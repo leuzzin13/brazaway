@@ -22,8 +22,9 @@ proibida em período integral) está carregado, mas **inativo**: só entra em vi
 | OpenStreetMap (PBF Geofabrik `sudeste-latest`, o mesmo dos tiles do Valhalla) | geometria das vias | **ODbL 1.0** — © colaboradores do OpenStreetMap. A geometria da camada é base derivada do OSM: atribuir e manter sob ODbL se for redistribuída |
 | Google My Maps da CET (3 KML: VER §1, §2/§3, §4) | **só conferência** (% de cobertura); nada do KML vai para o seed | sem licença explícita |
 
-Horários, exceções e vigências foram conferidos no texto compilado da Portaria 137/2018 e no texto da Portaria 49/2021
-(cópias baixadas nas pesquisas `docs/research/restricoes_sp_capital` e `docs/research/legislacao_limites`), em 09/10/2026.
+Horários, exceções e vigências foram conferidos no texto compilado da Portaria 137/2018 e no texto da Portaria 49/2021, em
+09/10/2026. Os trechos usados estão em `data/raw/ver/portaria137_2018_trechos.txt` e `data/raw/ver/portaria49_2021.txt`; a cada
+importação o importador confere, letra por letra, que o texto de cada um dos 81 incisos (`texto_legal`) está no texto oficial.
 
 ## Regras modeladas
 

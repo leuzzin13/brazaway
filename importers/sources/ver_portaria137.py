@@ -939,7 +939,32 @@ def split_valid(c: list) -> list[list]:
 
 
 # ----------------------------------------------------------------------------------------------------------------
+RAW_DIR = DATA_DIR / 'raw' / 'ver'   # cópias do texto oficial (portaria137_2018_trechos.txt, portaria49_2021.txt)
+
+
+def _letras(s: str) -> str:
+    return re.sub(r'[^a-z0-9]', '', norm(s))
+
+
+def conferir_textos(trechos: list[dict]) -> list[str]:
+    """Cada `texto` de inciso precisa estar, letra por letra, no texto oficial guardado em data/raw/ver."""
+    fontes = {1: 'portaria137_2018_trechos.txt', 2: 'portaria137_2018_trechos.txt', 3: 'portaria137_2018_trechos.txt',
+              4: 'portaria137_2018_trechos.txt', 5: 'portaria49_2021.txt'}
+    cache, erros = {}, []
+    for tr in trechos:
+        f = RAW_DIR / fontes[tr['par']]
+        if not f.exists():
+            return [f'texto oficial ausente em {f} (conferência pulada)']
+        if f not in cache:
+            cache[f] = _letras(f.read_text(encoding='utf-8'))
+        if _letras(tr['texto']) not in cache[f]:
+            erros.append(f"§{tr['par']} {tr['inc']}: texto não confere com {f.name}")
+    return erros
+
+
 def build_features(trechos: list[dict]) -> list[dict]:
+    for e in conferir_textos(trechos):
+        print(f'    ! {e}')
     opl = ensure_opl()
     net = Net(load_ways(opl))
     kml = _kml_lines()
