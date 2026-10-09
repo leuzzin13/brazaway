@@ -190,7 +190,7 @@ async function lineUse(line: GeoJSON.LineString, ids?: string[], mainNearM = MAI
             select c.*, ST_Transform(c.lg, c.utm) as lm,
                    (select ST_Transform(ST_Collect(parts.p), c.utm) from parts where parts.p && ST_Expand(c.lg, 0.0005)) as pm
               from c)
-     select p.id::text, p.name, p.kind, p.props, ST_X(p.geom) as lon, ST_Y(p.geom) as lat, p.li, p.near_minor,
+     select p.id::text, p.name, p.kind, p.props, ST_X(p.geom) as lon, ST_Y(p.geom) as lat, p.li, p.near_minor, p.near_main,
             ST_LineLocatePoint((select g from r), p.geom)::float as fraction,
             (case when p.pm is null or ST_Length(p.lm) = 0 then 0
                   else ST_Length(ST_Intersection(p.lm, ST_Buffer(p.pm, $7))) / ST_Length(p.lm) end)::float as r_along,
