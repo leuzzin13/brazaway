@@ -7,7 +7,9 @@ suspeitos (provável erro de digitação: há 2 com 2,40 m em Jundiaí numa rodo
 dia) e NÃO bloqueiam a rota — viram aviso para confirmar.
 
 A API (oae.layer.ts) bloqueia a passarela para veículos com altura >= altura_livre_m - 0,10 m (folga) com uma
-exclusão pequena no ponto (raio bloqueio.raio_m), que cobre as pistas sob a passarela.
+exclusão pequena no ponto (raio bloqueio.raio_m), que cobre as pistas sob a passarela. O ponto da ARTESP fica a 5 m
+(mediana; p99 19 m) da pista mais próxima no grafo do Valhalla; em pista DUPLA a outra pista pode estar a 20-30 m,
+por isso o raio é 35 m em pista dupla e 20 m nas demais.
 """
 import io
 import re
@@ -23,7 +25,8 @@ NOTES = ('Campo ALTURA sem dicionário oficial: tratado como altura livre. Altur
          'Passarelas DEMOLIDA descartadas. Pontes e viadutos da malha concedida não são publicados pela ARTESP.')
 
 ALTURA_SUSPEITA_M = 3.0      # abaixo disso o valor é incompatível com rodovia aberta a caminhões
-RAIO_BLOQUEIO_M = 30         # cobre as duas pistas sob a passarela (ponto ARTESP fica perto do eixo da rodovia)
+RAIO_BLOQUEIO_M = {'DUPLA': 35}   # cobre as duas pistas sob a passarela (ponto ARTESP fica perto de uma das pistas)
+RAIO_BLOQUEIO_PADRAO_M = 20
 SP_BBOX = (-53.2, -25.4, -44.1, -19.7)
 
 
@@ -92,6 +95,8 @@ def fetch():
         km_txt = f'{km:.3f}'.rstrip('0').rstrip('.').replace('.', ',') if km is not None else '?'
         label = f'Passarela {rod} km {km_txt}' + (f' ({nome.title()})' if nome else '')
         ra = _txt(p.get('RA'))
+        tipo_pista = _txt(p.get('TIPO_PISTA'))
+        raio = RAIO_BLOQUEIO_M.get((tipo_pista or '').upper(), RAIO_BLOQUEIO_PADRAO_M)
         out.append({
             'source_id': ra or f'{rod}-{km}',
             'geometry': {'type': 'Point', 'coordinates': [round(lon, 6), round(lat, 6)]},
@@ -100,7 +105,7 @@ def fetch():
             'props': {
                 'admin': 'estadual concedida (ARTESP)',
                 'concessionaria': _txt(p.get('CONCESSIONARIA')),
-                'rodovia': rod, 'km': km, 'tipo_pista': _txt(p.get('TIPO_PISTA')),
+                'rodovia': rod, 'km': km, 'tipo_pista': tipo_pista,
                 'municipio': _txt(p.get('MUNICIPIO')), 'status': status or None,
                 'estrutura': _txt(p.get('ESTRUTURA')),
                 'largura_m': _num(p.get('LARGURA')), 'comprimento_m': _num(p.get('COMPRIMENTO')),
@@ -111,7 +116,7 @@ def fetch():
                 'altura_fonte': 'ARTESP (campo ALTURA, sem dicionário oficial)',
                 'peso_max_t': None,
                 # como bloquear: exclusão circular no ponto (a passarela está SOBRE a rodovia)
-                'bloqueio': {'modo': 'sob', 'pontos': [[round(lon, 6), round(lat, 6)]], 'raio_m': RAIO_BLOQUEIO_M},
+                'bloqueio': {'modo': 'sob', 'pontos': [[round(lon, 6), round(lat, 6)]], 'raio_m': raio},
             },
         })
     return out
