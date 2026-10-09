@@ -17,7 +17,7 @@ Tipos (kind):
 Licença: ODbL 1.0 (derivado do OSM). PBF: o mesmo do Valhalla (ver osm_altura_nos.pbf_path).
 """
 from __future__ import annotations
-import time
+import re, time
 from array import array
 from sources.osm_altura_nos import (DRIVABLE, MAJOR, NO_SIGN, parse_length, parse_weight, valhalla_weight, pbf_path, fmt)
 
@@ -285,8 +285,14 @@ def fetch():
                 mine, prob = parse_weight(tags.get('maxweight'))
                 vh = valhalla_weight(tags.get('maxweight'))
                 motivo = prob or f'o Valhalla lê {fmt(vh, "t")} (vírgula decimal)'
+                # valor provável da placa: kg sem unidade -> t; vírgula -> o número com decimal; < 1 t -> desconhecido
+                provavel = None
+                if prob and 'provável kg' in prob:
+                    provavel = round(float(re.sub(r'[^0-9.]', '', tags['maxweight'].replace(',', '.'))) / 1000, 2)
+                elif not prob:
+                    provavel = mine
                 name = f"Peso suspeito ({tags.get('maxweight')}): {nm or 'via sem nome'}"
-                props.update(prioridade=2, valor_t=mine, valhalla_le_t=vh, motivo=motivo)
+                props.update(prioridade=2, valor_t=mine, valhalla_le_t=vh, provavel_t=provavel, motivo=motivo)
             out.append({'source_id': f'{reason[:3]}{wid}', 'geometry': {'type': 'LineString', 'coordinates': [[round(x, 7), round(y, 7)] for x, y in gs.coords]},
                         'name': name[:160], 'kind': reason, 'props': props})
 
