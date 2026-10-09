@@ -16,7 +16,7 @@ SOURCE = 'antt'
 CKAN = 'https://dados.antt.gov.br/api/3/action/package_show?id=praca-de-pedagio'
 LIST_URL = 'https://www.gov.br/antt/pt-br/assuntos/rodovias/concessionarias/lista-de-concessoes'
 SOURCE_URL = 'https://dados.antt.gov.br/dataset/praca-de-pedagio + https://www.gov.br/antt/pt-br/assuntos/rodovias/concessionarias/lista-de-concessoes/<concessao>/tarifas-de-pedagio'
-LICENSE = 'CC-BY (dados.antt.gov.br) para as praças; tarifas: páginas gov.br/antt (conteúdo público, sem licença explícita)'
+LICENSE = 'Praças: CC-BY (dados.antt.gov.br). Tarifas: páginas gov.br/antt, CC BY-ND 3.0 (rodapé gov.br)'
 NOTES = ''
 
 # nome da concessionária no CKAN -> slug da página de tarifas (conferido na lista de concessões da ANTT em 10/2026)

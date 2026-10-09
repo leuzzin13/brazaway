@@ -21,7 +21,7 @@ TABLE_URL = 'https://www.der.sp.gov.br/der/rodovias/balanca/pontos_de_pesagem'
 FS_URL = 'https://mapas.der.sp.gov.br/server/rest/services/Hosted/Balancas_DER_DBO/FeatureServer/0'
 KM_URL = 'https://mapas.der.sp.gov.br/server/rest/services/Hosted/pontos_1km_rodovias/FeatureServer/9'
 SOURCE_URL = f'{TABLE_URL} + {FS_URL} (+ {KM_URL} para rodovia/km)'
-LICENSE = 'DER-SP — dados públicos sem licença declarada nas páginas (ver docs/layers/balancas.md)'
+LICENSE = 'DER-SP — sem licença aberta declarada; rodapé do portal cms.sp.gov.br: "todos os direitos reservados" (ver docs/layers/balancas.md)'
 NOTES = ''
 
 
