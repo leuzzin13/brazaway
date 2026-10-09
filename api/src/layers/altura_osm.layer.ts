@@ -28,8 +28,15 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteLayer } fro
  * avisa com severidade 'danger'.
  */
 const LAYER = 'altura_osm';
-/** fator do linear_cost_factors: "proibido salvo sem alternativa" (ver types.ts) */
-export const BLOCK_FACTOR = 1000;
+/**
+ * fator do linear_cost_factors: "proibido salvo sem alternativa". NÃO usamos o 1000 sugerido em types.ts: o Valhalla
+ * aplica a MÉDIA do fator na aresta inteira (custom_cost_t::avg_factor), então o trecho do nó (~120 m) numa aresta longa
+ * de rodovia dilui 1000 para poucas vezes o custo; e em rota longa o Valhalla poda vias locais no meio do caminho, o
+ * desvio vira dezenas de km e fica mais caro que o trecho "penalizado". Medido: nó 3908618328 (Dutra, 4,3 m), carreta
+ * Rio->SP: com 1000 a rota é idêntica à sem fator; com 100000 desvia (+38 km). Em rota curta 1000 já bastava.
+ * 100000 é o teto dos fatores na doc do Valhalla.
+ */
+export const BLOCK_FACTOR = 100000;
 /** buffer (m) em volta da rota para dizer que ela percorre o trecho da via (a geometria da rota é a do próprio OSM) */
 export const ALONG_BUFFER_M = 5;
 /** fração mínima do trecho dentro do buffer para contar como "a rota passa por ali" (e não por cima/baixo) */

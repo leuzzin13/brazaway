@@ -118,6 +118,20 @@ describe('altura_osm: limitador de altura gravado em nó do OSM (Av. Humberto de
     expect(r.body.avoided.map((a: any) => a.id)).not.toContain(featureId);
   });
 
+  it('rota longa: nó em rodovia (aresta longa) também desvia — fator alto o bastante (Dutra, nó 3908618328, 4,3 m)', async () => {
+    const [dutra] = await featureByNode('altura_osm', 3908618328);
+    expect(dutra?.props.max_height_m).toBe(4.3);
+    const rio = { lat: -22.9, lon: -43.2 }, sp = { lat: -23.52, lon: -46.58 };
+    const carreta = await route({ origin: rio, destination: sp, vehicle: CARRETA, departure_at: DEP });
+    expect(carreta.status, JSON.stringify(carreta.body)).toBe(200);
+    expect(carreta.body.avoided.map((a: any) => a.id)).toContain(dutra.id);
+    expect(carreta.body.warnings.filter((w: any) => w.code === 'uses_restricted_way' && w.id === dutra.id)).toEqual([]);
+    const truck = await route({ origin: rio, destination: sp, vehicle: TRUCK, departure_at: DEP });
+    expect(truck.status).toBe(200);
+    expect(minDistM(truck.body, { lat: dutra.lat, lon: dutra.lon })).toBeLessThan(5);
+    expect(truck.body.avoided.map((a: any) => a.id)).not.toContain(dutra.id);
+  });
+
   it('features() mostra o ponto no mapa e, de perto, o trecho bloqueado', async () => {
     const bbox = [NODE.lon - 0.01, NODE.lat - 0.01, NODE.lon + 0.01, NODE.lat + 0.01].join(',');
     const z14 = await get(`/api/layers/altura_osm/features?bbox=${bbox}&zoom=14`);
