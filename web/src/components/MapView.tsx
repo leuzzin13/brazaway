@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import maplibregl, { Map as MLMap, Marker, Popup } from 'maplibre-gl';
 import { api, REPORT_TYPES, REST_KINDS, type LatLon, type LayerMeta, type Report, type RouteResult } from '../lib/api';
 
@@ -33,6 +33,7 @@ export function MapView(p: MapViewProps) {
   const odMarkers = useRef<{ o?: Marker; d?: Marker; pending?: Marker }>({});
   const restMarkers = useRef<Marker[]>([]);
   const loadedLayers = useRef<Set<string>>(new Set());
+  const [ready, setReady] = useState(false);
   const propsRef = useRef(p);
   propsRef.current = p;
 
@@ -62,6 +63,7 @@ export function MapView(p: MapViewProps) {
       };
       emit();
       m.on('moveend', emit);
+      setReady(true);
       m.on('click', 'zones-fill', (e) => {
         const f = e.features?.[0];
         if (!f || propsRef.current.reportMode) return;
@@ -80,6 +82,7 @@ export function MapView(p: MapViewProps) {
       propsRef.current.onMapClick({ lat: e.lngLat.lat, lon: e.lngLat.lng });
     });
     map.current = m;
+    (window as unknown as { __truckMap?: MLMap }).__truckMap = m; // depuração
     // Garante o tamanho correto mesmo se o container só for medido depois do mount
     const resize = () => m.resize();
     requestAnimationFrame(resize);
@@ -135,7 +138,7 @@ export function MapView(p: MapViewProps) {
 
   // camadas de dados genéricas (/api/layers/:id/features)
   useEffect(() => {
-    const m = map.current; if (!m) return;
+    const m = map.current; if (!m || !ready) return;
     let timer: number | undefined;
     const metaById = new Map(p.dataLayers.map((l) => [l.id, l]));
     const removeLayer = (id: string) => {
@@ -186,10 +189,10 @@ export function MapView(p: MapViewProps) {
       refresh();
     };
     const onMove = () => { window.clearTimeout(timer); timer = window.setTimeout(refresh, 350); };
-    if (m.isStyleLoaded()) apply(); else m.once('load', apply);
+    apply();
     m.on('moveend', onMove);
     return () => { m.off('moveend', onMove); window.clearTimeout(timer); };
-  }, [p.visibleLayers, p.dataLayers]);
+  }, [p.visibleLayers, p.dataLayers, ready]);
 
   // origin / destination / pending markers
   useEffect(() => {
