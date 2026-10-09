@@ -29,6 +29,11 @@ const POINT_ON_ROUTE_M = 20;
 const LINE_OVERLAP = 0.6;
 const LINE_TOL_M = 15;
 const MAX_WARNINGS = 12;
+/** Feições por pedido do mapa: as com limite/restrição/nome vêm primeiro (até MAP_KNOWN_LIMIT), o resto completa. */
+const MAP_LIMIT = 4000;
+const MAP_KNOWN_LIMIT = 2000;
+/** Abaixo desta altura informada a ARTESP é tratada como erro de cadastro (ver importers/sources/artesp_passarelas.py). */
+const ALTURA_IMPLAUSIVEL_M = 4.4;
 
 export interface Bloqueio { modo: 'sob' | 'sobre'; pontos: [number, number][]; raio_m: number }
 export interface Criterio {
@@ -45,6 +50,7 @@ export interface Restricao {
 }
 export interface OaeProps {
   altura_livre_m?: number | null; altura_informada_m?: number | null; altura_suspeita?: boolean; altura_fonte?: string | null;
+  altura_por_pista?: { pista: string | null; altura_m: number }[] | null; provavel_mesma_que?: string | null;
   peso_max_t?: number | null; bloqueio?: Bloqueio | null; restricao?: Restricao;
   rodovia?: string | null; km?: number | null; status_obra?: string | null; dt_termino?: string | null; atualizado_em?: string | null;
   admin?: string | null; municipio?: string | null;
@@ -79,21 +85,23 @@ export function restricaoVigente(r: Restricao | undefined, dia: string): boolean
 
 export interface Motivo { code: 'oae_altura' | 'oae_peso' | 'oae_restricao'; regra: string; valor: number | null; mensagem: string }
 
-/** Por que esta OAE bloqueia este veículo (vazio = não bloqueia). */
+/** Por que esta OAE bloqueia este veículo na data local `dia` (AAAA-MM-DD). Vazio = não bloqueia. */
 export function motivosBloqueio(p: OaeProps, v: Vehicle, dia: string): Motivo[] {
   const out: Motivo[] = [];
-  const h = num(p.altura_livre_m);
+  const r = p.restricao;
+  // limites numéricos vindos de restrição curada só valem dentro da vigência dela (início futuro ainda não bloqueia)
+  const limitesValem = !r || restricaoVigente(r, dia);
+  const h = limitesValem ? num(p.altura_livre_m) : null;
   if (h != null && h > 0 && v.height_m >= round2(h - FOLGA_ALTURA_M) - 1e-9) {
     out.push({
       code: 'oae_altura', valor: h, regra: `altura livre ${fmtM(h)} m`,
       mensagem: `altura livre ${fmtM(h)} m${p.altura_fonte ? ` (${p.altura_fonte.split(' (')[0]})` : ''}; seu veículo tem ${fmtM(v.height_m)} m e precisa de folga de ${fmtM(FOLGA_ALTURA_M)} m`,
     });
   }
-  const pm = num(p.peso_max_t);
+  const pm = limitesValem ? num(p.peso_max_t) : null;
   if (pm != null && pm > 0 && v.weight_t > pm) {
     out.push({ code: 'oae_peso', valor: pm, regra: `peso máx. ${fmtT(pm)} t`, mensagem: `limite de ${fmtT(pm)} t; seu veículo pesa ${fmtT(v.weight_t)} t` });
   }
-  const r = p.restricao;
   // tipo altura/peso vigente já vira altura_livre_m/peso_max_t no importador; aqui só proibições/interdições
   if (r && (r.tipo === 'proibido_pesados' || r.tipo === 'interditada') && restricaoVigente(r, dia) && criterioAplica(r.criterio, v)) {
     const desde = fmtData(r.inicio);
@@ -169,6 +177,7 @@ function displayProps(r: Row): Record<string, unknown> {
   return {
     id: r.id, name: r.name, kind: r.kind, source: r.source,
     limite,
+    alturas_por_pista: p.altura_por_pista?.length ? p.altura_por_pista.map((a) => `${a.pista ?? 'pista'} ${fmtM(a.altura_m)} m`).join(' · ') : null,
     altura_informada: p.altura_suspeita && p.altura_informada_m != null ? `${fmtM(p.altura_informada_m)} m (suspeita, não usada)` : null,
     restricao: rest ? `${rest.status === 'vigente' ? 'VIGENTE' : 'histórica'}: ${rest.aplica_a ?? rest.tipo}` : null,
     ato: rest?.ato ?? null,
@@ -201,8 +210,12 @@ const layer: RouteLayer = {
   async features(bbox, { zoom }) {
     const z = zoom ?? 12;
     if (z < 9) return { type: 'FeatureCollection', features: [] };
-    // zoom baixo: só o que tem limite/restrição/nome (as bordas do GeoSampa poluem o mapa)
-    const rows = (await featuresInBbox('oae', bbox, { limit: 4000, where: z < 12 ? KNOWN_WHERE : undefined })) as Row[];
+    // primeiro o que tem limite/restrição/nome; as bordas do GeoSampa/DER-SP (só contagem) completam até o limite e
+    // só a partir do zoom 12 (no zoom baixo poluem o mapa). Assim o corte por limite nunca derruba uma restrição.
+    const known = (await featuresInBbox('oae', bbox, { limit: MAP_KNOWN_LIMIT, where: KNOWN_WHERE })) as Row[];
+    const rest = z < 12 || known.length >= MAP_LIMIT ? []
+      : ((await featuresInBbox('oae', bbox, { limit: MAP_LIMIT - known.length, where: `not ${KNOWN_WHERE}` })) as Row[]);
+    const rows = [...known, ...rest];
     return {
       type: 'FeatureCollection',
       features: rows.map((r) => ({ type: 'Feature', id: r.id, geometry: r.geometry, properties: displayProps(r) })),
@@ -299,7 +312,20 @@ const layer: RouteLayer = {
 
       const h = num(p.altura_livre_m);
       if (h != null) alturaOk.push({ row: r, h, dist: onRoute.dist, fraction: f });
-      if (p.altura_suspeita && p.altura_informada_m != null) suspeitas.push({ id: r.id, name: r.name, altura_informada_m: p.altura_informada_m });
+      if (p.altura_suspeita && p.altura_informada_m != null) {
+        const hi = p.altura_informada_m;
+        suspeitas.push({ id: r.id, name: r.name, altura_informada_m: hi });
+        // valor suspeito nunca bloqueia; avisa se o veículo não passaria caso o valor fosse verdadeiro
+        if (v.height_m >= round2(hi - FOLGA_ALTURA_M) - 1e-9) {
+          const implausivel = hi < ALTURA_IMPLAUSIVEL_M;
+          warnings.push({
+            ...base, _f: f, severity: implausivel ? 'info' : 'warn', code: 'oae_altura_suspeita',
+            message: implausivel
+              ? `${r.name ?? 'Passarela'}: a ARTESP informa altura de ${fmtM(hi)} m, valor incompatível com a rodovia (provável erro de cadastro). O app não bloqueou; atenção à sinalização.`
+              : `${r.name ?? 'Passarela'}: a ARTESP informa altura de ${fmtM(hi)} m (valor suspeito, não usado para bloquear). Seu veículo tem ${fmtM(v.height_m)} m: confira a placa de altura antes de passar.`,
+          });
+        }
+      }
 
       if (r.source === 'siurb') {
         siurb.push({ name: r.name ?? 'OAE', status: p.status_obra ?? null, termino: p.dt_termino ?? null });
@@ -316,17 +342,24 @@ const layer: RouteLayer = {
         if (rest.status === 'vigente' && restricaoVigente(rest, dia)) {
           // vigente mas não alcança este veículo (ex.: faixa interditada, VUC liberado)
           warnings.push({ ...base, _f: f, severity: 'info', code: 'oae_restricao_nao_aplica', message: `${r.name}: restrição vigente (${rest.aplica_a ?? rest.tipo}); não se aplica ao seu veículo. Atenção à sinalização.` });
+        } else if (rest.status === 'vigente' && rest.inicio && dia < rest.inicio) {
+          warnings.push({ ...base, _f: f, severity: aplica ? 'warn' : 'info', code: 'oae_restricao_futura', message: `${r.name}: restrição (${rest.aplica_a ?? rest.tipo}) a partir de ${fmtData(rest.inicio)}${aplica ? '; alcança o seu veículo' : ''}. Não vale na data desta viagem.` });
         } else if (rest.status === 'historica') {
+          // `fim` só existe quando a fonte libera explicitamente os veículos da restrição (ver oae_restricoes_curadas.py)
           const lib = fmtData(rest.liberacao_data);
+          const fonte = /^oficial/i.test(rest.liberacao_fonte ?? '') ? 'fonte oficial' : 'notícia';
           const liberada = !!rest.fim;
           const quando = rest.inicio?.slice(0, 4) ?? '';
+          const oque = rest.aplica_a ?? rest.tipo;
           warnings.push({
             ...base, _f: f,
             severity: !liberada && aplica ? 'warn' : 'info',
             code: 'oae_restricao_historica',
             message: liberada
-              ? `${r.name}: teve restrição em ${quando} (${rest.aplica_a ?? rest.tipo}), já liberada${lib ? ` (${/^oficial/i.test(rest.liberacao_fonte ?? '') ? 'fonte oficial' : 'notícia'} de ${lib})` : ''}. Confira a sinalização.`
-              : `${r.name}: teve restrição em ${quando} (${rest.aplica_a ?? rest.tipo}) e não achamos ato oficial de liberação. Confira a placa no local.`,
+              ? `${r.name}: teve restrição em ${quando} (${oque}), já liberada${lib ? ` (${fonte} de ${lib})` : ''}. Confira a sinalização.`
+              : lib
+                ? `${r.name}: teve restrição em ${quando} (${oque}). Há registro de obra concluída (${fonte} de ${lib}), mas sem liberação explícita para caminhões. Confira a placa no local.`
+                : `${r.name}: teve restrição em ${quando} (${oque}) e não achamos ato oficial de liberação. Confira a placa no local.`,
           });
         }
       }
@@ -337,11 +370,14 @@ const layer: RouteLayer = {
       alturaOk.sort((a, b) => a.h - b.h);
       const min = alturaOk[0];
       const where = min.row.name ?? 'OAE';
-      summary.push(`${alturaOk.length} estrutura(s) com altura livre publicada na rota; menor: ${fmtM(min.h)} m (${where}).`);
+      // a ARTESP cadastra algumas passarelas duas vezes (linha com RA e linha "Transversal"): conta uma vez só
+      const presentes = new Set(alturaOk.map((a) => `${a.row.source}:${a.row.source_id}`));
+      const n = alturaOk.filter((a) => !(a.row.props.provavel_mesma_que && presentes.has(`${a.row.source}:${a.row.props.provavel_mesma_que}`))).length;
+      summary.push(`${n} estrutura(s) com altura livre publicada na rota; menor: ${fmtM(min.h)} m (${where}).`);
       const [lon, lat] = rowPoint(min.row);
       warnings.push({
         layer: 'oae', id: min.row.id, lat, lon, _f: min.fraction, severity: 'info', code: 'oae_altura_ok',
-        message: `A rota passa sob ${alturaOk.length} ${alturaOk.every((a) => a.row.kind === 'passarela') ? 'passarela(s)' : 'estrutura(s)'} com altura publicada (menor ${fmtM(min.h)} m, ${where}). Seu veículo (${fmtM(v.height_m)} m) passa com folga.`,
+        message: `A rota passa sob ${n} ${alturaOk.every((a) => a.row.kind === 'passarela') ? 'passarela(s)' : 'estrutura(s)'} com altura publicada (menor ${fmtM(min.h)} m, ${where}). Seu veículo (${fmtM(v.height_m)} m) passa com folga.`,
       });
     }
     if (siurb.length) {
