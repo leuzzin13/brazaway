@@ -1,0 +1,112 @@
+name: truck-router
+
+services:
+  valhalla:
+    build: ./valhalla
+    container_name: truck-router-valhalla
+    ports:
+      - "${VALHALLA_PORT:-8002}:8002"
+    environment:
+      tile_urls: ${OSM_PBF_URL:-https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf}
+      server_threads: ${VALHALLA_THREADS:-4}
+      build_elevation: "False"
+      build_admins: "True"
+      build_time_zones: "True"
+      use_tiles_ignore_pbf: "True"
+    volumes:
+      - ./data/valhalla:/custom_files
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8002/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 200        # o primeiro build de tiles demora; não derrube o container
+      start_period: 120s
+    restart: unless-stopped
+
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: truck-router-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-truck}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-truck}
+      POSTGRES_DB: ${POSTGRES_DB:-truck_router}
+      TZ: ${TZ:-America/Sao_Paulo}
+      PGTZ: ${TZ:-America/Sao_Paulo}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-truck} -d ${POSTGRES_DB:-truck_router}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    image: postgis/postgis:16-3.4
+    container_name: truck-router-migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-truck}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-truck}
+      PGDATABASE: ${POSTGRES_DB:-truck_router}
+    volumes:
+      - ./db:/db:ro
+    entrypoint: ["bash", "/db/migrate.sh"]
+    restart: "no"
+
+  api:
+    build: ./api
+    container_name: truck-router-api
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL:-postgres://truck:truck@db:5432/truck_router}
+      VALHALLA_URL: ${VALHALLA_URL:-http://valhalla:8002}
+      REPORT_BUFFER_M: ${REPORT_BUFFER_M:-25}
+      WARN_RADIUS_M: ${WARN_RADIUS_M:-100}
+      TZ: ${TZ:-America/Sao_Paulo}
+      GEOCODER_PROVIDER: ${GEOCODER_PROVIDER:-photon}
+      PHOTON_URL: ${PHOTON_URL:-https://photon.komoot.io}
+    volumes:
+      - ./config:/app/config:ro
+    ports:
+      - "${API_PORT:-3000}:3000"
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    container_name: truck-router-web
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    restart: unless-stopped
+
+  # Importação da ZMRC (GeoSampa) via ogr2ogr. Roda só com: docker compose --profile import run --rm gdal
+  gdal:
+    image: ghcr.io/osgeo/gdal:ubuntu-small-3.9.3
+    container_name: truck-router-gdal
+    profiles: ["import"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-truck}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-truck}
+      PGDATABASE: ${POSTGRES_DB:-truck_router}
+    volumes:
+      - ./data:/data
+    entrypoint: ["bash", "/data/import/import-zmrc.sh"]
+
+volumes:
+  pgdata:
