@@ -258,7 +258,7 @@ const layer: RouteLayer = {
 
     const f = factor();
     const tileset = f ? await valhallaTileset() : null;
-    if (!summary.length && !warnings.length) return { data: { penalidade: { ativa: !!f, fator: f || null } } };
+    if (!summary.length && !warnings.length) return f ? { data: { penalidade: { ativa: true, fator: f, tileset } } } : {};
     return {
       summary, warnings,
       data: {
