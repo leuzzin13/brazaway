@@ -90,7 +90,7 @@ também o trecho bloqueado.
 | Rota | Sem camadas (API main) | Com a camada |
 |---|---|---|
 | Av. Humberto de Campos (1,3 km) | — | 0,2–0,4 s |
-| SP→Rio, carreta (421 km) | 3,5 s | 4,5 s (16 linhas enviadas) |
+| SP→Rio, carreta (421 km) | 3,5 s | 4,0 s (16 linhas enviadas) |
 
 A maior parte do custo extra é a comparação do `routing.ts` (turf, ~10 ms por linha numa rota de 400 km) e as consultas
 de uso, que picam a rota (`ST_Subdivide`) e medem em UTM SIRGAS 2000 (EPSG 31978–31985) só perto de cada trecho.

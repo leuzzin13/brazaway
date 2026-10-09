@@ -77,6 +77,16 @@ async function alongRoute(line: GeoJSON.LineString, bufferM: number, kinds: stri
   return r.rows;
 }
 
+/** Há placas do Mapillary carregadas? (o importador é opcional; sem elas pulamos a 2ª consulta) — cache de 10 min */
+let signsLoaded: { at: number; has: boolean } | null = null;
+async function hasSigns(): Promise<boolean> {
+  if (!signsLoaded || Date.now() - signsLoaded.at > 600_000) {
+    const r = await query<{ has: boolean }>(`select exists (select 1 from data_features where layer_id = $1 and kind = any($2)) as has`, [LAYER, SIGN_KINDS]);
+    signsLoaded = { at: Date.now(), has: r.rows[0]?.has ?? false };
+  }
+  return signsLoaded.has;
+}
+
 /** A rota percorre a feição (e não só cruza por cima/ao lado)? Uma rua que cruza por cima de um túnel curto deixa
  *  ~10 m dele dentro do buffer de 5 m; por isso a via inteira (túnel etc.) exige 40 m ou 80% dela dentro do buffer. */
 function travels(r: AlongRow): boolean {
@@ -123,7 +133,7 @@ const layer: RouteLayer = {
     const line = route.line.geometry;
     const [rows, signs] = await Promise.all([
       alongRoute(line, ALONG_BUFFER_M, [...UNDER_KINDS, ...DATA_KINDS]),
-      alongRoute(line, SIGN_BUFFER_M, SIGN_KINDS),
+      hasSigns().then((has) => (has ? alongRoute(line, SIGN_BUFFER_M, SIGN_KINDS) : [])),
     ]);
     const used = dedupe(rows.filter(travels));
     const under = used.filter((r) => UNDER_KINDS.includes(r.kind));
