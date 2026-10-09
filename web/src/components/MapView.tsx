@@ -65,7 +65,9 @@ export function MapView(p: MapViewProps) {
       });
     });
     m.on('click', (e) => {
-      // só clique "no mapa" (fora de marker); popups de zona tratados acima
+      // ignora cliques em markers (o MapLibre usa esse mesmo evento para abrir o popup do marker)
+      const target = e.originalEvent?.target as HTMLElement | null;
+      if (target?.closest?.('.maplibregl-marker, .maplibregl-popup')) return;
       propsRef.current.onMapClick({ lat: e.lngLat.lat, lon: e.lngLat.lng });
     });
     map.current = m;
@@ -160,7 +162,6 @@ export function MapView(p: MapViewProps) {
       };
       render(r.score);
       const mk = new Marker({ element: d, anchor: 'center' }).setLngLat(coord as [number, number]).setPopup(pop).addTo(m);
-      d.addEventListener('click', (ev) => { ev.stopPropagation(); });
       markers.current.push(mk);
     }
   }, [p.reports]);
