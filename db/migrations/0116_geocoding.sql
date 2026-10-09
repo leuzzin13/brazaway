@@ -43,10 +43,11 @@ on conflict (abbr) do update set full_word = excluded.full_word;
 -- 'S' (São) e 'N' (Nossa/nº) ficaram de fora de propósito: são ambíguos. A troca é aplicada dos dois lados
 -- (base e busca), então uma expansão "errada" (ex.: DEL → DELEGADO em "Del Rey") não atrapalha o casamento.
 
--- caixa alta, sem acento, só letras/dígitos separados por 1 espaço
+-- caixa alta, sem acento, só letras/dígitos separados por 1 espaço.
+-- search_path fixo: no Supabase as extensões ficam no schema "extensions", no docker em "public".
 create or replace function geo_norm(t text) returns text
-language sql immutable strict parallel safe as $$
-  select nullif(btrim(regexp_replace(upper(public.unaccent('public.unaccent'::regdictionary, t)), '[^A-Z0-9]+', ' ', 'g')), '')
+language sql immutable strict parallel safe set search_path = public, extensions as $$
+  select nullif(btrim(regexp_replace(upper(unaccent('unaccent'::regdictionary, t)), '[^A-Z0-9]+', ' ', 'g')), '')
 $$;
 
 -- geo_norm + troca de abreviações por palavra canônica + remoção de preposições
