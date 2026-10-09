@@ -1,22 +1,67 @@
-import type { Preset, Vehicle } from '../lib/api';
+import { useState } from 'react';
+import type { CargoType, Powertrain, Preset, Vehicle } from '../lib/api';
 
 interface Props { presets: Preset[]; vehicle: Vehicle; setVehicle: (v: Vehicle) => void; note?: string }
 
+const CARGO: [CargoType, string][] = [
+  ['general', 'Carga geral'], ['perishable', 'Perecível (alimento)'], ['hazmat', 'Produto perigoso'],
+  ['concrete', 'Concreto/bomba'], ['moving', 'Mudança'], ['other', 'Outra'],
+];
+const POWER: [Powertrain, string][] = [
+  ['diesel', 'Diesel'], ['gas', 'GNV/biometano'], ['electric', 'Elétrico'], ['hybrid', 'Híbrido'], ['hydrogen', 'Hidrogênio'],
+];
+const two = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8, alignItems: 'end' } as const;
+
+/** Campos que descrevem o veículo físico (vêm do preset). O resto (carga, AETC, placa...) é do usuário e sobrevive à troca de perfil. */
+const DIM_KEYS = ['height_m', 'width_m', 'length_m', 'weight_t', 'axle_load_t', 'axle_count', 'is_vuc'] as const;
+
 export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
+  const [open, setOpen] = useState(false);
+  const set = (patch: Partial<Vehicle>) => setVehicle({ ...vehicle, ...patch });
   const num = (k: keyof Vehicle, step = 0.1) => (
     <input type="number" step={step} inputMode="decimal" value={vehicle[k] as number}
-      onChange={(e) => setVehicle({ ...vehicle, [k]: Number(e.target.value) })} />
+      onChange={(e) => set({ [k]: Number(e.target.value) } as Partial<Vehicle>)} />
   );
+  const preset = presets.find((p) => p.id === vehicle.preset);
+  const isTruck = vehicle.weight_t > 3.5;
+  const year = new Date().getFullYear();
+
+  // resumo do que está marcado em "Autorizações e carga" (aparece fechado)
+  const tags = [
+    vehicle.has_aetc && 'AETC',
+    vehicle.cargo_type && vehicle.cargo_type !== 'general' && vehicle.cargo_type !== 'hazmat' && CARGO.find(([k]) => k === vehicle.cargo_type)?.[1].split(' ')[0],
+    vehicle.hazmat && `perigoso${vehicle.hazmat_un ? ` ONU ${vehicle.hazmat_un}` : ''}`,
+    vehicle.powertrain && vehicle.powertrain !== 'diesel' && POWER.find(([k]) => k === vehicle.powertrain)?.[1],
+    vehicle.manufacture_year && String(vehicle.manufacture_year),
+  ].filter(Boolean) as string[];
+
+  // avisos curtos e acionáveis (a API devolve os oficiais em vehicle.legal_notes)
+  const hints: string[] = [];
+  if (vehicle.is_vuc && !vehicle.has_aetc) hints.push('VUC sem AETC é tratado como caminhão na ZMRC e no rodízio.');
+  if (vehicle.is_vuc && (vehicle.width_m > 2.5 || vehicle.length_m > 7.2)) hints.push('VUC em SP: até 2,50 m de largura e 7,20 m de comprimento.');
+  if (vehicle.is_vuc && vehicle.manufacture_year && year - vehicle.manufacture_year > 15) hints.push('VUC com mais de 15 anos perde a isenção.');
+  if (vehicle.hazmat && !/^\d{4}$/.test(vehicle.hazmat_un ?? '')) hints.push('Informe o nº ONU (4 dígitos) para conferir as exceções de perigosos.');
+  if (vehicle.cargo_type === 'perishable' && !vehicle.has_aetc && isTruck) hints.push('Perecível só entra na ZMRC (05h–12h) com AETC.');
+
+  const setHazmat = (on: boolean) => set({
+    hazmat: on,
+    cargo_type: on ? 'hazmat' : vehicle.cargo_type === 'hazmat' ? 'general' : vehicle.cargo_type,
+    ...(on ? {} : { hazmat_un: undefined, hazmat_local_delivery: undefined }),
+  });
+
   return (
     <div className="vehicle">
       <div className="field">
         <label>Perfil do veículo</label>
         <select value={vehicle.preset ?? ''} onChange={(e) => {
           const p = presets.find((x) => x.id === e.target.value);
-          if (p) setVehicle({ ...p, preset: p.id, plate_last_digit: vehicle.plate_last_digit });
+          if (!p) return;
+          const dims = Object.fromEntries(DIM_KEYS.map((k) => [k, p[k]])) as Partial<Vehicle>;
+          setVehicle({ ...vehicle, ...dims, preset: p.id });
         }}>
           {presets.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
         </select>
+        {preset?.legal_basis && <small className="muted" title={preset.legal_basis}>{preset.legal_basis.length > 140 ? preset.legal_basis.slice(0, 140) + '…' : preset.legal_basis}</small>}
         {note && <small className="muted">{note}</small>}
       </div>
       <div className="grid3">
@@ -28,15 +73,58 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
         <div className="field"><label>Nº eixos</label>{num('axle_count', 1)}</div>
       </div>
       <div className="grid3">
-        <label className="check"><input type="checkbox" checked={vehicle.hazmat} onChange={(e) => setVehicle({ ...vehicle, hazmat: e.target.checked })} /> Carga perigosa</label>
-        <label className="check"><input type="checkbox" checked={vehicle.is_vuc} onChange={(e) => setVehicle({ ...vehicle, is_vuc: e.target.checked })} /> VUC</label>
+        <label className="check"><input type="checkbox" checked={vehicle.hazmat} onChange={(e) => setHazmat(e.target.checked)} /> Carga perigosa</label>
+        <label className="check"><input type="checkbox" checked={vehicle.is_vuc} onChange={(e) => set({ is_vuc: e.target.checked })} /> VUC</label>
         <div className="field"><label>Final placa</label>
-          <select value={vehicle.plate_last_digit ?? ''} onChange={(e) => setVehicle({ ...vehicle, plate_last_digit: e.target.value === '' ? undefined : Number(e.target.value) })}>
+          <select value={vehicle.plate_last_digit ?? ''} onChange={(e) => set({ plate_last_digit: e.target.value === '' ? undefined : Number(e.target.value) })}>
             <option value="">—</option>
-            {[0,1,2,3,4,5,6,7,8,9].map((d) => <option key={d} value={d}>{d}</option>)}
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
         </div>
       </div>
+
+      <button type="button" className="btn btn-block-sm" aria-expanded={open} onClick={() => setOpen(!open)}>
+        📋 Autorizações e carga{tags.length ? `: ${tags.join(' · ')}` : ''} {open ? '▲' : '▼'}
+      </button>
+      {open && (
+        <div>
+          <label className="check" title="Autorização Especial de Trânsito de Caminhão (cadastro no DSV/CET)">
+            <input type="checkbox" checked={!!vehicle.has_aetc} onChange={(e) => set({ has_aetc: e.target.checked || undefined })} /> Possui AETC (São Paulo)
+          </label>
+          <div style={two}>
+            <div className="field"><label>Tipo de carga</label>
+              <select value={vehicle.cargo_type ?? 'general'} onChange={(e) => {
+                const c = e.target.value as CargoType;
+                set({ cargo_type: c, hazmat: c === 'hazmat', ...(c === 'hazmat' ? {} : { hazmat_un: undefined, hazmat_local_delivery: undefined }) });
+              }}>
+                {CARGO.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+              </select>
+            </div>
+            <div className="field"><label>Motorização</label>
+              <select value={vehicle.powertrain ?? 'diesel'} onChange={(e) => set({ powertrain: e.target.value as Powertrain })}>
+                {POWER.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+              </select>
+            </div>
+            <div className="field"><label>Ano de fabricação</label>
+              <input type="number" inputMode="numeric" min={1950} max={year + 1} placeholder="ex.: 2018" value={vehicle.manufacture_year ?? ''}
+                onChange={(e) => set({ manufacture_year: e.target.value ? Number(e.target.value) : undefined })} />
+            </div>
+            {vehicle.hazmat && (
+              <div className="field"><label>Nº ONU</label>
+                <input type="text" inputMode="numeric" maxLength={8} placeholder="ex.: 1203" value={vehicle.hazmat_un ?? ''}
+                  onChange={(e) => set({ hazmat_un: e.target.value.replace(/[^\d]/g, '').slice(0, 4) || undefined })} />
+              </div>
+            )}
+          </div>
+          {vehicle.hazmat && (
+            <label className="check">
+              <input type="checkbox" checked={!!vehicle.hazmat_local_delivery} onChange={(e) => set({ hazmat_local_delivery: e.target.checked || undefined })} />
+              Fracionado p/ consumo local (ex.: GLP em botijão)
+            </label>
+          )}
+        </div>
+      )}
+      {hints.map((h) => <small key={h} className="muted" style={{ display: 'block', color: '#b45309' }}>⚠️ {h}</small>)}
     </div>
   );
 }
