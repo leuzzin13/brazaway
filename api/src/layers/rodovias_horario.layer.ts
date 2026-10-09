@@ -214,6 +214,14 @@ function escopoText(ws: PrfWindow[]): string {
   return parts.join(' e ');
 }
 
+/** A quem a janela se aplica (texto curto para o mapa). */
+function quemText(p: PrfProps): string {
+  if (p.criterio === 'largura') return `largura acima de ${fmt(p.largura_min_m ?? 0)} m (com AET/AE)`;
+  const L = p.limites;
+  const base = `excedentes (largura > ${fmt(L.largura_m)} m, altura > ${fmt(L.altura_m)} m, comprimento > ${fmt(L.comprimento_m)} m ou PBTC > ${fmt(L.pbtc_t)} t) e CVC com AET`;
+  return p.so_aet ? `${base}, só para quem tem AET/AE` : base;
+}
+
 /** Períodos de feriado prolongado (art. 3º, § 5º da SUP/DER-084/2023). Usa as operações de feriado da PRF (mesmo ato
  *  federal, exceto Eleições) e, se a tabela holidays estiver carregada, feriados de qui/sex/seg/ter (com o fim de semana). */
 function longHolidayPeriods(rules: Rules, tz: string): { start: DateTime; end: DateTime; name: string }[] {
@@ -714,14 +722,15 @@ const layer: RouteLayer = {
       const s: Seg = { id: r.id, source_id: r.source_id, name: r.name ?? '', kind: r.kind as Seg['kind'], p: r.props as unknown as SegProps, geometry: r.geometry as any };
       const ws = upcoming.filter((w) => segSubject(w.p, s));
       if (s.kind === 'pista_dupla' && !ws.length) continue; // pista dupla só aparece se houver regra especial (ex.: Aparecida)
-      const ativa = ws.find((w) => activeAt(w, now));
+      const ativas = ws.filter((w) => activeAt(w, now));
       const prox = ws.find((w) => w.start > now);
+      const quando = (w: PrfWindow) => `${fmtDT(w.start)}–${w.end.hasSame(w.start, 'day') ? w.end.toFormat('HH:mm') : fmtDT(w.end)}`;
       features.push({ type: 'Feature', id: r.id, geometry: r.geometry, properties: {
         id: r.id, name: r.name, kind: r.kind, codigo_snv: s.p.codigo, administracao: s.p.administracao,
-        status: ativa ? 'restrito agora' : prox ? 'livre agora' : 'sem janela futura publicada',
-        restricao_agora: ativa ? `${ativa.p.operacao} até ${fmtDT(ativa.end)}` : null,
-        proxima_restricao: prox ? `${prox.p.operacao}: ${fmtDT(prox.start)}–${prox.end.toFormat('HH:mm')}` : null,
-        ato: (ativa ?? prox)?.p.ato ?? null,
+        status: ativas.length ? 'restrição de feriado em vigor' : prox ? 'sem restrição agora' : 'sem janela futura publicada',
+        restricao_agora: ativas.length ? ativas.map((w) => `${w.p.operacao} até ${fmtDT(w.end)} — ${quemText(w.p)}`).join('; ') : null,
+        proxima_restricao: prox ? `${prox.p.operacao}: ${quando(prox)} — ${quemText(prox.p)}` : null,
+        ato: (ativas[0] ?? prox)?.p.ato ?? null,
       } });
     }
     return { type: 'FeatureCollection', features };
