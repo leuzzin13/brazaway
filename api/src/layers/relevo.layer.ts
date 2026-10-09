@@ -101,8 +101,7 @@ export function limitsFor(v: Vehicle, cfg = gradeConfig()): Limits & { source: '
 /**
  * Qual Valhalla tem elevação: VALHALLA_ELEV_URL se definido ("off" desliga a camada); senão tenta o de elevação local
  * (http://localhost:8003) e o principal (VALHALLA_URL) — assim, depois de trocar o principal pelos tiles com elevação,
- * a camada passa a usá-lo sem configuração. Cada candidato é sondado com /height na origem da rota (cache de 5 min se
- * tem elevação, 1 min se não tem/está fora).
+ * a camada passa a usá-lo sem configuração. Cada candidato é sondado com /height em pontos da rota (ver hasElevation).
  */
 function candidates(): string[] {
   const v = process.env.VALHALLA_ELEV_URL?.trim();
@@ -112,16 +111,24 @@ function candidates(): string[] {
 }
 const probes = new Map<string, { ok: boolean; until: number }>();
 function markDown(base: string) { probes.set(base, { ok: false, until: Date.now() + 60_000 }); }
-async function hasElevation(base: string, at: { lat: number; lon: number }): Promise<boolean> {
+/**
+ * O Valhalla tem elevação na região da rota? /height na origem, no meio e no destino. Positivo fica 5 min em cache;
+ * fora do ar, 1 min; "respondeu sem altitude" não fica em cache (depende do lugar: mar, fora dos tiles), e a sonda é barata.
+ */
+async function hasElevation(base: string, pts: { lat: number; lon: number }[]): Promise<boolean> {
   const c = probes.get(base);
   if (c && Date.now() < c.until) return c.ok;
-  let ok = false;
-  try { ok = typeof (await heightAt(base, [at]))[0] === 'number'; } catch { ok = false; }
-  probes.set(base, { ok, until: Date.now() + (ok ? 300_000 : 60_000) });
-  return ok;
+  try {
+    const ok = (await heightAt(base, pts)).some((h) => typeof h === 'number');
+    if (ok) probes.set(base, { ok, until: Date.now() + 300_000 });
+    return ok;
+  } catch {
+    markDown(base);
+    return false;
+  }
 }
-async function pickBase(at: { lat: number; lon: number }): Promise<string | null> {
-  for (const b of candidates()) if (await hasElevation(b, at)) return b;
+async function pickBase(pts: { lat: number; lon: number }[]): Promise<string | null> {
+  for (const b of candidates()) if (await hasElevation(b, pts)) return b;
   return null;
 }
 function isConnError(e: unknown): boolean {
@@ -378,9 +385,10 @@ const layer: RouteLayer = {
   },
 
   async annotate(ctx, route) {
-    const first = route.line.geometry.coordinates[0];
-    if (!first) return {};
-    const base = await pickBase({ lon: first[0], lat: first[1] });
+    const cs = route.line.geometry.coordinates;
+    if (cs.length < 2) return {};
+    const probePts = [cs[0], cs[Math.floor(cs.length / 2)], cs[cs.length - 1]].map(([lon, lat]) => ({ lat, lon }));
+    const base = await pickBase(probePts);
     if (!base) return {};
     const cfg = gradeConfig();
     const lim = limitsFor(ctx.vehicle, cfg);
@@ -402,6 +410,11 @@ const layer: RouteLayer = {
       });
     } catch (e) {
       if (isConnError(e)) { markDown(base); return {}; }
+      // o Valhalla de elevação não casou a rota (ex.: trecho fora da cobertura dos tiles com elevação): não anota
+      if ((e as { statusCode?: number }).statusCode === 502) {
+        console.warn(`[relevo] trace_attributes falhou (${(e as Error).message}); rota sem anotação de relevo`);
+        return {};
+      }
       throw e;
     }
     const { G, cum, edges } = traced;

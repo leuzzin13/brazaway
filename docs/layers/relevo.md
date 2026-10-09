@@ -40,7 +40,8 @@ metade do ANADEM) é GPL-3.0 e exige gerar DTM a partir de ~190 GB de LAZ: fica 
 POST /api/route ─► Valhalla principal (8002, sem elevação) ─► rota
                 └► relevo.annotate:
                      1. escolhe o Valhalla com elevação: VALHALLA_ELEV_URL, ou localhost:8003, ou o VALHALLA_URL
-                        (o primeiro cujo /height na origem devolve altitude; cache 5 min / 1 min)
+                        (o primeiro cujo /height na origem, no meio ou no destino devolve altitude; positivo fica
+                        5 min em cache, fora do ar 1 min, "sem altitude aqui" não fica em cache)
                      2. trace_attributes (edge_walk sobre a geometria da rota; map_snap se falhar), em pedaços
                         de até 150 km / 12 mil pontos (limite trace do Valhalla: 200 km / 16 mil)
                         atributos: edge.max_upward_grade, edge.max_downward_grade, edge.weighted_grade,
@@ -304,7 +305,7 @@ corredor origem–destino, e mostrá-los no mapa; reportes `steep_grade` confirm
 
 ## Testes
 
-`api/test/layers/relevo.test.ts` (8 testes; precisa da API desta branch e do Valhalla com elevação no ar):
+`api/test/layers/relevo.test.ts` (9 testes; precisa da API desta branch e do Valhalla com elevação no ar):
 
 ```bash
 cd api && API_URL=http://localhost:3111 npx vitest run test/layers/relevo.test.ts
@@ -316,9 +317,11 @@ cd api && API_URL=http://localhost:3111 npx vitest run test/layers/relevo.test.t
 - VUC na mesma rota: limites 15/20%, nenhum aviso de rampa;
 - 2ª rodada: as `cost_lines_suggested` mandadas ao Valhalla principal tiram a rota do trecho íngreme;
 - limites por preset e por PBT (truck com 30 t usa 6/8%);
-- Valhalla de elevação fora do ar (porta fechada) e Valhalla sem elevação (o principal, hoje): a camada devolve `{}`.
+- Valhalla de elevação fora do ar (porta fechada) e Valhalla sem elevação (o principal, hoje): a camada devolve `{}`;
+- linha no mar (sem DEM): `{}`, e a rota seguinte (em terra) é anotada normalmente (a sonda não "envenena" o cache).
 
-Sem o Valhalla de elevação, os 5 testes que dependem dele são pulados com aviso no console.
+Sem o Valhalla de elevação, os 6 testes que dependem dele são pulados com aviso no console. Suíte inteira contra a API
+desta branch (porta 3111): 18 testes passando (os 9 anteriores + 9 do relevo).
 
 ## Decisões
 

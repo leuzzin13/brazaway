@@ -109,6 +109,31 @@ describe.runIf(elevUp)('Relevo: ladeira conhecida de SP (Rua Teodoro Sampaio)', 
   });
 });
 
+describe.runIf(elevUp)('Relevo: sonda de elevação depende do lugar', () => {
+  it('linha no mar (sem DEM) não anota e não impede a próxima rota de ser anotada', async () => {
+    vi.resetModules();
+    const saved = process.env.VALHALLA_ELEV_URL;
+    process.env.VALHALLA_ELEV_URL = ELEV;
+    try {
+      const layer = (await import('../../src/layers/relevo.layer.js')).default;
+      const { resolveVehicle } = await import('../../src/services/vehicle.js');
+      const ctx = { vehicle: resolveVehicle({ preset: 'carreta' } as any), at: new Date(), departureLocal: LADEIRA.departure_at, origin: LADEIRA.origin, destination: LADEIRA.destination, tz: 'America/Sao_Paulo' };
+      const mar = turf.lineString([[-45.9, -24.6], [-45.8, -24.65], [-45.7, -24.7]]);
+      expect(await layer.annotate!(ctx, { line: mar, distance_km: 22, duration_s: 1000 })).toEqual({});
+      const res = await fetch(`${ELEV}/route`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ locations: [{ ...LADEIRA.origin }, { ...LADEIRA.destination }], costing: 'truck', date_time: { type: 1, value: LADEIRA.departure_at } }),
+      });
+      const j: any = await res.json();
+      const { decodePolyline6 } = await import('../../src/services/polyline.js');
+      const out: any = await layer.annotate!(ctx, { line: turf.lineString(decodePolyline6(j.trip.legs[0].shape)), distance_km: 2.8, duration_s: 600 });
+      expect(out.data?.max_up_pct).toBeGreaterThan(8);
+    } finally {
+      if (saved === undefined) delete process.env.VALHALLA_ELEV_URL; else process.env.VALHALLA_ELEV_URL = saved;
+    }
+  });
+});
+
 describe('Relevo: limites por preset/PBT (config/grade-limits.json)', () => {
   it('preset e PBT acima do preset', async () => {
     const { limitsFor } = await import('../../src/layers/relevo.layer.js');
