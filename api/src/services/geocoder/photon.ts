@@ -30,7 +30,7 @@ export async function photonSearch(q: string, opts: PhotonOpts = {}, baseUrl = e
     u.searchParams.set('lon', String(opts.lon));
   }
   const ctl = new AbortController();
-  const t = setTimeout(() => ctl.abort(), opts.timeoutMs ?? 5000);
+  const t = setTimeout(() => ctl.abort(), opts.timeoutMs ?? Number(process.env.PHOTON_TIMEOUT_MS ?? 3500));
   try {
     const res = await fetch(u, { headers: { 'user-agent': 'truck-router-mvp' }, signal: ctl.signal });
     if (!res.ok) throw Object.assign(new Error(`Photon ${res.status}`), { statusCode: 502 });

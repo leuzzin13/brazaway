@@ -137,3 +137,72 @@ export function cargoRank(estab: string): number {
   if (GENERIC_RE.test(n)) return -1;
   return (CARGO_RE.test(n) ? 2 : 0) + (n.length >= 12 ? 0.5 : 0);
 }
+
+// ----------------------------------------------------------------------------------------------
+// Números por extenso: o CNEFE grava "RUA VINTE E CINCO DE MARCO", o usuário digita "Rua 25 de Março" (e vice-versa).
+// A busca tenta as duas formas (variantes), sem mexer na base.
+// ----------------------------------------------------------------------------------------------
+const UNI = ['', 'UM', 'DOIS', 'TRES', 'QUATRO', 'CINCO', 'SEIS', 'SETE', 'OITO', 'NOVE', 'DEZ', 'ONZE', 'DOZE', 'TREZE', 'QUATORZE',
+  'QUINZE', 'DEZESSEIS', 'DEZESSETE', 'DEZOITO', 'DEZENOVE'];
+const DEZ = ['', '', 'VINTE', 'TRINTA', 'QUARENTA', 'CINQUENTA', 'SESSENTA', 'SETENTA', 'OITENTA', 'NOVENTA'];
+const CEN = ['', 'CENTO', 'DUZENTOS', 'TREZENTOS', 'QUATROCENTOS', 'QUINHENTOS', 'SEISCENTOS', 'SETECENTOS', 'OITOCENTOS', 'NOVECENTOS'];
+const WORD_VAL = new Map<string, number>([
+  ...UNI.map((w, i) => [w, i] as [string, number]).filter(([w]) => w),
+  ...DEZ.map((w, i) => [w, i * 10] as [string, number]).filter(([w]) => w),
+  ...CEN.map((w, i) => [w, i * 100] as [string, number]).filter(([w]) => w),
+  ['CEM', 100], ['UMA', 1], ['DUAS', 2], ['CATORZE', 14], ['DUZENTAS', 200], ['TREZENTAS', 300],
+]);
+
+export function numberToWords(n: number): string {
+  if (!Number.isInteger(n) || n <= 0 || n > 9999) return String(n);
+  const mil = Math.floor(n / 1000);
+  const rest = n % 1000;
+  let r = rest;
+  let low = '';
+  if (r === 100) low = 'CEM';
+  else if (r) {
+    const c = Math.floor(r / 100);
+    r %= 100;
+    const sub: string[] = [];
+    if (c) sub.push(CEN[c]);
+    if (r >= 20) { sub.push(DEZ[Math.floor(r / 10)]); if (r % 10) sub.push(UNI[r % 10]); } else if (r) sub.push(UNI[r]);
+    low = sub.join(' E ');
+  }
+  if (!mil) return low;
+  const head = mil === 1 ? 'MIL' : `${numberToWords(mil)} MIL`;
+  if (!low) return head;
+  // "mil e vinte", "mil e quinhentos", mas "mil novecentos e trinta e dois"
+  return `${head}${rest < 100 || rest % 100 === 0 ? ' E ' : ' '}${low}`;
+}
+
+/** "VINTE E CINCO MARCO" → "25 MARCO"; "MIL NOVECENTOS E TRINTA E DOIS" → "1932" */
+export function wordsToDigits(text: string): string {
+  const toks = text.split(' ');
+  const out: string[] = [];
+  let i = 0;
+  while (i < toks.length) {
+    if (!WORD_VAL.has(toks[i]) && toks[i] !== 'MIL') { out.push(toks[i]); i++; continue; }
+    let total = 0, cur = 0, j = i, used = false;
+    while (j < toks.length) {
+      const t = toks[j];
+      if (t === 'MIL') { total += (cur || 1) * 1000; cur = 0; used = true; j++; continue; }
+      if (WORD_VAL.has(t)) { cur += WORD_VAL.get(t)!; used = true; j++; continue; }
+      if (t === 'E' && j + 1 < toks.length && (WORD_VAL.has(toks[j + 1]) || toks[j + 1] === 'MIL') && used) { j++; continue; }
+      break;
+    }
+    out.push(String(total + cur));
+    i = j;
+  }
+  return out.join(' ');
+}
+
+/** Variantes da busca com números por extenso/algarismos ("1 MAIO" também vira "PRIMEIRO MAIO"). */
+export function numberVariants(text: string): string[] {
+  const vs = new Set<string>([text]);
+  if (/\b\d+\b/.test(text)) {
+    vs.add(text.split(' ').map((t, i, a) => (/^\d+$/.test(t) ? (t === '1' && isMonth(a[i + 1]) ? 'PRIMEIRO' : numberToWords(Number(t))) : t)).join(' '));
+  }
+  const d = wordsToDigits(text.replace(/\bPRIMEIRO (?=(JANEIRO|FEVEREIRO|MARCO|ABRIL|MAIO|JUNHO|JULHO|AGOSTO|SETEMBRO|OUTUBRO|NOVEMBRO|DEZEMBRO)\b)/, 'UM '));
+  if (d !== text) vs.add(d);
+  return [...vs];
+}

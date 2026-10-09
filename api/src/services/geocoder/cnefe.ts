@@ -10,7 +10,7 @@
  */
 import { query } from '../../db.js';
 import { distM, lerp, medoid, round6, type Pt } from './geo.js';
-import { cargoRank, fmtCep, titleCase, trigramSim, type Canon } from './normalize.js';
+import { cargoRank, fmtCep, numberVariants, titleCase, trigramSim, type Canon } from './normalize.js';
 import { parseStreet, type ParsedAddress, type ParsedStreet } from './parse.js';
 import type { Municipio, MunicipioIndex } from './municipios.js';
 import type { GeocodeResult, LatLon, Precisao } from './types.js';
@@ -111,24 +111,31 @@ export class CnefeGeocoder {
   // logradouro
   // -------------------------------------------------------------------------------------------
   private async findStreets(st: ParsedStreet, munFilter: number[] | null, limit = 30): Promise<StreetRow[]> {
-    const r = await query<StreetRow>(
+    // variantes com número por extenso ("25 de Março" x "VINTE E CINCO DE MARCO"); a melhor pontuação vence
+    const nomes = numberVariants(st.nome);
+    const cores = numberVariants(st.core);
+    const vars = nomes.map((n, i) => ({ nome: n, core: cores[i] ?? cores[0] }));
+    const byId = new Map<number, StreetRow>();
+    const rows = await Promise.all(vars.map((v) => query<StreetRow>(
       `select s.id, s.cod_mun, s.tipo, s.titulo, s.nome, s.nome_norm, s.core_norm, s.n,
               s.lat::float8 as lat, s.lon::float8 as lon, s.desvio_m::float8 as desvio_m,
               similarity(s.nome_norm, $1)::float8 as sim_nome, similarity(s.core_norm, $2)::float8 as sim_core
          from addr_street s
-        where (s.nome_norm % $1 or s.core_norm % $2)
+        where (s.nome_norm % $1 or s.core_norm % $2 or (length($1) >= 4 and (s.nome_norm like $1 || '%' or s.core_norm like $2 || '%')))
           and ($3::int[] is null or s.cod_mun = any($3::int[]))
         order by greatest(similarity(s.nome_norm, $1), similarity(s.core_norm, $2)) desc, s.n desc
         limit $4`,
-      [st.nome, st.core, munFilter, limit]);
-    for (const s of r.rows) {
+      [v.nome, v.core, munFilter, limit]).then((r) => r.rows.map((x) => ({ x, v })))));
+    for (const { x: s, v } of rows.flat()) {
       let score = 0.55 * s.sim_nome + 0.45 * s.sim_core;
-      if (s.nome_norm === st.nome) score += 0.05;
+      if (s.nome_norm === v.nome) score += 0.05;
+      // autocompletar: "Rua Costa Ag" → COSTA AGUIAR (começa com o texto) na frente de COSTA
+      else if (v.nome.length >= 4 && (s.nome_norm.startsWith(v.nome) || s.core_norm.startsWith(v.core))) score += 0.2;
       if (st.tipo && s.tipo) score += s.tipo === st.tipo ? 0.06 : -0.04;
-      s.score = score;
+      const prev = byId.get(s.id);
+      if (!prev || prev.score < score) byId.set(s.id, { ...s, score });
     }
-    r.rows.sort((a, b) => b.score - a.score || b.n - a.n);
-    return r.rows;
+    return [...byId.values()].sort((a, b) => b.score - a.score || b.n - a.n).slice(0, limit);
   }
 
   private async bairroIds(bairro: string | undefined, munFilter: number[] | null): Promise<Map<number, BairroRow>> {
@@ -157,7 +164,9 @@ export class CnefeGeocoder {
 
     const bonus = (pt: { bairro_id: number | null; cep: number | null }) =>
       (bairros.size && pt.bairro_id !== null && bairros.has(pt.bairro_id) ? 0.15 : 0) + (cep && pt.cep === cep ? 0.15 : 0);
-    const nearPenalty = (pt: Pt) => ((!p.municipio || p.municipioFraco) && ctx.near ? -0.04 * Math.min(1, distM(pt, ctx.near) / 80000) : 0);
+    // posição do usuário só desempata (homônimos): peso maior quando a cidade não foi digitada
+    const nearW = !p.municipio || p.municipioFraco ? 0.04 : 0.01;
+    const nearPenalty = (pt: Pt) => (ctx.near ? -nearW * Math.min(1, distM(pt, ctx.near) / 80000) : 0);
 
     if (p.numero !== undefined) {
       const km = !!p.km;

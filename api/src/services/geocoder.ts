@@ -103,6 +103,8 @@ export class CascadeGeocoder implements Geocoder {
     if (!p.street && p.municipio && !p.bairro) return false;      // só cidade ("Cajamar")
     if (p.numero !== undefined && best <= 1) return false;        // número exato/aproximado já resolvido
     if (p.semNumero && best <= 2 && local.length) return false;   // s/n: lista de estabelecimentos do CNEFE
+    // logradouro com tipo ("Rua Augusta") bem resolvido na base própria: o Photon só atrasaria o autocompletar
+    if (p.street?.tipo && local.some((r) => r.precisao === 'logradouro' && (r.score ?? 0) >= 0.95)) return false;
     return true;
   }
 

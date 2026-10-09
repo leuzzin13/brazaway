@@ -79,6 +79,20 @@ describe('parser de endereço', () => {
     expect([g.street, g.municipio?.cod]).toEqual([undefined, 3509205]);
     const h = parseAddress('05316-900', canon, munis);
     expect([h.cep, h.street]).toEqual(['05316900', undefined]);
+    // fim do texto sem vírgula que coincide com nome de cidade é só preferência ("Vila Leopoldina" ≠ Leopoldina-MG)
+    const i = parseAddress('Vila Leopoldina', canon, munis);
+    expect([i.municipio?.nome, i.municipioFraco, i.textoCompleto]).toEqual(['Leopoldina', true, 'Vila Leopoldina']);
+  });
+
+  it('números por extenso: "25 de Março" casa com "VINTE E CINCO DE MARCO"', async () => {
+    const { numberVariants, numberToWords, wordsToDigits } = await import('../src/services/geocoder/normalize.js');
+    expect(numberVariants('25 MARCO')).toContain('VINTE E CINCO MARCO');
+    expect(numberVariants('1 MAIO')).toContain('PRIMEIRO MAIO');
+    expect(numberToWords(1932)).toBe('MIL NOVECENTOS E TRINTA E DOIS');
+    expect(wordsToDigits('NOVE JULHO')).toBe('9 JULHO');
+    if (!hasCnefe) return;
+    const [top] = await geocode('Rua 25 de Março, 1000, São Paulo');
+    expect(top.logradouro).toMatch(/Vinte e Cinco de Marco/i);
   });
 });
 
@@ -279,6 +293,19 @@ describe('/api/geocode — cascata própria', () => {
     if (!hasCnefe) return;
     const ex = (await get(`/api/geocode?q=${encodeURIComponent('Vila Leopoldina, São Paulo')}&debug=1`)).body;
     expect(ex.results.some((r: any) => r.precisao === 'bairro' && /Leopoldina/i.test(r.label))).toBe(true);
+  });
+
+  it('POI/bairro digitado sem vírgula não é jogado para a cidade homônima (Vila Leopoldina ≠ Leopoldina-MG)', async () => {
+    if (!hasCnefe) return;
+    const rs = await geocode('Vila Leopoldina');
+    expect(rs.length).toBeGreaterThan(0);
+    expect(rs[0].lat).toBeLessThan(-23);         // SP, não Minas
+  });
+
+  it('autocompletar: "Rua Costa Ag" sugere a Rua Costa Aguiar', async () => {
+    if (!hasCnefe) return;
+    const rs = await geocode('Rua Costa Ag');
+    expect(rs[0].label).toMatch(/Costa Aguiar/);
   });
 
   it('valida q (422) e mantém o formato antigo (label/lat/lon) na resposta', async () => {
