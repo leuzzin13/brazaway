@@ -84,6 +84,21 @@ function travels(r: AlongRow): boolean {
   return r.inside_m >= Math.min(40, 0.5 * r.len_m);
 }
 
+/** Mesma lacuna vista duas vezes (via de baixo picada em dois ways sob a mesma estrutura, faixas paralelas mapeadas
+ *  separadas): mesmo tipo, a menos de 30 m e, para passagem, a mesma estrutura por cima. Conta uma vez. */
+function dedupe(rows: AlongRow[]): AlongRow[] {
+  const kept: AlongRow[] = [];
+  const dist = (a: AlongRow, b: AlongRow) => Math.hypot((a.lon - b.lon) * 111320 * Math.cos((a.lat * Math.PI) / 180), (a.lat - b.lat) * 110574);
+  const overs = (r: AlongRow) => new Set<number>((r.props.estruturas ?? []).map((e: { way_id: number }) => e.way_id));
+  for (const r of rows) {
+    const o = overs(r);
+    const dup = kept.some((k) => k.kind === r.kind && dist(k, r) < 30
+      && (r.kind !== 'passagem_sem_altura' || [...overs(k)].some((w) => o.has(w))));
+    if (!dup) kept.push(r);
+  }
+  return kept;
+}
+
 const num = (x: number) => String(Math.round(x * 100) / 100).replace('.', ',');
 const plural = (n: number, s: string, p: string) => `${n} ${n === 1 ? s : p}`;
 
@@ -109,7 +124,7 @@ const layer: RouteLayer = {
       alongRoute(line, ALONG_BUFFER_M, [...UNDER_KINDS, ...DATA_KINDS]),
       alongRoute(line, SIGN_BUFFER_M, SIGN_KINDS),
     ]);
-    const used = rows.filter(travels);
+    const used = dedupe(rows.filter(travels));
     const under = used.filter((r) => UNDER_KINDS.includes(r.kind));
     const unknown = under.filter((r) => !r.reportado);
     const reportados = under.length - unknown.length;
