@@ -13,15 +13,27 @@ Colunas do CSV (todas texto; vazias = desconhecido):
   liberacao_data, liberacao_fonte, verificado_em, eixo ("lon lat;lon lat;..."), bloqueio_pontos ("lon lat;..."),
   bloqueio_raio_m, obs
 
+Critério: `pbt>X` (peso bruto total acima de X t), `eixos>N` (mais de N eixos) e `altura>=X` usam exatamente o operador
+que a API aplica (`>` estrito para peso e eixos, `>=` para altura). Outro operador é recusado, para não trocar a
+semântica do ato em silêncio (ex.: um ato "a partir de 10 t" se escreve `pbt>9.99` ou se discute antes de entrar).
+
+`fim` só é preenchido quando a fonte diz explicitamente que os veículos alcançados pela restrição foram liberados
+(ex.: "liberada para todos os tipos de veículos"). Obra concluída ou faixas liberadas sem citar caminhões/pesados vão em
+`liberacao`/`liberacao_data`, sem `fim`: a API avisa "confira a placa" em vez de "já liberada".
+
 Geometria: `eixo` é o eixo aproximado da obra (poucos pontos; traçado sobre o OSM e conferido com a descrição oficial).
 `bloqueio_pontos` são pontos SOBRE o tabuleiro onde nenhuma outra via passa por baixo (ex.: sobre o rio), para a
 exclusão não bloquear a Marginal sob a ponte. Sem ponto de bloqueio a linha nunca bloqueia (só informa).
+O importador confere cada ponto no /locate do Valhalla: se houver uma aresta que não é a própria estrutura (nem ponte,
+nem com o nome dela) a menos de `bloqueio_raio_m` + MARGEM_OUTRA_VIA_M, a carga falha com a linha do erro. Sem Valhalla
+a conferência é pulada (com aviso no log).
 """
 import csv
 import os
 import re
 
 from common import DATA_DIR
+from sources._oae_locate import locate, norm
 
 LAYER_ID = 'oae'
 SOURCE = 'curadoria'
@@ -34,6 +46,7 @@ NOTES = 'Revisar a cada 3 meses. Só status=vigente bloqueia rota; historica ape
 TIPOS = {'proibido_pesados', 'interditada', 'peso', 'altura', 'faixa_interditada'}
 STATUS = {'vigente', 'historica'}
 DATE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+MARGEM_OUTRA_VIA_M = 10   # folga entre o círculo de bloqueio e a via mais próxima que não é a estrutura
 
 
 def _pts(s: str) -> list[list[float]]:
@@ -58,14 +71,49 @@ def _criterio(s: str, exceto_vuc: bool) -> dict:
         return {'todos': True}
     if s == 'caminhoes':
         return {'caminhoes': True, 'exceto_vuc': exceto_vuc}
-    m = re.match(r'^(pbt|eixos|altura)(>=|>)(\d+(?:\.\d+)?)$', s)
+    m = re.match(r'^(pbt|eixos|altura)(>=|>|<=|<|=)(\d+(?:\.\d+)?)$', s)
     if not m:
         raise ValueError(f'critério inválido: {s}')
     campo, op, val = m.group(1), m.group(2), float(m.group(3))
+    # o operador gravado tem de ser o que a API aplica (criterioAplica): > para peso/eixos, >= para altura
+    esperado = {'pbt': '>', 'eixos': '>', 'altura': '>='}[campo]
+    if op != esperado:
+        raise ValueError(f'{campo} usa "{esperado}" (a API compara assim); recebido "{op}" em {s}')
     key = {'pbt': 'peso_acima_t', 'eixos': 'eixos_acima', 'altura': 'altura_min_m'}[campo]
-    if campo == 'altura' and op != '>=':
-        raise ValueError('altura usa >=')
     return {key: val, 'exceto_vuc': exceto_vuc}
+
+
+def _palavras(s: str) -> str:
+    return re.sub(r'[^a-z0-9]+', ' ', norm(s)).strip()
+
+
+def conferir_pontos(rows: list[dict]) -> None:
+    """Confere no Valhalla que cada ponto de bloqueio 'sobre' toca só a própria estrutura (ver docstring do módulo)."""
+    alvos = [(f, tuple(p)) for f in rows for p in ((f['props']['bloqueio'] or {}).get('pontos') or [])
+             if f['props']['bloqueio']['modo'] == 'sobre']
+    if not alvos:
+        return
+    maior = max(f['props']['bloqueio']['raio_m'] for f, _ in alvos) + MARGEM_OUTRA_VIA_M
+    res = locate([p for _, p in alvos], maior)
+    if res is None:
+        print('  ! pontos de bloqueio NÃO conferidos no Valhalla')
+        return
+    erros = []
+    for (f, p), edges in zip(alvos, res):
+        raio = f['props']['bloqueio']['raio_m']
+        nome = _palavras(f['name'])
+        def propria(e):
+            return e['bridge'] or any(len(_palavras(n)) >= 6 and (_palavras(n) in nome or nome in _palavras(n)) for n in e['names'])
+        outras = [e for e in edges if e['dist'] <= raio + MARGEM_OUTRA_VIA_M and not propria(e)]
+        if outras:
+            o = outras[0]
+            erros.append(f"{f['source_id']}: ponto {p[0]} {p[1]} a {o['dist']:.1f} m de '{(o['names'] or ['via sem nome'])[0]}' "
+                         f'(limite {raio:g} + {MARGEM_OUTRA_VIA_M} m): o bloqueio pegaria essa via')
+        if not any(propria(e) and e['dist'] <= raio for e in edges):
+            print(f"  ! {f['source_id']}: nenhuma aresta da estrutura a até {raio:g} m do ponto {p[0]} {p[1]} "
+                  '(estrutura fora do grafo, ex.: obra/interditada no OSM?). Bloqueio vale se o OSM reabrir a via.')
+    if erros:
+        raise ValueError('pontos de bloqueio inválidos:\n  ' + '\n  '.join(erros))
 
 
 def _kind(nome: str) -> str:
@@ -140,4 +188,5 @@ def fetch():
             'valid_from': None,
             'valid_to': (r['fim'] + 'T23:59:59-03:00') if (vigente and r.get('fim')) else None,
         })
+    conferir_pontos(out)
     return out
