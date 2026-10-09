@@ -71,7 +71,11 @@ Fluxo de `POST /api/route`:
    axle_load,axle_count,hazmat}`, `date_time.type=1`).
 5. Calcula também a rota **sem** exclusões para listar o que foi efetivamente **evitado**,
    e varre reportes perto da rota para os **avisos** ("rota passa a 50 m de reporte não confirmado").
-6. Sem rota viável: `409 NO_ROUTE` com `blocked_by` dizendo quais restrições bloquearam.
+6. Busca os **pontos de descanso** a até 500 m da rota (`rest_stops`, derivados do OSM) e monta o
+   **plano de direção** da Lei 13.103 (`driving_plan`): parada de 30 min a cada 5h30 de direção,
+   sugerindo o ponto de descanso mais próximo antes do limite, e alerta ao passar de 8h (ou 10h com
+   prorrogação). O ETA de cada ponto é proporcional à distância ao longo da rota (aproximação).
+7. Sem rota viável: `409 NO_ROUTE` com `blocked_by` dizendo quais restrições bloquearam.
 
 ### Licença ODbL (OpenStreetMap)
 
@@ -102,6 +106,7 @@ web/              React + Vite + MapLibre
 | `POST` | `/api/reports/:id/votes` | `{device_id, vote: 1|-1}` |
 | `DELETE` | `/api/reports/:id?device_id=` | remove reporte próprio |
 | `GET` | `/api/zones` | FeatureCollection das zonas de restrição |
+| `GET` | `/api/rest-stops?bbox=` | pontos de descanso/apoio (OSM) |
 | `GET` | `/api/geocode?q=` | Photon (público) atrás da interface `Geocoder` |
 
 Tipos de reporte: `low_clearance` (m), `weight_limit` (t), `length_limit` (m), `truck_ban`,
@@ -109,6 +114,14 @@ Tipos de reporte: `low_clearance` (m), `weight_limit` (t), `length_limit` (m), `
 
 Regras: reporte afeta a rota com `score >= 0`; `score < -2` desativa; `road_closed` expira em
 24 h sem confirmação. Sem login: `device_id` anônimo gerado no navegador (localStorage).
+
+## Pontos de descanso (Lei 13.103)
+
+`rest_stops` recebe no seed 101 pontos da Grande SP (áreas de descanso, áreas de serviço/postos
+nomeados, estacionamentos de caminhão) extraídos do OpenStreetMap via Overpass por
+`scripts/fetch-rest-stops.py` (gera `data/raw/rest_stops.geojson` e `db/seed/0003_rest_stops.sql`).
+Regras de referência em `api/src/services/restStops.ts` (**confirmar**): 5h30 de direção contínua →
+30 min de descanso; 8h/dia, +2h de prorrogação.
 
 ## Zonas de restrição por horário
 
@@ -153,7 +166,9 @@ O schema usa só Postgres + PostGIS + `pgcrypto` (`gen_random_uuid`), todos disp
 - Navegação curva a curva, trânsito em tempo real, login/contas, app nativo, pagamentos.
 - ETA de entrada na zona (hoje só horário de saída).
 - Detecção automática de subidas por elevação (`build_elevation=True` no Valhalla; aumenta muito o build).
-- Pontos de descanso / Lei 13.103 (sugestão de parada a cada 5h30 e alerta de 8h de direção).
+- Pontos de descanso: hoje só Grande SP via `scripts/fetch-rest-stops.py` (Overpass). Para o Brasil
+  inteiro, rodar o script com `--bbox` por região ou extrair do PBF com osmium.
+- Subida que o caminhão não vence: hoje só por reporte (`steep_grade`); detecção automática é TODO.
 
 ## Referências
 

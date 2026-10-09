@@ -6,10 +6,13 @@ export interface Vehicle {
 export interface Preset extends Vehicle { id: string; label: string }
 export interface AvoidedItem { kind: 'report' | 'zone'; id: string; type?: string; value_num?: number | null; name?: string; rule?: string; lat?: number; lon?: number; note?: string | null }
 export interface Warning { code: string; message: string; report_id?: string; zone_id?: string }
+export interface RestStop { id: string; name: string | null; kind: string; lat: number; lon: number; distance_km: number; eta_s: number; off_route_m: number; tags: Record<string, string> }
+export interface DrivingPlan { driving_s: number; total_with_breaks_s: number; required_breaks: number; suggested_stops: { after_s: number; stop: RestStop | null; message: string }[]; notes: string[] }
 export interface RouteResult {
   geometry: GeoJSON.LineString; distance_km: number; duration_s: number; departure_at: string;
-  avoided: AvoidedItem[]; warnings: Warning[];
+  avoided: AvoidedItem[]; warnings: Warning[]; rest_stops: RestStop[]; driving_plan: DrivingPlan;
 }
+export const REST_KINDS: Record<string, string> = { rest_area: 'Área de descanso', service_area: 'Área de serviço / posto', truck_stop: 'Ponto de parada de caminhões', truck_parking: 'Estacionamento de caminhões', fuel_hgv: 'Posto com acesso a caminhão' };
 export interface Report {
   id: string; type: string; geometry: GeoJSON.Point | GeoJSON.LineString; value_num: number | null;
   time_window: { days: number[]; from: string; to: string } | null; note: string | null; score: number; status: string; confirmed: boolean; created_at: string;

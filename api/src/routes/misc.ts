@@ -3,6 +3,7 @@ import { query } from '../db.js';
 import { vehiclePresets } from '../config.js';
 import { activeZones, describeWindows } from '../services/zones.js';
 import { makeGeocoder } from '../services/geocoder.js';
+import { BboxQuery } from '../schemas.js';
 import * as valhalla from '../services/valhalla.js';
 
 const geocoder = makeGeocoder();
@@ -28,6 +29,16 @@ export async function miscRoutes(app: FastifyInstance) {
         properties: { id: z.id, name: z.name, rules: z.rules, source: z.source, description: describeWindows(z.rules) },
       })),
     };
+  });
+
+  app.get('/api/rest-stops', async (req, reply) => {
+    const q = BboxQuery.safeParse(req.query);
+    if (!q.success) return reply.code(422).send({ error: 'VALIDATION', message: 'bbox=minLon,minLat,maxLon,maxLat obrigatório' });
+    const r = await query(
+      `select id, osm_id, name, kind, ST_Y(geom) as lat, ST_X(geom) as lon, tags from rest_stops where geom && ST_MakeEnvelope($1,$2,$3,$4,4326) limit 500`,
+      q.data.bbox,
+    );
+    return r.rows;
   });
 
   app.get('/api/geocode', async (req, reply) => {

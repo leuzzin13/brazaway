@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import maplibregl, { Map as MLMap, Marker, Popup } from 'maplibre-gl';
-import { REPORT_TYPES, type LatLon, type Report, type RouteResult } from '../lib/api';
+import { REPORT_TYPES, REST_KINDS, type LatLon, type Report, type RouteResult } from '../lib/api';
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 const SP_CENTER: [number, number] = [-46.6333, -23.5505];
@@ -29,6 +29,7 @@ export function MapView(p: MapViewProps) {
   const map = useRef<MLMap | null>(null);
   const markers = useRef<Marker[]>([]);
   const odMarkers = useRef<{ o?: Marker; d?: Marker; pending?: Marker }>({});
+  const restMarkers = useRef<Marker[]>([]);
   const propsRef = useRef(p);
   propsRef.current = p;
 
@@ -106,6 +107,22 @@ export function MapView(p: MapViewProps) {
       }
     };
     if (m.isStyleLoaded() && m.getSource('route')) apply(); else m.once('load', apply);
+  }, [p.route]);
+
+  // pontos de descanso da rota (destaque nos sugeridos pelo plano de direção)
+  useEffect(() => {
+    const m = map.current; if (!m) return;
+    restMarkers.current.forEach((mk) => mk.remove()); restMarkers.current = [];
+    if (!p.route) return;
+    const suggested = new Set(p.route.driving_plan?.suggested_stops.map((s) => s.stop?.id).filter(Boolean));
+    for (const s of p.route.rest_stops ?? []) {
+      const d = document.createElement('div');
+      d.className = 'rest-marker' + (suggested.has(s.id) ? ' suggested' : '');
+      d.textContent = '🅿️';
+      const h = Math.floor(s.eta_s / 3600), mi = Math.round((s.eta_s % 3600) / 60);
+      const pop = new Popup({ offset: 14, maxWidth: '260px' }).setHTML(`<div class="pp"><div class="pp-title">${escapeHtml(s.name ?? REST_KINDS[s.kind] ?? s.kind)}</div><div class="pp-row">${REST_KINDS[s.kind] ?? s.kind}</div><div class="pp-row pp-meta">km ${s.distance_km} · ~${h ? `${h}h${String(mi).padStart(2, '0')}` : `${mi} min`} de direção · ${Math.round(s.off_route_m)} m da rota${suggested.has(s.id) ? ' · <strong>parada sugerida</strong>' : ''}</div><div class="pp-row pp-meta">Fonte: OpenStreetMap</div></div>`);
+      restMarkers.current.push(new Marker({ element: d, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(pop).addTo(m));
+    }
   }, [p.route]);
 
   // origin / destination / pending markers

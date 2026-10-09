@@ -136,6 +136,15 @@ export function App() {
                   )}
                   <h4>Avisos ({route.warnings.length})</h4>
                   {route.warnings.length === 0 ? <small className="muted">Sem avisos.</small> : <ul className="list warn">{route.warnings.map((w, i) => <li key={i}>⚠️ {w.message}</li>)}</ul>}
+                  {route.driving_plan && (
+                    <>
+                      <h4>Plano de direção · Lei 13.103</h4>
+                      <small className="muted">{fmtDuration(route.driving_plan.driving_s)} de direção · {route.driving_plan.required_breaks} parada(s) de 30 min · total ~{fmtDuration(route.driving_plan.total_with_breaks_s)}. {route.rest_stops?.length ?? 0} ponto(s) de descanso a até 500 m da rota.</small>
+                      {route.driving_plan.suggested_stops.length > 0 && (
+                        <ul className="list">{route.driving_plan.suggested_stops.map((s, i) => <li key={i}>{s.stop ? '🅿️' : '⚠️'} {s.message}</li>)}</ul>
+                      )}
+                    </>
+                  )}
                   <small className="muted">Limitação do MVP: zonas por horário consideram só o horário de saída, não a hora de entrada na zona.</small>
                 </div>
               )}

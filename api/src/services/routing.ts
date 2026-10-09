@@ -7,6 +7,7 @@ import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, reportToRing, type ReportRow } from './restrictions.js';
 import { activeZones, describeWindows, pointInZone, zoneApplies, zoneRings, type ZoneRow } from './zones.js';
+import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
 
 export interface AvoidedItem {
   kind: 'report' | 'zone';
@@ -29,6 +30,8 @@ export interface RouteResponse {
   vehicle: ReturnType<typeof resolveVehicle>;
   avoided: AvoidedItem[];
   warnings: Warning[];
+  rest_stops: RestStop[];
+  driving_plan: DrivingPlan;
   valhalla: { costing: 'truck'; exclude_polygons_count: number };
 }
 
@@ -149,6 +152,13 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     }
   }
 
+  // 6) Pontos de descanso ao longo da rota + plano de direção (Lei 13.103)
+  let restStops: RestStop[] = [];
+  try { restStops = await restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s); } catch { /* tabela vazia/erro: segue sem */ }
+  const plan = drivingPlan(restricted.duration_s, restStops);
+  for (const n of plan.notes) warnings.push({ code: 'driving_time', message: n });
+  for (const sgt of plan.suggested_stops) if (!sgt.stop) warnings.push({ code: 'no_rest_stop', message: sgt.message });
+
   return {
     geometry: line.geometry,
     distance_km: restricted.distance_km,
@@ -157,6 +167,8 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     vehicle,
     avoided,
     warnings,
+    rest_stops: restStops,
+    driving_plan: plan,
     valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length },
   };
 }
