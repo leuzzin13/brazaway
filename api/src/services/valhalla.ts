@@ -113,3 +113,76 @@ export async function traceAttributes(coordinates: [number, number][], vehicle: 
   if (!res.ok) throw Object.assign(new Error(`Valhalla trace_attributes ${res.status}: ${json?.error ?? ''}`), { statusCode: 502 });
   return json;
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Valhalla com elevação (camada "relevo"). Funções extras com URL explícita: o Valhalla principal (VALHALLA_URL)
+// pode estar sem elevação; o de elevação roda à parte (VALHALLA_ELEV_URL, default http://localhost:8003).
+
+/** Codifica [lon, lat][] em polyline de precisão 1e6 (formato do Valhalla). */
+export function encodePolyline6(coords: [number, number][]): string {
+  let out = '';
+  let pLat = 0, pLon = 0;
+  const enc = (v: number) => {
+    let n = v < 0 ? ~(v << 1) : v << 1;
+    while (n >= 0x20) { out += String.fromCharCode((0x20 | (n & 0x1f)) + 63); n >>= 5; }
+    out += String.fromCharCode(n + 63);
+  };
+  for (const [lon, lat] of coords) {
+    const iLat = Math.round(lat * 1e6), iLon = Math.round(lon * 1e6);
+    enc(iLat - pLat); enc(iLon - pLon);
+    pLat = iLat; pLon = iLon;
+  }
+  return out;
+}
+
+async function postJson(url: string, body: unknown, timeoutMs: number): Promise<{ ok: boolean; status: number; json: any }> {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: ctrl.signal });
+    const json = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, json };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+export interface TraceAttributesAtOpts {
+  /** edge_walk (rápido, exige a mesma malha do Valhalla que gerou a rota) ou map_snap (tolerante) */
+  shapeMatch?: 'edge_walk' | 'map_snap';
+  timeoutMs?: number;
+}
+
+/**
+ * trace_attributes num Valhalla escolhido (ex.: o de elevação). Atributos de rampa no 3.9.1:
+ * edge.max_upward_grade / edge.max_downward_grade (%, inteiro arredondado para cima; -500 = sem elevação),
+ * edge.weighted_grade (%), edge.mean_elevation (m), edge.length (km), edge.way_id, edge.bridge, edge.tunnel,
+ * edge.begin_shape_index / edge.end_shape_index (índices no `shape` devolvido).
+ */
+export async function traceAttributesAt(
+  baseUrl: string, coordinates: [number, number][], vehicle: Vehicle, filterAttributes: string[], opts: TraceAttributesAtOpts = {},
+): Promise<any> {
+  const body = {
+    encoded_polyline: encodePolyline6(coordinates),
+    costing: 'truck',
+    shape_match: opts.shapeMatch ?? 'edge_walk',
+    costing_options: { truck: { height: vehicle.height_m, width: vehicle.width_m, length: vehicle.length_m, weight: vehicle.weight_t } },
+    filters: { attributes: filterAttributes, action: 'include' },
+  };
+  const r = await postJson(`${baseUrl}/trace_attributes`, body, opts.timeoutMs ?? 15000);
+  if (!r.ok) throw Object.assign(new Error(`Valhalla trace_attributes ${r.status}: ${r.json?.error ?? ''}`), { statusCode: 502, valhallaCode: r.json?.error_code });
+  return r.json;
+}
+
+/**
+ * Perfil de altitude (POST /height) ao longo de uma linha: devolve [distância_m, altitude_m][]
+ * reamostrado a cada `resampleDistance` metros (mínimo do serviço: 10 m). Altitude null = sem dado (mar/fora do DEM).
+ */
+export async function heightProfileAt(
+  baseUrl: string, coordinates: [number, number][], opts: { resampleDistance?: number; timeoutMs?: number } = {},
+): Promise<[number, number | null][]> {
+  const body = { encoded_polyline: encodePolyline6(coordinates), range: true, resample_distance: opts.resampleDistance ?? 30, height_precision: 1 };
+  const r = await postJson(`${baseUrl}/height`, body, opts.timeoutMs ?? 15000);
+  if (!r.ok) throw Object.assign(new Error(`Valhalla height ${r.status}: ${r.json?.error ?? ''}`), { statusCode: 502 });
+  return (r.json.range_height ?? []) as [number, number | null][];
+}
