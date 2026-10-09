@@ -71,9 +71,9 @@ o Valhalla marca subidas de 24%** numa descida contínua. Por isso, para cada ar
 1. Calculamos no perfil uma **média móvel centrada** da rampa com janela `window_m` por classe de via:
    **1.000 m** em `motorway`/`trunk` e **120 m** nas demais (ladeira urbana curta continua aparecendo). Rodovias são
    projetadas com rampas longas e moderadas (IPR-706) e o que pesa para o caminhão é a rampa sustentada; com 300 m a
-   Anchieta (subida, Santos → SP) ainda dava 22% no perfil bruto, com 500 m 14,5%, com 1 km 8,9% e com 2 km 8,5% — a
-   partir de 1 km o valor estabiliza no que a serra realmente tem (~700 m de desnível em ~9 km). Pontes/túneis são "aplainados" no perfil (reta entre as cabeceiras),
-   porque o DEM mede o vale/morro e não o tabuleiro.
+   Anchieta (subida, Santos → SP) ainda dava 22% no perfil bruto, com 500 m 14,5%, com 1 km 8,9% e com 2 km 8,5%: a
+   partir de 1 km o valor estabiliza (no sentido contrário a camada mede a descida da serra em 729 m / 13,3 km).
+   Pontes/túneis são "aplainados" no perfil (reta entre as cabeceiras), porque o DEM mede o vale/morro e não o tabuleiro.
 2. A rampa da aresta é o **menor** entre o `max_upward_grade` do Valhalla e o máximo da média móvel nela.
 3. Trecho = arestas consecutivas acima do limite de atenção (folga de 50 m). Só entra se a rampa sustentada passar do
    limite em pelo menos `min_over_m` (30 m); só vira `evitar` se passar do limite "evitar" em ≥ 30 m.
@@ -85,8 +85,8 @@ Efeito medido (carreta, 09/10/2026):
 |---|---|---|
 | Pinheiros → Av. Dr. Arnaldo pela **R. Teodoro Sampaio** (2,8 km) | máx. 12%, 4 arestas > 6% | máx. **~11%** (215 m de trecho, 110 m acima de 8%) → 1 trecho `evitar` + 1 `atencao` |
 | Sé → Santos pela Anchieta (73 km, serra em descida) | máx. 24%, 26 trechos (13 "evitar", quase todos na serra, em descida) | máx. ~9,1%; 2 trechos de atenção (Pça. da Sé ~8,7% e Av. Martins Fontes ~9,1%, ambos acima de 8% em menos de 30 m, então não viram "evitar"); 29 picos descartados; **descida longa de 13,3 km a 5,5% (desce 729 m)** |
-| Santos → Sé pela Anchieta (72 km, serra em subida) | máx. 28% | 2 avisos de **subida forte na SP-150** (até ~9% e ~8,5%) + 9 trechos de atenção na serra; no centro de SP, Av. Rangel Pestana ~12% e R. Venceslau Brás ~10% (subida do Parque Dom Pedro para a Sé) |
-| Marginal Tietê → Rio pela Dutra (424 km) | máx. 20%, 33 trechos > 6% | 1 trecho de atenção (rua no Rio, ~7,5%); 151 picos descartados; descida longa da **Serra das Araras: 5,8 km a 5,5% (322 m)** |
+| Santos → Sé pela Anchieta (72 km, serra em subida) | máx. 28% | 2 avisos de **subida forte na SP-150** (até ~9% e ~8,5%) + 9 trechos de atenção na serra; na chegada ao centro de SP, Av. Rangel Pestana ~12% e R. Venceslau Brás ~10% (perto da Sé) |
+| Marginal Tietê → Rio pela Dutra (424 km) | máx. 20%, ~150 arestas > 6% | 1 trecho de atenção (rua no Rio, ~7,5%); 151 picos descartados; descida longa da **Serra das Araras: 5,8 km a 5,5% (322 m)** |
 
 ### Limites por veículo (`config/grade-limits.json`) — valores de partida, a calibrar
 
