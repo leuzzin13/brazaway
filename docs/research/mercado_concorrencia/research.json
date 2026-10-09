@@ -1,0 +1,482 @@
+{
+ "category": "mercado_concorrencia",
+ "summary": "A rodada anterior não tinha salvo nada, então esta começou do zero. Testei de verdade as fontes primárias e salvei amostras e scripts em scratchpad/research/mercado_concorrencia/ (NOTES.md completo).\n\nTamanho do mercado:\n- Frota (Senatran/Renavam, ago/2026): o Brasil tem 3.253.427 caminhões e 1.029.220 caminhões-trator. A RMSP tem 279.623 e 85.638, ou seja 8,5% do Brasil; o estado de SP tem 23,1%.\n- RNTRC/ANTT (ago/2026): há 906.022 transportadores ATIVOS no Brasil e 120.525 na RMSP (91.850 deles autônomos, os TAC).\n- A frota dos TAC tem idade média de 24 anos.\n- Em SP, 40% dos veículos de tração do RNTRC são leves (caminhonete, furgão ou caminhão leve). É o segmento urbano de ZMRC, VUC e rodízio.\n- Caminhões novos emplacados: 110.873 em 2025 (Fenabrave).\n\nPerfil do caminhoneiro:\n- A CNT 2025 (800 entrevistas) dá idade média de 45 anos. 73% pernoitam em postos de combustível e mais da metade quer estacionamento vigiado.\n- A CNTA 2025 (2.002 autônomos) mostra que 46,6% conseguem frete por aplicativo. Para cumprir a Lei do Descanso, 96,6% param em posto e 78,4% acham difícil achar local.\n- A CNT 2019 é o dado primário mais recente sobre uso de internet: 87,8% usam smartphone ou computador, e 98% desses acessam principalmente pelo celular.\n- O Android tem 79% do mercado no Brasil.\n\nConcorrência:\n- Waze e o app do Google Maps não têm modo caminhão.\n- O roteamento de veículo grande do Google Maps Platform só existe nos EUA e no Japão.\n- A HERE tem restrição de caminhão no Brasil só em rodovias e vias principais.\n- O Mapbox aceita altura, largura e peso, mas não trata janelas de horário.\n- Os GPS de caminhão globais custam caro no Brasil: Sygic \"Truck Brasil\" R$ 499,90; TomTom e CoPilot R$ 380 a 400 por ano.\n- Há reclamações de mapa ruim no Brasil.\n- O WikiRota (nota 4,76, 861 mil instalações) é forte em custo e pedágio. Uma review diz que ele não respeita as restrições da Grande SP.\n- O Maplink (B2B) documenta a ZMRC na API.\n- O CargoMaps promete ZMRC, mas não tem nenhuma avaliação.\n\nRoubo de carga é uma dor real e concentrada na RMSP: 83% dos casos do estado de SP. Os detalhes estão na pasta de segurança.",
+ "key_facts": [
+  {
+   "fact": "Frota registrada em ago/2026: no Brasil, 3.253.427 caminhões e 1.029.220 caminhões-trator. Na RMSP (39 municípios), 279.623 caminhões e 85.638 caminhões-trator (8,5% do Brasil). No estado de SP, 991.185 somados (23,1%). Na capital, 148.752 e 40.768.",
+   "source_url": "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2026"
+  },
+  {
+   "fact": "No Renavam o campo de eixos vem zerado em 63% dos caminhões da RMSP, e não existe categoria VUC. Não dá para saber a participação de VUC, toco e truck pela frota oficial.",
+   "source_url": "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2026-2/G_Frota_por_UF_Municipio_TIPO_ESPECIE_EIXOS_Agosto_2026.xlsx"
+  },
+  {
+   "fact": "RNTRC em ago/2026: 906.022 transportadores ativos no Brasil (632.817 TAC, 218.960 ETC equiparadas, 53.773 ETC e 472 CTC). Na RMSP são 120.525 ativos (91.850 TAC), e na capital 41.716 TAC. Foram 89.436 novos cadastros ativos em 2025.",
+   "source_url": "https://dados.antt.gov.br/dataset/b4a055d1-97a2-46f1-9461-cb17fbc6b6b3/resource/ce319c77-342c-4c35-87fa-a15a9f1bec03/download/transportadores_rntrc_08_2026.csv"
+  },
+  {
+   "fact": "Em out/2026, a frota de tração dos TAC tem idade média de 24,0 anos e a das ETC, 9,3 anos. São 634.945 TAC com 750.471 veículos de tração.",
+   "source_url": "https://dados.antt.gov.br/dataset/f5a84126-be26-4052-8ca4-9d5694b8d372/resource/31949a7b-8f03-4008-bd6f-ea9fa0c7a26e/download/rntrc-historico-dos-transportadores-de-veiculos-ativos.csv"
+  },
+  {
+   "fact": "Em SP, 182.750 dos 456.374 veículos de tração do RNTRC (40%) são caminhonete/furgão (1,5 a 3,49 t) ou caminhão leve (3,5 a 7,99 t). É o segmento urbano afetado por ZMRC, VUC e rodízio.",
+   "source_url": "https://dados.antt.gov.br/dataset/2b564396-5593-4b5c-ba2c-3de3fa0a92c0/resource/73efb515-d639-46b7-8c7d-1013320763eb/download/rntrc-veiculos.csv"
+  },
+  {
+   "fact": "Em 2024 havia 713.229 motoristas de caminhão CLT (RAIS), com mediana de remuneração de R$ 3.120. Em 2025 houve 534.972 admissões (Novo CAGED).",
+   "source_url": "https://www.gov.br/antt/pt-br/assuntos/cargas/dadostrc/infograficoperfilmotoristasrais2024.pdf"
+  },
+  {
+   "fact": "CNT 2025 (800 entrevistas, set a out/2025): idade média de 45,3 anos, e 41% dos autônomos estudaram só até a 9ª série. 73% pernoitam em postos de combustível e só 5 a 8% em PPD homologados. 54 a 58% querem estacionamento com vigilância. 76,6% dos autônomos querem fracionar as 11 horas de descanso.",
+   "source_url": "https://cdn.cnt.org.br/diretorioVirtual/e291a057-703a-4ee5-8849-e276ebe749c0.pdf"
+  },
+  {
+   "fact": "CNTA 2025 (2.002 TAC): 46,6% conseguem frete principalmente por aplicativo. 96,6% param em posto de combustível para cumprir a Lei do Descanso e 78,4% acham difícil encontrar local. 57,7% nunca se sentem seguros na rodovia e 13,3% já sofreram roubo com violência.",
+   "source_url": "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cvt/apresentacoes-em-eventos/eventos-2025/arquivos-de-eventos-2025/ap-25-12-09-allan-medeiros-cnta"
+  },
+  {
+   "fact": "CNT 2019: 87,8% dos caminhoneiros usam smartphone ou computador, e 98% desses acessam principalmente pelo celular. 49,5% já recusaram viagem por risco de roubo (60,2% dos autônomos).",
+   "source_url": "https://repositorio.itl.org.br/jspui/bitstream/123456789/153/1/Pesquisa%20CNT%20Perfil%20dos%20Caminhoneiros%202019.pdf"
+  },
+  {
+   "fact": "Habilitados (RENACH, ago/2024): 2.269.636 com categoria E ou AE no Brasil, 564.001 em SP. Entre eles, 41% têm 51 anos ou mais e só 5% têm até 30.",
+   "source_url": "https://dados.transportes.gov.br/dataset/3e837604-d68e-4dc1-82d8-f289f1c3cea7/resource/f8986322-f064-4a8c-8e88-00e8d1fb57f1/download/quantidadedecondutoreshabilitadosporregioufsexofaixaetriaporcategoriaagosto2024.csv"
+  },
+  {
+   "fact": "O Android tem 79,2% dos celulares no Brasil (set/2026).",
+   "source_url": "https://gs.statcounter.com/os-market-share/mobile/brazil"
+  },
+  {
+   "fact": "O Google Maps Platform Large Vehicle Routing só existe nos 48 estados contíguos dos EUA (GA) e no Japão (experimental), para clientes limitados. Não existe no Brasil.",
+   "source_url": "https://developers.google.com/maps/documentation/routes/lvr"
+  },
+  {
+   "fact": "HERE WeGo Pro: no Brasil a cobertura é 'full motorway coverage', ou seja, restrições de caminhão só em rodovias e vias principais, não na malha urbana toda.",
+   "source_url": "https://docs.here.com/wego-pro/docs/coverage"
+  },
+  {
+   "fact": "Waze não tem modo caminhão. No fórum oficial, em 03/06/2026, editores da comunidade disseram que a chance de ter é 'zero' e citaram SP como caso pedido.",
+   "source_url": "https://www.waze.com/discuss/t/inclusao-de-caminhoes-na-aba-detalhes-do-veiculo-em-tipo-de-veiculo/405531"
+  },
+  {
+   "fact": "Preços na App Store BR (out/2026): Sygic 'Truck Brasil' R$ 499,90. TomTom GO Expert caminhão R$ 99,90 por mês ou R$ 399,90 por ano. CoPilot caminhão R$ 37,90 a 41,90 por mês ou R$ 379,90 por ano. WikiRota R$ 7,99 a 9,99 por mês ou R$ 79,99 a 99,99 por ano.",
+   "source_url": "https://apps.apple.com/br/app/id992127700"
+  },
+  {
+   "fact": "WikiRota (app brasileiro de rota, custo e pedágio) tem 861 mil instalações e nota 4,76. Uma review no Play diz que ele não respeita as restrições da Grande SP para caminhão (manda por dentro em vez do Rodoanel).",
+   "source_url": "https://play.google.com/store/apps/details?id=com.wikirota&hl=pt_BR&gl=BR"
+  },
+  {
+   "fact": "Fretebras tem cerca de 7,19 milhões de instalações e diz ter mais de 1 milhão de fretes por mês. TruckPad tem cerca de 2,28 milhões. São o canal de distribuição natural, já que 46,6% dos TAC conseguem frete por app.",
+   "source_url": "https://play.google.com/store/apps/details?id=br.lgfelicio&hl=pt_BR&gl=BR"
+  },
+  {
+   "fact": "Maplink (B2B, Brasil) tem uma Restriction Zone API com o exemplo 'São Paulo ZMRC'. É o concorrente B2B mais direto em restrição urbana.",
+   "source_url": "https://developers.maplink.global/en/category/restriction-zone-en/"
+  },
+  {
+   "fact": "Emplacamentos de caminhões: 110.873 em 2025 (-8,65%), sendo 44,66% pesados e 33,47% semipesados. De jan a set/2026 foram 78.665.",
+   "source_url": "https://www.fenabrave.org.br/portal/files/2025_12_02.pdf"
+  },
+  {
+   "fact": "65% dos usuários de internet acessam só pelo celular. A taxa sobe para 84% entre quem tem ensino fundamental e 71% entre 45 e 59 anos (TIC Domicílios 2025).",
+   "source_url": "https://cetic.br/pt/tics/domicilios/2025/individuos/C16A/"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Frota de veículos por UF, município e tipo (Renavam), mensal",
+   "publisher": "SENATRAN / Ministério dos Transportes",
+   "url": "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-Senatran/frota-de-veiculos-2026",
+   "access": "bulk_download",
+   "format": "XLSX",
+   "license": "Dados públicos; o CKAN do Renavam indica 'Outra (Domínio Público)'. Uso comercial permitido.",
+   "tested": true,
+   "test_result": "Página 200. HEAD nos xlsx dá 403; GET com User-Agent de navegador dá 200. Baixei por UF (27 KB), por município (735 KB, 5.572 municípios, 22 tipos) e G_TIPO_ESPECIE_EIXOS (8 MB, 277.544 linhas). Ago/2026: BR 3.253.427 caminhões e 1.029.220 tratores; RMSP 279.623 e 85.638. 99,3% dos municípios casaram com o IBGE.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Tabela mercado_municipio (cod_ibge, tipos, ref_mes) carregada por um importador mensal (GET com UA, pandas e cruzamento com o IBGE por nome+UF mais tabela de apelidos). Uso: mapa de calor de frota no admin, penetração por município e escolha da próxima região.",
+   "geo_coverage": "Brasil, por município",
+   "record_count": "5.572 municípios; 39 na RMSP",
+   "relevant_fields": "UF, MUNICIPIO, CAMINHAO, CAMINHAO TRATOR, REBOQUE, SEMI-REBOQUE, CAMINHONETE, UTILITARIO; eixos e espécie no arquivo G",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/senatran/frota_caminhoes_municipios_ago2026.csv",
+   "updated": "Agosto/2026 (mensal)",
+   "caveats": "Conta a frota registrada, não a que circula. Eixos vêm zerados em 63% na RMSP e não há categoria VUC. Os arquivos F (ano) e H (restrição) não separam por tipo."
+  },
+  {
+   "name": "Renavam: frota por município, marca, modelo e ano",
+   "publisher": "SENATRAN (dados.transportes.gov.br)",
+   "url": "https://dados.transportes.gov.br/dataset/12686da0-3d71-4499-b432-d270f785c907/resource/4408da67-7821-4abf-96db-58acdf1497da/download/i_frota_por_uf_municipio_marca_e_modelo_ano_setembro_2026.zip",
+   "access": "bulk_download",
+   "format": "ZIP com TXT separado por ;",
+   "license": "Outra (Domínio Público)",
+   "tested": true,
+   "test_result": "Zip de 136.926.215 bytes, 1,22 GB descompactado. Li só o cabeçalho por HTTP Range: UF;Município;Marca Modelo;Ano;Qtd. Não tem coluna de tipo de veículo.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Futuro: casar modelo com classe (FIPE/fabricante) para estimar VUC, toco e truck por município e calibrar a ordem dos presets.",
+   "geo_coverage": "Brasil, por município",
+   "record_count": "não contado (arquivo grande)",
+   "relevant_fields": "Marca Modelo, Ano Fabricação, Qtd",
+   "updated": "Setembro/2026",
+   "caveats": "Grande e sem tipo; precisa de uma tabela externa de modelos."
+  },
+  {
+   "name": "RENACH: condutores habilitados por UF, sexo, faixa etária e categoria",
+   "publisher": "SENATRAN",
+   "url": "https://dados.transportes.gov.br/api/3/action/package_show?id=renach",
+   "access": "bulk_download",
+   "format": "CSV UTF-16",
+   "license": "Other (Public Domain)",
+   "tested": true,
+   "test_result": "CKAN 200, 55 recursos; o mais recente é de 08/2024 (744 KB). C a E somam 11.514.077 no Brasil; E/AE são 2.269.636 no Brasil e 564.001 em SP. Não há recurso de 2025 ou 2026, e as páginas de condutores no gov.br dão 404.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Não entra no banco. Serve para o pitch (teto de motoristas habilitados) e para o design (idade: 41% dos habilitados em E têm 51 anos ou mais).",
+   "geo_coverage": "Brasil, por UF",
+   "record_count": "84.168.606 habilitados (ago/2024)",
+   "relevant_fields": "UF, Sexo, Faixa Etária, Categoria, Qtd",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/senatran/renach_condutores_2024_08.csv",
+   "updated": "08/2024 (parado)",
+   "caveats": "Desatualizado. A categoria D também dirige caminhão, então o número de habilitados é bem maior que o de caminhoneiros ativos."
+  },
+  {
+   "name": "RNTRC: transportadores (mensal)",
+   "publisher": "ANTT",
+   "url": "https://dados.antt.gov.br/dataset/b4a055d1-97a2-46f1-9461-cb17fbc6b6b3/resource/ce319c77-342c-4c35-87fa-a15a9f1bec03/download/transportadores_rntrc_08_2026.csv",
+   "access": "bulk_download",
+   "format": "CSV latin1 separado por ;",
+   "license": "Creative Commons Atribuição. Uso comercial permitido com atribuição. Contém CPF e nome (LGPD).",
+   "tested": true,
+   "test_result": "200, 161 MB, 1.174.540 linhas, lido em streaming em 69 s. Ativos: 906.022 no Brasil e 120.525 na RMSP (91.850 TAC). Pendentes no Brasil: 268.518. Guardei só agregados.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Tabela mercado_rntrc (uf, cod_ibge, categoria, situacao, qtd), feita em streaming só com agregados. Opcional: validar o RNTRC de quem reporta guardando sha256(numero_rntrc), situação e categoria, e dar selo de 'transportador verificado' com peso maior na confiança dos reportes (consultar o jurídico sobre a LGPD).",
+   "geo_coverage": "Brasil, por município",
+   "record_count": "1.174.540 transportadores (906.022 ativos)",
+   "relevant_fields": "numero_rntrc, situacao_rntrc, categoria_transportador, equiparado, municipio, uf, cep, data_primeiro_cadastro",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/antt_rntrc/rntrc_agregado_08_2026.json",
+   "updated": "Agosto/2026 (mensal, publicado por volta do dia 10)",
+   "caveats": "Tem dado pessoal (CPF de TAC). O recurso de ago/2023 está vazio (85 B) e há um 'Set23' duplicado."
+  },
+  {
+   "name": "RNTRC: dados de veículos",
+   "publisher": "ANTT",
+   "url": "https://dados.antt.gov.br/dataset/2b564396-5593-4b5c-ba2c-3de3fa0a92c0/resource/73efb515-d639-46b7-8c7d-1013320763eb/download/rntrc-veiculos.csv",
+   "access": "bulk_download",
+   "format": "CSV (também há JSON)",
+   "license": "Creative Commons Atribuição",
+   "tested": true,
+   "test_result": "200, 10,9 MB, 98.119 linhas agregadas, somando 2.882.341 veículos (1.745.881 de tração). Em SP: 154.332 tratores, 130.394 caminhonetes/furgões, 116.375 caminhões simples e 52.356 leves. 52.498 tanques de produto perigoso no Brasil.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Calibrar a ordem e os padrões dos presets por UF (leve e caminhonete como VUC/3/4, simples como toco/truck, trator como carreta/bitrem). Estimar o tamanho do público de hazmat.",
+   "geo_coverage": "Brasil, por UF",
+   "record_count": "98.119 linhas agregadas",
+   "relevant_fields": "Categoria do Transportador, Tipo, UF, Categoria do veículo (faixa de peso), Carroceria, Ano, Quantidade",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/antt_rntrc/rntrc-veiculos.csv",
+   "updated": "06/10/2026",
+   "caveats": "Só tem UF, não município."
+  },
+  {
+   "name": "RNTRC: histórico de transportadores e veículos ativos",
+   "publisher": "ANTT",
+   "url": "https://dados.antt.gov.br/dataset/f5a84126-be26-4052-8ca4-9d5694b8d372/resource/31949a7b-8f03-4008-bd6f-ea9fa0c7a26e/download/rntrc-historico-dos-transportadores-de-veiculos-ativos.csv",
+   "access": "bulk_download",
+   "format": "CSV",
+   "license": "Creative Commons Atribuição",
+   "tested": true,
+   "test_result": "200, 1.954 B, abr a out/2026. Out/2026: 634.945 TAC (750.471 veículos de tração, 23,98 anos), 54.129 ETC (9,34 anos) e 222.300 ETC equiparadas.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Série para o pitch e acompanhamento do tamanho do mercado.",
+   "geo_coverage": "Brasil",
+   "record_count": "28 linhas",
+   "relevant_fields": "Ano, Mês, Categoria, Nº de transportadores, Nº de veículos, Idade média",
+   "updated": "07/10/2026"
+  },
+  {
+   "name": "Anuário TRC 2025 e infográfico do perfil dos motoristas (RAIS 2024)",
+   "publisher": "ANTT",
+   "url": "https://www.gov.br/antt/pt-br/assuntos/cargas/dadostrc/anuario_trc_2025_antt.pdf",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "Conteúdo do gov.br; rodapé do site em CC BY-ND 3.0. Citar os números.",
+   "tested": true,
+   "test_result": "Anuário 200, 4,0 MB, 67 páginas, texto extraível: 534.972 admissões em 2025; TAC são 73,27% dos transportadores; frota de tração dos TAC com 24,4 anos. Infográfico 200, 4,4 MB: 713.229 motoristas CLT em 2024, mediana de R$ 3.120.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só documentação e pitch.",
+   "geo_coverage": "Brasil",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/antt_rntrc/anuario_trc_2025_antt.pdf",
+   "updated": "2026"
+  },
+  {
+   "name": "CNT: Perfil e Preferências dos Caminhoneiros (set/2025)",
+   "publisher": "CNT",
+   "url": "https://cdn.cnt.org.br/diretorioVirtual/e291a057-703a-4ee5-8849-e276ebe749c0.pdf",
+   "access": "pdf",
+   "format": "PDF com texto",
+   "license": "Publicação da CNT (direitos reservados). Citar números com fonte; não redistribuir.",
+   "tested": true,
+   "test_result": "200, 2,2 MB, 35 páginas. 800 entrevistas, margem de 3,5 pontos. Idade de 45,3 anos, renda de R$ 6.948, 73% pernoitam em posto, 54 a 58% querem estacionamento vigiado. Não tem perguntas sobre celular ou apps.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Decisões de produto: camada de pontos de parada com filtro de vigilância, recurso de descanso com 8h+3h, interface para público de mais de 45 anos.",
+   "geo_coverage": "Brasil (inclui CEAGESP, Terminal Fernão Dias, Rodoanel e Dutra)",
+   "record_count": "800 entrevistas",
+   "updated": "Coleta de 25/09 a 03/10/2025"
+  },
+  {
+   "name": "CNT: Perfil dos Caminhoneiros 2019",
+   "publisher": "CNT / ITL",
+   "url": "https://repositorio.itl.org.br/jspui/bitstream/123456789/153/1/Pesquisa%20CNT%20Perfil%20dos%20Caminhoneiros%202019.pdf",
+   "access": "pdf",
+   "format": "PDF (gráficos em imagem)",
+   "license": "Publicação da CNT (direitos reservados)",
+   "tested": true,
+   "test_result": "HEAD 200, 22.552.458 B, igual ao espelho do Poder360. 1.066 entrevistas. Páginas lidas como imagem: 87,8% usam smartphone ou computador, 98% pelo celular; 49,5% já recusaram viagem por roubo; 7,6% foram vítimas de roubo de carga em 2 anos.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Pitch e justificativa de app mobile-first.",
+   "geo_coverage": "Brasil",
+   "record_count": "1.066 entrevistas",
+   "updated": "Coleta de ago a set/2018 (dado velho)"
+  },
+  {
+   "name": "CNTA: Realidade do Transportador Autônomo de Cargas 2025 (apresentação na Câmara)",
+   "publisher": "CNTA (via Câmara dos Deputados, CVT)",
+   "url": "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cvt/apresentacoes-em-eventos/eventos-2025/arquivos-de-eventos-2025/ap-25-12-09-allan-medeiros-cnta",
+   "access": "pdf",
+   "format": "PDF só imagem",
+   "license": "Publicação da CNTA (direitos reservados); apresentação pública na Câmara",
+   "tested": true,
+   "test_result": "200, 3,1 MB, 24 páginas, lido renderizando as páginas. 2.002 TAC. 46,6% conseguem frete por app. 96,6% param em posto para descansar e 78,4% acham difícil achar local. 57,7% nunca se sentem seguros e 13,3% sofreram roubo.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Canal de aquisição por parceria com apps de frete. Prioridade alta para a camada de paradas e segurança.",
+   "geo_coverage": "11 a 12 UFs, incluindo SP e MG",
+   "record_count": "2.002 entrevistas",
+   "updated": "Coleta de jun a ago/2025, apresentado em 09/12/2025",
+   "caveats": "O relatório completo não foi encontrado."
+  },
+  {
+   "name": "Lojas de apps: iTunes Search/Lookup API e páginas de detalhe do App Store BR",
+   "publisher": "Apple",
+   "url": "https://itunes.apple.com/search?term=sygic+truck&country=br&entity=software",
+   "access": "rest_api",
+   "format": "JSON e HTML",
+   "license": "API pública da Apple, com termos para uso promocional e afiliado. Dados de terceiros; uso interno para inteligência competitiva.",
+   "tested": true,
+   "test_result": "200 em 18 buscas. As páginas apps.apple.com/br trazem preços em pares leadingText/trailingText: Sygic Truck Brasil R$ 499,90; TomTom R$ 399,90 por ano; CoPilot R$ 379,90 por ano; WikiRota R$ 79,99 a 99,99 por ano.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Script mensal que consulta itunes.apple.com/lookup?id=...&country=br e grava nota, avaliações e versão em concorrentes_snapshot.",
+   "geo_coverage": "Loja BR",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/apps/appstore_precos_br.txt",
+   "updated": "09/10/2026"
+  },
+  {
+   "name": "Google Play: páginas de detalhe (instalações, nota, IAP e descrição)",
+   "publisher": "Google",
+   "url": "https://play.google.com/store/apps/details?id=com.sygic.truck&hl=pt_BR&gl=BR",
+   "access": "scrape",
+   "format": "HTML com JSON-LD",
+   "license": "Conteúdo da loja. Raspar viola os termos do Play; usar só como checagem manual ou serviço pago.",
+   "tested": true,
+   "test_result": "200 em 30 apps. Instalações aproximadas: Fretebras 7,19 mi, CoPilot 6,41 mi, Sygic Truck 5,17 mi, TomTom GO Expert 22,1 mi, WikiRota 861 mil (nota 4,76), TruckPad 2,28 mi, CargoTour 410 mil. As 3 reviews visíveis por página trazem reclamações de mapa e rota no Brasil.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitoramento manual trimestral, ou AppFollow ou Sensor Tower se precisar de série histórica.",
+   "geo_coverage": "Global (instalações e nota não são só do Brasil)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/apps/play_installs_iap.txt",
+   "updated": "09/10/2026"
+  },
+  {
+   "name": "Google Maps Platform: Large Vehicle Routing (documentação)",
+   "publisher": "Google",
+   "url": "https://developers.google.com/maps/documentation/routes/lvr",
+   "access": "other",
+   "format": "HTML (documentação)",
+   "license": "Documentação em CC BY 4.0; a API é paga",
+   "tested": true,
+   "test_result": "200. Disponível só nos 48 estados contíguos dos EUA (GA) e no Japão (experimental), para clientes limitados. Atualizada em 07/10/2026.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Nenhuma; é um fato competitivo (o Google não atende caminhão no Brasil).",
+   "geo_coverage": "EUA e Japão"
+  },
+  {
+   "name": "HERE WeGo Pro: cobertura de restrições de caminhão",
+   "publisher": "HERE Technologies",
+   "url": "https://docs.here.com/wego-pro/docs/coverage",
+   "access": "other",
+   "format": "HTML",
+   "license": "Documentação do fornecedor",
+   "tested": true,
+   "test_result": "200. O Brasil está na lista 'full motorway coverage' (restrições só em rodovias e vias principais), não na lista de cobertura completa.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Fato competitivo: o diferencial é a malha urbana da RMSP (ZMRC, rodízio, viadutos).",
+   "geo_coverage": "Global"
+  },
+  {
+   "name": "Mapbox Directions API: parâmetros max_height, max_width e max_weight",
+   "publisher": "Mapbox",
+   "url": "https://docs.mapbox.com/api/navigation/directions/",
+   "access": "other",
+   "format": "HTML",
+   "license": "Documentação; API paga",
+   "tested": true,
+   "test_result": "200. Aceita só max_height, max_width e max_weight, com a ressalva 'Coverage ... may vary by region'. Sem janelas de horário.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Referência de concorrente de infraestrutura; nossa pilha (Valhalla e OSM) já cobre isso.",
+   "geo_coverage": "Global"
+  },
+  {
+   "name": "Maplink Restriction Zone e Trip API (documentação)",
+   "publisher": "Maplink",
+   "url": "https://developers.maplink.global/en/category/restriction-zone-en/",
+   "access": "other",
+   "format": "HTML",
+   "license": "Documentação; API comercial",
+   "tested": true,
+   "test_result": "200. Índice com 'Example 1 – São Paulo ZMRC'. Preço não público.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Benchmark do concorrente B2B mais direto; avaliar se vale vender API B2B para frotas.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "Fenabrave: Informativo de Emplacamentos (mensal)",
+   "publisher": "Fenabrave",
+   "url": "https://www.fenabrave.org.br/portal/conteudo/emplacamentos",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "Relatório proprietário; citar números",
+   "tested": true,
+   "test_result": "Por https dá 200 (2,9 a 3,1 MB por mês); por http, 404. 2025: 110.873 caminhões (-8,65%), 44,66% pesados. Jan a set/2026: 78.665.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só pitch (ritmo de renovação da frota).",
+   "geo_coverage": "Brasil (há tabelas por UF)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/outros/fenabrave_2025_12_02.pdf",
+   "updated": "Setembro/2026"
+  },
+  {
+   "name": "StatCounter: sistema operacional mobile no Brasil (CSV)",
+   "publisher": "StatCounter",
+   "url": "https://gs.statcounter.com/os-market-share/mobile/brazil",
+   "access": "bulk_download",
+   "format": "CSV",
+   "license": "StatCounter declara CC BY-SA (não conferido nesta sessão)",
+   "tested": true,
+   "test_result": "200, 402 B. Set/2026: Android 79,23%, iOS 20,76%.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Decisão de produto: Android primeiro, com Android Auto.",
+   "geo_coverage": "Brasil",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/outros/statcounter_os_mobile_br.csv",
+   "updated": "Setembro/2026"
+  },
+  {
+   "name": "Cetic.br TIC Domicílios 2025, tabela C16A (acesso só pelo celular)",
+   "publisher": "Cetic.br / NIC.br",
+   "url": "https://cetic.br/pt/tics/domicilios/2025/individuos/C16A/",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Não informada na página",
+   "tested": true,
+   "test_result": "200. 65% acessam a internet só pelo celular; 84% entre quem tem ensino fundamental; 71% entre 45 e 59 anos.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Justifica o desenho mobile-first.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "RAIS: microdados de vínculos 2024 (SP)",
+   "publisher": "MTE / PDET",
+   "url": "ftp://ftp.mtps.gov.br/pdet/microdados/RAIS/2024/RAIS_VINC_PUB_SP.7z",
+   "access": "bulk_download",
+   "format": "7z com TXT",
+   "license": "Dados públicos do governo",
+   "tested": false,
+   "test_result": "Listei o diretório do FTP; o arquivo de SP tem 1.066.197.453 B. Não baixei por passar do limite de cerca de 300 MB. Também existe a pasta 2025.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Futuro: contar motoristas CLT de caminhão (CBO 7825) por município da RMSP para dimensionar o B2B de frotas.",
+   "geo_coverage": "SP, por município",
+   "updated": "18/05/2026"
+  },
+  {
+   "name": "Fórum oficial do Waze: pedido de modo caminhão",
+   "publisher": "Waze (comunidade)",
+   "url": "https://www.waze.com/discuss/t/inclusao-de-caminhoes-na-aba-detalhes-do-veiculo-em-tipo-de-veiculo/405531",
+   "access": "other",
+   "format": "HTML",
+   "license": "Conteúdo de fórum",
+   "tested": true,
+   "test_result": "Lido via WebFetch. Em 03/06/2026, editores da comunidade disseram que não há intenção de criar modo caminhão e que a chance é 'zero', por falta de dados de altura, peso e zonas de restrição.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Fato competitivo para o posicionamento ('o Waze do caminhão').",
+   "geo_coverage": "Brasil",
+   "caveats": "Quem respondeu parece ser moderador da comunidade, não necessariamente funcionário."
+  },
+  {
+   "name": "Páginas de suporte do Google sobre rodízio",
+   "publisher": "Google",
+   "url": "https://support.google.com/maps/answer/7017853?hl=pt-BR",
+   "access": "other",
+   "format": "HTML",
+   "license": "-",
+   "tested": false,
+   "test_result": "404 (e o mesmo na URL do Waze, 7015306). O recurso de rodízio no Google Maps só aparece em fonte secundária (Olhar Digital, 2018).",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma; precisa de confirmação manual no app.",
+   "geo_coverage": "SP capital"
+  },
+  {
+   "name": "Sygic eshop e cobertura de mapas do CoPilot",
+   "publisher": "Sygic / Trimble",
+   "url": "https://eshop.sygic.com/en/truck-navigation",
+   "access": "scrape",
+   "format": "HTML (SPA)",
+   "license": "-",
+   "tested": false,
+   "test_result": "Respondem 200 com 2,9 KB e 158 B: é a casca do JavaScript, sem conteúdo. Os preços vieram da App Store BR.",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Nenhuma.",
+   "geo_coverage": "Global"
+  }
+ ],
+ "gaps": [
+  "Não há contagem oficial de VUC, toco e truck. O Renavam não tem categoria VUC e o campo de eixos vem zerado em 63% dos caminhões da RMSP. O cruzamento por marca e modelo (zip de 137 MB mais FIPE) não foi feito.",
+  "Nenhuma pesquisa primária recente (2024 a 2026) mede o uso de apps de navegação por caminhoneiros. A CNT 2025 não pergunta isso; o último número primário é da CNT 2019 (87,8% usam smartphone).",
+  "Frota registrada não é frota em circulação, e não sei quantos caminhões de outras UFs operam na RMSP (seria preciso MDF-e, OD de cargas ou pedágio).",
+  "Os concorrentes não foram testados na prática (exigiria instalar e pagar). Não confirmei se Sygic, TomTom, CoPilot ou CargoMaps respeitam ZMRC, rodízio de caminhão ou viadutos da RMSP.",
+  "O recurso de rodízio no Google Maps e no Waze não foi confirmado em fonte oficial (as páginas de suporte deram 404).",
+  "O RENACH só tem dados até 08/2024 no CKAN; as páginas de condutores da Senatran dão 404.",
+  "O relatório completo da CNTA 2025 não foi achado (só a apresentação em imagem na Câmara).",
+  "Não há preço público de motorista para Fretebras e TruckPad (só a faixa de compras no app do Play).",
+  "Instalações e notas do Google Play são globais, não só do Brasil. O ranking por país exigiria serviço pago.",
+  "RAIS por município (CBO 7825) não foi baixada (o arquivo de SP tem 1,07 GB).",
+  "As licenças do StatCounter e do Cetic não foram conferidas.",
+  "A cota de buscas na web (200) acabou no fim da sessão, o que impediu checagens extras (por exemplo, a página oficial da CNT para a edição de 2019 e o painel de rodovias da Anatel)."
+ ],
+ "recommendations": [
+  "Posicionamento: o diferencial é a malha urbana da RMSP (ZMRC, rodízio, viadutos e janelas de horário). Google (só EUA e Japão), Waze (sem modo caminhão) e HERE (só rodovias e vias principais no Brasil) não cobrem isso, e há reclamação de usuário de que o WikiRota não respeita as restrições da Grande SP.",
+  "Público-alvo inicial: o segmento urbano leve da RMSP. Em SP, 40% dos veículos de tração do RNTRC são caminhonete/furgão ou caminhão leve, e a RMSP tem 120 mil transportadores ativos (92 mil TAC). Priorizar os presets VUC e 3/4 no onboarding.",
+  "Preço: os GPS de caminhão cobram R$ 380 a 500 por ano e o WikiRota R$ 80 a 100 por ano. Um plano de cerca de R$ 10 a 15 por mês, com rota básica grátis, cabe no bolso de um TAC com renda líquida em torno de R$ 7 mil e caminhão de 24 anos.",
+  "Distribuição: 46,6% dos TAC conseguem frete por app. Buscar parceria ou integração com Fretebras/Frete.com e TruckPad (deep link 'abrir rota no app'). É um canal mais barato que mídia paga.",
+  "Produto: Android primeiro (79%), mapa e rota offline (só 54% das rodovias federais têm 4G), botões grandes e fluxo simples (idade média de 45 anos, 41% estudaram só até a 9ª série), e pensar em integração com WhatsApp.",
+  "Fazer da camada de paradas uma funcionalidade principal: 96,6% param em posto, 78,4% acham difícil achar local e 54 a 58% querem estacionamento vigiado. Cruzar com os pontos de roubo de carga (83% dos roubos do estado estão na RMSP, com pico das 6h às 13h) para alertas de risco.",
+  "Importar mensalmente a frota da Senatran por município (tabela mercado_municipio) e os agregados do RNTRC (mercado_rntrc, sem CPF) para medir penetração e escolher a próxima região.",
+  "Estudar validar o RNTRC (guardando só o hash) como selo de confiança dos reportes colaborativos, depois de consultar o jurídico sobre a LGPD. Em nenhuma hipótese guardar CPF ou nome do CSV da ANTT.",
+  "Monitorar concorrentes com o iTunes Lookup API (público) e checagem manual do Play. Ficar de olho no CargoMaps (promete ZMRC) e no Maplink (B2B com ZMRC documentada)."
+ ],
+ "notes_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/mercado_concorrencia/NOTES.md"
+}

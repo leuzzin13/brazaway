@@ -1,0 +1,267 @@
+{
+ "category": "rodovias_restricoes",
+ "sources": [
+  {
+   "name": "Portaria DIOP/PRF nº 121/2026 (DOU)",
+   "url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480",
+   "verdict": "confirmed",
+   "note": "Re-testei com curl: HTTP 200, 105.019 bytes, DOU de 09/09/2026, ed. 170-A, Seção 1 Extra A. Conferi o texto inteiro: limites de 2,60 m, 4,40 m, 19,80 m e 58,5 t; §1º a §5º; art. 5º revoga a 26/2026. O Anexo é tabela HTML e bate com o CSV de 40 linhas (30 nacionais, 3 juninas, 6 de SP e 1 de MS). Licença: ato oficial, sem proteção autoral (Lei 9.610/98, art. 8º, IV, conferido no Planalto). Ressalva: a tabela de Aparecida/SP não traz horário, e o CSV do pesquisador assumiu 00h–24h por conta própria."
+  },
+  {
+   "name": "PRF – página Restrição de Tráfego 2026",
+   "url": "https://www.gov.br/prf/pt-br/seguranca-viaria/restricao-de-trafego/restricao-de-trafego-2026",
+   "verdict": "confirmed",
+   "note": "HTTP 200. O anexo está em 2 PNG (444x676 e 471x439) e a página não tem <table>. O rodapé diz CC BY-ND 3.0, o que confirma a licença. A página foi modificada em 11/09/2026, mas o texto ainda cita a 'PORTARIA DIOP/PRF Nº 26' enquanto o anexo é da 121/2026. O portal é inconsistente: use o DOU."
+  },
+  {
+   "name": "SNV DNIT (Nextcloud/WebDAV)",
+   "url": "http://servicos.dnit.gov.br/dnitcloud/index.php/s/oTpPRmYs5AAdiNr",
+   "verdict": "corrected",
+   "corrected_license": "Nenhuma licença na pasta. A página do DNIT que publica o link (https://www.gov.br/dnit/pt-br/assuntos/atlas-e-mapas/pnv-e-snv) está sob CC BY-ND 3.0 pelo rodapé do gov.br, que proíbe derivados. Antes do uso comercial derivado, confirmar com o DNIT.",
+   "note": "O PROPFIND devolveu 207. Baixei de novo o 202607A.zip: 68.515.469 bytes e 7.673 registros, como o pesquisador disse. Também batem PAV federal no Brasil (65.415 km), DUP (9.182 km), PAV sem as 5 UFs (58.024 km) e SP com 450 km de PAV e 749 km de DUP. Dois erros: (1) os 58.024 km contam duas vezes os trechos coincidentes; deduplicando por ds_coinc ficam cerca de 52.819 km (SP cerca de 417 km); (2) os valores 'RMSP' (BR-116 187,7 km, BR-381 58,6 km) usam o bbox RMSP+Baixada. Com os 39 municípios da RMSP (malha IBGE) dá cerca de 119 km de BR-116 DUP e 42 km de BR-381 DUP. Continua valendo que a RMSP tem 0 km de pista simples federal."
+  },
+  {
+   "name": "ARTESP – Mensagens em PMV",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/805d9c5d-33c1-4151-a33e-d6d861f001ec/resource/98e13d64-64bf-489b-8520-3ccae1a93776/download/mensagens_pmv_2025.csv",
+   "verdict": "corrected",
+   "note": "HTTP 200, 49.085.434 bytes, 257.495 linhas. O package_show dá license_id cc-by. A AutoBAn 'Operação Caminhão' bate exatamente: 375 mensagens em 50 dias, 317 em domingos. Já os números '5.799 mensagens em 339 dias' e '25.063 sobre caminhão/operação' dependem do regex e não reproduzi: obtive 5.840/306 dias (Ecovias, proibição ou restrição + pesado ou caminhão), 7.411/347 dias (pesado ou caminhão + Anchieta, todas as concessionárias) e 22.097. O arquivo de 2026 tem 84.385.383 bytes (HEAD), com Last-Modified 21/08/2026; nas amostras por Range a última data é 20/08. Hoje o atraso é de cerca de 7 semanas, não de 1 mês."
+  },
+  {
+   "name": "DOE-SP – API de busca e de conteúdo",
+   "url": "https://do-api-web-search.doe.sp.gov.br/v2/advanced-search/publications",
+   "verdict": "confirmed",
+   "note": "Testei os dois endpoints (HTTP 200, JSON). Li o texto integral de SUP/DER-084/2023, PR/DER-228/2025, PR/DER-127/2026, PR/DER-147/2025, PR/DER-164/2025, SUP/DER-001/2024, SUP/DER-037/2024, PR/DER-145/2025 e SUP/DER-062/2024. Uma busca de 2010 a 2022 devolve totalItems=0, o que confirma que o acervo começa em 2023. A página doe.sp.gov.br é SPA: todo slug devolve o mesmo shell de 56 kB, então o texto só sai pela API. Termos de uso da API não localizados."
+  },
+  {
+   "name": "ARTESP – Camadas geoespaciais auxiliares (Google Drive)",
+   "url": "https://drive.google.com/drive/folders/1icWZ6vr2O-JyfrPeYUJkCMjp6BERMg6Z",
+   "verdict": "confirmed",
+   "note": "Pasta listada (título 'poda-bases-aux-gis'). O CKAN 'programacao-de-obras' (CC BY) aponta para ela como 'Camadas Geoespaciais Auxiliares'. Baixei de novo marcos_quilometricos.gpkg: 1.658.880 bytes, 8.300 marcos, 21 concessionárias; SP150 57, SP160 63, SP055 178, SP021 131, SP348 161. Pelo layers_metadata.md, rodovias_sirgas2000 usa campos de tag do OSM, portanto é derivado ODbL."
+  },
+  {
+   "name": "ARTESP – Malha rodoviária concedida (CKAN)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=malha-rodoviaria",
+   "verdict": "corrected",
+   "note": "HTTP 200 e CC BY confirmados, com metadata_modified de 22/09/2026. O pacote tem 25 recursos, não 24: XLSX da malha (1,9 MB), XLSX de acessos e 23 KMZ."
+  },
+  {
+   "name": "CETESB ArcGIS – Malha Rodoviária Estadual SP",
+   "url": "https://arcgis.cetesb.sp.gov.br/server/rest/services/Hosted/Malha_Rodovi%C3%A1ria_Estadual_SP/FeatureServer/0",
+   "verdict": "confirmed",
+   "note": "HTTP 200. returnCountOnly dá 4.777. A SP 150 tem 9 trechos (km 9,7–65,6), todos DUP e administrados por concessionária. copyrightText e serviceDescription estão vazios, então não há licença declarada."
+  },
+  {
+   "name": "Ecovias Imigrantes – Condições da Via e FAQ",
+   "url": "https://www.ecoviasimigrantes.com.br/condicoes-da-via",
+   "verdict": "confirmed",
+   "note": "curl e WebFetch levam 403, como relatado. Pelo navegador embutido em 09/10/2026: Imigrantes km 62→40 sentido SP 'restrição de pesados' e, nesse momento, Anchieta km 31–40 sentido litoral 'operação comboio'. O FAQ (/atendimento/duvidas) confirma a Portaria ARTESP 11/2002 de 06/12/2002 e as regras do comboio. O conteúdo é proprietário."
+  },
+  {
+   "name": "Motiva AutoBAn – release Páscoa 2026 e página de caminhão",
+   "url": "https://rodovias.motiva.com.br/autoban/motoristas-de-caminhao/",
+   "verdict": "confirmed",
+   "note": "Os dois deram HTTP 200. O release diz sexta 03/04 e domingo 05/04, das 14h às 22h, Bandeirantes → Anhanguera do km 48 ao km 23, pela saída 48. Na página de caminhão: largura ≥4,50 m, altura ≥5,40 m, comprimento ≥35 m ou PBT >100 t exigem agendamento por e-mail com a AET."
+  },
+  {
+   "name": "Concessionária Tamoios – Operação Comboio",
+   "url": "https://www23.concessionariatamoios.com.br/a-tamoios/restricoes",
+   "verdict": "confirmed",
+   "note": "HTTP 200, cerca de 30 kB. Confirma o fechamento da Serra Antiga por chuva (5 estações), o comboio pela Serra Nova com caminhões e produtos perigosos depois dos carros no sentido litoral e os horários publicados no Instagram/X @tamoios099."
+  },
+  {
+   "name": "OSM local (Geofabrik sudeste-latest.osm.pbf)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "verdict": "corrected",
+   "note": "Rodei osmium no PBF local (replicação de 2026-10-08). Bateram: 53 ways com conditional de caminhão no Sudeste; 6 com hgv:conditional no bbox; 16 com hgv:lanes; SP-160 com 24 hgv=no e 22 hazmat=no; Rodoanel Norte com 115 ways motorway e opening_date=2025-12-22. Não bateu: '*:conditional em 194 ways'. O correto são 697 ways (tags-filter -R), a maioria lanes:bus, bicycle e motor_vehicle. Um way da Imigrantes 'pista ascendente' tem hgv=no, o que deixa estática no Valhalla a restrição da subida, que na prática é operacional."
+  },
+  {
+   "name": "Valhalla local – rotas truck Santos↔SP",
+   "url": "http://localhost:8002/route",
+   "verdict": "confirmed",
+   "note": "Reproduzi: truck Santos→SP com 67,3 km (SP-150 Anchieta → SP-021 Rodoanel → SP-160 planalto); truck SP→Santos com 71,3 km (SP-160 → SP-150); auto Santos→SP pela SP-160 com 66,2 km; auto SP→Santos pela SP-160 com 65,7 km."
+  },
+  {
+   "name": "BrasilAPI feriados 2026",
+   "url": "https://brasilapi.com.br/api/feriados/v1/2026",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 14 datas, com Carnaval (16 e 17/02), Páscoa e Corpus Christi marcados 'national'. Não traz feriados estaduais nem municipais."
+  },
+  {
+   "name": "DNIT Portaria nº 4.447/2026 (DOU)",
+   "url": "https://www.in.gov.br/web/dou/-/portaria-n-4.447-de-2-de-setembro-de-2026-729850451",
+   "verdict": "confirmed",
+   "note": "HTTP 200, DOU de 03/09/2026. BR-135/MA km 24,40–24,90 com mesmos limites da PRF e AET sem efeito. Os horários diferem do padrão PRF: 04/09 16–22h, 05/09 07–12h, 07/09 12–18h. Nos considerandos cita a Res. DNIT 11/2022 e a Portaria DIOP/PRF 26/2026. Vi na busca do DOU que a Resolução DNIT nº 1/2026 existe, mas não li o conteúdo."
+  },
+  {
+   "name": "Resolução CONTRAN 882/2021",
+   "url": "https://www.legisweb.com.br/legislacao/?id=425133",
+   "verdict": "corrected",
+   "corrected_url": "https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao8822021.pdf",
+   "corrected_license": "Ato oficial, sem proteção autoral (Lei 9.610/98, art. 8º, IV)",
+   "note": "Achei a fonte primária: PDF oficial no gov.br/transportes (HTTP 200, 1.761.997 bytes) e DOU https://www.in.gov.br/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699 (HTTP 200). Art. 18: CVC com mais de 2 unidades e PBTC >57 t ou comprimento >19,80 m precisa de AET. Art. 19: até 74 t e até 30 m (mínimo de 25 m se >57 t). Art. 20: do amanhecer ao pôr do sol, 80 km/h, diuturno em pista dupla com separador físico e 2+ faixas. Os 58,5 t são outro limite (art. 2º, f): cavalo + semirreboque de 4 eixos com 17,5 m ou mais. A 'divergência' não existe. A Res. 1.015/2024 só altera o eixo dianteiro de veículos GNV/elétricos (+1 t)."
+  },
+  {
+   "name": "Portaria ARTESP 11/2002 (link antigo)",
+   "url": "http://www.artesp.sp.gov.br/Shared%20Documents/Portarias/Portaria%20ARTESP%20n%C2%BA%20011_2002.pdf",
+   "verdict": "confirmed",
+   "note": "Confirmo que o link está quebrado. Hoje dá HTTP 200 com text/html de 113.888 bytes, uma página do portal, não 1.053 bytes como relatado; não é PDF. A existência e a data (06/12/2002) só aparecem citadas no FAQ da Ecovias."
+  },
+  {
+   "name": "DER-MG – notícia da Portaria 4.162/2025",
+   "url": "https://www.agenciaminas.mg.gov.br/noticia/der-mg-publica-portaria-que-restringe-trafego-de-veiculos-pesados-durante-os-feriados-de-2025",
+   "verdict": "confirmed",
+   "note": "HTTP 200. Portaria nº 4162 de 24/02/2025 (DOE-MG 25/02). Cobre CVC, CTV e indivisíveis, citando expressamente bitrens, treminhões e rodotrens, mesmo com AET/AE, em pista simples estadual e na MG-010, MGC-135 e MG-050. Fonte secundária oficial. A versão de 2026 não foi verificada."
+  },
+  {
+   "name": "PRF dados abertos – infrações",
+   "url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-infracoes",
+   "verdict": "confirmed",
+   "note": "HTTP 200, com links do Google Drive de 2007 a 2021. O portal está sob CC BY-ND 3.0. Não baixei nada."
+  },
+  {
+   "name": "dados.transportes.gov.br CKAN",
+   "url": "https://dados.transportes.gov.br/api/3/action/package_search?q=SNV",
+   "verdict": "confirmed",
+   "note": "HTTP 200 com count 0."
+  },
+  {
+   "name": "ARTESP legislação/portarias 2026 (CKAN)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=legislacao-portarias-2026",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 166 recursos, licença nula. Não li as descrições uma a uma."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "Portaria DIOP/PRF 121/2026 (DOU 09/09/2026 extra) restringe veículos com L>2,60, H>4,40, C>19,80 ou PBTC>58,5 t, e também CVC/CTV/CTVP mesmo com AET/AE; revoga a 26/2026.",
+   "verdict": "confirmed",
+   "note": "Art. 1º, §1º e art. 5º conferidos no DOU.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480"
+  },
+  {
+   "fact": "Vale em toda pista simples federal, exceto AC, AM, AP, PA e RR; MS e RO só na Operação Fim de Ano; RO tem ainda BR-319 km 140–144,4 no Carnaval.",
+   "verdict": "corrected",
+   "note": "O fato está incompleto para MS. O §3º diz que no MS a restrição vale no Fim de Ano 'e à restrição específica descrita no Anexo I': BR-262 km 233–328 em 09/04/2026, das 12h às 22h. A frase sobre RO está correta.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480"
+  },
+  {
+   "fact": "30 janelas nacionais (190 h); padrão véspera 16–22h, dia do feriado 06–12h, último dia 16–22h; eleições 07–18h; Tiradentes, Finados e 15/11 de fora.",
+   "verdict": "corrected",
+   "note": "Bateram as 30 janelas, as 190 h (28×6 + 2×11), as eleições em 04/10 e 25/10 das 07h às 18h e as três exclusões. O padrão está errado: a janela 06–12h cai no primeiro dia do feriadão, não no dia do feriado. Exemplos: Independência com 05/09 (sábado) 06–12h e 07/09 (feriado) 16–22h; Aparecida com 10/10 (sábado) 06–12h e 12/10 16–22h. O Carnaval tem 4 janelas, incluindo quarta de Cinzas 18/02 das 06h às 12h.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480"
+  },
+  {
+   "fact": "Aparecida/SP: pista dupla também, só AET/AE: BR-116 km 0–195 02–08/10 (>3,20 m) e todas 09–12/10; km 196–231 05–08/10 (>3,20 m) e todas 09–12/10; BR-459 km 0–32 09–12/10; BR-488 km 0–5 02–12/10.",
+   "verdict": "confirmed",
+   "note": "Bate com a tabela do DOU. Ressalva: a tabela não traz horário, então o 00h–24h do CSV é suposição. Pelo SNV, a BR-459 km 0–32 é PAV (pista simples), embora o §5º a trate como pista dupla. Hoje (09/10/2026) a restrição total está em vigor.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480"
+  },
+  {
+   "fact": "Em 2026 a regra PRF teve três versões: 12/2026 (DOU 02/02) revogou 172/2025, depois 26/2026, depois 121/2026.",
+   "verdict": "confirmed",
+   "note": "Conferido no PDF da 12/2026 (art. 5º revoga a 172 de 24/12/2025) e no DOU da 26/2026 de 09/03/2026 (art. 5º revoga a 12/2026). A 121 revoga a 26. A 121 trouxe as janelas de Eleições, que não estavam na 12.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-26-de-6-de-marco-de-2026-691165658"
+  },
+  {
+   "fact": "Na página da PRF 2026 o Anexo I é só imagem PNG; usar a tabela HTML do DOU.",
+   "verdict": "confirmed",
+   "note": "A página tem 2 <img> PNG e nenhuma <table>. Achei ainda uma inconsistência: o texto da página cita a Portaria 26/2026.",
+   "source_url": "https://www.gov.br/prf/pt-br/seguranca-viaria/restricao-de-trafego/restricao-de-trafego-2026"
+  },
+  {
+   "fact": "SNV 202607A: rodovias federais na RMSP são todas duplicadas (BR-116 187,7 km, BR-381 58,6 km); SP 450 km de pista simples federal; Brasil ~58.024 km.",
+   "verdict": "corrected",
+   "note": "Continua certo que a RMSP tem 0 km de PAV federal. As extensões vieram de um bbox RMSP+Baixada+Vale; com o polígono dos 39 municípios do IBGE dá cerca de 119 km (BR-116 DUP) e 42 km (BR-381 DUP). Os 58.024 km e os 450 km somam duas vezes os trechos coincidentes; deduplicando ficam cerca de 52.819 km e 417 km.",
+   "source_url": "http://servicos.dnit.gov.br/dnitcloud/index.php/s/oTpPRmYs5AAdiNr"
+  },
+  {
+   "fact": "Dutra em SP (BR-116) vai do km 0 (divisa RJ/SP) ao km 231,6 (Marginal Tietê); restrição de Aparecida km 0–231 cobre a Dutra inteira, incluindo Arujá e Guarulhos.",
+   "verdict": "confirmed",
+   "note": "No SNV: DIV RJ/SP km 0,0 e o último trecho 227,0–231,6 'ENTR BR-116/381 → MARGINAL TIETÊ'. Arujá (km 199,7) e Guarulhos estão dentro. Depois do km 231,6 a numeração passa ao trecho urbano e à Régis.",
+   "source_url": "http://servicos.dnit.gov.br/dnitcloud/index.php/s/oTpPRmYs5AAdiNr"
+  },
+  {
+   "fact": "Portaria SUP/DER-084-01/11/2023 (SP-150 km 40–55): CVC AET até 74 t/30 m só seg 01–05h e 23–05h seg→sex; chegada ao SAI não antes de 22h; sem feriados prolongados; indivisível e ônibus >26 m proibidos (PBT máx 70 t); CVC fora da faixa esquerda 18–20h em operação sentido Baixada.",
+   "verdict": "confirmed",
+   "note": "Bate com o texto integral pela API do DOE-SP (publicado em 07/11/2023). Detalhes extras: feriado prolongado é o que pega de quinta até terça; a AET vale só para esse trecho, por 6 meses. Nas buscas de 2023 a 2026 não achei revogação.",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-sup-084-arp-katia-8344367"
+  },
+  {
+   "fact": "FAQ Ecovias: descida de vans, ônibus e caminhões pela Imigrantes serra proibida pela Portaria ARTESP 11/2002; pesados do planalto da Imigrantes trocam para a Anchieta pela Interligação (km 40).",
+   "verdict": "confirmed",
+   "note": "Lido no navegador embutido, porque o curl leva 403. O texto primário da Portaria ARTESP continua indisponível.",
+   "source_url": "https://www.ecoviasimigrantes.com.br/atendimento/duvidas"
+  },
+  {
+   "fact": "Status ao vivo Ecovias em 09/10/2026: 'restrição de pesados' Imigrantes km 62→40 sentido SP; PMVs 2025 com 5.799 mensagens em 339 dias.",
+   "verdict": "corrected",
+   "note": "Confirmei o status ao vivo. A contagem não reproduz e depende do regex: obtive 5.840 mensagens em 306 dias (Ecovias) ou 7.411 em 347 dias (todas as concessionárias, com menção a Anchieta). A ordem de grandeza bate.",
+   "source_url": "https://www.ecoviasimigrantes.com.br/condicoes-da-via"
+  },
+  {
+   "fact": "Operação Comboio no SAI: visibilidade <100 m; saída nos pedágios Riacho Grande (SP-150 km 31+106) e Piratininga (SP-160 km 32+381); 350–500 veículos; ~40 km/h; a cada 30 min.",
+   "verdict": "confirmed",
+   "note": "FAQ da Ecovias lido no navegador.",
+   "source_url": "https://www.ecoviasimigrantes.com.br/atendimento/duvidas"
+  },
+  {
+   "fact": "Operação Caminhão AutoBAn: 14–22h nos dias anunciados, Bandeirantes → Anhanguera km 48→23 pela saída 48; PMVs 2025 em 50 dias, 317 de 375 mensagens em domingos.",
+   "verdict": "confirmed",
+   "note": "Bate com o release (03/04 e 05/04/2026) e com o CSV de PMV (375 mensagens, 50 dias, 317 em domingos, 42 domingos). Sem base normativa.",
+   "source_url": "https://rodovias.motiva.com.br/autoban/noticias/2026/marco/motiva-autoban-estima-movimento-de-2-milhoes-de-veiculos-na-oper/"
+  },
+  {
+   "fact": "SP-055 km 327→270,4 sentido leste: pesados (exceto ônibus) proibidos 21/12/2025–23/02/2026 domingos 12h→06h de segunda + datas extras; regra anual (075/2023, 174/2024) revogada pela PR/DER-127/2026.",
+   "verdict": "confirmed",
+   "note": "A PR/DER-228/2025 traz também 25/12 12h → 26/12 06h, 01/01 12h → 05/01 18h e 17/02 06h → 18/02 23h. A PR/DER-127/2026 (DOE 12/05/2026) revoga a 228. Ciclo confirmado: SUP/DER-075-18/10/2023 revogada pela SUP/DER-014/2024; SUP/DER-174/2024 revogada pela PR/DER-073/2025.",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-228-2025-202512181133192141537806"
+  },
+  {
+   "fact": "PR/DER-147/2025: carga >14 m e PBT >23 t proibida na SP-055 km 130–198,3, ambos sentidos.",
+   "verdict": "confirmed",
+   "note": "Texto conferido. O motivo é a obra na ponte sobre o Rio Parateus (km 191,4), então a regra tende a ser temporária. A portaria revoga a SUP/DER-015-11/04/2006.",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-147-2025-202509151132192141339273"
+  },
+  {
+   "fact": "PR/DER-164/2025: carga >14 m e produtos perigosos proibidos na SP-008 (Arão Sahm) km 25,28–31,5.",
+   "verdict": "confirmed",
+   "note": "Arts. 1º e 2º conferidos (km 25+280 a 31+500).",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-164-2025-202510071132192141389342"
+  },
+  {
+   "fact": "SUP/DER-001/2024 revogou SUP/DER-061/2015 e SUP/DER-133/2021 (proibições de carga na SP-099 Tamoios).",
+   "verdict": "confirmed",
+   "note": "Texto conferido. A justificativa é a nova configuração como pista dupla.",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-sup-der-001-29-01-2024-2024013111301911109201"
+  },
+  {
+   "fact": "OSM quase sem restrição temporal de caminhão: 53 ways no Sudeste; 6 hgv:conditional na RMSP+Baixada; SP-160 com 24 ways hgv=no.",
+   "verdict": "confirmed",
+   "note": "Conferido com osmium no PBF local. Os 6 hgv:conditional são 3 na SP-015 (horários de pico) e 3 da ZMRC. O detalhe da fonte '194 *:conditional' está errado: são 697.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html"
+  },
+  {
+   "fact": "Portaria DNIT 4.447/2026 restringiu excedentes na ponte do Estreito dos Mosquitos (BR-135/MA km 24,4–24,9) no feriado de 7/9; Res. DNIT 11/2022 manda AET observar as portarias anuais da PRF.",
+   "verdict": "confirmed",
+   "note": "Conferido no DOU. Os horários são próprios: 04/09 16–22h, 05/09 07–12h, 07/09 12–18h.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-n-4.447-de-2-de-setembro-de-2026-729850451"
+  },
+  {
+   "fact": "Rodoanel Norte trecho 1 liberado em 23/12/2025 e no OSM como motorway (opening_date 2025-12-22); trecho 2 previsto 2º semestre 2026; sem restrição a caminhões.",
+   "verdict": "unverifiable",
+   "note": "A fonte é uma notícia de 18/12/2025 que só anunciava a abertura no 'dia 23', não confirma que aconteceu. Confirmei o dado do OSM (115 ways com opening_date=2025-12-22). Não achei fonte primária da abertura nem do estado atual do trecho 2. A ausência de restrição a caminhões não tem como ser provada."
+  }
+ ],
+ "extra_findings": [
+  "O texto oficial da CONTRAN 882/2021 está em https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao8822021.pdf e no DOU (https://www.in.gov.br/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699). Isso fecha a lacuna: 57 t é o limiar de AET para CVC com mais de 2 unidades (art. 18) e 58,5 t é o PBTC de cavalo + semirreboque de 4 eixos. O art. 20 cria uma restrição temporal permanente que hoje não está modelada: CVC que exige AET (rodotrem, bitrem 9 eixos) em pista simples só circula do amanhecer ao pôr do sol, a 80 km/h no máximo.",
+  "Risco de interpretação na PRF 121/2026, §1º: 'A restrição abrange o trânsito de CVC, CTV e CTVP, ainda que autorizadas... por AET ou AE'. Na leitura literal, qualquer CVC entra, até o bitrem de 7 eixos com 57 t e até 19,80 m. A recomendação de mostrar 'Carreta e Bitrem dentro de 19,80 m e 58,5 t não afetados' não está confirmada. O DER-MG (Portaria 4.162/2025) cita bitrens expressamente. Convém tratar o bitrem como 'possivelmente afetado' até consultar a PRF.",
+  "A Portaria DIOP/PRF 26/2026, versão intermediária, está em https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-26-de-6-de-marco-de-2026-691165658 (DOU 09/03/2026). Ela não tinha as janelas de Eleições, que só entraram na 121.",
+  "A página gov.br da PRF 2026 (modificada em 11/09/2026) ainda cita a Portaria 26/2026 no texto, com o anexo já da 121. O monitor não deve usar o portal como fonte de verdade.",
+  "O DER-SP renova a regra de verão da SP-055 todo ano, e a cadeia está confirmada com URLs: SUP/DER-075-18/10/2023, revogada pela SUP/DER-014/2024 (https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-sup-der-014-2024-20240415113119214242869); SUP/DER-174/2024 (https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-sup-der-174-2024-20241219113219214790249), revogada pela PR/DER-073/2025 (https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/pr-der-073-25-202506061132192141129868); PR/DER-228/2025, revogada pela PR/DER-127/2026 (https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-127-2026-202605111133192141833643). Uma busca ampla no DOE-SP de 2023 a 2026 não achou portarias de circulação do DER além das já listadas.",
+  "Pelo SNV, a BR-459 km 0–32 (SP) é PAV, isto é, pista simples, e já entra na regra geral. O §5º da 121 a chama de pista dupla. Usar a geometria do SNV e não a frase da portaria.",
+  "Status ao vivo da Ecovias em 09/10/2026: além da 'restrição de pesados' na subida da Imigrantes, havia 'operação comboio' na Anchieta km 31–40 sentido litoral. Isso mostra que a operação é dinâmica e só aparece no site, que tem WAF (403 para curl). O snapshot está em scratchpad/research/rodovias_restricoes_verificacao/ecovias_condicoes_verif_2026-10-09.txt.",
+  "No OSM local, um way 'Rodovia dos Imigrantes (pista ascendente)' tem hgv=no. Isso deixa a proibição da subida estática no Valhalla, quando na prática é uma restrição operacional quase diária (PMV). Se a camada temporal for modelar a subida, revisar esse way. Não editar o OSM sem base física ou normativa.",
+  "A Res. DNIT nº 1/2026 (https://www.in.gov.br/web/dou/-/resolucao-n-1-de-19-de-marco-de-2026-694964009) aparece na busca do DOU. Não li o conteúdo nesta verificação.",
+  "As notas completas da verificação estão em /private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/rodovias_restricoes_verificacao/NOTES.md. Os scripts ficam na mesma pasta: snv_rmsp.py (km na RMSP com polígono IBGE) e snv_bbox.py."
+ ]
+}

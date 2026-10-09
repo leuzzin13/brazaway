@@ -1,0 +1,457 @@
+{
+ "category": "osm_qualidade_valhalla",
+ "summary": "Retomei a tentativa anterior a partir do código do Valhalla que ela já tinha baixado. Esse código é do commit exato que roda no container (3.9.1-c803bdc2f). Terminei o mapeamento das tags e validei o comportamento no Valhalla local.\n\nO Valhalla lê, nas vias: hgv (com :forward/:backward), maxheight (cai em maxheight:physical), maxwidth, maxlength, maxweight (com :forward/:backward), maxaxleload, maxaxles, hazmat (e hazmat:A–E/water), maxspeed:hgv e hgv=designated, que vira truck_route. Lê também restrições por horário em hgv/motor_vehicle/access:conditional, mas só se a requisição trouxer date_time e o valor tiver um único '@'. No caso de \"*:conditional\", só entende a exceção \"none @ destination\".\n\nO Valhalla NÃO lê:\n- maxheight em nós nem barrier=height_restrictor (issue #3487);\n- maxweight:conditional com horário ou estação (issue #4683);\n- qualificadores de peso ou eixo dentro das condicionais: a regra passa a valer para todo caminhão;\n- vírgula decimal no peso;\n- rampa: o truckcost não usa grade.\n\nTrata hgv=discouraged como proibido. Testes no Valhalla local:\n- Marginal Tietê Expressa: sem date_time a rota passa; às 08h de uma quarta, \"no path\"; às 12h, passa.\n- discouraged: a aresta fica com truck:false.\n- nó com maxheight: a restrição não é gravada.\n\nCobertura no Brasil (taginfo, 08/10/2026): 10.100 maxheight, dos quais 35% são default/none/below_default e são ignorados; 4.227 maxweight; 5.124 hgv; 350 hgv:conditional. Só 336 de 123.397 trechos de ponte rodoviária têm maxweight (0,27%). O salto de maxheight em 2026 veio de um único mapeador em Porto Alegre.\n\nNa RMSP (osmium, recorte pelos 39 municípios):\n- 1.108 vias com maxheight, 257 delas abaixo de 4,40 m;\n- 2.407 de 3.084 vias sob ponte/viaduto (78%) sem maxheight;\n- 6 de 3.389 trechos de ponte com maxweight;\n- 107 nós com maxheight, que o Valhalla ignora;\n- só 3 dos 103 trechos da Marginal Tietê Expressa têm hgv:conditional.\n\nSobre licenças: o GeoSampa é CC BY-SA 4.0, incompatível com importação no OSM. CC BY 4.0 exige waiver da OSMF. Houve proposta, publicada no fórum em 2023, de importar dados municipais de Santo André sob ODbL, sem confirmação de que tenha sido feita. A guideline de base coletiva da OSMF define quando os reportes ficam fora do share-alike.\n\nAs ferramentas de QA testadas funcionam: Osmose, ohsome, notas OSM e OSM Inspector. O CKAN da PMSP bloqueou o acesso (anti-bot) e a API do dados.gov.br pede token (401).",
+ "key_facts": [
+  {
+   "fact": "O Valhalla em produção é 3.9.1-c803bdc2f (valhalla-scripted:latest); o código analisado é desse commit. As tags de caminhão normalizadas no lua são maxheight (fallback maxheight:physical), maxwidth (fallback maxwidth:physical), maxlength, maxweight, maxaxleload e maxaxles, as versões :forward/:backward, hazmat e hazmat:A..E/water, e maxspeed:hgv.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "O Valhalla trata hgv=discouraged e hgv=unsuitable como proibido (tabela truck do graph.lua). No Brasil são 663 vias e na RMSP 13 (2,4 km) bloqueadas para caminhão. Confirmado via /locate local (truck:false).",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "Restrições por horário (hgv/motor_vehicle/access:conditional) só valem se a requisição trouxer date_time; sem ele são ignoradas (dynamiccost.h: current_time==0 → continue). Teste local na Marginal Tietê Expressa: sem date_time a rota passa, às 08:00 de quarta dá 442 'No path', às 12:00 passa.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/valhalla/sif/dynamiccost.h"
+  },
+  {
+   "fact": "Condicionais com mais de um '@' (ex.: 'yes @ (weight < 4); yes @ (...)') são descartadas inteiras, e qualificadores como weight>4 ou axles>3 são pulados, de modo que a regra passa a valer para todo caminhão.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/src/mjolnir/pbfgraphparser.cc"
+  },
+  {
+   "fact": "maxheight em nós e barrier=height_restrictor não são lidos pelo Valhalla (issue aberta #3487). Na RMSP há 107 nós com maxheight ignorados, e a quest do StreetComplete grava altura justamente nesses nós.",
+   "source_url": "https://github.com/valhalla/valhalla/issues/3487"
+  },
+  {
+   "fact": "maxweight:conditional com horário ou estação não é suportado (issue aberta #4683). Em Santa Maria/RS, 211 vias com maxweight=7.5 têm liberação noturna, mas o Valhalla aplica 7,5 t 24 h. Na BR-319/AM, 92 vias têm '17 @ (Dec-May)' ignorado.",
+   "source_url": "https://github.com/valhalla/valhalla/issues/4683"
+  },
+  {
+   "fact": "normalize_weight não trata vírgula: '3,5' vira 3 t e '4,30' vira 4 t. Valores em kg sem unidade (4500, 7000, 4536) viram milhares de toneladas e não restringem. normalize_measurement trata vírgula e unidades m/cm/ft/in.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "O costing truck não usa grade/elevação (truckcost.cc). Os padrões são dos EUA: 4,11 m, 2,6 m, 21,64 m, 21,77 t, eixo 9,07 t, 5 eixos. A restrição bloqueia só se o veículo for maior que o limite; igual passa.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/src/sif/truckcost.cc"
+  },
+  {
+   "fact": "Brasil (08/10/2026): 10.100 objetos com maxheight, dos quais 3.587 não numéricos (default 3.057, below_default 307, none 178), ignorados pelo Valhalla. Também 4.227 maxweight, 5.124 hgv, 350 hgv:conditional, 318 maxweight:conditional, 74 hazmat e 0 traffic_sign BR:R-14..R-18.",
+   "source_url": "https://taginfo.geofabrik.de/south-america:brazil/api/4/key/values?key=maxheight"
+  },
+  {
+   "fact": "No Brasil há 123.397 trechos de ponte rodoviária, dos quais só 336 (0,27%) têm maxweight. Dos 3.862 túneis rodoviários, 359 (9,3%) têm maxheight (Overpass, área 3600059470).",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "maxheight saltou de 5.965 para 10.108 em 2026 por ação de um único mapeador: 2.600 vias com maxheight=default na Grande Porto Alegre, editadas via JOSM com source=Survey. A cobertura depende de poucas pessoas e está concentrada no Sul (Sul 5.213 ways vs Sudeste 3.268).",
+   "source_url": "https://api.openstreetmap.org/api/0.6/changeset/177544973.json"
+  },
+  {
+   "fact": "RMSP: 1.108 vias com maxheight, 257 delas abaixo de 4,40 m. Das 3.084 vias que passam sob ponte/viaduto, 2.407 (78%) estão sem maxheight. Só 6 de 3.389 trechos de ponte têm maxweight, e nenhuma via tem source:maxheight (osmium no PBF Geofabrik de 2026-10-08).",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf"
+  },
+  {
+   "fact": "Só 3 dos 103 trechos da Marginal Tietê (Expressa) no OSM têm hgv:conditional. A marcação parcial gera rotas incoerentes, e a restrição precisa vir da nossa camada própria.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf"
+  },
+  {
+   "fact": "Os dados do GeoSampa estão sob CC BY-SA 4.0: uso comercial permitido, com share-alike. Pela OSMF, CC BY-SA é incompatível com o OSM, e CC BY 4.0 exige waiver explícito.",
+   "source_url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa"
+  },
+  {
+   "fact": "Licenças compatíveis com o OSM: CC0, domínio público verificado e OGL 2/3. CC BY 4.0 só com waiver. Dados sem licença determinável não servem (página da OSMF atualizada em 20/11/2025).",
+   "source_url": "https://osmfoundation.org/wiki/Licence/Licence_Compatibility"
+  },
+  {
+   "fact": "Guideline de base coletiva (endossada pela OSMF em 17/06/2016): dados próprios ficam fora do share-alike se, por propriedade e região, se usa só OSM ou nenhum OSM. Misturar maxheight do OSM com maxheight reportado no mesmo atributo tende a formar base derivada.",
+   "source_url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Collective_Database_Guideline_Guideline"
+  },
+  {
+   "fact": "Para importar no OSM é preciso: discussão com a comunidade local e no fórum (tags import/import-proposal, 14 dias), página no wiki, conta dedicada _import e licença com permissão explícita.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/Import/Guidelines"
+  },
+  {
+   "fact": "A comunidade BR mantém uma lista de autorizações (GEOMINAS, IBGE, IPECE, IJSN, SEMAD-MG; o MMA negou). Não há autorização de GeoSampa, DER, DNIT, ANTT ou CET.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/WikiProject_Brazil/Importa%C3%A7%C3%B5es"
+  },
+  {
+   "fact": "Houve uma proposta, de 2023, de importar dados municipais de Santo André/SP sob ODbL (compatível), um precedente na RMSP. O fórum não indica se a importação foi aprovada ou feita.",
+   "source_url": "https://community.openstreetmap.org/t/importacao-e-melhoria-de-dados-de-santo-andre-sp/106397"
+  },
+  {
+   "fact": "Osmose item 7130 (túnel ou building_passage sem maxheight): 95 alertas na RMSP e 775 no Brasil. Item 3350 (condicional mal formada): 236 na RMSP e 1.017 no Brasil. Dados de 2026-10-08.",
+   "source_url": "https://osmose.openstreetmap.fr/api/0.3/issues?item=7130&bbox=-47.21,-24.07,-45.69,-23.18"
+  },
+  {
+   "fact": "ohsome RMSP: vias com maxheight passaram de 332 (2018) para 1.067 (2026), hgv de 20 para 414 e maxweight de 6 para 22. Entre 36 e 112 usuários distintos por ano editam essas tags.",
+   "source_url": "https://api.ohsome.org/v1/elements/count"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Código-fonte Valhalla 3.9.1 (graph.lua, pbfgraphparser.cc, truckcost.cc, dynamiccost.h, timeparsing.cc, adminconstants.h)",
+   "publisher": "Projeto Valhalla (GitHub)",
+   "url": "https://github.com/valhalla/valhalla/tree/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df",
+   "access": "rest_api",
+   "format": "Lua/C++ (raw.githubusercontent)",
+   "license": "MIT (código); uso comercial permitido",
+   "tested": true,
+   "test_result": "raw.githubusercontent HTTP 200 para todos os arquivos do commit c803bdc2f (o mesmo do container: valhalla_service --version = 3.9.1-c803bdc2f). Arquivos: lua_graph.lua 85 KB, pbfgraphparser 236 KB, truckcost 42 KB etc.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Referência para o pré-processador de PBF e para os testes: fixar a versão da imagem (hoje 'latest') e reler graph.lua a cada upgrade; criar testes vitest para hgv:conditional com e sem date_time, discouraged e nós com maxheight.",
+   "geo_coverage": "n/a",
+   "relevant_fields": "normalize_measurement, normalize_weight, tabela truck, access_restriction_tags, conditional_access_restriction, tag_handlers maxheight/maxweight/hazmat, ModeSpecificAllowed, EvaluateRestrictions",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/valhalla_src",
+   "updated": "release 3.9.1 de 2026-10-06",
+   "caveats": "Comportamento mudará em upgrades; issues #3487 e #4683 continuam abertas."
+  },
+  {
+   "name": "Valhalla local (/route, /locate verbose)",
+   "publisher": "truck-router (container local)",
+   "url": "http://localhost:8002",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Dados derivados do OSM (ODbL)",
+   "tested": true,
+   "test_result": "/locate devolve access, access_restriction e destination_only_hgv por aresta. Marginal Tietê: sem date_time 1,60 km, 08:00 de quarta → 442, 12:00 → 1,60 km. hgv=discouraged → truck:false. Nó maxheight 2.1 → access_restriction:false. Ponte com maxweight 60 → access_restriction:true.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Testes automatizados de regressão das regras OSM e endpoint de diagnóstico (/locate) para explicar ao motorista por que uma via foi evitada.",
+   "geo_coverage": "Sudeste (tiles do PBF 2026-10-08)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/valhalla_tests",
+   "relevant_fields": "edge.access.truck, edge.access_restriction, destination_only_hgv, truck_route"
+  },
+  {
+   "name": "Extratos OSM Geofabrik (Sudeste e Brasil)",
+   "publisher": "Geofabrik GmbH / contribuidores OSM",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "access": "bulk_download",
+   "format": "OSM PBF",
+   "license": "ODbL 1.0; uso comercial permitido com atribuição e share-alike de bases derivadas publicadas",
+   "tested": true,
+   "test_result": "HEAD: Brasil 2.092.268.525 bytes, Sudeste 860.862.119 bytes (2026-10-08), state.txt seq 2485. PBF local lido com osmium (recorte RMSP: 18,5 mi nós, 2,73 mi ways; export filtrado de 417 mil feições).",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Pipeline mensal: baixar o extrato → pré-processar com osmium/pyosmium (nós maxheight → vias, discouraged, vírgulas, condicionais) → valhalla_build_tiles. Gerar a tabela osm_quality_gaps no PostGIS.",
+   "geo_coverage": "Brasil (2,09 GB) / Sudeste (861 MB)",
+   "record_count": "RMSP: 302.426 vias dirigíveis, 1.108 com maxheight, 26 com maxweight, 403 com hgv",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/osmium",
+   "updated": "diário (2026-10-08T20:21Z)",
+   "caveats": "O extrato público não traz user/changeset; para isso é preciso Overpass com out meta. O bind mount de /private/tmp não funciona no Colima (usar docker cp)."
+  },
+  {
+   "name": "taginfo Geofabrik Brasil (e sub-regiões)",
+   "publisher": "Geofabrik",
+   "url": "https://taginfo.geofabrik.de/south-america:brazil/api/4/key/stats?key=maxheight",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Estatísticas derivadas do OSM (ODbL, atribuir © OpenStreetMap contributors)",
+   "tested": true,
+   "test_result": "HTTP 200 em key/stats, key/values, key/chronology, tag/chronology e nas sub-regiões sudeste/sul/nordeste/norte/centro-oeste (data_until 2026-10-08T20:19Z). 48 chaves consultadas.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Job mensal que grava contagens por chave e região numa tabela osm_coverage_metrics, para painel interno de cobertura e alerta quando aparecem valores novos que o Valhalla não entende.",
+   "geo_coverage": "Brasil + 5 regiões",
+   "record_count": "maxheight 10.100; maxweight 4.227; hgv 5.124; hgv:conditional 350; maxweight:conditional 318; hazmat 74; maxspeed:hgv 13.458",
+   "relevant_fields": "count, values, chronology",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/taginfo",
+   "updated": "diário"
+  },
+  {
+   "name": "Overpass API",
+   "publisher": "overpass-api.de (FOSSGIS)",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "overpass",
+   "format": "JSON",
+   "license": "ODbL (dados OSM)",
+   "tested": true,
+   "test_result": "Condicionais/discouraged no BR: 200, 587 KB, 1.326 vias, 19 s. maxheight=default novo: 1ª tentativa 504, 2ª 200 (2.894 vias com meta). Contagens de pontes/túneis no BR: 200 em 188 s.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Consultas pontuais de diagnóstico (autor/changeset, localização de padrões). Não usar no caminho crítico; o pipeline usa o PBF.",
+   "geo_coverage": "Global (área Brasil 3600059470)",
+   "record_count": "123.397 pontes rodoviárias BR (336 com maxweight); 3.862 túneis (359 com maxheight)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/overpass",
+   "caveats": "Instância pública com timeouts (504); exige User-Agent e Accept."
+  },
+  {
+   "name": "ohsome API (histórico OSM)",
+   "publisher": "HeiGIT / Universidade de Heidelberg",
+   "url": "https://api.ohsome.org/v1/elements/count",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Resultados derivados do OSM (© OpenStreetMap contributors, ODbL)",
+   "tested": true,
+   "test_result": "metadata 200 (dados até 2026-07-27); elements/count com bpolys da RMSP: 200 em cerca de 2 s; users/count 200.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Série trimestral de cobertura (maxheight, maxweight, hgv, pontes com maxweight) e engajamento de mapeadores na RMSP e em cidades novas antes de lançar.",
+   "geo_coverage": "Global; testado na RMSP",
+   "record_count": "RMSP: maxheight 332→1.067 (2018→2026); hgv 20→414; maxweight 6→22",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/ohsome",
+   "updated": "defasagem de cerca de 2,5 meses (2026-07-27)"
+  },
+  {
+   "name": "Osmose QA",
+   "publisher": "Osmose / OpenStreetMap France",
+   "url": "https://osmose.openstreetmap.fr/api/0.3/issues?item=7130&bbox=-47.21,-24.07,-45.69,-23.18",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Alertas derivados do OSM (ODbL); código GPL",
+   "tested": true,
+   "test_result": "items 200 (1,2 MB). Issues RMSP: 7130 = 95, 3350 = 236, 7012 = 224, 9006 ≥500, 2130 ≥500, 8320 = 0. Brasil: 7130 = 775, 3350 = 1.017. Detalhe da issue traz tags do way.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Importar alertas 7130/3350/7012 para a tabela osm_quality_gaps (ponto e way_id), marcando zonas de incerteza e a fila de verificação para os reportes.",
+   "geo_coverage": "Brasil (países brazil_*)",
+   "record_count": "RMSP 95 (7130); BR 775 (7130)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/qa_tools",
+   "updated": "2026-10-08"
+  },
+  {
+   "name": "OSM Inspector (views highways e routing)",
+   "publisher": "Geofabrik",
+   "url": "https://tools.geofabrik.de/osmi/view/highways/wxs?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities",
+   "access": "wms",
+   "format": "WMS/WFS (MapServer)",
+   "license": "Derivado do OSM (ODbL)",
+   "tested": true,
+   "test_result": "GetCapabilities 200 (camadas maxheight, maxweight, maxlength; routing: islands_car, unconnected_open_ends). WFS GetFeature 200, mas a camada maxheight veio vazia no bbox central de SP; islands_car retornou feições.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Uso manual/visual para QA, e eventualmente ilhas de roteamento car como alerta de conectividade.",
+   "caveats": "Semântica exata da camada maxheight não confirmada (parece listar só valores problemáticos)."
+  },
+  {
+   "name": "OSM API 0.6 (changesets e notas)",
+   "publisher": "OpenStreetMap Foundation",
+   "url": "https://api.openstreetmap.org/api/0.6/notes/search.json?q=caminh%C3%A3o&bbox=-47.21,-24.07,-45.69,-23.18&closed=-1",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "ODbL (dados); notas públicas",
+   "tested": true,
+   "test_result": "changeset 177544973 200 (ftrebien, JOSM, source=Survey). Notas RMSP: 7 'caminhão' (6 fechadas), 7 'altura'. Uma nota relata maxheight copiado de imagens do Google Maps.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Ciclo de retorno: reporte de altura/peso confirmado por votos abre nota OSM (sem dado pessoal, linkando foto própria se houver) para a comunidade corrigir o dado. Não escrever direto no OSM em massa.",
+   "geo_coverage": "Global",
+   "caveats": "Criar nota é ação de escrita pública; exige conta e termos do OSM. Não testado (só leitura)."
+  },
+  {
+   "name": "Issues do Valhalla #3487 (maxheight em nós) e #4683 (maxweight:conditional)",
+   "publisher": "Projeto Valhalla (GitHub)",
+   "url": "https://github.com/valhalla/valhalla/issues/3487",
+   "access": "rest_api",
+   "format": "JSON (GitHub search API)",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "GitHub search API 200: #3487 aberta 'maxheight tag on OSM nodes is not respected'; #4683 aberta 'maxweight:hgv:conditional or maxweight:conditional is not supported?'.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Acompanhar; enquanto abertas, cobrir no pré-processamento do PBF. Contribuir PR upstream é opção de médio prazo.",
+   "updated": "consultado em 2026-10-09"
+  },
+  {
+   "name": "WikiProject Brazil/Importações",
+   "publisher": "Comunidade OSM Brasil (wiki OSM)",
+   "url": "https://wiki.openstreetmap.org/wiki/WikiProject_Brazil/Importa%C3%A7%C3%B5es",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Wiki CC BY-SA 2.0",
+   "tested": true,
+   "test_result": "WebFetch OK. Processo (contato oficial, registro no wiki, Import/Catalogue) e autorizações: GEOMINAS, IBGE, IPECE, IJSN, SEMAD-MG; MMA negou. Nada sobre GeoSampa, DER, DNIT, ANTT ou CET.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Roteiro caso queiramos devolver ao OSM dados de altura/peso de órgãos (ex.: pedir autorização a DER-SP/PMSP).",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "OSMF Licence Compatibility",
+   "publisher": "OpenStreetMap Foundation (LWG)",
+   "url": "https://osmfoundation.org/wiki/Licence/Licence_Compatibility",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "WebFetch OK (atualizada em 20/11/2025): CC0, domínio público e OGL 2/3 compatíveis; CC BY 4.0 só com waiver; CC BY-SA, NC e ND incompatíveis.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Checklist jurídico por fonte (coluna licenca + pode_ir_para_osm na tabela de fontes)."
+  },
+  {
+   "name": "OSMF Collective Database Guideline",
+   "publisher": "OpenStreetMap Foundation",
+   "url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Collective_Database_Guideline_Guideline",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "WebFetch OK: endossada em 17/06/2016. Base coletiva quando, por propriedade e região, se usa 'tudo OSM ou nada OSM'; ligação por ID permitida; não exige separação física.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Desenho da base de reportes: manter os reportes como propriedade própria (ex.: clearance_reported) ligada por way_id/geom, sem sobrescrever maxheight do OSM na mesma tabela, e decidir com advogado se a combinação na rota é Produced Work.",
+   "caveats": "Interpretação jurídica a validar."
+  },
+  {
+   "name": "OSM Import Guidelines",
+   "publisher": "OpenStreetMap (wiki)",
+   "url": "https://wiki.openstreetmap.org/wiki/Import/Guidelines",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Wiki CC BY-SA 2.0",
+   "tested": true,
+   "test_result": "WebFetch OK: comunidade local, fórum com tags import/import-proposal (14 dias), wiki, conta _import, licença com permissão explícita, Automated Edits code of conduct.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Só se formos importar (ex.: alturas de OAE com permissão). Prazo realista de semanas.",
+   "geo_coverage": "Global"
+  },
+  {
+   "name": "Fórum OSM — categoria Brasil",
+   "publisher": "OpenStreetMap Community Forum",
+   "url": "https://community.openstreetmap.org/c/communities/br/55",
+   "access": "rest_api",
+   "format": "JSON (Discourse)",
+   "license": "Conteúdo dos autores",
+   "tested": true,
+   "test_result": "categories.json 200: id 55, 588 tópicos. Busca: 'maxheight' 0, 'altura viaduto' 0, 'importação' 50 (GDF 2026-08, Brasília 2025-12, CNEFE 2024, Santo André 2023).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Canal para apresentar o app, pedir ajuda em campanhas de maxheight na RMSP e discutir qualquer devolução de dados.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "Proposta de importação Santo André/SP",
+   "publisher": "IgorEliezer (fórum OSM)",
+   "url": "https://community.openstreetmap.org/t/importacao-e-melhoria-de-dados-de-santo-andre-sp/106397",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Dados da Prefeitura de Santo André sob ODbL (segundo a proposta)",
+   "tested": true,
+   "test_result": "WebFetch OK: proposta de 26/11/2023 (arborização, edificações, eixos, ciclovias); dados ODbL via SIGA e LAI. Status de aprovação não indicado.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Precedente na RMSP: verificar se o SIGA de Santo André tem camadas de OAE/restrição (ODbL é compatível com nossa base e com o OSM).",
+   "geo_coverage": "Santo André/SP"
+  },
+  {
+   "name": "Licença do GeoSampa",
+   "publisher": "Prefeitura de São Paulo (SMUL)",
+   "url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "CC BY-SA 4.0: uso comercial permitido, atribuição e share-alike",
+   "tested": true,
+   "test_result": "WebFetch OK (página de 03/04/2025): CC-BY-SA-4.0, sem menção a OSM. Já anotado também no tema restricoes_sp_capital.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Manter camadas do GeoSampa (ZMRC, Mini-Anel, OAE) em tabelas próprias com atribuição; não enviar ao OSM sem autorização escrita da PMSP.",
+   "geo_coverage": "Município de São Paulo"
+  },
+  {
+   "name": "Parecer AddressForAll sobre dados municipais (Licenciamento_eixos_viarios.pdf)",
+   "publisher": "Instituto AddressForAll (hospedado no wiki OSM)",
+   "url": "https://wiki.osm.org/w/images/3/38/Licenciamento_eixos_viarios.pdf",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "n/a (parecer)",
+   "tested": true,
+   "test_result": "HTTP 200, 336 KB; texto extraído: defende domínio público de dados municipais com base na Lei 9.610/98 art. 8 e na LAI.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só referência argumentativa; não substitui autorização nem a posição da OSMF.",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/licencas/Licenciamento_eixos_viarios.txt"
+  },
+  {
+   "name": "UMBRAOSM",
+   "publisher": "União dos Mapeadores Brasileiros do OpenStreetMap",
+   "url": "https://umbraosm.com.br/",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "HTTP 200, título 'UMBRAOSM Uniao dos mapeadores brasileiros do openstreetmap'.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Possível parceira para mapatonas de altura de viadutos e peso de pontes."
+  },
+  {
+   "name": "StreetComplete quest AddMaxHeight",
+   "publisher": "StreetComplete (westnordost)",
+   "url": "https://wiki.openstreetmap.org/wiki/StreetComplete/Quests",
+   "access": "other",
+   "format": "Kotlin (lido do download do tema altura_sinalizacao)",
+   "license": "GPL-3.0 (app)",
+   "tested": true,
+   "test_result": "Arquivo local lido: a quest pergunta altura em barrier=height_restrictor (nó), em túneis e em vias sob pontes; a resposta 'sem placa' grava maxheight:signed=no.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Explica a origem de muitos nós com maxheight (ignorados pelo Valhalla). Reforça o pré-processamento nó→via. Divulgar a quest a motoristas e parceiros.",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/altura_sinalizacao/streetcomplete/AddMaxHeight.kt"
+  },
+  {
+   "name": "Wiki Pt:Key:hgv",
+   "publisher": "OpenStreetMap (wiki)",
+   "url": "https://wiki.openstreetmap.org/wiki/Pt:Key:hgv",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Wiki CC BY-SA 2.0",
+   "tested": true,
+   "test_result": "WebFetch OK: define veículo pesado no BR como mais de 3.500 kg citando 'Resolução CONTRAN nº 798'. Norma não confirmada; a busca web da sessão se esgotou.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só referência para mapeamento; a definição legal deve vir do tema legislacao_limites.",
+   "caveats": "Citação da norma não verificada."
+  },
+  {
+   "name": "CKAN de dados abertos da Prefeitura de SP",
+   "publisher": "Prefeitura de São Paulo",
+   "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search",
+   "access": "rest_api",
+   "format": "JSON (CKAN)",
+   "license": "desconhecida (não foi possível listar)",
+   "tested": true,
+   "test_result": "FALHOU: http retornou página anti-bot (JS 'bobcmn') e https retornou 502. Não deu para listar licenças por dataset.",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Tentar pelo navegador ou pedir via LAI; até lá, usar a licença do GeoSampa (CC BY-SA 4.0)."
+  },
+  {
+   "name": "API dados.gov.br",
+   "publisher": "Governo Federal",
+   "url": "https://dados.gov.br/dados/api/publico/conjuntos-dados?isPrivado=false&pagina=1",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "varia por conjunto (CC-BY comum)",
+   "tested": true,
+   "test_result": "FALHOU: HTTP 401 sem token (o mesmo comportamento já registrado no tema descanso_postos_combustivel).",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Gerar token se precisarmos auditar licenças de ANTT/DNIT; para importar no OSM, CC BY exige waiver."
+  }
+ ],
+ "gaps": [
+  "Passagens sob pontes ou viadutos sem maxheight: contei só na RMSP e por aproximação geométrica (cruzamento com ponte rodoviária ou ferroviária, layer padrão). O método pode superestimar, pois inclui viadutos altos, e não mede o vão livre real.",
+  "Não testei em tiles reais as condicionais com dois '@' nem com qualificador de peso; a conclusão vem do código (GetTagTokens e timeparsing). Não há caso desse tipo na RMSP para testar sem recompilar tiles.",
+  "A citação 'Resolução CONTRAN nº 798' do wiki Pt:Key:hgv não foi verificada, porque o limite de buscas web da sessão acabou.",
+  "Não consegui listar as licenças do CKAN da Prefeitura de SP (anti-bot e 502) nem do dados.gov.br (401).",
+  "Semântica da camada maxheight do OSM Inspector não confirmada: a WFS veio vazia no centro de SP.",
+  "Não comparei a exatidão dos valores de maxheight/maxweight do OSM com dados oficiais (DER-SP OAE, ANTT, GeoSampa obra de arte). Esse cruzamento depende dos temas pontes_* e altura_sinalizacao.",
+  "O ohsome tem dados só até 2026-07-27, e o extrato público da Geofabrik não traz autor/changeset (foi preciso usar o Overpass).",
+  "Não medi cobertura por cidade fora da RMSP além das concentrações de condicionais e de discouraged."
+ ],
+ "recommendations": [
+  "Mandar sempre date_time no /route (padrão: agora em America/Sao_Paulo). Hoje api/src/services/valhalla.ts só envia se departureLocal vier, e sem date_time todo hgv:conditional e motor_vehicle:conditional é ignorado.",
+  "Criar um pré-processador do PBF antes do valhalla_build_tiles (osmium/pyosmium num container), com cinco passos. (1) Copiar maxheight de nós e barrier=height_restrictor para o trecho da via. (2) Tratar hgv=discouraged/unsuitable como penalidade (linear_cost_factors) em vez de proibição. (3) Corrigir maxweight com vírgula e kg sem unidade. (4) Converter maxweight:conditional com horário e condicionais com vários '@' para formas que o Valhalla entende, ou movê-las para nossa camada de restrições. (5) Gerar relatório das alterações. O PBF derivado é base derivada ODbL: manter privado.",
+  "Não confiar no OSM para peso de pontes. Na RMSP, 6 de 3.389 trechos têm maxweight; no Brasil, 0,27% das pontes. O limite de peso precisa vir de DER/ANTT/PMSP (outros temas) e dos reportes.",
+  "Criar a tabela osm_quality_gaps no PostGIS com as 2.104 passagens inferiores sem maxheight nas vias principais, os túneis do Osmose 7130 e os valores suspeitos (maxweight abaixo de 1 t, maxheight acima de 7 m). Usar como zona de incerteza na rota (aviso para veículo acima de 4,0 m) e como fila prioritária para pedir confirmação aos motoristas.",
+  "Não depender do hgv:conditional do OSM para regras de SP: só 3 dos 103 trechos da Marginal Tietê Expressa estão marcados. Manter ZMRC, Marginais e Mini-Anel na nossa camada (GeoSampa, portarias), por zona ou por via.",
+  "Fixar a versão da imagem do Valhalla (hoje :latest) e ter testes vitest para: hgv:conditional com e sem date_time, discouraged, nó com maxheight, ponte com maxweight. Reavaliar ao subir de versão e acompanhar as issues #3487 e #4683.",
+  "Passar dimensões brasileiras explícitas nos presets (o padrão do truck é dos EUA: 4,11 m, 21,64 m, 21,77 t, 5 eixos). Lembrar que o bloqueio é só para valor maior que o limite: um veículo de 4,40 m passa em maxheight=4.4.",
+  "Desenho de licença: manter os reportes como propriedade própria ligada por way_id/geometria, sem sobrescrever maxheight do OSM na mesma propriedade e região (guideline de base coletiva da OSMF). Validar com advogado antes de publicar camadas combinadas. GeoSampa (CC BY-SA) fica em tabelas separadas e nunca vai para o OSM sem autorização.",
+  "Retorno à comunidade: reporte confirmado vira nota OSM ou desafio MapRoulette; nunca escrever em massa. Apresentar o projeto no fórum Brasil (categoria 55) e à UMBRAOSM para campanhas de maxheight na RMSP, incentivando a quest de altura do StreetComplete. Nunca usar Google/Street View como fonte.",
+  "Monitorar mensalmente a cobertura via taginfo (por região), ohsome (RMSP e cidades novas) e Osmose (bbox), e registrar em osm_coverage_metrics para decidir onde expandir o app."
+ ],
+ "notes_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/osm_qualidade_valhalla/NOTES.md"
+}

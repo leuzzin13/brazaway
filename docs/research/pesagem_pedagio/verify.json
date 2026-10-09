@@ -1,0 +1,258 @@
+{
+ "category": "pesagem_pedagio",
+ "sources": [
+  {
+   "name": "Praça de Pedágio (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/praca-de-pedagio",
+   "verdict": "corrected",
+   "note": "HTTP 200, CC-BY confirmada (package_show), CSV 33.935 bytes, latin1 ';', 277 linhas todas 'Ativo', 73 SP, 62 na bbox, 32 coordenadas com 2 casas. Correção: 93 linhas têm 'free flow' no nome (54 RIOSP, 11 Rota Verde, 8 EPR Paraná, 7 Nova 364, 5 Nova 381, 4 EPR Iguaçu 'FREEFLOW', 2 Motiva PR, 2 Way 262), logo 184 físicas, não 89/188. 51 linhas FF da Dutra na bbox (Guarulhos 32 + São Paulo 19). O KMZ do dataset é de 30/01/2024 (defasado frente ao CSV de 28/07/2026)."
+  },
+  {
+   "name": "Tarifas de pedágio por concessão (páginas ANTT)",
+   "url": "https://www.gov.br/antt/pt-br/assuntos/rodovias/concessionarias/lista-de-concessoes/ccr-rio-sp/tarifas-de-pedagio",
+   "verdict": "corrected",
+   "corrected_license": "CC BY-ND 3.0 (rodapé gov.br: 'Todo o conteúdo deste site está publicado sob a licença Creative Commons Atribuição-SemDerivações 3.0 Não Adaptada'). Permite uso comercial com atribuição, mas a cláusula SemDerivações pede cautela; avaliar se a tabela tarifária (ato oficial) se enquadra.",
+   "note": "Re-baixei RIOSP, Régis e Motiva Minas SP (HTTP 200). Tabelas e datas batem (29/08/2025, 05/01/2026, 12/05/2026). Contagem 25 com tabela / 8 x 404 / 8 sem tabela confere com o JSON raspado; reconfirmei 404 em ecoriominas, rota-verde-goias e via-cristais (a pasta 'revisoes-e-reajustes' da Rota Verde está vazia). Só a licença estava errada: não é 'sem licença explícita'."
+  },
+  {
+   "name": "PPV - Posto de Pesagem Veicular (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/ppv",
+   "verdict": "confirmed",
+   "note": "HTTP 200, CC-BY, CSV 5.480 bytes, 45 postos todos Ativo: 37 Fixo, 7 HS-WIM, 1 Móvel. SP: Itapecerica da Serra (BR-116 km 296,3), Miracatu (km 387,7), Guararema (km 179,4), Queluz (km 1,0). Na bbox: Itapecerica e Guararema. Tem lat/lon, sentido e tipo_ppv."
+  },
+  {
+   "name": "Operação dos Postos de Pesagem Veicular (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/posto-pesagem-veicular",
+   "verdict": "corrected",
+   "note": "Out/2025 (arquivo OPERACAO_PPV-2025_12) confere: média de 73%; Guararema 98%, Queluz 96%, Itapecerica 55%, Miracatu 37%. Correção: OPERACAO_PPV-2026_1 (jan/2026, 1.054 linhas) e 2026_2 (fev/2026, 952 linhas) TÊM dados. Só 2026_3 e 2026_4 vêm vazios (71 bytes). Os arquivos são mensais, não trimestrais. Jan/26: média 66%, Miracatu 68%, Itapecerica 67%. Fev/26: média 66%, Miracatu 66%, Itapecerica 59%, Queluz 73%. O último mês com dados é fev/2026, não out/2025."
+  },
+  {
+   "name": "Volume de Tráfego nas Praças de Pedágio (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/volume-trafego-praca-pedagio",
+   "verdict": "confirmed",
+   "note": "CC-BY. O cabeçalho do mensal 2026 confere. O CSV mensal 2026 tem 10,8 MB e o diário 2026 tem 250 MB (tamanhos do CKAN). Na amostra, categoria_eixo vai até 10, 11 e 12 eixos, o que é útil para a regra de mais de 8 eixos."
+  },
+  {
+   "name": "Free flow federal (página e FAQ ANTT)",
+   "url": "https://www.gov.br/antt/pt-br/free-flow",
+   "verdict": "confirmed",
+   "corrected_license": "CC BY-ND 3.0 (rodapé gov.br)",
+   "note": "HTTP 200 via curl. 9 trechos com 52 pórticos (3+10+5+2+7+4+8+2+11). Dutra/SP: 10 pórticos, base na Deliberação ANTT nº 467/2025; o texto diz 'km 205 e 230' e a lista vai até o km 231,3. FAQ atualizado em 30/04/2026: 30 dias para pagar sem TAG; a Deliberação 277/2026 suspende por 200 dias as multas lavradas pela ANTT, e o pedágio continua devido."
+  },
+  {
+   "name": "Malha Rodoviária ARTESP (KMZ por lote)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria",
+   "verdict": "corrected",
+   "note": "CKAN aberto, CC-BY confirmada, 23 KMZ re-baixados (todos HTTP 200). Correções: (1) somam cerca de 82 MB compactados, não 170 MB (170 MB inclui os KML extraídos); (2) contei 47 PGF, não 48. Com a mesma bbox do relatório conferem: 187 praças (49), PGF 16 na bbox, PPM 75 (6), 29 FreeFlow em l33 (pasta 'Equipamentos/FreeFlow'), 71 cargas excepcionais (19), 47 perigosos (16), 213 linhas TCP. Ressalvas: a bbox inclui Baixada Santista, Jundiaí, Atibaia e Itu, então não é 'Grande SP' estrita. O l29 falha no parse por atributo py:pytype sem namespace. Em l11, os PGF têm nome 'PPM ...'."
+  },
+  {
+   "name": "Tarifas de pedágio ARTESP (PDF vigente + histórico)",
+   "url": "https://www.artesp.sp.gov.br/artesp/setor-regulado/rodovia/pedagios",
+   "verdict": "corrected",
+   "corrected_url": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/c65c8bbb-34b7-45e5-8e68-23f626d5293a/items/15f70220-8ead-4e26-9334-1ab21443ec97/renditions/663c7fe6-a19b-4847-bdf9-b731b3a6339b?binary=true",
+   "corrected_license": "Não especificada no CKAN ('pedagio' = notspecified). O rodapé do portal cms.sp.gov.br diz 'Todos os direitos reservados... não podem ser reproduzidos, distribuídos ou modificados sem permissão expressa'. Pedir autorização ou parecer jurídico antes do uso comercial.",
+   "note": "O PDF 2025 confere (1,26 MB, 8 p., 01/07/2025, ModDate 02/12/2025, 136 linhas, PASSEIO = COMERCIAL POR EIXO em 100%, ViaPaulista CAT-1..9 com Manual/AVI). O histórico confere (23 p., colunas COBRANÇA e TARIFA uni/bidirecional, ModDate 10/03/2026, ainda com valores de 2025). Correção principal: existe a tabela 2026 em fonte primária. Ela está no PDF de 01/07/2026 (4 p., 136 linhas, Perus R$ 14,50) e no PDF da Entrevias de 06/07/2026, ambos linkados na notícia ARTESP de 29/06/2026. O link 'Valor Atual das Tarifas' da página ainda aponta para o PDF de 2025."
+  },
+  {
+   "name": "Site www.artesp.sp.gov.br (curl)",
+   "url": "https://www.artesp.sp.gov.br/artesp",
+   "verdict": "corrected",
+   "note": "Hoje o curl recebeu HTTP 200 com a página real ('<title>Pedagios', 92 KB) usando UA padrão, o UA truck-router-mvp/0.1 e Mozilla. Não reproduzi o bloqueio Imperva; o bloqueio pode ser intermitente. Pela página de notícias achei os PDFs de 2026."
+  },
+  {
+   "name": "Pontos para pesagem de veículos (DER-SP)",
+   "url": "https://www.der.sp.gov.br/der/rodovias/balanca/pontos_de_pesagem",
+   "verdict": "corrected",
+   "corrected_license": "Rodapé cms.sp.gov.br: 'Todos os direitos reservados... sem permissão expressa' (não é 'não declarada')",
+   "note": "HTTP 200. A tabela tem 136 linhas (34 FIXO, 102 MÓVEL), colunas Rodovia, Km+Metros, Sentido, Trecho, Administrador, Posto, sem coordenadas e sem data de atualização. Os números conferem; só a licença estava errada."
+  },
+  {
+   "name": "Peso oficial de veículos de carga por modelo (DER-SP)",
+   "url": "https://www.der.sp.gov.br/der/rodovias/balanca/peso_oficial_veiculos_carga",
+   "verdict": "corrected",
+   "corrected_url": "https://www.der.sp.gov.br/dx/api/dam/v1/collections/175fe81a-0b7c-4f28-acfe-795f7f1c8aa3/items/a654cbef-3364-4b1c-935d-c023480a1330/renditions/ad071d68-77f3-4301-b44d-577214f525bc?binary=true",
+   "corrected_license": "Rodapé cms.sp.gov.br: todos os direitos reservados",
+   "note": "O PDF tem HTTP 200, 7.566.934 bytes e 127 p., mas o título é 'TABELA OFICIAL DE PESO 2018 - ATUALIZADO 2-2018' (criado em 18/04/2019). Está defasado: não tem modelos lançados depois de 2018. O relatório não citou a data."
+  },
+  {
+   "name": "OSM toll_booth/toll_gantry com charge (Geofabrik sudeste)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "verdict": "confirmed",
+   "note": "Re-extraí do PBF local (timestamp 08/10/2026) com osmium 1.15: 592 toll_booth, 118 toll_gantry, 687 com charge BRL, 671 com BRL/hgv/axle, 509 com check_date 2026, 1 typo 'hgva', 15 gantries sem charge. Overpass na bbox: 83 booth e 42 gantry (125). Os pórticos da Dutra têm 'Mo-Fr .../Sa-Su ...'. Perus = 14.50 BRL/hgv/axle com check_date 2026-07-01, igual ao PDF ARTESP 2026. O HEAD do PBF dá 860.862.119 bytes. ODbL."
+  },
+  {
+   "name": "Valhalla: opções e atributos de pedágio",
+   "url": "https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/api/route/api-reference.md",
+   "verdict": "confirmed",
+   "note": "Documentação: HTTP 200, cita toll_booth_cost, toll_booth_penalty, use_tolls, exclude_tolls, has_toll e maneuver.toll. Licença MIT (arquivo COPYING). Teste local 3.9.1, Lapa→Jundiaí, 5 eixos: padrão 48,8 km/48 min com pedágio; use_tolls=0 dá 48,9 km/53 min ainda com pedágio; exclude_tolls e toll_booth_penalty=1800 dão 59,8 km/96 min sem pedágio. trace_attributes: 52 edges toll (20,6 km) e 1 node toll_booth. R$ 72,50 = 14,50 x 5 é coerente com uma praça (Perus ou Caieiras) na tarifa 2026."
+  },
+  {
+   "name": "Leis (planalto.gov.br)",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+   "verdict": "corrected",
+   "note": "Todas com HTTP 200. CTB 209 e 209-A (graves, Lei 14.157/2021) e 231 V (média, multa por 200 kg) conferem. Lei 10.209 art. 1º §1º: o pedágio de veículo de carga fica a cargo do embarcador. Correções: (a) a redação vigente do art. 17 da Lei 13.103 é da Lei 13.711/2018 (conversão da MP 833); (b) a Lei 7.408 art. 1º, na redação da Lei 14.229/2021, tem um §1º que o relatório omitiu: com PBT regulamentar de até 50 t, a fiscalização é só por PBT/PBTC, salvo casos do Contran."
+  },
+  {
+   "name": "TollGuru Toll API",
+   "url": "https://tollguru.com/toll-api",
+   "verdict": "untestable",
+   "note": "Redireciona para /toll-api-docs (HTTP 200). A página lista o Brasil entre os países cobertos e caminhões de até 9 eixos, e diz usar HERE por padrão para restrições de caminhão. Sem chave não dá para testar qualidade nem preço."
+  },
+  {
+   "name": "QualP",
+   "url": "https://www.qualp.com.br/",
+   "verdict": "corrected",
+   "corrected_url": "https://api.qualp.com.br/",
+   "note": "O site dá HTTP 200 e qualp.com.br/api dá 404 (confirmado), mas a API existe em https://api.qualp.com.br/ (HTTP 200, 'QualP API - Roteirização integrada'), com planos a partir de R$ 390/mês para 1.000 consultas. Os recursos listados incluem Pedágios, Balanças de Pesagem, Tabela Frete e compatibilidade HERE/Google. Não testei com chave."
+  },
+  {
+   "name": "PRF dados abertos - infrações",
+   "url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf",
+   "verdict": "confirmed",
+   "note": "Página HTTP 200. O aviso do Google Drive confirma 'infrações_2025.zip (318M)'. Há também infrações_2026.zip com 185M (dentro do limite de 300 MB): https://drive.google.com/file/d/1tGlevmqNhFZflvP02-ZDika6mVcH5dmG/view. Não baixei nenhum dos dois."
+  },
+  {
+   "name": "SIFAMA - Autos de Infração de Trânsito (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/sifama-autos-de-infracao-transito",
+   "verdict": "corrected",
+   "note": "CSV 2026 com 9.653 bytes e 37 linhas; os totais conferem (121.554 evasões, 4.638 em SP). Correção: as linhas de 'Evasão de Balança' só cobrem JAN–ABR/2026. De mai a set só há 'Excesso de Peso' (16 autos no Brasil). Não é 'jan–set'."
+  },
+  {
+   "name": "VPO - Vale-Pedágio Obrigatório (ANTT)",
+   "url": "https://dados.antt.gov.br/dataset/vale-pedagio-obrigatorio",
+   "verdict": "confirmed",
+   "note": "CC-BY, 75 linhas de 2025-04 a 2026-10, todas com Modelo='Tag', inclusive em 2025. O '100% Tag' parece refletir o escopo do dataset, não necessariamente o mercado."
+  },
+  {
+   "name": "dados.gov.br API",
+   "url": "https://dados.gov.br/dados/api/publico/conjuntos-dados",
+   "verdict": "confirmed",
+   "note": "Continua dando HTTP 401 sem chave."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "ANTT publica 277 linhas de praças federais (188 físicas + 89 free flow), 73 SP, 62 na bbox GSP, 51 FF da Dutra, 32 com 2 casas decimais, sem tarifa.",
+   "verdict": "corrected",
+   "note": "277, 73, 62, 51 e 32 conferem. O free flow tem 93 linhas (busca case-insensitive por 'free ?flow'; inclui 4 'FREEFLOW' da EPR Iguaçu), logo 184 físicas.",
+   "source_url": "https://dados.antt.gov.br/dataset/praca-de-pedagio"
+  },
+  {
+   "fact": "ANTT não tem dataset de tarifas no CKAN; 25 de 41 páginas com tabela, 8 com 404 e 8 sem tabela; multiplicador = nº de eixos para rodagem dupla (RIOSP Arujá 4,50 x 5 = 22,50); 2 eixos simples = cat. 1.",
+   "verdict": "confirmed",
+   "note": "package_search q=tarifa deu 0. RIOSP P1 (Arujá) cat. 1 = 4,50 e cat. 7 (5 eixos, dupla, mult. 5,0) = 22,50. Cat. 1 = 2 eixos, rodagem simples.",
+   "source_url": "https://www.gov.br/antt/pt-br/assuntos/rodovias/concessionarias/lista-de-concessoes/ccr-rio-sp/tarifas-de-pedagio"
+  },
+  {
+   "fact": "Régis Bittencourt vai até 6 eixos (R$ 25,80); Fernão Dias e RIOSP até 8 eixos.",
+   "verdict": "confirmed",
+   "note": "Régis cat. 8 = 6 eixos, R$ 25,80. Motiva Minas SP e RIOSP vão até a cat. 10 (8 eixos). A regra para mais eixos continua sem confirmação.",
+   "source_url": "https://www.gov.br/antt/pt-br/assuntos/rodovias/concessionarias/lista-de-concessoes/autopista-regis-bittencourt/tarifas-de-pedagio"
+  },
+  {
+   "fact": "Na tabela ARTESP, COMERCIAL POR EIXO = PASSEIO nas 136 linhas; ViaPaulista usa CAT-1..9 com Manual e AVI ~5% menor.",
+   "verdict": "confirmed",
+   "note": "Confere no PDF 2025 e também no PDF 2026 (136 de 136 iguais). A AVI dá 17,38/18,30 = 0,95. Em 2026, a Entrevias também usa o formato CAT-1..9 com Manual/AVI.",
+   "source_url": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/0a8ff7b8-005b-4a04-a152-c69236f1f15d/renditions/53b3922a-a33b-40f6-9e4c-46a6771e681d?binary=true"
+  },
+  {
+   "fact": "PDF 'vigente' ARTESP é de 01/07/2025; OSM tem Perus R$ 14,50 (check_date 2026-07-01) vs R$ 13,70 no PDF; não há tabela 2026 em fonte primária acessível.",
+   "verdict": "refuted",
+   "note": "As datas e os valores 2025 e OSM conferem, mas a tabela 2026 existe: a notícia ARTESP de 29/06/2026 (reajuste de 4,72%) linka o PDF de 01/07/2026, onde Perus = R$ 14,50, e o PDF da Entrevias de 06/07/2026. O que está desatualizado é só o link da página de pedágios.",
+   "source_url": "https://www.artesp.sp.gov.br/artesp/noticias/revisao+tarifaria+anual+das+rodovias+concedidas+entra+em+vigor+em+1+de+julho"
+  },
+  {
+   "fact": "Histórico consolidado ARTESP informa cobrança e tarifa uni/bidirecional por praça.",
+   "verdict": "confirmed",
+   "note": "Colunas 'COBRANÇA BIDIRECIONAL/UNIDIRECIONAL' e 'TARIFA UNIDIRECIONAL/BIDIRECIONAL' em 23 p. (125 e 126 ocorrências). Atenção: o PDF foi modificado em 10/03/2026 mas ainda traz os valores de 2025.",
+   "source_url": "https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/ee05ac89-3ea9-49e9-8452-1fce8bdfb065/renditions/b6d7cfaf-2436-40f1-b7dc-c3f0d522d1ba?binary=true"
+  },
+  {
+   "fact": "KMZ ARTESP (CC-BY): 187 praças (49 GSP), 48 PGF (16 GSP), 75 PPM, 29 pórticos free flow (Rota Sorocabana), 71 paradas de cargas excepcionais, 47 de perigosos, TCP.",
+   "verdict": "corrected",
+   "note": "Recontei nos KMZ re-baixados: 187 (49), PGF 47 (16), PPM 75, FreeFlow 29 em l33, 71, 47, TCP 213. São 47 PGF, não 48. A bbox usada vai além da RMSP (Santos, Jundiaí, Atibaia, Itu).",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria"
+  },
+  {
+   "fact": "OSM Sudeste: 592 toll_booth + 118 toll_gantry (125 GSP); 687 com charge BRL; 671 por eixo de caminhão; dia útil/FDS nos pórticos da Dutra; ODbL.",
+   "verdict": "confirmed",
+   "note": "Re-extraído do PBF local com osmium e conferido no Overpass. Os pórticos RioSP têm 'Mo-Fr .../Sa-Su ...'. 509 têm check_date em 2026.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/Key:charge"
+  },
+  {
+   "fact": "Valhalla não calcula preço; use_tolls=0 não evitou pedágio; exclude_tolls evitou com +11 km e +48 min (Lapa→Jundiaí, 5 eixos).",
+   "verdict": "confirmed",
+   "note": "Re-executado no Valhalla 3.9.1 local: 48,8 km/48 min contra 59,8 km/96 min; use_tolls=0 dá 48,9 km/53 min e has_toll=true. trace_attributes devolve node.type=toll_booth.",
+   "source_url": "https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/api/route/api-reference.md"
+  },
+  {
+   "fact": "Caminhão vazio não paga pedágio sobre eixos suspensos (Lei 13.103/2015 art. 17, redação MP 833/2018).",
+   "verdict": "corrected",
+   "note": "A regra confere. A redação vigente é a da Lei nº 13.711/2018, que converteu a MP 833. O §3º considera vazio o veículo que passa com eixo suspenso, sujeito a fiscalização.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13103.htm"
+  },
+  {
+   "fact": "Tolerância de 5% no PBT/PBTC e 12,5% por eixo (Lei 7.408 art. 1º, redação Lei 14.229/2021).",
+   "verdict": "corrected",
+   "note": "Os incisos I e II conferem. Falta o §1º (Lei 14.229/2021): com PBT regulamentar de até 50 t, a fiscalização é só por PBT/PBTC, sem checar eixo, salvo casos do Contran. Isso importa para os presets VUC, Toco, Truck e várias carretas.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l7408.htm"
+  },
+  {
+   "fact": "CTB: art. 209 (deixar de adentrar pesagem) grave; art. 209-A (evasão de pedágio, Lei 14.157/2021) grave; art. 231 V excesso de peso média com multa por 200 kg.",
+   "verdict": "confirmed",
+   "note": "Conferido no texto compilado do planalto. O art. 209 também tem redação da Lei 14.157/2021.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+   "fact": "ANTT registrou 121.554 autos de Evasão de Balança em jan–set/2026, 4.638 em SP.",
+   "verdict": "corrected",
+   "note": "Os totais conferem, mas as linhas de evasão do CSV 2026 só cobrem JAN–ABR. Não há registro de evasão de mai a set (só 16 autos de excesso de peso).",
+   "source_url": "https://dados.antt.gov.br/dataset/sifama-autos-de-infracao-transito"
+  },
+  {
+   "fact": "PPV federais: disponibilidade média 73% em out/2025 (Guararema 98%, Queluz 96%, Itapecerica 55%, Miracatu 37%); arquivos de 2026 vazios.",
+   "verdict": "corrected",
+   "note": "Os números de out/2025 conferem. Só que OPERACAO_PPV-2026_1 (jan) e 2026_2 (fev) têm dados: média de 66% nos dois meses; Miracatu 68% e 66%; Itapecerica 67% e 59%. Só 2026_3 e 2026_4 estão vazios.",
+   "source_url": "https://dados.antt.gov.br/dataset/posto-pesagem-veicular"
+  },
+  {
+   "fact": "Free flow federal: 9 trechos, 52 pórticos; Dutra/SP 10 pórticos km 205–231; 30 dias para pagar; Deliberação ANTT 277/2026 suspende multas por 200 dias.",
+   "verdict": "confirmed",
+   "note": "Página e FAQ ANTT (FAQ atualizado em 30/04/2026). A suspensão vale para multas lavradas pela ANTT. A base da Dutra é a Deliberação 467/2025, com tarifa por distância percorrida.",
+   "source_url": "https://www.gov.br/antt/pt-br/free-flow/duvidas-frequentes-do-free-flow"
+  },
+  {
+   "fact": "DER-SP publica 136 pontos de pesagem (34 fixos, 102 móveis) sem coordenadas.",
+   "verdict": "confirmed",
+   "note": "Conferido: 136 linhas na tabela HTML.",
+   "source_url": "https://www.der.sp.gov.br/der/rodovias/balanca/pontos_de_pesagem"
+  },
+  {
+   "fact": "Vale-Pedágio obrigatório põe o pedágio a cargo do embarcador (Lei 10.209/2001); 100% dos VPOs de 2026 por Tag.",
+   "verdict": "confirmed",
+   "note": "Art. 1º §1º confere. No dataset, todas as 75 linhas (2025 e 2026) são 'Tag'. Isso pode refletir o escopo do dataset.",
+   "source_url": "https://dados.antt.gov.br/dataset/vale-pedagio-obrigatorio"
+  },
+  {
+   "fact": "Google Routes API aceita toll passes BR, mas só em DRIVE e TWO_WHEELER; não serve para pedágio de caminhão por eixo.",
+   "verdict": "confirmed",
+   "note": "Doc: tollPasses 'Applies only to the DRIVE and TWO_WHEELER'. Ressalva: existe o modo TRUCK, com vehicleInfo de dimensões, peso, reboque e hazmat, mas sem número de eixos.",
+   "source_url": "https://developers.google.com/maps/documentation/routes/reference/rest/v2/RouteModifiers"
+  }
+ ],
+ "extra_findings": [
+  "Tabela ARTESP 2026 (fonte primária, CORRIGE a lacuna principal): PDF de 01/07/2026, 4 p., 136 linhas, Perus R$ 14,50: https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/c65c8bbb-34b7-45e5-8e68-23f626d5293a/items/15f70220-8ead-4e26-9334-1ab21443ec97/renditions/663c7fe6-a19b-4847-bdf9-b731b3a6339b?binary=true . Entrevias de 06/07/2026 (CAT-1..9 Manual/AVI): https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/c65c8bbb-34b7-45e5-8e68-23f626d5293a/items/95b34aa8-0ea4-469b-a98c-ed0b3cc6cb75/renditions/0f8c3d94-07d3-4aeb-8f79-9ed922b5972d?binary=true . Notícia de origem: https://www.artesp.sp.gov.br/artesp/noticias/revisao+tarifaria+anual+das+rodovias+concedidas+entra+em+vigor+em+1+de+julho . Para o scraper: monitorar /artesp/noticias, porque o link 'Valor Atual das Tarifas' da página de pedágios não foi atualizado.",
+  "Licenças que faltaram: as páginas gov.br (tarifas ANTT, free flow) declaram CC BY-ND 3.0 no rodapé. Os portais cms.sp.gov.br (ARTESP www e DER-SP) declaram 'Todos os direitos reservados... sem permissão expressa'. Os CKAN da ANTT e da ARTESP (malha) são CC-BY. Antes de usar comercialmente as tarifas ARTESP e as tabelas do DER-SP, pedir autorização ou parecer jurídico.",
+  "ARTESP também linka o 'Histórico de Tarifas (Contratos Encerrados)': https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/b2976357-43b2-4fbd-84c2-d68901ac049d/renditions/31bce28b-c696-4876-8505-bd0dc1c4ef10?binary=true (não baixado).",
+  "QualP tem API comercial em https://api.qualp.com.br/ (planos a partir de R$ 390/mês para 1.000 consultas; anuncia 'Pedágios' e 'Balanças de Pesagem'). É um candidato a benchmark de custo e de balanças. Não testado com chave.",
+  "Lei 7.408/1985 art. 1º §1º (Lei 14.229/2021): com PBT regulamentar de até 50 t, a fiscalização é só por PBT/PBTC, sem checagem por eixo (salvo Contran). Isso muda o aviso de risco de multa por eixo para a maioria dos presets: https://www.planalto.gov.br/ccivil_03/leis/l7408.htm",
+  "Dutra free flow: a página ANTT cita a Deliberação ANTT nº 467/2025 como base, com cobrança pela distância percorrida. É a pista mais provável para a tabela por par entrada/saída (não verificada): https://www.gov.br/antt/pt-br/free-flow",
+  "Operação PPV jan e fev/2026 disponíveis (o relatório disse que estavam vazios): OPERACAO_PPV-2026_1 e 2026_2 no dataset https://dados.antt.gov.br/dataset/posto-pesagem-veicular",
+  "Volume de tráfego ANTT 2026 mensal (10,8 MB): categoria_eixo aparece com 10, 11 e 12 eixos. Serve para estimar a cobrança acima de 8 eixos (bitrem e rodotrem) cruzando com a receita por praça: https://dados.antt.gov.br/dataset/volume-trafego-praca-pedagio e https://dados.antt.gov.br/dataset/receita-por-praca",
+  "DNIT Portaria nº 268/2022 (Composições Homologadas para o Transporte de Cargas), PDF de 19 p. e 1,6 MB (HEAD dá 403; GET com UA de navegador dá 200). Útil para validar os presets bitrem/rodotrem: https://www.gov.br/dnit/pt-br/rodovias/operacoes-rodoviarias/pesagem/portaria_268.pdf",
+  "PRF infrações_2026.zip tem 185 MB (dentro do limite), pelo aviso do Drive: https://drive.google.com/file/d/1tGlevmqNhFZflvP02-ZDika6mVcH5dmG/view",
+  "ANTT 'deteccao-de-altura' (CC-BY, CSV, JSON e KMZ de equipamentos de detecção de altura e estações meteorológicas nas concessões federais) serve para o tema low_clearance: https://dados.antt.gov.br/dataset/deteccao-de-altura",
+  "A tabela de peso oficial do DER-SP é de 2018 (título do PDF 'TABELA OFICIAL DE PESO 2018 - ATUALIZADO 2-2018'). Não serve sozinha para modelos recentes.",
+  "Nota operacional: no Colima, volumes em /private/tmp não são montados no container. Para osmium, usar saída por stdout ou montar uma pasta dentro de ~. Amostras e NOTES.md da verificação estão em /private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/pesagem_pedagio_verify/"
+ ]
+}

@@ -1,0 +1,281 @@
+{
+ "category": "pontes_sp_estado_municipio",
+ "sources": [
+  {
+   "name": "GeoSampa — Obras de Arte (geoportal:obra_arte)",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:obra_arte&outputFormat=application/json&srsName=EPSG:4326",
+   "verdict": "corrected",
+   "corrected_license": "O CMBD 2026 da Prefeitura declara para a base SMUL/GEOINFO 'Obras de Arte' (API = este WFS) a licença 'CC-BY-AS 4.0', provavelmente CC BY-SA 4.0. Permite uso comercial com atribuição, mas com compartilhamento pela mesma licença. A afirmação 'sem licença formal' está errada.",
+   "note": "Testei de novo: GetFeature 200, 3,83 MB, numberMatched 6548. Contagem confere: PONTE 4416, VIADUTO 1129, PASSARELA 821, TUNEL 114, CALCADAO 68. Ano 2004 em 5973 registros (91,2%) e mediana da PONTE de 6,7 m. DescribeFeatureType traz ge_linha, cd_identificador_obra_arte, cd_identificador_obra_arte_original, tx_tipo_obra_arte, tx_escala, tx_ano_referencia e sg_fonte_original. As capabilities dizem Fees/AccessConstraints NONE. WMS no host wms.* devolve PNG 200; no host wfs.* dá ServiceUnavailable. A correção é a licença: o CMBD 2026 (linha SMUL 'Obras de Arte', fonte 'Restituição aerofotogramétrica - ortofotos 2005') declara CC-BY-AS 4.0."
+  },
+  {
+   "name": "GeoSampa — Vistoria e reparo de pontes e viadutos (SP156)",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:sac_vistoria_reparo_ponte_viaduto&outputFormat=application/json&srsName=EPSG:4326",
+   "verdict": "confirmed",
+   "note": "200, 74,9 KB, 115 pontos, todos FINALIZADA. Abertura de 06/04/2020 a 29/09/2020, dt_carga 2021-03-25."
+  },
+  {
+   "name": "Controle de obras SIURB (aba servicos)",
+   "url": "https://dados.prefeitura.sp.gov.br/dataset/49a40a52-68c0-45c1-92d8-ccc35a525467/resource/5596c5a0-4c33-4859-b522-a228b4ccbdc8/download/completo-obras-controle-de-obras.xlsx",
+   "verdict": "corrected",
+   "note": "200, 181.911 bytes. Licença odc-by confirmada no package_show (metadata 2026-07-21, recursos 2025-11-19). A aba servicos tem 114 linhas, e 105 OAEs têm cd_geo válido (confere). Correções: (a) as datas de início vão de 2019 (17) a 2020 (88), não só 2020-2021; (b) a aba obras tem 354 linhas, não 355; (c) com UA 'Mozilla/5.0' recebi HTTP 502, não connection reset; (d) uma das OAEs (Ponte da Vila Guilherme) tem ponte OSM com maxweight (veja os fatos)."
+  },
+  {
+   "name": "DER-SP — OAE planilha SIGOA (XLSX)",
+   "url": "https://dersp.der.sp.gov.br/WebSite/Arquivos/DadosAbertos/AtivosRodoviarios/OAE/Obra%20de%20Arte%20Especial%20(OAE).xlsx",
+   "verdict": "corrected",
+   "note": "200, 155.270 bytes, 1873 linhas. Tipos conferem (PONTE 848, PASSAGEM DE GADO 336, VIADUTO 265...). CKAN dadosabertos.sp.gov.br: CC-BY-4.0, recurso de 2025-04-15, metadata 2026-08-13. Dentro da RMSP (malha IBGE) são 59, e 38 delas têm ponte OSM a até 100 m. Tudo confere. Correção: '3 coordenadas inválidas ou em DMS' está errado. 254 linhas trazem coordenada como texto, e cerca de 144 estão em DMS ou grau-minuto (ex.: \"21° 27.983'S\"). Depois de converter sobra 1 inválida (SP-351 km 28+150, lat=lon) e 5 caem fora de SP. O FeatureServer traz float em todas, o que reforça usar o FeatureServer."
+  },
+  {
+   "name": "DER-SP — OAE_DBO (ArcGIS FeatureServer)",
+   "url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/OAE_DBO/FeatureServer/0",
+   "verdict": "confirmed",
+   "note": "Layer 200. Campos confirmados (objectid, rodovia, km, referencia, regional, especifica, latitude, longitude, compriment, largura_de, area_m). count=1873, maxRecordCount 2000, editingInfo.lastEditDate 2026-07-30. Envelope da RMSP em f=geojson: 144 feições (49 KB). Point-in-polygon na RMSP: 59. O diretório Hosted lista Balancas_DER_DBO, Marcos_KM_DER_032026, Sinalizacao_Vertical_DBO e 'Malha_Rodoviária' (com acento, não 'Malha_Rodoviaria')."
+  },
+  {
+   "name": "DER-SP — Sinalização Vertical (R-14/R-15/R-16/R-17/R-18)",
+   "url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/Sinalizacao_Vertical_DBO/FeatureServer/0",
+   "verdict": "confirmed",
+   "note": "count 427.785. groupBy por código_pl: R-14 211, R-15 180, R-18 58, R-17 9, R-16 7, R-18-R-14 2 (há também 1 R-11-R-14). Não existe campo com o valor do limite. Na RMSP são 52. Até 500 m de uma OAE do DER deu R-14 80 e R-15 120 (original: 78/119; a diferença vem da projeção). Os levantamentos são de 2024 (192), 2025 (219) e 2026 (57), não só 2024-2025. CKAN 'sinalizacao-vertical' em CC-BY-4.0."
+  },
+  {
+   "name": "ARTESP — Passarelas (Cadastro de Ativos)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/491d79c5-ee09-4fe8-a3ce-1b425fe60bbe/resource/d864ec43-a93b-4803-9b48-1fee98a98fe7/download/passarelas.xlsx",
+   "verdict": "confirmed",
+   "note": "200, 63.885 bytes, 444 linhas (441 ATIVA, 2 DESATIVADA, 1 DEMOLIDA). ALTURA > 0 em 409, mais 3 registros com 0. Mínimo de 2,40 em 2 registros SP330 km 62 Jundiaí, onde ALTURA = LARGURA (provável erro). RMSP 81, sendo 71 com altura, mínimo 5,42 na SP150 km 16+230. CKAN cadastro-de-ativos: cc-by, recurso modificado em 2026-08-05."
+  },
+  {
+   "name": "ARTESP — Malha Rodoviária SP (XLSX)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/d60ee312-79b7-4d2c-9049-a1777ef1d377/resource/a7c33882-18a4-4c8c-9b17-5535783c6131/download/malha_rodoviaria_sp.xlsx",
+   "verdict": "confirmed",
+   "note": "200, 1,92 MB. A aba MALHA_RODOVIARIA_SP tem 14.372 linhas (original: 14.373). As somas dos trechos 01-EIXO batem exatamente: no estado DER 9987, ARTESP 7364, ANTT 1965; na RMSP DER 464, ARTESP 454, ANTT 470. Licença cc-by. O recurso foi modificado em 2026-08-31; 2026-09-22 é a data da metadata."
+  },
+  {
+   "name": "ARTESP — KMZ L01 Autoban",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/d60ee312-79b7-4d2c-9049-a1777ef1d377/resource/b3e0ca4a-fcd2-4d2b-9c5b-28f16f8d119e/download/l01.kmz",
+   "verdict": "corrected",
+   "note": "200, 3,37 MB, idêntico à amostra original. O KML tem 2.954 placemarks, não 838. Confirmei que não há pasta de pontes, viadutos ou OAEs: a única ocorrência da palavra 'viaduto' é texto solto. Há 57 placemarks em 'Segurança Viária/Passarelas', além de pesagem (PGF 49, PPM 5) e 1 'Área de Descanso'."
+  },
+  {
+   "name": "ARTESP — IP.DIN/010 Instrução de Projeto de OAE",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/c8763e27-55c8-4250-804a-e3565fb852a6/resource/12008409-23c0-42b6-8868-39513dee8da6/download/ip.din-010-instrucao-de-projeto-de-obra-de-arte-especial-3.pdf",
+   "verdict": "confirmed",
+   "note": "200, 488.992 bytes, application/pdf. Revisão 0 de 07/11/22, processo ARTESP-PRC-2022/00761. Na folha 6: altura livre mínima de 5,5 m para rodovia estadual, na situação mais desfavorável. Cita NBR 7188 e 'elevação da classe portante'. O PDF tem 22 páginas físicas (numeração interna 'x DE 20'). Dataset engenharia-digital-bim com licença other-pd. É regra de projeto para obras novas ou intervenções de concessionária, não um inventário."
+  },
+  {
+   "name": "OpenStreetMap / Geofabrik sudeste",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "verdict": "confirmed",
+   "note": "Página 200. O latest redireciona (307) para sudeste-261008.osm.pbf, com 860.862.119 bytes. Fiz extração própria do PBF local (timestamp 2026-10-08T20:21Z): 7094 pontes e 950 túneis highway no bbox. Na RMSP são 5458 (intersects) ou 5456 (centroide); na capital, 2535 a 2590 conforme o método. 1661 são footway. Atributos em pontes da RMSP: maxweight 6, maxheight 32, hgv=no 30, maxaxleload 1, além de 4 maxweightrating que o original não contou. Licença ODbL."
+  },
+  {
+   "name": "Prefeitura de SP — notícias de interdição em OAEs",
+   "url": "https://prefeitura.sp.gov.br/w/noticia/prefeitura-libera-circulacao-de-caminhoes-em-regioes-afetadas-por-interdicoes-na-zona-oeste",
+   "verdict": "confirmed",
+   "note": "Releitura (02/07/2019): 'proibição do tráfego de veículos pesados' na Ponte do Jaguaré (incêndio em 21/06, Portaria 090/2019-SMT.GAB) e no Viaduto Miguel Mofarrej (29/06, Portaria 091/2019-SMT.GAB). Conferem também: Limão (31/07/2021, batida em 28/07 de caminhão com altura acima da permitida), Freguesia do Ó/Casa Verde (22/02/2019) e Olímpio da Silveira (18/04/2019, sentido centro, recomendação SIURB). São fatos históricos e não confirmam a situação atual."
+  },
+  {
+   "name": "Prefeitura de SP — balanços OAE 2019 e 2025",
+   "url": "https://prefeitura.sp.gov.br/w/noticia/balanco-de-manutencao-de-pontes-e-viadutos-e-apresentado-na-prefeitura",
+   "verdict": "corrected",
+   "note": "2019 (13/11/2019): 126 locais, 222 unidades estruturais, GMOA criado em dez/2018. Confere. A página de 2025 (04/02/2025, atualizada em jun/2025) diz '374 unidades estruturais', mas no mesmo texto explica que são 199 UE em 152 obras executadas mais 175 UE em 126 obras em andamento. Portanto 374 inclui obras em andamento. Os demais números conferem: especiais 309 + 62 em andamento, rotineiras 843 + 924, cerca de R$ 2,6 bi desde 2021."
+  },
+  {
+   "name": "PMSP — CMBD Catálogo Municipal de Bases de Dados 2026",
+   "url": "https://dados.prefeitura.sp.gov.br/dataset/e9b8a70e-aeec-48ee-8da3-641697fd4bde/resource/d0ab871f-380e-402a-9bee-bb20ce182e1f/download/cmbd-e-pstda-compilado-2026.xlsx",
+   "verdict": "corrected",
+   "note": "Agora baixou: 200, 466.491 bytes. Dataset cc-zero. Tem 896 linhas na aba CMBD. A SIURB NÃO declara nenhum cadastro de OAEs: declara Controle de Obras (ODC-BY, visibilidade 'Privada'), Arquivo de Projeto, OBRAS (plantas) e outras. A SMUL/GEOINFO declara 'Obras de Arte' como pública, licença CC-BY-AS 4.0, API no WFS GeoSampa, atualização 2026. Isso responde à lacuna do original e corrige a licença do GeoSampa."
+  },
+  {
+   "name": "DER-SP — Restrições ao Trânsito de Veículos de Carga",
+   "url": "https://dersp.der.sp.gov.br/WebSite/Documentos/RestricaoCarga.aspx",
+   "verdict": "confirmed",
+   "note": "200, 52.954 bytes. A página aponta para http://200.144.30.104/der/portarias/webportarias/HTML/PRT024-18.ASP. Não submeti o formulário, assim como o original."
+  },
+  {
+   "name": "IBGE — localidades RM e malha SP",
+   "url": "https://servicodados.ibge.gov.br/api/v1/localidades/regioes-metropolitanas",
+   "verdict": "confirmed",
+   "note": "200. RM 04901 'Região Metropolitana de São Paulo' com 39 municípios. Malha api/v3/malhas/estados/35?intrarregiao=municipio&qualidade=intermediaria: 200, 1,01 MB, 645 polígonos."
+  },
+  {
+   "name": "Santo André — SIGA WFS",
+   "url": "https://siga.santoandre.sp.gov.br/geoserver/ows?service=WFS&request=GetCapabilities",
+   "verdict": "confirmed",
+   "note": "200, 225.577 bytes, 177 camadas. Nenhuma de ponte, viaduto ou OAE: os únicos casamentos de palavra-chave foram SIGA_TUR_ARTE_ARQUITETURA e SIGA_MUR_PONTO_RECARGA."
+  },
+  {
+   "name": "Guarulhos — GuaruGeo",
+   "url": "https://guarugeo.guarulhos.sp.gov.br/",
+   "verdict": "confirmed",
+   "note": "Home 200 (391 bytes). guarugeo/ogc.php GetCapabilities dá HTTP 500 com 0 bytes, como o original relatou."
+  },
+  {
+   "name": "São Bernardo — Geo",
+   "url": "https://geo.saobernardo.sp.gov.br/",
+   "verdict": "confirmed",
+   "note": "Home 200 (546 bytes); /geoserver/ows dá 404."
+  },
+  {
+   "name": "DataGeo / IDEA-SP",
+   "url": "https://datageo.ambiente.sp.gov.br/geoserver/datageo/ows?service=WFS&version=1.0.0&request=GetCapabilities",
+   "verdict": "confirmed",
+   "note": "200, 353.339 bytes, 913 FeatureType. Nenhuma camada de OAE ou malha; só AREA_PRIORITARIAS_PREVENCAO_INCENDIO_RODOVIAS."
+  },
+  {
+   "name": "DER-SP — IP-DE-C00-009_B",
+   "url": "http://www.der.sp.gov.br/WebSite/Arquivos/normas/IP-DE-C00-009_B.pdf",
+   "verdict": "confirmed",
+   "note": "301 para https e depois redirect para https://www.der.sp.gov.br/der (HTML de 171 KB). O PDF não existe mais nesse caminho."
+  },
+  {
+   "name": "DER-SP — Obras Emergenciais",
+   "url": "https://dersp.der.sp.gov.br/WebSite/Arquivos/DadosAbertos/Obras/ObrasEmergenciais/Obras%20Emergenciais.xlsx",
+   "verdict": "confirmed",
+   "note": "200, 127.449 bytes. 329 linhas não vazias depois do cabeçalho, 20 mencionam ponte, viaduto ou OAE."
+  },
+  {
+   "name": "TCM-SP — Workshop OAE",
+   "url": "https://egcportalantigo.tcm.sp.gov.br/images/conteudo-palestras/workshop-obras-artes-especiais/obras-de-arte.pdf",
+   "verdict": "confirmed",
+   "note": "200, 547.634 bytes. Confere: TAC de 25/07/2007 para recuperar 50 pontes e viadutos em até 10 anos; 571 inspeções rotineiras (Fares, 2012); concorrências 05 e 07/SMSO/2017 revogadas em 20/10/2018; T5 cedeu em 15/11/2018; sessão de 28/11/2018; laudos de 18 de 33 OAEs; 125 inspeções especiais; 'validade de 5 anos (NBR 9452/2016)'."
+  },
+  {
+   "name": "SIURB — apresentação SEESP ago/2024",
+   "url": "https://www.seesp.org.br/site/documentos/MarcosMonteiro_Manutenc%CC%A7a%CC%83oOAESEESP_SET24_Final2-compressed.pdf",
+   "verdict": "corrected",
+   "note": "HEAD 200, 117.068.351 bytes. Baixei, extraí o texto e apaguei o PDF. Confere: 770 OAEs monitoradas, totalizando 945 estruturas; 430 câmeras em 295 OAEs; MTInSAR; reforço TB45; inspeção especial a cada 5 anos, extensível a 8 pela NBR 9452. Correção: 2.575 / 303 / 341 são TOTAIS que incluem o que está em andamento. Concluídos: 1.651 rotineiras, 227 especiais (fases 1-3) e 113 obras."
+  },
+  {
+   "name": "Pedidos via LAI",
+   "url": "https://dadosabertos.sp.gov.br/dataset/obras-de-arte-especiais-oae",
+   "verdict": "untestable",
+   "note": "Ação manual, não testável. A página do dataset responde 200. O CMBD 2026 mostra que a SIURB não declara cadastro de OAE. O pedido deve citar o 'sistema de gestão' de OAEs que aparece na apresentação SEESP (770 OAEs / 945 estruturas)."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "GeoSampa obra_arte tem 6.548 feições (PONTE 4.416, VIADUTO 1.129, PASSARELA 821, TUNEL 114, CALCADAO 68), ano 2004 em 91%, sem nome, gabarito, peso nem estado.",
+   "verdict": "confirmed",
+   "note": "Reproduzi exatamente: 6548 feições; 2004 em 5973 (91,2%). Os atributos são só ids, tipo, escala, ano e fonte (GEOINFO).",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=DescribeFeatureType&typeNames=geoportal:obra_arte"
+  },
+  {
+   "fact": "OSM cobre 89% das linhas VIADUTO do GeoSampa (1.009/1.129) e 38% das PONTE (1.698/4.416) a até 50 m.",
+   "verdict": "confirmed",
+   "note": "Minha medição independente, com pontes highway do PBF local e distância ≤50 m em projeção local, deu VIADUTO 1027/1129 (91,0%) e PONTE 1712/4416 (38,8%). Também medi PASSARELA 82% e TUNEL 36%. A diferença de 1-2 pontos percentuais vem do método.",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs"
+  },
+  {
+   "fact": "Na RMSP há 5.455 vias OSM ponte (2.561 na capital); 6 com maxweight, 32 com maxheight, 1 com maxaxleload.",
+   "verdict": "confirmed",
+   "note": "Reproduzi 5458 (intersects) e 5456 (centroide), e 2535 a 2590 na capital conforme o método. maxweight 6, maxheight 32, maxaxleload 1 e hgv=no 30 conferem. Ressalva: há mais 4 pontes com maxweightrating (40/50) que o original não contou.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html"
+  },
+  {
+   "fact": "DER-SP publica 1.873 OAEs em CC-BY-4.0, sem classe portante nem gabarito; 59 na RMSP.",
+   "verdict": "confirmed",
+   "note": "A licença CC-BY-4.0 está no CKAN e os dois números (1873 e 59 na RMSP) batem. Ressalva sobre a qualidade do XLSX: 254 coordenadas vêm como texto, cerca de 144 em DMS. O FeatureServer não tem esse problema.",
+   "source_url": "https://dadosabertos.sp.gov.br/dataset/obras-de-arte-especiais-oae"
+  },
+  {
+   "fact": "Mesmo inventário no FeatureServer OAE_DBO (count=1873, maxRecordCount 2000, GeoJSON).",
+   "verdict": "confirmed",
+   "note": "count 1873, maxRecordCount 2000, f=geojson funciona, lastEditDate 2026-07-30.",
+   "source_url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/OAE_DBO/FeatureServer/0"
+  },
+  {
+   "fact": "Sinalização vertical DER: 427.785 placas; R-14 211, R-15 180, R-18 58, R-17 9, R-16 7; sem valor do limite; 78 R-14 e 119 R-15 a até 500 m de OAE.",
+   "verdict": "confirmed",
+   "note": "Contagens exatas. Na proximidade de OAE obtive 80 e 120, diferença que vem da projeção. Não existe campo com o valor do limite. Há 52 placas na RMSP.",
+   "source_url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/Sinalizacao_Vertical_DBO/FeatureServer/0"
+  },
+  {
+   "fact": "ARTESP publica só passarelas: 444, ALTURA em 409; RMSP 81, 71 com altura, mínimo 5,42 m (SP-150 km 16,23).",
+   "verdict": "confirmed",
+   "note": "Reproduzido exatamente. Ressalva: 3 registros têm ALTURA=0. O significado de ALTURA não está documentado.",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/491d79c5-ee09-4fe8-a3ce-1b425fe60bbe/resource/d864ec43-a93b-4803-9b48-1fee98a98fe7/download/passarelas.xlsx"
+  },
+  {
+   "fact": "IP.DIN/010 (07/11/2022) exige altura livre mínima de 5,5 m em rodovia estadual no ponto mais desfavorável.",
+   "verdict": "confirmed",
+   "note": "Está na folha 6 do PDF, com a medição entre o pavimento da rodovia inferior e a face inferior da viga ou laje. É instrução de projeto para concessionárias e não garante que OAEs antigas cumpram a regra.",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/c8763e27-55c8-4250-804a-e3565fb852a6/resource/12008409-23c0-42b6-8868-39513dee8da6/download/ip.din-010-instrucao-de-projeto-de-obra-de-arte-especial-3.pdf"
+  },
+  {
+   "fact": "Dataset SIURB (ODC-By) tem 105 OAEs nomeadas com lat/lon (serviços 2020-2021); 104 casam com ponte OSM a até 100 m e nenhuma tem maxweight.",
+   "verdict": "corrected",
+   "note": "105 OAEs e 104/105 casando a até 100 m conferem. Porém a Ponte da Vila Guilherme tem ways OSM 15963881 e 15963961 com maxweight=60 a 4-15 m. O original olhou só a way mais próxima (0,9 m, sem a tag). Além disso, os contratos começam em 2019 (17) e 2020 (88) e terminam entre 2019 e 2021.",
+   "source_url": "https://dados.prefeitura.sp.gov.br/dataset/49a40a52-68c0-45c1-92d8-ccc35a525467/resource/5596c5a0-4c33-4859-b522-a228b4ccbdc8/download/completo-obras-controle-de-obras.xlsx"
+  },
+  {
+   "fact": "SIURB ago/2024: 770 OAEs (945 estruturas), 430 câmeras em 295 OAEs, MT-InSAR, reforço TB45; sem painel público nem API.",
+   "verdict": "confirmed",
+   "note": "Números conferidos no texto do PDF. A parte 'sem painel público nem API' é afirmação de ausência. Ela é reforçada pelo CMBD 2026, onde a SIURB não declara base de OAE e as bases que declara são privadas e sem API.",
+   "source_url": "https://www.seesp.org.br/site/documentos/MarcosMonteiro_Manutenc%CC%A7a%CC%83oOAESEESP_SET24_Final2-compressed.pdf"
+  },
+  {
+   "fact": "Inventário SIURB nov/2019: 126 locais e 222 unidades estruturais; GMOA criado em dez/2018.",
+   "verdict": "confirmed",
+   "note": "Notícia de 13/11/2019.",
+   "source_url": "https://prefeitura.sp.gov.br/w/noticia/balanco-de-manutencao-de-pontes-e-viadutos-e-apresentado-na-prefeitura"
+  },
+  {
+   "fact": "Balanço 2025: 374 UE recuperadas, 309 especiais concluídas e 62 em andamento, 843 rotineiras e 924 em andamento, cerca de R$ 2,6 bi desde 2021.",
+   "verdict": "corrected",
+   "note": "A página (04/02/2025, atualizada em jun/2025) usa '374', mas decompõe o número em 199 UE concluídas (152 obras) mais 175 UE em 126 obras em andamento. As demais cifras conferem.",
+   "source_url": "https://prefeitura.sp.gov.br/web/obras/w/no-maior-programa-de-recupera%C3%A7%C3%A3o-de-pontes-e-viadutos-da-hist%C3%B3ria-da-cidade"
+  },
+  {
+   "fact": "Em 31/01/2019 a gestão Covas pôs termo de confidencialidade nos laudos (16 de 33 com necessidade de estudo urgente).",
+   "verdict": "confirmed",
+   "note": "Confere na matéria da IstoÉ Dinheiro de 09/02/2019. É fonte de imprensa, não primária. O TCM confirma a relação inicial de 33 OAEs.",
+   "source_url": "https://istoedinheiro.com.br/gestao-covas-coloca-sigilo-em-inspecao-de-pontes-e-viadutos-com-risco-em-sp"
+  },
+  {
+   "fact": "T5 cedeu em 15/11/2018; TAC PMSP×MP-SP de 25/07/2007 para 50 OAEs; NBR 9452 prevê inspeção especial a cada 5 anos.",
+   "verdict": "confirmed",
+   "note": "Os três fatos estão no PDF do TCM. A NBR 9452/2016 aparece citada pelo TCM, e a SIURB diz que o prazo é extensível a 8 anos.",
+   "source_url": "https://egcportalantigo.tcm.sp.gov.br/images/conteudo-palestras/workshop-obras-artes-especiais/obras-de-arte.pdf"
+  },
+  {
+   "fact": "Ponte do Limão proibida para pesados depois de batida de caminhão com altura acima do permitido (28/07/2021).",
+   "verdict": "confirmed",
+   "note": "Notícia de 31/07/2021. A restrição é histórica; a situação atual não foi verificada.",
+   "source_url": "https://prefeitura.sp.gov.br/w/noticia/ponte-do-limao-permanece-interditada-para-o-trafego-de-veiculos-pesados"
+  },
+  {
+   "fact": "22/02/2019: Freguesia do Ó com faixa interditada por peso acima do projeto; Casa Verde com 2 batidas de caminhão em menos de 48 h.",
+   "verdict": "confirmed",
+   "note": "A notícia cita laudo da EGT Engenharia e a interdição da faixa da direita sentido bairro-centro.",
+   "source_url": "https://prefeitura.sp.gov.br/w/noticia/prefeitura-faz-interdicao-parcial-da-ponte-da-freguesia-do-o-e-obra-emergencial-na-ponte-da-casa-verde"
+  },
+  {
+   "fact": "Jaguaré e Mofarrej proibidos para pesados em jun/2019; portarias 090/2019 e 091/2019-SMT.GAB.",
+   "verdict": "confirmed",
+   "note": "Jaguaré em 21/06 (incêndio) e Mofarrej em 29/06. A notícia também cita o Decreto 56.920/2016 e a Portaria 137/18-SMT.GAB (ZMRC/VER).",
+   "source_url": "https://prefeitura.sp.gov.br/w/noticia/prefeitura-libera-circulacao-de-caminhoes-em-regioes-afetadas-por-interdicoes-na-zona-oeste"
+  },
+  {
+   "fact": "Caminhões proibidos no Viaduto Gen. Olímpio da Silveira, sentido centro, a partir de 18/04/2019, por recomendação da SIURB.",
+   "verdict": "confirmed",
+   "note": "Notícia de 18/04/2019.",
+   "source_url": "https://prefeitura.sp.gov.br/web/mobilidade/w/noticias/275029"
+  },
+  {
+   "fact": "Malha ARTESP com 14.373 trechos; na RMSP cerca de 464 km DER, 454 ARTESP e 470 ANTT (soma bruta).",
+   "verdict": "corrected",
+   "note": "As somas por km batem exatamente. A aba tem 14.372 linhas de dados, não 14.373.",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/d60ee312-79b7-4d2c-9049-a1777ef1d377/resource/a7c33882-18a4-4c8c-9b17-5535783c6131/download/malha_rodoviaria_sp.xlsx"
+  }
+ ],
+ "extra_findings": [
+  "Licença do GeoSampa obra_arte: o CMBD 2026 (https://dados.prefeitura.sp.gov.br/dataset/e9b8a70e-aeec-48ee-8da3-641697fd4bde/resource/d0ab871f-380e-402a-9bee-bb20ce182e1f/download/cmbd-e-pstda-compilado-2026.xlsx, HTTP 200, 466 KB, dataset CC0) declara para a base SMUL/GEOINFO 'Obras de Arte' a licença 'CC-BY-AS 4.0', provavelmente CC BY-SA 4.0. Permite uso comercial com atribuição, mas exige compartilhar pela mesma licença. Isso afeta o plano de importar para a tabela oae: deixar a base separada e atribuída. No mesmo catálogo a SIURB não declara nenhum cadastro de OAE.",
+  "Lista oficial de OAEs da capital com limitador de altura da CET. Notícia PMSP de 29/07/2022, 'Cidade conta com 36 sinalizadores de altura nos acessos às pontes, túneis e viadutos' (https://prefeitura.sp.gov.br/w/noticia/cidade-conta-com-36-sinalizadores-de-altura-nos-acessos-as-pontes-tuneis-e-viadutos, HTTP 200). Lista nominal dos acessos: Viaduto CPTM na Av. do Estado, Viaduto Gal. Euclides de Figueiredo na 23 de Maio, Túnel Jânio Quadros, Ponte Casa Verde, Viaduto Bresser, Olímpio da Silveira, Rede Ferroviária na Av. Gabriela Mistral, Cruzeiro do Sul (viga do Metrô) e outros. Informa também 238 veículos com excesso de altura entre jan e jun de 2022. Não traz o valor da altura, mas é uma boa semente de low_clearance para cruzar com o OSM maxheight.",
+  "Altura máxima legal de veículos (lacuna do original): Resolução CONTRAN 882/2021 (https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao8822021.pdf, HTTP 200, 1,76 MB). Fixa altura máxima de 4,40 m (art. com 'II - altura máxima: 4,40 m'). O art. 64 revoga a Res. 210/2006 e o art. 65 põe a norma em vigor em 03/01/2022. Verificar alterações posteriores. A especificação da CET E.T. SDAAE/2019 (https://ssl.cetsp.com.br/media/1091607/SDAAE.pdf, HTTP 200) ainda cita a Res. 210/2006, já revogada.",
+  "Para o tema ZMRC: a notícia PMSP de 02/07/2019 sobre Jaguaré/Mofarrej cita como base das restrições de caminhão o Decreto nº 56.920/2016 e a Portaria 137/18-SMT.GAB (ZMRC e VER, seg-sex 05h-21h e sáb 10h-14h, exceto feriados). Útil para confirmar a regra hoje marcada 'confirmar'.",
+  "Lacuna federal: a ANTT soma cerca de 470 km de trechos-eixo na RMSP (Dutra, Fernão Dias etc., pela malha ARTESP). A busca no CKAN da ANTT (https://dados.antt.gov.br/api/3/action/package_search?q=obras%20de%20arte, HTTP 200) retorna só 'projetos-autorizados'. Buscas por 'ponte OR viaduto OR OAE' e 'passarela' retornam 0. Não achei inventário aberto de OAE federal; o SGO do DNIT não tem base aberta localizada. Incluir ANTT e DNIT nos pedidos via LAI.",
+  "Os KMZ da ARTESP (ex.: L01) e o diretório ArcGIS do DER (Balancas_DER_DBO, Cameras_DER_DBO, RadaresDBO, Sinistros_DER_2025) trazem balanças (PGF 49 e PPM 5 só no L01), áreas de descanso e câmeras. Servem para outros temas (pesagem, pontos de descanso), não para OAE.",
+  "A planilha OAE do DER tem 254 linhas com coordenadas em texto, cerca de 144 em DMS ou grau-minuto. Um importador baseado no XLSX precisa de parser DMS; o FeatureServer OAE_DBO entrega float em todas as 1873."
+ ]
+}
