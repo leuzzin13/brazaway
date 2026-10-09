@@ -12,7 +12,8 @@ Tipos (kind):
   - maxheight_suspeito  : maxheight numérico > 7 m (provável gabarito medido/estimado, não placa).
   - maxweight_suspeito  : maxweight < 1 t, sem unidade e alto (provável kg) ou com vírgula (o Valhalla lê '3,5' como 3 t).
 "Sem maxheight" = sem valor numérico em maxheight nem maxheight:physical e sem maxheight=default/none/no_indications
-(ou maxheight:signed=no), que significam "conferido, sem placa".
+(ou maxheight:signed=no), que significam "conferido, sem placa". Também NÃO é lacuna a passagem cuja via de baixo tem um
+nó com maxheight numérico a até 100 m do cruzamento, nem o túnel com nó assim (a camada altura_osm já aplica o limite).
 
 Licença: ODbL 1.0 (derivado do OSM). PBF: o mesmo do Valhalla (ver osm_altura_nos.pbf_path).
 """
@@ -33,6 +34,7 @@ RAIL = {'rail', 'light_rail', 'subway', 'tram', 'narrow_gauge', 'monorail', 'pre
 PEDESTRIAN = {'footway', 'cycleway', 'path', 'steps', 'pedestrian', 'bridleway', 'corridor', 'platform'}
 CLUSTER_M = 25.0
 HALF_PIECE_M = 30.0
+KNOWN_NODE_M = 100.0   # nó com maxheight na via de baixo a até 100 m do cruzamento = altura conhecida (não é lacuna)
 OVER_LABEL = {'viaduto': 'viaduto', 'passarela': 'passarela', 'ferrovia': 'ponte ferroviária', 'ponte': 'ponte'}
 
 
@@ -70,7 +72,7 @@ KEEP = ('highway', 'railway', 'bridge', 'tunnel', 'covered', 'layer', 'maxheight
 def fetch():
     import numpy as np
     import osmium
-    from osmium.filter import KeyFilter, IdFilter, TagFilter
+    from osmium.filter import KeyFilter, IdFilter
     from shapely import STRtree
     from shapely.geometry import LineString, Point, MultiPoint
     from shapely.ops import substring
@@ -78,13 +80,18 @@ def fetch():
     t0 = time.time()
     print(f'  PBF: {pbf}')
 
-    # 0) barrier=height_restrictor sem valor numérico
+    # 0) nós com altura: barrier=height_restrictor sem valor numérico (lacuna) e nós COM valor numérico
+    #    (altura conhecida pelo nó: a camada altura_osm já aplica; a passagem/túnel daquela via não é lacuna)
     restrictors: dict[int, dict] = {}
-    for n in osmium.FileProcessor(pbf, osmium.osm.NODE).with_filter(TagFilter(('barrier', 'height_restrictor'))):
+    height_nodes: dict[int, tuple[float, float]] = {}
+    for n in osmium.FileProcessor(pbf, osmium.osm.NODE).with_filter(KeyFilter('barrier', 'maxheight', 'maxheight:physical')):
         tags = {t.k: t.v for t in n.tags}
-        if parse_length(tags.get('maxheight')) is None and parse_length(tags.get('maxheight:physical')) is None:
+        numeric = parse_length(tags.get('maxheight')) is not None or parse_length(tags.get('maxheight:physical')) is not None
+        if numeric:
+            height_nodes[n.id] = (n.location.lon, n.location.lat)
+        elif tags.get('barrier') == 'height_restrictor':
             restrictors[n.id] = {'lon': n.location.lon, 'lat': n.location.lat, 'tags': tags, 'way': None}
-    print(f'  height_restrictor sem valor: {len(restrictors)} ({time.time()-t0:.0f}s)')
+    print(f'  height_restrictor sem valor: {len(restrictors)}; nós com altura numérica: {len(height_nodes)} ({time.time()-t0:.0f}s)')
 
     # 1) vias: estruturas por cima, vias principais candidatas por baixo, túneis e valores suspeitos
     over, under, single = [], [], []   # (way_id, tags, refs array)
@@ -104,13 +111,14 @@ def fetch():
             for n in w.nodes:
                 r = restrictors.get(n.ref)
                 if r and r['way'] is None:
-                    r['way'] = (w.id, tags.get('name') or tags.get('ref'), hw)
+                    # limitador sem valor numa via que já tem maxheight numérico: o Valhalla aplica o da via, não é lacuna
+                    r['way'] = 'conhecida' if hs == 'numerico' else (w.id, tags.get('name') or tags.get('ref'), hw)
         major = hw in MAJOR
         reasons = []
         if major and not _is_bridge(tags) and hs in ('sem_tag',):
             refs = refs or array('q', (n.ref for n in w.nodes))
             under.append((w.id, tags, refs))
-            if _is_tunnel(tags):
+            if _is_tunnel(tags) and not any(r in height_nodes for r in refs):
                 reasons.append('tunel_sem_altura')
         if hs == 'below_default':
             reasons.append('altura_abaixo_padrao')
@@ -195,7 +203,7 @@ def fetch():
         for p in pts:
             if isinstance(p, Point):
                 by_under.setdefault(ui, []).append((p, oi))
-    n_pass = 0
+    n_pass = n_known = 0
     for ui, hits in by_under.items():
         uwid, utags, _ = under_meta[ui]
         g = under_geoms[ui]
@@ -219,8 +227,13 @@ def fetch():
                 clusters[-1].append((pos, p, oi))
             else:
                 clusters.append([(pos, p, oi)])
+        # nós da via de baixo com altura numérica (limitador/portal/ponto sob o viaduto): posição em metros na via
+        known_pos = [deg_to_m(g.project(Point(height_nodes[r]))) for r in set(under_meta[ui][2]) if r in height_nodes]
         for cl in clusters:
             pos = sum(c[0] for c in cl) / len(cl)
+            if any(abs(kp - pos) <= KNOWN_NODE_M for kp in known_pos):
+                n_known += 1
+                continue
             a, b = max(0.0, pos - HALF_PIECE_M), min(total_m, pos + HALF_PIECE_M)
             piece = substring(g, m_to_deg(a), m_to_deg(b))
             if piece.is_empty or piece.geom_type != 'LineString':
@@ -253,7 +266,7 @@ def fetch():
                           'estrutura': okind, 'estrutura_nome': oname, 'estruturas': overs[:3], 'prioridade': prio},
             })
             n_pass += 1
-    print(f'  passagens inferiores sem altura: {n_pass} ({time.time()-t0:.0f}s)')
+    print(f'  passagens inferiores sem altura: {n_pass}; com altura em nó da via (descartadas): {n_known} ({time.time()-t0:.0f}s)')
 
     # 4) túneis, below_default, valores suspeitos (a via inteira)
     for wid, tags, refs, reasons in single:
@@ -298,7 +311,7 @@ def fetch():
 
     # 5) limitadores de altura sem valor (em via trafegável)
     for nid, r in restrictors.items():
-        if not r['way']:
+        if not r['way'] or r['way'] == 'conhecida':
             continue
         wid, wname, hw = r['way']
         out.append({'source_id': f'r{nid}', 'geometry': {'type': 'Point', 'coordinates': [round(r['lon'], 7), round(r['lat'], 7)]},
