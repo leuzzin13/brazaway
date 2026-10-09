@@ -30,7 +30,7 @@ com `valhalla:false` e `/api/route` falha**; o front sobe normalmente.
 
 | Região | PBF | RAM mínima p/ build | Tempo típico (8 vCPU) | Disco |
 |---|---|---|---|---|
-| Sudeste (default) | ~700 MB | **8 GB** livres para o Docker | 30–60 min | ~6 GB |
+| Sudeste (default) | ~860 MB | **8 GB** livres para o Docker | ~15 min de build + download (medido: 14 min em M4 Pro, 8 vCPU, 14 GB na VM) | ~3 GB (tiles 1,2 GB + tar 1,2 GB + PBF) |
 | Brasil inteiro | ~1,8 GB | **16 GB** | 1,5–3 h | ~15 GB |
 
 Acompanhe com `docker compose logs -f valhalla`. Os tiles ficam em `data/valhalla/` e são
