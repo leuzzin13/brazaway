@@ -132,6 +132,12 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       for (const ex of exclusions) {
         if (intersects(freeLine, ex) && !intersects(line, ex)) avoided.push(ex.item);
       }
+      if (avoided.length && restricted.distance_km > free.distance_km * 1.5) {
+        warnings.push({
+          code: 'large_detour',
+          message: `Desvio grande: ${restricted.distance_km.toFixed(1)} km contra ${free.distance_km.toFixed(1)} km sem as restrições (+${Math.round(restricted.distance_km - free.distance_km)} km). Verifique se há autorização/exceção aplicável.`,
+        });
+      }
     } catch { /* se a rota livre falhar, só não listamos "avoided" */ }
   }
 
