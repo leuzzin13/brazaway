@@ -461,17 +461,21 @@ const layer: RouteLayer = {
     const idx = new RouteIndex(coords);
     const totalKm = idx.totalKm || route.distance_km;
 
-    interface Uso { t: Trecho; km: number; metros: number }
+    interface Uso { t: Trecho; km: number; metros: number; ponto: Coord }
     const usados: Uso[] = [];
     for (const t of trechos) {
       let metros = 0, km = Infinity, total = 0;
+      let ponto: Coord = t.chains[0][0];
       for (const c of t.chains) {
         total += chainLenM(c);
         const u = usage(idx, c);
-        if (u) { metros += u.metros; km = Math.min(km, u.km); }
+        if (u) {
+          metros += u.metros;
+          if (u.km < km) { km = u.km; ponto = c[Math.floor(c.length / 2)]; }
+        }
       }
       // usa de verdade: >= 60 m (ou metade de um trecho curto, como pontes e viadutos)
-      if (metros >= 60 || (metros >= 25 && metros >= 0.5 * Math.min(total, 120))) usados.push({ t, km, metros });
+      if (metros >= 60 || (metros >= 25 && metros >= 0.5 * Math.min(total, 120))) usados.push({ t, km, metros, ponto });
     }
     if (!usados.length) return {};
     usados.sort((a, b) => a.km - b.km);
@@ -491,7 +495,7 @@ const layer: RouteLayer = {
       const eta = dep.plus({ seconds: Math.round(route.duration_s * Math.min(1, u.km / Math.max(totalKm, 1e-6))) });
       const hora = eta.toFormat('HH:mm');
       const rotulo = `${u.t.name} (VER ${PAR_TXT[p.paragrafo]}, inciso ${p.inciso})`;
-      const mid = u.t.chains[0][Math.floor(u.t.chains[0].length / 2)];
+      const mid = u.ponto;
       if (!vigente(p)) {
         if (p.paragrafo === 5 && !avisouP49) {
           avisouP49 = true;
@@ -521,7 +525,7 @@ const layer: RouteLayer = {
       } else {
         if (d.codigo === 'fora_horario' && minutosDaBorda(p.janelas, eta) <= 15) {
           warnings.push({ code: 'ver_horario_limite', severity: 'warn', id: u.t.id, lon: mid[0], lat: mid[1],
-            message: `Rota passa por ${rotulo} por volta das ${hora}, perto do início/fim da restrição (${p.horario}). Um atraso pode gerar multa (CTB art. 187, I).` });
+            message: `Rota passa por ${rotulo} por volta das ${hora}, perto do início/fim da restrição (${p.horario}). Poucos minutos de diferença podem cair no horário proibido (multa: CTB art. 187, I).` });
         }
         if (d.codigo === 'excecao' && d.excecao && !excecoesAvisadas.has(d.excecao.codigo)) {
           excecoesAvisadas.add(d.excecao.codigo);
