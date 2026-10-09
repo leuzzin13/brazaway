@@ -707,6 +707,52 @@ def chains(E, coord: dict) -> list[list[int]]:
     return res
 
 
+def join_chains(cs: list[list[int]], coord: dict) -> list[list[int]]:
+    """Emenda cadeias em que o fim de uma é o início de outra (bifurcação/junção dentro do mesmo inciso), para mandar
+    menos linhas ao Valhalla/API. Na bifurcação segue pela continuação mais reta; não emenda retorno (> 100°)."""
+    by_start, by_end = defaultdict(list), defaultdict(list)
+    for i, c in enumerate(cs):
+        by_start[c[0]].append(i)
+        by_end[c[-1]].append(i)
+    used = [False] * len(cs)
+    order = sorted(range(len(cs)), key=lambda i: -chain_len(cs[i], coord))
+    out = []
+    for i in order:
+        if used[i]:
+            continue
+        used[i] = True
+        seq = list(cs[i])
+        visited = set(seq)
+        while True:
+            nxt = None
+            for j in by_start.get(seq[-1], []):
+                if used[j] or len(cs[j]) < 2 or cs[j][1] in visited:
+                    continue
+                t = turn(bearing(coord[seq[-2]], coord[seq[-1]]), bearing(coord[cs[j][0]], coord[cs[j][1]]))
+                if t <= 100 and (nxt is None or t < nxt[0]):
+                    nxt = (t, j)
+            if nxt is None:
+                break
+            used[nxt[1]] = True
+            seq.extend(cs[nxt[1]][1:])
+            visited.update(cs[nxt[1]])
+        while True:  # junção: emenda no começo uma cadeia que termina onde esta começa
+            prv = None
+            for j in by_end.get(seq[0], []):
+                if used[j] or len(cs[j]) < 2 or cs[j][-2] in visited:
+                    continue
+                t = turn(bearing(coord[cs[j][-2]], coord[cs[j][-1]]), bearing(coord[seq[0]], coord[seq[1]]))
+                if t <= 100 and (prv is None or t < prv[0]):
+                    prv = (t, j)
+            if prv is None:
+                break
+            used[prv[1]] = True
+            seq = cs[prv[1]][:-1] + seq
+            visited.update(cs[prv[1]])
+        out.append(seq)
+    return out
+
+
 def chain_len(seq, coord) -> float:
     return sum(hav(coord[a], coord[b]) for a, b in zip(seq, seq[1:]))
 
@@ -977,6 +1023,7 @@ def build_features(trechos: list[dict]) -> list[dict]:
         cs = [c for c in chains(sel, net.coord) if len(c) >= 2 and chain_len(c, net.coord) >= 5]
         if tr.get('dir') is not None:
             cs = [c for c in cs if turn(bearing(net.coord[c[0]], net.coord[c[-1]]), tr['dir']) <= 60]
+        cs = join_chains(cs, net.coord)
         cs.sort(key=lambda c: -chain_len(c, net.coord))
         coords = [[[round(x, 7), round(y, 7)] for x, y in (net.coord[n] for n in c)] for c in cs]
         km_total = sum(chain_len(c, net.coord) for c in cs) / 1000

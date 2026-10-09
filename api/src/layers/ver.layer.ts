@@ -26,6 +26,7 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, Route
  */
 
 export const PORTARIA_49_VIGENTE = process.env.VER_PORTARIA_49_VIGENTE === '1';
+const DEBUG = process.env.VER_DEBUG === '1';
 const FACTOR = 1000;
 /** Até este número de cadeias candidatas, todas vão para a rota sem pré-seleção. */
 const MAX_DIRETO = 12;
@@ -367,6 +368,7 @@ async function selecionar(ctx: RouteCtx, day: LegalDayInfo, cands: Cand[]): Prom
   const sel = new Map<string, Cand>();
   for (let it = 0; it < MAX_ITER; it++) {
     const novas = usadasPor(rota, cands.filter((x) => !sel.has(candKey(x))));
+    if (DEBUG) console.log(`[ver] pré-seleção volta ${it}: +${novas.length} (${novas.map((x) => x.t.name).join(' | ')})`);
     if (!novas.length) return [...sel.values()];
     for (const x of novas) sel.set(candKey(x), x);
     const r = await valhalla.route({ ...base, costLines: [...sel.values()].map((x) => ({ coordinates: x.c, factor: FACTOR })) }).catch(() => null);
@@ -374,6 +376,7 @@ async function selecionar(ctx: RouteCtx, day: LegalDayInfo, cands: Cand[]): Prom
     rota = r.coordinates as Coord[];
   }
   for (const x of perto(cands, rota)) sel.set(candKey(x), x); // não convergiu: vizinhas da última rota
+  if (DEBUG) console.log(`[ver] pré-seleção não convergiu em ${MAX_ITER} voltas: ${sel.size} cadeias`);
   return [...sel.values()];
 }
 
