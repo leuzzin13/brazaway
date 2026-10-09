@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { query } from '../db.js';
 import { vehiclePresets } from '../config.js';
 import { describeWindows, zonesForDisplay } from '../services/zones.js';
-import { makeGeocoder } from '../services/geocoder.js';
+import { CascadeGeocoder, makeGeocoder } from '../services/geocoder.js';
 import { BboxQuery } from '../schemas.js';
 import * as valhalla from '../services/valhalla.js';
 
@@ -41,9 +41,15 @@ export async function miscRoutes(app: FastifyInstance) {
     return r.rows;
   });
 
+  // Geocodificação (ver docs/layers/geocoding.md). Resposta: lista de {label, lat, lon, precisao, desvio_m, fonte, ...}.
+  // ?debug=1 devolve {parsed, uf, results, photon, ms} (diagnóstico do parser e da cascata).
   app.get('/api/geocode', async (req, reply) => {
-    const { q, lat, lon } = req.query as { q?: string; lat?: string; lon?: string };
+    const { q, lat, lon, limit, debug } = req.query as { q?: string; lat?: string; lon?: string; limit?: string; debug?: string };
     if (!q || q.trim().length < 3) return reply.code(422).send({ error: 'VALIDATION', message: 'q com pelo menos 3 caracteres' });
-    return geocoder.search(q.trim(), { lat: lat ? Number(lat) : undefined, lon: lon ? Number(lon) : undefined });
+    if (q.length > 300) return reply.code(422).send({ error: 'VALIDATION', message: 'q com no máximo 300 caracteres' });
+    const num = (v?: string) => (v !== undefined && v !== '' && Number.isFinite(Number(v)) ? Number(v) : undefined);
+    const opts = { lat: num(lat), lon: num(lon), limit: num(limit) };
+    if (debug === '1' && geocoder instanceof CascadeGeocoder) return geocoder.explain(q.trim(), opts);
+    return geocoder.search(q.trim(), opts);
   });
 }
