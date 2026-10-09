@@ -41,7 +41,7 @@ export interface WeighOnRoute {
 
 const KIND: Record<string, WeighOnRoute['tipo']> = { fixo: 'fixa', movel: 'movel', hs_wim: 'hs_wim', outro: 'outro' };
 const KIND_TXT: Record<WeighOnRoute['tipo'], string> = {
-  fixa: 'fixa', movel: 'ponto de pesagem móvel (operação eventual)', hs_wim: 'pesagem em movimento (HS-WIM)', outro: 'balança',
+  fixa: 'fixa', movel: 'pesagem móvel, operação eventual', hs_wim: 'pesagem em movimento (HS-WIM)', outro: 'tipo não informado',
 };
 
 function toXY(c: number[], lat0: number): [number, number] {
@@ -177,7 +177,8 @@ const layer: RouteLayer = {
       const parts = [fixas && `${fixas} fixa(s)`, moveis && `${moveis} ponto(s) de pesagem móvel`, wim && `${wim} HS-WIM`, outros && `${outros} sem tipo`].filter(Boolean);
       summary.push(`${list.length} balança(s) no sentido da rota: ${parts.join(', ')}.`);
       for (const b of list.slice(0, 10)) {
-        summary.push(`• km ${Math.round(b.km_rota)}: ${b.nome} (${KIND_TXT[b.tipo]})${b.no_sentido === 'incerto' ? ' · sentido não confirmado' : ''}`);
+        const tipo = b.tipo === 'movel' && /m[oó]vel/i.test(b.nome) ? 'operação eventual' : KIND_TXT[b.tipo];
+        summary.push(`• km ${Math.round(b.km_rota)}: ${b.nome} — ${tipo}${b.no_sentido === 'incerto' ? ' · sentido não confirmado' : ''}`);
       }
       if (list.length > 10) summary.push(`• … mais ${list.length - 10}; ver dados da camada.`);
       summary.push('Balança sinalizada como aberta: entre na área de pesagem. Deixar de entrar é infração grave (CTB art. 209).');
