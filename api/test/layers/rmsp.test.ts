@@ -161,6 +161,23 @@ describe('regras por município (módulo da camada)', () => {
     expect(enquadrar(rp, resolveVehicle({ preset: 'truck' } as any)).aplica).toBe(true);   // 3 eixos
   });
 
+  it('feriado: VER de Osasco fica suspensa (a portaria excetua feriados); a ZMRC de Osasco não', async () => {
+    // feriado fictício numa terça distante, só para o teste (removido ao final)
+    const ins = await pool.query(
+      `insert into holidays (day, scope, name, source) values ('2030-03-12', 'national', 'TESTE rmsp', 'teste')
+       on conflict do nothing returning id`);
+    try {
+      const comum = await layer.costLines!(ctxOf(OSA_A, OSA_B, '2030-03-19T08:00', CARRETA) as any);
+      expect(comum.some((c) => c.item.type === 'VER' && /Osasco/.test(c.item.name ?? ''))).toBe(true);
+      const feriado = await layer.costLines!(ctxOf(OSA_A, OSA_B, '2030-03-12T08:00', CARRETA) as any);
+      expect(feriado.some((c) => c.item.type === 'VER' && /Osasco/.test(c.item.name ?? ''))).toBe(false);
+      const zonas = await layer.exclusions!(ctxOf(OSA_A, OSA_B, '2030-03-12T08:00', CARRETA) as any);
+      expect(zonas.some((e) => e.item.type === 'ZMRC')).toBe(true);
+    } finally {
+      if (ins.rows[0]) await pool.query(`delete from holidays where id = $1`, [ins.rows[0].id]);
+    }
+  });
+
   it('Ribeirão Pires: ZRC vira exclusão para caminhão 3 eixos e não para 2 eixos/16 t', async () => {
     const o = { lat: -23.7030, lon: -46.4250 }, d = { lat: -23.7160, lon: -46.3990 };
     const ex3 = await layer.exclusions!(ctxOf(o, d, '2026-10-13T03:00', { preset: 'truck' }) as any);
