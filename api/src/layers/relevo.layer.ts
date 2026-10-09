@@ -26,7 +26,11 @@ interface GradeConfig {
   presets: Record<string, Limits>;
   by_weight: { weight_override_ratio: number; tiers: (Limits & { max_weight_t: number })[] };
   descent: { min_weight_t: number; min_drop_m: number; min_avg_pct: number };
-  cost_lines: { avoid_factor: number };
+  cost_lines: { avoid_factor: number; exclude_road_classes: string[] };
+  /** trecho só é reportado se a rampa sustentada passar do limite de atenção em pelo menos min_over_m metros */
+  min_over_m: number;
+  /** janela (m) da rampa sustentada por classe de via do Valhalla (road_class); "default" para as demais */
+  window_m: Record<string, number>;
   max_segment_warnings: number;
 }
 const DEFAULT_CFG: GradeConfig = {
@@ -43,7 +47,9 @@ const DEFAULT_CFG: GradeConfig = {
     ],
   },
   descent: { min_weight_t: 16, min_drop_m: 150, min_avg_pct: 5 },
-  cost_lines: { avoid_factor: 10 },
+  cost_lines: { avoid_factor: 10, exclude_road_classes: ['motorway', 'trunk'] },
+  min_over_m: 30,
+  window_m: { motorway: 300, trunk: 300, default: 120 },
   max_segment_warnings: 5,
 };
 
@@ -60,11 +66,18 @@ export function gradeConfig(): GradeConfig {
       by_weight: { ...DEFAULT_CFG.by_weight, ...(raw.by_weight ?? {}) },
       descent: { ...DEFAULT_CFG.descent, ...(raw.descent ?? {}) },
       cost_lines: { ...DEFAULT_CFG.cost_lines, ...(raw.cost_lines ?? {}) },
+      window_m: { ...DEFAULT_CFG.window_m, ...(raw.window_m ?? {}) },
     };
   } catch {
     cfgCache = DEFAULT_CFG;
   }
   return cfgCache;
+}
+
+const isHighway = (rc: string | null | undefined) => rc === 'motorway' || rc === 'trunk';
+
+function windowFor(roadClass: string | undefined, cfg: GradeConfig): number {
+  return (roadClass && cfg.window_m[roadClass]) || cfg.window_m.default || 120;
 }
 
 /** Limites do veículo: preset; se o PBT passar do PBT de referência do preset × ratio (ou sem preset), vale o mais restritivo com a faixa de peso. */
@@ -125,8 +138,11 @@ function pointAt(coords: LonLat[], cum: number[], d: number): LonLat {
 }
 const r5 = (v: number) => Math.round(v * 1e5) / 1e5;
 const r1 = (v: number) => Math.round(v * 10) / 10;
+/** "350 m" ou "1,2 km" */
+const fmtLen = (m: number) => (m < 1000 ? `${Math.round(m / 10) * 10} m` : `${fmtKm(m)} km`);
 const fmtKm = (m: number) => (m / 1000).toLocaleString('pt-BR', { maximumFractionDigits: m < 10000 ? 1 : 0, minimumFractionDigits: m < 10000 ? 1 : 0 });
-const fmtPct = (v: number) => `${Math.round(v)}%`;
+/** rampa em pt-BR: 1 casa abaixo de 10% ("8,1%"), inteiro acima ("12%") */
+const fmtPct = (v: number) => (v < 10 ? `${(Math.round(v * 10) / 10).toLocaleString('pt-BR')}%` : `${Math.round(v)}%`);
 
 /** Divide a linha em pedaços que cabem no service_limits.trace do Valhalla (200 km / 16000 pontos por padrão). */
 function chunks(coords: LonLat[], cum: number[], maxM = 150_000, maxPts = 12_000): LonLat[][] {
@@ -167,11 +183,13 @@ export interface GradeSegment {
   id: string;
   level: 'evitar' | 'atencao';
   name: string;
+  road_class: string | null;
   way_ids: number[];
-  /** rampa máxima de subida (Valhalla, % arredondado para cima) */
+  /** rampa máxima de subida sustentada (menor entre o Valhalla e a média móvel de window_m no perfil), 1 casa */
   max_up_pct: number;
-  /** rampa máxima medida no perfil (janelas de 60 m), 1 casa */
-  max_up_pct_profile: number | null;
+  /** edge.max_upward_grade bruto do Valhalla (postes de 60 m, % arredondado para cima) */
+  max_up_pct_valhalla: number;
+  window_m: number;
   length_m: number;
   over_warn_m: number;
   over_avoid_m: number;
@@ -271,20 +289,6 @@ function elevFn(p: { d: number[]; h: number[] }) {
   };
 }
 
-/** Janelas de ~60 m (comprimentos iguais, sem sobreposição) a partir do início do trecho, como o elevationbuilder do Valhalla. */
-function windows(d0: number, d1: number, elev: (x: number) => number, step = 60): { s: number; e: number; g: number }[] {
-  const len = d1 - d0;
-  if (len < 10) return [];
-  const n = Math.max(1, Math.round(len / step));
-  const w = len / n;
-  const out: { s: number; e: number; g: number }[] = [];
-  for (let i = 0; i < n; i++) {
-    const a = d0 + i * w, b = i === n - 1 ? d1 : a + w;
-    out.push({ s: a, e: b, g: ((elev(b) - elev(a)) / (b - a)) * 100 });
-  }
-  return out;
-}
-
 function ascentDescent(h: number[], thr = 5): { up: number; down: number } {
   if (!h.length) return { up: 0, down: 0 };
   let last = h[0], up = 0, down = 0;
@@ -327,6 +331,7 @@ function nameAt(edges: Edge[], d: number): string {
 /** "na Rua X", "no Viaduto Y", "em SP-150" */
 function naVia(name: string): string {
   if (name === 'via sem nome') return 'em via sem nome';
+  if (/^[A-Z]{2,3}-\d{2,4}\b/.test(name)) return `na ${name}`; // BR-116, SP-150
   if (/^(rua|avenida|av\.|alameda|estrada|rodovia|travessa|ladeira|viela|praça|ponte|marginal|via|passagem|rampa|rotatória|alça|vicinal)\b/i.test(name)) return `na ${name}`;
   if (/^(viaduto|túnel|tunel|complexo|elevado|acesso|anel|rodoanel|corredor|contorno|largo|caminho|trevo)\b/i.test(name)) return `no ${name}`;
   return `em ${name}`;
@@ -382,48 +387,73 @@ const layer: RouteLayer = {
     const profile = buildProfile(samples, totalM, edges);
     const elev = profile ? elevFn(profile) : null;
 
-    // ---- arestas acima do limite de atenção (rampa de subida no sentido do percurso)
-    const flagged = edges.map((e, i) => ({ e, i })).filter(({ e }) => e.up != null && (e.up as number) > lim.warn_pct);
-    // agrupa arestas sinalizadas consecutivas (folga de até 50 m entre elas) em trechos
-    const groups: Edge[][] = [];
-    for (const { e } of flagged) {
-      const g = groups[groups.length - 1];
-      if (g && e.d0 - g[g.length - 1].d1 <= 50) g.push(e); else groups.push([e]);
-    }
-    const segments: GradeSegment[] = groups.map((g) => {
-      const maxUp = Math.max(...g.map((e) => e.up as number));
-      let overWarn = 0, overAvoid = 0, best: { s: number; e: number; g: number } | null = null;
-      for (const e of g) {
-        const w = elev ? windows(e.d0, e.d1, elev) : [];
-        const hits = w.filter((x) => x.g > lim.warn_pct);
-        if (!w.length || !hits.length) {
-          // perfil sem a janela (amostragem diferente da do Valhalla): conta a aresta (até 60 m) pelo valor do Valhalla
-          const l = Math.min(e.d1 - e.d0, 60);
-          overWarn += l;
-          if ((e.up as number) > lim.avoid_pct) overAvoid += l;
-          if (!best) best = { s: e.d0, e: e.d0 + l, g: e.up as number };
-          continue;
-        }
-        for (const x of w) {
-          if (x.g > lim.warn_pct) overWarn += x.e - x.s;
-          if (x.g > lim.avoid_pct && (e.up as number) > lim.avoid_pct) overAvoid += x.e - x.s;
-          if (!best || x.g > best.g) best = { ...x };
+    // ---- rampa "sustentada" por aresta: média móvel centrada de L m sobre o perfil (L por classe de via, ver
+    // cfg.window_m). Com L=60 m o DEM de 30 m inventa rampas (erro de 2–4 p.p., >20 p.p. em rodovia encaixada em
+    // encosta, ex.: Anchieta na serra); rodovias são projetadas com rampas longas e moderadas (IPR-706), então medimos
+    // 300 m nelas e 120 m nas demais (ladeiras urbanas curtas continuam aparecendo).
+    const gradeAt = (x: number, L: number): number => {
+      if (!elev) return 0;
+      let a = x - L / 2, b = x + L / 2;
+      if (a < 0) { b = Math.min(totalM, b - a); a = 0; }
+      if (b > totalM) { a = Math.max(0, a - (b - totalM)); b = totalM; }
+      return b - a < 10 ? 0 : ((elev(b) - elev(a)) / (b - a)) * 100;
+    };
+    const SUB = 15;
+    const stats = edges.map((e) => {
+      const L = windowFor(e.roadClass, cfg);
+      const len = e.d1 - e.d0;
+      const n = Math.max(1, Math.ceil(len / SUB));
+      const sub = len / n;
+      let maxG = -Infinity, minG = Infinity, peakX = (e.d0 + e.d1) / 2, overWarn = 0, overAvoid = 0;
+      if (elev) {
+        for (let i = 0; i < n; i++) {
+          const x = e.d0 + (i + 0.5) * sub;
+          const g = gradeAt(x, L);
+          if (g > maxG) { maxG = g; peakX = x; }
+          if (g < minG) minG = g;
+          if (g > lim.warn_pct) overWarn += sub;
+          if (g > lim.avoid_pct) overAvoid += sub;
         }
       }
-      // garante coerência: se o Valhalla diz > evitar, há ao menos um trecho contado
-      if (maxUp > lim.avoid_pct && overAvoid === 0) overAvoid = Math.min(60, g.reduce((s, e) => s + e.d1 - e.d0, 0));
-      const d0 = g[0].d0, d1 = g[g.length - 1].d1;
-      const peak = best ? pointAt(G, cum, (best.s + best.e) / 2) : pointAt(G, cum, (d0 + d1) / 2);
-      const a = G[g[0].b], b = G[g[g.length - 1].e];
-      const segCoords = G.slice(g[0].b, g[g.length - 1].e + 1);
-      const ways = [...new Set(g.map((e) => e.wayId).filter((x): x is number => typeof x === 'number'))];
+      // rampa da aresta: as duas fontes têm de concordar (o Valhalla mede o máximo em postes de 60 m e arredonda para
+      // cima; a média móvel suaviza o ruído do DEM) — vale o menor dos dois; sem perfil, vale o do Valhalla
+      const up = e.up == null ? null : elev ? Math.min(e.up, maxG) : e.up;
+      const down = e.down == null ? null : elev ? Math.min(Math.abs(e.down), Math.max(0, -minG)) : Math.abs(e.down);
+      return { up, down, peakX, overWarn: elev ? overWarn : Math.min(len, 60), overAvoid: elev ? overAvoid : Math.min(len, 60), window: L };
+    });
+
+    // ---- arestas acima do limite de atenção: o Valhalla (edge.max_upward_grade) E a rampa sustentada passam do limite
+    const flaggedIdx = edges.map((_, i) => i).filter((i) => edges[i].up != null && (edges[i].up as number) > lim.warn_pct && (stats[i].up as number) > lim.warn_pct);
+    const discardedNoise = edges.filter((e, i) => e.up != null && (e.up as number) > lim.warn_pct && !((stats[i].up as number) > lim.warn_pct)).length;
+    // agrupa arestas sinalizadas consecutivas (folga de até 50 m entre elas) em trechos
+    const groups: number[][] = [];
+    for (const i of flaggedIdx) {
+      const g = groups[groups.length - 1];
+      if (g && edges[i].d0 - edges[g[g.length - 1]].d1 <= 50) g.push(i); else groups.push([i]);
+    }
+    const segmentsAll: GradeSegment[] = groups.map((g) => {
+      const es = g.map((i) => edges[i]);
+      const best = g.reduce((m, i) => ((stats[i].up as number) > (stats[m].up as number) ? i : m), g[0]);
+      const maxUp = stats[best].up as number;
+      const rawMax = Math.max(...es.map((e) => e.up as number));
+      const overWarn = g.reduce((s, i) => s + stats[i].overWarn, 0);
+      const overAvoid = maxUp > lim.avoid_pct ? g.reduce((s, i) => s + stats[i].overAvoid, 0) : 0;
+      // "evitar" exige pelo menos min_over_m acima do limite (pico isolado de 15 m é ruído provável do DEM de 30 m)
+      const evitar = maxUp > lim.avoid_pct && overAvoid >= cfg.min_over_m;
+      const d0 = es[0].d0, d1 = es[es.length - 1].d1;
+      const peak = pointAt(G, cum, stats[best].peakX);
+      const a = G[es[0].b], b = G[es[es.length - 1].e];
+      const segCoords = G.slice(es[0].b, es[es.length - 1].e + 1);
+      const ways = [...new Set(es.map((e) => e.wayId).filter((x): x is number => typeof x === 'number'))];
       return {
         id: `relevo:${ways[0] ?? 'x'}:${Math.round(d0)}`,
-        level: maxUp > lim.avoid_pct ? 'evitar' : 'atencao',
-        name: mostCommonName(g),
+        level: evitar ? 'evitar' : 'atencao',
+        name: mostCommonName(es),
+        road_class: edges[best].roadClass ?? null,
         way_ids: ways,
-        max_up_pct: maxUp,
-        max_up_pct_profile: best && elev ? r1(best.g) : null,
+        max_up_pct: r1(maxUp),
+        max_up_pct_valhalla: rawMax,
+        window_m: stats[best].window,
         length_m: Math.round(d1 - d0),
         over_warn_m: Math.round(overWarn),
         over_avoid_m: Math.round(overAvoid),
@@ -435,24 +465,25 @@ const layer: RouteLayer = {
       };
     });
 
-    // ---- máximos da rota
-    const maxUpEdge = withData.reduce((m, e) => ((e.up as number) > (m.up as number) ? e : m), withData[0]);
-    const maxUp = maxUpEdge.up as number;
-    const downs = edges.filter((e) => e.down != null).map((e) => Math.abs(e.down as number));
-    const maxDown = downs.length ? Math.max(...downs) : 0;
+    const segments = segmentsAll.filter((x) => x.over_warn_m >= cfg.min_over_m);
+    const discardedShort = segmentsAll.length - segments.length;
+
+    // ---- máximos da rota (mesma regra das arestas: menor entre Valhalla e rampa sustentada)
+    const idxData = edges.map((_, i) => i).filter((i) => stats[i].up != null);
+    const maxIdx = idxData.reduce((m, i) => ((stats[i].up as number) > (stats[m].up as number) ? i : m), idxData[0]);
+    const maxUp = Math.max(0, stats[maxIdx].up as number);
+    const maxDown = Math.max(0, ...idxData.map((i) => stats[i].down ?? 0));
     const maxUpAt = (() => {
-      const seg = segments.find((s) => s.max_up_pct === maxUp);
-      if (seg) return { lat: seg.lat, lon: seg.lon, name: seg.name };
-      const p = pointAt(G, cum, (maxUpEdge.d0 + maxUpEdge.d1) / 2);
-      return { lat: r5(p[1]), lon: r5(p[0]), name: maxUpEdge.name ?? 'via sem nome' };
+      const p = pointAt(G, cum, stats[maxIdx].peakX);
+      return { lat: r5(p[1]), lon: r5(p[0]), name: edges[maxIdx].name ?? 'via sem nome' };
     })();
     const overWarnM = segments.reduce((s, x) => s + x.over_warn_m, 0);
-    const overAvoidM = segments.reduce((s, x) => s + x.over_avoid_m, 0);
+    const overAvoidM = segments.reduce((s, x) => s + (x.level === 'evitar' ? x.over_avoid_m : 0), 0);
     const avoidSegs = segments.filter((s) => s.level === 'evitar').sort((a, b) => b.max_up_pct - a.max_up_pct || b.over_avoid_m - a.over_avoid_m);
     const warnSegs = segments.filter((s) => s.level === 'atencao');
 
     // ---- perfil resumido
-    let profileOut: Record<string, unknown> | null = null;
+    let profileOut: Record<string, number | [number, number][]> | null = null;
     const histogram: Record<string, number> = {};
     const descentList: { km_from_start: number; length_km: number; drop_m: number; avg_pct: number; lat: number; lon: number; name: string }[] = [];
     if (profile) {
@@ -470,16 +501,19 @@ const layer: RouteLayer = {
         ascent_m: Math.round(up), descent_m: Math.round(down),
         points: pts,
       };
-      // km de subida por faixa de rampa (janelas de 60 m na rota toda; pontes/túneis já aplainados)
+      // km de subida por faixa de rampa sustentada (passo de 30 m na rota toda; pontes/túneis já aplainados)
       const bins: [string, number][] = [['0-3', 3], ['3-6', 6], ['6-8', 8], ['8-10', 10], ['10-12', 12], ['12-15', 15], ['15-20', 20], ['20+', Infinity]];
       for (const [k] of bins) histogram[k] = 0;
       let downSteep = 0;
-      const ef = elevFn(profile);
-      for (const w of windows(0, totalM, ef)) {
-        const len = w.e - w.s;
-        if (w.g <= -6) downSteep += len;
-        if (w.g <= 0) continue;
-        const bin = bins.find(([, hi]) => w.g < hi) ?? bins[bins.length - 1];
+      const STEP = 30;
+      let ei = 0;
+      for (let x = STEP / 2; x < totalM; x += STEP) {
+        while (ei < edges.length - 1 && edges[ei].d1 < x) ei++;
+        const g = gradeAt(x, windowFor(edges[ei]?.roadClass, cfg));
+        const len = Math.min(STEP, totalM - (x - STEP / 2));
+        if (g <= -6) downSteep += len;
+        if (g <= 0) continue;
+        const bin = bins.find(([, hi]) => g < hi) ?? bins[bins.length - 1];
         histogram[bin[0]] += len;
       }
       for (const k of Object.keys(histogram)) histogram[k] = r1(histogram[k] / 1000);
@@ -501,21 +535,38 @@ const layer: RouteLayer = {
     // ---- avisos (nunca 'danger': rampa não é restrição legal; o DEM erra ~2 p.p.)
     const label = ctx.vehicle.label ?? ctx.vehicle.id;
     const warnings: LayerWarning[] = [];
-    for (const s of avoidSegs.slice(0, cfg.max_segment_warnings)) {
+    // trechos "evitar": rodovias (motorway/trunk) próximos (<= 3 km) da mesma via viram um aviso só (serra)
+    const clusters: GradeSegment[][] = [];
+    for (const sg of [...avoidSegs].sort((a, b) => a.km_from_start - b.km_from_start)) {
+      const c = clusters[clusters.length - 1];
+      const last = c?.[c.length - 1];
+      if (c && last && isHighway(sg.road_class) && isHighway(last.road_class) && sg.name === last.name
+        && sg.km_from_start - (last.km_from_start + last.length_m / 1000) <= 3) c.push(sg);
+      else clusters.push([sg]);
+    }
+    const ranked = clusters
+      .map((c) => ({ c, top: c.reduce((m, x) => (x.max_up_pct > m.max_up_pct ? x : m), c[0]) }))
+      .sort((a, b) => b.top.max_up_pct - a.top.max_up_pct);
+    for (const { c, top } of ranked.slice(0, cfg.max_segment_warnings)) {
+      const overAvoid = c.reduce((sum, x) => sum + x.over_avoid_m, 0);
+      const k0 = c[0].km_from_start, k1 = c[c.length - 1].km_from_start + c[c.length - 1].length_m / 1000;
+      const where = Math.round(k1) > Math.round(k0) ? `km ${Math.round(k0)}–${Math.round(k1)} da rota` : `km ${Math.round(k0)} da rota`;
       warnings.push({
-        code: 'steep_grade_avoid', severity: 'warn', id: s.id, lat: s.lat, lon: s.lon,
-        message: `Rampa de ~${fmtPct(s.max_up_pct)} ${naVia(s.name)} (${s.length_m} m): acima do recomendado para ${label} (${lim.avoid_pct}%). Risco de patinar com piso molhado; avalie outra via.`,
+        code: 'steep_grade_avoid', severity: 'warn', id: top.id, lat: top.lat, lon: top.lon,
+        message: isHighway(top.road_class)
+          ? `Subida forte ${naVia(top.name)} (${where}): até ~${fmtPct(top.max_up_pct)}, com ${fmtLen(overAvoid)} acima de ${lim.avoid_pct}% (recomendado p/ ${label}). Engate marcha reduzida antes; com piso molhado há risco de perder tração.`
+          : `Rampa de ~${fmtPct(top.max_up_pct)} ${naVia(top.name)} (trecho de ${top.length_m} m): acima do recomendado para ${label} (${lim.avoid_pct}%). Risco de patinar com piso molhado; avalie outra via.`,
       });
     }
-    if (avoidSegs.length > cfg.max_segment_warnings) {
-      warnings.push({ code: 'steep_grade_avoid_more', severity: 'warn', message: `Mais ${avoidSegs.length - cfg.max_segment_warnings} trecho(s) com rampa acima de ${lim.avoid_pct}% na rota (ver perfil).` });
+    if (ranked.length > cfg.max_segment_warnings) {
+      warnings.push({ code: 'steep_grade_avoid_more', severity: 'warn', message: `Mais ${ranked.length - cfg.max_segment_warnings} trecho(s) com rampa acima de ${lim.avoid_pct}% na rota (ver perfil).` });
     }
     if (warnSegs.length) {
       const worst = [...warnSegs].sort((a, b) => b.max_up_pct - a.max_up_pct)[0];
       const km = warnSegs.reduce((s, x) => s + x.over_warn_m, 0);
       warnings.push({
         code: 'steep_grade_warn', severity: 'warn', id: worst.id, lat: worst.lat, lon: worst.lon,
-        message: `${warnSegs.length} trecho(s) com rampa entre ${lim.warn_pct}% e ${lim.avoid_pct}% (${fmtKm(km)} km); o pior, ~${fmtPct(worst.max_up_pct)}, ${naVia(worst.name)}. Reduza a marcha antes da subida.`,
+        message: `${warnSegs.length} trecho(s) com rampa acima de ${lim.warn_pct}% (${fmtLen(km)} no total); o pior, ~${fmtPct(worst.max_up_pct)}, ${naVia(worst.name)}. Reduza a marcha antes da subida.`,
       });
     }
     for (const ds of descentList.slice(0, 3)) {
@@ -529,7 +580,7 @@ const layer: RouteLayer = {
     const summary: string[] = [];
     summary.push(`Rampa máx. ~${fmtPct(maxUp)} ${naVia(maxUpAt.name)}. Limites p/ ${label}: atenção > ${lim.warn_pct}%, evitar > ${lim.avoid_pct}%.`);
     if (segments.length) {
-      summary.push(`${fmtKm(overWarnM)} km acima de ${lim.warn_pct}% em ${segments.length} trecho(s)${avoidSegs.length ? `; ${avoidSegs.length} acima de ${lim.avoid_pct}%` : ''}.`);
+      summary.push(`${fmtLen(overWarnM)} acima de ${lim.warn_pct}% em ${segments.length} trecho(s)${avoidSegs.length ? `; ${avoidSegs.length} acima de ${lim.avoid_pct}%` : ''}.`);
     } else {
       summary.push(`Nenhum trecho acima de ${lim.warn_pct}%.`);
     }
@@ -537,8 +588,8 @@ const layer: RouteLayer = {
     summary.push('Estimativa por modelo de terreno (ANADEM, ~30 m): erro típico de 2 p.p.; confirme no local.');
 
     // ---- 2ª rodada (sugestão, não aplicada): trechos "evitar" como linear_cost_factors no sentido da subida
-    const costLinesSuggested: LayerCostLine[] = avoidSegs.map((s) => ({
-      item: { kind: 'layer', layer: 'relevo', id: s.id, name: s.name, type: 'steep_grade', rule: `rampa ~${s.max_up_pct}% > ${lim.avoid_pct}%`, value_num: s.max_up_pct, lat: s.lat, lon: s.lon, note: null },
+    const costLinesSuggested: LayerCostLine[] = avoidSegs.filter((s) => !cfg.cost_lines.exclude_road_classes.includes(s.road_class ?? '')).map((s) => ({
+      item: { kind: 'layer', layer: 'relevo', id: s.id, name: s.name, type: 'steep_grade', rule: `rampa ~${fmtPct(s.max_up_pct)} > ${lim.avoid_pct}%`, value_num: s.max_up_pct, lat: s.lat, lon: s.lon, note: null },
       coordinates: s.coordinates,
       factor: cfg.cost_lines.avoid_factor,
     }));
@@ -548,11 +599,15 @@ const layer: RouteLayer = {
       warnings,
       data: {
         source: 'Valhalla trace_attributes + /height com elevação ANADEM v1 (HGT 1")',
+        window_m: cfg.window_m,
         vehicle: { preset: ctx.vehicle.id, weight_t: ctx.vehicle.weight_t },
         limits: { warn_pct: lim.warn_pct, avoid_pct: lim.avoid_pct, source: lim.source, basis: lim.basis ?? null },
-        max_up_pct: maxUp,
+        max_up_pct: r1(maxUp),
         max_up_at: maxUpAt,
-        max_down_pct: maxDown,
+        max_down_pct: r1(maxDown),
+        max_up_pct_valhalla: Math.max(...edges.filter((e) => e.up != null).map((e) => e.up as number)),
+        /** arestas em que o Valhalla (60 m) passou do limite de atenção mas a rampa sustentada não (ruído provável do DEM) */
+        discarded_spikes: discardedNoise + discardedShort,
         km_over_warn: r1(overWarnM / 1000),
         km_over_avoid: r1(overAvoidM / 1000),
         segments_count: segments.length,
