@@ -1,9 +1,12 @@
 """Praças de pedágio das rodovias ESTADUAIS concedidas de SP (ARTESP) + tarifa comercial por eixo.
 
 Fontes:
-  - Tarifas: PDF "Valor Atual das Tarifas" (página de pedágios da ARTESP; arquivo em admin.cms.sp.gov.br): por praça,
-    rodovia, km, valor PASSEIO e COMERCIAL POR EIXO (no Estado, caminhão paga tarifa x nº de eixos); contratos novos
-    (ViaPaulista) em categorias CAT-1..9 com valor manual e AVI (TAG) e vigência explícita.
+  - Tarifas: PDFs de tarifas da ARTESP (arquivos em admin.cms.sp.gov.br). Por praça: rodovia, km, valor PASSEIO e
+    COMERCIAL POR EIXO (no Estado, caminhão paga tarifa x nº de eixos); contratos novos (ViaPaulista, Entrevias) em
+    categorias CAT-1..9 com valor manual e AVI (TAG).
+    ATENÇÃO: o link "Valor Atual das Tarifas" da página de pedágios ainda aponta para a tabela de 01/07/2025. As tabelas
+    2026 (vigência 01/07/2026; Entrevias 06/07/2026) estão na notícia ARTESP de 29/06/2026 "Revisão tarifária anual das
+    rodovias concedidas entra em vigor em 1º de julho". Ver PDFS abaixo (ordem = prioridade).
   - Sentido de cobrança: PDF "Histórico de Tarifas (Contratos Vigentes)" (colunas COBRANÇA BI/UNIDIRECIONAL e
     TARIFA UNI/BIDIRECIONAL: praça unidirecional cobra num só sentido o valor de ida e volta).
   - Posição: KMZ de malha por lote (dadosabertos.artesp.sp.gov.br, CC-BY), pasta "Sistema de Arrecadação/Praças";
@@ -17,12 +20,25 @@ from common import http_get, stable_id, CACHE_DIR
 
 LAYER_ID = 'pedagio'
 SOURCE = 'artesp'
-PDF_TARIFAS = os.environ.get('ARTESP_PDF_TARIFAS', 'https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/0a8ff7b8-005b-4a04-a152-c69236f1f15d/renditions/53b3922a-a33b-40f6-9e4c-46a6771e681d?binary=true')
-PDF_HIST = os.environ.get('ARTESP_PDF_HIST', 'https://admin.cms.sp.gov.br/dx/api/dam/v1/collections/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/ee05ac89-3ea9-49e9-8452-1fce8bdfb065/renditions/b6d7cfaf-2436-40f1-b7dc-c3f0d522d1ba?binary=true')
+_DAM = 'https://admin.cms.sp.gov.br/dx/api/dam/v1/collections'
+# Tabelas de tarifa, da mais nova para a mais antiga. Uma tabela antiga só entra para os lotes que não aparecem nas novas
+# (ex.: ViaPaulista/L29, cujo contrato reajusta em novembro: tabela de 2025 com vigência 23/11/2025 a 22/11/2026).
+# `vigencia` = início de vigência conferido na notícia ARTESP de 29/06/2026 (o cabeçalho do PDF 2026 traz "07/01/2026",
+# data no formato mês/dia); `lote_cat` = lote dos blocos "CAT-1..9" do PDF.
+PDFS = [
+    {'id': '2026-07-01', 'vigencia': '2026-07-01', 'lote_cat': None,
+     'url': os.environ.get('ARTESP_PDF_TARIFAS', f'{_DAM}/c65c8bbb-34b7-45e5-8e68-23f626d5293a/items/15f70220-8ead-4e26-9334-1ab21443ec97/renditions/663c7fe6-a19b-4847-bdf9-b731b3a6339b?binary=true')},
+    {'id': '2026-07-06-entrevias', 'vigencia': '2026-07-06', 'lote_cat': 28,
+     'url': os.environ.get('ARTESP_PDF_ENTREVIAS', f'{_DAM}/c65c8bbb-34b7-45e5-8e68-23f626d5293a/items/95b34aa8-0ea4-469b-a98c-ed0b3cc6cb75/renditions/0f8c3d94-07d3-4aeb-8f79-9ed922b5972d?binary=true')},
+    {'id': '2025-07-01', 'vigencia': '2025-07-01', 'lote_cat': 29,
+     'url': f'{_DAM}/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/0a8ff7b8-005b-4a04-a152-c69236f1f15d/renditions/53b3922a-a33b-40f6-9e4c-46a6771e681d?binary=true'},
+]
+PDF_HIST = os.environ.get('ARTESP_PDF_HIST', f'{_DAM}/aa4b6398-685b-4dba-8fab-8dc3a0fe9c27/items/ee05ac89-3ea9-49e9-8452-1fce8bdfb065/renditions/b6d7cfaf-2436-40f1-b7dc-c3f0d522d1ba?binary=true')
+NEWS_2026 = 'https://www.artesp.sp.gov.br/artesp/noticias/revisao+tarifaria+anual+das+rodovias+concedidas+entra+em+vigor+em+1+de+julho'
 CKAN_MALHA = 'https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=malha-rodoviaria'
 PAGE = 'https://www.artesp.sp.gov.br/artesp/setor-regulado/rodovia/pedagios'
-SOURCE_URL = f'{PAGE} (PDFs "Valor Atual das Tarifas" e "Histórico de Tarifas") + https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria (KMZ)'
-LICENSE = 'KMZ de malha: CC-BY (ARTESP dados abertos); PDFs de tarifa: licença não especificada pela ARTESP (dado público oficial)'
+SOURCE_URL = f'{PAGE} + {NEWS_2026} (PDFs de tarifas 2026 e "Histórico de Tarifas") + https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria (KMZ)'
+LICENSE = 'KMZ de malha: CC-BY (ARTESP dados abertos); PDFs de tarifa: licença não especificada no CKAN e rodapé "todos os direitos reservados" no portal cms.sp.gov.br (ver docs/layers/pedagio.md)'
 NOTES = ''
 
 LOTE_NOME = {1: 'AutoBAn', 6: 'Intervias', 7: 'Rota das Bandeiras', 11: 'Renovias', 13: 'Rodovias das Colinas', 16: 'CART',
@@ -51,17 +67,22 @@ def pdftotext(data: bytes) -> str:
         return subprocess.run(['pdftotext', '-layout', f.name, '-'], check=True, capture_output=True).stdout.decode('utf-8', 'replace')
 
 
-def parse_tarifas(txt: str) -> tuple[list[dict], str | None]:
-    """Linhas praça/pórtico do PDF de tarifas vigentes. Devolve (linhas, data_da_tabela)."""
+def parse_tarifas(txt: str, lote_cat: int | None = 29) -> tuple[list[dict], str | None]:
+    """Linhas praça/pórtico de um PDF de tarifas. Devolve (linhas, data_impressa_no_pdf).
+    `lote_cat` = lote dos blocos de categorias (CAT-1..9) do PDF (ViaPaulista = 29 no PDF de 2025, Entrevias = 28)."""
     from sources.weigh_dersp import norm_rod, parse_km
     m = re.search(r'(\d{2})/(\d{2})/(\d{4})', txt[:3000])
     data = f'{m.group(3)}-{m.group(2)}-{m.group(1)}' if m else None
     lines = txt.split('\n')
     out = []
     lote = None
-    row_re = re.compile(rf'(?P<rod>{ROD_RE})(?P<praca>\s.*?)?\s+(?P<km>\d{{1,3}}\+\d{{3}})\s+R\$\s*(?P<p>[\d.,]+)\s+R\$\s*(?P<c>[\d.,]+)(?:\s+R\$\s*(?P<m>[\d.,]+))?')
+    vals = r'(?P<km>\d{1,3}\+\d{3})\s+R\$\s*(?P<p>[\d.,]+)\s+R\$\s*(?P<c>[\d.,]+)(?:\s+R\$\s*(?P<m>[\d.,]+))?'
+    row_re = re.compile(rf'(?P<rod>{ROD_RE})(?P<praca>\s.*?)?\s+{vals}')
+    # linha com valores mas sem rodovia (a rodovia ficou numa linha vizinha no layout do PDF)
+    norod_re = re.compile(rf'^\s+(?P<praca>\S.*?)\s+{vals}')
     skip_re = re.compile(r'(?i)LOTE|PRA[CÇ]AS DE PED|LOCALIZA|PASSEIO|PED[AÁ]GIOS CONCEDIDOS|^\s*$')
-    data_rows: dict[int, tuple[re.Match, int | None]] = {}
+    # i -> (match, lote, rodovia, coluna onde começa o nome da praça)
+    data_rows: dict[int, tuple[re.Match, int | None, str, int]] = {}
     for i, ln in enumerate(lines):
         lm = re.search(r'LOTE\s*-?\s*0?(\d{1,2})\b', ln)
         if lm:
@@ -71,7 +92,20 @@ def parse_tarifas(txt: str) -> tuple[list[dict], str | None]:
             lote = 29
         rm = row_re.search(ln)
         if rm:
-            data_rows[i] = (rm, lote)
+            data_rows[i] = (rm, lote, rm.group('rod'), rm.end('rod'))
+            continue
+        rm = norod_re.search(ln)
+        if rm and not re.search(r'CAT-\d', ln):
+            rod = None
+            for d in (1, -1, 2, -2):
+                j = i + d
+                if 0 <= j < len(lines) and 'R$' not in lines[j]:
+                    mm = re.search(ROD_RE, lines[j])
+                    if mm:
+                        rod = mm.group(0)
+                        break
+            if rod:
+                data_rows[i] = (rm, lote, rod, rm.start('praca'))
     # nome da praça quebrado em várias linhas (acima e/ou abaixo da linha com os valores): cada linha sem valores vai para
     # a linha de dados mais próxima; se estiver colada em duas, vai para a de baixo (o nome quebra para baixo)
     parts: dict[int, tuple[list[str], list[str]]] = {i: ([], []) for i in data_rows}
@@ -86,33 +120,34 @@ def parse_tarifas(txt: str) -> tuple[list[dict], str | None]:
         if min(dp, dn) > 2:
             continue
         tgt = nxt if dn <= dp else prev
-        rm = data_rows[tgt][0]
-        seg = ln[rm.end('rod'):rm.start('km')].strip()
+        rm, _, _, col = data_rows[tgt]
+        seg = ln[col:rm.start('km')].strip()
         if not seg or re.search(ROD_RE, seg) or len(seg) > 45:
             continue
         (parts[tgt][0] if i < tgt else parts[tgt][1]).append(seg)
     for i in idx:
-        rm, lt = data_rows[i]
+        rm, lt, rod, _ = data_rows[i]
         name = ' '.join([*parts[i][0], (rm.group('praca') or '').strip(), *parts[i][1]])
         name = re.sub(r'\s+', ' ', name).strip(' *')
-        out.append({'lote': lt, 'rodovia': norm_rod(rm.group('rod')), 'praca': name, 'km': parse_km(rm.group('km')), 'km_txt': rm.group('km'),
+        out.append({'lote': lt, 'rodovia': norm_rod(rod), 'praca': name, 'km': parse_km(rm.group('km')), 'km_txt': rm.group('km'),
                     'passeio': brl(rm.group('p')), 'eixo': brl(rm.group('c')), 'moto': brl(rm.group('m')) if rm.group('m') else None})
-    # contratos novos (ViaPaulista): blocos "SP 255 - Guatapará (km 045+500)" + linhas CAT-n
+    # contratos novos (ViaPaulista, Entrevias): blocos "SP 255 - Guatapará (km 045+500)" + linhas
+    # "mult CAT-n [sem arredondar] manual AVI"
     vig = re.search(r'Vig[eê]ncia:\s*Entre\s*(\d{2})/(\d{2})/(\d{4})\s*e\s*(\d{2})/(\d{2})/(\d{4})', txt)
     cur = None
     for ln in lines:
         hm = re.search(rf'({ROD_RE})\s*-\s*(.+?)\s*\(km\s*(\d{{1,3}}\+\d{{3}})\)', ln)
         if hm:
-            cur = {'lote': 29, 'rodovia': norm_rod(hm.group(1)), 'praca': hm.group(2).strip(), 'km': parse_km(hm.group(3)), 'km_txt': hm.group(3),
+            cur = {'lote': lote_cat, 'rodovia': norm_rod(hm.group(1)), 'praca': hm.group(2).strip(), 'km': parse_km(hm.group(3)), 'km_txt': hm.group(3),
                    'categorias': [], 'vigencia': vig and (f'{vig.group(3)}-{vig.group(2)}-{vig.group(1)}', f'{vig.group(6)}-{vig.group(5)}-{vig.group(4)}')}
             out.append(cur)
             continue
-        cm = re.match(r'^\s*([\d,]+)\s+CAT-(\d)\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)\s*$', ln)
+        cm = re.match(r'^\s*([\d,]+)\s+CAT-(\d)\s+(?:[\d,]+\s+)*?([\d,]+)\s+([\d,]+)\s*$', ln)
         if cm and cur is not None:
             cat = int(cm.group(2))
             if cat in CAT_NOVO:
                 eixos, rod = CAT_NOVO[cat]
-                cur['categorias'].append({'cat': cat, 'eixos': eixos, 'rodagem': rod, 'mult': brl(cm.group(1)), 'valor': brl(cm.group(4)), 'valor_tag': brl(cm.group(5))})
+                cur['categorias'].append({'cat': cat, 'eixos': eixos, 'rodagem': rod, 'mult': brl(cm.group(1)), 'valor': brl(cm.group(3)), 'valor_tag': brl(cm.group(4))})
     return out, data
 
 
@@ -229,10 +264,27 @@ def dist_m(a: tuple[float, float], b: tuple[float, float]) -> float:
 def fetch():
     global NOTES
     from sources.weigh_dersp import km_locator, pretty_rod
-    tar_txt = pdftotext(http_get(PDF_TARIFAS, cache='artesp_tarifas_vigentes.pdf', max_age_h=24 * 7, timeout=300))
     hist_txt = pdftotext(http_get(PDF_HIST, cache='artesp_tarifas_hist.pdf', max_age_h=24 * 7, timeout=300))
-    rows, data_tab = parse_tarifas(tar_txt)
     hist = parse_hist(hist_txt)
+    # tabelas da mais nova para a mais antiga; uma tabela antiga só contribui com lotes ausentes das mais novas
+    rows: list[dict] = []
+    covered: set[int | None] = set()
+    per_pdf: list[str] = []
+    for pdf in PDFS:
+        try:
+            txt = pdftotext(http_get(pdf['url'], cache=f'artesp_tarifas_{pdf["id"]}.pdf', max_age_h=24 * 7, timeout=300))
+        except Exception as e:
+            print(f'  ! PDF de tarifas {pdf["id"]} indisponível: {e}')
+            continue
+        got, printed = parse_tarifas(txt, pdf['lote_cat'])
+        new_rows = [r for r in got if r['lote'] not in covered]
+        for r in new_rows:
+            r['tabela'] = pdf['id']
+            r['data'] = (r['vigencia'][0] if r.get('vigencia') else None) or pdf['vigencia']
+        covered |= {r['lote'] for r in got}
+        rows += new_rows
+        per_pdf.append(f'{pdf["id"]}: {len(new_rows)} linhas (lotes {sorted({r["lote"] for r in new_rows if r["lote"] is not None})})')
+        print(f'  tabela {pdf["id"]} (data impressa {printed}): {len(got)} linhas, {len(new_rows)} usadas')
     kmz = [p for p in artesp_kmz_points() if p['tipo'] in ('praca', 'free_flow')]
     loc = km_locator()
     out, snapped, approx, lost = [], 0, 0, 0
@@ -268,10 +320,10 @@ def fetch():
             base = next((c['valor'] for c in cats if c['mult'] == 1), None)
             t = {'modelo': 'categorias', 'base': base, 'categorias': cats, 'max_eixos_tabela': max((c['eixos'] for c in cats), default=None),
                  'vigencia_inicio': r['vigencia'][0] if r.get('vigencia') else None, 'vigencia_fim': r['vigencia'][1] if r.get('vigencia') else None,
-                 'data': r['vigencia'][0] if r.get('vigencia') else data_tab}
+                 'data': r['data']}
         else:
-            t = {'modelo': 'por_eixo', 'eixo': r['eixo'], 'passeio': r['passeio'], 'moto': r['moto'], 'data': data_tab, 'vigencia_inicio': data_tab, 'vigencia_fim': None}
-        t.update({'fonte': 'ARTESP', 'url': PAGE})
+            t = {'modelo': 'por_eixo', 'eixo': r['eixo'], 'passeio': r['passeio'], 'moto': r['moto'], 'data': r['data'], 'vigencia_inicio': r['data'], 'vigencia_fim': None}
+        t.update({'fonte': 'ARTESP', 'url': next(p['url'] for p in PDFS if p['id'] == r['tabela']), 'tabela': r['tabela'], 'pagina': PAGE})
         out.append({
             'source_id': stable_id('artesp', r['lote'], r['rodovia'], r['km_txt'], nm),
             'geometry': {'type': 'Point', 'coordinates': [round(pos[0], 6), round(pos[1], 6)]},
@@ -296,6 +348,6 @@ def fetch():
                     'kind': 'portico' if p['tipo'] == 'free_flow' else 'praca',
                     'props': {'operador': p['lote_nome'], 'lote': p['lote'], 'rodovia': None, 'km': None, 'cobranca': None,
                               'free_flow': p['tipo'] == 'free_flow', 'precisao': 'kmz', 'tarifa': None, 'kmz_pasta': p['pasta'][-120:]}})
-    NOTES = (f'Tabela ARTESP de {data_tab}: {len(rows)} linhas ({snapped} posicionadas pelo KMZ, {approx} por rodovia+km, {lost} sem posição); '
+    NOTES = (f'Tabelas ARTESP ({"; ".join(per_pdf)}): {len(rows)} linhas ({snapped} posicionadas pelo KMZ, {approx} por rodovia+km, {lost} sem posição); '
              f'{extra} pontos só no KMZ (sem tarifa). Sentido de cobrança do histórico: {len(hist)} praças.')
     return out

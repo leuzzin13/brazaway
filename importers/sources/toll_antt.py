@@ -158,6 +158,13 @@ def tariff_for(page: dict, plaza_name: str) -> dict | None:
     return {'modelo': 'categorias', 'base': round(base, 4), 'categorias': cats, 'max_eixos_tabela': max(c['eixos'] for c in cats)}
 
 
+def display_name(name: str, municipio: str) -> str:
+    """'P 01' -> 'P 01 (Onda Verde)'; '1 Norte (Mairiporã)' fica como está."""
+    if not re.match(r'(?i)^p?\s*\d', name) or norm(municipio) in norm(name):
+        return name
+    return f'{name} ({municipio})'
+
+
 def fetch():
     global NOTES
     pkg = json.loads(http_get(CKAN, cache='antt_praca_pkg.json', max_age_h=24))['result']
@@ -223,7 +230,7 @@ def fetch():
             with_tariff += 1
         out.append({'source_id': stable_id(conc, name, r.get('rodovia'), r.get('km_m'), sentido),
                     'geometry': {'type': 'Point', 'coordinates': [lon, lat]},
-                    'name': name if not re.match(r'(?i)^p?\s*\d', name) else f'{name} ({r.get("municipal") or conc})',
+                    'name': display_name(name, r.get('municipal') or r.get('municipio') or conc),
                     'kind': 'praca', 'props': props})
     NOTES = f'{len(out)} pontos ({with_tariff} com tarifa oficial ANTT); CKAN atualizado em {pkg.get("metadata_modified", "")[:10]}.'
     return out
