@@ -29,7 +29,7 @@ drop table zone_import_tmp;
 SQL
 }
 
-ZMRC_RULES=$(python3 -c "import json;print(json.dumps(json.load(open('/data/../config/zmrc-rules.json'))['rules']))" 2>/dev/null \
+ZMRC_RULES=$(python3 -c "import json;print(json.dumps(json.load(open('/config/zmrc-rules.json'))['rules']))" 2>/dev/null \
   || echo '{"windows":[{"days":[1,2,3,4,5],"from":"05:00","to":"21:00"},{"days":[6],"from":"10:00","to":"14:00"}],"exceptions":["is_vuc"]}')
 RODIZIO_RULES='{"windows":[{"days":[1,2,3,4,5],"from":"07:00","to":"10:00"},{"days":[1,2,3,4,5],"from":"17:00","to":"20:00"}],"exceptions":[],"plate_rule":{"digits_by_day":{"1":[1,2],"2":[3,4],"3":[5,6],"4":[7,8],"5":[9,0]}}}'
 
