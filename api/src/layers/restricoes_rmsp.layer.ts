@@ -308,7 +308,8 @@ const layer: RouteLayer = {
       const e = enquadrar(r, v);
       const oIn = pointIn(z.inset, ctx.origin), dIn = pointIn(z.inset, ctx.destination);
       const inter = z.inset && turf.booleanIntersects(line, z.inset as GeoJSON.Polygon);
-      if (!inter && !oIn && !dIn) continue;
+      const evitada = !inter && !!route.free && !!z.inset && turf.booleanIntersects(route.free.line, z.inset as GeoJSON.Polygon);
+      if (!inter && !oIn && !dIn && !evitada) continue;
       const { ativa } = await regraAtiva(r, v, ctx.at, holiday);
       let frac = 0;
       if (inter && !oIn) {
@@ -318,7 +319,7 @@ const layer: RouteLayer = {
       const tPass = passAt(frac);
       const ativaPass = (await regraAtiva(r, v, tPass, holiday)).ativa;
       hits.push({ regra_id: r.regra_id, municipio: r.municipio, regime: r.regime, nome: r.nome, ativa_na_saida: ativa, ativa_na_passagem: ativaPass, passagem: local(tPass).toFormat("HH:mm"), enquadramento: e.classe });
-      summary.push(`${r.nome}: ${ruleLabel(r, e)} — ${!e.aplica ? 'não se aplica a este veículo' : ativa ? 'ativa na saída' : 'inativa na saída'}.`);
+      summary.push(`${r.nome}: ${ruleLabel(r, e)} — ${!e.aplica ? 'não se aplica a este veículo' : evitada ? 'ativa na saída: a rota contorna a zona' : ativa ? 'ativa na saída' : 'inativa na saída'}.`);
       if (e.aplica && (oIn || dIn) && (ativa || ativaPass)) {
         warnings.push({
           code: oIn && dIn ? 'rmsp_origem_destino_na_zona' : oIn ? 'rmsp_origem_na_zona' : 'rmsp_destino_na_zona', severity: 'warn', id: z.id,
@@ -328,7 +329,7 @@ const layer: RouteLayer = {
         warnings.push({ code: 'rmsp_zona_ativa_na_passagem', severity: 'warn', id: z.id,
           message: `A rota entra na ${r.nome} por volta das ${local(tPass).toFormat("HH'h'mm")}, dentro do horário de restrição (${ruleLabel(r, e)}). Saia mais cedo ou mais tarde.` });
       }
-      if (inter || oIn || dIn) noteVuc(r, e, v, warnings, seen);
+      noteVuc(r, e, v, warnings, seen);
     }
 
     // 2) vias da rota: passagem estimada, VUC com cadastro, destino local
