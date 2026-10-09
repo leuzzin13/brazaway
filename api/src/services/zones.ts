@@ -110,8 +110,10 @@ export function vehicleMatchesException(exc: string, v: Vehicle, at: Date = new 
   switch (exc) {
     // VUC só é liberado com AETC (Portaria SMT.GAB 137/2018 art. 18; Portaria DSV.G 09/2019 art. 7º).
     // 'is_vuc' é o nome antigo: mantido como sinônimo para seeds antigos, com a mesma exigência de AETC.
+    // VUC com carga perigosa segue a legislação de perigosos (art. 18 §4º; na ZMRC, art. 35). No rodízio isso não muda a
+    // rota: a zona de perigosos (Portaria SMT.GAB 051/2024) cobre a mesma área e os mesmos horários.
     case 'is_vuc':
-    case 'vuc_aetc': return isVucSP(v, year) && !!v.has_aetc;
+    case 'vuc_aetc': return isVucSP(v, year) && !!v.has_aetc && !v.hazmat;
     case 'vuc_sp': return isVucSP(v, year);
     case 'has_aetc': return !!v.has_aetc;
     case 'cargo_perishable': return v.cargo_type === 'perishable';
@@ -148,7 +150,8 @@ export function zoneApplies(rules: ZoneRules, v: Vehicle, at: Date, day: ZoneDay
   if (rules.vehicle_scope === 'non_trucks' && truck) return false;
   if (rules.hazmat_only && !v.hazmat) return false;
   if (rules.skip_on_holidays && day.holiday) return false;
-  // suspensão publicada (CET): só libera se NÃO estiver "mantido para veículos pesados"
+  // Suspensão publicada (CET): só libera se NÃO estiver "MANTIDO para veículos pesados". As suspensões "para veículos de
+  // passeio" não liberam nenhum veículo de carga, nem o utilitário até 3,5 t (que não é "de passeio"): leitura conservadora.
   if (rules.suspension_scope && day.suspensions?.some((s) => (s.scope === rules.suspension_scope || s.scope === 'all') && !s.applies_to_heavy)) return false;
   const local = DateTime.fromJSDate(at).setZone(env.tz);
   const dow = local.weekday; // 1=seg..7=dom

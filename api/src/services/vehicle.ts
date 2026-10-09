@@ -97,10 +97,17 @@ function legalNotes(v: Vehicle): string[] {
   } else if (v.is_vuc && !v.has_aetc) {
     notes.push('VUC sem AETC: em São Paulo é tratado como caminhão comum na ZMRC e no rodízio (Portaria SMT 137/2018 art. 18).');
   }
-  if (v.requires_aet) {
-    notes.push('Exige AET (Res. CONTRAN 882/2021 art. 18): em pista simples só circula do amanhecer ao pôr do sol, a até 80 km/h (art. 20).');
+  if (v.requires_aet && v.vehicle_class === 'cvc') {
+    notes.push('CVC com AET (Res. CONTRAN 882/2021 art. 18): em pista simples só circula do amanhecer ao pôr do sol, a até 80 km/h (art. 20).');
+  } else if (v.requires_aet) {
+    notes.push('Acima dos limites de largura, altura ou comprimento da Res. CONTRAN 882/2021 (art. 4º): só circula com AET do órgão da via.');
   }
   if (v.hazmat && !normalizeUn(v.hazmat_un)) notes.push('Carga perigosa: informe o nº ONU para conferir as exceções de São Paulo (Portaria SMT.GAB 051/2024).');
+  if (v.hazmat && v.is_vuc) notes.push('VUC com carga perigosa segue a regra de perigosos, não a do VUC (Portaria SMT 137/2018 art. 18 §4º): na ZMRC só 10h–16h com AETC (art. 35).');
+  if (isHazmatLocalOrOther(v)) {
+    notes.push('Perigoso de consumo local/outros: pode circular o dia todo dentro do centro expandido, mas não nas vias do Minianel das 7h às 10h e das 17h às 20h (Portaria SMT.GAB 051/2024 art. 3º). O app evita a área inteira nesses horários.');
+  }
+  if (v.hazmat) notes.push('Em São Paulo o transporte de perigoso exige LETPP da CET (Decreto 50.446/2009).');
   return notes;
 }
 
@@ -120,11 +127,10 @@ export function resolveVehicle(input: z.infer<typeof VehicleInput>): Vehicle {
   v.hazmat_group_sp = v.hazmat ? hazmatGroupSP(v.hazmat_un) : undefined;
   v.is_truck = isTruck(v);
   const cls = v.vehicle_class ?? 'rigid';
-  if (input.requires_aet === undefined) {
-    const overDims = v.width_m > 2.6 || v.height_m > 4.4 || v.length_m > MAX_LENGTH_BY_CLASS[cls];
-    const overCvc = cls === 'cvc' && v.weight_t > 57;
-    v.requires_aet = !!preset.requires_aet || overDims || overCvc;
-  }
+  // AET é consequência das dimensões (Res. CONTRAN 882/2021 arts. 4º e 18): o usuário pode declarar que tem, nunca "dispensar".
+  const overDims = v.width_m > 2.6 || v.height_m > 4.4 || v.length_m > MAX_LENGTH_BY_CLASS[cls];
+  const overCvc = cls === 'cvc' && v.weight_t > 57;
+  v.requires_aet = input.requires_aet === true || overDims || overCvc;
   v.legal_notes = legalNotes(v);
   return v;
 }

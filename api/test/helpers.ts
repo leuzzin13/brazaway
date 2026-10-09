@@ -68,5 +68,6 @@ export const PTS = {
 };
 
 export const TRUCK_410 = { preset: 'truck', height_m: 4.1 };
-export const VUC_320 = { preset: 'vuc', height_m: 3.2, is_vuc: true };
+/** VUC de São Paulo com AETC: a isenção na ZMRC e no rodízio exige a autorização (Portaria SMT 137/2018 art. 18). */
+export const VUC_320 = { preset: 'vuc', height_m: 3.2, is_vuc: true, has_aetc: true };
 export const CARRETA = { preset: 'carreta' };
