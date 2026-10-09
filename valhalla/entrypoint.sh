@@ -16,9 +16,11 @@ if ! test -f "${CONFIG_FILE}"; then
 fi
 
 echo "INFO [truck-router]: ajustando service_limits em ${CONFIG_FILE}"
+# (só chaves que existem na versão atual; chaves desconhecidas em service_limits são
+#  interpretadas como nome de costing e derrubam o valhalla_service)
 jq '.service_limits.max_exclude_polygons_length = 20000000
     | .service_limits.max_exclude_locations = 500
-    | .service_limits.max_avoid_polygons_length = 20000000
-    | .service_limits.max_avoid_locations = 500' "${CONFIG_FILE}" | sponge "${CONFIG_FILE}"
+    | .service_limits.max_exclude_polygons_vertices = 20000
+    | del(.service_limits.max_avoid_polygons_length, .service_limits.max_avoid_locations)' "${CONFIG_FILE}" | sponge "${CONFIG_FILE}"
 
 exec /valhalla/scripts/docker-entrypoint.sh "$@"
