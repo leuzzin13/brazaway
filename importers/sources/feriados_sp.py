@@ -46,8 +46,8 @@ NATIONAL_FIXED = [
     ((12, 25), 'Natal', L662),
 ]
 STATE_SP = [((7, 9), 'Revolução Constitucionalista de 1932 (data magna de SP)', 'Lei estadual SP 9.497/1997 art. 1º; Lei federal 9.093/1995 art. 1º II')]
-MUNICIPAL_SP_FIXED = [((1, 25), 'Aniversário da cidade de São Paulo', 'Lei municipal SP 14.485/2007 art. 10')]
 L14485_REL = 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'
+MUNICIPAL_SP_FIXED = [((1, 25), 'Aniversário da cidade de São Paulo', L14485_REL)]
 
 
 def easter(year: int) -> dt.date:

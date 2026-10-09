@@ -4,7 +4,7 @@
 -- Municipais (São Paulo, IBGE 3550308): Lei municipal 14.485/2007 art. 10. Carnaval NÃO é feriado (ponto facultativo).
 insert into holidays (day, scope, uf, ibge_code, name, source, legal_basis) values
   ('2026-01-01', 'national', null, null, 'Confraternização Universal', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
-  ('2026-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10'),
+  ('2026-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2026-04-03', 'municipal', 'SP', '3550308', 'Sexta-feira da Paixão', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2026-04-21', 'national', null, null, 'Tiradentes', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
   ('2026-05-01', 'national', null, null, 'Dia do Trabalho', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
@@ -17,7 +17,7 @@ insert into holidays (day, scope, uf, ibge_code, name, source, legal_basis) valu
   ('2026-11-20', 'national', null, null, 'Dia Nacional de Zumbi e da Consciência Negra', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 14.759/2023 art. 1º; também Lei municipal SP 14.485/2007 arts. 9º e 10'),
   ('2026-12-25', 'national', null, null, 'Natal', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
   ('2027-01-01', 'national', null, null, 'Confraternização Universal', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
-  ('2027-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10'),
+  ('2027-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2027-03-26', 'municipal', 'SP', '3550308', 'Sexta-feira da Paixão', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2027-04-21', 'national', null, null, 'Tiradentes', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
   ('2027-05-01', 'national', null, null, 'Dia do Trabalho', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
@@ -30,7 +30,7 @@ insert into holidays (day, scope, uf, ibge_code, name, source, legal_basis) valu
   ('2027-11-20', 'national', null, null, 'Dia Nacional de Zumbi e da Consciência Negra', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 14.759/2023 art. 1º; também Lei municipal SP 14.485/2007 arts. 9º e 10'),
   ('2027-12-25', 'national', null, null, 'Natal', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
   ('2028-01-01', 'national', null, null, 'Confraternização Universal', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
-  ('2028-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10'),
+  ('2028-01-25', 'municipal', 'SP', '3550308', 'Aniversário da cidade de São Paulo', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2028-04-14', 'municipal', 'SP', '3550308', 'Sexta-feira da Paixão', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei municipal SP 14.485/2007 art. 10; Lei federal 9.093/1995 art. 2º'),
   ('2028-04-21', 'national', null, null, 'Tiradentes', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
   ('2028-05-01', 'national', null, null, 'Dia do Trabalho', 'lei (calculado por importers/sources/feriados_sp.py)', 'Lei 662/1949 art. 1º (red. Lei 10.607/2002)'),
