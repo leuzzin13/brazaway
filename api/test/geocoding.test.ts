@@ -6,7 +6,7 @@ import { parseAddress } from '../src/services/geocoder/parse.js';
 import { getCanon } from '../src/services/geocoder/normalize.js';
 import { getMunicipios } from '../src/services/geocoder/municipios.js';
 import { CascadeGeocoder, PhotonGeocoder } from '../src/services/geocoder.js';
-import { interpCnefe } from '../src/services/geocoder/cnefe.js';
+import { interpClusters, interpCnefe } from '../src/services/geocoder/cnefe.js';
 import { distM } from '../src/services/geocoder/geo.js';
 import { pool as apiPool } from '../src/db.js';
 
@@ -92,6 +92,52 @@ describe('interpolação entre vizinhos do CNEFE', () => {
     // vizinhos a 12 km um do outro com 100 números de diferença: não interpola, usa o mais próximo em número
     const far = interpCnefe(110, [a, { numero: 200, lat: -23.6, lon: -46.6 }]);
     expect(distM(far!.pt, a)).toBeLessThan(1);
+  });
+});
+
+describe('precisão medida na própria base (deixa-um-de-fora)', () => {
+  it('interpolação entre vizinhos do CNEFE: mediana < 20 m e p80 < 60 m (Guarulhos, 150 endereços)', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select p.street_id, p.numero, p.lat::float8 lat, p.lon::float8 lon
+        from addr_point p join addr_street s on s.id = p.street_id
+       where s.cod_mun = 3518800 and p.numero is not null and p.km = false and p.nv_geo = 1
+       order by md5(p.street_id::text || p.numero::text) limit 150`);
+    const errs: number[] = [];
+    for (const t of r.rows) {
+      const nb = await pool.query(`select numero, lat::float8 lat, lon::float8 lon from addr_point
+          where street_id = $1 and km = false and numero between $2 - 600 and $2 + 600 and numero <> $2`, [t.street_id, t.numero]);
+      const res = interpClusters(t.numero, nb.rows);
+      if (res.length) errs.push(distM(res[0].pt, t));
+    }
+    const s = [...errs].sort((a, b) => a - b);
+    console.log(`CNEFE deixa-um-de-fora: n=${s.length} p50=${Math.round(median(s))} m p80=${Math.round(s[Math.floor(s.length * 0.8)])} m`);
+    expect(s.length).toBeGreaterThan(120);
+    expect(median(s)).toBeLessThan(20);
+    expect(s[Math.floor(s.length * 0.8)]).toBeLessThan(60);
+  });
+
+  it('segmentos do GeoSampa conferidos pelo CNEFE: mediana < 40 m', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`
+      with amostra as (
+        select p.numero, p.lat, p.lon, s.core_norm
+          from addr_point p join addr_street s on s.id = p.street_id
+         where s.cod_mun = 3550308 and p.numero is not null and p.km = false and p.nv_geo = 1
+         order by md5(p.street_id::text || p.numero::text) limit 400),
+      c as (
+        select a.*, ST_Distance(ST_LineInterpolatePoint(g.geom, case when x.hi = x.lo then 0.5
+                 else greatest(0, least(1, (a.numero - x.lo)::float8 / (x.hi - x.lo))) end)::geography,
+                 ST_SetSRID(ST_MakePoint(a.lon, a.lat), 4326)::geography) err
+          from amostra a
+          join addr_segment g on g.cod_mun = 3550308 and g.core_norm = a.core_norm and g.orientacao = 'cnefe'
+          cross join lateral (select case when a.numero % 2 = 0 then g.par_ini else g.impar_ini end lo,
+                                     case when a.numero % 2 = 0 then g.par_fim else g.impar_fim end hi) x
+         where x.lo is not null and x.hi is not null and a.numero between least(x.lo, x.hi) and greatest(x.lo, x.hi)),
+      best as (select distinct on (numero, lat, lon) err from c order by numero, lat, lon, err)
+      select count(*)::int n, percentile_cont(0.5) within group (order by err) p50 from best`);
+    console.log(`GeoSampa (segmentos conferidos): n=${r.rows[0].n} p50=${Math.round(r.rows[0].p50)} m`);
+    expect(r.rows[0].n).toBeGreaterThan(100);
+    expect(r.rows[0].p50).toBeLessThan(40);
   });
 });
 

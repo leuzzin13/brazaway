@@ -27,7 +27,7 @@ interface PointRow {
   street_id: number; numero: number | null; km: boolean; bairro_id: number | null; cep: number | null; nv_geo: number;
   n: number; estab: string | null; lat: number; lon: number; bairro: string | null;
 }
-interface SegRow { id: number; codlog: string; tipo: string; core_norm: string; lo: number; hi: number; lat: number; lon: number; len_m: number }
+interface SegRow { id: number; codlog: string; tipo: string; core_norm: string; lo: number; hi: number; lat: number; lon: number; len_m: number; orientacao: string | null }
 interface BairroRow { id: number; cod_mun: number; nome: string; nome_norm: string; n: number; lat: number; lon: number; desvio_m: number | null; sim: number }
 
 export interface CnefeCtx {
@@ -217,7 +217,15 @@ export class CnefeGeocoder {
         const f = pts.filter((x) => bonus(x) > 0);
         if (f.length) pts = f;
       }
-      const cn = interpCnefe(n, pts);
+      const groups = interpClusters(n, pts);
+      const cn = groups[0];
+      // homônimos (mesmo nome, outro bairro): os outros grupos viram resultados próprios, um pouco abaixo
+      for (const g of groups.slice(1, 3)) {
+        out.push(this.pointResult(s, { ...g.pt, bairro: g.ref.bairro ?? null, cep: (g.ref as PointRow).cep ?? null }, ctx, {
+          precisao: 'numero_aproximado', metodo: 'cnefe_interpolado', desvio: g.desvio,
+          score: s.score + 0.03 + bonus(g.ref as PointRow) + nearPenalty(g.pt), numero: p.numeroTexto ?? String(n),
+        }));
+      }
       let gs: { pt: Pt; desvio: number; seg: SegRow } | undefined;
       const mySegs = segs.filter((g) => g.core_norm === s.core_norm || g.core_norm === s.nome_norm);
       if (mySegs.length) {
@@ -229,13 +237,17 @@ export class CnefeGeocoder {
           .sort((a, b) => Number(b.tipoOk) - Number(a.tipoOk) || a.d - b.d);
         if (ranked.length) {
           const g = ranked[0].g;
-          gs = { pt: { lat: g.lat, lon: g.lon }, desvio: 15 + 0.25 * g.len_m, seg: g };
+          // segmento conferido pelos endereços do CNEFE: mediana ~16 m; não conferido: bem pior (~200 m)
+          gs = { pt: { lat: g.lat, lon: g.lon }, desvio: g.orientacao === 'cnefe' ? 15 + 0.2 * g.len_m : 60 + 0.5 * g.len_m, seg: g };
         }
       }
       let pick: { pt: Pt; desvio: number; metodo: string; fonte: string; ref?: PointRow } | undefined;
       if (cn && gs) {
         const dis = distM(cn.pt, gs.pt);
-        if (cn.gap <= 40 || (dis <= 300 && cn.desvio <= gs.desvio)) pick = { pt: cn.pt, desvio: cn.desvio, metodo: 'cnefe_interpolado', fonte: 'cnefe', ref: cn.ref };
+        // vizinhos do CNEFE perto em número ganham; senão vence o menor desvio estimado, exceto segmento não
+        // conferido que discorda muito do CNEFE (numeração do cadastro municipal e do IBGE divergem ali)
+        const gsUnverified = gs.seg.orientacao !== 'cnefe';
+        if (cn.gap <= 40 || cn.desvio <= gs.desvio || (gsUnverified && dis > 300)) pick = { pt: cn.pt, desvio: cn.desvio, metodo: 'cnefe_interpolado', fonte: 'cnefe', ref: cn.ref };
         else pick = { pt: gs.pt, desvio: gs.desvio, metodo: 'geosampa_segmento', fonte: 'geosampa', ref: cn.ref };
       } else if (cn) pick = { pt: cn.pt, desvio: cn.desvio, metodo: 'cnefe_interpolado', fonte: 'cnefe', ref: cn.ref };
       else if (gs) pick = { pt: gs.pt, desvio: gs.desvio, metodo: 'geosampa_segmento', fonte: 'geosampa', ref: nearestRow(gs.pt, pts) };
@@ -254,8 +266,8 @@ export class CnefeGeocoder {
     const names = [...new Set(streets.flatMap((s) => [s.core_norm, s.nome_norm]))];
     try {
       const r = await query<SegRow>(
-        `select id, codlog, tipo, core_norm, lo, hi, ST_Y(pt)::float8 lat, ST_X(pt)::float8 lon, len_m
-           from (select s.id, s.codlog, s.tipo, s.core_norm, s.geom,
+        `select id, codlog, tipo, core_norm, orientacao, lo, hi, ST_Y(pt)::float8 lat, ST_X(pt)::float8 lon, len_m
+           from (select s.id, s.codlog, s.tipo, s.core_norm, s.orientacao, s.geom,
                         case when $2::int % 2 = 0 then s.par_ini else s.impar_ini end lo,
                         case when $2::int % 2 = 0 then s.par_fim else s.impar_fim end hi
                    from addr_segment s where s.cod_mun = ${COD_SP} and s.core_norm = any($1::text[])) x,
@@ -483,6 +495,20 @@ export function interpCnefe<T extends { numero: number | null; lat: number; lon:
   return { pt: { lat: near.lat, lon: near.lon }, desvio: 20 + gap, gap, ref: near };
 }
 
+/** Separa homônimos: agrupa os vizinhos por proximidade (ligação simples, raio em m) e interpola em cada grupo.
+ *  Devolve um resultado por grupo, o grupo com mais endereços primeiro. */
+export function interpClusters<T extends { numero: number | null; lat: number; lon: number }>(n: number, pts: T[], radius = 350):
+  { pt: Pt; desvio: number; gap: number; ref: T; size: number }[] {
+  const sorted = [...pts].sort((a, b) => (a.numero ?? 0) - (b.numero ?? 0));
+  const groups = clusters(sorted, radius);
+  const out: { pt: Pt; desvio: number; gap: number; ref: T; size: number }[] = [];
+  for (const g of groups) {
+    const r = interpCnefe(n, g);
+    if (r) out.push({ ...r, size: g.length });
+  }
+  return out.sort((a, b) => b.size - a.size);
+}
+
 function nearestByNumber<T extends { numero: number | null; lat: number; lon: number }>(n: number, pts: T[]): Pt | undefined {
   let best: T | undefined;
   for (const x of pts) if (x.numero !== null && (!best || Math.abs(x.numero - n) < Math.abs(best.numero! - n))) best = x;
@@ -499,15 +525,21 @@ function nearestRow<T extends Pt>(pt: Pt, rows: T[]): T | undefined {
   return bd < 300 ? best : undefined;
 }
 
-/** agrupa pontos a menos de `radius` m (single-link simples; listas pequenas) */
+/** agrupa pontos a menos de `radius` m (ligação simples com união dos grupos; listas de até ~1.000 pontos) */
 function clusters<T extends Pt>(pts: T[], radius: number): T[][] {
-  const groups: T[][] = [];
-  for (const p of pts) {
-    const g = groups.find((gr) => gr.some((q) => distM(p, q) <= radius));
-    if (g) g.push(p);
-    else groups.push([p]);
+  const parent = pts.map((_, i) => i);
+  const find = (i: number): number => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  // filtro barato por grau antes da distância exata
+  const dLat = radius / 111000;
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      if (Math.abs(pts[i].lat - pts[j].lat) > dLat || Math.abs(pts[i].lon - pts[j].lon) > dLat * 1.2) continue;
+      if (distM(pts[i], pts[j]) <= radius) parent[find(i)] = find(j);
+    }
   }
-  return groups;
+  const m = new Map<number, T[]>();
+  pts.forEach((p, i) => { const r = find(i); m.set(r, [...(m.get(r) ?? []), p]); });
+  return [...m.values()];
 }
 
 export function avisoFor(precisao: Precisao, desvio: number): string | undefined {
