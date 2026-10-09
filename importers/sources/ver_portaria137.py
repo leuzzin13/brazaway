@@ -54,8 +54,9 @@ SOURCE_URL = ('https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-
               ' ; geometria: OpenStreetMap (Geofabrik sudeste-latest)')
 LICENSE = ('Regras: ato oficial, sem proteção autoral (Lei 9.610/98, art. 8º, IV). '
            'Geometria: derivada do OpenStreetMap, © colaboradores do OpenStreetMap, ODbL 1.0.')
-NOTES = ('79 incisos do art. 2º §§1º–4º (vigentes desde 03/10/2018) + 2 do §5º (Portaria 49/2021, inativo até a liberação do '
-         'Rodoanel Norte). Casamento por nome/limites sobre o OSM; conferido com os My Maps da CET (só referência).')
+NOTES = ('Art. 2º: 79 incisos dos §§1º–4º (vigentes desde 03/10/2018) + 2 do §5º (Portaria 49/2021, inativo até a liberação do '
+         'Rodoanel Norte); 77+2 com geometria (Passagem Tom Jobim e Vd. Gazeta do Ipiranga sem via no OSM). Uma feição por '
+         'inciso, cadeias dirigidas no sentido proibido, casadas por nome/limites sobre o OSM e conferidas com os My Maps da CET.')
 
 OSM_PBF = pathlib.Path(os.environ.get('OSM_PBF', str(DATA_DIR / 'valhalla' / 'sudeste-latest.osm.pbf')))
 WORK = CACHE_DIR / 'ver'
