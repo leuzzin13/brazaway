@@ -199,7 +199,7 @@ def _from_overpass() -> list[dict]:
 (node["barrier"="toll_booth"]({BBOX}); node["highway"="toll_gantry"]({BBOX}););
 out body;
 way(bn)["highway"];
-out tags geom;"""
+out body geom;"""
     print(f'  Overpass ({OVERPASS}) bbox {BBOX}')
     d = json.loads(http_get(OVERPASS + '?data=' + __import__('urllib.parse').parse.quote(q), cache='osm_toll_overpass.json', max_age_h=24 * 7, timeout=400))
     nodes = {e['id']: e for e in d['elements'] if e['type'] == 'node'}

@@ -106,25 +106,9 @@ def parse_tarifas(txt: str, lote_cat: int | None = 29) -> tuple[list[dict], str 
                         break
             if rod:
                 data_rows[i] = (rm, lote, rod, rm.start('praca'))
-    # nome da praça quebrado em várias linhas (acima e/ou abaixo da linha com os valores): cada linha sem valores vai para
-    # a linha de dados mais próxima; se estiver colada em duas, vai para a de baixo (o nome quebra para baixo)
-    parts: dict[int, tuple[list[str], list[str]]] = {i: ([], []) for i in data_rows}
+    # nome da praça quebrado em várias linhas (acima e/ou abaixo da linha com os valores), ver assign_name_parts()
+    parts = assign_name_parts(lines, data_rows, skip_re)
     idx = sorted(data_rows)
-    for i, ln in enumerate(lines):
-        if i in data_rows or skip_re.search(ln):
-            continue
-        prev = max((k for k in idx if k < i), default=None)
-        nxt = min((k for k in idx if k > i), default=None)
-        dp = i - prev if prev is not None else 99
-        dn = nxt - i if nxt is not None else 99
-        if min(dp, dn) > 2:
-            continue
-        tgt = nxt if dn <= dp else prev
-        rm, _, _, col = data_rows[tgt]
-        seg = ln[col:rm.start('km')].strip()
-        if not seg or re.search(ROD_RE, seg) or len(seg) > 45:
-            continue
-        (parts[tgt][0] if i < tgt else parts[tgt][1]).append(seg)
     for i in idx:
         rm, lt, rod, _ = data_rows[i]
         name = ' '.join([*parts[i][0], (rm.group('praca') or '').strip(), *parts[i][1]])
@@ -149,6 +133,91 @@ def parse_tarifas(txt: str, lote_cat: int | None = 29) -> tuple[list[dict], str 
                 eixos, rod = CAT_NOVO[cat]
                 cur['categorias'].append({'cat': cat, 'eixos': eixos, 'rodagem': rod, 'mult': brl(cm.group(1)), 'valor': brl(cm.group(3)), 'valor_tag': brl(cm.group(4))})
     return out, data
+
+
+def is_ponto_a_ponto(praca: str) -> bool:
+    """Pórtico do sistema ponto a ponto da ARTESP: marcado '(PaP)' no PDF. Palavra inteira: 'PAPA João XXIII' não é PaP."""
+    return bool(re.search(r'\(pap\)|\bpap\b', praca or '', re.I))
+
+
+def _paren_open(s: str) -> int:
+    """Parênteses abertos e não fechados em s (negativo = há ')' sem '(' antes)."""
+    depth = low = 0
+    for ch in s:
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+            low = min(low, depth)
+    return depth if low == 0 else low
+
+
+def assign_name_parts(lines: list[str], data_rows: dict[int, tuple], skip_re: re.Pattern) -> dict[int, tuple[list[str], list[str]]]:
+    """Distribui as linhas sem valores (pedaços do nome da praça) entre as linhas de dados vizinhas (até 2 linhas).
+    Regras, nesta ordem:
+      1. pedaço com ')' sem '(' (ex.: 'Interna)') continua o nome que tem '(' aberto (o de cima ou o de baixo); se
+         nenhum tem, continua o de cima;
+      2. com o nome da linha de cima ainda com '(' aberto, o pedaço abaixo dela é dela (se não estiver mais perto da de baixo);
+      3. senão, vai para a linha de dados mais próxima;
+      4. empate (mesma distância das duas): pedaço que começa com minúscula continua o de cima; senão vai para a de cima
+         se ela tem mais pedaços acima do que abaixo (o PDF centraliza o nome na linha de valores), e para a de baixo
+         caso contrário.
+    Devolve {linha_de_dados: (pedaços_acima, pedaços_abaixo)}."""
+    parts: dict[int, tuple[list[str], list[str]]] = {i: ([], []) for i in data_rows}
+    idx = sorted(data_rows)
+
+    def seg_for(ln: str, tgt: int) -> str | None:
+        rm, _, _, col = data_rows[tgt]
+        seg = ln[col:rm.start('km')].strip()
+        if not seg or re.search(ROD_RE, seg) or len(seg) > 45:
+            return None
+        return seg
+
+    def name_so_far(tgt: int) -> str:
+        rm = data_rows[tgt][0]
+        return ' '.join([*parts[tgt][0], (rm.group('praca') or '').strip(), *parts[tgt][1]])
+
+    ties: list[tuple[int, int, int, str | None, str | None]] = []
+    for i, ln in enumerate(lines):
+        if i in data_rows or skip_re.search(ln):
+            continue
+        prev = max((k for k in idx if k < i), default=None)
+        nxt = min((k for k in idx if k > i), default=None)
+        dp = i - prev if prev is not None else 99
+        dn = nxt - i if nxt is not None else 99
+        if min(dp, dn) > 2:
+            continue
+        sp = seg_for(ln, prev) if dp <= 2 else None
+        sn = seg_for(ln, nxt) if dn <= 2 else None
+        open_p = sp is not None and _paren_open(name_so_far(prev)) > 0
+        open_n = sn is not None and _paren_open(' '.join(parts[nxt][0])) > 0
+        closes_p = sp is not None and _paren_open(sp) < 0
+        closes_n = sn is not None and _paren_open(sn) < 0
+        if closes_p and open_p:
+            tgt = prev
+        elif closes_n and open_n:
+            tgt = nxt
+        elif closes_p and not open_n:
+            tgt = prev
+        elif open_p and dp <= dn:
+            tgt = prev
+        elif dp < dn:
+            tgt = prev
+        elif dn < dp:
+            tgt = nxt
+        else:
+            ties.append((i, prev, nxt, sp, sn))
+            continue
+        seg = sp if tgt == prev else sn
+        if seg is not None:
+            (parts[tgt][0] if i < tgt else parts[tgt][1]).append(seg)
+    for i, prev, nxt, sp, sn in ties:
+        up = len(parts[prev][0]) > len(parts[prev][1])
+        if sp is not None and (up or sp[:1].islower()):
+            parts[prev][1].append(sp)
+        elif sn is not None:
+            parts[nxt][0].insert(0, sn)  # a 2 linhas acima: antes dos pedaços a 1 linha
+    return parts
 
 
 def parse_hist(txt: str) -> dict[tuple[str, int], tuple[str, str]]:
@@ -308,7 +377,7 @@ def fetch():
             print(f'  ! sem posição: lote {r["lote"]} {r["rodovia"]} {r["praca"]} km {r["km_txt"]}')
             continue
         nm = norm(r['praca'])
-        is_pap = '(pap)' in r['praca'].lower() or ' pap' in nm
+        is_pap = is_ponto_a_ponto(r['praca'])
         is_portico = 'portico' in nm
         bloqueio = 'bloqueio' in nm
         h = hist.get((r['rodovia'], round(r['km'] * 10)))
