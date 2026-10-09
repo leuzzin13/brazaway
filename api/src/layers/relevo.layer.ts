@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { vehiclePresets } from '../config.js';
+import { env, vehiclePresets } from '../config.js';
 import { decodePolyline6 } from '../services/polyline.js';
-import { heightProfileAt, traceAttributesAt } from '../services/valhalla.js';
+import { heightAt, heightProfileAt, traceAttributesAt } from '../services/valhalla.js';
 import type { Vehicle } from '../services/vehicle.js';
 import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
 
@@ -15,7 +15,8 @@ import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
  * Compara com config/grade-limits.json (por preset; PBT acima do preset usa a faixa de peso mais restritiva).
  *
  * Não é restrição legal (nenhuma norma proíbe subir X%): os avisos são 'warn' (risco) ou 'info', nunca 'danger'.
- * Se o Valhalla de elevação estiver fora do ar (VALHALLA_ELEV_URL), a camada simplesmente não anota.
+ * Valhalla de elevação: VALHALLA_ELEV_URL ou, sem ela, localhost:8003 e depois o principal (VALHALLA_URL) — o primeiro
+ * que responde /height com altitude. Se nenhum tiver elevação (ou estiverem fora do ar), a camada simplesmente não anota.
  * Trechos acima do limite "evitar" saem em data.cost_lines_suggested (LayerCostLine no sentido da subida) para uma
  * 2ª rodada de rota; a rota atual não é alterada (ver docs/layers/relevo.md).
  */
@@ -97,11 +98,32 @@ export function limitsFor(v: Vehicle, cfg = gradeConfig()): Limits & { source: '
 }
 
 // ------------------------------------------------------------------------------------- disponibilidade/serviço
-function elevUrl(): string | null {
-  const u = (process.env.VALHALLA_ELEV_URL ?? 'http://localhost:8003').trim();
-  return !u || u === 'off' ? null : u.replace(/\/$/, '');
+/**
+ * Qual Valhalla tem elevação: VALHALLA_ELEV_URL se definido ("off" desliga a camada); senão tenta o de elevação local
+ * (http://localhost:8003) e o principal (VALHALLA_URL) — assim, depois de trocar o principal pelos tiles com elevação,
+ * a camada passa a usá-lo sem configuração. Cada candidato é sondado com /height na origem da rota (cache de 5 min se
+ * tem elevação, 1 min se não tem/está fora).
+ */
+function candidates(): string[] {
+  const v = process.env.VALHALLA_ELEV_URL?.trim();
+  if (v === 'off') return [];
+  const list = v ? [v] : ['http://localhost:8003', env.valhallaUrl];
+  return [...new Set(list.map((u) => u.replace(/\/$/, '')))];
 }
-let downUntil = 0;
+const probes = new Map<string, { ok: boolean; until: number }>();
+function markDown(base: string) { probes.set(base, { ok: false, until: Date.now() + 60_000 }); }
+async function hasElevation(base: string, at: { lat: number; lon: number }): Promise<boolean> {
+  const c = probes.get(base);
+  if (c && Date.now() < c.until) return c.ok;
+  let ok = false;
+  try { ok = typeof (await heightAt(base, [at]))[0] === 'number'; } catch { ok = false; }
+  probes.set(base, { ok, until: Date.now() + (ok ? 300_000 : 60_000) });
+  return ok;
+}
+async function pickBase(at: { lat: number; lon: number }): Promise<string | null> {
+  for (const b of candidates()) if (await hasElevation(b, at)) return b;
+  return null;
+}
 function isConnError(e: unknown): boolean {
   const err = e as { name?: string; cause?: { code?: string }; message?: string };
   return err?.name === 'AbortError' || /fetch failed|ECONNREFUSED|ECONNRESET|ENOTFOUND|EAI_AGAIN|UND_ERR/i.test(`${err?.message} ${err?.cause?.code ?? ''}`);
@@ -353,8 +375,10 @@ const layer: RouteLayer = {
   },
 
   async annotate(ctx, route) {
-    const base = elevUrl();
-    if (!base || Date.now() < downUntil) return {};
+    const first = route.line.geometry.coordinates[0];
+    if (!first) return {};
+    const base = await pickBase({ lon: first[0], lat: first[1] });
+    if (!base) return {};
     const cfg = gradeConfig();
     const lim = limitsFor(ctx.vehicle, cfg);
     const coords = route.line.geometry.coordinates as LonLat[];
@@ -374,7 +398,7 @@ const layer: RouteLayer = {
         return [];
       });
     } catch (e) {
-      if (isConnError(e)) { downUntil = Date.now() + 60_000; return {}; }
+      if (isConnError(e)) { markDown(base); return {}; }
       throw e;
     }
     const { G, cum, edges } = traced;

@@ -149,11 +149,15 @@ step_serve() {
 }
 
 step_check() {
-  # /height no Marco Zero (Sé, ~757 m no ANADEM) e uma rampa conhecida (Av. Dr. Arnaldo) via trace_attributes
+  # /height no Marco Zero (Sé, ~757 m no ANADEM) e rampa máxima da subida da R. Teodoro Sampaio (Pinheiros -> Av. Dr. Arnaldo,
+  # ~12% no Valhalla) via route + trace_attributes (edge_walk). Roda dentro do contêiner (curl + jq).
   log "check /height (Sé):"
   curl -s "http://localhost:$PORT/height" -d '{"shape":[{"lat":-23.5505,"lon":-46.6339}]}'; echo
-  log "check trace_attributes (Rua Cardeal Arcoverde x Av. Dr. Arnaldo, subida):"
-  curl -s "http://localhost:$PORT/trace_attributes" -d '{"shape":[{"lat":-23.5537,"lon":-46.6773},{"lat":-23.5531,"lon":-46.6795},{"lat":-23.5521,"lon":-46.6817}],"costing":"auto","shape_match":"map_snap","filters":{"attributes":["edge.max_upward_grade","edge.max_downward_grade","edge.weighted_grade","edge.length","edge.names"],"action":"include"}}' | head -c 1200; echo
+  log "check rampa (R. Teodoro Sampaio, subida):"
+  docker exec truck-router-valhalla-elev bash -c '
+    shape=$(curl -s localhost:8002/route -d "{\"locations\":[{\"lat\":-23.5665,\"lon\":-46.6925},{\"lat\":-23.5540,\"lon\":-46.6735}],\"costing\":\"truck\"}" | jq -r ".trip.legs[0].shape")
+    curl -s localhost:8002/trace_attributes -d "{\"encoded_polyline\":$(jq -Rn --arg s "$shape" "\$s"),\"costing\":\"truck\",\"shape_match\":\"edge_walk\",\"filters\":{\"attributes\":[\"edge.max_upward_grade\",\"edge.names\"],\"action\":\"include\"}}" \
+      | jq -c "[.edges[] | select(.max_upward_grade > -500)] | {arestas: length, rampa_max_pct: (map(.max_upward_grade) | max), via: (max_by(.max_upward_grade).names[0])}"'
 }
 
 step_clean() {

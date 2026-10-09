@@ -4,7 +4,8 @@
 #   ./scripts/build-elevation.sh            # DEM -> HGT, build dos tiles e sobe este serviço
 #   docker compose -f docker-compose.yml -f docker-compose.elevation.yml up -d --no-deps valhalla-elev
 #
-# A API lê VALHALLA_ELEV_URL (default http://localhost:8003; dentro do compose: http://valhalla-elev:8002).
+# A API lê VALHALLA_ELEV_URL; sem ela tenta http://localhost:8003 e depois o VALHALLA_URL (o primeiro com elevação).
+# Subindo a stack inteira com este override, o contêiner da API recebe VALHALLA_ELEV_URL=http://valhalla-elev:8002.
 # Para trocar o Valhalla principal por estes tiles, ver docs/layers/relevo.md.
 services:
   valhalla-elev:
@@ -30,3 +31,7 @@ services:
       retries: 20
       start_period: 60s
     restart: unless-stopped
+
+  api:
+    environment:
+      VALHALLA_ELEV_URL: ${VALHALLA_ELEV_URL:-http://valhalla-elev:8002}

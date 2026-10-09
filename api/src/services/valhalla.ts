@@ -186,3 +186,10 @@ export async function heightProfileAt(
   if (!r.ok) throw Object.assign(new Error(`Valhalla height ${r.status}: ${r.json?.error ?? ''}`), { statusCode: 502 });
   return (r.json.range_height ?? []) as [number, number | null][];
 }
+
+/** Altitude em pontos soltos (POST /height). null = sem dado (Valhalla sem DEM ou fora da cobertura). */
+export async function heightAt(baseUrl: string, points: { lat: number; lon: number }[], timeoutMs = 3000): Promise<(number | null)[]> {
+  const r = await postJson(`${baseUrl}/height`, { shape: points.map((p) => ({ lat: p.lat, lon: p.lon })) }, timeoutMs);
+  if (!r.ok) throw Object.assign(new Error(`Valhalla height ${r.status}: ${r.json?.error ?? ''}`), { statusCode: 502 });
+  return (r.json.height ?? []) as (number | null)[];
+}
