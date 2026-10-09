@@ -234,7 +234,7 @@ TRECHOS: list[dict] = [
       cor=C('rua da cantareira', 'alfredo issa|avenida ipiranga|avenida rio branco', width=40), sentido_txt=AMBOS),
     T(1, 'XV', 'Av. Ipiranga', 'Av. Ipiranga, entre a Pça. Alfredo Issa e Av. São Luiz',
       ['Avenida Ipiranga', 'Praça da República'], (-46.648, -23.549, -46.634, -23.537),
-      cor=C('alfredo issa|avenida senador queiros|avenida rio branco', 'avenida sao luis', width=40), sentido_txt=AMBOS,
+      cor=C((-46.6362, -23.5394, 60), 'avenida sao luis', width=40), sentido_txt=AMBOS,
       nota='No OSM o trecho da Ipiranga junto à praça se chama "Praça da República": entra só o que é paralelo ao eixo.'),
     T(1, 'XVI', 'Av. São Luís', 'Av. São Luiz, toda extensão',
       ['Avenida São Luís'], (-46.647, -23.550, -46.640, -23.543), clip=True, sentido_txt=AMBOS),
@@ -281,8 +281,10 @@ TRECHOS: list[dict] = [
       ['Avenida Jornalista Roberto Marinho'], (-46.700, -23.642, -46.657, -23.608), clip=True, sentido_txt=AMBOS),
     # ---------------------------------------------------------------- § 3º (seg–sex 05–21h, sáb 10–14h)
     T(3, 'I', 'Av. Giovanni Gronchi', 'Av. Giovanni Gronchi, entre Av. Carlos Caldeira Filho e Av. Morumbi',
-      ['Avenida Giovanni Gronchi'], (-46.740, -23.645, -46.705, -23.592),
-      cor=C('carlos caldeira', 'avenida morumbi|roberto gomes pedrosa', width=60), sentido_txt=AMBOS),
+      ['Avenida Giovanni Gronchi', 'Praça Roberto Gomes Pedrosa'], (-46.740, -23.645, -46.705, -23.592),
+      cor=C('carlos caldeira', (-46.7085, -23.5991, 80), width=60), sentido_txt=AMBOS,
+      nota='A Gronchi passa pelo estádio (no OSM esse trecho se chama "Praça Roberto Gomes Pedrosa") e só encontra a Av. '
+           'Morumbi no extremo leste; limite ali.'),
     T(3, 'II', 'Av. Morumbi', 'Av. Morumbi, entre Ponte do Morumbi e Av. Professor Francisco Morato',
       ['Avenida Morumbi'], (-46.716, -23.622, -46.684, -23.570),
       cor=C('ponte do morumbi', 'francisco morato', width=60), sentido_txt=AMBOS),
