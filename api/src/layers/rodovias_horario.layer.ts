@@ -678,12 +678,20 @@ const layer: RouteLayer = {
             : `Janela da serra da ${via} aberta para CVC com AET até ${fmtDT(wk.open.end)} (${wk.r.p.ato}, art. 3º)${cheg}.`,
         });
       }
-      // art. 4º: faixa da esquerda (informativo, para qualquer CVC)
-      if (runs.length && wk.r.p.faixa_esquerda_cvc) {
+    }
+
+    // art. 4º da SUP/DER-084/2023: faixa da esquerda proibida a QUALQUER CVC das 18h às 20h (informativo).
+    // CVC estimada por comprimento > 14 m (maior veículo simples, Res. CONTRAN 882/2021, art. 4º) ou AET.
+    if (ctx.vehicle.length_m > 14 || ctx.vehicle.requires_aet) {
+      for (const r of state.rules.weekly) {
+        const fx = r.p.faixa_esquerda_cvc;
+        if (!fx) continue;
+        const runs = weeklyRuns(coords, r.geometry);
+        if (!runs.length) continue;
         const eta = etaAt(runs[0][0]).toFormat('HH:mm');
-        if (eta >= wk.r.p.faixa_esquerda_cvc.ini && eta < wk.r.p.faixa_esquerda_cvc.fim) {
-          warnings.push({ code: 'anchieta_faixa_esquerda', severity: 'info',
-            message: `Serra da Anchieta: CVC não usa a faixa da esquerda das ${wk.r.p.faixa_esquerda_cvc.ini} às ${wk.r.p.faixa_esquerda_cvc.fim} quando a pista opera sentido Baixada (${wk.r.p.ato}, art. 4º).` });
+        if (eta >= fx.ini && eta < fx.fim) {
+          warnings.push({ code: 'anchieta_faixa_esquerda', severity: 'info', ...midOf(coords, runs[0]),
+            message: `Serra da Anchieta: CVC não usa a faixa da esquerda das ${fx.ini} às ${fx.fim} quando a pista opera sentido Baixada (${r.p.ato}, art. 4º).` });
         }
       }
     }
