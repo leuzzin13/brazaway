@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { query } from '../db.js';
 import { vehiclePresets } from '../config.js';
-import { activeZones, describeWindows } from '../services/zones.js';
+import { describeWindows, zonesForDisplay } from '../services/zones.js';
 import { makeGeocoder } from '../services/geocoder.js';
 import { BboxQuery } from '../schemas.js';
 import * as valhalla from '../services/valhalla.js';
@@ -19,7 +19,7 @@ export async function miscRoutes(app: FastifyInstance) {
   app.get('/api/vehicles/presets', async () => vehiclePresets);
 
   app.get('/api/zones', async () => {
-    const zones = await activeZones(0.0001);
+    const zones = await zonesForDisplay(0.0001);
     return {
       type: 'FeatureCollection',
       features: zones.map((z) => ({

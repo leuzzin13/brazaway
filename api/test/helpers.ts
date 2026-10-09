@@ -50,8 +50,11 @@ export function minDistM(r: any, p: { lat: number; lon: number }) {
   return turf.pointToLineDistance(turf.point([p.lon, p.lat]), lineOf(r), { units: 'meters' });
 }
 
+/** A rota entra na zona? Usa o polígono recuado 30 m: as vias que formam o contorno da zona
+ *  (marginais, avenidas-limite) são liberadas por projeto (ZONE_INSET_M na API). */
 export function crossesZone(r: any, zone: GeoJSON.Feature) {
-  return turf.booleanIntersects(lineOf(r), zone as any);
+  const inset = turf.buffer(zone as any, -0.03, { units: 'kilometers' }) ?? zone;
+  return turf.booleanIntersects(lineOf(r), inset as any);
 }
 
 // Pontos na Grande SP para os testes. Corredor Vila Leopoldina → Pinheiros (fora da ZMRC) para o teste de viaduto.
@@ -59,9 +62,9 @@ export const PTS = {
   // viaduto: origem/destino fora da ZMRC, na zona oeste (Marginal Pinheiros / Jaguaré)
   clearanceA: { lat: -23.5316, lon: -46.7400 },   // Vila Leopoldina / CEAGESP
   clearanceB: { lat: -23.5770, lon: -46.7430 },   // Jaguaré / Butantã (USP)
-  // ZMRC: norte da Marginal Tietê → sul da Av. Bandeirantes (atravessa o centro expandido)
-  zmrcA: { lat: -23.5040, lon: -46.6720 },        // Limão / Casa Verde (norte do Tietê)
-  zmrcB: { lat: -23.6240, lon: -46.6600 },        // Campo Belo (sul da Bandeirantes)
+  // ZMRC: Santana (norte do Tietê) → Jabaquara (sul da Bandeirantes): o caminho natural atravessa o centro expandido
+  zmrcA: { lat: -23.5085, lon: -46.6350 },        // Santana
+  zmrcB: { lat: -23.6420, lon: -46.6480 },        // Jabaquara
 };
 
 export const TRUCK_410 = { preset: 'truck', height_m: 4.1 };

@@ -85,7 +85,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       });
       continue;
     }
-    exclusions.push({ item: zoneItem(z), rings: zoneRings(z), polygon: turf.multiPolygon(z.geometry.coordinates) });
+    exclusions.push({ item: zoneItem(z), rings: zoneRings(z), polygon: turf.multiPolygon(z.geometry_full.coordinates) });
   }
 
   // 2) Reportes colaborativos que bloqueiam ESTE veículo (base separada do OSM)
