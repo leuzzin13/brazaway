@@ -31,6 +31,10 @@ export interface ParsedAddress {
   bairro?: string;
   bairroTexto?: string;
   municipio?: Municipio;
+  /** município deduzido do fim de um texto sem vírgula: só preferência, não filtro */
+  municipioFraco?: boolean;
+  /** com município fraco: o trecho inteiro, com o nome do município (ex.: "Vila Leopoldina") */
+  textoCompleto?: string;
   uf?: string;
   /** trechos não classificados (ex.: nome de empresa) */
   extras: string[];
@@ -194,8 +198,11 @@ export function parseAddress(q: string, canon: Canon, munis: MunicipioIndex): Pa
         if (prefix.every((t) => TYPE_WORDS.has(t) || TITLE_WORDS.has(t))) continue; // "Rua Itu", "Rua São Paulo"
         const mm = munis.find(ct.slice(k).join(' '), out.uf);
         if (mm) {
+          // sem vírgula o fim do texto pode ser parte do nome ("Vila Leopoldina", "Shopping Eldorado"): pista fraca,
+          // que só dá preferência ao município e não filtra nem muda a UF de referência
           out.municipio = mm;
-          out.uf = out.uf ?? mm.uf;
+          out.municipioFraco = true;
+          out.textoCompleto = parts[0];
           parts[0] = prefix.join(' ');
           break;
         }

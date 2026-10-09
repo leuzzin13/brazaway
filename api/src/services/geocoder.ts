@@ -49,7 +49,8 @@ export class CascadeGeocoder implements Geocoder {
       ? { lat: opts.lat, lon: opts.lon } : undefined;
     const [canon, munis] = await Promise.all([getCanon(), getMunicipios()]);
     const parsed = parseAddress(q, canon, munis);
-    const uf = parsed.uf ?? parsed.municipio?.uf ?? (near ? munis.ufAt(near.lat, near.lon) : undefined) ?? 'SP';
+    const hardMun = parsed.municipio && !parsed.municipioFraco ? parsed.municipio : undefined;
+    const uf = parsed.uf ?? hardMun?.uf ?? (near ? munis.ufAt(near.lat, near.lon) : undefined) ?? parsed.municipio?.uf ?? 'SP';
 
     let local: GeocodeResult[] = [];
     try {
@@ -61,11 +62,11 @@ export class CascadeGeocoder implements Geocoder {
     const photonInfo: GeocodeExplain['photon'] = { called: false };
     let photon: GeocodeResult[] = [];
     if (this.photon && this.needsPhoton(parsed, local)) {
-      const bbox = parsed.municipio ? expand(parsed.municipio.bbox, 0.01) : (munis.ufBbox.get(uf) ?? SP_BBOX);
+      const bbox = hardMun ? expand(hardMun.bbox, 0.01) : (munis.ufBbox.get(uf) ?? SP_BBOX);
       photonInfo.called = true;
       photonInfo.bbox = bbox;
       try {
-        const bias = near && inBbox(near, bbox) ? near : parsed.municipio ? { lat: parsed.municipio.lat, lon: parsed.municipio.lon } : undefined;
+        const bias = near && inBbox(near, bbox) ? near : hardMun ? { lat: hardMun.lat, lon: hardMun.lon } : undefined;
         const raw = await this.photon.search(q, { ...bias, limit: Math.max(limit, 6), bbox });
         photonInfo.recebidos = raw.length;
         photon = await this.validatePhoton(raw, parsed, uf, munis);
@@ -76,11 +77,16 @@ export class CascadeGeocoder implements Geocoder {
       }
       // pontuação comparável à da cascata local: POI pesa mais quando a busca não parece endereço
       const base = parsed.enderecoLike ? 0.55 : 0.95;
-      photon.forEach((r, i) => { r.score = Math.round((base - 0.03 * i) * 1000) / 1000; });
+      photon.forEach((r, i) => {
+        const pref = parsed.municipioFraco && r.cod_ibge === parsed.municipio?.cod ? 0.1 : 0;
+        r.score = Math.round((base - 0.03 * i + pref) * 1000) / 1000;
+      });
     }
 
-    const merged = dedupe([...local, ...photon]).sort((a, b) => (b.score ?? 0) - (a.score ?? 0)).slice(0, limit);
-    // nunca devolve campo interno de ordenação vazio; mantém o resto
+    const merged = dedupe([...local, ...photon])
+      .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+      .slice(0, limit)
+      .map((r) => ({ ...r, score: r.score === undefined ? undefined : Math.round(r.score * 1000) / 1000 }));
     const { municipio, ...rest } = parsed;
     return {
       parsed: { ...rest, municipio: municipio ? { cod: municipio.cod, nome: municipio.nome, uf: municipio.uf } : undefined },
@@ -94,7 +100,7 @@ export class CascadeGeocoder implements Geocoder {
   private needsPhoton(p: ParsedAddress, local: GeocodeResult[]): boolean {
     const best = local.reduce((m, r) => Math.min(m, r.precisao ? PRECISAO_RANK[r.precisao] : 9), 9);
     if (!p.street && p.cep && local.length) return false;          // só CEP
-    if (!p.street && p.municipio && !p.bairro) return false;      // só cidade
+    if (!p.street && p.municipio && !p.bairro) return false;      // só cidade ("Cajamar")
     if (p.numero !== undefined && best <= 1) return false;        // número exato/aproximado já resolvido
     if (p.semNumero && best <= 2 && local.length) return false;   // s/n: lista de estabelecimentos do CNEFE
     return true;
@@ -105,12 +111,12 @@ export class CascadeGeocoder implements Geocoder {
     if (!rs.length) return rs;
     if (!munis.hasPolygons) {
       // sem polígonos (importador cnefe_municipios não rodou): compara o nome da cidade
-      if (!p.municipio) return rs;
+      if (!p.municipio || p.municipioFraco) return rs;
       const target = p.municipio.canon;
       const canon = await getCanon();
       return rs.filter((r) => r.municipio && canon.canon(r.municipio) === target);
     }
-    if (p.municipio) {
+    if (p.municipio && !p.municipioFraco) {
       const ok = await pointsInMunicipio(rs, p.municipio.cod, 300);
       return rs.filter((_, i) => ok[i]).map((r) => ({ ...r, municipio: p.municipio!.nome, uf: p.municipio!.uf, cod_ibge: p.municipio!.cod }));
     }

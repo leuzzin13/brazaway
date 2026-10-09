@@ -66,22 +66,40 @@ export class CnefeGeocoder {
     const munFilter = this.munFilter(p, ctx);
 
     if (p.street && p.street.nome) {
-      out.push(...(await this.byStreet(p, p.street, munFilter, ctx)));
+      if (p.municipioFraco && p.municipio) {
+        // "Rua Augusta Guarulhos" / "Vila Leopoldina": tenta o texto sem o município (só nele) e o texto inteiro (UF)
+        out.push(...(await this.byStreet(p, p.street, [p.municipio.cod], ctx)));
+        const full = p.textoCompleto ? parseStreet(p.textoCompleto, ctx.canon) : undefined;
+        if (full?.nome) {
+          out.push(...(await this.byStreet(p, full, munFilter, ctx)));
+          if (!p.enderecoLike && !p.bairro) out.push(...(await this.byBairro(full.nome, munFilter, ctx, 0.9)));
+        }
+      } else {
+        out.push(...(await this.byStreet(p, p.street, munFilter, ctx)));
+      }
       // trecho sem tipo e sem número pode ser um bairro ("Vila Leopoldina, São Paulo")
       if (!p.enderecoLike && !p.bairro) {
-        out.push(...(await this.byBairro(p.street.nome, munFilter, ctx, 0.9)));
+        out.push(...(await this.byBairro(p.street.nome, p.municipioFraco && p.municipio ? [p.municipio.cod] : munFilter, ctx, 0.9)));
       }
     }
+    // texto sem tipo nem número ("Aeroporto de Guarulhos", "Costa Aguiar"): rua achada por nome fica atrás de POI
+    if (!p.enderecoLike) for (const r of out) if (r.precisao === 'logradouro') r.score = (r.score ?? 0) - 0.2;
+    // município como pista fraca: preferência para resultados nele
+    if (p.municipio && p.municipioFraco) for (const r of out) if (r.cod_ibge === p.municipio.cod) r.score = (r.score ?? 0) + 0.1;
     const best = bestRank(out);
     if (p.cep && (best > 2 || out.length === 0)) out.push(...(await this.byCep(p, ctx)));
     if (p.bairro && bestRank(out) > 3) out.push(...(await this.byBairro(p.bairro, munFilter, ctx, 1)));
-    if (p.municipio && (out.length === 0 || bestRank(out) > 4)) out.push(this.byMunicipio(p.municipio));
+    if (p.municipio && (out.length === 0 || (bestRank(out) > 4 && !p.municipioFraco))) {
+      const m = this.byMunicipio(p.municipio);
+      if (p.municipioFraco) m.score = 0.2;
+      out.push(m);
+    }
     return dedupe(out).slice(0, Math.max(ctx.limit, 1) * 2);
   }
 
   /** municípios onde procurar: o digitado; senão os carregados (da UF de referência, se houver) */
   private munFilter(p: ParsedAddress, ctx: CnefeCtx): number[] | null {
-    if (p.municipio) return [p.municipio.cod];
+    if (p.municipio && !p.municipioFraco) return [p.municipio.cod];
     const cov = ctx.munis.covered();
     if (!cov.length) return null;
     const uf = p.uf ?? ctx.uf;
@@ -139,7 +157,7 @@ export class CnefeGeocoder {
 
     const bonus = (pt: { bairro_id: number | null; cep: number | null }) =>
       (bairros.size && pt.bairro_id !== null && bairros.has(pt.bairro_id) ? 0.15 : 0) + (cep && pt.cep === cep ? 0.15 : 0);
-    const nearPenalty = (pt: Pt) => (!p.municipio && ctx.near ? -0.04 * Math.min(1, distM(pt, ctx.near) / 80000) : 0);
+    const nearPenalty = (pt: Pt) => ((!p.municipio || p.municipioFraco) && ctx.near ? -0.04 * Math.min(1, distM(pt, ctx.near) / 80000) : 0);
 
     if (p.numero !== undefined) {
       const km = !!p.km;
