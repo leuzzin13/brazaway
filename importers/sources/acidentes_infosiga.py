@@ -313,13 +313,24 @@ def in_bbox(lon, lat, bbox=SP_BBOX) -> bool:
 EXCLUI_ADMIN = {'CONCESSIONARIA', 'ARTESP', 'DNIT'}
 EXCLUI_CIRC = {'FEDERAL'}
 RE_RODOVIA = re.compile(r'^(SP[AIM]?|BR)\s*-?\s*\d', re.I)
+# Marginais Tietê e Pinheiros ("SP 015 - TIETE"/"SP 015 - PINHEIROS"): código estadual, mas operadas pela Prefeitura/CET;
+# nem ARTESP nem PRF registram acidentes nelas, então ficam sempre com o Infosiga
+RE_MARGINAIS = re.compile(r'^SP\s*-?\s*0*15\b', re.I)
 
 
 def _rodovia(row: dict) -> bool:
-    """Sinistro em rodovia (ou com indício disso). O campo administracao do Infosiga marca muitas rodovias concedidas
-    como 'DER' (ex.: Anhanguera, Imigrantes, Rodoanel em 2022-2024), então ele sozinho não separa as malhas."""
-    return (norm_txt(row.get('administracao')) != 'PREFEITURA' or norm_txt(row.get('circunscricao')) in ('ESTADUAL', 'FEDERAL')
-            or norm_txt(row.get('tipo_via')) == 'ESTRADAS E RODOVIAS' or bool(RE_RODOVIA.match((row.get('logradouro') or '').strip())))
+    """Sinistro em rodovia de ARTESP/PRF (ou com indício disso). O campo administracao do Infosiga marca muitas rodovias
+    concedidas como 'DER' (ex.: Anhanguera, Imigrantes, Rodoanel em 2022-2024), então ele sozinho não separa as malhas.
+    Exceções (nunca rodovia): as Marginais (SP-015) e vias da Prefeitura de circunscrição municipal sem código de rodovia
+    no logradouro (ex.: 'AVENIDA MARGINAL ...' com tipo de via 'ESTRADAS E RODOVIAS')."""
+    logr = (row.get('logradouro') or '').strip()
+    if RE_MARGINAIS.match(logr):
+        return False
+    adm, circ = norm_txt(row.get('administracao')), norm_txt(row.get('circunscricao'))
+    codigo = bool(RE_RODOVIA.match(logr))
+    if adm == 'PREFEITURA' and circ == 'MUNICIPAL' and not codigo:
+        return False
+    return adm != 'PREFEITURA' or circ in ('ESTADUAL', 'FEDERAL') or norm_txt(row.get('tipo_via')) == 'ESTRADAS E RODOVIAS' or codigo
 
 
 def _sinistros_files(z: zipfile.ZipFile, start: dt.date, end: dt.date) -> list[str]:

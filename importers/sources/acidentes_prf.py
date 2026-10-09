@@ -11,8 +11,9 @@ from sources.acidentes_infosiga import Hotspots, cell_of, dilate, download, in_b
 LAYER_ID = 'acidentes'
 SOURCE = 'prf'
 SOURCE_URL = 'https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf'
-LICENSE = ('Dados abertos PRF — "sem restrição de licenças" (uso, reuso e redistribuição livres, segundo a página de dados '
-           'abertos da PRF); atribuição por boa prática. O rodapé do portal gov.br cita CC BY-ND 3.0 para o conteúdo do site.')
+# mesma redação de meta.sources em api/src/layers/acidentes.layer.ts e de docs/layers/acidentes.md
+LICENSE = ('Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); '
+           'o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR')
 NOTES = 'Grade 250 m, janela de 3 anos, mínimo de 3 acidentes com caminhão por célula. Rodovias federais de todo o país.'
 DRIVE = 'https://drive.usercontent.google.com/download?id={id}&export=download&confirm=t'
 # ids do Google Drive em 09/10/2026 (usados se a página mudar de formato; o do ano corrente muda todo mês)
