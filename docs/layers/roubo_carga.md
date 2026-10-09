@@ -51,15 +51,22 @@ nomes de via/bairro só aparecem quando representam 3 ou mais ocorrências. Regi
   **hora estimada de passagem** = saída + fração da rota × duração (proporcional à distância). Células a até 1,5 km uma
   da outra ao longo da rota formam um **trecho** (máx. 5 km). Para cada trecho soma-se `na_passagem` = ocorrências da
   faixa em que o veículo passa por *cada* célula.
+  `na_passagem_por_faixa` separa essa soma pela faixa de passagem, na ordem da rota (um trecho pode atravessar a virada
+  de faixa, ex.: entra 11:59 e sai 12:02).
 - Aviso `warn` (`code: cargo_theft_area`) para os **5 trechos** com mais ocorrências na faixa de passagem, desde que
   `na_passagem` ≥ **5** (≈ uma ocorrência a cada 4 meses naquela faixa de 6 h, numa área de poucos km²). Ex.:
   "Roubo de carga na região de Rua dos Condoreiros, São Paulo (km 18–22 da rota, ~09:22): 37 ocorrências de manhã em
   2025–2026 (67 no total). Evite parar na região; se precisar, use local vigiado."
+  Se o trecho atravessa a virada de faixa, o texto cita cada faixa com a sua contagem (faixas sem ocorrência ficam de
+  fora): "Roubo de carga na região de Rodovia Presidente Dutra, Guarulhos (km 31–32 da rota, ~11:59): 2 ocorrências de
+  manhã e 10 à tarde (horário de passagem) em 2025–2026 (35 no total). ..." (CEAGESP → Guarulhos saindo às 11:20).
 - Resumo: nº de áreas atravessadas, total de ocorrências e quantas na faixa de passagem; faixa mais crítica na rota e se
   o veículo passa nela ("se puder, ajuste a saída"); se não houver aviso, diz isso. `data` traz `por_faixa`, `pico`,
   `na_passagem` e até 50 trechos.
 - Mudar o horário de saída muda os avisos (ex.: CEAGESP → Guarulhos às 9h tem 5 avisos; às 3h, menos e "de madrugada").
-- `features`: polígonos (fill) com propriedades legíveis (ocorrências por faixa, local, anos). Zoom < 8 só "muito alto";
+- `features`: polígonos (fill) com até 12 propriedades exibíveis (o popup genérico do mapa corta em 12): nome, nível,
+  ocorrências, anos, roubos, furtos, as 4 faixas do dia e `local` ("via pública 12 · rodovia/acostamento 0 · posto 0").
+  A fonte aparece no rodapé do popup (`meta.sources`); não há `weight` (o estilo é fill). Zoom < 8 só "muito alto";
   < 10 alto e muito alto; a partir de 10 todas.
 - Severidade nunca é `danger`: é risco, não restrição legal.
 

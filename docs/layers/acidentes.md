@@ -16,15 +16,24 @@ resultado da rota, um resumo com a contagem e até 5 avisos `warn` dos trechos c
 |---|---|---|---|
 | **Infosiga SP** (Detran-SP) — `https://infosiga.detran.sp.gov.br/painel/download/file/dados_infosiga.zip` | Estado de SP, todas as vias; só sinistros **com vítima** e notificações | Sem licença nomeada. O Guia de Referência do Infosiga define os dados abertos como de uso, reuso e redistribuição livres, sujeitos no máximo a atribuição e à "manutenção dos mesmos termos de abertura". Citação pedida: "DEPARTAMENTO ESTADUAL DE TRÂNSITO DE SÃO PAULO (Detran-SP). Infosiga: Dados abertos". O Decreto SP 68.769/2024 (art. 1º §1º e art. 2º, V) trata as informações de transparência ativa como de livre utilização. | Mensal (dado até 08/2026 na carga de 09/10/2026) |
 | **ARTESP** — `https://dadosabertos.artesp.sp.gov.br/dataset/acidentes` | Rodovias estaduais **concedidas** de SP; inclui acidentes **sem vítima** | CC-BY (Creative Commons Attribution), conforme o CKAN da ARTESP | CSV anual, atualizado ao longo do ano |
-| **PRF** — `https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf` | Rodovias **federais** de todo o país; inclui acidentes sem vítima | A página de dados abertos diz "sem restrição de licenças" (uso, reuso e redistribuição livres); atribuição por boa prática. O rodapé do portal gov.br cita CC BY-ND 3.0 para o *conteúdo do site* — interpretamos que vale para os textos, não para os dados. | Mensal (CSV "agrupado por pessoa", Google Drive) |
+| **PRF** — `https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf` | Rodovias **federais** de todo o país; inclui acidentes sem vítima | Registrada (igual na API, no importador e aqui): "Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR". Ver nota abaixo. | Mensal (CSV "agrupado por pessoa", Google Drive) |
 | API de localidades do IBGE (`servicodados.ibge.gov.br`) | Só para grafar o nome oficial do município ("SAO PAULO" → "São Paulo") | Dado público do IBGE | Cache de 90 dias |
 
 Os dados ficam em `data_features` (`layer_id = 'acidentes'`), separados do OSM, e **nunca** vão para o OSM.
 Cada carga registra fonte, URL, licença e um resumo em `data_layer_runs` (`GET /api/sources`).
 
+**Licença da PRF (conferida em 09/10/2026):** os arquivos não trazem licença. A base legal é o **Decreto federal
+8.777/2016, art. 4º** (redação do Decreto 9.903/2019, conferida no Planalto): "Os dados disponibilizados pelo Poder
+Executivo federal e as informações de transparência ativa são de livre utilização pelos Poderes Públicos e pela
+sociedade"; o § 1º autoriza a utilização gratuita das bases de dados cujo detentor de direitos patrimoniais seja a União.
+A própria página da PRF cita esse decreto. A frase "sem restrição de licenças" que aparece no topo da página é só a
+definição genérica de "Dados Abertos", não uma licença do conjunto de dados. O rodapé do portal gov.br diz que o
+conteúdo do site está sob CC BY-ND 3.0; interpretamos que vale para os textos do site, não para os dados (que o
+decreto declara de livre utilização). Atribuímos a fonte por boa prática.
+
 **Incerteza de licença:** Infosiga e PRF não têm uma licença padrão (CC etc.) nomeada nos arquivos; a leitura acima vem
-das páginas oficiais (ver `docs/research/seguranca_acidentes_roubo/NOTES.md`). Para uso comercial em escala, vale
-confirmar por SIC/Fala.BR. A camada só publica agregados, o que reduz o risco.
+das páginas oficiais e da norma (ver `docs/research/seguranca_acidentes_roubo/NOTES.md`). Para uso comercial em escala,
+vale confirmar por SIC/Fala.BR. A camada só publica agregados, o que reduz o risco.
 
 ## Método (importadores)
 
@@ -43,7 +52,7 @@ confirmar por SIC/Fala.BR. A camada só publica agregados, o que reduz o risco.
 5. **Nível**: `score = com caminhão com vítima + 2 × com caminhão com morte + 0,2 × com caminhão sem vítima`.
    Os sem vítima pesam pouco porque só ARTESP e PRF os publicam (o Infosiga não): assim o nível fica comparável entre
    vias urbanas e rodovias. `muito_alto` ≥ 15, `alto` ≥ 8, senão `moderado`. Carga de 09/10/2026:
-   ARTESP 2.829 células (9 muito alto, 118 alto), PRF 3.912 (33 / 316), Infosiga 307 (0 / 19).
+   ARTESP 2.829 células (9 muito alto, 118 alto), PRF 3.912 (33 / 316), Infosiga 317 (1 / 23).
 
 ### Divisão por jurisdição (sem dupla contagem)
 
@@ -55,8 +64,24 @@ fonte só.
 - demais vias (municipais, como as Marginais, e estaduais do DER) → **Infosiga**.
 
 No Infosiga são descartados os sinistros com `administracao` CONCESSIONÁRIA/ARTESP/DNIT ou `circunscricao` FEDERAL e,
-como o campo `administracao` não é confiável, também os sinistros "de rodovia" (administração ≠ PREFEITURA, tipo de via
-"ESTRADAS E RODOVIAS" ou logradouro "SP 330", "BR 116"...) que caem numa célula (±1 célula) onde ARTESP ou PRF têm acidentes.
+como o campo `administracao` não é confiável, também os sinistros "de rodovia" (administração ≠ PREFEITURA,
+circunscrição ESTADUAL, tipo de via "ESTRADAS E RODOVIAS" ou logradouro "SP 330", "BR 116"...) que caem numa célula
+(±1 célula) onde ARTESP ou PRF têm acidentes.
+
+**Exceções (nunca contam como rodovia coberta):**
+- **Marginais Tietê e Pinheiros** (logradouro "SP 015 - TIETE"/"SP 015 - PINHEIROS"). Têm código de rodovia estadual e o
+  Infosiga as marca quase sempre com circunscrição ESTADUAL e tipo "ESTRADAS E RODOVIAS", mas são administradas pela
+  Prefeitura (`administracao` = PREFEITURA no Infosiga) e **nem ARTESP nem PRF registram acidentes nelas** (conferido:
+  nenhum registro "SP015" nos CSVs da ARTESP de 2023 a 2026; a PRF só cobre BRs). Antes da exceção, os acidentes da Marginal perto dos
+  entroncamentos (Dutra, Ayrton Senna, Anhanguera, Bandeirantes, Castello) caíam em células cobertas e sumiam da camada.
+- Vias com administração PREFEITURA e circunscrição MUNICIPAL **sem código de rodovia** no logradouro (ex.: "AVENIDA
+  MARGINAL ..." com tipo de via "ESTRADAS E RODOVIAS", vias marginais municipais ao lado das concessões).
+
+Efeito na carga de 09/10/2026 (janela 09/2023–08/2026): voltam 82 acidentes com caminhão que eram descartados (67 nas
+Marginais: 37 na Pinheiros e 30 na Tietê; 15 em avenidas marginais municipais), e o Infosiga passa de 307 para 317
+células (1 muito alto, 23 alto). Nenhum dos recuperados tem logradouro de rodovia concedida ou federal ("RODOVIA ...",
+"SP 330", "BR 116"), então não há dupla contagem com ARTESP/PRF. Continuam descartados, por precaução, os registros da
+Prefeitura com código no logradouro (ex.: "SPI 091/270", "sp 330"), que podem ser acessos de concessões.
 
 Conferido em 09/10/2026 com os acidentes com caminhão de 2025:
 - o Infosiga marca boa parte das concessões como "DER" (Anhanguera SP-330: 157 DER × 111 CONCESSIONÁRIA; Rodoanel SP-021:
@@ -73,7 +98,9 @@ Conferido em 09/10/2026 com os acidentes com caminhão de 2025:
   O resumo traz quantos pontos (por nível) e trechos, o total de acidentes com caminhão e as mortes; `data.trechos`
   traz até 50 trechos com todos os números.
 - `features`: pontos com `weight` = score/15 (entre 0,15 e 1) para o heatmap. Zoom < 7 só "muito alto"; < 9 alto e
-  muito alto; a partir de 9 todos. Propriedades legíveis (acidentes por faixa, período dos dados, fonte).
+  muito alto; a partir de 9 todos. Propriedades legíveis, no máximo 12 exibíveis (o popup genérico do mapa corta em 12):
+  nível, acidentes com caminhão/com vítima/com morte, óbitos, `por_faixa_do_dia` ("madrugada 0 · manhã 2 · ..."),
+  período dos dados, fonte, acidentes com todos os veículos e score.
 - Severidade nunca é `danger`: não há restrição legal, só risco.
 
 ## Como atualizar
