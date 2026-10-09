@@ -391,7 +391,7 @@ def features_from_fc(fc: dict, kind_default: str = 'via') -> list[dict]:
         rid = p['regra_id']
         r = rule(rid)
         status = r.get('status', 'vigente')
-        nome = p.get('via') or p.get('nome_osm') or r['nome']
+        nome = p.get('via') or p.get('nome_osm') or 'via sem nome no OSM'
         out.append({
             'source_id': stable_id(rid, p.get('inciso'), p.get('osm_way_id'), i, json.dumps(f['geometry'])[:200]),
             'geometry': f['geometry'],
@@ -400,6 +400,133 @@ def features_from_fc(fc: dict, kind_default: str = 'via') -> list[dict]:
             'props': {**r, **{k: v for k, v in p.items() if k != 'regra_id'}, 'verificado_em': regras.get('verificado_em')},
             'valid_from': r.get('vigencia_inicio'), 'valid_to': r.get('vigencia_fim'),
         })
+    return valhalla_check(out)
+
+
+def valhalla_check(feats: list[dict]) -> list[dict]:
+    """linear_cost_factors do Valhalla exige que a linha 'ande' pelas arestas do grafo (senão o /route inteiro falha com
+    'Failed to edge walk line feature'). Testa cada linha (e o sentido contrário, quando a via é de mão dupla); a que falha
+    é reencaixada com trace_attributes (map_snap) e, se ainda falhar, descartada. Sem Valhalla, não valida (avisa)."""
+    import requests
+    from concurrent.futures import ThreadPoolExecutor
+    url = os.environ.get('VALHALLA_URL', 'http://valhalla:8002')
+    try:
+        requests.get(f'{url}/status', timeout=5).raise_for_status()
+    except Exception:
+        print('  ! Valhalla indisponível: linhas NÃO validadas para linear_cost_factors')
+        return feats
+
+    def ok(c) -> bool:
+        a = c[len(c) // 2]
+        body = {'locations': [{'lat': a[1], 'lon': a[0]}, {'lat': a[1] + 0.001, 'lon': a[0] + 0.001}], 'costing': 'auto',
+                'linear_cost_factors': [{'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': c}, 'properties': {'factor': 2}}]}
+        try:
+            r = requests.post(f'{url}/route', json=body, timeout=60)
+            return not (r.status_code == 400 and 'edge walk' in r.text)
+        except Exception:
+            return True
+
+    def snap(c):
+        body = {'shape': [{'lat': y, 'lon': x} for x, y in c], 'costing': 'auto', 'shape_match': 'map_snap',
+                'trace_options': {'search_radius': 15}, 'filters': {'attributes': ['shape'], 'action': 'include'}}
+        try:
+            r = requests.post(f'{url}/trace_attributes', json=body, timeout=60).json()
+            return [[round(x, 6), round(y, 6)] for x, y in _decode6(r['shape'])] if 'shape' in r else None
+        except Exception:
+            return None
+
+    def check(f):
+        if f['kind'] != 'via':
+            return [f], 0
+        g = f['geometry']
+        parts = [g['coordinates']] if g['type'] == 'LineString' else g['coordinates']
+        two = f['props'].get('sentido') != 'unico' and not f['props'].get('mao_unica')
+        good, rev_extra, dropped = [], [], 0
+        for c in parts:
+            if not ok(c):
+                c2 = snap(c)
+                if not c2 or len(c2) < 2 or not ok(c2):
+                    dropped += 1
+                    continue
+                c = c2
+            good.append(c)
+            if two and not ok(c[::-1]):
+                r2 = snap(c[::-1])
+                rev_extra.append(r2 if r2 and len(r2) >= 2 and ok(r2) else None)
+        if not good:
+            return [], dropped
+        f['geometry'] = {'type': 'LineString', 'coordinates': good[0]} if len(good) == 1 else {'type': 'MultiLineString', 'coordinates': good}
+        f['props']['valhalla_validado'] = True
+        out = [f]
+        if rev_extra:
+            # o sentido contrário não casou com a mesma linha: vira feição própria (reencaixada) e esta fica de sentido único
+            f['props']['sentido'] = 'unico'
+            for k, r2 in enumerate(x for x in rev_extra if x):
+                out.append({**f, 'source_id': f['source_id'] + f'-r{k}', 'geometry': {'type': 'LineString', 'coordinates': r2},
+                            'props': {**f['props'], 'sentido': 'unico'}})
+            dropped += sum(1 for x in rev_extra if x is None)
+        return out, dropped
+
+    with ThreadPoolExecutor(8) as ex:
+        res = list(ex.map(check, feats))
+    dropped = sum(d for _, d in res)
+    if dropped:
+        print(f'  ! {dropped} trecho(s) descartado(s): não casam com o grafo do Valhalla')
+    checked = [f for fs, _ in res for f in fs]
+    merged = merge_chains(checked, ok)
+    print(f'    vias: {sum(1 for f in checked if f["kind"] == "via")} trechos -> {sum(1 for f in merged if f["kind"] == "via")} após encadear')
+    return merged
+
+
+def merge_chains(feats: list[dict], ok) -> list[dict]:
+    """Encadeia trechos contíguos (fim de um = início do outro, mesmo nó do OSM) da mesma regra/inciso/via num só
+    LineString. Menos linhas no request ao Valhalla e menos avisos repetidos. Só aceita a cadeia se ela (e o sentido
+    contrário, para mão dupla) passar no teste de 'edge walk'; senão mantém os trechos originais."""
+    from collections import defaultdict
+    from concurrent.futures import ThreadPoolExecutor
+    k = lambda p: (round(p[0], 6), round(p[1], 6))
+    groups, out = defaultdict(list), []
+    for f in feats:
+        p = f['props']
+        if f['kind'] != 'via' or f['geometry']['type'] != 'LineString':
+            out.append(f); continue
+        two = p.get('sentido') != 'unico' and not p.get('mao_unica')
+        groups[(p.get('regra_id'), p.get('inciso'), p.get('via') or p.get('nome_osm'), two)].append(f)
+    jobs = []
+    for (_, _, _, two), fs in groups.items():
+        segs = [(f, list(f['geometry']['coordinates'])) for f in fs]
+        used = [False] * len(segs)
+        for i in range(len(segs)):
+            if used[i]: continue
+            used[i] = True
+            chain, members = list(segs[i][1]), [segs[i][0]]
+            grown = True
+            while grown:
+                grown = False
+                for j in range(len(segs)):
+                    if used[j]: continue
+                    c = segs[j][1]
+                    if k(c[0]) == k(chain[-1]): chain += c[1:]
+                    elif two and k(c[-1]) == k(chain[-1]): chain += c[::-1][1:]
+                    elif k(c[-1]) == k(chain[0]): chain = c + chain[1:]
+                    elif two and k(c[0]) == k(chain[0]): chain = c[::-1] + chain[1:]
+                    else: continue
+                    used[j] = True; members.append(segs[j][0]); grown = True
+            jobs.append((members, chain, two))
+
+    def build(job):
+        members, chain, two = job
+        if len(members) == 1 or not ok(chain) or (two and not ok(chain[::-1])):
+            return members
+        f0 = members[0]
+        props = {**f0['props'], 'comprimento_m': sum(m['props'].get('comprimento_m') or 0 for m in members),
+                 'osm_way_ids': sorted({m['props'].get('osm_way_id') for m in members if m['props'].get('osm_way_id')}),
+                 'trechos_encadeados': len(members)}
+        return [{**f0, 'source_id': stable_id(*[m['source_id'] for m in members]), 'geometry': {'type': 'LineString', 'coordinates': chain}, 'props': props}]
+
+    with ThreadPoolExecutor(8) as ex:
+        for fs in ex.map(build, jobs):
+            out.extend(fs)
     return out
 
 
