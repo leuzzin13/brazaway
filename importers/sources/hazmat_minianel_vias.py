@@ -154,6 +154,19 @@ def fetch():
             continue
         by_item[it[0]].append({'coords': [[round(x, 6), round(y, 6)] for x, y in cs], 'names': e['names'], 'len': g.length, 'cls': e['cls']})
 
+    # conectores: arestas curtas fora da seleção (alça entre pistas, pedaço sem nome, ponte da própria marginal) que ligam
+    # o fim de uma cadeia ao início de outra da mesma via; entram na cadeia para não picar a via em dezenas de linhas
+    conn_idx = defaultdict(list)
+    for e in edges.values():
+        if e['cls'] not in ROAD_CLASSES:
+            continue
+        cs = decode6(e['shape'])
+        if not e['forward']:
+            cs = cs[::-1]
+        if len(cs) >= 2 and length_m(cs) <= 200:
+            conn_idx[tuple(round(v, 6) for v in cs[0])].append([[round(x, 6), round(y, 6)] for x, y in cs])
+    n_conn = 0
+
     # 4) encadeia por sentido e corta em pedaços
     feats, stats, notes = [], [], []
     candidates = []
@@ -190,6 +203,25 @@ def fetch():
                     if dh < bestd:
                         best, bestd = k, dh
                 if best is None:
+                    # tenta um conector curto até o início de outra aresta livre da mesma via
+                    for cc in conn_idx.get(tuple(c[-1]), []):
+                        if abs((heading(cc[0], cc[1]) - h0 + 180) % 360 - 180) > 46:
+                            continue
+                        hc = heading(cc[-2], cc[-1])
+                        for k in start_idx.get(tuple(cc[-1]), []):
+                            if k in used:
+                                continue
+                            n = es[k]['coords']
+                            if abs((heading(n[0], n[1]) - hc + 180) % 360 - 180) <= 46:
+                                es.append({'coords': cc, 'names': [], 'len': length_m(cc), 'cls': 'conector'})
+                                chain.append(len(es) - 1)
+                                used.add(len(es) - 1)
+                                n_conn += 1
+                                best = k
+                                break
+                        if best is not None:
+                            break
+                if best is None:
                     break
                 chain.append(best)
                 used.add(best)
@@ -217,7 +249,7 @@ def fetch():
                     continue
                 total += plen
                 candidates.append((it, coords, plen, pnames))
-        stats.append(f'{it[0]} {it[1]}: {total / 1000:.1f} km de pistas ({len(es)} arestas)')
+        stats.append(f'{it[0]} {it[1]}: {total / 1000:.1f} km de pistas ({len(es)} arestas, {len(chains)} cadeias)')
 
     ok = lcf_ok([c[1] for c in candidates])
     bad = 0
@@ -246,6 +278,7 @@ def fetch():
         print('    ' + s)
     if dropped:
         print('    descartadas (longe do contorno): ' + ', '.join(f'{k} {v / 1000:.1f} km' for k, v in sorted(dropped.items(), key=lambda kv: -kv[1])))
+    print(f'    {n_conn} conector(es) curtos incluídos nas cadeias')
     if bad:
         notes.append(f'{bad} pedaço(s) reprovado(s) no edge walk e descartado(s)')
     NOTES = '; '.join(stats + notes)
