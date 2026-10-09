@@ -9,8 +9,9 @@ import type { LayerWarning, RouteLayer } from './types.js';
  * Duas fontes na mesma camada:
  *  - geosampa-zona-azul: faces de quadra com vagas de caminhão e o horário de operação por dia;
  *  - geosampa-vaga-especial: pontos (endereço) das vagas de caminhão, casados com a face (zona_azul_id).
- * Regra do CAD: Portaria SMT 97/2007, arts. 2º e 3º (1 cartão = 30 min, no máximo 2 = 1 h, só caminhão,
- * caminhonete e veículo misto); exceção da CET para o Bolsão da R. Santa Rosa/R. Eurípedes Simões de Paula.
+ * Regra do CAD: CET, "Regras para estacionar em áreas de Zona Azul" (Bolsão Caminhão: 1 CAD = 30 min, no máximo 2 = 1 h,
+ * para caminhão, caminhonete e veículo misto; exceção do Bolsão da R. Santa Rosa/R. Eurípedes Simões de Paula = regra
+ * geral). A página da CET não cita o número da norma; a placa do local prevalece (ver docs/layers/carga_descarga.md).
  * annotate(): as 5 vagas (agrupadas por face de quadra) mais próximas do DESTINO, a até 1 km, com distância,
  * horário e se a Zona Azul estará em operação na hora estimada de chegada.
  */
@@ -45,6 +46,7 @@ export interface VagaOut {
   distancia_m: number;
   horario: string;
   regra: string | null;
+  cad_min: number | null;
   base_legal: string | null;
   em_operacao_na_chegada: boolean | null;
   status: string;
@@ -53,11 +55,11 @@ export interface VagaOut {
 }
 
 function statusAt(p: Props, arrival: Date, holiday: boolean): { active: boolean | null; text: string } {
-  if (!p.horario_informado || !p.windows?.length) return { active: null, text: 'horário não informado no cadastro: confira a placa' };
+  if (!p.horario_informado || !p.windows?.length) return { active: null, text: 'horário não informado: confira a placa' };
   const active = windowActive(p.windows, arrival, { holiday, holidayMode: 'own' });
   return active
-    ? { active, text: `em operação na chegada: use CAD (${p.cad_min === 60 ? '1 CAD = 1 h' : '1 CAD = 30 min, máx. 1 h'})` }
-    : { active, text: 'fora do horário da Zona Azul na chegada: vale a sinalização da via' };
+    ? { active, text: 'Zona Azul em operação na chegada (use CAD)' }
+    : { active, text: 'fora do horário da Zona Azul na chegada (vale a placa)' };
 }
 
 const layer: RouteLayer = {
@@ -149,6 +151,7 @@ const layer: RouteLayer = {
         distancia_m: Math.round(nearest.dist_m),
         horario: ref.props.horario_informado ? describeWins(ref.props.windows) : 'não informado',
         regra: ref.props.regra ?? null,
+        cad_min: ref.props.cad_min ?? null,
         base_legal: ref.props.base_legal ?? null,
         em_operacao_na_chegada: st.active,
         status: st.text,
@@ -163,12 +166,12 @@ const layer: RouteLayer = {
       const v = vagas[0];
       warnings.push({
         code: 'loading_bay_near_destination', severity: 'info', id: v.id, lat: v.lat, lon: v.lon,
-        message: `Vaga de carga e descarga mais próxima do destino: ${v.endereco ?? v.nome}, a ${fmtKm(v.distancia_m)} (${v.vagas ?? '?'} vaga(s) de caminhão; ${v.horario}). ${v.regra ?? ''}`.trim(),
+        message: `Vaga de Zona Azul Caminhão mais próxima do destino: ${v.endereco ?? v.nome}, a ${fmtKm(v.distancia_m)} (${v.vagas ?? '?'} vaga(s); ${v.horario}; ${v.status}). ${v.regra ?? ''}.`.replace(/\.\.$/, '.'),
       });
       vagas.forEach((x, i) => summary.push(
-        `${i + 1}. ${x.endereco ?? x.nome}${x.lado ? ` (lado ${x.lado})` : ''} — ${fmtKm(x.distancia_m)}, ${x.vagas ?? '?'} vaga(s); ${x.horario}; ${x.status}.`,
+        `${i + 1}. ${x.endereco ?? x.nome}${x.lado ? ` (lado ${x.lado})` : ''} — ${fmtKm(x.distancia_m)}, ${x.vagas ?? '?'} vaga(s); ${x.horario}; ${x.status}${x.cad_min === 60 && x.regra ? `; ${x.regra}` : ''}.`,
       ));
-      summary.push(`Chegada estimada: ${arrLabel}${holiday ? ' (feriado)' : ''}. Zona Azul Caminhão: 1 CAD = 30 min, máx. 2 CADs (Portaria SMT 97/2007).`);
+      summary.push(`Chegada estimada: ${arrLabel}${holiday ? ' (feriado)' : ''}. Bolsão Caminhão: 1 CAD = 30 min, máx. 2 CADs (1 h) na mesma vaga (regra da CET; a placa do local prevalece).`);
     } else {
       const g = ranked[0];
       warnings.push({

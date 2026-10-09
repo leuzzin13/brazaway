@@ -10,9 +10,10 @@ estacionamento de veículos ficam proibidos nos locais de montagem das bancas (c
 Municipal em 09/10/2026). O § 1º do mesmo artigo admite horários diferenciados por feira: a janela é a padrão.
 
 Se o Valhalla estiver acessível, o ponto é casado (locate) com a aresta da malha de MESMO NOME de rua a até 70 m
-(≈ a quadra da feira). props.osm guarda o traçado exato da aresta nos dois sentidos (validado no edge walk de
-linear_cost_factors, só vale para o tileset registrado) e o meio da aresta (mid), usado como reserva quando o
-tileset muda (a API bloqueia a quadra com um polígono minúsculo no meio dela). Sem casamento seguro, só aviso.
+(≈ a quadra da feira) e o meio dessa aresta vai em props.osm.mid. A API bloqueia a quadra na janela da feira com um
+polígono de poucos metros nesse ponto: o Valhalla exclui só a aresta que passa por ele (as esquinas e as ruas que
+cruzam ficam livres) e o ponto continua válido se o tileset for recompilado. Por que não linear_cost_factors: ver
+docs/layers/feiras_livres.md. Sem casamento seguro, a feira só gera aviso.
 """
 from __future__ import annotations
 
@@ -21,15 +22,14 @@ import re
 import time
 import unicodedata
 
-from sources.geosampa_faixa_onibus import _post, decode6, dist_m, lcf_ok, length_m, valhalla_tileset, wfs_geojson
+from sources.geosampa_faixa_onibus import _post, decode6, dist_m, length_m, valhalla_tileset, wfs_geojson
 
 LAYER_ID = 'feiras_livres'
 SOURCE = 'geosampa'
 SOURCE_URL = 'https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs (typeNames=geoportal:equipamento_feira_livre)'
 LICENSE = 'CC-BY-SA 4.0 — GeoSampa/Prefeitura de São Paulo (SMDU/Deinfo); props.osm derivado do OpenStreetMap (ODbL)'
 NOTES = ('Ponto de referência, sem extensão da feira. Horário pelo Decreto 48.172/2007 art. 5º I (red. Dec. 61.775/2022) '
-         'só para categoria T (tradicional/comum); props.osm = aresta da malha com o mesmo nome de rua (≤ 70 m): '
-         'traçado nos dois sentidos validado no edge walk (lines) e meio da aresta (mid).')
+         'só para categoria T (tradicional/comum); props.osm.mid = meio da aresta da malha com o mesmo nome de rua (≤ 70 m).')
 
 DIAS = {'SEGUNDA-FEIRA': 1, 'TERCA-FEIRA': 2, 'QUARTA-FEIRA': 3, 'QUINTA-FEIRA': 4, 'SEXTA-FEIRA': 5, 'SABADO': 6, 'DOMINGO': 7}
 DIA_PT = {1: 'segunda', 2: 'terça', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sábado', 7: 'domingo'}
@@ -109,7 +109,9 @@ def fetch():
                 # janela legal só para a feira comum (categoria T); demais: horário não publicado
                 'windows': [{'days': [dia], **JANELA_COMUM}] if comum else [],
                 'horario': 'montagem 7h–8h, venda 8h–14h, desmontagem até 14h45' if comum else None,
-                'base_legal': 'Decreto 48.172/2007, art. 4º e art. 5º, I (redação do Decreto 61.775/2022)' if comum else None,
+                'base_legal': ('Decreto 48.172/2007: art. 4º (dias), art. 5º, I (horário, redação do Decreto 61.775/2022) e '
+                               'art. 5º, § 2º, III (proibido trafegar e estacionar no local das bancas)') if comum else
+                              'Decreto 48.172/2007, art. 5º, § 2º, III (horário desta categoria não publicado)',
                 'atualizado_em': (p.get('dt_atualizacao') or '')[:10] or None,
             },
         })
@@ -171,20 +173,6 @@ def _attach_osm(feats: list[dict], tileset: int) -> None:
             if L < 24:            # quadra curta demais: o polígono encostaria nas esquinas
                 continue
             n += 1
-            sh = [[round(x, 6), round(y, 6)] for x, y in shape]
             f['props']['osm'] = {'tileset': tileset, 'mid': mid, 'aresta_m': round(L), 'way_id': e['edge_info'].get('way_id'),
-                                 'nome_osm': (e['edge_info'].get('names') or [None])[0], 'distancia_m': round(e.get('distance', 0), 1),
-                                 'lines': [{'dir': 'fwd', 'coords': sh}, {'dir': 'rev', 'coords': sh[::-1]}]}
-    # valida o edge walk de cada traçado (um traçado inválido derrubaria a rota inteira no Valhalla)
-    todo = [(f, l) for f in cands if f['props'].get('osm') for l in f['props']['osm']['lines']]
-    ok = lcf_ok([l['coords'] for _, l in todo]) if todo else []
-    bad = {id(l) for (_, l), good in zip(todo, ok) if not good}
-    n_lines = 0
-    for f in cands:
-        o = f['props'].get('osm')
-        if not o:
-            continue
-        o['lines'] = [l for l in o['lines'] if id(l) not in bad]
-        n_lines += len(o['lines'])
-    print(f'    feiras: {len(cands)} com janela legal, {n} casadas com a quadra da rua de mesmo nome, '
-          f'{n_lines} traçados válidos no edge walk ({time.time() - t0:.0f}s)')
+                                 'nome_osm': (e['edge_info'].get('names') or [None])[0], 'distancia_m': round(e.get('distance', 0), 1)}
+    print(f'    feiras: {len(cands)} com janela legal, {n} casadas com a quadra da rua de mesmo nome ({time.time() - t0:.0f}s)')

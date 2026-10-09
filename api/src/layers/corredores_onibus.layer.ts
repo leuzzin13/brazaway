@@ -167,10 +167,10 @@ const layer: RouteLayer = {
          cross join rm
          cross join lateral (select ST_Transform(f.geom, 31983) as fg) t
          cross join lateral (
-           select d.geom as seg from ST_Dump(ST_Intersection(t.fg, ST_Buffer(rm.g, case when f.kind = 'corredor' then $3 else $2 end))) d
+           select d.geom as seg from ST_Dump(ST_Intersection(t.fg, ST_Buffer(rm.g, case when f.kind = 'corredor' then $3::float else $2::float end))) d
             where GeometryType(d.geom) = 'LINESTRING' order by ST_Length(d.geom) desc limit 1) s
         where f.layer_id = $4 and f.geom && ST_Expand(rm.g4, 0.001)
-          and ST_DWithin(t.fg, rm.g, case when f.kind = 'corredor' then $3 else $2 end)
+          and ST_DWithin(t.fg, rm.g, case when f.kind = 'corredor' then $3::float else $2::float end)
           and (f.valid_to is null or f.valid_to > now())`,
       [JSON.stringify(route.line.geometry), NEAR_M, NEAR_CORREDOR_M, LAYER],
     );
