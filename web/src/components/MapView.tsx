@@ -69,7 +69,12 @@ export function MapView(p: MapViewProps) {
       propsRef.current.onMapClick({ lat: e.lngLat.lat, lon: e.lngLat.lng });
     });
     map.current = m;
-    return () => { m.remove(); map.current = null; };
+    // Garante o tamanho correto mesmo se o container só for medido depois do mount
+    const resize = () => m.resize();
+    requestAnimationFrame(resize);
+    setTimeout(resize, 300);
+    window.addEventListener('resize', resize);
+    return () => { window.removeEventListener('resize', resize); m.remove(); map.current = null; };
   }, []);
 
   // cursor
