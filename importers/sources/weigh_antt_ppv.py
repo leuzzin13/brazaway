@@ -64,6 +64,11 @@ def uptime() -> tuple[dict[tuple[str, str], float], str | None]:
     return {}, None
 
 
+def km_txt(km: float) -> str:
+    """179.399 -> '179,4'; 1.0 -> '1'"""
+    return f'{round(km, 1):g}'.replace('.', ',')
+
+
 def fetch():
     global NOTES
     pkg = json.loads(http_get(CKAN + 'ppv', cache='antt_ppv_pkg.json', max_age_h=24))['result']
@@ -95,7 +100,7 @@ def fetch():
         km = float(r['km_m'].replace(',', '.')) if re.match(r'^[\d.,]+$', r.get('km_m') or '') else None
         out.append({'source_id': stable_id('antt-ppv', r.get('concessionaria'), r.get('nome_do_ppv'), r.get('km_m'), sentido),
                     'geometry': {'type': 'Point', 'coordinates': [lon, lat]},
-                    'name': f'PPV {rod} km {km:g} ({r.get("municipio")})' if km is not None else (r.get('nome_do_ppv') or 'PPV').strip(),
+                    'name': f'PPV {rod} km {km_txt(km)} ({r.get("municipio")})' if km is not None else (r.get('nome_do_ppv') or 'PPV').strip(),
                     'kind': kind,
                     'props': {'rodovia': rod, 'km': km, 'sentido': sentido, 'administrador': (r.get('concessionaria') or '').strip(),
                               'nome_original': (r.get('nome_do_ppv') or '').strip(), 'municipio': r.get('municipio'), 'uf': uf,

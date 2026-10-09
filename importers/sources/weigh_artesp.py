@@ -64,7 +64,7 @@ def fetch():
         if key in seen:
             continue
         seen.add(key)
-        name = f'{"Posto de pesagem (PGF)" if tipo == "pgf" else "Ponto de pesagem móvel (PPM)"} {pretty_rod(rod) or ""} {f"km {km:g}" if km is not None else ""}'.strip()
+        name = f'{"Posto de pesagem (PGF)" if tipo == "pgf" else "Ponto de pesagem móvel (PPM)"} {pretty_rod(rod) or ""} {f"km {round(km, 1):g}".replace('.', ',') if km is not None else ""}'.strip()
         out.append({'source_id': stable_id('artesp', p['lote'], tipo, key[0], key[1]),
                     'geometry': {'type': 'Point', 'coordinates': [round(p['lon'], 6), round(p['lat'], 6)]},
                     'name': re.sub(r'\s+', ' ', name),
