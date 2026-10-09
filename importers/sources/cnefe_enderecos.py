@@ -80,7 +80,7 @@ def _download(url: str, dest) -> None:
     tmp = dest.with_suffix('.part')
     for attempt in range(4):
         try:
-            with requests.get(url, headers=UA, stream=True, timeout=300) as r:
+            with requests.get(url, headers=UA, stream=True, timeout=(30, 120)) as r:
                 r.raise_for_status()
                 with open(tmp, 'wb') as fh:
                     for chunk in r.iter_content(1 << 20):
@@ -208,6 +208,8 @@ def _load_municipio(conn, cod: int, path, nome_arquivo: str) -> dict:
     t0 = time.time()
     with conn.transaction(), conn.cursor() as cur:
         cur.execute("set local work_mem = '256MB'")
+        # banco compartilhado: não fica horas esperando lock de outra sessão (falha e tenta de novo)
+        cur.execute("set local lock_timeout = '5min'")
         cur.execute("set local synchronous_commit = off")
         # as junções por 3 colunas de texto têm estimativa ruim (rows=6) e viram nested loop de minutos
         cur.execute("set local enable_nestloop = off")
@@ -256,21 +258,18 @@ def _load_municipio(conn, cod: int, path, nome_arquivo: str) -> dict:
                          n_enderecos = excluded.n_enderecos, n_logradouros = excluded.n_logradouros, fonte = excluded.fonte,
                          carregado_em = excluded.carregado_em""",
                     (cod, nome, uf, n_raw, n_pts, n_st, f'IBGE CNEFE 2022 ({nome_arquivo})'))
-        # cobertura (para /api/sources e para o mapa): fecho convexo dos pontos representativos dos logradouros
-        cur.execute("""select ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_ConvexHull(ST_Collect(ST_MakePoint(lon, lat))), 0.0005), 6)
-                         from addr_street where cod_mun = %(m)s and lat is not null""", {'m': cod})
-        hull = cur.fetchone()[0]
     print(f'    {cod} {nome}: {n_raw:,} registros → {n_pts:,} pontos, {n_st:,} logradouros '
           f'(copy {t1 - t0:.0f}s, agregação {time.time() - t1:.0f}s)', flush=True)
-    return {'cod': cod, 'nome': nome, 'uf': uf, 'registros': n_raw, 'enderecos': n_pts, 'logradouros': n_st, 'hull': hull}
+    return {'cod': cod, 'nome': nome, 'uf': uf, 'registros': n_raw, 'enderecos': n_pts, 'logradouros': n_st}
 
 
 def fetch():
     global NOTES
     cods = municipios()
     listings: dict[int, dict[int, str]] = {}
-    done = []
-    with _pg_conn() as conn:
+    done, failed = [], []
+    conn = _pg_conn()
+    try:
         for cod in cods:
             uf = cod // 100000
             if uf not in UF_DIR:
@@ -283,21 +282,51 @@ def fetch():
                 continue
             path = CACHE_DIR / 'geocoding' / 'cnefe' / fname
             _download(BASE + UF_DIR[uf] + '/' + fname, path)
-            done.append(_load_municipio(conn, cod, path, fname))
+            for attempt in range(3):
+                try:
+                    done.append(_load_municipio(conn, cod, path, fname))
+                    break
+                except Exception as e:  # noqa: BLE001 — lock_timeout, queda de conexão...
+                    print(f'  ! {cod}: falhou ({type(e).__name__}: {str(e)[:160]}); tentativa {attempt + 1}/3', flush=True)
+                    if conn.closed:
+                        conn = _pg_conn()
+                    time.sleep(10 * (attempt + 1))
+            else:
+                failed.append(cod)
+        if 3550308 in [d['cod'] for d in done]:
+            # capital recarregada: confere a orientação dos segmentos do GeoSampa pelos endereços (se já importados)
+            with conn.transaction(), conn.cursor() as cur:
+                cur.execute('select exists (select 1 from addr_segment where cod_mun = 3550308)')
+                if cur.fetchone()[0]:
+                    cur.execute('select * from addr_segment_orient(3550308)')
+                    print('    GeoSampa: segmentos conferidos/invertidos/sem dado = %s' % (cur.fetchone(),), flush=True)
         conn.autocommit = True
         with conn.cursor() as cur:
             cur.execute('vacuum analyze addr_point')
             cur.execute('analyze addr_street')
             cur.execute('analyze addr_bairro')
-    tot = sum(d['enderecos'] for d in done)
-    NOTES = (f'{tot:,} pontos de endereço em addr_point ({sum(d["registros"] for d in done):,} registros do CNEFE) de '
-             f'{len(done)} municípios. Tabelas próprias (addr_*); as feições aqui são só a cobertura. Sem seed: rodar o importador.')
+    finally:
+        conn.close()
+    # cobertura de TODOS os municípios já carregados (o runner substitui as feições desta fonte a cada carga)
+    with _pg_conn() as c2, c2.cursor() as cur:
+        cur.execute('select count(*), coalesce(sum(n_enderecos), 0), coalesce(sum(n_registros), 0) from addr_municipio')
+        n_mun, n_pts, n_reg = cur.fetchone()
+        cur.execute("""select m.cod_mun, m.nome, m.uf, m.n_enderecos, m.n_registros, m.n_logradouros,
+                              ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_ConvexHull(ST_Collect(ST_MakePoint(s.lon, s.lat))), 0.0005), 6)
+                         from addr_municipio m join addr_street s on s.cod_mun = m.cod_mun and s.lat is not null
+                        group by m.cod_mun, m.nome, m.uf, m.n_enderecos, m.n_registros, m.n_logradouros""")
+        cov = cur.fetchall()
+    NOTES = (f'Carga: {sum(d["enderecos"] for d in done):,} pontos de {len(done)} municípios'
+             f'{f" (FALHARAM: {failed})" if failed else ""}. Base total: {n_pts:,} pontos de endereço em addr_point '
+             f'({n_reg:,} registros do CNEFE) em {n_mun} municípios. Tabelas próprias (addr_*); as feições aqui são só a '
+             f'cobertura. Sem seed: rodar o importador.')
+    if failed and not done:
+        raise RuntimeError(f'CNEFE: nenhum município carregado (falharam {failed})')
     print('    ' + NOTES)
     return [{
-        'source_id': str(d['cod']),
-        'geometry': json.loads(d['hull']),
-        'name': d['nome'],
+        'source_id': str(cod),
+        'geometry': json.loads(hull),
+        'name': nome,
         'kind': 'cobertura_cnefe',
-        'props': {'cod_ibge': d['cod'], 'uf': d['uf'], 'enderecos': d['enderecos'], 'registros': d['registros'],
-                  'logradouros': d['logradouros']},
-    } for d in done if d['hull']]
+        'props': {'cod_ibge': cod, 'uf': uf, 'enderecos': n_e, 'registros': n_r, 'logradouros': n_l},
+    } for cod, nome, uf, n_e, n_r, n_l, hull in cov if hull]

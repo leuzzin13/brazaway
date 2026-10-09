@@ -160,3 +160,42 @@ create table if not exists addr_segment (
   geom       geometry(LineString, 4326) not null
 );
 create index if not exists addr_segment_core on addr_segment (cod_mun, core_norm);
+
+-- orientação de cada segmento: a linha precisa começar na ponta do número inicial para interpolar.
+-- 'vizinhos' = deduzida pela sequência de segmentos (importador); 'cnefe' = conferida/corrigida pelos endereços do CNEFE.
+alter table addr_segment add column if not exists orientacao text;
+
+-- Confere a orientação dos segmentos contra os endereços do CNEFE (número x posição ao longo da linha) e inverte
+-- as linhas com correlação negativa. Idempotente (numa segunda rodada a correlação já é positiva).
+-- Chamada pelos importadores geosampa_logradouro e cnefe_enderecos (depois de carregar a capital).
+create or replace function addr_segment_orient(p_cod integer default 3550308)
+returns table (conferidos integer, invertidos integer, sem_dado integer)
+language plpgsql as $$
+begin
+  create temp table _seg_orient on commit drop as
+  with seg as (
+    select g.id, g.geom, g.core_norm, x.lo, x.hi, x.par
+      from addr_segment g
+      cross join lateral (values (g.par_ini, g.par_fim, true), (g.impar_ini, g.impar_fim, false)) as x(lo, hi, par)
+     where g.cod_mun = p_cod and x.lo is not null and x.hi is not null and abs(x.hi - x.lo) >= 6
+  ), pts as (
+    select s.id,
+           (a.numero - s.lo)::float8 / (s.hi - s.lo) as t,
+           ST_LineLocatePoint(s.geom, ST_SetSRID(ST_MakePoint(a.lon, a.lat), 4326)) as f
+      from seg s
+      join addr_street st on st.cod_mun = p_cod and st.core_norm = s.core_norm
+      join addr_point a on a.street_id = st.id and a.km = false
+                       and a.numero between least(s.lo, s.hi) and greatest(s.lo, s.hi) and (a.numero % 2 = 0) = s.par
+     where ST_DWithin(s.geom::geography, ST_SetSRID(ST_MakePoint(a.lon, a.lat), 4326)::geography, 40)
+  )
+  select id, corr(t, f) as r, count(*) as n from pts where f > 0.02 and f < 0.98 group by id having count(*) >= 3;
+
+  update addr_segment s set geom = ST_Reverse(s.geom), orientacao = 'cnefe'
+    from _seg_orient o where o.id = s.id and o.r < -0.3;
+  update addr_segment s set orientacao = 'cnefe'
+    from _seg_orient o where o.id = s.id and o.r >= -0.3 and s.orientacao is distinct from 'cnefe';
+  return query
+    select (select count(*)::int from _seg_orient),
+           (select count(*)::int from _seg_orient where r < -0.3),
+           (select count(*)::int from addr_segment where cod_mun = p_cod and orientacao is distinct from 'cnefe');
+end $$;
