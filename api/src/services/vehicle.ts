@@ -1,33 +1,130 @@
-import { vehiclePresets, type VehiclePreset } from '../config.js';
+import { findPreset, type VehicleClass, type VehiclePreset } from '../config.js';
 import type { z } from 'zod';
 import type { VehicleInput } from '../schemas.js';
 
 export interface Vehicle extends VehiclePreset {
   plate_last_digit?: number;
+  /** SP: Autorização Especial de Trânsito de Caminhão (cadastro no DSV) */
   has_aetc?: boolean;
   requires_aet?: boolean;
   manufacture_year?: number;
   cargo_type?: 'general' | 'perishable' | 'hazmat' | 'concrete' | 'moving' | 'other';
   powertrain?: 'diesel' | 'electric' | 'hybrid' | 'gas' | 'hydrogen';
+  /** número ONU do produto perigoso (4 dígitos) */
   hazmat_un?: string;
+  /** carga perigosa fracionada para consumo local (Anexo II da Portaria SMT.GAB 051/2024) quando o nº ONU também está no Anexo I */
+  hazmat_local_delivery?: boolean;
   suspended_axles?: number;
   dual_wheels?: boolean;
   has_toll_tag?: boolean;
   cargo_od_in_city?: boolean;
   employment?: 'employee' | 'autonomous';
+  /** id do preset efetivamente usado (resolve aliases como "carreta" -> "carreta_5e") */
+  preset_id: string;
+  /** PBT > 3,5 t (CTB Anexo I). Calculado. */
+  is_truck: boolean;
+  /** grupo do produto perigoso na Portaria SMT.GAB 051/2024 (calculado a partir de hazmat_un) */
+  hazmat_group_sp?: HazmatGroupSP;
+  /** avisos curtos sobre o enquadramento legal do veículo (calculados) */
+  legal_notes: string[];
 }
 
 const EXTRA_KEYS = ['plate_last_digit', 'has_aetc', 'requires_aet', 'manufacture_year', 'cargo_type', 'powertrain', 'hazmat_un',
-  'suspended_axles', 'dual_wheels', 'has_toll_tag', 'cargo_od_in_city', 'employment'] as const;
+  'hazmat_local_delivery', 'suspended_axles', 'dual_wheels', 'has_toll_tag', 'cargo_od_in_city', 'employment'] as const;
 
-/** Preset + campos editáveis. Sem preset, parte do "truck". */
+/** CTB Anexo I (red. Lei 14.440/2022): caminhão é o veículo de carga com PBT acima de 3.500 kg. */
+export const TRUCK_MIN_PBT_T = 3.5;
+
+/** Portaria SMT.GAB 137/2018 art. 18 (red. Portaria SMT 57/2021). */
+export const VUC_SP = { max_width_m: 2.5, max_length_m: 7.2, min_manufacture_year: 2005, max_age_years: 15 } as const;
+
+/**
+ * Grupos de produtos perigosos da Portaria SMT.GAB 051/2024 (art. 2º): Anexo I = alta frequência de circulação,
+ * Anexo II = consumo local, Anexo III = outros. Vários nº ONU aparecem nos Anexos I e II (ex.: 1202 diesel, 1075 GLP
+ * engarrafado/fracionado): nesses casos o grupo depende da operação (hazmat_local_delivery).
+ */
+const ANEXO_I = new Set(['1001', '1005', '1072', '1073', '1075', '1170', '1202', '1203', '1223', '1263', '1791', '1823', '1824', '1830', '1863', '1977', '3077', '3082', '3475']);
+const ANEXO_II = new Set(['1002', '1003', '1006', '1046', '1066', '1070', '1072', '1073', '1075', '1170', '1202', '1203', '1951', '1963', '1966', '1977', '2187', '2201', '3082', '3475']);
+const ANEXO_III = new Set(['1660', '2908', '2910', '2911', '2915', '2916', '3291', '3332', '3373']);
+export type HazmatGroupSP = 'alta_frequencia' | 'consumo_local' | 'outros' | 'ambiguo' | 'nao_listado';
+
+export function normalizeUn(un?: string): string | undefined {
+  const d = (un ?? '').replace(/\D/g, '');
+  return d.length === 4 ? d : undefined;
+}
+
+export function hazmatGroupSP(un?: string): HazmatGroupSP | undefined {
+  const n = normalizeUn(un);
+  if (!n) return undefined;
+  if (ANEXO_III.has(n)) return 'outros';
+  if (ANEXO_I.has(n) && ANEXO_II.has(n)) return 'ambiguo';
+  if (ANEXO_II.has(n)) return 'consumo_local';
+  if (ANEXO_I.has(n)) return 'alta_frequencia';
+  return 'nao_listado';
+}
+
+/** Produto dos grupos "consumo local" ou "outros" (Portaria SMT.GAB 051/2024 art. 2º III e IV). */
+export function isHazmatLocalOrOther(v: Pick<Vehicle, 'hazmat' | 'hazmat_un' | 'hazmat_local_delivery'>): boolean {
+  if (!v.hazmat) return false;
+  const g = hazmatGroupSP(v.hazmat_un);
+  return g === 'outros' || g === 'consumo_local' || (g === 'ambiguo' && !!v.hazmat_local_delivery);
+}
+
+export function isTruck(v: Pick<Vehicle, 'weight_t'>): boolean {
+  return v.weight_t > TRUCK_MIN_PBT_T;
+}
+
+/** Atende a definição de VUC de São Paulo (dimensões, ano e idade). Não verifica AETC. */
+export function isVucSP(v: Pick<Vehicle, 'is_vuc' | 'width_m' | 'length_m' | 'weight_t' | 'manufacture_year'>, year = new Date().getFullYear()): boolean {
+  if (!v.is_vuc || !isTruck(v)) return false;
+  if (v.width_m > VUC_SP.max_width_m || v.length_m > VUC_SP.max_length_m) return false;
+  if (v.manufacture_year !== undefined) {
+    // §3º: idade máxima de 15 anos "excluído o ano de fabricação"
+    if (v.manufacture_year < VUC_SP.min_manufacture_year || year - v.manufacture_year > VUC_SP.max_age_years) return false;
+  }
+  return true;
+}
+
+/** Comprimento máximo sem AET por tipo (Res. CONTRAN 882/2021 art. 4º III, red. Res. 1.005/2024). */
+const MAX_LENGTH_BY_CLASS: Record<VehicleClass, number> = { light: 14, rigid: 14, semitrailer: 19.3, truck_trailer: 19.8, cvc: 19.8 };
+
+function legalNotes(v: Vehicle): string[] {
+  const notes: string[] = [];
+  const year = new Date().getFullYear();
+  if (!v.is_truck) notes.push('PBT até 3,5 t: não é caminhão (CTB, Anexo I). ZMRC não se aplica; rodízio sim, inclusive nas vias do Minianel.');
+  if (v.is_vuc && !isVucSP(v, year)) {
+    notes.push(`Fora da definição de VUC em SP (até ${String(VUC_SP.max_width_m).replace('.', ',')} m de largura e ${String(VUC_SP.max_length_m).replace('.', ',')} m de comprimento, fabricado a partir de 2005, até 15 anos): tratado como caminhão.`);
+  } else if (v.is_vuc && !v.has_aetc) {
+    notes.push('VUC sem AETC: em São Paulo é tratado como caminhão comum na ZMRC e no rodízio (Portaria SMT 137/2018 art. 18).');
+  }
+  if (v.requires_aet) {
+    notes.push('Exige AET (Res. CONTRAN 882/2021 art. 18): em pista simples só circula do amanhecer ao pôr do sol, a até 80 km/h (art. 20).');
+  }
+  if (v.hazmat && !normalizeUn(v.hazmat_un)) notes.push('Carga perigosa: informe o nº ONU para conferir as exceções de São Paulo (Portaria SMT.GAB 051/2024).');
+  return notes;
+}
+
+/** Preset + campos editáveis. Sem preset, parte do "truck". Aceita ids antigos (aliases). */
 export function resolveVehicle(input: z.infer<typeof VehicleInput>): Vehicle {
   const presetId = input.preset ?? 'truck';
-  const preset = vehiclePresets.presets.find((p) => p.id === presetId);
+  const preset = findPreset(presetId);
   if (!preset) throw Object.assign(new Error(`Preset de veículo desconhecido: ${presetId}`), { statusCode: 422 });
-  const v: Vehicle = { ...preset };
+  const v = { ...preset, preset_id: preset.id } as Vehicle;
   for (const k of ['height_m', 'width_m', 'length_m', 'weight_t', 'axle_load_t', 'axle_count', 'hazmat', 'is_vuc', ...EXTRA_KEYS] as const) {
     if (input[k] !== undefined) (v as unknown as Record<string, unknown>)[k] = input[k];
   }
+  // carga perigosa declarada por qualquer um dos campos
+  if (v.cargo_type === 'hazmat' || normalizeUn(v.hazmat_un)) v.hazmat = true;
+  if (v.hazmat && v.cargo_type === undefined) v.cargo_type = 'hazmat';
+  if (v.hazmat_un !== undefined) v.hazmat_un = normalizeUn(v.hazmat_un) ?? v.hazmat_un;
+  v.hazmat_group_sp = v.hazmat ? hazmatGroupSP(v.hazmat_un) : undefined;
+  v.is_truck = isTruck(v);
+  const cls = v.vehicle_class ?? 'rigid';
+  if (input.requires_aet === undefined) {
+    const overDims = v.width_m > 2.6 || v.height_m > 4.4 || v.length_m > MAX_LENGTH_BY_CLASS[cls];
+    const overCvc = cls === 'cvc' && v.weight_t > 57;
+    v.requires_aet = !!preset.requires_aet || overDims || overCvc;
+  }
+  v.legal_notes = legalNotes(v);
   return v;
 }

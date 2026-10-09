@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const LatLon = z.object({ lat: z.number().min(-90).max(90), lon: z.number().min(-180).max(180) });
 
 export const VehicleInput = z.object({
-  preset: z.string().optional(),
+  preset: z.string().optional(),                    // id de config/vehicle-presets.json (aceita ids antigos via "aliases")
   height_m: z.number().positive().max(10).optional(),
   width_m: z.number().positive().max(5).optional(),
   length_m: z.number().positive().max(40).optional(),
@@ -14,17 +14,18 @@ export const VehicleInput = z.object({
   is_vuc: z.boolean().optional(),
   plate_last_digit: z.number().int().min(0).max(9).optional(),
   // atributos legais/operacionais usados pelas camadas (todos opcionais)
-  has_aetc: z.boolean().optional(),                 // SP: Autorização Especial de Trânsito de Caminhão (cadastro DSV)
+  has_aetc: z.boolean().optional(),                 // SP: Autorização Especial de Trânsito de Caminhão (cadastro DSV); exigida p/ isenção do VUC
   requires_aet: z.boolean().optional(),             // CVC com AET (rodotrem etc.)
-  manufacture_year: z.number().int().min(1950).max(2100).optional(),
+  manufacture_year: z.number().int().min(1950).max(2100).optional(), // VUC em SP: fabricado a partir de 2005 e até 15 anos
   cargo_type: z.enum(['general', 'perishable', 'hazmat', 'concrete', 'moving', 'other']).optional(),
   powertrain: z.enum(['diesel', 'electric', 'hybrid', 'gas', 'hydrogen']).optional(),
-  hazmat_un: z.string().max(10).optional(),         // número ONU do produto perigoso
+  hazmat_un: z.string().max(10).optional(),         // número ONU do produto perigoso (4 dígitos; "UN 1203" também é aceito)
+  hazmat_local_delivery: z.boolean().optional(),    // perigoso fracionado p/ consumo local (Anexo II da Portaria SMT.GAB 051/2024)
   suspended_axles: z.number().int().min(0).max(6).optional(),
   dual_wheels: z.boolean().optional(),              // rodagem dupla (categoria de pedágio)
   has_toll_tag: z.boolean().optional(),
   cargo_od_in_city: z.boolean().optional(),         // carga com origem/destino no município (Portaria SMT 49/2021)
-  employment: z.enum(['employee', 'autonomous']).optional(), // CLT x TAC (jornada)
+  employment: z.enum(['employee', 'autonomous']).optional(), // CLT (empregado) x TAC (autônomo): limites de jornada
 });
 
 export const RouteRequest = z.object({
