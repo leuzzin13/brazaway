@@ -53,6 +53,10 @@ function coord(r: DataFeatureRow): [number, number] {
 function distM(a: [number, number], b: [number, number]): number {
   return turf.distance(turf.point(a), turf.point(b), { units: 'meters' });
 }
+function fmtBr(d: string | null | undefined): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d ?? '');
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : String(d ?? '');
+}
 function kmTxt(km: unknown): string {
   const n = Number(km);
   return Number.isFinite(n) && km !== null && km !== '' ? `km ${String(Math.round(n * 10) / 10).replace('.', ',')}` : '';
@@ -90,11 +94,19 @@ export interface PlazaOnRoute {
   data: string | null;
   url?: string;
   observacao?: string;
-  /** valor pelo OSM, para comparação com a tabela oficial */
+  /** valor pelo OSM (e data de conferência), para comparação com a tabela oficial */
   valor_osm?: number | null;
+  data_osm?: string | null;
   osm_id: string;
   oficial_id: string | null;
   oficial_fonte: string | null;
+}
+
+/** Rumo cobrado pelo `direction` do OSM (importador): se todos diferem > 120° do rumo da rota, a cabine é do outro sentido. */
+function chargedHere(h: DataFeatureRow, bearing: number | null): boolean {
+  const hs = (h.props as Props).charged_headings as number[] | undefined;
+  if (bearing == null || !Array.isArray(hs) || !hs.length) return true;
+  return hs.some((x) => { const d = Math.abs(((x - bearing) % 360 + 540) % 360 - 180); return d <= 120; });
 }
 
 /** Nó do OSM que é só cabine de estacionamento/condomínio: sem tarifa, sem rodovia e sem praça oficial perto. */
@@ -217,7 +229,11 @@ const layer: RouteLayer = {
     const used = new Set<string>();
     const plazas: PlazaOnRoute[] = [];
     const ignored: string[] = [];
-    for (const c of clusters) {
+    const otherWay: string[] = [];
+    for (const c0 of clusters) {
+      // cabine em via de mão dupla com `direction` que só cobra o outro sentido: não conta
+      const c = c0.filter((h) => chargedHere(h, bearingAt(route.line, lenKm, h.fraction)));
+      if (!c.length) { otherWay.push(...c0.map((h) => h.source_id)); continue; }
       const rep = c.find((h) => (h.props as Props).tarifa && h.kind === 'praca') ?? c.find((h) => (h.props as Props).tarifa) ?? c[0];
       const off = matchOfficial(rep, officials, used, bearingAt(route.line, lenKm, rep.fraction));
       if (looksPrivate(rep, off)) { ignored.push(rep.source_id); continue; }
@@ -247,6 +263,7 @@ const layer: RouteLayer = {
         url: price?.url,
         observacao: price?.observacao,
         valor_osm: osmPrice?.valor ?? null,
+        data_osm: osmPrice?.data ?? null,
         osm_id: rep.source_id,
         oficial_id: off?.id ?? null,
         oficial_fonte: off?.source ?? null,
@@ -342,6 +359,16 @@ const layer: RouteLayer = {
         message: `A rota passa por ${ff.length} pórtico(s) free flow (sem cabine). Com TAG o débito é automático; sem TAG, pague pelo site ou app da concessionária${federal ? ' em até 30 dias (ANTT)' : ' no prazo informado por ela'}. Não pagar é evasão de pedágio, infração grave (CTB art. 209-A).`,
       });
     }
+    // tabela oficial mais antiga que a conferência no OSM e com valor diferente: provável reajuste não publicado na fonte
+    const diverg = charged.filter((p) => p.fonte !== 'OSM' && p.valor_osm != null && p.data_osm && p.data
+      && p.data_osm > p.data && Math.abs((p.valor_osm ?? 0) - (p.valor ?? 0)) > 0.01);
+    if (diverg.length) {
+      const ex = diverg[0];
+      warnings.push({
+        code: 'toll_tariff_divergence', severity: 'info', lat: ex.lat, lon: ex.lon,
+        message: `Em ${diverg.length} praça(s) o valor conferido no OSM é mais recente que a tabela oficial e diferente dela (ex.: ${ex.nome}: ${brl(ex.valor)} pela ${ex.fonte} de ${fmtBr(ex.data)}, ${brl(ex.valor_osm)} no OSM em ${fmtBr(ex.data_osm)}). Pode ter havido reajuste; confirme na concessionária.`,
+      });
+    }
     if (estimated.length) {
       warnings.push({
         code: 'toll_estimated', severity: 'info',
@@ -359,6 +386,8 @@ const layer: RouteLayer = {
         possiveis,
         alternativa_sem_pedagio: alternativa,
         ignorados_osm: ignored,
+        outro_sentido_osm: otherWay,
+        divergencias_oficial_osm: diverg.map((p) => ({ nome: p.nome, oficial: p.valor, fonte: p.fonte, data: p.data, osm: p.valor_osm, data_osm: p.data_osm })),
         metodo: 'nós de pedágio do OSM sobre a polilinha da rota (sentido certo) + tarifa oficial ANTT/ARTESP da praça mais próxima; OSM charge como reserva',
       },
     };
