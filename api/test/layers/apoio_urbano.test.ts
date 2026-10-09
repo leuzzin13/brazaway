@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { get, minDistM, pool, route, waitForStack } from '../helpers.js';
+import { get, pool, route, waitForStack } from '../helpers.js';
 import { describeWins, windowActive } from '../../src/layers/apoio_urbano.js';
 
 /**
- * Frente apoio_urbano: carga_descarga (Zona Azul Caminhão), corredores_onibus (faixas/corredores) e feiras_livres.
+ * Frente apoio_urbano: carga_descarga (Zona Azul Caminhão) e corredores_onibus (faixas/corredores de ônibus).
  * Contra a API local com os seeds do GeoSampa carregados (importers: geosampa_zona_azul, geosampa_vaga_caminhao,
- * geosampa_faixa_onibus, geosampa_corredor_onibus, geosampa_feira_livre).
+ * geosampa_faixa_onibus, geosampa_corredor_onibus).
  * Datas: 2026-10-12 = segunda, 2026-10-13 = terça, 2029-12-25 = terça (Natal).
  */
 const VUC = { preset: 'vuc' };
@@ -15,9 +15,6 @@ const PINHEIROS = { lat: -23.5670, lon: -46.6930 };
 const PARAISO = { lat: -23.5760, lon: -46.6400 };          // passa por Teodoro Sampaio, Paulista, Bernardino de Campos
 const BUTANTA = { lat: -23.5710, lon: -46.7080 };
 const COTIA = { lat: -23.6040, lon: -46.9190 };            // fora do município: a mais de 20 km da vaga mais próxima
-// Rua Ministro Godoy (Perdizes): feira "Alto das Perdizes" às terças. O e D ficam 250 m antes/depois da quadra casada.
-const GODOY_O = { lat: -23.536846697946153, lon: -46.67113690552912 };
-const GODOY_D = { lat: -23.541305302053846, lon: -46.67464009447089 };
 
 const layerWarnings = (r: any, layer: string) => (r.warnings as any[]).filter((w) => w.layer === layer);
 
@@ -36,23 +33,14 @@ describe('apoio_urbano: regras de janela (funções puras)', () => {
   });
 });
 
-describe('apoio_urbano: camadas carga_descarga, corredores_onibus e feiras_livres', () => {
-  let godoy: { id: string; mid: [number, number] };
-
-  beforeAll(async () => {
-    await waitForStack();
-    const r = await pool.query(
-      `select id::text, props->'osm'->'mid' as mid from data_features
-        where layer_id = 'feiras_livres' and props->>'rua' = 'RUA MIN GODOY' and (props->>'dia')::int = 2 and props ? 'osm'`);
-    expect(r.rows.length, 'feira da R. Min. Godoy (terça) não encontrada: rode o importador geosampa_feira_livre').toBe(1);
-    godoy = r.rows[0];
-  });
+describe('apoio_urbano: camadas carga_descarga e corredores_onibus', () => {
+  beforeAll(async () => { await waitForStack(); });
   afterAll(async () => { await pool.end(); });
 
-  it('catálogo: três camadas com fonte GeoSampa CC-BY-SA e cargas registradas', async () => {
+  it('catálogo: duas camadas com fonte GeoSampa CC-BY-SA e cargas registradas', async () => {
     const r = await get('/api/layers');
     expect(r.status).toBe(200);
-    for (const id of ['carga_descarga', 'corredores_onibus', 'feiras_livres']) {
+    for (const id of ['carga_descarga', 'corredores_onibus']) {
       const l = r.body.find((x: any) => x.id === id);
       expect(l, `camada ${id} não carregada`).toBeTruthy();
       expect(l.sources.every((s: any) => /CC-BY-SA 4\.0/.test(s.license))).toBe(true);
@@ -60,7 +48,7 @@ describe('apoio_urbano: camadas carga_descarga, corredores_onibus e feiras_livre
       expect(l.runs.every((x: any) => x.record_count > 0 && /CC-BY-SA/.test(x.license))).toBe(true);
     }
     expect(r.body.find((x: any) => x.id === 'carga_descarga').affects_route).toBe(false);
-    expect(r.body.find((x: any) => x.id === 'feiras_livres').affects_route).toBe(true);
+    expect(r.body.find((x: any) => x.id === 'feiras_livres'), 'feiras_livres saiu desta frente').toBeUndefined();
   });
 
   it('features: vagas de caminhão no centro trazem horário e regra do CAD', async () => {
@@ -80,7 +68,8 @@ describe('apoio_urbano: camadas carga_descarga, corredores_onibus e feiras_livre
     expect(paulista.length).toBeGreaterThan(0);
     expect(paulista[0].properties.horario).toMatch(/\d/);
     expect(paulista[0].properties.regra).toMatch(/184/);
-    const low = await get('/api/layers/feiras_livres/features?bbox=-46.8,-23.7,-46.4,-23.4&zoom=10');
+    const low = await get('/api/layers/corredores_onibus/features?bbox=-46.665,-23.572,-46.645,-23.555&zoom=10');
+    expect(low.status).toBe(200);
     expect(low.body.features).toHaveLength(0);
   });
 
@@ -128,40 +117,5 @@ describe('apoio_urbano: camadas carga_descarga, corredores_onibus e feiras_livre
     expect(night.status).toBe(200);
     expect(layerWarnings(night.body, 'corredores_onibus').find((x) => x.code === 'bus_lane_active')).toBeUndefined();
     expect(night.body.layers.corredores_onibus.data.faixa_fora_do_horario_m).toBeGreaterThan(1000);
-  });
-
-  it('feiras_livres: segunda passa pela quadra; terça 9h desvia (sem aviso danger); terça 15h e Natal passam', async () => {
-    const mid = { lon: godoy.mid[0], lat: godoy.mid[1] };
-    const mon = await route({ origin: GODOY_O, destination: GODOY_D, vehicle: VUC, departure_at: '2026-10-12T09:00' });
-    expect(mon.status, JSON.stringify(mon.body)).toBe(200);
-    expect(minDistM(mon.body, mid), 'pré-condição: sem feira, a rota usa a quadra').toBeLessThan(12);
-
-    const tue = await route({ origin: GODOY_O, destination: GODOY_D, vehicle: VUC, departure_at: '2026-10-13T09:00' });
-    expect(tue.status, JSON.stringify(tue.body)).toBe(200);
-    expect(minDistM(tue.body, mid)).toBeGreaterThan(12);
-    const av = tue.body.avoided.find((a: any) => a.layer === 'feiras_livres');
-    expect(av?.id).toBe(godoy.id);
-    expect(av?.name).toMatch(/Godoy/);
-    expect(av?.rule).toMatch(/ter 07h–14h45/);
-    expect(tue.body.warnings.filter((w: any) => w.layer === 'feiras_livres' && w.severity === 'danger')).toHaveLength(0);
-    expect(tue.body.layers.feiras_livres.summary.join(' ')).toMatch(/Desvio de 1/);
-
-    for (const when of ['2026-10-13T15:00', '2029-12-25T09:00']) {
-      const r = await route({ origin: GODOY_O, destination: GODOY_D, vehicle: VUC, departure_at: when });
-      expect(r.status, JSON.stringify(r.body)).toBe(200);
-      expect(minDistM(r.body, mid), `${when}: sem feira, a rota deveria usar a quadra`).toBeLessThan(12);
-      expect(r.body.avoided.find((a: any) => a.layer === 'feiras_livres')).toBeUndefined();
-    }
-  });
-
-  it('feiras_livres: destino na quadra da feira não bloqueia a rota e avisa', async () => {
-    const mid = { lon: godoy.mid[0], lat: godoy.mid[1] };
-    const r = await route({ origin: GODOY_O, destination: mid, vehicle: VUC, departure_at: '2026-10-13T09:00' });
-    expect(r.status, JSON.stringify(r.body)).toBe(200);
-    const w = layerWarnings(r.body, 'feiras_livres');
-    const dest = w.find((x) => x.code === 'street_market_at_destination');
-    expect(dest?.severity).toBe('warn');
-    expect(dest?.message).toMatch(/Decreto 48\.172\/2007/);
-    expect(w.find((x) => x.code === 'street_market_on_route' && x.id === godoy.id)).toBeUndefined();
   });
 });

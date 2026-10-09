@@ -1,6 +1,6 @@
 /**
- * Utilitários das camadas urbanas de São Paulo (frente "apoio_urbano": carga_descarga, corredores_onibus,
- * feiras_livres). Não é uma camada (não termina em .layer.ts); só funções compartilhadas.
+ * Utilitários das camadas urbanas de São Paulo (frente "apoio_urbano": carga_descarga e corredores_onibus).
+ * Não é uma camada (não termina em .layer.ts, o index.ts não o carrega); só funções compartilhadas pelas duas.
  *
  * Janela semanal: { days: [1..7] (ISO, 1 = seg) | 8 (= feriado), from: "HH:MM", to: "HH:MM" }.
  * `to` pode ser "24:00"; `from > to` cruza a meia-noite (ex.: Zona Azul noturna 07:00–02:00).
@@ -20,7 +20,7 @@ export function localParts(at: Date, tz = env.tz) {
 
 /**
  * A janela vale no instante `at`? Com `holiday: 'own'` (Zona Azul), num feriado só valem janelas do dia 8;
- * sem janela de feriado, a regra não opera. Com `holiday: 'weekday'` (faixas, feiras), o feriado conta como o dia da semana.
+ * sem janela de feriado, a regra não opera. Com `holiday: 'weekday'` (faixas de ônibus), o feriado conta como o dia da semana.
  */
 export function windowActive(ws: Win[] | null | undefined, at: Date, opts: { holiday?: boolean; holidayMode?: 'own' | 'weekday' } = {}): boolean {
   if (!ws?.length) return false;
@@ -95,19 +95,6 @@ export async function valhallaTileset(): Promise<number | null> {
   } catch { value = null; }
   tilesetCache = { at: Date.now(), value };
   return value;
-}
-
-/** Polígono (anel fechado [lon, lat]) regular de raio `radiusM` em torno do ponto. */
-export function ringAround(p: [number, number], radiusM: number, n = 8): [number, number][] {
-  const [lon, lat] = p;
-  const dLat = radiusM / 110_574, dLon = radiusM / (111_320 * Math.cos((lat * Math.PI) / 180));
-  const ring: [number, number][] = [];
-  for (let i = 0; i < n; i++) {
-    const a = (2 * Math.PI * i) / n;
-    ring.push([Number((lon + dLon * Math.cos(a)).toFixed(7)), Number((lat + dLat * Math.sin(a)).toFixed(7))]);
-  }
-  ring.push(ring[0]);
-  return ring;
 }
 
 export function fmtKm(m: number): string {
