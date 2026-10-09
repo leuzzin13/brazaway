@@ -5,7 +5,7 @@ import { env } from '../config.js';
 import * as valhalla from '../services/valhalla.js';
 import type { Vehicle } from '../services/vehicle.js';
 import { featuresInBbox } from './data.js';
-import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteLayer } from './types.js';
+import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
  * Restrições de horário em rodovias (camada 'rodovias_horario').
@@ -21,7 +21,7 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteLayer } fro
  * Como bloqueia: se a regra vale no horário de SAÍDA e o veículo é afetado, calcula a rota livre, recorta dela os
  * pedaços que passam pelos trechos restritos (o recorte usa os vértices da própria rota, então o Valhalla consegue
  * "andar" sobre eles em linear_cost_factors) e penaliza esses pedaços (fator 1000 = proibido salvo sem alternativa).
- * Repete até 3 vezes para pegar alternativas que também sejam restritas.
+ * Repete (até 6 rotas) enquanto a nova rota cair em outro trecho restrito.
  */
 
 const LAYER = 'rodovias_horario';
@@ -29,8 +29,13 @@ const FACTOR = Number(process.env.RODOVIAS_HORARIO_FATOR ?? 1000);
 /** distância máxima rota↔trecho do SNV (SNV × OSM: mediana ~3 m, p99 ~25 m na BR-459) */
 const TOL_M = 30;
 const MIN_RUN_M = 300;
-const MAX_ITER = 3;
+const MAX_ITER = 6;
+/** sobreposição mínima (km) entre o trecho da portaria e o do SNV para o trecho do SNV entrar na regra */
+const MIN_OVERLAP_KM = 0.05;
 const RULES_TTL_MS = 5 * 60_000;
+/** Mostrar no mapa os trechos do SNV (geometria do DNIT). RODOVIAS_HORARIO_MAPA_SNV=0 tira do mapa (ver a nota de licença
+ *  em docs/layers/rodovias_horario.md); a rota continua usando o SNV internamente. */
+const MAPA_SNV = process.env.RODOVIAS_HORARIO_MAPA_SNV !== '0';
 const DIAS = ['', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'];
 
 // ------------------------------------------------------------------------------------------- tipos
@@ -168,26 +173,40 @@ function segSubject(w: PrfProps, s: Seg): boolean {
 function trechoEntry(s: Seg, t: Trecho): { km_ini: number; km_fim: number } | null {
   if (t.uf && s.p.uf !== t.uf) return null;
   const entries = s.p.coinc ?? [{ br: s.p.br, codigo: s.p.codigo, km_ini: s.p.km_ini, km_fim: s.p.km_fim }];
-  const e = entries.find((x) => x.br === t.br && x.km_ini < t.km_fim && x.km_fim > t.km_ini);
+  const e = entries.find((x) => x.br === t.br && Math.min(x.km_fim, t.km_fim) - Math.max(x.km_ini, t.km_ini) >= MIN_OVERLAP_KM);
   return e ? { km_ini: e.km_ini, km_fim: e.km_fim } : null;
 }
 
-/** Geometria do trecho sujeita à janela: para tabela por km, recorta o trecho do SNV (digitalizado no sentido do km). */
-function subjectGeometry(w: PrfProps, s: Seg): GeoJSON.LineString | GeoJSON.MultiLineString {
-  if (w.escopo !== 'trechos' || s.geometry.type !== 'LineString') return s.geometry;
+type LineGeom = GeoJSON.LineString | GeoJSON.MultiLineString;
+
+/** Geometria do trecho sujeita à janela, ou null se a janela não pega o trecho. Para tabela por km, recorta o trecho do
+ *  SNV por interpolação de km (o SNV é digitalizado no sentido do km). MultiLineString parcial fica inteira (há 1 no SNV). */
+function subjectGeometry(w: PrfProps, s: Seg): LineGeom | null {
+  if (w.escopo !== 'trechos') return segSubject(w, s) ? s.geometry : null;
   for (const t of w.trechos ?? []) {
     const e = trechoEntry(s, t);
     if (!e) continue;
     const span = e.km_fim - e.km_ini;
-    if (span <= 0 || (t.km_ini <= e.km_ini && t.km_fim >= e.km_fim)) return s.geometry;
+    if (span <= 0) continue;
+    if (t.km_ini <= e.km_ini && t.km_fim >= e.km_fim) return s.geometry;
+    if (s.geometry.type !== 'LineString') return s.geometry;
     const line = turf.lineString(s.geometry.coordinates);
     const len = turf.length(line, { units: 'kilometers' });
     const a = Math.max(0, (t.km_ini - e.km_ini) / span) * len;
     const b = Math.min(1, (t.km_fim - e.km_ini) / span) * len;
-    if (b - a < 0.05) return s.geometry;
+    if (b - a < MIN_OVERLAP_KM) continue;
     return turf.lineSliceAlong(line, a, b, { units: 'kilometers' }).geometry;
   }
-  return s.geometry;
+  return null;
+}
+
+/** Parte do trecho sujeita a qualquer das janelas (junta os recortes), ou null. */
+function subjectOfAny(ws: PrfProps[], s: Seg): LineGeom | null {
+  const gs = ws.map((w) => subjectGeometry(w, s)).filter((g): g is LineGeom => !!g);
+  if (!gs.length) return null;
+  if (gs.includes(s.geometry)) return s.geometry;
+  if (gs.length === 1) return gs[0];
+  return { type: 'MultiLineString', coordinates: gs.flatMap((g) => (g.type === 'LineString' ? [g.coordinates] : g.coordinates)) };
 }
 
 function activeAt(w: PrfWindow, t: DateTime) { return w.start <= t && t < w.end; }
@@ -222,38 +241,82 @@ function quemText(p: PrfProps): string {
   return p.so_aet ? `${base}, só para quem tem AET/AE` : base;
 }
 
-/** Períodos de feriado prolongado (art. 3º, § 5º da SUP/DER-084/2023). Usa as operações de feriado da PRF (mesmo ato
- *  federal, exceto Eleições) e, se a tabela holidays estiver carregada, feriados de qui/sex/seg/ter (com o fim de semana). */
-function longHolidayPeriods(rules: Rules, tz: string): { start: DateTime; end: DateTime; name: string }[] {
-  const out: { start: DateTime; end: DateTime; name: string }[] = [];
+/** Domingo de Páscoa no calendário gregoriano (algoritmo de Meeus/Jones/Butcher). */
+export function easterSunday(year: number): { month: number; day: number } {
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const n = h + l - 7 * m + 114;
+  return { month: Math.floor(n / 31), day: (n % 31) + 1 };
+}
+
+type Period = { start: DateTime; end: DateTime; name: string };
+/** gap máximo entre janelas da mesma operação PRF para formar um só feriado (Carnaval e Corpus Christi: 3,17 d entre
+ *  a ida e a volta; Natal → Réveillon: 3,75 d, ficam separados) */
+const MAX_GAP_DAYS = 3.5;
+
+/**
+ * Períodos de feriado prolongado do art. 3º, § 5º da SUP/DER-084-01/11/2023: "feriados prolongados, municipal, estadual
+ * ou federal, que envolvam os dias de quinta-feira até a terça-feira da semana subsequente, em especial o Carnaval,
+ * Semana Santa, Natal e Ano Novo". União de três fontes:
+ *  a) operações de feriado da PRF (mesmo ato federal, sem Eleições): do dia da primeira ao da última janela da operação.
+ *     Quarta-feira na ponta (véspera à tarde, ou volta de manhã como na Quarta de Cinzas) sai, porque o § 5º vai de
+ *     quinta a terça; fica se a quarta for o próprio feriado.
+ *  b) Carnaval (sexta → terça de Carnaval) e Semana Santa (quinta → domingo de Páscoa), calculados pela Páscoa. Valem
+ *     mesmo sem a portaria da PRF do ano no banco.
+ *  c) feriados da tabela holidays e Natal/Ano Novo (25/12 e 01/01, por data): qui → dom, sex (com a quinta) → dom,
+ *     sáb → seg, sáb → ter (com a ponte de segunda); Natal/Ano Novo em outro dia bloqueiam o próprio dia.
+ */
+export function longHolidayPeriods(rules: Pick<Rules, 'windows' | 'holidays'>, tz: string, t: DateTime): Period[] {
+  const out: Period[] = [];
+  const holidayDays = new Set(rules.holidays.map((h) => h.day));
+  const isHoliday = (d: DateTime) => holidayDays.has(d.toISODate()!) || ['12-25', '01-01'].includes(d.toFormat('LL-dd'));
+
+  // a) operações da PRF
   const byOp = new Map<string, PrfWindow[]>();
   for (const w of rules.windows) {
     if (w.p.escopo !== 'pista_simples_federal' || /elei/i.test(w.p.operacao) || w.p.ufs_apenas) continue;
-    // a mesma operação pode se repetir no ano (ex.: Fim de Ano tem Natal e Réveillon): agrupa por janelas a até 4 dias
-    const key = `${w.p.operacao}`;
-    byOp.set(key, [...(byOp.get(key) ?? []), w]);
+    byOp.set(w.p.operacao, [...(byOp.get(w.p.operacao) ?? []), w]);
   }
-  for (const [name, ws] of byOp) {
+  for (const [name, list] of byOp) {
+    const ws = [...list].sort((x, y) => x.start.toMillis() - y.start.toMillis());
     let cur: PrfWindow[] = [];
     const flush = () => {
       if (!cur.length) return;
-      out.push({ start: cur[0].start.setZone(tz).startOf('day'), end: cur[cur.length - 1].end.setZone(tz).endOf('day'), name });
+      let a = cur[0].start.setZone(tz).startOf('day');
+      let b = cur[cur.length - 1].end.setZone(tz).startOf('day');
+      if (b > a && b.weekday === 3 && !isHoliday(b)) b = b.minus({ days: 1 });
+      if (b > a && a.weekday === 3 && !isHoliday(a)) a = a.plus({ days: 1 });
+      out.push({ start: a, end: b.endOf('day'), name });
       cur = [];
     };
     for (const w of ws) {
-      if (cur.length && w.start.diff(cur[cur.length - 1].end, 'days').days > 2.5) flush();
+      // a mesma operação pode se repetir (Fim de Ano = Natal + Réveillon): janelas a mais de 3,5 dias abrem outro período
+      if (cur.length && w.start.diff(cur[cur.length - 1].end, 'days').days > MAX_GAP_DAYS) flush();
       cur.push(w);
     }
     flush();
   }
-  for (const h of rules.holidays) {
+
+  // b) Carnaval e Semana Santa pela Páscoa
+  const years = [t.year - 1, t.year, t.year + 1];
+  for (const y of years) {
+    const e = DateTime.fromObject({ year: y, ...easterSunday(y) }, { zone: tz });
+    out.push({ start: e.minus({ days: 51 }).startOf('day'), end: e.minus({ days: 47 }).endOf('day'), name: 'Carnaval' });
+    out.push({ start: e.minus({ days: 3 }).startOf('day'), end: e.endOf('day'), name: 'Semana Santa' });
+  }
+
+  // c) feriados com fim de semana ligado
+  const days = [...rules.holidays, ...years.flatMap((y) => [{ day: `${y}-12-25`, name: 'Natal' }, { day: `${y}-01-01`, name: 'Ano Novo' }])];
+  for (const h of days) {
     const d = DateTime.fromISO(h.day, { zone: tz });
     const wd = d.weekday; // 1=seg
     let a: DateTime | null = null; let b: DateTime | null = null;
-    if (wd === 4) { a = d; b = d.plus({ days: 3 }); }          // qui → dom
+    if (wd === 4) { a = d; b = d.plus({ days: 3 }); }                         // qui → dom
     else if (wd === 5) { a = d.minus({ days: 1 }); b = d.plus({ days: 2 }); } // qui (ponte) → dom
-    else if (wd === 1) { a = d.minus({ days: 2 }); b = d; }    // sáb → seg
-    else if (wd === 2) { a = d.minus({ days: 3 }); b = d; }    // sáb → ter (com a ponte de segunda)
+    else if (wd === 1) { a = d.minus({ days: 2 }); b = d; }                   // sáb → seg
+    else if (wd === 2) { a = d.minus({ days: 3 }); b = d; }                   // sáb → ter (com a ponte de segunda)
+    else if (/^(Natal|Ano Novo)$/.test(h.name)) { a = d; b = d; }             // "em especial ... Natal e Ano Novo"
     if (a && b) out.push({ start: a.startOf('day'), end: b.endOf('day'), name: h.name });
   }
   return out;
@@ -294,7 +357,7 @@ async function computeState(ctx: RouteCtx): Promise<State & { rules: Rules }> {
     if (w.end <= t || w.start > t.plus({ hours: 24 })) continue;
     (activeAt(w, t) ? prfActive : prfSoon).push({ w, reasons });
   }
-  const blocked = longHolidayPeriods(rules, ctx.tz);
+  const blocked = longHolidayPeriods(rules, ctx.tz, t);
   const weekly: State['weekly'] = [];
   for (const r of rules.weekly) {
     const reasons = weeklyReasons(r.p, v);
@@ -416,7 +479,8 @@ async function restrictedHits(coords: Coord[], st: State): Promise<Hit[]> {
     for (const s of segs) {
       const ws = st.prfActive.filter((a) => segSubject(a.w.p, s));
       if (!ws.length) continue;
-      const g = ws.length === 1 ? subjectGeometry(ws[0].w.p, s) : s.geometry;
+      const g = subjectOfAny(ws.map((a) => a.w.p), s);
+      if (!g) continue;
       const runs = runsNear(coords, g);
       if (!runs.length) continue;
       const until = releaseTime(st.prfAffecting.filter((w) => segSubject(w.p, s)), st.t);
@@ -468,6 +532,27 @@ function groupLabel(segs: Seg[]): string {
   return `${brs} km ${k0.toFixed(1).replace('.', ',')}–${k1.toFixed(1).replace('.', ',')} (${segs[0].kind === 'pista_simples' ? 'pista simples' : 'pista dupla'})`;
 }
 
+/** "BR-488/SP km 0,0–1,4 e 2,3–4,3, BR-116/SP km 110,4–117,4": trechos do SNV agrupados por BR/UF, km contíguos unidos. */
+function kmRanges(segs: Seg[]): string {
+  const byRoad = new Map<string, [number, number][]>();
+  for (const s of new Map(segs.map((x) => [x.source_id, x])).values()) {
+    const road = s.name.match(/^BR-[\d/]+\/[A-Z]{2}/)?.[0] ?? `BR-${s.p.br}/${s.p.uf}`;
+    byRoad.set(road, [...(byRoad.get(road) ?? []), [s.p.km_ini, s.p.km_fim]]);
+  }
+  const k = (n: number) => n.toFixed(1).replace('.', ',');
+  const parts: string[] = [];
+  for (const [road, rs] of byRoad) {
+    rs.sort((a, b) => a[0] - b[0]);
+    const merged: [number, number][] = [];
+    for (const r of rs) {
+      const last = merged[merged.length - 1];
+      if (last && r[0] <= last[1] + 0.05) last[1] = Math.max(last[1], r[1]); else merged.push([r[0], r[1]]);
+    }
+    parts.push(`${road} km ${merged.map(([a, b]) => `${k(a)}–${k(b)}`).join(' e ')}`);
+  }
+  return `${parts.slice(0, 4).join(', ')}${parts.length > 4 ? ` e mais ${parts.length - 4}` : ''}`;
+}
+
 /** Pedaços da rota no trecho da regra semanal: a serra não tem saídas no meio, então une sequências separadas por
  *  menos de 3 km e exige ao menos 1,5 km (evita falso positivo de quem só encosta no fim do trecho, ex.: Cubatão). */
 function weeklyRuns(coords: Coord[], g: GeoJSON.LineString | GeoJSON.MultiLineString): Run[] {
@@ -512,6 +597,8 @@ async function prepare(ctx: RouteCtx): Promise<Stash> {
   let r: valhalla.ValhallaRouteResult;
   try { r = await valhalla.route(base); } catch { return out; }
   const seen = new Set<string>();
+  // cada rodada procura trechos restritos na rota atual, penaliza os novos e refaz a rota; para quando a rota não cai em
+  // trecho novo. A última rodada (MAX_ITER) penaliza sem refazer: quem sobrar na rota final sai como "desvio não testado".
   for (let iter = 0; iter < MAX_ITER; iter++) {
     const idsOf = (h: Hit) => h.segs?.map((x) => `prf:${x.source_id}`) ?? [h.key];
     const fresh = (await restrictedHits(r.coordinates, state)).filter((h) => idsOf(h).some((k) => !seen.has(k)));
@@ -533,6 +620,23 @@ async function prepare(ctx: RouteCtx): Promise<Stash> {
   return out;
 }
 
+/**
+ * O routing.ts já emite 'uses_restricted_way' (danger) para cada costLine que a rota final usa: mesmo critério dele
+ * (usesCostLine: ≥ 50% dos pontos da linha a até 15 m da rota; só quando a rota livre foi calculada). Serve para não
+ * repetir o mesmo danger: a camada então só complementa com o horário e a norma.
+ */
+function routingWarns(route: RouteGeom, lines: LayerCostLine[], h: Hit): boolean {
+  if (!route.free) return false;
+  return lines.some((cl) => {
+    if (cl.item.id !== h.item.id && !cl.item.id.startsWith(`${h.item.id}#`)) return false;
+    const c = cl.coordinates;
+    if (!c.length) return false;
+    const pts = c.length > 40 ? c.filter((_, i) => i % Math.ceil(c.length / 40) === 0) : c;
+    const near = pts.filter((p) => turf.pointToLineDistance(turf.point(p), route.line, { units: 'meters' }) <= 15).length;
+    return near / pts.length >= 0.5;
+  });
+}
+
 // ------------------------------------------------------------------------------------------- ETA ao longo da rota
 function cumulativeKm(coords: Coord[]): number[] {
   const out = [0];
@@ -549,9 +653,10 @@ const layer: RouteLayer = {
     group: 'restricoes',
     sources: [
       { name: 'PRF — Portaria DIOP/PRF nº 121/2026 (DOU)', url: 'https://www.in.gov.br/web/dou/-/portaria-diop/prf-n-121-de-8-de-setembro-de-2026-730790480', license: 'Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)' },
-      { name: 'DNIT — SNV (bases geométricas)', url: 'https://servicos.dnit.gov.br/dnitcloud/index.php/s/oTpPRmYs5AAdiNr', license: 'Dado público federal (sem licença explícita; ver docs/layers/rodovias_horario.md)' },
+      { name: 'DNIT — SNV 202607A (bases geométricas), trechos federais simplificados', url: 'https://servicos.dnit.gov.br/dnitcloud/index.php/s/oTpPRmYs5AAdiNr', license: 'Dados abertos do Poder Executivo federal, livre utilização (Decreto 8.777/2016, art. 4º, red. Decreto 9.903/2019); sem licença nomeada no arquivo; ver docs/layers/rodovias_horario.md' },
       { name: 'DER-SP — Portaria SUP/DER-084-01/11/2023 (DOE-SP)', url: 'https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-sup-084-arp-katia-8344367', license: 'Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)' },
-      { name: 'ARTESP — marcos quilométricos', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria', license: 'CC BY (ARTESP)' },
+      { name: 'ARTESP — marcos quilométricos (Camadas Geoespaciais Auxiliares do dataset Programação de Obras)', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/programacao-de-obras', license: 'CC BY (ARTESP)' },
+      { name: 'OpenStreetMap (geometria da serra da Anchieta, casada pelo Valhalla)', url: 'https://www.openstreetmap.org/copyright', license: '© OpenStreetMap contributors (ODbL 1.0)' },
     ],
     style: { kind: 'line', color: '#ea580c', width: 3, minzoom: 6, icon: '⏰', opacity: 0.8 },
     defaultVisible: false,
@@ -580,8 +685,18 @@ const layer: RouteLayer = {
 
     // ---- 1) PRF em vigor na saída
     if (state.prfActive.length) {
-      const stillOn = onRoute.filter((x) => state.prfActive.some((a) => segSubject(a.w.p, x.s) && runsNear(coords, subjectGeometry(a.w.p, x.s)).length));
+      const activeP = state.prfActive.map((a) => a.w.p);
+      const stillOn = onRoute
+        .map((x) => { const g = subjectOfAny(activeP, x.s); return { s: x.s, runs: g ? runsNear(coords, g) : [] }; })
+        .filter((x) => x.runs.length);
       const prfHits = hits.filter((h) => h.kind === 'prf');
+      // um trecho pode estar em mais de um pedaço penalizado (rodadas diferentes juntam vizinhos diferentes)
+      const hitsOf = (s: Seg) => prfHits.filter((h) => (h.segs ?? [h.seg!]).some((z) => z.source_id === s.source_id));
+      // na rota final: (a) penalizado e já avisado pelo routing.ts; (b) penalizado sem aviso do routing.ts; (c) nunca
+      // penalizado (a rota final mudou por outras camadas/zonas, ou passou do limite de rodadas): desvio não testado
+      const viaRouting = stillOn.filter((x) => hitsOf(x.s).some((h) => routingWarns(route, lines, h)));
+      const semAlternativa = stillOn.filter((x) => !viaRouting.includes(x) && hitsOf(x.s).length);
+      const naoTestado = stillOn.filter((x) => !hitsOf(x.s).length);
       const touchedSegs = [...stillOn.map((x) => x.s), ...prfHits.flatMap((h) => h.segs ?? [h.seg!])];
       // janelas que importam para esta rota (as que pegam os trechos tocados); sem trecho tocado, todas as ativas
       const rel = touchedSegs.length ? state.prfActive.filter((a) => touchedSegs.some((sg) => segSubject(a.w.p, sg))) : state.prfActive;
@@ -592,21 +707,33 @@ const layer: RouteLayer = {
       const release = touchedSegs.map(untilFor).reduce<DateTime | null>((m, d) => (!m || d > m ? d : m), null)
         ?? rel.map((a) => releaseTime(state.prfAffecting.filter((w) => w.p.escopo === a.w.p.escopo), t)).reduce((m, d) => (d > m ? d : m));
       const escopo = escopoText(rel.map((a) => a.w));
-      const lista = (names: string[]) => `${names.slice(0, 4).join(', ')}${names.length > 4 ? '…' : ''}`;
-      if (stillOn.length) {
-        const at = midOf(coords, stillOn[0].runs[0]);
+      const lista = (names: string[]) => `${names.slice(0, 4).join(', ')}${names.length > 4 ? ` e mais ${names.length - 4}` : ''}`;
+      const nomes = (xs: { s: Seg }[]) => kmRanges(xs.map((x) => x.s));
+      const regra = `${reasons.join('; ')} — proibido ${escopo} até ${fmtDT(release)}`;
+      const saida = `espere até ${fmtDT(release)} ou escolha outro caminho (${ato}; infração do CTB, art. 187, I).`;
+      if (semAlternativa.length || naoTestado.length) {
+        const partes: string[] = [];
+        if (semAlternativa.length) partes.push(`${nomes(semAlternativa)}, sem alternativa razoável`);
+        if (naoTestado.length) partes.push(`${nomes(naoTestado)}, trecho restrito cujo desvio não foi testado`);
         warnings.push({
-          code: 'prf_feriado_na_rota', severity: 'danger', ...at,
-          message: `Restrição da PRF em vigor (${ops}): ${reasons.join('; ')} — proibido ${escopo} até ${fmtDT(release)}. `
-            + `A rota passa por ${lista([...new Set(stillOn.map((x) => x.s.name))])} sem alternativa razoável: espere até ${fmtDT(release)} ou escolha outro caminho (${ato}; infração do CTB, art. 187, I).`,
+          code: 'prf_feriado_na_rota', severity: 'danger', ...midOf(coords, (semAlternativa[0] ?? naoTestado[0]).runs[0]),
+          message: `Restrição da PRF em vigor (${ops}): ${regra}. A rota passa por ${partes.join(', e por ')}: ${saida}`,
         });
-      } else if (prfHits.length) {
+      }
+      if (viaRouting.length) {
+        // o danger já saiu do routing.ts ('uses_restricted_way'); aqui só o detalhe da regra
+        warnings.push({
+          code: 'prf_feriado_sem_alternativa', severity: 'info', ...midOf(coords, viaRouting[0].runs[0]),
+          message: `Sobre o trecho restrito na rota (${nomes(viaRouting)}): restrição da PRF em vigor (${ops}), ${regra}. Sem alternativa razoável: ${saida}`,
+        });
+      }
+      if (!stillOn.length && prfHits.length) {
         warnings.push({
           code: 'prf_feriado_desvio', severity: 'danger',
           message: `Restrição da PRF em vigor (${ops}): ${reasons.join('; ')} — proibido ${escopo} até ${fmtDT(release)}. `
-            + `A rota evita ${lista([...new Set(prfHits.map((h) => h.label))])}. Liberado a partir de ${fmtDT(release)} (${ato}).`,
+            + `A rota evita ${kmRanges(prfHits.flatMap((h) => h.segs ?? [h.seg!]))}. Liberado a partir de ${fmtDT(release)} (${ato}).`,
         });
-      } else {
+      } else if (!stillOn.length) {
         warnings.push({
           code: 'prf_feriado_vigente', severity: 'info',
           message: `Restrição da PRF de feriado em vigor (${ops}) até ${fmtDT(release)} para este veículo (${reasons.join('; ')}), ${escopo}. Esta rota não usa esses trechos.`,
@@ -627,7 +754,8 @@ const layer: RouteLayer = {
         for (const { w } of list) {
           for (const x of onRoute) {
             if (!segSubject(w.p, x.s) || state.prfActive.some((a) => segSubject(a.w.p, x.s))) continue;
-            const runs = runsNear(coords, subjectGeometry(w.p, x.s));
+            const g = subjectGeometry(w.p, x.s);
+            const runs = g ? runsNear(coords, g) : [];
             if (!runs.length) continue;
             names.add(x.s.name);
             const eta = etaAt(runs[0][0]); const etaEnd = etaAt(runs[runs.length - 1][1]);
@@ -660,13 +788,24 @@ const layer: RouteLayer = {
       const prox = wk.next ? `${fmtDT(wk.next.start)} às ${fmtDT(wk.next.end)}` : 'sem janela nas próximas semanas';
       const cheg = wk.r.p.chegada_minima ? `; chegada ao sistema Anchieta-Imigrantes a partir das ${wk.r.p.chegada_minima}` : '';
       if (!wk.open) {
-        warnings.push({
-          code: runs.length ? 'anchieta_cvc_aet_na_rota' : 'anchieta_cvc_aet_desvio', severity: 'danger',
-          ...(runs.length ? midOf(coords, runs[0]) : {}),
-          message: `CVC com AET só passa na serra da ${via} nas janelas de madrugada de seg a sex, fora de feriado prolongado (${wk.r.p.ato}, art. 3º). `
-            + (runs.length ? 'A rota passa pela serra fora da janela e não há alternativa legal: aguarde. ' : 'A rota desvia da serra; confira se a sua AET cobre o caminho alternativo. ')
-            + `Próxima janela: ${prox}${cheg}.`,
-        });
+        const regra = `CVC com AET só passa na serra da ${via} nas janelas de madrugada de seg a sex, fora de feriado prolongado (${wk.r.p.ato}, art. 3º, §§ 1º e 5º)`;
+        if (runs.length && hit && routingWarns(route, lines, hit)) {
+          // danger já emitido pelo routing.ts ('uses_restricted_way'); aqui só o detalhe e a próxima janela
+          warnings.push({
+            code: 'anchieta_cvc_aet_sem_alternativa', severity: 'info', ...midOf(coords, runs[0]),
+            message: `Sobre o trecho restrito na rota: ${regra}. Sem alternativa razoável: aguarde a próxima janela, ${prox}${cheg}.`,
+          });
+        } else {
+          warnings.push({
+            code: runs.length ? 'anchieta_cvc_aet_na_rota' : 'anchieta_cvc_aet_desvio', severity: 'danger',
+            ...(runs.length ? midOf(coords, runs[0]) : {}),
+            message: `${regra}. `
+              + (!runs.length ? 'A rota desvia da serra; confira se a sua AET cobre o caminho alternativo. '
+                : hit ? 'A rota passa pela serra fora da janela, sem alternativa razoável: aguarde. '
+                  : 'A rota passa pela serra fora da janela (desvio não testado): aguarde ou escolha outro caminho. ')
+              + `Próxima janela: ${prox}${cheg}.`,
+          });
+        }
         summary.push(`Serra da Anchieta fechada para CVC com AET agora; próxima janela: ${prox}.`);
       } else if (runs.length) {
         const eta = etaAt(runs[0][0]);
@@ -715,7 +854,7 @@ const layer: RouteLayer = {
     const now = DateTime.now().setZone(env.tz);
     const upcoming = rules.windows.filter((w) => w.end > now);
     const rows = await featuresInBbox(LAYER, bbox, {
-      limit: 3000, where: `kind in ('pista_simples', 'pista_dupla', 'regra_semanal')`,
+      limit: 3000, where: MAPA_SNV ? `kind in ('pista_simples', 'pista_dupla', 'regra_semanal')` : `kind = 'regra_semanal'`,
       simplify: z < 9 ? 0.001 : z < 12 ? 0.0002 : undefined,
     });
     const features: GeoJSON.Feature[] = [];
