@@ -8,7 +8,7 @@ import math
 import re
 
 from sources.geosampa_faixa_onibus import wfs_geojson
-from sources.geosampa_zona_azul import cad_rule, trucks_rows, windows_of
+from sources.geosampa_zona_azul import VEICULOS, cad_rule, trucks_rows, windows_of
 
 LAYER_ID = 'carga_descarga'
 SOURCE = 'geosampa-vaga-especial'
@@ -75,7 +75,7 @@ def fetch():
                 'local': local, 'distancia_face_m': round(best_d, 1) if zp else None,
                 'windows': w, 'horario_informado': bool(w),
                 **cad_rule(local),
-                'veiculos': 'caminhão, caminhonete e veículo misto (Portaria SMT 97/2007, art. 3º)',
+                'veiculos': VEICULOS,
                 'dt_carga': (p.get('dt_carga') or '')[:10] or None,
             },
         })

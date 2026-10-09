@@ -5,9 +5,14 @@ barracas, extensão nem localização exata. Horário: Decreto 48.172/2007, art.
 61.775/2022) para as feiras comuns: 7h–8h montagem, 8h–14h comercialização, 14h–14h45 desmontagem; art. 4º:
 terça a domingo, exceto 25/12 e 1º/01.
 
-Se o Valhalla estiver acessível, o ponto é casado (locate) com a aresta da malha de MESMO NOME de rua a até 70 m;
-o meio dessa aresta (≈ a quadra da feira) vai em props.osm.mid e a API bloqueia a quadra na janela da feira com um
-polígono minúsculo ali (não afeta as ruas que cruzam). Sem casamento seguro, a feira só gera aviso.
+Base legal do bloqueio: Decreto 48.172/2007, art. 5º, § 2º, III — nos dias e horários da feira o tráfego e o
+estacionamento de veículos ficam proibidos nos locais de montagem das bancas (conferido no Catálogo de Legislação
+Municipal em 09/10/2026). O § 1º do mesmo artigo admite horários diferenciados por feira: a janela é a padrão.
+
+Se o Valhalla estiver acessível, o ponto é casado (locate) com a aresta da malha de MESMO NOME de rua a até 70 m
+(≈ a quadra da feira). props.osm guarda o traçado exato da aresta nos dois sentidos (validado no edge walk de
+linear_cost_factors, só vale para o tileset registrado) e o meio da aresta (mid), usado como reserva quando o
+tileset muda (a API bloqueia a quadra com um polígono minúsculo no meio dela). Sem casamento seguro, só aviso.
 """
 from __future__ import annotations
 
@@ -16,14 +21,15 @@ import re
 import time
 import unicodedata
 
-from sources.geosampa_faixa_onibus import _post, decode6, dist_m, length_m, valhalla_tileset, wfs_geojson
+from sources.geosampa_faixa_onibus import _post, decode6, dist_m, lcf_ok, length_m, valhalla_tileset, wfs_geojson
 
 LAYER_ID = 'feiras_livres'
 SOURCE = 'geosampa'
 SOURCE_URL = 'https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs (typeNames=geoportal:equipamento_feira_livre)'
 LICENSE = 'CC-BY-SA 4.0 — GeoSampa/Prefeitura de São Paulo (SMDU/Deinfo); props.osm derivado do OpenStreetMap (ODbL)'
 NOTES = ('Ponto de referência, sem extensão da feira. Horário pelo Decreto 48.172/2007 art. 5º I (red. Dec. 61.775/2022) '
-         'só para categoria T (tradicional/comum); props.osm.mid = meio da aresta da malha com o mesmo nome de rua (≤ 70 m).')
+         'só para categoria T (tradicional/comum); props.osm = aresta da malha com o mesmo nome de rua (≤ 70 m): '
+         'traçado nos dois sentidos validado no edge walk (lines) e meio da aresta (mid).')
 
 DIAS = {'SEGUNDA-FEIRA': 1, 'TERCA-FEIRA': 2, 'QUARTA-FEIRA': 3, 'QUINTA-FEIRA': 4, 'SEXTA-FEIRA': 5, 'SABADO': 6, 'DOMINGO': 7}
 DIA_PT = {1: 'segunda', 2: 'terça', 3: 'quarta', 4: 'quinta', 5: 'sexta', 6: 'sábado', 7: 'domingo'}
@@ -165,6 +171,20 @@ def _attach_osm(feats: list[dict], tileset: int) -> None:
             if L < 24:            # quadra curta demais: o polígono encostaria nas esquinas
                 continue
             n += 1
+            sh = [[round(x, 6), round(y, 6)] for x, y in shape]
             f['props']['osm'] = {'tileset': tileset, 'mid': mid, 'aresta_m': round(L), 'way_id': e['edge_info'].get('way_id'),
-                                 'nome_osm': (e['edge_info'].get('names') or [None])[0], 'distancia_m': round(e.get('distance', 0), 1)}
-    print(f'    feiras: {len(cands)} com janela legal, {n} casadas com a quadra da rua de mesmo nome ({time.time() - t0:.0f}s)')
+                                 'nome_osm': (e['edge_info'].get('names') or [None])[0], 'distancia_m': round(e.get('distance', 0), 1),
+                                 'lines': [{'dir': 'fwd', 'coords': sh}, {'dir': 'rev', 'coords': sh[::-1]}]}
+    # valida o edge walk de cada traçado (um traçado inválido derrubaria a rota inteira no Valhalla)
+    todo = [(f, l) for f in cands if f['props'].get('osm') for l in f['props']['osm']['lines']]
+    ok = lcf_ok([l['coords'] for _, l in todo]) if todo else []
+    bad = {id(l) for (_, l), good in zip(todo, ok) if not good}
+    n_lines = 0
+    for f in cands:
+        o = f['props'].get('osm')
+        if not o:
+            continue
+        o['lines'] = [l for l in o['lines'] if id(l) not in bad]
+        n_lines += len(o['lines'])
+    print(f'    feiras: {len(cands)} com janela legal, {n} casadas com a quadra da rua de mesmo nome, '
+          f'{n_lines} traçados válidos no edge walk ({time.time() - t0:.0f}s)')
