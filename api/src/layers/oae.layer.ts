@@ -151,8 +151,8 @@ function passaPor(line: GeoJSON.Feature<GeoJSON.LineString> | null, r: Row): { o
   return { ok: dist <= POINT_ON_ROUTE_M, dist };
 }
 
-/** Feições que podem bloquear ou ter limite conhecido (exclui geosampa/der-sp sem limite). */
-const KNOWN_WHERE = `(source in ('artesp','siurb','curadoria') or (props->>'altura_livre_m') is not null or (props->>'peso_max_t') is not null)`;
+/** Feições com limite, nome ou restrição (tudo menos as fontes só de contagem, a não ser que tenham limite). */
+const KNOWN_WHERE = `(source not in (${COUNT_SOURCES.map((s) => `'${s}'`).join(',')}) or (props->>'altura_livre_m') is not null or (props->>'peso_max_t') is not null)`;
 
 /** Corredor (bbox origem–destino com folga) onde as exclusões são calculadas. Fora dele o aviso da rota ainda pega. */
 function corridor(ctx: RouteCtx): [number, number, number, number] {
