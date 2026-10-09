@@ -30,7 +30,7 @@ DRIVABLE = {'motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'prim
 MAJOR = {'motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
          'tertiary', 'tertiary_link'}
 LIMITE_M = 60.0      # extensão do trecho penalizado para cada lado do nó
-PASSO_M = 5.0        # densificação (a API mede sobreposição pelos vértices)
+PASSO_M = 20.0       # densificação: o routing.ts mede sobreposição pelos vértices (até 40 por linha); 20 m basta e deixa a comparação leve
 NO_SIGN = {'default', 'none', 'no_indications', 'no', 'unsigned'}
 # nós cujo maxweight NÃO é restrição de trânsito (capacidade de balança, heliponto, elevador, balsa...)
 NOT_TRAFFIC = ('amenity', 'aeroway', 'ferry', 'public_transport', 'man_made')
