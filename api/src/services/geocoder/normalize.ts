@@ -109,3 +109,31 @@ export function fmtCep(cep: number | string | null | undefined): string | undefi
   const s = String(cep).replace(/\D/g, '').padStart(8, '0');
   return s.length === 8 ? `${s.slice(0, 5)}-${s.slice(5)}` : undefined;
 }
+
+/** similaridade de trigramas no estilo do pg_trgm (para listas pequenas em memória) */
+export function trigramSim(a: string, b: string): number {
+  const tg = (s: string) => {
+    const set = new Set<string>();
+    for (const w of s.split(' ')) {
+      if (!w) continue;
+      const p = `  ${w} `;
+      for (let i = 0; i < p.length - 2; i++) set.add(p.slice(i, i + 3));
+    }
+    return set;
+  };
+  const A = tg(a);
+  const B = tg(b);
+  let inter = 0;
+  for (const x of A) if (B.has(x)) inter++;
+  const uni = A.size + B.size - inter;
+  return uni ? inter / uni : 0;
+}
+
+/** Palavras que indicam destino de carga (terminal, CD, armazém...) — ordenam os estabelecimentos "s/n". */
+const CARGO_RE = /\b(TERMINA|PORT[OU]|ARMAZ|LOGIST|TRANSPORT|DISTRIBUI|ENTREPOSTO|ALFANDEG|PATIO|GALPA|INDUSTRI|FABRICA|ATACAD|CEAGESP|CORREIOS|TECON|CONT[AE]INER|GRANE|CARGA|DEPOSITO|FRIGORIF|USINA|REDEX|EADI|CD|CENTRAL|COMPANHIA|CIA|LTDA|S A)\b/;
+const GENERIC_RE = /^(VAGO|SEM NOME|BAR|LANCHONETE|BORRACHARIA|CASA|RESIDENCIA|GARAGEM|IGREJA|COMERCIO|LOJA|OFICINA|SALAO|TERRENO VAGO|EM CONSTRUCAO|DEPOSITO)$/;
+export function cargoRank(estab: string): number {
+  const n = normBasic(estab);
+  if (GENERIC_RE.test(n)) return -1;
+  return (CARGO_RE.test(n) ? 2 : 0) + (n.length >= 12 ? 0.5 : 0);
+}

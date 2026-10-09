@@ -10,7 +10,7 @@
  */
 import { query } from '../../db.js';
 import { distM, lerp, medoid, round6, type Pt } from './geo.js';
-import { fmtCep, titleCase, type Canon } from './normalize.js';
+import { cargoRank, fmtCep, titleCase, trigramSim, type Canon } from './normalize.js';
 import { parseStreet, type ParsedAddress, type ParsedStreet } from './parse.js';
 import type { Municipio, MunicipioIndex } from './municipios.js';
 import type { GeocodeResult, LatLon, Precisao } from './types.js';
@@ -306,12 +306,20 @@ export class CnefeGeocoder {
         score: s.score + nearPenalty(md.p),
         aviso: 'Endereço sem número: escolha o estabelecimento na lista ou marque o portão no mapa',
       }));
-      // estabelecimentos "s/n" com nome (terminais, CDs, centrais de abastecimento) como sugestões próprias
-      const named = pts.filter((x) => x.estab && x.estab.length >= 4).sort((a, b) => b.n - a.n || (a.estab! < b.estab! ? -1 : 1)).slice(0, 4);
-      for (const x of named) {
+      // estabelecimentos "s/n" com nome (terminais, CDs, centrais de abastecimento) como sugestões próprias.
+      // Com nome digitado ("Santos Brasil, Av. Santos Dumont, s/n") o mais parecido vem primeiro (e na frente da rua).
+      const want = p.extras.length ? ctx.canon.canon(p.extras.join(' ')) : '';
+      const named = pts
+        .filter((x) => x.estab && x.estab.length >= 3)
+        .map((x) => ({ x, sim: want ? trigramSim(want, ctx.canon.canon(x.estab!)) : 0, rank: cargoRank(x.estab!) }))
+        .filter((o) => (want ? o.sim >= 0.3 : o.rank >= 0))
+        .sort((a, b) => b.sim - a.sim || b.rank - a.rank || b.x.n - a.x.n)
+        .slice(0, want ? 3 : 4);
+      for (const { x, sim } of named) {
         out.push(this.pointResult(s, x, ctx, {
-          precisao: 'logradouro', metodo: 'cnefe_sem_numero_estabelecimento', desvio: DESVIO_NV[x.nv_geo] ?? 30, numero: 's/n',
-          extra: titleCase(x.estab), score: s.score - 0.01 + nearPenalty(x),
+          precisao: want && sim >= 0.5 ? 'numero' : 'logradouro', metodo: 'cnefe_sem_numero_estabelecimento',
+          desvio: DESVIO_NV[x.nv_geo] ?? 30, numero: 's/n', extra: titleCase(x.estab),
+          score: s.score - 0.01 + (want ? 0.2 * sim : 0) + nearPenalty(x),
           aviso: 'Ponto do estabelecimento no CNEFE (sem número): confira se é o portão de caminhões',
         }));
       }

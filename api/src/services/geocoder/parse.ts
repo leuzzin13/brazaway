@@ -154,8 +154,9 @@ export function parseAddress(q: string, canon: Canon, munis: MunicipioIndex): Pa
       parts.splice(i, 1);
       break;
     }
-    // sufixo do trecho ("IPIRANGA SAO PAULO" → bairro IPIRANGA + município)
+    // sufixo do trecho ("IPIRANGA SAO PAULO" → bairro IPIRANGA + município); nunca dentro de um logradouro ("Rua Itu")
     const ct = c.split(' ').filter(Boolean);
+    if (ct.length > 1 && TYPE_WORDS.has(ct[0])) continue;
     for (let k = 1; k < ct.length; k++) {
       const mm = munis.find(ct.slice(k).join(' '), uf);
       if (mm) {
@@ -203,13 +204,18 @@ export function parseAddress(q: string, canon: Canon, munis: MunicipioIndex): Pa
   }
 
   if (parts.length) {
-    out.street = parseStreet(parts[0], canon);
-    const rest = parts.slice(1).filter((p) => canon.canon(p));
+    // o logradouro é o primeiro trecho que começa com tipo ("Santos Brasil, Av. Santos Dumont, s/n" → nome + rua);
+    // sem tipo em nenhum trecho, é o primeiro. Trechos antes dele viram "extras" (nome de empresa/terminal).
+    let si = parts.findIndex((x) => { const t = canon.tokens(x); return t.length > 1 && TYPE_WORDS.has(t[0]); });
+    if (si < 0) si = 0;
+    out.street = parseStreet(parts[si], canon);
+    const before = parts.slice(0, si).filter((p) => canon.canon(p));
+    const rest = parts.slice(si + 1).filter((p) => canon.canon(p));
     if (rest.length) {
       out.bairroTexto = rest[0];
       out.bairro = canon.canon(rest[0]);
-      out.extras = rest.slice(1);
     }
+    out.extras = [...before, ...rest.slice(1)];
   }
   out.enderecoLike = !!(out.street?.tipo || out.numero !== undefined || out.semNumero || out.km);
   return out;
