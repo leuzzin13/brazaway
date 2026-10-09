@@ -77,11 +77,12 @@ async function alongRoute(line: GeoJSON.LineString, bufferM: number, kinds: stri
   return r.rows;
 }
 
-/** A rota percorre a feição (e não só cruza por cima/ao lado)? */
+/** A rota percorre a feição (e não só cruza por cima/ao lado)? Uma rua que cruza por cima de um túnel curto deixa
+ *  ~10 m dele dentro do buffer de 5 m; por isso a via inteira (túnel etc.) exige 40 m ou 80% dela dentro do buffer. */
 function travels(r: AlongRow): boolean {
   if (r.len_m === 0) return true; // ponto dentro do buffer
   if (r.kind === 'passagem_sem_altura') return r.inside_m / r.len_m >= PASSAGE_MIN_RATIO;
-  return r.inside_m >= Math.min(40, 0.5 * r.len_m);
+  return r.inside_m >= 40 || r.inside_m / r.len_m >= 0.8;
 }
 
 /** Mesma lacuna vista duas vezes (via de baixo picada em dois ways sob a mesma estrutura, faixas paralelas mapeadas
