@@ -26,7 +26,7 @@ interface Limits { warn_pct: number; avoid_pct: number; basis?: string }
 interface GradeConfig {
   presets: Record<string, Limits>;
   by_weight: { weight_override_ratio: number; tiers: (Limits & { max_weight_t: number })[] };
-  descent: { min_weight_t: number; min_drop_m: number; min_avg_pct: number };
+  descent: { min_weight_t: number; min_drop_m: number; min_avg_pct: number; window_m: number };
   cost_lines: { avoid_factor: number; exclude_road_classes: string[] };
   /** trecho só é reportado se a rampa sustentada passar do limite de atenção em pelo menos min_over_m metros */
   min_over_m: number;
@@ -47,10 +47,10 @@ const DEFAULT_CFG: GradeConfig = {
       { max_weight_t: 999, warn_pct: 6, avoid_pct: 8 },
     ],
   },
-  descent: { min_weight_t: 16, min_drop_m: 150, min_avg_pct: 5 },
+  descent: { min_weight_t: 16, min_drop_m: 150, min_avg_pct: 5, window_m: 2000 },
   cost_lines: { avoid_factor: 10, exclude_road_classes: ['motorway', 'trunk'] },
   min_over_m: 30,
-  window_m: { motorway: 300, trunk: 300, default: 120 },
+  window_m: { motorway: 1000, trunk: 1000, default: 120 },
   max_segment_warnings: 5,
 };
 
@@ -311,31 +311,34 @@ function elevFn(p: { d: number[]; h: number[] }) {
   };
 }
 
-function ascentDescent(h: number[], thr = 5): { up: number; down: number } {
+/** subida/descida acumuladas com histerese de `thr` m (o DEM oscila alguns metros em serra) */
+function ascentDescent(h: number[], thr = 10): { up: number; down: number } {
   if (!h.length) return { up: 0, down: 0 };
   let last = h[0], up = 0, down = 0;
   for (const v of h) {
     const dv = v - last;
     if (Math.abs(dv) >= thr) { if (dv > 0) up += dv; else down -= dv; last = v; }
   }
+  const tail = h[h.length - 1] - last; // resto abaixo do limiar no fim do perfil
+  if (tail > 0) up += tail; else down -= tail;
   return { up, down };
 }
 
-/** Descidas contínuas (sem repique maior que `rebound` m). */
-function descents(p: { d: number[]; h: number[] }, rebound = 15): { a: number; b: number }[] {
-  const out: { a: number; b: number }[] = [];
-  const { h } = p;
-  let top = 0, bottom = 0;
-  for (let i = 1; i < h.length; i++) {
-    if (h[i] < h[bottom]) bottom = i;
-    if (h[i] - h[bottom] > rebound) {
-      if (bottom > top) out.push({ a: top, b: bottom });
-      top = i; bottom = i;
-    } else if (bottom === top && h[i] > h[top]) {
-      top = i; bottom = i;
+/**
+ * Descidas longas: janelas de `win` m (passo de 100 m) com queda média >= minAvg% viram intervalos (janelas que se
+ * tocam são unidas). Robusto ao ruído do DEM em serra, onde a altitude "repica" dezenas de metros numa descida contínua.
+ */
+function longDescents(elev: (x: number) => number, totalM: number, win: number, minAvg: number): { s: number; e: number }[] {
+  const out: { s: number; e: number }[] = [];
+  if (totalM < win) return out;
+  let cur: { s: number; e: number } | null = null;
+  for (let x = 0; x + win <= totalM; x += 100) {
+    const avg = ((elev(x) - elev(x + win)) / win) * 100;
+    if (avg >= minAvg) {
+      if (cur && x <= cur.e) cur.e = x + win; else { if (cur) out.push(cur); cur = { s: x, e: x + win }; }
     }
   }
-  if (bottom > top) out.push({ a: top, b: bottom });
+  if (cur) out.push(cur);
   return out;
 }
 
@@ -414,7 +417,7 @@ const layer: RouteLayer = {
     // ---- rampa "sustentada" por aresta: média móvel centrada de L m sobre o perfil (L por classe de via, ver
     // cfg.window_m). Com L=60 m o DEM de 30 m inventa rampas (erro de 2–4 p.p., >20 p.p. em rodovia encaixada em
     // encosta, ex.: Anchieta na serra); rodovias são projetadas com rampas longas e moderadas (IPR-706), então medimos
-    // 300 m nelas e 120 m nas demais (ladeiras urbanas curtas continuam aparecendo).
+    // 1 km nelas e 120 m nas demais (ladeiras urbanas curtas continuam aparecendo).
     const gradeAt = (x: number, L: number): number => {
       if (!elev) return 0;
       let a = x - L / 2, b = x + L / 2;
@@ -544,15 +547,14 @@ const layer: RouteLayer = {
       histogram['descida_6+'] = r1(downSteep / 1000);
       // descidas longas (veículos pesados)
       if (ctx.vehicle.weight_t >= cfg.descent.min_weight_t) {
-        for (const { a, b } of descents(profile)) {
-          const drop = h[a] - h[b], len = d[b] - d[a];
-          if (len <= 0) continue;
-          const avg = (drop / len) * 100;
-          if (drop >= cfg.descent.min_drop_m && avg >= cfg.descent.min_avg_pct) {
-            const p = pointAt(G, cum, d[a]);
-            descentList.push({ km_from_start: r1(d[a] / 1000), length_km: r1(len / 1000), drop_m: Math.round(drop), avg_pct: r1(avg), lat: r5(p[1]), lon: r5(p[0]), name: nameAt(edges, d[a]) });
-          }
+        const ef = elevFn(profile);
+        for (const iv of longDescents(ef, totalM, cfg.descent.window_m, cfg.descent.min_avg_pct)) {
+          const drop = ef(iv.s) - ef(iv.e), len = iv.e - iv.s;
+          if (len <= 0 || drop < cfg.descent.min_drop_m) continue;
+          const p = pointAt(G, cum, iv.s);
+          descentList.push({ km_from_start: r1(iv.s / 1000), length_km: r1(len / 1000), drop_m: Math.round(drop), avg_pct: r1((drop / len) * 100), lat: r5(p[1]), lon: r5(p[0]), name: nameAt(edges, iv.s) });
         }
+        descentList.sort((a, b) => b.drop_m - a.drop_m);
       }
     }
 

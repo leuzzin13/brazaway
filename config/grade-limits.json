@@ -20,10 +20,11 @@
     ]
   },
   "descent": {
-    "_note": "Heurística (sem norma): descida longa para veículos com PBT >= min_weight_t vira aviso 'info' (freio-motor). Medida no perfil /height com histerese.",
+    "_note": "Heurística (sem norma): descida longa para veículos com PBT >= min_weight_t vira aviso 'info' (freio-motor). Janelas de window_m no perfil /height com queda média >= min_avg_pct, unidas; reporta se a queda total >= min_drop_m.",
     "min_weight_t": 16,
     "min_drop_m": 150,
-    "min_avg_pct": 5
+    "min_avg_pct": 5,
+    "window_m": 2000
   },
   "cost_lines": {
     "_note": "Sugestão para uma 2ª rodada de rota (não aplicada automaticamente): trechos acima de avoid_pct viram linear_cost_factors no sentido da subida. Rodovias (motorway/trunk) ficam de fora: em geral não há alternativa e o aviso é de condução.",
@@ -32,9 +33,9 @@
   },
   "min_over_m": 30,
   "window_m": {
-    "_note": "Janela (m) da rampa sustentada por classe de via do Valhalla (road_class). Com 60 m o DEM de 30 m inventa rampas (rodovia encaixada em encosta chega a +20 p.p.); rodovias têm rampas longas e moderadas (IPR-706), ladeiras urbanas são curtas.",
-    "motorway": 300,
-    "trunk": 300,
+    "_note": "Janela (m) da rampa sustentada por classe de via do Valhalla (road_class). Com 60 m o DEM de 30 m inventa rampas (rodovia encaixada em encosta chega a +20 p.p.; Anchieta: 22% com 300 m, 8,9% com 1 km); rodovias têm rampas longas e moderadas (IPR-706), ladeiras urbanas são curtas.",
+    "motorway": 1000,
+    "trunk": 1000,
     "default": 120
   },
   "max_segment_warnings": 5

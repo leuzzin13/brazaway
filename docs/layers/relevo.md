@@ -56,6 +56,8 @@ Nomes dos atributos conferidos no Valhalla 3.9.1 (`c803bdc2f`) que roda aqui. De
   até 16% e passos de 4 de 16 a 76). Aresta sem elevação vem com **-500** (é o que o Valhalla principal devolve hoje).
   Por causa do arredondamento para cima, a comparação é sempre `>` limite.
 - `weighted_grade` vem em % (já convertido do índice 0–15). Ponte/túnel: o Valhalla limita a ±3%.
+- `trace_attributes` e `/height` usam a mesma linha (o `shape` devolvido pelo trace), então as distâncias das arestas e
+  do perfil batem (o `/height` mede a distância um pouco diferente; reescalamos pelo comprimento total).
 - Os tiles de 8002 e 8003 saem do mesmo PBF e da mesma configuração, então a malha é idêntica e o `edge_walk`
   casa a geometria exatamente (testado). Depois da troca (abaixo) é o mesmo Valhalla.
 
@@ -66,8 +68,10 @@ Com postes de 60 m, um DEM de 30 m inventa rampa: erro médio de 2,1–2,5 p.p. 
 o Valhalla marca subidas de 24%** numa descida contínua. Por isso, para cada aresta:
 
 1. Calculamos no perfil uma **média móvel centrada** da rampa com janela `window_m` por classe de via:
-   **300 m** em `motorway`/`trunk` (rodovias são projetadas com rampas longas e moderadas — IPR-706) e **120 m** nas demais
-   (ladeira urbana curta continua aparecendo). Pontes/túneis são "aplainados" no perfil (reta entre as cabeceiras),
+   **1.000 m** em `motorway`/`trunk` e **120 m** nas demais (ladeira urbana curta continua aparecendo). Rodovias são
+   projetadas com rampas longas e moderadas (IPR-706) e o que pesa para o caminhão é a rampa sustentada; com 300 m a
+   Anchieta (subida, Santos → SP) ainda dava 22% no perfil bruto, com 500 m 14,5%, com 1 km 8,9% e com 2 km 8,5% — a
+   partir de 1 km o valor estabiliza no que a serra realmente tem (~700 m de desnível em ~9 km). Pontes/túneis são "aplainados" no perfil (reta entre as cabeceiras),
    porque o DEM mede o vale/morro e não o tabuleiro.
 2. A rampa da aresta é o **menor** entre o `max_upward_grade` do Valhalla e o máximo da média móvel nela.
 3. Trecho = arestas consecutivas acima do limite de atenção (folga de 50 m). Só entra se a rampa sustentada passar do
@@ -79,8 +83,9 @@ Efeito medido (carreta, 09/10/2026):
 | Rota | Valhalla bruto (60 m) | Depois do filtro |
 |---|---|---|
 | Pinheiros → Av. Dr. Arnaldo pela **R. Teodoro Sampaio** (2,8 km) | máx. 12%, 4 arestas > 6% | máx. **~11%** (215 m de trecho, 110 m acima de 8%) → 1 trecho `evitar` + 1 `atencao` |
-| Sé → Santos pela Anchieta (73 km) | máx. 24%, 26 trechos (13 "evitar", quase todos na serra, em descida) | máx. ~9,1%; 3 trechos de atenção (Pça. da Sé ~8,7%, BR-050 ~6,3%, Av. Martins Fontes ~9,1%; os dois acima de 8% passam do limite em menos de 30 m e não viram "evitar"); 28 picos descartados; 1 descida longa (4,6 km a 6,2%) |
-| Marginal Tietê → Rio pela Dutra (424 km) | máx. 20% | máx. ~11% (Serra das Araras); 6 trechos `evitar` agrupados em 5 avisos de "subida forte"; 110 picos descartados |
+| Sé → Santos pela Anchieta (73 km, serra em descida) | máx. 24%, 26 trechos (13 "evitar", quase todos na serra, em descida) | máx. ~9,1%; 2 trechos de atenção (Pça. da Sé ~8,7% e Av. Martins Fontes ~9,1%, ambos acima de 8% em menos de 30 m, então não viram "evitar"); 29 picos descartados; **descida longa de 13,3 km a 5,5% (desce 729 m)** |
+| Santos → Sé pela Anchieta (72 km, serra em subida) | máx. 28% | 2 avisos de **subida forte na SP-150** (até ~9% e ~8,5%) + 9 trechos de atenção na serra; no centro de SP, Av. Rangel Pestana ~12% e R. Venceslau Brás ~10% (subida do Parque Dom Pedro para a Sé) |
+| Marginal Tietê → Rio pela Dutra (424 km) | máx. 20%, 33 trechos > 6% | 1 trecho de atenção (rua no Rio, ~7,5%); 151 picos descartados; descida longa da **Serra das Araras: 5,8 km a 5,5% (322 m)** |
 
 ### Limites por veículo (`config/grade-limits.json`) — valores de partida, a calibrar
 
@@ -110,10 +115,14 @@ Normas conferidas por mim na fonte primária (09/10/2026):
 - **DNER/DNIT IPR-706, Manual de Projeto Geométrico de Rodovias Rurais (1999), Quadro 5.5.2.1, p. 124** (PDF do DNIT):
   rampas máximas plano/ondulado/montanhoso — Classe 0: 3/4/5%; I: 3/4,5/6%; II: 3/5/7%; III: 4/6/8%; IV-A: 4/6/8%;
   IV-B: 6/8/10%, com a nota "a extensão de rampas acima de 8% será desejavelmente limitada a 300 m contínuos". Usado
-  para justificar a janela de 300 m em rodovias.
+  como referência de que rodovia tem rampa longa e moderada (janela de 1 km nelas); rampa > 10% sustentada em rodovia é
+  quase sempre artefato do DEM.
 
-A heurística de **descida longa** (PBT ≥ 16 t, queda ≥ 150 m, média ≥ 5%) não tem norma: é só um aviso `info` de
-condução (freio-motor) e está em `descent` na config.
+A heurística de **descida longa** não tem norma: é só um aviso `info` de condução (freio-motor), para PBT ≥ 16 t.
+Janelas de 2 km (passo de 100 m) com queda média ≥ 5% são unidas em intervalos; vale se a queda total for ≥ 150 m
+(`descent` na config). Janela fixa em vez de "do topo ao fundo" porque em serra o DEM repica dezenas de metros numa
+descida contínua. Subida/descida acumuladas do perfil usam histerese de 10 m pelo mesmo motivo (ainda assim ficam
+infladas em serra longa: ~2,5 km de subida acumulada na Dutra inteira).
 
 ### Severidade dos avisos
 
@@ -121,14 +130,15 @@ Rampa não é restrição legal certa, e o DEM erra ~2 p.p.: **nunca `danger`**.
 
 | code | severidade | quando |
 |---|---|---|
-| `steep_grade_avoid` | `warn` | trecho acima do limite "evitar" (até 5; rodovia: trechos da mesma via a ≤ 3 km viram um aviso de "subida forte") |
+| `steep_grade_avoid` | `warn` | trecho acima do limite "evitar" em ≥ 30 m (até 5; rodovia: trechos da mesma via a ≤ 3 km viram um aviso de "subida forte") |
 | `steep_grade_avoid_more` | `warn` | mais trechos "evitar" além dos 5 |
 | `steep_grade_warn` | `warn` | um aviso agregado dos trechos de atenção (quantos, metros, o pior) |
 | `long_descent` | `info` | descida longa para veículo pesado (até 3) |
 
 Exemplos (carreta): "Rampa de ~11% na Rua Teodoro Sampaio (trecho de 215 m): acima do recomendado para Carreta (8%).
-Risco de patinar com piso molhado; avalie outra via." · "Subida forte na BR-116 (km 357–361 da rota): até ~11%, com
-550 m acima de 8% (recomendado p/ Carreta). Engate marcha reduzida antes; com piso molhado há risco de perder tração."
+Risco de patinar com piso molhado; avalie outra via." · "Subida forte na SP-150 (km 27–30 da rota): até ~9%, com
+150 m acima de 8% (recomendado p/ Carreta). Engate marcha reduzida antes; com piso molhado há risco de perder tração."
+· "Descida longa: 13,3 km com média de 5,5% (desce 729 m) a partir da SP-150. Use freio-motor e marcha reduzida."
 
 ### Saída em `layers.relevo`
 
@@ -142,7 +152,7 @@ over_warn_m, over_avoid_m, km_from_start, lat, lon, start, end, coordinates`), `
 ascent_m, descent_m, points[[km, m]]}`, `histogram_up_km` (faixas 0-3 … 20+, `descida_6+`), `long_descents[]`,
 `cost_lines_suggested[]` (formato `LayerCostLine`), `coverage_pct`, `elapsed_ms`, `window_m`, `note`.
 
-Custo medido na API: 8–26 ms numa rota urbana de 3 km, 20–100 ms em 73 km, 40–480 ms em 424 km (a primeira chamada
+Custo medido na API: 8–26 ms numa rota urbana de 3 km, 12–100 ms em 73 km, 25–480 ms em 424 km (a primeira chamada
 aquece o cache do Valhalla).
 
 ## Build dos tiles com elevação (medido em 09/10/2026)
@@ -276,9 +286,10 @@ corredor origem–destino, e mostrá-los no mapa; reportes `steep_grade` confirm
 - **Erro do DEM**: ANADEM erra 2,1–2,5 p.p. (MAE) por intervalo de 60 m em bairros de morro e **subestima rampas muito
   fortes** (recall de 0,33–0,40 para > 15%); em área plana e densa ainda pode inventar rampa (precisão de 0,47 para
   > 8% na Mooca). A média móvel reduz o ruído mas também achata ladeiras com menos de ~120 m. Tudo é "~".
-- **Rodovia encaixada em encosta / viaduto sem `bridge=yes`**: o DEM mede o terreno ao lado; a janela de 300 m filtra a
-  maior parte (Anchieta), mas pode sobrar falso positivo (ex.: ~9% na Av. Martins Fontes, em Santos, provavelmente rampa
-  de viaduto) e as descidas máximas (`max_down_pct`) ficam infladas em serra.
+- **Rodovia encaixada em encosta / viaduto sem `bridge=yes`**: o DEM mede o terreno ao lado; a janela de 1 km nas
+  rodovias resolve a maior parte (Anchieta), mas esconde um "degrau" curto e forte numa rodovia, e em via urbana
+  (janela de 120 m) pode sobrar falso positivo (ex.: ~9% na Av. Martins Fontes, em Santos, provavelmente rampa de
+  viaduto). Rodovias estaduais classificadas como `primary` usam a janela urbana.
 - `max_upward_grade` é o máximo da aresta, não o comprimento: o comprimento acima do limite sai do perfil (passo de 30 m,
   amostras de 15 m na aresta). Arestas < 10 m não têm rampa no Valhalla.
 - O Valhalla 3.9.1 **não usa rampa no costing `truck`** (issue #1191): a rota não evita subidas sozinha; esta camada só
@@ -316,6 +327,6 @@ Sem o Valhalla de elevação, os 5 testes que dependem dele são pulados com avi
   `valhalla_build_elevation` só baixa do Skadi.
 - **Sudeste inteiro, não só a RMSP**: o volume coube (2,8 GB de HGT, 2,5 min de conversão).
 - **`edge_walk`** sobre a geometria da rota (malhas idênticas), com `map_snap` de reserva.
-- **Rampa sustentada** (menor entre Valhalla e média móvel de 120/300 m) para não acusar rampa inexistente em serra.
+- **Rampa sustentada** (menor entre Valhalla e média móvel de 120 m / 1 km em rodovia) para não acusar rampa inexistente em serra.
 - **Sem `danger`**: rampa não é restrição legal; erro do DEM ~2 p.p.
 - **Sem dados em `data_features`** (cálculo por rota, nada a importar).
