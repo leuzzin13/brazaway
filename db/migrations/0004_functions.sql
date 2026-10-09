@@ -61,6 +61,7 @@ create or replace function active_reports_for_vehicle(
        or (r.type = 'length_limit'  and r.value_num < p_length_m)
        or (r.type = 'truck_ban'     and not p_is_vuc)
        or (r.type = 'hazmat_ban'    and p_hazmat)
+       or (r.type = 'steep_grade'   and r.value_num < p_weight_t)
        or (r.type = 'road_closed')
      )
 $$;
