@@ -42,15 +42,18 @@ citação foi **removida** por não ter sido confirmada na fonte primária.
 
 Horário de operação: vem do próprio cadastro da CET por face de quadra (`hr_inicio_*`/`hr_termino_*`). Campo vazio =
 a Zona Azul não opera naquele dia; 61 faces não têm horário de seg–sex e aparecem como "horário não informado:
-confira a placa". "23:59" vira 24:00; janelas como 07:00–02:00 atravessam a meia-noite. Em feriado só vale a janela
-de feriado (2 faces têm; nas demais a Zona Azul não opera).
+confira a placa". "23:59" vira 24:00; janelas como 07:00–02:00 atravessam a meia-noite (4 registros, R. Vinte e
+Quatro de Maio): de madrugada vale a janela do dia anterior. Em feriado só vale a janela de feriado (2 faces têm;
+nas demais a Zona Azul não opera) — e isso vale também para a madrugada seguinte: à 01:00 do dia seguinte a um
+feriado, a face "seg–sex 07h–02h" está fora de operação, porque no feriado ela não operou.
 
 ## Como entra na rota
 
 `annotate()` (não muda o traçado):
 - as **5 vagas mais próximas do destino a até 1 km**, agrupadas por face de quadra, com distância em linha reta até
   o ponto mais próximo da face, número de vagas, lado da via, horário, regra do CAD e se a Zona Azul estará em
-  operação na **hora estimada de chegada** (saída + duração da rota, com feriado pelo calendário legal);
+  operação na **hora estimada de chegada** (saída + duração da rota, com feriado pelo calendário legal — o dia da
+  chegada e o anterior, para as janelas que cruzam a meia-noite; `data.feriado` e `data.dia_anterior_feriado`);
 - aviso `loading_bay_near_destination` (`info`) com a mais próxima; se não houver nenhuma até 1 km, aviso
   `no_loading_bay_near_destination` (`info`) com a distância da mais próxima (busca até 5 km);
 - destino a mais de 5 km de qualquer vaga (fora do município) → a camada não devolve nada.

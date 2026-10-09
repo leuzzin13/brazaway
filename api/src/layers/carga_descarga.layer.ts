@@ -54,9 +54,9 @@ export interface VagaOut {
   lon: number;
 }
 
-function statusAt(p: Props, arrival: Date, holiday: boolean): { active: boolean | null; text: string } {
+function statusAt(p: Props, arrival: Date, holiday: boolean, prevHoliday: boolean): { active: boolean | null; text: string } {
   if (!p.horario_informado || !p.windows?.length) return { active: null, text: 'horário não informado: confira a placa' };
-  const active = windowActive(p.windows, arrival, { holiday, holidayMode: 'own' });
+  const active = windowActive(p.windows, arrival, { holiday, prevHoliday, holidayMode: 'own' });
   return active
     ? { active, text: 'Zona Azul em operação na chegada (use CAD)' }
     : { active, text: 'fora do horário da Zona Azul na chegada (vale a placa)' };
@@ -121,8 +121,14 @@ const layer: RouteLayer = {
     if (!r.rows.length) return {};   // fora da cobertura (município de SP)
 
     const arrival = new Date(ctx.at.getTime() + route.duration_s * 1000);
-    const day = await legalDayInfo(arrival).catch(() => ({ holiday: null }));
+    // feriado na chegada e no dia anterior (janela que cruza a meia-noite, ex.: 07:00–02:00, vem do dia anterior)
+    const noHoliday = { holiday: null };
+    const [day, prevDay] = await Promise.all([
+      legalDayInfo(arrival).catch(() => noHoliday),
+      legalDayInfo(new Date(arrival.getTime() - 86_400_000)).catch(() => noHoliday),
+    ]);
     const holiday = !!day.holiday;
+    const prevHoliday = !!prevDay.holiday;
     const arrLabel = localParts(arrival).label;
 
     // agrupa por face de quadra (o ponto da vaga e o trecho de Zona Azul são a mesma vaga)
@@ -141,7 +147,7 @@ const layer: RouteLayer = {
       const trecho = g.find((x) => x.kind === 'zona_azul_caminhao');
       const ponto = g.find((x) => x.kind === 'vaga_caminhao');
       const ref = trecho ?? nearest;
-      const st = statusAt(ref.props, arrival, holiday);
+      const st = statusAt(ref.props, arrival, holiday, prevHoliday);
       return {
         id: nearest.id,
         nome: prettyStreet(ref.props.local ?? ref.props.endereco ?? nearest.name ?? 'Vaga de caminhão'),
@@ -180,7 +186,7 @@ const layer: RouteLayer = {
       });
       summary.push(`Sem vaga de Zona Azul Caminhão a até 1 km do destino; a mais próxima fica a ${fmtKm(g[0].dist_m)}.`);
     }
-    return { summary, warnings, data: { chegada: arrLabel, feriado: holiday, raio_m: RADIUS_M, vagas } };
+    return { summary, warnings, data: { chegada: arrLabel, feriado: holiday, dia_anterior_feriado: prevHoliday, raio_m: RADIUS_M, vagas } };
   },
 };
 

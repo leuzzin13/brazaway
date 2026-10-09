@@ -10,10 +10,12 @@ import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
  * Regra: a faixa é exclusiva de ônibus no horário de funcionamento (texto da CET por trecho, "2ª a 6ª das 06-09h"...);
  * o corredor (à esquerda, canteiro central) é exclusivo em tempo integral. Transitar na faixa/corredor é infração
  * gravíssima (CTB art. 184, III; enquadramento CET 758-70). Na faixa à direita só se entra para acessar garagem/lote
- * ou no trecho tracejado imediatamente antes da conversão à direita (CET, Perguntas Frequentes). As liberações de
- * feriado e de madrugada da Portaria 083/16-SMT.GAB valem para veículos de passageiros e de uso misto, não para
- * veículos de carga: para caminhão a faixa segue o horário da placa também em feriados. As DEMAIS faixas da via
- * continuam liberadas: por isso a camada não bloqueia a via.
+ * ou no trecho tracejado imediatamente antes da conversão à direita (CET, Perguntas Frequentes). Portaria
+ * 083/16-SMT.GAB: o art. 2º libera os CORREDORES a veículos de passageiros e de uso misto à noite, em fins de semana e
+ * feriados (parágrafo único: vedados veículos de carga); o art. 3º libera as FAIXAS exclusivas em feriados só para
+ * veículos de passageiros e de uso misto. Caminhão e caminhonete são veículos de carga (CTB art. 96, II, b), então
+ * ficam fora das duas liberações: para caminhão a faixa segue o horário da placa também em feriados e o corredor vale
+ * em tempo integral. As DEMAIS faixas da via continuam liberadas: por isso a camada não bloqueia a via.
  *
  * costLines(): penalidade moderada (fator CORREDORES_ONIBUS_FATOR, ex.: 1.3) nas faixas em operação na hora
  * estimada de passagem, para o roteador preferir avenidas sem faixa nos horários de pico. DESLIGADA por padrão
@@ -30,6 +32,7 @@ const LAYER = 'corredores_onibus';
 const NEAR_M = 15;          // faixa: eixo da via a até 15 m do traçado da rota
 const NEAR_CORREDOR_M = 25; // corredor: eixo no canteiro central, pistas laterais um pouco mais longe
 const DEST_M = 25;
+const DEST_TAIL_M = 60;   // trecho final da rota usado para saber de que lado da via o caminhão chega
 const MIN_OVERLAP_M = 45;   // cruzar a via (corda do buffer de 15 m) não conta como "usar" a faixa
 const REGRA = 'CTB art. 184, III: gravíssima';
 
@@ -90,6 +93,7 @@ const layer: RouteLayer = {
     sources: [
       { name: 'GeoSampa faixa_onibus (levantamento CET/PMSP)', url: 'https://geosampa.prefeitura.sp.gov.br', license: 'CC-BY-SA 4.0' },
       { name: 'GeoSampa corredor_onibus (SPTrans/EMTU)', url: 'https://geosampa.prefeitura.sp.gov.br', license: 'CC-BY-SA 4.0' },
+      { name: 'OpenStreetMap (props.osm: traçado das faixas casado com a malha do Valhalla, usado só na penalidade opcional)', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0' },
     ],
     style: { kind: 'line', color: '#dc2626', width: 3, minzoom: 12, icon: '🚌' },
     defaultVisible: false,
@@ -113,7 +117,7 @@ const layer: RouteLayer = {
             lado: corredor ? 'à esquerda (canteiro central)' : ladoTxt(p.lado),
             sentido: corredor ? null : (p.sentido_faixa || (p.sentido_via === 'DUPLO' ? 'os dois sentidos' : null)),
             horario: corredor ? 'exclusivo em tempo integral' : (p.horario ?? 'não informado'),
-            agora: corredor ? 'exclusivo' : (windowActive(p.windows, at) ? 'em operação' : 'fora do horário'),
+            agora: corredor ? 'exclusivo' : !p.windows?.length ? 'horário não informado (confira a placa)' : windowActive(p.windows, at) ? 'em operação' : 'fora do horário',
             regra: corredor ? 'Só ônibus (táxi em horários definidos). Caminhão: use as pistas laterais.' :
               'Caminhão não trafega nem para na faixa no horário; à direita, só entra para virar ou acessar imóvel (CTB art. 184).',
             fonte: corredor ? 'GeoSampa/SPTrans (CC-BY-SA 4.0)' : 'GeoSampa/CET (CC-BY-SA 4.0)',
@@ -184,7 +188,7 @@ const layer: RouteLayer = {
 
     const activeByStreet = new Map<string, { m: number; rule: string; lado: string; lat: number; lon: number; incerto: boolean }>();
     const corredores = new Map<string, { m: number; lat: number; lon: number }>();
-    let activeM = 0, offM = 0, prefM = 0;
+    let activeM = 0, offM = 0, prefM = 0, oppositeM = 0, unknownM = 0;
     const segs: unknown[] = [];
     for (const h of r.rows) {
       // trecho "usado": a sobreposição cobre boa parte da faixa (ou >= 150 m); cruzamentos não contam
@@ -199,8 +203,10 @@ const layer: RouteLayer = {
         continue;
       }
       if (h.kind === 'faixa_preferencial' || h.kind === 'faixa_temporaria') { prefM += h.overlap_m; continue; }
+      if (!h.props.windows?.length) { unknownM += h.overlap_m; continue; }   // horário não interpretável (ex.: "BLOQUEIO NA AV PAULISTA")
       const dir: 'fwd' | 'rev' = h.f1 >= h.f0 ? 'fwd' : 'rev';
-      const ws = h.props.dirs?.[dir] ?? h.props.windows ?? [];
+      const ws = h.props.dirs?.[dir] ?? h.props.windows;
+      if (!ws.length) { oppositeM += h.overlap_m; continue; }   // a faixa só existe no outro sentido da via
       const active = windowActive(ws, eta);
       segs.push({ id: h.id, logradouro: h.props.logradouro, tipo: h.kind, lado: h.props.lado, sentido: dir, horario: describeWins(ws), em_operacao: active, sobreposicao_m: Math.round(h.overlap_m), passagem: localParts(eta).label });
       if (!active) { offM += h.overlap_m; continue; }
@@ -226,6 +232,7 @@ const layer: RouteLayer = {
     }
     if (offM > 0) summary.push(`Faixas de ônibus fora do horário na passagem: ${fmtKm(offM)} (livres para circular).`);
     if (prefM > 0) summary.push(`Faixa preferencial/temporária de ônibus: ${fmtKm(prefM)} da rota.`);
+    if (unknownM >= MIN_OVERLAP_M) summary.push(`Faixa de ônibus sem horário no cadastro da CET: ${fmtKm(unknownM)} da rota (confira a placa).`);
     const cors = [...corredores.entries()].filter(([, c]) => c.m >= 200).sort((a, b) => b[1].m - a[1].m);
     if (cors.length) {
       const total = cors.reduce((s, [, c]) => s + c.m, 0);
@@ -237,19 +244,34 @@ const layer: RouteLayer = {
       });
     }
 
-    // destino sobre faixa em operação na chegada: não parar para carga/descarga na faixa
+    // destino sobre faixa em operação na chegada: não parar para carga/descarga na faixa. Vale a faixa do lado em
+    // que o caminhão chega: se os últimos ~60 m da rota correm junto à faixa, só as janelas desse sentido; se a rota
+    // chega por uma transversal (ou a faixa não acompanha o fim da rota), as dos dois sentidos (conservador).
     const arrival = new Date(ctx.at.getTime() + route.duration_s * 1000);
-    const dest = await query<{ id: string; kind: string; name: string | null; props: FaixaProps }>(
-      `select f.id::text, f.kind, f.name, f.props - 'osm' - 'segmentos' as props from data_features f
+    const dest = await query<{ id: string; kind: string; name: string | null; props: FaixaProps; along_m: number; a: number; b: number }>(
+      `with r as (select ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON($5), 4326), 31983) as g),
+            t as (select ST_LineSubstring(r.g, greatest(0, 1 - $6 / greatest(ST_Length(r.g), 1)), 1) as g from r)
+       select f.id::text, f.kind, f.name, f.props - 'osm' - 'segmentos' as props,
+              ST_Length(ST_Intersection(fg.g, ST_Buffer(t.g, $7)))::float as along_m,
+              ST_LineLocatePoint(fg.g, ST_StartPoint(t.g))::float as a,
+              ST_LineLocatePoint(fg.g, ST_EndPoint(t.g))::float as b
+         from data_features f
+         cross join t
+         cross join lateral (select ST_Transform(f.geom, 31983) as g) fg
         where f.layer_id = $1 and f.kind in ('faixa_exclusiva', 'faixa_reversivel')
           and ST_DWithin(f.geom::geography, ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography, $4)
           and (f.valid_to is null or f.valid_to > now())`,
-      [LAYER, ctx.destination.lon, ctx.destination.lat, DEST_M],
+      [LAYER, ctx.destination.lon, ctx.destination.lat, DEST_M, JSON.stringify(route.line.geometry), DEST_TAIL_M, NEAR_M],
     );
-    const destActive = dest.rows.filter((d) => windowActive([...(d.props.dirs?.fwd ?? []), ...(d.props.dirs?.rev ?? [])], arrival));
+    const destWins = (d: (typeof dest.rows)[number]): Win[] => {
+      const fwd = d.props.dirs?.fwd ?? d.props.windows ?? [];
+      const rev = d.props.dirs?.rev ?? d.props.windows ?? [];
+      if (d.along_m >= DEST_TAIL_M * 0.5 && d.a !== d.b) return d.b > d.a ? fwd : rev;
+      return [...fwd, ...rev];
+    };
+    const destActive = dest.rows.map((d) => ({ d, ws: destWins(d) })).filter((x) => windowActive(x.ws, arrival));
     if (destActive.length) {
-      const d0 = destActive[0];
-      const ws = [...(d0.props.dirs?.fwd ?? []), ...(d0.props.dirs?.rev ?? [])];
+      const { d: d0, ws } = destActive[0];
       warnings.push({
         code: 'destination_on_bus_lane', severity: 'warn', lat: ctx.destination.lat, lon: ctx.destination.lon, id: d0.id,
         message: `O destino fica em via com faixa exclusiva de ônibus em operação na chegada (${prettyStreet(d0.props.logradouro ?? d0.name)}: ${describeWins(ws)}). Não pare na faixa para carga e descarga: use uma vaga de Zona Azul Caminhão próxima ou a garagem do destinatário.`,
@@ -263,6 +285,7 @@ const layer: RouteLayer = {
       summary, warnings,
       data: {
         faixa_em_operacao_m: Math.round(activeM), faixa_fora_do_horario_m: Math.round(offM),
+        faixa_sentido_oposto_m: Math.round(oppositeM), faixa_sem_horario_m: Math.round(unknownM),
         corredores: cors.map(([n, c]) => ({ nome: n, metros: Math.round(c.m) })),
         trechos: segs.slice(0, 50),
         penalidade: { ativa: !!f, fator: f || null, tileset },

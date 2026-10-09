@@ -19,14 +19,21 @@ export function localParts(at: Date, tz = env.tz) {
 }
 
 /**
- * A janela vale no instante `at`? Com `holiday: 'own'` (Zona Azul), num feriado só valem janelas do dia 8;
- * sem janela de feriado, a regra não opera. Com `holiday: 'weekday'` (faixas de ônibus), o feriado conta como o dia da semana.
+ * A janela vale no instante `at`? Com `holidayMode: 'own'` (Zona Azul), num feriado só valem janelas do dia 8;
+ * sem janela de feriado, a regra não opera. Com `holidayMode: 'weekday'` (faixas de ônibus), o feriado conta como o
+ * dia da semana. Janela que cruza a meia-noite: de madrugada vale a janela do dia ANTERIOR — em modo 'own', se o dia
+ * anterior foi feriado (`prevHoliday`), a do dia 8.
  */
-export function windowActive(ws: Win[] | null | undefined, at: Date, opts: { holiday?: boolean; holidayMode?: 'own' | 'weekday' } = {}): boolean {
+export function windowActive(
+  ws: Win[] | null | undefined,
+  at: Date,
+  opts: { holiday?: boolean; prevHoliday?: boolean; holidayMode?: 'own' | 'weekday' } = {},
+): boolean {
   if (!ws?.length) return false;
   const { dow, hhmm } = localParts(at);
-  const day = opts.holiday && (opts.holidayMode ?? 'weekday') === 'own' ? 8 : dow;
-  const prev = day === 8 ? dow - 1 || 7 : day - 1 || 7;
+  const own = (opts.holidayMode ?? 'weekday') === 'own';
+  const day = own && opts.holiday ? 8 : dow;
+  const prev = own && opts.prevHoliday ? 8 : dow - 1 || 7;
   return ws.some((w) => {
     const to = w.to === '00:00' ? '24:00' : w.to;
     if (w.from < to) return w.days.includes(day) && hhmm >= w.from && hhmm < to;
