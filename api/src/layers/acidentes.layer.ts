@@ -26,6 +26,7 @@ const NIVEL_LABEL: Record<Nivel, string> = { muito_alto: 'muito alto', alto: 'al
 const FAIXAS = ['madrugada', 'manha', 'tarde', 'noite'] as const;
 type Faixa = (typeof FAIXAS)[number];
 const FAIXA_LABEL: Record<Faixa, string> = { madrugada: 'de madrugada', manha: 'de manhã', tarde: 'à tarde', noite: 'à noite' };
+const FAIXA_CURTA: Record<Faixa, string> = { madrugada: 'madrugada', manha: 'manhã', tarde: 'tarde', noite: 'noite' };
 
 interface HotspotProps {
   cell: string;
@@ -142,7 +143,14 @@ const layer: RouteLayer = {
     sources: [
       { name: 'Infosiga SP (Detran-SP)', url: 'https://infosiga.detran.sp.gov.br/', license: 'Dados abertos Detran-SP (uso e redistribuição livres com atribuição e mesmos termos de abertura)' },
       { name: 'ARTESP — acidentes nas rodovias concedidas', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/acidentes', license: 'CC-BY' },
-      { name: 'PRF — acidentes nas rodovias federais', url: 'https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf', license: 'Dados abertos PRF (sem restrição de licença; atribuição por boa prática)' },
+      {
+        name: 'PRF — acidentes nas rodovias federais',
+        url: 'https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf',
+        // mesma redação do LICENSE de importers/sources/acidentes_prf.py e de docs/layers/acidentes.md
+        license:
+          'Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); ' +
+          'o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR',
+      },
     ],
     style: { kind: 'heatmap', color: '#dc2626', radius: 16, opacity: 0.65, icon: '⚠️' },
     defaultVisible: false,
@@ -155,6 +163,7 @@ const layer: RouteLayer = {
     const rows = await featuresInBbox(LAYER, bbox, { limit: 6000, where: 'kind = any($7)', params: [niveis] });
     return {
       type: 'FeatureCollection',
+      // até 12 propriedades exibíveis (o popup genérico do mapa mostra 12; id e weight ficam de fora)
       features: rows.map((r) => {
         const p = props(r);
         return {
@@ -169,13 +178,10 @@ const layer: RouteLayer = {
             com_vitima: p.caminhao_vitima,
             com_morte: p.caminhao_fatais,
             obitos: p.obitos,
-            madrugada: p.periodo?.madrugada ?? 0,
-            manha: p.periodo?.manha ?? 0,
-            tarde: p.periodo?.tarde ?? 0,
-            noite: p.periodo?.noite ?? 0,
-            acidentes_todos_veiculos: p.total,
+            por_faixa_do_dia: FAIXAS.map((f) => `${FAIXA_CURTA[f]} ${p.periodo?.[f] ?? 0}`).join(' · '),
             periodo_dados: `${fmtDate(p.janela?.de)} a ${fmtDate(p.janela?.ate)}`,
             fonte: p.fonte ?? r.source,
+            acidentes_todos_veiculos: p.total,
             score: p.score,
             weight: Math.round(Math.min(1, Math.max(0.15, (p.score ?? 0) / SCORE_MAX)) * 100) / 100,
           },

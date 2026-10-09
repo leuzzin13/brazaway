@@ -69,6 +69,9 @@ interface Trecho {
   pico: Faixa | null;
   /** ocorrências registradas na faixa do dia em que o veículo passa por cada área do trecho */
   na_passagem: number;
+  /** na_passagem separado pela faixa de passagem, na ordem da rota (o trecho pode atravessar a virada de faixa) */
+  na_passagem_por_faixa: Partial<Record<Faixa, number>>;
+  /** faixa do dia na entrada do trecho */
   faixa_passagem: Faixa;
   /** horário local aproximado de entrada no trecho (HH:mm) */
   passagem: string;
@@ -76,6 +79,17 @@ interface Trecho {
   km_fim: number;
   lat: number;
   lon: number;
+}
+
+/** "9 ocorrências de manhã" ou, se o trecho atravessa a virada de faixa, "9 ocorrências de manhã e 3 à tarde (horário de passagem)" */
+function textoPassagem(porFaixa: Partial<Record<Faixa, number>>): string {
+  const partes = (Object.entries(porFaixa) as [Faixa, number][]).filter(([, n]) => n > 0);
+  if (!partes.length) return '0 ocorrências no horário de passagem';
+  const [f0, n0] = partes[0];
+  const primeira = `${n0} ${n0 === 1 ? 'ocorrência' : 'ocorrências'} ${FAIXA_LABEL[f0]}`;
+  if (partes.length === 1) return primeira;
+  const lista = [primeira, ...partes.slice(1).map(([f, n]) => `${n} ${FAIXA_LABEL[f]}`)];
+  return `${lista.slice(0, -1).join(', ')} e ${lista.at(-1)} (horário de passagem)`;
 }
 
 function cluster(rows: NearRouteRow[], distanceKm: number, eta: (fraction: number) => DateTime): Trecho[] {
@@ -90,7 +104,12 @@ function cluster(rows: NearRouteRow[], distanceKm: number, eta: (fraction: numbe
     const periodo = Object.fromEntries(FAIXAS.map((f) => [f, rs.reduce((s, r) => s + (props(r).periodo?.[f] ?? 0), 0)])) as Record<Faixa, number>;
     const pico = FAIXAS.some((f) => periodo[f] > 0) ? FAIXAS.reduce((a, b) => (periodo[b] > periodo[a] ? b : a)) : null;
     // cada área conta as ocorrências da faixa em que o veículo passa POR ELA (o trecho pode atravessar a virada de faixa)
-    const naPassagem = rs.reduce((s, r) => s + (props(r).periodo?.[faixaOf(eta(r.fraction).hour)] ?? 0), 0);
+    const porFaixaPassagem: Partial<Record<Faixa, number>> = {};
+    for (const r of rs) {
+      const f = faixaOf(eta(r.fraction).hour);
+      porFaixaPassagem[f] = (porFaixaPassagem[f] ?? 0) + (props(r).periodo?.[f] ?? 0);
+    }
+    const naPassagem = Object.values(porFaixaPassagem).reduce((s, n) => s + (n ?? 0), 0);
     const t0 = eta(rs[0].fraction);
     const sum = (k: 'total' | 'roubo' | 'furto') => rs.reduce((s, r) => s + (props(r)[k] ?? 0), 0);
     const c = (best.geometry as GeoJSON.Polygon).coordinates[0];
@@ -107,6 +126,7 @@ function cluster(rows: NearRouteRow[], distanceKm: number, eta: (fraction: numbe
       periodo,
       pico,
       na_passagem: naPassagem,
+      na_passagem_por_faixa: porFaixaPassagem,
       faixa_passagem: faixaOf(t0.hour),
       passagem: t0.toFormat('HH:mm'),
       km_inicio: Math.round(rs[0].fraction * distanceKm * 10) / 10,
@@ -150,6 +170,7 @@ const layer: RouteLayer = {
     const rows = await featuresInBbox(LAYER, bbox, { limit: 4000, where: 'kind = any($7)', params: [niveis] });
     return {
       type: 'FeatureCollection',
+      // até 12 propriedades exibíveis (o popup genérico do mapa mostra 12; id fica de fora e a fonte vai no rodapé)
       features: rows.map((r) => {
         const p = props(r);
         return {
@@ -161,18 +182,16 @@ const layer: RouteLayer = {
             name: label(p, r.name),
             nivel: NIVEL_LABEL[nivelOf(r)],
             ocorrencias: p.total,
+            anos: fmtAnos(p.anos),
             roubos: p.roubo,
             furtos: p.furto,
             [`madrugada (${FAIXA_HORAS.madrugada})`]: p.periodo?.madrugada ?? 0,
             [`manhã (${FAIXA_HORAS.manha})`]: p.periodo?.manha ?? 0,
             [`tarde (${FAIXA_HORAS.tarde})`]: p.periodo?.tarde ?? 0,
             [`noite (${FAIXA_HORAS.noite})`]: p.periodo?.noite ?? 0,
-            em_via_publica: p.local?.via_publica ?? null,
-            em_rodovia_ou_acostamento: p.local ? (p.local.rodovia ?? 0) + (p.local.acostamento ?? 0) : null,
-            em_posto: p.local?.posto ?? null,
-            anos: fmtAnos(p.anos),
-            fonte: 'SSP-SP',
-            weight: Math.round(Math.min(1, Math.max(0.15, (p.total ?? 0) / 25)) * 100) / 100,
+            local: p.local
+              ? `via pública ${p.local.via_publica ?? 0} · rodovia/acostamento ${(p.local.rodovia ?? 0) + (p.local.acostamento ?? 0)} · posto ${p.local.posto ?? 0}`
+              : null,
           },
         } as GeoJSON.Feature;
       }),
@@ -213,7 +232,7 @@ const layer: RouteLayer = {
       lon: t.lon,
       message:
         `Roubo de carga na região de ${t.name} (km ${fmtRange(t.km_inicio, t.km_fim)} da rota, ~${t.passagem}): ` +
-        `${t.na_passagem} ocorrências ${FAIXA_LABEL[t.faixa_passagem]} em ${anos} (${t.total} no total). ` +
+        `${textoPassagem(t.na_passagem_por_faixa)} em ${anos} (${t.total} no total). ` +
         `Evite parar na região; se precisar, use local vigiado.`,
     }));
 

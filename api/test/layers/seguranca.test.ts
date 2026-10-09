@@ -106,4 +106,52 @@ describe('Camadas de segurança: acidentes e roubo de carga', () => {
     for (const w of layerWarnings(madrugada.body, 'roubo_carga')) expect(w.message).toMatch(/de madrugada/);
     expect(layerWarnings(madrugada.body, 'roubo_carga').length).toBeLessThan(layerWarnings(manha.body, 'roubo_carga').length);
   });
+
+  it('roubo de carga na virada de faixa: aviso separa as ocorrências pela faixa em que passa por cada área', async () => {
+    // saindo às 11:20, o trecho da Dutra em Guarulhos começa ~11:59 e termina depois do meio-dia
+    const r = await route({ origin: CEAGESP, destination: GUARULHOS, vehicle: CARRETA, departure_at: '2026-10-13T11:20' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const trechos: any[] = r.body.layers.roubo_carga.data.trechos;
+    const FAIXA_LABEL: Record<string, string> = { madrugada: 'de madrugada', manha: 'de manhã', tarde: 'à tarde', noite: 'à noite' };
+    for (const t of trechos) {
+      const pf: Record<string, number> = t.na_passagem_por_faixa;
+      expect(Object.values(pf).reduce((s, n) => s + n, 0)).toBe(t.na_passagem);
+      for (const [f, n] of Object.entries(pf)) expect(n).toBeLessThanOrEqual(t.periodo[f]);
+    }
+    const virada = trechos.filter((t) => Object.keys(t.na_passagem_por_faixa).length > 1);
+    expect(virada.length, 'nenhum trecho atravessa a virada de faixa').toBeGreaterThan(0);
+    expect(virada.some((t) => t.na_passagem_por_faixa.manha !== undefined && t.na_passagem_por_faixa.tarde !== undefined)).toBe(true);
+
+    const wr = layerWarnings(r.body, 'roubo_carga');
+    expect(wr.length).toBeGreaterThan(0);
+    for (const w of wr) {
+      const t = trechos.find((x) => x.id === w.id);
+      expect(t, `trecho do aviso ${w.id}`).toBeTruthy();
+      const citadas = Object.entries(FAIXA_LABEL)
+        .map(([f, label]) => [f, w.message.match(new RegExp(`(\\d+) (?:ocorrências? )?${label}`))] as const)
+        .filter(([, m]) => m);
+      expect(citadas.length).toBeGreaterThan(0);
+      for (const [f, m] of citadas) {
+        const n = Number(m![1]);
+        expect(n, w.message).toBe(t.na_passagem_por_faixa[f]);       // número citado = ocorrências daquela faixa na passagem
+        expect(n, w.message).toBeLessThanOrEqual(t.periodo[f]);
+      }
+      const nFaixas = Object.values(t.na_passagem_por_faixa as Record<string, number>).filter((n) => n > 0).length;
+      if (nFaixas > 1) expect(w.message).toMatch(/horário de passagem/);
+    }
+    expect(wr.some((w: any) => /de manhã e \d+ à tarde \(horário de passagem\)/.test(w.message))).toBe(true);
+  });
+
+  it('features cabem no popup do mapa (até 12 propriedades exibíveis), com o período dos dados', async () => {
+    for (const id of ['acidentes', 'roubo_carga']) {
+      const r = await get(`/api/layers/${id}/features?bbox=${RMSP_BBOX}&zoom=11`);
+      expect(r.status).toBe(200);
+      for (const f of r.body.features.slice(0, 200)) {
+        const shown = Object.entries(f.properties).filter(([k, v]) => v !== null && v !== '' && !['id', 'weight'].includes(k));
+        expect(shown.length, `${id}: ${shown.map(([k]) => k).join(', ')}`).toBeLessThanOrEqual(12);
+      }
+    }
+    const rc = await get(`/api/layers/roubo_carga/features?bbox=${RMSP_BBOX}&zoom=11`);
+    expect(rc.body.features.every((f: any) => /^\d{4}(–\d{4})?$/.test(f.properties.anos))).toBe(true);
+  });
 });
