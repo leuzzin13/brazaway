@@ -97,6 +97,7 @@ export interface PlazaOnRoute {
   /** valor pelo OSM (e data de conferência), para comparação com a tabela oficial */
   valor_osm?: number | null;
   data_osm?: string | null;
+  valor_oficial_sem_tag?: number | null;
   osm_id: string;
   oficial_id: string | null;
   oficial_fonte: string | null;
@@ -243,7 +244,9 @@ const layer: RouteLayer = {
       const pap = !!op.ponto_a_ponto;
       const osmPrice = priceFor(rp.tarifa as Tariff | null, prof);
       let price: TollPrice | null = pap ? null : (priceFor(op.tarifa as Tariff | null, prof) ?? osmPrice);
-      if (price && price.valor === 0) price = { ...price, observacao: 'tabela oficial com tarifa zero (pórtico sem cobrança)' };
+      // o OSM guarda o valor de cabine (sem desconto de TAG): compara com o oficial sem TAG
+      const officialManual = prof.tag ? priceFor(op.tarifa as Tariff | null, { ...prof, tag: false }) : null;
+      if (price && price.valor === 0) price = { ...price, observacao: 'tarifa zero na fonte (ponto sem cobrança)' };
       const [lon, lat] = coord(rep);
       plazas.push({
         nome: plazaLabel(off, rep),
@@ -264,6 +267,7 @@ const layer: RouteLayer = {
         observacao: price?.observacao,
         valor_osm: osmPrice?.valor ?? null,
         data_osm: osmPrice?.data ?? null,
+        valor_oficial_sem_tag: officialManual?.valor ?? price?.valor ?? null,
         osm_id: rep.source_id,
         oficial_id: off?.id ?? null,
         oficial_fonte: off?.source ?? null,
@@ -308,7 +312,7 @@ const layer: RouteLayer = {
               pedagio_na_ponta: nt.has_toll,
               metodo: 'Valhalla costing_options.truck.exclude_tolls=true, mesmas restrições da rota',
             }
-          : { disponivel: false, motivo: 'sem caminho sem pedágio para este veículo' };
+          : { disponivel: false, motivo: 'sem_caminho' };
       } catch (e) {
         alternativa = { disponivel: false, motivo: `falha ao calcular: ${(e as Error).message}` };
       }
@@ -337,7 +341,9 @@ const layer: RouteLayer = {
         const sign = (x: number, u: string) => `${x >= 0 ? '+' : '−'}${Math.abs(x).toFixed(u === 'km' ? 1 : 0).replace('.', ',')} ${u}`;
         summary.push(`Sem pedágio: ${sign(dk, 'km')} e ${sign(dm, 'min')} para economizar ${brl(total)}${unknown.length ? ' (ou mais)' : ''}${alternativa.pedagio_na_ponta ? '; ainda pode haver pedágio perto da origem/destino' : ''}.`);
       } else {
-        summary.push(`Sem alternativa sem pedágio para este veículo (${alternativa.motivo}).`);
+        summary.push(alternativa.motivo === 'sem_caminho'
+          ? 'Não há rota sem pedágio para este veículo.'
+          : `Alternativa sem pedágio indisponível agora (${alternativa.motivo}).`);
       }
     }
     if (plazas.length) {
@@ -361,12 +367,13 @@ const layer: RouteLayer = {
     }
     // tabela oficial mais antiga que a conferência no OSM e com valor diferente: provável reajuste não publicado na fonte
     const diverg = charged.filter((p) => p.fonte !== 'OSM' && p.valor_osm != null && p.data_osm && p.data
-      && p.data_osm > p.data && Math.abs((p.valor_osm ?? 0) - (p.valor ?? 0)) > 0.01);
+      // tolerância de R$ 0,06 por eixo: arredondamento (ex.: tabela por categoria x valor por eixo do OSM)
+      && p.data_osm > p.data && Math.abs((p.valor_osm ?? 0) - (p.valor_oficial_sem_tag ?? p.valor ?? 0)) > 0.06 * prof.eixos_cobrados);
     if (diverg.length) {
       const ex = diverg[0];
       warnings.push({
         code: 'toll_tariff_divergence', severity: 'info', lat: ex.lat, lon: ex.lon,
-        message: `Em ${diverg.length} praça(s) o valor conferido no OSM é mais recente que a tabela oficial e diferente dela (ex.: ${ex.nome}: ${brl(ex.valor)} pela ${ex.fonte} de ${fmtBr(ex.data)}, ${brl(ex.valor_osm)} no OSM em ${fmtBr(ex.data_osm)}). Pode ter havido reajuste; confirme na concessionária.`,
+        message: `Em ${diverg.length} praça(s) o valor conferido no OSM é mais recente que a tabela oficial e diferente dela (ex.: ${ex.nome}: ${brl(ex.valor_oficial_sem_tag ?? ex.valor)} pela ${ex.fonte} de ${fmtBr(ex.data)}, ${brl(ex.valor_osm)} no OSM em ${fmtBr(ex.data_osm)}). Pode ter havido reajuste; confirme na concessionária.`,
       });
     }
     if (estimated.length) {
@@ -387,7 +394,7 @@ const layer: RouteLayer = {
         alternativa_sem_pedagio: alternativa,
         ignorados_osm: ignored,
         outro_sentido_osm: otherWay,
-        divergencias_oficial_osm: diverg.map((p) => ({ nome: p.nome, oficial: p.valor, fonte: p.fonte, data: p.data, osm: p.valor_osm, data_osm: p.data_osm })),
+        divergencias_oficial_osm: diverg.map((p) => ({ nome: p.nome, oficial: p.valor_oficial_sem_tag ?? p.valor, fonte: p.fonte, data: p.data, osm: p.valor_osm, data_osm: p.data_osm })),
         metodo: 'nós de pedágio do OSM sobre a polilinha da rota (sentido certo) + tarifa oficial ANTT/ARTESP da praça mais próxima; OSM charge como reserva',
       },
     };
