@@ -177,7 +177,7 @@ async function tilesetKey(): Promise<string | null> {
 async function walkOk(lines: Coord[][]): Promise<boolean | null> {
   const body = {
     locations: [{ lat: -23.5505, lon: -46.634 }, { lat: -23.5614, lon: -46.6559 }],
-    costing: 'auto',
+    costing: 'truck',
     directions_type: 'none',
     linear_cost_factors: lines.map((c) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: c }, properties: { factor: 1 } })),
   };

@@ -921,7 +921,7 @@ def conferencia(lines_coords: list, kml_grid) -> float | None:
 def _walk_ok(lines: list[list]) -> bool | None:
     body = {
         'locations': [{'lat': -23.5505, 'lon': -46.6340}, {'lat': -23.5614, 'lon': -46.6559}],  # Sé → Paulista (qualquer par serve)
-        'costing': 'auto', 'directions_type': 'none',
+        'costing': 'truck', 'directions_type': 'none',
         'linear_cost_factors': [{'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': c}, 'properties': {'factor': 1.0}}
                                 for c in lines],
     }
