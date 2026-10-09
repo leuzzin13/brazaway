@@ -363,6 +363,11 @@ def fetch():
     return feats
 
 
+def _unico(p: dict) -> bool:
+    """Via de mão única segundo a CET (tx_sentido_via_cet = 'ÚNICO')."""
+    return (p.get('sentido_via') or '').upper().startswith(('ÚNICO', 'UNICO'))
+
+
 def _attach_osm(feats: list[dict], tileset: int) -> None:
     """props.osm = {tileset, lines: [{dir: 'fwd'|'rev', coords}]} para as faixas que podem virar linear_cost_factors."""
     t0 = time.time()
@@ -378,11 +383,14 @@ def _attach_osm(feats: list[dict], tileset: int) -> None:
             cc = coords if d == 'fwd' else list(reversed(coords))
             todo.append((f, d, cc))
     matched = []
+    # sentidos que casaram no /trace_route (antes da validação do edge walk), por feição: decidem o sentido de
+    # uma via de mão única; uma falha técnica do edge walk só tira a penalidade opcional, não as janelas
+    matched_dirs: dict[int, set[str]] = {}
     swapped = 0
     for i, (f, d, cc) in enumerate(todo):
         legs = match_line(cc)
         p = f['props']
-        unico = (p.get('sentido_via') or '').startswith(('ÚNICO', 'UNICO'))
+        unico = _unico(p)
         if not legs and unico and not (p['dirs']['fwd'] and p['dirs']['rev']):
             # faixa de sentido único cujo sentido inferido não casou: se o oposto casa, a via é mão única
             # no outro sentido e a faixa acompanha o tráfego → corrige o sentido pela malha
@@ -394,6 +402,7 @@ def _attach_osm(feats: list[dict], tileset: int) -> None:
                 d = other
                 swapped += 1
         if legs:
+            matched_dirs.setdefault(id(f), set()).add(d)
             for leg in legs:
                 matched.append((f, d, leg))
         if i and i % 500 == 0:
@@ -408,15 +417,20 @@ def _attach_osm(feats: list[dict], tileset: int) -> None:
         n_ok += 1
         osm = f['props'].setdefault('osm', {'tileset': tileset, 'lines': []})
         osm['lines'].append({'dir': d, 'coords': leg})
-    # sentido incerto numa via de mão única: só o sentido que casou fica com janelas
+    # sentido incerto numa via de MÃO ÚNICA, com os dois sentidos tentados: se só um casou com a malha no
+    # /trace_route, a faixa acompanha o tráfego nesse sentido e só ele fica com janelas. Em via de mão dupla
+    # (DUPLO) nada muda: lá a faixa pode existir nos dois sentidos.
+    fixed = 0
     for f in feats:
         p = f['props']
-        if p.get('sentido_incerto') and p.get('osm'):
-            dirs_ok = {l['dir'] for l in p['osm']['lines']}
-            if len(dirs_ok) == 1:
-                only = dirs_ok.pop()
-                other = 'rev' if only == 'fwd' else 'fwd'
-                p['dirs'][other] = []
-                p['sentido_incerto'] = False
-                p['sentido_pela_malha'] = True
+        md = matched_dirs.get(id(f), set())
+        if p.get('sentido_incerto') and _unico(p) and p['dirs']['fwd'] and p['dirs']['rev'] and len(md) == 1:
+            only = next(iter(md))
+            other = 'rev' if only == 'fwd' else 'fwd'
+            p['dirs'][other] = []
+            p['sentido_incerto'] = False
+            p['sentido_pela_malha'] = True
+            fixed += 1
+    if fixed:
+        print(f'      {fixed} faixa(s) de mão única com sentido incerto resolvido pela malha')
     print(f'    casamento com a malha: {len(todo)} sentidos → {len(matched)} traçados, {n_ok} válidos no edge walk ({time.time() - t0:.0f}s)')
