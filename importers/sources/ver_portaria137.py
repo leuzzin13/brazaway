@@ -17,13 +17,15 @@ descritos na portaria ("entre X e Y", "sentido A-B", "toda extensão"):
      - `corredor`: pistas paralelas (todas as denominações) entre dois pontos, filtradas por sentido de circulação e
        por pista (local/central/expressa) — usado nas marginais;
      - `dir`: mantém só as cadeias cujo rumo bate com o sentido proibido (ex.: ponte "sentido Norte-Sul");
-  4. monta cadeias DIRIGIDAS (no sentido de circulação proibido). É isso que vai para o Valhalla: linear_cost_factors
+  4. monta cadeias DIRIGIDAS (no sentido de circulação proibido; quebra em bifurcação/junção e depois emenda pela
+     continuação mais reta, para ter menos linhas). É isso que vai para o Valhalla: linear_cost_factors
      faz "edge walk" orientado (linha no sentido contrário não penaliza nada; linha que não casa com o grafo derruba a
      requisição inteira com erro 233 — por isso cada cadeia é testada no Valhalla aqui e de novo na API);
   5. compara com os My Maps da CET (KML) só como conferência (% da extensão casada a até 40 m de uma linha da CET).
 Precisa do binário `osmium` (osmium-tool) só quando o cache OPL não existe ou está mais velho que o PBF. Na imagem:
-  docker compose --profile import run --rm -v $PWD/data/valhalla:/pbf --entrypoint sh importer -c \
-     "apt-get update -qq && apt-get install -y -qq osmium-tool && OSM_PBF=/pbf/sudeste-latest.osm.pbf python run.py ver_portaria137"
+  docker compose --profile import run --rm --entrypoint sh importer -c \
+     "apt-get update -qq && apt-get install -y -qq osmium-tool && python run.py ver_portaria137"
+(o PBF dos tiles fica em data/valhalla/, montado em /data/valhalla no container).
 Variáveis: OSM_PBF (default DATA_DIR/valhalla/sudeste-latest.osm.pbf), VALHALLA_URL (default http://valhalla:8002;
 VALHALLA_URL=off pula a checagem), VER_DEBUG=1 imprime o casamento por inciso.
 
