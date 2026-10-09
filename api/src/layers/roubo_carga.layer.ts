@@ -136,7 +136,7 @@ const layer: RouteLayer = {
     sources: [
       {
         name: 'SSP-SP — microdados de BO (SPDadosCriminais)',
-        url: 'https://www.ssp.sp.gov.br/estatistica/consultas',
+        url: 'https://www.ssp.sp.gov.br/estatistica/spdados',
         license: 'Dados abertos SSP-SP (sem licença explícita; Decreto SP 68.769/2024 — livre utilização)',
       },
     ],
