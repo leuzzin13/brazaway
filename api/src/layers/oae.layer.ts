@@ -325,7 +325,7 @@ const layer: RouteLayer = {
             severity: !liberada && aplica ? 'warn' : 'info',
             code: 'oae_restricao_historica',
             message: liberada
-              ? `${r.name}: teve restrição em ${quando} (${rest.aplica_a ?? rest.tipo}), já liberada${lib ? ` (fonte oficial de ${lib})` : ''}. Confira a sinalização.`
+              ? `${r.name}: teve restrição em ${quando} (${rest.aplica_a ?? rest.tipo}), já liberada${lib ? ` (${/^oficial/i.test(rest.liberacao_fonte ?? '') ? 'fonte oficial' : 'notícia'} de ${lib})` : ''}. Confira a sinalização.`
               : `${r.name}: teve restrição em ${quando} (${rest.aplica_a ?? rest.tipo}) e não achamos ato oficial de liberação. Confira a placa no local.`,
           });
         }
@@ -341,7 +341,7 @@ const layer: RouteLayer = {
       const [lon, lat] = rowPoint(min.row);
       warnings.push({
         layer: 'oae', id: min.row.id, lat, lon, _f: min.fraction, severity: 'info', code: 'oae_altura_ok',
-        message: `A rota passa sob ${alturaOk.length} passarela(s) com altura publicada (menor ${fmtM(min.h)} m, ${where}). Seu veículo (${fmtM(v.height_m)} m) passa com folga.`,
+        message: `A rota passa sob ${alturaOk.length} ${alturaOk.every((a) => a.row.kind === 'passarela') ? 'passarela(s)' : 'estrutura(s)'} com altura publicada (menor ${fmtM(min.h)} m, ${where}). Seu veículo (${fmtM(v.height_m)} m) passa com folga.`,
       });
     }
     if (siurb.length) {
