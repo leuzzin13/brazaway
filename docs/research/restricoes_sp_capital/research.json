@@ -1,0 +1,651 @@
+{
+ "category": "restricoes_sp_capital",
+ "summary": "Levantei o regime legal vigente das restrições a caminhões na capital paulista e testei as fontes de dados uma a uma: GeoSampa WFS, sites da CET, catálogo de legislação, OSM local, CKAN, Querido Diário e Overpass. Em geometria oficial e aberta (GeoSampa, CC-BY-SA 4.0) só existem as zonas ZMRC, Mini-Anel e ZMRF, além de camadas de apoio: classificação viária CET, faixas e corredores de ônibus, Zona Azul com vagas de caminhão, vagas especiais, obras de arte, feiras e zoneamento ZER. As VER (Vias Estruturais Restritas) não estão no GeoSampa. Elas existem como texto legal (Portaria 137/18: 79 trechos com horários) e como KML de 3 Google My Maps da CET, que estão incompletos frente à portaria. ZERC e as vias com placa R-9 local não têm nenhum dado publicado. O OSM praticamente não traz essas regras: só 6 vias com hgv:conditional no município. Achados que mudam o produto: (1) desde a Portaria 57/2021 o VUC pode ter até 2,50 m de largura (antes 2,20 m), com comprimento de 7,20 m e no máximo 15 anos de fabricação; o preset atual usa 2,2 x 6,3 m. (2) No rodízio, caminhão é restrito dentro do Mini-Anel mas pode circular nas vias-limite, e o VUC cadastrado é isento; a regra do seed hoje não isenta o VUC. (3) As VER §1 proíbem até o VUC; as do §4 (Marginal Tietê e zona leste) têm outra janela, 05–09h e 17–21h. (4) Produtos perigosos seguem a Portaria 051/2024: proibidos 7–10h e 17–20h no Mini-Anel e na área interna. (5) A Portaria 49/2021, já publicada, proibirá a Marginal Tietê para caminhões sem origem ou destino em SP assim que o Rodoanel Norte for concluído; o trecho final estava em 68% em junho de 2026. (6) A CET publica a tabela de suspensões do rodízio e da ZMRC; nas suspensões extraordinárias a regra quase sempre continua valendo para pesados. (7) Zona Azul Caminhão: 2.806 vagas em 775 trechos, com 1 CAD valendo 30 min. (8) Na OD de Cargas da CET, utilitários (até 3,5 t, que não são caminhão pelo CTB) fazem 34,6% dos movimentos e VUC 23,6%. Falharam: Overpass (504), CKAN da prefeitura (bloqueio anti-bot, não contornado) e Querido Diário (503). Todas as amostras e o NOTES.md estão na pasta do tema.",
+ "key_facts": [
+  {
+   "fact": "ZMRC: caminhão proibido 2ª–6ª 05–21h e sáb 10–14h, exceto feriados; circular nos horários de restrição exige AETC (cadastro no SUAE, válida até 2 anos). Fora do horário não precisa de cadastro.",
+   "source_url": "https://www.cetsp.com.br/consultas/caminhoes/locais-com-restricao-ao-caminhao/zona-de-maxima-restricao-de-circulacao-zmrc.aspx"
+  },
+  {
+   "fact": "A Portaria 137/18-SMT.GAB lista 79 trechos de VER: §1º com 26 (centro, 05–21h, VUC proibido), §2º com 4 (Marginal Pinheiros Jaguaré–Morumbi, Bandeirantes, Taunay, Roberto Marinho, 05–21h), §3º com 9 (Morumbi, 05–21h) e §4º com 40 (Marginal Tietê por pista e sentido, Av. do Estado, Salim Farah Maluf etc.: 05–09h e 17–21h). Sábado 10–14h em todas.",
+   "source_url": "https://www.cetsp.com.br/media/722444/p-137_18.pdf"
+  },
+  {
+   "fact": "O VUC é proibido nas VER do §1º mesmo com AETC; na ZMRC, na ZERC e nas VER §2º–§4º circula o dia todo com AETC e vistoria (CVC).",
+   "source_url": "https://www.cetsp.com.br/consultas/caminhoes/resumo-das-restricoes.aspx"
+  },
+  {
+   "fact": "Definição de VUC vigente: largura até 2,50 m (Portaria SMT 57/2021 alterou de 2,20 m), comprimento até 7,20 m, fabricação a partir de 2005 e idade máxima de 15 anos. O site da CET e vários blogs ainda citam 2,20 m.",
+   "source_url": "https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-57-de-10-de-dezembro-de-2021"
+  },
+  {
+   "fact": "A Portaria SMT 49/2021 cria a VER §5º: Marginal Tietê (todas as pistas, os dois sentidos) proibida a caminhões, salvo carga com origem ou destino no município (art. 38-A). Revoga os incisos I–IV do §4º. Entra em vigor quando o trecho norte do Rodoanel estiver concluído e liberado.",
+   "source_url": "https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-49-de-8-de-outubro-de-2021"
+  },
+  {
+   "fact": "O trecho final do Rodoanel Norte estava com 68% das obras em 28/06/2026, com entrega prevista para o 2º semestre de 2026. A Portaria 49/2021 está portanto pendente e próxima de valer.",
+   "source_url": "https://mobilidadesampa.com.br/2026/06/rodoanel-norte-avanco-trecho-final-2026/"
+  },
+  {
+   "fact": "Rodízio (Decreto 58.584/18): inclui caminhões, 2ª–6ª 7–10h e 17–20h por final de placa, na área do Mini-Anel 'inclusive seus limites'. Porém o art. 2º §2º libera caminhões nas vias do Mini-Anel. Ficam isentos VUC, perecíveis, elétricos/híbridos/hidrogênio, Correios, transporte de valores e outros.",
+   "source_url": "https://www.cetsp.com.br/media/800356/decreto_58584_18.pdf"
+  },
+  {
+   "fact": "A CET confirma: nas vias limítrofes do rodízio caminhões estão liberados; dentro da área não circulam carros nem caminhões no horário. VUC só fica isento do rodízio se estiver cadastrado.",
+   "source_url": "https://www.cetsp.com.br/consultas/rodizio-municipal/como-funciona.aspx"
+  },
+  {
+   "fact": "Produtos perigosos (Portaria SMT.GAB 051/2024): proibidos 2ª–6ª 7–10h e 17–20h no Mini-Anel (13 vias do Anexo IV) e na área interna. Os grupos 'consumo local' (GLP fracionado, gases medicinais, diesel, gasolina etc.) e 'outros' podem circular o dia todo na área interna, mas não nas vias do Mini-Anel. A Portaria 100/2016-DSV foi revogada.",
+   "source_url": "https://www.cetsp.com.br/media/1592296/portaria-051-24.pdf"
+  },
+  {
+   "fact": "Na ZMRC e na ZERC, perigosos só com até 2 eixos traseiros, das 10 às 16h, com AETC e LETPP; caminhão-trator não é autorizado. Nas VER, proibidos (Portaria 137/18, art. 35).",
+   "source_url": "https://www.cetsp.com.br/media/722444/p-137_18.pdf"
+  },
+  {
+   "fact": "ZERC é definida como área ou via em Zona Exclusivamente Residencial sinalizada com R-9 'ZONA ESPECIAL DE RESTRIÇÃO', em período integral. Não há lista nem geometria publicada.",
+   "source_url": "https://www.cetsp.com.br/consultas/caminhoes/locais-com-restricao-ao-caminhao/zona-especial-de-restricao-de-circulacao-zerc.aspx"
+  },
+  {
+   "fact": "Multa por circular em local ou horário proibido (R-9, ZMRC, VER): R$ 130,16, infração média, 4 pontos (CTB art. 187). A fiscalização usa radares com Leitura Automática de Placas.",
+   "source_url": "https://www.cetsp.com.br/perguntas-frequentes.aspx"
+  },
+  {
+   "fact": "Pelo CTB, CAMINHÃO é o veículo de carga com PBT acima de 3.500 kg (Lei 14.440/2022). Até 3.500 kg é CAMINHONETE e não se sujeita às regras de caminhão (R-9, ZMRC, VER).",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+   "fact": "Trafegar em faixa ou via exclusiva de ônibus é infração gravíssima com remoção (CTB art. 184, III). Na faixa da direita exclusiva tolera-se acesso a imóvel e conversão à direita (art. 184, I).",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+   "fact": "Zona Azul Caminhão: 1 CAD = 30 min e 2 CADs = 1 h, válida para caminhão, caminhonete e veículo misto. Carga e descarga em Zona Azul é permitida com CAD ativo.",
+   "source_url": "https://www.cetsp.com.br/consultas/zona-azul/tudo-sobre-zona-azul-digital.aspx"
+  },
+  {
+   "fact": "GeoSampa zona_azul tem 4.595 trechos, dos quais 775 com vagas de caminhão (2.806 vagas no total), com horários por dia (dt_carga 2026-10-03). vaga_especial tem 816 pontos de caminhão (2.521 vagas).",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs"
+  },
+  {
+   "fact": "Dados do GeoSampa são licenciados CC-BY-SA 4.0: uso comercial permitido, com atribuição e share-alike na republicação.",
+   "source_url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa"
+  },
+  {
+   "fact": "Leis, decretos e demais atos oficiais não têm proteção de direito autoral (Lei 9.610/98, art. 8º, IV). Podemos digitalizar as VER a partir do texto da portaria.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9610.htm"
+  },
+  {
+   "fact": "Nas suspensões extraordinárias do rodízio (greves de trem, vésperas de feriado, jogos), a CET suspende para carros mas MANTÉM a regra para pesados e para a ZMRC (9 de 15 eventos em 2026). Nos feriados ficam suspensos rodízio, ZMRC e ZMRF.",
+   "source_url": "https://webforms.cetsp.com.br/suspensaorodizio/Relatorio?year=2026"
+  },
+  {
+   "fact": "Pesquisa OD de Cargas da CET (12.424 movimentos): Utilitário 34,6%, VUC 23,6%, Truck 10,2%, Moto 10,0%, Toco 8,9%, Carreta 5,1%, Bitrem 0,2%.",
+   "source_url": "https://www.cetsp.com.br/media/565389/base-od-cargas-08022017-1-.csv"
+  },
+  {
+   "fact": "No OSM do município (PBF local), só 6 vias têm hgv:conditional e 346 têm hgv=no, contra 285.230 vias. As restrições de horário (ZMRC/VER/ZERC) estão praticamente ausentes.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html"
+  },
+  {
+   "fact": "O Valhalla (master/valhalla-scripted:latest) interpreta hgv:conditional e motor_vehicle:conditional como restrições temporais (kTimedDenied/kTimedAllowed), aplicadas quando a requisição traz date_time.",
+   "source_url": "https://raw.githubusercontent.com/valhalla/valhalla/master/src/mjolnir/pbfgraphparser.cc"
+  },
+  {
+   "fact": "Em vias com R-9 'EXCETO veículos autorizados 2ª–6ª 5–9h e 17–22h, sáb 10–14h' valem as exceções da Portaria 024/12 (VUC liberado o dia todo). Essas vias não constam de nenhum dataset.",
+   "source_url": "https://ssl.cetsp.com.br/media/119100/portaria02412.pdf"
+  },
+  {
+   "fact": "AET municipal para excesso de dimensões ou peso: Portaria SMT.GAB 052/2024. Referências CONTRAN: altura 4,40 m; largura 2,60 m; comprimento 14,00 m (simples), 19,30 m (articulado) e 19,80 m (com reboque); PBT 45 t.",
+   "source_url": "https://www.cetsp.com.br/consultas/caminhoes/cargas-indivisiveis-e-superdimensionadas.aspx"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Portaria 137/18-SMT.GAB (texto consolidado + alterações)",
+   "publisher": "Prefeitura de SP / SMT (catálogo de legislação municipal)",
+   "url": "https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transportes-smt-137-de-3-de-agosto-de-2018",
+   "access": "scrape",
+   "format": "HTML + PDF (anexos)",
+   "license": "Ato oficial, sem proteção autoral (Lei 9.610/98 art. 8º IV); uso comercial livre",
+   "tested": true,
+   "test_result": "HTTP 200, 74 KB. Texto consolidado com a lista de alterações (Port. 154/2018, 49/2021, 57/2021) e anexos I–VI. PDF da CET (https://www.cetsp.com.br/media/722444/p-137_18.pdf): 200, 828 KB, 20 páginas, convertido em texto.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Fonte oficial das regras: alimentar a tabela legal_rules (horários, exceções por tipo de serviço/veículo) e a lista de 79 trechos de VER, que serão casados com ways do OSM.",
+   "caveats": "Partes da portaria ficaram revogadas ou suspensas (art. 36, §4º do art. 33). Conferir a página 'Alterações' todo mês.",
+   "geo_coverage": "Município de São Paulo",
+   "record_count": "79 trechos de VER; 57 limites da ZMRC (Anexo II)",
+   "relevant_fields": "Art. 1º–4º (zonas e horários), arts. 18–38 (exceções), Anexo II (limites ZMRC), Anexo VI (resumo)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/cet/p-137_18.txt",
+   "updated": "Última alteração listada: Portaria 57/2021"
+  },
+  {
+   "name": "Portaria SMT.GAB 49/2021 (Marginal Tietê pós-Rodoanel Norte)",
+   "publisher": "Prefeitura de SP / SMT",
+   "url": "https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-49-de-8-de-outubro-de-2021",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial (domínio público de fato)",
+   "tested": true,
+   "test_result": "HTTP 200, 23 KB. Texto integral lido: cria a VER §5º e o art. 38-A; vigência condicionada à liberação do Rodoanel Norte.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Deixar a regra pronta atrás de feature flag (Marginal Tietê proibida para caminhão sem origem/destino em SP) e ativar quando o Rodoanel Norte for liberado. Perguntar no app se a carga tem origem/destino no município.",
+   "caveats": "Ainda não vigente em 09/10/2026 (trecho final do Rodoanel em obras). O texto do parágrafo único do 38-A é ambíguo: confirmar com a CET.",
+   "geo_coverage": "Marginal Tietê (SP)"
+  },
+  {
+   "name": "Portaria SMT.GAB 57/2021 (largura do VUC 2,50 m)",
+   "publisher": "Prefeitura de SP / SMT",
+   "url": "https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-57-de-10-de-dezembro-de-2021",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 22 KB; altera o art. 18 §1º I para largura máxima de 2,50 m.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Atualizar a validação do preset VUC: largura ≤ 2,50 m, comprimento ≤ 7,20 m, ano ≥ 2005, idade ≤ 15 anos, mais a flag 'possui AETC'."
+  },
+  {
+   "name": "Decreto 56.920/2016 (conceitos ZMRC/ZERC/VER/AETC/VUC)",
+   "publisher": "Câmara Municipal de SP (texto do DOC)",
+   "url": "https://www.saopaulo.sp.leg.br/iah/txt/decretos/D56920.html",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 13,8 KB. Define os conceitos sem medidas para o VUC (delegadas à SMT); cria o Programa de Entrega Noturna.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Glossário e base legal exibidos no app."
+  },
+  {
+   "name": "Decreto 58.584/2018 (rodízio, inclusive caminhões) + Dec. 58.604/2019",
+   "publisher": "Prefeitura de SP (PDF hospedado pela CET)",
+   "url": "https://www.cetsp.com.br/media/800356/decreto_58584_18.pdf",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 290 KB. Texto extraído: janelas, dígitos, vias do Minianel, §2º (caminhões nas vias-limite) e lista de isenções.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Corrigir a regra do Mini-Anel no seed: incluir isenção para VUC cadastrado, perecíveis, elétricos/híbridos etc., e manter as vias-limite liberadas para caminhão (o recuo de 15 m já faz isso).",
+   "geo_coverage": "Centro expandido (Minianel)"
+  },
+  {
+   "name": "Portaria SMT.GAB 051/2024 (produtos perigosos)",
+   "publisher": "Prefeitura de SP / SMT (PDF CET)",
+   "url": "https://www.cetsp.com.br/media/1592296/portaria-051-24.pdf",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 233 KB, 5 páginas. Anexos I–IV extraídos: grupos por número ONU e as 13 vias do Minianel.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Trocar o booleano 'hazmat' por grupo ONU / categoria (alta periculosidade, alta frequência, consumo local, outros). Regras de horário no Minianel e na área interna, combinadas com o art. 35 da Portaria 137/18 (ZMRC/ZERC 10–16h, ≤ 2 eixos traseiros). Avisar sobre LETPP/CTPP.",
+   "caveats": "A combinação com a Portaria 137/18 dentro da ZMRC precisa de confirmação jurídica."
+  },
+  {
+   "name": "Portaria 024/12-SMT.GAB (exceções em R-9 'exceto autorizados')",
+   "publisher": "SMT (PDF CET)",
+   "url": "https://ssl.cetsp.com.br/media/119100/portaria02412.pdf",
+   "access": "pdf",
+   "format": "PDF",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 126 KB; texto extraído.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Regra genérica aplicada a vias marcadas por reporte colaborativo como 'R-9 exceto autorizados'. Não há geometria oficial."
+  },
+  {
+   "name": "CET – páginas de restrições a caminhões (resumo, ZMRC, VER §1–4, ZERC, rodízio, perigosos, Zona Azul, fretamento, FAQ)",
+   "publisher": "CET-SP",
+   "url": "https://www.cetsp.com.br/consultas/caminhoes/resumo-das-restricoes.aspx",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Sem licença explícita (Copyright CET); o conteúdo normativo é ato oficial",
+   "tested": true,
+   "test_result": "Mais de 25 páginas baixadas, todas HTTP 200 (26–164 KB). Texto salvo em cet/*.txt. O resumo das exceções por tipo de serviço ou carga, para cada zona ou VER, foi extraído.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Fonte para modelar as exceções por tipo de serviço (perecíveis 5–12h, concretagem 5–16h, mudanças etc.) em legal_rules.exceptions e para textos de ajuda.",
+   "caveats": "Partes desatualizadas: títulos ainda citam a Port. 31/16, o VUC aparece com 2,20 m e as VER do §4 não mencionam a Port. 49/2021."
+  },
+  {
+   "name": "CET Google My Maps – VER (Caminhão 1, 2, 3) – export KML",
+   "publisher": "CET-SP (Google My Maps)",
+   "url": "https://www.google.com/maps/d/kml?mid=z9TqTcegPvdk.kotJ30qs8z8A&forcekml=1",
+   "access": "bulk_download",
+   "format": "KML",
+   "license": "Sem licença explícita; usar só como referência e conferência",
+   "tested": true,
+   "test_result": "3 KML, HTTP 200 (75 KB, 63 KB, 92 KB). Caminhão 1 (VER §1): 25 linhas, 104,7 km. Caminhão 3 (§2/§3): 13 linhas, 69,2 km. Caminhão 2 (§4): 30 linhas, 154,4 km. Também há polígonos da ZMRC e do Mini-Anel. Convertido em GeoJSON (166 feições, junto com a ZMRF).",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Gabarito para digitalizar as VER sobre o OSM. Gerar hgv:conditional num PBF derivado ou montar uma tabela própria de segmentos; comparar com a lista da portaria.",
+   "caveats": "Incompleto frente à Portaria 137/18: faltam Vd. 9 de Julho, Vd. Jacareí, R. Maria Paula, Melo Freire, Conde de Frontin, Gen. Edgar Facó, Juntas Provisórias, Bresser, Taquari, Gazeta do Ipiranga, Vd. Grande SP, Pte. Tatuapé, São Miguel/Mal. Tito etc. Contém um rótulo estranho ('Rio Branco/Rudge Ramos'). Linhas separadas por sentido.",
+   "geo_coverage": "Município de SP",
+   "record_count": "68 linhas de VER + polígonos ZMRC/Mini-Anel",
+   "relevant_fields": "name (via, trecho, sentido), description (horário, VUC proibido)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/mymaps/cet_mymaps_ver_zmrf.geojson"
+  },
+  {
+   "name": "CET Google My Maps – ZMRF (fretamento) KML",
+   "publisher": "CET-SP",
+   "url": "https://www.google.com/maps/d/kml?mid=1yu7xtaE67exPcbYBXxzMsUi1L28&forcekml=1",
+   "access": "bulk_download",
+   "format": "KML",
+   "license": "Sem licença explícita",
+   "tested": true,
+   "test_result": "HTTP 200, 150 KB: 1 polígono ZMRF, 25 'Vias Restritas' (77,9 km) e 30 vias com circulação permitida (60,3 km), referentes à Portaria 72/16-SMT.GAB.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só se o app atender ônibus fretados: restrição 2ª–6ª 5–21h."
+  },
+  {
+   "name": "CET shapefile do Mini-Anel (rodízio)",
+   "publisher": "CET-SP",
+   "url": "https://webforms.cetsp.com.br/mapabasico/export/shapesMiniAnel.zip",
+   "access": "bulk_download",
+   "format": "Shapefile (zip)",
+   "license": "Sem licença explícita",
+   "tested": true,
+   "test_result": "HTTP 200, 13 KB, 1 polígono 'MIAN' (arquivo de fev/2019). Variantes shapesZMRC/VER/ZMRF/Caminhao.zip testadas: 404.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Conferência do polígono do GeoSampa já integrado."
+  },
+  {
+   "name": "CET Classificação Viária (classvias.gpkg + listagens XLSX)",
+   "publisher": "CET-SP",
+   "url": "https://www.cetsp.com.br/media/1673515/classvias.zip",
+   "access": "bulk_download",
+   "format": "GeoPackage (zip) + XLSX",
+   "license": "Sem licença explícita (a classificação em si é ato oficial: Portaria DSV.G 18/19)",
+   "tested": true,
+   "test_result": "HTTP 200, 29,9 MB, gpkg de 61 MB (nov/2025, EPSG:4326, 210.740 feições). Por classe: LOCAL 133.264 (12.900 km), COLETORA 50.471 (4.179 km), ARTERIAL 21.767 (2.183 km), VTR 429 (175 km), RODOVIA 653 (340 km), VIA DE PEDESTRES 4.151.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Casar com ways do OSM por geometria e nome para: preferir vias arteriais/VTR no costing de caminhão (custom speeds ou penalidade em vias locais), detectar 'vias de pedestres' e alimentar a heurística de ZERC (vias locais em ZER).",
+   "geo_coverage": "Município de SP",
+   "record_count": "210.740",
+   "relevant_fields": "Lg_codlog, Classifica, Lg_nome, numeração, EXT",
+   "updated": "Listagem vigente a partir de 15/12/2025"
+  },
+  {
+   "name": "CET – histórico de suspensões do rodízio/ZMRC/ZMRF",
+   "publisher": "CET-SP",
+   "url": "https://webforms.cetsp.com.br/suspensaorodizio/Relatorio?year=2026",
+   "access": "scrape",
+   "format": "HTML (tabela)",
+   "license": "Sem licença explícita (informação de ato oficial)",
+   "tested": true,
+   "test_result": "HTTP 200, cerca de 21 KB por ano; parâmetro year funciona (1997–2026). 2024: 13 eventos, 2025: 12, 2026: 15. CSV gerado com 40 linhas.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Scraper diário para uma tabela rule_suspensions (data, período, escopo: passeio, pesados, ZMRC, ZMRF). O motor de regras consulta essa tabela junto com o calendário de feriados.",
+   "caveats": "Texto livre: é preciso classificar 'MANTIDO para veículos pesados' versus suspensão total.",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/cet/rodizio_suspensoes.csv"
+  },
+  {
+   "name": "CET Pesquisa Origem-Destino de Cargas (2015–16)",
+   "publisher": "CET-SP / ANTP / BIRD",
+   "url": "https://www.cetsp.com.br/media/565389/base-od-cargas-08022017-1-.csv",
+   "access": "bulk_download",
+   "format": "CSV (latin1, ;) + dicionário + zoneamento (zip/rar)",
+   "license": "Sem licença formal; a CET declara que o resultado 'será de domínio público'",
+   "tested": true,
+   "test_result": "HTTP 200, 6,1 MB, 12.424 movimentos de 3.001 empresas. Dicionário (17,7 KB) e zoneamento de 49 zonas (zip 388 KB) baixados.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Não entra no roteamento. Serve para priorizar presets (utilitário e VUC são 58% dos movimentos), faixas horárias de entrega e mercado-alvo.",
+   "record_count": "12.424",
+   "relevant_fields": "TIPO_VEIC_MOV, FAIXA_HORARIA_MOV, CATEGORIA_PRODUTO_MOV, zonas OD"
+  },
+  {
+   "name": "CET Fiscalização eletrônica (locais de radar/LAP)",
+   "publisher": "CET-SP",
+   "url": "https://www.cetsp.com.br/consultas/fiscalizacao-eletronica-do-transito.aspx",
+   "access": "other",
+   "format": "Painel Power BI público",
+   "license": "Sem licença",
+   "tested": false,
+   "test_result": "A página (HTTP 200) só leva a um painel Power BI. Não é dataset e não foi extraído (scraping de Power BI é frágil).",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Futuro: alertas de 'radar LAP com fiscalização de caminhão' se a CET publicar a lista. Pedir via LAI.",
+   "caveats": "Não confirmei se o painel identifica quais equipamentos fiscalizam restrição de caminhão."
+  },
+  {
+   "name": "GeoSampa WFS – ZMRC / Mini-Anel / ZMRF",
+   "publisher": "PMSP / SMUL-GEOINFO (fonte CET)",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+   "access": "wfs",
+   "format": "GeoJSON via WFS 2.0",
+   "license": "CC-BY-SA 4.0 (comercial OK, atribuição + share-alike)",
+   "tested": true,
+   "test_result": "1 polígono por camada. Áreas: ZMRC 100,2 km², Mini-Anel 150,6 km², ZMRF 74,7 km². Todos com dt_carga 2018-02-14.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Já integrado (exclude_polygons com recuo). Faltam a exceção de rodízio para VUC e o calendário de feriados e suspensões.",
+   "geo_coverage": "Município de SP",
+   "record_count": "3",
+   "updated": "2018-02-14"
+  },
+  {
+   "name": "GeoSampa WFS – faixa_onibus (faixas exclusivas)",
+   "publisher": "PMSP / SPTrans / CET",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:faixa_onibus&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 6,15 MB, 7.378 segmentos (778,5 km): EXCLUSIVA 7.003, PREFERENCIAL 231, REVERSÍVEL 103, TEMPORÁRIA 41. Horário em texto livre, lado da via e sentido.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Não bloqueia a rota (restrição de faixa, não de via). Gera alertas 'não pare/não circule na faixa exclusiva 06–09h' e penaliza paradas de entrega nesses trechos; exige parser do campo de horário.",
+   "record_count": "7.378",
+   "relevant_fields": "tx_horario_funcionamento, nm_tipo_faixa_corredor, tx_localizacao, tx_sentido_faixa_corredor",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/full/faixa_onibus.geojson",
+   "updated": "Manual, por ordem de serviço (metadado de 2021)"
+  },
+  {
+   "name": "GeoSampa WFS – corredor_onibus",
+   "publisher": "PMSP / SPTrans",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:corredor_onibus&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 97 KB, 45 corredores: 40 em operação (494,9 km), 2 em implantação, 3 futuros. Inclui municípios da RMSP.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Conferir no OSM se os corredores estão como highway=busway (1.035 ways). O costing truck do Valhalla já evita busway.",
+   "updated": "2025-10-02"
+  },
+  {
+   "name": "GeoSampa WFS – zona_azul (inclui vagas de caminhão e fretamento)",
+   "publisher": "PMSP / CET",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:zona_azul&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 3,1 MB, 4.595 trechos. 775 têm vagas de caminhão (2.806 vagas) e 23 têm vagas de fretamento (149). Horários seg–sex, sábado, domingo e feriado. 56.357 vagas de auto.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importar como POIs/trechos 'onde parar para carga e descarga' com horário de operação e regra CAD (30 min por cartão). Sugerir o trecho mais próximo do destino no fim da rota.",
+   "geo_coverage": "Município de SP",
+   "record_count": "4.595",
+   "relevant_fields": "nm_local, tx_lado, qt_vaga_caminhao, qt_vaga_fretamento, hr_inicio/termino_* (seg-sex, sábado, domingo, feriado)",
+   "sample_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/full/zona_azul.geojson",
+   "updated": "dt_carga 2026-10-03"
+  },
+  {
+   "name": "GeoSampa WFS – vaga_especial",
+   "publisher": "PMSP / CET",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:vaga_especial&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON (pontos)",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 2,9 MB, 6.734 pontos. Tipos: CA (caminhão) 816 pontos / 2.521 vagas, todos rotativos; FR (fretado) 12/70; MO 2.451; ID 1.642; DF 1.475; PK 217 (sigla não documentada); BK 116; MF 5.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Pontos de vaga de caminhão como complemento da camada zona_azul (deduplicar por proximidade).",
+   "record_count": "6.734",
+   "updated": "2025-06-07"
+  },
+  {
+   "name": "GeoSampa WFS – classificacao_viaria_cet",
+   "publisher": "PMSP / CET",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:classificacao_viaria_cet&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "210.754 feições (hits). Limite de 30.000 por requisição, com paginação por startIndex + sortBy testada. Contagem por CQL: Local 133.098, Coletora 50.641, Arterial 21.707, Vias de pedestre 4.232, Rodovia 648, VTR 428.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Alternativa licenciada (CC-BY-SA) ao gpkg da CET para o mesmo uso: penalizar vias locais e montar a heurística de ZERC."
+  },
+  {
+   "name": "GeoSampa WFS – obra_arte (pontes, viadutos, túneis)",
+   "publisher": "PMSP / GEOINFO",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:obra_arte&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 3,8 MB, 6.548 linhas: PONTE 4.416, VIADUTO 1.129, PASSARELA 821, TÚNEL 114, CALÇADÃO 68. Sem altura nem peso; base de 2004 (5.973 feições).",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Cruzar com o OSM (maxheight/maxweight) para listar viadutos e túneis sem gabarito e priorizar pedidos de reporte colaborativo (low_clearance) e verificação em campo.",
+   "caveats": "Não traz restrição alguma; serve só de inventário."
+  },
+  {
+   "name": "GeoSampa WFS – perimetro_zona_lei_18081_24 / 18177_24 (zoneamento ZER)",
+   "publisher": "PMSP / SMUL",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:perimetro_zona_lei_18081_24&outputFormat=application/json&CQL_FILTER=cd_zoneamento_perimetro%20LIKE%20%27ZER%25%27",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "Camada com 61.692 polígonos. Filtro ZER*: 2.979 (ZER-1 2.522, ZERa 368, ZER-2 89), cerca de 39,4 km², arquivo de 6,3 MB.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Proxy de ZERC: penalidade leve ou alerta 'zona residencial exclusiva — possível placa R-9 integral' em vias locais dentro de ZER. Confirmar com reportes truck_ban.",
+   "caveats": "ZER não é ZERC: só vale onde houver placa."
+  },
+  {
+   "name": "GeoSampa WFS – equipamento_feira_livre",
+   "publisher": "PMSP / SMSUB",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:equipamento_feira_livre&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON (pontos)",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 1,2 MB, 975 feiras com dia da semana (DOM 205, SÁB 195, QUA 161, QUI 141, SEX 140, TER 133). Horário vazio em todas; o ponto é o endereço inicial.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Alerta ou penalidade temporária na via do endereço no dia da feira, pela manhã. Horário a confirmar; a extensão da rua fechada não está nos dados.",
+   "updated": "2026-06-24"
+  },
+  {
+   "name": "GeoSampa WFS – controle_uso_via_publica_geoinfra (obras)",
+   "publisher": "PMSP / SMSUB-CONVIAS",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:controle_uso_via_publica_geoinfra&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON (pontos)",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 808 KB, 1.902 pontos, todos do tipo EMERGÊNCIA (977 encerradas, 925 informadas). Snapshot de 2026-01-31, sem datas por obra.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Pouco útil para interdições ao vivo. No máximo, um mapa de calor de obras de concessionárias.",
+   "updated": "2026-01-31"
+  },
+  {
+   "name": "GeoSampa WFS – acidente_cet",
+   "publisher": "PMSP / CET",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:acidente_cet&outputFormat=application/json",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "HTTP 200, 3 MB, 5.716 acidentes de 28/02/2021 a 28/02/2022. 270 envolvem caminhão; 82 envolvem caminhão e têm vítima fatal.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Opcional: pontos críticos para caminhão (alerta de segurança). Série curta e antiga."
+  },
+  {
+   "name": "GeoSampa WFS – demais camadas de contexto (semaforo, linha/ponto/terminal de ônibus, ferrovia_mdc, via_bicicleta, alagamento, departamento/gerência CET, transpetro_duto, pde_viario_estrutural, classificacao_viaria_quadro_9, segmento_logradouro, sac_*)",
+   "publisher": "PMSP / GEOINFO / CET / SPTrans",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+   "access": "wfs",
+   "format": "GeoJSON",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "Contagens: semaforo 6.432 (2018), ponto_onibus 22.569, linha_onibus 2.316, terminal_onibus 50, ferrovia_mdc 2.400, via_bicicleta 2.135, risco_ocorrencia_alagamento 292, departamento_cet 59, gerencia_cet 36, transpetro_duto 754, pde_viario_estrutural 266, classificacao_viaria_quadro_9 189.703, segmento_logradouro 10.200, sac_vistoria_reparo_ponte_viaduto 115, sac_veiculo_local_proibido 2.005, sac_placa_transito 941. Falsos positivos do grep: restricao_mirante_santana (estação meteorológica) e restricao_geotecnica.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Contexto e alertas: alagamento como alerta de chuva, pedidos SAC de vistoria em pontes como sinal de risco. Nenhuma camada traz restrição a caminhão.",
+   "record_count": "485 FeatureTypes no GetCapabilities; 32 testados"
+  },
+  {
+   "name": "GeoSampa – licença de uso dos dados",
+   "publisher": "PMSP / SMUL",
+   "url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Define a licença CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "Lido via WebFetch (o endereço capital.sp.gov.br redireciona com 302). Licença CC-BY-SA 4.0 com reconhecimento da fonte e republicação nas mesmas condições.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Atribuição 'GeoSampa/PMSP, CC-BY-SA 4.0' no mapa. Manter derivados em tabelas próprias, fora da base OSM (ODbL)."
+  },
+  {
+   "name": "GeoSampa GeoNetwork (metadados)",
+   "publisher": "PMSP / GEOINFO",
+   "url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/srv/api/records/f95c2d1f-cfbf-4b6d-b50f-b970abd81c7d",
+   "access": "rest_api",
+   "format": "ISO 19139 XML",
+   "license": "CC-BY-SA 4.0 (dados)",
+   "tested": true,
+   "test_result": "HTTP 200, 20,8 KB (formatters/xml). Mostra fonte, data e frequência de atualização (faixas exclusivas: manual, por ordem de serviço). Não traz campo de licença.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Usar para saber a frequência de atualização de cada camada."
+  },
+  {
+   "name": "OpenStreetMap (PBF Geofabrik sudeste, local) – cobertura de tags de caminhão no município",
+   "publisher": "OSM contributors / Geofabrik",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "access": "bulk_download",
+   "format": "PBF",
+   "license": "ODbL 1.0 (uso comercial OK; share-alike na base)",
+   "tested": true,
+   "test_result": "osmium no bbox do município: 285.230 ways highway. hgv=no 346; hgv:conditional 6; hgv=destination 13; motor_vehicle:conditional 160; access:conditional 16; maxweight 23; maxheight 978; maxlength 11; hazmat 35; highway=busway 1.035; psv:lanes 1.198; parking:both 1.142.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Base do grafo. Injetar hgv:conditional das VER (derivado do texto legal) num PBF privado antes do build dos tiles; o Valhalla aplica restrições temporais com date_time.",
+   "caveats": "Não contém ZMRC, VER ou ZERC. Dados derivados que forem misturados à base OSM ficam sob ODbL."
+  },
+  {
+   "name": "Valhalla pbfgraphparser.cc (suporte a :conditional)",
+   "publisher": "Valhalla (GitHub)",
+   "url": "https://raw.githubusercontent.com/valhalla/valhalla/master/src/mjolnir/pbfgraphparser.cc",
+   "access": "other",
+   "format": "Código C++",
+   "license": "MIT",
+   "tested": true,
+   "test_result": "HTTP 200, 236 KB. Linhas ~2609–2675 tratam hgv:conditional e motor_vehicle:conditional como AccessType::kTimedDenied/kTimedAllowed. O graph.lua trata conditional 'destination/delivery'.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Confirma a viabilidade de modelar as VER como hgv:conditional, em vez de exclude_polygons, que bloqueariam também as ruas que cruzam a via."
+  },
+  {
+   "name": "CTB (Lei 9.503/97 compilada) – definições e infrações",
+   "publisher": "Planalto",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 790 KB. Extraídos: Anexo I (CAMINHÃO > 3.500 kg; CAMINHONETE ≤ 3.500 kg), art. 184 (faixas exclusivas) e art. 187 (local/horário não permitido).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Classificar o veículo pelo PBT. Restrições R-9 só para PBT > 3,5 t; o rodízio vale para todos."
+  },
+  {
+   "name": "Portal de Dados Abertos da Prefeitura de SP (CKAN API)",
+   "publisher": "PMSP / CGM",
+   "url": "http://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=caminhao",
+   "access": "rest_api",
+   "format": "JSON (CKAN)",
+   "license": "Varia por dataset (CC-BY indicado na interface)",
+   "tested": false,
+   "test_result": "FALHOU: 17 consultas devolveram página de desafio anti-bot (F5/TSPD) em vez de JSON; não contornei. Via WebFetch, a busca 'caminhão' mostrou só 1 dataset irrelevante (auditorias CGM).",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Nenhuma no momento. Se for preciso, pedir acesso ou usar navegador manualmente.",
+   "caveats": "Bloqueio de bot; não confirmei se há datasets de autuações por enquadramento (ex.: 187 I para caminhão)."
+  },
+  {
+   "name": "Overpass API (contagem de tags no município)",
+   "publisher": "overpass-api.de",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "overpass",
+   "format": "JSON",
+   "license": "ODbL",
+   "tested": false,
+   "test_result": "FALHOU: HTTP 504 (gateway timeout) numa consulta com 20 contagens por área administrativa. Substituído por osmium no PBF local.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Usar o PBF local (osmium) para métricas de cobertura."
+  },
+  {
+   "name": "Querido Diário API (diários oficiais)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=3550308",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Dados de diários oficiais (atos públicos); API aberta",
+   "tested": false,
+   "test_result": "FALHOU: o domínio antigo redireciona (302) para api.queridodiario.org.br. A 1ª chamada deu 200 com total_gazettes=0 para 'trânsito de caminhões' em SP desde 2024; as seguintes deram 503 'no available server'.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Se cobrir São Paulo, monitorar portarias SMT/DSV com 'caminhões' e 'R-9' para detectar novas restrições locais. Alternativa: o DOC SP oficial (diariooficial.prefeitura.sp.gov.br), não testado.",
+   "caveats": "Não consegui confirmar se a capital está indexada."
+  },
+  {
+   "name": "Rodoanel Norte – status de obra (gatilho da Portaria 49/2021)",
+   "publisher": "Mobilidade Sampa (imprensa)",
+   "url": "https://mobilidadesampa.com.br/2026/06/rodoanel-norte-avanco-trecho-final-2026/",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Conteúdo jornalístico (só referência)",
+   "tested": true,
+   "test_result": "Lido via WebFetch: matéria de 28/06/2026 com trecho final em 68% e entrega no 2º semestre de 2026. A matéria da Gazeta SP sobre a inauguração deu 403.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Monitorar fontes oficiais (Agência SP/ARTESP, catálogo de legislação) para ligar a regra da Marginal Tietê."
+  }
+ ],
+ "gaps": [
+  "VER (79 trechos) não têm geometria oficial aberta. Os KML da CET (Google My Maps) estão incompletos e sem licença; será preciso digitalizar sobre o OSM a partir do texto da Portaria 137/18.",
+  "ZERC e vias com placa R-9 local (integral ou 'exceto autorizados', Portaria 024/12) não têm lista nem geometria publicada; dependem de reporte colaborativo ou levantamento de campo.",
+  "Status da Portaria 49/2021 (proibição da Marginal Tietê pós-Rodoanel Norte) não confirmado em 09/10/2026: depende da liberação do trecho final, que estava em 68% em junho de 2026.",
+  "Gabarito de altura e limite de peso de viadutos e túneis: obra_arte do GeoSampa não traz atributos e o OSM tem só 978 maxheight e 23 maxweight no município.",
+  "Locais dos radares com Leitura Automática de Placas que fiscalizam caminhão: só existe painel Power BI, sem dataset.",
+  "Vagas de carga e descarga não rotativas (regulamentadas por placa fora da Zona Azul) não aparecem em nenhuma base; só há Zona Azul Caminhão e vaga_especial CA.",
+  "Feiras livres: o GeoSampa tem dia da semana mas não horário nem extensão da rua fechada.",
+  "Calendário de feriados municipais, estaduais e nacionais (que suspendem ZMRC, rodízio e ZMRF) não foi pesquisado como fonte de dados.",
+  "dados.prefeitura.sp.gov.br bloqueado por anti-bot (não contornado). Não verifiquei datasets de autuações por enquadramento de caminhão.",
+  "Querido Diário instável (503) e DOC SP oficial não testado: falta um canal automatizado para detectar novas portarias SMT/DSV.",
+  "A cota de WebSearch da sessão se esgotou. Não verifiquei regra municipal sobre estacionamento ou pernoite de caminhões em vias residenciais, nem as regras dos demais municípios da Grande SP (Guarulhos, Osasco, ABC etc.), que têm restrições próprias.",
+  "A interação entre a Portaria 051/2024 (consumo local liberado o dia todo na área interna) e a Portaria 137/18 art. 35 (perigosos na ZMRC só 10–16h com AETC) precisa de confirmação jurídica ou da CET.",
+  "Sigla 'PK' em vaga_especial não documentada; o texto do parágrafo único do art. 38-A (Portaria 49/2021) é ambíguo.",
+  "Portaria SMT.GAB 052/2024 (AET de superdimensionados): a página do catálogo foi baixada (HTTP 200), mas usei só o resumo da CET; texto integral não analisado."
+ ],
+ "recommendations": [
+  "Corrigir já o preset e a validação do VUC: largura ≤ 2,50 m (Portaria 57/2021), comprimento ≤ 7,20 m, fabricação ≥ 2005 e idade ≤ 15 anos. Separar 'é VUC' de 'tem AETC', porque a isenção na ZMRC, nas VER §2–4 e no rodízio exige cadastro.",
+  "Corrigir a regra do rodízio no seed: adicionar isenção para VUC cadastrado, perecíveis e elétricos/híbridos (Dec. 58.584/18 art. 3º) e manter as vias-limite do Mini-Anel liberadas para caminhão (art. 2º §2º; o recuo de 15 m já cobre isso).",
+  "Implementar as VER como restrição temporal por via (hgv:conditional num PBF derivado privado, ou tabela própria de edges), não como exclude_polygons, para não bloquear travessias. Três janelas: §1–3 com 05–21h e sáb 10–14h; §4 com 05–09h e 17–21h e sáb 10–14h. No §1 bloquear também o VUC.",
+  "Digitalizar as VER a partir do texto da Portaria 137/18 (domínio público pela Lei 9.610 art. 8º IV) casando com ways do OSM; usar o KML da CET só para conferir. Assim a geometria fica livre de licença e pode virar contribuição ao OSM.",
+  "Criar um motor de 'calendário legal': feriados, mais scraper diário de webforms.cetsp.com.br/suspensaorodizio/Relatorio, distinguindo suspensão total de 'mantido para pesados'.",
+  "Modelar perigosos por grupo (Portaria 051/2024, anexos I–III por número ONU) em vez de booleano, e avisar sobre LETPP/CTPP obrigatórios no município.",
+  "Deixar pronta, atrás de feature flag, a regra da Marginal Tietê da Portaria 49/2021 (proibida exceto carga com origem/destino em SP) e monitorar a liberação do Rodoanel Norte.",
+  "Adicionar um preset 'Utilitário/caminhonete até 3,5 t' (34,6% dos movimentos na OD de Cargas): não sofre R-9, ZMRC nem VER, mas sofre rodízio. É um diferencial para entregadores.",
+  "Fim de rota com carga e descarga: importar zona_azul (775 trechos com vaga de caminhão) e vaga_especial CA, mostrando horário e regra de 30 min por CAD; alertar sobre faixas exclusivas de ônibus ativas no horário de chegada.",
+  "ZERC: usar os polígonos ZER do zoneamento (~39 km²) como alerta ou penalidade leve em vias locais e pedir confirmação por reporte truck_ban; não bloquear.",
+  "Licenças: manter os dados do GeoSampa (CC-BY-SA 4.0) em tabelas separadas do OSM (ODbL), com atribuição visível. Não redistribuir camadas derivadas sem a mesma licença.",
+  "Fazer um pedido via LAI (e-SIC) à CET pela lista de equipamentos LAP que fiscalizam caminhão, pela geometria oficial das VER/ZERC e pelas vias com R-9 integral."
+ ],
+ "notes_path": "/private/tmp/claude-501/-Users-arthurleuzzi-Downloads-n8n-code-javascript/de99f64a-b388-4b25-9cc1-69bceb35b74f/scratchpad/research/restricoes_sp_capital/NOTES.md"
+}

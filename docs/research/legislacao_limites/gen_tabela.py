@@ -1,0 +1,60 @@
+import csv
+R882="https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao8822021.pdf"
+P137="https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transportes-smt-137-de-3-de-agosto-de-2018"
+CTB="https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+CLT="https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm"
+D58584="https://www.cetsp.com.br/media/800356/decreto_58584_18.pdf"
+rows=[
+("dimensao","largura maxima (geral)","2,60 m","Res. CONTRAN 882/2021 (red. Res. 994/2023)","art. 4 I b",R882,"2.6","OK"),
+("dimensao","altura maxima","4,40 m","Res. CONTRAN 882/2021","art. 4 II",R882,"4.4","OK"),
+("dimensao","comprimento veiculo nao articulado","14,00 m","Res. CONTRAN 882/2021","art. 4 III a",R882,"toco 9 / truck 12","OK"),
+("dimensao","comprimento cavalo + semirreboque","19,30 m (era 18,60 m)","Res. CONTRAN 1.005/2024 (altera 882)","art. 4 III e","https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao10052024.pdf","carreta 18.6","DESATUALIZADO"),
+("dimensao","comprimento caminhao + reboque","19,80 m","Res. CONTRAN 882/2021","art. 4 III f",R882,"-","FALTA preset Romeu e Julieta"),
+("dimensao","comprimento CVC >2 unidades sem AET","19,80 m","Res. CONTRAN 882/2021","art. 4 III g; art. 18",R882,"bitrem 25","ERRADO (bitrem 57 t sem AET: 17,5-19,8 m)"),
+("dimensao","comprimento CVC com AET","ate 30 m; se PBTC >57 t: entre 25 e 30 m","Res. CONTRAN 882/2021","art. 19 I b, c",R882,"rodotrem 30","OK, mas exige AET"),
+("dimensao","balanco traseiro nao articulado","<=60% do entre-eixos e <=3,50 m","Res. CONTRAN 882/2021","art. 4 par. 2 I",R882,"-","nao modelado"),
+("peso","PBT nao articulado","29 t","Res. CONTRAN 882/2021","art. 6 I a",R882,"-","OK"),
+("peso","eixo isolado 2 pneus","6 t; 7 t no eixo dianteiro de GNV/GNL/biometano/eletrico/hibrido/H2, +1 t no PBT/PBTC","Res. 882 (red. Res. 1.015/2024)","art. 6 II; par. 3 e 4","https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/Resolucao10152024.pdf","-","FALTA flag combustivel alternativo"),
+("peso","eixo isolado 4 pneus","10 t","Res. CONTRAN 882/2021","art. 6 III",R882,"toco 10","OK"),
+("peso","2 eixos direcionais","12 t","Res. CONTRAN 882/2021","art. 6 IV",R882,"-","OK"),
+("peso","tandem duplo (1,20-2,40 m)","17 t (8,5 t por eixo)","Res. CONTRAN 882/2021","art. 6 V",R882,"truck 8.5","OK"),
+("peso","2 eixos nao em tandem","15 t","Res. CONTRAN 882/2021","art. 6 VI",R882,"-","OK"),
+("peso","tandem triplo (semirreboque)","25,5 t","Res. CONTRAN 882/2021","art. 6 VII",R882,"-","OK"),
+("peso","PBTC cavalo+SR <16 m","45 t","Res. CONTRAN 882/2021","art. 6 I c",R882,"-","OK"),
+("peso","PBTC cavalo+SR tandem triplo >16 m","54,5 t, limitado pela soma dos eixos (5 eixos 6+10+25,5=41,5 t; 6 eixos 6+17+25,5=48,5 t)","Res. CONTRAN 882/2021","art. 6 I d; II-VII",R882,"carreta 41,5 t com 6 eixos","INCONSISTENTE (41,5 t = 5 eixos)"),
+("peso","PBTC cavalo+SR de 4 eixos (3+1) >=17,5 m","58,5 t (48,5 t sem CAT)","Res. CONTRAN 882/2021","art. 6 I f; par. 1",R882,"-","FALTA preset"),
+("peso","bitrem (>2 unidades) sem AET","57 t; max 7 eixos; 17,5-19,8 m; cavalo-trator","Res. CONTRAN 882/2021","art. 6 I j",R882,"57 t / 7 eixos / 25 m","COMPRIMENTO ERRADO"),
+("peso","CVC com AET (rodotrem, bitrenzao)","PBTC <=74 t; AET obrigatoria se >57 t ou >19,80 m; AET pode ser dispensada por trecho publicado pelo orgao","Res. CONTRAN 882/2021 (red. Res. 899/2022)","art. 18; art. 19 I a e par. 5",R882,"74 t / 9 eixos","OK, mas FALTA flag requires_aet"),
+("operacao","CVC com AET: horario","do amanhecer ao por do sol, 80 km/h; diuturno em pista dupla com separador e >=2 faixas","Res. CONTRAN 882/2021","art. 20",R882,"-","NAO MODELADO"),
+("fiscalizacao","tolerancia na balanca","5% PBT/PBTC; 12,5% por eixo; <=50 t fiscaliza so PBT/PBTC; tolerancia nao pode ser incorporada na carga","Res. CONTRAN 882/2021; CTB art. 99","art. 50 e par. 1-3",R882,"-","informativo"),
+("definicao","caminhao","PBT >3.500 kg; caminhonete <=3.500 kg nao e caminhao","CTB Anexo I (Lei 14.440/2022); Res. 882","Anexo I; art. 3 I",CTB,"-","FALTA preset utilitario <=3,5 t"),
+("SP-municipal","ZMRC horario","seg-sex 05-21h; sab 10-14h; EXCETO FERIADOS","Portaria SMT.GAB 137/2018","art. 1",P137,"seg-sex 05-21 / sab 10-14","OK, FALTA feriados"),
+("SP-municipal","VUC definicao","largura <=2,50 m; comprimento <=7,20 m; fabricado desde jan/2005; idade max 15 anos; AETC + vistoria CET","Portaria SMT 137/2018 (red. Portaria SMT 57/2021)","art. 18 par. 1-3","https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-57-de-10-de-dezembro-de-2021","6,3 x 2,2 sem AETC","ERRADO"),
+("SP-municipal","VUC onde e liberado","ZMRC, ZERC e VER par. 2-4 por periodo integral; NAO nas VER par. 1 (Paulista, Reboucas, 9 de Julho, 23 de Maio etc.)","Portaria SMT.GAB 137/2018","art. 18 caput",P137,"is_vuc libera ZMRC","INCOMPLETO"),
+("SP-municipal","VER par. 1 (26 vias)","seg-sex 05-21h; sab 10-14h; exceto feriados","Portaria SMT.GAB 137/2018","art. 2 par. 1",P137,"-","NAO MODELADO"),
+("SP-municipal","VER par. 2 (Marg. Pinheiros Jaguare-Morumbi, Bandeirantes, Taunay, Roberto Marinho)","seg-sex 05-21h; sab 10-14h; exceto feriados","Portaria SMT.GAB 137/2018","art. 2 par. 2",P137,"-","NAO MODELADO"),
+("SP-municipal","VER par. 3 (vias do Morumbi)","seg-sex 05-21h; sab 10-14h; exceto feriados","Portaria SMT.GAB 137/2018","art. 2 par. 3",P137,"-","NAO MODELADO"),
+("SP-municipal","VER par. 4 (Marg. Tiete, Av. do Estado, Salim Farah Maluf, Tancredo Neves etc.; 40 itens)","seg-sex 05-09h e 17-21h; sab 10-14h; exceto feriados","Portaria SMT.GAB 137/2018","art. 2 par. 4",P137,"-","NAO MODELADO"),
+("SP-municipal","Marginal Tiete apos Rodoanel Norte","proibicao de caminhoes sem horario (exceto carga com origem/destino no municipio; quem tem AETC segue proibido 05-21h e sab 10-14h)","Portaria SMT 49/2021","art. 1 (par. 5 do art. 2 e art. 38-A); art. 3 vigencia","https://legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transito-smt-49-de-8-de-outubro-de-2021","-","MONITORAR: vigora com a liberacao do trecho norte do Rodoanel"),
+("SP-municipal","pereciveis com AETC","ZMRC e VER par. 1-3: 05-12h e sab 10-14h; VER par. 4: 05-09h e sab 10-14h","Portaria SMT.GAB 137/2018","art. 32",P137,"-","NAO MODELADO"),
+("SP-municipal","placa R-9 'Exceto veiculos autorizados'","seg-sex 05-09h e 17-22h; sab 10-14h","Portaria SMT.GAB 024/2012","art. 1","https://www.cetsp.com.br/media/119100/portaria02412.pdf","-","NAO MODELADO"),
+("SP-municipal","rodizio horario","seg-sex EXCETO FERIADOS, 07-10h e 17-20h; inclui caminhoes","Decreto 58.584/2018","art. 1",D58584,"07-10 / 17-20","OK, FALTA feriados"),
+("SP-municipal","rodizio finais de placa","seg 1-2; ter 3-4; qua 5-6; qui 7-8; sex 9-0","Decreto 58.584/2018","art. 1 I-V",D58584,"igual","OK"),
+("SP-municipal","rodizio area","area do Minianel inclusive os limites; caminhoes podem circular nas vias do Minianel","Decreto 58.584/2018","art. 2 par. 1-2",D58584,"recuo 15 m","OK"),
+("SP-municipal","rodizio excecoes de carga","VUC (isencao automatica via cadastro AETC); pereciveis; eletrico/hibrido/hidrogenio; Correios; valores etc.","Decreto 58.584/2018; Portaria DSV.G 09/2019","art. 3 VIII l, m e IX a; art. 7","https://www.cetsp.com.br/media/808826/Portaria-DSV-G-09_19-cadastro-Rodizio.pdf","exceptions []","ERRADO (lista vazia)"),
+("SP-municipal","suspensoes","feriado suspende Rodizio+ZMRC+ZMRF; suspensoes por portaria (fim de ano, carnaval, greve, jogos) MANTEM restricao para pesados","CET historico de suspensoes","-","https://webforms.cetsp.com.br/institucional/rodizio/default.asp","-","NAO MODELADO"),
+("SP-municipal","produtos perigosos","seg-sex exceto feriados 07-10h e 17-20h nas vias do Minianel e no centro expandido; grupos consumo local/outros liberados dentro (nao nas vias do Minianel); LETPP obrigatoria","Portaria SMT.GAB 051/2024; Decreto 50.446/2009","art. 3","https://www.cetsp.com.br/media/1592296/portaria-051-24.pdf","-","NAO MODELADO"),
+("jornada","direcao continua maxima","5h30","CTB (Lei 13.103/2015)","art. 67-C caput",CTB,"5.5 h","OK (comentario cita CLT 235-C, errado)"),
+("jornada","pausa","30 min dentro de cada 6 h (carga), fracionavel sem passar de 5h30 continuas","CTB","art. 67-C par. 1",CTB,"30 min","OK"),
+("jornada","descanso diario","11 h em 24 h; apos ADI 5322 ininterruptas e com veiculo parado","CTB art. 67-C par. 3; CLT art. 235-C par. 3; STF ADI 5322","67-C par. 3",CTB,"-","FALTA"),
+("jornada","jornada diaria (empregado)","8 h + ate 2 h extras (ate 4 h com convencao/acordo); tempo de espera conta como jornada (ADI 5322)","CLT","art. 235-C caput; par. 1, 8, 9",CLT,"8 h de DIRECAO +2 h","CONCEITO ERRADO"),
+("jornada","refeicao","minimo 1 h (pode coincidir com parada obrigatoria)","CLT","art. 235-C par. 2",CLT,"-","FALTA"),
+("jornada","revezamento com 2 motoristas","descanso com veiculo em movimento invalidado","STF ADI 5322 (CLT 235-D par. 5; 235-E III)","-","https://noticias.stf.jus.br/postsnoticias/stf-invalida-dispositivos-da-lei-dos-caminhoneiros-sobre-tempo-de-espera-jornada-e-descanso/","-","informativo"),
+("jornada","excecoes","pode estender ate local seguro; sem penalidade se faltar PPD/vaga, conforme regulamentacao Contran","CTB","art. 67-C par. 2 e 8; art. 67-E par. 1-A",CTB,"-","informativo"),
+("jornada","vigencia por trecho","regras de 67-C (caput, par. 1 e 3) produzem efeito nos trechos publicados (art. 11)","Lei 13.103/2015","art. 11 e 12","https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13103.htm","-","informativo"),
+("jornada","retencao na fiscalizacao","30 min (pausa) / 11 h (descanso)","Res. CONTRAN 525/2015","art. 6 par. 1","https://www.gov.br/transportes/pt-br/assuntos/transito/conteudo-contran/resolucoes/resolucao5252015c.pdf","-","informativo"),
+("federal","PRF restricao em feriados","CVC/AET/AE >2,60 m largura, >4,40 m altura, >19,80 m ou >58,5 t proibidas em pista simples federal nas janelas do Anexo (ex.: 09/10/2026 16-22h; 10/10 06-12h; 12/10 16-22h)","Portaria DIOP/PRF 26/2026 (Anexo I alterado pela Portaria DIOP/PRF 121/2026)","art. 1 e Anexo I","https://www.gov.br/prf/pt-br/seguranca-viaria/restricao-de-trafego/restricao-de-trafego-2026","-","NAO MODELADO"),
+]
+with open('tabela_valores_oficiais.csv','w',newline='') as f:
+    w=csv.writer(f); w.writerow(["tema","parametro","valor_oficial","norma","artigo","url_fonte_primaria","valor_no_app","status"]); w.writerows(rows)
+print(len(rows))

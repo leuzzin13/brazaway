@@ -1,0 +1,31 @@
+import pandas as pd
+s = pd.read_csv('infosiga/dados_infosiga/sinistros_2025-2026.csv', sep=';', encoding='latin1', low_memory=False)
+print('linhas', len(s), 'datas', s.ano_mes_sinistro.min(), s.ano_mes_sinistro.max())
+print(s.tipo_registro.value_counts().to_string())
+print(s.regiao_administrativa.value_counts().head(20).to_string())
+print(s.tipo_via.value_counts().to_string())
+print(s.administracao.value_counts().head(15).to_string())
+for c in ['latitude','longitude']:
+    s[c] = pd.to_numeric(s[c].astype(str).str.replace(',','.'), errors='coerce')
+s['tem_coord'] = s.latitude.notna() & (s.latitude!=0)
+print('com coordenada total:', s.tem_coord.mean().round(3))
+print(s.groupby('tipo_registro').tem_coord.mean().round(3).to_string())
+rm = s[s.regiao_administrativa.str.contains('METROPOLITANA', na=False)]
+print('RMSP linhas', len(rm), 'municipios', rm.municipio.nunique())
+tr = rm[rm.qtd_caminhao.fillna(0)>0]
+print('RMSP com caminhao:', len(tr), ' por tipo_registro:'); print(tr.tipo_registro.value_counts().to_string())
+print('RMSP caminhao com coord:', tr.tem_coord.mean().round(3))
+print('RMSP caminhao fatal (qtd_gravidade_fatal>0):', (tr.qtd_gravidade_fatal.fillna(0)>0).sum(), ' obitos', tr.qtd_gravidade_fatal.fillna(0).sum())
+print('RMSP total obitos', rm.qtd_gravidade_fatal.fillna(0).sum())
+print('RMSP caminhao por tipo_via:'); print(tr.tipo_via.value_counts().to_string())
+print('RMSP caminhao por administracao:'); print(tr.administracao.value_counts().head(12).to_string())
+print('RMSP caminhao por municipio:'); print(tr.municipio.value_counts().head(15).to_string())
+print('RMSP caminhao top logradouros:'); print(tr.logradouro.value_counts().head(25).to_string())
+print('RMSP caminhao turno:'); print(tr.turno.value_counts().to_string())
+print('RMSP caminhao tp_sinistro_primario:'); print(tr.tp_sinistro_primario.value_counts().to_string())
+sp = s[s.qtd_caminhao.fillna(0)>0]
+print('ESTADO SP com caminhao:', len(sp), 'obitos', sp.qtd_gravidade_fatal.fillna(0).sum(), 'de', s.qtd_gravidade_fatal.fillna(0).sum())
+tr[tr.tem_coord].to_csv('infosiga/amostra_infosiga_rmsp_caminhao_2025_2026.csv', index=False)
+print('bbox RMSP caminhao', tr[tr.tem_coord][['latitude','longitude']].describe().loc[['min','max']].to_string())
+v = pd.read_csv('infosiga/dados_infosiga/veiculos_2025-2026.csv', sep=';', encoding='latin1', low_memory=False)
+print(v.tipo_veiculo.value_counts().to_string())

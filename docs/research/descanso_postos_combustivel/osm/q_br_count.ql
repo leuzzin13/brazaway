@@ -1,0 +1,12 @@
+[out:json][timeout:600];
+area["ISO3166-1"="BR"][admin_level=2]->.br;
+nwr["amenity"="fuel"](area.br);
+out count;
+nwr["highway"="rest_area"](area.br);
+out count;
+nwr["amenity"="parking"]["hgv"~"designated|yes"](area.br);
+out count;
+nwr["amenity"="fuel"]["fuel:HGV_diesel"="yes"](area.br);
+out count;
+nwr["amenity"="fuel"]["fuel:adblue"="yes"](area.br);
+out count;
