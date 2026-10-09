@@ -7,10 +7,14 @@ import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, reportToRing, type ReportRow } from './restrictions.js';
 import { activeZones, describeWindows, pointInZone, zoneApplies, zoneRings, type ZoneRow } from './zones.js';
+import { legalDayInfo } from './calendar.js';
 import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
+import { loadLayers } from '../layers/index.js';
+import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLine } from '../layers/types.js';
 
 export interface AvoidedItem {
-  kind: 'report' | 'zone';
+  kind: 'report' | 'zone' | 'layer';
+  layer?: string;
   id: string;
   type?: string;        // report type
   value_num?: number | null;
@@ -20,7 +24,7 @@ export interface AvoidedItem {
   lon?: number;
   note?: string | null;
 }
-export interface Warning { code: string; message: string; report_id?: string; zone_id?: string }
+export interface Warning { code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string }
 
 export interface RouteResponse {
   geometry: GeoJSON.LineString;
@@ -32,7 +36,9 @@ export interface RouteResponse {
   warnings: Warning[];
   rest_stops: RestStop[];
   driving_plan: DrivingPlan;
-  valhalla: { costing: 'truck'; exclude_polygons_count: number };
+  /** resultado de cada camada de dados (resumo + dados próprios) */
+  layers: Record<string, { label: string; group: string; summary?: string[]; data?: unknown }>;
+  valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number };
 }
 
 export class RouteBlockedError extends Error {
@@ -54,6 +60,22 @@ function intersects(line: GeoJSON.Feature<GeoJSON.LineString>, ex: Exclusion): b
   return turf.booleanIntersects(line, ex.polygon);
 }
 
+/** fração dos pontos da linha penalizada que ficam a até tolM da rota (aprox. "a rota usa o trecho") */
+function overlapRatio(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [number, number][], tolM = 15): number {
+  if (!coords.length) return 0;
+  const pts = coords.length > 40 ? coords.filter((_, i) => i % Math.ceil(coords.length / 40) === 0) : coords;
+  const hits = pts.filter((c) => turf.pointToLineDistance(turf.point(c), route, { units: 'meters' }) <= tolM).length;
+  return hits / pts.length;
+}
+function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostLine): boolean {
+  return overlapRatio(route, cl.coordinates) >= 0.5;
+}
+function itemLabel(b: AvoidedItem): string {
+  if (b.kind === 'zone') return b.name ?? 'zona';
+  if (b.kind === 'layer') return `${b.name ?? b.type ?? b.layer}${b.rule ? ` (${b.rule})` : ''}`;
+  return `${b.type}${b.value_num ? ` ${b.value_num}` : ''}`;
+}
+
 function minDistanceM(line: GeoJSON.Feature<GeoJSON.LineString>, g: GeoJSON.Point | GeoJSON.LineString): number {
   const pts = g.type === 'Point' ? [g.coordinates] : g.coordinates;
   return Math.min(...pts.map((p) => turf.pointToLineDistance(turf.point(p), line, { units: 'meters' })));
@@ -72,9 +94,10 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   const exclusions: Exclusion[] = [];
 
   // 1) Zonas de restrição por horário (só horário de saída — limitação documentada)
-  const zones = await activeZones();
+  const [zones, dayInfo] = await Promise.all([activeZones(), legalDayInfo(at)]);
+  if (dayInfo.holiday) warnings.push({ code: 'holiday', severity: 'info', message: `Feriado (${dayInfo.holiday.name}): ZMRC, rodízio e restrição de perigosos em SP não se aplicam; rodovias podem ter restrição de feriado.` });
   for (const z of zones) {
-    if (!zoneApplies(z.rules, vehicle, at)) continue;
+    if (!zoneApplies(z.rules, vehicle, at, dayInfo)) continue;
     const oIn = pointInZone(z, req.origin);
     const dIn = pointInZone(z, req.destination);
     if (oIn || dIn) {
@@ -95,25 +118,47 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     exclusions.push({ item: reportItem(r), rings: [ring], polygon: turf.polygon([ring]) });
   }
 
+  // 3) Camadas de dados (data_features): exclusões duras e trechos penalizados
+  const ctx: RouteCtx = { vehicle, at, departureLocal, origin: req.origin, destination: req.destination, tz: env.tz };
+  const layers = await loadLayers();
+  const costLines: LayerCostLine[] = [];
+  await Promise.all(layers.map(async (l) => {
+    try {
+      if (l.exclusions) {
+        for (const ex of await l.exclusions(ctx)) {
+          const poly = ex.rings.length === 1 ? turf.polygon([closeRing(ex.rings[0])]) : turf.multiPolygon(ex.rings.map((r) => [closeRing(r)]));
+          exclusions.push({ item: ex.item, rings: ex.rings, polygon: poly });
+        }
+      }
+      if (l.costLines) costLines.push(...(await l.costLines(ctx)));
+    } catch (err) {
+      warnings.push({ code: 'layer_error', layer: l.meta.id, severity: 'info', message: `Camada "${l.meta.label}" indisponível nesta rota: ${(err as Error).message}` });
+    }
+  }));
+
   const excludePolygons = exclusions.flatMap((e) => e.rings);
   const base = { origin: req.origin, destination: req.destination, vehicle, departureLocal };
+  const restrictedOpts = { ...base, excludePolygons, costLines: costLines.map((c) => ({ coordinates: c.coordinates, factor: c.factor })) };
+  const hasRestrictions = exclusions.length > 0 || costLines.length > 0;
+  let freeCache: Promise<valhalla.ValhallaRouteResult | null> | null = null;
+  const freeRoute = () => (freeCache ??= valhalla.route(base).catch(() => null));
 
   // 3) Rota restrita
   let restricted: valhalla.ValhallaRouteResult;
   try {
-    restricted = await valhalla.route({ ...base, excludePolygons });
+    restricted = await valhalla.route(restrictedOpts);
   } catch (e) {
     if (!(e instanceof NoRouteError)) throw e;
     // Descobrir quem bloqueou: rota livre e interseção com as exclusões
     let blockedBy: AvoidedItem[] = [];
     if (exclusions.length) {
-      try {
-        const free = await valhalla.route(base);
+      const free = await freeRoute();
+      if (free) {
         const line = turf.lineString(free.coordinates);
         blockedBy = exclusions.filter((ex) => intersects(line, ex)).map((ex) => ex.item);
-      } catch { /* sem rota nem livre */ }
+      }
     }
-    const names = blockedBy.map((b) => (b.kind === 'zone' ? b.name : `${b.type}${b.value_num ? ` ${b.value_num}` : ''}`));
+    const names = blockedBy.map(itemLabel);
     throw new RouteBlockedError(
       blockedBy,
       blockedBy.length
@@ -125,12 +170,23 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
 
   // 4) O que foi efetivamente evitado (rota livre cruza, rota restrita não)
   const avoided: AvoidedItem[] = [];
-  if (exclusions.length) {
-    try {
-      const free = await valhalla.route(base);
+  let freeGeom: RouteLine | undefined;
+  if (hasRestrictions) {
+    const free = await freeRoute();
+    if (free) {
       const freeLine = turf.lineString(free.coordinates);
+      freeGeom = { line: freeLine, distance_km: free.distance_km, duration_s: free.duration_s };
       for (const ex of exclusions) {
         if (intersects(freeLine, ex) && !intersects(line, ex)) avoided.push(ex.item);
+      }
+      for (const cl of costLines) {
+        const freeUses = usesCostLine(freeLine, cl);
+        const restrictedUses = usesCostLine(line, cl);
+        if (freeUses && !restrictedUses) avoided.push(cl.item);
+        else if (restrictedUses) {
+          warnings.push({ code: 'uses_restricted_way', layer: cl.item.layer, severity: 'danger', id: cl.item.id, lat: cl.item.lat, lon: cl.item.lon,
+            message: `A rota passa por trecho restrito sem alternativa razoável: ${itemLabel(cl.item)}. Confira a regra antes de seguir.` });
+        }
       }
       if (avoided.length && restricted.distance_km > free.distance_km * 1.5) {
         warnings.push({
@@ -138,7 +194,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
           message: `Desvio grande: ${restricted.distance_km.toFixed(1)} km contra ${free.distance_km.toFixed(1)} km sem as restrições (+${Math.round(restricted.distance_km - free.distance_km)} km). Verifique se há autorização/exceção aplicável.`,
         });
       }
-    } catch { /* se a rota livre falhar, só não listamos "avoided" */ }
+    }
   }
 
   // 5) Avisos: rota passa perto de reporte não confirmado (score <= 0), de qualquer tipo
@@ -165,6 +221,20 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   for (const n of plan.notes) warnings.push({ code: 'driving_time', message: n });
   for (const sgt of plan.suggested_stops) if (!sgt.stop) warnings.push({ code: 'no_rest_stop', message: sgt.message });
 
+  // 7) Anotações das camadas (pedágio, OAEs, acidentes, roubo de carga, relevo...)
+  const routeGeom: RouteGeom = { line, distance_km: restricted.distance_km, duration_s: restricted.duration_s, free: freeGeom };
+  const layerOut: RouteResponse['layers'] = {};
+  await Promise.all(layers.map(async (l) => {
+    if (!l.annotate) return;
+    try {
+      const a = await l.annotate(ctx, routeGeom);
+      for (const w of a.warnings ?? []) warnings.push({ ...w, layer: w.layer ?? l.meta.id } as Warning & LayerWarning);
+      if (a.summary?.length || a.data !== undefined) layerOut[l.meta.id] = { label: l.meta.label, group: l.meta.group, summary: a.summary, data: a.data };
+    } catch (err) {
+      warnings.push({ code: 'layer_error', layer: l.meta.id, severity: 'info', message: `Camada "${l.meta.label}" falhou: ${(err as Error).message}` });
+    }
+  }));
+
   return {
     geometry: line.geometry,
     distance_km: restricted.distance_km,
@@ -175,7 +245,8 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     warnings,
     rest_stops: restStops,
     driving_plan: plan,
-    valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length },
+    layers: layerOut,
+    valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length },
   };
 }
 
@@ -188,3 +259,10 @@ export function describeReport(r: { type: string; value_num: number | null }): s
   const unit = r.type === 'weight_limit' || r.type === 'steep_grade' ? 't' : 'm';
   return `${labels[r.type] ?? r.type}${r.value_num != null ? ` ${String(r.value_num).replace('.', ',')} ${unit}` : ''}`;
 }
+
+function closeRing(r: [number, number][]): [number, number][] {
+  if (!r.length) return r;
+  const [a, b] = [r[0], r[r.length - 1]];
+  return a[0] === b[0] && a[1] === b[1] ? r : [...r, a];
+}
+export type { LayerItem };

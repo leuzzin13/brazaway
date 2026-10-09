@@ -13,6 +13,18 @@ export const VehicleInput = z.object({
   hazmat: z.boolean().optional(),
   is_vuc: z.boolean().optional(),
   plate_last_digit: z.number().int().min(0).max(9).optional(),
+  // atributos legais/operacionais usados pelas camadas (todos opcionais)
+  has_aetc: z.boolean().optional(),                 // SP: Autorização Especial de Trânsito de Caminhão (cadastro DSV)
+  requires_aet: z.boolean().optional(),             // CVC com AET (rodotrem etc.)
+  manufacture_year: z.number().int().min(1950).max(2100).optional(),
+  cargo_type: z.enum(['general', 'perishable', 'hazmat', 'concrete', 'moving', 'other']).optional(),
+  powertrain: z.enum(['diesel', 'electric', 'hybrid', 'gas', 'hydrogen']).optional(),
+  hazmat_un: z.string().max(10).optional(),         // número ONU do produto perigoso
+  suspended_axles: z.number().int().min(0).max(6).optional(),
+  dual_wheels: z.boolean().optional(),              // rodagem dupla (categoria de pedágio)
+  has_toll_tag: z.boolean().optional(),
+  cargo_od_in_city: z.boolean().optional(),         // carga com origem/destino no município (Portaria SMT 49/2021)
+  employment: z.enum(['employee', 'autonomous']).optional(), // CLT x TAC (jornada)
 });
 
 export const RouteRequest = z.object({

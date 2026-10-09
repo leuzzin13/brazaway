@@ -8,7 +8,13 @@ import type { Ring } from './valhalla.js';
 export interface ZoneWindow { days: number[]; from: string; to: string }
 export interface ZoneRules {
   windows: ZoneWindow[];
-  exceptions?: string[];              // ex.: ["is_vuc"]
+  exceptions?: string[];              // ex.: ["is_vuc"], ["vuc_aetc", "cargo_perishable", "powertrain_electric"]
+  /** a regra não vale em feriados (ZMRC, rodízio e perigosos em SP: "exceto feriados") */
+  skip_on_holidays?: boolean;
+  /** escopo usado para casar com rule_suspensions da CET ('rodizio' | 'zmrc' | 'zmrf' | 'hazmat') */
+  suspension_scope?: string;
+  /** só vale para veículo transportando produto perigoso */
+  hazmat_only?: boolean;
   /** Rodízio: dígitos finais de placa proibidos por dia ISO (1=seg). Se presente, a zona só vale para esses dígitos. */
   plate_rule?: { digits_by_day: Record<string, number[]> };
 }
@@ -67,8 +73,27 @@ export function describeWindows(rules: ZoneRules): string {
  * A zona restringe este veículo neste horário? (só horário de SAÍDA — limitação do MVP:
  * não calculamos a hora em que a rota efetivamente entra na zona.)
  */
-export function zoneApplies(rules: ZoneRules, v: Vehicle, at: Date): boolean {
-  if (rules.exceptions?.includes('is_vuc') && v.is_vuc) return false;
+export interface ZoneDayCtx {
+  holiday?: { name: string } | null;
+  suspensions?: { scope: string; applies_to_heavy: boolean }[];
+}
+
+/** Exceções suportadas em rules.exceptions. */
+export function vehicleMatchesException(exc: string, v: Vehicle): boolean {
+  switch (exc) {
+    case 'is_vuc': return !!v.is_vuc;
+    case 'vuc_aetc': return !!v.is_vuc && !!v.has_aetc;           // VUC só é liberado com AETC (Portaria SMT 137/2018)
+    case 'cargo_perishable': return v.cargo_type === 'perishable';
+    case 'powertrain_electric': return v.powertrain === 'electric' || v.powertrain === 'hybrid' || v.powertrain === 'hydrogen';
+    default: return false;
+  }
+}
+
+export function zoneApplies(rules: ZoneRules, v: Vehicle, at: Date, day: ZoneDayCtx = {}): boolean {
+  if (rules.hazmat_only && !v.hazmat) return false;
+  if (rules.exceptions?.some((e) => vehicleMatchesException(e, v))) return false;
+  if (rules.skip_on_holidays && day.holiday) return false;
+  if (rules.suspension_scope && day.suspensions?.some((s) => (s.scope === rules.suspension_scope || s.scope === 'all') && !s.applies_to_heavy)) return false;
   const local = DateTime.fromJSDate(at).setZone(env.tz);
   const dow = local.weekday; // 1=seg..7=dom
   const hhmm = local.toFormat('HH:mm');

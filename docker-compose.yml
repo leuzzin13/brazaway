@@ -109,5 +109,27 @@ services:
       - ./config:/config:ro
     entrypoint: ["bash", "/data/import/import-zmrc.sh"]
 
+  # Importadores de camadas de dados (fontes públicas → data_features + seeds em db/seed/layers)
+  #   docker compose --profile import run --rm importer --list
+  #   docker compose --profile import run --rm importer all
+  importer:
+    build: ./importers
+    container_name: truck-router-importer
+    profiles: ["import"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-truck}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-truck}
+      PGDATABASE: ${POSTGRES_DB:-truck_router}
+      DATA_DIR: /data
+      SEED_DIR: /seed/layers
+    volumes:
+      - ./data:/data
+      - ./db/seed:/seed
+      - ./importers:/app
+
 volumes:
   pgdata:

@@ -22,6 +22,8 @@ interface Opts {
   vehicle: Vehicle;
   departureLocal?: string; // "YYYY-MM-DDTHH:mm"
   excludePolygons?: Ring[];
+  /** trechos penalizados (Valhalla linear_cost_factors): só as arestas sob a linha, não as que cruzam */
+  costLines?: { coordinates: [number, number][]; factor: number }[];
 }
 
 /**
@@ -54,6 +56,13 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
   };
   if (o.departureLocal) body.date_time = { type: 1, value: o.departureLocal };
   if (o.excludePolygons && o.excludePolygons.length) body.exclude_polygons = o.excludePolygons;
+  if (o.costLines && o.costLines.length) {
+    body.linear_cost_factors = o.costLines.map((c) => ({
+      type: 'Feature',
+      geometry: { type: 'LineString', coordinates: c.coordinates },
+      properties: { factor: c.factor },
+    }));
+  }
 
   const res = await fetch(`${env.valhallaUrl}/route`, {
     method: 'POST',
@@ -88,4 +97,19 @@ export async function status(): Promise<{ ok: boolean; detail?: unknown }> {
   } catch (e) {
     return { ok: false, detail: String(e) };
   }
+}
+
+/** trace_attributes sobre uma geometria já calculada (ex.: pedágio por aresta, way_id, velocidade). */
+export async function traceAttributes(coordinates: [number, number][], vehicle: Vehicle, filterAttributes: string[]): Promise<any> {
+  const body = {
+    shape: coordinates.map(([lon, lat]) => ({ lat, lon })),
+    costing: 'truck',
+    shape_match: 'map_snap',
+    costing_options: { truck: { height: vehicle.height_m, width: vehicle.width_m, length: vehicle.length_m, weight: vehicle.weight_t } },
+    filters: { attributes: filterAttributes, action: 'include' },
+  };
+  const res = await fetch(`${env.valhallaUrl}/trace_attributes`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const json = (await res.json()) as any;
+  if (!res.ok) throw Object.assign(new Error(`Valhalla trace_attributes ${res.status}: ${json?.error ?? ''}`), { statusCode: 502 });
+  return json;
 }

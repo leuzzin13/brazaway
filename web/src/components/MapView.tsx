@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import maplibregl, { Map as MLMap, Marker, Popup } from 'maplibre-gl';
-import { REPORT_TYPES, REST_KINDS, type LatLon, type Report, type RouteResult } from '../lib/api';
+import { api, REPORT_TYPES, REST_KINDS, type LatLon, type LayerMeta, type Report, type RouteResult } from '../lib/api';
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 const SP_CENTER: [number, number] = [-46.6333, -23.5505];
@@ -16,6 +16,8 @@ export interface MapViewProps {
   onBboxChange: (bbox: [number, number, number, number]) => void;
   onVote: (report: Report, vote: 1 | -1) => Promise<void>;
   pendingReportPoint: LatLon | null;
+  dataLayers: LayerMeta[];
+  visibleLayers: Set<string>;
 }
 
 function reportLabel(r: Report) {
@@ -30,6 +32,7 @@ export function MapView(p: MapViewProps) {
   const markers = useRef<Marker[]>([]);
   const odMarkers = useRef<{ o?: Marker; d?: Marker; pending?: Marker }>({});
   const restMarkers = useRef<Marker[]>([]);
+  const loadedLayers = useRef<Set<string>>(new Set());
   const propsRef = useRef(p);
   propsRef.current = p;
 
@@ -69,6 +72,11 @@ export function MapView(p: MapViewProps) {
       // ignora cliques em markers (o MapLibre usa esse mesmo evento para abrir o popup do marker)
       const target = e.originalEvent?.target as HTMLElement | null;
       if (target?.closest?.('.maplibregl-marker, .maplibregl-popup')) return;
+      // clique numa feição de camada de dados abre popup, não define origem/destino
+      if (!propsRef.current.reportMode) {
+        const ids = [...loadedLayers.current].flatMap((id) => [`lyr-${id}`, `lyr-${id}-line`]).filter((id) => m.getLayer(id));
+        if (ids.length && m.queryRenderedFeatures(e.point, { layers: ids }).length) return;
+      }
       propsRef.current.onMapClick({ lat: e.lngLat.lat, lon: e.lngLat.lng });
     });
     map.current = m;
@@ -124,6 +132,64 @@ export function MapView(p: MapViewProps) {
       restMarkers.current.push(new Marker({ element: d, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(pop).addTo(m));
     }
   }, [p.route]);
+
+  // camadas de dados genéricas (/api/layers/:id/features)
+  useEffect(() => {
+    const m = map.current; if (!m) return;
+    let timer: number | undefined;
+    const metaById = new Map(p.dataLayers.map((l) => [l.id, l]));
+    const removeLayer = (id: string) => {
+      for (const suffix of ['', '-line', '-outline']) if (m.getLayer(`lyr-${id}${suffix}`)) m.removeLayer(`lyr-${id}${suffix}`);
+      if (m.getSource(`lyr-${id}`)) m.removeSource(`lyr-${id}`);
+      loadedLayers.current.delete(id);
+    };
+    const ensureLayer = (meta: LayerMeta) => {
+      const id = meta.id, st = meta.style!, src = `lyr-${id}`;
+      if (m.getSource(src)) return;
+      m.addSource(src, { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      const before = m.getLayer('route-casing') ? 'route-casing' : undefined;
+      const mz = st.minzoom ?? 0;
+      if (st.kind === 'line') m.addLayer({ id: src, type: 'line', source: src, minzoom: mz, paint: { 'line-color': st.color, 'line-width': st.width ?? 2, 'line-opacity': st.opacity ?? 0.85 } }, before);
+      else if (st.kind === 'fill') {
+        m.addLayer({ id: src, type: 'fill', source: src, minzoom: mz, paint: { 'fill-color': st.color, 'fill-opacity': st.opacity ?? 0.2 } }, before);
+        m.addLayer({ id: `${src}-outline`, type: 'line', source: src, minzoom: mz, paint: { 'line-color': st.color, 'line-width': 1 } }, before);
+      } else if (st.kind === 'heatmap') m.addLayer({ id: src, type: 'heatmap', source: src, minzoom: mz, paint: { 'heatmap-weight': ['coalesce', ['get', 'weight'], 1], 'heatmap-radius': st.radius ?? 18, 'heatmap-opacity': st.opacity ?? 0.6, 'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, st.color, 1, '#7f1d1d'] } }, before);
+      else {
+        m.addLayer({ id: src, type: 'circle', source: src, minzoom: mz, filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': st.color, 'circle-radius': st.radius ?? 5, 'circle-stroke-color': '#fff', 'circle-stroke-width': 1.5, 'circle-opacity': st.opacity ?? 0.9 } }, before);
+        m.addLayer({ id: `${src}-line`, type: 'line', source: src, minzoom: mz, filter: ['!=', ['geometry-type'], 'Point'], paint: { 'line-color': st.color, 'line-width': st.width ?? 3, 'line-opacity': st.opacity ?? 0.85 } }, before);
+      }
+      const onClick = (e: maplibregl.MapLayerMouseEvent) => {
+        const f = e.features?.[0]; if (!f || propsRef.current.reportMode) return;
+        const props = f.properties ?? {};
+        const rows = Object.entries(props).filter(([k, v]) => v !== null && v !== '' && v !== 'null' && !['id', 'weight'].includes(k)).slice(0, 12)
+          .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(String(v)).slice(0, 160)}</td></tr>`).join('');
+        new Popup({ maxWidth: '320px' }).setLngLat(e.lngLat).setHTML(`<div class="pp"><div class="pp-title">${st.icon ?? ''} ${escapeHtml(String(props.name ?? meta.label))}</div><table class="pp-table">${rows}</table><div class="pp-meta">${escapeHtml(meta.sources.map((s) => s.name).join(' · '))}</div></div>`).addTo(m);
+      };
+      for (const lid of [src, `${src}-line`]) if (m.getLayer(lid)) {
+        m.on('click', lid, onClick);
+        m.on('mouseenter', lid, () => { m.getCanvas().style.cursor = 'pointer'; });
+        m.on('mouseleave', lid, () => { m.getCanvas().style.cursor = propsRef.current.reportMode ? 'crosshair' : ''; });
+      }
+      loadedLayers.current.add(id);
+    };
+    const refresh = () => {
+      const b = m.getBounds();
+      const bbox: [number, number, number, number] = [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()];
+      for (const id of p.visibleLayers) {
+        const meta = metaById.get(id); if (!meta?.style || !meta.has_features) continue;
+        ensureLayer(meta);
+        api.layerFeatures(id, bbox, m.getZoom()).then((fc) => (m.getSource(`lyr-${id}`) as maplibregl.GeoJSONSource | undefined)?.setData(fc)).catch(() => {});
+      }
+    };
+    const apply = () => {
+      for (const id of [...loadedLayers.current]) if (!p.visibleLayers.has(id)) removeLayer(id);
+      refresh();
+    };
+    const onMove = () => { window.clearTimeout(timer); timer = window.setTimeout(refresh, 350); };
+    if (m.isStyleLoaded()) apply(); else m.once('load', apply);
+    m.on('moveend', onMove);
+    return () => { m.off('moveend', onMove); window.clearTimeout(timer); };
+  }, [p.visibleLayers, p.dataLayers]);
 
   // origin / destination / pending markers
   useEffect(() => {

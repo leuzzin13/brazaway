@@ -4,12 +4,14 @@ import { env } from './config.js';
 import { routeRoutes } from './routes/route.js';
 import { reportRoutes } from './routes/reports.js';
 import { miscRoutes } from './routes/misc.js';
+import { layerRoutes } from './routes/layers.js';
 
 const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } });
 await app.register(cors, { origin: true });
 await app.register(miscRoutes);
 await app.register(routeRoutes);
 await app.register(reportRoutes);
+await app.register(layerRoutes);
 
 app.setErrorHandler((err: any, _req, reply) => {
   const status = err.statusCode && err.statusCode >= 400 ? err.statusCode : 500;

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { api, ApiError, REPORT_TYPES, type LatLon, type Preset, type Report, type RouteResult, type Vehicle } from './lib/api';
+import { api, ApiError, REPORT_TYPES, type LatLon, type LayerMeta, type Preset, type Report, type RouteResult, type Vehicle } from './lib/api';
+import { LayerPanel } from './components/LayerPanel';
 import { getDeviceId } from './lib/deviceId';
 import { MapView } from './components/MapView';
 import { PlaceInput } from './components/PlaceInput';
@@ -15,6 +16,7 @@ function localNowIso() {
 }
 function fmtDuration(s: number) { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}h${pad(m)}` : `${m} min`; }
 function pad(n: number) { return String(n).padStart(2, '0'); }
+function sev(s?: string) { return s === 'danger' ? 3 : s === 'warn' || !s ? 2 : 1; }
 
 export function App() {
   const deviceId = useMemo(getDeviceId, []);
@@ -37,10 +39,26 @@ export function App() {
   const [sheetOpen, setSheetOpen] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const bboxRef = useRef<[number, number, number, number] | null>(null);
+  const [dataLayers, setDataLayers] = useState<LayerMeta[]>([]);
+  const [visibleLayers, setVisibleLayers] = useState<Set<string>>(() => {
+    try { const v = localStorage.getItem('truck-router.layers'); return v ? new Set(JSON.parse(v)) : new Set(); } catch { return new Set(); }
+  });
+  const toggleLayer = (id: string) => setVisibleLayers((prev) => {
+    const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id);
+    try { localStorage.setItem('truck-router.layers', JSON.stringify([...n])); } catch { /* sem storage */ }
+    return n;
+  });
 
   useEffect(() => {
     api.presets().then((p) => { setPresets(p.presets); setPresetNote(p._note); const t = p.presets.find((x) => x.id === 'truck') ?? p.presets[0]; setVehicle({ ...t, preset: t.id }); }).catch(() => setError({ message: 'API indisponível. Confira docker compose up.' }));
     api.zones().then(setZones).catch(() => {});
+    api.layers().then((ls) => {
+      setDataLayers(ls);
+      setVisibleLayers((prev) => {
+        if (prev.size) return prev;
+        return new Set(ls.filter((l) => l.defaultVisible).map((l) => l.id));
+      });
+    }).catch(() => {});
   }, []);
 
   const refreshReports = useCallback(async () => {
@@ -92,7 +110,8 @@ export function App() {
   return (
     <div className={'app' + (sheetOpen ? ' open' : '')}>
       <MapView origin={origin} destination={destination} route={route} zones={zones} reports={reports}
-        reportMode={reportMode} onMapClick={onMapClick} onBboxChange={onBboxChange} onVote={vote} pendingReportPoint={pendingPoint} />
+        reportMode={reportMode} onMapClick={onMapClick} onBboxChange={onBboxChange} onVote={vote} pendingReportPoint={pendingPoint}
+        dataLayers={dataLayers} visibleLayers={visibleLayers} />
 
       <div className="topbar">
         <strong>🚛 Rota Caminhão</strong>
@@ -118,6 +137,7 @@ export function App() {
               <PlaceInput label="Destino" value={destination} onChange={(p, l) => { setDestination(p); if (l) setDestText(l); }} near={origin} text={destText} setText={setDestText}
                 picking={picking === 'destination'} onPickOnMap={() => { setPicking(picking === 'destination' ? null : 'destination'); if (window.innerWidth < 768) setSheetOpen(false); }} />
               <div className="field"><label>Horário de saída</label><input type="datetime-local" value={departure} onChange={(e) => setDeparture(e.target.value)} /></div>
+              <LayerPanel layers={dataLayers} visible={visibleLayers} toggle={toggleLayer} />
               <button className="btn btn-primary btn-block" disabled={!origin || !destination || loading} onClick={calc}>{loading ? 'Calculando…' : 'Calcular rota'}</button>
 
               {error && (
@@ -135,7 +155,22 @@ export function App() {
                     <ul className="list">{route.avoided.map((a) => <li key={a.id}>{a.kind === 'zone' ? `🟠 ${a.name} · ${a.rule}` : `${REPORT_TYPES[a.type!]?.icon ?? '•'} ${REPORT_TYPES[a.type!]?.label ?? a.type}${a.value_num != null ? ` ${String(a.value_num).replace('.', ',')} ${REPORT_TYPES[a.type!]?.unit ?? ''}` : ''}${a.note ? ` — ${a.note}` : ''}`}</li>)}</ul>
                   )}
                   <h4>Avisos ({route.warnings.length})</h4>
-                  {route.warnings.length === 0 ? <small className="muted">Sem avisos.</small> : <ul className="list warn">{route.warnings.map((w, i) => <li key={i}>⚠️ {w.message}</li>)}</ul>}
+                  {route.warnings.length === 0 ? <small className="muted">Sem avisos.</small> : (
+                    <ul className="list warn">{[...route.warnings].sort((a, b) => sev(b.severity) - sev(a.severity)).map((w, i) => (
+                      <li key={i} className={`sev-${w.severity ?? 'warn'}`}>{w.severity === 'danger' ? '⛔' : w.severity === 'info' ? 'ℹ️' : '⚠️'} {w.message}</li>
+                    ))}</ul>
+                  )}
+                  {Object.keys(route.layers ?? {}).length > 0 && (
+                    <>
+                      <h4>Dados na rota</h4>
+                      {Object.entries(route.layers).map(([id, l]) => (
+                        <div key={id} className="layer-summary">
+                          <strong>{dataLayers.find((x) => x.id === id)?.style?.icon ?? '•'} {l.label}</strong>
+                          {(l.summary ?? []).map((line, i) => <div key={i} className="muted">{line}</div>)}
+                        </div>
+                      ))}
+                    </>
+                  )}
                   {route.driving_plan && (
                     <>
                       <h4>Plano de direção · Lei 13.103</h4>
