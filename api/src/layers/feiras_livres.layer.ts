@@ -233,9 +233,13 @@ const layer: RouteLayer = {
     );
     const destFeira = dest.rows.find((x) => x.d <= DEST_M && feiraActive(x.props, arrival));
     if (destFeira) {
+      // o aviso do destino substitui o de "feira na rota" da mesma feira
+      const i = warnings.findIndex((w) => w.id === destFeira.id && w.code === 'street_market_on_route');
+      if (i >= 0) warnings.splice(i, 1);
+      const onde = destFeira.d < 30 ? 'na quadra do destino' : `a ${fmtKm(destFeira.d)} do destino`;
       warnings.push({
         code: 'street_market_at_destination', severity: 'warn', id: destFeira.id, lat: destFeira.lat, lon: destFeira.lon,
-        message: `${label(destFeira)} a ${fmtKm(destFeira.d)} do destino na chegada (${localParts(arrival).label}; feira até 14h45). Não trafegue nem pare no trecho das bancas: combine outro ponto de descarga.`,
+        message: `${label(destFeira)} ${onde} na chegada (${localParts(arrival).label}; feira até 14h45). Não trafegue nem pare no trecho das bancas (${BASE_LEGAL}): combine outro ponto de descarga.`,
       });
     }
 
@@ -249,7 +253,7 @@ const layer: RouteLayer = {
     const inactive = onRoute.filter((x) => !x.active && x.row.props.windows?.length);
     if (inactive.length) summary.push(`${inactive.length} rua(s) de feira na rota fora do horário da feira na passagem (livres).`);
     if (!summary.length && !warnings.length) return {};
-    if (act.length || desviadas.length) summary.push('Extensão das feiras não publicada: o bloqueio cobre só a quadra do endereço de referência.');
+    if (act.length || desviadas.length) summary.push('Extensão das feiras não publicada: consideramos só a quadra do endereço de referência.');
     return {
       summary, warnings,
       data: {

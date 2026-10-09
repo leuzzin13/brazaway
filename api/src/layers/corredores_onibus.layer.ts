@@ -8,16 +8,20 @@ import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
  * corredor_onibus) na cidade de São Paulo.
  *
  * Regra: a faixa é exclusiva de ônibus no horário de funcionamento (texto da CET por trecho, "2ª a 6ª das 06-09h"...);
- * o corredor (à esquerda, canteiro central) é exclusivo em tempo integral. Caminhão não trafega na faixa/corredor
- * (CTB art. 184: I direita — só para virar à direita ou acessar imóvel; II esquerda; III via/faixa exclusiva de
- * transporte coletivo). As DEMAIS faixas da via continuam liberadas: por isso a camada não bloqueia a via.
+ * o corredor (à esquerda, canteiro central) é exclusivo em tempo integral. Transitar na faixa/corredor é infração
+ * gravíssima (CTB art. 184, III; enquadramento CET 758-70). Na faixa à direita só se entra para acessar garagem/lote
+ * ou no trecho tracejado imediatamente antes da conversão à direita (CET, Perguntas Frequentes). As liberações de
+ * feriado e de madrugada da Portaria 083/16-SMT.GAB valem para veículos de passageiros e de uso misto, não para
+ * veículos de carga: para caminhão a faixa segue o horário da placa também em feriados. As DEMAIS faixas da via
+ * continuam liberadas: por isso a camada não bloqueia a via.
  *
  * costLines(): penalidade moderada (fator CORREDORES_ONIBUS_FATOR, ex.: 1.3) nas faixas em operação na hora
  * estimada de passagem, para o roteador preferir avenidas sem faixa nos horários de pico. DESLIGADA por padrão
  * (variável ausente ou <= 1): o routing.ts atual trata toda costLine usada pela rota como "trecho restrito sem
- * alternativa" com severidade 'danger', o que é falso para uma faixa (o caminhão pode usar as outras faixas).
- * Ver docs/layers/corredores_onibus.md. Os traçados vêm casados com a malha do Valhalla (props.osm) e só são
- * usados se o tileset atual for o mesmo da importação (senão o edge walk falharia e derrubaria a rota).
+ * alternativa" com severidade 'danger', o que é falso para uma faixa (o caminhão pode usar as outras faixas) — com
+ * fator 1.3, 4 de 5 rotas urbanas de teste ganharam 1–5 avisos 'danger' falsos. Ver docs/layers/corredores_onibus.md.
+ * Os traçados vêm casados com a malha do Valhalla (props.osm) e só são usados se o tileset atual for o mesmo da
+ * importação (senão o edge walk falharia e derrubaria a rota).
  *
  * annotate(): quanto da rota corre junto a faixa em operação (no horário estimado de passagem, por sentido),
  * corredores ao lado da rota e faixa em operação no destino (não parar para carga/descarga).
@@ -26,6 +30,8 @@ const LAYER = 'corredores_onibus';
 const NEAR_M = 15;          // faixa: eixo da via a até 15 m do traçado da rota
 const NEAR_CORREDOR_M = 25; // corredor: eixo no canteiro central, pistas laterais um pouco mais longe
 const DEST_M = 25;
+const MIN_OVERLAP_M = 45;   // cruzar a via (corda do buffer de 15 m) não conta como "usar" a faixa
+const REGRA = 'CTB art. 184, III: gravíssima';
 
 function factor(): number {
   const f = Number(process.env.CORREDORES_ONIBUS_FATOR ?? '');
@@ -132,6 +138,7 @@ const layer: RouteLayer = {
           and (f.props->'osm'->>'tileset')::bigint = $6
           and f.geom && ST_Expand(od.g, $7 / 90000.0)
           and ST_DWithin(f.geom::geography, od.g::geography, $7)
+          and (f.valid_to is null or f.valid_to > now())
         order by (f.props->>'comprimento_m')::int desc nulls last
         limit 400`,
       [ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat, LAYER, tileset, radiusM],
@@ -181,7 +188,7 @@ const layer: RouteLayer = {
     const segs: unknown[] = [];
     for (const h of r.rows) {
       // trecho "usado": a sobreposição cobre boa parte da faixa (ou >= 150 m); cruzamentos não contam
-      if (h.overlap_m < 30 || h.overlap_m < Math.min(h.len_m * 0.5, 150)) continue;
+      if (h.overlap_m < MIN_OVERLAP_M || h.overlap_m < Math.min(h.len_m * 0.5, 150)) continue;
       const fmid = (h.f0 + h.f1) / 2;
       const eta = etaAlong(ctx, route.duration_s, fmid);
       if (h.kind === 'corredor') {
@@ -213,7 +220,7 @@ const layer: RouteLayer = {
       const left = streets.some(([, a]) => a.lado.includes('esquerda'));
       warnings.push({
         code: 'bus_lane_active', severity: 'warn', lat: streets[0][1].lat, lon: streets[0][1].lon,
-        message: `A rota passa por ${fmtKm(activeM)} de via com faixa exclusiva de ônibus em operação no horário previsto (${top}${streets.length > 3 ? '; …' : ''}). Não trafegue nem pare na faixa: ${left ? 'a da esquerda é proibida; ' : ''}na da direita, só entre para virar ou acessar imóvel (CTB art. 184).`,
+        message: `Faixa exclusiva de ônibus em operação em ${fmtKm(activeM)} da rota (${top}${streets.length > 3 ? '; …' : ''}). Não trafegue nem pare nela (${REGRA}): ${left ? 'na faixa da esquerda não há exceção; ' : ''}na da direita, só entre para acessar garagem ou no tracejado antes de virar à direita.`,
       });
       summary.push(`Faixa exclusiva de ônibus em operação: ${fmtKm(activeM)} da rota (${streets.slice(0, 4).map(([s]) => s).join(', ')}${streets.length > 4 ? '…' : ''}).`);
     }
@@ -226,7 +233,7 @@ const layer: RouteLayer = {
       summary.push(`Corredor de ônibus junto à rota: ${fmtKm(total)} (${names}).`);
       warnings.push({
         code: 'bus_corridor_on_route', severity: 'info', lat: cors[0][1].lat, lon: cors[0][1].lon,
-        message: `A rota segue ${fmtKm(total)} ao lado de corredor de ônibus (${names}): a faixa da esquerda (canteiro central) é só de ônibus em tempo integral; use as faixas comuns.`,
+        message: `A rota segue ${fmtKm(total)} ao lado de corredor de ônibus (${names}): a pista do canteiro central é só de ônibus, para caminhão em tempo integral (${REGRA}). Use as faixas comuns.`,
       });
     }
 
@@ -245,7 +252,7 @@ const layer: RouteLayer = {
       const ws = [...(d0.props.dirs?.fwd ?? []), ...(d0.props.dirs?.rev ?? [])];
       warnings.push({
         code: 'destination_on_bus_lane', severity: 'warn', lat: ctx.destination.lat, lon: ctx.destination.lon, id: d0.id,
-        message: `O destino fica em via com faixa exclusiva de ônibus em operação na chegada (${prettyStreet(d0.props.logradouro ?? d0.name)}: ${describeWins(ws)}). Não pare na faixa para carga e descarga; procure vaga de carga e descarga próxima.`,
+        message: `O destino fica em via com faixa exclusiva de ônibus em operação na chegada (${prettyStreet(d0.props.logradouro ?? d0.name)}: ${describeWins(ws)}). Não pare na faixa para carga e descarga: use uma vaga de Zona Azul Caminhão próxima ou a garagem do destinatário.`,
       });
     }
 
