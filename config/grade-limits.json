@@ -1,0 +1,33 @@
+{
+  "_note": "VALORES DE PARTIDA, A CALIBRAR com reportes steep_grade e motoristas. Não são limites legais: nenhuma norma brasileira proíbe um caminhão de subir uma rampa X. Base: cálculo de aderência no piso molhado com a fórmula do Anexo III da Resolução CONTRAN 882/2021 (u=0,45, rr=11 kgf/t, rendimento 0,9; art. 19 §1º exige que a tratora de CVC vença 6% carregada) e quadro 5.5.2.1 do Manual IPR-706 (DNER, 1999). Ver docs/layers/relevo.md e docs/research/elevacao_rampas/NOTES.md §5. A rampa vem do Valhalla com elevação ANADEM (~30 m, erro típico 2–2,5 p.p. em morro).",
+  "units": "porcentagem de rampa de subida no sentido do percurso (edge.max_upward_grade do Valhalla, arredondado para cima)",
+  "presets": {
+    "vuc":      { "warn_pct": 15, "avoid_pct": 20, "basis": "VUC/toco 4x2: aderência no molhado ~27% (16 t); limite prático pelo DEM e por manobra em ladeira" },
+    "toco":     { "warn_pct": 15, "avoid_pct": 20, "basis": "toco 4x2 16 t: aderência no molhado ~27%, seco ~43%" },
+    "truck":    { "warn_pct": 12, "avoid_pct": 15, "basis": "truck 6x2 23 t: aderência no molhado ~15,5%" },
+    "carreta":  { "warn_pct": 6,  "avoid_pct": 8,  "basis": "cavalo 4x2/6x2 41,5–48,5 t: aderência no molhado 6,8–9,7%; CONTRAN 882 art. 19 §1º (vencer 6%)" },
+    "bitrem":   { "warn_pct": 10, "avoid_pct": 12, "basis": "bitrem com cavalo 6x4 57 t: aderência no molhado ~12,3%" },
+    "rodotrem": { "warn_pct": 6,  "avoid_pct": 9,  "basis": "rodotrem com cavalo 6x4 74 t: aderência no molhado ~9,2%" }
+  },
+  "by_weight": {
+    "_note": "Usado quando o preset é desconhecido ou o PBT informado passa do PBT de referência do preset × weight_override_ratio; vale o mais restritivo entre preset e faixa.",
+    "weight_override_ratio": 1.1,
+    "tiers": [
+      { "max_weight_t": 10,  "warn_pct": 15, "avoid_pct": 20 },
+      { "max_weight_t": 16,  "warn_pct": 15, "avoid_pct": 20 },
+      { "max_weight_t": 23,  "warn_pct": 12, "avoid_pct": 15 },
+      { "max_weight_t": 999, "warn_pct": 6,  "avoid_pct": 8 }
+    ]
+  },
+  "descent": {
+    "_note": "Heurística (sem norma): descida longa para veículos com PBT >= min_weight_t vira aviso 'info' (freio-motor). Medida no perfil /height com histerese.",
+    "min_weight_t": 16,
+    "min_drop_m": 150,
+    "min_avg_pct": 5
+  },
+  "cost_lines": {
+    "_note": "Sugestão para uma 2ª rodada de rota (não aplicada automaticamente): trechos acima de avoid_pct viram linear_cost_factors no sentido da subida.",
+    "avoid_factor": 10
+  },
+  "max_segment_warnings": 5
+}

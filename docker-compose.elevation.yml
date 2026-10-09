@@ -1,0 +1,32 @@
+# Override: 2º Valhalla, COM elevação (ANADEM v1), na porta 8003, sem tocar no Valhalla principal (8002).
+# Os tiles são gerados antes por scripts/build-elevation.sh (dem + tiles) em data/valhalla_elev/.
+#
+#   ./scripts/build-elevation.sh            # DEM -> HGT, build dos tiles e sobe este serviço
+#   docker compose -f docker-compose.yml -f docker-compose.elevation.yml up -d --no-deps valhalla-elev
+#
+# A API lê VALHALLA_ELEV_URL (default http://localhost:8003; dentro do compose: http://valhalla-elev:8002).
+# Para trocar o Valhalla principal por estes tiles, ver docs/layers/relevo.md.
+services:
+  valhalla-elev:
+    image: truck-router-valhalla
+    build: ./valhalla
+    container_name: truck-router-valhalla-elev
+    ports:
+      - "${VALHALLA_ELEV_PORT:-8003}:8002"
+    environment:
+      server_threads: ${VALHALLA_THREADS:-4}
+      # os tiles já vêm prontos (com elevação): só carregar, nunca rebuildar nem baixar Skadi
+      build_elevation: "False"
+      build_admins: "True"
+      build_time_zones: "True"
+      use_tiles_ignore_pbf: "True"
+      force_rebuild: "False"
+    volumes:
+      - ${VALHALLA_ELEV_DIR:-./data/valhalla_elev}:/custom_files
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8002/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    restart: unless-stopped
