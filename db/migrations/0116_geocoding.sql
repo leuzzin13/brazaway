@@ -125,14 +125,15 @@ create index if not exists addr_point_street_num on addr_point (street_id, numer
 -- CEP → centroide (ipea/padronizacao_cnefe municipio_cep, derivado do CNEFE)
 -- ---------------------------------------------------------------------------------------------
 create table if not exists cep_centroid (
-  cep       integer primary key,   -- 8 dígitos
-  cod_mun   integer,
+  cep       integer not null,      -- 8 dígitos
+  cod_mun   integer not null,      -- um CEP pode cobrir mais de um município (ex.: CEP geral de distrito)
   municipio text,
   uf        text,
   n         integer,               -- endereços do CNEFE no CEP
   desvio_m  real,                  -- desvio informado pela fonte (m)
   lat       real not null,
-  lon       real not null
+  lon       real not null,
+  primary key (cep, cod_mun)
 );
 
 -- consultas ao ViaCEP (só para CEP ausente de cep_centroid, ex.: grandes usuários -9xx), com cache
