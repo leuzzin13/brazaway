@@ -150,16 +150,17 @@ export function MapView(p: MapViewProps) {
               <button class="btn btn-no" data-v="-1">👎 Negar</button>
             </div>
           </div>`);
-        setTimeout(() => {
-          pop.getElement()?.querySelectorAll<HTMLButtonElement>('button[data-v]').forEach((b) => {
-            b.onclick = async () => {
-              b.disabled = true;
-              await propsRef.current.onVote(r, Number(b.dataset.v) as 1 | -1);
-              pop.remove();
-            };
-          });
-        }, 0);
       };
+      const attach = () => {
+        pop.getElement()?.querySelectorAll<HTMLButtonElement>('button[data-v]').forEach((b) => {
+          b.onclick = async () => {
+            b.disabled = true;
+            await propsRef.current.onVote(r, Number(b.dataset.v) as 1 | -1);
+            pop.remove();
+          };
+        });
+      };
+      pop.on('open', attach);
       render(r.score);
       const mk = new Marker({ element: d, anchor: 'center' }).setLngLat(coord as [number, number]).setPopup(pop).addTo(m);
       markers.current.push(mk);
