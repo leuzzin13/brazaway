@@ -526,8 +526,8 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
       W('hazmat_minianel_eta', 'warn', `Saindo às ${fmtH(ctx.at)}, a rota chega ao Minianel (${vias.join(', ')}) por volta das ${fmtH(firstEta!)}, dentro da janela proibida para PP (${WINDOW_TXT}). Ajuste o horário de saída.`);
     } else if (usedM > 0) {
       summary.push(`Usa ${fmtKm(usedM)} de vias do Minianel fora da janela de restrição (passagem estimada ${fmtH(firstEta!)}).`);
-    } else if (pl.minianelActive) {
-      summary.push(`Vias do Minianel evitadas: proibidas para PP agora (${WINDOW_TXT}; ${LEGAL.minianel}).`);
+    } else if (pl.minianelActive && pl.costLines.some((c) => c.item.name?.startsWith('Minianel'))) {
+      summary.push(`Vias do Minianel proibidas para PP neste horário (${WINDOW_TXT}; ${LEGAL.minianel}): rota calculada sem elas.`);
     } else if (pl.day.holiday && inSpWindows(ctx.at)) {
       summary.push(`Feriado (${pl.day.holiday.name}): a restrição de PP no Minianel não se aplica.`);
     }
