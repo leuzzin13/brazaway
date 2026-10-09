@@ -33,7 +33,7 @@ import io
 import re
 
 from common import http_get
-from sources._oae_locate import dist_m, locate, nome_tem_ref, ref_key
+from sources._oae_locate import dist_m, locate, nome_tem_ref, norm, ref_key
 
 LAYER_ID = 'oae'
 SOURCE = 'artesp'
@@ -52,7 +52,7 @@ BUSCA_M = {'TRANSVERSAL': 100}   # linhas 'Transversal': ponto na ponta de passa
 BUSCA_PADRAO_M = 60
 FAIXA_M = 60                 # pistas a até (distância da pista mais próxima + FAIXA_M) do ponto
 RAIO_PISTA_M = 8             # círculo em cada pista (o ponto está SOBRE a aresta; 8 m de tolerância para edição do OSM)
-AGRUPAR_PISTA_M = 10
+AGRUPAR_PISTA_M = 3          # mesmo ponto (os dois sentidos de uma via de mão dupla); pistas do canteiro ficam a 8+ m
 SP_BBOX = (-53.2, -25.4, -44.1, -19.7)
 _FERREA = re.compile(r'f[eé]rre', re.I)
 
@@ -122,14 +122,17 @@ def _txt(v):
 def pistas_sob(edges: list[dict], rodovia: str, busca_m: float) -> list[dict]:
     """Pontos (um por pista) da rodovia sob a passarela, a partir das arestas do /locate perto do ponto da ARTESP.
 
-    Só arestas com o código da rodovia no nome, que não são alça nem túnel. O ponto mais próximo de cada aresta é o pé
-    da perpendicular (sob a passarela) quando cai no meio da aresta; quando cai na ponta (pct 0/1) a pista continua em
-    outra aresta e o ponto é descartado, a não ser que seja o mais próximo de todos.
+    Só arestas que não são alça nem túnel e têm o código da rodovia no nome, ou um nome que as arestas com o código
+    também têm (no OSM às vezes só uma das pistas leva o `ref`: 'SP-330; Rodovia X' de um lado e 'Rodovia X' do outro).
+    O ponto mais próximo de cada aresta é o pé da perpendicular (sob a passarela) quando cai no meio da aresta; quando cai
+    na ponta (pct 0/1) a pista continua em outra aresta e o ponto é descartado, a não ser que seja o mais próximo de todos.
     """
-    cand = [e for e in edges if e['dist'] <= busca_m and not e['link'] and not e['tunnel'] and e['use'] in (None, 'road')
-            and any(nome_tem_ref(n, rodovia) for n in e['names'])]
-    if not cand:
+    base = [e for e in edges if e['dist'] <= busca_m and not e['link'] and not e['tunnel'] and e['use'] in (None, 'road')]
+    com_ref = [e for e in base if any(nome_tem_ref(n, rodovia) for n in e['names'])]
+    if not com_ref:
         return []
+    apelidos = {norm(n) for e in com_ref for n in e['names'] if len(n) >= 8 and not nome_tem_ref(n, rodovia)}
+    cand = [e for e in base if e in com_ref or any(norm(n) in apelidos for n in e['names'])]
     dmin = cand[0]['dist']
     out: list[dict] = []
     for e in cand:
