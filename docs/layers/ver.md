@@ -90,7 +90,8 @@ o nome do OSM dentro de um retângulo e aplica um dos modos:
   (local/central/expressa): Marginais, avenidas de pista dupla com "entre X e Y";
 - `dir` — mantém só as cadeias no rumo do sentido proibido (pontes "sentido Norte-Sul").
 
-Depois monta **cadeias dirigidas** (quebradas em bifurcação, junção ou retorno), testa no Valhalla e grava uma feição por inciso
+Depois monta **cadeias dirigidas** (quebradas em bifurcação, junção ou retorno e depois emendadas pela continuação mais reta, para
+mandar menos linhas: 523 → 312), testa no Valhalla e grava uma feição por inciso
 (`source_id = p137-a2-s<§>-<inciso>`), com texto legal, norma, janelas, exceções, sentido, ways do OSM e % de conferência.
 Túneis, viadutos e praças que dão continuidade à via entram quando têm nome próprio no eixo (definição de VER da CET).
 
@@ -132,58 +133,58 @@ Decisões por inciso (também no campo `nota` de cada feição):
 | Inciso | Via | km (cadeias dirigidas) | cadeias | CET % | modo |
 |---|---|---|---|---|---|
 | §1 I | Av. Paulista | 4.91 | 2 | 100.0 | corredor |
-| §1 II | Av. Rebouças | 6.39 | 8 | 100.0 | corredor |
-| §1 III | Av. Eusébio Matoso | 4.09 | 15 | 87.1 | toda extensão |
+| §1 II | Av. Rebouças | 6.39 | 5 | 100.0 | corredor |
+| §1 III | Av. Eusébio Matoso | 4.09 | 8 | 86.6 | toda extensão |
 | §1 IV | Av. Prof. Francisco Morato | 10.88 | 2 | 99.2 | corredor |
-| §1 V | Av. Nove de Julho | 12.79 | 17 | 100.0 | toda extensão |
-| §1 VI | Av. Cidade Jardim | 2.61 | 6 | 100.0 | corredor |
+| §1 V | Av. Nove de Julho | 12.79 | 8 | 100.0 | toda extensão |
+| §1 VI | Av. Cidade Jardim | 2.61 | 5 | 100.0 | corredor |
 | §1 VII | Av. São Gabriel | 1.5 | 2 | 98.8 | toda extensão |
-| §1 VIII | Av. Santo Amaro | 13.53 | 15 | 98.0 | corredor |
-| §1 IX | Av. Santos Dumont (Luz) | 3.37 | 14 | 91.3 | toda extensão |
+| §1 VIII | Av. Santo Amaro | 13.53 | 10 | 97.9 | corredor |
+| §1 IX | Av. Santos Dumont (Luz) | 3.37 | 8 | 91.0 | toda extensão |
 | §1 X | Av. Tiradentes | 3.9 | 6 | 83.5 | toda extensão |
-| §1 XI | Av. Prestes Maia | 4.14 | 14 | 100.0 | toda extensão |
+| §1 XI | Av. Prestes Maia | 4.14 | 7 | 100.0 | toda extensão |
 | §1 XIII | Av. Rio Branco | 4.5 | 3 | 87.6 | toda extensão |
 | §1 XIV | Av. Sen. Queirós | 1.2 | 2 | 100.0 | corredor |
 | §1 XV | Av. Ipiranga | 1.44 | 2 | 100.0 | corredor |
-| §1 XVI | Av. São Luís | 0.74 | 4 | 100.0 | toda extensão |
+| §1 XVI | Av. São Luís | 0.74 | 2 | 100.0 | toda extensão |
 | §1 XVII | Vd. Nove de Julho | 0.57 | 2 | 100.0 | toda extensão |
 | §1 XVIII | Vd. Jacareí | 0.39 | 2 | 100.0 | toda extensão |
 | §1 XIX | R. Maria Paula | 0.59 | 2 | 100.0 | toda extensão |
-| §1 XX | Vd. Dona Paulina | 0.27 | 3 | 78.6 | toda extensão |
-| §1 XXI | Av. Vinte e Três de Maio | 12.82 | 12 | 100.0 | toda extensão |
+| §1 XX | Vd. Dona Paulina | 0.27 | 2 | 76.9 | toda extensão |
+| §1 XXI | Av. Vinte e Três de Maio | 12.82 | 8 | 100.0 | toda extensão |
 | §1 XXII | Av. Rubem Berta | 5.85 | 4 | 100.0 | toda extensão |
-| §1 XXIII | Av. Moreira Guimarães | 2.91 | 8 | 100.0 | corredor |
-| §1 XXIV | Av. Alcântara Machado (Radial Leste) | 16.19 | 26 | 93.2 | toda extensão |
-| §1 XXV | R. Melo Freire | 4.94 | 5 | 100.0 | toda extensão |
+| §1 XXIII | Av. Moreira Guimarães | 2.91 | 5 | 100.0 | corredor |
+| §1 XXIV | Av. Alcântara Machado (Radial Leste) | 16.19 | 12 | 93.3 | toda extensão |
+| §1 XXV | R. Melo Freire | 4.94 | 3 | 100.0 | toda extensão |
 | §1 XXVI | Av. Conde de Frontin | 1.17 | 2 | 100.0 | corredor |
-| §2 I | Marginal Pinheiros (Pte. Jaguaré–Pte. Morumbi) | 35.48 | 16 | 96.0 | corredor |
-| §2 II | Av. dos Bandeirantes | 14.55 | 10 | 100.0 | toda extensão |
+| §2 I | Marginal Pinheiros (Pte. Jaguaré–Pte. Morumbi) | 35.48 | 11 | 96.0 | corredor |
+| §2 II | Av. dos Bandeirantes | 14.55 | 6 | 100.0 | toda extensão |
 | §2 III | Av. Affonso D´Escragnolle Taunay | 4.49 | 4 | 89.0 | toda extensão |
 | §2 IV | Av. Jornalista Roberto Marinho | 10.28 | 3 | 95.1 | toda extensão |
-| §3 I | Av. Giovanni Gronchi | 13.82 | 27 | 100.0 | corredor |
-| §3 II | Av. Morumbi | 11.82 | 20 | 100.0 | corredor |
-| §3 III | R. Dr. Luiz Migliano | 4.62 | 15 | 100.0 | toda extensão |
-| §3 IV | Av. Dr. Guilherme Dumont Vilares | 4.87 | 8 | 100.0 | corredor |
+| §3 I | Av. Giovanni Gronchi | 13.82 | 6 | 100.0 | corredor |
+| §3 II | Av. Morumbi | 11.82 | 2 | 100.0 | corredor |
+| §3 III | R. Dr. Luiz Migliano | 4.62 | 4 | 100.0 | toda extensão |
+| §3 IV | Av. Dr. Guilherme Dumont Vilares | 4.87 | 5 | 100.0 | corredor |
 | §3 V | Av. Dep. Jacob Salvador Zveibil | 1.1 | 2 | 93.4 | toda extensão |
 | §3 VI | Av. Jorge João Saad | 2.96 | 3 | 99.3 | toda extensão |
-| §3 VII | Av. Eng. Oscar Americano | 2.88 | 9 | 100.0 | toda extensão |
+| §3 VII | Av. Eng. Oscar Americano | 2.88 | 3 | 100.0 | toda extensão |
 | §3 VIII | Av. Padre Lebret | 1.7 | 2 | 100.0 | toda extensão |
 | §3 IX | Av. Jules Rimet | 0.51 | 2 | 100.0 | corredor |
-| §4 I | Marginal Tietê sentido Castelo (Pte. Aricanduva–Av. Raimundo P. Magalhães) | 49.38 | 29 | 99.7 | corredor |
-| §4 II | Marginal Tietê sentido Ayrton Senna, local e central (R. Botocudos–Pte. Aricanduva) | 31.22 | 13 | 98.8 | corredor |
-| §4 III | Marginal Tietê sentido Ayrton Senna sob a Ponte do Tatuapé | 1.45 | 4 | 100.0 | corredor |
-| §4 IV | Marginal Tietê sentido Ayrton Senna, expressa (Cebolão–Pte. Aricanduva) | 20.9 | 4 | 100.0 | corredor |
+| §4 I | Marginal Tietê sentido Castelo (Pte. Aricanduva–Av. Raimundo P. Magalhães) | 49.38 | 13 | 99.7 | corredor |
+| §4 II | Marginal Tietê sentido Ayrton Senna, local e central (R. Botocudos–Pte. Aricanduva) | 31.22 | 10 | 98.8 | corredor |
+| §4 III | Marginal Tietê sentido Ayrton Senna sob a Ponte do Tatuapé | 1.45 | 2 | 100.0 | corredor |
+| §4 IV | Marginal Tietê sentido Ayrton Senna, expressa (Cebolão–Pte. Aricanduva) | 20.9 | 3 | 100.0 | corredor |
 | §4 V | Av. General Edgar Facó | 0.06 | 1 | 100.0 | entre limites |
 | §4 VI | Av. Ermano Marchetti sentido Centro | 1.72 | 1 | 100.0 | entre limites |
 | §4 VII | Av. Ermano Marchetti sentido Lapa | 1.4 | 2 | 100.0 | entre limites |
 | §4 VIII | Av. Marquês de São Vicente | 6.45 | 4 | 94.3 | toda extensão |
 | §4 IX | R. Norma Pieruccini Giannotti | 1.82 | 2 | 100.0 | toda extensão |
-| §4 X | R. Sérgio Tomás | 1.52 | 4 | 100.0 | toda extensão |
+| §4 X | R. Sérgio Tomás | 1.52 | 3 | 100.0 | toda extensão |
 | §4 XI | Av. Pres. Castello Branco (Sérgio Tomás–Av. do Estado) | 0.45 | 1 | 100.0 | corredor |
-| §4 XII | Av. do Estado (Marginal–Anhaia Mello) | 22.42 | 13 | 100.0 | corredor |
+| §4 XII | Av. do Estado (Marginal–Anhaia Mello) | 22.42 | 9 | 100.0 | corredor |
 | §4 XIII | Av. Anhaia Mello sentido Vila Formosa | 1.58 | 1 | 94.3 | corredor |
-| §4 XIV | Av. Anhaia Mello sentido Ipiranga | 2.97 | 7 | 99.3 | corredor |
-| §4 XV | Av. Pres. Tancredo Neves | 5.54 | 8 | 100.0 | toda extensão |
+| §4 XIV | Av. Anhaia Mello sentido Ipiranga | 2.97 | 5 | 99.3 | corredor |
+| §4 XV | Av. Pres. Tancredo Neves | 5.54 | 3 | 100.0 | toda extensão |
 | §4 XVI | R. Malvina Ferrara Samarone | 0.9 | 2 | 77.8 | toda extensão |
 | §4 XVII | R. das Juntas Provisórias sentido Cambuci | 1.06 | 1 | 100.0 | corredor |
 | §4 XVIII | R. das Juntas Provisórias sentido Sacomã | 0.7 | 1 | 100.0 | corredor |
@@ -191,13 +192,13 @@ Decisões por inciso (também no campo `nota` de cada feição):
 | §4 XX | R. Bresser | 0.84 | 2 | 97.5 | entre limites |
 | §4 XXI | R. Taquari | 0.36 | 2 | 100.0 | corredor |
 | §4 XXII | Av. Paes de Barros | 7.66 | 2 | 100.0 | toda extensão |
-| §4 XXIII | Av. Salim Farah Maluf | 20.55 | 29 | 100.0 | toda extensão |
+| §4 XXIII | Av. Salim Farah Maluf | 20.55 | 14 | 100.0 | toda extensão |
 | §4 XXIV | R. Ulisses Cruz | 0.32 | 1 | 100.0 | corredor |
-| §4 XXV | Vd. Grande São Paulo | 1.62 | 4 | 90.8 | toda extensão |
+| §4 XXV | Vd. Grande São Paulo | 1.62 | 3 | 90.6 | toda extensão |
 | §4 XXVI | Vd. José Colassuono | 0.48 | 1 | 100.0 | toda extensão |
 | §4 XXVII | Complexo Viário Sen. Antônio Emygdio de Barros Filho | 0.19 | 1 | 100.0 | toda extensão |
 | §4 XXVIII | Vd. Pacheco e Chaves | 1.21 | 2 | 100.0 | toda extensão |
-| §4 XXX | Complexo Viário Maria Maluf | 3.93 | 9 | 69.9 | toda extensão |
+| §4 XXX | Complexo Viário Maria Maluf | 3.93 | 7 | 70.1 | toda extensão |
 | §4 XXXI | Ponte do Piqueri | 0.49 | 2 | 100.0 | toda extensão |
 | §4 XXXII | Av. Santos Dumont sentido Centro (Santana) | 0.24 | 1 | 100.0 | entre limites |
 | §4 XXXIII | Ponte das Bandeiras sentido Centro | 0.24 | 1 | 100.0 | toda extensão |
@@ -208,8 +209,8 @@ Decisões por inciso (também no campo `nota` de cada feição):
 | §4 XXXVIII | Av. Marechal Tito sentido centro | 1.23 | 1 | 0.0 | entre limites |
 | §4 XXXIX | R. Beraldo Marcondes sentido centro | 0.31 | 1 | 0.0 | entre limites |
 | §4 XL | Pça. Pe. Aleixo Monteiro Mafra | 0.2 | 1 | 0.0 | toda extensão |
-| §5 I | Marginal Tietê sentido Castelo Branco (Portaria 49/2021) | 63.59 | 41 | 81.0 | corredor |
-| §5 II | Marginal Tietê sentido Ayrton Senna (Portaria 49/2021) | 60.47 | 20 | 93.5 | corredor |
+| §5 I | Marginal Tietê sentido Castelo Branco (Portaria 49/2021) | 63.59 | 21 | 81.0 | corredor |
+| §5 II | Marginal Tietê sentido Ayrton Senna (Portaria 49/2021) | 60.47 | 13 | 93.4 | corredor |
 
 "km" soma os dois sentidos (e todas as pistas nas marginais). Os 2 incisos sem geometria (§1 XII e §4 XXIX) não estão no seed.
 
@@ -246,3 +247,8 @@ Decisões por inciso (também no campo `nota` de cada feição):
   sentido (ex.: São Miguel, Bresser) ele pode aparecer quando a rota usa o sentido liberado. O aviso `ver_proibida` desta camada
   considera o sentido.
 - Os "avoided" saem por cadeia (uma via pode aparecer mais de uma vez na lista do front).
+- **Desempenho:** em rota urbana a camada soma ~0,5–1 s (pré-seleção: 2–5 rotas de referência no Valhalla). Em rota longa no
+  horário de pico (ex.: Jundiaí → Mooca às 18h, desvio de 121 km, 44 linhas) a rota leva ~10 s contra ~4,5 s sem a camada: o
+  `routing.ts` confere cada linha penalizada contra a rota livre e a restrita com `turf.pointToLineDistance` (custo ∝ linhas ×
+  pontos da rota). Um índice espacial nessa checagem resolveria (fora do escopo desta frente). `VER_DEBUG=1` na API mostra as
+  voltas da pré-seleção.
