@@ -423,6 +423,19 @@ describe('/api/geocode — cascata própria', () => {
     expect(distM(inteiro, { lat: -23.597301, lon: -46.86425 })).toBeLessThan(5);
   });
 
+  it('rodovia "km N,f" sem registro: o km mais próximo até 3 km, com o desvio da diferença; além disso, só a rodovia', async () => {
+    if (!hasCnefe) return;
+    // Raposo Tavares em Cotia tem registros nos km 30,325 / 30,565 / 30,640 / 34 / 36 / 40
+    const [prox] = await geocode('Rodovia Raposo Tavares km 33,5, Cotia');
+    expect([prox.precisao, prox.metodo, prox.desvio_m]).toEqual(['numero_aproximado', 'cnefe_km_proximo', 650]);
+    expect(prox.aviso).toMatch(/km 34\b/);
+    expect(distM(prox, { lat: -23.601439, lon: -46.938332 })).toBeLessThan(5);   // registro do km 34
+    // km 44: o registro mais perto (km 40) fica a 4 km, fora da janela de 3 km → não inventa ponto de km
+    const [longe] = await geocode('Rodovia Raposo Tavares km 44, Cotia');
+    expect(longe.metodo ?? '').not.toMatch(/^cnefe_km/);
+    expect(longe.precisao).toBe('logradouro');
+  });
+
   it('CEP de grande usuário (fora do CNEFE) cai no endereço do ViaCEP geocodificado no CNEFE', async () => {
     if (!hasCnefe) return;
     const rs = await geocode('05316-900');
