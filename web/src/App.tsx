@@ -56,7 +56,7 @@ export function App() {
   });
 
   useEffect(() => {
-    api.presets().then((p) => { setPresets(p.presets); setPresetNote(p._note); const t = p.presets.find((x) => x.id === 'truck') ?? p.presets[0]; setVehicle({ ...t, preset: t.id }); }).catch(() => setError({ message: 'API indisponível. Confira docker compose up.' }));
+    api.presets().then((p) => { setPresets(p.presets); setPresetNote(p._note); const t = p.presets.find((x) => x.id === 'truck') ?? p.presets[0]; setVehicle({ ...t, preset: t.id, payload_t: undefined }); }).catch(() => setError({ message: 'API indisponível. Confira docker compose up.' }));
     api.zones().then(setZones).catch(() => {});
     api.layers().then((ls) => {
       setDataLayers(ls);
