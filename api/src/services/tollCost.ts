@@ -32,6 +32,7 @@ export interface Tariff {
   // categorias
   base?: number | null;
   categorias?: TariffCategory[];
+  min_eixos_tabela?: number | null;
   max_eixos_tabela?: number | null;
   vigencia_inicio?: string | null;
   vigencia_fim?: string | null;
@@ -59,6 +60,8 @@ export interface VehicleTollProfile {
   multiplicador: number;
   tag: boolean;
   fim_de_semana: boolean;
+  /** data local da viagem (YYYY-MM-DD), para conferir a vigência da tabela */
+  data_viagem: string;
 }
 
 export function round2(n: number): number { return Math.round(n * 100) / 100; }
@@ -81,8 +84,12 @@ export function tollProfile(v: Vehicle, at: Date): VehicleTollProfile {
   const susp = Math.max(0, Math.min(v.suspended_axles ?? 0, v.axle_count - 2));
   const eixos = Math.max(2, v.axle_count - susp);
   const dupla = v.dual_wheels !== false;
-  const dow = DateTime.fromJSDate(at).setZone(env.tz).weekday; // 1=seg..7=dom
-  return { eixos_cobrados: eixos, eixos_suspensos: susp, rodagem: dupla ? 'dupla' : 'simples', multiplicador: multiplier(eixos, dupla), tag: !!v.has_toll_tag, fim_de_semana: dow >= 6 };
+  const local = DateTime.fromJSDate(at).setZone(env.tz);
+  const dow = local.weekday; // 1=seg..7=dom
+  return {
+    eixos_cobrados: eixos, eixos_suspensos: susp, rodagem: dupla ? 'dupla' : 'simples', multiplicador: multiplier(eixos, dupla),
+    tag: !!v.has_toll_tag, fim_de_semana: dow >= 6, data_viagem: local.toISODate() ?? '',
+  };
 }
 
 function fmtDate(d?: string | null): string | null {
@@ -91,9 +98,20 @@ function fmtDate(d?: string | null): string | null {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : d;
 }
 
+/** Tabela oficial vencida na data da viagem: o valor sai como estimado, com a data de fim de vigência. */
+function withValidity(pr: TollPrice | null, t: Tariff, p: VehicleTollProfile): TollPrice | null {
+  if (!pr || !t.vigencia_fim || !p.data_viagem || t.vigencia_fim >= p.data_viagem) return pr;
+  const obs = `tabela vencida em ${fmtDate(t.vigencia_fim)}; pode ter havido reajuste`;
+  return { ...pr, estimado: true, observacao: pr.observacao ? `${obs}; ${pr.observacao}` : obs };
+}
+
 /** Valor a pagar numa praça, para o perfil do veículo. */
 export function priceFor(t: Tariff | null | undefined, p: VehicleTollProfile): TollPrice | null {
   if (!t) return null;
+  return withValidity(rawPriceFor(t, p), t, p);
+}
+
+function rawPriceFor(t: Tariff, p: VehicleTollProfile): TollPrice | null {
   const meta = { fonte: t.fonte, data: t.data ?? null, url: t.url };
   if (t.modelo === 'categorias' && t.categorias?.length) {
     const cats = t.categorias.filter((c) => c.mult >= 1 && c.valor != null);
@@ -104,15 +122,24 @@ export function priceFor(t: Tariff | null | undefined, p: VehicleTollProfile): T
       if (p.tag && exact.valor_tag != null) { valor = exact.valor_tag; regra += ', valor com TAG (AVI)'; }
       return { valor: round2(valor), regra, estimado: false, ...meta };
     }
-    // fora da tabela (ex.: tabela vai até 6 eixos e o veículo tem 9): valor por unidade de multiplicador x multiplicador
-    const unit = t.base ?? (cats.length ? cats[0].valor / cats[0].mult : null);
+    // Só estende a tabela ACIMA do maior nº de eixos dela (ex.: vai até 6 eixos e o veículo tem 9). Categoria que falta
+    // DENTRO da faixa (ex.: praça que só publica 4 a 8 eixos) = tarifa não publicada para o veículo.
+    const maxEixos = t.max_eixos_tabela ?? Math.max(...cats.map((c) => c.eixos));
+    if (!cats.length || p.eixos_cobrados <= maxEixos) return null;
+    const unit = t.base ?? cats[0].valor / cats[0].mult;
     if (unit == null) return null;
     const fds = p.fim_de_semana ? cats.find((c) => c.valor_fds != null) : undefined;
-    const unitUsed = fds ? fds.valor_fds! / fds.mult : unit;
+    let unitUsed = fds ? fds.valor_fds! / fds.mult : unit;
+    let regra = `${brl(unitUsed)} x ${String(p.multiplicador).replace('.', ',')} (multiplicador)`;
+    // desconto de TAG da própria tabela (razão AVI/manual da maior categoria que tem as duas colunas)
+    const tagRef = p.tag ? [...cats].filter((c) => c.valor_tag != null && c.valor > 0).sort((a, b) => b.eixos - a.eixos)[0] : undefined;
+    if (tagRef) {
+      unitUsed *= tagRef.valor_tag! / tagRef.valor;
+      regra += `, desconto de TAG da tabela (${String(Math.round((1 - tagRef.valor_tag! / tagRef.valor) * 1000) / 10).replace('.', ',')}%)`;
+    }
     return {
-      valor: round2(unitUsed * p.multiplicador), estimado: true, ...meta,
-      regra: `${brl(unitUsed)} x ${String(p.multiplicador).replace('.', ',')} (multiplicador)`,
-      observacao: `tabela oficial vai até ${t.max_eixos_tabela ?? '?'} eixos; valor estendido pela regra do multiplicador`,
+      valor: round2(unitUsed * p.multiplicador), estimado: true, ...meta, regra,
+      observacao: `tabela oficial vai até ${maxEixos} eixos; valor estendido pela regra do multiplicador`,
     };
   }
   if (t.modelo === 'por_eixo' && t.eixo != null) {
@@ -151,31 +178,50 @@ export interface NoTollRoute {
   /** o Valhalla permite pedágio só no começo/fim da rota com exclude_tolls */
   has_toll: boolean;
   coordinates: [number, number][];
+  /** restrições que não puderam ser consultadas (a alternativa pode passar por onde a rota principal não passa) */
+  falhas: string[];
 }
+
+interface Restrictions { rings: Ring[]; costLines: { coordinates: [number, number][]; factor: number }[]; falhas: string[] }
 
 /**
  * Restrições que a rota principal também respeita (zonas por horário, reportes que bloqueiam o veículo e as outras
  * camadas), para que a alternativa sem pedágio seja comparável. Mesma lógica de services/routing.ts.
+ * LIMITAÇÃO: routing.ts não entrega às camadas as restrições que já calculou (o contrato RouteGeom não as traz), então
+ * elas são consultadas de novo aqui, em paralelo. Falha numa consulta não derruba a alternativa, mas fica em `falhas`.
  */
-async function restrictionsFor(ctx: RouteCtx, skipLayer: string): Promise<{ rings: Ring[]; costLines: { coordinates: [number, number][]; factor: number }[] }> {
+async function restrictionsFor(ctx: RouteCtx, skipLayer: string): Promise<Restrictions> {
   const rings: Ring[] = [];
-  const costLines: { coordinates: [number, number][]; factor: number }[] = [];
-  const [zones, dayInfo] = await Promise.all([activeZones().catch(() => []), legalDayInfo(ctx.at).catch(() => ({ holiday: null, suspensions: [] }))]);
-  for (const z of zones) {
-    if (!zoneApplies(z.rules, ctx.vehicle, ctx.at, dayInfo)) continue;
-    if (pointInZone(z, ctx.origin) || pointInZone(z, ctx.destination)) continue;
-    rings.push(...zoneRings(z));
-  }
-  for (const r of await blockingReports(ctx.vehicle, ctx.at).catch(() => [])) rings.push(reportToRing(r));
+  const costLines: Restrictions['costLines'] = [];
+  const falhas: string[] = [];
   const { loadLayers } = await import('../layers/index.js');
-  for (const l of await loadLayers()) {
-    if (l.meta.id === skipLayer) continue;
-    try {
-      if (l.exclusions) for (const ex of await l.exclusions(ctx)) rings.push(...ex.rings);
-      if (l.costLines) for (const c of await l.costLines(ctx)) costLines.push({ coordinates: c.coordinates, factor: c.factor });
-    } catch { /* camada indisponível: segue sem ela, como a rota principal */ }
-  }
-  return { rings, costLines };
+  const layers = (await loadLayers()).filter((l) => l.meta.id !== skipLayer && (l.exclusions || l.costLines));
+  const [zones, dayInfo, reports, ...perLayer] = await Promise.allSettled([
+    activeZones(),
+    legalDayInfo(ctx.at),
+    blockingReports(ctx.vehicle, ctx.at),
+    ...layers.map(async (l) => ({
+      ex: l.exclusions ? await l.exclusions(ctx) : [],
+      cl: l.costLines ? await l.costLines(ctx) : [],
+    })),
+  ]);
+  if (zones.status === 'fulfilled') {
+    const di = dayInfo.status === 'fulfilled' ? dayInfo.value : {};
+    if (dayInfo.status === 'rejected') falhas.push('calendário de feriados');
+    for (const z of zones.value) {
+      if (!zoneApplies(z.rules, ctx.vehicle, ctx.at, di)) continue;
+      if (pointInZone(z, ctx.origin) || pointInZone(z, ctx.destination)) continue;
+      rings.push(...zoneRings(z));
+    }
+  } else falhas.push('zonas de restrição');
+  if (reports.status === 'fulfilled') for (const r of reports.value) rings.push(reportToRing(r));
+  else falhas.push('reportes de bloqueio');
+  perLayer.forEach((res, i) => {
+    if (res.status === 'rejected') { falhas.push(layers[i].meta.label); return; }
+    for (const ex of res.value.ex) rings.push(...ex.rings);
+    for (const c of res.value.cl) costLines.push({ coordinates: c.coordinates, factor: c.factor });
+  });
+  return { rings, costLines, falhas };
 }
 
 /**
@@ -186,7 +232,7 @@ async function restrictionsFor(ctx: RouteCtx, skipLayer: string): Promise<{ ring
  */
 export async function noTollRoute(ctx: RouteCtx, skipLayer = 'pedagio'): Promise<NoTollRoute | null> {
   const v = ctx.vehicle;
-  const { rings, costLines } = await restrictionsFor(ctx, skipLayer);
+  const { rings, costLines, falhas } = await restrictionsFor(ctx, skipLayer);
   const body: Record<string, unknown> = {
     locations: [
       { lat: ctx.origin.lat, lon: ctx.origin.lon, type: 'break' },
@@ -220,5 +266,5 @@ export async function noTollRoute(ctx: RouteCtx, skipLayer = 'pedagio'): Promise
   const trip = json.trip;
   const coordinates: [number, number][] = [];
   for (const leg of trip.legs) coordinates.push(...decodePolyline6(leg.shape));
-  return { distance_km: Number(trip.summary.length), duration_s: Number(trip.summary.time), has_toll: !!trip.summary.has_toll, coordinates };
+  return { distance_km: Number(trip.summary.length), duration_s: Number(trip.summary.time), has_toll: !!trip.summary.has_toll, coordinates, falhas };
 }

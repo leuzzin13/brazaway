@@ -68,15 +68,61 @@ describe('balanças: PPV federal (Régis Bittencourt, sentido crescente)', () =>
   });
 });
 
+describe('balanças: par norte/sul no mesmo km (SP-332 km 44,5, DER-SP)', () => {
+  // Os dois postos ficam a ~34 m um do outro; ali a via corre a ~229° no sentido NORTE (nominal) da rodovia.
+  const A = { lat: -23.3217, lon: -46.7266 }, B = { lat: -23.24, lon: -46.82 }; // A -> B = rumo a Jundiaí (sentido norte)
+  let ids: Record<string, string>;
+  beforeAll(async () => {
+    await waitForStack();
+    const r = await pool.query(`select id::text, props->>'sentido' s from data_features where layer_id = 'balancas' and source = 'der-sp'
+      and props->>'rodovia' = 'SP-332' and (props->>'km')::float = 44.5`);
+    ids = Object.fromEntries(r.rows.map((x: any) => [x.s, x.id]));
+    expect(Object.keys(ids).sort()).toEqual(['norte', 'sul']);
+  });
+
+  it('sentido norte: lista a balança "norte" (não a omite pelo rumo local)', async () => {
+    const r = await route({ origin: A, destination: B, vehicle: { preset: 'carreta' }, departure_at: WEEKDAY });
+    expect(r.status).toBe(200);
+    const list = r.body.layers.balancas.data.balancas;
+    const norte = list.find((b: any) => b.id === ids.norte);
+    expect(norte, JSON.stringify(list)).toBeTruthy();
+    expect(['sim', 'provavel']).toContain(norte.no_sentido);
+    expect(norte.sentido).toBe('norte');
+    const sul = list.find((b: any) => b.id === ids.sul);
+    if (sul) expect(sul.no_sentido).toBe('incerto');
+  });
+
+  it('sentido sul: não junta as duas balanças e não copia o sentido de uma para a outra', async () => {
+    const r = await route({ origin: B, destination: A, vehicle: { preset: 'carreta' }, departure_at: WEEKDAY });
+    expect(r.status).toBe(200);
+    const list = r.body.layers.balancas.data.balancas;
+    const sul = list.find((b: any) => b.id === ids.sul);
+    expect(sul, JSON.stringify(list)).toBeTruthy();
+    expect(['sim', 'provavel']).toContain(sul.no_sentido);
+    for (const b of list) {
+      if (b.id === ids.sul || b.id === ids.norte) {
+        expect(b.fontes).toEqual(['der-sp']);
+        expect(b.nome).toContain(`(${b.sentido})`);
+        expect(b.como).not.toMatch(b.sentido === 'sul' ? /"norte"/ : /"sul"/);
+      }
+    }
+    const norte = list.find((b: any) => b.id === ids.norte);
+    if (norte) expect(norte.no_sentido).toBe('incerto');
+  });
+});
+
 describe('regra de sentido (unitário)', () => {
-  it('rótulo cardinal x rumo da rota e lado da via', () => {
-    expect(directionVerdict('norte', 330, -1, true, 40).v).toBe('provavel');   // indo para NO, posto à direita
-    expect(directionVerdict('sul', 330, 1, false, 5).v).toBe('nao');
-    expect(directionVerdict('crescente', 200, -1, true, 40).v).toBe('provavel'); // só pelo lado (direita)
+  it('lado da via decide com posição exata; rótulo sozinho nunca omite', () => {
+    expect(directionVerdict('norte', 330, -1, true, 40).v).toBe('provavel');    // à direita, rótulo concorda
+    expect(directionVerdict('norte', 180, -1, true, 40).v).toBe('provavel');    // à direita; rótulo contra é ignorado
+    expect(directionVerdict('norte', 180, -1, true, 40).como).toMatch(/ignorado/);
+    expect(directionVerdict('norte', 0, 1, true, 40).v).toBe('nao');            // à esquerda: outro sentido, mesmo com rótulo a favor
+    expect(directionVerdict('sul', 330, 1, false, 5).v).toBe('incerto');        // só o rótulo contra: lista como não confirmado
+    expect(directionVerdict('norte', 315, 1, true, 7.7).v).toBe('provavel');    // colado na linha (< 12 m): vale o rótulo a favor
+    expect(directionVerdict('crescente', 200, -1, true, 40).v).toBe('provavel');
     expect(directionVerdict('crescente', 200, 1, true, 40).v).toBe('nao');
-    expect(directionVerdict('crescente', 200, 1, false, 40).v).toBe('incerto');  // posição aproximada
+    expect(directionVerdict('crescente', 200, 1, false, 40).v).toBe('incerto'); // posição aproximada
     expect(directionVerdict('crescente+decrescente', 0, 1, true, 40).v).toBe('sim');
-    expect(directionVerdict('norte', 0, 1, true, 40).v).toBe('incerto');        // rótulo e lado discordam
     expect(directionVerdict(null, 0, 1, true, 5).v).toBe('incerto');
   });
 });

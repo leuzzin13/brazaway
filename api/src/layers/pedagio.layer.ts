@@ -310,6 +310,8 @@ const layer: RouteLayer = {
               economia: total,
               economia_parcial: unknown.length > 0,
               pedagio_na_ponta: nt.has_toll,
+              restricoes_parciais: nt.falhas.length > 0,
+              restricoes_com_falha: nt.falhas,
               metodo: 'Valhalla costing_options.truck.exclude_tolls=true, mesmas restrições da rota',
             }
           : { disponivel: false, motivo: 'sem_caminho' };
@@ -328,7 +330,7 @@ const layer: RouteLayer = {
       const n = charged.length;
       summary.push(`Pedágio estimado: ${brl(total)}${unknown.length ? ' + praças sem tarifa' : ''} — ${n} ponto${n === 1 ? '' : 's'} de cobrança, ${eixosTxt}${prof.fim_de_semana ? ', fim de semana' : ''}${prof.tag ? ', com TAG' : ''}.`);
       for (const p of plazas.slice(0, 10)) {
-        const val = p.ponto_a_ponto ? 'ponto a ponto (não somado)' : p.valor == null ? 'tarifa não publicada' : brl(p.valor);
+        const val = p.ponto_a_ponto ? 'ponto a ponto (não somado)' : p.valor == null ? 'tarifa não encontrada' : brl(p.valor);
         const src = p.valor != null ? ` · ${describeSource({ fonte: p.fonte ?? '', data: p.data } as TollPrice)}${p.estimado ? ' · estimado' : ''}` : '';
         summary.push(`• km ${Math.round(p.km_rota)}: ${p.nome}: ${val}${src}`);
       }
@@ -340,6 +342,8 @@ const layer: RouteLayer = {
         const dk = alternativa.delta_km as number, dm = alternativa.delta_min as number;
         const sign = (x: number, u: string) => `${x >= 0 ? '+' : '−'}${Math.abs(x).toFixed(u === 'km' ? 1 : 0).replace('.', ',')} ${u}`;
         summary.push(`Sem pedágio: ${sign(dk, 'km')} e ${sign(dm, 'min')} para economizar ${brl(total)}${unknown.length ? ' (ou mais)' : ''}${alternativa.pedagio_na_ponta ? '; ainda pode haver pedágio perto da origem/destino' : ''}.`);
+        const falhas = (alternativa.restricoes_com_falha as string[] | undefined) ?? [];
+        if (falhas.length) summary.push(`Atenção: a rota sem pedágio foi calculada sem as restrições de ${falhas.join(', ')} (falha na consulta). Confira antes de usar.`);
       } else {
         summary.push(alternativa.motivo === 'sem_caminho'
           ? 'Não há rota sem pedágio para este veículo.'
@@ -354,7 +358,7 @@ const layer: RouteLayer = {
     if (unknown.length) {
       warnings.push({
         code: 'toll_price_unknown', severity: 'info', lat: unknown[0].lat, lon: unknown[0].lon,
-        message: `Sem tarifa publicada para ${unknown.length} ponto(s) de cobrança (${unknown.slice(0, 3).map((p) => p.nome).join('; ')}). O total não inclui esses valores.`,
+        message: `Sem tarifa nas fontes importadas para ${unknown.length} ponto(s) de cobrança (${unknown.slice(0, 3).map((p) => p.nome).join('; ')}). O total não inclui esses valores; confira na concessionária.`,
       });
     }
     const ff = plazas.filter((p) => p.free_flow && !p.ponto_a_ponto);

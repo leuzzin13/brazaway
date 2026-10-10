@@ -130,6 +130,43 @@ describe('Valhalla: opção que evita pedágio (premissa da camada)', () => {
   });
 });
 
+describe('pedágio: quadro ANTT sem número de praça (Autopista Fluminense, BR-101/RJ)', () => {
+  it('cobra a tarifa ANTT vigente (R$ 54,00 / 5 eixos em todas as praças), não o OSM antigo', async () => {
+    await waitForStack();
+    const r = await route({ origin: { lat: -22.827, lon: -43.053 }, destination: { lat: -22.37, lon: -41.79 }, vehicle: { preset: 'carreta', axle_count: 5 }, departure_at: WEEKDAY });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const d = r.body.layers.pedagio.data;
+    const antt = d.pracas.filter((p: any) => p.fonte === 'ANTT');
+    expect(antt.length, JSON.stringify(d.pracas)).toBeGreaterThanOrEqual(1);
+    for (const p of antt) {
+      const t = await tariffOf(p.oficial_id);
+      const cat5 = t.categorias!.find((c) => c.eixos === 5 && c.rodagem === 'dupla')!;
+      expect(p.valor).toBe(cat5.valor);
+      expect(p.estimado).toBe(false);
+    }
+    expect(d.total).toBeCloseTo(d.pracas.reduce((s: number, p: any) => s + (p.valor ?? 0), 0), 2);
+  });
+});
+
+describe('pedágio: SPMar (Rodoanel Leste), "Papa João XXIII" não é ponto a ponto', () => {
+  it('nenhuma praça da ARTESP com "Papa" no nome está marcada como PaP', async () => {
+    const r = await pool.query(`select name, props->>'ponto_a_ponto' pap from data_features where layer_id = 'pedagio' and source = 'artesp' and name ilike '%papa%'`);
+    expect(r.rows.length).toBeGreaterThanOrEqual(2);
+    for (const row of r.rows) expect(row.pap, row.name).toBe('false');
+  });
+
+  it('a praça Leste 1 é cobrada na rota que passa por ela', async () => {
+    const r = await route({ origin: { lat: -23.54, lon: -46.31 }, destination: { lat: -23.6677, lon: -46.4613 }, vehicle: { preset: 'carreta', axle_count: 5 }, departure_at: WEEKDAY });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const d = r.body.layers.pedagio.data;
+    const leste1 = d.pracas.find((p: any) => /Leste 1/.test(p.nome));
+    expect(leste1, JSON.stringify(d.pracas)).toBeTruthy();
+    expect(leste1.ponto_a_ponto).toBe(false);
+    expect(leste1.valor).toBeGreaterThan(0);
+    expect(d.alternativa_sem_pedagio?.restricoes_parciais).toBe(false);
+  });
+});
+
 describe('regras de preço (unitário)', () => {
   const v = (o: Partial<Vehicle>): Vehicle => ({ id: 't', label: 't', height_m: 4, width_m: 2.6, length_m: 18, weight_t: 40, axle_load_t: 10, axle_count: 5, hazmat: false, is_vuc: false, ...o });
   const WED = new Date('2026-10-14T13:00:00Z');
@@ -170,6 +207,44 @@ describe('regras de preço (unitário)', () => {
     const nove = priceFor(antt, tollProfile(v({ axle_count: 9 }), WED))!;
     expect(nove.estimado).toBe(true);
     expect(nove.valor).toBeCloseTo(4.8 * 9, 2);
+  });
+
+  it('categoria que falta DENTRO da faixa da tabela = não publicada (não extrapola)', () => {
+    // Via Brasil P3 (Trairão): a fonte só publica 4 a 8 eixos
+    const t: Tariff = {
+      modelo: 'categorias', fonte: 'ANTT', data: '2026-10-02', base: 78.4, min_eixos_tabela: 4, max_eixos_tabela: 8,
+      categorias: [4, 5, 6, 7, 8].map((e, i) => ({ cat: 6 + i, eixos: e, rodagem: 'dupla' as const, mult: e, valor: 78.4 * e })),
+    };
+    expect(priceFor(t, tollProfile(v({ axle_count: 2 }), WED))).toBeNull();
+    expect(priceFor(t, tollProfile(v({ axle_count: 5 }), WED))!.valor).toBeCloseTo(392, 2);
+    const nove = priceFor(t, tollProfile(v({ axle_count: 9 }), WED))!;
+    expect(nove.estimado).toBe(true);
+    expect(nove.observacao).toMatch(/até 8 eixos/);
+  });
+
+  it('tabela vencida na data da viagem sai como estimada', () => {
+    // ViaPaulista: tabela 2025 com vigência até 22/11/2026
+    const vp: Tariff = { modelo: 'categorias', fonte: 'ARTESP', data: '2025-11-23', vigencia_fim: '2026-11-22', base: 18.3, max_eixos_tabela: 6,
+      categorias: [{ cat: 5, eixos: 5, rodagem: 'dupla', mult: 5, valor: 91.6, valor_tag: 87.02 }] };
+    const antes = priceFor(vp, tollProfile(v({}), WED))!;
+    expect(antes.estimado).toBe(false);
+    const depois = priceFor(vp, tollProfile(v({}), new Date('2026-11-25T13:00:00Z')))!;
+    expect(depois.estimado).toBe(true);
+    expect(depois.valor).toBe(91.6);
+    expect(depois.observacao).toMatch(/tabela vencida em 22\/11\/2026/);
+    expect(tollProfile(v({}), WED).data_viagem).toBe('2026-10-14');
+  });
+
+  it('extrapolação acima da tabela aplica o desconto de TAG da própria tabela', () => {
+    const vp: Tariff = { modelo: 'categorias', fonte: 'ARTESP', base: 18.32, max_eixos_tabela: 6, categorias: [
+      { cat: 5, eixos: 5, rodagem: 'dupla', mult: 5, valor: 91.6, valor_tag: 87.02 },
+      { cat: 6, eixos: 6, rodagem: 'dupla', mult: 6, valor: 109.92, valor_tag: 104.42 },
+    ] };
+    const sem = priceFor(vp, tollProfile(v({ axle_count: 9 }), WED))!;
+    const com = priceFor(vp, tollProfile(v({ axle_count: 9, has_toll_tag: true }), WED))!;
+    expect(sem.valor).toBeCloseTo(18.32 * 9, 2);
+    expect(com.valor).toBeCloseTo(18.32 * 9 * (104.42 / 109.92), 2);
+    expect(com.regra).toMatch(/desconto de TAG/);
   });
 
   it('ARTESP por eixo, TAG (AVI) e OSM como reserva', () => {
