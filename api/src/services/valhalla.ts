@@ -107,7 +107,9 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
  * Exportada para quem monta o próprio /route com linear_cost_factors (ex.: services/tollCost.ts).
  */
 export async function retime(shapes: string[], routeBody: Record<string, unknown>, distanceKm: number): Promise<number | null> {
-  const modes: ('edge_walk' | 'map_snap')[] = distanceKm < 190 ? ['edge_walk', 'map_snap'] : ['edge_walk'];
+  // map_snap (HMM) em traçado longo é patológico no Valhalla: já levou 15 min num pedido que a API abandonou em 15 s,
+  // prendendo uma thread do servidor e enfileirando as outras rotas. Só como reserva em rota curta.
+  const modes: ('edge_walk' | 'map_snap')[] = distanceKm <= 20 ? ['edge_walk', 'map_snap'] : ['edge_walk'];
   for (const mode of modes) {
     try {
       let total = 0;
