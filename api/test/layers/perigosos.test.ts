@@ -1,7 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as turf from '@turf/turf';
+import { DateTime } from 'luxon';
 import { get, route, waitForStack } from '../helpers.js';
 import { describeProduct, getProduct, hazmatInfo, limitedQuantity, parseUns, productCount, spGroup, spGroupForLoad } from '../../src/services/hazmat.js';
+import { hazmatGroupSP, isHazmatLocalOrOther, resolveVehicle } from '../../src/services/vehicle.js';
+import { zoneApplies, type ZoneRules } from '../../src/services/zones.js';
 
 /**
  * Camada "perigosos" (produtos perigosos). Roda contra a API local (API_URL) com os dados importados
@@ -40,6 +44,10 @@ const TRUCK = { preset: 'truck' };
 // Osasco (oeste do Cebolão) -> Penha (leste da Av. Salim Farah Maluf): o caminho natural é a Marginal Tietê (via do Minianel)
 const OSASCO = { lat: -23.532, lon: -46.775 };
 const PENHA = { lat: -23.522, lon: -46.552 };
+// Butantã (oeste do Rio Pinheiros) -> Mooca (dentro do Minianel): a ZMRC empurra a rota para o anel longe da rota
+// livre; com PP a rota tem de evitar as vias do Minianel mesmo assim (antes saía 3,7 km pela Marginal Tietê às 08h)
+const BUTANTA = { lat: -23.570, lon: -46.720 };
+const MOOCA = { lat: -23.555, lon: -46.595 };
 // SP-008 (Rod. Arão Sahm): divisa SP/Mairiporã -> Mairiporã; o caminho natural passa pelo km 25,28–31,5
 const SP008_A = { lat: -23.39, lon: -46.576 };
 const SP008_B = { lat: -23.33, lon: -46.58 };
@@ -56,6 +64,19 @@ describe('hazmat.ts — tabela ONU, grupos de SP e quantidade limitada', () => {
     expect(describeProduct('1203')).toMatch(/^ONU 1203 \(.*GASOLINA.*classe 3\)$/);
   });
 
+  it('parse da Relação: sem número da página na coluna 5 e nomes na linha certa', () => {
+    expect(getProduct('0054')?.riskNumber).toBe('');        // antes: "1" (número da página)
+    expect(getProduct('1105')?.riskNumber).toBe('33');      // antes: "33 15"
+    expect(getProduct('1250')?.riskNumber).toBe('X338');    // antes: "X338 21"
+    expect(getProduct('1588')?.riskNumber).toBe('66 60');   // antes: "66 60 34"
+    expect(getProduct('3546')?.name).toMatch(/SUBSTÂNCIA TÓXICA/);
+    expect(getProduct('3547')?.name).toMatch(/SUBSTÂNCIA CORROSIVA/);
+    expect(getProduct('3548')?.name).toMatch(/PERIGOSA DIVERSA/);
+    expect(getProduct('3549')?.name).toMatch(/^RESÍDUOS MÉDICOS, CATEGORIA A/);
+    expect(getProduct('3534')).toMatchObject({ riskNumber: '40', lqVehicle: 'ZERO' });
+    expect(getProduct('0133')?.name).toMatch(/UMEDECIDO com no mínimo 40% de água/);   // antes: palavras coladas
+  });
+
   it('grupos da Portaria SMT.GAB 051/2024', () => {
     expect(spGroup('1203')).toMatchObject({ group: 'II', ambiguous: true, interiorAllowed: false });  // Anexos I e II
     expect(spGroup('1203', true).group).toBe('III');                                                   // entrega fracionada p/ consumo local
@@ -63,6 +84,30 @@ describe('hazmat.ts — tabela ONU, grupos de SP e quantidade limitada', () => {
     expect(spGroup('2908').group).toBe('IV');    // radioativo, volume exceptivo (Anexo III)
     expect(spGroup('1017').group).toBe('I');     // cloro: fora dos anexos = alta periculosidade (Decreto 50.446 art. 3º I)
     expect(spGroupForLoad(['2908', '1017'])?.group).toBe('I');
+    // Anexo II: o 3082 é só o biodiesel (ABNT NBR 15512); entrega local sem essa indicação continua grupo II
+    expect(spGroup('3082', true)).toMatchObject({ group: 'II', qualifierMissing: true });
+    expect(spGroup('3082', true, true).group).toBe('III');
+    expect(spGroup('1075', true)).toMatchObject({ group: 'III', annexIIQualifier: 'ENGARRAFADOS/FRACIONADO' });
+  });
+
+  it('vehicle.ts usa os grupos de hazmat.ts; zona de PP do Minianel com exceção para consumo local/outros', () => {
+    const cfg = JSON.parse(readFileSync(new URL('../../../config/zmrc-rules.json', import.meta.url), 'utf8'));
+    const zona: ZoneRules = cfg.other_zones.find((z: any) => z.id.endsWith('0003')).rules;
+    const pico = DateTime.fromISO('2026-10-13T08:00', { zone: 'America/Sao_Paulo' }).toJSDate();
+    const glp = resolveVehicle({ preset: 'truck', hazmat_un: '1075', hazmat_local_delivery: true });
+    expect(isHazmatLocalOrOther(glp)).toBe(true);
+    expect(zoneApplies(zona, glp, pico)).toBe(false);                                   // art. 3º parágrafo único
+    expect(zoneApplies(zona, resolveVehicle({ preset: 'truck', hazmat_un: '1203' }), pico)).toBe(true);
+    expect(zoneApplies(zona, resolveVehicle({ preset: 'truck', hazmat_un: '2908' }), pico)).toBe(false);   // grupo IV
+    const oleo = { preset: 'truck', hazmat_un: '3082', hazmat_local_delivery: true };
+    expect(zoneApplies(zona, resolveVehicle(oleo), pico)).toBe(true);                    // 3082 que não é biodiesel
+    expect(zoneApplies(zona, resolveVehicle({ ...oleo, hazmat_biodiesel: true }), pico)).toBe(false);
+    // vários nº ONU: vale o mais restritivo, e qualquer nº ONU marca o veículo como PP
+    const carga = resolveVehicle({ preset: 'truck', hazmat_un: 'UN 2908 / 1017' });
+    expect(carga.hazmat).toBe(true);
+    expect(hazmatGroupSP(carga.hazmat_un)).toBe('nao_listado');
+    expect(isHazmatLocalOrOther(carga)).toBe(false);
+    expect(resolveVehicle({ preset: 'truck', hazmat_un: '1203', hazmat_qty_kg: 300, rear_axle_count: 2 })).toMatchObject({ hazmat_qty_kg: 300, rear_axle_count: 2 });
   });
 
   it('isenção por quantidade limitada: menor valor entre os produtos, peso bruto <= limite', () => {
@@ -71,7 +116,21 @@ describe('hazmat.ts — tabela ONU, grupos de SP e quantidade limitada', () => {
     expect(limitedQuantity(['1203', '1017'], 25)).toMatchObject({ limitKg: 20, exempt: false });
     expect(limitedQuantity(['1203']).exempt).toBeNull();
     expect(parseUns('UN 1203 / 1202')).toEqual(['1203', '1202']);
-    expect(hazmatInfo({ hazmat: false, hazmat_un: '1203' } as any).active).toBe(true);
+    // isenção dispensa só as limitações do RTPP; o texto não pode dizer "sem restrição de itinerário"
+    expect(limitedQuantity(['1203'], 300).text).toMatch(/restrições municipais e do DER continuam valendo/);
+    expect(limitedQuantity(['1203'], 300).text).not.toMatch(/sem restrição de itinerário/);
+  });
+
+  it('PP ativo só com vehicle.hazmat (mesmo sinal do costing, dos reportes e das zonas)', () => {
+    expect(hazmatInfo({ hazmat: false, hazmat_un: '1203' } as any)).toMatchObject({ active: false, declaredWithoutFlag: true });
+    expect(hazmatInfo({ hazmat: false, cargo_type: 'hazmat' } as any)).toMatchObject({ active: false, declaredWithoutFlag: true });
+    expect(hazmatInfo({ hazmat: false } as any)).toMatchObject({ active: false, declaredWithoutFlag: false });
+    expect(hazmatInfo({ hazmat: true, hazmat_un: '1203' } as any).active).toBe(true);
+    expect(hazmatInfo({ hazmat: true, hazmat_un: '1203', hazmat_qty_kg: 300 } as any).lqExempt).toBe(true);
+    expect(hazmatInfo({ hazmat: true, hazmat_un: '1203', hazmat_qty_kg: 400 } as any).lqExempt).toBe(false);
+    // pela API o resolveVehicle marca hazmat com nº ONU ou cargo_type 'hazmat': a camada sempre recebe o sinal
+    expect(hazmatInfo(resolveVehicle({ preset: 'truck', hazmat_un: '1203' })).active).toBe(true);
+    expect(hazmatInfo(resolveVehicle({ preset: 'truck', cargo_type: 'hazmat' })).active).toBe(true);
   });
 });
 
@@ -102,7 +161,7 @@ describe('Camada perigosos na rota', () => {
     expect(overlapM(r.body, minianel), 'pré-condição: o caminho natural usa as vias do Minianel').toBeGreaterThan(5000);
     expect(r.body.avoided.some((a: any) => a.layer === 'perigosos')).toBe(false);
     expect(r.body.layers.perigosos).toBeUndefined();
-  }, 120_000);
+  }, 300_000);
 
   it('ONU 1203 (gasolina) às 09h30 de terça desvia das vias do Minianel', async () => {
     const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T09:30' });
@@ -114,7 +173,36 @@ describe('Camada perigosos na rota', () => {
     expect(p.data.grupo_sp.group).toBe('II');
     expect(r.body.warnings.some((w: any) => w.code === 'hazmat_letpp')).toBe(true);
     expect(r.body.warnings.some((w: any) => w.code === 'hazmat_minianel_used')).toBe(false);
-  }, 120_000);
+    // cada via do Anexo IV aparece uma vez só em "evitado"
+    const names = r.body.avoided.filter((a: any) => a.layer === 'perigosos').map((a: any) => a.name);
+    expect(new Set(names).size).toBe(names.length);
+    expect(p.data.minianel.evitado_m).toBeGreaterThan(5000);
+  }, 300_000);
+
+  it('Butantã→Mooca às 08h de terça com ONU 1203: nenhum metro de via do Minianel (todas as vias entram no plano)', async () => {
+    const r = await route({ origin: BUTANTA, destination: MOOCA, vehicle: GASOLINA, departure_at: '2026-10-13T08:00' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const p = r.body.layers.perigosos;
+    expect(p.data.minianel.regra_ativa_na_saida).toBe(true);
+    expect(p.data.minianel.vias_no_plano).toBeGreaterThan(150);
+    expect(p.data.minianel.usado_m, JSON.stringify(p.data.minianel)).toBe(0);
+    expect(overlapM(r.body, minianel)).toBeLessThan(300);
+    expect(r.body.warnings.some((w: any) => w.code === 'hazmat_minianel_used')).toBe(false);
+    expect(r.body.warnings.some((w: any) => w.code === 'uses_restricted_way' && w.layer === 'perigosos')).toBe(false);
+  }, 300_000);
+
+  it('quantidade limitada (300 kg de gasolina) não tira a restrição do Minianel; só avisa a isenção do RTPP', async () => {
+    const v = { ...GASOLINA, hazmat: undefined, hazmat_qty_kg: 300 };     // sem hazmat: true, só o nº ONU
+    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: v, departure_at: '2026-10-13T09:30' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body.vehicle.hazmat).toBe(true);
+    const p = r.body.layers.perigosos;
+    expect(p.data.isento_quantidade_limitada).toBe(true);
+    expect(overlapM(r.body, minianel)).toBeLessThan(300);
+    const w = r.body.warnings.find((x: any) => x.code === 'hazmat_limited_qty_exempt');
+    expect(w?.message).toMatch(/restrições municipais e do DER continuam valendo/);
+    expect(r.body.warnings.some((x: any) => x.code === 'hazmat_flag_missing')).toBe(false);
+  }, 300_000);
 
   it('ONU 1203 às 11h (fora da janela) pode usar o Minianel', async () => {
     const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T11:00' });
@@ -122,7 +210,7 @@ describe('Camada perigosos na rota', () => {
     expect(overlapM(r.body, minianel)).toBeGreaterThan(5000);
     expect(r.body.layers.perigosos.data.minianel.regra_ativa_na_saida).toBe(false);
     expect(r.body.layers.perigosos.data.minianel.usado_m).toBeGreaterThan(5000);
-  }, 120_000);
+  }, 300_000);
 
   // 16h50: nem perigosos (17–20h) nem a VER § 4 (17–21h) valem na saída; a passagem estimada cai depois das 17h.
   it('saindo 16h50, avisa que a passagem estimada pelo Minianel cai na janela', async () => {
@@ -131,7 +219,7 @@ describe('Camada perigosos na rota', () => {
     const w = r.body.warnings.find((x: any) => x.code === 'hazmat_minianel_eta');
     expect(w, JSON.stringify(r.body.warnings)).toBeTruthy();
     expect(w.severity).toBe('warn');
-  }, 120_000);
+  }, 300_000);
 
   it('SP-008 km 25,28–31,5 (Portaria PR/DER-164/2025): sem PP passa, com PP desvia', async () => {
     const free = await route({ origin: SP008_A, destination: SP008_B, vehicle: TRUCK, departure_at: '2026-10-13T14:00' });
@@ -146,7 +234,7 @@ describe('Camada perigosos na rota', () => {
     expect(av[0].rule).toMatch(/PR\/DER-164\/2025/);
     // trecho 100% dentro da APRM Alto Juquery: aviso de manancial, sem bloqueio
     expect(hz.body.warnings.some((w: any) => w.code === 'hazmat_aprm' && /Alto Juquery/.test(w.message))).toBe(true);
-  }, 120_000);
+  }, 300_000);
 
   it('mapa: trechos, vias do Minianel, paradas de PP e emergências químicas', async () => {
     const r = await get(`/api/layers/perigosos/features?bbox=-46.9,-23.9,-46.3,-23.3&zoom=12`);

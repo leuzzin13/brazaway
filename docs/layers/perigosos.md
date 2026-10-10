@@ -1,7 +1,14 @@
 # Camada `perigosos` (produtos perigosos)
 
-A camada só age quando o veículo transporta produto perigoso (PP). Isso vale se o veículo tiver
-`vehicle.hazmat`, `vehicle.hazmat_un` ou `cargo_type: 'hazmat'`.
+A camada só age quando o veículo transporta produto perigoso (PP), ou seja, com `vehicle.hazmat = true`.
+É o mesmo sinal que o resto da pilha usa: o costing do Valhalla (que respeita `hazmat=no` do OSM), os
+reportes `hazmat_ban` e as zonas `hazmat_only`.
+
+Na API, o `resolveVehicle` (`vehicle.ts`) marca `hazmat = true` sempre que vier um nº ONU reconhecível
+em `hazmat_un` (inclusive uma lista, como "UN 2908 / 1017") ou `cargo_type: 'hazmat'`. Então, na
+prática, qualquer um dos três campos liga a camada, e a rota nunca sai protegida pela metade. Quem
+chamar `hazmatInfo()` direto com nº ONU e `hazmat: false` recebe o aviso `hazmat_flag_missing` (warn)
+e nenhuma regra de PP.
 
 Sem PP, ela não muda a rota e não anota nada. O mapa continua mostrando os trechos, as vias, as
 paradas e as emergências.
@@ -9,7 +16,8 @@ paradas e as emergências.
 | Peça | Arquivo |
 |---|---|
 | Módulo da API | `api/src/layers/perigosos.layer.ts` |
-| Tabela ONU, grupos de SP e quantidade limitada | `api/src/services/hazmat.ts` |
+| Tabela ONU, grupos de SP e quantidade limitada | `api/src/services/hazmat.ts` (fonte única: `vehicle.ts` e `zones.ts` usam os grupos daqui) |
+| Campos do veículo | `api/src/schemas.ts` e `api/src/services/vehicle.ts`: `hazmat_un`, `hazmat_local_delivery`, `hazmat_biodiesel`, `hazmat_qty_kg`, `rear_axle_count` |
 | Importadores | `importers/sources/hazmat_trechos_der.py`, `hazmat_minianel_vias.py`, `hazmat_aprm.py`, `hazmat_paradas_artesp.py`, `hazmat_municipio_sp.py` e `cetesb_emergencias.py` |
 | Dados versionados | `data/raw/hazmat/` (CSV das regras e da Relação ANTT, scripts de extração) |
 | Seeds | `db/seed/layers/perigosos__*.sql` |
@@ -34,7 +42,7 @@ Os dois entram na rota como `costLines` com fator 1000, ou seja, só a pista é 
 Conferi os textos pela API do DOE-SP (`do-api-web-search.doe.sp.gov.br/v2/publications/<slug>`).
 
 O importador também faz uma busca no DOE-SP por "produtos perigosos". Ele filtra pelo DER e por
-portarias. Na última execução encontrou só essas duas portarias, nenhuma candidata nova.
+portarias. Na última execução (09/10/2026) encontrou só essas duas portarias, nenhuma candidata nova.
 
 Fiquei com elas porque a pesquisa (`docs/research/carga_perigosa`) não achou outra proibição do
 DER/ARTESP com fonte primária. Ficaram de fora:
@@ -60,16 +68,29 @@ Exceções aplicadas:
 - **Suspensões:** vêm de `rule_suspensions` com escopo `hazmat` ou `all` e `applies_to_heavy = false`.
 
 A **área interna** (centro expandido, grupos I e II) não é desenhada aqui. Ela é a zona `hazmat_only`
-da frente `core_legal`, em `restriction_zones`. Ver a seção 5.
+da frente `core_legal`, em `restriction_zones`, agora com a exceção `hazmat_local_or_other` para os
+grupos III e IV. Ver a seção 5.
 
 ### 1.3 ZMRC (Portaria SMT.GAB 137/2018, art. 35)
 
 > "Fica autorizado na ZMRC e ZERC, no período das 10 às 16 horas, mediante AETC, o trânsito de caminhões
 > de até dois eixos traseiros destinados ao transporte dos produtos perigosos de 'consumo local' e 'outros'..."
+>
+> "§ 2º O trânsito de 'caminhão-trator' não será autorizado para esta modalidade de transporte."
 
 Quem aplica essa exceção é a zona ZMRC da `core_legal`. Esta camada só emite um aviso
 `hazmat_zmrc` (info) quando a rota toca a ZMRC ou quando a origem ou o destino estão nela. O aviso
-diz se o veículo se enquadra: grupo, `has_aetc` e eixos traseiros.
+diz se o veículo se enquadra:
+
+- **Sem nº ONU:** pede o nº ONU, em vez de dizer que o produto não se enquadra.
+- **Grupo:** só consumo local e outros (grupos III e IV).
+- **AETC:** `has_aetc`.
+- **Caminhão-trator:** semirreboque e CVC nunca se enquadram (§ 2º).
+- **Eixos traseiros:** usa `rear_axle_count` quando informado. Sem ele, só afirma com até 3 eixos no
+  total. Com 4 ou mais (ex.: "bitruck" rígido, com 2 eixos dianteiros e 2 traseiros) ou caminhão com
+  reboque, o aviso pede para conferir os eixos traseiros.
+
+A exceção `rear_axles_le_2` do `zones.ts` também passou a usar `rear_axle_count` quando informado.
 
 ### 1.4 Grupos de São Paulo por nº ONU (`hazmat.ts`)
 
@@ -90,6 +111,20 @@ eles:
 - com `hazmat_local_delivery`, conta como grupo III;
 - GLP a granel ("bobtail") não é consumo local (FAQ PMSP de 2019, item 31; Lei 11.368/1993, art. 3º III).
 
+`hazmat_local_delivery` cobre só a condição de entrega fracionada para consumo local. O Anexo II tem
+dois qualificadores, conferidos no PDF da CET:
+
+| Nº ONU | Texto do Anexo II | Regra em `spGroup` |
+|---|---|---|
+| 1075 | "GLP (ENGARRAFADOS/FRACIONADO)" | É o que `hazmat_local_delivery` descreve: grupo III |
+| 3082 | "(BIODIESEL, conforme estabelecido pela ABNT NBR 15512)" | Grupo III só com `hazmat_local_delivery` **e** `hazmat_biodiesel`. Sem a indicação de biodiesel, continua grupo II e o resumo explica |
+
+Com vários nº ONU na carga, vale o grupo mais restritivo.
+
+O `vehicle.ts` da `core_legal` (`hazmatGroupSP`, `isHazmatLocalOrOther`) passou a usar
+`spGroup`/`spGroupForLoad` daqui. Assim, as exceções `hazmat_local_or_other` das zonas (ZMRC art. 35 e
+zona de PP do Minianel) seguem os mesmos anexos e o mesmo qualificador do 3082.
+
 ### 1.5 Isenção por quantidade limitada (Res. ANTT 5.998/2022, Parte 3)
 
 | Item | O que diz |
@@ -98,42 +133,70 @@ eles:
 | 3.4.3.2 | Com vários produtos, vale o menor valor da coluna 8 sobre o peso bruto total. |
 | 3.4.3.4 c | Dispensa "limitações quanto a itinerário, estacionamento e locais de carga e descarga". |
 
-Com o peso bruto informado e dentro do limite, a camada não gera `costLines` e emite o aviso
-`hazmat_limited_qty_exempt`.
+O peso bruto vem de `vehicle.hazmat_qty_kg` (no schema desde 09/10/2026; o formulário do front tem o
+campo "Peso da carga perigosa").
+
+O item 3.4.3.4 c dispensa as limitações de itinerário do **próprio regulamento** (RTPP). A pesquisa
+da frente registra que o RTPP não cria proibição de rota: quem proíbe é o órgão da via. E as
+normas do órgão da via não têm exceção por quantidade. Conferi o texto:
+
+| Norma | Alcance | Exceção |
+|---|---|---|
+| Portaria SMT.GAB 051/2024, art. 3º | "veículos que transportam produtos perigosos" | Nenhuma por quantidade |
+| PR/DER-164/2025, art. 2º | "veículos transportando produtos perigosos" | Nenhuma |
+| SUP/DER-062/2024, art. 1º | "veículos transportando produtos perigosos" | Só a do art. 2º (estabelecimentos comerciais ou lindeiros ao trecho, com autorização da DR.1) |
+
+Por isso, com o peso bruto informado e dentro do limite:
+
+- as `costLines` dos trechos do DER e das vias do Minianel **continuam**, assim como os avisos do
+  Minianel;
+- o aviso `hazmat_limited_qty_exempt` (info) diz que as restrições municipais e do DER continuam
+  valendo;
+- só os avisos do RTPP são rebaixados: `hazmat_aprm` (Decreto 96.044/1988, art. 9º) vira info, e o
+  resumo das paradas (art. 14) diz que a carga está dispensada da regra de estacionamento;
+- `data.isento_quantidade_limitada` fica `true`.
 
 A LETPP continua obrigatória em São Paulo (Decreto 50.446/2009, art. 5º; FAQ PMSP de 2019, itens
 32 e 33).
 
-O peso bruto é lido de `vehicle.hazmat_qty_kg`, mas o campo ainda **não existe no schema**. Ver a
-seção 6.
+Até a revisão de 09/10/2026, a isenção zerava o plano. Não chegou a ter efeito porque o zod
+descartava `hazmat_qty_kg`, mas viraria bug quando o campo entrasse no schema (e entrou).
 
 ### 1.6 Avisos sem bloqueio
 
 | Código | Severidade | Base |
 |---|---|---|
+| `hazmat_flag_missing` | warn | Nº ONU ou `cargo_type: 'hazmat'` sem `vehicle.hazmat` (só fora da API; o `resolveVehicle` já marca): nenhuma regra de PP foi aplicada |
 | `hazmat_minianel_used` | danger | A rota usa vias do Minianel na janela (sem alternativa) |
 | `hazmat_minianel_eta` | warn | A saída está fora da janela, mas a passagem estimada cai dentro dela |
-| `hazmat_aprm` | warn | km da rota em APRM. Decreto 96.044/1988, art. 9º ("deverá evitar o uso de vias em áreas ... de proteção de mananciais") |
+| `hazmat_aprm` | warn (info em quantidade limitada) | km da rota em APRM. Decreto 96.044/1988, art. 9º ("deverá evitar o uso de vias em áreas ... de proteção de mananciais") |
+| `hazmat_limited_qty_exempt` | info | Peso bruto dentro da quantidade limitada: dispensa só as limitações do RTPP; município e DER continuam valendo |
 | `hazmat_trecho_lindeiro` | warn | Origem ou destino a até 300 m de trecho proibido. Mostra a exceção da portaria ou o Decreto 96.044, art. 12 |
 | `hazmat_letpp` | info | A rota passa pelo município de SP (Decreto 50.446/2009, art. 5º) |
-| `hazmat_zmrc` | info | Portaria SMT.GAB 137/2018, art. 35 |
-| `hazmat_interior_zone_missing` | info | A zona do centro expandido para PP não está cadastrada (antes do merge da `core_legal`) |
-| `hazmat_interior_group_iii_iv` | info | A zona do centro expandido foi aplicada a grupo III ou IV (ver a seção 5) |
+| `hazmat_zmrc` | info | Portaria SMT.GAB 137/2018, art. 35 e § 2º |
+| `hazmat_interior_zone_missing` | info | A zona do centro expandido para PP não está cadastrada |
+| `hazmat_interior_group_iii_iv` | info | A zona do centro expandido está sem a exceção `hazmat_local_or_other` e foi aplicada a grupo III ou IV (proteção caso a configuração volte atrás) |
 | `hazmat_emergencias_hotspot` | info | Faixa de 2 km da rota com 3 ou mais emergências da CETESB |
 | `hazmat_un_missing` / `hazmat_un_unknown` | info / warn | Nº ONU ausente ou fora da Relação |
 | `hazmat_transport_prohibited` | danger | Relação ANTT: "TRANSPORTE PROIBIDO" (ONU 1798) |
-| `hazmat_layer_stale` | info | Traçados que não casaram com os tiles atuais |
+| `hazmat_layer_stale` | info | Traçados que não casaram com os tiles atuais (rodar os importadores) |
+| `hazmat_layer_unverified` | warn | O Valhalla não respondeu ao validar traçados (timeout, ocupado): parte das vias pode ter ficado fora; nada fica em cache |
+| `hazmat_tileset_unconfirmed` | info | O `/status` do Valhalla não respondeu em duas tentativas: usados os traçados da importação |
 
 O resumo (`layers.perigosos.summary`) traz:
 
-- produto e grupo SP;
+- produto e grupo SP (e, no 3082 com entrega local sem biodiesel, por que ficou no grupo II);
 - quantidade limitada;
-- uso e horário de passagem no Minianel;
+- uso e horário de passagem no Minianel, ou quanto do Minianel a rota evitou (só quando o caminho
+  livre usaria o anel);
 - km em APRM;
 - emergências a até 250 m;
 - paradas de PP na rota, com o Decreto 96.044, art. 14 (descanso só em áreas determinadas).
 
-`data` traz a mesma informação em formato estruturado.
+`data` traz a mesma informação em formato estruturado. Em `data.minianel`: `usado_m`, `evitado_m`
+(metros do anel no caminho livre), `vias_no_plano` (pedaços de via considerados) e a passagem
+estimada. Em `data.tracados`: traçados desatualizados, sem resposta do Valhalla e tileset não
+confirmado.
 
 ## 2. Fontes, licenças e como atualizar
 
@@ -156,17 +219,19 @@ docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e P
 ```
 
 `hazmat_trechos_der` e `hazmat_minianel_vias` precisam do Valhalla (`VALHALLA_URL`, padrão
-`http://valhalla:8002`).
+`http://valhalla:8002`; com o compose deste repositório o container se chama
+`truck-router-valhalla`).
 
 Os arquivos de `data/raw/hazmat/` foram adicionados com `git add -f`, porque o `.gitignore` ignora
 `data/raw/*`.
 
-Contagens da última carga (09/10/2026):
+Contagens da última carga (09/10/2026; os traçados foram casados de novo com o tileset
+1791576041, o do Valhalla com elevação ANADEM):
 
 | Tipo | Quantidade |
 |---|---|
 | Trechos | 2 |
-| Pedaços de via do Minianel | 200 (cerca de 205 km de pistas) |
+| Pedaços de via do Minianel | 200 (cerca de 205 km de pistas, 12 dos 13 itens do Anexo IV) |
 | APRM | 4 |
 | Emergências de transporte rodoviário | 2.349 (2014 a 2026) |
 | Paradas de PP | 48 |
@@ -199,29 +264,71 @@ Contagens da última carga (09/10/2026):
 5. A conferência visual (Cebolão, Bandeirantes, Salim Farah Maluf, Ponte do Limão) mostrou todas as
    pistas das duas margens e nenhuma rua paralela. A R. Hungria, por exemplo, ficou fora.
 
+**Relação ANTT (`parse_relacao_antt.py` + `build_relacao.py`):**
+
+- Colunas pela posição x dos rótulos "(1)".."(10)" do cabeçalho de cada página.
+- Linhas pela faixa entre os fios horizontais da coluna (1): o texto das outras colunas é
+  centralizado na vertical e às vezes começa acima do nº ONU, então cada palavra vai para a faixa que
+  contém o seu centro.
+- O número da página (isolado, acima do rodapé) fica de fora. Antes ele entrava no nº de risco da
+  última linha das 125 páginas (ex.: 0054 "1", 1105 "33 15", 1250 "X338 21").
+- Nome com tolerância horizontal de 1,0 pt: nas linhas justificadas o espaço entre palavras chega a
+  1,4 pt, e dentro da palavra o vão é de até 0,2 pt. Com o padrão (3 pt), o pdfplumber colava
+  palavras (ex.: 0133 "comnomínimo40% deágua").
+- Efeitos da correção de 09/10/2026 na tabela: nº de risco de 127 nº ONU (126 com o número da página
+  colado; o 3509 ficou com o "90", que pela geometria da tabela é dele), 94 nomes (inclusive
+  3533–3534 e 3545–3549, que estavam deslocados), a grafia de 18 células da coluna 8 ("I L IMITADA")
+  e a coluna 8 do 3534 (de vazio para "ZERO", conferido no texto do PDF; nos dois casos, sem isenção).
+  A coluna 8 normalizada dos demais nº ONU não mudou.
+
 ## 3. Como a camada entra na rota
 
 `plan(ctx)` é calculado uma vez por requisição e compartilhado entre `exclusions` e `costLines`:
 
-1. **Corredor:** só entram feições na elipse com focos na origem e no destino. A condição é
-   d(O,p) + d(D,p) ≤ L + máx(5 km; 0,3·L).
+1. **Trechos do DER (corredor):** só entram os trechos na elipse com focos na origem e no destino.
+   A condição é d(O,p) + d(D,p) ≤ L + máx(5 km; 0,3·L).
 2. **Minianel:**
    - só entra quando a janela vale no **horário de saída**, como as zonas;
-   - só entram as vias a até 2,5 km da rota livre, calculada aqui com uma chamada ao Valhalla;
-   - se a rota livre atravessa a ZMRC ou o miolo do Minianel (mais de 500 m para dentro), entram
-     todas as vias do corredor, porque as outras restrições podem empurrar a rota para qualquer lado
-     do anel.
-3. **Traçados:**
+   - entram **todas** as vias a até 30 km do retângulo origem–destino, sem a elipse e sem filtro pela
+     rota livre. São 200 pedaços, que viram 84 linhas depois do encadeamento;
+   - motivo: a ZMRC e a área interna empurram a rota restrita para o anel por caminhos longe da rota
+     livre. Na revisão de 09/10/2026, com o filtro antigo (elipse + 2,5 km da rota livre), 3 de 6
+     pares dentro de SP às 08h saíam por vias do Minianel que nunca viraram `costLine`, embora
+     houvesse alternativa. Exemplo: Butantã→Mooca, 3,7 km na Marginal Tietê. Agora a rota evita o
+     anel (91,8 km), e o teste `perigosos.test.ts` cobre esse caso.
+3. **Quantidade limitada:** não muda o plano (seção 1.5).
+4. **Traçados:**
    - se `props.osm.tileset` é o tileset atual, os traçados da importação são usados;
    - se não, a camada casa de novo em tempo de execução (`trace_route`, 8 em paralelo, cache por
      tileset) e valida tudo no edge walk com uma rota de prova, por bisseção. Um traçado inválido
      derrubaria a rota inteira (Valhalla erro 233);
    - um trecho de rodovia sem traçado válido vira exclusão de 12 m em volta da geometria da fonte;
-   - uma via do Minianel sem traçado válido só gera o aviso `hazmat_layer_stale`.
-4. **Junção de linhas:**
+   - uma via do Minianel sem traçado válido só gera aviso: `hazmat_layer_stale` quando o dado está
+     desatualizado, `hazmat_layer_unverified` quando o Valhalla não respondeu.
+5. **Falhas do Valhalla:**
+   - o `/status` é tentado duas vezes. Uma falha não entra no cache; sem resposta, a camada usa o
+     último tileset conhecido ou, sem ele, os traçados da importação, e emite
+     `hazmat_tileset_unconfirmed`;
+   - no recasamento, uma falha transitória (rede, timeout, 5xx, edge walk sem resposta) sai do cache
+     assim que resolve, e a próxima requisição tenta de novo;
+   - um traçado que não casou de verdade fica em cache por 10 minutos, não até reiniciar a API.
+6. **Junção de linhas e "evitado":**
    - na pista simples (SP-008), ida e volta viram uma linha só, com retorno no fim. Ela passa no edge
-     walk e não duplica o item em "evitado";
-   - pedaços contíguos da mesma via do Minianel são reunidos em uma linha antes de ir para o Valhalla.
+     walk;
+   - pedaços contíguos da mesma via do Minianel são reunidos em uma linha antes de ir para o Valhalla;
+   - todas as linhas de um mesmo trecho (os dois sentidos da SP-324) e de uma mesma via do Anexo IV
+     (id `minianel-anexo-iv-<item>`) levam o mesmo id. Como o `routing.ts` deduplica "evitado" e os
+     avisos por id, cada via aparece uma vez só.
+
+**Desempenho:** o `routing.ts` mede, para cada `costLine`, se as rotas livre e restrita a usam
+(`usesCostLine`). Antes, cada ponto amostrado percorria a rota inteira com
+`turf.nearestPointOnLine`: com as 84 linhas do Minianel numa rota de 1.800 vértices, isso levava cerca
+de 3 s por rota. Agora há um índice em grade da rota (células de 0,002°), e cada ponto só olha os
+segmentos das células vizinhas. Com os mesmos dados, o resultado é idêntico (conferido linha a linha
+em duas rotas) e o custo caiu de 3.036 ms para 8 ms, e de 1.475 ms para 46 ms. O tempo que sobra na
+resposta é do Valhalla e das outras camadas. Butantã→Mooca às 08h, no ambiente compartilhado de
+09/10/2026 (vários agentes rodando suítes ao mesmo tempo): 18 a 23 s com PP e cerca de 27 s sem PP
+com carga moderada, e até 160 s no pico. Os testes de rota desta camada têm limite de 300 s.
 
 ## 4. Mapa
 
@@ -235,50 +342,39 @@ front. APRM e município não são desenhados: servem só para os avisos.
 
 ## 5. Alinhamento com a frente `core_legal`
 
-A `core_legal` cria a zona "Produtos perigosos — Minianel e centro expandido": `hazmat_only`,
-polígono do MIAN expandido 25 m, mesmas janelas, `exceptions: []`.
-
-Hoje, depois do merge:
+A `core_legal` cria a zona "Produtos perigosos — Minianel e centro expandido" (`...0003`):
+`hazmat_only`, polígono do MIAN expandido 25 m, mesmas janelas e, desde 09/10/2026,
+`exceptions: ["hazmat_local_or_other"]` (em `config/zmrc-rules.json` e no seed
+`db/seed/0002_zones.sql`, gerado por `scripts/gen-zones-seed.py`).
 
 | Grupo | Efeito |
 |---|---|
 | I e II | A zona bloqueia área e vias; as `costLines` desta camada repetem as vias (redundante, sem efeito colateral) |
-| III e IV | A zona também bloqueia a área interna. É mais restritivo que a portaria, e a `core_legal` reconhece isso em `docs/layers/core_legal.md`. |
+| III e IV | A zona não se aplica (art. 3º parágrafo único). As vias do Anexo IV continuam proibidas pelas `costLines` desta camada |
 
-**Ajuste recomendado na `core_legal`:** pôr `"exceptions": ["hazmat_local_or_other"]` na zona
-`...0003` em `config/zmrc-rules.json`. A exceção já existe no `zones.ts` dela.
+O aviso `hazmat_interior_group_iii_iv` continua no código para o caso de a exceção sair da zona.
 
-Com o ajuste:
-
-- grupos III e IV ficam liberados na área e proibidos só nas vias, pelas `costLines` desta camada;
-- a camada emite `hazmat_interior_group_iii_iv` enquanto o ajuste não for feito.
-
-Antes do merge (na `main`), a área interna não é restringida, e a camada avisa
-(`hazmat_interior_zone_missing`).
-
-A `core_legal` também tem `hazmatGroupSP()` em `vehicle.ts`, com os mesmos anexos. O `hazmat.ts`
-desta frente acrescenta a tabela ANTT, o grupo I e a quantidade limitada. Vale unificar depois do
-merge: `vehicle.ts` passa a chamar `hazmat.ts`.
+Os grupos vêm de uma fonte só: `hazmatGroupSP()` e `isHazmatLocalOrOther()` do `vehicle.ts` chamam o
+`hazmat.ts`, que traz também a tabela ANTT, o grupo I, os qualificadores do Anexo II e a quantidade
+limitada. O texto de `legal_notes` para consumo local/outros diz que o app evita só as vias do
+Minianel nos horários da portaria.
 
 ## 6. Limitações e pendências
 
-- **Peso bruto da carga:** `hazmat_qty_kg` não está em `schemas.ts`/`vehicle.ts` (fora desta frente);
-  o zod descarta o campo. Para a isenção por quantidade limitada funcionar na rota, falta:
-  - acrescentar `hazmat_qty_kg: z.number().nonnegative().optional()` em `VehicleInput`;
-  - acrescentar o campo em `EXTRA_KEYS`.
-  `hazmat_local_delivery` vem da `core_legal`. A camada lê os dois de forma defensiva.
 - **Horário:** como nas zonas, vale o horário de **saída**. A passagem estimada (fração da rota ×
   duração) só gera aviso (`hazmat_minianel_eta`) e não muda a rota.
 - **R. Cipriano Siqueira (item 9 do Anexo IV):** no OSM a única via com esse nome é residencial, a
   cerca de 500 m do contorno da CET. Não foi incluída; a ligação entre R. Malvina Ferrara Samarone e
-  R. das Juntas Provisórias tem cerca de 50 m. Conferir em campo.
-- **Desempenho:** o `routing.ts` mede a sobreposição de cada `costLine` com as rotas livre e restrita
-  usando `turf.pointToLineDistance` geodésico, até 40 pontos por linha × todos os vértices da rota.
-  - rota de PP que cruza SP na janela: 1 a 2 s;
-  - desvio longo (Osasco→Penha às 08h, 77 km pelo Rodoanel): cerca de 8 s.
-  A correção fica no `routing.ts`: pré-filtrar por bbox e usar distância planar, ou medir no PostGIS.
-- **"Evitado":** pista dupla (SP-324) e vias do Minianel com várias linhas podem aparecer mais de
-  uma vez. Os ids são distintos e o nome se repete. Deduplicar por nome no `routing.ts` ou no front.
+  R. das Juntas Provisórias tem cerca de 50 m. O importador avisa a cada execução. Conferir em campo.
+- **Risco de edge walk com o Valhalla mudo:** com o Valhalla sem `/status`, a API recém-reiniciada e os
+  tiles trocados depois da importação, um traçado velho pode ir para o edge walk e derrubar a rota
+  (erro 233). A saída é rodar os importadores depois de cada reconstrução de tiles (seção 2).
+- **Front:** uma camada tem um estilo só (`meta.style`). As emergências CETESB saem como pontos com
+  `weight`, mas são desenhadas como círculos junto com linhas e paradas. Heatmap de verdade pede
+  subcamadas no front ou um `*.layer.ts` separado.
+- **Seeds:** os 6 `db/seed/layers/perigosos__*.sql` (cerca de 1,9 MB) são gerados pelo runner, como na
+  camada `oae`, e não têm dado pessoal. A revisão pediu que a exceção à lista de arquivos da frente
+  fique registrada na integração.
 - **Licenças:**
   - Malha CETESB, DataGEO (emergências e APRM): licença não declarada. Uso com atribuição; confirmar
     os termos com CETESB/SIMA.
@@ -291,8 +387,11 @@ merge: `vehicle.ts` passa a chamar `hazmat.ts`.
   - Ponte Rio–Niterói está fora do piloto.
 - **Relação ANTT:** é a versão de 2022.
   - O parse foi conferido amostralmente contra o texto do PDF (1203 = 333 kg, 1202 = 1.000 kg,
-    1017 = 20 kg, 1005 = 20 kg, 1075 = 333 kg, 3082 = 1.000 kg, 2187 = 1.000 kg).
-  - 12 nº ONU dependem de provisão especial ("Ver PE 277") ou têm a célula vazia: sem isenção
+    1017 = 20 kg, 1005 = 20 kg, 1075 = 333 kg, 3082 = 1.000 kg, 2187 = 1.000 kg, 3534 = "ZERO").
+  - 11 nº ONU dependem de provisão especial ("Ver PE 277") ou têm a célula vazia: sem isenção
     automática.
   - 13 são "não sujeito": a restrição continua aplicada, com aviso.
-  - Não conferi se a Res. 6.056/2024 alterou a coluna 8.
+  - Ainda há nomes longos com palavras coladas em poucas linhas em que o PDF não deixa vão entre as
+    palavras; a coluna 8 não é afetada.
+  - Não conferi se a Res. 6.056/2024 alterou a coluna 8. A AP ANTT 7/2026 vai acrescentar nº ONU:
+    reprocessar com `data/raw/hazmat/*.py`.
