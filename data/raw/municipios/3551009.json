@@ -1,0 +1,170 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3551009",
+  "municipio": "São Vicente",
+  "uf": "SP",
+  "fonte_id": "sao-vicente",
+  "fonte": {
+    "url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2009/5641/lei_a2163.pdf (Lei 2163-A/2009, ARC) ; https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1990/6149/lei_2320.pdf (Lei 2.320/1990, Ponte Pênsil) ; https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2025/9410/l4633.pdf (Lei 4.633/2025, revogação de 215 leis)",
+    "licenca": "Leis municipais de São Vicente (SAPL da Câmara): domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "A Lei 4.633/2025 revogou 215 leis de trânsito e estacionamento de caminhão; a 2163-A/2009 (ARC), a 2.320/1990 (Ponte Pênsil) e as leis de rua 633-A/1998, 669-A/1998, 1169-A/2002 e 3339-A/2015 não estão na lista. A Lei 633-A/1998 (caminhão com mais de 3 eixos em todas as vias do Jardim Pombeba) não foi registrada: o bairro não tem contorno no OSM."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "As leis de São Vicente não definem VUC: vale a definição de caminhão do CTB (PBT acima de 3,5 t).",
+  "regras": [
+    {
+      "id": "sao_vicente_arc",
+      "tipo": "zona",
+      "regime": "ARC",
+      "nome": "ARC — Área de Restrição de Caminhões do Centro de São Vicente",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6], "from": "10:00", "to": "19:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial (AE) da Secretaria de Transportes para concessionárias, Forças Armadas, perecíveis, mudanças e geradores (art. 1º, §3º, e art. 2º, parágrafo único)",
+      "excecoes": [
+        "Auto-guinchos, Corpo de Bombeiros, Polícias Militar e Civil e serviços de urgência (art. 1º, §2º)",
+        "Com Autorização Especial (AE): concessionárias de serviço público, Forças Armadas, perecíveis, mudanças e geradores de energia (art. 1º, §3º)",
+        "Estabelecimentos da área: incluídos no §3º pela Lei 2.315-A/2010, revogada pela Lei 4.633/2025 (efeito incerto)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2163-A/2009 de São Vicente (03/07/2009)",
+          "artigo": "art. 1º, caput (perímetro da ARC; seg–sáb 10h–19h, exceto feriados), §1º (caminhão do CTB), §§2º e 3º (exceções); art. 3º (o Executivo pode mudar perímetro e horário por decreto)",
+          "url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2009/5641/lei_a2163.pdf"
+        },
+        {
+          "ato": "Lei municipal 4.633/2025 de São Vicente (21/03/2025), que revoga 215 leis sobre trânsito e estacionamento de caminhões",
+          "artigo": "incisos do art. 1º (lista das leis revogadas: a 2163-A/2009 não consta; a 2.315-A/2010, que mudou o §3º, consta)",
+          "url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2025/9410/l4633.pdf"
+        }
+      ],
+      "nota": "Confiança média (verify): o texto e os horários conferem e a lei não foi revogada, mas o art. 3º permite ao Executivo mudar perímetro e horário por decreto, e os decretos não foram verificados. Ativa: a pesquisa não achou norma que a revogue. A 'Av. Antônio Rodrigues' do perímetro não existe no OSM: o trecho da orla até a R. Mem de Sá está como Av. Embaixador Pedro de Toledo.",
+      "fonte_geometria": "Perímetro do art. 1º percorrido pelas vias do OSM (Pres. Wilson, Benjamin Constant, Campos Sales, Frei Gaspar, Capitão-Mor Aguiar, R. do Colégio, Pça. 22 de Janeiro, Emb. Pedro de Toledo e Mem de Sá), a 10 m do eixo (a API recua mais 20 m): as vias do perímetro ficam livres.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3551009_arc.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py sao-vicente (Overpass)"
+        }
+      ]
+    },
+    {
+      "id": "sao_vicente_ponte_pensil",
+      "tipo": "ponte",
+      "regime": "Ponte Pênsil",
+      "nome": "Ponte Pênsil (ônibus e caminhões proibidos)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.320/1990 de São Vicente (10/05/1990)",
+          "artigo": "art. 1º (proíbe o tráfego de ônibus e caminhões na Ponte Pênsil); texto lido na imagem do PDF escaneado",
+          "url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1990/6149/lei_2320.pdf"
+        },
+        {
+          "ato": "Lei municipal 425-A/1996 de São Vicente",
+          "artigo": "revoga o parágrafo único do art. 1º da Lei 2.320/1990 (exceção dos ônibus municipais do Japuí); não há exceção para caminhão",
+          "url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1996/2445/lei_a0425.pdf"
+        }
+      ],
+      "nota": "O OSM já tem hgv=no e maxweight=12 na ponte (coerente com a lei): a linha de custo reforça e dá o ato ao motorista. Não consta da Lei 4.633/2025.",
+      "fonte_geometria": "OSM (ODbL), ways 'Ponte Pênsil'",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Ponte Pênsil"], "descricao": "Ponte Pênsil, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3551009_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_vicente_oswaldo_toschi",
+      "tipo": "via",
+      "regime": "Lei 3339-A/2015",
+      "nome": "R. Ver. Oswaldo Toschi, Vila Jóquei Clube (tráfego de caminhão proibido)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa na pesquisa: lei de rua sem confirmação de sinalização nem de fiscalização. O texto foi conferido e a lei não está entre as revogadas pela Lei 4.633/2025.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3339-A/2015 de São Vicente (24/06/2015)",
+          "artigo": "art. 1º (tráfego de caminhões e estacionamento de ônibus e caminhões proibidos em toda a extensão da R. Ver. Oswaldo Toschi)",
+          "url": "http://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2015/2926/l3339a.pdf"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL): no OSM a via se chama 'Avenida Vereador Oswaldo Toschi'",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Avenida Vereador Oswaldo Toschi", "Rua Vereador Oswaldo Toschi"], "descricao": "R. Ver. Oswaldo Toschi, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3551009_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_vicente_rua_campos",
+      "tipo": "via",
+      "regime": "Lei 1169-A/2002",
+      "nome": "R. Campos, Vila Voturuá (trânsito de caminhão proibido)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa na pesquisa: lei de rua sem confirmação de sinalização nem de fiscalização. O texto foi conferido e a lei não está entre as revogadas pela Lei 4.633/2025.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1169-A/2002 de São Vicente (13/09/2002)",
+          "artigo": "art. 1º (trânsito de caminhões proibido em toda a R. Campos, na Vila Voturuá)",
+          "url": "http://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2002/4789/lei_a1169.pdf"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) pelo nome",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Rua Campos"], "descricao": "R. Campos, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3551009_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_vicente_lei_669a",
+      "tipo": "via",
+      "regime": "Lei 669-A/1998",
+      "nome": "Ruas Argentina, Venezuela, Bolívia e Equador, Pq. São Vicente (caminhão com mais de 2 eixos)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa na pesquisa: lei de rua sem confirmação de sinalização nem de fiscalização. O texto foi conferido e a lei não está entre as revogadas pela Lei 4.633/2025.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 2}]},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 669-A/1998 de São Vicente (02/12/1998)",
+          "artigo": "art. 1º (trânsito e estacionamento de caminhão com mais de dois eixos proibidos nas Ruas Argentina, Venezuela e Bolívia e na R. Equador até a Av. Augusto Severo)",
+          "url": "http://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1998/2618/lei_a0669.pdf"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) pelo nome; a R. Equador tem um só way no OSM e entrou inteira (aproximada)",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Rua Argentina"], "descricao": "R. Argentina, em toda a extensão"},
+        {"inciso": "art. 1º", "via": ["Rua Venezuela"], "descricao": "R. Venezuela, em toda a extensão"},
+        {"inciso": "art. 1º", "via": ["Rua Bolívia"], "descricao": "R. Bolívia, em toda a extensão"},
+        {"inciso": "art. 1º", "via": ["Rua Equador"], "descricao": "R. Equador, até a Av. Augusto Severo", "aproximado": true, "nota": "Aplicada à via inteira do OSM (o ponto da Av. Augusto Severo não foi recortado)."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3551009_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

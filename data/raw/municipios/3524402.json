@@ -1,0 +1,104 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3524402",
+  "municipio": "Jacareí",
+  "uf": "SP",
+  "fonte_id": "jacarei",
+  "fonte": {
+    "url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf (Dec. 247/2017) ; https://www.jacarei.sp.gov.br/aplicativo-e-plataforma-online-que-autorizam-rota-de-cargas-pesadas-em-jacarei-passam-por-atualizacao/ (26/10/2023)",
+    "licenca": "Decreto municipal de Jacareí: domínio público (Lei 9.610/1998, art. 8º, IV). Notícias da Prefeitura: só os fatos, com link. Geometria: limite municipal do IBGE (Malha Municipal, dados públicos, citar a fonte) menos os corredores das rotas e rodovias do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Duas zonas: (1) VCP fora das 7 Rotas de Cargas Pesadas (RCP) e das rodovias estaduais e federais, em 22 pedaços (art. 5º); (2) VCPB (caminhão + reboque, bitrem) e VCPT (treminhão) no município inteiro menos as rodovias estaduais e federais que não são RCP, inclusive nas RCP, em 14 pedaços (arts. 6º e 8º). Com origem ou destino num pedaço, só ele deixa de ser excluído e a rota avisa (a entrega no município ganha AETC pelo art. 12). Os Anexos I e II (ZRMC e ZREC) e os Decs. 1.085/2020 e 359/2022 não foram lidos."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "O Dec. 247/2017 não usa VUC: o Veículo de Carga Leve (VCL — até 7,99 t, 7,20 m e 2 eixos; art. 2º, VI) circula livre em todas as zonas (art. 4º).",
+  "regras": [
+    {
+      "id": "jacarei_fora_rcp",
+      "tipo": "zona",
+      "regime": "Rota de Cargas Pesadas",
+      "nome": "Zona de Jacareí fora das Rotas de Cargas Pesadas (caminhão pesado só com AETC)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 7.99}, {"campo": "comprimento_m", "acima": 7.2}, {"campo": "eixos", "acima": 2}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "AETC — Autorização Especial de Trânsito de Carga, com cadastro no CCP/Observa e a nota fiscal ou o manifesto da entrega no município; nas ZRMC e ZREC há ainda o horário de restrição de 7h–9h e 17h–19h (arts. 2º, V, 5º, 10 e 12)",
+      "excecoes": [
+        "Rotas de Cargas Pesadas, sem AETC: Av. Lucas Nogueira Garcez, Av. Maria Augusta Fagundes Gomes, Av. Santa Helena, Av. São João (a partir do nº 160) e Av. Santa Cruz dos Lázaros (rota 1); Rod. Euryale de Jesus Zerbine (rota 2); Av. Getúlio Dorneles Vargas e rotatória da Pça. Charles Gates (rota 3); Av. Malek Assad, Av. Adhemar Pereira de Barros e Av. Eng. Davi Monteiro Lino (rota 4); Av. Pres. Humberto Castelo Branco, Av. Industrial e rotatória da Av. Pensilvânia (rota 5); Rod. Nilo Máximo e rotatória da Cidade Salvador (rota 6); Rod. Geraldo Scavone, Av. do Cristal, Av. José Ribeiro Moreira e Av. São Jorge, só na descida (rota 7) (arts. 2º, IV, e 3º)",
+        "Veículo de Carga Leve (até 7,99 t, 7,20 m e 2 eixos) em todas as zonas (art. 4º)",
+        "Utilidade pública, urgência (CTB art. 29, VII), obras de infraestrutura e de urgência, socorro mecânico e combustível para os postos do município (art. 9º)",
+        "Entrega ou coleta no município com placa de fora: AETC pelo registro da placa e da nota fiscal (art. 12); caminhoneiro de Jacareí: cadastro de 12 meses (art. 10, §1º)",
+        "Bitrem, caminhão + reboque e treminhão (VCPB e VCPT) não são livres nas RCP: regra jacarei_vcpb_vcpt (arts. 6º e 8º)",
+        "Não modelado: horário de restrição 7h–9h e 17h–19h nas ZRMC e ZREC (art. 2º, V; anexos não localizados) e produto perigoso só com AETC (art. 7º; o perfil do veículo não entra no predicado por tipo de carga)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 247/2017 de Jacareí (10/08/2017)",
+          "artigo": "art. 2º, IV (7 Rotas de Cargas Pesadas), V (horário de restrição 7h–9h e 17h–19h nas ZRMC e ZREC), VI (VCL: até 7,99 t, 7,20 m e 2 eixos) e VII (VCP); art. 3º (VCL e VCP livres nas RCP); art. 4º (VCL livre em todas as zonas); art. 5º (VCP fora das RCP só com AETC); arts. 6º a 9º e 12; art. 15 (vigência 90 dias após a publicação)",
+          "url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf"
+        },
+        {
+          "ato": "Prefeitura de Jacareí, notícia de 26/10/2023 (atualização do Cadastro de Carga Pesada)",
+          "artigo": "sem artigo (notícia: regra do Dec. 247/2017 complementada pelos Decs. 1.085/2020 e 359/2022; as mesmas 7 rotas, 35 km)",
+          "url": "https://www.jacarei.sp.gov.br/aplicativo-e-plataforma-online-que-autorizam-rota-de-cargas-pesadas-em-jacarei-passam-por-atualizacao/"
+        }
+      ],
+      "nota": "Confiança média (verify): o texto de 2017 confere, mas os Decs. 1.085/2020 e 359/2022 e os Anexos I e II não foram lidos; a notícia de 2023, já com os dois decretos, lista as mesmas 7 rotas. O decreto não diz os dias do horário de restrição (corrigido do 'todos os dias' da pesquisa). Ativa: o objetivo declarado da regra é impedir a fuga de pedágio por dentro da cidade, e as rodovias (Dutra, Carvalho Pinto, D. Pedro I) ficam livres. Caminhão de 2 eixos, até 7,99 t e 7,20 m (VCL) não é alvo.",
+      "fonte_geometria": "Limite municipal do IBGE menos um corredor de 20 m de cada lado das 7 RCP, das rodovias estaduais e federais e das alças, rotatórias e ligações curtas entre elas no OSM (a API recua mais 20 m). As ligações que o decreto não lista (até 500 m, para cada rota ser alcançável a partir da Dutra e voltar a ela respeitando a mão única) estão em 'ligacoes_entre_rotas' no GeoJSON. Um polígono por pedaço.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3524402_fora_rcp.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py jacarei (Overpass e malha do IBGE)",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "jacarei_vcpb_vcpt",
+      "tipo": "zona",
+      "regime": "Bitrem, reboque e treminhão",
+      "nome": "Zona de Jacareí para bitrem, caminhão + reboque e treminhão (inclusive nas Rotas de Cargas Pesadas)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "tipo", "em": ["truck_trailer", "cvc"]}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "AETC prévia para bitrem e caminhão + reboque, que só circulam nas Rotas de Cargas Pesadas; o treminhão é proibido no município, sem autorização (Dec. 247/2017, arts. 6º e 8º; AETC pelos arts. 10 e 12, com cadastro no CCP/Observa)",
+      "excecoes": [
+        "Rodovias estaduais e federais que o decreto não lista como RCP, com as alças: Rod. Presidente Dutra, Rod. Carvalho Pinto, Rod. D. Pedro I, Rod. Henrique Eroles e Rod. Nicola Capucci (fora da competência do município)",
+        "VCPB (caminhão + reboque; cavalo + semirreboque + reboque; cavalo + 2 semirreboques, o bitrem): só nas Rotas de Cargas Pesadas e com AETC prévia (art. 6º); o decreto não prevê o VCPB fora das RCP",
+        "Utilidade pública, urgência (CTB art. 29, VII), obras de infraestrutura e de urgência, socorro mecânico e combustível para os postos do município (art. 9º)",
+        "VCPT (caminhão + 2 reboques; cavalo + 3 semirreboques, o treminhão): proibido no município, sem exceção por AETC (art. 8º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 247/2017 de Jacareí (10/08/2017)",
+          "artigo": "art. 2º, VIII (VCPB: caminhão + reboque, cavalo + semirreboque + reboque e cavalo + 2 semirreboques, o bitrem) e IX (VCPT: caminhão + 2 reboques e cavalo + 3 semirreboques, o treminhão); art. 6º (VCPB nas RCP só com AETC prévia); art. 8º (VCPT vedado no município); art. 9º (exceções); arts. 10 e 12 (AETC); art. 15 (vigência)",
+          "url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf"
+        },
+        {
+          "ato": "Prefeitura de Jacareí, notícia de 26/10/2023 (atualização do Cadastro de Carga Pesada)",
+          "artigo": "sem artigo (notícia: regra do Dec. 247/2017 complementada pelos Decs. 1.085/2020 e 359/2022; as mesmas 7 rotas)",
+          "url": "https://www.jacarei.sp.gov.br/aplicativo-e-plataforma-online-que-autorizam-rota-de-cargas-pesadas-em-jacarei-passam-por-atualizacao/"
+        }
+      ],
+      "nota": "Confiança média, como a outra zona de Jacareí (verify: arts. 2º–8º conferem, 'bitrem com AETC, treminhão proibido'; Decs. 1.085/2020 e 359/2022 não lidos). Alvo pelo tipo do veículo: truck_trailer (caminhão + reboque) e cvc (bitrem, rodotrem) são VCPB; o treminhão (VCPT) cai numa dessas classes, e o app não distingue um do outro: a zona vale igual para os dois (para o VCPB a regra é exata; para o VCPT, que nem com AETC circula, fica do lado seguro). A carreta (cavalo + 1 semirreboque) é VCP e segue a zona fora das RCP. As RCP ficam dentro da zona, inclusive os trechos com nome de rodovia que o decreto lista como RCP (Rod. Euryale de Jesus Zerbine e Rod. Geraldo Scavone, da SP-066, e Rod. Nilo Máximo, da SP-077). Com origem ou destino na cidade, o pedaço urbano não é excluído e a rota avisa (política da ZMRC); a outra zona ainda prende a rota às RCP.",
+      "fonte_geometria": "Limite municipal do IBGE menos um corredor de 20 m de cada lado das rodovias estaduais e federais que não são RCP (Dutra, Carvalho Pinto, D. Pedro I, Henrique Eroles, Nicola Capucci) e das alças, rotatórias e conectores sem nome entre elas, no OSM (a API recua mais 20 m). As 7 RCP não são recortadas. Um polígono por pedaço (14).",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3524402_vcpb_vcpt.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py jacarei (Overpass e malha do IBGE)",
+          "props": {"aproximado": true}
+        }
+      ]
+    }
+  ]
+}

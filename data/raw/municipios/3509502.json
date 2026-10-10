@@ -1,0 +1,161 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3509502",
+  "municipio": "Campinas",
+  "uf": "SP",
+  "fonte_id": "campinas",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf (Res. SETRANSP 079/2017, DOM 20/02/2017, p. 19–20) ; https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf (Res. 349/2019) ; https://www.emdec.com.br/dois-radares-vao-monitorar-veiculos-de-carga-a-partir-desta-segunda-18-08/ (EMDEC, 18/08/2025)",
+    "licenca": "Atos oficiais de Campinas (Diário Oficial do Município): domínio público (Lei 9.610/1998, art. 8º, IV). Notícia da EMDEC: só o fato, com link. Geometria: contornos montados sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap) e o limite municipal do IBGE (Malha Municipal, dados públicos, citar a fonte).",
+    "notas": "Os atos não trazem coordenadas: os três polígonos foram montados pelas vias que o ato cita (data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py). Regra por comprimento do veículo (o ato não usa VUC). Vigência: a Res. 349/2019 manda observar a 079/2017 e a EMDEC (18/08/2025) diz que a regra vigente está nas Res. 79/2017 e 349/2019."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "A Res. 079/2017 não usa o termo VUC: a restrição é pelo comprimento do veículo de carga (acima de 14 m no Anel Rodoviário e em Nova Aparecida; acima de 6,30 m no Anel Rebouças).",
+  "regras": [
+    {
+      "id": "campinas_anel_rodoviario",
+      "tipo": "zona",
+      "regime": "Anel Rodoviário",
+      "nome": "Área interna do Anel Rodoviário de Campinas (veículo de carga acima de 14 m)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:00", "to": "20:00"},
+        {"days": [6], "from": "09:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 14}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "acesso só pelas entradas e roteiros liberados do Anexo II da Res. 079/2017 — Av. Prestes Maia, Av. São José dos Campos, R. Pe. José de Quadros, Av. Lix da Cunha, Av. Com. Aladino Selmi e Av. Carolina Florence (art. 6º e Anexo III)",
+      "excecoes": [
+        "Veículos do CTB, art. 29, VII e VIII, e obras ou serviços de emergência comunicados à EMDEC (art. 2º)",
+        "Entradas e roteiros liberados do Anexo II, sem autorização: Av. Prestes Maia, Av. São José dos Campos, R. Pe. José de Quadros, Av. Lix da Cunha, Av. Com. Aladino Selmi e Av. Carolina Florence (art. 6º e Anexo III)",
+        "ACC e ACM da EMDEC valem só seg–sex 9h–16h e sáb 6h–9h, fora do horário de restrição do Anel Rodoviário (art. 7º)",
+        "Concretagem, imprensa, caçambas de entulho e combustível, oxigênio e GLP a granel (art. 10)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução SETRANSP nº 079/2017 de Campinas (DOM 20/02/2017, p. 19–20)",
+          "artigo": "art. 3º, I e II (acima de 14 m; seg–sex 6h–9h e 16h–20h; sáb 9h–14h) e parágrafo único (polígono das Rod. Dom Pedro I, Anhanguera e José Roberto Magalhães Teixeira); art. 6º e Anexos II e III (entradas liberadas); art. 27 (vigência na publicação)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf",
+          "nota": "Revogou a Res. 013/2013 (art. 28)."
+        },
+        {
+          "ato": "Resolução SETRANSP nº 349/2019 de Campinas (DOM 12/11/2019)",
+          "artigo": "art. 1º, parágrafo único (manda observar a Res. 079/2017: prova de vigência) e art. 20 (revoga a Res. 080/2017)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf"
+        },
+        {
+          "ato": "EMDEC, notícia de 18/08/2025 (radares e Sistema Observa)",
+          "artigo": "sem artigo (notícia da EMDEC: a regra vigente está nas Res. 79/2017 e 349/2019)",
+          "url": "https://www.emdec.com.br/dois-radares-vao-monitorar-veiculos-de-carga-a-partir-desta-segunda-18-08/"
+        }
+      ],
+      "nota": "Como na ZMRC de SP: origem ou destino dentro do anel não exclui a zona, e a rota avisa. As entradas do Anexo II são roteiros de ida e volta a partir da Anhanguera e da D. Pedro I até destinos dentro do anel (não atravessam o anel): com destino nelas a zona não é excluída. O ato não excetua feriados. O alvo do app é caminhão (PBT acima de 3,5 t) com mais de 14 m; o ato diz 'qualquer veículo de carga'.",
+      "fonte_geometria": "Região fechada pelas pistas e marginais da Rod. Dom Pedro I (SP-065), Rod. Anhanguera (SP-330) e Rod. José Roberto Magalhães Teixeira (SP-083) e pelas alças que as tocam, no OSM, a 25 m do eixo mais interno (a API recua mais 20 m): as três rodovias, as marginais e os trevos ficam livres. Recortada pelo limite municipal de Campinas (IBGE): a faixa de 0,24 km² que o anel fecha em Valinhos, entre a SP-330 e a divisa, ficou de fora (a resolução é de Campinas).",
+      "vigencia_inicio": "2017-02-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509502_anel_rodoviario.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py campinas (Overpass; ver docs/layers/municipios/mun_interior_sp.md)"
+        }
+      ]
+    },
+    {
+      "id": "campinas_nova_aparecida",
+      "tipo": "zona",
+      "regime": "Nova Aparecida",
+      "nome": "Distrito de Nova Aparecida — passagem de veículo de carga acima de 14 m",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 14}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "ACC da EMDEC para destino comercial ou industrial no distrito com os serviços do art. 8º, §1º, ou ACM de morador, válidas só seg–sex 9h–16h e sáb 6h–9h (arts. 7º a 9º)",
+      "excecoes": [
+        "A proibição é da circulação de passagem (art. 4º): com origem ou destino no distrito, a zona não é excluída e a rota avisa",
+        "Veículos do CTB, art. 29, VII e VIII, e obras ou serviços de emergência comunicados à EMDEC (art. 2º)",
+        "ACC (destino comercial ou industrial no distrito, serviços do art. 8º, §1º) e ACM (morador com vaga própria), seg–sex 9h–16h e sáb 6h–9h (arts. 7º a 9º)",
+        "Concretagem, imprensa, caçambas e combustível, oxigênio e GLP a granel, seg–sex 9h–16h e sáb 6h–9h (arts. 10 e 11)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução SETRANSP nº 079/2017 de Campinas (DOM 20/02/2017, p. 19–20)",
+          "artigo": "art. 4º (passagem de veículo de carga acima de 14 m proibida em qualquer dia e horário) e parágrafo único (R. Batista Raffi, Rod. Anhanguera, Rod. Adalberto Panzan, Rod. Jornalista Francisco Aguirre Proença e o viário limítrofe com Hortolândia e Sumaré); arts. 7º a 11 (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf"
+        },
+        {
+          "ato": "Resolução SETRANSP nº 349/2019 de Campinas (DOM 12/11/2019)",
+          "artigo": "art. 1º, parágrafo único (manda observar a Res. 079/2017)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf"
+        }
+      ],
+      "nota": "O polígono segue o parágrafo único do art. 4º (não a relação administrativa 'Nova Aparecida' do OSM, que inclui áreas do outro lado da Anhanguera). Exceções do verify: pelo art. 7º, ACC e ACM só valem seg–sex 9h–16h e sáb 6h–9h; pelo art. 11, os veículos do art. 10 circulam sem autorização nessas mesmas janelas.",
+      "fonte_geometria": "Limite municipal de Campinas (IBGE) nas divisas com Hortolândia e Sumaré, cortado pela R. Batista Raffi, Rod. Anhanguera (pistas e marginais), Rod. Adalberto Panzan e Rod. Jornalista Francisco Aguirre Proença do OSM (20 m do eixo; a API recua mais 20 m).",
+      "vigencia_inicio": "2017-02-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509502_nova_aparecida.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py campinas (Overpass e malha do IBGE)"
+        }
+      ]
+    },
+    {
+      "id": "campinas_anel_reboucas",
+      "tipo": "zona",
+      "regime": "Anel Rebouças",
+      "nome": "Área interna do Anel de Integração Eng. Rebouças (veículo de carga acima de 6,30 m)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 6.3}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "ACC ou ACM da EMDEC no Sistema Observa, válidas só seg–sex 9h–16h e sáb 6h–9h (arts. 7º a 9º e 12 a 15)",
+      "excecoes": [
+        "Veículos do CTB, art. 29, VII e VIII, e obras ou serviços de emergência comunicados à EMDEC (art. 2º)",
+        "ACC (mudança, perecível não embalado, material de construção, limpeza de fossa, água para hemodiálise, reciclável de cooperativa, resíduo hospitalar) e ACM (morador ou empregado com vaga própria), seg–sex 9h–16h e sáb 6h–9h (arts. 7º a 9º)",
+        "Concretagem, imprensa, caçambas e combustível, oxigênio e GLP a granel, sem autorização, seg–sex 9h–16h e sáb 6h–9h (arts. 10 e 11)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução SETRANSP nº 079/2017 de Campinas (DOM 20/02/2017, p. 19–20)",
+          "artigo": "art. 5º, I e II (acima de 6,30 m; seg–sex 6h–20h; sáb 6h–14h) e parágrafo único, I a XX (as 20 vias do anel); arts. 7º a 11 (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf"
+        },
+        {
+          "ato": "Resolução SETRANSP nº 349/2019 de Campinas (DOM 12/11/2019)",
+          "artigo": "art. 1º, parágrafo único (manda observar a Res. 079/2017); art. 8º (veículo acima de 6,30 m só estaciona nas vagas de carga e descarga)",
+          "url": "https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf"
+        },
+        {
+          "ato": "EMDEC, notícia de 18/08/2025 (radares na Av. Prestes Maia e na Av. Brasil, sentido Centro, e Sistema Observa)",
+          "artigo": "sem artigo (notícia da EMDEC: fiscalização do art. 5º por radar desde 18/08/2025; 144 pontos de fiscalização)",
+          "url": "https://www.emdec.com.br/dois-radares-vao-monitorar-veiculos-de-carga-a-partir-desta-segunda-18-08/"
+        }
+      ],
+      "nota": "Fiscalização por radar (Sistema Observa) desde 18/08/2025 na Av. Prestes Maia (antes da Av. Pref. Faria Lima) e na Av. Brasil (altura da Av. Barão de Itapura), sentido Centro. O ato não excetua feriados. VUC de 7,20 m (perfil 'VUC' de SP) tem mais de 6,30 m: entra na restrição. O ato vale para qualquer veículo de carga acima de 6,30 m; o app só aplica a caminhão (PBT acima de 3,5 t, limite do núcleo): utilitário de carga de até 3,5 t com mais de 6,30 m (furgão de chassi longo, cerca de 7 m) não é desviado nem avisado.",
+      "fonte_geometria": "Região fechada pelas 20 vias do art. 5º, parágrafo único, no OSM (cada uma entre a anterior e a seguinte; Av. Dr. Ângelo Simões, Av. Júlio Prestes e R. Dona Luísa de Gusmão inteiras, por não fecharem entre as transversais), a 30 m do eixo (a API recua mais 20 m): as vias do anel ficam livres.",
+      "vigencia_inicio": "2017-02-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509502_anel_reboucas.geojson",
+          "construir": "manual",
+          "como_gerar": "data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py campinas (Overpass)"
+        }
+      ]
+    }
+  ]
+}
