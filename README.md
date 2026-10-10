@@ -37,6 +37,26 @@ Acompanhe com `docker compose logs -f valhalla`. Os tiles ficam em `data/valhall
 reaproveitados nas próximas subidas (segundos). Para forçar rebuild: apague `data/valhalla/*`.
 
 > Colima/Docker Desktop: dê memória suficiente à VM (ex.: `colima start --memory 12`).
+> **macOS:** não deixe o projeto em Downloads, Documentos ou Mesa. Essas pastas são protegidas e o Docker e o
+> Claude Code perdem o acesso a elas. Use uma pasta comum, como `~/Projetos/truck-router`.
+
+### Dados que o `docker compose up` já carrega
+
+Todas as camadas de dados públicos têm seed versionado em `db/seed/layers/` (o serviço `migrate` aplica):
+pontes/viadutos, VER, ZMRC, rodízio, perigosos, pedágio, balanças, acidentes, roubo de carga, feriados, SIAET,
+restrições dos municípios da Grande SP etc. Para **atualizar** a partir das fontes:
+
+```bash
+docker compose --profile import run --rm importer --list   # importadores disponíveis
+docker compose --profile import run --rm importer all       # todos (minutos; alguns baixam centenas de MB)
+```
+
+### Dados pesados (opcionais, fora do git)
+
+| O quê | Comando | Tempo / disco | Sem isso |
+|---|---|---|---|
+| **Geocodificação própria** (CNEFE 2022 do IBGE + CEPs + GeoSampa) | ver `docs/layers/geocoding.md` (`cnefe_municipios`, `cnefe_enderecos --no-seed`, `cep_ipea --no-seed`, `geosampa_logradouro --no-seed`) | ~25 min, ~750 MB no banco | `/api/geocode` cai no Photon público (impreciso para endereço com número) |
+| **Relevo** (ANADEM, CC BY 4.0) nos tiles do Valhalla | `./scripts/build-elevation.sh` e depois a troca descrita em `docs/layers/relevo.md` | ~6 min + 6,3 GB de download, ~5,5 GB em disco | a camada de relevo não anota rampas |
 
 ### Trocar a região (Brasil inteiro)
 
@@ -56,6 +76,39 @@ Para outras cidades, basta importar as zonas de restrição delas em `restrictio
                                                              ├──► valhalla  (OSM, costing truck, exclude_polygons)
                                                              └──► postgis   (reports, report_votes, restriction_zones)
 ```
+
+Dados de terceiros entram como **camadas** (`api/src/layers/*.layer.ts`, carregadas automaticamente; contrato em
+`docs/LAYERS.md`). Cada camada pode bloquear trechos (`exclude_polygons`), penalizar só a via (`linear_cost_factors`,
+sem afetar as ruas que cruzam), anotar a rota (avisos, resumo, dados) e desenhar no mapa. Os dados ficam na
+tabela `data_features`, separada do OSM e dos reportes, com fonte e licença registradas em `data_layer_runs`
+(`GET /api/sources`).
+
+### Camadas de dados
+
+<!-- camadas:inicio -->
+| Camada | Grupo | Efeito na rota | Registros | Fontes (licença) | Doc |
+|---|---|---|---|---|---|
+| Faixas e corredores de ônibus | Restrições | desvia | 1.455 | GeoSampa faixa_onibus (levantamento CET/PMSP) (CC-BY-SA 4.0); GeoSampa corredor_onibus (SPTrans/EMTU) (CC-BY-SA 4.0); OpenStreetMap (props.osm: traçado das faixas casado com a malha do Valhalla, usado só na penalidade opcional) (ODbL 1.0) | [corredores_onibus](docs/layers/corredores_onibus.md) |
+| Limitadores de altura (OSM) | Restrições | desvia | 216 | OpenStreetMap — nós com maxheight/maxwidth/maxweight e barrier=height_restrictor (ODbL 1.0 — © colaboradores do OpenStreetMap) | [altura_osm](docs/layers/altura_osm.md) |
+| Placas de restrição (DER-SP) | Restrições | avisa | 584 | DER-SP Sinalização Vertical (CC-BY-4.0) | [placas_restricao](docs/layers/placas_restricao.md) |
+| Produtos perigosos | Restrições | desvia | 2.604 | Portaria SMT.GAB 051/2024 (PMSP/CET) (Ato oficial (Lei 9.610/98 art. 8º IV)); Portarias PR/DER-164/2025 e SUP/DER-062/2024 (DOE-SP) (Ato oficial (Lei 9.610/98 art. 8º IV)); Relação de Produtos Perigosos (Res. ANTT 5.998/2022) (Ato oficial (Lei 9.610/98 art. 8º IV)); CETESB Malha Rodoviária Estadual (km) (Não declarada (atribuição)); CETESB Emergências Químicas (DataGEO) (Não declarada (atribuição)); APRM — limites de bacia (DataGEO/SIMA) (Não declarada (atribuição)); ARTESP — paradas de produtos perigosos (CC-BY); IBGE — malha municipal (LETPP) (Dados públicos (citar a fonte)); OpenStreetMap (traçado das vias, via Valhalla) (ODbL) | [perigosos](docs/layers/perigosos.md) |
+| Restrições de horário em rodovias | Restrições | desvia | 855 | PRF — Portaria DIOP/PRF nº 121/2026 (DOU) (Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)); DNIT — SNV 202607A (bases geométricas), trechos federais simplificados (Dados abertos do Poder Executivo federal, livre utilização (Decreto 8.777/2016, art. 4º, red. Decreto 9.903/2019); sem licença nomeada no arquivo; ver docs/layers/rodovias_horario.md); DER-SP — Portaria SUP/DER-084-01/11/2023 (DOE-SP) (Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)); ARTESP — marcos quilométricos (Camadas Geoespaciais Auxiliares do dataset Programação de Obras) (CC BY (ARTESP)); OpenStreetMap (geometria da serra da Anchieta, casada pelo Valhalla) (© OpenStreetMap contributors (ODbL 1.0)) | [rodovias_horario](docs/layers/rodovias_horario.md) |
+| Restrições federais (SIAET/DNIT) | Restrições | desvia | 4.891 | DNIT/SIAET — Restrições definitivas e temporárias por UF (Informação pública DNIT (Res. DNIT 11/2022); portal gov.br CC BY-ND 3.0 — só valores factuais, com citação); DNIT/DNITGeo — SNV (vgeo:vw_snv_rod) e OAEs (vgeo:oae_sgo) (Dado público DNIT, sem licença explícita (AccessConstraints=NONE)) |  |
+| Restrições municipais (Grande SP) | Restrições | desvia | 410 | Osasco: Dec. 10.676/2012 (red. Dec. 13.704/2023), mapa DEMUTRAN (IOMO 2434) e Portaria SETRAN (IOMO 2487) (Ato oficial (domínio público, Lei 9.610/98 art. 8º IV)); Barueri: Dec. 9.025/2019 (Jornal Oficial ed. 1.169) (Ato oficial (domínio público)); Guarulhos: Decs. 37.887/2021 e 38.400/2021 (ZRCC-TB) (Ato oficial (domínio público)); Cajamar: Dec. 7.397/2025 (DOM ed. 1358) (Ato oficial (domínio público)); Santana de Parnaíba: Dec. 4.288/2019 (Imprensa Oficial ed. 298) (Ato oficial (domínio público)); Ribeirão Pires: Dec. 7.608/2025 (DO ed. 44/2026) (Ato oficial (domínio público)); Geometria das vias: OpenStreetMap (ODbL 1.0 (© colaboradores do OpenStreetMap)); Limites municipais: IBGE Malha Municipal (Dados públicos IBGE (citar a fonte)) | [restricoes_rmsp](docs/layers/restricoes_rmsp.md) |
+| VER — vias restritas a caminhão (SP) | Restrições | desvia | 79 | Portaria SMT.GAB 137/2018, art. 2º (texto compilado) e Portaria SMT.GAB 49/2021 (Ato oficial, sem proteção autoral (Lei 9.610/98, art. 8º, IV)); OpenStreetMap (geometria das vias) (ODbL 1.0 — © colaboradores do OpenStreetMap) | [ver](docs/layers/ver.md) |
+| Altura desconhecida (OSM) | Infraestrutura | avisa | 12.536 | OpenStreetMap — vias sob estruturas, túneis e valores sem altura/peso (ODbL 1.0 — © colaboradores do OpenStreetMap); Mapillary — placas detectadas (opcional) (CC BY-SA 4.0 — Termos de Uso Mapillary, seção 12; atribuição com logo e link) | [lacunas_osm](docs/layers/lacunas_osm.md) |
+| Balanças | Infraestrutura | avisa | 330 | ANTT: PPV e operação dos postos (dados.antt.gov.br) (CC-BY); ARTESP: malha rodoviária por lote, Sistema de Pesagem (KMZ) (CC-BY); DER-SP: pontos para pesagem de veículos + camada Balancas_DER (Não declarada (portal cms.sp.gov.br: todos os direitos reservados)) | [balancas](docs/layers/balancas.md) |
+| Pontes e viadutos | Infraestrutura | desvia | 8.909 | GeoSampa obra_arte (PMSP) (CC-BY-SA 4.0); DER-SP OAE (CC-BY-4.0); ARTESP passarelas (Cadastro de Ativos) (CC-BY); SIURB controle de obras (PMSP) (ODC-By 1.0); Curadoria de atos e notícias oficiais (PMSP, Prefeituras, Defesa Civil) (fatos de atos oficiais, com citação da fonte) | [oae](docs/layers/oae.md) |
+| Pontes federais (DNIT/ANTT) | Infraestrutura | avisa | 12.950 | DNIT/DNITGeo — OAEs (vgeo:oae_sgo) (Dado público DNIT, sem licença explícita (AccessConstraints=NONE)); DNIT/PROARTE — painel "Obras de Arte Especiais" (nota técnica SGO) (Sem licença declarada (painel público do DNIT): uso informativo com citação); ANTT — Pontes e similares das rodovias concedidas (CC-BY (Creative Commons Atribuição)); DNIT — Alertas de serviços (notícias) (Portal gov.br CC BY-ND 3.0: só fatos e link) |  |
+| Acidentes com caminhão | Segurança | avisa | 7.058 | Infosiga SP (Detran-SP) (Dados abertos Detran-SP (uso e redistribuição livres com atribuição e mesmos termos de abertura)); ARTESP — acidentes nas rodovias concedidas (CC-BY); PRF — acidentes nas rodovias federais (Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR) | [acidentes](docs/layers/acidentes.md) |
+| Roubo de carga | Segurança | avisa | 593 | SSP-SP — microdados de BO (SPDadosCriminais) (Dados abertos SSP-SP (sem licença explícita; Decreto SP 68.769/2024 — livre utilização)) | [roubo_carga](docs/layers/roubo_carga.md) |
+| Carga e descarga (Zona Azul Caminhão) | Serviços | avisa | 1.591 | GeoSampa zona_azul (CET/PMSP) (CC-BY-SA 4.0); GeoSampa vaga_especial, tipo CA (CET/PMSP) (CC-BY-SA 4.0) | [carga_descarga](docs/layers/carga_descarga.md) |
+| Pedágio | Custos | avisa | 1.153 | ANTT: praças de pedágio (dados.antt.gov.br) (CC-BY); ANTT: tarifas por concessão (gov.br/antt) (CC BY-ND 3.0 (rodapé gov.br)); ARTESP: tabelas de tarifas 2026 (PDF) (Não especificada (portal cms.sp.gov.br: todos os direitos reservados)); ARTESP: malha rodoviária por lote (KMZ) (CC-BY); OpenStreetMap: barrier=toll_booth / highway=toll_gantry (charge) (ODbL 1.0) | [pedagio](docs/layers/pedagio.md) |
+| Relevo e rampas | Relevo | avisa | 0 | ANADEM v1 (ANA/UFRGS), MDT 30 m; derivado do Copernicus DEM GLO-30 (© DLR e.V., © Airbus); modificado: reamostrado (bilinear) para HGT 1" e usado para estimar rampas (CC-BY-4.0); Licença Creative Commons Atribuição 4.0 (ANADEM) (CC-BY-4.0); OpenStreetMap (geometria das vias, via Valhalla) (ODbL-1.0) | [relevo](docs/layers/relevo.md) |
+<!-- camadas:fim -->
+
+Pesquisa das fontes (o que existe, o que não existe, licenças, contagens): `docs/research/` e o resumo para
+decisão em `docs/DECISOES.md`.
 
 Fluxo de `POST /api/route`:
 
@@ -115,26 +168,19 @@ Tipos de reporte: `low_clearance` (m), `weight_limit` (t), `length_limit` (m), `
 Regras: reporte afeta a rota com `score >= 0`; `score < -2` desativa; `road_closed` expira em
 24 h sem confirmação. Sem login: `device_id` anônimo gerado no navegador (localStorage).
 
-## Pontos de descanso (Lei 13.103)
+## Regras legais (núcleo)
 
-`rest_stops` recebe no seed 101 pontos da Grande SP (áreas de descanso, áreas de serviço/postos
-nomeados, estacionamentos de caminhão) extraídos do OpenStreetMap via Overpass por
-`scripts/fetch-rest-stops.py` (gera `data/raw/rest_stops.geojson` e `db/seed/0003_rest_stops.sql`).
-Regras de referência em `api/src/services/restStops.ts` (**confirmar**): 5h30 de direção contínua →
-30 min de descanso; 8h/dia, +2h de prorrogação.
+Detalhes, normas e artigos em `docs/layers/core_legal.md`. Em resumo:
 
-## Zonas de restrição por horário
-
-- `restriction_zones` recebe no seed a **ZMRC** (Zona Máxima de Restrição a Caminhões) e o
-  **Mini-Anel do rodízio**, baixados automaticamente do WFS público do GeoSampa
-  (`data/raw/README.md` tem o passo a passo manual e `docker compose --profile import run --rm gdal`
-  reimporta com `ogr2ogr`).
-- Regra inicial da ZMRC em `config/zmrc-rules.json` — **confirmar com a CET**: caminhões
-  proibidos seg–sex 05:00–21:00 e sáb 10:00–14:00; VUC liberado.
-- Rodízio (Mini-Anel) — **confirmar com a CET**: seg–sex 07–10h e 17–20h por final de placa
-  (seg 1-2, ter 3-4, qua 5-6, qui 7-8, sex 9-0). Só se aplica se `plate_last_digit` for informado.
-- **Limitação do MVP:** a regra usa só o **horário de saída**; não calculamos a hora em que a
-  rota entra na zona. Uma viagem que sai 20h30 e chega à ZMRC 21h10 ainda é tratada como proibida.
+- **Presets** conforme a Res. CONTRAN 882/2021 e alterações (899/2022, 994/2023, 1.005/2024, 1.015/2024), com a base
+  legal em cada preset (`config/vehicle-presets.json`). Ids antigos continuam aceitos como apelidos.
+- **VUC em SP**: até 2,50 m × 7,20 m, fabricação a partir de 2005 e até 15 anos (Portaria SMT 137/2018, red. 57/2021).
+  Isenção na ZMRC e no rodízio só com **AETC** (`has_aetc`).
+- **ZMRC, rodízio e perigosos** não valem em feriados (`holidays`) e respeitam as suspensões publicadas pela CET
+  (`rule_suspensions`, importador `cet_suspensoes`). Exceções do rodízio pelo Decreto 58.584/2018.
+- **Jornada** (Lei 13.103/2015 com a decisão do STF na ADI 5322) no plano de direção.
+- **Limitação:** as zonas usam o horário de saída; algumas camadas (perigosos, roubo de carga, acidentes) já estimam
+  o horário de passagem ao longo da rota.
 
 ## Testes automatizados
 
@@ -144,9 +190,10 @@ Contra o ambiente local, depois do `docker compose up` (espera o Valhalla ficar 
 ./scripts/run-tests.sh
 ```
 
-Cobrem: viaduto 3,80 m (caminhão 4,10 m desvia, VUC 3,20 m passa); ZMRC (carreta 10h de
-terça desvia, 22h passa, VUC passa sempre, origem dentro da zona gera aviso); score -3 não afeta
-a rota. Os testes criam seus próprios reportes (`device_id` de teste) e os apagam ao final.
+Cobrem os critérios do MVP (viaduto 3,80 m, ZMRC, score -3) e cada camada (`api/test/layers/*.test.ts`):
+VER, perigosos, pedágio, balanças, acidentes/roubo, feriados em rodovia, SIAET, altura OSM, municípios da RMSP,
+placas/gabaritos, carga e descarga, relevo e geocodificação. Os testes criam seus próprios reportes
+(`device_id` de teste) e os apagam ao final. A suíte completa leva alguns minutos (muitas rotas reais).
 
 ## Migrar o banco para o Supabase
 
@@ -162,13 +209,11 @@ O schema usa só Postgres + PostGIS + `pgcrypto` (`gen_random_uuid`), todos disp
 
 ## TODO / fora do escopo
 
-- Importação de dados do **DNIT** (SNV, pontes e limites de peso em rodovias federais): TODO.
 - Navegação curva a curva, trânsito em tempo real, login/contas, app nativo, pagamentos.
-- ETA de entrada na zona (hoje só horário de saída).
-- Detecção automática de subidas por elevação (`build_elevation=True` no Valhalla; aumenta muito o build).
-- Pontos de descanso: hoje só Grande SP via `scripts/fetch-rest-stops.py` (Overpass). Para o Brasil
-  inteiro, rodar o script com `--bbox` por região ou extrair do PBF com osmium.
-- Subida que o caminhão não vence: hoje só por reporte (`steep_grade`); detecção automática é TODO.
+- Postos com diesel (ANP, CC-BY) e pontos de parada certificados (PPD) no plano de direção.
+- ETA dependente do horário (hoje o Valhalla não tem tráfego histórico na RMSP; ver `docs/research/trafego_tempo`).
+- Rampa no custo do Valhalla (o costing truck 3.9.1 ignora; hoje a camada de relevo só avisa).
+- Pedidos via LAI para gabarito e limite de peso de pontes/viadutos (ver `docs/DECISOES.md`).
 
 ## Referências
 

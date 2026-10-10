@@ -71,6 +71,8 @@ services:
       PORT: 3000
       DATABASE_URL: ${DATABASE_URL:-postgres://truck:truck@db:5432/truck_router}
       VALHALLA_URL: ${VALHALLA_URL:-http://valhalla:8002}
+      # tiles do Valhalla principal já têm elevação (ANADEM); a camada de relevo usa o mesmo serviço
+      VALHALLA_ELEV_URL: ${VALHALLA_ELEV_URL:-http://valhalla:8002}
       REPORT_BUFFER_M: ${REPORT_BUFFER_M:-25}
       WARN_RADIUS_M: ${WARN_RADIUS_M:-100}
       TZ: ${TZ:-America/Sao_Paulo}

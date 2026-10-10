@@ -94,16 +94,18 @@ describe('Camada perigosos na rota', () => {
     expect(l.runs.map((x: any) => x.source)).toEqual(expect.arrayContaining(['der-sp', 'osm-minianel', 'cetesb', 'artesp']));
   });
 
-  it('sem carga perigosa, às 08h de terça, o caminhão usa a Marginal Tietê (Minianel)', async () => {
-    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: TRUCK, departure_at: '2026-10-13T08:00' });
+  // 09h30: janela de perigosos (07–10h, Portaria SMT.GAB 051/2024) ativa, mas a VER § 4 da Marginal Tietê
+  // (05–09h e 17–21h, Portaria SMT 137/2018) não — assim o efeito medido é só o da camada de perigosos.
+  it('sem carga perigosa, às 09h30 de terça, o caminhão usa a Marginal Tietê (Minianel)', async () => {
+    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: TRUCK, departure_at: '2026-10-13T09:30' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
     expect(overlapM(r.body, minianel), 'pré-condição: o caminho natural usa as vias do Minianel').toBeGreaterThan(5000);
     expect(r.body.avoided.some((a: any) => a.layer === 'perigosos')).toBe(false);
     expect(r.body.layers.perigosos).toBeUndefined();
   }, 120_000);
 
-  it('ONU 1203 (gasolina) às 08h de terça desvia das vias do Minianel', async () => {
-    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T08:00' });
+  it('ONU 1203 (gasolina) às 09h30 de terça desvia das vias do Minianel', async () => {
+    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T09:30' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
     expect(overlapM(r.body, minianel)).toBeLessThan(300);
     expect(r.body.avoided.some((a: any) => a.layer === 'perigosos' && /Minianel/.test(a.name))).toBe(true);
@@ -122,8 +124,9 @@ describe('Camada perigosos na rota', () => {
     expect(r.body.layers.perigosos.data.minianel.usado_m).toBeGreaterThan(5000);
   }, 120_000);
 
-  it('saindo 06h50, avisa que a passagem estimada pelo Minianel cai na janela', async () => {
-    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T06:50' });
+  // 16h50: nem perigosos (17–20h) nem a VER § 4 (17–21h) valem na saída; a passagem estimada cai depois das 17h.
+  it('saindo 16h50, avisa que a passagem estimada pelo Minianel cai na janela', async () => {
+    const r = await route({ origin: OSASCO, destination: PENHA, vehicle: GASOLINA, departure_at: '2026-10-13T16:50' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
     const w = r.body.warnings.find((x: any) => x.code === 'hazmat_minianel_eta');
     expect(w, JSON.stringify(r.body.warnings)).toBeTruthy();
