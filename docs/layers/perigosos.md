@@ -18,10 +18,10 @@ paradas e as emergências.
 | Módulo da API | `api/src/layers/perigosos.layer.ts` |
 | Tabela ONU, grupos de SP e quantidade limitada | `api/src/services/hazmat.ts` (fonte única: `vehicle.ts` e `zones.ts` usam os grupos daqui) |
 | Campos do veículo | `api/src/schemas.ts` e `api/src/services/vehicle.ts`: `hazmat_un`, `hazmat_local_delivery`, `hazmat_biodiesel`, `hazmat_qty_kg`, `rear_axle_count` |
-| Importadores | `importers/sources/hazmat_trechos_der.py`, `hazmat_minianel_vias.py`, `hazmat_aprm.py`, `hazmat_paradas_artesp.py`, `hazmat_municipio_sp.py` e `cetesb_emergencias.py` |
+| Importadores | `importers/sources/hazmat_trechos_der.py`, `hazmat_minianel_vias.py`, `hazmat_aprm.py`, `hazmat_paradas_artesp.py`, `hazmat_municipio_sp.py` e `cetesb_emergencias.py`; fora de SP, `hazmat_trechos_sudeste.py` ([perigosos_sudeste.md](perigosos_sudeste.md)) |
 | Dados versionados | `data/raw/hazmat/` (CSV das regras e da Relação ANTT, scripts de extração) |
 | Seeds | `db/seed/layers/perigosos__*.sql` |
-| Testes | `api/test/layers/perigosos.test.ts` |
+| Testes | `api/test/layers/perigosos.test.ts` e, para os trechos fora de SP, `api/test/layers/perigosos_sudeste.test.ts` |
 
 Não há migration nova: tudo fica em `data_features` (`layer_id = 'perigosos'`), e o número 0113
 ficou sem uso.
@@ -384,7 +384,9 @@ Minianel nos horários da portaria.
   - portarias do DER anteriores a 2023 não têm índice público (pedir via LAI);
   - outros municípios da RMSP (exceto Guarulhos, que declara não ter regra): regra municipal de PP
     não encontrada;
-  - Ponte Rio–Niterói está fora do piloto.
+  - trechos fora de SP (Ponte Rio–Niterói e Av. Portuária, Linha Vermelha, Terceira Ponte): ver
+    [perigosos_sudeste.md](perigosos_sudeste.md), com a regra por classe ONU, a isenção da Parte 3 e a exceção de
+    Mocanguê.
 - **Relação ANTT:** é a versão de 2022.
   - O parse foi conferido amostralmente contra o texto do PDF (1203 = 333 kg, 1202 = 1.000 kg,
     1017 = 20 kg, 1005 = 20 kg, 1075 = 333 kg, 3082 = 1.000 kg, 2187 = 1.000 kg, 3534 = "ZERO").

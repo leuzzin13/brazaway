@@ -193,7 +193,7 @@ def rule_lines(rule: dict, notes: list[str]):
     # polígono do Rio); por isso o corte é por EXCLUSÃO dos municípios vizinhos: sai a aresta com mais da metade do
     # comprimento dentro do vizinho recuado `folga_divisa_m`. Entre o Caju e Vigário Geral a divisa com Duque de Caxias
     # passa entre as duas pistas da Linha Vermelha (a 2–9 m de cada uma, na malha do IBGE e no limite do OSM): o recuo
-    # mantém as duas pistas nesse trecho; a oeste dele as duas pistas estão a mais de 100 m dentro de Caxias e saem.
+    # mantém as duas pistas nesse trecho; a oeste dele as duas pistas estão a 60–220 m dentro de Caxias e saem.
     folga = sel.get('folga_divisa_m', 0)
     vizinhos = [transform(fw, ibge_shape(c)[0]).buffer(-folga) for c in sel.get('excluir_municipios_ibge', [])]
     es, fora = [], 0.0

@@ -146,6 +146,8 @@ describe('Camada perigosos na rota — trechos fora de SP', () => {
     expect(r.body.distance_km).toBeLessThan(30);
     expect(r.body.avoided.some((a: any) => a.layer === 'perigosos')).toBe(false);
     expect(trecho(r.body, 'RJ-PONTE-RIO-NITEROI')).toMatchObject({ aplicada: false, decisao: 'classe_liberada' });
+    // a Linha Vermelha (Res. SMTR 2.204/2012, art. 1º IV) proíbe todas as classes: continua aplicada para a classe 9
+    expect(trecho(r.body, 'RJ-RIO-LINHA-VERMELHA')).toMatchObject({ aplicada: true, decisao: 'aplicada', classes_proibidas: null });
     expect(r.body.layers.perigosos.summary.some((s: string) => /Ponte Rio–Niterói.*classe 9, fora das proibidas/.test(s))).toBe(true);
   }, 300_000);
 
