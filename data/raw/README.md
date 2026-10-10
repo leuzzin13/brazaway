@@ -27,10 +27,20 @@ Endpoint: `https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs`
 docker compose --profile import run --rm gdal
 ```
 
-O script `data/import/import-zmrc.sh` usa o arquivo local se existir; senão tenta o WFS.
+O script `data/import/import-zmrc.sh` dá prioridade ao arquivo baixado à mão (o mais recente); senão usa o GeoJSON
+desta pasta; senão baixa do WFS. O resultado é sempre gravado em `geosampa_restricao_circulacao_veiculo_<camada>.geojson`.
+Ele atualiza a ZMRC no banco na hora. O Mini-Anel **não** vai direto para o banco: a zona do rodízio de caminhões é o
+Mini-Anel menos o corredor das vias-limite (Decreto 58.584/2018 art. 2º §2º), e o corte depende de remedir a borda.
+Depois do script, no host:
+
+```bash
+python3 scripts/gen-zones-seed.py --measure
+docker exec -i truck-router-db psql -U truck -d truck_router < db/seed/0002_zones.sql
+```
 
 ## Seed
 
-`db/seed/0002_zones.sql` é gerado por `python3 scripts/gen-zones-seed.py` a partir destes
-arquivos e é aplicado automaticamente no `docker compose up` (serviço `migrate`), então
-o app já sobe com a ZMRC sem precisar do passo de importação.
+`db/seed/0002_zones.sql` (zonas) e `db/seed/0004_holidays.sql` (feriados) são gerados por
+`python3 scripts/gen-zones-seed.py` a partir destes arquivos e de `config/zmrc-rules.json`, e são aplicados
+automaticamente no `docker compose up` (serviço `migrate`), então o app já sobe com as zonas sem precisar do passo de
+importação. Detalhes em `docs/layers/core_legal.md`.

@@ -61,6 +61,8 @@ def load(name):
     if not p.exists():
         return None
     d = json.load(open(p, encoding='utf-8'))
+    if len(d['features']) != 1:   # ex.: arquivo convertido de SHP por data/import/import-zmrc.sh com várias partes
+        raise SystemExit(f"data/raw/{name} tem {len(d['features'])} feições; o gerador espera uma só (o polígono da zona)")
     f = d['features'][0]
     geom = f['geometry']
     if geom['type'] == 'Polygon':
