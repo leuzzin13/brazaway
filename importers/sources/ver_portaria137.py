@@ -27,7 +27,8 @@ Precisa do binário `osmium` (osmium-tool) só quando o cache OPL não existe ou
      "apt-get update -qq && apt-get install -y -qq osmium-tool && python run.py ver_portaria137"
 (o PBF dos tiles fica em data/valhalla/, montado em /data/valhalla no container).
 Variáveis: OSM_PBF (default DATA_DIR/valhalla/sudeste-latest.osm.pbf), VALHALLA_URL (default http://valhalla:8002;
-VALHALLA_URL=off pula a checagem), VER_DEBUG=1 imprime o casamento por inciso.
+VALHALLA_URL=off pula a checagem), VER_DEBUG=1 imprime o casamento por inciso. Se o `texto` de algum inciso não estiver,
+letra por letra, no texto oficial guardado em data/raw/ver, a importação FALHA (VER_IGNORAR_TEXTO=1 importa mesmo assim).
 
 LICENÇA: o texto da portaria é ato oficial (Lei 9.610/98, art. 8º, IV). A geometria é derivada do OpenStreetMap
 (© colaboradores do OpenStreetMap, ODbL 1.0) — base derivada: atribuir e manter sob ODbL se for redistribuída.
@@ -91,6 +92,12 @@ J_S4 = [{'days': SEMANA, 'from': '05:00', 'to': '09:00'}, {'days': SEMANA, 'from
 EXC_S4 = [{'days': SEMANA, 'from': '05:00', 'to': '09:00'}, {'days': [6], 'from': '10:00', 'to': '14:00'}]
 # art. 27 I / 28 I / 30 I: "no período das 05 às 16 horas" (sem dia: vale em todo dia em que a VER restringe)
 J_05_16 = [{'days': [1, 2, 3, 4, 5, 6], 'from': '05:00', 'to': '16:00'}]
+# § 1º: art. 27, I (betoneira) e 28, I (bomba) dão 05–16h, mas o art. 28, § 3º manda a concretagem-bomba ficar
+# estacionada de 2ª a 6ª das 12 às 14 h, "exceto nas VER previstas nos §§ 2º, 3º e 4º" — ou seja, nas VER do § 1º ela
+# não circula nesse intervalo. O perfil do veículo não separa betoneira de bomba (cargo_type 'concrete' = "Concreto/bomba"
+# no app), então no § 1º usamos a janela conservadora, que vale para os dois.
+J_CONCRETO_S1 = [{'days': SEMANA, 'from': '05:00', 'to': '12:00'}, {'days': SEMANA, 'from': '14:00', 'to': '16:00'},
+                 {'days': [6], 'from': '05:00', 'to': '16:00'}]
 # art. 32 I: "no período das 05 às 12 horas e aos sábados das 10 às 14 horas"
 J_PEREC_123 = [{'days': SEMANA, 'from': '05:00', 'to': '12:00'}, {'days': [6], 'from': '10:00', 'to': '14:00'}]
 
@@ -108,7 +115,10 @@ PARAGRAFOS = {
     1: {
         'kind': 'ver_s1', 'janelas': J_05_21, 'horario': 'seg–sex 05h–21h; sáb 10h–14h; exceto feriados',
         'norma': 'Portaria SMT.GAB 137/2018, art. 2º, § 1º',
-        'excecoes': [EXC_PEREC_123, {**EXC_CONCRETO_123, 'texto': 'Concretagem com AETC (itinerário na AETC): 05h–16h'}],
+        'excecoes': [EXC_PEREC_123, {
+            'codigo': 'concreto_aetc', 'artigo': 'Portaria 137/2018, arts. 27, I, e 28, I e § 3º', 'janelas': J_CONCRETO_S1,
+            'texto': 'Concretagem com AETC (itinerário na AETC): seg–sex 05h–12h e 14h–16h, sáb 05h–16h '
+                     '(a concretagem-bomba fica estacionada seg–sex 12h–14h nas VER do § 1º; a betoneira pode circular até 16h)'}],
         'vuc': 'VUC proibido mesmo com AETC (art. 18 só libera ZMRC, ZERC e VER dos §§ 2º a 4º)',
     },
     2: {
@@ -1003,7 +1013,7 @@ def conferir_textos(trechos: list[dict]) -> list[str]:
     for tr in trechos:
         f = RAW_DIR / fontes[tr['par']]
         if not f.exists():
-            return [f'texto oficial ausente em {f} (conferência pulada)']
+            return [f'texto oficial ausente em {f}']
         if f not in cache:
             cache[f] = _letras(f.read_text(encoding='utf-8'))
         if _letras(tr['texto']) not in cache[f]:
@@ -1012,8 +1022,13 @@ def conferir_textos(trechos: list[dict]) -> list[str]:
 
 
 def build_features(trechos: list[dict]) -> list[dict]:
-    for e in conferir_textos(trechos):
+    erros = conferir_textos(trechos)
+    for e in erros:
         print(f'    ! {e}')
+    if erros and os.environ.get('VER_IGNORAR_TEXTO') != '1':
+        # texto do inciso diferente do oficial (ou texto oficial ausente): não grava seed nem banco; o runner marca FALHARAM
+        raise RuntimeError(f'{len(erros)} inciso(s) não conferem com o texto oficial em {RAW_DIR} '
+                           '(corrija TRECHOS ou o texto guardado; VER_IGNORAR_TEXTO=1 importa mesmo assim)')
     opl = ensure_opl()
     net = Net(load_ways(opl))
     kml = _kml_lines()

@@ -1,8 +1,10 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
 import { get, pool, route, waitForStack } from '../helpers.js';
-import { decide, vigente, type VerProps } from '../../src/layers/ver.layer.js';
+import verLayer, { decide, vigente, type VerProps } from '../../src/layers/ver.layer.js';
+import { pool as apiPool } from '../../src/db.js';
+import type { RouteCtx } from '../../src/layers/types.js';
 import type { Vehicle } from '../../src/services/vehicle.js';
 
 // 2026-10-13 é terça-feira; 2026-10-17 é sábado; 2026-10-18 é domingo
@@ -10,6 +12,8 @@ const TZ = 'America/Sao_Paulo';
 const at = (iso: string) => DateTime.fromISO(iso, { zone: TZ });
 const TRUCK: Vehicle = { id: 'truck', label: 'Truck', height_m: 4.2, width_m: 2.6, length_m: 12, weight_t: 23, axle_load_t: 8.5, axle_count: 3, hazmat: false, is_vuc: false };
 const VUC: Vehicle = { id: 'vuc', label: 'VUC', height_m: 3.2, width_m: 2.2, length_m: 6.3, weight_t: 7, axle_load_t: 5, axle_count: 2, hazmat: false, is_vuc: true };
+
+afterAll(async () => { await apiPool.end(); });
 
 async function props(sourceId: string): Promise<VerProps> {
   const r = await pool.query(`select props from data_features where layer_id = 'ver' and source_id = $1`, [sourceId]);
@@ -50,6 +54,11 @@ describe('VER — regras da Portaria SMT 137/2018 (dados do banco)', () => {
     const concreto = { ...TRUCK, has_aetc: true, cargo_type: 'concrete' as const };
     expect(decide(s1, concreto, at('2026-10-13T15:30')).codigo).toBe('excecao');
     expect(decide(s1, concreto, at('2026-10-13T16:30')).proibido).toBe(true);
+    // art. 28, § 3º: a concretagem-bomba fica estacionada seg–sex 12–14h nas VER do § 1º (o perfil não separa da betoneira)
+    expect(decide(s1, concreto, at('2026-10-13T11:00')).codigo).toBe('excecao');
+    expect(decide(s1, concreto, at('2026-10-13T13:00')).proibido).toBe(true);
+    expect(decide(s1, concreto, at('2026-10-17T12:30')).codigo).toBe('excecao'); // sábado: o § 3º do art. 28 fala só de 2ª a 6ª
+    expect(decide(s2, concreto, at('2026-10-13T13:00')).codigo).toBe('excecao'); // §§ 2º–4º: sem a parada das 12–14h
     const mudanca = { ...TRUCK, has_aetc: true, cargo_type: 'moving' as const };
     expect(decide(s1, mudanca, at('2026-10-13T10:00')).proibido).toBe(true);
     expect(decide(s2, mudanca, at('2026-10-13T10:00')).codigo).toBe('excecao');
@@ -76,6 +85,42 @@ describe('VER — regras da Portaria SMT 137/2018 (dados do banco)', () => {
     expect(decide(s5, { ...TRUCK, cargo_od_in_city: true }, at('2026-10-13T10:00')).codigo).toBe('excecao');
     expect(decide(s5, { ...TRUCK, cargo_od_in_city: true, has_aetc: true }, at('2026-10-13T10:00')).proibido).toBe(true); // art. 38-A, p. único
     expect(decide(s5, { ...TRUCK, cargo_od_in_city: true, has_aetc: true }, at('2026-10-13T22:00')).codigo).toBe('excecao');
+  });
+});
+
+describe('VER — annotate(): feriado do dia da PASSAGEM, não do dia da saída', () => {
+  // Rota sintética: 20 km em linha reta a oeste + a Ponte do Tatuapé sentido Tatuapé (§ 4º XXXIV, uma cadeia de ~860 m).
+  // Com duration_s = 8 h, a passagem pela ponte fica ~7h40 depois da saída.
+  async function anotar(departure: string) {
+    const q = await pool.query(`select id::text, ST_AsGeoJSON(geom, 7)::json as g from data_features where layer_id = 'ver' and source_id = 'p137-a2-s4-xxxiv'`);
+    expect(q.rows.length, 'p137-a2-s4-xxxiv não está no banco').toBe(1);
+    const g = q.rows[0].g as GeoJSON.MultiLineString;
+    const c = g.coordinates[0] as [number, number][];
+    const far: [number, number] = [c[0][0] - 0.2, c[0][1]];
+    const line = turf.lineString([far, ...c]);
+    const ctx: RouteCtx = { vehicle: TRUCK, at: at(departure).toJSDate(), departureLocal: departure, tz: TZ,
+      origin: { lon: far[0], lat: far[1] }, destination: { lon: c[c.length - 1][0], lat: c[c.length - 1][1] } };
+    const a = await verLayer.annotate!(ctx, { line, distance_km: turf.length(line), duration_s: 8 * 3600 });
+    const usada = ((a.data as any)?.usadas ?? []).find((u: any) => u.id === q.rows[0].id);
+    expect(usada, JSON.stringify(a.data)).toBeTruthy();
+    return { a, usada, id: q.rows[0].id as string };
+  }
+
+  it('sai às 22h do feriado (12/10) e passa às ~05h40 de terça, dia útil: PROIBIDA', async () => {
+    const { a, usada, id } = await anotar('2026-10-12T22:00');
+    expect(usada.data_passagem).toBe('2026-10-13');
+    expect(usada.proibido).toBe(true);
+    expect(a.warnings!.some((w) => w.code === 'ver_proibida' && w.id === id && w.severity === 'danger')).toBe(true);
+    expect((a.summary ?? []).join(' ')).not.toMatch(/Feriado na passagem|— feriado \(/);
+  });
+
+  it('sai às 22h de domingo e passa às ~05h40 do feriado (12/10): liberada', async () => {
+    const { a, usada, id } = await anotar('2026-10-11T22:00');
+    expect(usada.data_passagem).toBe('2026-10-12');
+    expect(usada.proibido).toBe(false);
+    expect(usada.motivo).toMatch(/^feriado \(Nossa Senhora Aparecida\)/);
+    expect(a.warnings!.some((w) => w.code === 'ver_proibida' && w.id === id)).toBe(false);
+    expect(a.summary![0]).toMatch(/Feriado na passagem \(Nossa Senhora Aparecida, 12\/10\)/);
   });
 });
 
@@ -167,6 +212,32 @@ describe('VER — efeito na rota', () => {
     const w = r.body.warnings.filter((x: any) => x.code === 'ver_proibida');
     expect(w.length).toBeGreaterThan(0);
     expect(w.some((x: any) => x.severity === 'danger' && /Marginal Tietê/.test(x.message) && /§ 4º/.test(x.message))).toBe(true);
+  });
+
+  it('RJ → Mooca saindo 23h59 do feriado (12/10): a passagem é na terça e o feriado não libera as VER', async () => {
+    const r = await route({ origin: { lat: -22.88, lon: -43.28 }, destination: { lat: -23.55, lon: -46.599 }, vehicle: { preset: 'truck' }, departure_at: '2026-10-12T23:59' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const usadas: any[] = r.body.layers.ver?.data?.usadas ?? [];
+    expect(usadas.length, 'pré-condição: a rota chega à Mooca pela Radial/Salim/Bresser').toBeGreaterThan(0);
+    for (const u of usadas) {
+      expect(u.data_passagem).toBe('2026-10-13');
+      expect(u.motivo).not.toMatch(/^feriado/);
+    }
+    expect((r.body.layers.ver?.summary ?? []).join(' ')).not.toMatch(/Feriado na passagem|— feriado \(/);
+    // passagem por volta das 05h: o que cai a partir das 05:00 é proibido (§§ 1º e 4º) e vira ver_proibida
+    if (usadas.some((u) => u.horario_passagem >= '05:00')) {
+      expect(usadas.filter((u) => u.horario_passagem >= '05:00' && u.horario_passagem < '09:00').every((u) => u.proibido)).toBe(true);
+      expect(r.body.warnings.some((w: any) => w.code === 'ver_proibida')).toBe(true);
+    }
+  }, 400_000); // rota de ~425 km com todas as camadas: 1–1,5 min com a máquina ocupada
+
+  it('duração não inflada pelo factor 1000: VUC sem AETC às 10h com origem perto da VER (Jules Rimet)', async () => {
+    const r = await route({ origin: { lat: -23.6, lon: -46.72 }, destination: { lat: -23.615, lon: -46.68 }, vehicle: { preset: 'vuc' }, departure_at: '2026-10-13T10:00' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body.valhalla.cost_lines_count).toBeGreaterThan(0);
+    // o /route do Valhalla 3.9.1 devolvia 16 507 s (factor aplicado também ao tempo); re-cronometrada, ~34 min para ~15 km
+    expect(r.body.duration_s).toBeLessThan(3600);
+    expect(r.body.duration_s / 60 / r.body.distance_km).toBeLessThan(5); // < 5 min/km (> 12 km/h de média)
   });
 
   it('mapa: linhas com cor por parágrafo e sem o § 5º inativo', async () => {

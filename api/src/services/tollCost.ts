@@ -16,7 +16,7 @@
 import { DateTime } from 'luxon';
 import { env } from '../config.js';
 import type { Vehicle } from './vehicle.js';
-import type { Ring } from './valhalla.js';
+import { retime, type Ring } from './valhalla.js';
 import { decodePolyline6 } from './polyline.js';
 import { activeZones, pointInZone, zoneApplies, zoneRings } from './zones.js';
 import { blockingReports, reportToRing } from './restrictions.js';
@@ -266,5 +266,9 @@ export async function noTollRoute(ctx: RouteCtx, skipLayer = 'pedagio'): Promise
   const trip = json.trip;
   const coordinates: [number, number][] = [];
   for (const leg of trip.legs) coordinates.push(...decodePolyline6(leg.shape));
-  return { distance_km: Number(trip.summary.length), duration_s: Number(trip.summary.time), has_toll: !!trip.summary.has_toll, coordinates, falhas };
+  const distance_km = Number(trip.summary.length);
+  let duration_s = Number(trip.summary.time);
+  // o factor dos linear_cost_factors infla também o tempo (Valhalla 3.9.1): re-cronometra como em valhalla.route()
+  if (body.linear_cost_factors) duration_s = (await retime(trip.legs.map((l: { shape: string }) => l.shape), body, distance_km)) ?? duration_s;
+  return { distance_km, duration_s, has_toll: !!trip.summary.has_toll, coordinates, falhas };
 }
