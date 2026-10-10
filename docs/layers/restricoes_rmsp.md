@@ -159,7 +159,8 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   `rmsp_via_restrita_na_rota` (o que o `routing.ts` não consegue ver).
 - O `routing.ts` já deduplica `avoided`/avisos por id e testa o **sentido** no uso de cada linha de custo (commit
   "rota: uso de trecho penalizado sensível ao sentido"): as duas linhas de uma via de mão dupla e os pedaços de uma
-  mesma rua aparecem uma vez só.
+  mesma rua aparecem uma vez só. Mudança mínima feita no núcleo por esta frente: `usesCostLine` mede cada linha só
+  contra o trecho da rota perto dela (mesmo resultado, sem percorrer a rota inteira por linha).
 
 ## Licenças
 
@@ -202,9 +203,11 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   Cajamar) nem tipo de carga/sede da empresa (Santana art. 2º, II): a rota não aplica essas exceções, só as cita.
 - Exceções por atividade (correios, coleta, betoneira em operação etc.) também não estão no perfil do veículo.
 - Sem geometria/regra: Cotia (só placas), Diadema (2011, sem ato primário), Taboão, Mogi, Suzano e os demais.
-- Desempenho: com Osasco inteira ativa (pico), ~320 linhas de custo (os pedaços de 400 m e as vias da ZMRC
-  aumentaram o número); a rota Osasco leste–oeste leva ~3,8 s na API (o Valhalla em si ~0,1 s; o resto é a checagem
-  de sobreposição do `routing.ts` e as demais camadas).
+- Desempenho: com Osasco inteira ativa (pico), ~320 linhas de custo numa rota dentro de Osasco e ~530 numa rota
+  Osasco–Penha (os pedaços de 400 m e as vias da ZMRC aumentaram o número). O Valhalla absorve bem (~0,3 s com 530
+  linhas); o gargalo era a checagem de uso do `routing.ts`, que media cada linha contra a rota inteira — agora ela só
+  olha o trecho da rota perto de cada linha (Osasco–Penha às 8h: de 70–160 s para ~30 s, o resto é annotate de outras
+  camadas; o `annotate` desta camada leva ~0,3 s nessa rota).
 - O `routing.ts` só checa as linhas que recebeu e usa razão ≥ 50%: os casos que ele não vê (via fora do corredor,
   uso parcial) são cobertos pelo aviso `rmsp_via_restrita_na_rota` da camada, não por desvio.
 - O uso de via é geométrico (10 m): numa via de mão dupla sem sentido no ato, uma rua paralela a menos de 10 m
