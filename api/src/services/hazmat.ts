@@ -5,11 +5,15 @@
  *    (data/raw/hazmat/*.py). Colunas usadas: nº ONU (1), nome (2), classe (3), risco subsidiário (4), nº de risco (5),
  *    grupo de embalagem (6) e quantidade limitada por veículo (8).
  *  - Grupos de São Paulo: Portaria SMT.GAB 051/2024, art. 2º e Anexos I a III; o grupo I ("alta periculosidade
- *    intrínseca") são os demais produtos da classificação ONU (Decreto 50.446/2009, art. 3º I).
+ *    intrínseca") são os demais produtos da classificação ONU (Decreto 50.446/2009, art. 3º I). O Anexo II tem dois
+ *    qualificadores: 1075 só "ENGARRAFADOS/FRACIONADO" e 3082 só "BIODIESEL, conforme estabelecido pela ABNT NBR 15512".
  *  - Isenção por quantidade limitada por veículo: Res. ANTT 5.998/2022, Parte 3, itens 3.4.3.1 (até o valor da coluna 8;
  *    "zero" = sem isenção), 3.4.3.2 (vale o menor valor entre os produtos, sobre o peso bruto total do carregamento) e
- *    3.4.3.4 c (dispensa de "limitações quanto a itinerário, estacionamento e locais de carga e descarga").
- *    Não dispensa a LETPP em São Paulo (Decreto 50.446/2009, art. 5º; FAQ PMSP 2019, itens 32 e 33).
+ *    3.4.3.4 c (dispensa das "limitações quanto a itinerário, estacionamento e locais de carga e descarga" do próprio
+ *    regulamento). A isenção NÃO alcança as restrições criadas pelo órgão da via: a Portaria SMT.GAB 051/2024, art. 3º
+ *    ("veículos que transportam produtos perigosos") e as portarias do DER-SP (PR/DER-164/2025 art. 2º; SUP/DER-062/2024
+ *    art. 1º: "veículos transportando produtos perigosos") não têm exceção por quantidade. Também não dispensa a LETPP
+ *    em São Paulo (Decreto 50.446/2009, art. 5º; FAQ PMSP 2019, itens 32 e 33).
  */
 import type { Vehicle } from './vehicle.js';
 
@@ -101,6 +105,15 @@ const ANEXO_I = new Set(['1001', '1005', '1072', '1073', '1075', '1170', '1202',
 const ANEXO_II = new Set(['1002', '1003', '1006', '1046', '1066', '1070', '1072', '1073', '1075', '1170', '1202', '1203', '1951', '1963', '1966', '1977', '2187', '2201', '3082', '3475']);
 /** Anexo III = grupo IV (outros). */
 const ANEXO_III = new Set(['1660', '2908', '2910', '2911', '2915', '2916', '3291', '3332', '3373']);
+/**
+ * Qualificadores do Anexo II (texto da portaria). `hazmat_local_delivery` cobre só a condição de entrega fracionada para
+ * consumo local, que é o que o qualificador do 1075 descreve. O 3082 do Anexo II é só o biodiesel: sem a indicação
+ * explícita (`hazmat_biodiesel`), um 3082 continua no grupo II mesmo com entrega local.
+ */
+export const ANEXO_II_QUALIFIER: Record<string, string> = {
+  '1075': 'ENGARRAFADOS/FRACIONADO',
+  '3082': 'BIODIESEL, conforme estabelecido pela ABNT NBR 15512',
+};
 
 export type SpGroup = 'I' | 'II' | 'III' | 'IV';
 export interface SpGroupInfo {
@@ -110,6 +123,10 @@ export interface SpGroupInfo {
   annexes: string[];
   /** o nº ONU está nos Anexos I e II: o grupo depende de ser entrega fracionada para consumo local */
   ambiguous: boolean;
+  /** qualificador do Anexo II para este nº ONU, se houver */
+  annexIIQualifier?: string;
+  /** entrega local informada, mas falta a condição do qualificador (3082 sem indicação de biodiesel) */
+  qualifierMissing: boolean;
   /** pode circular no centro expandido nas janelas (art. 3º parágrafo único: só grupos III e IV) */
   interiorAllowed: boolean;
   basis: string;
@@ -124,25 +141,32 @@ const GROUP_LABEL: Record<SpGroup, string> = {
 
 /**
  * Grupo de um nº ONU na Portaria SMT.GAB 051/2024. `localDelivery` = carga fracionada para consumo local (ex.: GLP
- * engarrafado), que decide os nº ONU listados nos Anexos I e II. Sem a informação, fica o grupo II (mais restritivo).
+ * engarrafado), que decide os nº ONU listados nos Anexos I e II; `biodiesel` = o 3082 é biodiesel (ABNT NBR 15512),
+ * condição do Anexo II para esse número. Sem a informação, fica o grupo II (mais restritivo).
  */
-export function spGroup(un: string, localDelivery = false): SpGroupInfo {
+export function spGroup(un: string, localDelivery = false, biodiesel = false): SpGroupInfo {
   const annexes = [ANEXO_I.has(un) && 'I', ANEXO_II.has(un) && 'II', ANEXO_III.has(un) && 'III'].filter(Boolean) as string[];
   const ambiguous = ANEXO_I.has(un) && ANEXO_II.has(un);
+  const annexIIQualifier = ANEXO_II.has(un) ? ANEXO_II_QUALIFIER[un] : undefined;
+  const qualifierMet = un !== '3082' || biodiesel;
   let group: SpGroup;
   let basis: string = LEGAL.gruposSP;
   if (ANEXO_III.has(un)) group = 'IV';
-  else if (ambiguous) group = localDelivery ? 'III' : 'II';
+  else if (ambiguous) group = localDelivery && qualifierMet ? 'III' : 'II';
   else if (ANEXO_II.has(un)) group = 'III';
   else if (ANEXO_I.has(un)) group = 'II';
   else { group = 'I'; basis = `${LEGAL.grupoI}; ${LEGAL.gruposSP}`; }
-  return { group, label: GROUP_LABEL[group], annexes, ambiguous, interiorAllowed: group === 'III' || group === 'IV', basis };
+  return {
+    group, label: GROUP_LABEL[group], annexes, ambiguous, annexIIQualifier,
+    qualifierMissing: ambiguous && localDelivery && !qualifierMet,
+    interiorAllowed: group === 'III' || group === 'IV', basis,
+  };
 }
 
 /** Carregamento com vários produtos: vale o grupo mais restritivo (qualquer produto fora dos grupos III/IV). */
-export function spGroupForLoad(uns: string[], localDelivery = false): SpGroupInfo | undefined {
+export function spGroupForLoad(uns: string[], localDelivery = false, biodiesel = false): SpGroupInfo | undefined {
   if (!uns.length) return undefined;
-  const infos = uns.map((u) => spGroup(u, localDelivery));
+  const infos = uns.map((u) => spGroup(u, localDelivery, biodiesel));
   return infos.find((i) => !i.interiorAllowed) ?? infos[0];
 }
 
@@ -159,6 +183,9 @@ export interface LimitedQtyInfo {
   text: string;
 }
 
+/** O que a isenção alcança e o que não alcança (3.4.3.4 c x restrições do órgão da via). */
+const LQ_SCOPE = 'dispensa só as limitações de itinerário e estacionamento do regulamento da ANTT; as restrições municipais e do DER continuam valendo';
+
 export function limitedQuantity(uns: string[], grossKg?: number | null): LimitedQtyInfo {
   if (!uns.length) return { limitKg: null, exempt: null, text: 'Sem nº ONU: não dá para conferir a isenção por quantidade limitada.' };
   let limit = Infinity;
@@ -172,17 +199,17 @@ export function limitedQuantity(uns: string[], grossKg?: number | null): Limited
     limit = Math.min(limit, q);
   }
   if (limit === 0) return { limitKg: 0, exempt: false, text: `Sem isenção por quantidade limitada (coluna 8 = "zero"; ${LEGAL.qtdLimitada}).` };
-  if (undefinedLimit) return { limitKg: null, exempt: null, text: 'Quantidade limitada por veículo não definida na Relação (provisão especial ou nº ONU desconhecido): restrições aplicadas.' };
+  if (undefinedLimit) return { limitKg: null, exempt: null, text: 'Quantidade limitada por veículo não definida na Relação (provisão especial ou nº ONU desconhecido): sem isenção automática.' };
   const fmt = limit === Infinity ? 'ilimitada' : `${limit.toLocaleString('pt-BR')} kg de peso bruto`;
   if (grossKg === undefined || grossKg === null || !Number.isFinite(grossKg)) {
-    return { limitKg: limit, exempt: null, text: `Quantidade limitada por veículo: ${fmt} (${LEGAL.qtdLimitada}). Abaixo disso não há restrição de itinerário; informe o peso bruto da carga.` };
+    return { limitKg: limit, exempt: null, text: `Quantidade limitada por veículo: ${fmt} (${LEGAL.qtdLimitada}). Abaixo disso a isenção ${LQ_SCOPE}; informe o peso bruto da carga.` };
   }
   const exempt = grossKg <= limit;
   return {
     limitKg: limit, exempt,
     text: exempt
-      ? `Carga de ${grossKg.toLocaleString('pt-BR')} kg dentro da quantidade limitada (${fmt}): sem restrição de itinerário (${LEGAL.qtdLimitada}).`
-      : `Carga de ${grossKg.toLocaleString('pt-BR')} kg acima da quantidade limitada (${fmt}): valem as restrições de itinerário.`,
+      ? `Carga de ${grossKg.toLocaleString('pt-BR')} kg dentro da quantidade limitada (${fmt}; ${LEGAL.qtdLimitada}): a isenção ${LQ_SCOPE}.`
+      : `Carga de ${grossKg.toLocaleString('pt-BR')} kg acima da quantidade limitada (${fmt}): sem isenção.`,
   };
 }
 
@@ -191,8 +218,13 @@ export function limitedQuantity(uns: string[], grossKg?: number | null): Limited
 // ---------------------------------------------------------------------------------------------------------------
 
 export interface HazmatVehicleInfo {
-  /** o veículo transporta PP (vehicle.hazmat, vehicle.hazmat_un ou cargo_type 'hazmat') */
+  /**
+   * o veículo transporta PP: só `vehicle.hazmat`, que é o que o resto da pilha usa (costing do Valhalla com OSM
+   * hazmat=no, reportes hazmat_ban e zonas hazmat_only). Assim a rota não sai protegida pela metade.
+   */
   active: boolean;
+  /** nº ONU ou cargo_type 'hazmat' informados sem `vehicle.hazmat`: nenhuma regra de PP foi aplicada (aviso) */
+  declaredWithoutFlag: boolean;
   uns: string[];
   /** nº ONU que não estão na Relação da ANTT */
   unknownUns: string[];
@@ -200,34 +232,41 @@ export interface HazmatVehicleInfo {
   lq: LimitedQtyInfo;
   grossKg?: number;
   localDelivery: boolean;
+  biodiesel: boolean;
   /** algum produto tem "TRANSPORTE PROIBIDO" na Relação */
   prohibited: string[];
   /** todos os produtos informados estão como "não sujeito" ao regulamento */
   notSubject: boolean;
-  /** isento das restrições de itinerário por quantidade limitada (peso bruto informado e dentro do limite) */
-  itineraryExempt: boolean;
+  /**
+   * dentro da quantidade limitada (peso bruto informado e <= limite): dispensa só as limitações de itinerário e
+   * estacionamento do regulamento da ANTT (3.4.3.4 c). Não tira as restrições do município nem do DER.
+   */
+  lqExempt: boolean;
 }
 
 /** Campos opcionais que outras frentes podem acrescentar ao schema do veículo (lidos de forma defensiva). */
-type VehicleExtras = { hazmat_local_delivery?: boolean; hazmat_qty_kg?: number; hazmat_gross_kg?: number };
+type VehicleExtras = { hazmat_local_delivery?: boolean; hazmat_biodiesel?: boolean; hazmat_qty_kg?: number; hazmat_gross_kg?: number };
 
 export function hazmatInfo(v: Vehicle): HazmatVehicleInfo {
   const x = v as Vehicle & VehicleExtras;
   const uns = parseUns(v.hazmat_un);
-  const active = !!v.hazmat || uns.length > 0 || v.cargo_type === 'hazmat';
+  const active = !!v.hazmat;
   const grossRaw = x.hazmat_qty_kg ?? x.hazmat_gross_kg;
   const grossKg = typeof grossRaw === 'number' && Number.isFinite(grossRaw) && grossRaw >= 0 ? grossRaw : undefined;
   const localDelivery = !!x.hazmat_local_delivery;
+  const biodiesel = !!x.hazmat_biodiesel;
   const lq = limitedQuantity(uns, grossKg);
   const products = uns.map(getProduct);
   return {
-    active, uns,
+    active,
+    declaredWithoutFlag: !active && (uns.length > 0 || v.cargo_type === 'hazmat'),
+    uns,
     unknownUns: uns.filter((_, i) => !products[i]),
-    group: spGroupForLoad(uns, localDelivery),
-    lq, grossKg, localDelivery,
+    group: spGroupForLoad(uns, localDelivery, biodiesel),
+    lq, grossKg, localDelivery, biodiesel,
     prohibited: products.filter((p) => p?.lqVehicle === 'PROIBIDO').map((p) => p!.un),
     notSubject: products.length > 0 && products.every((p) => p?.lqVehicle === 'NAO_SUJEITO'),
-    itineraryExempt: active && lq.exempt === true,
+    lqExempt: active && lq.exempt === true,
   };
 }
 

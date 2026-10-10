@@ -4,12 +4,13 @@ import { env } from '../config.js';
 import { query } from '../db.js';
 import { legalDayInfo, type LegalDayInfo } from '../services/calendar.js';
 import { decodePolyline6 } from '../services/polyline.js';
-import * as valhalla from '../services/valhalla.js';
 import { LEGAL, SP_HAZMAT_WINDOWS, describeProduct, getProduct, hazmatInfo, type HazmatVehicleInfo } from '../services/hazmat.js';
 import type { LayerAnnotation, LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
- * Produtos perigosos (PP). Só age quando o veículo transporta PP (vehicle.hazmat, vehicle.hazmat_un ou cargo_type 'hazmat').
+ * Produtos perigosos (PP). Só age com vehicle.hazmat = true, o mesmo sinal que o resto da pilha usa (costing do Valhalla
+ * com hazmat=no do OSM, reportes hazmat_ban, zonas hazmat_only). Com nº ONU ou cargo_type 'hazmat' sem esse sinal, a
+ * camada não aplica nada e só avisa (hazmat_flag_missing), para a rota não sair protegida pela metade.
  *
  *  costLines (linear_cost_factors, fator 1000 = "proibido salvo sem alternativa"; penaliza só a via, não quem a cruza):
  *   - trechos de rodovia proibidos por portaria do DER-SP, 24h (kind 'trecho_proibido': SP-008 km 25,28–31,5, Portaria
@@ -17,8 +18,10 @@ import type { LayerAnnotation, LayerCostLine, LayerExclusion, LayerItem, LayerWa
  *   - vias do minianel (Anexo IV da Portaria SMT.GAB 051/2024), para TODOS os grupos, de 2ª a 6ª, exceto feriados,
  *     07h–10h e 17h–20h (art. 3º I) — kind 'via_minianel'. A ÁREA interna (centro expandido, grupos I e II) é a zona
  *     hazmat_only da frente core_legal (restriction_zones); esta camada não duplica o polígono.
- *  Isenção: carga dentro da quantidade limitada por veículo (Res. ANTT 5.998/2022, Parte 3, 3.4.3.4 c) não recebe
- *  restrição de itinerário — só quando o peso bruto é informado (vehicle.hazmat_qty_kg, se o schema tiver o campo).
+ *  Quantidade limitada (Res. ANTT 5.998/2022, Parte 3, 3.4.3.4 c): dispensa só as limitações de itinerário e
+ *  estacionamento do próprio regulamento. As costLines continuam: a Portaria SMT.GAB 051/2024 e as portarias do DER
+ *  valem para os veículos que transportam PP, sem exceção por quantidade. A isenção só rebaixa os avisos do
+ *  RTPP (APRM, art. 9º; estacionamento, art. 14) e gera o aviso hazmat_limited_qty_exempt.
  *
  *  annotate: produto/grupo SP, quantidade limitada, uso e horário estimado de passagem no minianel, trechos proibidos com
  *  origem/destino lindeiro, km em área de manancial (APRM, aviso sem bloqueio — Decreto 96.044/1988 art. 9º),
@@ -27,6 +30,7 @@ import type { LayerAnnotation, LayerCostLine, LayerExclusion, LayerItem, LayerWa
  *  Os traçados das costLines vêm casados com a malha do Valhalla na importação (props.osm.tileset). Se o tileset mudou,
  *  a camada casa de novo em tempo de execução (trace_route) e valida no edge walk antes de usar (um traçado inválido
  *  derrubaria a rota inteira). Se ainda assim um trecho de rodovia não casar, ele vira exclusão estreita (12 m).
+ *  Falha transitória do Valhalla (timeout, ocupado) nunca fica no cache: a próxima requisição tenta de novo.
  */
 const LAYER = 'perigosos';
 const FACTOR = 1000;
@@ -83,16 +87,28 @@ const fmtKm = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(1).replace('.', 
 // ---------------------------------------------------------------------------------------------------------------
 
 type Coords = [number, number][];
-let tilesetCache: { at: number; value: number | null } | null = null;
-async function valhallaTileset(): Promise<number | null> {
-  if (tilesetCache && Date.now() - tilesetCache.at < 60_000) return tilesetCache.value;
-  let value: number | null = null;
+/** Último tileset confirmado pelo /status (renovado a cada 60 s). Falha de rede não entra no cache. */
+let tilesetCache: { at: number; value: number } | null = null;
+async function fetchTileset(): Promise<number | null> {
   try {
     const r = await fetch(`${env.valhallaUrl}/status`, { signal: AbortSignal.timeout(3000) });
-    value = ((await r.json()) as { tileset_last_modified?: number }).tileset_last_modified ?? null;
-  } catch { value = null; }
-  tilesetCache = { at: Date.now(), value };
-  return value;
+    if (!r.ok) return null;
+    const v = ((await r.json()) as { tileset_last_modified?: number }).tileset_last_modified;
+    return typeof v === 'number' ? v : null;
+  } catch { return null; }
+}
+/**
+ * Tileset atual do Valhalla. Sem resposta em duas tentativas (Valhalla ocupado): `confirmed: false`, com o último valor
+ * conhecido (se houver) — quem chama usa os traçados da importação e avisa que o tileset não foi confirmado.
+ */
+async function valhallaTileset(): Promise<{ value: number | null; confirmed: boolean }> {
+  if (tilesetCache && Date.now() - tilesetCache.at < 60_000) return { value: tilesetCache.value, confirmed: true };
+  const v = (await fetchTileset()) ?? (await fetchTileset());
+  if (v !== null) {
+    tilesetCache = { at: Date.now(), value: v };
+    return { value: v, confirmed: true };
+  }
+  return { value: tilesetCache?.value ?? null, confirmed: false };
 }
 
 function lineLenM(c: Coords): number {
@@ -109,20 +125,26 @@ function densify(c: Coords, stepM = 40): Coords {
   return out;
 }
 
-async function traceMatch(coords: Coords): Promise<Coords[] | null> {
+/** Casamento de um traçado; `transient` = falha do Valhalla (rede, timeout, 5xx), que não deve ficar no cache. */
+type MatchResult = { legs: Coords[]; transient: false } | { legs: null; transient: boolean };
+
+async function traceMatch(coords: Coords): Promise<MatchResult> {
+  let res: Response;
+  let j: any;
   try {
-    const res = await fetch(`${env.valhallaUrl}/trace_route`, {
+    res = await fetch(`${env.valhallaUrl}/trace_route`, {
       method: 'POST', headers: { 'content-type': 'application/json' }, signal: AbortSignal.timeout(20_000),
       body: JSON.stringify({ shape: densify(coords).map(([lon, lat]) => ({ lon, lat })), costing: 'truck', shape_match: 'map_snap',
         trace_options: { search_radius: 50, gps_accuracy: 15 } }),
     });
-    const j = (await res.json()) as any;
-    if (!res.ok || !j.trip) return null;
-    const legs: Coords[] = (j.trip.legs as any[]).map((l) => decodePolyline6(l.shape)).filter((l) => l.length >= 2 && lineLenM(l) >= 5);
-    const L = lineLenM(coords), M = legs.reduce((s, l) => s + lineLenM(l), 0);
-    if (!legs.length || M > L * 1.3 + 50 || M < L * 0.7 - 30) return null;
-    return legs;
-  } catch { return null; }
+    j = await res.json();
+  } catch { return { legs: null, transient: true }; }
+  if (res.status >= 500) return { legs: null, transient: true };
+  if (!res.ok || !j?.trip) return { legs: null, transient: false };
+  const legs: Coords[] = (j.trip.legs as any[]).map((l) => decodePolyline6(l.shape)).filter((l) => l.length >= 2 && lineLenM(l) >= 5);
+  const L = lineLenM(coords), M = legs.reduce((s, l) => s + lineLenM(l), 0);
+  if (!legs.length || M > L * 1.3 + 50 || M < L * 0.7 - 30) return { legs: null, transient: false };
+  return { legs, transient: false };
 }
 
 const PROBE = [{ lon: -46.656, lat: -23.5614 }, { lon: -46.645, lat: -23.57 }];
@@ -156,70 +178,122 @@ async function edgeWalkOk(lines: Coords[]): Promise<boolean[] | null> {
 
 interface RouteRow { id: string; name: string | null; kind: string; props: Record<string, any>; geometry: GeoJSON.LineString }
 
-/** traçados casados por (tileset, id da feição); preenchido sob demanda quando o tileset da importação não é o atual */
-const rematchCache = new Map<string, Promise<Coords[] | null>>();
+interface Rematch { lines: Coords[] | null; transient: boolean }
+/**
+ * Traçados casados por (tileset, id da feição); preenchido sob demanda quando o tileset da importação não é o atual.
+ * Falha transitória (trace_route ou edge walk sem resposta) sai do cache assim que resolve; resultado vazio definitivo
+ * (não casou) expira em 10 min, para não ficar preso até reiniciar a API.
+ */
+const rematchCache = new Map<string, { at: number; p: Promise<Rematch> }>();
+const REMATCH_NULL_TTL_MS = 10 * 60_000;
 
-async function rematchRows(rows: RouteRow[], tileset: number): Promise<Map<string, Coords[] | null>> {
-  const out = new Map<string, Coords[] | null>();
-  const todo = rows.filter((r) => !rematchCache.has(`${tileset}:${r.id}`));
+async function rematchRows(rows: RouteRow[], tileset: number): Promise<Map<string, Rematch>> {
+  const key = (r: RouteRow) => `${tileset}:${r.id}`;
+  const now = Date.now();
+  for (const r of rows) {
+    const c = rematchCache.get(key(r));
+    if (c && now - c.at > REMATCH_NULL_TTL_MS && (await c.p).lines === null) rematchCache.delete(key(r));
+  }
+  const todo = rows.filter((r) => !rematchCache.has(key(r)));
   if (todo.length) {
     const job = (async () => {
-      const matched = new Map<string, Coords[]>();
+      const matched = new Map<string, { legs: Coords[]; transient: boolean }>();
       let i = 0;
       const worker = async () => {
         while (i < todo.length) {
           const r = todo[i++];
           const g = r.geometry.coordinates as Coords;
           const dirs: Coords[] = r.kind === 'trecho_proibido' ? [g, [...g].reverse()] : [g];
-          const legs: Coords[] = [];
-          for (const d of dirs) legs.push(...((await traceMatch(d)) ?? []));
-          matched.set(r.id, legs);
+          const m = { legs: [] as Coords[], transient: false };
+          for (const d of dirs) {
+            const t = await traceMatch(d);
+            if (t.legs) m.legs.push(...t.legs);
+            else if (t.transient) m.transient = true;
+          }
+          matched.set(r.id, m);
         }
       };
       await Promise.all(Array.from({ length: 8 }, worker));
       const flat: { id: string; c: Coords }[] = [];
-      for (const [id, legs] of matched) for (const c of legs) flat.push({ id, c });
+      for (const [id, m] of matched) for (const c of m.legs) flat.push({ id, c });
       const ok = await edgeWalkOk(flat.map((f) => f.c));
-      const res = new Map<string, Coords[] | null>();
-      for (const r of todo) res.set(r.id, ok ? [] : null);
-      if (ok) flat.forEach((f, k) => { if (ok[k]) res.get(f.id)!.push(f.c); });
+      const res = new Map<string, Rematch>();
+      for (const r of todo) {
+        const lines = ok ? flat.filter((f, k) => f.id === r.id && ok[k]).map((f) => f.c) : [];
+        res.set(r.id, { lines: lines.length ? lines : null, transient: !!matched.get(r.id)?.transient || ok === null });
+      }
       return res;
     })();
-    for (const r of todo) rematchCache.set(`${tileset}:${r.id}`, job.then((m) => { const v = m.get(r.id); return v && v.length ? v : null; }));
+    for (const r of todo) {
+      const k = key(r);
+      const p = job.then((m) => m.get(r.id) ?? { lines: null, transient: true }, (): Rematch => ({ lines: null, transient: true }));
+      const entry = { at: now, p };
+      rematchCache.set(k, entry);
+      void p.then((v) => { if (v.transient && rematchCache.get(k) === entry) rematchCache.delete(k); });
+    }
   }
-  for (const r of rows) out.set(r.id, await rematchCache.get(`${tileset}:${r.id}`)!);
+  const out = new Map<string, Rematch>();
+  for (const r of rows) out.set(r.id, await (rematchCache.get(key(r))?.p ?? Promise.resolve<Rematch>({ lines: null, transient: true })));
   return out;
 }
 
-/** Traçados (sentido do tráfego) que podem ir para linear_cost_factors, ou null se não houver traçado válido. */
-async function routableLines(rows: RouteRow[]): Promise<Map<string, Coords[] | null>> {
-  const tileset = await valhallaTileset();
-  const out = new Map<string, Coords[] | null>();
+interface Routable {
+  /** traçados (sentido do tráfego) que podem ir para linear_cost_factors, ou null se não houver traçado válido */
+  lines: Map<string, Coords[] | null>;
+  /** ids sem traçado por falha transitória do Valhalla (não é dado desatualizado) */
+  transientIds: Set<string>;
+  /** usou os traçados da importação sem confirmar o tileset (Valhalla não respondeu ao /status) */
+  tilesetUnconfirmed: boolean;
+}
+
+async function routableLines(rows: RouteRow[]): Promise<Routable> {
+  const ts = await valhallaTileset();
+  const lines = new Map<string, Coords[] | null>();
+  const transientIds = new Set<string>();
+  let tilesetUnconfirmed = false;
   const stale: RouteRow[] = [];
   for (const r of rows) {
     const osm = r.props.osm as { tileset?: number; geom?: boolean; lines?: { coords: Coords }[] } | undefined;
-    if (tileset && osm?.tileset === tileset) {
-      out.set(r.id, osm.geom ? [r.geometry.coordinates as Coords] : (osm.lines ?? []).map((l) => l.coords));
+    const imported: Coords[] | null = osm ? (osm.geom ? [r.geometry.coordinates as Coords] : (osm.lines ?? []).map((l) => l.coords)) : null;
+    if (ts.value !== null && osm?.tileset === ts.value) {
+      lines.set(r.id, imported);
+      if (!ts.confirmed) tilesetUnconfirmed = true;
+    } else if (ts.value === null) {
+      // Valhalla não respondeu e não há tileset conhecido: usa os traçados da importação, com aviso
+      lines.set(r.id, imported?.length ? imported : null);
+      if (imported?.length) tilesetUnconfirmed = true; else transientIds.add(r.id);
     } else stale.push(r);
   }
   if (stale.length) {
-    if (!tileset) for (const r of stale) out.set(r.id, null);
-    else for (const [id, v] of await rematchRows(stale, tileset)) out.set(id, v);
+    for (const [id, v] of await rematchRows(stale, ts.value!)) {
+      lines.set(id, v.lines);
+      if (!v.lines && v.transient) transientIds.add(id);
+    }
   }
-  return out;
+  return { lines, transientIds, tilesetUnconfirmed };
 }
 
 // ---------------------------------------------------------------------------------------------------------------
 // plano de restrições (exclusions + costLines compartilham o mesmo cálculo por requisição)
 // ---------------------------------------------------------------------------------------------------------------
 
-interface Plan { costLines: LayerCostLine[]; exclusions: LayerExclusion[]; minianelActive: boolean; day: LegalDayInfo; hz: HazmatVehicleInfo; fallbackIds: string[] }
+interface Plan {
+  costLines: LayerCostLine[]; exclusions: LayerExclusion[]; minianelActive: boolean; day: LegalDayInfo; hz: HazmatVehicleInfo;
+  /** feições sem traçado válido na malha atual (dado desatualizado: rodar os importadores) */
+  fallbackIds: string[];
+  /** feições sem traçado por falha transitória do Valhalla */
+  transientIds: string[];
+  tilesetUnconfirmed: boolean;
+  /** vias do Minianel consideradas no plano */
+  minianelRows: number;
+}
 const plans = new WeakMap<RouteCtx, Promise<Plan>>();
 
 /**
- * Corredor plausível da rota: elipse com focos na origem e no destino (d(O,p) + d(D,p) <= L + folga). Limita as
- * costLines às vias que a rota pode usar: o routing.ts mede a sobreposição de cada costLine com as rotas livre e
- * restrita (custo proporcional ao nº de vértices), então mandar o Minianel inteiro numa rota em Mairiporã só custa tempo.
+ * Corredor plausível da rota para os trechos de rodovia: elipse com focos na origem e no destino
+ * (d(O,p) + d(D,p) <= L + folga). O routing.ts mede a sobreposição de cada costLine com as rotas livre e restrita
+ * (custo proporcional ao nº de vértices), então não vale mandar a SP-324 numa rota em Mairiporã.
+ * As vias do Minianel NÃO passam por esse filtro (ver MINIANEL_REACH_M).
  */
 function corridor(ctx: RouteCtx): { L: number; slack: number } {
   const L = turf.distance([ctx.origin.lon, ctx.origin.lat], [ctx.destination.lon, ctx.destination.lat], { units: 'meters' });
@@ -298,15 +372,13 @@ function chainMinianel(parts: { row: RouteRow; coords: Coords }[]): { row: Route
   return out;
 }
 
-/** Rota sem restrições (só o veículo), para escolher quais vias do Minianel podem interessar. */
-async function freeRouteLine(ctx: RouteCtx): Promise<GeoJSON.LineString | null> {
-  try {
-    const r = await valhalla.route({ origin: ctx.origin, destination: ctx.destination, vehicle: ctx.vehicle, departureLocal: ctx.departureLocal });
-    return { type: 'LineString', coordinates: r.coordinates };
-  } catch { return null; }
-}
-
-const NEAR_FREE_M = 2500;
+/**
+ * Vias do Minianel: entram TODAS as que estão a até 30 km do retângulo origem–destino, sem a elipse e sem filtro pela
+ * rota livre. A ZMRC e a área interna empurram a rota restrita para o anel por caminhos longe da rota livre e da elipse
+ * (ex.: Butantã→Mooca às 08h saía pela Marginal Tietê); com o conjunto inteiro (~200 pedaços, ~84 linhas depois do
+ * encadeamento) o Valhalla só usa uma via do anel quando não há alternativa.
+ */
+const MINIANEL_REACH_M = 30_000;
 
 function plan(ctx: RouteCtx): Promise<Plan> {
   let p = plans.get(ctx);
@@ -315,62 +387,59 @@ function plan(ctx: RouteCtx): Promise<Plan> {
       const hz = hazmatInfo(ctx.vehicle);
       const day = await legalDayInfo(ctx.at);
       const minianelActive = spRuleActive(ctx.at, day);
-      const empty: Plan = { costLines: [], exclusions: [], minianelActive, day, hz, fallbackIds: [] };
-      if (!hz.active || hz.itineraryExempt) return empty;
-      const kinds = ['trecho_proibido', ...(minianelActive ? ['via_minianel'] : [])];
+      const empty: Plan = { costLines: [], exclusions: [], minianelActive, day, hz, fallbackIds: [], transientIds: [], tilesetUnconfirmed: false, minianelRows: 0 };
+      // Quantidade limitada NÃO zera o plano: as portarias do município e do DER não têm exceção por quantidade.
+      if (!hz.active) return empty;
       const { L, slack } = corridor(ctx);
-      // Minianel: só as vias a até 2,5 km da rota livre, a não ser que ela atravesse a ZMRC ou o miolo do centro expandido
-      // (aí as outras restrições podem empurrar a rota para qualquer lado do anel e entram todas as vias do corredor).
-      const free = minianelActive ? await freeRouteLine(ctx) : null;
-      let nearFree: string | null = free ? JSON.stringify(free) : null;
-      if (nearFree) {
-        const hit = await query<{ hit: boolean }>(
-          `with fr as (select ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) as g)
-           select coalesce(bool_or(ST_Intersects(case when z.name ilike '%ZMRC%' then z.geom else ST_Buffer(z.geom, -0.005) end, fr.g)), false) as hit
-             from restriction_zones z, fr
-            where z.active and (z.name ilike '%ZMRC%' or z.name ilike '%mini%anel%' or z.name ilike '%minianel%') and z.geom && fr.g`,
-          [nearFree],
-        );
-        if (hit.rows[0]?.hit) nearFree = null;
-      }
-      const r = await query<RouteRow>(
-        `with o as (select ST_SetSRID(ST_MakePoint($3, $4), 4326)::geography as g),
-              d as (select ST_SetSRID(ST_MakePoint($5, $6), 4326)::geography as g)
-         select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry from data_features f, o, d
-          where f.layer_id = $1 and f.kind = any($2)
-            and f.geom && ST_Expand(ST_MakeEnvelope(least($3, $5), least($4, $6), greatest($3, $5), greatest($4, $6), 4326), $7 / 100000.0)
-            and ST_Distance(f.geom::geography, o.g) + ST_Distance(f.geom::geography, d.g) <= $8
-            and (f.valid_to is null or f.valid_to > now()) and (f.valid_from is null or f.valid_from <= now())`,
-        [LAYER, kinds, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat, slack, L + slack],
-      );
-      if (nearFree && r.rows.some((x) => x.kind === 'via_minianel')) {
-        const near = await query<{ id: string }>(
-          `select f.id::text from data_features f where f.id = any($1::bigint[]) and ST_DWithin(f.geom, ST_SetSRID(ST_GeomFromGeoJSON($2), 4326), $3 / 100000.0)`,
-          [r.rows.filter((x) => x.kind === 'via_minianel').map((x) => x.id), nearFree, NEAR_FREE_M],
-        );
-        const keep = new Set(near.rows.map((x) => x.id));
-        r.rows = r.rows.filter((x) => x.kind !== 'via_minianel' || keep.has(x.id));
-      }
-      if (!r.rows.length) return empty;
-      const lines = await routableLines(r.rows);
+      const od = [ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat];
+      const sel = `select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry from data_features f`;
+      const valid = `(f.valid_to is null or f.valid_to > now()) and (f.valid_from is null or f.valid_from <= now())`;
+      const bbox = `ST_MakeEnvelope(least($2::float8, $4::float8), least($3::float8, $5::float8), greatest($2::float8, $4::float8), greatest($3::float8, $5::float8), 4326)`;
+      const [trechos, minianel] = await Promise.all([
+        query<RouteRow>(
+          `with o as (select ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography as g),
+                d as (select ST_SetSRID(ST_MakePoint($4, $5), 4326)::geography as g)
+           ${sel}, o, d
+            where f.layer_id = $1 and f.kind = 'trecho_proibido' and ${valid}
+              and f.geom && ST_Expand(${bbox}, $6 / 100000.0)
+              and ST_Distance(f.geom::geography, o.g) + ST_Distance(f.geom::geography, d.g) <= $7`,
+          [LAYER, ...od, slack, L + slack],
+        ),
+        minianelActive
+          ? query<RouteRow>(
+            `${sel} where f.layer_id = $1 and f.kind = 'via_minianel' and ${valid} and ST_DWithin(f.geom, ${bbox}, $6 / 100000.0)`,
+            [LAYER, ...od, MINIANEL_REACH_M],
+          )
+          : Promise.resolve({ rows: [] as RouteRow[] }),
+      ]);
+      const rows = [...trechos.rows, ...minianel.rows];
+      if (!rows.length) return empty;
+      const rt = await routableLines(rows);
       const costLines: LayerCostLine[] = [];
       const exclusions: LayerExclusion[] = [];
       const fallbackIds: string[] = [];
+      const transientIds: string[] = [];
       const minianelParts: { row: RouteRow; coords: Coords }[] = [];
-      for (const row of r.rows) {
+      for (const row of rows) {
         const item = itemOf(row);
-        const ls = lines.get(row.id);
+        const ls = rt.lines.get(row.id);
         if (ls && ls.length) {
           if (row.kind === 'via_minianel') { for (const c of ls) minianelParts.push({ row, coords: c }); continue; }
-          mergeUTurn(ls).forEach((c, k) => costLines.push({ item: k ? { ...item, id: `${item.id}#${k}` } : item, coordinates: c, factor: FACTOR }));
-        } else if (row.kind === 'trecho_proibido') {
+          // pista dupla (SP-324): uma linha por sentido, com o mesmo item (o routing.ts deduplica "evitado" por id)
+          for (const c of mergeUTurn(ls)) costLines.push({ item, coordinates: c, factor: FACTOR });
+          continue;
+        }
+        if (row.kind === 'trecho_proibido') {
           // sem traçado válido na malha atual: exclusão estreita em volta da geometria da fonte (corta também quem cruza)
           exclusions.push({ item, rings: [ringAround(row.geometry.coordinates as Coords, 12)] });
-          fallbackIds.push(row.id);
-        } else fallbackIds.push(row.id);
+        }
+        (rt.transientIds.has(row.id) ? transientIds : fallbackIds).push(row.id);
       }
-      for (const ch of chainMinianel(minianelParts)) costLines.push({ item: itemOf(ch.row), coordinates: ch.coords, factor: FACTOR });
-      return { costLines, exclusions, minianelActive, day, hz, fallbackIds };
+      // todas as cadeias da mesma via do Anexo IV (sentidos, trechos) têm o mesmo id: a via aparece uma vez só em "evitado"
+      for (const ch of chainMinianel(minianelParts)) {
+        costLines.push({ item: { ...itemOf(ch.row), id: `minianel-anexo-iv-${ch.row.props.anexo_iv_item}` }, coordinates: ch.coords, factor: FACTOR });
+      }
+      return { costLines, exclusions, minianelActive, day, hz, fallbackIds, transientIds, tilesetUnconfirmed: rt.tilesetUnconfirmed, minianelRows: minianel.rows.length };
     })();
     plans.set(ctx, p);
   }
@@ -469,17 +538,35 @@ async function trechosNearOD(ctx: RouteCtx) {
   return r.rows;
 }
 
-function rearAxlesLe2(ctx: RouteCtx): boolean {
-  const v = ctx.vehicle as RouteCtx['vehicle'] & { vehicle_class?: string };
-  // Portaria 137/2018 art. 35: "caminhões de até dois eixos traseiros" (caminhão simples, não cavalo mecânico)
-  if (v.vehicle_class && v.vehicle_class !== 'rigid') return false;
-  return v.axle_count - 1 <= 2;
+/**
+ * Portaria 137/2018 art. 35: "caminhões de até dois eixos traseiros"; §2º: "O trânsito de 'caminhão-trator' não será
+ * autorizado". Cavalo mecânico (semirreboque, CVC) nunca se enquadra. Nos demais, usa rear_axle_count quando o veículo
+ * tiver o campo; sem ele, só dá para afirmar com até 3 eixos no total (no máximo 2 traseiros). Um "bitruck" de 4 eixos
+ * pode ter 2 dianteiros e 2 traseiros, e no caminhão com reboque a conta depende do conjunto: aí a resposta é null
+ * ("confira os eixos traseiros").
+ */
+type AxleCheck = { ok: boolean | null; tractor: boolean };
+function rearAxlesLe2(ctx: RouteCtx): AxleCheck {
+  const v = ctx.vehicle as RouteCtx['vehicle'] & { rear_axle_count?: number };
+  if (v.vehicle_class === 'semitrailer' || v.vehicle_class === 'cvc') return { ok: false, tractor: true };
+  if (typeof v.rear_axle_count === 'number' && Number.isFinite(v.rear_axle_count)) return { ok: v.rear_axle_count <= 2, tractor: false };
+  if (v.vehicle_class !== 'truck_trailer' && typeof v.axle_count === 'number' && v.axle_count <= 3) return { ok: true, tractor: false };
+  return { ok: null, tractor: false };
 }
 
 async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotation> {
   const pl = await plan(ctx);
   const { hz } = pl;
-  if (!hz.active) return {};
+  if (!hz.active) {
+    if (!hz.declaredWithoutFlag) return {};
+    const what = hz.uns.length ? `Nº ONU ${hz.uns.join(', ')} informado` : 'Carga do tipo "produto perigoso" informada';
+    return {
+      warnings: [{
+        code: 'hazmat_flag_missing', severity: 'warn', layer: LAYER,
+        message: `${what}, mas o veículo não está marcado como "carga perigosa": a rota saiu sem as regras de PP (vias com hazmat=no no OSM, reportes de proibição de PP, zonas e vias do Minianel). Marque "carga perigosa" e calcule de novo.`,
+      }],
+    };
+  }
   const line = route.line.geometry;
   const warnings: LayerWarning[] = [];
   const summary: string[] = [];
@@ -495,17 +582,22 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
     if (group?.ambiguous && !hz.localDelivery) {
       summary.push('Nº ONU nos Anexos I e II da Portaria 051/2024: tratado como grupo II. Se for entrega fracionada para consumo local (ex.: GLP engarrafado), é grupo III.');
     }
+    if (group?.qualifierMissing) {
+      summary.push(`ONU 3082 só é grupo III (consumo local) quando for ${group.annexIIQualifier} (Anexo II da Portaria 051/2024): sem essa indicação, tratado como grupo II.`);
+    }
   }
   for (const u of hz.unknownUns) W('hazmat_un_unknown', 'warn', `ONU ${u} não consta na Relação de Produtos Perigosos da ANTT. Confira o número; restrições aplicadas como grupo I.`);
   for (const u of hz.prohibited) W('hazmat_transport_prohibited', 'danger', `ONU ${u} (${getProduct(u)?.name ?? ''}): transporte rodoviário proibido pela Relação da Res. ANTT 5.998/2022.`);
   if (hz.notSubject) summary.push('Produto marcado como "não sujeito" ao regulamento de transporte de PP na Relação da ANTT; restrições aplicadas mesmo assim porque a carga foi declarada perigosa.');
   summary.push(hz.lq.text);
-  if (hz.itineraryExempt) {
-    W('hazmat_limited_qty_exempt', 'info', `${hz.lq.text} A LETPP continua obrigatória em São Paulo (${LEGAL.letpp}).`);
+  if (hz.lqExempt) {
+    W('hazmat_limited_qty_exempt', 'info', `${hz.lq.text} Rota calculada com elas; a LETPP continua obrigatória em São Paulo (${LEGAL.letpp}).`);
   }
 
-  const [use, aprm, touch, nearOD, emerg, paradas] = await Promise.all([
+  const free = pl.minianelActive ? route.free?.line.geometry : undefined;
+  const [use, freeUse, aprm, touch, nearOD, emerg, paradas] = await Promise.all([
     minianelUse(line).catch(() => [] as UseSeg[]),
+    free ? minianelUse(free).catch(() => [] as UseSeg[]) : Promise.resolve([] as UseSeg[]),
     aprmKm(line).catch(() => []),
     routeTouches(line, ctx).catch(() => undefined),
     trechosNearOD(ctx).catch(() => []),
@@ -519,21 +611,27 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   const firstEta = use.length ? etaOf(use[0].f0) : null;
   const vias = [...new Set(use.flatMap((u) => (u.vias ?? '').split(', ').filter(Boolean)))];
   const etaInWindow = use.some((u) => spRuleActive(etaOf(u.f0), pl.day) || spRuleActive(etaOf(u.f1), pl.day));
-  if (!hz.itineraryExempt) {
-    if (usedM > 0 && pl.minianelActive) {
-      W('hazmat_minianel_used', 'danger', `A rota usa ${fmtKm(usedM)} de vias do Minianel (${vias.join(', ')}) no horário proibido para PP (${WINDOW_TXT}; ${LEGAL.minianel}). Saia fora da janela ou use outro acesso.`);
-    } else if (usedM > 0 && etaInWindow) {
-      W('hazmat_minianel_eta', 'warn', `Saindo às ${fmtH(ctx.at)}, a rota chega ao Minianel (${vias.join(', ')}) por volta das ${fmtH(firstEta!)}, dentro da janela proibida para PP (${WINDOW_TXT}). Ajuste o horário de saída.`);
-    } else if (usedM > 0) {
-      summary.push(`Usa ${fmtKm(usedM)} de vias do Minianel fora da janela de restrição (passagem estimada ${fmtH(firstEta!)}).`);
-    } else if (pl.minianelActive && pl.costLines.some((c) => c.item.name?.startsWith('Minianel'))) {
-      summary.push(`Vias do Minianel proibidas para PP neste horário (${WINDOW_TXT}; ${LEGAL.minianel}): rota calculada sem elas.`);
-    } else if (pl.day.holiday && inSpWindows(ctx.at)) {
-      summary.push(`Feriado (${pl.day.holiday.name}): a restrição de PP no Minianel não se aplica.`);
-    }
+  const freeUsedM = freeUse.reduce((s, u) => s + u.len_m, 0);
+  // vale com ou sem quantidade limitada: a Portaria 051/2024 não prevê exceção por quantidade
+  if (usedM > 0 && pl.minianelActive) {
+    W('hazmat_minianel_used', 'danger', `A rota usa ${fmtKm(usedM)} de vias do Minianel (${vias.join(', ')}) no horário proibido para PP (${WINDOW_TXT}; ${LEGAL.minianel}). Saia fora da janela ou use outro acesso.`);
+  } else if (usedM > 0 && etaInWindow) {
+    W('hazmat_minianel_eta', 'warn', `Saindo às ${fmtH(ctx.at)}, a rota chega ao Minianel (${vias.join(', ')}) por volta das ${fmtH(firstEta!)}, dentro da janela proibida para PP (${WINDOW_TXT}). Ajuste o horário de saída.`);
+  } else if (usedM > 0) {
+    summary.push(`Usa ${fmtKm(usedM)} de vias do Minianel fora da janela de restrição (passagem estimada ${fmtH(firstEta!)}).`);
+  } else if (pl.minianelActive && freeUsedM > 0) {
+    summary.push(`Vias do Minianel proibidas para PP neste horário (${WINDOW_TXT}; ${LEGAL.minianel}): a rota evita ${fmtKm(freeUsedM)} delas que o caminho livre usaria.`);
+  } else if (pl.day.holiday && inSpWindows(ctx.at)) {
+    summary.push(`Feriado (${pl.day.holiday.name}): a restrição de PP no Minianel não se aplica.`);
   }
   if (pl.fallbackIds.length) {
     W('hazmat_layer_stale', 'info', 'Parte dos traçados de PP não casou com a malha viária atual (tiles do Valhalla mudaram): rode de novo os importadores hazmat_trechos_der e hazmat_minianel_vias.');
+  }
+  if (pl.transientIds.length) {
+    W('hazmat_layer_unverified', 'warn', `O Valhalla não respondeu a tempo ao validar ${pl.transientIds.length} traçado(s) de PP: parte das vias restritas pode ter ficado fora desta rota. Calcule de novo em instantes.`);
+  }
+  if (pl.tilesetUnconfirmed) {
+    W('hazmat_tileset_unconfirmed', 'info', 'O Valhalla não confirmou a versão da malha (sem resposta do /status): as vias restritas para PP usaram os traçados da última importação.');
   }
 
   // --- centro expandido (zona da frente core_legal) e grupos III/IV
@@ -554,11 +652,17 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
     }
     // --- ZMRC (art. 35 da Portaria 137/2018; a exceção é aplicada pela zona ZMRC, não aqui)
     if (touch.zmrc || touch.zmrc_od) {
-      const okGroup = !!group?.interiorAllowed;
-      const ok = okGroup && !!ctx.vehicle.has_aetc && rearAxlesLe2(ctx);
-      W('hazmat_zmrc', 'info', ok
-        ? `ZMRC: PP de consumo local/outros, com AETC e até 2 eixos traseiros, pode circular das 10h às 16h (${LEGAL.zmrc}).`
-        : `ZMRC: para PP só há liberação das 10h às 16h com AETC, caminhão de até 2 eixos traseiros e produto dos grupos consumo local/outros (${LEGAL.zmrc}). ${!okGroup ? 'Este produto não se enquadra.' : !ctx.vehicle.has_aetc ? 'Sem AETC informada.' : 'Veículo com mais de 2 eixos traseiros.'} Vale a restrição geral de caminhões.`);
+      const rule = `ZMRC: para PP só há liberação das 10h às 16h com AETC, caminhão de até 2 eixos traseiros e produto dos grupos consumo local/outros (${LEGAL.zmrc}).`;
+      const axles = rearAxlesLe2(ctx);
+      let msg: string;
+      if (!group) msg = `${rule} Informe o nº ONU para saber se o produto é de consumo local/outros.`;
+      else if (!group.interiorAllowed) msg = `${rule} Este produto (${group.label}) não se enquadra; vale a restrição geral de caminhões.`;
+      else if (!ctx.vehicle.has_aetc) msg = `${rule} Sem AETC informada; vale a restrição geral de caminhões.`;
+      else if (axles.tractor) msg = `${rule} Caminhão-trator (cavalo mecânico) não é autorizado (art. 35 §2º); vale a restrição geral de caminhões.`;
+      else if (axles.ok === false) msg = `${rule} Veículo com mais de 2 eixos traseiros; vale a restrição geral de caminhões.`;
+      else if (axles.ok === null) msg = `${rule} Produto e AETC se enquadram; confira se o caminhão tem até 2 eixos traseiros.`;
+      else msg = `ZMRC: PP de consumo local/outros, com AETC e até 2 eixos traseiros, pode circular das 10h às 16h (${LEGAL.zmrc}).`;
+      W('hazmat_zmrc', 'info', msg);
     }
   }
 
@@ -575,7 +679,11 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   if (aprm.length) {
     const tot = aprm.reduce((s, a) => s + a.len_m, 0);
     const txt = aprm.map((a) => `${a.name} ${fmtKm(a.len_m)}`).join(', ');
-    W('hazmat_aprm', 'warn', `${fmtKm(tot)} da rota em área de proteção de mananciais (${txt}). Evite parar nesses trechos e redobre a atenção (${LEGAL.mananciais}). Em vazamento, ligue 193.`);
+    if (hz.lqExempt) {
+      W('hazmat_aprm', 'info', `${fmtKm(tot)} da rota em área de proteção de mananciais (${txt}). Em quantidade limitada, a carga está dispensada dessa limitação de itinerário (${LEGAL.mananciais}; ${LEGAL.qtdLimitada}). Em vazamento, ligue 193.`);
+    } else {
+      W('hazmat_aprm', 'warn', `${fmtKm(tot)} da rota em área de proteção de mananciais (${txt}). Evite parar nesses trechos e redobre a atenção (${LEGAL.mananciais}). Em vazamento, ligue 193.`);
+    }
     summary.push(`Mananciais (APRM): ${txt}, a partir do km ${Math.round(aprm[0].f0 * route.distance_km)} da rota.`);
   }
 
@@ -600,7 +708,10 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   // --- paradas de PP (ARTESP)
   const paradasOut = paradas.map((p) => ({ id: p.id, name: p.name, km_rota: Math.round(p.fraction * route.distance_km), concessionaria: p.props.concessionaria, lon: p.geometry.coordinates[0], lat: p.geometry.coordinates[1] }));
   if (paradasOut.length) {
-    summary.push(`Paradas para PP na rota (ARTESP; descanso só em áreas indicadas, ${LEGAL.estacionamento}): ${paradasOut.slice(0, 5).map((p) => `km ${p.km_rota} (${p.concessionaria})`).join(', ')}${paradasOut.length > 5 ? '…' : ''}.`);
+    const regra = hz.lqExempt
+      ? `em quantidade limitada a carga está dispensada da regra de estacionamento (${LEGAL.estacionamento}; ${LEGAL.qtdLimitada})`
+      : `descanso só em áreas indicadas, ${LEGAL.estacionamento}`;
+    summary.push(`Paradas para PP na rota (ARTESP; ${regra}): ${paradasOut.slice(0, 5).map((p) => `km ${p.km_rota} (${p.concessionaria})`).join(', ')}${paradasOut.length > 5 ? '…' : ''}.`);
   }
 
   return {
@@ -612,10 +723,15 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
       }),
       grupo_sp: group ?? null,
       quantidade_limitada: hz.lq,
-      isento_itinerario: hz.itineraryExempt,
-      minianel: { regra_ativa_na_saida: pl.minianelActive, usado_m: Math.round(usedM), vias, passagem_estimada: firstEta?.toISOString() ?? null, janela_na_passagem: etaInWindow },
+      /** dentro da quantidade limitada: dispensa só as limitações do RTPP; costLines do município e do DER continuam */
+      isento_quantidade_limitada: hz.lqExempt,
+      minianel: {
+        regra_ativa_na_saida: pl.minianelActive, usado_m: Math.round(usedM), evitado_m: Math.round(freeUsedM), vias,
+        vias_no_plano: pl.minianelRows, passagem_estimada: firstEta?.toISOString() ?? null, janela_na_passagem: etaInWindow,
+      },
       cost_lines: pl.costLines.length,
       exclusoes_fallback: pl.exclusions.length,
+      tracados: { desatualizados: pl.fallbackIds.length, sem_resposta: pl.transientIds.length, tileset_nao_confirmado: pl.tilesetUnconfirmed },
       aprm: aprm.map((a) => ({ nome: a.name, km: Math.round(a.len_m / 100) / 10 })),
       emergencias: { total: emerg.length, hotspot },
       paradas: paradasOut,
