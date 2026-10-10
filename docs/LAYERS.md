@@ -5,6 +5,8 @@ Cada fonte de dados de terceiros entra no app como uma **camada**, em três peç
 1. **Importador** `importers/sources/<nome>.py` — baixa a fonte pública e devolve feições normalizadas
    (`LAYER_ID`, `SOURCE`, `SOURCE_URL`, `LICENSE`, `fetch()`). Ver `importers/common.py`.
    Rodar: `docker compose --profile import run --rm importer <nome>` (ou `all`).
+   Importador opcional que depende de credencial declara `REQUIRES_ENV = ('VAR',)`: em `all`, sem a variável, ele é
+   pulado (não conta como falha nem mexe no banco); pelo nome, roda e falha com a mensagem dele (ex.: `mapillary_placas`).
    O runner grava em `data_features` + `data_layer_runs` e gera o seed `db/seed/layers/<layer>__<source>.sql`,
    aplicado automaticamente pelo `migrate` numa máquina limpa.
 2. **Módulo da API** `api/src/layers/<id>.layer.ts` — exporta `default` um `RouteLayer` (ver `types.ts`).

@@ -151,9 +151,14 @@ Leva ~1–1,5 min cada no PBF do Sudeste. O seed é determinístico (o mesmo PBF
 
 ### A conferir (dado que muda rota de veículo legal de 4,40 m)
 
+4,40 m é a altura máxima sem AET/AE (Res. CONTRAN 882/2021, art. 4º, II; texto do DOU de 24/12/2021, seção 1, p. 153).
+A camada não aplica esse valor: só compara o limite do nó com a altura informada do veículo (os perfis vêm de
+`config/vehicle-presets.json`, conferidos pela frente `core_legal`).
+
 - Nó **3908618328**, Rodovia Presidente Dutra (pista sentido SP), Volta Redonda (-22.5329, -44.1957): `maxheight=4.3`,
-  `source=signpost`, via sem `maxheight`. Faz carreta de 4,40 m desviar no sentido Rio→SP. Confirmar em campo; se for
-  erro, corrigir no OSM (nota/edição com fonte própria) e reimportar.
+  `source=signpost`, via sem `maxheight`. Faz carreta de 4,40 m desviar no sentido Rio→SP. Conferido na API do OSM em
+  09/10/2026: versão 2, de 29/05/2019, só com essas duas tags (ninguém mexeu desde então). Falta conferir em campo ou
+  por imagem de rua; se for erro, corrigir no OSM (nota/edição com fonte própria) e reimportar.
 - Nós **7867297145** e **8528811679**, Av. Humberto de Campos sob o Rodoanel (São Bernardo): limitadores de 4,3 m nas duas
   pistas (usados nos testes).
 
