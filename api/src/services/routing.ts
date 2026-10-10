@@ -68,6 +68,50 @@ function overlapRatio(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [numbe
   return hits / pts.length;
 }
 /**
+ * Índice em grade dos segmentos da rota (célula de 0,002°, ~200 m), para o usesCostLine não percorrer a rota inteira a
+ * cada ponto amostrado (com dezenas de costLines e rotas de milhares de vértices, era o maior custo da resposta).
+ * Cada segmento é registrado nas células de pontos espaçados de no máximo meia célula ao longo dele; um ponto a até
+ * 15 m da rota cai, então, na vizinhança 3×3 de alguma dessas células.
+ */
+const GRID_DEG = 0.002;
+const routeGrids = new WeakMap<GeoJSON.Feature<GeoJSON.LineString>, Map<string, number[]>>();
+const cellKey = (x: number, y: number) => `${Math.floor(x / GRID_DEG)}:${Math.floor(y / GRID_DEG)}`;
+function routeGrid(route: GeoJSON.Feature<GeoJSON.LineString>): Map<string, number[]> {
+  let g = routeGrids.get(route);
+  if (g) return g;
+  g = new Map();
+  const cs = route.geometry.coordinates;
+  for (let i = 0; i < cs.length - 1; i++) {
+    const [x0, y0] = cs[i], [x1, y1] = cs[i + 1];
+    const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) / (GRID_DEG / 2)));
+    const seen = new Set<string>();
+    for (let k = 0; k <= n; k++) {
+      const key = cellKey(x0 + ((x1 - x0) * k) / n, y0 + ((y1 - y0) * k) / n);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const list = g.get(key);
+      if (list) list.push(i); else g.set(key, [i]);
+    }
+  }
+  routeGrids.set(route, g);
+  return g;
+}
+/** Ponto da rota mais próximo de p, olhando só os segmentos das células vizinhas (dist = Infinity se não houver). */
+function nearestOnRoute(route: GeoJSON.Feature<GeoJSON.LineString>, p: [number, number]): { dist: number; index: number } {
+  const g = routeGrid(route);
+  const cx = Math.floor(p[0] / GRID_DEG), cy = Math.floor(p[1] / GRID_DEG);
+  const cand = new Set<number>();
+  for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const i of g.get(`${cx + dx}:${cy + dy}`) ?? []) cand.add(i);
+  let best = { dist: Infinity, index: 0 };
+  const cs = route.geometry.coordinates;
+  for (const i of cand) {
+    const d = turf.pointToLineDistance(turf.point(p), turf.lineString([cs[i], cs[i + 1]]), { units: 'meters' });
+    if (d < best.dist) best = { dist: d, index: i };
+  }
+  return best;
+}
+
+/**
  * A rota usa o trecho penalizado NO MESMO SENTIDO? (linhas de mão única ou penalizadas só num sentido:
  * a rota que passa pela pista contrária não "usa" o trecho). Amostra pontos da linha que ficam perto da rota e
  * compara o rumo local da linha com o rumo da rota no ponto mais próximo (diferença < 90°).
@@ -81,10 +125,10 @@ function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostL
     total++;
     const a = coords[i], b = coords[i + 1];
     const mid: [number, number] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    const np = turf.nearestPointOnLine(route, turf.point(mid), { units: 'meters' });
-    if ((np.properties.dist ?? Infinity) > 15) continue;
+    const np = nearestOnRoute(route, mid);
+    if (np.dist > 15) continue;
     near++;
-    const idx = Math.min(np.properties.index ?? 0, route.geometry.coordinates.length - 2);
+    const idx = Math.min(np.index, route.geometry.coordinates.length - 2);
     const r0 = route.geometry.coordinates[idx], r1 = route.geometry.coordinates[idx + 1];
     const bl = turf.bearing(turf.point(a), turf.point(b));
     const br = turf.bearing(turf.point(r0 as [number, number]), turf.point(r1 as [number, number]));
