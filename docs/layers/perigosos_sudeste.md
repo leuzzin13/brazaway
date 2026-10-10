@@ -24,7 +24,7 @@ Fonte das regras: pesquisas `docs/research/sudeste_perigosos_fora_sp` e `docs/re
 | Ponte Rio–Niterói (BR-101) e acessos (`RJ-PONTE-RIO-NITEROI`) | Portaria SPRF-RJ/PRF nº 407/2024, art. 1º e parágrafo único | DOU 22/11/2024, Seção 1, ed. 225 (portaria de 14/11/2024; art. 5º: vigência na publicação) | 1, 2.1, 2.3, 3, 4, 5, 6 e 8 | 24h | Sim (parágrafo único) | **Aplicada** |
 | Av. Portuária, Av. Brasil → Porto do Rio (`RJ-AV-PORTUARIA`) | Portaria SPRF-RJ/PRF nº 407/2024, art. 4º-A | idem | as mesmas | 24h | Sim | **Aplicada** |
 | Linha Vermelha, trecho no Município do Rio (`RJ-RIO-LINHA-VERMELHA`) | Res. SMTR nº 2.204/2012, art. 1º, IV | DO Rio 19/03/2012, p. 38–39 | todas | 24h (o ato não fixa horário) | Não prevista | **Aplicada** |
-| Terceira Ponte, ES-060, Vitória–Vila Velha (`ES-TERCEIRA-PONTE`) | IS DERTES nº 021-N/2004, art. 1º, g, e "Horários", item 2 | DIO-ES 27/09/2004 | todas | 0h às 24h | Não prevista | **Desativada** (vigência não confirmada) |
+| Terceira Ponte, ES-060, Vitória–Vila Velha (`ES-TERCEIRA-PONTE`) | IS DERTES nº 021-N/2004, art. 1º, g, e "Horários", item 2 | DIO-ES 27/09/2004 (vale desde 23/09/2004) | todas | 0h às 24h | Não prevista | **Aplicada** (com nota de vigência, seção 1.1) |
 
 Textos conferidos (atos oficiais, Lei 9.610/98 art. 8º IV):
 
@@ -45,16 +45,19 @@ Textos conferidos (atos oficiais, Lei 9.610/98 art. 8º IV):
   indica as alternativas (Segunda Ponte, Rod. Darly Santos/ES-471, Av. Carlos Lindenberg); art. 3º cita o CTB,
   arts. 187 e 231, IV.
 
-### 1.1 Por que a Terceira Ponte entrou desativada
+### 1.1 Terceira Ponte: aplicada, com nota de vigência
 
-O texto foi conferido no PDF do DER-ES e a IS ainda aparece na página de legislação do órgão. Mas não há
-confirmação de que continue valendo depois do fim da concessão da Rodosol (22/12/2023), da gestão temporária pela
-Ceturb (projeto de lei complementar aprovado em 24/10/2023) e da ampliação da ponte. Buscas de 10/10/2026 (DER-ES,
-imprensa) acharam só as regras de caminhão por peso e horário, sem menção a PP. O `verify.json` classifica a
-vigência como de confiança média. Pela convenção da frente, a regra entra registrada com `ativa: false`,
-`situacao: 'vigencia_nao_confirmada'` e o motivo, nunca vira restrição e só gera o aviso
-`hazmat_regra_nao_confirmada` quando a rota passa pela ponte. Para ativá-la, basta confirmar o ato com o DER-ES,
-trocar `ativa` para `true` no JSON e rodar o importador.
+A pesquisa dá confiança **alta** à IS 021-N/2004 e o `verify.json` a marca como **confirmed**: o PDF do DER-ES foi
+lido (art. 1º, g: "Todos veículos transportando produtos perigosos", 0h às 24h) e a página de legislação do órgão
+ainda lista a IS, sem revogação localizada. A convenção da frente só desativa regra de confiança baixa ou não
+verificável, então a regra entra com `ativa: true` e `situacao: 'vigente'` e vira `costLine` para qualquer veículo
+com PP. Isso atende à recomendação P1 da pesquisa: o caminhão leve e o utilitário com PP, que a `hgv:conditional` de
+peso do OSM não alcança, deixam de passar pela ponte.
+
+A dúvida que resta (vigência não confirmada com o órgão depois do fim da concessão da Rodosol em 22/12/2023, da
+gestão pela Ceturb e da ampliação da ponte) fica em `nota_vigencia` e sai no aviso `hazmat_trecho_vigencia` (info)
+quando a regra pesa na rota, junto com as alternativas do art. 2º. Se o DER-ES confirmar a revogação, troque para
+`ativa: false` com `situacao: 'revogada'` e `valid_to` no JSON e rode o importador.
 
 ### 1.2 Registradas e nunca aplicadas
 
@@ -63,8 +66,8 @@ Entram como `kind = 'regra_registrada'` (ponto de referência) ou `'zona_registr
 | Registro | Situação | Efeito |
 |---|---|---|
 | Res. ANTT 1.713/2006 (Ponte, classes 1, 2.1, 2.3, 3, 4, 5 e 8) | Revogada pela Res. ANTT 6.000/2022, art. 234, II, em 01/07/2024 (`valid_to`) | Nenhum (histórico) |
-| Res. ANTT 5.936/2021 (acrescentou o art. 4º-A à 1.713) | Alteradora da 1.713; o efeito caiu com ela (correção do `verify.json`: não falava em "trajeto então utilizado") | Nenhum |
-| Lei Rio 1.632/1990, art. 1º e parágrafo único (PP só das 21h às 6h no perímetro urbano) | "Em Vigor" na CMRJ, sem regulamentação nem fiscalização localizadas: confiança baixa | Aviso `hazmat_lei_municipal` (info) quando a rota passa pelo Rio com saída entre 6h e 21h |
+| Res. ANTT 5.936/2021 (acrescentou o art. 4º-A à 1.713) | `situacao: 'sem_efeito'`: o ANTTlegis a classifica como "Alteradora", não "Revogada" (correção do `verify.json`); o efeito caiu com a 1.713 em 01/07/2024 (`valid_to`). Não falava em "trajeto então utilizado" | Nenhum |
+| Lei Rio 1.632/1990, art. 1º e parágrafo único (PP só das 21h às 6h no perímetro urbano) | "Em Vigor" na CMRJ, sem regulamentação nem fiscalização localizadas: confiança baixa | Aviso `hazmat_lei_municipal` (info) quando a **passagem estimada** pela cidade (entrada ou saída da área) cai entre 6h e 21h |
 | Lei Rio 2.959/1999 (cargas tóxicas na Av. Brasil só das 22h às 2h, nas pistas laterais) | Pede regulamentação (art. 4º), não localizada; veto total, promulgada pela Câmara; DCM 03/01/2000 e DO Rio 18/01/2000 (data corrigida pelo `verify.json`) | Nenhum (restrição por pista lateral, que o roteador não modela) |
 
 ## 2. Como a decisão é tomada (`trechoRuleDecision`)
@@ -72,20 +75,27 @@ Entram como `kind = 'regra_registrada'` (ponto de referência) ou `'zona_registr
 A ordem é a mesma para todo trecho com `regra_id`. Os trechos do DER-SP não têm os campos novos e continuam valendo
 para todo PP, sem isenção.
 
-1. **Regra inativa** (`ativa: false`, ou `situacao` revogada/suspensa): nunca vale.
+1. **Regra inativa** (`ativa: false`, ou `situacao` revogada, suspensa ou `sem_efeito`): nunca vale.
 2. **Classe** (`classRuleApplies`): vale a classe ou subclasse de risco **principal** (coluna 3 da Relação da Res.
    ANTT 5.998/2022), porque a portaria fala em "produtos perigosos relacionados nas classes indicadas" da Parte 2
    (classificação). "4" alcança 4.1, 4.2 e 4.3; "6" alcança 6.1 e 6.2; "2.1" só a 2.1. Um nº ONU com mais de uma linha
    na Relação conta com todas as classes. Carga com vários produtos: basta um na lista.
-   - O risco subsidiário não decide (ex.: oxigênio comprimido, ONU 1072, é 2.2 com risco subsidiário 5.1): o resumo
-     avisa e sugere confirmar com a PRF.
+   - **Risco subsidiário** (coluna 4): quando nenhuma classe principal está na lista mas algum risco subsidiário está,
+     a regra **vale** (`basis: 'subsidiario'`), pelo lado conservador. É o que manda a pesquisa (`perigosos_fora_sp`,
+     recomendação P1 a: "costLine com fator 1000 só quando a carga tem classe ou risco subsidiário listado"). Na Ponte,
+     entram por aí os gases 2.2 com risco subsidiário 5.1: oxigênio comprimido (ONU 1072), oxigênio líquido
+     refrigerado (1073), óxido nitroso (1070) e gás oxidante comprimido, n.e. (3156). Ar comprimido (1002) e
+     nitrogênio comprimido (1066), 2.2 sem risco subsidiário, continuam liberados. A rota sai com o aviso
+     `hazmat_trecho_subsidiario` (info), que sugere confirmar com a PRF.
    - **Sem nº ONU** ou nº ONU fora da Relação: a regra vale (lado conservador), com o aviso `hazmat_trecho_classe`
      dizendo quais classes não são proibidas ali (2.2, 7 e 9 na Ponte).
 3. **Isenção da Parte 3**, só onde a norma prevê (`isencao_qtd_limitada: true`, Portaria 407/2024):
-   - quantidade limitada: peso bruto informado (`hazmat_qty_kg`) dentro da coluna 8 (mesma conta da seção 1.5 de
-     `perigosos.md`, `hz.lqExempt`);
+   - quantidade limitada: peso bruto informado (`hazmat_qty_kg`) **positivo** e dentro da coluna 8 (mesma conta da
+     seção 1.5 de `perigosos.md`, `hz.lqExempt`). Com 0 kg a isenção não vale: é o veículo vazio não limpo nem
+     descontaminado, que segue a proibição (Portaria 407/2024, art. 3º; o `verify.json` manda tratá-lo como
+     proibido). A rota sai com o aviso `hazmat_trecho_vazio` (info);
    - produto "não sujeito" na Relação (provisões especiais), `hz.notSubject`.
-   A Res. SMTR 2.204/2012 e as portarias do DER-SP não têm essa isenção.
+   A Res. SMTR 2.204/2012, a IS DERTES 021-N/2004 e as portarias do DER-SP não têm essa isenção.
 4. **Exceção da própria norma**, conferida por quem chama (`exceptionOk`): hoje só a de Mocanguê.
 
 ### 2.1 Na rota
@@ -96,8 +106,19 @@ para todo PP, sem isenção.
   mesmo ponto de referência: em "evitado" a regra aparece uma vez.
 - Origem ou destino dentro da regra **não exclui**: como é `costLine`, a rota sai e o `routing.ts` avisa
   `uses_restricted_way` (danger); a camada acrescenta `hazmat_trecho_lindeiro` com as exceções do ato.
-- Quando o tileset do Valhalla muda, os traçados são recasados em tempo de execução só no sentido do tráfego (o
-  traçado já é exato; antes os trechos do DER eram casados nos dois sentidos, e continuam assim).
+- Quando o tileset do Valhalla muda (reconstrução dos tiles), os traçados são recasados em tempo de execução
+  (`rematchRows`), só no sentido do tráfego (o traçado já é exato; os trechos do DER continuam casados nos dois
+  sentidos):
+  - o `trace_route` usa o **costing gravado na importação** (`props.osm.costing`, o da `selecao`). Com `truck`, a
+    Linha Vermelha (`hgv=no`) não casa: um pedaço de 2.157 m voltava com 14 m;
+  - o traçado exato da importação entra como **reserva** no mesmo edge walk: se a malha não mudou ali, ele passa como
+    está;
+  - sem traçado válido, o pedaço de regra fora de SP **fica de fora** da rota e a regra entra em `semTracado`, com o
+    aviso `hazmat_layer_stale` (warn, id `stale-sudeste`) e `sem_tracado: true` em `data.trechos`. **Nunca vira
+    exclusão**: o anel de 12 m dos trechos do DER cortaria também quem cruza ou sai da via. Na Linha Vermelha isso
+    deixava sem rota qualquer veículo com PP indo para a Ilha do Governador/Galeão ou para a Ilha do Fundão ("No
+    path could be found"), e contrariava as regras da frente (via → `costLine`; origem ou destino dentro da regra
+    não bloqueia). Se a rota passar mesmo assim pela via, sai `hazmat_trecho_usado` (danger).
 
 ### 2.2 Veículos que não são caminhão
 
@@ -129,23 +150,33 @@ nacional, conflito, estado de defesa ou de sítio e intervenção federal.
 | Código | Severidade | Quando |
 |---|---|---|
 | `hazmat_trecho_classe` | info | Regra por classe aplicada sem nº ONU (ou com nº ONU fora da Relação); lista as classes que não são proibidas ali |
+| `hazmat_trecho_subsidiario` | info | Regra por classe aplicada pelo risco subsidiário (classe principal fora da lista), quando a regra pesa na rota |
+| `hazmat_trecho_vazio` | info | Regra com isenção da Parte 3 e quantidade de 0 kg: tratada como vazio não limpo (art. 3º), a proibição fica |
+| `hazmat_trecho_vigencia` | info | Regra aplicada com nota de vigência (Terceira Ponte), quando a regra pesa na rota; traz as alternativas do art. 2º |
 | `hazmat_trecho_isento` | info | A rota passa pela ponte/Av. Portuária dentro da quantidade limitada ou com produto "não sujeito" |
 | `hazmat_mocangue` | warn | Origem ou destino na Ilha de Mocanguê, com ou sem a exceção do art. 2º |
-| `hazmat_regra_nao_confirmada` | warn | A rota passa (≥ 100 m) por regra registrada e desativada (Terceira Ponte) |
-| `hazmat_trecho_usado` | danger | A rota passa por regra que vale para o veículo, mas que ficou fora do corredor do plano (rede de segurança) |
-| `hazmat_lei_municipal` | info | Lei Rio 1.632/1990 (registrada, não aplicada), com saída entre 6h e 21h |
+| `hazmat_regra_nao_confirmada` | warn | A rota passa (≥ 100 m) por regra registrada e desativada (hoje nenhuma das quatro vias; fica para regra futura de confiança baixa) |
+| `hazmat_trecho_usado` | danger | A rota passa por regra que vale para o veículo, mas que ficou fora do corredor do plano ou sem traçado válido na malha atual (rede de segurança) |
+| `hazmat_layer_stale` | warn | Pedaço de regra fora de SP sem traçado válido depois de uma reconstrução dos tiles: ficou fora do cálculo, sem desvio (id `stale-sudeste`) |
+| `hazmat_lei_municipal` | info | Lei Rio 1.632/1990 (registrada, não aplicada), com a passagem estimada pela cidade (entrada ou saída) entre 6h e 21h |
 | `hazmat_trecho_lindeiro` | warn | Origem/destino a até 300 m de trecho cuja regra vale para o veículo (uma vez por regra e ponta) |
 
+"Pesa na rota" quer dizer que a rota ou a rota livre (sem as restrições) passa ≥ 100 m pela via. A passagem
+estimada da Lei 1.632 usa a mesma conta do Minianel: fração da rota na primeira entrada e na última saída do
+município × duração da rota, somada à hora de saída. Ex.: São José dos Campos → Caju saindo às 03h00 passa pelo Rio
+das 06h51 às 07h05 e avisa; saindo às 18h00 passa das 21h51 às 22h05 e não avisa.
+
 Resumo: com a classe liberada, a camada diz que a passagem é permitida (ex.: "Ponte Rio–Niterói (BR-101) e
-acessos: carga da classe 9, fora das proibidas (...); passagem permitida.").
+acessos: carga da classe 9, fora das proibidas e sem risco subsidiário na lista (...); passagem permitida.").
 
 `layers.perigosos.data.trechos` lista as regras no corredor ou usadas pela rota, com `regra_id`, `via`, `uf`,
 `norma`, `artigo`, `situacao`, `classes_proibidas`, `aplicada`, `decisao` (`aplicada`, `inativa`,
-`classe_liberada`, `qtd_limitada`, `nao_sujeito`, `excecao`), `no_plano` e `usado_m` (metros da rota sobre a via,
-buffer de 8 m em SIRGAS 2000 / UTM 23S). `data.mocangue` traz a avaliação da exceção quando uma ponta está na ilha.
+`classe_liberada`, `qtd_limitada`, `nao_sujeito`, `excecao`), `base_classe` (`todas`, `proibida`, `subsidiario`,
+`liberada`, `sem_onu`, `desconhecido`), `no_plano`, `sem_tracado` e `usado_m` (metros da rota sobre a via, buffer de
+8 m em SIRGAS 2000 / UTM 23S). `data.mocangue` traz a avaliação da exceção quando uma ponta está na ilha.
 
 O mapa mostra os pedaços como os demais trechos (`trecho_proibido`); o popup traz `regra_id`, classes, isenção,
-situação (a Terceira Ponte aparece como "desativada: ...") e a nota do ato.
+situação e a nota do ato.
 
 ## 4. Geometria (importador)
 
@@ -167,6 +198,8 @@ Sem Overpass e sem PBF: tudo pelo Valhalla, como o `hazmat_minianel_vias`.
 5. **Encadeamento** por sentido de tráfego (fim = início, mudança de rumo < 46°; a alça que sai da pista vira cadeia
    própria), corte em pedaços de até ~2 km em fronteira de aresta e **validação no edge walk** de
    `linear_cost_factors` (o edge walk passa também nas arestas com `hgv=no`).
+6. Cada pedaço grava `props.osm = {tileset, geom: true, costing}`, com o costing da `selecao`, que a API usa para
+   recasar quando o tileset muda (seção 2.1).
 
 Carga de 10/10/2026 (tileset 1791646166):
 
@@ -175,12 +208,18 @@ Carga de 10/10/2026 (tileset 1791646166):
 | Ponte Rio–Niterói e acessos | 18 | 28,6 km (o OSM tem 26,5 km de motorway + 2,2 km de links com o nome) |
 | Av. Portuária | 9 | 5,7 km (inclui os dois sentidos dos trechos de mão dupla) |
 | Linha Vermelha (Rio) | 19 | 30,0 km (cerca de 15 km por sentido) |
-| Terceira Ponte (desativada) | 4 | 6,8 km |
+| Terceira Ponte | 4 | 6,8 km |
 
 Mais 2 `area_excecao` (Mocanguê e Niterói), 1 `zona_registrada` (Lei 1.632/1990) e 3 `regra_registrada`.
 
-Efeito medido (truck 23 t, 13/10/2026 14h): Niterói → Caju com ONU 1203 sai por 105,8 km/97 min contornando a baía
-(sem a restrição, 19,9 km pela ponte); com ONU 3082 (classe 9), ou com 300 kg de gasolina, 19,9 km pela ponte.
+Efeito medido (13/10/2026, 14h):
+
+- Niterói → Caju (truck 23 t): com ONU 1203 sai por 105,8 km/97 min contornando a baía (sem a restrição, 19,9 km pela
+  ponte); com ONU 3082 (classe 9), ou com 300 kg de gasolina, 19,9 km pela ponte; com 0 kg de gasolina, contorna.
+- Vila Velha → Vitória (utilitário 3,5 t): com ONU 1203, 18,4 km/39 min, sem a Terceira Ponte; sem PP, 5,8 km/10 min
+  pela ponte.
+- Av. Brasil (Caju) → Porto do Rio (truck): com ONU 3082, 5,8 km, 2,8 km deles pela Av. Portuária; com ONU 1203,
+  8,7 km, só 0,5 km na via, junto ao destino (aviso `hazmat_trecho_lindeiro`).
 
 ## 5. Fontes, licenças e atualização
 
@@ -212,14 +251,21 @@ docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data/raw:/data/raw:ro --entry
 
 ## 6. Limitações e pendências
 
-- **Terceira Ponte:** confirmar a vigência da IS 021-N/2004 com o DER-ES/Ceturb (seção 1.1).
+- **Terceira Ponte:** a regra é aplicada; falta só confirmar a vigência da IS 021-N/2004 com o DER-ES/Ceturb
+  (seção 1.1). Se ela tiver caído, desative no JSON e rode o importador.
+- **Risco subsidiário:** a leitura conservadora (seção 2) pode desviar da Ponte uma carga que a PRF libere, como o
+  oxigênio. Se a PRF disser que vale só a classe principal, basta tirar o `subsidiario` de `classRuleApplies`.
+- **Reconstrução dos tiles:** depois de reconstruir, rode de novo o importador. Até lá, um pedaço que não casar fica
+  fora do cálculo, com aviso (seção 2.1).
 - **Acessos da ponte:** "acessos" = as ways que o OSM chama de "Ponte Rio-Niterói" (inclui as alças com esse nome).
   A "Ligação Ponte - Linha Vermelha" e as avenidas de chegada (Av. Brasil, Av. do Contorno) não entram; a Linha
   Vermelha tem regra própria.
 - **Av. Portuária:** a extensão exata do "trecho que liga a Avenida Brasil ao Porto" é a das ways com esse nome no
   OSM (confiança média, como na pesquisa).
-- **Vazio não limpo (art. 3º da Portaria 407):** o app não tem esse campo; quem roda vazio sem descontaminar deve
-  marcar "carga perigosa" com o nº ONU do último produto.
+- **Vazio não limpo (art. 3º da Portaria 407):** o app não tem esse campo. Quem roda vazio sem descontaminar deve
+  marcar "carga perigosa" com o nº ONU do último produto e **deixar a quantidade em branco**. Com 0 kg a camada
+  também trata como vazio não limpo e mantém a proibição (seção 2, item 3), mas outras partes da camada (avisos do
+  RTPP em SP) leem 0 kg como quantidade limitada.
 - **Mocanguê:** vale o horário de saída; o destino militar e o aviso prévio não são conferidos (só avisados).
 - **Corredor:** como nos trechos do DER, só as regras na elipse origem–destino viram restrição. Uma regra que a rota
   use fora dela gera `hazmat_trecho_usado` (danger).
