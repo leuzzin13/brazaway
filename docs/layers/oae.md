@@ -15,7 +15,9 @@ Módulo: `api/src/layers/oae.layer.ts` · Testes: `api/test/layers/placas_gabari
 | Restrição vigente que não alcança o veículo (ex.: VUC liberado, faixa interditada) | nenhum | `info` `oae_restricao_nao_aplica` |
 | Restrição **histórica** | nenhum (nunca bloqueia) | `oae_restricao_historica`: `info` "já liberada" se a fonte liberou explicitamente os veículos da restrição (`fim` preenchido); senão `warn` "confira a placa" quando o critério alcança o veículo (com a menção "obra concluída, sem liberação explícita para caminhões" se houver registro de obra/liberação de faixas), `info` quando não alcança |
 | OAE nomeada da SIURB na rota | nenhum | linha no resumo com nome e status da obra; `info` `oae_obra` se o status não for "CONCLUÍDA" |
-| GeoSampa / DER-SP (sem limites) | nenhum | contagem no resumo, `info` `oae_limits_unknown` para veículo pesado/alto, `warn` `wooden_bridge` |
+| GeoSampa / DER-SP / DER-MG (sem limites) | nenhum | contagem no resumo, `info` `oae_limits_unknown` para veículo pesado/alto, `warn` `wooden_bridge` |
+| Ponte do DER-MG com largura cadastrada < 5,50 m ou 1 faixa | nenhum | `oae_ponte_estreita`: `warn` se a largura < largura do veículo + 0,60 m, senão `info` (ver `docs/layers/rodovias_estaduais.md`) |
+| Ponte do ES com PBT máximo (IS do DER-ES) ou limite por eixo (`eixo_max_t`) e veículo acima | exclusão pequena sobre a ponte | `danger` `oae_peso_desvio` / `oae_peso_excedido` |
 
 Limites numéricos (`altura_livre_m`/`peso_max_t`) de uma feição com restrição curada só valem dentro da vigência dela
 (`inicio`/`fim` contra a data local da viagem). Sem restrição curada (ARTESP) valem sempre.
@@ -47,6 +49,8 @@ cargas excepcionais (≥ 5,28 m); os testes usam uma passarela de teste de 4,30 
 | `artesp` | `artesp_passarelas` | 443 passarelas das rodovias concedidas (441 ativas + 2 desativadas, mantidas por segurança), 438 com **ALTURA** (436 usadas para bloquear, 2 suspeitas) | CC-BY (dadosabertos.artesp.sp.gov.br, "Cadastro de Ativos") | mensal (XLSX de 05/08/2026) |
 | `siurb` | `siurb_oae` | 105 OAEs municipais **nomeadas** com status da obra (contratos de inspeção/recuperação 2019-2021) | ODC-By 1.0 (dados.prefeitura.sp.gov.br) | manual |
 | `curadoria` | `oae_restricoes_curadas` | restrições oficiais em pontes/viadutos, curadas em `data/raw/oae_restricoes_curadas.csv` | fatos de atos/notícias oficiais com citação; geometria aproximada do OSM (ODbL, extração não substancial) | revisar a cada 3 meses |
+| `der-mg` | `oae_der_mg` | 4.370 OAEs do DER-MG (Observatório da Infraestrutura) com largura, estrutura e nota de inspeção crua (escala não documentada); só aviso | não declarada (risco de uso comercial; ver `docs/layers/rodovias_estaduais.md`) | mensal |
+| `der-es` | `oae_der_es` | 17 pontes estaduais do ES com PBT máximo em Instrução de Serviço do DER-ES (DIO-ES, 2024–2026), curadas em `data/raw/ders_estaduais/regras.json`; bloqueio por peso | ato oficial (domínio público) | a cada nova IS no DIO-ES |
 
 Rodar: `docker compose --profile import run --rm importer artesp_passarelas siurb_oae oae_restricoes_curadas`
 (ou o `docker run ... truck-router-importer <nome>` do README). Cada carga gera `db/seed/layers/oae__<source>.sql`.
