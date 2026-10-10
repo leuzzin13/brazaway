@@ -15,9 +15,10 @@ O polígono do GeoSampa contém o corredor inteiro das marginais (as duas margen
 `--measure` mede, ao longo da borda, a distância até a pista do Minianel mais afastada, sobre o eixo de logradouros do
 PRÓPRIO GeoSampa (geoportal:segmento_logradouro, CC-BY-SA 4.0 — mesma fonte e licença do polígono; nada do OSM):
   1. amostra a borda a cada `spacing_m`;
-  2. pega os segmentos com nome de via do Minianel (denominações oficiais em config) e os acessos a elas (tipo em
-     `access_types`, ex.: "AC DOIS A AV PRES CASTELO BRANCO") e os pontos deles (a cada 10 m) dentro do polígono; cada
-     ponto cai no trecho da borda mais próximo;
+  2. pega os segmentos com nome de via do Minianel (denominações oficiais em config) e os acessos a elas e às pontes
+     sobre os rios (tipo em `access_types` com o nome da via ou casando com `access_patterns`, ex.: "AC DOIS A AV PRES
+     CASTELO BRANCO", "AC A PONTE DO PIQUERI") e os pontos deles (a cada 10 m) dentro do polígono; cada ponto cai no
+     trecho da borda mais próximo;
   3. um ponto só alarga o corredor se o raio borda→ponto não cruzar, depois da primeira pista, uma rua local paralela à
      borda (não engole quadras entre pistas, como em Bom Retiro, onde a Av. Pres. Castelo Branco entra no bairro);
   4. largura do trecho = maior distância + `margin_m` (mínimo `min_width_m`); vales mais curtos que 2 x `gap_fill_m`
@@ -354,14 +355,20 @@ def measure(mian_geom):
     R = B.P
     classes = {_norm(n): float(lc['max_dist_m']) for lc in c['lanes'] for n in lc['names']}
     acc_types = set(c.get('access_types', []))
+    acc_res = [re.compile(r) for r in c.get('access_patterns', [])]
+    acc_cap = max(classes.values()) if classes else 0.0
 
     def lane_cap(name, tipo):
-        """Distância máxima da borda se o segmento é pista do Minianel; acessos (tipo AC) cujo nome oficial cita uma via do
-        Minianel ("AC DOIS A AV PRES CASTELO BRANCO") contam como pista: são a entrada e a saída das vias (art. 2º §2º)."""
+        """Distância máxima da borda se o segmento é pista do Minianel. Acessos (tipo AC) cujo nome oficial cita uma via do
+        Minianel ou uma ponte sobre os rios ("AC DOIS A AV PRES CASTELO BRANCO", "AC A PONTE DO PIQUERI") contam como pista:
+        são a entrada e a saída das vias (art. 2º §2º)."""
         if name in classes:
             return classes[name]
         if tipo in acc_types:
-            return next((cap for ln, cap in classes.items() if name.endswith(' ' + ln)), None)
+            cap = next((cap for ln, cap in classes.items() if name.endswith(' ' + ln)), None)
+            if cap is None and any(r.search(name) for r in acc_res):
+                cap = acc_cap
+            return cap
         return None
     no_block = set(c.get('non_blocking_types', []))
     feats = fetch_segments(ring)
