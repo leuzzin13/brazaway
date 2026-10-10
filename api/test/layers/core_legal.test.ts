@@ -23,6 +23,7 @@ const HOLIDAY = { holiday: { name: 'teste' } };
 const OSASCO = { lat: -23.5320, lon: -46.7700 };
 const PENHA = { lat: -23.5250, lon: -46.5450 };
 const BUTANTA = { lat: -23.5700, lon: -46.7300 };
+const CASA_VERDE = { lat: -23.5050, lon: -46.6600 };
 // Dentro do Minianel, mas no corredor das vias-limite (cortado da zona de caminhões na rota): Vila Leopoldina e Bom Retiro
 const GASTAO_VIDIGAL = { lat: -23.5184, lon: -46.7416 };
 const SERGIO_TOMAS = { lat: -23.5204, lon: -46.6446 };
@@ -233,7 +234,9 @@ describe('core_legal — rotas (ponta a ponta)', () => {
   });
 
   it('rodízio: caminhão com placa do dia usa as marginais (vias do Minianel); utilitário não', async () => {
-    const base = { origin: OSASCO, destination: PENHA, departure_at: '2026-10-19T08:00' };
+    // Penha -> Casa Verde pela Marginal Tietê (sentido Castello Branco). Osasco -> Penha às 8h deixou de servir: a VER da
+    // Marginal Tietê sentido Ayrton Senna (camada ver) e a ZMRC de Osasco empurram a rota para dentro do Minianel.
+    const base = { origin: PENHA, destination: CASA_VERDE, departure_at: '2026-10-19T08:00' };
     const livre = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 3 } });
     const rod = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 1 } });
     expect(rod.status, JSON.stringify(rod.body)).toBe(200);
