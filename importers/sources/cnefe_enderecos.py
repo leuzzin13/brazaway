@@ -25,6 +25,7 @@ BASE = 'https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatis
 SOURCE_URL = BASE + '35_SP/'
 LICENSE = 'IBGE — CNEFE 2022: dados públicos, uso livre com citação obrigatória ("Fonte: IBGE, Censo Demográfico 2022 — CNEFE")'
 NOTES = None  # preenchido em fetch() com as contagens
+RECORD_COUNT = None  # total de pontos em addr_point (a base inteira, não só esta carga; as feições são só cobertura)
 
 UF_DIR = {35: '35_SP', 33: '33_RJ', 31: '31_MG', 32: '32_ES', 41: '41_PR'}
 
@@ -149,8 +150,9 @@ analyze cnefe_rec;
 
 -- com número: 1 ponto por (logradouro, número, km, bairro); média das coordenadas de campo (nv 1–2).
 -- (média e não mediana: agregados ordenados por grupo custam minutos em 2,5 M grupos; a maioria tem 1–3 registros)
-insert into addr_point (street_id, numero, km, bairro_id, cep, nv_geo, n, estab, lat, lon)
-select street_id, numero, km, bairro_id,
+-- km_m: km em metros. O CNEFE mistura "km inteiro" (26) e "km×1000 + metros" (25345 = km 25,345) no número.
+insert into addr_point (street_id, numero, km, km_m, bairro_id, cep, nv_geo, n, estab, lat, lon)
+select street_id, numero, km, case when km then (case when numero < 1000 then numero * 1000 else numero end) end, bairro_id,
        max(cep),
        min(nv), least(count(*), 32000),
        coalesce(max(estab) filter (where especie = 6), max(estab) filter (where especie <> 1)),
@@ -179,6 +181,9 @@ create temp table st_med on commit drop as
    order by p.street_id, (p.lat - c.clat) ^ 2 + ((p.lon - c.clon) * cos(radians(c.clat))) ^ 2;
 update addr_street s set n = c.n, lat = m.lat, lon = m.lon
   from st_c c join st_med m using (street_id) where s.id = c.street_id;
+-- logradouro sem nenhum ponto (todos os registros sem coordenada válida): não serve para geocodificar
+delete from addr_street s
+ where s.cod_mun = %(m)s and s.n = 0 and not exists (select 1 from addr_point a where a.street_id = s.id);
 update addr_street s set desvio_m = d.dm
   from (select p.street_id,
                percentile_cont(0.5) within group (order by sqrt(((p.lat - s2.lat) * 111320) ^ 2 + ((p.lon - s2.lon) * 111320 * cos(radians(s2.lat))) ^ 2)) dm
@@ -264,7 +269,7 @@ def _load_municipio(conn, cod: int, path, nome_arquivo: str) -> dict:
 
 
 def fetch():
-    global NOTES
+    global NOTES, RECORD_COUNT
     cods = municipios()
     listings: dict[int, dict[int, str]] = {}
     done, failed = [], []
@@ -299,7 +304,7 @@ def fetch():
                 cur.execute('select exists (select 1 from addr_segment where cod_mun = 3550308)')
                 if cur.fetchone()[0]:
                     cur.execute('select * from addr_segment_orient(3550308)')
-                    print('    GeoSampa: segmentos conferidos/invertidos/sem dado = %s' % (cur.fetchone(),), flush=True)
+                    print('    GeoSampa: segmentos conferidos (r >= 0,3)/invertidos/fracos ou sem dado = %s' % (cur.fetchone(),), flush=True)
         conn.autocommit = True
         with conn.cursor() as cur:
             cur.execute('vacuum analyze addr_point')
@@ -316,9 +321,10 @@ def fetch():
                          from addr_municipio m join addr_street s on s.cod_mun = m.cod_mun and s.lat is not null
                         group by m.cod_mun, m.nome, m.uf, m.n_enderecos, m.n_registros, m.n_logradouros""")
         cov = cur.fetchall()
-    NOTES = (f'Carga: {sum(d["enderecos"] for d in done):,} pontos de {len(done)} municípios'
-             f'{f" (FALHARAM: {failed})" if failed else ""}. Base total: {n_pts:,} pontos de endereço em addr_point '
-             f'({n_reg:,} registros do CNEFE) em {n_mun} municípios. Tabelas próprias (addr_*); as feições aqui são só a '
+    RECORD_COUNT = int(n_pts)
+    NOTES = (f'Base: {n_pts:,} pontos de endereço em addr_point ({n_reg:,} registros do CNEFE) em {n_mun} municípios. '
+             f'Esta carga: {sum(d["enderecos"] for d in done):,} pontos de {len(done)} município(s)'
+             f'{f" (FALHARAM: {failed})" if failed else ""}. Tabelas próprias (addr_*); as feições aqui são só a '
              f'cobertura. Sem seed: rodar o importador.')
     if failed and not done:
         raise RuntimeError(f'CNEFE: nenhum município carregado (falharam {failed})')

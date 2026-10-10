@@ -17,6 +17,7 @@ WFS = 'https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs'
 SOURCE_URL = WFS + ' (typeNames=geoportal:segmento_logradouro)'
 LICENSE = 'CC-BY-SA 4.0 — GeoSampa/Prefeitura de São Paulo'
 NOTES = None
+RECORD_COUNT = None  # segmentos em addr_segment (a feição é só a cobertura)
 PAGE = int(os.environ.get('GEOSAMPA_PAGE', '10000'))
 COD_SP = 3550308
 
@@ -102,7 +103,7 @@ def _orienta(segs: list[dict]) -> int:
 
 
 def fetch():
-    global NOTES
+    global NOTES, RECORD_COUNT
     from pyproj import Transformer
     segs, start, total, tr, bad = [], 0, None, {}, 0
     while True:
@@ -165,8 +166,9 @@ def fetch():
         if cur.fetchone()[0]:
             cur.execute('select * from addr_segment_orient(%s)', (COD_SP,))
             orient = cur.fetchone()
-    o = (f'; conferidos pelo CNEFE: {orient[0]:,} ({orient[1]:,} invertidos), sem endereço para conferir: {orient[2]:,}'
-         if orient else '; orientação ainda não conferida pelo CNEFE')
+    RECORD_COUNT = int(n)
+    o = (f'; conferidos pelo CNEFE com correlação >= 0,3: {orient[0]:,} ({orient[1]:,} invertidos); fracos ou sem endereço '
+         f'para conferir: {orient[2]:,}' if orient else '; orientação ainda não conferida pelo CNEFE')
     NOTES = (f'{n:,} segmentos com faixa de numeração em addr_segment (tabela própria; {flipped:,} linhas invertidas pela '
              f'sequência de numeração{o}; {bad} descartados por coordenada inválida). A feição aqui é só a cobertura.')
     print('    ' + NOTES)

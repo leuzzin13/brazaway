@@ -4,6 +4,9 @@ O IPEA publica o CNEFE 2022 padronizado (base do pacote geocodebr). municipio_ce
 a média das coordenadas dos endereços do CNEFE no CEP (n_casos) e o desvio em metros.
 CEPs de grandes usuários (-9xx, ex.: 05316-900 CEAGESP) NÃO estão: a API consulta o ViaCEP só nesses casos.
 
+Centroides de CEP "coringa" (o CNEFE usa alguns CEPs para endereços espalhados pela cidade, ex.: 01001-000) ficam com
+confiavel = false (cep_centroid_flag(), na migration 0116) e a API não os devolve como precisão de CEP.
+
 Sem seed versionado (~930 mil linhas). Rode com --no-seed; precisa de pyarrow:
     docker run ... --entrypoint sh truck-router-importer -c "pip install -q pyarrow==17.0.0 && python run.py cep_ipea --no-seed"
 """
@@ -17,10 +20,11 @@ SOURCE_URL = f'https://github.com/ipea/padronizacao_cnefe/releases/download/{REL
 LICENSE = ('Dados: IBGE — CNEFE 2022 (público, citar a fonte), padronizados pelo IPEA (ipea/padronizacao_cnefe; o repositório não '
            'declara licença; o pacote geocodebr que os distribui é MIT)')
 NOTES = None
+RECORD_COUNT = None  # CEPs em cep_centroid (as feições são só a cobertura por UF)
 
 
 def fetch():
-    global NOTES
+    global NOTES, RECORD_COUNT
     import pyarrow.parquet as pq
     raw = http_get(SOURCE_URL, cache=f'geocoding/municipio_cep_{RELEASE}.parquet', max_age_h=24 * 180, timeout=600)
     t = pq.read_table(io.BytesIO(raw), columns=['estado', 'municipio', 'code_muni', 'cep', 'n_casos', 'lon', 'lat', 'desvio_metros'])
@@ -37,11 +41,17 @@ def fetch():
                               None if r['desvio_metros'] is None else round(float(r['desvio_metros']), 1),
                               float(r['lat']), float(r['lon'])))
                 n += 1
+        # centroide sem sentido como localização de CEP (CEP "coringa" do CNEFE, ex.: 01001-000 com desvio de 21,6 km):
+        # confiavel = false; a API consulta o ViaCEP nesses casos (regra em cep_centroid_flag(), migration 0116)
+        cur.execute('select cep_centroid_flag()')
+        n_nao = cur.fetchone()[0]
         # cobertura por UF (só para /api/sources e mapa): fecho convexo dos centroides
         cur.execute("""select uf, count(*), ST_AsGeoJSON(ST_SimplifyPreserveTopology(ST_ConvexHull(ST_Collect(ST_MakePoint(lon, lat))), 0.01), 5)
                          from cep_centroid group by uf order by uf""")
         cov = cur.fetchall()
-    NOTES = f'{n:,} CEPs em cep_centroid (tabela própria; release {RELEASE}). As feições aqui são só a cobertura por UF.'
+    RECORD_COUNT = n
+    NOTES = (f'{n:,} CEPs em cep_centroid (tabela própria; release {RELEASE}); {n_nao:,} com centroide não confiável '
+             f'(desvio > 1,5 km fora do CEP geral do município: a API consulta o ViaCEP). As feições aqui são só a cobertura por UF.')
     print('    ' + NOTES)
     return [{'source_id': uf, 'geometry': json.loads(g), 'name': f'CEPs {uf}', 'kind': 'cobertura_cep',
              'props': {'uf': uf, 'ceps': c}} for uf, c, g in cov if g]

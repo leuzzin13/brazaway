@@ -31,11 +31,13 @@ def main(argv):
             print(f'==> {n} ({mod.LAYER_ID}/{mod.SOURCE})')
             feats = common.validate(mod.fetch())
             notes = getattr(mod, 'NOTES', None)
+            # fontes que gravam em tabela própria e devolvem só feições de cobertura informam o volume real
+            count = getattr(mod, 'RECORD_COUNT', None)
             if not no_seed:
-                p = common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes)
+                p = common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes, record_count=count)
                 print(f'    seed: {p} ({p.stat().st_size/1e6:.1f} MB)')
             if not seed_only:
-                common.load_db(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes)
+                common.load_db(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes, record_count=count)
             print(f'    ok: {len(feats)} feições em {time.time()-t0:.0f}s')
         except Exception:
             traceback.print_exc()

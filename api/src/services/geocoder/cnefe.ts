@@ -11,7 +11,7 @@
 import { query } from '../../db.js';
 import { distM, lerp, medoid, round6, type Pt } from './geo.js';
 import { cargoRank, fmtCep, numberVariants, titleCase, trigramSim, type Canon } from './normalize.js';
-import { parseStreet, type ParsedAddress, type ParsedStreet } from './parse.js';
+import { fmtKm, parseStreet, type ParsedAddress, type ParsedStreet } from './parse.js';
 import type { Municipio, MunicipioIndex } from './municipios.js';
 import type { GeocodeResult, LatLon, Precisao } from './types.js';
 import { viacepLookup } from './viacep.js';
@@ -25,9 +25,18 @@ interface StreetRow {
 }
 interface PointRow {
   street_id: number; numero: number | null; km: boolean; bairro_id: number | null; cep: number | null; nv_geo: number;
-  n: number; estab: string | null; lat: number; lon: number; bairro: string | null;
+  n: number; estab: string | null; lat: number; lon: number; bairro: string | null; km_m?: number | null;
 }
-interface SegRow { id: number; codlog: string; tipo: string; core_norm: string; lo: number; hi: number; lat: number; lon: number; len_m: number; orientacao: string | null }
+interface SegRow {
+  id: number; codlog: string; tipo: string; core_norm: string; lo: number; hi: number; lat: number; lon: number; len_m: number;
+  orientacao: string | null;
+  /** correlação número × posição ao longo da linha medida com o CNEFE (addr_segment_orient); null = sem endereço para conferir */
+  orient_r: number | null;
+  orient_n: number | null;
+}
+interface CepRow { cep: number; cod_mun: number; municipio: string; uf: string; n: number; desvio_m: number | null; lat: number; lon: number; confiavel: boolean }
+
+const PT_COLS = `p.street_id, p.numero, p.km, p.km_m, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab, p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro`;
 interface BairroRow { id: number; cod_mun: number; nome: string; nome_norm: string; n: number; lat: number; lon: number; desvio_m: number | null; sim: number }
 
 export interface CnefeCtx {
@@ -41,7 +50,18 @@ export interface CnefeCtx {
 }
 
 function streetLabel(s: Pick<StreetRow, 'tipo' | 'titulo' | 'nome'>): string {
-  return [titleCase(s.tipo), titleCase(s.titulo), titleCase(s.nome)].filter(Boolean).join(' ');
+  // junto, para a preposição do meio sair minúscula ("Praca da Se", não "Praca Da Se")
+  return titleCase([s.tipo, s.titulo, s.nome].filter(Boolean).join(' '));
+}
+
+/** Desvio (m) da interpolação pela faixa do segmento do GeoSampa, pela correlação com o CNEFE e o comprimento.
+ *  Calibrado contra 16 mil endereços do CNEFE na capital (p80 do erro, 10/2026): r >= 0,7 → p50 11 m / p80 33 m;
+ *  0,3–0,7 → 34/107 m; |r| < 0,3 → 46/124 m; sem endereço para conferir → 169/331 m (cresce com o comprimento). */
+export function segDesvio(r: number | null | undefined, lenM: number): number {
+  if (r === null || r === undefined) return 200 + lenM;
+  if (r >= 0.7) return 12 + 0.2 * lenM;
+  if (r >= 0.3) return 30 + 0.55 * lenM;
+  return 30 + 0.75 * lenM;
 }
 
 function muniLabel(m: Municipio | undefined, cod: number, munis: MunicipioIndex): { nome?: string; uf?: string; text: string } {
@@ -115,6 +135,7 @@ export class CnefeGeocoder {
          from addr_street s
         where (s.nome_norm % $1 or s.core_norm % $2 or (length($1) >= 4 and (s.nome_norm like $1 || '%' or s.core_norm like $2 || '%')))
           and ($3::int[] is null or s.cod_mun = any($3::int[]))
+          and s.n > 0 and s.lat is not null
         order by greatest(similarity(s.nome_norm, $1), similarity(s.core_norm, $2)) desc, s.n desc
         limit $4`,
       [v.nome, v.core, munFilter, limit]).then((r) => r.rows.map((x) => ({ x, v })))));
@@ -162,10 +183,14 @@ export class CnefeGeocoder {
 
     if (p.numero !== undefined) {
       const km = !!p.km;
-      const exact = await query<PointRow>(
-        `select p.street_id, p.numero, p.km, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab, p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro
-           from addr_point p left join addr_bairro b on b.id = p.bairro_id
-          where p.street_id = any($1::int[]) and p.numero = $2 and p.km = $3`, [ids, p.numero, km]);
+      // km: o CNEFE mistura "km inteiro" e "km×1000+metros" no número; km_m (metros) é a unidade única
+      const exact = km
+        ? await query<PointRow>(
+          `select ${PT_COLS} from addr_point p left join addr_bairro b on b.id = p.bairro_id
+            where p.street_id = any($1::int[]) and p.km and p.km_m = $2`, [ids, p.kmM ?? p.numero * 1000])
+        : await query<PointRow>(
+          `select ${PT_COLS} from addr_point p left join addr_bairro b on b.id = p.bairro_id
+            where p.street_id = any($1::int[]) and p.numero = $2 and p.km = false`, [ids, p.numero]);
       const done = new Set<number>();
       for (const s of cands) {
         const pts = exact.rows.filter((x) => x.street_id === s.id);
@@ -223,8 +248,7 @@ export class CnefeGeocoder {
     const n = p.numero!;
     const ids = streets.map((s) => s.id);
     const nb = await query<PointRow>(
-      `select p.street_id, p.numero, p.km, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab, p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro
-         from addr_point p left join addr_bairro b on b.id = p.bairro_id
+      `select ${PT_COLS} from addr_point p left join addr_bairro b on b.id = p.bairro_id
         where p.street_id = any($1::int[]) and p.km = false and p.numero between $2::int - 600 and $2::int + 600`, [ids, n]);
     const capital = streets.filter((s) => s.cod_mun === COD_SP);
     const segs = capital.length ? await this.segments(capital, n) : [];
@@ -256,8 +280,8 @@ export class CnefeGeocoder {
           .sort((a, b) => Number(b.tipoOk) - Number(a.tipoOk) || a.d - b.d);
         if (ranked.length) {
           const g = ranked[0].g;
-          // segmento conferido pelos endereços do CNEFE: mediana ~16 m; não conferido: bem pior (~200 m)
-          gs = { pt: { lat: g.lat, lon: g.lon }, desvio: g.orientacao === 'cnefe' ? 15 + 0.2 * g.len_m : 60 + 0.5 * g.len_m, seg: g };
+          // desvio pela correlação com o CNEFE (forte: mediana ~11 m; fraca ou sem endereço para conferir: bem pior)
+          gs = { pt: { lat: g.lat, lon: g.lon }, desvio: segDesvio(g.orient_r, g.len_m), seg: g };
         }
       }
       let pick: { pt: Pt; desvio: number; metodo: string; fonte: string; ref?: PointRow } | undefined;
@@ -265,7 +289,7 @@ export class CnefeGeocoder {
         const dis = distM(cn.pt, gs.pt);
         // vizinhos do CNEFE perto em número ganham; senão vence o menor desvio estimado, exceto segmento não
         // conferido que discorda muito do CNEFE (numeração do cadastro municipal e do IBGE divergem ali)
-        const gsUnverified = gs.seg.orientacao !== 'cnefe';
+        const gsUnverified = gs.seg.orientacao !== 'cnefe' || (gs.seg.orient_r ?? 0) < 0.3;
         if (cn.gap <= 40 || cn.desvio <= gs.desvio || (gsUnverified && dis > 300)) pick = { pt: cn.pt, desvio: cn.desvio, metodo: 'cnefe_interpolado', fonte: 'cnefe', ref: cn.ref };
         else pick = { pt: gs.pt, desvio: gs.desvio, metodo: 'geosampa_segmento', fonte: 'geosampa', ref: cn.ref };
       } else if (cn) pick = { pt: cn.pt, desvio: cn.desvio, metodo: 'cnefe_interpolado', fonte: 'cnefe', ref: cn.ref };
@@ -285,8 +309,9 @@ export class CnefeGeocoder {
     const names = [...new Set(streets.flatMap((s) => [s.core_norm, s.nome_norm]))];
     try {
       const r = await query<SegRow>(
-        `select id, codlog, tipo, core_norm, orientacao, lo, hi, ST_Y(pt)::float8 lat, ST_X(pt)::float8 lon, len_m
-           from (select s.id, s.codlog, s.tipo, s.core_norm, s.orientacao, s.geom,
+        `select id, codlog, tipo, core_norm, orientacao, orient_r::float8 orient_r, orient_n, lo, hi,
+                ST_Y(pt)::float8 lat, ST_X(pt)::float8 lon, len_m
+           from (select s.id, s.codlog, s.tipo, s.core_norm, s.orientacao, s.orient_r, s.orient_n, s.geom,
                         case when $2::int % 2 = 0 then s.par_ini else s.impar_ini end lo,
                         case when $2::int % 2 = 0 then s.par_fim else s.impar_fim end hi
                    from addr_segment s where s.cod_mun = ${COD_SP} and s.core_norm = any($1::text[])) x,
@@ -299,29 +324,32 @@ export class CnefeGeocoder {
     } catch { return []; }
   }
 
-  /** rodovia "km N": ponto do CNEFE com km mais próximo (o CNEFE grava km no número com modificador KM) */
+  /** rodovia "km N" sem registro exato: ponto do CNEFE com KM na faixa digitada ("km 30" = 30,000–30,999) e,
+   *  sem ele, o mais próximo até 3 km. Usa km_m (metros), porque o CNEFE grava "km 26" e "25345" (= km 25,345). */
   private async nearestKm(p: ParsedAddress, streets: StreetRow[], ctx: CnefeCtx, nearPenalty: (pt: Pt) => number): Promise<GeocodeResult[]> {
-    const r = await query<PointRow>(
-      `select distinct on (p.street_id) p.street_id, p.numero, p.km, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab,
-              p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro
+    const alvo = p.kmM ?? p.numero! * 1000;
+    const [lo, hi] = p.kmFracao ? [alvo, alvo] : [alvo, alvo + 999];
+    const r = await query<PointRow & { km_m: number }>(
+      `select distinct on (p.street_id) ${PT_COLS}
          from addr_point p left join addr_bairro b on b.id = p.bairro_id
-        where p.street_id = any($1::int[]) and p.km and abs(p.numero - $2::int) <= 3
-        order by p.street_id, abs(p.numero - $2::int)`, [streets.map((s) => s.id), p.numero]);
+        where p.street_id = any($1::int[]) and p.km and p.km_m between $2::int - 3000 and $2::int + 3999
+        order by p.street_id, (p.km_m between $3::int and $4::int) desc, abs(p.km_m - $2::int), p.nv_geo, p.n desc`,
+      [streets.map((s) => s.id), alvo, lo, hi]);
     return r.rows.map((x) => {
       const s = streets.find((y) => y.id === x.street_id)!;
-      const gap = Math.abs((x.numero ?? 0) - p.numero!);
+      const gap = Math.abs(x.km_m - alvo);
+      const naFaixa = x.km_m >= lo && x.km_m <= hi;
       return this.pointResult(s, x, ctx, {
-        precisao: 'numero_aproximado', metodo: 'cnefe_km_proximo', desvio: 150 + gap * 1000, km: true,
-        score: s.score + 0.06 - gap * 0.02 + nearPenalty(x), numero: String(p.numero),
-        aviso: gap ? `Ponto no km ${x.numero} (mais próximo cadastrado): confira no mapa` : undefined,
+        precisao: 'numero_aproximado', metodo: naFaixa ? 'cnefe_km_faixa' : 'cnefe_km_proximo', desvio: 150 + gap, km: true,
+        score: s.score + 0.06 - (gap / 1000) * 0.02 + nearPenalty(x), numero: fmtKm(alvo),
+        aviso: gap >= 100 ? `Ponto no km ${fmtKm(x.km_m)} (registro mais próximo no CNEFE): confira no mapa` : undefined,
       });
     });
   }
 
   private async semNumero(p: ParsedAddress, streets: StreetRow[], bairros: Map<number, BairroRow>, ctx: CnefeCtx, nearPenalty: (pt: Pt) => number): Promise<GeocodeResult[]> {
     const r = await query<PointRow>(
-      `select p.street_id, p.numero, p.km, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab, p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro
-         from addr_point p left join addr_bairro b on b.id = p.bairro_id
+      `select ${PT_COLS} from addr_point p left join addr_bairro b on b.id = p.bairro_id
         where p.street_id = any($1::int[]) and p.numero is null`, [streets.map((s) => s.id)]);
     const out: GeocodeResult[] = [];
     for (const s of streets) {
@@ -366,8 +394,7 @@ export class CnefeGeocoder {
     let rows: PointRow[] = [];
     if (filtered) {
       const r = await query<PointRow>(
-        `select p.street_id, p.numero, p.km, p.bairro_id, p.cep, p.nv_geo, p.n, p.estab, p.lat::float8 lat, p.lon::float8 lon, b.nome as bairro
-           from addr_point p left join addr_bairro b on b.id = p.bairro_id
+        `select ${PT_COLS} from addr_point p left join addr_bairro b on b.id = p.bairro_id
           where p.street_id = any($1::int[]) and (p.bairro_id = any($2::int[]) or p.cep = $3::int)`,
         [streets.map((s) => s.id), [...bairros.keys()], cep ?? -1]);
       rows = r.rows;
@@ -396,10 +423,10 @@ export class CnefeGeocoder {
   // -------------------------------------------------------------------------------------------
   async byCep(p: ParsedAddress, ctx: CnefeCtx): Promise<GeocodeResult[]> {
     const cep = Number(p.cep);
-    let rows: { cep: number; cod_mun: number; municipio: string; uf: string; n: number; desvio_m: number | null; lat: number; lon: number }[] = [];
+    let rows: CepRow[] = [];
     try {
-      const r = await query<(typeof rows)[number]>(
-        `select cep, cod_mun, municipio, uf, n, desvio_m::float8 desvio_m, lat::float8 lat, lon::float8 lon
+      const r = await query<CepRow>(
+        `select cep, cod_mun, municipio, uf, n, desvio_m::float8 desvio_m, lat::float8 lat, lon::float8 lon, confiavel
            from cep_centroid where cep = $1 order by n desc`, [cep]);
       rows = r.rows;
     } catch { /* tabela ausente */ }
@@ -407,8 +434,8 @@ export class CnefeGeocoder {
       const f = rows.filter((x) => x.cod_mun === p.municipio!.cod);
       if (f.length) rows = f;
     }
-    if (rows.length) {
-      const x = rows[0];
+    const x = rows[0];
+    if (x && x.confiavel !== false) {
       const mun = muniLabel(undefined, x.cod_mun, ctx.munis);
       const desvio = Math.max(30, x.desvio_m ?? 300);
       return [{
@@ -418,8 +445,25 @@ export class CnefeGeocoder {
         aviso: avisoFor('cep', desvio), score: 0.7,
       }];
     }
-    // CEP fora do CNEFE (grande usuário, caixa postal, CEP novo): ViaCEP → logradouro + número → cascata local
-    if (ctx.viacep === false) return [];
+    // CEP fora do CNEFE (grande usuário, caixa postal, CEP novo) ou centroide sem sentido (CEP "coringa" do CNEFE,
+    // ex.: 01001-000 com endereços em 103 bairros): ViaCEP → logradouro + número → cascata local
+    const via = ctx.viacep === false ? [] : await this.byViaCep(p, ctx);
+    if (!x) return via;
+    const good = via.filter((r) => r.precisao && RANK[r.precisao] <= RANK.bairro);
+    if (good.length) return good;
+    // sem ViaCEP (ou sem logradouro resolvido): o centroide fica, mas com a precisão de município e o desvio real
+    const mun = muniLabel(undefined, x.cod_mun, ctx.munis);
+    const desvio = Math.max(1500, x.desvio_m ?? 0);
+    return [{
+      label: [`CEP ${fmtCep(x.cep)}`, mun.text || `${titleCase(x.municipio)} - ${x.uf}`].filter(Boolean).join(' · '),
+      lat: round6(x.lat), lon: round6(x.lon), precisao: 'municipio', desvio_m: Math.round(desvio), fonte: 'cep', metodo: 'centroide_cep_disperso',
+      municipio: mun.nome ?? titleCase(x.municipio), uf: mun.uf ?? x.uf, cod_ibge: x.cod_mun, cep: fmtCep(x.cep),
+      aviso: 'CEP genérico (endereços espalhados pela cidade na base do IBGE): marque o ponto no mapa', score: 0.4,
+    }];
+  }
+
+  /** ViaCEP (com cache) → logradouro/complemento/bairro → cascata local. Sem coordenada própria. */
+  private async byViaCep(p: ParsedAddress, ctx: CnefeCtx): Promise<GeocodeResult[]> {
     const v = await viacepLookup(p.cep!);
     if (!v) return [];
     const street = v.logradouro ? parseStreet(v.logradouro, ctx.canon) : undefined;
@@ -429,7 +473,7 @@ export class CnefeGeocoder {
     const sub: ParsedAddress = {
       raw: `${v.logradouro}, ${compl}`, extras: [], enderecoLike: true, street,
       numero: numM ? Number(numM[1]) : undefined, numeroTexto: numM ? numM[1] : undefined,
-      semNumero: /s\s*\/?\s*n/i.test(compl) && !numM ? true : undefined,
+      semNumero: /(^|\s)s\s*\/\s*n\b/i.test(compl) && !numM ? true : undefined,
       bairro: v.bairro ? ctx.canon.canon(v.bairro) : undefined, bairroTexto: v.bairro, municipio: mun, uf: v.uf,
     };
     let res: GeocodeResult[] = [];
