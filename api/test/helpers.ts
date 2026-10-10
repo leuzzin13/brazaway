@@ -32,8 +32,23 @@ export async function cleanupTestReports() {
   await pool.query(`delete from reports where device_id = $1`, [DEVICE]);
 }
 
-export async function route(body: Record<string, unknown>) {
-  return post('/api/route', body);
+/**
+ * POST /api/route com tempo limite e novas tentativas. Calcular rota é idempotente. Motivo: sob carga, o
+ * encaminhamento de portas do Colima já segurou respostas prontas por vários minutos (a API registrou ~1 s; o teste
+ * esperou até o limite de 300 s do fetch). Com 90 s por tentativa, uma conexão travada não derruba o teste.
+ */
+export async function route(body: Record<string, unknown>, attempts = 3): Promise<{ status: number; body: any }> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(`${API}/api/route`, {
+        method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+        signal: AbortSignal.timeout(90_000),
+      });
+      return { status: res.status, body: (await res.json().catch(() => ({}))) };
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr;
 }
 
 export function lineOf(r: any) { return turf.lineString(r.geometry.coordinates); }
