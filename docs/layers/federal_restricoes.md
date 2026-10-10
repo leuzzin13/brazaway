@@ -202,3 +202,7 @@ O item na rota é `alerta:<source_id>`.
   é a via certa. Se o casamento pegou só uma das pistas, o uso da outra não gera `danger`.
 - Uma pista paralela do mesmo sentido que não foi casada, a menos de 15 m da casada, pode receber
   `uses_restricted_way` do routing.ts.
+- **Conflito com o teste da `rodovias_horario`.** O SIAET de out/2026 dá à BR-459/SP comprimento máx. de 15 m (na
+  temporária e na definitiva) e PBT máx. de 45 t (459BSP0190, 459BMG0130). Por isso o rodotrem (74 t, 30 m) e a carreta
+  (19,30 m) desviam da BR-459 em qualquer horário, inclusive na API da main. O teste que espera o rodotrem na BR-459
+  fora da janela de feriado da PRF falha por causa disso, e precisa de um veículo com AET que caiba nesses limites.
