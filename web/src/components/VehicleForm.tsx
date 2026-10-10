@@ -3,6 +3,8 @@ import type { CargoType, Powertrain, Preset, Vehicle } from '../lib/api';
 
 interface Props { presets: Preset[]; vehicle: Vehicle; setVehicle: (v: Vehicle) => void; note?: string }
 
+/** campos de PP limpos quando o veículo deixa de levar carga perigosa */
+const HAZMAT_OFF = { hazmat_un: undefined, hazmat_local_delivery: undefined, hazmat_biodiesel: undefined, hazmat_qty_kg: undefined, rear_axle_count: undefined };
 const CARGO: [CargoType, string][] = [
   ['general', 'Carga geral'], ['perishable', 'Perecível (alimento)'], ['hazmat', 'Produto perigoso'],
   ['concrete', 'Concreto/bomba'], ['moving', 'Mudança'], ['other', 'Outra'],
@@ -46,7 +48,7 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
   const setHazmat = (on: boolean) => set({
     hazmat: on,
     cargo_type: on ? 'hazmat' : vehicle.cargo_type === 'hazmat' ? 'general' : vehicle.cargo_type,
-    ...(on ? {} : { hazmat_un: undefined, hazmat_local_delivery: undefined }),
+    ...(on ? {} : HAZMAT_OFF),
   });
 
   return (
@@ -95,7 +97,7 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
             <div className="field"><label>Tipo de carga</label>
               <select value={vehicle.cargo_type ?? 'general'} onChange={(e) => {
                 const c = e.target.value as CargoType;
-                set({ cargo_type: c, hazmat: c === 'hazmat', ...(c === 'hazmat' ? {} : { hazmat_un: undefined, hazmat_local_delivery: undefined }) });
+                set({ cargo_type: c, hazmat: c === 'hazmat', ...(c === 'hazmat' ? {} : HAZMAT_OFF) });
               }}>
                 {CARGO.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
               </select>
@@ -115,11 +117,31 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
                   onChange={(e) => set({ hazmat_un: e.target.value.replace(/[^\d]/g, '').slice(0, 4) || undefined })} />
               </div>
             )}
+            {vehicle.hazmat && (
+              <div className="field" title="Peso bruto total da carga perigosa: abaixo da quantidade limitada (Res. ANTT 5.998/2022) a carga é dispensada de parte das regras da ANTT; as do município e do DER continuam">
+                <label>Peso da carga perigosa (kg)</label>
+                <input type="number" inputMode="numeric" min={0} placeholder="ex.: 300" value={vehicle.hazmat_qty_kg ?? ''}
+                  onChange={(e) => set({ hazmat_qty_kg: e.target.value === '' ? undefined : Math.max(0, Number(e.target.value)) })} />
+              </div>
+            )}
+            {vehicle.hazmat && (
+              <div className="field" title="Portaria SMT 137/2018 art. 35: na ZMRC, perigoso de consumo local/outros só em caminhão de até 2 eixos traseiros">
+                <label>Eixos traseiros</label>
+                <input type="number" inputMode="numeric" min={1} max={10} placeholder={String(Math.max(1, vehicle.axle_count - 1))} value={vehicle.rear_axle_count ?? ''}
+                  onChange={(e) => set({ rear_axle_count: e.target.value === '' ? undefined : Number(e.target.value) })} />
+              </div>
+            )}
           </div>
           {vehicle.hazmat && (
             <label className="check">
               <input type="checkbox" checked={!!vehicle.hazmat_local_delivery} onChange={(e) => set({ hazmat_local_delivery: e.target.checked || undefined })} />
               Fracionado p/ consumo local (ex.: GLP em botijão)
+            </label>
+          )}
+          {vehicle.hazmat && vehicle.hazmat_un === '3082' && (
+            <label className="check" title="Anexo II da Portaria SMT.GAB 051/2024: o 3082 só é de consumo local quando for biodiesel">
+              <input type="checkbox" checked={!!vehicle.hazmat_biodiesel} onChange={(e) => set({ hazmat_biodiesel: e.target.checked || undefined })} />
+              É biodiesel (ABNT NBR 15512)
             </label>
           )}
         </div>

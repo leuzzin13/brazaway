@@ -268,11 +268,11 @@ Numa máquina limpa, o `migrate` aplica tudo em ordem: migrations, depois seeds.
 - **Aviso de suspensão:** a rota não avisa quando um dia tem suspensão publicada, porque o aviso
   precisaria de `routing.ts` ou de um módulo de camada. Os dados estão em `legalDayInfo().suspensions`.
 - **Perigosos de consumo local/outros:** a Portaria 051/2024 (art. 3º, parágrafo único) libera esses
-  grupos dentro do centro expandido, mas não nas vias do Minianel. Zona por polígono não separa "via"
-  de "área":
-  - um corredor só das vias também bloquearia as pontes que o cruzam;
-  - por isso o app evita a área inteira para esses grupos nos horários de pico (conservador), e o
-    veículo recebe um aviso em `legal_notes`.
+  grupos dentro do centro expandido, mas não nas vias do Minianel. A zona `...0003` tem a exceção
+  `hazmat_local_or_other`, então os grupos III e IV ficam fora dela. As vias do Anexo IV entram como
+  `costLines` da camada `perigosos`, para todos os grupos, sem bloquear quem só cruza o anel por ponte
+  ou viaduto (ver `docs/layers/perigosos.md`). O grupo vem de `services/hazmat.ts`, com os
+  qualificadores do Anexo II (o 3082 só conta como consumo local com `hazmat_biodiesel`).
 - **VER, ZERC, placas R-9 e a Portaria SMT 49/2021** (Marginal Tietê, que só entra em vigor com a
   conclusão do Rodoanel Norte) não estão aqui. VER e rodovias ficam nas frentes `ver` e
   `rodovias_horario`.

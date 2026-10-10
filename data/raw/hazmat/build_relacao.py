@@ -50,9 +50,29 @@ def clean_name(s: str) -> str:
     return s
 
 
+def join_spaced(raw: str) -> str:
+    """O PDF espaça letras em algumas células: "I L IMITADA" -> "ILIMITADA", "Z E RO" -> "ZERO"."""
+    out: list[str] = []
+    buf = ''
+    for t in raw.split():
+        if re.fullmatch(r'[A-Za-z]+', t) and t.upper() not in ('ZERO', 'ILIMITADA'):
+            buf += t
+            if buf.upper() in ('ZERO', 'ILIMITADA'):
+                out.append(buf.upper())
+                buf = ''
+            continue
+        if buf:
+            out.append(buf)
+            buf = ''
+        out.append(t)
+    if buf:
+        out.append(buf)
+    return ' '.join(out)
+
+
 def qty_code(raw: str, txt_line: str) -> tuple[str, str]:
     """(código normalizado, valores originais)"""
-    toks = raw.split()
+    toks = join_spaced(raw).split()
     vals = []
     ok = bool(toks)
     for t in toks:
@@ -90,7 +110,9 @@ def main():
         nome = r['nome']
         if (re.search(r'[A-ZÀ-Úa-zà-ú(),;]{24,}', nome) or len(nome) < 3) and onu in blocks:
             first = re.split(r'\s{3,}', blocks[onu].strip())[0]
-            if len(first) >= 3:
+            # só troca se a linha do nº ONU no texto trouxer o nome (letras); em linhas centralizadas na vertical o nome
+            # pode estar acima ou abaixo, e o primeiro campo seria a classe (ex.: "6.2" no 3549)
+            if len(first) >= 3 and re.search(r'[A-Za-zÀ-ú]{3}', first):
                 nome = first + ('…' if re.search(r'(\bou|\(|,|-|\bde|\bcom)$', first) else '')
                 fixed += 1
         code, raw = qty_code(r['qtd_limitada_veiculo_kg'].strip(), blocks.get(onu, ''))

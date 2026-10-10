@@ -128,8 +128,9 @@ export function vehicleMatchesException(exc: string, v: Vehicle, at: Date = new 
     // Decreto 58.584/2018 art. 3º IX a: elétrico, hidrogênio ou híbrido (GNV não é isento)
     case 'powertrain_electric': return v.powertrain === 'electric' || v.powertrain === 'hybrid' || v.powertrain === 'hydrogen';
     case 'hazmat_local_or_other': return isHazmatLocalOrOther(v);
-    // "caminhões de até dois eixos traseiros" (Portaria 137/2018 art. 35): caminhão simples com até 3 eixos
-    case 'rear_axles_le_2': return (v.vehicle_class ?? 'rigid') === 'rigid' && v.axle_count - 1 <= 2;
+    // "caminhões de até dois eixos traseiros" (Portaria 137/2018 art. 35): caminhão simples; rear_axle_count quando
+    // informado, senão até 3 eixos no total
+    case 'rear_axles_le_2': return (v.vehicle_class ?? 'rigid') === 'rigid' && (v.rear_axle_count ?? v.axle_count - 1) <= 2;
     // art. 35 §2º: caminhão-trator não é autorizado
     case 'not_tractor': return v.vehicle_class !== 'semitrailer' && v.vehicle_class !== 'cvc';
     default: return false;

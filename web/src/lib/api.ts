@@ -13,6 +13,12 @@ export interface Vehicle {
   hazmat_un?: string;
   /** perigoso fracionado para consumo local (Anexo II da Portaria SMT.GAB 051/2024) */
   hazmat_local_delivery?: boolean;
+  /** o ONU 3082 é biodiesel (ABNT NBR 15512): condição do 3082 no Anexo II */
+  hazmat_biodiesel?: boolean;
+  /** peso bruto total da carga perigosa, em kg (quantidade limitada, Res. ANTT 5.998/2022) */
+  hazmat_qty_kg?: number;
+  /** eixos traseiros (Portaria SMT 137/2018 art. 35) */
+  rear_axle_count?: number;
   employment?: 'employee' | 'autonomous';
 }
 export interface Preset extends Vehicle {

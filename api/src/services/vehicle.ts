@@ -1,6 +1,7 @@
 import { findPreset, type VehicleClass, type VehiclePreset } from '../config.js';
 import type { z } from 'zod';
 import type { VehicleInput } from '../schemas.js';
+import { parseUns, spGroup, spGroupForLoad } from './hazmat.js';
 
 export interface Vehicle extends VehiclePreset {
   plate_last_digit?: number;
@@ -14,6 +15,12 @@ export interface Vehicle extends VehiclePreset {
   hazmat_un?: string;
   /** carga perigosa fracionada para consumo local (Anexo II da Portaria SMT.GAB 051/2024) quando o nº ONU também está no Anexo I */
   hazmat_local_delivery?: boolean;
+  /** o ONU 3082 é biodiesel (ABNT NBR 15512): condição do 3082 no Anexo II da Portaria SMT.GAB 051/2024 */
+  hazmat_biodiesel?: boolean;
+  /** peso bruto total da carga perigosa, em kg (isenção por quantidade limitada, Res. ANTT 5.998/2022 Parte 3) */
+  hazmat_qty_kg?: number;
+  /** eixos traseiros (Portaria SMT 137/2018 art. 35); sem o campo, estimado como axle_count - 1 */
+  rear_axle_count?: number;
   suspended_axles?: number;
   dual_wheels?: boolean;
   has_toll_tag?: boolean;
@@ -30,7 +37,8 @@ export interface Vehicle extends VehiclePreset {
 }
 
 const EXTRA_KEYS = ['plate_last_digit', 'has_aetc', 'requires_aet', 'manufacture_year', 'cargo_type', 'powertrain', 'hazmat_un',
-  'hazmat_local_delivery', 'suspended_axles', 'dual_wheels', 'has_toll_tag', 'cargo_od_in_city', 'employment'] as const;
+  'hazmat_local_delivery', 'hazmat_biodiesel', 'hazmat_qty_kg', 'rear_axle_count',
+  'suspended_axles', 'dual_wheels', 'has_toll_tag', 'cargo_od_in_city', 'employment'] as const;
 
 /** CTB Anexo I (red. Lei 14.440/2022): caminhão é o veículo de carga com PBT acima de 3.500 kg. */
 export const TRUCK_MIN_PBT_T = 3.5;
@@ -41,12 +49,14 @@ export const VUC_SP = { max_width_m: 2.5, max_length_m: 7.2, min_manufacture_yea
 /**
  * Grupos de produtos perigosos da Portaria SMT.GAB 051/2024 (art. 2º): Anexo I = alta frequência de circulação,
  * Anexo II = consumo local, Anexo III = outros. Vários nº ONU aparecem nos Anexos I e II (ex.: 1202 diesel, 1075 GLP
- * engarrafado/fracionado): nesses casos o grupo depende da operação (hazmat_local_delivery).
+ * engarrafado/fracionado): nesses casos o grupo depende da operação (hazmat_local_delivery; o 3082 só com
+ * hazmat_biodiesel). A tabela dos anexos e os qualificadores do Anexo II ficam em services/hazmat.ts (fonte única,
+ * a mesma da camada perigosos).
  */
-const ANEXO_I = new Set(['1001', '1005', '1072', '1073', '1075', '1170', '1202', '1203', '1223', '1263', '1791', '1823', '1824', '1830', '1863', '1977', '3077', '3082', '3475']);
-const ANEXO_II = new Set(['1002', '1003', '1006', '1046', '1066', '1070', '1072', '1073', '1075', '1170', '1202', '1203', '1951', '1963', '1966', '1977', '2187', '2201', '3082', '3475']);
-const ANEXO_III = new Set(['1660', '2908', '2910', '2911', '2915', '2916', '3291', '3332', '3373']);
 export type HazmatGroupSP = 'alta_frequencia' | 'consumo_local' | 'outros' | 'ambiguo' | 'nao_listado';
+/** do mais restritivo ao menos restritivo (carga com vários nº ONU fica com o pior) */
+const GROUP_SP_RANK: HazmatGroupSP[] = ['nao_listado', 'alta_frequencia', 'ambiguo', 'consumo_local', 'outros'];
+const GROUP_SP_OF = { I: 'nao_listado', II: 'alta_frequencia', III: 'consumo_local', IV: 'outros' } as const;
 
 export function normalizeUn(un?: string): string | undefined {
   const d = (un ?? '').replace(/\D/g, '');
@@ -54,20 +64,16 @@ export function normalizeUn(un?: string): string | undefined {
 }
 
 export function hazmatGroupSP(un?: string): HazmatGroupSP | undefined {
-  const n = normalizeUn(un);
-  if (!n) return undefined;
-  if (ANEXO_III.has(n)) return 'outros';
-  if (ANEXO_I.has(n) && ANEXO_II.has(n)) return 'ambiguo';
-  if (ANEXO_II.has(n)) return 'consumo_local';
-  if (ANEXO_I.has(n)) return 'alta_frequencia';
-  return 'nao_listado';
+  const uns = parseUns(un);
+  if (!uns.length) return undefined;
+  const groups = uns.map((u): HazmatGroupSP => { const g = spGroup(u); return g.ambiguous ? 'ambiguo' : GROUP_SP_OF[g.group]; });
+  return groups.sort((a, b) => GROUP_SP_RANK.indexOf(a) - GROUP_SP_RANK.indexOf(b))[0];
 }
 
-/** Produto dos grupos "consumo local" ou "outros" (Portaria SMT.GAB 051/2024 art. 2º III e IV). */
-export function isHazmatLocalOrOther(v: Pick<Vehicle, 'hazmat' | 'hazmat_un' | 'hazmat_local_delivery'>): boolean {
+/** Produto dos grupos "consumo local" ou "outros" (Portaria SMT.GAB 051/2024 art. 2º III e IV), com os qualificadores do Anexo II. */
+export function isHazmatLocalOrOther(v: Pick<Vehicle, 'hazmat' | 'hazmat_un' | 'hazmat_local_delivery' | 'hazmat_biodiesel'>): boolean {
   if (!v.hazmat) return false;
-  const g = hazmatGroupSP(v.hazmat_un);
-  return g === 'outros' || g === 'consumo_local' || (g === 'ambiguo' && !!v.hazmat_local_delivery);
+  return !!spGroupForLoad(parseUns(v.hazmat_un), !!v.hazmat_local_delivery, !!v.hazmat_biodiesel)?.interiorAllowed;
 }
 
 export function isTruck(v: Pick<Vehicle, 'weight_t'>): boolean {
@@ -102,10 +108,10 @@ function legalNotes(v: Vehicle): string[] {
   } else if (v.requires_aet) {
     notes.push('Acima dos limites de largura, altura ou comprimento da Res. CONTRAN 882/2021 (art. 4º): só circula com AET do órgão da via.');
   }
-  if (v.hazmat && !normalizeUn(v.hazmat_un)) notes.push('Carga perigosa: informe o nº ONU para conferir as exceções de São Paulo (Portaria SMT.GAB 051/2024).');
+  if (v.hazmat && !parseUns(v.hazmat_un).length) notes.push('Carga perigosa: informe o nº ONU para conferir as exceções de São Paulo (Portaria SMT.GAB 051/2024).');
   if (v.hazmat && v.is_vuc) notes.push('VUC com carga perigosa segue a regra de perigosos, não a do VUC (Portaria SMT 137/2018 art. 18 §4º): na ZMRC só 10h–16h com AETC (art. 35).');
   if (isHazmatLocalOrOther(v)) {
-    notes.push('Perigoso de consumo local/outros: pode circular o dia todo dentro do centro expandido, mas não nas vias do Minianel das 7h às 10h e das 17h às 20h (Portaria SMT.GAB 051/2024 art. 3º). O app evita a área inteira nesses horários.');
+    notes.push('Perigoso de consumo local/outros: pode circular o dia todo dentro do centro expandido, mas não nas vias do Minianel das 7h às 10h e das 17h às 20h (Portaria SMT.GAB 051/2024 art. 3º). O app evita só as vias do Minianel nesses horários.');
   }
   if (v.hazmat) notes.push('Em São Paulo o transporte de perigoso exige LETPP da CET (Decreto 50.446/2009).');
   return notes;
@@ -121,7 +127,7 @@ export function resolveVehicle(input: z.infer<typeof VehicleInput>): Vehicle {
     if (input[k] !== undefined) (v as unknown as Record<string, unknown>)[k] = input[k];
   }
   // carga perigosa declarada por qualquer um dos campos
-  if (v.cargo_type === 'hazmat' || normalizeUn(v.hazmat_un)) v.hazmat = true;
+  if (v.cargo_type === 'hazmat' || parseUns(v.hazmat_un).length) v.hazmat = true;
   if (v.hazmat && v.cargo_type === undefined) v.cargo_type = 'hazmat';
   if (v.hazmat_un !== undefined) v.hazmat_un = normalizeUn(v.hazmat_un) ?? v.hazmat_un;
   v.hazmat_group_sp = v.hazmat ? hazmatGroupSP(v.hazmat_un) : undefined;
