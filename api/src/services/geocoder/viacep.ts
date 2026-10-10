@@ -1,4 +1,5 @@
-/** ViaCEP (https://viacep.com.br) — SÓ para CEP ausente de cep_centroid (grandes usuários "-9xx", CEPs novos).
+/** ViaCEP (https://viacep.com.br) — SÓ para CEP ausente de cep_centroid (grandes usuários "-9xx", CEPs novos) ou com
+ *  centroide não confiável (cep_centroid.confiavel = false: CEP "coringa" do CNEFE, ex.: 01001-000).
  *  Devolve logradouro/complemento/bairro/município; NÃO dá coordenada (o ponto sai da cascata do CNEFE).
  *  Resposta guardada em cep_lookup_cache (encontrado: 180 dias; não encontrado: 7 dias) para não martelar o serviço,
  *  que é gratuito, sem SLA e avisa que uso massivo pode bloquear. Desligar: VIACEP_URL= (vazio). */

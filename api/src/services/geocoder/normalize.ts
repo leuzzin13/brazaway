@@ -16,14 +16,14 @@ export function normBasic(s: string): string {
 export class Canon {
   constructor(private readonly map: Map<string, string>) {}
 
-  /** = geo_canon: troca abreviações pela palavra canônica e remove preposições */
+  /** = geo_canon: troca abreviações pela palavra canônica e remove preposições ('D' conforme o contexto: dWord) */
   canon(s: string): string {
+    const toks = normBasic(s).split(' ').filter(Boolean);
     const out: string[] = [];
-    for (const tok of normBasic(s).split(' ')) {
-      if (!tok) continue;
-      const full = this.map.has(tok) ? this.map.get(tok)! : tok;
+    toks.forEach((tok, i) => {
+      const full = tok === 'D' ? dWord(toks[i + 1]) : this.map.has(tok) ? this.map.get(tok)! : tok;
       if (full) out.push(full);
-    }
+    });
     return out.join(' ');
   }
 
@@ -33,11 +33,21 @@ export class Canon {
   }
 }
 
+/** 'D' isolado (= geo_canon no SQL): último token ou antes de algarismo fica 'D' (ruas com letra: "Rua Projetada D",
+ *  "Viela 6 D"); antes de vogal sai (elisão: D'Avila, Olho d'Água); antes de consoante vira 'DOM' ("Av. D. Pedro I").
+ *  "D. Maria" (Dona) também vira DOM: o título fica fora do núcleo, então o casamento pelo núcleo não muda. */
+export function dWord(next: string | undefined): string {
+  if (!next) return 'D';
+  if (/^[AEIOU]/.test(next)) return '';
+  if (/^[0-9]/.test(next)) return 'D';
+  return 'DOM';
+}
+
 // Fallback mínimo (se a migration 0116 ainda não rodou). O normal é carregar geo_abbrev.
 const FALLBACK: [string, string][] = [
   ['AV', 'AVENIDA'], ['R', 'RUA'], ['AL', 'ALAMEDA'], ['EST', 'ESTRADA'], ['ROD', 'RODOVIA'], ['TV', 'TRAVESSA'],
   ['PC', 'PRACA'], ['PCA', 'PRACA'], ['DR', 'DOUTOR'], ['PROF', 'PROFESSOR'], ['ENG', 'ENGENHEIRO'], ['STA', 'SANTA'],
-  ['STO', 'SANTO'], ['JD', 'JARDIM'], ['VL', 'VILA'], ['PQ', 'PARQUE'], ['DE', ''], ['DA', ''], ['DO', ''], ['DAS', ''], ['DOS', ''], ['D', ''],
+  ['STO', 'SANTO'], ['JD', 'JARDIM'], ['VL', 'VILA'], ['PQ', 'PARQUE'], ['DE', ''], ['DA', ''], ['DO', ''], ['DAS', ''], ['DOS', ''],
 ];
 
 let canonCache: { at: number; value: Promise<Canon> } | null = null;

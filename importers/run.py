@@ -44,13 +44,13 @@ def main(argv):
             print(f'==> {n} ({mod.LAYER_ID}/{mod.SOURCE})')
             feats = common.validate(mod.fetch())
             notes = getattr(mod, 'NOTES', None)
-            # fontes que gravam em tabela própria (ex.: cet_suspensoes -> rule_suspensions) informam a contagem real
-            # (RECORD_COUNT) e o próprio seed (SEED_SQL); as demais usam as feições de data_features
+            # fontes que gravam em tabela própria (ex.: cet_suspensoes -> rule_suspensions, cnefe -> addr_point) informam a
+            # contagem real (RECORD_COUNT) e, se quiserem, o próprio seed (SEED_SQL); as demais usam as feições de data_features
             count = getattr(mod, 'RECORD_COUNT', None)
             seed_sql = getattr(mod, 'SEED_SQL', None)
             if not no_seed:
                 p = (common.write_seed_sql(mod.LAYER_ID, mod.SOURCE, seed_sql) if seed_sql is not None
-                     else common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes))
+                     else common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes, record_count=count))
                 print(f'    seed: {p} ({p.stat().st_size/1e6:.1f} MB)')
             if not seed_only:
                 common.load_db(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes, record_count=count)

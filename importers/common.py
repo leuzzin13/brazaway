@@ -78,7 +78,8 @@ def _sql_str(v) -> str:
     return f'{tag}{s}{tag}'
 
 
-def write_seed(layer_id: str, source: str, feats: list[dict], source_url: str, license: str, notes: str | None = None) -> pathlib.Path:
+def write_seed(layer_id: str, source: str, feats: list[dict], source_url: str, license: str, notes: str | None = None,
+               record_count: int | None = None) -> pathlib.Path:
     SEED_DIR.mkdir(parents=True, exist_ok=True)
     path = SEED_DIR / f'{layer_id}__{source}.sql'
     lines = [f'-- GERADO por importers/run.py ({layer_id}/{source}). Fonte: {source_url}. Licença: {license}. Não edite à mão.',
@@ -98,7 +99,7 @@ def write_seed(layer_id: str, source: str, feats: list[dict], source_url: str, l
         if len(chunk) >= 500:
             flush()
     flush()
-    lines.append(f"insert into data_layer_runs (layer_id, source, source_url, license, record_count, notes) values ({_sql_str(layer_id)}, {_sql_str(source)}, {_sql_str(source_url)}, {_sql_str(license)}, {len(feats)}, {_sql_str(notes)});")
+    lines.append(f"insert into data_layer_runs (layer_id, source, source_url, license, record_count, notes) values ({_sql_str(layer_id)}, {_sql_str(source)}, {_sql_str(source_url)}, {_sql_str(license)}, {len(feats) if record_count is None else int(record_count)}, {_sql_str(notes)});")
     path.write_text('\n'.join(lines) + '\n')
     return path
 
@@ -121,7 +122,7 @@ def load_db(layer_id: str, source: str, feats: list[dict], source_url: str, lice
                 cp.write_row((layer_id, source, f['source_id'], f.get('name'), f.get('kind'),
                               _ewkt(f['geometry']), json.dumps(f.get('props') or {}, ensure_ascii=False), f.get('valid_from'), f.get('valid_to')))
         cur.execute('insert into data_layer_runs (layer_id, source, source_url, license, record_count, notes) values (%s,%s,%s,%s,%s,%s)',
-                    (layer_id, source, source_url, license, len(feats) if record_count is None else record_count, notes))
+                    (layer_id, source, source_url, license, len(feats) if record_count is None else int(record_count), notes))
 
 
 def _ewkt(geom: dict) -> str:

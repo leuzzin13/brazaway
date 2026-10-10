@@ -6,7 +6,7 @@ import { parseAddress } from '../src/services/geocoder/parse.js';
 import { getCanon } from '../src/services/geocoder/normalize.js';
 import { getMunicipios } from '../src/services/geocoder/municipios.js';
 import { CascadeGeocoder, PhotonGeocoder } from '../src/services/geocoder.js';
-import { interpClusters, interpCnefe } from '../src/services/geocoder/cnefe.js';
+import { interpClusters, interpCnefe, segDesvio } from '../src/services/geocoder/cnefe.js';
 import { distM } from '../src/services/geocoder/geo.js';
 import { pool as apiPool } from '../src/db.js';
 
@@ -84,6 +84,38 @@ describe('parser de endereço', () => {
     expect([i.municipio?.nome, i.municipioFraco, i.textoCompleto]).toEqual(['Leopoldina', true, 'Vila Leopoldina']);
   });
 
+  it('"D" isolado conforme o contexto, igual no SQL (geo_canon) e no TS', async () => {
+    const canon = await getCanon();
+    const casos: [string, string][] = [
+      ['Rua D', 'RUA D'],                               // rua com letra: não pode virar "RUA"
+      ['Rua Projetada D', 'RUA PROJETADA D'],
+      ['Viela 6 D', 'VIELA 6 D'],
+      ['Rua 1 D', 'RUA 1 D'],
+      ['Rua D 5', 'RUA D 5'],
+      ["Rua Olho D'Água", 'RUA OLHO AGUA'],             // elisão
+      ["Rua D'Avila", 'RUA AVILA'],
+      ["Santa Bárbara d'Oeste", 'SANTA BARBARA OESTE'],
+      ['Av. D. Pedro I', 'AVENIDA DOM PEDRO I'],        // D. antes de consoante = Dom
+      ['D', 'D'],
+    ];
+    for (const [txt, want] of casos) expect(canon.canon(txt), txt).toBe(want);
+    expect(canon.canon('Rua Projetada D')).not.toBe(canon.canon('Rua Projetada'));
+    const r = await pool.query(`select t, geo_canon(t) c from unnest($1::text[]) t`, [casos.map((c) => c[0])]);
+    for (const row of r.rows) expect(row.c, `SQL geo_canon(${row.t})`).toBe(canon.canon(row.t));
+    const ab = await pool.query(`select count(*)::int n from geo_abbrev where abbr = 'D'`);
+    expect(ab.rows[0].n).toBe(0);
+  });
+
+  it('km com fração: "km 30,325" = 30.325 m; "km 30" = 30.000 m (faixa 30,000–30,999)', async () => {
+    const [canon, munis] = await Promise.all([getCanon(), getMunicipios()]);
+    const a = parseAddress('Rod. Raposo Tavares km 30,325, Cotia', canon, munis);
+    expect([a.km, a.numero, a.kmM, a.kmFracao, a.numeroTexto]).toEqual([true, 30, 30325, true, 'km 30,325']);
+    const b = parseAddress('Rodovia Raposo Tavares km 30,5', canon, munis);
+    expect([b.kmM, b.numeroTexto]).toEqual([30500, 'km 30,5']);
+    const c = parseAddress('Rodovia Raposo Tavares km 30', canon, munis);
+    expect([c.kmM, c.kmFracao]).toEqual([30000, false]);
+  });
+
   it('números por extenso: "25 de Março" casa com "VINTE E CINCO DE MARCO"', async () => {
     const { numberVariants, numberToWords, wordsToDigits } = await import('../src/services/geocoder/normalize.js');
     expect(numberVariants('25 MARCO')).toContain('VINTE E CINCO MARCO');
@@ -106,6 +138,71 @@ describe('interpolação entre vizinhos do CNEFE', () => {
     // vizinhos a 12 km um do outro com 100 números de diferença: não interpola, usa o mais próximo em número
     const far = interpCnefe(110, [a, { numero: 200, lat: -23.6, lon: -46.6 }]);
     expect(distM(far!.pt, a)).toBeLessThan(1);
+  });
+
+  it('desvio do segmento do GeoSampa cresce quando a correlação com o CNEFE é fraca ou ausente', () => {
+    const forte = segDesvio(0.9, 100);
+    const media = segDesvio(0.5, 100);
+    const fraca = segDesvio(0.1, 100);
+    const negativaFraca = segDesvio(-0.2, 100);
+    const semDado = segDesvio(null, 100);
+    expect(forte).toBeLessThan(media);
+    expect(media).toBeLessThan(fraca);
+    expect(negativaFraca).toBe(fraca);
+    expect(fraca).toBeLessThan(semDado);
+    expect(semDado).toBeGreaterThanOrEqual(250);   // medido: p80 ~330 m sem endereço para conferir
+  });
+});
+
+describe('integridade da base (importadores)', () => {
+  it('nenhum logradouro sem ponto (n = 0 / sem coordenada)', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select count(*)::int n from addr_street where n = 0 or lat is null`);
+    expect(r.rows[0].n).toBe(0);
+  });
+
+  it('ruas com letra não se fundem: "PROJETADA D" é outra rua, separada de "PROJETADA"', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select count(*)::int n from addr_street where nome_norm ~ '(^| )D$'`);
+    expect(r.rows[0].n).toBeGreaterThan(0);
+    const fund = await pool.query(`select count(*)::int n from addr_street where nome ~ '(^| )D$' and nome_norm !~ '(^| )D$'`);
+    expect(fund.rows[0].n).toBe(0);
+  });
+
+  it('km de rodovia em metros (km_m) para todo ponto com KM', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select count(*) filter (where km_m is null)::int sem, count(*)::int n,
+        count(*) filter (where km_m <> case when numero < 1000 then numero * 1000 else numero end)::int errado
+        from addr_point where km`);
+    expect(r.rows[0].n).toBeGreaterThan(500);
+    expect([r.rows[0].sem, r.rows[0].errado]).toEqual([0, 0]);
+  });
+
+  it('segmento "cnefe" (conferido) só com correlação >= 0,3; função de orientação reentrante', async () => {
+    const r = await pool.query(`select count(*) filter (where orientacao = 'cnefe' and (orient_r is null or orient_r < 0.3))::int ruim,
+        count(*) filter (where orientacao = 'cnefe')::int conferidos from addr_segment`);
+    expect(r.rows[0].ruim).toBe(0);
+    if (hasCnefe) expect(r.rows[0].conferidos).toBeGreaterThan(50000);
+    // duas chamadas na mesma transação (município sem segmentos: rápido e sem efeito)
+    const c = await pool.connect();
+    try {
+      await c.query('begin');
+      await c.query('select * from addr_segment_orient(9999999)');
+      const again = await c.query('select * from addr_segment_orient(9999999)');
+      expect(again.rows[0].conferidos).toBe(0);
+    } finally {
+      await c.query('rollback');
+      c.release();
+    }
+  });
+
+  it('record_count da camada é o volume da base, não o nº de feições de cobertura', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select distinct on (source) source, record_count, notes from data_layer_runs
+        where layer_id = 'geocoding' and source = 'ibge-cnefe' order by source, imported_at desc`);
+    const n = await pool.query(`select count(*)::int n from addr_point`);
+    expect(r.rows[0].record_count).toBeGreaterThan(0.9 * n.rows[0].n);
+    expect(r.rows[0].notes).toMatch(/^Base: /);
   });
 });
 
@@ -276,6 +373,67 @@ describe('/api/geocode — cascata própria', () => {
     expect(top.precisao).toBe('cep');
     expect(top.desvio_m).toBeGreaterThan(0);
     expect(distM(top, { lat: -23.589029, lon: -46.606135 })).toBeLessThan(1500);
+  });
+
+  it('CEP "coringa" do CNEFE (01001-000, Praça da Sé): não devolve o centroide como precisão de CEP', async () => {
+    if (!hasCnefe) return;
+    const flag = await pool.query(`select confiavel from cep_centroid where cep = 1001000`);
+    expect(flag.rows[0]?.confiavel).toBe(false);
+    // sem ViaCEP: o centroide fica, mas com precisão de município e o desvio real
+    const off = await new CascadeGeocoder(null, false).explain('01001-000');
+    expect(off.results[0].precisao).toBe('municipio');
+    expect(off.results[0].metodo).toBe('centroide_cep_disperso');
+    expect(off.results[0].desvio_m).toBeGreaterThan(1500);
+    // com ViaCEP: logradouro do cadastro dos Correios (Praça da Sé) resolvido na base própria
+    const rs = await geocode('01001-000');
+    expect(rs[0].precisao).not.toBe('cep');
+    const cache = await pool.query(`select found from cep_lookup_cache where cep = 1001000`);
+    if (cache.rows[0]?.found) {
+      expect(rs[0].fonte).toMatch(/^viacep\+/);
+      expect(distM(rs[0], { lat: -23.5503, lon: -46.6340 }), rs[0].label).toBeLessThan(500);
+    }
+  });
+
+  it('"Av. D. Pedro I" resolve na Avenida Dom Pedro I (o CNEFE grava o título DOM)', async () => {
+    if (!hasCnefe) return;
+    const r = await pool.query(`select s.cod_mun, p.numero, p.lat::float8 lat, p.lon::float8 lon
+        from addr_street s join addr_point p on p.street_id = s.id
+       where s.tipo = 'AVENIDA' and s.nome_norm = 'DOM PEDRO I' and s.cod_mun = 3547809 and p.numero is not null and p.km = false
+       order by abs(p.numero - 1000) limit 1`);
+    expect(r.rows.length).toBe(1);
+    const x = r.rows[0];
+    const [top] = await geocode(`Av. D. Pedro I, ${x.numero}, Santo André`);
+    expect(top.logradouro).toMatch(/Dom Pedro I/i);
+    expect(top.precisao).toBe('numero');
+    expect(distM(top, x)).toBeLessThan(30);
+  });
+
+  it('rodovia "km 30" acha os registros do CNEFE gravados em metros (Raposo Tavares, Cotia: 30325 = km 30,325)', async () => {
+    if (!hasCnefe) return;
+    const [top] = await geocode('Rodovia Raposo Tavares km 30, Cotia');
+    expect(top.precisao).toBe('numero_aproximado');
+    expect(top.metodo).toBe('cnefe_km_faixa');
+    expect(top.municipio).toBe('Cotia');
+    expect(distM(top, { lat: -23.599545, lon: -46.894417 })).toBeLessThan(50);   // registro 30325
+    const [exato] = await geocode('Rodovia Raposo Tavares km 30,325, Cotia');
+    expect(exato.precisao).toBe('numero');
+    expect(distM(exato, { lat: -23.599545, lon: -46.894417 })).toBeLessThan(5);
+    const [inteiro] = await geocode('Rodovia Raposo Tavares km 26, Cotia');
+    expect(inteiro.precisao).toBe('numero');
+    expect(distM(inteiro, { lat: -23.597301, lon: -46.86425 })).toBeLessThan(5);
+  });
+
+  it('rodovia "km N,f" sem registro: o km mais próximo até 3 km, com o desvio da diferença; além disso, só a rodovia', async () => {
+    if (!hasCnefe) return;
+    // Raposo Tavares em Cotia tem registros nos km 30,325 / 30,565 / 30,640 / 34 / 36 / 40
+    const [prox] = await geocode('Rodovia Raposo Tavares km 33,5, Cotia');
+    expect([prox.precisao, prox.metodo, prox.desvio_m]).toEqual(['numero_aproximado', 'cnefe_km_proximo', 650]);
+    expect(prox.aviso).toMatch(/km 34\b/);
+    expect(distM(prox, { lat: -23.601439, lon: -46.938332 })).toBeLessThan(5);   // registro do km 34
+    // km 44: o registro mais perto (km 40) fica a 4 km, fora da janela de 3 km → não inventa ponto de km
+    const [longe] = await geocode('Rodovia Raposo Tavares km 44, Cotia');
+    expect(longe.metodo ?? '').not.toMatch(/^cnefe_km/);
+    expect(longe.precisao).toBe('logradouro');
   });
 
   it('CEP de grande usuário (fora do CNEFE) cai no endereço do ViaCEP geocodificado no CNEFE', async () => {

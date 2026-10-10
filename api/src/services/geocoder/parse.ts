@@ -26,6 +26,10 @@ export interface ParsedAddress {
   numero?: number;
   numeroTexto?: string;
   km?: boolean;
+  /** com km: posição em metros ("km 30" = 30000, "km 30,325" = 30325) */
+  kmM?: number;
+  /** com km: o texto trazia a fração ("km 30,5"); sem ela, "km 30" aceita qualquer ponto entre 30,000 e 30,999 */
+  kmFracao?: boolean;
   semNumero?: boolean;
   street?: ParsedStreet;
   bairro?: string;
@@ -43,6 +47,13 @@ export interface ParsedAddress {
 }
 
 const ROAD_PREFIX = new Set([...UF_CODES, 'BR', 'KM', 'SPA', 'SPI', 'SPM', 'RODOVIA']);
+
+/** 30000 → "30"; 30325 → "30,325"; 30500 → "30,5" */
+export function fmtKm(m: number): string {
+  const km = Math.floor(m / 1000);
+  const r = m % 1000;
+  return r ? `${km},${String(r).padStart(3, '0').replace(/0+$/, '')}` : String(km);
+}
 
 export function parseStreet(text: string, canon: Canon): ParsedStreet | undefined {
   const toks = canon.tokens(text);
@@ -77,12 +88,15 @@ export function parseAddress(q: string, canon: Canon, munis: MunicipioIndex): Pa
     s = s.replace(snRe, '$1 , ');
   }
 
-  // km de rodovia ("km 30", "km30,5")
-  const kmM = s.match(/\bkm\s*\.?\s*(\d{1,4})(?:[.,]\d+)?\b/i);
+  // km de rodovia ("km 30", "km30,5", "km 30.325")
+  const kmM = s.match(/\bkm\s*\.?\s*(\d{1,4})(?:[.,](\d{1,3}))?\b/i);
   if (kmM) {
     out.km = true;
     out.numero = Number(kmM[1]);
-    out.numeroTexto = `km ${kmM[1]}`;
+    const frac = kmM[2] ? Number(kmM[2].padEnd(3, '0')) : 0;
+    out.kmM = out.numero * 1000 + frac;
+    out.kmFracao = !!kmM[2];
+    out.numeroTexto = `km ${fmtKm(out.kmM)}`;
     s = s.replace(kmM[0], ' , ');
   }
 
