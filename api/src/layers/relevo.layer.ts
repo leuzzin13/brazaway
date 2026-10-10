@@ -325,7 +325,7 @@ async function traceRoute(base: string, coords: LonLat[], vehicle: Vehicle) {
     if (!shape.length) continue;
     const dropFirst = G.length > 0 && haversineM(G[G.length - 1], shape[0]) < 1;
     const base_ = G.length - (dropFirst ? 1 : 0);
-    G.push(...(dropFirst ? shape.slice(1) : shape));
+    for (let i = dropFirst ? 1 : 0; i < shape.length; i++) G.push(shape[i]); // sem espalhar (pedaço grande estoura a pilha)
     for (const e of (res.edges ?? []) as RawEdge[]) raw.push({ edge: e, b: base_ + e.begin_shape_index, e: base_ + e.end_shape_index });
   }
   const cum = cumulative(G);
