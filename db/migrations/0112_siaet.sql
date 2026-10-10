@@ -11,7 +11,7 @@ create table if not exists siaet_osm_match (
   tileset     text not null,          -- tileset_last_modified do Valhalla (/status)
   geom_hash   text not null,          -- md5 da geometria de entrada (reimportação com outra geometria invalida o cache)
   ok          boolean not null,
-  lines       jsonb,                  -- [[[lon,lat],...], ...] linhas prontas para linear_cost_factors (ida e volta)
+  lines       jsonb,                  -- [[[lon,lat],...], ...] linhas DIRIGIDAS prontas para linear_cost_factors (info.dirs = sentido de cada uma)
   info        jsonb,                  -- way_ids, extensão casada, motivo da falha etc.
   created_at  timestamptz not null default now(),
   primary key (feature_key, mode, tileset)

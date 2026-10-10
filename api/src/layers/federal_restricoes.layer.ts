@@ -907,8 +907,8 @@ const layer: RouteLayer = {
     description: 'Limites de altura, largura, PBT e comprimento por trecho de rodovia federal (SIAET/DNIT, atualização mensal).',
     group: 'restricoes',
     sources: [
-      { name: 'DNIT/SIAET — Restrições definitivas e temporárias por UF', url: 'https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes', license: 'Informação pública DNIT (Res. DNIT 11/2022); portal gov.br CC BY-ND 3.0 — só valores factuais, com citação' },
-      { name: 'DNIT/DNITGeo — SNV (vgeo:vw_snv_rod) e OAEs (vgeo:oae_sgo)', url: 'https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs', license: 'Dado público DNIT, sem licença explícita (AccessConstraints=NONE)' },
+      { name: 'DNIT/SIAET — Restrições definitivas e temporárias por UF', url: 'https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes', license: 'Dado do Poder Executivo federal, livre utilização (Decreto 8.777/2016, art. 4º, red. Decreto 9.903/2019); cadastro oficial (Lei 9.610/98, art. 8º IV e V); portal gov.br CC BY-ND 3.0: só valores factuais, com citação' },
+      { name: 'DNIT/DNITGeo — SNV (vgeo:vw_snv_rod) e OAEs (vgeo:oae_sgo)', url: 'https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs', license: 'Dado público DNIT, livre utilização (Decreto 8.777/2016, art. 4º); WFS sem licença explícita (AccessConstraints=NONE)' },
     ],
     style: { kind: 'line', color: '#dc2626', width: 4, opacity: 0.75, minzoom: 5, icon: '⛔' },
     defaultVisible: false,
@@ -935,14 +935,17 @@ const layer: RouteLayer = {
       type: 'FeatureCollection',
       features: r.rows.map((row) => {
         const p = row.props as SiaetProps;
+        const impedido = p.tipo === 'temporaria' && !naoFederal(p.administracao) && (p.aet_bloqueada ?? []).includes('peso');
         return {
           type: 'Feature' as const, id: row.id, geometry: row.geometry,
           properties: {
             id: row.id, item_id: `siaet:${row.source_id}`, name: row.name,
             'Restrição': p.tipo === 'temporaria' ? 'temporária' : 'definitiva',
+            'Interdição': impedido ? 'trecho impedido para veículo de carga (PBT 0 na temporária)' : null,
             'PBT máx.': lim(p.peso_t, 't'), 'Altura máx.': lim(p.altura_m, 'm'), 'Largura máx.': lim(p.largura_m, 'm'),
             'Comprimento máx.': lim(p.comprimento_m, 'm'),
-            'AET bloqueada': p.aet_bloqueada?.length ? p.aet_bloqueada.join(', ') : null,
+            'AET bloqueada': p.aet_bloqueada?.length ? p.aet_bloqueada.filter((z) => !(impedido && z === 'peso')).join(', ') || null : null,
+            'Jurisdição': p.administracao || null,
             'OAEs no trecho': p.n_oae, 'Ponte': p.oae_unica?.nome ?? null,
             'Trecho': [p.local_inicio, p.local_fim].filter(Boolean).join(' → ') || null,
             'Referência': `SIAET ${p.ref_mes}${p.atualizado_em ? ` (atualizado ${p.atualizado_em})` : ''}`,
@@ -979,7 +982,8 @@ const layer: RouteLayer = {
     for (const { c, res } of results) {
       if (res === 'timeout') { memo.pendentes++; memo.sem_casamento.push(c); continue; }
       if (!res || !res.ok || !res.lines.length) { memo.sem_casamento.push(c); continue; }
-      const n = res.lines.reduce((s, l) => s + l.length, 0);
+      // só contam no orçamento as linhas dos sentidos que têm restrição para o veículo
+      const n = res.lines.reduce((s, l, k) => s + ((res.dirs[k] ? c.byDir[res.dirs[k]] : c.viols).length ? l.length : 0), 0);
       if (n > budget) { memo.sem_casamento.push(c); continue; }
       budget -= n;
       const isBridge = res.info?.modo === 'ponte';
