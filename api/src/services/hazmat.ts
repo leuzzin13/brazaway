@@ -15,8 +15,9 @@
  *    art. 1º: "veículos transportando produtos perigosos") não têm exceção por quantidade. Também não dispensa a LETPP
  *    em São Paulo (Decreto 50.446/2009, art. 5º; FAQ PMSP 2019, itens 32 e 33).
  *  - Regras de trecho por classe (fora de SP): a Portaria SPRF-RJ/PRF 407/2024 (Ponte Rio–Niterói, art. 1º) proíbe só
- *    as classes 1, 2.1, 2.3, 3, 4, 5, 6 e 8 (classe principal, coluna 3 da Relação) e, no parágrafo único, isenta pela
- *    Parte 3 (quantidade limitada, provisões especiais). Ver `trechoRuleDecision`.
+ *    as classes 1, 2.1, 2.3, 3, 4, 5, 6 e 8 (classe principal, coluna 3 da Relação, ou risco subsidiário na lista, pelo
+ *    lado conservador) e, no parágrafo único, isenta pela Parte 3 (quantidade limitada, provisões especiais). Ver
+ *    `trechoRuleDecision`.
  */
 import type { Vehicle } from './vehicle.js';
 
@@ -305,23 +306,28 @@ export function classesOutside(ruleClasses: readonly string[]): string[] {
 }
 
 export interface ClassRuleCheck {
-  /** a regra alcança a carga (sem nº ONU ou com nº ONU fora da Relação, alcança: lado conservador) */
+  /** a regra alcança a carga (sem nº ONU, com nº ONU fora da Relação ou com risco subsidiário na lista: lado conservador) */
   applies: boolean;
-  /** 'todas' = regra sem lista; 'proibida' = alguma classe da carga está na lista; 'liberada' = nenhuma está */
-  basis: 'todas' | 'proibida' | 'liberada' | 'sem_onu' | 'desconhecido';
+  /**
+   * 'todas' = regra sem lista; 'proibida' = alguma classe principal da carga está na lista; 'subsidiario' = nenhuma
+   * classe principal está, mas algum risco subsidiário está; 'liberada' = nem classe nem risco subsidiário na lista
+   */
+  basis: 'todas' | 'proibida' | 'subsidiario' | 'liberada' | 'sem_onu' | 'desconhecido';
   /** classes da carga (coluna 3; um nº ONU pode ter mais de uma linha) */
   loadClasses: string[];
   /** classes da carga que a lista da regra alcança */
   matched: string[];
-  /** riscos subsidiários da carga que estão na lista: não decidem (a regra fala em classe), só entram no aviso */
+  /** riscos subsidiários da carga (coluna 4) que estão na lista */
   subsidiaryHits: string[];
 }
 
 /**
  * A regra por classe alcança a carga? A Portaria SPRF-RJ/PRF 407/2024 (art. 1º) fala em "produtos perigosos
- * relacionados nas classes indicadas", da Parte 2 (classificação) da Res. ANTT 5.998/2022: vale a classe ou subclasse
- * de risco principal (coluna 3 da Relação), não o risco subsidiário. Carga com vários produtos: basta um na lista.
- * `ruleClasses` null/vazio = todas as classes.
+ * relacionados nas classes indicadas", da Parte 2 (classificação) da Res. ANTT 5.998/2022. Decide a classe ou subclasse
+ * de risco principal (coluna 3 da Relação) e, quando ela fica de fora, o risco subsidiário (coluna 4): a pesquisa
+ * (perigosos_fora_sp, recomendação P1 a) manda aplicar a regra "quando a carga tem classe ou risco subsidiário listado",
+ * pelo lado conservador (ex.: oxigênio comprimido, ONU 1072, é 2.2 com risco subsidiário 5.1). Carga com vários
+ * produtos: basta um na lista. `ruleClasses` null/vazio = todas as classes.
  */
 export function classRuleApplies(ruleClasses: readonly string[] | null | undefined, uns: string[]): ClassRuleCheck {
   const empty = { loadClasses: [] as string[], matched: [] as string[], subsidiaryHits: [] as string[] };
@@ -341,6 +347,7 @@ export function classRuleApplies(ruleClasses: readonly string[] | null | undefin
   const matched = loadClasses.filter(hit);
   const subsidiaryHits = subs.filter(hit);
   if (matched.length) return { applies: true, basis: 'proibida', loadClasses, matched, subsidiaryHits };
+  if (subsidiaryHits.length) return { applies: true, basis: 'subsidiario', loadClasses, matched, subsidiaryHits };
   if (unknown) return { applies: true, basis: 'desconhecido', loadClasses, matched, subsidiaryHits };
   return { applies: false, basis: 'liberada', loadClasses, matched, subsidiaryHits };
 }
@@ -365,24 +372,30 @@ export interface TrechoRuleProps {
   classes_proibidas?: string[] | null;
   /** a norma isenta pela Parte 3 da Res. ANTT 5.998/2022 (quantidade limitada, provisões especiais) */
   isencao_qtd_limitada?: boolean;
-  /** false = registrada e nunca aplicada (vigência não confirmada, confiança baixa) */
+  /** false = registrada e nunca aplicada (confiança baixa ou não verificável) */
   ativa?: boolean;
   situacao?: string;
 }
+/** Situações de ato que nunca é aplicado, mesmo com `ativa` ausente. */
+const SITUACOES_SEM_EFEITO = new Set(['revogada', 'suspensa', 'sem_efeito']);
 export type TrechoDecisionCode = 'aplicada' | 'inativa' | 'classe_liberada' | 'qtd_limitada' | 'nao_sujeito' | 'excecao';
 export interface TrechoDecision { applies: boolean; code: TrechoDecisionCode; classCheck: ClassRuleCheck }
 
 /**
- * A proibição do trecho vale para este veículo? Ordem: regra inativa (ou suspensa/revogada) nunca vale; classe fora da
- * lista; isenção da Parte 3 só onde a norma a prevê (Portaria 407/2024 art. 1º parágrafo único — não nas portarias do
- * DER-SP nem na Res. SMTR 2.204/2012); exceção própria da norma já conferida por quem chama (`exceptionOk`, ex.: Mocanguê).
+ * A proibição do trecho vale para este veículo? Ordem: regra inativa (ou suspensa/revogada/sem efeito) nunca vale;
+ * classe fora da lista; isenção da Parte 3 só onde a norma a prevê (Portaria 407/2024 art. 1º parágrafo único — não nas
+ * portarias do DER-SP nem na Res. SMTR 2.204/2012); exceção própria da norma já conferida por quem chama
+ * (`exceptionOk`, ex.: Mocanguê).
+ *
+ * Quantidade limitada só com peso bruto POSITIVO: 0 kg é o veículo vazio não limpo nem descontaminado, que segue a
+ * proibição (Portaria 407/2024, art. 3º; o verify.json da pesquisa manda tratá-lo como proibido).
  */
 export function trechoRuleDecision(p: TrechoRuleProps, hz: HazmatVehicleInfo, exceptionOk = false): TrechoDecision {
   const classCheck = classRuleApplies(p.classes_proibidas, hz.uns);
-  if (p.ativa === false || p.situacao === 'revogada' || p.situacao === 'suspensa') return { applies: false, code: 'inativa', classCheck };
+  if (p.ativa === false || SITUACOES_SEM_EFEITO.has(String(p.situacao))) return { applies: false, code: 'inativa', classCheck };
   if (!classCheck.applies) return { applies: false, code: 'classe_liberada', classCheck };
   if (p.isencao_qtd_limitada && hz.notSubject) return { applies: false, code: 'nao_sujeito', classCheck };
-  if (p.isencao_qtd_limitada && hz.lqExempt) return { applies: false, code: 'qtd_limitada', classCheck };
+  if (p.isencao_qtd_limitada && hz.lqExempt && (hz.grossKg ?? 0) > 0) return { applies: false, code: 'qtd_limitada', classCheck };
   if (exceptionOk) return { applies: false, code: 'excecao', classCheck };
   return { applies: true, code: 'aplicada', classCheck };
 }

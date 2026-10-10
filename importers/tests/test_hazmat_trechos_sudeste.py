@@ -61,12 +61,18 @@ class RegrasConferidas(unittest.TestCase):
         self.assertTrue(lv['ativa'])
         self.assertEqual(lv['selecao']['excluir_municipios_ibge'], ['3301702'])   # só o trecho do Rio
 
-    def test_terceira_ponte_desativada_com_razao(self):
+    def test_terceira_ponte_ativa(self):
+        # pesquisa: confiança 'alta'; verify.json: 'confirmed' (PDF lido; o DER-ES ainda lista a IS). Só confiança
+        # baixa/unverifiable entra desativada: a dúvida sobre a vigência depois de 2023 fica em nota_vigencia
         t = RULES['ES-TERCEIRA-PONTE']
-        self.assertFalse(t['ativa'])
-        self.assertEqual(t['situacao'], 'vigencia_nao_confirmada')
-        self.assertRegex(t['motivo_inativa'], r'Vigência não confirmada')
-        self.assertTrue(t['aviso_inativa'])
+        self.assertTrue(t['ativa'])
+        self.assertEqual((t['situacao'], t['confianca']), ('vigente', 'alta'))
+        self.assertEqual(t['norma'], 'Instrução de Serviço DERTES nº 021-N/2004')
+        self.assertEqual(t['artigo'], "art. 1º, g, e 'Horários', item 2")
+        self.assertIsNone(t['classes_proibidas'])          # "Todos veículos transportando produtos perigosos"
+        self.assertFalse(t['isencao_qtd_limitada'])
+        self.assertRegex(t['nota_vigencia'], r'DER-ES')
+        self.assertNotIn('motivo_inativa', t)
 
     def test_baixa_confianca_e_revogadas_nunca_ativas(self):
         for r in CFG['regras']:
@@ -74,8 +80,11 @@ class RegrasConferidas(unittest.TestCase):
                 self.assertFalse(r['ativa'], r['id'])
         for r in CFG['registradas']:
             self.assertTrue(r.get('motivo_inativa') or r.get('revogacao'), r['id'])
-            if r['situacao'] == 'revogada':
+            if r['situacao'] in ('revogada', 'sem_efeito'):
                 self.assertTrue(r.get('valid_to'), r['id'])
+        # verify.json: a 5.936/2021 é "Alteradora" no ANTTlegis, não revogada (o efeito caiu com a 1.713)
+        self.assertEqual(REG['RES-ANTT-5936-2021']['situacao'], 'sem_efeito')
+        self.assertEqual(REG['RES-ANTT-1713-2006']['situacao'], 'revogada')
         # Lei Rio 2.959/1999: publicação corrigida pelo verify.json (DCM 03/01/2000, não 01/03/2000)
         self.assertIn('DCM 03/01/2000', REG['RJ-RIO-LEI-2959']['publicacao'])
 
@@ -91,6 +100,15 @@ class RegrasConferidas(unittest.TestCase):
         self.assertTrue(ok('RJ-RIO-LINHA-VERMELHA', 'Via Expressa Presidente João Goulart'))
         self.assertFalse(ok('RJ-RIO-LINHA-VERMELHA', 'Linha Amarela'))
         self.assertTrue(ok('ES-TERCEIRA-PONTE', 'Ponte Deputado Darcy Castello de Mendonça'))
+
+
+class Recasamento(unittest.TestCase):
+    def test_props_osm_guarda_o_costing_da_selecao(self):
+        # a API recasa com este costing quando o tileset muda; com 'truck' a Linha Vermelha (hgv=no) não casa
+        self.assertEqual(imp.osm_props(1, RULES['RJ-RIO-LINHA-VERMELHA']['selecao']), {'tileset': 1, 'geom': True, 'costing': 'auto'})
+        self.assertEqual(imp.osm_props(1, RULES['RJ-AV-PORTUARIA']['selecao'])['costing'], 'truck')
+        for r in CFG['regras']:
+            self.assertIn(r['selecao'].get('costing'), ('auto', 'truck'), r['id'])
 
 
 class Encadeamento(unittest.TestCase):

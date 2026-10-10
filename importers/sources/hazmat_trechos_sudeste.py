@@ -1,9 +1,9 @@
 """Trechos proibidos para produtos perigosos (PP) fora de SP: Ponte Rio–Niterói e Av. Portuária (Portaria SPRF-RJ/PRF
-407/2024), Linha Vermelha (Res. SMTR 2.204/2012) e Terceira Ponte (IS DERTES 021-N/2004, registrada DESATIVADA).
+407/2024), Linha Vermelha (Res. SMTR 2.204/2012) e Terceira Ponte (IS DERTES 021-N/2004).
 
 Regras: data/raw/hazmat/trechos_sudeste_pp.json (curado; cada regra conferida no texto do ato — ver docs/layers/perigosos.md,
 seção 7). Cada regra traz as classes proibidas (null = todas), se a isenção da Parte 3 da Res. ANTT 5.998/2022 vale, a
-situação (vigente, vigência não confirmada...) e `ativa`. A API (perigosos.layer.ts) decide por veículo: classe ONU,
+situação (vigente, revogada, sem efeito...) e `ativa`. A API (perigosos.layer.ts) decide por veículo: classe ONU,
 quantidade limitada, exceção de Mocanguê; regra inativa nunca é aplicada, só avisada.
 
 Como as vias são encontradas (sem Overpass e sem PBF):
@@ -50,7 +50,7 @@ LOCATE_RADIUS_M = 40
 # props da regra copiadas para cada pedaço de via
 RULE_KEYS = ('uf', 'municipios', 'jurisdicao', 'orgao', 'via', 'trecho_norma', 'sentidos', 'regra', 'classes_proibidas', 'janela',
              'isencao_qtd_limitada', 'isencao_texto', 'excecoes', 'penalidade', 'norma', 'artigo', 'publicacao', 'vigencia', 'url',
-             'confianca', 'situacao', 'ativa', 'motivo_inativa', 'aviso_inativa', 'nota', 'excecao_mocangue')
+             'confianca', 'situacao', 'ativa', 'motivo_inativa', 'aviso_inativa', 'nota', 'nota_vigencia', 'excecao_mocangue')
 
 
 def strip_accents(s: str) -> str:
@@ -177,6 +177,13 @@ def pieces_of(es: list[dict], chain: list[int]):
     return out
 
 
+def osm_props(tileset, sel: dict) -> dict:
+    """props.osm de cada pedaço. A geometria é o próprio traçado casado (vértices das arestas do Valhalla, sentido do
+    tráfego: `geom`). `costing` é o da seleção: a API recasa com ele quando o tileset muda (a Linha Vermelha, com
+    hgv=no, não casa com 'truck' no trace_route)."""
+    return {'tileset': tileset, 'geom': True, 'costing': sel.get('costing', 'auto')}
+
+
 def rule_lines(rule: dict, notes: list[str]):
     """Pedaços (traçado exato da malha, sentido do tráfego) das vias de uma regra."""
     from pyproj import Transformer
@@ -256,8 +263,7 @@ def fetch():
                     'regra_id': rule['id'], **base, 'nomes_osm': names[:4], 'alca': uses == {'ramp'},
                     'comprimento_m': round(plen), 'ponto_medio': coords[len(coords) // 2], 'ponto_ref': ref,
                     'geometria_fonte': f"OSM via tiles do Valhalla (vias com o nome da regra; {rule['selecao']['nome']})",
-                    # o traçado da geometria é o próprio traçado casado (vértices das arestas do Valhalla, sentido do tráfego)
-                    'osm': {'tileset': tileset, 'geom': True},
+                    'osm': osm_props(tileset, rule['selecao']),
                 },
                 'valid_from': rule.get('valid_from'), 'valid_to': rule.get('valid_to'),
             })
