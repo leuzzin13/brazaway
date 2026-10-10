@@ -33,6 +33,7 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
     vehicle.hazmat && `perigoso${vehicle.hazmat_un ? ` ONU ${vehicle.hazmat_un}` : ''}`,
     vehicle.powertrain && vehicle.powertrain !== 'diesel' && POWER.find(([k]) => k === vehicle.powertrain)?.[1],
     vehicle.manufacture_year && String(vehicle.manufacture_year),
+    vehicle.employment && (vehicle.employment === 'autonomous' ? 'autônomo' : 'CLT'),
   ].filter(Boolean) as string[];
 
   // avisos curtos e acionáveis (a API devolve os oficiais em vehicle.legal_notes)
@@ -108,6 +109,14 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
             <div className="field"><label>Ano de fabricação</label>
               <input type="number" inputMode="numeric" min={1950} max={year + 1} placeholder="ex.: 2018" value={vehicle.manufacture_year ?? ''}
                 onChange={(e) => set({ manufacture_year: e.target.value ? Number(e.target.value) : undefined })} />
+            </div>
+            <div className="field" title="Limite de jornada: CLT art. 235-C só para empregado; CTB art. 67-C para todos">
+              <label>Vínculo do motorista</label>
+              <select value={vehicle.employment ?? ''} onChange={(e) => set({ employment: (e.target.value || undefined) as Vehicle['employment'] })}>
+                <option value="">Não informado</option>
+                <option value="employee">Empregado (CLT)</option>
+                <option value="autonomous">Autônomo (TAC)</option>
+              </select>
             </div>
             {vehicle.hazmat && (
               <div className="field"><label>Nº ONU</label>
