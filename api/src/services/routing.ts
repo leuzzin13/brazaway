@@ -213,6 +213,13 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
 
   const excludePolygons = exclusions.flatMap((e) => e.rings);
   const base = { origin: req.origin, destination: req.destination, vehicle, departureLocal };
+  // Trechos penalizados que o Valhalla não consegue casar com o grafo ("Failed to edge walk line feature") derrubariam a
+  // rota inteira. Os já conhecidos saem antes; um novo é achado por busca binária, descartado com aviso e lembrado.
+  const knownBad = costLines.filter((c) => BAD_COST_LINES.has(costLineKey(c)));
+  if (knownBad.length) {
+    costLines.splice(0, costLines.length, ...costLines.filter((c) => !BAD_COST_LINES.has(costLineKey(c))));
+    noteDroppedLines(knownBad, warnings);
+  }
   const restrictedOpts = { ...base, excludePolygons, costLines: costLines.map((c) => ({ coordinates: c.coordinates, factor: c.factor })) };
   const hasRestrictions = exclusions.length > 0 || costLines.length > 0;
   let freeCache: Promise<valhalla.ValhallaRouteResult | null> | null = null;
@@ -221,7 +228,17 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   // 3) Rota restrita
   let restricted: valhalla.ValhallaRouteResult;
   try {
-    restricted = await timed(timings, 'valhalla:restrita', () => valhalla.route(restrictedOpts));
+    try {
+      restricted = await timed(timings, 'valhalla:restrita', () => valhalla.route(restrictedOpts));
+    } catch (e) {
+      if (!isEdgeWalkError(e) || !costLines.length) throw e;
+      const bad = await findBadCostLines(costLines, (ls) => valhalla.route({ ...base, excludePolygons, costLines: ls.map((c) => ({ coordinates: c.coordinates, factor: c.factor })) }));
+      for (const b of bad) BAD_COST_LINES.add(costLineKey(b));
+      costLines.splice(0, costLines.length, ...costLines.filter((c) => !bad.includes(c)));
+      noteDroppedLines(bad, warnings);
+      restrictedOpts.costLines = costLines.map((c) => ({ coordinates: c.coordinates, factor: c.factor }));
+      restricted = await timed(timings, 'valhalla:restrita', () => valhalla.route(restrictedOpts));
+    }
   } catch (e) {
     if (!(e instanceof NoRouteError)) throw e;
     // Descobrir quem bloqueou: rota livre e interseção com as exclusões
@@ -443,6 +460,38 @@ async function timed<T>(t: Record<string, number> | null, key: string, fn: () =>
   if (!t) return fn();
   const t0 = performance.now();
   try { return await fn(); } finally { t[key] = Math.round((t[key] ?? 0) + performance.now() - t0); }
+}
+
+/** Trechos penalizados que já falharam no edge walk do Valhalla (por processo; somem num restart ou tileset novo). */
+const BAD_COST_LINES = new Set<string>();
+function costLineKey(c: LayerCostLine): string {
+  const a = c.coordinates[0], b = c.coordinates[c.coordinates.length - 1];
+  return `${c.item.layer}|${c.item.id}|${c.coordinates.length}|${a?.join(',')}|${b?.join(',')}`;
+}
+function isEdgeWalkError(e: unknown): boolean {
+  return /edge walk/i.test(String((e as Error)?.message ?? ''));
+}
+/** Busca binária: devolve as linhas que, sozinhas, fazem o Valhalla recusar o pedido por edge walk. */
+async function findBadCostLines(lines: LayerCostLine[], attempt: (ls: LayerCostLine[]) => Promise<unknown>): Promise<LayerCostLine[]> {
+  const ok = async (ls: LayerCostLine[]) => {
+    try { await attempt(ls); return true; } catch (e) { if (isEdgeWalkError(e)) return false; return true; } // sem rota etc. não é culpa da linha
+  };
+  const rec = async (ls: LayerCostLine[]): Promise<LayerCostLine[]> => {
+    if (!ls.length || await ok(ls)) return [];
+    if (ls.length === 1) return ls;
+    const mid = ls.length >> 1;
+    return [...await rec(ls.slice(0, mid)), ...await rec(ls.slice(mid))];
+  };
+  return rec(lines);
+}
+function noteDroppedLines(bad: LayerCostLine[], warnings: Warning[]) {
+  const byLayer = new Map<string, LayerCostLine[]>();
+  for (const b of bad) byLayer.set(b.item.layer, [...(byLayer.get(b.item.layer) ?? []), b]);
+  for (const [layer, ls] of byLayer) {
+    console.warn(`[rota] ${ls.length} trecho(s) da camada ${layer} não casam com o grafo do Valhalla e foram ignorados: ${ls.slice(0, 5).map((l) => l.item.id).join(', ')}`);
+    warnings.push({ code: 'cost_line_ignored', layer, severity: 'info',
+      message: `${ls.length} trecho(s) da camada "${layer}" não casaram com o mapa e não foram considerados nesta rota (${ls.slice(0, 3).map((l) => l.item.name ?? l.item.id).join('; ')}).` });
+  }
 }
 
 function closeRing(r: [number, number][]): [number, number][] {

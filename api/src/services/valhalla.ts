@@ -32,11 +32,14 @@ interface Opts {
  * weight,axle_load,axle_count,hazmat}; exclude_polygons = [[[lon,lat],...],...];
  * date_time = {type:1 (departure), value:"YYYY-MM-DDThh:mm"}.
  */
-/** Remove vértices consecutivos iguais (após arredondar a 6 casas, a precisão em que as camadas trafegam). */
+/**
+ * Remove vértices consecutivos repetidos (comparação exata, SEM arredondar: arredondar tira do eixo linhas que as
+ * camadas validaram com mais casas, como as de altura_osm). As geometrias servidas pelo PostGIS com 6 casas podem trazer
+ * vértices iguais depois do arredondamento delas, e o Valhalla recusa a linha inteira por isso.
+ */
 export function dedupeCoords(cs: [number, number][]): [number, number][] {
   const out: [number, number][] = [];
-  for (const [x, y] of cs) {
-    const p: [number, number] = [Math.round(x * 1e6) / 1e6, Math.round(y * 1e6) / 1e6];
+  for (const p of cs) {
     const last = out[out.length - 1];
     if (!last || last[0] !== p[0] || last[1] !== p[1]) out.push(p);
   }
