@@ -47,7 +47,7 @@ export function MapView(p: MapViewProps) {
       zoom: 11,
       attributionControl: false,
     });
-    m.addControl(new maplibregl.AttributionControl({ compact: false, customAttribution: '© OpenStreetMap contributors · Tiles OpenFreeMap' }), 'bottom-right');
+    m.addControl(new maplibregl.AttributionControl({ compact: false, customAttribution: '© OpenStreetMap contributors · Tiles OpenFreeMap · Endereços: IBGE – CNEFE 2022' }), 'bottom-right');
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     m.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), 'top-right');
     m.on('load', () => {

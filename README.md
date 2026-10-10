@@ -160,7 +160,7 @@ web/              React + Vite + MapLibre
 | `DELETE` | `/api/reports/:id?device_id=` | remove reporte próprio |
 | `GET` | `/api/zones` | FeatureCollection das zonas de restrição |
 | `GET` | `/api/rest-stops?bbox=` | pontos de descanso/apoio (OSM) |
-| `GET` | `/api/geocode?q=` | Photon (público) atrás da interface `Geocoder` |
+| `GET` | `/api/geocode?q=` | geocodificador próprio (CNEFE/IBGE, GeoSampa, CEPs; Photon só para POI) atrás da interface `Geocoder`; cada resultado traz `precisao` e `desvio_m` (`docs/layers/geocoding.md`) |
 
 Tipos de reporte: `low_clearance` (m), `weight_limit` (t), `length_limit` (m), `truck_ban`,
 `hazmat_ban`, `road_closed`, `steep_grade` (t = peso máx. que vence a subida).
@@ -222,3 +222,4 @@ O schema usa só Postgres + PostGIS + `pgcrypto` (`gen_random_uuid`), todos disp
 - Geofabrik: https://download.geofabrik.de/south-america/brazil.html
 - GeoSampa WFS: https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs
 - OpenFreeMap: https://openfreemap.org · Photon: https://photon.komoot.io
+- Endereços: IBGE, Censo Demográfico 2022 — CNEFE (https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/) · CEPs: ipea/padronizacao_cnefe · ViaCEP: https://viacep.com.br

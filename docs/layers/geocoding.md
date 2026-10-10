@@ -18,9 +18,9 @@ real deve estar. Os níveis, do melhor para o pior:
 | `precisao` | De onde vem | `desvio_m` típico |
 |---|---|---|
 | `numero` | o número existe no CNEFE (ponto coletado em campo pelo recenseador) | 10–60 m, conforme `NV_GEO_COORD` |
-| `numero_aproximado` | interpolado entre os vizinhos do CNEFE no mesmo logradouro (mesma paridade). Na capital, também pela faixa par/ímpar do segmento do GeoSampa; fica o de menor desvio estimado | 15–150 m |
+| `numero_aproximado` | interpolado entre os vizinhos do CNEFE no mesmo logradouro (mesma paridade). Na capital, também pela faixa par/ímpar do segmento do GeoSampa; fica o de menor desvio estimado. Rodovia "km N" sem registro exato: registro com KM na faixa digitada ou o mais próximo | 15–150 m (segmento sem conferência: 250 m ou mais) |
 | `logradouro` | só a rua: o endereço real mais central, filtrado pelo bairro ou CEP digitado. Inclui "s/n" | 40 m a alguns km |
-| `cep` | centroide do CEP (IPEA/CNEFE). CEP de grande usuário (`-9xx`) vai ao ViaCEP para obter logradouro e número, que depois passam pela cascata | o desvio da fonte |
+| `cep` | centroide do CEP (IPEA/CNEFE), só quando ele é confiável (ver abaixo). CEP de grande usuário (`-9xx`) e CEP com centroide não confiável vão ao ViaCEP para obter logradouro e número, que depois passam pela cascata | o desvio da fonte |
 | `bairro` | endereço mais central do bairro (`DSC_LOCALIDADE` do CNEFE) | centenas de m |
 | `municipio` | ponto interno do polígono do município (IBGE) | km |
 | `poi` | lugar com nome do OpenStreetMap, via Photon | pela extensão do objeto |
@@ -45,7 +45,18 @@ O formato antigo (`label`, `lat`, `lon`) continua igual, e a interface `Geocoder
   estabelecimentos "s/n" do CNEFE naquela via, com prioridade para terminal, CD, armazém etc. Exemplo: em
   "Av. Santos Dumont, s/n, Guarujá" aparecem os terminais do porto. Se a busca trouxer o nome
   ("Santos Brasil, Av. Santos Dumont, s/n, Guarujá"), o estabelecimento mais parecido vem primeiro.
-- **Rodovia "km N"** usa o ponto do CNEFE com modificador `KM` mais próximo, até 3 km de diferença.
+- **Rodovia "km N"**: o CNEFE grava o km no número com modificador `KM`, mas em duas unidades: km inteiro (26, 27,
+  34) e km×1000 + metros (25345 = km 25,345; 13,6% dos registros com KM). O importador grava `addr_point.km_m` em
+  metros (número < 1000 → ×1000; senão já está em metros). "km 30" aceita qualquer registro de 30,000 a 30,999
+  (`metodo: cnefe_km_faixa`) e, sem ele, o mais próximo até 3 km (`cnefe_km_proximo`); o desvio é 150 m + a diferença.
+  "km 30,325" (com fração) procura o ponto exato e sai como `numero` quando ele existe.
+- **CEP com centroide não confiável.** O CNEFE usa alguns CEPs como "coringa": 01001-000 (Praça da Sé) tem 6.973
+  endereços em 103 bairros, e o centroide fica a 4,8 km da praça (desvio de 21,6 km). `cep_centroid.confiavel` é
+  falso quando o desvio passa de 1.500 m e o CEP não é o CEP geral do município (sufixo `000` com pelo menos metade
+  dos endereços do município, isto é, município de CEP único). São 36.975 CEPs no Brasil (1.013 na capital). Nesses
+  casos a API consulta o ViaCEP (com cache) e resolve o logradouro na base própria (01001-000 → Praça da Sé, a menos
+  de 100 m). Sem ViaCEP, ou sem logradouro resolvido, devolve o centroide com `precisao: 'municipio'`,
+  `metodo: 'centroide_cep_disperso'` e o desvio real, nunca como `cep`.
 - **Números por extenso**: "Rua 25 de Março" encontra "RUA VINTE E CINCO DE MARCO", que é como o CNEFE grava, e
   vice-versa. "1º de Maio" encontra "PRIMEIRO DE MAIO".
 - **Photon** só é chamado quando a base própria não resolveu bem: POI, nome de lugar ou número não encontrado.
@@ -58,8 +69,8 @@ O formato antigo (`label`, `lat`, `lon`) continua igual, e a interface `Geocoder
 - `photon_puro`: comportamento antigo, só Photon, sem bbox e sem validação.
 
 O valor `photon` passou a significar a cascata para não exigir mudança no compose. Ele "mantém o Photon" para POI.
-**Sugestão para quem mantém o README/compose:** trocar o padrão para `cascata` e atualizar a linha de `/api/geocode`
-no README. Essas edições ficaram fora desta frente.
+O README já descreve `/api/geocode` como a cascata própria. O padrão do `docker-compose.yml` continua `photon`
+(equivale a `cascata`); trocar o nome no compose é só cosmético e ficou de fora.
 
 Outras variáveis:
 - `PHOTON_URL` e `PHOTON_TIMEOUT_MS` (3500).
@@ -105,6 +116,10 @@ docker compose --profile import run --rm importer cep_ipea --no-seed
 # 5) GeoSampa, segmentos com faixa de numeração (capital). SEM seed:
 docker compose --profile import run --rm importer geosampa_logradouro --no-seed
 ```
+
+Como esses importadores devolvem ao runner só a cobertura, eles informam o volume real em `RECORD_COUNT`
+(`importers/run.py` passa para `data_layer_runs.record_count`): pontos em `addr_point`, CEPs em `cep_centroid` e
+segmentos em `addr_segment`. As notas começam pelo total da base ("Base: …"); a carga parcial vem depois.
 
 **Não rode os passos 3–5 sem `--no-seed`, e não versione** `db/seed/layers/geocoding__ibge-cnefe.sql`,
 `geocoding__ipea-cep.sql` ou `geocoding__geosampa-segmentos.sql`. Esses importadores gravam direto nas tabelas
@@ -154,10 +169,22 @@ no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de 
   | Santos | 9 m | 31 m | 72 m |
 
   O p95 (116–447 m) vem de homônimos e de numeração irregular.
-- **Segmentos do GeoSampa**: a mediana é de 16–20 m nos segmentos conferidos pelo CNEFE. Nos não conferidos, que
-  não têm endereço do CNEFE a até 40 m, a mediana é de cerca de 230 m: ali a numeração do cadastro municipal e a do
-  IBGE divergem. Por isso o desvio estimado é maior para esses segmentos, e a API prefere o CNEFE quando os dois
-  discordam.
+- **Segmentos do GeoSampa**: `addr_segment_orient()` mede, para cada segmento, a correlação `r` entre o número e a
+  posição ao longo da linha dos endereços do CNEFE a até 40 m (`orient_r`, `orient_n`). Só vira `orientacao = 'cnefe'`
+  (conferido) com `r >= 0,3` depois da eventual inversão; com `|r| < 0,3` o CNEFE não confirma nada e o segmento fica
+  `vizinhos`. O desvio informado sai de `r` e do comprimento (`segDesvio()` em `cnefe.ts`), calibrado contra 16 mil
+  endereços do CNEFE na capital:
+
+  | correlação | n | erro p50 | erro p80 | desvio informado |
+  |---|---|---|---|---|
+  | `r >= 0,7` | 9.945 | 11 m | 33 m | 12 m + 0,2 × comprimento |
+  | `0,3 <= r < 0,7` | 1.727 | 34 m | 107 m | 30 m + 0,55 × comprimento |
+  | `\|r\| < 0,3` (fraca) | 986 | 46 m | 124 m | 30 m + 0,75 × comprimento |
+  | sem endereço para conferir | 3.548 | 169 m | 331 m | 200 m + comprimento |
+
+  Antes, os de correlação fraca contavam como conferidos e os sem dado recebiam 60 m + 0,5 × comprimento: o desvio
+  saía de 2 a 4 vezes menor que o erro real. Quando o segmento não é conferido e discorda do CNEFE em mais de 300 m,
+  a API fica com a interpolação do CNEFE.
 - Faixa original do GeoSampa: cerca de 30% das linhas vinham desenhadas no sentido contrário ao da numeração.
   O campo `cd_numero_ordem_segmento` também não acompanha a numeração em várias vias. O importador deduz a
   orientação pela sequência de numeração (81% de acerto) e o banco corrige pelos endereços do CNEFE (95%).
@@ -174,6 +201,15 @@ no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de 
 - **Normalização com fonte única.** A tabela `geo_abbrev` (AV→AVENIDA, DR→DOUTOR, JD→JARDIM, preposições removidas…)
   é usada por `geo_canon()` no import e carregada pela API para normalizar a busca do mesmo jeito.
   "S" (São) e "N" (Nossa/nº) ficaram de fora por ambiguidade.
+- **"D" isolado depende do contexto** (`geo_canon()` no SQL e `dWord()` em `normalize.ts`, testados juntos):
+  como último token ou antes de algarismo fica `D` (ruas com letra: "Rua D", "Rua Projetada D", "Viela 6 D");
+  antes de palavra que começa por vogal sai (elisão: "D'Avila", "Olho d'Água", "Santa Bárbara d'Oeste"); antes de
+  consoante vira `DOM` ("Av. D. Pedro I" = "Avenida Dom Pedro I", como o CNEFE grava). A versão anterior apagava
+  todo "D": ruas com letra perdiam a identidade e eram fundidas (ex.: "RUA 1 D" de Guarulhos juntava 402 registros
+  de 6 bairros), e "RUA D" sumia da base. "D. Maria" (Dona) também vira `DOM`; como `DOM` e `DONA` são títulos e
+  ficam fora do núcleo (`core_norm`), "R. D. Maria Paula" ainda casa com "Rua Dona Maria Paula" pelo núcleo.
+  Quem mudar essa regra precisa reaplicar a migration e reimportar `cnefe_enderecos` (as ruas já fundidas não se
+  separam sozinhas); `addr_segment.core_norm` é recalculado pela migration.
 - **Números por extenso** são tratados como variantes na hora da busca, sem reescrever a base.
 - **O ViaCEP só entra para CEP que não está no centroide.** As coordenadas da BrasilAPI e da AwesomeAPI não são
   usadas, conforme a pesquisa: proveniência e licença incertas, e erros de 5–10 km.
@@ -188,8 +224,13 @@ no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de 
   o portão de caminhões. A tabela `site_access` da pesquisa (portarias e acessos colaborativos) não foi feita aqui.
 - O nome de estabelecimento só é usado no "s/n". Não há busca de POI pelo nome do CNEFE; isso fica com o Photon.
 - "Rodovia X, km N" só funciona onde o CNEFE tem registro com `KM`. Os marcos quilométricos (DER/DNIT) são outro tema.
+  A regra de unidade (número < 1000 = km inteiro) erra registros como "158" na Raposo Tavares em São Paulo, que pela
+  posição parece ser km 15,8: vira km 158. O efeito é não achar o ponto (ou achar só pelo mais próximo), nunca mandar
+  para outra rodovia, porque a busca é sempre dentro do logradouro.
+- CEP "coringa" sem ViaCEP (rede fora ou `VIACEP_URL=`) fica só no nível de município. A regra de confiança
+  (1.500 m) é um corte simples: CEP rural legítimo e espalhado também cai nela e passa pelo ViaCEP.
 - Os polígonos de município cobrem só o Sudeste (`GEO_UFS`). Fora deles, a validação do Photon usa o nome da cidade
   e o bbox da UF.
 - O Photon público tem limite de uso. Em produção, auto-hospedar e apontar `PHOTON_URL`.
-- Atribuição no mapa: o front mostra a fonte do ponto escolhido. Falta incluir "Endereços: IBGE – CNEFE 2022" no
-  rodapé de atribuições do mapa, no `MapView.tsx`, que é de outra frente.
+- Atribuição: o front mostra a fonte do ponto escolhido (`PlaceInput.tsx`) e o rodapé do mapa (`MapView.tsx`) traz
+  "Endereços: IBGE – CNEFE 2022".
