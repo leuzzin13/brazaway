@@ -21,6 +21,9 @@ export const VehicleInput = z.object({
   powertrain: z.enum(['diesel', 'electric', 'hybrid', 'gas', 'hydrogen']).optional(),
   hazmat_un: z.string().max(10).optional(),         // número ONU do produto perigoso (4 dígitos; "UN 1203" também é aceito)
   hazmat_local_delivery: z.boolean().optional(),    // perigoso fracionado p/ consumo local (Anexo II da Portaria SMT.GAB 051/2024)
+  hazmat_biodiesel: z.boolean().optional(),         // o ONU 3082 é biodiesel (ABNT NBR 15512): única condição do 3082 no Anexo II da Portaria 051/2024
+  hazmat_qty_kg: z.number().nonnegative().max(100000).optional(), // peso bruto total da carga perigosa (quantidade limitada, Res. ANTT 5.998/2022 Parte 3, 3.4.3.2)
+  rear_axle_count: z.number().int().min(1).max(10).optional(),    // eixos traseiros ("até dois eixos traseiros", Portaria SMT 137/2018 art. 35)
   suspended_axles: z.number().int().min(0).max(6).optional(),
   dual_wheels: z.boolean().optional(),              // rodagem dupla (categoria de pedágio)
   has_toll_tag: z.boolean().optional(),
