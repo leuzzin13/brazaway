@@ -8,7 +8,7 @@ import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
 
 /**
  * Relevo / rampa. Depois da rota, consulta um Valhalla COM elevação (tiles gerados com o ANADEM v1, ver
- * scripts/build-elevation.sh e docs/layers/relevo.md):
+ * scripts/build-elevation.sh e docs/layers/relevo.md; hoje é o próprio Valhalla principal):
  *  - trace_attributes (edge_walk sobre a geometria da rota) → rampa máxima de subida por aresta no sentido do percurso
  *    (edge.max_upward_grade, % arredondado para cima), descida, rampa ponderada, comprimento, way_id, ponte/túnel;
  *  - /height ao longo da mesma linha (a cada 30 m) → perfil, km acima do limite e localização do ponto mais íngreme.
@@ -16,8 +16,8 @@ import type { LayerCostLine, LayerWarning, RouteLayer } from './types.js';
  * de aderência do Anexo III da Resolução CONTRAN 882/2021, ver limitsFor).
  *
  * Não é restrição legal (nenhuma norma proíbe subir X%): os avisos são 'warn' (risco) ou 'info', nunca 'danger'.
- * Valhalla de elevação: VALHALLA_ELEV_URL ou, sem ela, localhost:8003 e depois o principal (VALHALLA_URL) — o primeiro
- * que responde /height com altitude. Se nenhum tiver elevação (ou estiverem fora do ar), a camada simplesmente não anota.
+ * Valhalla de elevação: VALHALLA_ELEV_URL ou, sem ela, o principal (VALHALLA_URL), desde que responda /height com
+ * altitude. Sem elevação (ou fora do ar), a camada simplesmente não anota.
  * Trechos acima do limite "evitar" saem em data.cost_lines_suggested (LayerCostLine no sentido da subida) para uma
  * 2ª rodada de rota; a rota atual não é alterada (ver docs/layers/relevo.md).
  */
@@ -50,9 +50,12 @@ interface GradeConfig {
   max_segment_warnings: number;
 }
 const DEFAULT_CFG: GradeConfig = {
+  // chaves = id do preset em config/vehicle-presets.json (ver config/grade-limits.json)
   presets: {
-    vuc: { warn_pct: 15, avoid_pct: 20, ref_weight_t: 16 }, toco: { warn_pct: 15, avoid_pct: 20, ref_weight_t: 16 },
-    truck: { warn_pct: 12, avoid_pct: 15 }, carreta: { warn_pct: 6, avoid_pct: 8 }, bitrem: { warn_pct: 10, avoid_pct: 12 },
+    utilitario: { warn_pct: 15, avoid_pct: 20, ref_weight_t: 16 }, vuc: { warn_pct: 15, avoid_pct: 20, ref_weight_t: 16 },
+    toco: { warn_pct: 15, avoid_pct: 20, ref_weight_t: 16 }, truck: { warn_pct: 12, avoid_pct: 15 },
+    carreta_5e: { warn_pct: 6, avoid_pct: 8 }, carreta_6e: { warn_pct: 6, avoid_pct: 8, ref_weight_t: 41.5 },
+    romeu_julieta: { warn_pct: 12, avoid_pct: 15, ref_weight_t: 23 }, bitrem: { warn_pct: 10, avoid_pct: 12 },
     rodotrem: { warn_pct: 6, avoid_pct: 9 },
   },
   by_weight: {
@@ -110,9 +113,13 @@ const RR_PCT = 1.1;
  *   (truck 23 t → 30 t: 12/15 → 8,9/11,2). Mais peso também pode pôr mais carga no eixo motriz; a fórmula ignora isso e
  *   fica do lado conservador.
  * - Preset sem entrada na config: faixas de peso (`by_weight`).
+ * Presets derivados de outro (carreta_6e da carreta_5e, romeu_julieta do truck) usam os limites do preset de origem com o
+ * ref_weight_t dele, e caem pela mesma relação até o próprio PBT (carreta_6e 48,5 t: 5/6,7; romeu_julieta 50 t: 4,9/6,3).
  */
 export function limitsFor(v: Vehicle, cfg = gradeConfig()): Limits & { source: 'preset' | 'peso' | 'preset+peso'; ref_weight_t: number | null } {
-  const preset = cfg.presets[v.id];
+  // id do preset; aceita na config também o nome antigo (alias, ex.: "carreta" → carreta_5e)
+  const alias = Object.entries(vehiclePresets.aliases ?? {}).find(([, real]) => real === v.id)?.[0];
+  const preset = cfg.presets[v.id] ?? (alias ? cfg.presets[alias] : undefined);
   if (!preset) {
     const tiers = [...cfg.by_weight.tiers].sort((a, b) => a.max_weight_t - b.max_weight_t);
     const tier = tiers.find((t) => v.weight_t <= t.max_weight_t) ?? tiers[tiers.length - 1];
@@ -129,14 +136,15 @@ export function limitsFor(v: Vehicle, cfg = gradeConfig()): Limits & { source: '
 
 // ------------------------------------------------------------------------------------- disponibilidade/serviço
 /**
- * Qual Valhalla tem elevação: VALHALLA_ELEV_URL se definido ("off" desliga a camada); senão tenta o de elevação local
- * (http://localhost:8003) e o principal (VALHALLA_URL) — assim, depois de trocar o principal pelos tiles com elevação,
- * a camada passa a usá-lo sem configuração. Cada candidato é sondado com /height em pontos da rota (ver hasElevation).
+ * Qual Valhalla tem elevação: VALHALLA_ELEV_URL se definido ("off" desliga a camada); senão o principal (VALHALLA_URL),
+ * cujos tiles já têm a elevação do ANADEM (troca feita em 09/10/2026, ver docs/layers/relevo.md). Um Valhalla de
+ * elevação avulso (ex.: scripts/build-elevation.sh serve, porta 8003, para testar um build novo antes de trocar) só é
+ * usado se apontado em VALHALLA_ELEV_URL. O candidato é sondado com /height em pontos da rota (ver hasElevation).
  */
 function candidates(): string[] {
   const v = process.env.VALHALLA_ELEV_URL?.trim();
   if (v === 'off') return [];
-  const list = v ? [v] : ['http://localhost:8003', env.valhallaUrl];
+  const list = v ? [v] : [env.valhallaUrl];
   return [...new Set(list.map((u) => u.replace(/\/$/, '')))];
 }
 const probes = new Map<string, { ok: boolean; until: number }>();
@@ -215,7 +223,7 @@ const fmtKm = (m: number) => (m / 1000).toLocaleString('pt-BR', { maximumFractio
 /** limite de rampa em pt-BR, até 1 casa ("8", "11,2") */
 const fmtLim = (v: number) => (Math.round(v * 10) / 10).toLocaleString('pt-BR');
 /** mínimo e máximo sem espalhar o array em argumentos (Math.min(...a) estoura a pilha com ~150 mil itens) */
-function minMax(a: ArrayLike<number>): { min: number; max: number } {
+export function minMax(a: ArrayLike<number>): { min: number; max: number } {
   let min = Infinity, max = -Infinity;
   for (let i = 0; i < a.length; i++) { const v = a[i]; if (v < min) min = v; if (v > max) max = v; }
   return { min, max };
@@ -237,6 +245,9 @@ function chunks(coords: LonLat[], cum: number[], maxM = 150_000, maxPts = 12_000
   if (start < coords.length - 1 || out.length === 0) out.push(coords.slice(start));
   return out;
 }
+
+/** tempo máximo do trace_attributes e do /height (ms); RELEVO_TRACE_TIMEOUT_MS muda (testes) */
+const traceTimeoutMs = () => Number(process.env.RELEVO_TRACE_TIMEOUT_MS) || 20_000;
 
 async function pool<T, R>(items: T[], n: number, fn: (t: T, i: number) => Promise<R>): Promise<R[]> {
   const res: R[] = new Array(items.length);
@@ -299,12 +310,12 @@ async function traceRoute(base: string, coords: LonLat[], vehicle: Vehicle) {
   const parts = chunks(coords, cum0);
   const results = await pool(parts, 3, async (part) => {
     try {
-      return await traceAttributesAt(base, part, vehicle, ATTRS, { shapeMatch: 'edge_walk', timeoutMs: 20000 });
+      return await traceAttributesAt(base, part, vehicle, ATTRS, { shapeMatch: 'edge_walk', timeoutMs: traceTimeoutMs() });
     } catch (e) {
       // fora do ar ou lento: não adianta tentar o map_snap (mais lento ainda)
       if (isConnError(e) || isTimeout(e)) throw e;
       // malha diferente da que gerou a rota (ou geometria fora das arestas): tenta casar por proximidade
-      return traceAttributesAt(base, part, vehicle, ATTRS, { shapeMatch: 'map_snap', timeoutMs: 30000 });
+      return traceAttributesAt(base, part, vehicle, ATTRS, { shapeMatch: 'map_snap', timeoutMs: Math.round(traceTimeoutMs() * 1.5) });
     }
   });
   const G: LonLat[] = [];
@@ -314,7 +325,7 @@ async function traceRoute(base: string, coords: LonLat[], vehicle: Vehicle) {
     if (!shape.length) continue;
     const dropFirst = G.length > 0 && haversineM(G[G.length - 1], shape[0]) < 1;
     const base_ = G.length - (dropFirst ? 1 : 0);
-    G.push(...(dropFirst ? shape.slice(1) : shape));
+    for (let i = dropFirst ? 1 : 0; i < shape.length; i++) G.push(shape[i]); // sem espalhar (pedaço grande estoura a pilha)
     for (const e of (res.edges ?? []) as RawEdge[]) raw.push({ edge: e, b: base_ + e.begin_shape_index, e: base_ + e.end_shape_index });
   }
   const cum = cumulative(G);
@@ -526,7 +537,7 @@ const layer: RouteLayer = {
       // /height aceita no máximo service_limits.skadi.max_shape pontos (750 mil); com no máximo 100 mil amostras o
       // passo fica em 30 m até 3.000 km e cresce depois disso
       const step = Math.max(30, Math.ceil(totalM / 100_000));
-      samples = await heightProfileAt(base, traced.G, { resampleDistance: step, timeoutMs: 20000 }).catch((e) => {
+      samples = await heightProfileAt(base, traced.G, { resampleDistance: step, timeoutMs: traceTimeoutMs() }).catch((e) => {
         if (isConnError(e)) throw e;
         // lento ou erro no /height: segue só com as rampas do trace_attributes (sem perfil)
         return [];

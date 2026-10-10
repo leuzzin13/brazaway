@@ -2,7 +2,14 @@
 # Constrói um 2º conjunto de tiles do Valhalla COM elevação (ANADEM v1 -> HGT 1") em data/valhalla_elev/
 # e sobe um Valhalla separado na porta 8003. NÃO toca no Valhalla principal (porta 8002, data/valhalla/).
 #
+# Estado atual (09/10/2026): o principal JÁ roda com estes tiles (troca descrita em docs/layers/relevo.md) e o 8003
+# foi desligado. Este script serve para (a) instalação nova: gerar o conjunto com elevação e depois fazer a troca; (b)
+# montar e testar um conjunto novo (PBF/ANADEM novos) no 8003 antes de trocar; (c) só regenerar os HGT direto na pasta
+# do principal: VALHALLA_ELEV_DIR="$PWD/data/valhalla" ./scripts/build-elevation.sh dem (o rebuild normal do principal
+# usa data/valhalla/elevation_data sozinho; ver docs/layers/relevo.md).
+#
 # Uso:  ./scripts/build-elevation.sh [all|dem|tiles|serve|check|clean]      (default: all = dem + tiles + serve + check)
+#   check: confere o valhalla-elev (8003) se ele estiver rodando; senão, o principal (truck-router-valhalla, 8002)
 #
 # Variáveis (opcionais):
 #   VALHALLA_MAIN_DIR   tiles/PBF do Valhalla principal (default: <repo>/data/valhalla) — só leitura
@@ -30,8 +37,10 @@ PBF_URL="${OSM_PBF_URL:-https://download.geofabrik.de/south-america/brazil/sudes
 LOGS="$ELEV_DIR/logs"
 
 mkdir -p "$ELEV_DIR/elevation_data" "$LOGS"
-# a pasta se ignora sozinha no git (não depende do .gitignore da raiz)
-[ -f "$ELEV_DIR/.gitignore" ] || printf '*\n' > "$ELEV_DIR/.gitignore"
+# a pasta se ignora sozinha no git (não depende do .gitignore da raiz); a do principal já é ignorada pela raiz
+if [ "$(cd "$ELEV_DIR" && pwd)" != "$(cd "$MAIN_DIR" 2>/dev/null && pwd)" ]; then
+  [ -f "$ELEV_DIR/.gitignore" ] || printf '*\n' > "$ELEV_DIR/.gitignore"
+fi
 
 log() { echo "[$(date '+%H:%M:%S')] $*"; }
 record() { # record <etapa> <segundos>
@@ -151,10 +160,14 @@ step_serve() {
 step_check() {
   # /height no Marco Zero (Sé, ~757 m no ANADEM) e rampa máxima da subida da R. Teodoro Sampaio (Pinheiros -> Av. Dr. Arnaldo,
   # ~12% no Valhalla) via route + trace_attributes (edge_walk). Roda dentro do contêiner (curl + jq).
+  # Alvo: o valhalla-elev (8003) se estiver rodando; senão o principal (truck-router-valhalla, VALHALLA_PORT ou 8002).
+  local ctr="truck-router-valhalla-elev" port="$PORT"
+  if ! docker ps --format '{{.Names}}' | grep -qx "$ctr"; then ctr="truck-router-valhalla"; port="${VALHALLA_PORT:-8002}"; fi
+  log "check em $ctr (localhost:$port)"
   log "check /height (Sé):"
-  curl -s "http://localhost:$PORT/height" -d '{"shape":[{"lat":-23.5505,"lon":-46.6339}]}'; echo
+  curl -s "http://localhost:$port/height" -d '{"shape":[{"lat":-23.5505,"lon":-46.6339}]}'; echo
   log "check rampa (R. Teodoro Sampaio, subida):"
-  docker exec truck-router-valhalla-elev bash -c '
+  docker exec "$ctr" bash -c '
     shape=$(curl -s localhost:8002/route -d "{\"locations\":[{\"lat\":-23.5665,\"lon\":-46.6925},{\"lat\":-23.5540,\"lon\":-46.6735}],\"costing\":\"truck\"}" | jq -r ".trip.legs[0].shape")
     curl -s localhost:8002/trace_attributes -d "{\"encoded_polyline\":$(jq -Rn --arg s "$shape" "\$s"),\"costing\":\"truck\",\"shape_match\":\"edge_walk\",\"filters\":{\"attributes\":[\"edge.max_upward_grade\",\"edge.names\"],\"action\":\"include\"}}" \
       | jq -c "[.edges[] | select(.max_upward_grade > -500)] | {arestas: length, rampa_max_pct: (map(.max_upward_grade) | max), via: (max_by(.max_upward_grade).names[0])}"'
