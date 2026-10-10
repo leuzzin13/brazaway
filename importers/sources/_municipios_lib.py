@@ -19,7 +19,7 @@ import re
 import time
 import unicodedata
 
-from common import DATA_DIR, http_get, stable_id
+from common import CACHE_DIR, DATA_DIR, http_get, stable_id
 
 LAYER_ID = 'restricoes_rmsp'
 # caminhos de geometria nos arquivos de município são relativos a data/raw/
@@ -47,19 +47,31 @@ def raw_path(rel: str) -> pathlib.Path:
     return p
 
 
+class GeometriaAusente(RuntimeError):
+    """Geometria que só o import gera (Overpass, malha do IBGE): a validação offline (--validar) não a constrói."""
+
+
 def municipios() -> list[dict]:
-    """Limites curados da RMSP (39 municípios, IBGE qualidade máxima simplificada a ~10 m)."""
+    """Limites curados da RMSP (39 municípios, IBGE qualidade máxima simplificada a ~10 m). Arquivo ausente = [] (o
+    municipio_geom cai na malha do IBGE); a carga 'ibge' (municipios.limites) recusa a lista vazia."""
     p = raw_path(LIMITES_RMSP)
     return json.loads(p.read_text())['features'] if p.exists() else []
 
 
-def municipio_geom(ibge: str):
-    """Limite do município: o curado da RMSP ou, fora dela, a malha do IBGE (API v3, qualidade máxima, com cache)."""
+def municipio_geom(ibge: str, rede: bool = True):
+    """Limite do município: o curado da RMSP ou, fora dela, a malha do IBGE (API v3, qualidade máxima, com cache).
+    `rede=False`: só o curado ou o cache (sem cache, GeometriaAusente)."""
     from shapely.geometry import shape
     for f in municipios():
         if f['properties']['ibge'] == ibge:
             return shape(f['geometry'])
-    d = json.loads(http_get(IBGE_MALHA_URL.format(ibge=ibge), cache=f'municipios/ibge_malha_{ibge}.geojson', max_age_h=24 * 365))
+    cache = f'municipios/ibge_malha_{ibge}.geojson'
+    if not rede:
+        if not (CACHE_DIR / cache).exists():
+            raise GeometriaAusente(f'limite do município {ibge} (malha do IBGE, baixada no import)')
+        d = json.loads((CACHE_DIR / cache).read_text())
+    else:
+        d = json.loads(http_get(IBGE_MALHA_URL.format(ibge=ibge), cache=cache, max_age_h=24 * 365))
     feats = d.get('features') or ([d] if d.get('type') == 'Feature' else [])
     if not feats:
         raise KeyError(f'limite do município {ibge} não encontrado no IBGE')

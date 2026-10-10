@@ -42,6 +42,10 @@ ATUALIZAR = os.environ.get('ATUALIZAR') == '1'
 NOVOS = {'uf', 'confianca', 'status_motivo', 'excecao_destino_local_artigo', 'abrangencia_ibge'}
 
 
+# mudanças intencionais depois dos importadores antigos: desfeitas NOS DOIS LADOS antes do digest "legado"
+LEGADO_IGNORAR: dict = {}
+
+
 class Dirs:
     """Aponta o importador para outra pasta de municípios/data raw durante o teste."""
     def __init__(self, raw: pathlib.Path, municipios: pathlib.Path):
@@ -61,11 +65,13 @@ def precisa_repo(t: unittest.TestCase):
         t.skipTest('data/raw/municipios/schema.json não encontrado: monte o repositório inteiro (ver docstring)')
 
 
-def legado(feats: list[dict]) -> list[dict]:
-    """Forma comparável com a saída dos importadores rmsp_* antigos: sem source_id e sem os campos novos."""
+def legado(feats: list[dict], fonte: str | None = None) -> list[dict]:
+    """Forma comparável com a saída dos importadores rmsp_* antigos: sem source_id, sem os campos novos e sem as mudanças
+    intencionais da fonte (LEGADO_IGNORAR)."""
     out = []
+    ignorar = LEGADO_IGNORAR.get(fonte, lambda p: p)
     for f in feats:
-        p = {k: v for k, v in f['props'].items() if k not in NOVOS and k != 'trevo'}
+        p = ignorar({k: v for k, v in f['props'].items() if k not in NOVOS and k != 'trevo'})
         if p.get('status') == 'vigente':
             p['status'] = 'ativa'
         if 'base_legal' in p:
@@ -285,6 +291,65 @@ class Erros(unittest.TestCase):
             shutil.rmtree(tmp)
 
 
+# ----------------------------------------------------------------------------- validação offline e carga de limites
+def _proibido(*a, **k):
+    raise AssertionError('a validação offline tentou acessar a rede ou gerar geometria')
+
+
+class Offline(unittest.TestCase):
+    """--validar (compilar com construir=False) não acessa a rede nem grava em data/raw; a carga 'ibge' não roda vazia."""
+    @classmethod
+    def setUpClass(cls):
+        if not SCHEMA.exists():
+            raise unittest.SkipTest('schema não encontrado: monte o repositório inteiro (ver docstring)')
+        cls.base = json.loads(FIX_DOC.read_text())
+
+    def setUp(self):
+        self.tmp = pathlib.Path(tempfile.mkdtemp())
+        shutil.copytree(FIX / 'municipios', self.tmp / 'municipios')
+        self.antes = (lib.build_or_load, lib._overpass, lib.http_get, lib.CACHE_DIR)
+        lib.build_or_load = lib._overpass = lib.http_get = _proibido
+        lib.CACHE_DIR = self.tmp / 'cache'
+
+    def tearDown(self):
+        lib.build_or_load, lib._overpass, lib.http_get, lib.CACHE_DIR = self.antes
+        shutil.rmtree(self.tmp)
+
+    def test_trechos_a_gerar_nao_sao_construidos(self):
+        doc = copy.deepcopy(self.base)
+        doc['regras'][1]['geometria'] = [{'arquivo': 'municipios/geo/3599999_a_gerar.geojson', 'construir': 'trechos'}]
+        doc['regras'][1]['trechos'] = [{'inciso': 'I', 'via': ['Avenida Fictícia']}]
+        with Dirs(self.tmp, self.tmp / 'municipios'):
+            with self.assertRaises(lib.GeometriaAusente):
+                m.compilar(doc, construir=False)
+            texto, ok = m._resumo(doc)
+        self.assertTrue(ok)
+        self.assertIn('geometria a gerar no import: data/raw/municipios/geo/3599999_a_gerar.geojson', texto)
+        self.assertFalse((self.tmp / 'municipios' / 'geo' / '3599999_a_gerar.geojson').exists())
+
+    def test_limite_do_ibge_fora_da_rmsp_sem_cache(self):
+        doc = copy.deepcopy(self.base)
+        doc['regras'][0]['geometria'] = [{'municipios': ['3106200']}]          # BH: fora dos limites curados da RMSP
+        with Dirs(self.tmp, self.tmp / 'municipios'):
+            texto, ok = m._resumo(doc)
+        self.assertTrue(ok)
+        self.assertIn('geometria a gerar no import: limite do município 3106200', texto)
+
+    def test_geometria_existente_incoerente_falha(self):
+        doc = copy.deepcopy(self.base)
+        doc['regras'][2]['geometria'][0]['geojson'] = {'type': 'Point', 'coordinates': [-44.79, -24.805]}
+        with Dirs(self.tmp, self.tmp / 'municipios'):
+            texto, ok = m._resumo(doc)
+        self.assertFalse(ok)
+        self.assertIn('geometria inválida', texto)
+
+    def test_limites_sem_arquivo_recusa_carga_vazia(self):
+        with Dirs(self.tmp, self.tmp / 'municipios'):
+            self.assertEqual(lib.municipios(), [])           # o municipio_geom cai na malha do IBGE
+            with self.assertRaisesRegex(FileNotFoundError, 'limites municipais curados ausentes'):
+                m.limites()
+
+
 # ----------------------------------------------------------------------------- arquivos reais
 class Reais(unittest.TestCase):
     @classmethod
@@ -311,7 +376,7 @@ class Reais(unittest.TestCase):
                 if fid in dig['exato'] and fid not in feats:
                     feats[fid] = m.compilar(self.docs[fid])
         for fid, d in dig['legado'].items():
-            self.assertEqual(digest(legado(feats[fid])), d, f'{fid}: conteúdo mudou em relação aos importadores rmsp_* antigos')
+            self.assertEqual(digest(legado(feats[fid], fid)), d, f'{fid}: conteúdo mudou em relação aos importadores rmsp_* antigos')
         novo = {fid: digest(exato(feats[fid])) for fid in dig['exato']}
         if ATUALIZAR:
             dig['exato'] = novo

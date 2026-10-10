@@ -124,30 +124,34 @@ def _construir(doc: dict, r: dict, g: dict) -> dict:
     raise RuntimeError(f'data/raw/{g["arquivo"]} ausente (geometria curada à mão)' + (f': {g["como_gerar"]}' if g.get('como_gerar') else ''))
 
 
-def _uniao_municipios(g: dict) -> dict:
+def _uniao_municipios(g: dict, construir: bool = True) -> dict:
     from shapely.geometry import mapping, shape
     from shapely.ops import unary_union
     lim = {f['properties']['ibge']: shape(f['geometry']) for f in lib.municipios()}
-    geoms = [lim[c] if c in lim else lib.municipio_geom(c) for c in g['municipios']]
+    geoms = [lim[c] if c in lim else lib.municipio_geom(c, rede=construir) for c in g['municipios']]
     u = unary_union(geoms)
     if g.get('simplificar'):
         u = u.simplify(g['simplificar'])
     return lib.round_geojson(mapping(u), g.get('casas', 7))
 
 
-def _itens(doc: dict, r: dict, carregados: dict) -> list[tuple[dict, list[tuple[int, dict]]]]:
+def _itens(doc: dict, r: dict, carregados: dict, construir: bool = True) -> list[tuple[dict, list[tuple[int, dict]]]]:
     """[(item de geometria, [(índice, feição GeoJSON)])]. Índice = posição no arquivo (antes do filtro por regra_id, para
-    o source_id não mudar quando o arquivo é compartilhado), recontado depois de `omitir_ways_de`."""
+    o source_id não mudar quando o arquivo é compartilhado), recontado depois de `omitir_ways_de`.
+    `construir=False` (validação offline): só lê o que existe; geometria a gerar levanta lib.GeometriaAusente."""
     brutos: dict[str, list[tuple[int, dict]]] = {}
     for k, g in enumerate(r['geometria']):
         if 'arquivo' in g:
             if g['arquivo'] not in carregados:
-                carregados[g['arquivo']] = lib.build_or_load(g['arquivo'], lambda g=g: _construir(doc, r, g))
+                if not construir and not lib.raw_path(g['arquivo']).exists():
+                    raise lib.GeometriaAusente(f'data/raw/{g["arquivo"]} (construir: {g.get("construir", "manual")})')
+                carregados[g['arquivo']] = lib.build_or_load(g['arquivo'], lambda g=g: _construir(doc, r, g)) if construir \
+                    else json.loads(lib.raw_path(g['arquivo']).read_text())
             fs = _features_de(carregados[g['arquivo']])
         elif 'geojson' in g:
             fs = _features_de(g['geojson'])
         else:
-            fs = [{'type': 'Feature', 'geometry': _uniao_municipios(g), 'properties': {}}]
+            fs = [{'type': 'Feature', 'geometry': _uniao_municipios(g, construir), 'properties': {}}]
         for f in fs:
             p = f['properties']
             if g.get('formato') == 'eixos':      # eixos casados de um mapa: {nome, oneway}
@@ -169,14 +173,15 @@ def _itens(doc: dict, r: dict, carregados: dict) -> list[tuple[dict, list[tuple[
 _GEOM_OK = {'zona': ('Polygon', 'MultiPolygon'), 'via': ('LineString', 'MultiLineString'), 'ponte': ('LineString', 'MultiLineString')}
 
 
-def compilar(doc: dict) -> list[dict]:
-    """Feições do município ANTES da validação no Valhalla (determinístico, sem rede quando a geometria está curada)."""
+def compilar(doc: dict, construir: bool = True) -> list[dict]:
+    """Feições do município ANTES da validação no Valhalla (determinístico, sem rede quando a geometria está curada).
+    `construir=False`: nunca gera geometria nem acessa a rede (GeoJSON a gerar → lib.GeometriaAusente)."""
     out, carregados = [], {}
     for r in doc['regras']:
         base = regra_props(doc, r)
         ativa = r['status'] == 'ativa'
         kind = ('zona' if r['tipo'] == 'zona' else 'via') if ativa else r['status']
-        feats = [x for _, fs in _itens(doc, r, carregados) for x in fs]
+        feats = [x for _, fs in _itens(doc, r, carregados, construir) for x in fs]
         if r.get('source_id') and len(feats) != 1:
             raise ValueError(f'{doc["ibge"]}.json, {r["id"]}: source_id fixo exige uma única feição ({len(feats)} montadas)')
         if ativa and not feats:
@@ -201,9 +206,14 @@ def compilar(doc: dict) -> list[dict]:
 
 
 def limites() -> list[dict]:
+    fs = lib.municipios()
+    if not fs:
+        # carga vazia apagaria os 39 limites do banco (o load_db troca a fonte inteira) e derrubaria a exceção de destino local
+        raise FileNotFoundError(f'limites municipais curados ausentes: data/raw/{lib.LIMITES_RMSP} (DATA_DIR/MUNICIPIOS_RAW_DIR '
+                                'apontam para o lugar certo?)')
     return [{'source_id': f"mun-{f['properties']['ibge']}", 'geometry': f['geometry'], 'name': f['properties']['nome'], 'kind': 'municipio',
              'props': {'ibge': f['properties']['ibge'], 'municipio': f['properties']['nome'], 'fonte': 'IBGE Malha Municipal'}}
-            for f in lib.municipios()]
+            for f in fs]
 
 
 # ----------------------------------------------------------------------------- protocolo do run.py (várias fontes)
@@ -229,17 +239,23 @@ def fetch():
 
 
 # ----------------------------------------------------------------------------- validação offline
-def _resumo(doc: dict) -> str:
+def _resumo(doc: dict) -> tuple[str, bool]:
+    """Resumo do município e se a geometria existente é coerente. Não usa rede nem grava em data/raw: a geometria que só
+    o import gera (Overpass, malha do IBGE) aparece como "a gerar no import"."""
     linhas = [f'{doc["ibge"]} {doc["municipio"]}/{doc["uf"]} (fonte {doc["fonte_id"]}, verificado em {doc["verificado_em"]})']
+    ok = True
     try:
-        feats = compilar(doc)
-    except Exception as e:                          # geometria ausente que só o import constrói (Overpass)
+        feats = compilar(doc, construir=False)
+    except lib.GeometriaAusente as e:
         feats = None
-        linhas.append(f'  ! geometria não montada sem rede: {e}')
+        linhas.append(f'  - geometria a gerar no import: {e}')
+    except ValueError as e:                         # geometria existente mas incoerente com a regra
+        feats, ok = None, False
+        linhas.append(f'  ! geometria inválida: {e}')
     for r in doc['regras']:
         n = '' if feats is None else f', {sum(1 for f in feats if f["props"]["regra_id"] == r["id"])} feição(ões)'
         linhas.append(f'  - {r["id"]}: {r["tipo"]} {r["status"]} (confiança {r["confianca"]}){n}')
-    return '\n'.join(linhas)
+    return '\n'.join(linhas), ok
 
 
 if __name__ == '__main__':
@@ -252,6 +268,12 @@ if __name__ == '__main__':
     except ValueError as e:
         print(f'ERRO:\n{e}')
         sys.exit(1)
+    invalidos = 0
     for d in ds:
-        print(_resumo(d))
+        texto, ok = _resumo(d)
+        print(texto)
+        invalidos += not ok
+    if invalidos:
+        print(f'ERRO: geometria inválida em {invalidos} arquivo(s)')
+        sys.exit(1)
     print(f'ok: {len(ds)} arquivo(s) válido(s)')
