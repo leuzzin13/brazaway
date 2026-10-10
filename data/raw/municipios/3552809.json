@@ -1,0 +1,53 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3552809",
+  "municipio": "Taboão da Serra",
+  "uf": "SP",
+  "fonte_id": "taboao-da-serra",
+  "fonte": {
+    "url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b (serviço oficial 'Concessão de Cartão Caminhão – Digital', que cita a Portaria SETRAM GS 003/2021)",
+    "licenca": "Informação oficial da Prefeitura de Taboão da Serra (só o fato, com citação da fonte). Área = limite municipal do IBGE (dados públicos) menos a BR-116 do OpenStreetMap (derivado do OSM, ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Regra registrada e NÃO aplicada: o texto da Portaria SETRAM GS 003/2021 não foi lido e o regime de 2021 pode ser por áreas e vias, não pelo município inteiro."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "taboao_municipio",
+      "tipo": "zona",
+      "regime": "Restrição no município (2010)",
+      "nome": "Taboão da Serra — restrição a caminhões nas ruas e avenidas municipais (regime de 2010)",
+      "status": "desativada",
+      "status_motivo": "A página oficial do Cartão Caminhão cita a Portaria SETRAM GS 003/2021 ('Regulamentar áreas e vias com restrição ao trânsito de caminhões'), cujo texto não foi lido (site da prefeitura com bloqueio), e o formulário fala em corredores, zona especial de restrição e vias de trânsito seletivo: o município inteiro e os horários de 2010 (só imprensa) podem estar superados.",
+      "confianca": "media",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "05:00", "to": "21:00"},
+        {"days": [6], "from": "10:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Cartão Caminhão (RCC) da Prefeitura de Taboão da Serra, só para quem comprova entrega ou retirada no município (2 notas fiscais nos últimos 120 dias)",
+      "excecoes": ["Caminhões com Cartão Caminhão (destino ou origem comprovados no município)"],
+      "base_legal": [
+        {
+          "ato": "Portaria SETRAM GS 003/2021 (Taboão da Serra), citada no serviço oficial 'Concessão de Cartão Caminhão – Digital'",
+          "artigo": "texto não lido (só a ementa: 'Regulamentar áreas e vias com restrição ao trânsito de caminhões'); horários de 2010 da imprensa (O Taboanense, 07/12/2010; Frota&Cia, 16/11/2011; infração 5746-3, art. 187 do CTB)",
+          "url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b"
+        }
+      ],
+      "nota": "Janelas registradas = as noticiadas em 2010 (seg–sex 5h–21h, sáb 10h–14h, em vigor desde 06/12/2010). A área é o município menos uma faixa de 30 m em torno da BR-116 (Régis Bittencourt) e alças, que não são municipais.",
+      "fonte_geometria": "Limite municipal do IBGE menos a BR-116 do OSM (data/raw/municipios/curadoria/rmsp_restante_geo.py taboao)",
+      "vigencia_inicio": "2010-12-06",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3552809_vias_municipais.geojson",
+          "construir": "manual",
+          "como_gerar": "docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/raw/municipios/curadoria:/c --entrypoint python truck-router-importer /c/rmsp_restante_geo.py taboao (antes, osm_pbf_cache.py passo 1)"
+        }
+      ]
+    }
+  ]
+}

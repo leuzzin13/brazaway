@@ -1,0 +1,50 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3552502",
+  "municipio": "Suzano",
+  "uf": "SP",
+  "fonte_id": "suzano",
+  "fonte": {
+    "url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson (GeoSuzano, 'MOB-Restrição trânsito de caminhões')",
+    "licenca": "Camada oficial do GeoSuzano (Depto de Geotecnologias, Secretaria de Planejamento Urbano e Habitação da Prefeitura de Suzano), sem licença declarada (licenseInfo vazio; a prefeitura pede atribuição ao Depto de Geotecnologias): usada só para selecionar as vias e o horário. Linhas: eixos do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "A camada oficial desenha a SUPERFÍCIE das ruas restritas (2 polígonos, o maior com furos nos quarteirões; dados de 30/06/2021), não uma zona: virou via (costLines) com os eixos do OSM sob os polígonos. O ato normativo não foi localizado (site da prefeitura com bloqueio)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "A imprensa (Diário de Suzano, 02/10/2022) diz que a restrição não se aplica ao VUC, mas não há definição de VUC nem ato localizado: a rota trata o VUC como caminhão.",
+  "regras": [
+    {
+      "id": "suzano_centro",
+      "tipo": "via",
+      "regime": "Restrição no Centro (GeoSuzano)",
+      "nome": "Suzano — vias do Centro com restrição ao trânsito de caminhões",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6], "from": "07:00", "to": "21:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "Transporte de carga perecível devidamente identificado (campo Obs da camada oficial)",
+        "Casos excepcionais, como mudança, com autorização da Secretaria de Transportes (imprensa)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Camada oficial 'MOB-Restrição trânsito de caminhões' (GeoSuzano, Depto de Geotecnologias da Prefeitura de Suzano), campos Dt_Ho ('Segunda a Sábado - 07:00 - 21:00') e Obs",
+          "artigo": "sem artigo (dado geográfico oficial; ato normativo não localizado)",
+          "url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson",
+          "nota": "Dados de 30/06/2021 (dataLastEditDate); o 18/03/2025 é edição do esquema. O limite de 3,5 t de PBT vem da imprensa (2023) e coincide com o mínimo da camada (caminhão = PBT acima de 3,5 t)."
+        }
+      ],
+      "nota": "Vias: eixos do OSM com 30 m ou mais sob os polígonos oficiais (os cruzamentos de ruas livres ficam de fora). A Av. Armando de Salles Oliveira, citada pela imprensa, quase não aparece na camada oficial (só o cruzamento) e não foi incluída. A camada não fala de feriados.",
+      "fonte_geometria": "Eixos do OSM (ODbL) sob os polígonos oficiais do GeoSuzano (data/raw/municipios/curadoria/rmsp_restante_geo.py suzano)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3552502_centro_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "baixar o FeatureService (URL da fonte) em data/cache/rmsp_restante/geosuzano_restricao_caminhoes.geojson e rodar data/raw/municipios/curadoria/rmsp_restante_geo.py suzano (antes, osm_pbf_cache.py passo 1)"
+        }
+      ]
+    }
+  ]
+}
