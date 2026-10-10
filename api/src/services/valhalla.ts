@@ -82,11 +82,49 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
   const trip = json.trip;
   const coordinates: [number, number][] = [];
   for (const leg of trip.legs) coordinates.push(...decodePolyline6(leg.shape));
-  return {
-    coordinates,
-    distance_km: Number(trip.summary.length),
-    duration_s: Number(trip.summary.time),
-  };
+  const distance_km = Number(trip.summary.length);
+  let duration_s = Number(trip.summary.time);
+  if (body.linear_cost_factors) {
+    const t = await retime(trip.legs.map((l: { shape: string }) => l.shape), body, distance_km);
+    if (t != null) duration_s = t;
+  }
+  return { coordinates, distance_km, duration_s };
+}
+
+/**
+ * O Valhalla (3.9.1) aplica o `factor` dos linear_cost_factors também ao TEMPO das arestas, não só ao custo: quando a
+ * rota não consegue evitar um trecho penalizado (origem/destino nele, sem alternativa), `trip.summary.time` explode
+ * (ex.: VUC na VER, 14,6 km com factor 1000 → 16 507 s, contra 2 028 s re-cronometrando a mesma geometria). A duração
+ * alimenta o ETA das camadas, o plano de direção (Lei 13.103) e o front, então re-cronometramos a geometria escolhida
+ * com /trace_route (mesmo costing, mesmas opções e date_time, sem as penalidades). edge_walk sobre a shape devolvida
+ * pelo próprio /route reproduz o tempo do /route sem penalidade (diferença < 0,1 s, ~10 ms); map_snap é o reserva
+ * (limite de 200 km no serviço). Se os dois falharem, fica o tempo do /route (inflado) e um aviso no log.
+ */
+async function retime(shapes: string[], routeBody: Record<string, unknown>, distanceKm: number): Promise<number | null> {
+  const modes: ('edge_walk' | 'map_snap')[] = distanceKm < 190 ? ['edge_walk', 'map_snap'] : ['edge_walk'];
+  for (const mode of modes) {
+    try {
+      let total = 0;
+      for (const shape of shapes) {
+        const r = await postJson(`${env.valhallaUrl}/trace_route`, {
+          encoded_polyline: shape,
+          shape_match: mode,
+          costing: routeBody.costing,
+          costing_options: routeBody.costing_options,
+          ...(routeBody.date_time ? { date_time: routeBody.date_time } : {}),
+          units: 'kilometers',
+          directions_type: 'none',
+        }, 15000);
+        const t = Number(r.json?.trip?.summary?.time);
+        if (!r.ok || !Number.isFinite(t)) throw new Error(r.json?.error ?? `HTTP ${r.status}`);
+        total += t;
+      }
+      return total;
+    } catch (e) {
+      console.warn(`[valhalla] trace_route (${mode}) não re-cronometrou a rota com linear_cost_factors: ${(e as Error).message}`);
+    }
+  }
+  return null;
 }
 
 export async function status(): Promise<{ ok: boolean; detail?: unknown }> {
