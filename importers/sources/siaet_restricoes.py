@@ -3,7 +3,9 @@
 Fonte: PDFs mensais por UF publicados pelo DNIT em
   https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes/restricao-{definitiva|temporaria}/{MM-AAAA}/{uf}.pdf
 Cada linha = BR, UF, código PNV, km inicial/final e, por pista (1 = sentido crescente, 2 = decrescente), altura,
-largura, PBT (t), comprimento (e raio de giro na definitiva). Valor 0,0 = AET não autorizada naquela grandeza.
+largura, PBT (t), comprimento (e raio de giro na definitiva). Valor 0,0 vai para `aet_bloqueada` (nome histórico): na API,
+PBT 0 numa temporária de via federal = trecho impedido (interdição); 0 nas outras grandezas = AET não autorizada nelas
+(ver docs/layers/federal_restricoes.md, "O que o valor 0 quer dizer").
 
 Geometria: segmento do SNV (DNITGeo WFS vgeo:vw_snv_rod), casado pelo código PNV. O SIAET usa uma numeração de km
 própria (às vezes de versões antigas do SNV), então:
@@ -366,7 +368,7 @@ def _pista(r: dict, p: str, kind: str) -> dict | None:
 
 
 def _limits(pistas: list[dict]) -> dict:
-    """Menor limite positivo entre as pistas (aplicado aos dois sentidos: conservador) e grandezas com 0 (AET bloqueada)."""
+    """Menor limite positivo entre as pistas (resumo conservador; a API usa pista1/pista2 por sentido) e grandezas com 0."""
     out, zeros = {}, set()
     for k in ('altura_m', 'largura_m', 'peso_t', 'comprimento_m'):
         vals = [p[k] for p in pistas if p and p.get(k) is not None]

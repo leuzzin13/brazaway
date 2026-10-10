@@ -4,12 +4,12 @@ import type { LayerWarning, RouteLayer } from './types.js';
 
 /**
  * Pontes e viadutos das rodovias federais — camada INFORMATIVA, nunca bloqueia a rota.
- *  - DNITGeo `oae_sgo` + nota técnica do PROARTE/DNIT (painel Power BI; Norma DNIT 010/2024-PRO: 1 crítica ... 5 excelente);
+ *  - DNITGeo `oae_sgo` + nota técnica do PROARTE/DNIT (painel Power BI; Norma DNIT 010/2024-PRO, Anexo C: 1 crítica ... 5 excelente);
  *  - ANTT "Pontes e similares" (concessões federais, CC-BY);
  *  - Alertas de serviços do DNIT (interdições/restrições de ponte) — pendentes de revisão humana; só os aprovados em
  *    dnit_alertas_curadoria viram restrição (na camada federal_restricoes).
- * Nota 1–2 gera aviso 'warn' e pedido de reporte: a nota não é limite de peso (Res. DNIT 11/2022, art. 29 §5º) e as
- * vistorias publicadas são de 2020–2021.
+ * Nota 1–2 (Norma DNIT 010/2024-PRO, Anexo C) gera aviso 'warn' e pedido de reporte: a nota, sozinha, não é parâmetro
+ * de restrição de peso (Res. DNIT 11/2022, art. 29 §5º), não é limite sinalizado e as vistorias publicadas são de 2020–2021.
  */
 
 type LonLat = [number, number];
@@ -40,8 +40,8 @@ const layer: RouteLayer = {
     description: 'Pontes e viadutos de rodovias federais com nota técnica do DNIT (PROARTE), OAEs das concessões (ANTT) e alertas de interdição do DNIT. Informativa.',
     group: 'infraestrutura',
     sources: [
-      { name: 'DNIT/DNITGeo — OAEs (vgeo:oae_sgo)', url: 'https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs', license: 'Dado público DNIT, sem licença explícita (AccessConstraints=NONE)' },
-      { name: 'DNIT/PROARTE — painel "Obras de Arte Especiais" (nota técnica SGO)', url: 'https://app.powerbi.com/view?r=eyJrIjoiZWU3NWRjYjQtNGVmMS00ZmEwLTk2MmYtODM3NWIxYWRlZWZhIiwidCI6IjQ0MTBhNmY2LWM2MTMtNGNkNy05M2VjLTY1MzBhZjdhMzA1MyJ9', license: 'Sem licença declarada (painel público do DNIT): uso informativo com citação' },
+      { name: 'DNIT/DNITGeo — OAEs (vgeo:oae_sgo)', url: 'https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs', license: 'Dado público DNIT, livre utilização (Decreto 8.777/2016, art. 4º); WFS sem licença explícita (AccessConstraints=NONE)' },
+      { name: 'DNIT/PROARTE — painel "Obras de Arte Especiais" (nota técnica SGO)', url: 'https://app.powerbi.com/view?r=eyJrIjoiZWU3NWRjYjQtNGVmMS00ZmEwLTk2MmYtODM3NWIxYWRlZWZhIiwidCI6IjQ0MTBhNmY2LWM2MTMtNGNkNy05M2VjLTY1MzBhZjdhMzA1MyJ9', license: 'Sem licença declarada (painel público do DNIT, transparência ativa: Decreto 8.777/2016, art. 4º): uso informativo com citação' },
       { name: 'ANTT — Pontes e similares das rodovias concedidas', url: 'https://dados.antt.gov.br/dataset/pontes-similares', license: 'CC-BY (Creative Commons Atribuição)' },
       { name: 'DNIT — Alertas de serviços (notícias)', url: 'https://www.gov.br/dnit/pt-br/central-de-conteudos/noticias-alerta-de-servicos', license: 'Portal gov.br CC BY-ND 3.0: só fatos e link' },
     ],
@@ -156,13 +156,14 @@ const layer: RouteLayer = {
 
     // alertas do DNIT perto da rota (pendentes = só informação; aprovados já entram como restrição na federal_restricoes)
     const al = await query<Row & { status: string; acao: string | null }>(
-      `with l as (select ST_SimplifyPreserveTopology(ST_SetSRID(ST_GeomFromGeoJSON($1), 4326), 0.0001) as g)
+      `with l as (select ST_SimplifyPreserveTopology(ST_SetSRID(ST_GeomFromGeoJSON($1), 4326), 0.0001) as g),
+            s as (select ST_Subdivide(ST_Segmentize(l.g, 0.05), 64) as g from l),
+            p as (select distinct f.id from data_features f join s on f.geom && ST_Expand(s.g, 0.003) and ST_DWithin(f.geom, s.g, 0.003)
+                   where f.layer_id = 'pontes_federais' and f.source = 'dnit-alertas')
        select f.id::text, f.source, f.source_id, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry,
               coalesce(c.status, 'pendente_revisao') as status, c.acao
-         from data_features f left join dnit_alertas_curadoria c on c.source_id = f.source_id, l
-        where f.layer_id = 'pontes_federais' and f.source = 'dnit-alertas'
-          and ST_DWithin(f.geom, l.g, 0.003)
-          and coalesce(c.status, 'pendente_revisao') <> 'rejeitado'
+         from data_features f join p using (id) left join dnit_alertas_curadoria c on c.source_id = f.source_id
+        where coalesce(c.status, 'pendente_revisao') <> 'rejeitado'
           and (c.status = 'aprovado' or f.valid_from is null or f.valid_from > now() - interval '${ALERTA_DIAS} days')
         order by f.valid_from desc nulls last limit 20`,
       [JSON.stringify(route.line.geometry)],
