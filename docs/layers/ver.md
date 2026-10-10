@@ -9,7 +9,7 @@ proibida em período integral) está carregado, mas **inativo**: só entra em vi
 | Importador | `importers/sources/ver_portaria137.py` (`LAYER_ID=ver`, `SOURCE=smt-137-2018`) |
 | Seed | `db/seed/layers/ver__smt-137-2018.sql` (0,6 MB, 79 feições) |
 | API | `api/src/layers/ver.layer.ts` |
-| Testes | `api/test/layers/ver.test.ts` (regras com os dados do banco + rotas) |
+| Testes | `api/test/layers/ver.test.ts` (regras com os dados do banco, `annotate()` em processo e rotas); `importers/tests/test_ver_regras.py` (janelas e conferência do texto, sem rede) |
 
 ## Fontes e licença
 
@@ -25,6 +25,8 @@ proibida em período integral) está carregado, mas **inativo**: só entra em vi
 Horários, exceções e vigências foram conferidos no texto compilado da Portaria 137/2018 e no texto da Portaria 49/2021, em
 09/10/2026. Os trechos usados estão em `data/raw/ver/portaria137_2018_trechos.txt` e `data/raw/ver/portaria49_2021.txt`; a cada
 importação o importador confere, letra por letra, que o texto de cada um dos 81 incisos (`texto_legal`) está no texto oficial.
+Se algum não conferir (ou o texto oficial não estiver em `data/raw/ver`), a importação **falha** antes de gravar seed ou banco
+e o runner a lista em `FALHARAM`; `VER_IGNORAR_TEXTO=1` importa mesmo assim.
 
 ## Regras modeladas
 
@@ -32,13 +34,14 @@ Todas as VER valem **exceto feriados** (art. 2º, caput). Caminhão = PBT > 3,5 
 
 | § | Horário proibido | Exceções modeladas (todas exigem AETC, `has_aetc: true`) |
 |---|---|---|
-| 1º (26 vias) | seg–sex 05h–21h; sáb 10h–14h | perecíveis 05h–12h e sáb 10h–14h (art. 32, I); concretagem 05h–16h (arts. 27, I e 28, I). **VUC proibido mesmo com AETC** (art. 18 só libera ZMRC, ZERC e VER dos §§ 2º–4º). Mudança **não** é exceção no § 1º (art. 30, I cita só §§ 2º e 3º) |
-| 2º (4 vias) | seg–sex 05h–21h; sáb 10h–14h | VUC período integral (art. 18); perecíveis 05h–12h e sáb 10h–14h (art. 32, I); concretagem 05h–16h (arts. 27/28, I); mudança 05h–16h (art. 30, I) |
+| 1º (26 vias) | seg–sex 05h–21h; sáb 10h–14h | perecíveis 05h–12h e sáb 10h–14h (art. 32, I); concretagem **seg–sex 05h–12h e 14h–16h, sáb 05h–16h** (arts. 27, I e 28, I, com o **art. 28, § 3º**: a concretagem-bomba fica estacionada de 2ª a 6ª das 12h às 14h, salvo nas VER dos §§ 2º–4º; como o perfil não separa betoneira de bomba, vale a janela mais restrita para as duas). **VUC proibido mesmo com AETC** (art. 18 só libera ZMRC, ZERC e VER dos §§ 2º–4º). Mudança **não** é exceção no § 1º (art. 30, I cita só §§ 2º e 3º) |
+| 2º (4 vias) | seg–sex 05h–21h; sáb 10h–14h | VUC período integral (art. 18); perecíveis 05h–12h e sáb 10h–14h (art. 32, I); concretagem 05h–16h (arts. 27/28, I; a parada das 12–14h do art. 28, § 3º não se aplica aos §§ 2º–4º); mudança 05h–16h (art. 30, I) |
 | 3º (9 vias) | seg–sex 05h–21h; sáb 10h–14h | igual ao § 2º |
 | 4º (40 itens) | seg–sex 05h–09h e 17h–21h; sáb 10h–14h | VUC integral (art. 18); perecíveis, concretagem e mudança seg–sex 05h–09h e sáb 10h–14h (arts. 32, II; 27/28, II; 30, II) |
 | 5º (Portaria 49/2021, **inativo**) | período integral | carga com origem/destino no município liberada (art. 38-A); quem tem AETC segue proibido seg–sex 05h–21h e sáb 10h–14h (art. 38-A, parágrafo único) |
 
-Mapeamento do perfil: VUC = `is_vuc`; perecíveis = `cargo_type: perishable`; concretagem = `cargo_type: concrete`; mudança =
+Mapeamento do perfil: VUC = `is_vuc`; perecíveis = `cargo_type: perishable`; concretagem (betoneira ou bomba, "Concreto/bomba"
+no app) = `cargo_type: concrete`; mudança =
 `cargo_type: moving`; origem/destino no município = `cargo_od_in_city`. Janelas: início incluído, fim excluído (05:00 proíbe,
 21:00 libera). Suspensões da CET só afastam a VER se tiverem escopo `ver` ou `all` e não valerem para pesados.
 
@@ -47,9 +50,25 @@ autorização): acesso a estacionamento próprio (art. 19), guincho (20), report
 e serviços essenciais (25), vacinas (26), feiras e Ceagesp (29), coleta de lixo (31), entulho (33), caçambas (34), valores
 (36, Portaria 154/2018), material de construção (37), serviço postal (38).
 
-**Portaria 49/2021:** quando o Rodoanel Norte for liberado, ligue `VER_PORTARIA_49_VIGENTE=1` na API: o § 5º passa a valer e os
-incisos I–IV do § 4º deixam de valer (art. 2º da Portaria 49/2021). Antes disso, rotas pela Marginal Tietê recebem um aviso
-`info` (`ver_portaria_49`). Acompanhar a obra e o DOC.
+**Portaria 49/2021:** o art. 3º condiciona a vigência à "conclusão das obras do trecho norte do Rodoanel e sua liberação para a
+circulação de veículos". Quando isso acontecer, ligue `VER_PORTARIA_49_VIGENTE=1` na API (sem reimportar): o § 5º passa a valer e
+os incisos I–IV do § 4º deixam de valer (art. 2º da Portaria 49/2021). Antes disso, rotas pela Marginal Tietê recebem um aviso
+`info` (`ver_portaria_49`) com a data da última conferência (`P49_CONFERIDA_EM` em `ver.layer.ts`, também em
+`data.portaria_49_conferida_em`).
+
+Situação conferida em **09/10/2026**:
+
+- **Trecho 1** do Rodoanel Norte (Dutra–Fernão Dias, km 129–153, 24 km) foi liberado ao tráfego em **23/12/2025** (Agência SP,
+  https://www.agenciasp.sp.gov.br/rodoanel-norte-tem-primeiro-trecho-liberado-ao-trafego-veja-como-a-obra-vai-mudar-a-logistica-de-sp/).
+  É uma abertura **parcial** e **não dispara** o art. 3º, que exige a conclusão das obras do trecho norte.
+- **Trecho 2** (Fernão Dias–Av. Raimundo Pereira de Magalhães, ~20 km, ligação com o trecho Oeste na altura da Bandeirantes) tem
+  entrega prevista para o **2º semestre de 2026** (Agência SP; Via Appia, "De olho na obra", https://viaappia.com.br/de-olho-na-obra/).
+  Até 09/10/2026 não achei notícia de liberação.
+- **O que acompanhar:** a liberação do trecho 2 pelo Governo do Estado (Agência SP, DER-SP, ARTESP, Via Appia) e, do lado da
+  Prefeitura, o Diário Oficial da Cidade (publicações da SMT.GAB sobre a Portaria 137/2018) e os comunicados da CET
+  (cetsp.com.br) sobre o início da fiscalização na Marginal Tietê. O gatilho é um fato (a liberação), não um ato novo; se a
+  Prefeitura publicar portaria ou comunicado fixando a data, vale essa data. Ao reconferir, atualize `P49_CONFERIDA_EM`, o texto
+  `P49_SITUACAO` e esta seção.
 
 ## Na rota (`ver.layer.ts`)
 
@@ -62,8 +81,12 @@ incisos I–IV do § 4º deixam de valer (art. 2º da Portaria 49/2021). Antes d
   - *Edge walk:* uma linha que não casa com o grafo derruba a rota inteira (Valhalla erro 233). O importador testa e quebra as
     cadeias problemáticas; a API testa de novo todas as cadeias (1 requisição; busca binária se falhar) uma vez por versão dos
     tiles (`/status`) e deixa de fora as que falharem (log `[ver]`).
+  - *Item evitado:* o item de cada cadeia leva o id do **inciso**; como o `routing.ts` deduplica `avoided` e avisos por id, uma via
+    com várias cadeias aparece uma vez só.
 - **annotate:** detecta as VER que a rota percorre **no sentido da cadeia** (amostras a cada ~20 m, até 12 m e 50° da rota) e
-  estima o horário de passagem pela posição na rota (fração da distância × duração). Avisos:
+  estima o horário de passagem pela posição na rota (fração da distância × duração). **Feriado e suspensões da CET são avaliados
+  no dia e no instante da passagem**, não no da saída: sair às 23h59 de um feriado e passar às 05h de um dia útil é proibido;
+  sair no domingo à noite e passar no feriado é liberado. Avisos:
   - `ver_proibida` — `danger` quando a VER está proibida para o veículo no horário estimado (inclusive quando a saída é antes da
     janela e a chegada cai dentro dela); `warn` se a passagem fica a até 15 min da borda da janela. Agrupa incisos da mesma via
     (ex.: pistas da Marginal Tietê). Cita norma e, no § 1º, que VUC com AETC não é liberado; se origem/destino estão na própria
@@ -71,12 +94,21 @@ incisos I–IV do § 4º deixam de valer (art. 2º da Portaria 49/2021). Antes d
   - `ver_horario_limite` (`warn`) — liberada, mas a até 15 min do início/fim da restrição.
   - `ver_excecao` (`info`) — liberada por exceção (ex.: VUC com AETC, perecíveis): leve a AETC.
   - `ver_portaria_49` (`info`) — usa a Marginal Tietê enquanto o § 5º não vigora.
-  - Resumo (`layers.ver.summary`): cada VER usada com "PROIBIDA às ~hh:mm" ou "liberada às ~hh:mm — motivo"; `data.usadas`.
+  - Resumo (`layers.ver.summary`): cada VER usada com "PROIBIDA às ~hh:mm" ou "liberada às ~hh:mm — motivo", e uma linha
+    "Feriado na passagem (nome, dd/mm)" quando um feriado liberou alguma VER usada. `data.usadas[]` traz `horario_passagem`,
+    `data_passagem`, `proibido`, `motivo` e `norma`.
   O `routing.ts` ainda emite o aviso genérico `uses_restricted_way` para cadeias penalizadas que a rota não conseguiu evitar.
+- **Duração da rota:** o Valhalla 3.9.1 multiplica pelo `factor` dos `linear_cost_factors` também o **tempo** das arestas, não só
+  o custo. Com o `factor: 1000` desta camada, uma rota que não consegue evitar a VER (origem ou destino nela) saía com a duração
+  inflada: VUC sem AETC às 10h, de (-23,600, -46,720) a (-23,615, -46,680), 14,6 km em 16 507 s. Isso deslocava o horário
+  estimado de passagem e o plano de direção. `services/valhalla.ts` agora re-cronometra a geometria escolhida com `/trace_route`
+  (`edge_walk`, com `map_snap` de reserva até 190 km; mesmo costing, opções e `date_time`, sem penalidades), e a mesma rota sai
+  com 2 029 s. Conferi em 3 rotas sem `linear_cost_factors` que o `/trace_route` reproduz o tempo do `/route` (diferença < 0,1 s).
+  A rota sem pedágio (`services/tollCost.ts`) faz o mesmo.
 - **features:** linhas (MultiLineString por inciso) a partir do zoom 10, só dos incisos vigentes, com `color` por parágrafo
   (§1 vermelho `#dc2626`, §2 laranja `#ea580c`, §3 âmbar `#d97706`, §4 roxo `#7c3aed`), horário, sentido, VUC, exceções, norma
-  e vigência no popup. O front atual pinta a camada com `meta.style.color`; para colorir por parágrafo basta usar
-  `['coalesce', ['get', 'color'], st.color]` no `line-color` do MapView (fora do escopo desta frente).
+  e vigência no popup. O front pinta cada linha com `properties.color` (`['to-color', ['get', 'color'], st.color]` no
+  `MapView.tsx`); camadas sem essa propriedade ficam com a cor da camada.
 
 ## Geometria: como cada inciso foi casado com o OSM
 
@@ -229,13 +261,21 @@ Decisões por inciso (também no campo `nota` de cada feição):
    avisos de casamento por inciso; `VALHALLA_URL` (padrão `http://valhalla:8002`, `off` desliga) testa o edge walk.
 3. Conferir: incisos com "sem geometria", "âncora não encontrada" ou CET muito abaixo do esperado; rodar
    `API_URL=http://localhost:<porta> npx vitest run test/layers/ver.test.ts`.
-4. **Portaria 49/2021:** ao ser publicada a liberação do Rodoanel Norte, `VER_PORTARIA_49_VIGENTE=1` na API (sem reimportar).
+4. **Portaria 49/2021:** quando o trecho norte do Rodoanel estiver concluído e liberado (veja "Situação conferida" acima),
+   `VER_PORTARIA_49_VIGENTE=1` na API (sem reimportar).
+5. Testes do importador (sem rede): `docker run --rm -v $PWD/importers:/app -v $PWD/data/raw:/data/raw:ro --entrypoint python
+   truck-router-importer -m unittest tests.test_ver_regras -v`.
 
 ## Limitações
 
-- **Horário:** a penalidade usa o horário de **saída** (como as zonas do app). O aviso usa o horário estimado de passagem
-  (proporcional à posição na rota, sem trânsito). Saída 20:50 pode evitar uma VER à toa; saída 04:40 de longe pode chegar dentro da
-  janela — nesse caso só há aviso `danger`, a rota não é recalculada.
+- **Horário:** a penalidade usa o horário (e o feriado) de **saída**, como as zonas do app. O aviso usa o horário e o dia
+  estimados da passagem (proporcional à posição na rota, sem trânsito). Saída 20:50 pode evitar uma VER à toa; saída 04:40 de longe
+  pode chegar dentro da janela. Nesse caso só há aviso `danger` e a rota não é recalculada.
+- **`uses_restricted_way` × horário de passagem:** o aviso genérico do `routing.ts` vale para toda cadeia penalizada (pelo horário
+  de saída) que a rota não conseguiu evitar, e não olha a hora de passagem. Ex.: saída 08:30 numa VER do § 4º com passagem às 09:01:
+  o `routing.ts` diz `uses_restricted_way` (`danger`) e a camada diz `ver_horario_limite` (`warn`, passagem liberada mas perto do
+  limite). O aviso desta camada é o mais preciso. Resolver exige decidir as costLines pelo horário estimado de passagem (fica para
+  o integrador).
 - **Geometria derivada do OSM:** nomes/ways mudam; o casamento depende de nomes exatos e limites aproximados em alguns incisos (ver
   decisões). Acessos e alças **sem nome** que levam à VER não são penalizados (a via principal é).
 - **Placas em campo** (art. 2º, caput: vale o que está sinalizado com R-9 "VIA RESTRITA") podem diferir da portaria e do OSM.
@@ -243,12 +283,8 @@ Decisões por inciso (também no campo `nota` de cada feição):
   máxima do VUC (15 anos, art. 18 § 3º) também não são verificados — o perfil `has_aetc: true` é tomado como AETC válida para a VER.
 - A pré-seleção replica zonas e reportes do `routing.ts`; exclusões/penalidades de **outras camadas** não entram nas rotas de
   referência — se alguma outra camada empurrar a rota para uma VER não selecionada, a rota pode usá-la (o `annotate` avisa).
-- O aviso genérico `uses_restricted_way` do `routing.ts` é independente do sentido; em via de mão dupla com restrição só num
-  sentido (ex.: São Miguel, Bresser) ele pode aparecer quando a rota usa o sentido liberado. O aviso `ver_proibida` desta camada
-  considera o sentido.
-- Os "avoided" saem por cadeia (uma via pode aparecer mais de uma vez na lista do front).
 - **Desempenho:** em rota urbana a camada soma ~0,5–1 s (pré-seleção: 2–5 rotas de referência no Valhalla). Em rota longa no
   horário de pico (ex.: Jundiaí → Mooca às 18h, desvio de 121 km, 44 linhas) a rota leva ~10 s contra ~4,5 s sem a camada: o
-  `routing.ts` confere cada linha penalizada contra a rota livre e a restrita com `turf.pointToLineDistance` (custo ∝ linhas ×
-  pontos da rota). Um índice espacial nessa checagem resolveria (fora do escopo desta frente). `VER_DEBUG=1` na API mostra as
+  `routing.ts` confere cada linha penalizada contra a rota livre e a restrita (`usesCostLine`, com `turf.nearestPointOnLine`;
+  custo ∝ linhas × pontos da rota). Um índice espacial nessa checagem resolveria (fica para o integrador, é do núcleo). `VER_DEBUG=1` na API mostra as
   voltas da pré-seleção.

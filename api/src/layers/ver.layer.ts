@@ -22,7 +22,8 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, Route
  * Geometria: cadeias DIRIGIDAS (sentido de circulação proibido) casadas com ways do OSM pelo importador
  * importers/sources/ver_portaria137.py. Na rota: cada cadeia vira um linear_cost_factor (factor 1000) quando a janela vale
  * para o veículo no horário de SAÍDA; depois, annotate() calcula o horário estimado de passagem em cada VER usada (pela
- * posição na rota) e avisa (danger) se a rota ainda usa uma VER proibida naquele horário.
+ * posição na rota) e avisa (danger) se a rota ainda usa uma VER proibida naquele horário — com feriado e suspensões do dia
+ * e instante DA PASSAGEM. A duração usada no ETA já vem re-cronometrada sem as penalidades (services/valhalla.ts).
  */
 
 export const PORTARIA_49_VIGENTE = process.env.VER_PORTARIA_49_VIGENTE === '1';
