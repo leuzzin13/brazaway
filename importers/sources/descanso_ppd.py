@@ -179,8 +179,10 @@ def _date_ms(v) -> str | None:
     if v is None:
         return None
     try:
-        # o Power BI grava a data à meia-noite de Brasília em UTC (1748736000000 = 31/05/2025 21:00 -03)
-        return dt.datetime.fromtimestamp(int(v) / 1000, dt.timezone(dt.timedelta(hours=-3))).date().isoformat()
+        # coluna Date (DataType 7, formato 'D'): o Power BI não tem fuso e serializa a data como meia-noite UTC
+        # (1748736000000 = 2025-06-01T00:00Z = 01/06/2025). Ler em -03 daria um dia antes. Confere com a Portaria
+        # 802/2025 §1º (4 anos): portaria nº 11 de 12/01/2026 -> 12/01/2030.
+        return dt.datetime.fromtimestamp(int(v) / 1000, dt.timezone.utc).date().isoformat()
     except (TypeError, ValueError, OverflowError):
         return None
 

@@ -8,7 +8,7 @@ critérios do script, com dois acréscimos:
   - amenity=truck_stop                                   -> truck_stop
   - amenity=parking com hgv=designated|only ou parking=truck|hgv, ou nome com "caminh" -> truck_parking
   - amenity=fuel com hgv=yes|designated ou fuel:HGV_diesel=yes (bomba de alta vazão)    -> fuel_hgv
-A API deduplica contra rest_stops (mesmo objeto OSM ou ponto a menos de 150 m).
+A API deduplica contra rest_stops (mesmo objeto OSM ou ponto a menos de 100 m).
 Licença: ODbL 1.0 (© colaboradores do OpenStreetMap); fica em data_features separado das fontes CC-BY.
 """
 from __future__ import annotations
