@@ -6,7 +6,7 @@ praças) e devolve as feições da camada `pedagio`. Usado por toll_agetransp.py
 Posição de cada praça (props.posicao_metodo, sempre registrado):
   - 'oficial': coordenada publicada em ato ou contrato (UTM SIRGAS 2000 23S quando houver, senão graus/minutos/segundos);
   - 'osm': casamento com os nós barrier=toll_booth / highway=toll_gantry do OSM (fonte 'osm' da mesma camada, isto é,
-    o mesmo extrato do Valhalla) do MESMO operador (regex `operador_osm`) a até `raio_m` da âncora; os nós a até 700 m
+    o mesmo extrato do Valhalla; se o PBF local for mais novo que essa carga, lidos do PBF) do MESMO operador (regex `operador_osm`) a até `raio_m` da âncora; os nós a até 700 m
     do mais próximo formam a praça e a posição é o centro deles. A âncora é a posição do grupo de nós identificado em
     10/10/2026 (praça por praça, pelo nome do município, pela rodovia e pela ordem ao longo da rodovia);
   - 'sre_km': rodovia + km na malha SRE-MG 2026_02 (só para registro inativo, ver _sre_mg.py).
@@ -69,25 +69,54 @@ def utm23s(e: float, n: float) -> tuple[float, float]:
     return lon, lat
 
 
+_NODES: list[dict] | None = None
+
+
+def banco_atualizado(n_rows: int, carga_ts: float | None, pbf_mtime: float | None) -> bool:
+    """Os nós do OSM no banco servem se existem e se a última carga do toll_osm é posterior ao extrato local (sem PBF
+    local, o banco é a única referência do extrato do Valhalla)."""
+    if not n_rows:
+        return False
+    if pbf_mtime is None:
+        return True
+    return carga_ts is not None and carga_ts >= pbf_mtime
+
+
 def osm_toll_nodes() -> list[dict]:
-    """Nós de pedágio do OSM já importados (fonte 'osm' da camada pedagio: o mesmo extrato do Valhalla). Sem banco ou sem
-    dados, lê direto do PBF/Overpass pelo toll_osm."""
+    """Nós de pedágio do OSM do MESMO extrato do Valhalla, lidos uma vez por processo.
+    Do banco (fonte 'osm' da camada pedagio) quando a última carga do toll_osm é posterior ao PBF local; senão, direto do
+    PBF (ou da Overpass) pelo toll_osm.fetch(). Isso cobre o `run.py all`, que roda em ordem alfabética e chama
+    toll_agetransp, toll_artemig e toll_municipais ANTES do toll_osm: com um extrato novo, a posição das praças e os
+    `osm_nodes` já saem do extrato novo, sem esperar a carga seguinte."""
+    global _NODES
+    if _NODES is not None:
+        return _NODES
     rows: list[dict] = []
+    carga = None
     try:
         from common import _pg_conn
         with _pg_conn() as c, c.cursor() as cur:
+            cur.execute("select extract(epoch from max(imported_at)) from data_layer_runs where layer_id = 'pedagio' and source = 'osm'")
+            carga = cur.fetchone()[0]
             cur.execute("""select source_id, ST_X(geom), ST_Y(geom), props->>'operador', name, props->'rodovias', kind
                              from data_features where layer_id = 'pedagio' and source = 'osm'""")
             for sid, lon, lat, op, name, rods, kind in cur.fetchall():
                 rows.append({'id': sid, 'lon': lon, 'lat': lat, 'operador': op, 'name': name, 'rodovias': rods or [], 'kind': kind})
     except Exception as e:  # noqa: BLE001
         print(f'  ! banco indisponível para ler os nós do OSM ({e}); lendo pelo toll_osm')
-    if not rows:
-        from sources import toll_osm
+    from sources import toll_osm
+    pbf = toll_osm._pbf_path()
+    pbf_mtime = os.path.getmtime(pbf) if pbf else None
+    if not banco_atualizado(len(rows), float(carga) if carga is not None else None, pbf_mtime):
+        if rows:
+            print(f'  ! o extrato {pbf} é mais novo que a última carga do toll_osm no banco: lendo os nós de pedágio do PBF '
+                  '(rode o toll_osm para atualizar a camada)')
+        rows = []
         for f in toll_osm.fetch():
             lon, lat = f['geometry']['coordinates']
             rows.append({'id': f['source_id'], 'lon': lon, 'lat': lat, 'operador': f['props'].get('operador'), 'name': f.get('name'),
                          'rodovias': f['props'].get('rodovias') or [], 'kind': f.get('kind')})
+    _NODES = rows
     return rows
 
 

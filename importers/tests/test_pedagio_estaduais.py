@@ -54,6 +54,36 @@ class AgetranspPage(unittest.TestCase):
         self.assertEqual(next(c for c in cats2 if c['eixos'] == 8)['valor'], 80.0)
         self.assertTrue(diffs2)
 
+    def test_merge_vialagos_mesma_estrutura(self):
+        conc = next(c for c in curated()['concessoes'] if c['id'] == 'rj_vialagos')
+        page = toll_agetransp.parse_page((FIX / 'agetransp_vialagos.html').read_text(encoding='utf-8'))
+        self.assertEqual(toll_agetransp.structure_problems(conc, page), [])
+        cats, tbp, _, diffs = toll_agetransp.merge_tariff(conc, page)
+        self.assertEqual(diffs, [])
+        self.assertEqual(next(c for c in cats if c['cat'] == 7)['valor_fds'], 153.00)
+
+    def test_estrutura_mudou_nao_casa_pelo_multiplicador(self):
+        """Página (hipotética) da Rota 116 com tabela linear por eixo, como a Deliberação 1698/2026 recomenda estudar: a
+        categoria 'III a VI' (mult 4) NÃO pode receber o valor da nova linha de mult 4 (só 4 eixos). Fica a transcrição,
+        vencida na véspera da nova data da página."""
+        d = curated()
+        conc = next(c for c in d['concessoes'] if c['id'] == 'rj_rota116')
+        page = toll_agetransp.parse_page((FIX / 'agetransp_rota116_linear.html').read_text(encoding='utf-8'))
+        self.assertEqual(sorted(r['mult'] for r in page['linhas']), [1, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(page['desde'], '2026-08-01')
+        with self.assertRaises(toll_agetransp.EstruturaMudou) as cm:
+            toll_agetransp.merge_tariff(conc, page)
+        probs = cm.exception.problemas
+        self.assertTrue(any(p.startswith('categoria 3 ') for p in probs), probs)
+        self.assertTrue(any(p.startswith('linha nova na página: mult 5') for p in probs), probs)
+        self.assertIn('retranscrever', str(cm.exception))
+        c2 = toll_agetransp.vencer_na_data_da_pagina(conc, page)
+        self.assertEqual(c2['vigencia_fim'], '2026-07-31')  # véspera de 01/08/2026 (igual ao fim já transcrito)
+        self.assertEqual(toll_agetransp.vencer_na_data_da_pagina(conc, {**page, 'desde': '2026-03-01'})['vigencia_fim'], '2026-02-28')
+        t = base.build_tariff(c2, d, 'AGETRANSP', extra={'estrutura_mudou': probs})
+        self.assertEqual(next(c for c in t['categorias'] if c['cat'] == 3)['valor'], 38.40)  # transcrição, não os R$ 40,00 da página
+        self.assertEqual(t['base'], 9.60)
+
 
 class Curadoria(unittest.TestCase):
     def test_dms_e_utm(self):
@@ -90,6 +120,14 @@ class Curadoria(unittest.TestCase):
         c = next(c for c in curated()['concessoes'] if c['id'] == 'mg_lote2_sul_de_minas')
         self.assertEqual(c['tarifa']['base'], 10.10)
         self.assertFalse(c['reajuste_suspenso']['aplicado'])
+
+    def test_nos_do_osm_do_extrato_mais_novo(self):
+        """`run.py all` roda toll_agetransp/artemig/municipais antes do toll_osm: com PBF mais novo que a carga, lê do PBF."""
+        self.assertTrue(base.banco_atualizado(700, carga_ts=2000.0, pbf_mtime=1000.0))
+        self.assertFalse(base.banco_atualizado(700, carga_ts=1000.0, pbf_mtime=2000.0))  # extrato novo: PBF
+        self.assertFalse(base.banco_atualizado(700, carga_ts=None, pbf_mtime=2000.0))
+        self.assertTrue(base.banco_atualizado(700, carga_ts=None, pbf_mtime=None))       # sem PBF local: banco
+        self.assertFalse(base.banco_atualizado(0, carga_ts=2000.0, pbf_mtime=None))      # banco vazio: toll_osm
 
     def test_casamento_osm_pelo_operador(self):
         conc = {'id': 'x', 'operador': 'Rota 116', 'operador_osm': 'rota ?116'}

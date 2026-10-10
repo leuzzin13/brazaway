@@ -10,6 +10,10 @@ Estrutura NÃO linear da Rota 116 (Deliberação 1631/2025 e site da concession�
 2 eixos rodas duplas = 2; 3 a 6 eixos rodas duplas = 4 (R$ 38,40 para 3, 4, 5 ou 6 eixos); 7 eixos = 7; 8 eixos = 8
 (PDF "evolução das tarifas"); 7 ou mais eixos = TBP por eixo (eixo adicional).
 Janela da TBA da Via Lagos (sexta 12h a segunda 12h; véspera de feriado nacional 12h ao dia seguinte 12h): ver o JSON.
+Estrutura da tabela: antes de usar os valores da página, o importador confere se as linhas dela (multiplicador + eixos e
+rodagem do texto "eixos") são as mesmas categorias da transcrição. Se a estrutura mudou (ex.: a Rota 116 passar a
+cobrar por eixo, como recomenda a Deliberação 1698/2026), NÃO casa valores pelo multiplicador: usa a transcrição, com a
+vigência encerrada na véspera da nova data da página (o valor sai estimado), e o NOTES pede a retranscrição.
 Posição: nós de pedágio do OSM do mesmo operador (sem coordenada oficial; método registrado em props.posicao_metodo).
 """
 from __future__ import annotations
@@ -65,9 +69,53 @@ def parse_page(html: str) -> dict:
     return {'linhas': rows, 'desde': desde, 'deliberacao': (dm.group(1), dm.group(2)) if dm else None, 'deliberacao_url': link}
 
 
+class EstruturaMudou(ValueError):
+    """A tabela da página não tem as mesmas categorias da transcrição: não dá para casar os valores pelo multiplicador."""
+    def __init__(self, problemas: list[str]):
+        super().__init__('estrutura tarifária mudou na página; retranscrever: ' + '; '.join(problemas))
+        self.problemas = problemas
+
+
+def _eixos(txt: str) -> frozenset[int]:
+    """'2,3 e 4 eixos rodas simples' -> {2, 3, 4}; '7 eixos 7D' -> {7} (só os números antes de 'eixo')."""
+    head = re.split(r'eixo', txt or '', maxsplit=1, flags=re.I)[0]
+    return frozenset(int(x) for x in re.findall(r'\d+', head))
+
+
+def _rodagem(txt: str) -> str | None:
+    t = (txt or '').lower()
+    return 'dupla' if 'dupla' in t else 'simples' if 'simples' in t else None
+
+
+def structure_problems(conc: dict, page: dict) -> list[str]:
+    """Compara as linhas da página com as categorias da transcrição: mesmo multiplicador, mesmos eixos e (quando os dois
+    dizem) mesma rodagem. Categoria marcada `fora_da_pagina` (8 eixos da Rota 116, só no PDF da concessionária) não é
+    cobrada da página. Devolve a lista de diferenças (vazia = mesma estrutura)."""
+    rows = list(page['linhas'])
+    livres = list(range(len(rows)))
+    probs = []
+    for c in conc['tarifa']['categorias']:
+        if c.get('fora_da_pagina'):
+            continue
+        ax = frozenset(range(int(c['eixos']), int(c.get('eixos_ate') or c['eixos']) + 1))
+        hit = next((i for i in livres if abs(rows[i]['mult'] - float(c['mult'])) < 1e-9 and _eixos(rows[i]['eixos_txt']) == ax
+                    and (c.get('rodagem') is None or _rodagem(rows[i]['eixos_txt']) in (None, c['rodagem']))), None)
+        if hit is None:
+            probs.append(f"categoria {c.get('cat')} (mult {c['mult']:g}, {'/'.join(map(str, sorted(ax)))} eixos, rodagem {c.get('rodagem')}) não está na página")
+        else:
+            livres.remove(hit)
+    for i in livres:
+        probs.append(f"linha nova na página: mult {rows[i]['mult']:g}, '{rows[i]['eixos_txt']}'")
+    return probs
+
+
 def merge_tariff(conc: dict, page: dict) -> tuple[list[dict], float, float | None, list[str]]:
-    """Valores da página aplicados às categorias da transcrição (casadas pelo multiplicador). Categoria que a página não
-    traz (8 eixos da Rota 116) = mult x TBP da página. Devolve (categorias, TBP, eixo_adicional, diferenças)."""
+    """Valores da página aplicados às categorias da transcrição (casadas pelo multiplicador, depois de conferir que a
+    estrutura é a mesma; senão levanta EstruturaMudou). Categoria que a página não traz (8 eixos da Rota 116) = mult x
+    TBP da página. Devolve (categorias, TBP, eixo_adicional, diferenças)."""
+    probs = structure_problems(conc, page)
+    if probs:
+        raise EstruturaMudou(probs)
     t = conc['tarifa']
     by_mult: dict[float, dict] = {}
     for r in page['linhas']:
@@ -93,6 +141,17 @@ def merge_tariff(conc: dict, page: dict) -> tuple[list[dict], float, float | Non
         cats.append(nc)
     eixo_ad = tbp if t.get('eixo_adicional') is not None else None
     return cats, tbp, eixo_ad, diffs
+
+
+def vencer_na_data_da_pagina(conc: dict, page: dict) -> dict:
+    """Transcrição com a vigência encerrada na véspera da data nova publicada na página (se for posterior ao início dela)."""
+    conc = dict(conc)
+    desde = page.get('desde')
+    if desde and desde > (conc.get('vigencia_inicio') or ''):
+        fim = (date.fromisoformat(desde) - timedelta(days=1)).isoformat()
+        if not conc.get('vigencia_fim') or fim < conc['vigencia_fim']:
+            conc['vigencia_fim'] = fim
+    return conc
 
 
 def fetch():
@@ -122,6 +181,12 @@ def fetch():
                                        extra={'lido_da_pagina': True, 'deliberacao_pagina': page['deliberacao'] and f'Deliberação N. {page["deliberacao"][0]} de {page["deliberacao"][1]}'})
             notes.append(f'{conc["id"]}: tabela lida da AGETRANSP ({len(page["linhas"])} linhas, TBP R$ {f"{tbp:.2f}".replace(".", ",")}, desde {page["desde"]})'
                          + (f'; difere da transcrição: {"; ".join(diffs)}' if diffs else '; igual à transcrição'))
+        except EstruturaMudou as e:
+            # valores da página não casam com as categorias transcritas: fica a transcrição, vencida a partir da nova data
+            conc = vencer_na_data_da_pagina(conc, page)
+            print(f'  ! {conc["id"]}: {e}; usando a transcrição de 10/10/2026 (vigência até {conc.get("vigencia_fim")})')
+            tarifa = base.build_tariff(conc, d, FONTE, url, extra={'estrutura_mudou': e.problemas})
+            notes.append(f'{conc["id"]}: {e} (transcrição usada, vigência até {conc.get("vigencia_fim")}; valor estimado depois disso)')
         except Exception as e:  # noqa: BLE001
             print(f'  ! {conc["id"]}: página da AGETRANSP ilegível ({e}); usando a transcrição de 10/10/2026')
             tarifa = base.build_tariff(conc, d, FONTE, url)

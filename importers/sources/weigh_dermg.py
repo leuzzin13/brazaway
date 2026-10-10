@@ -24,6 +24,8 @@ from sources._sre_mg import SreLocator
 LAYER_ID = 'balancas'
 SOURCE = 'der-mg'
 SITE_URL = 'https://www.der.mg.gov.br/transportes/pracas-de-pesagem'
+# texto do site sobre o funcionamento (os postos "Estratégica" não são eventuais: o site não dá horário por posto)
+OPERACAO_OBS = 'O funcionamento das balanças ocorre de forma permanente e estratégica todos os dias da semana (site do DER-MG)'
 FS_URL = 'https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pracas_pesagem/FeatureServer/2'
 SOURCE_URL = f'{SITE_URL} (lista dos postos em operação) + {FS_URL} (coordenadas) + SRE-MG 2026_02 (rodovia+km)'
 LICENSE = ('Site do DER-MG: reutilização permitida com identificação da fonte e crédito (página "Aspectos legais"); camada ArcGIS '
@@ -172,7 +174,9 @@ def fetch():
         km_txt = f"{r['km']:g}".replace('.', ',')
         nome = f"Posto de pesagem DER-MG {pretty_rod(r['rodovia'])} km {km_txt} ({r['municipio']})"
         if r['operacao'] == 'estratégica':
-            nome += ', operação estratégica (eventual)'
+            # rótulo da própria tabela; o site não diz "eventual" ("O FUNCIONAMENTO DAS BALANÇAS OCORRE DE FORMA PERMANENTE E
+            # ESTRATÉGICA TODOS OS DIAS DA SEMANA"): posto sinalizado aberto obriga a entrar (CTB art. 209)
+            nome += ', operação estratégica'
         out.append({
             'source_id': stable_id('der-mg', r['rodovia'], r['km'], r.get('ramo')),
             'geometry': {'type': 'Point', 'coordinates': [round(lon, 7), round(lat, 7)]},
@@ -181,7 +185,7 @@ def fetch():
             'props': {'rodovia': pretty_rod(r['rodovia']), 'km': r['km'], 'sentido': None,
                       'sentido_txt': _sentido_txt(r),
                       'administrador': 'DER-MG' + (f" (trecho da concessão {r['concessao']})" if r.get('concessao') else ''),
-                      'operacao': r['operacao'], 'urg': r['urg'], 'municipio': r['municipio'], 'uf': 'MG',
+                      'operacao': r['operacao'], 'operacao_obs': OPERACAO_OBS, 'urg': r['urg'], 'municipio': r['municipio'], 'uf': 'MG',
                       'precisao': prec, 'posicao_metodo': metodo, 'erro_km_estimado': erro,
                       'fonte_lista': SITE_URL, 'base_legal': 'CTB art. 209 (deixar de adentrar as áreas destinadas à pesagem, redação da Lei 14.157/2021)'},
         })
