@@ -162,6 +162,16 @@ A camada não aplica esse valor: só compara o limite do nó com a altura inform
 - Nós **7867297145** e **8528811679**, Av. Humberto de Campos sob o Rodoanel (São Bernardo): limitadores de 4,3 m nas duas
   pistas (usados nos testes).
 
+### Pendências
+
+- Conferir em campo o nó 3908618328 da Dutra (acima).
+- `costLines` calcula a sua própria rota livre e o `routing.ts` calcula outra igual depois (`freeRoute()`): uma chamada
+  a mais ao Valhalla por rota (1–3 s numa rota longa com o Valhalla livre, bem mais com ele ocupado). Compartilhar a
+  rota livre exigiria um campo novo em `RouteCtx`/`routing.ts` (núcleo); não foi feito.
+- Infra decidida na integração (não é mais pendência): `osmium==4.0.2` em `importers/requirements.txt` (também usado
+  pelo `toll_osm` do pedágio; a imagem `truck-router-importer` já o tem) e os seeds em `db/seed/layers/` seguindo o
+  `docs/LAYERS.md`.
+
 ## Testes (`api/test/layers/altura_osm.test.ts`)
 
 Caso real conferido no PBF com pyosmium: nó 7867297145 (`barrier=height_restrictor`, `maxheight=4.3`, versão 3) na way
