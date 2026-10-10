@@ -53,14 +53,6 @@ function muniLabel(m: Municipio | undefined, cod: number, munis: MunicipioIndex)
 const DESVIO_NV: Record<number, number> = { 1: 10, 2: 15, 3: 35, 4: 60 };
 
 export class CnefeGeocoder {
-  /** Há endereços carregados? (sem CNEFE, a cascata cai direto para CEP/bairro/município/Photon) */
-  async available(): Promise<boolean> {
-    try {
-      const r = await query<{ ok: boolean }>('select exists (select 1 from addr_street limit 1) as ok');
-      return r.rows[0]?.ok ?? false;
-    } catch { return false; }
-  }
-
   async geocode(p: ParsedAddress, ctx: CnefeCtx): Promise<GeocodeResult[]> {
     const out: GeocodeResult[] = [];
     const munFilter = this.munFilter(p, ctx);
