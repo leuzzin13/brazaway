@@ -58,7 +58,7 @@ const OSM_KIND_LABEL: Record<string, string> = {
 const SOURCE_RANK: Record<string, number> = { 'ppd-mt': 0, artesp: 1, antt: 2, osm: 3 };
 /** dois candidatos a menos disso são o mesmo lugar (fica o de melhor tier/fonte) */
 const SAME_PLACE_M = 100;
-const MAX_LAYER_ROWS = 300;
+const MAX_LAYER_ROWS = 800;
 
 /** Data de hoje em Brasília (AAAA-MM-DD), para comparar com a validade da certificação. */
 export function todayBR(now = new Date()): string {
