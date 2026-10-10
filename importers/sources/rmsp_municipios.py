@@ -403,85 +403,182 @@ def features_from_fc(fc: dict, kind_default: str = 'via') -> list[dict]:
     return valhalla_check(out)
 
 
+# Tamanho máximo de cada linha de custo. O routing.ts (usesCostLine) e o annotate da camada consideram que a rota "usa"
+# o trecho quando >= 50% da linha fica a até 15 m dela: com linhas longas (cadeias de vários km), uma rota que roda
+# 2 km de uma via de 5 km não passava do critério e o trecho proibido ficava sem aviso. Por isso as vias são cortadas
+# em pedaços de até ~400 m e o encadeamento de trechos contíguos para nesse limite.
+MAX_PIECE_M = 400.0
+MAX_PIECE_PTS = 40
+# linhas que não puderam ser testadas no Valhalla (timeout/erro de conexão) acima deste número abortam o import
+MAX_UNTESTED = 5
+
+
+def _dist_m(a, b) -> float:
+    import math
+    lat = math.radians((a[1] + b[1]) / 2)
+    return math.hypot((b[0] - a[0]) * 111320.0 * math.cos(lat), (b[1] - a[1]) * 110540.0)
+
+
+def line_length_m(c) -> float:
+    return sum(_dist_m(a, b) for a, b in zip(c[:-1], c[1:]))
+
+
+def split_long(c: list, max_m: float = MAX_PIECE_M) -> list[list]:
+    """Corta a linha em pedaços de comprimento parecido e <= max_m (pontos interpolados no próprio eixo; o edge walk
+    do Valhalla aceita início/fim no meio da aresta — testado)."""
+    total = line_length_m(c)
+    if total <= max_m * 1.1 or len(c) < 2:
+        return [c]
+    import math
+    n = math.ceil(total / max_m)
+    step = total / n
+    pieces, cur, acc, k = [], [list(c[0])], 0.0, 1
+    for a, b in zip(c[:-1], c[1:]):
+        d = _dist_m(a, b)
+        while k < n and d > 0 and acc + d >= k * step - 1e-6:
+            t = (k * step - acc) / d
+            p = [round(a[0] + (b[0] - a[0]) * t, 7), round(a[1] + (b[1] - a[1]) * t, 7)]
+            if _dist_m(cur[-1], p) > 0.5:
+                cur.append(p)
+            else:
+                p = cur[-1]            # corte cai num vértice existente
+            if len(cur) >= 2:
+                pieces.append(cur)
+            cur, k = [p], k + 1
+        if list(cur[-1]) != list(b):
+            cur.append(list(b))
+        acc += d
+    if len(cur) >= 2 and line_length_m(cur) > 1:
+        pieces.append(cur)
+    elif pieces:
+        pieces[-1].extend(cur[1:])
+    return pieces or [c]
+
+
 def valhalla_check(feats: list[dict]) -> list[dict]:
     """linear_cost_factors do Valhalla exige que a linha 'ande' pelas arestas do grafo (senão o /route inteiro falha com
-    'Failed to edge walk line feature'). Testa cada linha (e o sentido contrário, quando a via é de mão dupla); a que falha
-    é reencaixada com trace_attributes (map_snap) e, se ainda falhar, descartada. Sem Valhalla, não valida (avisa)."""
+    'Failed to edge walk line feature', error_code 233). Antes do teste, cada parte de MultiLineString vira feição própria
+    e as linhas longas são cortadas (MAX_PIECE_M). Testa cada linha (e o sentido contrário, quando a via é de mão dupla);
+    a que falha é reencaixada com trace_attributes (map_snap) e, se ainda falhar, descartada. Erro de rede/timeout:
+    tenta de novo; se não der para testar, a linha é tratada como falha (nunca entra sem teste) e, acima de MAX_UNTESTED,
+    o import aborta. Sem Valhalla, não valida (avisa e marca valhalla_validado=false)."""
     import requests
+    import threading
     from concurrent.futures import ThreadPoolExecutor
     url = os.environ.get('VALHALLA_URL', 'http://valhalla:8002')
+    feats = explode_and_split(feats)
     try:
         requests.get(f'{url}/status', timeout=5).raise_for_status()
     except Exception:
         print('  ! Valhalla indisponível: linhas NÃO validadas para linear_cost_factors')
+        for f in feats:
+            if f['kind'] == 'via':
+                f['props']['valhalla_validado'] = False
         return feats
+    lock = threading.Lock()
+    untested: list[str] = []
 
-    def ok(c) -> bool:
-        a = c[len(c) // 2]
-        body = {'locations': [{'lat': a[1], 'lon': a[0]}, {'lat': a[1] + 0.001, 'lon': a[0] + 0.001}], 'costing': 'auto',
+    def ok(c) -> bool | None:
+        """True = linha aceita; False = edge walk falhou; None = não deu para testar (rede/timeout/5xx)."""
+        a, b = c[0], c[-1]
+        body = {'locations': [{'lat': a[1], 'lon': a[0]}, {'lat': b[1], 'lon': b[0]}], 'costing': 'auto',
                 'linear_cost_factors': [{'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': c}, 'properties': {'factor': 2}}]}
-        try:
-            r = requests.post(f'{url}/route', json=body, timeout=60)
-            return not (r.status_code == 400 and 'edge walk' in r.text)
-        except Exception:
-            return True
+        for attempt in range(3):
+            try:
+                r = requests.post(f'{url}/route', json=body, timeout=60)
+            except Exception:
+                time.sleep(2 * (attempt + 1))
+                continue
+            if r.status_code >= 500:
+                time.sleep(2 * (attempt + 1))
+                continue
+            # o edge walk das linhas é feito antes de localizar os pontos: qualquer outra resposta = linha aceita
+            return not ('"error_code":233' in r.text.replace(' ', '') or 'edge walk' in r.text)
+        return None
+
+    def tested(c, sid) -> bool:
+        r = ok(c)
+        if r is None:
+            with lock:
+                untested.append(sid)
+            return False
+        return r
 
     def snap(c):
         body = {'shape': [{'lat': y, 'lon': x} for x, y in c], 'costing': 'auto', 'shape_match': 'map_snap',
                 'trace_options': {'search_radius': 15}, 'filters': {'attributes': ['shape'], 'action': 'include'}}
-        try:
-            r = requests.post(f'{url}/trace_attributes', json=body, timeout=60).json()
-            return [[round(x, 6), round(y, 6)] for x, y in _decode6(r['shape'])] if 'shape' in r else None
-        except Exception:
-            return None
+        for attempt in range(2):
+            try:
+                r = requests.post(f'{url}/trace_attributes', json=body, timeout=60).json()
+                return [[round(x, 6), round(y, 6)] for x, y in _decode6(r['shape'])] if 'shape' in r else None
+            except Exception:
+                time.sleep(2)
+        return None
 
     def check(f):
         if f['kind'] != 'via':
-            return [f], 0
-        g = f['geometry']
-        parts = [g['coordinates']] if g['type'] == 'LineString' else g['coordinates']
+            return [f], []
+        c = f['geometry']['coordinates']
         two = f['props'].get('sentido') != 'unico' and not f['props'].get('mao_unica')
-        good, rev_extra, dropped = [], [], 0
-        for c in parts:
-            if not ok(c):
-                c2 = snap(c)
-                if not c2 or len(c2) < 2 or not ok(c2):
-                    dropped += 1
-                    continue
-                c = c2
-            good.append(c)
-            if two and not ok(c[::-1]):
-                r2 = snap(c[::-1])
-                rev_extra.append(r2 if r2 and len(r2) >= 2 and ok(r2) else None)
-        if not good:
-            return [], dropped
-        f['geometry'] = {'type': 'LineString', 'coordinates': good[0]} if len(good) == 1 else {'type': 'MultiLineString', 'coordinates': good}
+        if not tested(c, f['source_id']):
+            c2 = snap(c)
+            if not c2 or len(c2) < 2 or not tested(c2, f['source_id']):
+                return [], [f"{f['props'].get('via') or f['props'].get('nome_osm')} (inc. {f['props'].get('inciso')})"]
+            c = c2
+        f['geometry'] = {'type': 'LineString', 'coordinates': c}
         f['props']['valhalla_validado'] = True
-        out = [f]
-        if rev_extra:
-            # o sentido contrário não casou com a mesma linha: vira feição própria (reencaixada) e esta fica de sentido único
-            f['props']['sentido'] = 'unico'
-            for k, r2 in enumerate(x for x in rev_extra if x):
-                out.append({**f, 'source_id': f['source_id'] + f'-r{k}', 'geometry': {'type': 'LineString', 'coordinates': r2},
-                            'props': {**f['props'], 'sentido': 'unico'}})
-            dropped += sum(1 for x in rev_extra if x is None)
-        return out, dropped
+        if not two or tested(c[::-1], f['source_id']):
+            return [f], []
+        # o sentido contrário não casou com a mesma linha: vira feição própria (reencaixada) e esta fica de sentido único
+        r2 = snap(c[::-1])
+        f['props']['sentido'] = 'unico'
+        if r2 and len(r2) >= 2 and tested(r2, f['source_id']):
+            return [f, {**f, 'source_id': f['source_id'] + '-r', 'geometry': {'type': 'LineString', 'coordinates': r2},
+                        'props': {**f['props'], 'sentido': 'unico'}}], []
+        return [f], [f"{f['props'].get('via') or f['props'].get('nome_osm')} (inc. {f['props'].get('inciso')}, sentido contrário)"]
 
     with ThreadPoolExecutor(8) as ex:
         res = list(ex.map(check, feats))
-    dropped = sum(d for _, d in res)
+    if len(set(untested)) > MAX_UNTESTED:
+        raise RuntimeError(f'{len(set(untested))} linhas não puderam ser testadas no Valhalla ({url}): import abortado')
+    if untested:
+        print(f'  ! {len(set(untested))} linha(s) sem teste no Valhalla (rede/timeout): tratadas como falha')
+    dropped = [x for _, d in res for x in d]
     if dropped:
-        print(f'  ! {dropped} trecho(s) descartado(s): não casam com o grafo do Valhalla')
+        print(f'  ! {len(dropped)} trecho(s)/sentido(s) descartado(s), não casam com o grafo do Valhalla: {"; ".join(dropped)}')
     checked = [f for fs, _ in res for f in fs]
-    merged = merge_chains(checked, ok)
-    print(f'    vias: {sum(1 for f in checked if f["kind"] == "via")} trechos -> {sum(1 for f in merged if f["kind"] == "via")} após encadear')
+    merged = merge_chains(checked, lambda c: ok(c) is True)
+    print(f'    vias: {sum(1 for f in checked if f["kind"] == "via")} linhas -> {sum(1 for f in merged if f["kind"] == "via")} após encadear '
+          f'(máx. {MAX_PIECE_M:.0f} m por linha)')
     return merged
 
 
+def explode_and_split(feats: list[dict]) -> list[dict]:
+    """Uma feição por LineString (as partes de um MultiLineString não compartilham mais o 'sentido') e linhas longas
+    cortadas em pedaços de até MAX_PIECE_M."""
+    out = []
+    for f in feats:
+        g = f['geometry']
+        if f['kind'] != 'via' or g['type'] not in ('LineString', 'MultiLineString'):
+            out.append(f)
+            continue
+        parts = [g['coordinates']] if g['type'] == 'LineString' else g['coordinates']
+        for i, part in enumerate(parts):
+            pieces = split_long(part)
+            for j, c in enumerate(pieces):
+                sid = f['source_id'] + (f'-p{i}' if len(parts) > 1 else '') + (f'-s{j}' if len(pieces) > 1 else '')
+                props = {**f['props'], 'comprimento_m': round(line_length_m(c))}
+                if len(pieces) > 1:
+                    props['pedaco'] = f'{j + 1}/{len(pieces)}'
+                out.append({**f, 'source_id': sid, 'geometry': {'type': 'LineString', 'coordinates': c}, 'props': props})
+    return out
+
+
 def merge_chains(feats: list[dict], ok) -> list[dict]:
-    """Encadeia trechos contíguos (fim de um = início do outro, mesmo nó do OSM) da mesma regra/inciso/via num só
-    LineString. Menos linhas no request ao Valhalla e menos avisos repetidos. Só aceita a cadeia se ela (e o sentido
-    contrário, para mão dupla) passar no teste de 'edge walk'; senão mantém os trechos originais."""
+    """Encadeia trechos contíguos (fim de um = início do outro) da mesma regra/inciso/via num só LineString, sem passar
+    de MAX_PIECE_M nem de MAX_PIECE_PTS vértices (ver MAX_PIECE_M). Menos linhas no request ao Valhalla e menos avisos
+    repetidos. Só aceita a cadeia se ela (e o sentido contrário, para mão dupla) passar no teste de 'edge walk'; senão
+    mantém os trechos originais."""
     from collections import defaultdict
     from concurrent.futures import ThreadPoolExecutor
     k = lambda p: (round(p[0], 6), round(p[1], 6))
@@ -500,18 +597,21 @@ def merge_chains(feats: list[dict], ok) -> list[dict]:
             if used[i]: continue
             used[i] = True
             chain, members = list(segs[i][1]), [segs[i][0]]
+            length = line_length_m(chain)
             grown = True
             while grown:
                 grown = False
                 for j in range(len(segs)):
                     if used[j]: continue
                     c = segs[j][1]
+                    lc = line_length_m(c)
+                    if length + lc > MAX_PIECE_M or len(chain) + len(c) - 1 > MAX_PIECE_PTS: continue
                     if k(c[0]) == k(chain[-1]): chain += c[1:]
                     elif two and k(c[-1]) == k(chain[-1]): chain += c[::-1][1:]
                     elif k(c[-1]) == k(chain[0]): chain = c + chain[1:]
                     elif two and k(c[0]) == k(chain[0]): chain = c[::-1] + chain[1:]
                     else: continue
-                    used[j] = True; members.append(segs[j][0]); grown = True
+                    used[j] = True; members.append(segs[j][0]); grown = True; length += lc
             jobs.append((members, chain, two))
 
     def build(job):
@@ -519,9 +619,10 @@ def merge_chains(feats: list[dict], ok) -> list[dict]:
         if len(members) == 1 or not ok(chain) or (two and not ok(chain[::-1])):
             return members
         f0 = members[0]
-        props = {**f0['props'], 'comprimento_m': sum(m['props'].get('comprimento_m') or 0 for m in members),
+        props = {**f0['props'], 'comprimento_m': round(line_length_m(chain)),
                  'osm_way_ids': sorted({m['props'].get('osm_way_id') for m in members if m['props'].get('osm_way_id')}),
                  'trechos_encadeados': len(members)}
+        props.pop('pedaco', None)
         return [{**f0, 'source_id': stable_id(*[m['source_id'] for m in members]), 'geometry': {'type': 'LineString', 'coordinates': chain}, 'props': props}]
 
     with ThreadPoolExecutor(8) as ex:
