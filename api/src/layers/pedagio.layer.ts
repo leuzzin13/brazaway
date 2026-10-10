@@ -355,7 +355,7 @@ const layer: RouteLayer = {
           };
           const semGanho = altPts.length > 0 && (!evitados.length || (economia <= 0 && !evitados.some((p) => p.valor == null)));
           alternativa = semGanho
-            ? { disponivel: false, motivo: 'mesmos_pontos', ...base }
+            ? { disponivel: false, motivo: evitados.length ? 'sem_economia' : 'mesmos_pontos', ...base }
             : { disponivel: true, ...base, economia: altPts.length ? economia : total, economia_parcial: unknown.length > 0 || altPts.some((p) => p.valor == null) };
         }
       } catch (e) {
@@ -398,7 +398,9 @@ const layer: RouteLayer = {
           ? 'Não há rota sem pedágio para este veículo.'
           : alternativa.motivo === 'mesmos_pontos'
             ? `Rota sem pedágio não encontrada: a alternativa calculada passa pelos mesmos pontos de cobrança${rest?.pontos.length ? ` (${rest.pontos.slice(0, 2).join('; ')})` : ''}; pórtico free flow nem sempre está marcado como pedágio no mapa.`
-            : `Alternativa sem pedágio indisponível agora (${alternativa.motivo}).`);
+            : alternativa.motivo === 'sem_economia'
+              ? `Rota sem pedágio não encontrada: a alternativa calculada passa por outros pontos de cobrança${rest?.pontos.length ? ` (${rest.pontos.slice(0, 2).join('; ')})` : ''} e não sai mais barata.`
+              : `Alternativa sem pedágio indisponível agora (${alternativa.motivo}).`);
       }
     }
     if (plazas.length) {

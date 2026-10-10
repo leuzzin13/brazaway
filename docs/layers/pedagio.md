@@ -145,8 +145,9 @@ Itaguaí: a "rota sem pedágio" passava pelas mesmas praças e o resumo prometia
 - a alternativa não passa por nenhum ponto de cobrança → "Sem pedágio: +x km e +y min para economizar R$ …";
 - passa por parte deles → "Com menos pedágio: … para economizar R$ (total − pedágio da alternativa)", com
   `pedagio_restante` (valor e pontos);
-- não evita nenhum (ou não economiza) → `disponivel: false`, `motivo: 'mesmos_pontos'` e "Rota sem pedágio não
-  encontrada: a alternativa calculada passa pelos mesmos pontos de cobrança …".
+- não evita nenhum → `disponivel: false`, `motivo: 'mesmos_pontos'` e "Rota sem pedágio não encontrada: a
+  alternativa calculada passa pelos mesmos pontos de cobrança …"; troca por outros pontos sem sair mais barata →
+  `motivo: 'sem_economia'`.
 
 ## Saída na rota (`layers.pedagio`)
 
