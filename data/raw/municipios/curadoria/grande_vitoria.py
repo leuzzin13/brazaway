@@ -266,12 +266,14 @@ def geometria():
     pn = cadeia(ws, [60457866, 550677963, 996964543, 167255155])      # Pedro Nolasco, leste → noroeste
     tri = Polygon(em + pn).buffer(0)
     ma = LineString(cadeia(ws, [184098004]))                          # Marcos de Azevedo: Duarte Lemos → Pedro Nolasco
-    mercado = unary_union([tri, buf_m(ma, 30)])
+    # a Av. Alexandre Buaiz (acesso ao porto pela Ponte Seca) fica fora: o ato não fecha o lado oeste do triângulo
+    ab = unary_union([e['_L'] for e in vias(ws, {'Avenida Alexandre Buaiz'}, dentro=buf_m(tri, 60))])
+    mercado = unary_union([tri, buf_m(ma, 30)]).difference(buf_m(ab, 25))
     salvar('3205309_mercado_vila_rubim.geojson', [{'type': 'Feature', 'geometry': limpo(mercado), 'properties': {
         'area': 'Mercado da Vila Rubim (Dec. 16.243/2015, art. 2º, §2º)',
         'osm_ids': ['w52227711', 'w439501573', 'w487090317', 'w60457866', 'w550677963', 'w996964543', 'w167255155', 'w184098004']}}],
         'triângulo Av. Elias Miguel × R. Pedro Nolasco fechado na Ponte Seca + 30 m em torno da Av. Marcos de Azevedo '
-        '(Av. Duarte Lemos → R. Pedro Nolasco)')
+        '(Av. Duarte Lemos → R. Pedro Nolasco), menos 25 m em torno da Av. Alexandre Buaiz')
 
     # ---------------- Vitória: instalações portuárias do Centro (art. 2º, §1º, red. Dec. 18.103/2020)
     # Faixa entre a orla (Av. Elias Miguel, Av. Getúlio Vargas, Av. Mal. Mascarenhas de Moraes) e o canal, da Ponte Seca
