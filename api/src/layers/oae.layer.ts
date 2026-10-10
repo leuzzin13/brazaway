@@ -12,6 +12,9 @@ import type { LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteLayer } fr
  *  - artesp    : passarelas das rodovias concedidas COM altura (props.altura_livre_m)  → bloqueio por altura
  *  - siurb     : 105 OAEs municipais nomeadas com status de obra                      → nomes e status na rota
  *  - curadoria : restrições oficiais curadas (props.restricao, vigente|historica)       → bloqueio se vigente
+ *  - der-mg    : 4.370 OAEs do DER-MG (Observatório da Infraestrutura), largura/estrutura e nota de inspeção crua
+ *                (escala não documentada)                                                  → contagem, madeira, ponte estreita
+ *  - der-es    : pontes estaduais do ES com PBT máximo em Instrução de Serviço do DER-ES (DIO-ES) → bloqueio por peso
  *
  * Regra geral (qualquer fonte): se a feição tem `altura_livre_m` e o veículo tem altura >= altura_livre_m - FOLGA,
  * ou tem `peso_max_t` e o veículo pesa mais, ou tem restrição curada VIGENTE cujo critério alcança o veículo, vira
@@ -22,7 +25,16 @@ import type { LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteLayer } fr
 /** Folga sobre a altura livre publicada. Decisão de produto (margem para erro de cadastro, carga e pavimento), não valor legal. */
 export const FOLGA_ALTURA_M = 0.1;
 /** Fontes cujas feições entram na contagem de estruturas (as demais duplicariam a mesma OAE). */
-const COUNT_SOURCES = ['geosampa', 'der-sp'];
+const COUNT_SOURCES = ['geosampa', 'der-sp', 'der-mg'];
+/**
+ * Ponte estreita (DER-MG): largura cadastrada abaixo disto não comporta dois caminhões de 2,60 m (largura máxima sem AET,
+ * Res. CONTRAN 882/2021, art. 4º, I) lado a lado com folga. Decisão de produto, não valor legal; o DER-MG não documenta se
+ * a largura é a total ou a da pista.
+ */
+export const LARGURA_ESTREITA_M = 5.5;
+/** Folga lateral mínima sobre a largura do veículo antes de o aviso de ponte estreita subir para `warn` (decisão de produto). */
+const FOLGA_LARGURA_M = 0.6;
+const MAX_ESTREITAS = 5;
 /** Raio para considerar que a rota passa por uma OAE pontual sem `bloqueio` (ex.: SIURB, ponto geocodificado). */
 const POINT_ON_ROUTE_M = 20;
 /** Fração mínima do eixo (linha) da estrutura a até LINE_TOL_M da rota para considerar que a rota usa a estrutura. */
@@ -54,6 +66,13 @@ export interface OaeProps {
   peso_max_t?: number | null; bloqueio?: Bloqueio | null; restricao?: Restricao;
   rodovia?: string | null; km?: number | null; status_obra?: string | null; dt_termino?: string | null; atualizado_em?: string | null;
   admin?: string | null; municipio?: string | null;
+  /** limite por eixo (t), quando o ato publica (ex.: DER-ES IS 011-N/2026) */
+  eixo_max_t?: number | null;
+  /** DER-MG: largura cadastrada (m), estrutura e inspeção crua (escala das notas não documentada pela fonte) */
+  largura_m?: number | null; estrutura?: string | null; id_cadastro?: string | null; sremg?: string | null;
+  condicao?: { nota_estrutural?: number | null; nota_durabilidade?: number | null; faixas?: number | null; largura_total_m?: number | null; altura_estrutura_m?: number | null; descricao?: string | null } | null;
+  /** DER-ES: código da OAE no ato */
+  oae_codigo?: string | null;
 }
 
 type Row = DataFeatureRow & { props: OaeProps };
@@ -101,6 +120,10 @@ export function motivosBloqueio(p: OaeProps, v: Vehicle, dia: string): Motivo[] 
   const pm = limitesValem ? num(p.peso_max_t) : null;
   if (pm != null && pm > 0 && v.weight_t > pm) {
     out.push({ code: 'oae_peso', valor: pm, regra: `peso máx. ${fmtT(pm)} t`, mensagem: `limite de ${fmtT(pm)} t; seu veículo pesa ${fmtT(v.weight_t)} t` });
+  }
+  const em = limitesValem ? num(p.eixo_max_t) : null;
+  if (em != null && em > 0 && v.axle_load_t > em && !out.some((m) => m.code === 'oae_peso')) {
+    out.push({ code: 'oae_peso', valor: em, regra: `${fmtT(em)} t por eixo`, mensagem: `limite de ${fmtT(em)} t por eixo; seu veículo tem ${fmtT(v.axle_load_t)} t por eixo` });
   }
   // tipo altura/peso vigente já vira altura_livre_m/peso_max_t no importador; aqui só proibições/interdições
   if (r && (r.tipo === 'proibido_pesados' || r.tipo === 'interditada') && restricaoVigente(r, dia) && criterioAplica(r.criterio, v)) {
@@ -186,6 +209,15 @@ function displayProps(r: Row): Record<string, unknown> {
     rodovia: p.rodovia ?? null, km: p.km ?? null,
     status_obra: p.status_obra ?? null, termino_obra: fmtData(p.dt_termino),
     admin: p.admin ?? null, fonte_url: rest?.fonte_url ?? null,
+    largura: p.largura_m != null ? `${fmtM(p.largura_m)} m (cadastro ${r.source === 'der-mg' ? 'DER-MG' : r.source})` : null,
+    estrutura: p.estrutura ?? null,
+    inspecao: p.condicao ? [
+      p.condicao.nota_estrutural != null ? `nota estrutural ${p.condicao.nota_estrutural}` : null,
+      p.condicao.nota_durabilidade != null ? `durabilidade ${p.condicao.nota_durabilidade}` : null,
+      p.condicao.faixas != null ? `${p.condicao.faixas} faixa(s)` : null,
+      'escala não documentada pelo DER-MG',
+    ].filter(Boolean).join(' · ') : null,
+    codigo: p.oae_codigo ?? p.id_cadastro ?? null,
     bloqueia: !!(p.bloqueio?.pontos?.length && (h != null || pm != null || rest?.status === 'vigente')),
   };
 }
@@ -194,7 +226,7 @@ const layer: RouteLayer = {
   meta: {
     id: 'oae',
     label: 'Pontes e viadutos',
-    description: 'Pontes, viadutos, passarelas e túneis. Bloqueia passarelas com altura livre publicada (ARTESP) abaixo da altura do veículo + 0,10 m e restrições oficiais vigentes; nas demais o limite não é publicado.',
+    description: 'Pontes, viadutos, passarelas e túneis. Bloqueia passarelas com altura livre publicada (ARTESP) abaixo da altura do veículo + 0,10 m, pontes estaduais do ES com PBT máximo em ato do DER-ES e restrições oficiais vigentes; nas demais o limite não é publicado. Em MG avisa ponte de madeira e ponte estreita (cadastro do DER-MG).',
     group: 'infraestrutura',
     sources: [
       { name: 'GeoSampa obra_arte (PMSP)', url: 'https://geosampa.prefeitura.sp.gov.br', license: 'CC-BY-SA 4.0' },
@@ -202,6 +234,8 @@ const layer: RouteLayer = {
       { name: 'ARTESP passarelas (Cadastro de Ativos)', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/491d79c5-ee09-4fe8-a3ce-1b425fe60bbe', license: 'CC-BY' },
       { name: 'SIURB controle de obras (PMSP)', url: 'https://dados.prefeitura.sp.gov.br/dataset/49a40a52-68c0-45c1-92d8-ccc35a525467', license: 'ODC-By 1.0' },
       { name: 'Curadoria de atos e notícias oficiais (PMSP, Prefeituras, Defesa Civil)', url: 'https://prefeitura.sp.gov.br/noticias', license: 'fatos de atos oficiais, com citação da fonte' },
+      { name: 'DER-MG — cadastro de OAEs e inspeção (Observatório da Infraestrutura, SEINFRA-MG)', url: 'https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/pontes_20_05_2025/FeatureServer/0', license: 'Não declarada (licenseInfo vazio); site do DER-MG: reutilização com fonte e crédito. Risco de uso comercial: ver docs/layers/rodovias_estaduais.md' },
+      { name: 'DER-ES — Instruções de Serviço de restrição de PBT em pontes estaduais (DIO-ES)', url: 'https://ioes.dio.es.gov.br/busca', license: 'Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)' },
     ],
     style: { kind: 'circle', color: '#7c3aed', width: 3, radius: 4, minzoom: 10, icon: '🌉' },
     defaultVisible: false,
@@ -398,7 +432,28 @@ const layer: RouteLayer = {
     }
     const madeira = rows.filter((r) => r.kind === 'ponte_madeira');
     for (const m of madeira.slice(0, 5)) {
-      warnings.push({ code: 'wooden_bridge', severity: 'warn', id: m.id, _f: m.fraction, message: `Ponte de madeira na rota (${m.name ?? 'DER-SP'}): capacidade de carga desconhecida.` });
+      warnings.push({ code: 'wooden_bridge', severity: 'warn', id: m.id, _f: m.fraction, message: `Ponte de madeira na rota (${m.name ?? (m.source === 'der-mg' ? 'DER-MG' : 'DER-SP')}): capacidade de carga desconhecida.` });
+    }
+
+    // 4) pontes estreitas ou de uma faixa do cadastro do DER-MG (a ponte é o ponto da OAE a até 12 m da rota)
+    const estreitas = (rows as (Row & { fraction: number })[])
+      .filter((r) => r.source === 'der-mg' && (r.kind === 'ponte' || r.kind === 'ponte_madeira'))
+      .map((r) => ({ r, larg: num(r.props.largura_m), faixas: num(r.props.condicao?.faixas) }))
+      .filter((x) => (x.larg != null && x.larg > 0 && x.larg < LARGURA_ESTREITA_M) || x.faixas === 1);
+    if (estreitas.length) {
+      summary.push(`${estreitas.length} ponte(s) estreita(s) ou de uma faixa do DER-MG na rota (largura cadastrada < ${fmtM(LARGURA_ESTREITA_M)} m ou 1 faixa).`);
+      estreitas.sort((a, b) => (a.larg ?? 99) - (b.larg ?? 99));
+      for (const x of estreitas.slice(0, MAX_ESTREITAS)) {
+        const apertada = x.larg != null && x.larg < v.width_m + FOLGA_LARGURA_M;
+        const larg = x.larg != null ? `largura cadastrada de ${fmtM(x.larg)} m` : 'uma faixa só';
+        const [lon, lat] = rowPoint(x.r);
+        warnings.push({
+          layer: 'oae', id: x.r.id, lat, lon, _f: x.r.fraction, code: 'oae_ponte_estreita', severity: apertada ? 'warn' : 'info',
+          message: apertada
+            ? `${x.r.name ?? 'Ponte'} (DER-MG): ${larg}, pouco acima ou abaixo da largura do seu veículo (${fmtM(v.width_m)} m). O cadastro não diz se é a largura total ou a da pista: confira no local antes de passar.`
+            : `${x.r.name ?? 'Ponte'} (DER-MG): ponte estreita (${larg}${x.faixas === 1 && x.larg != null ? ', 1 faixa' : ''}). Não cabem dois caminhões: espere o sentido oposto liberar.`,
+        });
+      }
     }
 
     // ordem: gravidade, depois posição na rota; corta excesso (exceto 'danger')

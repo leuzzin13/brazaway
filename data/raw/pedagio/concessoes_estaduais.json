@@ -1,0 +1,473 @@
+{
+  "_doc": [
+    "Concessões rodoviárias ESTADUAIS (RJ: AGETRANSP; MG: ARTEMIG) e MUNICIPAIS (Rio de Janeiro; Pirapetinga/MG) com cobrança de pedágio.",
+    "Lido pelos importadores toll_agetransp.py (fonte 'agetransp'), toll_artemig.py ('artemig') e toll_municipais.py ('municipais').",
+    "Valores TRANSCRITOS das fontes citadas em cada concessão (tabelas em imagem lidas uma a uma). A AGETRANSP publica a tabela em HTML: o importador relê a página e só usa esta transcrição se a leitura falhar.",
+    "Posição das praças: 'oficial' (coordenada publicada em ato/contrato), 'osm' (casamento com barrier=toll_booth/highway=toll_gantry do OSM do MESMO operador perto da âncora, medida em 10/10/2026) ou 'sre_km' (rodovia+km na malha SRE-MG; só para registro inativo).",
+    "ativo=false: regra com confiança baixa ou não verificável, ou cobrança não iniciada. Fica registrada com o motivo e nunca entra na conta.",
+    "ES: sem pedágio estadual desde 22/12/2023 (fim da concessão Rodosol; a ARSP lista como última a tabela de 01/01/2023 a 21/12/2023). Nada a importar; ver docs/layers/pedagio_estaduais.md."
+  ],
+  "transcrito_em": "2026-10-10",
+  "janelas": {
+    "vialagos_tba": {
+      "rotulo": "TBA (sexta 12h a segunda 12h; véspera de feriado nacional 12h ao dia seguinte 12h)",
+      "semana": { "de": [5, 12], "ate": [1, 12] },
+      "feriados_nacionais": { "vespera_desde_h": 12, "dia_seguinte_ate_h": 12 },
+      "fonte": "https://rodovias.motiva.com.br/vialagos/noticias/2025/julho/novas-tarifas-de-pedagio-da-vialagos--rj-124--passam-a-vigorar-a/",
+      "base_legal": "Valores TBP/TBA: Deliberação AGETRANSP/CD nº 1630/2025, arts. 1º e 2º. Janela: comunicado da concessionária (Motiva, 07/2025): R$ 18,40 das 12h de segunda às 12h de sexta e R$ 30,60 das 12h de sexta às 12h de segunda e das 12h da véspera às 12h do dia seguinte aos feriados nacionais. A página da AGETRANSP rotula a coluna como 'Sáb. Dom. e feriados'. Feriado estadual/municipal não entra (o comunicado fala só em feriados nacionais)."
+    }
+  },
+  "concessoes": [
+    {
+      "id": "rj_vialagos",
+      "importador": "agetransp",
+      "uf": "RJ", "esfera": "estadual", "regulador": "AGETRANSP", "poder_concedente": "Estado do Rio de Janeiro",
+      "concessionaria": "CCR Via Lagos (Motiva)", "operador": "CCR ViaLagos", "operador_osm": "via ?lagos",
+      "rodovia": "RJ-124",
+      "contrato": "Contrato de Concessão nº 43/1996",
+      "ato": "Deliberação AGETRANSP/CD nº 1630, de 29/07/2025, arts. 1º e 2º (TBP R$ 18,3712 praticada a R$ 18,40; TBA R$ 30,6187 praticada a R$ 30,60, a partir de agosto/2025)",
+      "ato_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1630/visualizar",
+      "pagina_tarifa": "https://www.agetransp.rj.gov.br/operadoras/vialagos",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": "2025-08-01", "vigencia_fim": "2026-07-31",
+      "vigencia_obs": "reajuste ordinário do período 2025/2026 (art. 1º). Reajuste de agosto/2026 não localizado em 10/10/2026 (página da AGETRANSP ainda mostra 'cobrança praticada a partir de 01/08/2025'; deliberações online até a nº 1816, de 25/06/2026). O art. 4º recomenda à concessionária avaliar não aplicar reajustes no âmbito da modernização do contrato.",
+      "cobranca": "bidirecional (2 cabines no OSM, uma por sentido)",
+      "tarifa": {
+        "modelo": "categorias", "base": 18.40, "max_eixos_tabela": 6, "janela": "vialagos_tba",
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 18.40, "valor_fds": 30.60 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 36.80, "valor_fds": 61.20 },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 27.60, "valor_fds": 45.90 },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 55.20, "valor_fds": 91.80 },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 36.80, "valor_fds": 61.20 },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 73.60, "valor_fds": 122.40 },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 92.00, "valor_fds": 153.00 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 110.40, "valor_fds": 183.60 },
+          { "cat": 9, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 9.20, "valor_fds": 15.30, "desc": "motocicletas, motonetas e bicicletas a motor" }
+        ]
+      },
+      "pracas": [
+        { "id": "P", "nome": "Praça de pedágio da Via Lagos", "rodovia": "RJ-124", "km": null, "municipio": null,
+          "posicao": { "metodo": "osm", "ancora": [-42.46453, -22.80082], "raio_m": 600 } }
+      ]
+    },
+    {
+      "id": "rj_rota116",
+      "importador": "agetransp",
+      "uf": "RJ", "esfera": "estadual", "regulador": "AGETRANSP", "poder_concedente": "Fundação DER-RJ",
+      "concessionaria": "Concessionária Rota 116 S.A.", "operador": "Rota 116", "operador_osm": "rota ?116",
+      "rodovia": "RJ-116",
+      "contrato": "Contrato de Concessão nº 08/2001 (6º Termo Aditivo de 2026: prorrogação e metodologia de reajuste na Cláusula Quarta, citada na Deliberação AGETRANSP 1790/2026)",
+      "ato": "Deliberação AGETRANSP/CD nº 1631, de 29/07/2025, arts. 1º e 2º (TBP R$ 9,60 a partir de 01/08/2025)",
+      "ato_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1631/visualizar",
+      "pagina_tarifa": "https://www.agetransp.rj.gov.br/operadoras/rota116",
+      "fontes_extra": [
+        "https://www.rota116.com.br/evolucao_das_tarifas.pdf (CAT VIII, 8 eixos: R$ 76,80 a partir de 01/08/2025)",
+        "https://www.rota116.com.br/tarifas ('7 ou mais eixos - rodagem dupla - R$ 9,60 por eixo'; 'cobrança bidirecional'; 'Tarifas válidas até 31/07/2026')"
+      ],
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": "2025-08-01", "vigencia_fim": "2026-07-31",
+      "vigencia_obs": "o site da concessionária diz 'Tarifas válidas até 31/07/2026'; o valor posterior não foi publicado até 10/10/2026. A Deliberação AGETRANSP 1698 (23/02/2026) recomendou ao DER-RJ novo índice de reajuste, DUF e regras para eixo suspenso na prorrogação: a estrutura pode mudar.",
+      "cobranca": "bidirecional (site da concessionária)",
+      "isencoes": "motocicletas, motonetas, bicicletas, veículos oficiais e do corpo diplomático",
+      "tarifa": {
+        "modelo": "categorias", "base": 9.60, "max_eixos_tabela": 8, "eixo_adicional": 9.60, "nao_linear": true,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "eixos_ate": 4, "rodagem": "simples", "mult": 1, "valor": 9.60, "desc": "2, 3 e 4 eixos, rodas simples" },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 19.20 },
+          { "cat": 3, "eixos": 3, "eixos_ate": 6, "rodagem": "dupla", "mult": 4, "valor": 38.40, "desc": "categorias III a VI: 3, 4, 5 e 6 eixos, rodas duplas" },
+          { "cat": 7, "eixos": 7, "rodagem": "dupla", "mult": 7, "valor": 67.20, "desc": "categoria 7D" },
+          { "cat": 8, "eixos": 8, "rodagem": "dupla", "mult": 8, "valor": 76.80, "desc": "categoria VIII (PDF de evolução das tarifas)", "fora_da_pagina": true }
+        ]
+      },
+      "pracas": [
+        { "id": "Itaborai", "nome": "Praça de Itaboraí", "rodovia": "RJ-116", "km": null, "municipio": "Itaboraí",
+          "posicao": { "metodo": "osm", "ancora": [-42.81140, -22.71573], "raio_m": 600 } },
+        { "id": "Cachoeiras", "nome": "Praça de Cachoeiras de Macacu", "rodovia": "RJ-116", "km": null, "municipio": "Cachoeiras de Macacu",
+          "posicao": { "metodo": "osm", "ancora": [-42.62304, -22.41644], "raio_m": 600 } },
+        { "id": "Friburgo", "nome": "Praça de Nova Friburgo", "rodovia": "RJ-116", "km": null, "municipio": "Nova Friburgo",
+          "posicao": { "metodo": "osm", "ancora": [-42.49166, -22.21355], "raio_m": 600 } },
+        { "id": "Cordeiro", "nome": "Praça de Cordeiro", "rodovia": "RJ-116", "km": null, "municipio": "Cordeiro",
+          "posicao": { "metodo": "osm", "ancora": [-42.36237, -22.05460], "raio_m": 600 } }
+      ]
+    },
+    {
+      "id": "mg_lote1_triangulo",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Rodovias do Triângulo SPE S.A. (EPR Triângulo)", "operador": "EPR Triângulo", "operador_osm": "epr tri",
+      "contrato": "Contrato nº 003/2022 (Concorrência Internacional 002/2021)",
+      "ato": "Contrato nº 003/2022 e tabela tarifária publicada pela ARTEMIG (valores válidos até 21/10/2026)",
+      "ato_url": "https://artemig.mg.gov.br/artemig/lote-01-triangulo-mineiro/",
+      "imagem_tabela": "https://artemig.mg.gov.br/ (Pedagios_Valores_2026_Lote_01.jpg e Pracas-de-Pedagio-Lote-01-Triangulo-Mineiro.png)",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": null, "vigencia_fim": "2026-10-21",
+      "data_desc": "tabela válida até 21/10/2026 (consulta em 10/10/2026)",
+      "cobranca": "bidirecional (2 cabines no OSM em cada praça)",
+      "isencoes": "veículos do Poder Concedente/Ente Regulador, PM Rodoviária, emergência e oficiais do Estado credenciados; DUF só para categoria 1 com TAG",
+      "tarifa": {
+        "modelo": "categorias", "base": 14.00, "max_eixos_tabela": 10, "eixo_adicional": 14.00,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 14.00 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 28.00 },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 21.00 },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 42.00 },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 28.00 },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 56.00 },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 70.00 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 84.00 },
+          { "cat": 9, "eixos": 7, "rodagem": "dupla", "mult": 7, "valor": 98.00 },
+          { "cat": 10, "eixos": 8, "rodagem": "dupla", "mult": 8, "valor": 112.00 },
+          { "cat": 11, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 7.00, "desc": "motocicleta, motoneta, triciclo e ciclomotor" },
+          { "cat": 12, "eixos": 9, "rodagem": "dupla", "mult": 9, "valor": 126.00 },
+          { "cat": 13, "eixos": 10, "rodagem": "dupla", "mult": 10, "valor": 140.00 }
+        ]
+      },
+      "pracas": [
+        { "id": "P1", "nome": "P1 Uberaba", "rodovia": "MGC-452", "km": 186.4, "municipio": "Uberaba",
+          "posicao": { "metodo": "osm", "ancora": [-47.85068, -19.20331], "raio_m": 600 } },
+        { "id": "P2", "nome": "P2 Perdizes", "rodovia": "BR-452", "km": 260.30, "municipio": "Perdizes",
+          "posicao": { "metodo": "osm", "ancora": [-47.31479, -19.40492], "raio_m": 600 } },
+        { "id": "P3", "nome": "P3 Monte Carmelo", "rodovia": "BR-365", "km": 515.25, "municipio": "Monte Carmelo",
+          "posicao": { "metodo": "osm", "ancora": [-47.33909, -18.92255], "raio_m": 600,
+                       "obs": "nós do OSM chamados 'Patrocínio - 1/2' na BR-365 (via sem ref no OSM); a praça foi realocada 1,5 a 3,7 km em relação ao PER" } },
+        { "id": "P4", "nome": "P4 Indianópolis", "rodovia": "BR-365", "km": 589.10, "municipio": "Indianópolis",
+          "posicao": { "metodo": "osm", "ancora": [-48.01649, -18.86677], "raio_m": 600, "obs": "nós do OSM chamados 'Araguari - 1/2'" } },
+        { "id": "P5", "nome": "P5 Patrocínio", "rodovia": "MGC-462", "km": 34.15, "municipio": "Patrocínio",
+          "posicao": { "metodo": "osm", "ancora": [-47.17423, -19.13368], "raio_m": 600 } },
+        { "id": "P6", "nome": "P6 Nova Ponte", "rodovia": "LMG-798 (tabela da ARTEMIG: 'LMG-190' km 6,80; site da EPR: 'MG-190' km 6,80; PER: LMG-798 km 13)", "km": 6.80, "municipio": "Nova Ponte",
+          "ativo": false,
+          "motivo_inativo": "operação não confirmada: sem nó no OSM (o mais próximo fica a 39 km) e a rodovia aparece com três códigos diferentes nas fontes; posição só do PER (localização original)",
+          "posicao": { "metodo": "oficial", "coord_oficial": "19°32'19\"S 47°43'46\"W", "fonte": "PER do Lote 1, Apêndice D (localização original; http://artemig.mg.gov.br/wp-content/uploads/2025/10/PER_Lote_1.pdf)" } },
+        { "id": "P7", "nome": "P7 Nova Ponte", "rodovia": "MG-190", "km": 75.50, "municipio": "Nova Ponte",
+          "posicao": { "metodo": "osm", "ancora": [-47.57899, -19.02392], "raio_m": 600 } },
+        { "id": "P8", "nome": "P8 Água Comprida", "rodovia": "MG-427", "km": 15, "municipio": "Água Comprida",
+          "ativo": false,
+          "motivo_inativo": "operação não confirmada: sem nó no OSM (o mais próximo fica a 26 km); posição só do PER (localização original, MG-427 km 14,65)",
+          "posicao": { "metodo": "oficial", "coord_oficial": "19°51'31\"S 48°04'30\"W", "fonte": "PER do Lote 1, Apêndice D (localização original)" } }
+      ]
+    },
+    {
+      "id": "mg_lote2_sul_de_minas",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Rodovias do Sul de Minas SPE S.A. (EPR Sul de Minas)", "operador": "EPR Sul de Minas", "operador_osm": "epr sul",
+      "contrato": "Contrato nº 004/2022 (PPP patrocinada)",
+      "ato": "Contrato nº 004/2022 e tabela tarifária publicada pela ARTEMIG (TBP R$ 10,10; a ARTEMIG informava validade até 08/10/2026, mas o reajuste seguinte está suspenso)",
+      "ato_url": "https://artemig.mg.gov.br/artemig/lote-02-sul-de-minas/",
+      "imagem_tabela": "https://artemig.mg.gov.br/ (Pedagios_Valores_2026_Lote_02.jpg e Pracas-de-Pedagio-Sul-de-Minas.png)",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": null, "vigencia_fim": null,
+      "data_desc": "TBP R$ 10,10; reajuste de 2026 suspenso pelo TCE-MG (consulta em 10/10/2026)",
+      "reajuste_suspenso": {
+        "ato": "Deliberação ARTEMIG nº 41/2026 (25/09/2026): TBP de R$ 10,10 para R$ 10,60 a partir de 09/10/2026",
+        "status": "suspenso",
+        "motivo": "decisão do TCE-MG que suspendeu os efeitos da deliberação, notificada à ARTEMIG e à SEINFRA em 07/10/2026; a ARTEMIG comunicou à concessionária a suspensão da aplicação dos novos valores (notícia de 09/10/2026)",
+        "fonte": "https://artemig.mg.gov.br/noticias/governo-de-minas-cumpre-determinacao-do-tce-mg-sobre-reajuste-das-tarifas-de-pedagio-do-lote-2/",
+        "aplicado": false
+      },
+      "cobranca": "bidirecional (2 cabines no OSM em cada praça)",
+      "isencoes": "mesmas do Lote 1; DUF para categoria 1 com TAG",
+      "tarifa": {
+        "modelo": "categorias", "base": 10.10, "max_eixos_tabela": 10, "eixo_adicional": 10.10,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 10.10 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 20.20 },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 15.15 },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 30.30 },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 20.20 },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 40.40 },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 50.50 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 60.60 },
+          { "cat": 9, "eixos": 7, "rodagem": "dupla", "mult": 7, "valor": 70.70 },
+          { "cat": 10, "eixos": 8, "rodagem": "dupla", "mult": 8, "valor": 80.80 },
+          { "cat": 11, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 5.05, "desc": "motocicleta, motoneta, triciclo e ciclomotor" },
+          { "cat": 12, "eixos": 9, "rodagem": "dupla", "mult": 9, "valor": 90.90 },
+          { "cat": 13, "eixos": 10, "rodagem": "dupla", "mult": 10, "valor": 101.00 }
+        ]
+      },
+      "fonte_posicao": "1º Termo Aditivo ao Contrato 004/2022, cláusula 3.1 (localização definitiva das praças, UTM 23K e lat/lon): http://artemig.mg.gov.br/wp-content/uploads/2025/10/01_Termo_Aditivo_Lote-2.pdf",
+      "pracas": [
+        { "id": "P1", "nome": "P1 Caldas", "rodovia": "BR-459", "km": 40.5, "municipio": "Caldas",
+          "posicao": { "metodo": "oficial", "coord_oficial": "21°58'56.40\"S 46°19'48.40\"W", "fonte": "1º Termo Aditivo, cláusula 3.1" } },
+        { "id": "P2", "nome": "P2 Senador José Bento", "rodovia": "BR-459", "km": 80.9, "municipio": "Senador José Bento",
+          "posicao": { "metodo": "oficial", "coord_oficial": "22°9'32.80\"S 46°6'22.90\"W", "fonte": "1º Termo Aditivo, cláusula 3.1" } },
+        { "id": "P3", "nome": "P3 Santa Rita do Sapucaí", "rodovia": "BR-459", "km": 117.3, "municipio": "Santa Rita do Sapucaí",
+          "posicao": { "metodo": "oficial", "coord_oficial": "22°15'16.99\"S 45°49'21.12\"W", "fonte": "1º Termo Aditivo, cláusula 3.1" } },
+        { "id": "P4", "nome": "P4 Poços de Caldas", "rodovia": "CMG-146", "km": 622.8, "municipio": "Poços de Caldas",
+          "posicao": { "metodo": "oficial", "coord_oficial": "21°54'27.10\"S 46°34'42.20\"W", "fonte": "1º Termo Aditivo, cláusula 3.1 (km 622+300)" } },
+        { "id": "P5", "nome": "P5 Gonçalves", "rodovia": "MG-173", "km": 51.3, "municipio": "Gonçalves",
+          "posicao": { "metodo": "oficial", "coord_oficial": "22°39'12.36\"S 45°44'53.77\"W", "fonte": "1º Termo Aditivo, cláusula 3.1" } },
+        { "id": "P6", "nome": "P6 Borda da Mata", "rodovia": "MG-290", "km": 34.5, "municipio": "Borda da Mata",
+          "posicao": { "metodo": "oficial", "coord_oficial": "22°17'22.97\"S 46°11'56.40\"W", "fonte": "1º Termo Aditivo, cláusula 3.1" } },
+        { "id": "P7", "nome": "P7 Ouro Fino", "rodovia": "MG-290", "km": 71.1, "municipio": "Ouro Fino",
+          "posicao": { "metodo": "oficial", "coord_oficial": "22°16'42.10\"S 46°29'15.30\"W", "fonte": "1º Termo Aditivo, cláusula 3.1 (km 071+500)" } },
+        { "id": "P8", "nome": "P8 Monte Sião (pórtico free flow)", "rodovia": "MG-459", "km": 12.722, "municipio": "Monte Sião",
+          "tipo": "portico", "free_flow": true, "confianca": "media",
+          "obs": "A PP08 física (1º Termo Aditivo: MG-459 km 6,4, Ouro Fino) foi trocada por pórtico de livre passagem 'na localização originalmente prevista' (2º Termo Aditivo de 03/06/2024, subcláusula 2.1.1; Anexo, item 1.1: km 12+722 da MG-459). Subcláusula 3.5: a troca 'não implica alteração da TARIFA DE PEDÁGIO'. O 6º Termo Aditivo (03/06/2026) prorrogou a solução experimental por 365 dias. Em operação desde 04/06/2024.",
+          "pagamento": "pague em até 30 dias pelo app ou site da EPR, nas bases ou nas praças; quem regularizar até 16/11/2026 não leva multa (transição da Deliberação CONTRAN 277, notícia ARTEMIG de 15/06/2026)",
+          "posicao": { "metodo": "oficial", "utm_23s": [349444.1235, 7527152.3217], "coord_oficial": "22°21'18\"S 46°27'44\"W",
+                       "fonte": "PER do Lote 2, Apêndice D (praça original, MG-459 km 1012+700), 22 m do km 12+722 do 2º Termo Aditivo",
+                       "cobra_sem_no_osm": { "raio_m": 30, "rumo_via": 9.8,
+                         "metodo": "sem nó de pedágio no OSM; conta quando a rota passa a até 30 m do ponto no rumo da MG-459 (9,8°/189,8°), medido no grafo do Valhalla (/locate: via a 3,9 m do ponto) em 10/10/2026" } } }
+      ]
+    },
+    {
+      "id": "mg_lote3_varginha_furnas",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Concessionária Rodovias do Café SPE S.A. (EPR Vias do Café)", "operador": "EPR Vias do Café", "operador_osm": "vias do caf",
+      "contrato": "Contrato nº 005/2023 (Concorrência Internacional 003/2022)",
+      "ato": "Contrato nº 005/2023 e tabela publicada pela ARTEMIG: 'Cobrança autorizada pela Secretaria de Estado de Infraestrutura, Mobilidade e Parcerias (Seinfra) a partir de 26 de julho de 2026' (valores válidos até 25/07/2027)",
+      "ato_url": "https://artemig.mg.gov.br/artemig/lote-03-varginha-furnas/",
+      "imagem_tabela": "https://artemig.mg.gov.br/ (Tarifas-Lote-03-Varginha-Furnas.png e Pracas-de-Pedagio-Lote-03-Varginha-Furnas.png)",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": "2026-07-26", "vigencia_fim": "2027-07-25",
+      "cobranca": "bidirecional (2 cabines no OSM em cada praça)",
+      "isencoes": "mesmas do Lote 1; DUF para categoria 1 com TAG",
+      "tarifa": {
+        "modelo": "categorias", "base": 15.80, "max_eixos_tabela": 10, "eixo_adicional": 15.80,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 15.80 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 31.60 },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 23.70 },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 47.40 },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 31.60 },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 63.20 },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 79.00 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 94.80 },
+          { "cat": 9, "eixos": 7, "rodagem": "dupla", "mult": 7, "valor": 110.60 },
+          { "cat": 10, "eixos": 8, "rodagem": "dupla", "mult": 8, "valor": 126.40 },
+          { "cat": 11, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 7.90, "desc": "motocicleta, motoneta, triciclo e ciclomotor" },
+          { "cat": 12, "eixos": 9, "rodagem": "dupla", "mult": 9, "valor": 142.20 },
+          { "cat": 13, "eixos": 10, "rodagem": "dupla", "mult": 10, "valor": 158.00 }
+        ]
+      },
+      "pracas": [
+        { "id": "P1", "nome": "P1 Nepomuceno", "rodovia": "BR-265", "km": 366.5, "municipio": "Nepomuceno",
+          "posicao": { "metodo": "osm", "ancora": [-45.36020, -21.24639], "raio_m": 600 } },
+        { "id": "P2", "nome": "P2 Boa Esperança", "rodovia": "BR-265", "km": 396, "municipio": "Boa Esperança",
+          "posicao": { "metodo": "osm", "ancora": [-45.56968, -21.14695], "raio_m": 600 } },
+        { "id": "P3", "nome": "P3 Muzambinho", "rodovia": "BR-146", "km": 529.2, "municipio": "Muzambinho",
+          "posicao": { "metodo": "osm", "ancora": [-46.50043, -21.35837], "raio_m": 600 } },
+        { "id": "P4", "nome": "P4 Monte Santo de Minas", "rodovia": "CMG-491", "km": 46, "municipio": "Monte Santo de Minas",
+          "posicao": { "metodo": "osm", "ancora": [-46.95038, -21.25424], "raio_m": 600 } },
+        { "id": "P5", "nome": "P5 Alfenas", "rodovia": "CMG-491", "km": 159.1, "municipio": "Alfenas",
+          "posicao": { "metodo": "osm", "ancora": [-46.09952, -21.43755], "raio_m": 600 } },
+        { "id": "P6", "nome": "P6 Três Corações", "rodovia": "CMG-491", "km": 251.6, "municipio": "Três Corações",
+          "posicao": { "metodo": "osm", "ancora": [-45.39198, -21.63242], "raio_m": 600 } }
+      ]
+    },
+    {
+      "id": "mg_mg050_via_nascentes",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Via Nascentes (Via Appia; antiga AB Nascentes das Gerais)", "operador": "Via Nascentes", "operador_osm": "nascentes|appia",
+      "contrato": "Contrato SETOP nº 007/2007 (PPP patrocinada)",
+      "ato": "Contrato SETOP nº 007/2007 e tabela publicada pela ARTEMIG e pela concessionária (R$ 9,10 de 13/06/2026 a 12/06/2027; reajuste anual em 13/06 pelo IPCA)",
+      "ato_url": "https://artemig.mg.gov.br/artemig/mg-050/",
+      "imagem_tabela": "https://artemig.mg.gov.br/ (Tarifas-de-Pedagio-MG-050-2027-2026.png); https://viaappia.com.br/nascentes-tarifas/",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": "2026-06-13", "vigencia_fim": "2027-06-12",
+      "cobranca": "bidirecional (2 cabines no OSM em cada praça)",
+      "obs_rodagem": "rodagem single/supersingle conta como dupla (Via Appia)",
+      "isencoes": "SEINFRA, DER-MG, Polícia Rodoviária Estadual, forças policiais e emergência em serviço, militares em instrução, oficiais credenciados",
+      "tarifa": {
+        "modelo": "categorias", "base": 9.10, "max_eixos_tabela": 6, "eixo_adicional": 9.10,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 9.10, "desc": "automóvel, caminhonete, furgão" },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 18.20, "desc": "ônibus, caminhão (2 eixos)" },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 13.70, "desc": "automóvel ou caminhonete com semirreboque (3 eixos)" },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 27.30 },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 18.20, "desc": "automóvel/caminhonete com reboque (4 eixos)" },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 36.40 },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 45.50 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 54.60, "desc": "veículos com mais de 6 eixos: 54,60 + 9,10 por eixo" },
+          { "cat": 9, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 4.60, "desc": "motocicleta, motoneta" }
+        ]
+      },
+      "pracas": [
+        { "id": "Pratapolis", "nome": "Praça Pratápolis", "rodovia": "MG-050", "km": 389.2, "municipio": "Pratápolis",
+          "posicao": { "metodo": "osm", "ancora": [-46.87797, -20.84289], "raio_m": 600, "obs": "nós do OSM chamados 'São Sebastião do Paraíso - 1/2'" } },
+        { "id": "Passos", "nome": "Praça Passos", "rodovia": "MG-050", "km": 333, "municipio": "Passos",
+          "posicao": { "metodo": "osm", "ancora": [-46.40198, -20.72348], "raio_m": 600, "obs": "nós do OSM chamados 'Rio Conquista'" } },
+        { "id": "Piumhi", "nome": "Praça Piumhi", "rodovia": "MG-050", "km": 270.7, "municipio": "Piumhi",
+          "posicao": { "metodo": "osm", "ancora": [-45.97428, -20.51177], "raio_m": 600, "obs": "nós do OSM chamados 'Capitólio - 1/2'" } },
+        { "id": "Formiga", "nome": "Praça Formiga", "rodovia": "MG-050", "km": 219.9, "municipio": "Formiga",
+          "posicao": { "metodo": "osm", "ancora": [-45.59843, -20.48719], "raio_m": 600 } },
+        { "id": "SaoSebastiaoOeste", "nome": "Praça São Sebastião do Oeste", "rodovia": "MG-050", "km": 140.5, "municipio": "São Sebastião do Oeste",
+          "posicao": { "metodo": "osm", "ancora": [-44.99773, -20.19349], "raio_m": 600, "obs": "nós do OSM chamados 'Córrego das Colheres'" } },
+        { "id": "Itauna", "nome": "Praça Itaúna", "rodovia": "MG-050", "km": 81, "municipio": "Itaúna",
+          "posicao": { "metodo": "osm", "ancora": [-44.53311, -20.03959], "raio_m": 600, "obs": "nós do OSM chamados 'Azurita - 1/2'" } }
+      ]
+    },
+    {
+      "id": "mg_br135_ecovias_norte_minas",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual (BR-135 delegada)", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Eco135 / Ecovias Norte Minas", "operador": "Ecovias Norte Minas", "operador_osm": "norte ?minas|eco ?135",
+      "contrato": "Contrato SETOP nº 004/2018 (3º Termo Aditivo de 03/12/2025: ARTEMIG como interveniente)",
+      "ato": "Contrato SETOP nº 004/2018 e tabela publicada pela ARTEMIG em 24/04/2026 (valores válidos até 31/03/2027)",
+      "ato_url": "https://artemig.mg.gov.br/artemig/br-135/",
+      "imagem_tabela": "https://artemig.mg.gov.br/ (Tabela-de-Pedagio-BR-135-24-04-26.jpg e Pracas_BR-135.png)",
+      "confianca": "alta", "ativo": true,
+      "vigencia_inicio": null, "vigencia_fim": "2027-03-31",
+      "data_desc": "tabela de 24/04/2026, válida até 31/03/2027",
+      "data": "2026-04-24",
+      "cobranca": "bidirecional (2 cabines no OSM em cada praça)",
+      "tarifa": {
+        "modelo": "categorias", "base": 10.60, "max_eixos_tabela": 10,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 10.60, "desc": "automóvel" },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 21.20, "desc": "caminhão leve 2 eixos / ônibus 2 eixos" },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.5, "valor": 15.90, "desc": "automóvel com semirreboque" },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 31.80, "desc": "caminhão 3 eixos / ônibus 3 eixos" },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 21.20, "desc": "automóvel com reboque" },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 4, "valor": 42.40, "desc": "caminhão 4 eixos / ônibus 4 eixos" },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 5, "valor": 53.00 },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 6, "valor": 63.60 },
+          { "cat": 9, "eixos": 7, "rodagem": "dupla", "mult": 7, "valor": 74.20 },
+          { "cat": 10, "eixos": 8, "rodagem": "dupla", "mult": 8, "valor": 84.80 },
+          { "cat": 11, "eixos": 9, "rodagem": "dupla", "mult": 9, "valor": 95.40 },
+          { "cat": 12, "eixos": 10, "rodagem": "dupla", "mult": 10, "valor": 106.00 },
+          { "cat": 13, "eixos": 2, "rodagem": null, "mult": 0.5, "valor": 5.30, "desc": "moto" }
+        ]
+      },
+      "pracas": [
+        { "id": "km399", "nome": "Praça Montes Claros", "rodovia": "BR-135", "km": 399, "municipio": "Montes Claros",
+          "posicao": { "metodo": "osm", "ancora": [-43.84954, -17.01404], "raio_m": 600 } },
+        { "id": "km466", "nome": "Praça Bocaiúva", "rodovia": "BR-135", "km": 466, "municipio": "Bocaiúva",
+          "posicao": { "metodo": "osm", "ancora": [-44.05267, -17.52102], "raio_m": 600 } },
+        { "id": "km523", "nome": "Praça Buenópolis", "rodovia": "BR-135", "km": 523, "municipio": "Buenópolis",
+          "posicao": { "metodo": "osm", "ancora": [-44.16874, -17.98496], "raio_m": 600 } },
+        { "id": "km583", "nome": "Praça Corinto", "rodovia": "BR-135", "km": 583, "municipio": "Corinto",
+          "posicao": { "metodo": "osm", "ancora": [-44.45695, -18.43136], "raio_m": 600 } },
+        { "id": "km634", "nome": "Praça Curvelo (BR-135)", "rodovia": "BR-135", "km": 634, "municipio": "Curvelo",
+          "posicao": { "metodo": "osm", "ancora": [-44.49587, -18.86727], "raio_m": 600, "obs": "nós do OSM chamados 'Corinto' (nome errado no mapa; posição ao sul de Curvelo)" } },
+        { "id": "lmg754km25", "nome": "Praça Curvelo (LMG-754)", "rodovia": "LMG-754", "km": 25, "municipio": "Curvelo",
+          "posicao": { "metodo": "osm", "ancora": [-44.37123, -18.95984], "raio_m": 600 } }
+      ]
+    },
+    {
+      "id": "mg_lote7_via_liberdade",
+      "importador": "artemig",
+      "uf": "MG", "esfera": "estadual", "regulador": "ARTEMIG", "poder_concedente": "SEINFRA-MG",
+      "concessionaria": "Rota da Liberdade S.A.", "operador": "Rota da Liberdade",
+      "contrato": "Contrato SEINFRA nº 9493121/2026 (eficácia em 20/03/2026; 1º Termo Aditivo de 13/04/2026)",
+      "ato": "Contrato SEINFRA nº 9493121/2026: free flow com tarifa proporcional ao trecho (valores não publicados)",
+      "ato_url": "https://artemig.mg.gov.br/rodovias/lote-7-ouro-preto-mariana/",
+      "confianca": "media", "ativo": false,
+      "motivo_inativo": "cobrança ainda não iniciada: 'A cobrança terá início após a conclusão da fase inicial de investimentos' (crlsa.com.br, 10/10/2026); tarifas não publicadas",
+      "tarifa": null,
+      "pracas": [
+        { "id": "BR356km43", "nome": "Pórtico free flow previsto (Itabirito)", "rodovia": "BR-356", "km": 43, "municipio": "Itabirito", "tipo": "portico", "free_flow": true,
+          "posicao": { "metodo": "sre_km", "rod_sre": "BR356" } },
+        { "id": "BR356km62", "nome": "Pórtico free flow previsto (Ouro Preto)", "rodovia": "BR-356", "km": 62.5, "municipio": "Ouro Preto", "tipo": "portico", "free_flow": true,
+          "posicao": { "metodo": "sre_km", "rod_sre": "BR356" } },
+        { "id": "MG262km30", "nome": "Pórtico free flow previsto (Acaiaca)", "rodovia": "MG-262", "km": 30.3, "municipio": "Acaiaca", "tipo": "portico", "free_flow": true,
+          "posicao": { "metodo": "sre_km", "rod_sre": "MG262" } },
+        { "id": "MG329km125", "nome": "Pórtico free flow previsto (Ponte Nova)", "rodovia": "MG-329", "km": 125.4, "municipio": "Ponte Nova", "tipo": "portico", "free_flow": true,
+          "posicao": { "metodo": "sre_km", "rod_sre": "MG329" } }
+      ],
+      "fonte_pracas": "https://crlsa.com.br/ (pórticos na BR-356 km 43 e km 62,5, na MG-262 km 30,3 e na MG-329 km 125,4)"
+    },
+    {
+      "id": "rio_linha_amarela",
+      "importador": "municipais",
+      "uf": "RJ", "esfera": "municipal (Rio de Janeiro)", "regulador": "Prefeitura do Rio de Janeiro", "poder_concedente": "Município do Rio de Janeiro",
+      "concessionaria": "LAMSA (Linha Amarela S.A.)", "operador": "LAMSA", "operador_osm": "lamsa",
+      "rodovia": "Linha Amarela",
+      "ato": "Tabela publicada pela concessionária em cumprimento à Lei 8.987/1995, art. 9º, §5º (incluído pela Lei 13.673/2018); ato da Prefeitura não localizado. Vigência a partir das 00h de 18/04/2026",
+      "ato_url": "https://www.lamsa.com.br/www.lamsa.com.br/pages/pedagio.html",
+      "imagem_tabela": "https://www.lamsa.com.br/ (imagem 2026.jpg; tabela transcrita em 10/10/2026)",
+      "confianca": "media", "ativo": true,
+      "vigencia_inicio": "2026-04-18", "vigencia_fim": null,
+      "cobranca": "bidirecional (cabines nos dois sentidos no OSM)",
+      "isencoes": "motocicletas (categoria 9)",
+      "tarifa": {
+        "modelo": "categorias", "base": 4.00, "max_eixos_tabela": 99, "nao_linear": true,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 4.00 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 1.5, "valor": 6.00 },
+          { "cat": 3, "eixos": 3, "rodagem": "dupla", "mult": 3.325, "valor": 13.30 },
+          { "cat": 4, "eixos": 4, "rodagem": "dupla", "mult": 3.625, "valor": 14.50 },
+          { "cat": 5, "eixos": 5, "rodagem": "dupla", "mult": 4.025, "valor": 16.10 },
+          { "cat": 6, "eixos": 6, "rodagem": "dupla", "mult": 5.025, "valor": 20.10 },
+          { "cat": 7, "eixos": 3, "rodagem": "simples", "mult": 1.6, "valor": 6.40 },
+          { "cat": 8, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 8.00 },
+          { "cat": 10, "eixos": 7, "eixos_ate": 99, "rodagem": "dupla", "mult": 6.025, "valor": 24.10, "desc": "7 ou mais eixos, rodagem dupla" }
+        ]
+      },
+      "pracas": [
+        { "id": "AguaSanta", "nome": "Praça Água Santa", "rodovia": "Linha Amarela", "km": null, "municipio": "Rio de Janeiro",
+          "posicao": { "metodo": "osm", "ancora": [-43.30889, -22.90734], "raio_m": 400 } }
+      ]
+    },
+    {
+      "id": "rio_transolimpica",
+      "importador": "municipais",
+      "uf": "RJ", "esfera": "municipal (Rio de Janeiro)", "regulador": "Prefeitura do Rio de Janeiro", "poder_concedente": "Município do Rio de Janeiro",
+      "concessionaria": "ViaRio (Motiva)", "operador": "ViaRio", "operador_osm": "viario|via rio",
+      "rodovia": "Transolímpica",
+      "ato": "Tabela publicada pela concessionária em cumprimento à Lei 8.987/1995, art. 9º, §5º (incluído pela Lei 13.673/2018); ato da Prefeitura não localizado. 'Tarifa vigente a partir de 00h do dia 03/05/2026'",
+      "ato_url": "https://www.viario.com.br/tarifas-do-pedagio.php",
+      "confianca": "media", "ativo": true,
+      "vigencia_inicio": "2026-05-03", "vigencia_fim": null,
+      "cobranca": "bidirecional (cabines nos dois sentidos no OSM); número de praças não informado pela fonte (o OSM tem 2 grupos de cabines)",
+      "tarifa": {
+        "modelo": "categorias", "base": 9.95, "max_eixos_tabela": 7, "nao_linear": true,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 9.95, "desc": "automóvel/caminhoneta/furgão" },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 1.5025, "valor": 14.95, "desc": "caminhão/cavalo/furgão" },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.598, "valor": 15.90, "desc": "automóvel/caminhoneta + semirreboque" },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3.3015, "valor": 32.85, "desc": "caminhão/cavalo simples/combinado" },
+          { "cat": 5, "eixos": 4, "rodagem": "simples", "mult": 2, "valor": 19.90, "desc": "automóvel/caminhoneta + reboque" },
+          { "cat": 6, "eixos": 4, "rodagem": "dupla", "mult": 3.598, "valor": 35.80, "desc": "caminhão/cavalo + reboque/semirreboque" },
+          { "cat": 7, "eixos": 5, "rodagem": "dupla", "mult": 4, "valor": 39.80, "desc": "caminhão/cavalo + reboque/semirreboque" },
+          { "cat": 8, "eixos": 6, "rodagem": "dupla", "mult": 5, "valor": 49.75, "desc": "caminhão/cavalo + reboque/semirreboque" },
+          { "cat": 9, "eixos": 7, "rodagem": "dupla", "mult": 6, "valor": 59.70, "desc": "veículo especial com 7 eixos" },
+          { "cat": 10, "eixos": 2, "rodagem": null, "mult": 0.402, "valor": 4.00, "desc": "motocicletas, motonetas e bicicletas motorizadas" }
+        ]
+      },
+      "pracas": [
+        { "id": "RioGrande", "nome": "Praça Rio Grande", "rodovia": "Transolímpica", "km": null, "municipio": "Rio de Janeiro",
+          "posicao": { "metodo": "osm", "ancora": [-43.39923, -22.89590], "raio_m": 400 } },
+        { "id": "Sul", "nome": "Cabines do grupo sul", "rodovia": "Transolímpica", "km": null, "municipio": "Rio de Janeiro",
+          "posicao": { "metodo": "osm", "ancora": [-43.39652, -22.91949], "raio_m": 400, "obs": "nós sem nome no OSM; a fonte não informa quantas praças há" } }
+      ]
+    },
+    {
+      "id": "mg_crp_pirapetinga",
+      "importador": "municipais",
+      "uf": "MG", "esfera": "municipal (Pirapetinga)", "regulador": "Município de Pirapetinga", "poder_concedente": "Município de Pirapetinga",
+      "concessionaria": "CRP Concessionária SPE Ltda", "operador": "CRP Concessionária", "operador_osm": "crp",
+      "rodovia": "MGC-393",
+      "ato": "Concessão autorizada pelo município em 2024; ação civil pública do MPMG contra CRP, Município e DER-MG com suspensão judicial da cobrança (notícia do MPMG de 13/10/2025)",
+      "ato_url": "https://www.mpmg.mp.br/portal/menu/comunicacao/noticias/mpmg-consegue-na-justica-suspensao-de-cobranca-de-pedagio-em-trecho-da-mgc-393-em-pirapetinga.shtml",
+      "confianca": "baixa", "ativo": false,
+      "motivo_inativo": "situação jurídica incerta: cobrança suspensa por decisão judicial em ação do MPMG (notícia de 13/10/2025), mas o site da CRP e o OSM (check_date 2026-05-13) indicam cobrança",
+      "tarifa": {
+        "modelo": "categorias", "base": 11.00, "max_eixos_tabela": 3,
+        "categorias": [
+          { "cat": 1, "eixos": 2, "rodagem": "simples", "mult": 1, "valor": 11.00 },
+          { "cat": 2, "eixos": 2, "rodagem": "dupla", "mult": 2, "valor": 22.00 },
+          { "cat": 3, "eixos": 3, "rodagem": "simples", "mult": 1.509, "valor": 16.60 },
+          { "cat": 4, "eixos": 3, "rodagem": "dupla", "mult": 3, "valor": 33.00 }
+        ]
+      },
+      "pracas": [
+        { "id": "Pirapetinga", "nome": "Pedágio de Pirapetinga (CRP)", "rodovia": "MGC-393", "km": null, "municipio": "Pirapetinga",
+          "posicao": { "metodo": "osm", "ancora": [-42.38173, -21.66463], "raio_m": 400 } }
+      ]
+    },
+    {
+      "id": "es_rodosol_encerrada",
+      "importador": null,
+      "uf": "ES", "esfera": "estadual", "regulador": "ARSP",
+      "concessionaria": "Rodosol (Terceira Ponte e Rodovia do Sol, ES-060)",
+      "status": "sem pedágio estadual desde 22/12/2023 (fim do contrato de concessão de 1998); a ARSP lista como última a 'Tabela de Tarifa em vigor a partir de 1º/01/2023 até 21/12/2023'. A data do fim foi deduzida da tabela, sem ato conferido. No ES só há pedágio federal (Ecovias Capixaba, BR-101), já na fonte ANTT.",
+      "ato_url": "https://arsp.es.gov.br/tarifas-infraestrutura",
+      "pracas": []
+    }
+  ]
+}

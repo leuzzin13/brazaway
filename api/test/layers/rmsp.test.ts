@@ -318,7 +318,9 @@ describe('regras por município (módulo da camada)', () => {
     const rio = { lat: -22.9, lon: -43.2 }, sp = { lat: -23.52, lon: -46.58 };
     // 22h30: só as vias 24h de Santana (PBT > 15 t) estão ativas, a ~25 km do destino — fora do corredor
     const noite = await layer.costLines!(ctxOf(rio, sp, '2026-10-13T22:30', CARRETA) as any);
-    expect(noite.length).toBe(0);
+    // com as regras do Rio (municipios_core/mun_rio) a origem traz linhas próprias; o que este teste cobre é o corte
+    // do corredor na Grande SP: nenhuma via 24h de Santana de Parnaíba (nem de Cajamar) pode entrar
+    expect(noite.filter((c) => /Santana de Parna|Cajamar/.test(c.item.note ?? c.item.name ?? '')).length).toBe(0);
     // 18h: o trevo de Bonsucesso (Guarulhos), a ~7 km do segmento e na Dutra, entra; Santana e Cajamar não
     const pico = await layer.costLines!(ctxOf(rio, sp, '2026-10-13T18:00', CARRETA) as any);
     expect(pico.some((c) => c.item.type === 'ZRCC-TB')).toBe(true);

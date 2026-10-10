@@ -1,0 +1,200 @@
+{
+ "category": "seguranca_rj_mg_es",
+ "sources": [
+  {
+   "name": "SEJUSP-MG: base do Painel de Sinistro de Trânsito (REDS) no Google Drive",
+   "url": "https://drive.google.com/drive/folders/1W_4SsAW8u5bvsaBoHhwInpUr72vES8yw",
+   "verdict": "confirmed",
+   "note": "Re-testado em 10/10/2026. A pasta abre (HTTP 200) e o embeddedfolderview lista as subpastas Condicoes, Ocorrências, Veículo, Via e Vítimas. Há um CSV por ano de 2012 a 'Jan a Ago 2026' (15/09), e o arquivo 'Jan a Jul 2026' continua lá. O link sai da página sppagebuilder/page/289, no botão 'Acesse a Base de Dados do Painel de Sinistro de Trânsito'. Registros 2025: HTTP 200, 103.028.851 bytes, 312.700 linhas. Veículos 2025: 20.985.783 bytes, 551.161 linhas. Os arquivos de 2026 têm 70.661.488 e 14.313.975 bytes. Licença: o CKAN da SEJUSP tem 5 conjuntos, todos com license_id vazio. O art. 22 do Decreto 48.383/2022 foi conferido, mas o texto acrescenta 'observados os princípios do art. 6º da LGPD e os requisitos da Lei 14.129/2021'. Erro no record_count: 'cerca de 129 mil em jan-ago/2026' está errado. O REDS de Jan-Ago 2026 tem 214.694 ocorrências (de 23,7 mil a 28,9 mil por mês). O número 128.841 é do RENAEST-MG de jan-mai/2026."
+  },
+  {
+   "name": "SEJUSP-MG: Vítimas de Acidente de Trânsito (CKAN)",
+   "url": "https://dados.mg.gov.br/dataset/sejusp_vitimas_acidentes_transito",
+   "verdict": "confirmed",
+   "note": "O vitimas_acidente_transito_2025.csv dá HTTP 200 com content-length 24.542.814. São 90.295 linhas, 98,9% com latitude dentro de MG e 2.236 com condição FATAL; não há coluna de hora nem de tipo de veículo. license_id vazio. Ressalva: o arquivo traz numero_ocorrencia_associado, então pode ser ligado ao REDS e dar o tipo de veículo pela tabela Veículo. Dizer que ele 'não identifica o caminhão' só vale se ele for usado sozinho."
+  },
+  {
+   "name": "SEJUSP-MG: Furtos e Roubos por Alvo, base completa (alvo 'Cargas')",
+   "url": "https://drive.google.com/drive/folders/1CjziaHx_ehpY6XozeV5FIR-zoCfCjh8k",
+   "verdict": "confirmed",
+   "note": "A pasta tem link na página transparencia/dados-abertos da SEJUSP. O arquivo 'Alvo - Roubo Consumado - Jan 2015 a Ago 2026.csv' (ID 1zDmcqFeiQJ80Na4l7TrULDV7xl-y2H2u) dá HTTP 200 com 197.301.215 bytes e 635.714 linhas, 4.456 delas com Alvo=Cargas. A série bate exatamente: 662 (2015), 217 (2024), 132 (2025), 59 (2026), última data em 08/2026. Não há lat/lon; de logradouro só vem o tipo. A fonte omite que a mesma pasta tem 'Alvo - Furto Consumado - Jan 2022 a Ago 2026.csv', que tem bem mais furtos de carga (ver extra_findings)."
+  },
+  {
+   "name": "SEJUSP-MG: Veículos roubados, base completa",
+   "url": "https://drive.google.com/drive/folders/1CjziaHx_ehpY6XozeV5FIR-zoCfCjh8k",
+   "verdict": "confirmed",
+   "note": "O arquivo de ID 1M2mDDct3VQbwLjixls4TL9I0p3SewMbN dá HTTP 200 com 40.496.631 bytes e 126.778 linhas. Em 2025: CAMINHAO 154, CAMINHAO/TRATOR 54, SEMI-REBOQUE 65, REBOQUE 24, total 297. Não tem coordenada."
+  },
+  {
+   "name": "ISP-RJ: polígonos das CISPs (CISPshp.rar) e série mensal por CISP",
+   "url": "https://www.ispdados.rj.gov.br/Arquivos/CISPshp.rar",
+   "verdict": "confirmed",
+   "note": "O RAR dá HTTP 200 com 2.346.562 bytes, last-modified 14/08/2026 e assinatura RAR v5. O bsdtar do macOS extraiu sem erro. São 137 polígonos em WGS84, com campos cisp, aisp, st_area_sh, st_length_ e areakm2, e mediana de 169,4 km². O BaseDPEvolucaoMensalCisp.csv dá HTTP 200 com 7.167.961 bytes, last-modified 17/09/2026, e vai até 08/2026. Os 137 códigos batem 100% entre os dois. O Dockerfile dos importadores (importers/Dockerfile) não instala libarchive-tools, então é preciso incluir isso no plano."
+  },
+  {
+   "name": "ISP-RJ: Portaria ISP nº 127/2022 (microdados sob pedido)",
+   "url": "http://arquivo.proderj.rj.gov.br/isp_imagens/Uploads/PortariaISP127_Fornecimento_Microdados.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 1.093.457 bytes. O PDF é a edição do DOERJ de 26/02/2022, que contém a Portaria ISP nº 127 de 22/02/2022. O art. 2º §2º limita a desagregação a CISP, AISP, RISP, bairro e município. O art. 3º §1º diz que bases e microdados 'não poderão ser comercializadas em nenhuma hipótese' e proíbe repasse a terceiros. O art. 3º §4º confirma que a transparência ativa segue as 'condições tecnológicas' dos portais."
+  },
+  {
+   "name": "RENAEST mensal 05-2026 (zip)",
+   "url": "https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip",
+   "verdict": "confirmed",
+   "note": "529.020.946 bytes. A conexão caiu várias vezes e só completou com retomada (-C). A licença no CKAN é other-pd. Contei: RJ com 0,0% de coordenada de 2018 a 2025 (22.215 acidentes em 2025) e 21,6% em 2026 (9.502). Há 1 acidente com caminhão no RJ em 2021 e nenhum nos outros anos. MG 2025: 312.061, 98,8% com coordenada, 35.915 com caminhão. ES 2025: 43.110, 50,4% com coordenada, 37 de 1.544 caminhões com ponto (2023: 930 de 1.720). MG 'igual ao REDS' só aproximadamente: 312.061 contra 312.700 e 35.915 contra 36.074."
+  },
+  {
+   "name": "SESP-ES: Roubo de Veículo (CKAN)",
+   "url": "https://dados.es.gov.br/dataset/roubo-veiculo",
+   "verdict": "corrected",
+   "note": "HTTP 200, redirecionamento para S3 assinado, 1.826.082 bytes, latin1, licença cc-by. O arquivo tem 6.239 linhas, que são veículos, e 6.116 BOs distintos; não são 6.239 BOs. São 77 linhas com caminhão: CAMINHÃO 37, CAMINHAO TRATOR 20, SEMI-REBOQUE 15, REBOQUE 5. Não há coluna de coordenada. A SESP tem 42 conjuntos: 38 cc-by e 4 odc-by, não todos CC-BY. A busca 'carga' no CKAN do ES retorna 0."
+  },
+  {
+   "name": "DETRAN-ES: sinistros agregados e Observatório de Trânsito",
+   "url": "https://dados.es.gov.br/dataset/sinistros-de-transito-com-e-sem-vitimas",
+   "verdict": "confirmed",
+   "note": "Licença cc-zero. O CSV de 223 bytes tem 39.609 sinistros sem vítimas, 12.924 com vítimas parciais, 919 com vítimas fatais e 53.446 no total. O observatório redireciona para analitico.sides.es.gov.br/SASVisualAnalytics como convidado só de leitura. Não testei se o SAS deixa exportar os dados de cada objeto."
+  },
+  {
+   "name": "BHTrans: sinistros com vítima (pontos) e si-bol/si-veic",
+   "url": "https://dados.pbh.gov.br/dataset/ocorrencia-sinistro-transito-com-vitima",
+   "verdict": "confirmed",
+   "note": "Licença cc-by. 20260901_sinistro_transito_vitima.csv: HTTP 200, 15.125.853 bytes, 132.935 linhas de 2016-01-01 a 2026-08-22, 1.266 fatais, geometria POINT em UTM. Não tem tipo de veículo. si-bol e si-veic são odc-odbl. si-bol-2024 tem 13.266 boletins; si-veic-2024 tem 24.840 veículos. São 484 boletins com caminhão, caminhão-trator, reboque/semirreboque ou trator de rodas, e 460 (95%) com coordenada diferente de zero."
+  },
+  {
+   "name": "Prefeitura do Rio: ocorrências do COR (item do data.rio)",
+   "url": "https://www.arcgis.com/sharing/rest/content/items/4b21231ce02243e99b5f080b8a0ff821?f=json",
+   "verdict": "confirmed",
+   "note": "O item é um 'Document Link' com licença 'Creative Commons Attribution-NoDerivatives 3.0 Unported'. A descrição promete download em CSV gzip, mas o link aponta para prefeitura-rio.github.io/queries-datario/pages/404. O que resta é BigQuery (datario.adm_cor_comando.ocorrencias) ou a lib basedosdados, que também usa BigQuery. api.dados.rio/v1/ respondeu 503 de novo em 10/10/2026. As colunas não foram verificadas."
+  },
+  {
+   "name": "Detran-RJ: boletim 'Trânsito em Números' (arquivo ..._2025.pdf)",
+   "url": "https://www.detran.rj.gov.br/images/transparencia/outros/boletim_estatistico_transito_transito_em_numeros_2025.pdf",
+   "verdict": "corrected",
+   "note": "HTTP 200, 1.640.916 bytes, 22 páginas. É o BEST nº 5 e cobre só o 1º TRIMESTRE de 2025, não o ano. Confere: sinistros vêm do ISP, tipo de veículo vem do Corpo de Bombeiros, e caminhões mais caminhões-trator são 2,3% da frota (195.615). O boletim traz 523 homicídios culposos de trânsito no 1º tri de 2025 e 482 no 1º tri de 2024. O número 2.375 não aparece no documento (ver key_facts)."
+  },
+  {
+   "name": "Sinesp VDE 2025",
+   "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 26.643.031 bytes. Roubo de carga em 2025, abrangência Estadual: RJ 3.777, SP 3.470, MG 132, ES 7. A abrangência Polícia Federal dá 0. Nesses estados a coluna municipio vem 'NÃO INFORMADO' para roubo de carga, então o Sinesp só serve por UF."
+  },
+  {
+   "name": "Juiz de Fora: SISURB MapServer/69",
+   "url": "https://sisurb.pjf.mg.gov.br/server/rest/services/PEUS_13_11_R004_MIL1/MapServer/69?f=pjson",
+   "verdict": "confirmed",
+   "note": "Respondeu {code:404,'Service PEUS_13_11_R004_MIL1/MapServer not found'}. Olhei o catálogo do servidor (SISURB_peus e SISURB_mobilidade) e não há camada de acidentes, então não parece ser só uma URL que mudou de lugar."
+  }
+ ],
+ "rules": [
+  {
+   "where": "rules: [] (tema segurança RJ/MG/ES)",
+   "verdict": "confirmed",
+   "note": "Não há regra de circulação neste tema, porque as fontes são de sinistros e de crimes. A lista vazia está certa e não havia ato para conferir."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "A SEJUSP-MG publica no Drive a base do Painel de Sinistro (Ocorrências, Veículo, Vítimas, Via e Condições), um CSV por ano de 2012 a Jan-Ago 2026, atualizada em 15/09/2026, com link na página 289.",
+   "verdict": "confirmed",
+   "note": "Pasta e subpastas listadas sem login. O arquivo de Jan-Ago 2026 tem data de 15/09. O link 'Acesse a Base de Dados do Painel' está na página. O arquivo antigo 'Jan a Jul 2026' continua na pasta."
+  },
+  {
+   "fact": "REDS-MG 2025: 312.700 ocorrências (241.580 sem vítima e 71.120 com vítima), lat/lon em 98,9%, com horário, logradouro, bairro, município, causa e unidade.",
+   "verdict": "confirmed",
+   "note": "As contagens batem exatamente. Todas as linhas têm lat/lon preenchida; 98,8% caem dentro de MG pelo meu critério. As colunas existem."
+  },
+  {
+   "fact": "REDS-MG 2025: 36.074 ocorrências com caminhão (11,5%), 98,1% georreferenciadas e 3.825 com vítima; 436 tiveram vítima fatal (495 óbitos).",
+   "verdict": "corrected",
+   "note": "36.074, 11,5%, 98,1% e 3.825 conferem. Pelo cruzamento com a base de vítimas, o total é 445 ocorrências com vítima FATAL e 505 óbitos. O 436/495 só vale para as que têm coordenada válida. Se o filtro usar só CAMINHAO e CAMINHAO/TRATOR, sem os reboques, são 34.615 ocorrências."
+  },
+  {
+   "fact": "A Delegacia Virtual registra 15.780 dos 36.074 (44%), quase todos sem vítima; 21% caem em coordenadas repetidas 5 vezes ou mais; o manual cita SAD-69.",
+   "verdict": "corrected",
+   "note": "15.780 (43,7%) confere, mas TODOS os 15.780 são sem vítima, não 'quase todos'. A fração repetida depende de como se conta: 22,0% contando repetição só entre os casos com caminhão, 18,3% só dentro da Delegacia Virtual, 39% no total de ocorrências. O manual (PDF de 1.909.553 bytes) diz mesmo que as coordenadas do REDS 'estão em formato SAD-69' e são aproximadas."
+  },
+  {
+   "fact": "Jurisdição MG 2025: 6.569 casos com logradouro BR ou Anel, mais 1.948 em células da PRF; sobram 26.868 casos em 2.013 células com 3 ou mais; 2 'muito alto' e 10 'alto'. A PRF tem 3.142 acidentes com caminhão nas BRs de MG.",
+   "verdict": "corrected",
+   "note": "PRF = 3.142 confirmado. Refiz a simulação com o método do importador (EPSG:5880, células de 250 m, dilatação de ±1, score e níveis do acidentes_infosiga) e cheguei a: 5.845 (regex ^BR|ANEL) ou 6.312 (\\bBR\\b|ANEL) casos de BR/Anel; 2.140 em células da PRF; 28.089 restantes; 2.060 células com 3 ou mais; 2 muito_alto e 11 alto. A ordem de grandeza confere, mas os números exatos dependem da regra de casamento do logradouro, que não foi informada."
+  },
+  {
+   "fact": "Decreto MG 48.383/2022, art. 22: dados de transparência ativa 'são de livre utilização pela sociedade'; os conjuntos da SEJUSP no CKAN não têm licença nomeada.",
+   "verdict": "confirmed",
+   "note": "Texto conferido na ALMG. A citação está truncada: o artigo continua com 'observados os princípios dispostos no art. 6º da Lei Federal nº 13.709 (LGPD) e os requisitos da Lei Federal nº 14.129'. Os 5 conjuntos da SEJUSP no CKAN têm license_id vazio."
+  },
+  {
+   "fact": "SEJUSP-MG, roubo com alvo 'Cargas': 635.714 linhas; 662 (2015), 217 (2024), 132 (2025), 59 (2026); em 2025-26, 54% em rodovia, 44% de 0h a 6h, 65% com arma de fogo; Contagem 25, BH 24, Betim 16.",
+   "verdict": "confirmed",
+   "note": "Tudo bate exatamente: 191 casos em 2025-26, RODOVIA 104, faixa 0-6h 84, ARMAS DE FOGO 124, municípios 25, 24 e 16."
+  },
+  {
+   "fact": "Sinesp VDE 2025, roubo de carga: MG 132, ES 7, RJ 3.777, SP 3.470.",
+   "verdict": "confirmed",
+   "note": "Valores exatos na abrangência Estadual."
+  },
+  {
+   "fact": "Portaria ISP 127/2022: o art. 2º §2º limita a desagregação a CISP, AISP, RISP, bairro e município; o art. 3º §1º proíbe comercializar 'em nenhuma hipótese' e repassar a terceiros.",
+   "verdict": "confirmed",
+   "note": "Texto conferido no PDF do DOERJ de 26/02/2022. Ressalva: o §1º fala literalmente de bases 'disponibilizadas pelo ISP', sem a palavra 'sob pedido'. A leitura de que vale só para o que é pedido vem do caput do art. 3º, que trata de dados ainda não públicos, e do §4º. É uma leitura razoável, mas não está explícita no texto, o que reforça pedir confirmação escrita ao ISP."
+  },
+  {
+   "fact": "O ISP-RJ publica os polígonos das 137 CISPs (WGS84, cisp, aisp, areakm2, mediana de 169 km², last-modified 14/08/2026); os códigos batem 100% com a série.",
+   "verdict": "confirmed",
+   "note": "Conferido: 137 polígonos, mediana de 169,4 km², last-modified 14/08/2026, 137 códigos iguais."
+  },
+  {
+   "fact": "ISP-RJ, roubo de carga em 2025: 3.113 casos, 87 CISPs com pelo menos 1, 37 com 12 ou mais, 17 com 50 ou mais; CISP 59 (402; 40,8 km²), 60 (287), 64 (212), 21 (194; 14,8 km²), 39 (165); as 10 maiores somam 61% de 2025-26; série até 08/2026.",
+   "verdict": "confirmed",
+   "note": "Tudo bate: as 10 maiores somam 60,7%; 2.035 casos em jan-ago/2026. Nomes conferidos na tabela Relacao_RISPxAISPxCISP: 59 Duque de Caxias (Centro), 60 Campos Elyseos, 64 São João de Meriti, 21 Bonsucesso/Maré, 39 Pavuna."
+  },
+  {
+   "fact": "RENAEST 05-2026: RJ com 0% de coordenada de 2018 a 2025 (2.055 de 9.502 em 2026) e nenhum caminhão; MG 2025 com 312.061, 98,8% e 35.915 caminhões; ES 2025 com 43.110, 50%, 37 de 1.544 (2023: 930 de 1.720).",
+   "verdict": "confirmed",
+   "note": "Reproduzido com o zip completo. Pequena ressalva: há 1 acidente com caminhão no RJ em 2021. RJ 2026 tem 21,6% com coordenada (cerca de 2.050)."
+  },
+  {
+   "fact": "PRF 2025, acidentes com caminhão: RJ 1.115 de 6.428 (40 mortos), MG 3.142 de 9.570 (110 mortos), ES 631 de 2.642 (27 mortos); BRs principais conforme listado.",
+   "verdict": "corrected",
+   "note": "Os totais de acidentes e as BRs principais conferem (CSV por pessoa, ID 1-Gp9S-ALO0D1nT8S_OKoC8xlW7BY8F82). As MORTES estão erradas. Nos acidentes com caminhão há RJ 118 óbitos (108 acidentes fatais), MG 443 (361) e ES 77 (70). Mesmo contando só os ocupantes do caminhão, dá RJ 31, MG 140 e ES 19. Nenhum critério testado reproduz 40/110/27."
+  },
+  {
+   "fact": "SESP-ES: 42 conjuntos CC-BY, nenhum de roubo de carga; 'roubo-veiculo' com 6.239 BOs de 2023-2025, sem coordenada; 77 com caminhão ou carreta.",
+   "verdict": "corrected",
+   "note": "São 42 conjuntos, mas 38 cc-by e 4 odc-by. As 6.239 são linhas por veículo, com 6.116 BOs distintos. 77 com caminhão e nenhuma coordenada conferem. Não há conjunto de roubo de carga."
+  },
+  {
+   "fact": "DETRAN-ES (CC0) só publica agregados: 53.446 sinistros em 2024 (39.609 sem vítima, 12.924 com vítimas e 919 fatais); o Observatório é SAS VA sem download.",
+   "verdict": "confirmed",
+   "note": "Números e licença conferidos. O observatório redireciona para o SAS Visual Analytics como convidado. Não testei se dá para exportar dados de cada objeto do painel."
+  },
+  {
+   "fact": "BHTrans: 132.935 sinistros com vítima de 2016 a 22/08/2026 (CC-BY, EPSG:31983), sem tipo de veículo; si-bol e si-veic são ODbL e anuais até 2024; 484 boletins com caminhão em 2024.",
+   "verdict": "confirmed",
+   "note": "Confere, inclusive 1.266 fatais e 460 dos 484 (95%) com coordenada diferente de zero."
+  },
+  {
+   "fact": "O boletim 'Trânsito em Números 2025' do Detran-RJ é PDF agregado, com sinistros do ISP e tipo de veículo dos Bombeiros; os 2.375 homicídios culposos de 2025 batem com a soma de hom_culposo do ISP.",
+   "verdict": "refuted",
+   "note": "PDF agregado e as fontes (ISP e CBMERJ) conferem. Mas o boletim é do 1º TRIMESTRE de 2025 e o número 2.375 não aparece nele. Ele traz 523 homicídios culposos no 1º tri de 2025 e 482 no 1º tri de 2024. A soma anual de hom_culposo do ISP em 2025 é mesmo 2.375. Para o 1º tri, o ISP dá hoje 546 em 2025 (o boletim diz 523, então houve revisão) e 482 em 2024, igual ao boletim."
+  },
+  {
+   "fact": "As ocorrências do COR-Rio só existem via BigQuery, com licença CC BY-ND 3.0; api.dados.rio respondeu 503 em 10/10/2026.",
+   "verdict": "confirmed",
+   "note": "A licença está no item. O suposto download CSV aponta para uma página 404. A API respondeu 503 de novo no meu teste."
+  }
+ ],
+ "extra_findings": [
+  "MG, FURTO de carga (não citado): na mesma pasta da SEJUSP, o arquivo 'Alvo - Furto Consumado - Jan 2022 a Ago 2026.csv' (https://drive.usercontent.google.com/download?id=1uDM4WFeTXXPwfEff9iA-Bo5K63VzvxJJ&export=download&confirm=t; 1.025.737 linhas) tem Alvo=Cargas em 381 casos (2022), 499 (2023), 485 (2024), 536 (2025) e 297 (jan-ago/2026). É cerca de 4 vezes o roubo de carga. Em 2025-26, 400 dos 833 (48%) foram em RODOVIA. Tem hora, mas não tem coordenada. Se a camada roubo_carga por município de MG for feita, o furto de carga triplica o volume e muda o corte de 3 casos em 2 anos.",
+  "PRF 2025: os óbitos citados (40, 110, 27) estão errados. Pelo CSV por pessoa (https://drive.usercontent.google.com/download?id=1-Gp9S-ALO0D1nT8S_OKoC8xlW7BY8F82&export=download&confirm=t), nos acidentes com caminhão há RJ 118 óbitos e 108 acidentes fatais, MG 443 e 361, ES 77 e 70.",
+  "REDS-MG Jan-Ago 2026 (https://drive.usercontent.google.com/download?id=15TYzFOkD9PGvQc6G-mufUUUsntR7upAM&export=download&confirm=t) tem 214.694 ocorrências, não 'cerca de 129 mil'. 128.841 é o RENAEST-MG de jan-mai/2026, pelo zip 05-2026.",
+  "Detran-RJ: o PDF boletim_estatistico_transito_transito_em_numeros_2025.pdf é o BEST nº 5, só do 1º trimestre de 2025 (523 homicídios culposos de trânsito), e não o ano inteiro. O total anual de 2,375 vem do ISP (BaseDPEvolucaoMensalCisp.csv, coluna hom_culposo), não do boletim.",
+  "data.rio guarda um Web Map antigo, 'Mapa de Ocorrências Secretaria de Segurança Pública-Roubo de Cargas' (https://www.arcgis.com/sharing/rest/content/items/b6606dbb31d74f728b7f0c731966b544?f=json, de 2019). Ele aponta para https://pgeo3.rio.rj.gov.br/arcgis/rest/services/Seguranca/Ocorrencias_AISP/MapServer/0, que responde 404 'Service not found'. Não existe mais fonte de pontos de roubo de carga no Rio por esse caminho. Vale registrar como testado e morto.",
+  "ES: o 'Anuário Estadual da Segurança Pública' lista a 'Tabela 19 – Furto e Roubo de Carga' (agregada). No dados.es.gov.br, o recurso microdados-anuario-de-seguranca-2024 (https://dados.es.gov.br/dataset/microdados-anuario-de-seguranca-2024) é só um índice de 1.090 bytes, sem a tabela. Se for preciso o número estadual de furto e roubo de carga do ES fora do Sinesp, ele está no anuário.",
+  "REDS-MG: o manual diz que as coordenadas vêm de SAD-69, mas as colunas se chamam latitude_sirgas2000 e longitude_sirgas2000. Não ficou claro se a conversão foi feita. O desvio típico entre SAD-69 e SIRGAS2000 no Sudeste é de dezenas de metros, o que pesa numa grade de 250 m. Convém validar com os pontos da BHTrans (CC-BY), como a própria pesquisa sugere, antes de publicar.",
+  "Sinesp VDE 2025: para roubo de carga no RJ, em MG e no ES a coluna municipio vem 'NÃO INFORMADO'. O Sinesp não serve como alternativa municipal ao ISP nem à SEJUSP.",
+  "Infra do importador: o CISPshp.rar é RAR v5 e o importers/Dockerfile (python:3.12-slim) não instala libarchive-tools/bsdtar. O plano roubo_carga_isp_rj precisa acrescentar isso ou guardar o GeoJSON já convertido.",
+  "Juiz de Fora: no catálogo ArcGIS (https://sisurb.pjf.mg.gov.br/server/rest/services?f=pjson), as pastas SISURB_peus e SISURB_mobilidade não têm camada de acidentes. O 404 não é só uma URL mudada."
+ ]
+}

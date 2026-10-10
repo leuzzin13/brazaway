@@ -1,0 +1,567 @@
+{
+ "category": "pedagio_balancas_concessoes_estaduais",
+ "summary": "Pesquisa concluída para os três estados em 10/10/2026, com testes reais em curl/python, no PBF local, na malha DER-MG (IDE-Sisema) e na API local.\n\nES: não tem pedágio estadual. O contrato da Rodosol (Terceira Ponte e Rodovia do Sol) acabou em 22/12/2023. A ARSP lista como última a tabela \"1º/01/2023 até 21/12/2023\". No ES só há pedágio federal (Ecovias Capixaba), que já está na camada.\n\nRJ: a AGETRANSP regula só duas rodovias estaduais.\n- CCR ViaLagos (RJ-124), Deliberação 1630/2025: R$ 18,40 por multiplicador nos dias úteis e R$ 30,60 (TBA) de sexta 12h a segunda 12h e nos feriados nacionais (das 12h da véspera às 12h do dia seguinte).\n- Rota 116 (RJ-116), Deliberação 1631/2025: TBP R$ 9,60, com estrutura NÃO linear. De 3 a 6 eixos com rodagem dupla paga 4x (R$ 38,40). Sete eixos pagam 7x e oito eixos 8x.\n- As tabelas estão em HTML. O reajuste de agosto/2026 não foi localizado: as páginas ainda mostram 01/08/2025 e as deliberações online param na nº 1816 (25/06/2026).\n- Na capital, as concessões municipais Linha Amarela (LAMSA, tabela de 18/04/2026) e Transolímpica (ViaRio, 03/05/2026) também têm tabelas não lineares.\n\nMG: a ARTEMIG (Lei Estadual 25.235/2025) assumiu a regulação no lugar da SEINFRA e publica uma página por concessão, com tarifas e praças em imagem. Concessões em cobrança:\n- Lote 1 Triângulo (EPR): R$ 14,00/eixo, 8 praças.\n- Lote 2 Sul de Minas (EPR): R$ 10,10, 8 praças + free flow na MG-459 (Monte Sião). O reajuste para R$ 10,60 (Deliberação ARTEMIG 41/2026) foi suspenso pelo TCE-MG em 07/10/2026.\n- Lote 3 Varginha-Furnas (EPR Vias do Café): R$ 15,80, 6 praças.\n- MG-050 (Via Nascentes): R$ 9,10, 6 praças.\n- BR-135/LMG-754 (Ecovias Norte Minas): R$ 10,60, 6 praças.\n- O Lote 7 (Via Liberdade) terá 4 pórticos de free flow, ainda sem cobrança.\n- A CRP Pirapetinga (MGC-393) é concessão municipal com cobrança contestada na Justiça.\n- Pistas erradas: \"Rota das Grutas\" é concessão de parques; \"MGO\" e \"Via Sul\" não são concessões estaduais mineiras.\n\nComparação com o OSM (81 nós de concessões estaduais ou municipais em RJ/MG):\n- Os valores de MG conferem com as tabelas oficiais. Exceções: um nó de Azurita com 6.10 e um de Nepomuceno com 15.90.\n- Os do RJ estão errados para caminhão. Prova na API local com carreta de 5 eixos:\n  - ViaLagos numa quarta às 10h: o app cobra R$ 153,00 e o oficial é R$ 92,00. O nó traz \"Mo-Fr 18.40BRL/hgv\" sem \"/axle\", e o tollCost cai no valor de fim de semana.\n  - Rota 116 (Itaboraí → Nova Friburgo): R$ 128,00 contra R$ 76,80 oficiais.\n  - Transolímpica: R$ 49,75 contra R$ 39,80.\n- Só 33 dos 81 nós ficam em via toll=yes. Nas praças da EPR, da ViaLagos e da Linha Amarela a \"rota sem pedágio\" sai como \"mesmos_pontos\".\n- Faltam no OSM a P6 e a P8 (MG-427) do Lote 1 e a P8 e o pórtico free flow da MG-459 no Lote 2.\n- O km da concessão difere de 4 a 8 km do km da malha DER-MG, então posicionar praça por rodovia+km sem calibração erra.\n\nBalanças: não há lista aberta para DER-MG (49 balanças, segundo a imprensa), DER-RJ nem DER-ES. As federais (PPV ANTT) já estão no app. O Lote 7 declara uma balança na BR-356 km 62,3.\n\nObservação: o orçamento de WebSearch da sessão se esgotou no fim (200/200). Por isso a lista atual de balanças do DER-MG ficou sem confirmação.\n\nArquivos em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/concessoes_estaduais/ (NOTES.md, tarifas_estaduais_oficiais.json, osm_toll_nodes_rj_mg_es.csv, mg_pracas_oficiais_posicionadas.csv, api_tests/).",
+ "rules": [
+  {
+   "jurisdiction": "RJ (estadual, AGETRANSP)",
+   "kind": "via",
+   "where": "RJ-124 ViaLagos, praça única bidirecional (OSM -22.8007,-42.4646, nós 1700042140/1700042199)",
+   "days_hours": "TBP R$ 18,40 de segunda 12h a sexta 12h; TBA R$ 30,60 de sexta 12h a segunda 12h e das 12h da véspera às 12h do dia seguinte a feriado NACIONAL; vigência desde 01/08/2025 (reajuste 2026 não localizado)",
+   "vehicles": "Multiplicador: moto 0,5; 2 eixos simples 1; 2 dupla 2; 3 simples 1,5; 3 dupla 3; 4 simples 2; 4 dupla 4; 5 dupla 5; 6 dupla 6. Carreta 5 eixos: R$ 92,00 (útil) / R$ 153,00 (TBA). A tabela vai só até 6 eixos",
+   "exceptions": "Feriados estaduais/municipais não acionam a TBA (só nacionais). Eixo suspenso de caminhão vazio isento (Lei 13.103/2015 art. 17, regra nacional já no app)",
+   "act": "Deliberação AGETRANSP/CD nº 1630 de 29/07/2025, arts. 1º e 2º (Contrato de Concessão 43/1996); janela TBA conforme comunicado da concessionária",
+   "act_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1630/visualizar",
+   "confidence": "alta",
+   "geometry_source": "OSM (nós de pedágio); sem coordenada oficial"
+  },
+  {
+   "jurisdiction": "RJ (estadual, AGETRANSP; poder concedente Fundação DER-RJ)",
+   "kind": "rodovia",
+   "where": "RJ-116 Rota 116: praças Itaboraí, Cachoeiras de Macacu, Nova Friburgo e Cordeiro, cobrança bidirecional",
+   "days_hours": "Todos os dias; vigência desde 01/08/2025; site informa 'válidas até 31/07/2026' (valor posterior não publicado)",
+   "vehicles": "TBP R$ 9,60. Rodagem simples 2–4 eixos = 1x (9,60); 2 eixos dupla = 2x (19,20); 3, 4, 5 e 6 eixos dupla = 4x (38,40); 7 eixos = 7x (67,20); 8 eixos = 8x (76,80); site: 7 ou mais eixos = R$ 9,60 por eixo",
+   "exceptions": "Motos, bicicletas, veículos oficiais e do corpo diplomático isentos",
+   "act": "Deliberação AGETRANSP/CD nº 1631 de 29/07/2025, arts. 1º e 2º; Contrato 08/2001, 6º Termo Aditivo (Cláusula Quarta: metodologia de reajuste, citada na Deliberação 1790/2026)",
+   "act_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1631/visualizar",
+   "confidence": "alta",
+   "geometry_source": "OSM (8 nós, 4 praças); sem coordenada oficial"
+  },
+  {
+   "jurisdiction": "Rio de Janeiro (municipal)",
+   "kind": "via",
+   "where": "Linha Amarela (LAMSA), praça Água Santa",
+   "days_hours": "Todos os dias; vigência desde 00h de 18/04/2026",
+   "vehicles": "Cat.1 (2 eixos simples) 4,00; cat.2 (2 eixos dupla) 6,00; cat.3 (3 eixos dupla) 13,30; cat.4 (4 eixos dupla) 14,50; cat.5 (5 eixos) 16,10; cat.6 (6 eixos) 20,10; cat.7 (3 eixos simples) 6,40; cat.8 (4 eixos simples) 8,00; cat.10 (7 ou mais eixos dupla) 24,10. Tabela NÃO proporcional a eixos",
+   "exceptions": "Motos isentas (cat.9)",
+   "act": "Tabela publicada pela concessionária (Lei 8.987/1995 art. 9º §5º); ato da Prefeitura não localizado",
+   "act_url": "https://www.lamsa.com.br/www.lamsa.com.br/pages/pedagio.html",
+   "confidence": "media",
+   "geometry_source": "OSM (4 nós, operator=LAMSA, sem check_date)"
+  },
+  {
+   "jurisdiction": "Rio de Janeiro (municipal)",
+   "kind": "via",
+   "where": "Transolímpica (ViaRio/Motiva)",
+   "days_hours": "Todos os dias; vigência desde 00h de 03/05/2026",
+   "vehicles": "2 eixos auto 9,95; 2 eixos caminhão/cavalo/furgão 14,95; 3 eixos auto+semirreboque 15,90; 3 eixos caminhão 32,85; 4 eixos auto+reboque 19,90; 4 eixos caminhão 35,80; 5 eixos 39,80; 6 eixos 49,75; 7 eixos (especial) 59,70; moto 4,00. NÃO proporcional",
+   "exceptions": "Não informadas",
+   "act": "Tabela publicada pela concessionária; ato municipal não localizado",
+   "act_url": "https://www.viario.com.br/tarifas-do-pedagio.php",
+   "confidence": "media",
+   "geometry_source": "OSM (4 nós, 2 praças, sem check_date)"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG; poder concedente SEINFRA)",
+   "kind": "rodovia",
+   "where": "Lote 1 Triângulo Mineiro (Rodovias do Triângulo SPE / EPR Triângulo), 627,4 km: P1 MGC-452 km 186,4 Uberaba; P2 BR-452 km 260,30 Perdizes; P3 BR-365 km 515,25 Monte Carmelo; P4 BR-365 km 589,10 Indianópolis; P5 MGC-462 km 34,15 Patrocínio; P6 'LMG-190' km 6,80 Nova Ponte; P7 MG-190 km 75,50 Nova Ponte; P8 MG-427 km 15 Água Comprida",
+   "days_hours": "Todos os dias; valores válidos até 21/10/2026 (reajuste anual)",
+   "vehicles": "TBP R$ 14,00; multiplicador = nº de eixos com rodagem dupla (5 eixos R$ 70,00; 9 eixos 126,00; 10 eixos 140,00); eixo adicional R$ 14,00; moto R$ 7,00; rodagem simples 3/4 eixos = 1,5/2",
+   "exceptions": "Isentos: veículos do Poder Concedente/Ente Regulador, PM Rodoviária, emergência, oficiais do Estado credenciados. DUF só para categoria 1 com TAG",
+   "act": "Contrato nº 003/2022 (Concorrência Internacional 002/2021) e tabela publicada pela ARTEMIG",
+   "act_url": "https://artemig.mg.gov.br/artemig/lote-01-triangulo-mineiro/",
+   "confidence": "alta",
+   "geometry_source": "OSM: 6 praças/12 nós; P6 e P8 sem nó. Rodovia+km oficial (km da concessão ≠ km do SRE)"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG)",
+   "kind": "rodovia",
+   "where": "Lote 2 Sul de Minas (Rodovias do Sul de Minas SPE / EPR Sul de Minas), 454,3 km: P1 BR-459 km 40,5 Caldas; P2 BR-459 km 80,9 Senador José Bento; P3 BR-459 km 117,3 Santa Rita do Sapucaí; P4 CMG-146 km 622,8 Poços de Caldas; P5 MG-173 km 51,3 Gonçalves; P6 MG-290 km 34,5 Borda da Mata; P7 MG-290 km 71,1 Ouro Fino; P8 MG-459 km 6,4 Ouro Fino",
+   "days_hours": "Todos os dias. Tarifa vigente R$ 10,10 (a ARTEMIG informava validade até 08/10/2026). O reajuste para R$ 10,60 a partir de 09/10/2026 (Deliberação ARTEMIG 41/2026) foi SUSPENSO pelo TCE-MG em 07/10/2026",
+   "vehicles": "Multiplicador = eixos com rodagem dupla (5 eixos R$ 50,50); eixo adicional R$ 10,10; moto R$ 5,05; mesmo valor em todas as praças",
+   "exceptions": "Mesmas isenções do Lote 1; DUF para categoria 1 com TAG",
+   "act": "Contrato nº 004/2022 (PPP patrocinada); Deliberação ARTEMIG 41/2026 com efeitos suspensos",
+   "act_url": "https://artemig.mg.gov.br/noticias/governo-de-minas-cumpre-determinacao-do-tce-mg-sobre-reajuste-das-tarifas-de-pedagio-do-lote-2/",
+   "confidence": "alta",
+   "geometry_source": "OSM: 7 praças/14 nós; P8 sem nó"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG)",
+   "kind": "via",
+   "where": "Free flow da EPR Sul de Minas na MG-459, Monte Sião (pórtico, bidirecional)",
+   "days_hours": "Desde 04/06/2024; pagamento em até 30 dias após a passagem (TAG, app, portal, bases, praças); período de transição sem multa nem pontos para débitos regularizados até 16/11/2026",
+   "vehicles": "Todas as categorias (valor por categoria não publicado em texto)",
+   "exceptions": "Tarifa continua devida durante a transição; evasão = CTB art. 209-A (regra nacional)",
+   "act": "2º Termo Aditivo ao Contrato 004/2022 (03/06/2024, free flow experimental); notícia ARTEMIG de 15/06/2026 citando a Deliberação Contran nº 277",
+   "act_url": "https://artemig.mg.gov.br/noticias/governo-de-minas-e-concessionaria-orientam-usuarios-sobre-regularizacao-de-multas-e-tarifas-do-sistema-free-flow/",
+   "confidence": "media",
+   "geometry_source": "Nenhuma: pórtico ausente no OSM e km não publicado"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG)",
+   "kind": "rodovia",
+   "where": "Lote 3 Varginha-Furnas (Concessionária Rodovias do Café SPE / EPR Vias do Café), 432,8 km: P1 BR-265 km 366,5 Nepomuceno; P2 BR-265 km 396 Boa Esperança; P3 BR-146 km 529,2 Muzambinho; P4 CMG-491 km 46 Monte Santo de Minas; P5 CMG-491 km 159,1 Alfenas; P6 CMG-491 km 251,6 Três Corações",
+   "days_hours": "Todos os dias; cobrança autorizada a partir de 26/07/2026, válida até 25/07/2027",
+   "vehicles": "TBP R$ 15,80; multiplicador = eixos com rodagem dupla (5 eixos R$ 79,00; 10 eixos 158,00); eixo adicional R$ 15,80; moto R$ 7,90",
+   "exceptions": "Mesmas isenções; DUF para categoria 1 com TAG",
+   "act": "Contrato SULOG nº 005/2023 (Concorrência Internacional 003/2022)",
+   "act_url": "https://artemig.mg.gov.br/artemig/lote-03-varginha-furnas/",
+   "confidence": "alta",
+   "geometry_source": "OSM: 6 praças/12 nós, nenhum em via toll=yes"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG)",
+   "kind": "rodovia",
+   "where": "MG-050/BR-491/BR-265 (Via Nascentes/Via Appia, ex-AB Nascentes das Gerais): Pratápolis km 389,2; Passos km 333; Piumhi km 270,7; Formiga km 219,9; São Sebastião do Oeste km 140,5; Itaúna km 81",
+   "days_hours": "Todos os dias; R$ 9,10 desde 13/06/2026, válido até 12/06/2027; reajuste anual em 13/06 pelo IPCA",
+   "vehicles": "Moto 4,60; carro 9,10; caminhão 2 eixos 18,20; 3 eixos 27,30; 4 eixos 36,40; 5 eixos 45,50; 6 eixos 54,60; mais de 6 eixos = 54,60 + 9,10 por eixo excedente. Rodagem single/supersingle conta como dupla",
+   "exceptions": "Isentos: SEINFRA, DER-MG, Polícia Rodoviária Estadual, forças policiais e emergência em serviço, militares em instrução, oficiais credenciados",
+   "act": "Contrato SETOP 007/2007 (PPP patrocinada) e tabela da ARTEMIG/concessionária",
+   "act_url": "https://artemig.mg.gov.br/artemig/mg-050/",
+   "confidence": "alta",
+   "geometry_source": "OSM: 6 praças (operator dividido entre 'Nascentes das Gerais' e 'Appia Via Nascentes'), todas em via toll=yes"
+  },
+  {
+   "jurisdiction": "MG (estadual, BR delegada, ARTEMIG)",
+   "kind": "rodovia",
+   "where": "BR-135/LMG-754/MG-231 (Eco135 / Ecovias Norte Minas), 363,95 km: praças na BR-135 km 399, 466, 523, 583 e 634 e na LMG-754 km 25",
+   "days_hours": "Todos os dias; tabela de 24/04/2026, valores válidos até 31/03/2027",
+   "vehicles": "TBP R$ 10,60; multiplicador por eixo (caminhão 5 eixos R$ 53,00; 10 eixos 106,00); moto 5,30",
+   "exceptions": "Mesmas isenções dos lotes ARTEMIG",
+   "act": "Contrato SETOP 004/2018 (3º Termo Aditivo de 03/12/2025 inclui a ARTEMIG como ente regulador)",
+   "act_url": "https://artemig.mg.gov.br/artemig/br-135/",
+   "confidence": "alta",
+   "geometry_source": "OSM: 6 praças/12 nós, todos em via toll=yes"
+  },
+  {
+   "jurisdiction": "MG (estadual, ARTEMIG)",
+   "kind": "rodovia",
+   "where": "Lote 7 Ouro Preto–Mariana (Rota da Liberdade S.A.): pórticos previstos na BR-356 km 43 (Itabirito), BR-356 km 62,5 (Ouro Preto), MG-262 km 30,3 (Acaiaca) e MG-329 km 125,4 (Ponte Nova); balança na BR-356 km 62,3",
+   "days_hours": "Cobrança ainda não iniciada (começa após a fase inicial de investimentos); contrato eficaz desde 20/03/2026",
+   "vehicles": "Free flow com tarifa proporcional ao trecho (valores não publicados)",
+   "exceptions": "—",
+   "act": "Contrato SEINFRA nº 9493121/2026; 1º Termo Aditivo de 13/04/2026 (ARTEMIG interveniente)",
+   "act_url": "https://artemig.mg.gov.br/rodovias/lote-7-ouro-preto-mariana/",
+   "confidence": "media",
+   "geometry_source": "Só rodovia+km do site da concessionária (crlsa.com.br)"
+  },
+  {
+   "jurisdiction": "MG (municipal: Pirapetinga)",
+   "kind": "via",
+   "where": "MGC-393, trecho de cerca de 5 km em Pirapetinga (CRP Concessionária SPE Ltda), praça única (OSM -21.6646,-42.3817)",
+   "days_hours": "Situação incerta: suspensa por decisão judicial em ação do MPMG (notícia de 13/10/2025); site e OSM (check_date 2026-05-13) indicam cobrança",
+   "vehicles": "2 eixos simples 11,00; 2 eixos dupla 22,00; 3 eixos simples 16,60; 3 eixos dupla 33,00 (demais categorias não publicadas)",
+   "exceptions": "—",
+   "act": "Concessão autorizada pelo município em 2024; ação civil pública do MPMG contra CRP, Município e DER-MG",
+   "act_url": "https://www.mpmg.mp.br/portal/menu/comunicacao/noticias/mpmg-consegue-na-justica-suspensao-de-cobranca-de-pedagio-em-trecho-da-mgc-393-em-pirapetinga.shtml",
+   "confidence": "baixa",
+   "geometry_source": "OSM (1 nó)"
+  },
+  {
+   "jurisdiction": "ES (estadual, ARSP)",
+   "kind": "outro",
+   "where": "Terceira Ponte e Rodovia do Sol (ES-060), ex-Rodosol",
+   "days_hours": "Sem pedágio desde 22/12/2023 (última tabela: 01/01/2023 a 21/12/2023)",
+   "vehicles": "Todos",
+   "exceptions": "Pedágio federal da BR-101 (Ecovias Capixaba) continua e já está na camada",
+   "act": "Fim do contrato de concessão Rodosol (1998, 25 anos); página de tarifas da ARSP",
+   "act_url": "https://arsp.es.gov.br/tarifas-infraestrutura",
+   "confidence": "alta",
+   "geometry_source": "OSM sem nós Rodosol (coerente)"
+  },
+  {
+   "jurisdiction": "Nacional (vale para concessões estaduais)",
+   "kind": "outro",
+   "where": "Todas as concessões",
+   "days_hours": "Permanente",
+   "vehicles": "Concessionária deve publicar no site a tabela de tarifas praticadas e a evolução de revisões e reajustes dos últimos 5 anos",
+   "exceptions": "—",
+   "act": "Lei 8.987/1995 art. 9º §5º (incluído pela Lei 13.673/2018, art. 1º)",
+   "act_url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13673.htm",
+   "confidence": "alta",
+   "geometry_source": "—"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "A AGETRANSP lista só duas concessões rodoviárias estaduais no RJ (Rota 116 e Via Lagos), com tabela HTML de 'tarifa máxima homologada' e 'cobrança praticada a partir de 01/08/2025'.",
+   "source_url": "https://www.agetransp.rj.gov.br/operadoras/vialagos"
+  },
+  {
+   "fact": "ViaLagos: TBP homologada R$ 18,3712 (praticada R$ 18,40) e TBA R$ 30,6187 (praticada R$ 30,60) a partir de agosto/2025 (Deliberação AGETRANSP/CD 1630 de 29/07/2025, arts. 1º e 2º).",
+   "source_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1630/visualizar"
+  },
+  {
+   "fact": "Janela da TBA da ViaLagos: das 12h de sexta às 12h de segunda e das 12h da véspera às 12h do dia seguinte a feriados nacionais.",
+   "source_url": "https://rodovias.motiva.com.br/vialagos/noticias/2025/julho/novas-tarifas-de-pedagio-da-vialagos--rj-124--passam-a-vigorar-a/"
+  },
+  {
+   "fact": "Rota 116: TBP R$ 9,60; categorias III a VI (3–6 eixos, rodagem dupla) pagam R$ 38,40 (4x), VII R$ 67,20 e VIII R$ 76,80 (histórico 2018–2025 no PDF da concessionária).",
+   "source_url": "https://www.rota116.com.br/evolucao_das_tarifas.pdf"
+  },
+  {
+   "fact": "O site da Rota 116 informa cobrança bidirecional e 'Tarifas válidas até 31/07/2026'; a página de praças lista Cordeiro, Itaboraí, Cachoeiras de Macacu e Nova Friburgo.",
+   "source_url": "https://www.rota116.com.br/tarifas"
+  },
+  {
+   "fact": "A Deliberação AGETRANSP 1790 (16/06/2026) extinguiu a consulta sobre a metodologia de reajuste da Rota 116 porque o 6º Termo Aditivo ao Contrato 08/2001 (Cláusula Quarta) a disciplinou de forma definitiva, com ciência à Fundação DER-RJ.",
+   "source_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1790/visualizar"
+  },
+  {
+   "fact": "As deliberações AGETRANSP acessíveis por número vão até a nº 1816 (25/06/2026); nenhuma de reajuste de pedágio de 2026 foi encontrada entre a 1684 e a 1816.",
+   "source_url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes"
+  },
+  {
+   "fact": "Linha Amarela: tarifa básica de R$ 4,00 a partir de 18/04/2026; tabela em imagem com 2 eixos dupla R$ 6,00, 3 eixos R$ 13,30, 5 eixos R$ 16,10 e 7 ou mais eixos R$ 24,10.",
+   "source_url": "https://www.lamsa.com.br/www.lamsa.com.br/pages/pedagio.html"
+  },
+  {
+   "fact": "Transolímpica: tabela vigente desde 03/05/2026; caminhão de 5 eixos R$ 39,80 e de 6 eixos R$ 49,75 (o curl recebe 'Requisição recusada' do WAF da Motiva).",
+   "source_url": "https://www.viario.com.br/tarifas-do-pedagio.php"
+  },
+  {
+   "fact": "A ARTEMIG foi criada pela Lei Estadual 25.235/2025 e assumiu as atribuições de ente regulador antes exercidas pela SEINFRA (3º Termo Aditivo da BR-135, 03/12/2025).",
+   "source_url": "https://infraestrutura.mg.gov.br/ppp/br-135/"
+  },
+  {
+   "fact": "Contratos rodoviários vigentes em MG: Lote 1 Triângulo, Lote 2 Sul de Minas, Lote 3 Varginha-Furnas, Lote 7 Ouro Preto–Mariana (Via Liberdade), Rodoanel, BR-135 e MG-050. 'Rota de Grutas Peter Lund' é concessão de parques estaduais.",
+   "source_url": "https://infraestrutura.mg.gov.br/ppp/contratos-vigentes/"
+  },
+  {
+   "fact": "Lote 1 Triângulo: R$ 14,00 por eixo (valores válidos até 21/10/2026), 8 praças P1–P8 com rodovia, km e município, publicadas em imagem.",
+   "source_url": "https://artemig.mg.gov.br/artemig/lote-01-triangulo-mineiro/"
+  },
+  {
+   "fact": "Lote 2 Sul de Minas: R$ 10,10 por eixo, 8 praças. O 2º Termo Aditivo (03/06/2024) regulamenta o free flow experimental.",
+   "source_url": "https://artemig.mg.gov.br/artemig/lote-02-sul-de-minas/"
+  },
+  {
+   "fact": "Em 07/10/2026 a ARTEMIG e a SEINFRA foram notificadas da decisão do TCE-MG que suspendeu a Deliberação ARTEMIG 41/2026 (reajuste do Lote 2) e suspenderam a aplicação dos novos valores.",
+   "source_url": "https://artemig.mg.gov.br/noticias/governo-de-minas-cumpre-determinacao-do-tce-mg-sobre-reajuste-das-tarifas-de-pedagio-do-lote-2/"
+  },
+  {
+   "fact": "O único free flow estadual em MG é o da EPR Sul de Minas na MG-459 (Monte Sião): pagamento em até 30 dias e regularização sem multa até 16/11/2026.",
+   "source_url": "https://artemig.mg.gov.br/noticias/governo-de-minas-e-concessionaria-orientam-usuarios-sobre-regularizacao-de-multas-e-tarifas-do-sistema-free-flow/"
+  },
+  {
+   "fact": "Lote 3 Varginha-Furnas: R$ 15,80 por eixo, cobrança autorizada pela SEINFRA a partir de 26/07/2026 (válida até 25/07/2027), 6 praças.",
+   "source_url": "https://artemig.mg.gov.br/artemig/lote-03-varginha-furnas/"
+  },
+  {
+   "fact": "MG-050 (Via Nascentes): 6 praças com km e tarifa de R$ 9,10 por eixo; mais de 6 eixos paga 54,60 + 9,10 por eixo; rodagem single/supersingle equivale à dupla; reajuste anual em 13 de junho pelo IPCA.",
+   "source_url": "https://viaappia.com.br/nascentes-tarifas/"
+  },
+  {
+   "fact": "BR-135 (Ecovias Norte Minas): R$ 10,60 por eixo (tabela de 24/04/2026), válida até 31/03/2027; praças na BR-135 km 399, 466, 523, 583 e 634 e na LMG-754 km 25.",
+   "source_url": "https://artemig.mg.gov.br/artemig/br-135/"
+  },
+  {
+   "fact": "Lote 7 (Rota da Liberdade): free flow com pórticos na BR-356 km 43 e km 62,5, na MG-262 km 30,3 e na MG-329 km 125,4; balança na BR-356 km 62,3; cobrança só após a fase inicial de investimentos.",
+   "source_url": "https://crlsa.com.br/"
+  },
+  {
+   "fact": "ES: a última tabela de pedágio da Terceira Ponte e da Rodovia do Sol vigorou de 1º/01/2023 até 21/12/2023.",
+   "source_url": "https://arsp.es.gov.br/tarifas-infraestrutura"
+  },
+  {
+   "fact": "DER-MG tem 49 balanças em rodovias estaduais; decisão do TJMG mantida pelo STF obriga ao menos 50% em operação (notícia de 04/03/2026).",
+   "source_url": "https://ofator.com.br/informacao/stf-mantem-decisao-que-obriga-der-mg-operar-metade-das-balancas-pesagem/"
+  },
+  {
+   "fact": "Atos oficiais não são protegidos por direito autoral (Lei 9.610/1998, art. 8º, IV): os valores das deliberações podem ser reproduzidos.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9610.htm"
+  },
+  {
+   "fact": "API local, carreta de 5 eixos numa quarta às 10h: ViaLagos sai R$ 153,00 (o oficial em dia útil é R$ 92,00); Rota 116 Itaboraí→Nova Friburgo sai R$ 128,00 (oficial R$ 76,80); Transolímpica sai R$ 49,75 (oficial R$ 39,80). Lotes de MG conferem (Sul de Minas R$ 101,00; Triângulo R$ 140,00; MG-050 R$ 45,50; BR-135 R$ 53,00).",
+   "source_url": "http://localhost:3000/api/route"
+  },
+  {
+   "fact": "No PBF Sudeste de 08/10/2026 há 81 nós de pedágio de concessões estaduais ou municipais em RJ/MG e só 33 estão em via toll=yes (EPR Triângulo 0/12, Vias do Café 0/12, Sul de Minas 2/14, ViaLagos 0/2, LAMSA 0/4).",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html"
+  },
+  {
+   "fact": "Posicionar as praças oficiais por rodovia+km na malha DER-MG (IDE-Sisema) dá deslocamento sistemático de cerca de 7 km na MG-050 e de cerca de 4,4 km na BR-135 e na CMG-491 em relação aos nós OSM: o km da concessão não é o km do SRE.",
+   "source_url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IDE:ide_0401_mg_rodovias_lin&outputFormat=application/json"
+  }
+ ],
+ "sources": [
+  {
+   "name": "AGETRANSP: páginas das operadoras ViaLagos e Rota 116 (tarifa máxima homologada)",
+   "publisher": "AGETRANSP (Governo do RJ)",
+   "url": "https://www.agetransp.rj.gov.br/operadoras/vialagos",
+   "access": "HTML público (curl 200)",
+   "format": "HTML com tabela",
+   "license": "Não declarada no site; valores vêm de atos oficiais (Lei 9.610/1998 art. 8º IV)",
+   "tested": true,
+   "test_result": "200 (41 KB vialagos, 39 KB rota116); tabelas completas por categoria, dias úteis e TBA, com referência à deliberação e à nota técnica. Ainda mostram 01/08/2025.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Novo importador importers/sources/toll_agetransp.py (layer pedagio, source 'agetransp'): parse da tabela HTML (categoria, eixos, rodagem, multiplicador, TBP/TBA) + data 'Cobrança praticada a partir de'. Associar às praças OSM por operator (CCR ViaLagos, Rota 116). Em tollCost.ts, novo modelo 'tabela' (valor por nº de eixos e rodagem) e janela TBA.",
+   "geo_coverage": "RJ-124 e RJ-116",
+   "record_count": "2 concessões, 5 praças",
+   "caveats": "Sem coordenadas; reajuste de 2026 não publicado na página"
+  },
+  {
+   "name": "AGETRANSP: deliberações por número (PDF)",
+   "publisher": "AGETRANSP",
+   "url": "https://www.agetransp.rj.gov.br/atos-normativos/deliberacoes/numero/1630/visualizar",
+   "access": "GET por número (a lista usa POST com CSRF)",
+   "format": "PDF (tabela anexa em imagem)",
+   "license": "Ato oficial (Lei 9.610/1998 art. 8º IV)",
+   "tested": true,
+   "test_result": "1630 e 1631 baixadas (281 KB, 4 p.). Sondagem 1684–1950: PDFs até a nº 1816 (25/06/2026); 1817–1950 sem documento.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitor: sondar N+1… periodicamente e procurar 'REAJUSTE' + 'VIA LAGOS'/'ROTA 116' no texto da primeira página; registrar ato e vigência no importador.",
+   "geo_coverage": "RJ",
+   "record_count": "~1.816 deliberações",
+   "caveats": "A listagem HTML não mostra as de 2026; a tabela tarifária vem como imagem no PDF"
+  },
+  {
+   "name": "Rota 116: tarifas, praças e evolução das tarifas",
+   "publisher": "Concessionária Rota 116 S.A.",
+   "url": "https://www.rota116.com.br/evolucao_das_tarifas.pdf",
+   "access": "HTML + PDF público",
+   "format": "HTML/PDF texto",
+   "license": "Não declarada; publicação obrigatória (Lei 8.987 art. 9º §5º)",
+   "tested": true,
+   "test_result": "200; PDF com TBP e categorias II, III–VI, VII e VIII de 2018 a 2025; /pedagios lista 4 praças; /tarifas diz 'válidas até 31/07/2026'",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Fonte secundária do toll_agetransp para as categorias VII/VIII e a cobrança bidirecional.",
+   "geo_coverage": "RJ-116",
+   "record_count": "4 praças",
+   "caveats": "Site parado em 2025"
+  },
+  {
+   "name": "ViaLagos (Motiva): notícia de reajuste com janela da TBA",
+   "publisher": "CCR ViaLagos / Motiva",
+   "url": "https://rodovias.motiva.com.br/vialagos/noticias/2025/julho/novas-tarifas-de-pedagio-da-vialagos--rj-124--passam-a-vigorar-a/",
+   "access": "HTML (WebFetch ok)",
+   "format": "HTML",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "Janela da TBA (sexta 12h → segunda 12h; véspera de feriado nacional 12h → dia seguinte 12h) confirmada",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra fixa no importador (janela_tba) usando a tabela holidays (scope nacional) já usada por calendar.ts.",
+   "geo_coverage": "RJ-124",
+   "record_count": "1",
+   "caveats": "Feriados estaduais não contam"
+  },
+  {
+   "name": "ARTEMIG: páginas por concessão (ficha, tarifas e praças em imagem, contratos, PER, aditivos)",
+   "publisher": "ARTEMIG (Governo de MG)",
+   "url": "https://artemig.mg.gov.br/artemig/lote-02-sul-de-minas/",
+   "access": "HTML + imagens + PDFs (curl 200)",
+   "format": "HTML; tabelas em JPG/PNG; contratos/PER em PDF",
+   "license": "Rodapé 'Copyright © 2025 – Todos os direitos reservados'; os valores tarifários são fatos/atos oficiais",
+   "tested": true,
+   "test_result": "6 páginas (Lotes 1, 2, 3 e 7, MG-050, BR-135) com 200; 9 imagens baixadas e lidas (tarifas e praças); PERs dos Lotes 1 e 2 e da BR-135 baixados (182/102/79 p.)",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador importers/sources/toll_artemig.py lendo um JSON curado (data/raw/pedagio/estaduais_mg.json, modelo em tarifas_estaduais_oficiais.json) com TBP, vigência, ato e URL. A ARTEMIG publica 'válidos até' por lote: o importador avisa quando a vigência vence. Praças posicionadas pelos nós OSM do mesmo operator e não por km.",
+   "geo_coverage": "MG (5 concessões com cobrança + Lote 7)",
+   "record_count": "34 praças + 1 free flow + 4 pórticos previstos",
+   "caveats": "Tabelas só em imagem (sem OCR confiável); 'LMG-190' na tabela do Lote 1 é código inexistente"
+  },
+  {
+   "name": "SEINFRA-MG: contratos vigentes (documentos dos lotes, KMZ do Rodoanel)",
+   "publisher": "SEINFRA-MG",
+   "url": "https://infraestrutura.mg.gov.br/ppp/contratos-vigentes/",
+   "access": "HTML + PDFs/ZIP",
+   "format": "HTML/PDF/ZIP-KMZ",
+   "license": "'Todos os direitos reservados' (rodapé)",
+   "tested": true,
+   "test_result": "200; 7 contratos rodoviários listados; KMZ por segmento só para o Rodoanel",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Referência de contrato/aditivos. Monitorar novos lotes (Lote 9 Zona da Mata etc.).",
+   "geo_coverage": "MG",
+   "record_count": "7 contratos rodoviários",
+   "caveats": "Sem coordenadas de praças"
+  },
+  {
+   "name": "Concessionárias MG (EPR Triângulo, EPR Sul de Minas, EPR Vias do Café, Ecovias Norte Minas, Via Appia)",
+   "publisher": "Concessionárias",
+   "url": "https://viaappia.com.br/nascentes-tarifas/",
+   "access": "Via Appia: curl 200. EPR/Ecovias: curl 403 (WAF); WebFetch funciona",
+   "format": "HTML + imagem",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "Via Appia 200 (regras de mais de 6 eixos e single/supersingle); eprsuldeminas /tarifa-de-pedagio e /pedagio-eletronico lidos por WebFetch (tabela em imagem, valor igual em todas as praças, free flow sem km); ecoviasnorteminas 403",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Só conferência manual a cada reajuste; não automatizar raspagem (WAF).",
+   "geo_coverage": "MG",
+   "record_count": "5 concessionárias",
+   "caveats": "Bloqueio anti-robô"
+  },
+  {
+   "name": "LAMSA: tarifas da Linha Amarela",
+   "publisher": "LAMSA (Invepar)",
+   "url": "https://www.lamsa.com.br/www.lamsa.com.br/pages/pedagio.html",
+   "access": "HTML + imagem",
+   "format": "JPG (tabela)",
+   "license": "'Todos os direitos reservados LAMSA'",
+   "tested": true,
+   "test_result": "O link do menu (/pages/pedagio.html) dá 404; o caminho com prefixo duplicado dá 200; imagem 2026.jpg (1412x1504) lida: 10 categorias",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Entrada no JSON curado (toll_rio_municipal ou no mesmo toll_estaduais) com modelo 'tabela'.",
+   "geo_coverage": "Rio de Janeiro (Linha Amarela)",
+   "record_count": "1 praça, 10 categorias",
+   "caveats": "Tabela em imagem; URL estranha"
+  },
+  {
+   "name": "ViaRio: tarifas da Transolímpica",
+   "publisher": "ViaRio (Motiva)",
+   "url": "https://www.viario.com.br/tarifas-do-pedagio.php",
+   "access": "WebFetch ok; curl bloqueado ('Requisição recusada', Suporte BOT ID)",
+   "format": "HTML",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "Tabela de 03/05/2026 com 10 categorias",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "JSON curado, modelo 'tabela'.",
+   "geo_coverage": "Rio de Janeiro (Transolímpica)",
+   "record_count": "10 categorias",
+   "caveats": "WAF; número de praças não confirmado na fonte"
+  },
+  {
+   "name": "ARSP-ES: tarifas de infraestrutura viária (Rodosol)",
+   "publisher": "ARSP (Governo do ES)",
+   "url": "https://arsp.es.gov.br/tarifas-infraestrutura",
+   "access": "HTML + PDFs",
+   "format": "HTML/PDF",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "200; última tabela vigente de 01/01/2023 a 21/12/2023; resoluções e notas técnicas até 2023",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma importação: documentar que o ES não tem pedágio estadual (evita usar OSM antigo).",
+   "geo_coverage": "ES",
+   "record_count": "0 praças ativas",
+   "caveats": "—"
+  },
+  {
+   "name": "IDE-Sisema / DER-MG: malha rodoviária com km inicial e final (WFS)",
+   "publisher": "SEMAD/DER-MG",
+   "url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IDE:ide_0401_mg_rodovias_lin&outputFormat=application/json",
+   "access": "WFS público com CQL_FILTER",
+   "format": "GeoJSON/SHP",
+   "license": "'O acesso ao dado é livre' (já registrado em superficie_pavimento)",
+   "tested": true,
+   "test_result": "14 rodovias consultadas; interpolação ok, mas km da concessão ≠ km do SRE (desvio de 4–8 km); capabilities com 1.420 camadas e nenhuma de pedágio ou balança",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Só para validação ou para praça sem nó OSM, com calibração por offset medido entre praças conhecidas da mesma rodovia; marcar precisao='aprox_km'.",
+   "geo_coverage": "MG",
+   "record_count": "3.444 trechos",
+   "caveats": "Offsets de km"
+  },
+  {
+   "name": "OpenStreetMap: barrier=toll_booth / highway=toll_gantry (PBF Sudeste local)",
+   "publisher": "OSM (Geofabrik)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "access": "PBF local (data/valhalla/sudeste-latest.osm.pbf)",
+   "format": "OSM PBF",
+   "license": "ODbL 1.0",
+   "tested": true,
+   "test_result": "227 nós em RJ/MG/ES, 81 estaduais ou municipais; valores MG conferem; RJ com erros (Rota 116 12.80/axle; ViaLagos 'Mo-Fr 18.40BRL/hgv' sem axle; LAMSA 3.00/axle; ViaRio 9.95/axle); 48 dos 81 nós fora de via toll=yes; faltam Lote 1 P6/P8 e Lote 2 P8/free flow",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Já importado (toll_osm). Usar como geometria das praças estaduais e como reserva; a tarifa oficial do JSON curado deve ter precedência.",
+   "geo_coverage": "Sudeste",
+   "record_count": "81 nós estaduais/municipais em RJ/MG",
+   "caveats": "Valores colaborativos; sem feriados"
+  },
+  {
+   "name": "API local truck-router (POST /api/route)",
+   "publisher": "Projeto",
+   "url": "http://localhost:3000/api/route",
+   "access": "Local",
+   "format": "JSON",
+   "license": "—",
+   "tested": true,
+   "test_result": "9 rotas com carreta_5e: ViaLagos +66% em dia útil, Rota 116 +67%, Transolímpica +25%; MG confere; alternativa 'mesmos_pontos' nas praças sem toll=yes",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Casos de teste para api/test/layers/pedagio.test.ts depois da implementação (JSONs em api_tests/).",
+   "geo_coverage": "RJ/MG",
+   "record_count": "9 rotas",
+   "caveats": "Não rodei suítes de teste"
+  },
+  {
+   "name": "CRP Concessionária (Pirapetinga) + MPMG",
+   "publisher": "CRP / MPMG",
+   "url": "https://www.crpconcessionaria.com.br/",
+   "access": "HTML",
+   "format": "HTML (Next.js)",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "Site 200 com 4 categorias (11,00/22,00/16,60/33,00); /tarifas 404; notícia do MPMG (13/10/2025) relata suspensão judicial",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Marcar a praça OSM como 'cobrança contestada' (aviso info), no padrão de COBRANCA_SUSPENSA do toll_antt.",
+   "geo_coverage": "MGC-393",
+   "record_count": "1 praça",
+   "caveats": "Situação jurídica incerta"
+  },
+  {
+   "name": "Rota da Liberdade (Lote 7): pórticos e balança",
+   "publisher": "Concessionária Rota da Liberdade S.A.",
+   "url": "https://crlsa.com.br/",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "200; 4 pórticos e 1 balança com rodovia+km; cobrança não iniciada",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Pórticos como 'previstos' (sem cobrança) na camada pedagio; balança BR-356 km 62,3 na camada balancas (weigh_estaduais) quando houver coordenada.",
+   "geo_coverage": "BR-356/MG-262/MG-329",
+   "record_count": "4 pórticos + 1 balança",
+   "caveats": "Sem coordenadas"
+  },
+  {
+   "name": "DER-MG / DER-RJ / DER-ES: postos de pesagem estaduais",
+   "publisher": "DERs estaduais",
+   "url": "https://ofator.com.br/informacao/stf-mantem-decisao-que-obriga-der-mg-operar-metade-das-balancas-pesagem/",
+   "access": "Não há lista aberta (só imprensa)",
+   "format": "—",
+   "license": "—",
+   "tested": false,
+   "test_result": "Nenhuma lista oficial localizada; notícias da Agência Minas (PDF) dão 404; só a contagem de 49 balanças DER-MG pela imprensa. Orçamento de WebSearch esgotado antes de confirmar a lista atual.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Pedido via LAI (e-SIC MG/RJ/ES) da lista com coordenadas e status; importar como weigh_der_mg etc. na camada balancas.",
+   "geo_coverage": "MG/RJ/ES",
+   "record_count": "49 (DER-MG, segundo a imprensa)",
+   "caveats": "Não confirmado em fonte primária"
+  }
+ ],
+ "reused_from_existing": [
+  "docs/research/pesagem_pedagio (+ pesagem_pedagio_verify): ANTT CKAN de praças e PPV, tarifas ANTT por concessão, regras de multiplicador, licenças ANTT/ARTESP, análise do charge do OSM e comportamento do Valhalla (exclude_tolls sem preço). Não retestei.",
+  "docs/layers/pedagio.md e balancas.md: algoritmo de cobrança (nó OSM a até 3 m, agrupamento a 500 m, reserva OSM 'estimada', COBRANCA_SUSPENSA, alternativa sem pedágio com motivo 'mesmos_pontos'). Usei para explicar o efeito das lacunas.",
+  "Seeds db/seed/layers/pedagio__osm/antt/artesp.sql e balancas__antt.sql (somente leitura) para separar as praças federais das estaduais e contar os PPV federais em RJ (7), MG (7) e ES (4).",
+  "docs/research/superficie_pavimento: WFS IDE-Sisema/DER-MG (ide_0401_mg_rodovias_lin) e a licença 'acesso livre'; reusado para posicionar rodovia+km.",
+  "docs/research/rodovias_restricoes: DER-MG publica portarias próprias (feriados), ou seja, cada DER tem regra própria; não retestado.",
+  "Leis já conferidas no planalto pelo tema pesagem_pedagio (Lei 13.103/2015 art. 17, eixo suspenso; CTB 209/209-A; Lei 10.209/2001). Valem para as praças estaduais e não foram retestadas.",
+  "Convenção acertada com a outra sessão (sudeste/CONVENCOES_IMPLEMENTACAO.md): novas fontes de pedágio e balança como importadores toll_*/weigh_* nas camadas pedagio/balancas, sem camada nova."
+ ],
+ "gaps": [
+  "Reajuste de agosto/2026 da ViaLagos e da Rota 116 não localizado. As páginas da AGETRANSP ainda mostram 01/08/2025 e as deliberações online param em 25/06/2026 (nº 1816). O site da Rota 116 diz 'válidas até 31/07/2026'.",
+  "Texto do 6º Termo Aditivo da Rota 116 (prorrogação por 25 anos e nova metodologia de reajuste) não obtido; a imprensa diverge sobre a data de publicação no DOERJ (17 ou 20/03/2026).",
+  "Nenhuma fonte oficial traz coordenadas das praças estaduais de RJ/MG, só rodovia+km. O km da concessão difere do km do SRE/DER-MG em 4–8 km.",
+  "As tabelas da ARTEMIG e das concessionárias de MG e da LAMSA estão em imagem (sem CSV/API). Os sites da EPR e da Ecovias Norte Minas devolvem 403 ao curl.",
+  "Faltam no OSM a P6 do Lote 1 (código 'LMG-190', inexistente na malha) e a P8 (MG-427 km 15, Água Comprida), a P8 do Lote 2 (MG-459 km 6,4) e o pórtico free flow de Monte Sião. Não confirmei se a P6 e a P8 do Lote 1 já cobram.",
+  "Tarifa por categoria e localização exata do pórtico free flow de Monte Sião não publicadas em texto.",
+  "Reajuste do Lote 2 pendente no TCE-MG: o valor pode mudar a qualquer momento (hoje vale R$ 10,10).",
+  "Situação da praça municipal de Pirapetinga (CRP, MGC-393) incerta: suspensão judicial em 10/2025, mas site e OSM indicam cobrança.",
+  "Balanças estaduais (DER-MG 49 segundo a imprensa, DER-RJ, DER-ES) sem lista aberta. Os PERs dos lotes de MG só exigem estudo de implantação e pesagem móvel.",
+  "Linha Amarela e Transolímpica: atos da Prefeitura do Rio não localizados (só tabelas das concessionárias); número de praças da Transolímpica não confirmado na fonte.",
+  "O orçamento de WebSearch da sessão acabou (200/200) antes de confirmar a lista atual de balanças do DER-MG e o reajuste de 2026 no DOERJ."
+ ],
+ "recommendations": [
+  "Criar importers/sources/toll_estaduais.py (layer pedagio, source 'estaduais'), seguindo a convenção toll_*. Para a AGETRANSP, parse automático da tabela HTML de /operadoras/vialagos e /operadoras/rota116. Para MG (ARTEMIG), Linha Amarela e Transolímpica, ler um JSON curado em data/raw/pedagio/estaduais.json (modelo: tarifas_estaduais_oficiais.json) com TBP, categorias, vigência, ato e URL. Esforço médio (2–3 dias); valor alto, porque corrige erros de 25–67% no RJ.",
+  "Posicionar as praças estaduais pelos nós OSM do mesmo operator (agrupados a 700 m) e casar pelo nome ou nº (P1…P8), sem usar rodovia+km. Para as praças sem nó (Lote 1 P6/P8, Lote 2 P8), listar como 'possível/sem posição' até haver coordenada.",
+  "Em api/src/services/tollCost.ts: (a) novo modelo 'tabela' (valor por nº de eixos e rodagem, não linear) para Rota 116, LAMSA e Transolímpica; (b) janela tarifária da ViaLagos (TBA de sexta 12h a segunda 12h e de 12h da véspera às 12h do dia seguinte a feriado nacional, usando a tabela holidays); (c) no modelo osm_charge, não usar o valor de fim de semana num dia útil quando só existe hgv_axle de fim de semana. Usar o 'hgv' do dia útil ou marcar 'tarifa não encontrada'. É a causa dos R$ 153,00 numa quarta na ViaLagos.",
+  "Tarifa oficial sempre com precedência sobre o OSM nas estaduais (como já é com ANTT/ARTESP), mantendo o aviso toll_tariff_divergence. Incluir status 'reajuste suspenso' para o Lote 2 e 'cobrança contestada' para a CRP Pirapetinga, no padrão de COBRANCA_SUSPENSA.",
+  "Free flow: incluir o pórtico de Monte Sião (EPR Sul de Minas) como ponto de cobrança com aviso toll_free_flow (pagamento em até 30 dias; transição sem multa até 16/11/2026). Pórticos do Lote 7 como 'previstos', sem soma, até a cobrança começar.",
+  "Monitor periódico (mensal e perto das datas de vigência): ARTEMIG (Lote 1 vence em 21/10/2026; Lote 2 aguarda o TCE; BR-135 em 31/03/2027; MG-050 em 12/06/2027; Lote 3 em 25/07/2027) e AGETRANSP (sondar deliberações N+1… e as páginas das operadoras em agosto). Avisar quando vigencia_fim < data da viagem, como já é feito com a ViaPaulista.",
+  "Balanças: pedir por LAI (e-SIC MG/RJ/ES) a lista de postos de pesagem estaduais com coordenadas e status. Enquanto isso, não usar OSM weighbridge e incluir a balança do Lote 7 (BR-356 km 62,3) quando houver coordenada (importador weigh_estaduais na camada balancas).",
+  "Licenças: guardar só os valores (fatos e atos oficiais, Lei 9.610/1998 art. 8º IV) com a fonte citada em meta.sources, sem republicar as imagens da ARTEMIG ou das concessionárias ('todos os direitos reservados').",
+  "Testes a acrescentar depois da implementação (sem rodar a suíte inteira): ViaLagos quarta 10h = R$ 92,00 e sexta 15h = R$ 153,00; Rota 116 Itaboraí→Friburgo 5 eixos = R$ 76,80; Transolímpica 5 eixos = R$ 39,80; Lote 2 = R$ 50,50 por praça. Usar os JSONs de api_tests/ como referência."
+ ]
+}

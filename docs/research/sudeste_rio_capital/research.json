@@ -1,0 +1,607 @@
+{
+ "category": "rio_capital",
+ "summary": "**Por que o tema não saiu completo:** a cota de WebSearch da sessão (200 buscas) acabou logo no início. Por isso a pesquisa foi feita direto nas fontes primárias:\n- busca do D.O. Rio (API JSON) e download das edições;\n- Querido Diário;\n- SMTR e 1746;\n- ArcGIS do IPP e data.rio;\n- Overpass;\n- anttlegis e DOU.\n\nFicaram de fora o inventário completo das portarias pontuais de 2020–2026 e o ato atual da Ponte Rio–Niterói.\n\n**Achado que muda o produto:** a regra geral de caminhões do Rio está suspensa e continua suspensa.\n- A regra é o Dec. 45.433/2018 com a Res. SMTR 3.055/2018: ARP no Centro das 6h às 21h e um polígono grande ARM/ARV das 6h às 10h e das 17h às 21h, em dias úteis.\n- A suspensão é \"por prazo indeterminado\", pela Res. SMTR 3.254/2020 (DO 20/03/2020) e pelo Dec. 47.285/2020.\n- Confirmei a suspensão em três lugares: página da SMTR (2023), artigo do 1746 editado em 08/06/2026 e parecer da CET-Rio no DO de 11/01/2024. Não há revogação no DO até set/2026.\n- Não implementar esses polígonos como ativos. Registrar como \"suspensa\".\n\n**Regras em vigor, por via, em atos primários:**\n\n| Via | Ato | Restrição |\n|---|---|---|\n| Linha Vermelha | Res. SMTR 2.204/2012 | 24h, todos os dias: caminhão de qualquer espécie, reboques e produtos perigosos |\n| Linha Amarela | Res. SMTR 2.063/2010 | veículos de carga em dias úteis, das 6h às 10h e das 17h às 20h |\n| Corredor Rebouças | Portaria CRV 24.914/2003 | caminhão com PBT ≥ 6,4 t e reboques, 24h; vale nos dois túneis, no Viaduto Saint Hilaire, na Av. Vital Brasil e nos Elevados Freyssinet e Rufino Pizarro |\n| Centro | Portaria CRV 10.798/2017 | caminhões, 24h: Praça XV, R. Primeiro de Março, R. São José e Orla Conde |\n| Transoeste | Res. SMTR 2.242/2012, art. 5º | caminhões e reboques no Túnel da Grota Funda e na pista central da Av. das Américas |\n| Ruas pontuais | Portarias de 2020, 2023 e 2024 | Gonzaga Duque, João Borges, Duque Estrada e Caminho da Canoa |\n| Grumari | Portaria sazonal | caminhões nos fins de semana de verão |\n\nA CRV emitiu autorizações por placa com base nesses atos até 2020–2022, o que indica que estão em uso.\n\n**Av. Brasil:**\n- Não há restrição horária em vigor. A restrição anunciada para 16/03/2024 (pista central Irajá–Caju, 4h–22h) foi adiada em 10/03/2024, e não saiu nenhum ato até set/2026.\n- Só vale a proibição de caminhão na faixa exclusiva de ônibus (Res. 3.718/2024 com a 3.726/2024). É uma regra por faixa, que o router não modela.\n\n**VUC carioca:** até 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura (Dec. 45.433, art. 1º, VI). A isenção depende de AEVC.\n\n**Perigosos:** no município, só a Linha Vermelha. Na Ponte Rio–Niterói, a Res. ANTT 1.713/2006 (estendida à Av. Portuária pela 5.936/2021) foi revogada pela 6.000/2022. O ato atual não foi achado; há só uma notícia secundária de dez/2024.\n\n**Carga e descarga:** não há regra geral em vigor. As vagas saem uma a uma por portaria da CRV, cerca de 1.000 páginas do DO por ano, sem dataset.\n\n**Geometria:** o CadLog/IPP (132.064 trechos, CC BY 4.0) dá a geometria por nome. É obrigatório filtrar por bairro, porque há homônimos (Rua São José em 15 bairros; Av. Presidente João Goulart também no Vidigal).\n\n**OSM:**\n- Já tem `hgv=no` em 79 das 86 ways da Linha Vermelha e nos túneis Rebouças.\n- Não tem a regra da Linha Amarela nem a dos elevados do corredor Rebouças.\n- Tem 33 `hgv:conditional` herdadas da Res. 3.055 suspensa, que fazem o Valhalla desviar caminhão sem base legal hoje.\n\nO NOTES.md, as páginas dos atos e as amostras estão em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/rio_capital/ (87 MB).",
+ "rules": [
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR/CRV)",
+   "kind": "via",
+   "where": "Linha Vermelha (Via/Rodovia Expressa Presidente João Goulart), trecho sob jurisdição municipal por cessão do Estado (Termo de Cessão, proc. 03/000.139/2007; Portaria PRE DER/RJ 307/2005)",
+   "days_hours": "Todos os dias, 24h (o ato não fixa horário)",
+   "vehicles": "Caminhão de qualquer espécie, caminhão-tanque, caminhão-trator, articulado, provido de reboque, reboque e semirreboque, veículos com produtos perigosos (Res. ANTT 420/2004), transporte de valores. Também bicicletas, motos <124 cc e outros. Inclui o VUC, porque o ato diz 'caminhão de qualquer espécie'",
+   "act": "Res. SMTR nº 2.204, de 16/03/2012, art. 1º (I.3, II.2, II.4, IV e V), arts. 3º e 4º (DO Rio 19/03/2012, p. 38–39)",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681",
+   "confidence": "alta",
+   "exceptions": "Veículos do art. 29, VII do CTB; guinchos e veículos a serviço da CET-Rio (art. 4º); exceções provisórias autorizadas pela CRV após análise da CET-Rio (art. 3º; houve autorizações por placa em out/2020)",
+   "geometry_source": "CadLog/IPP 'Avenida Presidente João Goulart' (128 trechos, 35,2 km; excluir o bairro Vidigal, que é homônimo) ou OSM name=Linha Vermelha ref=RJ-071 (79 de 86 ways já com hgv=no)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "via",
+   "where": "Linha Amarela (Av. Governador Carlos Lacerda), toda a extensão",
+   "days_hours": "Dias úteis, 06h–10h e 17h–20h",
+   "vehicles": "'Veículos de carga' (o ato não define PBT nem dimensão)",
+   "act": "Res. SMTR nº 2.063, de 14/12/2010, arts. 1º–3º (DO Rio 15/12/2010, p. 45); revogou a Portaria TR/CRV 2.622/2007",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1085",
+   "confidence": "media",
+   "exceptions": "Socorro e emergência (CTB art. 29, VII); utilidade pública (art. 29, VIII; Res. CONTRAN 268/2008); mudança residencial; combustíveis e lubrificantes para os aeroportos; autorizações por placa da CRV (citadas até a Portaria 126/2021, válida até 14/05/2023)",
+   "geometry_source": "CadLog 'Avenida Carlos Lacerda' (249 trechos, 39,1 km) ou OSM name=Linha Amarela (sem hgv:conditional hoje)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Corredor Rebouças: Viaduto Saint Hilaire; Túnel Antônio Rebouças; Túnel André Rebouças; Av. Vital Brasil (Rio Comprido); Elevado Eng. Freyssinet; Elevado Eng. Rufino de Almeida Pizarro",
+   "days_hours": "Todos os dias, 24h",
+   "vehicles": "Caminhões com PBT igual ou superior a 6,4 t, e reboques",
+   "act": "Portaria TR/SUB/CRV nº 24.914, de 24/11/2003, art. 1º (DO Rio 25/11/2003, p. 36–37); revogou a Portaria 9.729/1998",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7379",
+   "confidence": "media",
+   "exceptions": "Caminhões da COMLURB; autorizações por placa da CRV (Portarias de 05/2021 e de 30/12/2021, esta válida até 31/12/2022)",
+   "geometry_source": "CadLog (109 trechos, 20,7 km com os 6 nomes; o Elevado tem a grafia 'Pizzarro'); no OSM só os túneis têm hgv=no"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Bairro Centro: Praça XV de Novembro, Rua Primeiro de Março, Rua São José, Orla Prefeito Luiz Paulo Conde",
+   "days_hours": "Todos os dias, 24h ('entrada e circulação')",
+   "vehicles": "Caminhões",
+   "act": "Portaria TR/SUBG/CRV nº 10.798, de 09/11/2017, art. 1º (DO Rio 10/11/2017, p. 61)",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2017-11-10/4f492f351d6ceeb8e6c34613bfa68e07df7b2968.pdf",
+   "confidence": "media",
+   "exceptions": "Nenhuma no ato",
+   "geometry_source": "CadLog filtrado por bairro=Centro ('Rua São José' existe em 15 bairros); a Orla Conde não aparece no CadLog: usar o OSM; no OSM, Primeiro de Março e São José já têm hgv=no"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "via",
+   "where": "Túnel da Grota Funda (Túnel Vice-Presidente José Alencar), nos dois sentidos; Av. das Américas, pista central, nos dois sentidos, entre a Av. Ayrton Senna e a Estr. Ver. Alceu de Carvalho (exceto o trecho do Viaduto Alm. Orlando Raso)",
+   "days_hours": "Todos os dias, 24h, em quaisquer faixas",
+   "vehicles": "Caminhões e reboques",
+   "act": "Res. SMTR nº 2.242, de 23/07/2012, art. 5º (DO Rio 24/07/2012, p. 27–28); revogou a Res. 2.228/2012",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1823",
+   "confidence": "media",
+   "exceptions": "Autorizações por placa da CRV (houve uma para o Túnel José Alencar em 17/01/2020)",
+   "geometry_source": "CadLog 'Tunel Vice Presidente José Alencar' (2 trechos, 2,3 km); pista central da Av. das Américas: OSM (separação por carriageway); no OSM o túnel tem hgv=no"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "via",
+   "where": "Santa Cruz: R. Barão de Laguna (Lopes de Moura–Felipe Cardoso); R. Felipe Cardoso (Barão de Laguna–Rua Primeira e Antares–Visconde de Sepetiba); R. Lucindo Passos (Tereza Cristina–Av. Isabel); R. Teresa Cristina (Álvaro Alberto–Barão de Laguna)",
+   "days_hours": "Segunda a sexta, 06h–20h",
+   "vehicles": "Caminhões",
+   "act": "Res. SMTR nº 2.242/2012, art. 4º (DO Rio 24/07/2012, p. 28)",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1823",
+   "confidence": "baixa",
+   "exceptions": "Não verificadas; a Portaria CRV 16.374/2018 revogou outras portarias de caminhão em Santa Cruz (7.762/2011, 18.385/2013, 21.232/2014), mas não esta resolução",
+   "geometry_source": "CadLog por nome + bairro=Santa Cruz"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Rua Gonzaga Duque (Ramos), em toda a extensão",
+   "days_hours": "Todos os dias, 24h",
+   "vehicles": "Caminhões",
+   "act": "Portaria TR/SUBTT/CRV nº 8.083, de 18/07/2024, art. 1º (DO Rio 19/07/2024, p. 20)",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2024-07-19/d793403922afdf3c1d759a172bde047e45a48a5b.pdf",
+   "confidence": "alta",
+   "exceptions": "Veículos de emergência, de concessionárias e de coleta de lixo",
+   "geometry_source": "CadLog 'Rua Gonzaga Duque' (9 trechos, 0,71 km)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Gávea: Rua João Borges e Rua Duque Estrada, em toda a extensão",
+   "days_hours": "Todos os dias, 24h",
+   "vehicles": "Caminhões",
+   "act": "Portaria TR/SUBTT/CRV nº 1.451, de 25/07/2023, arts. 1º e 2º (DO Rio 26/07/2023, p. 28)",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2023-07-26/e1f4304846662e28c57b9ac7d46337e5717af80a.pdf",
+   "confidence": "alta",
+   "exceptions": "Nenhuma no trecho lido",
+   "geometry_source": "CadLog (5 trechos, 1,18 km)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Caminho da Canoa (São Conrado), em toda a extensão",
+   "days_hours": "Todos os dias, 24h",
+   "vehicles": "Caminhões",
+   "act": "Portaria TR/CRV nº 4.536, de 20/07/2020, art. 1º (DO Rio 21/07/2020, p. 38)",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2020-07-21/4436fb6fedf70785a492afc7c1a16f5fcf81fcc6.pdf",
+   "confidence": "alta",
+   "exceptions": "Nenhuma no trecho lido",
+   "geometry_source": "CadLog (1 trecho, 0,18 km)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Estrada Roberto Burle Marx, entre a Estr. do Grumari e a Praia do Canto (Grumari/Barra de Guaratiba)",
+   "days_hours": "Temporada de verão, sáb, dom e feriados, 06h–22h (ex.: 18/10/2025 a 01/03/2026; também 24/01–28/02/2025)",
+   "vehicles": "Caminhões; também é proibida a operação de carga e descarga",
+   "act": "Portaria TR/SUBG/CRV de outubro/2025, art. 2º (DO Rio 15/10/2025, p. 27; número não legível no índice); repete-se todo verão desde pelo menos 2021",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7632",
+   "confidence": "media",
+   "exceptions": "Veículos de utilidade pública e militares",
+   "geometry_source": "CadLog 'Estrada Roberto Burle Marx' (64 trechos, 9,9 km; recortar o trecho Grumari–Praia do Canto)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Vias adjacentes ao Maracanã (ex.: R. Visconde de Itamarati entre São Francisco Xavier e Prof. Eurico Rabelo, entre outras)",
+   "days_hours": "Dias de evento esportivo no Estádio Jornalista Mário Filho",
+   "vehicles": "Caminhões e utilitários (van, kombi, furgão e similares)",
+   "act": "Portaria CRV publicada no DO Rio 06/09/2022, p. 21, art. 1º",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2022-09-06/c40be937525e63739e2a09fa7fe6a88c590c9522.pdf",
+   "confidence": "media",
+   "exceptions": "Não lidas por inteiro",
+   "geometry_source": "CadLog por nome; ativar só com calendário de jogos (COR WP API)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "via",
+   "where": "Av. Brasil, pista central, 2ª faixa à esquerda: Trevo das Margaridas → Viaduto da Treliça (sentido Centro) e Rua Carlos Seidl → estação Vigário Geral (sentido Deodoro); e faixa à esquerda da pista central Estr. do Camboatá ↔ Terminal Gentileza (BRT)",
+   "days_hours": "A faixa funciona nos dias úteis fora das janelas 10h–16h e 20h–5h, e não funciona em fim de semana nem feriado; a vedação a caminhão vale 'em qualquer dia ou horário'",
+   "vehicles": "Caminhões (só na faixa exclusiva; o resto da pista continua liberado)",
+   "act": "Res. SMTR nº 3.718, de 27/03/2024 (DO extra 27/03/2024), com a redação da Res. SMTR nº 3.726, de 16/04/2024, art. 1º (art. 2º, §§ 1º–3º); efeitos a partir de 23/04/2024",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/6506",
+   "confidence": "alta",
+   "exceptions": "Socorro, polícia, fiscalização e ambulâncias (art. 5º, parágrafo único)",
+   "geometry_source": "Regra por faixa: não roteável no Valhalla; usar só como aviso"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR/CET-Rio)",
+   "kind": "via",
+   "where": "Av. Brasil: pista central Irajá–Caju; lateral sentido Centro Irajá–Caju; lateral sentido Santa Cruz Caju–Ramos",
+   "days_hours": "Anunciado: pista central todos os dias 04h–22h; lateral sentido Centro dias úteis 05h–09h; lateral sentido Santa Cruz dias úteis 16h–20h. NÃO VIGENTE: adiado em 10/03/2024, sem nova data e sem ato publicado até set/2026",
+   "vehicles": "Caminhões e carretas",
+   "act": "Anúncio da CET-Rio/COR de 08/03/2024; adiamento pelo COR/Prefeitura em 10/03/2024; pauta da CPLOG-Rio no Edital SMTR 01/2023 (DO 14/12/2023, p. 69)",
+   "act_url": "https://cetrio.prefeitura.rio/noticias/cet-rio-implanta-sinalizacao-especifica-de-restricoes-a-circulacao-de-caminhoes-na-av-brasil/",
+   "confidence": "alta",
+   "exceptions": "—",
+   "geometry_source": "Não aplicar; vigiar o DO e o COR"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "zona",
+   "where": "ARP: Centro, delimitada pela orla e por 27 vias (Praça Mauá, Sacadura Cabral, Camerino, Barão de São Félix, Pres. Vargas pista lateral, Frei Caneca, Riachuelo, Mem de Sá, Beira-Mar, Alm. Silvio de Noronha etc.)",
+   "days_hours": "Dias úteis, 06h–21h, circulação e carga/descarga. SUSPENSA por prazo indeterminado desde 20/03/2020",
+   "vehicles": "Caminhões, isto é, veículos de carga acima do VUC (2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura). O VUC só fica isento com AEVC",
+   "act": "Res. SMTR nº 3.055, de 10/12/2018, arts. 2º, 4º e 5º (DO 11/12/2018, p. 24–26), com base no Dec. 45.433/2018; suspensa pela Res. SMTR nº 3.254, de 19/03/2020, art. 1º (DO 20/03/2020, p. 42) e pelo Dec. 47.285/2020, art. 1º, 'r'",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf",
+   "confidence": "alta",
+   "exceptions": "Art. 5º: VUC com AEVC; socorro; transporte de valores; mudança com AEVC e permissão da CET-Rio (Res. SMTR 1.599/2006); utilidade pública; combustível de aeroporto; Correios; obras públicas; reportagem; gases medicinais (1 eixo traseiro); caminhão-pipa; garagem na área. Art. 4º: vias limítrofes liberadas",
+   "geometry_source": "Anexo I (mapa em imagem no DO); reconstruir pelas vias-limite com o CadLog. Guardar como kind=suspensa, nunca aplicar"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (SMTR)",
+   "kind": "zona",
+   "where": "ARM/ARV: polígono delimitado pela orla e por 26 vias (Av. Francisco Bicalho, Francisco Eugênio, Bartolomeu de Gusmão, Visconde de Niterói, Dom Hélder Câmara, Viaduto de Cascadura, Intendente Magalhães, Cândido Benício, Geremário Dantas, Estr. de Jacarepaguá, Estr. do Itanhangá, Estr. da Barra da Tijuca, Ponte Nova, Av. Min. Ivan Lins etc.)",
+   "days_hours": "Dias úteis, 06h–10h e 17h–21h, circulação e carga/descarga. SUSPENSA desde 20/03/2020",
+   "vehicles": "Caminhões (acima do VUC)",
+   "act": "Res. SMTR nº 3.055/2018, art. 3º; suspensa pela Res. SMTR nº 3.254/2020",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2020-03-20/85f5557eced5715b37a1e80a6e95645afea9536f.pdf",
+   "confidence": "alta",
+   "exceptions": "As mesmas do art. 5º",
+   "geometry_source": "Anexo II (imagem). As 33 ways do OSM com hgv:conditional 'Mo-Fr 06:00-10:00,17:00-21:00' são resíduo desta regra suspensa"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (Prefeito)",
+   "kind": "outro",
+   "where": "Município inteiro (conceitos)",
+   "days_hours": "—",
+   "vehicles": "VUC = caminhão com no máximo 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura total; Caminhão = qualquer veículo automotor de carga acima disso; AEVC = autorização especial da SMTR",
+   "act": "Dec. Rio nº 45.433, de 07/12/2018, art. 1º, § 1º, I–VIII, e art. 2º (DO 10/12/2018)",
+   "act_url": "https://data.queridodiario.ok.org.br/3304557/2018-12-10/a16190d5cc381041229e3c1513ba718db6f20c02.pdf",
+   "confidence": "alta",
+   "exceptions": "Pela SMTR, a AEVC vale no máximo 2 anos (Res. 3.055, art. 9º)",
+   "geometry_source": "—"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (CRV)",
+   "kind": "via",
+   "where": "Ponte da Joatinga, Túnel do Joá, Elevado das Bandeiras (Elevado do Joá), Túnel de São Conrado",
+   "days_hours": "Todos os dias, nos dois sentidos; havia também altura máxima de 4,00 m no sentido São Conrado e 60 km/h. O ato parece ter validade de 17/12/2012 a 17/12/2013 (colunas embaralhadas no PDF)",
+   "vehicles": "Caminhões",
+   "act": "Portaria TR/SUBG/CRV de 13/12/2012 (nº 15.389 ou próximo), art. 1º (DO Rio 14/12/2012, p. 38)",
+   "act_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1947",
+   "confidence": "baixa",
+   "exceptions": "Não lidas",
+   "geometry_source": "OSM já tem hgv=no no Elevado do Joá e na Ponte da Joatinga; não há ato atual que confirme. Tratar como aviso"
+  },
+  {
+   "jurisdiction": "Federal (ANTT / concessão Ponte Rio–Niterói, BR-101/RJ)",
+   "kind": "ponte",
+   "where": "Ponte Presidente Costa e Silva (Rio–Niterói) e Av. Portuária (ligação Av. Brasil–Porto do Rio)",
+   "days_hours": "Proibição contínua (regime de 2006–2023). O regime atual não foi confirmado",
+   "vehicles": "Produtos perigosos das classes 1, 2.1, 2.3, 3, 4, 5 e 8, inclusive veículo vazio não descontaminado; a Ilha de Mocanguê tinha janela de 23h–4h e 11h–16h",
+   "act": "Res. ANTT 1.713/2006, arts. 1º–4º-A (art. 4º-A incluído pela Res. ANTT 5.936/2021), revogada pela Res. ANTT 6.000/2022. A notícia de 05/12/2024 (Folha do Leste, secundária) fala em PP proibido e em janelas para caminhões de 2 e de 3 ou mais eixos, sem número de ato",
+   "act_url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00001713&seqAto=000&valorAno=2006&orgao=DG/ANTT/MT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+   "confidence": "baixa",
+   "exceptions": "Isenções de quantidade limitada e de provisões especiais (RTPP); destino militar em Mocanguê",
+   "geometry_source": "SNV/OSM BR-101 km ~321–334 e Av. Portuária; usar só como aviso até achar o ato vigente"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "A Res. SMTR 3.254, de 19/03/2020, art. 1º, suspende 'por prazo indeterminado' a Res. SMTR 3.055/2018, que dá os polígonos e horários de caminhão do Rio. Foi publicada no DO Rio de 20/03/2020, p. 42.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2020-03-20/85f5557eced5715b37a1e80a6e95645afea9536f.pdf"
+  },
+  {
+   "fact": "O artigo oficial do 1746 sobre horários de carga continuava citando a suspensão pela Res. 3.254/2020 em 08/06/2026 (updated_at da API Zendesk).",
+   "source_url": "https://www.1746.rio/api/v2/help_center/pt-br/articles/10872428930203.json"
+  },
+  {
+   "fact": "A página da AEVC da SMTR (atualizada em 03/03/2023) traz o aviso: 'As restrições para circulação e a operação de carga e descarga de caminhões estão suspensas por tempo indeterminado'.",
+   "source_url": "https://transportes.prefeitura.rio/autorizacao-especial-para-veiculos-de-carga-aevc/"
+  },
+  {
+   "fact": "Um parecer da CET-Rio no DO de 11/01/2024 (p. 17) diz que o Dec. 45.433/2018 e a Res. SMTR 3.055/2018 'temporariamente estão suspensos pelo Decreto Rio nº 47.285/2020'.",
+   "source_url": "https://doweb.rio.rj.gov.br/busca/busca/buscar/query/1/y:2024/?1=1&q=%2245.433%22"
+  },
+  {
+   "fact": "Res. 3.055/2018: a ARP do Centro proíbe caminhões das 6h às 21h em dias úteis. A ARM/ARV, um polígono da orla ao Francisco Bicalho, Dom Hélder Câmara, Cândido Benício, Estr. de Jacarepaguá e Av. Min. Ivan Lins, proíbe das 6h às 10h e das 17h às 21h. As vias limítrofes ficam liberadas e o art. 5º traz 12 exceções.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf"
+  },
+  {
+   "fact": "Pelo Dec. 45.433/2018, o VUC carioca tem no máximo 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura total (art. 1º, § 1º, VI). Diferente de SP, o Rio limita a altura. A isenção exige AEVC da SMTR.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2018-12-10/a16190d5cc381041229e3c1513ba718db6f20c02.pdf"
+  },
+  {
+   "fact": "A Res. SMTR 2.204/2012 proíbe na Linha Vermelha caminhão de qualquer espécie, caminhão-tanque, caminhão-trator, articulado, reboque e semirreboque, veículos com produtos perigosos e transporte de valores. O ato não fixa horário. Exceções: art. 29, VII do CTB e guinchos da CET-Rio.",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681"
+  },
+  {
+   "fact": "A Res. SMTR 2.063/2010 proíbe veículos de carga na Linha Amarela em dias úteis, das 6h às 10h e das 17h às 20h. Exceções: emergência, utilidade pública, mudança e combustível de aeroporto.",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1085"
+  },
+  {
+   "fact": "A Portaria TR/SUB/CRV 24.914/2003 proíbe caminhões com PBT ≥ 6,4 t e reboques, exceto COMLURB, no Viaduto Saint Hilaire, nos Túneis Antônio e André Rebouças, na Av. Vital Brasil e nos Elevados Freyssinet e Rufino Pizarro. A CRV ainda dava autorizações por placa com base nela em dez/2021, válidas até 31/12/2022.",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7379"
+  },
+  {
+   "fact": "A Res. SMTR 2.242/2012, art. 5º, proíbe caminhões e reboques no Túnel da Grota Funda e na pista central da Av. das Américas entre a Av. Ayrton Senna e a Estr. Ver. Alceu de Carvalho.",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1823"
+  },
+  {
+   "fact": "A restrição de caminhões na Av. Brasil anunciada para 16/03/2024 previa: pista central Irajá–Caju todos os dias das 4h às 22h; lateral sentido Centro em dias úteis das 5h às 9h; lateral sentido Santa Cruz (Caju–Ramos) em dias úteis das 16h às 20h. Ela foi adiada em 10/03/2024.",
+   "source_url": "https://prefeitura.rio/cidade/avenida-brasil-adiada-a-restricao-de-horario-para-circulacao-de-caminhoes/"
+  },
+  {
+   "fact": "A Res. SMTR 3.726/2024 alterou a 3.718/2024 e determinou que 'será vedado o trânsito de caminhões' na faixa exclusiva da pista central da Av. Brasil a qualquer dia ou horário.",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/6555"
+  },
+  {
+   "fact": "A Av. Brasil está sob administração municipal (Dec. Rio 19.593/2001; convênio União–Município de 13/09/2001). As rodovias estaduais dentro do município foram transferidas ao Município pelo Dec. Estadual 18.512/1993 (considerandos da Res. 3.718/2024).",
+   "source_url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/6506"
+  },
+  {
+   "fact": "A Res. ANTT 5.936/2021 incluiu o art. 4º-A na Res. 1.713/2006, estendendo à Av. Portuária a proibição de PP das classes 1, 2.1, 2.3, 3, 4, 5 e 8 da Ponte Rio–Niterói. A 1.713 consta como revogada pela Res. 6.000/2022.",
+   "source_url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00005936&seqAto=000&valorAno=2021&orgao=DG/ANTT/MI&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true"
+  },
+  {
+   "fact": "O CadLog do IPP tem 132.064 trechos de logradouro com nome, bairro, hierarquia, oneway e tipo_trecho (Túnel/Viaduto), sob licença CC BY 4.0.",
+   "source_url": "https://pgeo3.rio.rj.gov.br/arcgis/rest/services/CadLog/Trechos_Logradouros/FeatureServer/0"
+  },
+  {
+   "fact": "No OSM, a Linha Vermelha tem hgv=no em 79 de 86 ways. A Linha Amarela não tem nenhuma restrição horária. Há 33 ways com hgv:conditional 'Mo-Fr 06:00-10:00,17:00-21:00', resíduo da Res. 3.055 suspensa.",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "A Portaria TR/SUBG/CRV 10.798/2017 proíbe a entrada e a circulação de caminhões na Praça XV, na Rua Primeiro de Março, na Rua São José e na Orla Prefeito Luiz Paulo Conde.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2017-11-10/4f492f351d6ceeb8e6c34613bfa68e07df7b2968.pdf"
+  },
+  {
+   "fact": "A Portaria TR/SUBTT/CRV 8.083/2024 proíbe caminhões na Rua Gonzaga Duque (Ramos), exceto emergência, concessionárias e coleta de lixo.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2024-07-19/d793403922afdf3c1d759a172bde047e45a48a5b.pdf"
+  }
+ ],
+ "sources": [
+  {
+   "name": "D.O. Rio, API de busca (Elasticsearch) e download de edições",
+   "publisher": "Prefeitura do Rio / Imprensa da Cidade",
+   "url": "https://doweb.rio.rj.gov.br/busca/busca/buscar/query/1/?1=1&q=%22circula%C3%A7%C3%A3o%20de%20caminh%C3%B5es%22",
+   "access": "GET sem autenticação; JSON. Edição em /portal/edicoes/download/{diario_id}",
+   "format": "JSON (texto por página) e PDF",
+   "license": "Ato oficial, sem proteção autoral (Lei 9.610/98, art. 8º, IV); uso comercial livre com citação",
+   "tested": true,
+   "test_result": "HTTP 200. 'caminhões' em 2019–2026 deu 1.279 páginas, das quais baixei 1.269 (13 MB). Busca entre aspas = match_phrase com slop 3. Em várias buscas por frase os hits vêm vazios, mas aggregations.Edicoes traz os ids. Baixei 11 edições (0,4–86 MB) e achei os atos 2.063/2010, 2.204/2012, 24.914/2003, 2.242/2012, 3.718/2024 e 47.285/2020. Uma lista de anos com vírgula no fim dá erro 'query_shard_exception'.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador rmsp_rio_capital.py lendo regras curadas (data/raw/<municipio>/regras.json) com ato, artigo, página e URL. Monitor semanal pela API com as frases 'circulação de caminhões', 'tráfego de caminhões', '3.055', '3254', 'Avenida Brasil'+'caminhões' e 'CPLOG', avisando sobre ato novo.",
+   "record_count": "cerca de 15 a 27 páginas com 'proíbe/proibir a circulação de caminhões' por consulta (2002–2026); cerca de 1.000 páginas por ano com 'carga / descarga'",
+   "geo_coverage": "Município do Rio",
+   "format_notes": "",
+   "caveats": "O texto de 2002–2010 vem de OCR ruim. Páginas em duas colunas embaralham os artigos; conferir no PDF com pdftotext -layout."
+  },
+  {
+   "name": "Querido Diário, Rio de Janeiro (3304557)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://queridodiario.ok.org.br/api/gazettes?territory_ids=3304557&querystring=%22circula%C3%A7%C3%A3o%20de%20caminh%C3%B5es%22",
+   "access": "API pública; PDFs em data.queridodiario.ok.org.br",
+   "format": "JSON + PDF",
+   "license": "Atos oficiais (domínio público); projeto aberto",
+   "tested": true,
+   "test_result": "HTTP 200, level 3. Achou as portarias 8.083/2024, 1.451/2023, 4.536/2020 e 10.798/2017, a convocação da CPLOG e as Res. 3.055 e 3.254. Instável: 500/520 em frases com 'Nº' e contagens inconsistentes entre chamadas (35 contra 16).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só como espelho dos PDFs do DO e como segundo canal de vigilância (como em restricoes_rmsp_municipios).",
+   "record_count": "",
+   "geo_coverage": "Município do Rio (desde 2016 no índice)",
+   "caveats": "Índice incompleto; não serve para inventário."
+  },
+  {
+   "name": "Res. SMTR 2.204/2012 (Linha Vermelha)",
+   "publisher": "SMTR Rio",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681",
+   "access": "PDF do DO de 19/03/2012, p. 38–39",
+   "format": "PDF",
+   "license": "Ato oficial (domínio público)",
+   "tested": true,
+   "test_result": "HTTP 200, 17 MB. Texto lido: caminhão de qualquer espécie, reboques e PP proibidos, sem horário.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra 'via' 24h para qualquer caminhão + trecho hazmat_trechos_rio (PP) na camada perigosos. Geometria do CadLog ou do OSM RJ-071. Exclusion ou costLine com fator 1000. O OSM já cobre 79/86 ways; a camada fecha as 7 ways restantes e gera o aviso com o ato.",
+   "record_count": "1 via, cerca de 35 km (CadLog)",
+   "geo_coverage": "Linha Vermelha no município",
+   "caveats": "Confirmar se a cessão do Estado cobre a via inteira até o limite com Duque de Caxias e São João de Meriti."
+  },
+  {
+   "name": "Res. SMTR 2.063/2010 (Linha Amarela)",
+   "publisher": "SMTR Rio",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1085",
+   "access": "PDF do DO de 15/12/2010, p. 45",
+   "format": "PDF",
+   "license": "Ato oficial (domínio público)",
+   "tested": true,
+   "test_result": "HTTP 200, 4,6 MB. Veículos de carga proibidos em dias úteis das 6h às 10h e das 17h às 20h. A CRV citava o ato em autorizações até 05/2021.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra 'via' com janela e dias úteis (calendário holidays com feriados RJ e Rio) → costLines fator 1000 e aviso na passagem (mesmo mecanismo do restricoes_rmsp).",
+   "record_count": "1 via, cerca de 39 km",
+   "geo_coverage": "Linha Amarela",
+   "caveats": "'Veículo de carga' não é definido. Os decretos de 2016 que mudaram a regra foram revogados (risco de repristinação)."
+  },
+  {
+   "name": "Portaria TR/SUB/CRV 24.914/2003 (corredor Rebouças)",
+   "publisher": "SMTR/CRV Rio",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7379",
+   "access": "PDF do DO de 25/11/2003, p. 36–37 (OCR)",
+   "format": "PDF (86 MB, digitalizado)",
+   "license": "Ato oficial (domínio público)",
+   "tested": true,
+   "test_result": "HTTP 200, 86 MB. Lidas pelo OCR: PBT ≥ 6,4 t e reboques, 6 vias, exceção COMLURB.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra 'via' 24h com condição PBT ≥ 6,4 t ou reboque. Geometria do CadLog (109 trechos) → costLines fator 1000.",
+   "record_count": "6 vias, cerca de 20,7 km",
+   "geo_coverage": "Lagoa, Rio Comprido, São Cristóvão",
+   "caveats": "No OSM só os túneis estão marcados."
+  },
+  {
+   "name": "Res. SMTR 3.055/2018 e Res. SMTR 3.254/2020 (polígonos suspensos)",
+   "publisher": "SMTR Rio",
+   "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf",
+   "access": "PDFs do DO de 11/12/2018 (p. 24–26) e de 20/03/2020 (p. 42)",
+   "format": "PDF; anexos em imagem",
+   "license": "Ato oficial (domínio público)",
+   "tested": true,
+   "test_result": "Textos completos lidos. Os Anexos I e II são JPEG (1280×904) sem vetor. A suspensão foi confirmada pela SMTR, pelo 1746 (2026) e pela CET-Rio (DO 2024).",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Registrar como kind=suspensa (como a ABC revogada em restricoes_rmsp), nunca aplicar, e avisar 'regra suspensa desde 2020'. Reconstruir os polígonos só se a regra voltar.",
+   "record_count": "2 polígonos (ARP com 27 vias-limite; ARM/ARV com 26)",
+   "geo_coverage": "Centro, Zona Sul, Grande Tijuca, Zona Norte e parte de Jacarepaguá",
+   "caveats": "A suspensão pode cair a qualquer momento por ato da SMTR."
+  },
+  {
+   "name": "1746, artigo 'horários de circulação de carga' (API Zendesk)",
+   "publisher": "Prefeitura do Rio (Central 1746)",
+   "url": "https://www.1746.rio/api/v2/help_center/pt-br/articles/10872428930203.json",
+   "access": "API pública (a página HTML dá 403)",
+   "format": "JSON",
+   "license": "Não declarada (conteúdo institucional; usar como fato com citação)",
+   "tested": true,
+   "test_result": "HTTP 200, 8,3 KB, updated_at 2026-06-08. Cita a Res. 3.254/2020 e a suspensão.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Vigiar updated_at como sinal de mudança de regime.",
+   "record_count": "1 artigo",
+   "geo_coverage": "Município",
+   "caveats": "Descreve as regras de 2018 junto com a suspensão; não é ato."
+  },
+  {
+   "name": "SMTR, página da AEVC",
+   "publisher": "SMTR Rio",
+   "url": "https://transportes.prefeitura.rio/autorizacao-especial-para-veiculos-de-carga-aevc/",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "HTTP 200, 185 KB, atualizada em 03/03/2023, com o aviso de suspensão. Os PDFs linkados do decreto e da resolução dão 404. A WP REST dá 401.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só referência.",
+   "record_count": "",
+   "geo_coverage": "",
+   "caveats": ""
+  },
+  {
+   "name": "IPP CadLog, Trechos de Logradouros (ArcGIS REST)",
+   "publisher": "Instituto Pereira Passos / PCRJ (data.rio)",
+   "url": "https://pgeo3.rio.rj.gov.br/arcgis/rest/services/CadLog/Trechos_Logradouros/FeatureServer/0",
+   "access": "ArcGIS REST query (maxRecordCount 2000; outSR=4326; f=geojson)",
+   "format": "GeoJSON/JSON (EPSG:31983 nativo)",
+   "license": "CC BY 4.0 (item data.rio 899168c8feab4230a9f795ed07cdde7b), uso comercial permitido com atribuição",
+   "tested": true,
+   "test_result": "HTTP 200, count=132.064. Por nome: Linha Vermelha 128 trechos/35,2 km; Linha Amarela 249/39,1 km; corredor Rebouças 109/20,7 km; Grota Funda 2/2,3 km. Há homônimos (Rua São José em 15 bairros). Amostra em geo/amostra_vias_restritas_rio.geojson.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Biblioteca de geometria do importador municipal do Rio: nome + bairro → linhas cortadas em pedaços de até ~400 m (padrão restricoes_rmsp) e casadas com o OSM/Valhalla para costLines. Também serve ao geocoding (tema enderecos).",
+   "record_count": "132.064 trechos",
+   "geo_coverage": "Município do Rio",
+   "caveats": "Não separa pista central de lateral. Algumas grafias diferem ('Pizzarro', 'Tunel' sem acento). A Orla Conde não aparece."
+  },
+  {
+   "name": "data.rio, catálogo (search API) e BRS/BRT",
+   "publisher": "Prefeitura do Rio (IPP)",
+   "url": "https://www.data.rio/api/search/v1/collections/dataset/items?q=BRS&limit=100",
+   "access": "API OGC Records / ArcGIS Hub",
+   "format": "JSON; camadas ArcGIS",
+   "license": "CC BY 4.0 nos itens testados (Logradouros, Trajetos BRT, BRS)",
+   "tested": true,
+   "test_result": "HTTP 200. Não há dataset de restrição de caminhão, de vaga de carga e descarga nem de túnel ou viaduto com restrição. BRS: 25 corredores com nº de portaria; Trajetos BRT: 5.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "BRS e BRT podem entrar depois como fonte nova da camada corredores_onibus (Rio).",
+   "record_count": "BRS 25; Trajetos BRT 5",
+   "geo_coverage": "Município",
+   "caveats": "A pasta GeoVias do pgeo3 exige token (499)."
+  },
+  {
+   "name": "OpenStreetMap via Overpass (tags de caminhão no Rio)",
+   "publisher": "OSM",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "Overpass com User-Agent e Accept JSON",
+   "format": "JSON",
+   "license": "ODbL 1.0",
+   "tested": true,
+   "test_result": "HTTP 200, 653 ways: hgv=no 157, hgv:conditional 33 (resíduo da Res. 3.055 suspensa), maxheight 435. Linha Vermelha hgv=no em 79/86; túneis Rebouças hgv=no; Linha Amarela sem condicional; Joá, Joatinga, Niemeyer e Autoestrada Lagoa-Barra hgv=no sem ato atual. Uma 2ª consulta deu 504/500 em 3 instâncias.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Já entra pelo Valhalla. Lista das 33 ways com conditional obsoleto para correção no OSM. A camada lacunas_osm pode avisar onde o OSM diverge do ato.",
+   "record_count": "653 ways com tag de caminhão",
+   "geo_coverage": "Município",
+   "caveats": "As hgv:conditional obsoletas bloqueiam caminhão hoje sem base legal."
+  },
+  {
+   "name": "anttlegis: Res. ANTT 1.713/2006 e 5.936/2021",
+   "publisher": "ANTT",
+   "url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00001713&seqAto=000&valorAno=2006&orgao=DG/ANTT/MT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Ato oficial (domínio público)",
+   "tested": true,
+   "test_result": "HTTP 200 (28 KB). A 1.713 está marcada 'Revogada pela Resolução 6000/2022'; a 5.936 inclui o art. 4º-A (Av. Portuária).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Quando houver ato vigente, entra em hazmat_trechos_* (camada perigosos). Hoje, só aviso.",
+   "record_count": "2 atos",
+   "geo_coverage": "Ponte Rio–Niterói e Av. Portuária",
+   "caveats": "Regime atual desconhecido."
+  },
+  {
+   "name": "DOU (busca in.gov.br) sobre a Ponte Rio–Niterói",
+   "publisher": "Imprensa Nacional",
+   "url": "https://www.in.gov.br/consulta/-/buscar/dou?q=%22Ponte%20Rio%20Niter%C3%B3i%22&s=todos&exactDate=all&sortType=0",
+   "access": "HTML com JSON embutido (script dou_search.py reaproveitado)",
+   "format": "HTML/JSON",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200. Achou só atos contratuais (Decisão SUROD 1.324/2026 de velocidade média, revisões tarifárias). Nenhuma restrição de caminhão ou PP entre out/2024 e mar/2025.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Vigiar 'Ecoponte' e 'Ecovias Ponte' no DOU.",
+   "record_count": "",
+   "geo_coverage": "Federal",
+   "caveats": "Busca por frase com hífen falha."
+  },
+  {
+   "name": "Notícias oficiais da Av. Brasil (CET-Rio, COR, Prefeitura) e COR WP API",
+   "publisher": "CET-Rio / COR / Prefeitura do Rio",
+   "url": "https://cor.rio/wp-json/wp/v2/posts?search=caminh%C3%B5es&after=2024-03-01T00:00:00&per_page=100",
+   "access": "WP REST (COR aberto; CET-Rio e prefeitura.rio dão 401)",
+   "format": "JSON/HTML",
+   "license": "Não declarada (fatos com citação)",
+   "tested": true,
+   "test_result": "COR 200: nenhum post sobre restrição na Av. Brasil depois do adiamento de 10/03/2024; muitos esquemas de evento (Maracanã etc.). CET-Rio: página 'adiada' de 07/03/2024, atualizada em 10/03/2024.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Fonte da camada 'interdicoes' para o Rio (eventos, Maracanã, obras), como o RSS da CET-SP; também vigia a Av. Brasil.",
+   "record_count": "cerca de 80 posts com 'caminhões' desde 03/2024",
+   "geo_coverage": "Município",
+   "caveats": "Texto livre; exige geocodificação."
+  },
+  {
+   "name": "Folha do Leste, 05/12/2024 (Ponte Rio–Niterói), secundária",
+   "publisher": "Folha do Leste",
+   "url": "https://folhadoleste.com.br/ponte-rio-niteroi-tem-novas-restricoes-para-caminhoes/",
+   "access": "HTML (WebFetch)",
+   "format": "HTML",
+   "license": "Direitos reservados (só fatos)",
+   "tested": true,
+   "test_result": "Cita 2 eixos sentido Niterói seg–sex 4h–10h; 3+ eixos sentido Niterói 4h–12h e sentido Rio 12h–22h; PP proibido; sem número de ato.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não usar como regra; só como pista para achar o ato.",
+   "record_count": "",
+   "geo_coverage": "Ponte",
+   "caveats": "Não confirmado em fonte primária."
+  },
+  {
+   "name": "Ecoponte / Ecovias Ponte (site da concessionária)",
+   "publisher": "Concessionária Ponte Rio–Niterói S.A.",
+   "url": "https://www.ecoponte.com.br/",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Não verificada",
+   "tested": true,
+   "test_result": "403 em curl e em WebFetch (WAF).",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Pedir regras e regulamento por LAI à ANTT ou consultar pelo navegador.",
+   "record_count": "",
+   "geo_coverage": "Ponte",
+   "caveats": "Bloqueado."
+  },
+  {
+   "name": "LegisWeb: Decretos Rio 42.252/2016 e 45.433/2018 (secundária)",
+   "publisher": "LegisWeb",
+   "url": "https://www.legisweb.com.br/legislacao/?id=371007",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Compilação privada (usar só o fato; o texto primário está no DO)",
+   "tested": true,
+   "test_result": "HTTP 200. Texto do 45.433 bate com o DO. O 42.252 consta como revogado pelo 42.272/2016.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhum; o ato primário é o DO.",
+   "record_count": "",
+   "geo_coverage": "",
+   "caveats": ""
+  }
+ ],
+ "reused_from_existing": [
+  "carga_perigosa: Res. ANTT 1.713/2006 (Ponte Rio–Niterói) revogada pela Res. 6.000/2022 e a pista da Res. 5.936/2021 e da notícia de 12/2024. Aqui confirmei só o conteúdo das duas resoluções no anttlegis.",
+  "carga_perigosa: o RTPP não regula itinerário; a restrição de rota é do órgão com circunscrição (CTB art. 187, I). Isso enquadra a Res. SMTR 2.204/2012 como regra municipal de PP.",
+  "restricoes_rmsp_municipios e CONVENCOES_IMPLEMENTACAO.md: estender a camada restricoes_rmsp a uma camada municipal genérica por IBGE (3304557), com regras.json, padrão de costLines fator 1000, linhas cortadas em ~400 m, kind=revogada/suspensa e VUC por município.",
+  "restricoes_rmsp_municipios: uso da API do Querido Diário para achar atos. Para o Rio usei ainda a API do próprio D.O. Rio, mais completa.",
+  "restricoes_sp_capital e interdicoes_temporarias_alagamentos: o Valhalla honra *:conditional (motor_vehicle:conditional testado). Por isso as 33 hgv:conditional obsoletas do Rio de fato afetam a rota.",
+  "interdicoes_temporarias_alagamentos: proposta da camada 'interdicoes'. O COR.rio (WP REST aberto) é o análogo carioca do RSS da CET-SP.",
+  "federal_restricoes (SIAET, já no app): a Av. Brasil aparece como BR-040/101 com administração 'Convênio Adm. Federal/Municipal' e limites de altura e largura. Não testei de novo.",
+  "rodovias_horario (PRF Portaria 121/2026, já no app): restrições de feriado nas BRs do RJ. Não testei de novo.",
+  "seguranca_acidentes_roubo: ISP-RJ (roubo de carga por CISP) já testado. Não testei de novo.",
+  "rodovias_restricoes: script dou_search.py reaproveitado para a busca no DOU."
+ ],
+ "gaps": [
+  "A cota de WebSearch da sessão (200) acabou no início do tema. A pesquisa seguiu só com APIs primárias e WebFetch, e notícias e fontes secundárias recentes não foram varridas.",
+  "Ponte Rio–Niterói / Av. Portuária: não achei o ato vigente que substituiu a Res. ANTT 1.713/2006 (PP) nem o das janelas por eixo citadas pela notícia de 05/12/2024. O DOU não trouxe nada e o site da Ecoponte dá 403.",
+  "Res. 3.055/2018: os polígonos ARP e ARM/ARV só existem como imagem (Anexos I e II); não há vetor oficial. Hoje estão suspensos.",
+  "Linha Amarela (Res. 2.063/2010): não achei autorização da CRV depois de 2021 nem outra evidência de fiscalização atual. Também há risco jurídico de repristinação, porque os Decs. 42.252 e 42.272/2016 regularam a via de novo e foram revogados.",
+  "Elevado do Joá, Ponte da Joatinga, Túnel do Joá e de São Conrado: a portaria de 12/2012 parece temporária (até 17/12/2013); não sei se foi prorrogada. Av. Niemeyer e Autoestrada Lagoa-Barra (hgv=no no OSM): nenhum ato achado.",
+  "Inventário incompleto das portarias permanentes 'proíbe a circulação de caminhões': a API do DO esconde os hits de 2020–2026 em buscas por frase (contagens de 15, 27 e 8 páginas). Li só uma parte; seria preciso baixar as edições pelos ids.",
+  "Carga e descarga: milhares de portarias de vaga (cerca de 1.000 páginas do DO por ano) e nenhum dataset. Não extraí.",
+  "Túnel Santa Bárbara, Túnel Noel Rosa, Grajaú–Jacarepaguá e outros: nenhuma restrição a caminhão encontrada em ato. O Grajaú–Jacarepaguá só tem o conditional obsoleto no OSM.",
+  "Feriados municipais e estaduais do RJ, necessários para 'dias úteis' da Linha Amarela e da Res. 2.242: não verificados aqui (tema feriados).",
+  "Dec. 29.231/2008: a revogação expressa não foi verificada; tratado como superado pelos decretos de 2013–2018.",
+  "O número da Portaria CRV do Grumari (out/2025) e o da portaria do Maracanã (09/2022) não ficaram legíveis no índice."
+ ],
+ "recommendations": [
+  "Não aplicar os polígonos da Res. 3.055/2018. Registrar como kind=suspensa (padrão do ABC em restricoes_rmsp) e avisar quando a rota cruza as áreas: 'restrição suspensa desde 20/03/2020 (Res. SMTR 3.254/2020)'. Esforço baixo.",
+  "Implementar as regras por via do Rio no importador municipal genérico (IBGE 3304557), com regras.json e geometria do CadLog filtrada por nome e bairro. As regras são: Linha Vermelha 24h para qualquer caminhão, Linha Amarela em dias úteis das 6h às 10h e das 17h às 20h, corredor Rebouças com PBT ≥ 6,4 t ou reboque, Centro (10.798/2017), Grota Funda e as ruas pontuais. Entram como costLines fator 1000 e aviso de passagem. Esforço médio, cerca de 2 a 3 dias com testes.",
+  "Perigosos: criar hazmat_trechos_rio.py com a Linha Vermelha (Res. SMTR 2.204/2012, art. 1º, IV) na camada perigosos. Deixar a Ponte Rio–Niterói só como aviso de 'regra federal em revisão' até achar o ato da ANTT. Pedir o ato à ANTT por LAI ou Fala.BR.",
+  "VUC por município: Rio = 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura (inclui altura), com isenção só com AEVC. Seguir o padrão has_aetc de SP: has_aevc_rio no perfil, desligado por padrão.",
+  "Av. Brasil: não modelar restrição horária. Mostrar no máximo aviso de faixa exclusiva (Res. 3.718/3.726/2024). Vigiar a CPLOG-Rio e o DO, porque a medida de 2024 foi só adiada.",
+  "OSM: corrigir na comunidade as 33 hgv:conditional obsoletas (Av. Menezes Côrtes, Estr. dos Três Rios, Pau-Ferro, Av. Atlântica, R. Equador, R. Nelson Carneiro). Elas bloqueiam caminhão nos picos sem base legal desde 2020 e o app não consegue anulá-las no Valhalla. Também incluir hgv:conditional na Linha Amarela e hgv=no ou maxweight nos elevados do corredor Rebouças.",
+  "Vigilância: job semanal na API do D.O. Rio com as frases 'circulação de caminhões', 'tráfego de caminhões', '3.055', '3254', 'CPLOG' e 'veículos de carga', mais o updated_at do artigo 1746 e o COR WP API, gerando alerta para curadoria. É o mesmo papel do Querido Diário em restricoes_rmsp.",
+  "Interdições temporárias do Rio (Maracanã, Grumari sazonal, eventos): estender a camada 'interdicoes' com o COR.rio e as portarias da CRV de validade definida.",
+  "Fechar o inventário das portarias permanentes 2020–2026: baixar só as edições cujos ids vêm em aggregations.Edicoes (consulta por frase) e extrair por regex. Estimativa: menos de 30 edições, cerca de 1 GB transitório."
+ ]
+}

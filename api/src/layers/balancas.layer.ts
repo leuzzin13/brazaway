@@ -3,8 +3,9 @@ import { featuresInBbox, featuresNearRoute, type NearRouteRow } from './data.js'
 import type { LayerWarning, RouteLayer } from './types.js';
 
 /**
- * Balanças (pesagem veicular): PPV das concessões federais (ANTT), PGF/PPM das concessões estaduais de SP (ARTESP, KMZ)
- * e pontos de pesagem do DER-SP. Só INFORMA as balanças no sentido da rota. Nunca sugere desvio: deixar de entrar na
+ * Balanças (pesagem veicular): PPV das concessões federais (ANTT), PGF/PPM das concessões estaduais de SP (ARTESP, KMZ),
+ * pontos de pesagem do DER-SP e postos em operação do DER-MG (fonte 'der-mg', precisao 'aprox': coordenada sem o lado
+ * da pista, então o sentido sai "não confirmado"). Só INFORMA as balanças no sentido da rota. Nunca sugere desvio: deixar de entrar na
  * área de pesagem é infração grave (CTB art. 209, redação da Lei 14.157/2021). Por isso a camada não tem
  * exclusions/costLines e não calcula rota alternativa.
  *
@@ -146,6 +147,7 @@ const layer: RouteLayer = {
       { name: 'ANTT: PPV e operação dos postos (dados.antt.gov.br)', url: 'https://dados.antt.gov.br/dataset/ppv', license: 'CC-BY' },
       { name: 'ARTESP: malha rodoviária por lote, Sistema de Pesagem (KMZ)', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria', license: 'CC-BY' },
       { name: 'DER-SP: pontos para pesagem de veículos + camada Balancas_DER', url: 'https://www.der.sp.gov.br/der/rodovias/balanca/pontos_de_pesagem', license: 'Não declarada (portal cms.sp.gov.br: todos os direitos reservados)' },
+      { name: 'DER-MG: postos de pesagem em operação (site) + camada pracas_pesagem (Observatório da Infraestrutura)', url: 'https://www.der.mg.gov.br/transportes/pracas-de-pesagem', license: 'Site: reutilização com fonte e crédito ("Aspectos legais"); camada ArcGIS sem licença declarada' },
     ],
     style: { kind: 'circle', color: '#0891b2', radius: 6, minzoom: 7, icon: '⚖️' },
     defaultVisible: false,
@@ -169,7 +171,10 @@ const layer: RouteLayer = {
           properties: {
             id: r.id, name: r.name, tipo: KIND_TXT[tipo], rodovia: p.rodovia ?? null, km: p.km ?? null, sentido: p.sentido ?? null,
             administrador: p.administrador ?? null,
-            posicao: p.precisao === 'aprox_km' ? `aproximada (rodovia + km, ±${p.erro_km_estimado ?? '?'} km)` : 'exata',
+            posicao: p.precisao === 'aprox_km' ? `aproximada (rodovia + km, ±${p.erro_km_estimado ?? '?'} km)`
+              : p.precisao === 'aprox' ? 'coordenada da fonte, sem o lado da pista' : 'exata',
+            operacao: p.operacao ?? null,
+            ramo: p.sentido_txt ?? null,
             disponibilidade: p.disponibilidade_pct != null ? `${p.disponibilidade_pct}% do tempo operando (${p.disponibilidade_ref})` : null,
             fonte: r.source,
           },

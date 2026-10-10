@@ -1,0 +1,555 @@
+{
+ "category": "ders_estaduais",
+ "summary": "Pesquisei DER-MG, DER-RJ e DER-ES e testei 19 fontes com curl, python, osmium no PBF local e o Valhalla local. Nada foi escrito no repo nem no banco. O NOTES.md e as amostras estão em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/ders_estaduais/ (47 MB).\n\nMG é, de longe, o estado mais bem servido. O Observatório da Infraestrutura (ArcGIS 11.4, consulta anônima) publica as camadas abaixo, mas não declara licença:\n- pontos críticos vivos: 833 registros, 459 ativos, última edição em 09/10/2026. Trazem trafegabilidade (inclusive o código \"pista interrompida para veículos pesados\"), limite de carga, variante e prazo;\n- cadastro de 4.370 OAEs do DER-MG, com tipo, largura e estrutura. 1.021 têm menos de 5,5 m de largura e 8 são de madeira;\n- 1.456 OAEs com nota de condição, cuja escala não é documentada;\n- 52 e 57 balanças com coordenadas, além da tabela do site com 43 postos em operação (37 casados com coordenada);\n- o SRE 2026_02, com 3.647 trechos e 43.163 km, km SRE e marco km, pista simples/dupla e responsável. Serve de referência linear.\n\nAs regras de MG têm fonte primária:\n- Portaria DER-MG 4.242/2026, de 06/02/2026 (PDF no site do DER-MG): calendário de feriados de 2026. Vale para veículos acima de 2,60 m de largura, 4,40 m de altura, 19,80 m de comprimento ou 58,5 t de PBTC, e para CVC/CTV/CTVP mesmo com AET. Abrange toda estadual de pista simples e três trechos duplicados com km, além de trechos especiais em Romaria e Três Pontas.\n- Portaria DER-MG 4.262/2026 (DOE-MG de 27/06/2026, lida no LegisWeb): regras de AET. A AET circula do amanhecer ao pôr do sol; vale 24 h para veículo com até 3,00 m de largura, 20 m de comprimento e 4,40 m de altura; é proibido iniciar a viagem com chuva ou neblina; comboio é vedado.\n\nO OSM quase não tem restrição de caminhão nas estaduais de MG: há 3 ways com hgv ou maxweight em MG-xxx, nenhuma em MGC e 2 em LMG.\n\nRJ tem pouco dado útil:\n- O CKAN estadual tem datasets do DER-RJ com licença PDDL, mas são agregados e sem geometria. A \"Sinalização Vertical\" tem só 43 linhas por rodovia, sem local nem valor.\n- O BC25 do INEA tem pontes sem carga nem gabarito.\n- O site do DER-RJ parou em 2024. Não há portaria de feriado, OAE nem balança aberta.\n- A RJ-127 (Paracambi–Mendes) estava fechada para pesados desde 09/2024; o status em 2026 não foi confirmado.\n\nES tem malha boa e atos antigos:\n- A rede do SRE de out/2025 tem 895 trechos e 9.719 km, em KML no DER-ES e em WFS no GEOBASES, com km e SIT, mas sem licença declarada.\n- Atos ainda publicados no site do DER-ES:\n  - Terceira Ponte (IS 021-N/2004): 3 eixos ou mais, especiais e produtos perigosos proibidos 24 h. Caminhão de 2 eixos só nas janelas de peso e horário.\n  - Lei 4.463/1990 (Rodovia do Sol).\n  - IS 009-N/2008 (ES-010, máximo de 23 t).\n- Um ato de 2024 (DIO-ES de 24/01/2024, número não confirmado) proíbe PBT acima de 23 t na ES-060, do km 33 ao 39.\n\nNo OSM, a Terceira Ponte só tem hgv:conditional sem base hgv=no. Mesmo assim, o Valhalla já desvia um caminhão de 25 t (19,4 km contra 6,2 km do carro).\n\nPrioridades sugeridas:\n1. Pontos críticos do DER-MG como interdição viva.\n2. Portaria 4.242 na camada rodovias_horario, com o SRE-MG para achar a pista simples.\n3. Balanças do DER-MG na camada balancas.\n4. OAEs do DER-MG na camada oae, só como aviso.\n5. Regras curadas do ES.",
+ "rules": [
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "rodovia",
+   "where": "Todas as rodovias e estradas de pista simples sob responsabilidade do DER-MG, inclusive as concedidas (no SRE 2026_02, sitfis diferente de DUP e resp diferente de DNIT/MUNICIPAL: cerca de 24.132 km pavimentados)",
+   "days_hours": "Janelas do Anexo I em 2026. Padrão: véspera 16h–22h, feriado 06h–12h e último dia 16h–22h. Carnaval: 13/02 16–22, 14/02 06–12, 17/02 16–22, 18/02 06–12. Semana Santa: 02/04 16–22, 03/04 06–12, 06/04 16–22. Trabalho: 30/04 16–22, 01/05 06–12, 03/05 16–22. Corpus Christi: 03/06 16–22, 04/06 06–12, 07/06 16–22. Independência: 04/09 16–22, 05/09 06–12, 07/09 16–22. Aparecida: 09/10 16–22, 10/10 06–12, 12/10 16–22. Consciência Negra: 19/11 16–22, 20/11 06–12, 22/11 16–22. Fim de ano: 24/12 16–22, 25/12 06–22, 27/12 16–22, 31/12 16–22, 01/01/2027 06–12, 03/01/2027 16–22",
+   "vehicles": "Veículo ou CVC que exceda qualquer um destes limites: largura 2,60 m, altura 4,40 m, comprimento 19,80 m ou PBTC 58,5 t (art. 1º, I–IV). Também CVC, CTV e CTVP mesmo com AET ou AE (art. 1º, § 1º). Não há definição de VUC (regra rodoviária)",
+   "act": "Portaria DER-MG nº 4.242, de 06/02/2026 (publicada em 07/02/2026), art. 1º caput e § 1º, Anexo I; infração art. 187, I, do CTB (código 574-61), art. 2º; vigência na publicação (art. 4º)",
+   "act_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf",
+   "confidence": "alta",
+   "exceptions": "O veículo autuado é liberado ao fim do horário (art. 2º, parágrafo único). Sem escolta oficial para superdimensionados nos períodos do Anexo I, em qualquer horário (art. 3º). A portaria não traz outras exceções",
+   "geometry_source": "SRE-MG 2026_02 (observatorio.infraestrutura.mg.gov.br Hosted/sremg_2026_02, ano='202602'), filtrando sitfis≠DUP e resp estadual ou concessionária; casar com o OSM via Valhalla"
+  },
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "rodovia",
+   "where": "Trechos de pista dupla incluídos: MG-010 do km 12,4 (Venda Nova/Viaduto da Vilarinho) ao km 31,3 (entroncamento para o Aeroporto de Confins); MGC-135 do km 370 (Montes Claros) ao km 398 (Bocaiuva) e do km 573 (Corinto) ao km 668 (entroncamento com a BR-040); MG-050 do km 57 (entroncamento com a BR-262, início da duplicação) ao km 164 (entroncamento com a MG-164)",
+   "days_hours": "Mesmas janelas nacionais do Anexo I da regra anterior (Carnaval a Fim de Ano de 2026)",
+   "vehicles": "Iguais aos da regra anterior: excedentes de 2,60 m, 4,40 m, 19,80 m ou 58,5 t, e CVC/CTV/CTVP mesmo com AET",
+   "act": "Portaria DER-MG nº 4.242/2026, art. 1º, § 1º, I a III",
+   "act_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf",
+   "confidence": "alta",
+   "exceptions": "Iguais às da regra anterior",
+   "geometry_source": "SRE-MG 2026_02 por rodovia e km (kmini/kmfim; na MG-010, km 12,4 é o início exato do trecho 010EMG0020D/E)"
+  },
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "rodovia",
+   "where": "Festa de N. Sra. da Abadia da Água Suja (Romaria): BR-365 do km 476,20 (entroncamento com a MGC-462, Patrocínio) ao km 608 (Anel Viário de Uberlândia); MG-190 do km 41 (entroncamento com a MG-223, Monte Carmelo) ao km 104,4 (entroncamento com a LMG-812, Nova Ponte); MG-223 do km 28 (entroncamento com a BR-365) ao km 87 (entroncamento com a BR-050, Araguari); LMG-748 do km 41 (BR-050, Araguari) ao km 35 (BR-365, Indianópolis), na ordem em que está no texto",
+   "days_hours": "31/07 16h → 01/08 08h; 01/08 16h → 02/08 22h; 07/08 16h → 08/08 08h; 08/08 16h → 09/08 22h; 14/08 16h → 15/08 22h; 16/08 06h–22h (2026)",
+   "vehicles": "Iguais aos do art. 1º: excedentes de 2,60 m, 4,40 m, 19,80 m ou 58,5 t, e CVC/CTV/CTVP mesmo com AET",
+   "act": "Portaria DER-MG nº 4.242/2026, art. 1º, § 2º, e Anexo I",
+   "act_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf",
+   "confidence": "alta",
+   "exceptions": "Iguais às do art. 1º. Leitura minha: nessas janelas a restrição vale só nos trechos do § 2º",
+   "geometry_source": "SRE-MG 2026_02 (MG-190, MG-223, LMG-748) e SNV/DNIT para a BR-365"
+  },
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "rodovia",
+   "where": "Aniversário de morte do Beato Padre Victor: MG-167 do km 17 (Três Pontas) ao km 43,8 (Varginha)",
+   "days_hours": "22/09/2026 12h → 23/09/2026 12h",
+   "vehicles": "Iguais aos do art. 1º",
+   "act": "Portaria DER-MG nº 4.242/2026, art. 1º, § 3º, e Anexo I",
+   "act_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf",
+   "confidence": "alta",
+   "exceptions": "Iguais às do art. 1º",
+   "geometry_source": "SRE-MG 2026_02 (rod MG167)"
+  },
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "rodovia",
+   "where": "Todas as vias sob responsabilidade do DER-MG, inclusive as concedidas ou delegadas (art. 2º)",
+   "days_hours": "AET circula do amanhecer ao pôr do sol, todos os dias (art. 45). Noturno só com justificativa expressa na AET (art. 45, §§ 1º–3º). Período integral (24 h) quando a largura for de até 3,00 m, o comprimento de até 20 m e a altura de até 4,40 m (art. 36, § 2º, III), e para guindaste com excesso longitudinal de até 3,20 m (art. 36, § 3º). Proibido iniciar a viagem com chuva, neblina ou fumaça; em trânsito, parar em local seguro (art. 3º, §§ 2º–3º)",
+   "vehicles": "Cargas indivisíveis acima dos limites da Res. CONTRAN 882/2021. Viagem única e detalhamento do percurso acima de 48,5 t de PBT/PBTC, 23 m de comprimento, 3,20 m de largura ou 4,40 m de altura (art. 36, § 1º). Engenheiro credenciado acima de 100 tf ou de 5,50 m de altura, 6,50 m de largura ou 45 m de comprimento (art. 35). Programação obrigatória em concessão ou com escolta oficial a partir de 3,50 m de largura, 5,40 m de altura, 35 m de comprimento ou 100 tf (art. 54). Guincho com mais de 18,60 m exige AET (art. 3º, § 4º)",
+   "act": "Portaria DER-MG nº 4.262, de 26/06/2026 (DOE-MG de 27/06/2026); revoga a Portaria nº 3.902/2021 (art. 60); vigência na publicação (art. 61)",
+   "act_url": "https://www.legisweb.com.br/legislacao/?id=497413",
+   "confidence": "media",
+   "exceptions": "Utilidade pública e emergências podem ter prazo e horário diferenciados (art. 39). O comboio (2 ou mais conjuntos no mesmo sentido) é vedado (art. 4º, IX)",
+   "geometry_source": "Malha DER-MG inteira (SRE-MG). A regra de horário vale para qualquer AET emitida pelo DER-MG"
+  },
+  {
+   "jurisdiction": "MG (DER-MG)",
+   "kind": "outro",
+   "where": "Pontos críticos das rodovias estaduais de MG (camada viva): 459 ativos em 10/10/2026. 5 com pista interrompida (3 por dano em OAE: MG-430 em Igaratinga e em São Gonçalo do Pará, LMG-828 em Oratórios; 2 por barreira ou aterro: MG-457 e LMG-850). 19 com meia-pista",
+   "days_hours": "Enquanto status ∈ {1 A iniciar, 2 Em andamento, 3 Paralisada}; data_prevista e prazos_adicionais dão a previsão",
+   "vehicles": "trafegabilidade 3 = todos; 4 = 'Pista interrompida para veículos pesados' (nenhum ativo hoje); 2 = meia-pista (pare-e-siga, risco para veículo largo e longo); limite_carga 1 = 'Sim' (o valor qnt_carga_limite está vazio em 100%)",
+   "act": "Cadastro operacional DER-MG/SEINFRA, painel público 'Pontos críticos'. Não é ato normativo",
+   "act_url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pontos_criticos_publico/FeatureServer/0",
+   "confidence": "media",
+   "exceptions": "solucao_trafego 1 = com variante (o traçado da variante está em pontos_criticos_variantes, 9 polylines); obs_alternativa traz a rota em texto",
+   "geometry_source": "Ponto lat/lon da própria camada, com código SRE (sremg) para achar o trecho"
+  },
+  {
+   "jurisdiction": "ES (DER-ES)",
+   "kind": "ponte",
+   "where": "Ponte Castelo de Mendonça (3ª Ponte), ES-060 km 0 em diante, Vitória–Vila Velha",
+   "days_hours": "Cat. 2 (2 eixos, rodagem dupla): até 10 t proibido das 6h às 10h e das 16h às 22h; até 15 t proibido das 6h às 22h, nos dois sentidos. Demais categorias: 0h–24h",
+   "vehicles": "Proibidos 24 h: caminhão de 3 eixos ou mais, CVC de 4 a 6 eixos, mais de 6 eixos, veículos especiais com carga indivisível e qualquer veículo com produtos perigosos. Ônibus e furgão são excluídos das categorias. O 2 eixos com até 10 t passa das 10h às 16h e das 22h às 06h; com até 15 t, das 22h às 06h",
+   "act": "Instrução de Serviço DERTES nº 021-N, de 21/09/2004 (DIO-ES de 27/09/2004), art. 1º; substitui na prática a IS 011-N/2003; infração arts. 187 e 231, IV, do CTB",
+   "act_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Instru%C3%A7%C3%B5es%20de%20Servi%C3%A7o/15-07-16/IS%20N%C2%BA%20021%20-%20N%202004%20%20-%20PROIBIR%20CAMINH%C3%83O%20NA%20TERCEIRA%20PONTE.pdf",
+   "confidence": "media",
+   "exceptions": "Rota alternativa oficial: Segunda Ponte, Rodovia Darly Santos (ES-471) e Av. Carlos Lindemberg (art. 2º). O fim da concessão Rodosol (LC 1.055/2023, gestão Ceturb) não revogou a IS, que segue no site do DER-ES; o OSM já tem hgv:conditional igual",
+   "geometry_source": "OSM: ways 'Ponte Deputado Darcy Castello de Mendonça' (14 ways); SRE ES-060 060EES0010 km 0–3,591"
+  },
+  {
+   "jurisdiction": "ES (DER-ES/Semobi)",
+   "kind": "rodovia",
+   "where": "ES-060 (Rodovia do Sol) do km 33 (retorno de Village do Sol) ao km 39 (trevo de Setiba). No SRE 2025 o trecho é 'Village do Sol – Setiba', km 31,859–39,79 (DUP). Também a 'ES-477' do entorno da antiga praça de pedágio até o entroncamento com a ES-388, perto da BR-101 (esse código não bate com a ES-477 do SRE, que fica perto de Castelo)",
+   "days_hours": "Permanente (sem horário na fonte)",
+   "vehicles": "Caminhão com PBT acima de 23 t",
+   "act": "Normativas Semobi/DER-ES publicadas no DIO-ES de 24/01/2024 (número do ato não confirmado), conforme notícia de 23/01/2024",
+   "act_url": "https://tribunaonline.com.br/_/164539",
+   "confidence": "baixa",
+   "exceptions": "Não informadas na notícia (provável liberação para destino local, não confirmada)",
+   "geometry_source": "SRE-ES (GEOBASES geonode:der_rodovias_es_epsg_31984 ou KML DER-ES out/2025) por km; o trecho da ES-477 depende de confirmar o ato"
+  },
+  {
+   "jurisdiction": "ES (Assembleia/DER-ES)",
+   "kind": "rodovia",
+   "where": "Rodovia do Sol (ES-060), em toda a extensão",
+   "days_hours": "Permanente",
+   "vehicles": "Veículo de carga com mais de 2 eixos ou PBT acima de 15 t (art. 1º)",
+   "act": "Lei estadual ES nº 4.463, de 14/11/1990 (DOE-ES de 16/11/1990), arts. 1º–3º",
+   "act_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Leis/15-07-16/LEI%20N%C2%BA%204.463%201990%20-%20PROIBI%C3%87%C3%83O%20VEICULO%20CARGA%20NA%20ES%20060.pdf",
+   "confidence": "baixa",
+   "exceptions": "Destino na rodovia ou em localidade atendida só por ela: autorização especial do DER (art. 3º). Desvio pela BR-101 Sul (art. 2º). Vigência atual incerta: o ato de 2024 limita só o km 33–39 a 23 t, o que sugere que a lei não é aplicada por inteiro. O OSM tem hgv=no e maxweight=15 em 25 ways da 'Rodovia José Ribeiro Tristão'",
+   "geometry_source": "SRE-ES, sigla ES-060"
+  },
+  {
+   "jurisdiction": "ES (DER-ES)",
+   "kind": "rodovia",
+   "where": "ES-010, entre o limite Aracruz/Fundão (Portal de Aracruz) e o trevo de acesso a Santa Cruz (Aracruz)",
+   "days_hours": "Permanente, 'por tempo indeterminado'",
+   "vehicles": "PBT acima de 23,0 t",
+   "act": "Instrução de Serviço DER-ES nº 009-N, de 30/10/2008 (DIO-ES de 04/11/2008), item 1; torna sem efeito a IS 006-N/2006",
+   "act_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Instru%C3%A7%C3%B5es%20de%20Servi%C3%A7o/15-07-16/IS%20N%C2%BA%20009%20-%20N%202008%20-%20PROIBIR%2023%20TON%20PBT%20NA%20ES%20010.pdf",
+   "confidence": "media",
+   "exceptions": "Nenhuma no texto. Vigência atual não confirmada em campo, mas o ato segue publicado no site do DER-ES. O OSM não tem maxweight nesse trecho",
+   "geometry_source": "SRE-ES, ES-010, aproximadamente km 26,171–40,136 (ENTR. ES-124 – ENTR. ACESSO À SANTA CRUZ); o km exato do 'Portal de Aracruz' precisa ser confirmado"
+  },
+  {
+   "jurisdiction": "ES (DER-ES)",
+   "kind": "rodovia",
+   "where": "Trechos da Res. do Conselho Rodoviário Estadual nº 4.779/98 (lista não localizada)",
+   "days_hours": "Permanente (prazo inicial de 540 dias, prorrogável)",
+   "vehicles": "Carga com PBT ou PBTC entre 45 e 57 t exige AET",
+   "act": "Resolução C.A. DERTES nº 0778, de 31/08/2005 (DIO-ES de 16/09/2005), arts. 1º–2º",
+   "act_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Resolu%C3%A7%C3%B5es%20DER-ES/15-07-16/RESOLU%C3%87%C3%83O%20CA%20N%C2%BA%200778%20-%202005%20-%20AET%20PARA%20PBT%20ENTRE%2045%20E%2057%20TON.pdf",
+   "confidence": "baixa",
+   "exceptions": "Trechos liberados aos poucos, conforme estudos e sinalização (art. 2º, § 1º). Provavelmente superada pela Res. CONTRAN 882/2021; não usar sem confirmar",
+   "geometry_source": "Indisponível (Res. CRE 4.779/98 não encontrada)"
+  },
+  {
+   "jurisdiction": "RJ (DER-RJ)",
+   "kind": "rodovia",
+   "where": "RJ-127, Serra de Paracambi, trecho Paracambi–Mendes",
+   "days_hours": "Desde 09/09/2024: pare-e-siga para leves das 5h às 10h e das 17h às 24h; fechado no resto do tempo. Obra prevista para 12 meses; status em 10/2026 não confirmado",
+   "vehicles": "Pesados (carretas, caminhões e ônibus) proibidos. Liberados só carro, moto, utilitário e micro-ônibus",
+   "act": "Notícias DER-RJ de 02/09/2024 e 06/09/2024 (não é ato normativo publicado)",
+   "act_url": "https://www.der.rj.gov.br/detalhe_noticia.asp?ident=1019",
+   "confidence": "baixa",
+   "exceptions": "Nenhuma informada",
+   "geometry_source": "OSM ref=RJ-127 (sem hgv no PBF de 09/10/2026)"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "Portaria DER-MG 4.242, de 06/02/2026 (publicada em 07/02/2026): restringe, nos feriados de 2026, veículos acima de 2,60 m, 4,40 m, 19,80 m ou 58,5 t de PBTC, e CVC/CTV/CTVP mesmo com AET. Vale em toda estadual de pista simples e em MG-010 km 12,4–31,3, MGC-135 km 370–398 e 573–668 e MG-050 km 57–164. Infração: art. 187, I, do CTB.",
+   "source_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf"
+  },
+  {
+   "fact": "A Portaria 4.242/2026 traz janelas especiais para Romaria (BR-365, MG-190, MG-223 e LMG-748, de 31/07 a 16/08) e Três Pontas (MG-167 km 17–43,8, de 22/09 12h a 23/09 12h). Não há escolta oficial nos períodos do Anexo I.",
+   "source_url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf"
+  },
+  {
+   "fact": "Portaria DER-MG 4.262/2026 (AET, DOE-MG de 27/06/2026) revoga a 3.902/2021. A AET circula do amanhecer ao pôr do sol. Vale 24 h se a largura for de até 3,00 m, o comprimento de até 20 m e a altura de até 4,40 m. É proibido iniciar a viagem com chuva ou neblina, e o comboio é vedado.",
+   "source_url": "https://www.legisweb.com.br/legislacao/?id=497413"
+  },
+  {
+   "fact": "Observatório SEINFRA/DER-MG, pontos críticos: 833 registros, 459 ativos. 5 com pista interrompida e 19 com meia-pista. Última edição em 09/10/2026 18:42 UTC. Há código de domínio para 'Pista interrompida para veículos pesados'.",
+   "source_url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pontos_criticos_publico/FeatureServer/0"
+  },
+  {
+   "fact": "Cadastro de OAEs do DER-MG (pontes_20_05_2025): 4.370 estruturas (3.352 pontes, 217 viadutos, 66 passarelas, 7 túneis, 8 de madeira). 1.021 têm largura abaixo de 5,5 m e 405 abaixo de 4 m. Não há classe portante nem gabarito.",
+   "source_url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/pontes_20_05_2025/FeatureServer/0"
+  },
+  {
+   "fact": "Camada Pontes do DER-MG: 1.456 OAEs com condestrut e conddurabi (valores 0, 2, 3 e 4; 181 com nota 2; escala não documentada) e 277 de uma só faixa. alturatota é a altura da estrutura, não o gabarito.",
+   "source_url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/Pontes/FeatureServer/0"
+  },
+  {
+   "fact": "O DER-MG lista 43 postos de pesagem em operação (URG, rodovia, km, município, 24 h ou estratégica). 37 casaram com coordenadas das camadas ArcGIS pracas_pesagem (52) ou Balancas_V2 (57).",
+   "source_url": "https://www.der.mg.gov.br/transportes/pracas-de-pesagem"
+  },
+  {
+   "fact": "SRE-MG 2026_02: 3.647 trechos e 43.163 km na versão 202602, com km SRE, marco km, sitfis (PAV, DUP, IMP, LEN), responsável (DER, 20 concessionárias, DNIT, município) e VMD. São cerca de 24.132 km de estadual de pista simples pavimentada.",
+   "source_url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/sremg_2026_02/FeatureServer/0"
+  },
+  {
+   "fact": "A camada 'Ocorrências significativas' do Observatório declara licença 'Dados de uso restrito DER-MG'. As demais não declaram licença. O site do DER-MG permite reutilizar conteúdo com fonte e crédito.",
+   "source_url": "https://www.der.mg.gov.br/aspectos-legais-e-responsabilidades"
+  },
+  {
+   "fact": "A IDE-Sisema (1.421 camadas WFS) só tem a malha rodoviária (ide_0401_mg_rodovias_lin) para o tema. Não tem OAE, balança nem placa.",
+   "source_url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetCapabilities"
+  },
+  {
+   "fact": "O CKAN do RJ tem 13 datasets do DER-RJ com licença PDDL. A 'Sinalização Vertical' é só um agregado por rodovia (43 linhas: unidades, m² e custo), sem local nem valor de placa.",
+   "source_url": "https://dadosabertos.rj.gov.br/dataset/sinalizacao-vertical"
+  },
+  {
+   "fact": "DER-RJ, 'Situação da Rede Estadual' (30/11/2024): PDF de 7 páginas com a extensão de cada rodovia RJ por situação (DUP, PAV, IMP, LEN, PLA), sem geometria. Licença PDDL.",
+   "source_url": "https://dadosabertos.rj.gov.br/dataset/e35f554c-14fd-48fc-906c-bb461ef9355d/resource/092d6929-9b0f-4eed-b466-fefd8cf4ee23/download/situacao-da-rede-estadual.pdf"
+  },
+  {
+   "fact": "BC25 do RJ no geoportal do INEA: 7.387 pontes em ponto, com cargasupor e vaovertica zerados em 100% (337 de madeira), e 182.819 trechos rodoviários, nenhum com jurisdição 'Estadual'.",
+   "source_url": "https://geoportal.inea.rj.gov.br/server/rest/services/MAREM/gpt_tra_ponte_25/FeatureServer/0"
+  },
+  {
+   "fact": "RJ-127 (Paracambi–Mendes): pesados proibidos desde 09/2024; pare-e-siga só para leves, das 5h às 10h e das 17h às 24h, com obra de 12 meses. As notícias do site do DER-RJ param em 09/2024.",
+   "source_url": "https://www.der.rj.gov.br/detalhe_noticia.asp?ident=1021"
+  },
+  {
+   "fact": "Rede Rodoviária DER-ES (out/2025): 895 trechos e 9.719 km, com SRE, sigla, km inicial e final, SIT (PAV 6.088 km, LEN 2.024, PLA 928, EOP 528, DUP 151) e relevo. Está também no WFS do GEOBASES (894 feições), com licença 'Not Specified'.",
+   "source_url": "https://der.es.gov.br/media/Documentos/Rodovias%20Estaduais/Rede_Rodoviaria_DER_ES_Out_2025.zip"
+  },
+  {
+   "fact": "Terceira Ponte (IS DERTES 021-N/2004): 3 eixos ou mais, especiais e produtos perigosos proibidos 24 h. O 2 eixos com até 10 t passa das 10h às 16h e das 22h às 06h; com até 15 t, das 22h às 06h.",
+   "source_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Instru%C3%A7%C3%B5es%20de%20Servi%C3%A7o/15-07-16/IS%20N%C2%BA%20021%20-%20N%202004%20%20-%20PROIBIR%20CAMINH%C3%83O%20NA%20TERCEIRA%20PONTE.pdf"
+  },
+  {
+   "fact": "IS DER-ES 009-N/2008: PBT acima de 23 t proibido por tempo indeterminado na ES-010, entre o Portal de Aracruz e o trevo de Santa Cruz.",
+   "source_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Instru%C3%A7%C3%B5es%20de%20Servi%C3%A7o/15-07-16/IS%20N%C2%BA%20009%20-%20N%202008%20-%20PROIBIR%2023%20TON%20PBT%20NA%20ES%20010.pdf"
+  },
+  {
+   "fact": "Lei ES 4.463/1990: proíbe na Rodovia do Sol veículo de carga com mais de 2 eixos ou PBT acima de 15 t. Em 2024 houve outra regra, de 23 t no km 33–39 (DIO-ES de 24/01/2024, número do ato não confirmado).",
+   "source_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Leis/15-07-16/LEI%20N%C2%BA%204.463%201990%20-%20PROIBI%C3%87%C3%83O%20VEICULO%20CARGA%20NA%20ES%20060.pdf"
+  },
+  {
+   "fact": "O Plano de Dados Abertos do DER-ES (07/2024) prevê só bases administrativas: nenhuma malha, OAE, interdição ou balança.",
+   "source_url": "https://der.es.gov.br/media/Documentos/plano_dados_abertos/Plano%20de%20Dados%20Abertos%20-%20PDA%20-%20DER-ES.pdf"
+  },
+  {
+   "fact": "OSM (PBF do Sudeste de 09/10/2026): ways com hgv ou maxweight em estaduais. MG 3, MGC 0, LMG 2, RJ 129 (116 na Linha Vermelha), ES 84. Na Terceira Ponte há hgv:conditional sem hgv=no de base em 10 de 14 ways.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf"
+  }
+ ],
+ "sources": [
+  {
+   "name": "DER-MG Pontos críticos (público) + variantes",
+   "publisher": "SEINFRA-MG / DER-MG (Observatório da Infraestrutura)",
+   "url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pontos_criticos_publico/FeatureServer/0",
+   "access": "ArcGIS REST FeatureServer anônimo (query f=geojson, paginação de 1.000)",
+   "format": "GeoJSON/JSON (pontos) + tabela prazos_adicionais + polylines de variantes",
+   "license": "Não declarada (licenseInfo vazio); sem cláusula restritiva no item",
+   "tested": true,
+   "test_result": "HTTP 200. 833 feições (459 ativas, todas com geometria), mais 1.733 registros de prazos adicionais e 9 variantes. Última edição em 09/10/2026 18:42 UTC. Domínios lidos: trafegabilidade (0–4), ativo_afetado, limite_carga, status. qnt_carga_limite vazio em 100%. Amostra: mg/pontos_criticos_ativos.geojson",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador importers/sources/dermg_pontos_criticos.py, de hora em hora ou diário, filtrando status∈{1,2,3}. Gravar em uma camada de interdições, nova (interdicoes.layer.ts) ou dividida com o tema interdicoes_temporarias. Pista interrompida (3) ou pista interrompida para pesados (4) vira exclusions com raio pequeno ou costLines fator 1000 no trecho do SRE. Meia-pista vira aviso warn. Mostrar obs_alternativa e a variante. No annotate, citar a data da última edição.",
+   "record_count": "833 (459 ativos)",
+   "caveats": "Cadastro operacional, não ato normativo. Pontos sem km nem extensão: usar o código SRE para achar o trecho. Licença não declarada: pedir termo ou LAI antes do uso comercial.",
+   "geo_coverage": "Rodovias estaduais e delegadas de MG"
+  },
+  {
+   "name": "DER-MG cadastro de OAEs (pontes_20_05_2025) e Pontes com condição",
+   "publisher": "DER-MG (Observatório da Infraestrutura)",
+   "url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/pontes_20_05_2025/FeatureServer/0",
+   "access": "ArcGIS REST anônimo",
+   "format": "Pontos (GeoJSON)",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "HTTP 200. 4.370 OAEs com tipo, extensão, largura, estrutura, SRE e dataresp (2024). Hosted/Pontes/FeatureServer/0: 1.456 com condestrut, conddurabi, qtdfaixas e larguratot. Geometria válida em 100% (os atributos x e y vêm trocados). Amostras: mg/oae_dermg_*.geojson",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Importador oae_dermg.py para a camada oae, como o DER-SP OAE: só contagem e aviso, sem bloqueio. Aviso wooden_bridge para tipoestrut='Madeira'. Novo aviso 'ponte estreita' quando a largura for menor que a largura do veículo + 1,0 m ou qtdfaixas=1. Não usar alturatota como gabarito.",
+   "record_count": "4.370 + 1.456",
+   "caveats": "Sem classe portante, limite de peso ou gabarito. A escala de condição não é documentada.",
+   "geo_coverage": "MG (malha DER-MG)"
+  },
+  {
+   "name": "DER-MG Praças de pesagem (site + ArcGIS pracas_pesagem/Balancas_V2)",
+   "publisher": "DER-MG",
+   "url": "https://www.der.mg.gov.br/transportes/pracas-de-pesagem",
+   "access": "Tabela HTML + ArcGIS REST (00_PUBLICACOES/pracas_pesagem/FeatureServer/2 e Hosted/Balancas_V2/FeatureServer/0)",
+   "format": "HTML + GeoJSON",
+   "license": "Site: reutilização com fonte e crédito ('Aspectos legais'). ArcGIS: não declarada",
+   "tested": true,
+   "test_result": "Tabela do site com 43 postos em operação. ArcGIS: 52 pontos (20 ativos, 9 em obras, 23 previstos) e 57 em Balancas_V2 (editada em 03/2025). 37 de 43 casados por rodovia e km (até 1 km). Saída: mg/der_mg_balancas_site_geocod.geojson",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Importador weigh_dermg.py (convenção: source nova na camada balancas). Usa a tabela do site como lista vigente e o ArcGIS para a coordenada. Os 6 sem par vão por km no SRE-MG, com precisao='aprox_km'. Reaproveita directionVerdict de balancas.layer.ts.",
+   "record_count": "43 em operação",
+   "caveats": "Não há sentido de fiscalização (exceto 'Ramo A/B'). A camada V2 está desatualizada.",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "SRE-MG 2026_02 (malha estadual com km)",
+   "publisher": "DER-MG",
+   "url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/Hosted/sremg_2026_02/FeatureServer/0",
+   "access": "ArcGIS REST anônimo, filtrar ano='202602'",
+   "format": "Polylines",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "HTTP 200. 14.115 feições em 4 versões; a 202602 tem 3.647 trechos e 43.163 km. Campos rod, sremg, kmini/kmfim, mkini/mkfim, sitfis, resp, VMD. MG-010 km 12,4 bate com a portaria. Amostra: mg/sremg_2026_02_MG010_amostra.geojson",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador sre_mg.py, só referência (tabela auxiliar, sem camada). Serve para (a) a geometria de pista simples e dos km da Portaria 4.242 em rodovias_horario e (b) achar o km das balanças e dos pontos críticos. Substitui a IDE-Sisema de 12/2021.",
+   "record_count": "3.647 trechos",
+   "caveats": "Marco km (mk) e km SRE podem divergir. A camada tem versões anteriores misturadas.",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "Portaria DER-MG 4.242/2026 (feriados) — PDF oficial",
+   "publisher": "DER-MG",
+   "url": "https://www.der.mg.gov.br/files/2692/Ano-de-2026/36720/Portaria-n%C2%BA-4242.pdf",
+   "access": "PDF público (lista anual em /institucional/legislacao/portarias)",
+   "format": "PDF com texto",
+   "license": "Ato oficial: domínio público (Lei 9.610/98, art. 8º, IV)",
+   "tested": true,
+   "test_result": "HTTP 200, 129 KB, pdftotext ok. Janelas do Anexo I em mg/portaria_4242_2026_anexo_I.csv (35 linhas)",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador der_mg_portarias.py: lista anual + PDF + parser do Anexo I. Gera trechos na camada rodovias_horario (mesmo esquema da PRF e do DER-SP 084), com o escopo 'pista simples DER-MG' vindo do SRE-MG, mais os trechos duplicados e especiais por km. Checar todo ano a nova portaria (a de 2025 era a 4.162).",
+   "record_count": "35 janelas; 3 trechos DUP + 5 especiais",
+   "caveats": "A portaria cita 'Anexos I e II', mas o PDF só traz o Anexo I. A LMG-748 está escrita do km 41 ao 35.",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "Portaria DER-MG 4.262/2026 (AET)",
+   "publisher": "DER-MG (cópia LegisWeb)",
+   "url": "https://www.legisweb.com.br/legislacao/?id=497413",
+   "access": "HTML público (cópia secundária); primária no DOE-MG de 27/06/2026",
+   "format": "HTML",
+   "license": "Ato oficial: domínio público (Lei 9.610/98, art. 8º, IV); a compilação do LegisWeb não deve ser copiada",
+   "tested": true,
+   "test_result": "HTTP 200, 112 KB. Lidos arts. 1–4, 35, 36, 41, 45, 54, 60 e 61. O PDF da 4.262 também está na lista de portarias de 2026 do DER-MG, mas não foi baixado",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Sem importador: regra fixa em core_legal.layer.ts. Aviso para veículo com AET em rodovia DER-MG: horário do amanhecer ao pôr do sol, salvo os casos de 24 h; proibido iniciar a viagem com chuva ou neblina. Usar o PDF do DER-MG como fonte citada.",
+   "record_count": "1 ato",
+   "caveats": "Conferir o texto no PDF oficial do DER-MG antes de citar o artigo no app.",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "DER-MG Localização de radares fixos e portáteis",
+   "publisher": "DER-MG",
+   "url": "https://www.der.mg.gov.br/transportes/localizacao-de-radares-fixos-e-portateis",
+   "access": "Tabela HTML",
+   "format": "HTML (1,7 MB)",
+   "license": "Reutilização com fonte e crédito (site DER-MG)",
+   "tested": true,
+   "test_result": "HTTP 200. 710 radares fixos com rodovia, km, município, velocidade regulamentada e datas. Também há a camada ArcGIS 00_PUBLICACOES/radares",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Fora do tema: passar ao tema trafego_tempo (velocidade regulamentada pontual nas estaduais de MG).",
+   "record_count": "710",
+   "caveats": "Só pontual; sem trecho de velocidade",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "IDE-Sisema (GeoServer SEMAD) — verificação de camadas",
+   "publisher": "SEMAD-MG",
+   "url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetCapabilities",
+   "access": "WFS público",
+   "format": "XML capabilities",
+   "license": "'O acesso ao dado é livre' (ver superficie_pavimento)",
+   "tested": true,
+   "test_result": "HTTP 200, 584 KB, 1.421 camadas. A única de rodovias é ide_0401_mg_rodovias_lin (já testada em superficie_pavimento); não há OAE, balança ou placa. O portal idesisema.meioambiente.mg.gov.br deu 503",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhum: substituída pelo SRE-MG 2026_02.",
+   "record_count": "1.421 camadas",
+   "caveats": "Malha de 12/2021",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "DER-RJ no portal de dados abertos do RJ (Sinalização, Situação da Rede, Condições, Fluxo)",
+   "publisher": "DER-RJ",
+   "url": "https://dadosabertos.rj.gov.br/api/3/action/package_search?fq=organization:der&rows=100",
+   "access": "CKAN aberto",
+   "format": "CSV e PDF",
+   "license": "Open Data Commons PDDL (domínio público; uso comercial permitido)",
+   "tested": true,
+   "test_result": "API 200, 13 datasets. sinalizacao_vertical.csv tem 2.986 bytes e 43 linhas por rodovia (agregado). situacao-da-rede-estadual.pdf tem 7 páginas, de 30/11/2024. condicao_da_conservacao.csv (Regional I, 2025) traz conservação por rodovia, município e km. fluxo_2024.csv traz o fluxo nos radares",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Só complementar: o PDF da Situação da Rede pode alimentar a camada de superfície das RJ (DUP/PAV/LEN por rodovia) via OSM ref. Não serve para OAE, placa ou restrição.",
+   "record_count": "13 datasets",
+   "caveats": "Sem geometria nem inventário pontual",
+   "geo_coverage": "RJ (Regionais I e III para condições)"
+  },
+  {
+   "name": "INEA geoportal — BC25 RJ (pontes e trechos rodoviários)",
+   "publisher": "INEA / IBGE-SEA (RJ25)",
+   "url": "https://geoportal.inea.rj.gov.br/server/rest/services/MAREM/gpt_tra_ponte_25/FeatureServer/0",
+   "access": "ArcGIS REST anônimo",
+   "format": "Pontos e linhas",
+   "license": "Não declarada no serviço (base IBGE/SEA; citar fonte)",
+   "tested": true,
+   "test_result": "HTTP 200. Pontes: 7.387 pontos e 1.372 linhas; cargasupor e vaovertica = 0 em 100%; 337 pontos de madeira. Trechos: 182.819, com jurisdição Desconhecida (172.158), Federal ou Municipal, sem 'Estadual'",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Opcional: avisar ponte de madeira em via com sigla RJ-xxx (camada oae, aviso wooden_bridge). Nada de bloqueio.",
+   "record_count": "7.387 + 182.819",
+   "caveats": "Base de 2018 com fotos mais antigas; sem limites",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "Site DER-RJ (AET, notícias RJ-127)",
+   "publisher": "DER-RJ",
+   "url": "https://www.der.rj.gov.br/texto_explicativo_AET.asp",
+   "access": "HTML (ASP)",
+   "format": "HTML",
+   "license": "Rodapé 'PRODERJ – Todos os direitos reservados'; atos e fatos com citação",
+   "tested": true,
+   "test_result": "HTTP 200. AET por portal Softplan (derrj.sider.softplan.com.br/portalaet/), base CONTRAN 882/2021. Notícias 1019 e 1021 (09/2024) sobre pesados proibidos na RJ-127. lombadas_radares.asp deu 404. Não há portaria de feriado nem lista de restrições",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Curadoria manual: RJ-127 entra em oae_restricoes_curadas ou em interdições, com fim desconhecido e aviso 'confira'.",
+   "record_count": "—",
+   "caveats": "Site parado desde 09/2024",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "SEFAZ-RJ especificação de balanças (PCF Nhangapi, Levy Gasparian, Morro do Coco)",
+   "publisher": "SEFAZ-RJ",
+   "url": "https://portal.fazenda.rj.gov.br/licitacoes/wp-content/uploads/sites/44/2023/11/Especificacoes-tecnicas-provisorias..pdf",
+   "access": "PDF (bloqueado)",
+   "format": "PDF",
+   "license": "—",
+   "tested": false,
+   "test_result": "O curl devolveu HTML de 1.605 bytes em vez do PDF (provável WAF). Não confirmei se são balanças fiscais da SEFAZ ou de trânsito do DER",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Se confirmado, posto fiscal com balança entra na camada balancas como informativo; pedir a lista via LAI",
+   "record_count": "3 postos (citação da busca)",
+   "caveats": "Não confirmado",
+   "geo_coverage": "RJ (divisas)"
+  },
+  {
+   "name": "DER-ES Rede Rodoviária (SRE out/2025) — KML e WFS GEOBASES",
+   "publisher": "DER-ES / GEOBASES",
+   "url": "https://ide.geobases.es.gov.br/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=geonode:der_rodovias_es_epsg_31984&outputFormat=application/json&srsName=EPSG:4326",
+   "access": "WFS público; ZIP com KML no site do DER-ES",
+   "format": "GeoJSON e KML",
+   "license": "GeoNode 'Not Specified'; Decreto ES 5.139-R/2022 (Política de Dados Abertos) não atribui licença a esta base",
+   "tested": true,
+   "test_result": "WFS 200 com numberMatched 894. ZIP de 11,1 MB com KML de 30 MB e 895 placemarks (9.719 km). Campos SRE, SIGLA, DESCRICAO, SIT, KM_INICIAL e KM_FINAL, RELEVO, geometria com Z. Amostra: es/sre_es060_es010_es477.geojson",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador sre_es.py, só referência. Serve para achar os trechos das regras do ES por km e marcar pista simples ou dupla. RELEVO MONTANHOSO pode servir de aviso secundário.",
+   "record_count": "894 trechos",
+   "caveats": "Sem licença declarada",
+   "geo_coverage": "ES (malha estadual)"
+  },
+  {
+   "name": "DER-ES atos de trânsito (Lei 4.463/1990; IS 011-N/2003, 021-N/2004, 009-N/2008; Res. CA 0778/2005; IS 001-N/2014; IS 007-N/2018)",
+   "publisher": "DER-ES (DERTES)",
+   "url": "https://der.es.gov.br/legislacao-2",
+   "access": "PDFs públicos",
+   "format": "PDF (texto; a IS 019-N/2011 é imagem)",
+   "license": "Atos oficiais: domínio público (Lei 9.610/98, art. 8º, IV)",
+   "tested": true,
+   "test_result": "10 PDFs com HTTP 200 (204–689 KB). Texto extraído com pdftotext em es/*.txt. A IS 019-N/2011 não tem texto e precisa de OCR (tesseract ausente)",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Curadoria em data/raw/der_es/regras.json e importador der_es_restricoes.py. A Terceira Ponte (com horário) vai para rodovias_horario. Limites permanentes de PBT (ES-010 23 t; ES-060 km 33–39 23 t) vão para costLines com fator 1000 por PBT na camada de restrições de rodovia (generalizar federal_restricoes) ou em rodovias_horario sem janela.",
+   "record_count": "10 atos",
+   "caveats": "A vigência atual de vários atos não foi confirmada (DIO-ES não consultado); a Lei 4.463/1990 parece não ser aplicada por inteiro",
+   "geo_coverage": "ES"
+  },
+  {
+   "name": "Notícia Semobi/DER-ES: 23 t na Rodovia do Sol (DIO-ES de 24/01/2024)",
+   "publisher": "Tribuna Online (via notícia oficial es.gov.br)",
+   "url": "https://tribunaonline.com.br/_/164539",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Notícia: só fatos e link",
+   "tested": true,
+   "test_result": "WebFetch ok: km 33–39 (Village do Sol–Setiba) e ES-477 da antiga praça até a ES-388, acima de 23 t. A página es.gov.br/Noticia/governo-regulamenta-trafego-de-caminhoes-na-rodovia-do-sol só renderiza por JS (curl sem corpo). O número do ato não foi obtido",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Antes de modelar, localizar o ato no DIO-ES (ioes.dio.es.gov.br) e depois curar como as demais regras do ES.",
+   "record_count": "1",
+   "caveats": "Fonte secundária; o código ES-477 não confere com o SRE",
+   "geo_coverage": "ES"
+  },
+  {
+   "name": "dados.es.gov.br + PDA DER-ES 2024",
+   "publisher": "Governo ES / DER-ES",
+   "url": "https://dados.es.gov.br/api/3/action/package_search?q=der&rows=40",
+   "access": "CKAN aberto",
+   "format": "CSV e PDF",
+   "license": "Variada (Other Open, GFDL, não especificada); 'Pontes Rurais' da SEAG é CC0",
+   "tested": true,
+   "test_result": "8 datasets do DER-ES, todos administrativos. O PDA de 07/2024 prevê só 7 bases administrativas. 'balan' teve 0 resultados. 'Pontes Rurais' (SEAG) cobre vicinais",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhum agora; registrar como lacuna e pedir abertura via LAI ou PDA",
+   "record_count": "8",
+   "caveats": "—",
+   "geo_coverage": "ES"
+  },
+  {
+   "name": "OSM PBF Sudeste local + Valhalla local (verificação de cobertura)",
+   "publisher": "OpenStreetMap / projeto",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "access": "Arquivo local (osmium no container osmq-img) e API localhost:8002",
+   "format": "PBF / GeoJSONSeq",
+   "license": "ODbL 1.0",
+   "tested": true,
+   "test_result": "5.643 ways com tags de caminhão no Sudeste. Em estaduais: MG 3, MGC 0, LMG 2, RJ 129, ES 84. Terceira Ponte com hgv:conditional em 14 ways (maxweight 15 em 4). ES-060 'José Ribeiro Tristão' com hgv=no e maxweight=15 em 25 ways. Valhalla: 25 t, 3 eixos, Praia do Canto → Praia da Costa dá 19,4 km (carro 6,2 km); 40 t Vila Velha → Guarapari dá 94,3 km (carro 42,3 km) e não toca o SRE da ES-060 km 31,9–39,8",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Usar para medir a lacuna. Em MG o OSM não tem as restrições, então os dados do DER-MG trazem ganho real. No ES, conferir se o OSM e o ato de 2024 concordam antes de criar costLines (evita penalidade dupla).",
+   "record_count": "5.643 ways",
+   "caveats": "O PBF é de 09/10/2026",
+   "geo_coverage": "Sudeste"
+  },
+  {
+   "name": "Observatório MG — 'Ocorrências significativas'",
+   "publisher": "DER-MG",
+   "url": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/ocorrencias_significativas/FeatureServer",
+   "access": "ArcGIS REST anônimo",
+   "format": "JSON",
+   "license": "Declarada 'Dados de uso restrito DER-MG' (item do portal)",
+   "tested": true,
+   "test_result": "HTTP 200, 142 ocorrências com campos 'restrição_de_tráfego' e 'rota_alternativa', mas a licença é restritiva",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "NÃO importar. Usar pontos_criticos_publico no lugar.",
+   "record_count": "142",
+   "caveats": "Uso restrito",
+   "geo_coverage": "MG"
+  }
+ ],
+ "reused_from_existing": [
+  "superficie_pavimento: IDE-Sisema ide_0401_mg_rodovias_lin (3.444 trechos, 12/2021, 'acesso livre'). Não baixei de novo; só reconfirmei pelo GetCapabilities que a IDE-Sisema não tem OAE, balança nem placa.",
+  "superficie_pavimento: IBGE BC250 2025 (revestimento e tráfego periódico) cobre a lacuna de superfície no RJ e no ES; não retestado.",
+  "rodovias_restricoes: notícia da Portaria DER-MG 4.162/2025, agora substituída pela 4.242/2026 (lida no PDF oficial). O verify.json de rodovias_restricoes mostrou que o DER-MG cita bitrens expressamente; a 4.242 inclui CVC no § 1º.",
+  "rodovias_horario (docs/layers): mesmo modelo de trecho, janela, critério e costLines com fator 1000 da PRF 121/2026 e do DER-SP 084/2023; serve para a 4.242 e para a Terceira Ponte.",
+  "pontes_federais/federal_restricoes: SIAET, DNITGeo oae_sgo e ANTT pontes já cobrem as BRs em MG, RJ e ES (ex.: BR-365 do trecho de Romaria e alertas DNIT como a ponte da BR-259/ES); não retestados.",
+  "pesagem_pedagio/balancas: PPV da ANTT (federais) e a lógica directionVerdict servem para as balanças do DER-MG.",
+  "pontes_sp_estado_municipio e altura_sinalizacao: padrão DER-SP (OAE_DBO sem classe portante; Sinalizacao_Vertical sem valor) para comparar. Não há inventário de placas equivalente aberto em MG, RJ ou ES.",
+  "CONVENCOES_IMPLEMENTACAO.md (sudeste): balanças entram como source nova da camada balancas; não criar camada por estado."
+ ],
+ "gaps": [
+  "Nenhum dos três DERs publica inventário de placas R-14, R-15, R-9 etc. (o DER-RJ só publica agregado por rodovia; DER-MG e DER-ES nada).",
+  "Nenhum dos três publica limite de peso ou classe portante de OAE. O DER-MG tem condição (0–4, escala não documentada) e largura; o BC25 do RJ tem os campos cargasupor e vaovertica zerados.",
+  "DER-RJ: não há portaria de restrição em feriados, cadastro de OAE, lista de balanças, malha geométrica com km nem painel de interdições. O site está parado desde 09/2024 e o status atual da RJ-127 não foi confirmado.",
+  "DER-ES: o ato de 01/2024 (23 t na ES-060 km 33–39 e no trecho 'ES-477') não foi localizado no DIO-ES; número e exceções não confirmados. A vigência da Lei 4.463/1990 e da IS 009-N/2008 não foi checada.",
+  "DER-ES: não há lista de balanças nem de interdições atuais (a página de Interdições só tem a IS 007-N/2018). A IS 019-N/2011 é imagem e não foi lida (sem OCR).",
+  "DER-ES: não achei portaria de restrição em feriados; possivelmente não existe, mas não foi provado pelo DIO-ES.",
+  "Licenças: o Observatório MG e o GEOBASES ES não declaram licença. Só os datasets do DER-RJ no CKAN são PDDL. O uso comercial de MG e ES depende de autorização ou LAI.",
+  "A Portaria DER-MG 4.262/2026 foi lida em cópia secundária (LegisWeb); o PDF oficial está listado no site do DER-MG, mas não foi baixado.",
+  "Concessões estaduais de MG (EPR, Nascentes, Rota, Ecovias etc.): o site do DER-MG cita balanças das concessionárias sem lista aberta; não pesquisadas a fundo.",
+  "Overpass público deu 504; a cobertura OSM foi medida no PBF local de 09/10/2026."
+ ],
+ "recommendations": [
+  "1) MG pontos críticos (valor alto, esforço baixo): importador dermg_pontos_criticos.py, de hora em hora ou diário, para uma camada de interdições (nova interdicoes.layer.ts, a dividir com o tema interdicoes_temporarias_alagamentos). Pista interrompida (3, ou 4 para pesados) vira bloqueio pontual ou costLines com fator 1000 no trecho do SRE. Meia-pista vira aviso. Mostrar a variante e a data da última edição. São cerca de 1–2 dias.",
+  "2) Portaria DER-MG 4.242/2026 na camada rodovias_horario (valor alto, esforço médio): importador sre_mg.py (referência linear, ano='202602') e der_mg_portarias.py (lista anual de portarias + PDF + parser do Anexo I). Escopo 'pista simples DER-MG' = sitfis≠DUP com resp estadual ou concessionária, mais os 3 trechos duplicados e os especiais de Romaria e Três Pontas por km. Reaproveitar o critério de veículo da PRF 121 (excedentes + CVC/CTV/CTVP com AET). Criar alerta anual para checar a portaria do ano seguinte. São cerca de 3 dias.",
+  "3) Balanças DER-MG (valor médio, esforço baixo): weigh_dermg.py como source nova da camada balancas. A tabela do site é a lista vigente; as coordenadas vêm das camadas ArcGIS (37 de 43) e o resto do km no SRE-MG. Cerca de 0,5 dia.",
+  "4) OAEs DER-MG na camada oae (valor médio, esforço baixo): só aviso. Madeira gera wooden_bridge; largura menor que a do veículo + 1 m ou qtdfaixas=1 gera 'ponte estreita/uma faixa'. Não usar alturatota como gabarito nem a nota de condição como limite. Cerca de 1 dia.",
+  "5) ES (valor médio, esforço médio): sre_es.py (WFS GEOBASES) e um data/raw/der_es/regras.json curado. Terceira Ponte (IS 021-N/2004) vai para rodovias_horario, com as janelas do 2 eixos e o bloqueio 24 h para 3 eixos ou mais e produtos perigosos (o OSM já desvia, mas só com conditional parcial). O limite de 23 t na ES-010 (IS 009-N/2008) vira costLines por PBT. A ES-060 km 33–39 só depois de localizar o ato no DIO-ES.",
+  "6) Core legal: aviso AET MG (Portaria 4.262/2026, art. 45: do amanhecer ao pôr do sol, salvo os casos de 24 h; não iniciar a viagem com chuva ou neblina). Conferir antes no PDF oficial do DER-MG.",
+  "7) RJ (valor baixo): curar a RJ-127 como restrição com fim desconhecido e aviso 'confira'. Opcionalmente avisar as pontes de madeira do BC25 em vias RJ-xxx. Pedir via LAI (Fala.BR RJ ou e-SIC RJ) o cadastro de OAE, as balanças e as restrições vigentes do DER-RJ.",
+  "8) Licença: antes do uso comercial, pedir ao DER-MG/SEINFRA (Observatório) e ao DER-ES/GEOBASES uma declaração de licença (ideal CC-BY), citando os Decretos de dados abertos (ES 5.139-R/2022). Não importar 'Ocorrências significativas' (uso restrito).",
+  "9) Bônus para outros temas: os 710 radares do DER-MG, com velocidade regulamentada, servem ao tema trafego_tempo; o 'Fluxo de veículos 2024' do DER-RJ (PDDL) serve de contagem."
+ ]
+}

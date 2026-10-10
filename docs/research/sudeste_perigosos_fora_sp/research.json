@@ -1,0 +1,553 @@
+{
+ "category": "perigosos_fora_sp — restrições de rota para produtos perigosos em RJ, MG e ES",
+ "summary": "Fora de SP, só três proibições de rota para produtos perigosos (PP) têm ato vigente e texto primário lido:\n(1) Ponte Rio–Niterói (BR-101) e acessos, 24h. Ato: Portaria SPRF-RJ/PRF nº 407/2024 (DOU 22/11/2024).\n(2) Av. Portuária, no trecho Av. Brasil → Porto do Rio. Ato: art. 4º-A da mesma portaria.\n(3) Terceira Ponte, Vitória–Vila Velha, 0–24h. Ato: Instrução de Serviço DERTES nº 021-N/2004, que o DER-ES ainda lista como legislação.\n\nNa ponte do Rio são proibidas as classes 1, 2.1, 2.3, 3, 4, 5, 6 e 8. A classe 6 entrou agora: a Res. ANTT 1.713/2006 não a tinha.\nAo contrário das normas de SP, a portaria da PRF isenta a quantidade limitada e as provisões especiais da Parte 3 do RTPP. Prevê também uma exceção com janela horária para a Ilha de Mocanguê.\nIsso fecha a lacuna do tema carga_perigosa: a Res. 1.713 caiu em 01/07/2024 (Res. 6.000/2022, art. 234) e a PRF a substituiu em 22/11/2024.\n\nNenhuma das três está no OSM. Nenhuma via de RJ, MG ou ES tem tag hazmat.\nTestei no Valhalla local:\n- Niterói→Caju: 19,6 km pela ponte. Sem a ponte, 108,5 km e 99 min.\n- Terceira Ponte: o caminhão pesado já a evita por causa do hgv:conditional de peso. Já o caminhão leve com PP (8 t, 2 eixos) passa pela ponte, o que viola a IS. Sem a ponte, a rota sobe de 6,5 km para 17,5 km.\n\nRio de Janeiro: há duas leis municipais com status \"Em Vigor\" na Câmara, mas sem regulamentação nem fiscalização evidenciadas. Entram só como aviso.\n- Lei 1.632/1990: PP só das 21h às 6h no perímetro urbano.\n- Lei 2.959/1999: na Av. Brasil, cargas tóxicas só das 22h às 2h, nas pistas laterais.\n\nBH: a janela de PP no Anel (23h–5h, DNIT, 2011) só aparece em notícia. Desde 03/06/2025 o Anel é municipal, e o DOM-BH (2008–2026) não tem ato de PP para ele.\nDER-MG: só a Portaria 3.302/2014, da Copa, já expirada. Ela serve de precedente para regras por evento.\n\nMananciais: não achei proibição legal em RJ, MG ou ES. Só há a diretriz do Decreto 96.044, art. 9º.\nPolígonos testados para aviso de km em manancial:\n- APA do Rio Guandu, do INEA via INDE: a Dutra passa 18,9 km dentro dela.\n- APA Sul RMBH, da IDE-Sisema: a BR-040 de BH a Itabirito passa 46,6 km dentro dela.\n- APA Vargem das Flores, também da IDE-Sisema.\n\nFonte nova de emergências: FEAM/IDE-Sisema tem 4.012 acidentes ambientais de 2014 a 2025, 2.881 deles de transporte rodoviário. É o equivalente mineiro da CETESB.\nA busca web esgotou a cota (200). Por isso os municípios além de Rio, BH e Vitória ficaram sem varredura. NOTES.md, CSV de regras e amostras: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/perigosos_fora_sp/",
+ "rules": [
+  {
+   "jurisdiction": "Federal (PRF – Superintendência no RJ), rodovia concedida (Ecovias Ponte)",
+   "kind": "ponte",
+   "where": "Ponte Rio–Niterói (Pres. Costa e Silva), BR-101, e seus acessos, nos dois sentidos. No OSM: name='Ponte Rio-Niterói', 54 ways motorway (26,5 km) e 13 links (2,2 km)",
+   "days_hours": "24h, todos os dias",
+   "vehicles": "Veículos com PP das classes 1, 2.1, 2.3, 3, 4 (4.1/4.2/4.3), 5 (5.1/5.2), 6 (6.1/6.2) e 8 (Res. ANTT 5.998/2022, Parte 2). Classes 2.2, 7 e 9 não estão na lista. Veículos vazios não descontaminados seguem a mesma regra (art. 3º). Não há corte por PBT ou eixos",
+   "exceptions": "Art. 1º, § único: não se aplica quando produto, embalagem ou quantidade se enquadram nas isenções da Parte 3 do RTPP (provisões especiais e quantidade limitada). Art. 2º: carga para as instalações militares da Ilha de Mocanguê, só no trajeto Niterói↔Mocanguê, das 23h às 4h e das 11h às 16h, com aviso à concessionária 24h antes; essa limitação não vale em mobilização nacional, conflito, estado de defesa ou de sítio. Infração: CTB art. 187, I (média, art. 4º)",
+   "act": "Portaria SPRF-RJ/PRF nº 407, de 14/11/2024, arts. 1º a 4º (DOU de 22/11/2024, Seção 1; vigência na publicação). Substitui a Res. ANTT 1.713/2006, revogada pela Res. 6.000/2022, art. 234, II, em 01/07/2024",
+   "act_url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-407-de-14-de-novembro-de-2024-597101479",
+   "confidence": "alta",
+   "geometry_source": "OSM (PBF Sudeste local), ways com name='Ponte Rio-Niterói'; casar com o Valhalla (trace_route) como no hazmat_trechos_der"
+  },
+  {
+   "jurisdiction": "Federal (PRF – Superintendência no RJ)",
+   "kind": "via",
+   "where": "Av. Portuária, no trecho que liga a Av. Brasil ao Porto do Rio de Janeiro (Caju), nos dois sentidos. No OSM: name='Avenida Portuária', 13 ways service/trunk_link com hgv=designated, 3,8 km",
+   "days_hours": "24h, todos os dias",
+   "vehicles": "As mesmas classes da Ponte: 1, 2.1, 2.3, 3, 4, 5, 6 e 8, mais vazios não limpos",
+   "exceptions": "As mesmas da Ponte (quantidade limitada e provisões especiais da Parte 3 do RTPP). A Res. 5.936/2021, já revogada, dizia que os transportadores de PP podiam usar o trajeto então utilizado",
+   "act": "Portaria SPRF-RJ/PRF nº 407/2024, art. 4º-A (DOU 22/11/2024)",
+   "act_url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-407-de-14-de-novembro-de-2024-597101479",
+   "confidence": "alta",
+   "geometry_source": "OSM name='Avenida Portuária' no Caju. A extensão exata do 'trecho' tem confiança média: conferir em campo ou com a PRF"
+  },
+  {
+   "jurisdiction": "Estadual (DER-ES, então DERTES)",
+   "kind": "ponte",
+   "where": "Terceira Ponte (Ponte Dep. Darcy Castello de Mendonça), ES-060, Vitória–Vila Velha, nos dois sentidos. No OSM: 14 ways, 6,8 km, com hgv:conditional de peso e horário e sem hazmat",
+   "days_hours": "0h–24h, todos os dias",
+   "vehicles": "'Todos veículos transportando produtos perigosos' (art. 1º, g), sem filtro de classe, PBT ou eixos. A mesma IS também proíbe caminhões CAT 2 até 10 t das 6h às 10h e das 16h às 22h, CAT 2 até 15 t das 6h às 22h, e caminhões de 3 ou mais eixos e veículos especiais 24h",
+   "exceptions": "Nenhuma prevista. Rotas alternativas oficiais (art. 2º): Segunda Ponte, Rod. Darly Santos (ES-471) e Av. Carlos Lindenberg. Infração: CTB arts. 187 e 231, IV",
+   "act": "Instrução de Serviço DERTES nº 021-N, de 21/09/2004, art. 1º, g, e item 2 de 'Horários' (DIO-ES 27/09/2004; vale desde 23/09/2004). Substitui a IS 011-N/2003, que não tratava de PP",
+   "act_url": "https://der.es.gov.br/media/Documentos/Tr%C3%A2nsito/Instru%C3%A7%C3%B5es%20de%20Servi%C3%A7o/15-07-16/IS%20N%C2%BA%20021%20-%20N%202004%20%20-%20PROIBIR%20CAMINH%C3%83O%20NA%20TERCEIRA%20PONTE.pdf",
+   "confidence": "alta",
+   "geometry_source": "OSM name='Ponte Deputado Darcy Castello de Mendonça' (ref ES-060). A vigência atual se apoia na listagem da página de legislação do DER-ES em 10/10/2026, sem revogação localizada"
+  },
+  {
+   "jurisdiction": "Municipal (Rio de Janeiro), por lei da Câmara",
+   "kind": "zona",
+   "where": "Perímetro urbano do Município do Rio de Janeiro (IBGE 3304557). O texto não delimita o perímetro",
+   "days_hours": "Circulação permitida só das 21h às 6h, ou seja, proibida das 6h às 21h, todos os dias. O art. 2º obriga os postos a receber combustível só nesse horário",
+   "vehicles": "'Veículos de cargas perigosas': os que transportam combustíveis e seus derivados ou 'elementos químicos de alta periculosidade'. A lei não traz lista nem classes ONU",
+   "exceptions": "Nenhuma no texto",
+   "act": "Lei municipal nº 1.632, de 06/11/1990, art. 1º e parágrafo único (publicada no DO Rio em 19/11/1990). Status 'Em Vigor' no sistema da CMRJ; nenhuma regulamentação da SMTR foi localizada",
+   "act_url": "https://mail.camara.rj.gov.br/APL/Legislativos/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4/344f052de15dcb2f032576ac00738aeb?OpenDocument",
+   "confidence": "baixa",
+   "geometry_source": "Polígono do município (IBGE). Por ser a cidade inteira, a regra não muda rota: só gera aviso"
+  },
+  {
+   "jurisdiction": "Municipal (Rio de Janeiro), por lei da Câmara",
+   "kind": "via",
+   "where": "Avenida Brasil, 'via sob administração municipal'. No OSM, parte dela tem ref BR-101/040/116/465",
+   "days_hours": "Caminhões em geral: só das 22h às 6h. 'Cargas tóxicas, nocivas ao meio ambiente': só das 22h às 2h e nas vias laterais; onde não houver lateral, na faixa da direita",
+   "vehicles": "Caminhões de carga, carretas, caminhões-tanque e cegonhas; para PP, os que levam 'cargas tóxicas, nocivas ao meio ambiente', sem lista",
+   "exceptions": "Art. 1º, § único: veículos de 2 eixos que transportam só hortifrutigranjeiros e perecíveis para abastecer a cidade",
+   "act": "Lei municipal nº 2.959, de 30/12/1999, arts. 1º a 4º (DCM 01/03/2000). Status 'Em Vigor' na CMRJ, mas o art. 4º pede regulamentação. O regime real de caminhões está no Decreto Rio 45.433/2018 e em atos da SMTR",
+   "act_url": "https://mail.camara.rj.gov.br/APL/Legislativos/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4/cd6c0fd1fc02851f032576ac00733993?OpenDocument",
+   "confidence": "baixa",
+   "geometry_source": "OSM name='Avenida Brasil' (cerca de 165 km de ways no recorte do Rio). Usar só para aviso"
+  },
+  {
+   "jurisdiction": "Federal (DNIT, 2011); municipal (PBH/SMMUR/BHTrans) desde 03/06/2025",
+   "kind": "via",
+   "where": "Anel Rodoviário Celso Mello Azevedo, BH (BR-040/262/381). São 22,4 km municipalizados e 4,1 km ainda com o DNIT",
+   "days_hours": "Segundo notícia de 2011: PP só das 23h às 5h, mediante autorização",
+   "vehicles": "'Cargas perigosas', sem definição",
+   "exceptions": "Não informadas",
+   "act": "Ato não localizado. A única fonte é a notícia da Transporta Brasil, de 02/2011. O DOM-BH (API, 2008–2026) não tem ato de PP para o Anel, e as fiscalizações PBH+ANTT de 2026 verificam o RTPP, não horário",
+   "act_url": "https://www.transportabrasil.com.br/2011/02/veiculos-pesados-tem-novas-regras-de-circulacao-em-belo-horizonte-mg/",
+   "confidence": "baixa",
+   "geometry_source": "OSM name~'Anel Rodoviário Celso Mello' (cerca de 81 km de ways). Não aplicar como bloqueio"
+  },
+  {
+   "jurisdiction": "Estadual (DER-MG)",
+   "kind": "rodovia",
+   "where": "Rodovias estaduais da RMBH, de pista simples e dupla: MG-010, 020, 030, 040, 050, 060, 155, 424, 435, LMG-800, 806, 808 e MGC-262",
+   "days_hours": "Dias de jogo da Copa 2014: 14, 17, 21, 24 e 28/06 das 8h às 21h; 08/07 das 10h às 23h59. EXPIRADA",
+   "vehicles": "Todo veículo com PP (Res. ANTT 420/2004), mais CVC, CTV e cargas indivisíveis",
+   "exceptions": "GLP (ONU 1075) em motocicleta com side-car ou triciclo; combustível para Confins, com autorização do DER-MG e escolta armada",
+   "act": "Portaria DER-MG nº 3.302, de 09/06/2014, arts. 2º e 3º e Anexo (DOE-MG 10/06/2014). Vale como precedente para restrição por evento. Em BH houve o equivalente municipal: Portaria BHTRANS nº 51/2014 e o ato de 2013 da Copa das Confederações",
+   "act_url": "https://www.der.mg.gov.br/files/137/Ano-de-2014/1529/Portaria-n°-3302.pdf",
+   "confidence": "alta",
+   "geometry_source": "Lista de rodovias. Não usar: as datas já passaram"
+  },
+  {
+   "jurisdiction": "Federal (diretriz do Decreto 96.044/1988); polígonos estaduais (INEA-RJ e IEF/SEMAD-MG)",
+   "kind": "zona",
+   "where": "APA do Rio Guandu (RJ, 74.295 ha), APA Estadual Sul RMBH (MG, 164.431 ha) e APA Estadual Vargem das Flores (MG, 12.279 ha)",
+   "days_hours": "Sempre. É diretriz de evitar, não proibição",
+   "vehicles": "Todo veículo com PP",
+   "exceptions": "Nenhuma lei estadual (ALERJ, ALMG: Lei 22.805/2017 e Lei 16.197/2006) nem portaria DER proíbe PP nessas áreas",
+   "act": "Decreto federal 96.044/1988, art. 9º: evitar áreas de proteção de mananciais. A vigência é provável, segundo o tema carga_perigosa",
+   "act_url": "https://www.planalto.gov.br/ccivil_03/decreto/antigos/d96044.htm",
+   "confidence": "media",
+   "geometry_source": "INDE WFS INEA:apa_rio_guandu; IDE-Sisema WFS IDE:ide_2010_mg_unidades_conservacao_estaduais_pol. Exemplos de rota: Dutra Caju→Resende com 18,9 km na APA Guandu; BR-040 BH→Itabirito com 46,6 km na APA Sul"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "A Portaria SPRF-RJ/PRF nº 407/2024 proíbe PP das classes 1, 2.1, 2.3, 3, 4, 5, 6 e 8 na Ponte Rio–Niterói e acessos e, pelo art. 4º-A, na Av. Portuária. Isenta a quantidade limitada (Parte 3 do RTPP), libera Mocanguê das 23h às 4h e das 11h às 16h, e aplica a regra também aos vazios não limpos. Foi publicada no DOU de 22/11/2024.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-407-de-14-de-novembro-de-2024-597101479"
+  },
+  {
+   "fact": "A Res. ANTT 6.000/2022, art. 234, II, revogou as Res. 1.713/2006 (PP na ponte) e 2.294/2007 (caminhões na ponte) um ano depois de sua vigência, que começou em 01/07/2023. Logo, a revogação valeu a partir de 01/07/2024.",
+   "source_url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00006000&seqAto=000&valorAno=2022&orgao=DG/ANTT/MI&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true"
+  },
+  {
+   "fact": "A Res. ANTT 1.713/2006 não incluía a classe 6. A Res. 5.936/2021 estendeu a proibição à Av. Portuária. A portaria da PRF repete os dois e acrescenta a classe 6.",
+   "source_url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00001713&seqAto=000&valorAno=2006&orgao=DG%2FANTT%2FMT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true"
+  },
+  {
+   "fact": "A Portaria SPRF-RJ/PRF nº 406/2024 regula caminhões em geral na ponte: 2 eixos proibidos no sentido Niterói→Rio de seg a sex, das 4h às 10h; 3 ou mais eixos proibidos das 4h às 12h no sentido Niterói→Rio e das 12h às 22h no sentido Rio→Niterói. O tema é de caminhões em geral, não de PP.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-406-de-14-de-novembro-de-2024-597125791"
+  },
+  {
+   "fact": "A concessionária Ecovias Ponte confirma as portarias 406 e 407 na página 'Tráfego de caminhões'. O curl recebe 403; pelo navegador embutido a página abre.",
+   "source_url": "https://www.ecoviasponte.com.br/servicos/trafego-de-caminhoes"
+  },
+  {
+   "fact": "A IS DERTES 021-N/2004 proíbe 'todos veículos transportando produtos perigosos' na Terceira Ponte, 24h. Indica como alternativas a Segunda Ponte, a ES-471 e a Av. Carlos Lindenberg. O DER-ES ainda a lista em sua página de legislação.",
+   "source_url": "https://der.es.gov.br/legislacao-2"
+  },
+  {
+   "fact": "A Lei municipal do Rio 1.632/1990 permite veículos de cargas perigosas (combustíveis e derivados e químicos de alta periculosidade) no perímetro urbano só das 21h às 6h. O status na CMRJ é 'Em Vigor'.",
+   "source_url": "https://mail.camara.rj.gov.br/APL/Legislativos/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4/344f052de15dcb2f032576ac00738aeb?OpenDocument"
+  },
+  {
+   "fact": "A Lei municipal do Rio 2.959/1999 limita, na Av. Brasil, caminhões a 22h–6h e cargas tóxicas a 22h–2h, nas pistas laterais. O status é 'Em Vigor', mas a própria lei pede regulamentação no art. 4º.",
+   "source_url": "https://mail.camara.rj.gov.br/APL/Legislativos/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4/cd6c0fd1fc02851f032576ac00733993?OpenDocument"
+  },
+  {
+   "fact": "O Decreto Rio 45.433/2018, que define as áreas de restrição de caminhões (ART/ARP/ARM/ARV/VRE, polígonos por ato da SMTR), não menciona PP.",
+   "source_url": "https://www.legisweb.com.br/legislacao/?id=371007"
+  },
+  {
+   "fact": "O Anel Rodoviário de BH foi transferido à PBH em 2025: 22,4 km dos 26,5 km, e 4,1 km ficaram com o DNIT durante as obras.",
+   "source_url": "https://diariodocomercio.com.br/economia/anel-rodoviario-transferido-prefeitura-belo-horizonte/"
+  },
+  {
+   "fact": "As operações PBH+ANTT de 2026 no Novo Anel autuaram 12 de 13 veículos com PP (26 notificações) por itens do RTPP (equipamentos, documentos, identificação). Não houve autuação por horário ou rota.",
+   "source_url": "https://prefeitura.pbh.gov.br/noticias/orgaos-da-pbh-participam-de-fiscalizacao-conjunta-de-caminhoes-com-cargas-perigosas-no"
+  },
+  {
+   "fact": "A Portaria DER-MG 3.302/2014 proibiu PP nas rodovias estaduais da RMBH nos dias de jogo da Copa 2014. É a única portaria do DER-MG sobre PP nas listagens de 1999 a 2026.",
+   "source_url": "https://www.der.mg.gov.br/institucional/legislacao/portarias"
+  },
+  {
+   "fact": "A camada FEAM/IDE-Sisema de acidentes ambientais em MG tem 4.012 registros de 2014 a 2025, 2.881 de transporte rodoviário, com coordenadas, produto e nº ONU. O campo 'empresa' traz CPF em algumas linhas.",
+   "source_url": "https://geoserver.meioambiente.mg.gov.br/ows?service=WFS&version=2.0.0&request=GetCapabilities"
+  },
+  {
+   "fact": "A APA do Rio Guandu, de 2007 e sob tutela do INEA, tem 74.295 ha e está disponível por WFS na INDE (INEA:apa_rio_guandu, EPSG:4674).",
+   "source_url": "https://geoservicos.inde.gov.br/geoserver/ows?service=WFS&version=2.0.0&request=GetCapabilities"
+  },
+  {
+   "fact": "A Lei RJ 3.007/1998, art. 7º, exige licenciamento ambiental para transportar resíduos perigosos para dentro ou para fora do RJ. A lei não cria regra de rota.",
+   "source_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4/a87cbecbfbdb87ac032566400075f62e?OpenDocument"
+  },
+  {
+   "fact": "No PBF Sudeste local não há nenhuma tag hazmat em RJ, MG ou ES: as 37 ways estão em SP. A Terceira Ponte tem hgv:conditional por peso e horário; a Linha Vermelha (RJ-071) tem hgv=no.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html"
+  }
+ ],
+ "sources": [
+  {
+   "name": "DOU – Portaria SPRF-RJ/PRF nº 407/2024 (PP na Ponte Rio–Niterói e na Av. Portuária)",
+   "publisher": "Polícia Rodoviária Federal / Imprensa Nacional",
+   "url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-407-de-14-de-novembro-de-2024-597101479",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Ato oficial (Lei 9.610/98, art. 8º, IV); uso comercial livre",
+   "tested": true,
+   "test_result": "HTTP 200, 87,7 KB. Arts. 1º a 5º lidos e salvos em portaria_sprf_rj_407.txt. Achada pelo leiturajornal de 22/11/2024 (DO1), filtrando a hierarquia PRF/Superintendência. A busca por título 'SPRF-RJ/PRF' de 2024 a 2026 não mostra revogação",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Nova linha no CSV de trechos de PP por OSM (data/raw/hazmat/trechos_osm_pp.csv), com source 'prf-rj', classes proibidas, isencao_qtd_limitada=true e exceção Mocanguê. Importador hazmat_trechos_osm.py (seleciona ways por nome e bbox, encadeia, faz trace_route e valida no edge walk, reaproveitando match_line e lcf_ok do hazmat_trechos_der.py). Em perigosos.layer.ts: costLine com fator 1000 só quando a carga tem classe ou risco subsidiário listado (hazmat.ts já tem classes e subsidiaryRisk) e não está dentro da quantidade limitada",
+   "geo_coverage": "Ponte Rio–Niterói e Av. Portuária (RJ)",
+   "caveats": "'Seus acessos' não é delimitado no texto. Mocanguê exige aviso à concessionária e não dá para conferir no app"
+  },
+  {
+   "name": "DOU – Portaria SPRF-RJ/PRF nº 406/2024 (caminhões na ponte por eixos e sentido)",
+   "publisher": "Polícia Rodoviária Federal",
+   "url": "https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-406-de-14-de-novembro-de-2024-597125791",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 86 KB. Arts. 1º a 4º lidos. A 408/2024 (Serra de Petrópolis, CVC de 3 ou mais eixos) também tem HTTP 200",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Fora do escopo de PP: passar ao tema de restrições de caminhão em rodovias federais (federal_restricoes/rodovias_horario) como janela por sentido e eixos",
+   "geo_coverage": "BR-101 Ponte Rio–Niterói; BR-040 Serra de Petrópolis"
+  },
+  {
+   "name": "DOU leiturajornal / busca (localizar portarias das SPRF RJ, MG e ES)",
+   "publisher": "Imprensa Nacional",
+   "url": "https://www.in.gov.br/leiturajornal?data=22-11-2024&secao=do1",
+   "access": "HTTP aberto, JSON embutido em <script id=params>",
+   "format": "HTML+JSON",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "HTTP 200, cerca de 575 KB por dia. Listagem por título 2020–2026: 'SPRF-ES/PRF' com 7 atos e 'SPRF-MG/PRF' com 14 atos, nenhum de PP (só excedentes e JARI). A busca textual com termos entre aspas devolve 0 ou ruído",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Job semanal: varrer o leiturajornal DO1 e filtrar a hierarquia 'Polícia Rodoviária Federal/Superintendência' de RJ, MG e ES e os termos 'produtos perigosos', 'Ponte'. Para revisão manual, como o monitor do DOE-SP do hazmat_trechos_der",
+   "geo_coverage": "Brasil (atos federais)"
+  },
+  {
+   "name": "ANTTlegis – Res. 1.713/2006, 2.294/2007, 5.929/2021, 5.936/2021, 5.937/2021 e 6.000/2022 (art. 234)",
+   "publisher": "ANTT",
+   "url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00001713&seqAto=000&valorAno=2006&orgao=DG%2FANTT%2FMT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200 em todas, 28 a 396 KB. A 1.713 e a 2.294 aparecem como 'Revogada pela Resolução 6000/2022'; o art. 234, II, revoga após 1 ano (vigência em 01/07/2023). A 5.929 (O2 medicinal na pandemia) foi revogada pela 5.983/2022",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só histórico e base legal no popup. Não importar",
+   "geo_coverage": "Ponte Rio–Niterói"
+  },
+  {
+   "name": "Ecovias Ponte – Tráfego de caminhões",
+   "publisher": "Ecovias Ponte (EcoRodovias)",
+   "url": "https://www.ecoviasponte.com.br/servicos/trafego-de-caminhoes",
+   "access": "Web com WAF",
+   "format": "HTML",
+   "license": "Conteúdo da concessionária (só referência)",
+   "tested": true,
+   "test_result": "curl e WebFetch: 403. Navegador embutido: OK, confirma as portarias 406 e 407 (publicadas no DOU de 14/11/2024 segundo o site; o DOU real é de 22/11/2024)",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só confirmação. Não importar",
+   "geo_coverage": "Ponte Rio–Niterói"
+  },
+  {
+   "name": "DER-ES – Legislação de trânsito (IS 011-N/2003, IS 021-N/2004, IS 006-N/2006, IS 009-N/2008, Lei 4.463/1990)",
+   "publisher": "DER-ES",
+   "url": "https://der.es.gov.br/legislacao-2",
+   "access": "HTTP aberto, PDFs",
+   "format": "HTML + PDF (texto extraível com pdftotext)",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "Página: HTTP 200, 356 KB. PDFs das IS 011-N e 021-N e da Lei 4.463: HTTP 200, 280 a 340 KB, texto lido. A IS 021-N/2004 proíbe PP 24h na Terceira Ponte",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Linha ES-TERCEIRA-PONTE no trechos_osm_pp.csv (source 'der-es', todas as classes, sem isenção). Mesmo importador hazmat_trechos_osm.py. Monitorar a página por diff mensal",
+   "geo_coverage": "ES (Grande Vitória, ES-060 e ES-010)",
+   "caveats": "Vigência pós-ampliação da ponte não confirmada com o órgão. A Lei 4.463/1990 (Rodovia do Sol: mais de 2 eixos ou mais de 15 t proibidos) é regra geral de caminhão e precisa de conferência de vigência"
+  },
+  {
+   "name": "CMRJ – Legislação municipal do Rio (Leis 1.632/1990 e 2.959/1999)",
+   "publisher": "Câmara Municipal do Rio de Janeiro",
+   "url": "https://mail.camara.rj.gov.br/APL/Legislativos/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4?SearchView&Query=perigosas&SearchMax=50",
+   "access": "HTTP aberto (Lotus Notes, ?SearchView)",
+   "format": "HTML",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "HTTP 200. A busca 'perigosas' acha a Lei 1.632/1990 ('Em Vigor'); '\"produtos perigosos\"' acha só a Lei 5.019/2009 (APA). Textos das Leis 1.632 e 2.959 lidos (cerca de 20 KB cada). Os dois paths antigos (aplicnt, LeiOrdInt) dão 404",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Avisos sem bloqueio em perigosos.layer.ts: 'hazmat_rio_lei_1632' quando a rota passa pelo município do Rio com ETA entre 6h e 21h, e 'hazmat_av_brasil_lei_2959' para cargas tóxicas fora das 22h–2h. Polígono do município via importador IBGE, como no hazmat_municipio_sp",
+   "geo_coverage": "Município do Rio de Janeiro",
+   "caveats": "Sem regulamentação nem fiscalização evidenciadas; competência legislativa municipal em trânsito é questionável (CF art. 22, XI)"
+  },
+  {
+   "name": "LegisWeb – Decreto Rio 45.433/2018 (caminhões)",
+   "publisher": "Prefeitura do Rio (via LegisWeb)",
+   "url": "https://www.legisweb.com.br/legislacao/?id=371007",
+   "access": "HTTP aberto (agregador)",
+   "format": "HTML",
+   "license": "Ato oficial (agregador privado)",
+   "tested": true,
+   "test_result": "HTTP 200, 62 KB. Arts. 1º a 8º lidos: nenhuma regra de PP. O portal 1746 (só pelo navegador; WebFetch dá 403) cita a suspensão da Res. SMTR 3.055/2018 pela 3.254/2020",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma para PP. Repassar ao tema de restrições municipais do Rio",
+   "geo_coverage": "Município do Rio"
+  },
+  {
+   "name": "ALERJ – Legislação estadual RJ (contlei)",
+   "publisher": "ALERJ",
+   "url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/e9589b9aabd9cac8032564fe0065abb4?SearchView&Query=%22produtos%20perigosos%22&SearchMax=100",
+   "access": "HTTP aberto (Lotus Notes)",
+   "format": "HTML",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "HTTP 200. 'produtos perigosos': 2 leis (5.438/2009 TCFA e 4.789/2006 IPEM); 'cargas perigosas': 4.875/2006 (reboque) e 5.438; 'perigosos AND transporte': 11 leis de resíduos e agrotóxicos. Nenhuma lei de rota ou horário de PP. A Lei 3.007/1998, art. 7º, exige licenciamento para transportar resíduos perigosos entre estados",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma camada. Aviso de compliance opcional: 'transporte de resíduos perigosos para dentro ou fora do RJ exige licença (Lei RJ 3.007/1998, art. 7º)'",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "DER-RJ – Índice de legislação",
+   "publisher": "DER-RJ",
+   "url": "https://www.der.rj.gov.br/legislacao_indice.asp",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "HTTP 200, 32 KB. Só leis e decretos gerais e deliberações de 1991–2001. Nenhuma portaria de PP",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma. Pedir via LAI a lista de restrições vigentes em rodovias estaduais do RJ",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "DER-MG – Portarias 1999–2026 (listagens) e Portaria 3.302/2014",
+   "publisher": "DER-MG",
+   "url": "https://www.der.mg.gov.br/institucional/legislacao/portarias",
+   "access": "HTTP aberto; o PDF vem por redirect com cookie (com_dropfiles)",
+   "format": "HTML + PDF",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "28 páginas anuais com HTTP 200 (250 a 840 KB). Em 1999–2026 só uma ementa tem 'produtos perigosos': a Portaria 3.302/2014 (Copa), cujo PDF de 86 KB foi lido. As portarias de feriado (ex. 4.242/2026) tratam só de excedentes",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitor mensal: baixar as listagens e alertar quando aparecer ementa com 'perigos'. Suporte a 'regras por evento' (tabela com validade de datas) na camada perigosos",
+   "geo_coverage": "Rodovias estaduais de MG"
+  },
+  {
+   "name": "DOM-BH – API de busca (api-dom.pbh.gov.br/api/v1/edicoes/pesquisar)",
+   "publisher": "Prefeitura de Belo Horizonte",
+   "url": "https://dom-web.pbh.gov.br/",
+   "access": "WAF (GoCache) bloqueia curl; funciona no navegador. A API JSON tem os parâmetros termo, pesquisa_exata, documentos[]=E e paginacao",
+   "format": "JSON (Elasticsearch)",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "Pelo navegador: 'produtos perigosos' exato tem 57 hits em edições de 2008 a 2026. Só atos da Copa 2013/2014, licenças CNAE e o veto de 28/05/2016 a uma lei sobre critérios para carga perigosa. Nenhum ato de PP no Anel",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Monitor manual ou semiautomático (navegador) para BHTrans/SMMUR. Não dá para fazer importador por curl por causa do WAF",
+   "geo_coverage": "Belo Horizonte"
+  },
+  {
+   "name": "Notícia de 2011 – regras de veículos pesados em BH e no Anel (PP 23h–5h)",
+   "publisher": "Agência Transporta Brasil",
+   "url": "https://www.transportabrasil.com.br/2011/02/veiculos-pesados-tem-novas-regras-de-circulacao-em-belo-horizonte-mg/",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Imprensa (só referência)",
+   "tested": true,
+   "test_result": "WebFetch OK. Atribui ao DNIT a regra de PP no Anel (23h–5h, com autorização). Não cita número de ato",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não importar. Só aviso 'regra histórica não confirmada' e pedido via LAI",
+   "geo_coverage": "Anel Rodoviário de BH",
+   "caveats": "Fonte secundária de 2011; o Anel é municipal desde 2025"
+  },
+  {
+   "name": "PBH – Notícias do Novo Anel (municipalização, fiscalização de PP com a ANTT)",
+   "publisher": "Prefeitura de Belo Horizonte",
+   "url": "https://prefeitura.pbh.gov.br/noticias/orgaos-da-pbh-participam-de-fiscalizacao-conjunta-de-caminhoes-com-cargas-perigosas-no",
+   "access": "HTTP aberto",
+   "format": "HTML",
+   "license": "Conteúdo institucional",
+   "tested": true,
+   "test_result": "HTTP 200, 97 KB. Operação de 13/08/2026: 13 veículos com PP, 12 autuados, 26 notificações do RTPP. Nenhuma regra de horário",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Contexto. Pode alimentar um aviso informativo de 'fiscalização de PP frequente no Novo Anel'",
+   "geo_coverage": "BH"
+  },
+  {
+   "name": "FEAM/IDE-Sisema – Acidentes ambientais 2014–2025 (WFS)",
+   "publisher": "SEMAD/FEAM (IDE-Sisema, MG)",
+   "url": "https://geoserver.meioambiente.mg.gov.br/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=IDE:ide_2302_mg_acidentes_ambientais_2024_pto&outputFormat=application/json",
+   "access": "WFS aberto",
+   "format": "GeoJSON / CSV",
+   "license": "Não declarada (AccessConstraints NONE, Fees NONE); dados públicos estaduais, só atribuição. Uso comercial a confirmar",
+   "tested": true,
+   "test_result": "HTTP 200 em 2014–2025 (78 a 228 KB por ano). 4.012 registros, 2.881 'Transporte Rodoviário', todos com ponto; 214 em 10 municípios da RMBH; 847 rodoviários com nº ONU válido. 2025 em JSON dá erro 'non-finite numbers': usar outputFormat=csv. O campo 'empresa' tem CPF em 7 linhas de 2025",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador feam_acidentes_ambientais.py, irmão do cetesb_emergencias, com source 'feam' na camada perigosos: filtrar tipologia 'Transporte Rodoviário', descartar 'empresa' (LGPD) e manter data, município, produto, ONU e classe. Reaproveita o aviso hazmat_emergencias_hotspot. Atualização anual (a camada do ano corrente não existe ainda)",
+   "geo_coverage": "MG",
+   "record_count": "4.012 (2.881 rodoviários)"
+  },
+  {
+   "name": "FEAM/IDE-Sisema – Bases de empresas de atendimento a emergências com PP",
+   "publisher": "SEMAD/FEAM",
+   "url": "https://geoserver.meioambiente.mg.gov.br/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=IDE:ide_230202_mg_base_empresas_atendimento_acidentes_pto&outputFormat=csv",
+   "access": "WFS aberto",
+   "format": "CSV/GeoJSON",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "HTTP 200, 5,9 KB, 32 bases (empresa, cidade-base, lat/lon)",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "POI opcional no mapa da camada perigosos ('apoio a emergência mais próximo'). Baixa prioridade",
+   "geo_coverage": "MG",
+   "record_count": "32"
+  },
+  {
+   "name": "IDE-Sisema – Unidades de conservação estaduais de MG (APA Sul RMBH, APA Vargem das Flores)",
+   "publisher": "IEF/SEMAD-MG",
+   "url": "https://geoserver.meioambiente.mg.gov.br/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=IDE:ide_2010_mg_unidades_conservacao_estaduais_pol&outputFormat=application/json",
+   "access": "WFS aberto",
+   "format": "GeoJSON",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "HTTP 200, 2,8 MB, 95 UCs com nome, categoria e ato legal. APA Sul RMBH com 164.431 ha e APA Vargem das Flores com 12.279 ha. A rota BH→Itabirito pela BR-040 tem 46,6 km dentro da APA Sul",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Generalizar hazmat_aprm (fonte nova 'idesisema-apa'), carregando só as APAs de manancial (Sul RMBH, Vargem das Flores). Aviso hazmat_aprm 'km em área de manancial', sem bloqueio",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "INDE/INEA – APA do Rio Guandu, captações e AIPM 2021 (WFS)",
+   "publisher": "INEA-RJ via INDE",
+   "url": "https://geoservicos.inde.gov.br/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=INEA:apa_rio_guandu&outputFormat=application/json",
+   "access": "WFS aberto",
+   "format": "GeoJSON (EPSG:4674)",
+   "license": "Não declarada (AccessConstraints NONE)",
+   "tested": true,
+   "test_result": "HTTP 200. APA Guandu: 1 polígono, 74.295 ha, 372 KB. gpt_ponto_captacao_2021: 514 pontos. gpl_aipms_sedes_distritos_2021: 514 bacias, 28 MB; a maior é a do Paraíba do Sul, com 6 Mha, o que a torna inútil para aviso de km. A Dutra Caju→Resende tem 18,9 km dentro da APA Guandu",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Mesmo importador generalizado de mananciais (fonte 'inea-inde'): APA do Rio Guandu como polígono de aviso; pontos de captação só como contexto no mapa. Descartar as AIPM",
+   "geo_coverage": "RJ",
+   "record_count": "1 APA; 514 captações"
+  },
+  {
+   "name": "INEA – Geoportal ArcGIS e ArcGIS Online (UCs estaduais)",
+   "publisher": "INEA-RJ",
+   "url": "https://geoportal.inea.rj.gov.br/server/rest/services?f=json",
+   "access": "REST",
+   "format": "ArcGIS JSON",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "FALHOU: a listagem responde (HTTP 200), mas as consultas MapServer dão timeout depois de 120 s. Os FeatureServers do AGOL (services6…/Unidades_de_Conservação_Estaduais) devolvem 499 Token Required",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Não usar. A INDE já serve as mesmas camadas do INEA",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "ALMG – Lei 16.197/2006 (APA Vargem das Flores), Lei 22.805/2017 e Decreto 47.629/2019",
+   "publisher": "ALMG / Governo de MG",
+   "url": "https://www.almg.gov.br/legislacao-mineira/texto/LEI/16197/2006/",
+   "access": "HTML renderizado por JS (curl vem vazio; o navegador embutido funciona); a API de dados abertos dá 403/500",
+   "format": "HTML",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "Lei 16.197/2006 lida pelo navegador (45 KB): nada sobre PP; a BR-040 cruza a APA. Lei 22.805/2017 e Decreto 47.629/2019 verificados só por fonte secundária (normasbrasil e demarest): sem proibição de rota",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Base legal negativa para os avisos de manancial em MG (sem bloqueio)",
+   "geo_coverage": "MG"
+  },
+  {
+   "name": "Prefeitura de Vitória – Código de Posturas (Lei 6.080/2003) e Decreto 11.975/2004 (via LegisWeb)",
+   "publisher": "Prefeitura de Vitória",
+   "url": "https://www.legisweb.com.br/legislacao/?id=180813",
+   "access": "HTTP aberto (agregador)",
+   "format": "HTML",
+   "license": "Atos oficiais",
+   "tested": true,
+   "test_result": "HTTP 200, 211 e 397 KB. Nenhuma regra de rota ou horário de PP (só posto de combustível e GLP). O decreto de caminhões 16.243/2015, citado pela imprensa, não foi obtido: o URL testado no webleis deu 404",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma. Pedir o Decreto 16.243/2015 e conferir se trata de PP",
+   "geo_coverage": "Vitória"
+  },
+  {
+   "name": "OSM – PBF Sudeste local (osmium no container osmq-img)",
+   "publisher": "OpenStreetMap / Geofabrik",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "access": "Arquivo local data/valhalla/sudeste-latest.osm.pbf (somente leitura)",
+   "format": "PBF → GeoJSONSeq",
+   "license": "ODbL (permite uso comercial, com atribuição e share-alike para base derivada publicada)",
+   "tested": true,
+   "test_result": "OK. hazmat*: 37 ways, todas em SP. Ponte Rio–Niterói: 67 ways (28,6 km), sem hazmat. Av. Portuária: 13 ways (3,8 km), hgv=designated. Terceira Ponte: 14 ways (6,8 km), hgv:conditional de peso e horário. Linha Vermelha: hgv=no. Anel BH: sem tags",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Fonte da geometria dos trechos do hazmat_trechos_osm.py (seleção por nome, ref e bbox, depois trace_route). Não editar o OSM com hazmat=no: bloquearia também as classes 2.2/7/9 e as cargas isentas",
+   "geo_coverage": "Sudeste"
+  },
+  {
+   "name": "Valhalla local (truck, hazmat=true) – impacto das regras",
+   "publisher": "Projeto (container truck-router-valhalla, 3.9.1, tileset 1791576041)",
+   "url": "http://localhost:8002/route",
+   "access": "Local",
+   "format": "JSON",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "Niterói→Caju: 19,6 km/24 min com a ponte; sem ela, 108,5 km/99 min. Vila Velha→Vitória: caminhão padrão (cerca de 22 t) já evita a 3ª Ponte (17,5 km); caminhão leve com PP (8 t, 2 eixos) passa por ela (6,5 km/12 min), e sem ela a rota vai a 17,5 km/38 min",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Casos de teste para api/test/layers/perigosos.test.ts: PP classe 3 Niterói→Caju não usa a ponte; PP classe 9 ou dentro da quantidade limitada usa; caminhão leve com PP em Vila Velha→Vitória não usa a 3ª Ponte",
+   "geo_coverage": "Rio–Niterói, Grande Vitória"
+  },
+  {
+   "name": "Overpass API",
+   "publisher": "overpass-api.de",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "HTTP com headers (truck-router-mvp/0.1)",
+   "format": "JSON",
+   "license": "ODbL",
+   "tested": true,
+   "test_result": "FALHOU em 10/10/2026: HTTP 504 até em bbox pequenas (ponte do Rio, 3ª Ponte). Substituído pelo PBF local. A contagem nacional de hazmat continua a do tema carga_perigosa",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não necessário",
+   "geo_coverage": "-"
+  }
+ ],
+ "reused_from_existing": [
+  "carga_perigosa: o RTPP (Res. ANTT 5.998/2022) não cria rota; quem restringe é o órgão da via; infração do CTB art. 187, I. Não retestei.",
+  "carga_perigosa: lacuna 'Res. 1.713/2006 revogada pela 6.000/2022, ato substituto não achado'. Resolvi aqui: Portaria SPRF-RJ/PRF 407/2024.",
+  "carga_perigosa: Decreto 96.044/1988, arts. 9 a 14, com vigência provável. Base dos avisos de manancial. Não retestei o Planalto.",
+  "carga_perigosa: Relação ANTT com 2.336 nº ONU (classe, risco subsidiário, coluna 8 de quantidade limitada), já em api/src/services/hazmat.ts. Viabiliza o filtro por classe da Portaria 407 e a isenção por quantidade limitada.",
+  "carga_perigosa: fontes nacionais já testadas e só referenciadas: DNIT STRPP (login), IBAMA AATIPP (CSV por UF), IBAMA SIEMA (falhou), AP ANTT 7/2026 (sem regra de rota).",
+  "carga_perigosa e docs/layers/perigosos.md: desenho da camada (costLines com fator 1000, traçados casados com o Valhalla e validados no edge walk, aviso hazmat_aprm, hazmat_emergencias_hotspot, cetesb_emergencias). Usei como modelo para os importadores novos (trechos OSM, FEAM, APAs).",
+  "carga_perigosa (OSM): 73 ways hazmat no Brasil (37 na Imigrantes). Só confirmei no PBF Sudeste local que não há nenhuma em RJ, MG ou ES.",
+  "rodovias_restricoes: scripts dou_search.py e dou_get.py (copiados para a pasta do tema); PRF feriados (Portaria DIOP/PRF 121/2026); portaria de feriados do DER-MG como exemplo de regra estadual.",
+  "osm_qualidade_valhalla: o Valhalla só entende condicionais com um '@', trata hgv=discouraged como proibido e lê hazmat como booleano. Explica por que a 3ª Ponte já é evitada por caminhões pesados e não por PP leve.",
+  "seguranca_acidentes_roubo: acidentes PRF e ISP-RJ. Não refeito. A camada FEAM é complemento específico de PP em MG.",
+  "pontes_federais e balsas_travessias: SNV/DNIT e travessias. Não precisei retestar.",
+  "CONVENCOES_IMPLEMENTACAO.md (sudeste): trechos novos de PP entram na camada perigosos como importadores hazmat_trechos_*; restrições municipais na camada genérica restricoes_rmsp por código IBGE; feriados na tabela holidays."
+ ],
+ "gaps": [
+  "Anel Rodoviário de BH: a janela de PP (23h–5h com autorização, atribuída ao DNIT em 2011) não tem ato localizado, e não se sabe se a PBH, gestora desde 03/06/2025, a mantém. Pedir via LAI à PBH/SMMUR/BHTrans e ao DNIT.",
+  "Leis do Rio 1.632/1990 e 2.959/1999: constam como 'Em Vigor', mas não achei regulamentação, fiscalização nem decisão sobre constitucionalidade. O 'perímetro urbano' não está delimitado. Confirmar com SMTR e CET-Rio.",
+  "Túneis do Rio (Marcello Alencar, Rebouças, Santa Bárbara, Zuzu Angel, Noel Rosa), Linha Amarela e Elevado do Joá: nenhuma regra de PP achada. A Linha Vermelha tem hgv=no no OSM, mas o ato estadual ou municipal não foi lido.",
+  "Terceira Ponte: a vigência da IS 021-N/2004 depois da ampliação da ponte e da mudança de gestão não foi confirmada com o DER-ES (só pela listagem no site).",
+  "A extensão de 'seus acessos' na Ponte Rio–Niterói e o trecho exato da Av. Portuária não estão delimitados nas portarias. Confirmar com a PRF-RJ ou a Ecovias Ponte.",
+  "Municípios fora de Rio, BH e Vitória (Niterói, Duque de Caxias/REDUC, São Gonçalo, Nova Iguaçu, Contagem, Betim, Vila Velha, Serra, Cariacica, Juiz de Fora, Volta Redonda): não varridos, porque a cota de busca web (200) acabou.",
+  "ES: o Decreto de Vitória 16.243/2015 (caminhões) não foi obtido. Não achei geodados de mananciais (Jucu, Santa Maria da Vitória) nem de emergências ambientais do IEMA; a INDE não tem camadas do ES.",
+  "Rodovias federais concedidas em MG e ES (BR-040, BR-381, BR-262, BR-101/ES) e serras do RJ (Araras, Petrópolis): as portarias SPRF-MG e SPRF-ES de 2022–2026 não tratam de PP. Não conferi atos ANTT de 'restrição contínua' (Res. 6.000, art. 188) dessas concessões.",
+  "As licenças da IDE-Sisema e da INDE/INEA não são declaradas (AccessConstraints NONE). O uso comercial precisa ser confirmado com SEMAD e INEA.",
+  "A camada FEAM de acidentes tem CPF de pessoa física no campo 'empresa' e ainda não tem o ano de 2026.",
+  "A Lei MG 22.805/2017 e o Decreto 47.629/2019 foram conferidos só em fonte secundária, porque o texto da ALMG exige JS e a API deu 403/500."
+ ],
+ "recommendations": [
+  "P1 (esforço médio, 1–2 dias): criar data/raw/hazmat/trechos_osm_pp.csv com 3 linhas (RJ-PONTE-RIO-NITEROI, RJ-AV-PORTUARIA, ES-TERCEIRA-PONTE). Colunas: seleção OSM (nome, ref, bbox), classes_proibidas, isencao_qtd_limitada, excecao_destino e janela. Criar o importador hazmat_trechos_osm.py (sources 'prf-rj' e 'der-es'), que reaproveita match_line, lcf_ok e mergeUTurn do hazmat_trechos_der.py e do minianel. O CSV pronto está em regras_perigosos_fora_sp.csv no scratchpad.",
+  "P1: em perigosos.layer.ts e hazmat.ts, tornar o trecho condicional à carga. (a) Filtro por classe e risco subsidiário (Portaria 407: 1, 2.1, 2.3, 3, 4.x, 5.x, 6.x, 8; sem nº ONU, aplicar e avisar). (b) Isenção por quantidade limitada por regra, não global: a 407 isenta, a IS 021-N e as normas de SP não. (c) Exceção de destino na Ilha de Mocanguê, com janelas 23h–4h e 11h–16h e aviso de comunicação prévia. (d) Flag de veículo vazio não limpo, que também obedece.",
+  "P1: testes de rota em perigosos.test.ts. Niterói→Caju com classe 3 deve evitar a ponte (108,5 km). Classe 9 ou carga dentro da quantidade limitada deve passar (19,6 km). Caminhão leve (8 t) com PP em Vila Velha→Vitória deve evitar a 3ª Ponte; hoje passa.",
+  "P2 (esforço baixo): generalizar hazmat_aprm para uma fonte por UF de áreas de manancial. Usar a APA do Rio Guandu (INDE WFS INEA:apa_rio_guandu) e a APA Sul RMBH e a APA Vargem das Flores (IDE-Sisema). Aviso de km, sem bloqueio, com base no Decreto 96.044, art. 9º. Não usar as AIPM do INEA, porque as bacias são grandes demais.",
+  "P2 (esforço baixo): importador feam_acidentes_ambientais.py, a partir do WFS da IDE-Sisema de 2014 em diante, com CSV para 2025. Filtrar 'Transporte Rodoviário', descartar o campo 'empresa' (CPF) e alimentar hazmat_emergencias_hotspot em MG. Atualização anual.",
+  "P2: avisos sem bloqueio para normas de baixa confiança: 'hazmat_rio_lei_1632' (rota no município do Rio com ETA entre 6h e 21h), 'hazmat_av_brasil_lei_2959' (cargas tóxicas na Av. Brasil fora das 22h–2h) e 'hazmat_bh_anel_nao_confirmado'. Cada aviso deve citar o ato e dizer explicitamente que a aplicação não foi confirmada.",
+  "P2: suporte a regras de PP por evento, com validade de datas na tabela ou no CSV. Há precedentes: DER-MG 3.302/2014, BHTRANS 51/2014 e Copa das Confederações 2013.",
+  "P3: monitoramento normativo. Job semanal no DOU leiturajornal DO1 com filtro de hierarquia PRF/Superintendência para RJ, MG e ES e termos 'produtos perigosos', 'Ponte'. Diff mensal das páginas de portarias do DER-MG e da legislação do DER-ES. Verificação manual trimestral do DOM-BH, cuja API exige navegador.",
+  "P3: pedidos via LAI à PBH/SMMUR (PP no Anel e na área central), à SMTR-Rio (aplicação das Leis 1.632 e 2.959; PP em túneis), ao DER-ES (vigência da IS 021-N/2004 após a ampliação), à PRF-RJ (extensão de 'acessos' e da Av. Portuária) e ao DER-RJ (restrições de PP em rodovias estaduais).",
+  "Não marcar hazmat=no no OSM na Ponte Rio–Niterói nem na 3ª Ponte. O Valhalla lê hazmat como booleano e bloquearia também as classes 2.2/7/9 e as cargas isentas. A regra deve ficar na tabela própria da camada perigosos.",
+  "Passar ao tema de rodovias/caminhões (fora de PP): Portaria SPRF-RJ/PRF 406/2024 (eixos e sentido na ponte), 408/2024 e 340/2026 (Serra de Petrópolis), Lei ES 4.463/1990 (Rodovia do Sol, para conferir vigência) e as faixas de peso da IS 021-N/2004 na 3ª Ponte."
+ ]
+}

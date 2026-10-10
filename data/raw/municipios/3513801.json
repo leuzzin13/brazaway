@@ -1,0 +1,78 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3513801",
+  "municipio": "Diadema",
+  "uf": "SP",
+  "fonte_id": "diadema",
+  "fonte": {
+    "url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55 (serviço 55 'Cadastro de caminhões para vias de restrição', Portal de Atendimento da Prefeitura de Diadema)",
+    "licenca": "Informação oficial da Prefeitura de Diadema (serviço público; só o fato, com citação da fonte). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla.",
+    "notas": "11 vias do Centro e 3 do Jd. Eldorado, seg–sex 6h–20h e sáb 6h–14h. O decreto de 2011 não foi localizado; a regra vem da página oficial do serviço (2026). A R. Santo Antônio do Centro é só o trecho do Centro (há outra com o mesmo nome no sul do município)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "diadema_vias_restricao",
+      "tipo": "via",
+      "regime": "Vias de restrição (Centro e Jd. Eldorado)",
+      "nome": "Diadema — vias de restrição a caminhões no Centro e no Jd. Eldorado",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 6.3}, {"campo": "largura_m", "acima": 2.2}]},
+      "autorizacao": "Cadastro de caminhões para vias de restrição (serviço 55 do Portal de Atendimento da Prefeitura de Diadema).",
+      "excecoes": ["Caminhões com permissão obtida no cadastro do serviço 55"],
+      "base_legal": [
+        {
+          "ato": "Prefeitura de Diadema — serviço 55 'Cadastro de caminhões para vias de restrição' (Portal de Atendimento/e-Processo, setor Processamento/Trânsito)",
+          "artigo": "sem artigo (página de serviço oficial: 'Proibido o trânsito de caminhões que contenham medidas acima de 2,20 m de altura e acima de 6,30 de comprimento', seg–sex 6h–20h e sáb 6h–14h; o decreto de 2011 não foi localizado)",
+          "url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55"
+        }
+      ],
+      "nota": "A página diz '2,20 m de altura' e '6,30 de comprimento'. Lida ao pé da letra (altura E comprimento), como todo caminhão tem mais de 2,20 m de altura, a regra vira 'comprimento acima de 6,30 m'; a leitura usual (2,20 m de LARGURA, como o VUC de 2,20 x 6,30 m de Barueri e Osasco) dá 'largura acima de 2,20 m ou comprimento acima de 6,30 m'. A rota aplica a união das duas leituras (lado seguro): comprimento acima de 6,30 m OU largura acima de 2,20 m. A página não excetua feriados.",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local",
+      "trechos": [
+        {"inciso": "Centro 1", "via": ["Rua São Manoel", "Rua São Manuel"], "descricao": "R. São Manoel (CEP 09910-630)"},
+        {
+          "inciso": "Centro 2",
+          "via": ["Rua Santo Antônio", "Rua Santo Antonio"],
+          "de": {"lonlat": [-46.62901, -23.68496]},
+          "ate": {"lonlat": [-46.62963, -23.68704]},
+          "descricao": "R. Santo Antônio (CEP 09910-640), no Centro, ao norte da minirrotatória",
+          "nota": "Só o trecho do Centro: a outra R. Santo Antônio de Diadema (Jd. Eldorado/sul) fica de fora. No OSM a minirrotatória do meio da rua não tem o nome da rua: montada em dois trechos."
+        },
+        {
+          "inciso": "Centro 2",
+          "via": ["Rua Santo Antônio", "Rua Santo Antonio"],
+          "de": {"lonlat": [-46.62976, -23.68727]},
+          "ate": {"lonlat": [-46.63024, -23.68761]},
+          "descricao": "R. Santo Antônio (CEP 09910-640), no Centro, ao sul da minirrotatória"
+        },
+        {"inciso": "Centro 3", "via": ["Rua São Francisco de Assis"], "descricao": "R. São Francisco de Assis (CEP 09911-000)"},
+        {"inciso": "Centro 4", "via": ["Rua São Joaquim"], "descricao": "R. São Joaquim (CEP 09911-020)"},
+        {
+          "inciso": "Centro 5",
+          "via": ["Rua São Jorge", "Avenida São Jorge"],
+          "descricao": "R. São Jorge (CEP 09911-070), da Av. São José até o fim no Centro (no OSM, o trecho sul, entre a R. Artur Sampaio Moreira e a Av. São José, chama-se Avenida São Jorge)",
+          "nota": "Na base de CEP dos Correios (ViaCEP, consultada em 10/10/2026), Diadema tem um só logradouro 'São Jorge': a Rua São Jorge, Centro, CEP 09911-070, sem faixa de numeração (CEP único da rua). A 'Avenida São Jorge' do OSM (~115 m, way 125916038) é a continuação dela: começa no laço da R. Artur Sampaio Moreira, onde termina a 'Rua São Jorge', e tem no meio um pedaço com o nome 'Rua São Jorge' (way 296377656)."
+        },
+        {"inciso": "Centro 6", "via": ["Avenida São José"], "descricao": "Av. São José (CEP 09910-380)"},
+        {"inciso": "Centro 7", "via": ["Rua Artur Sampaio Moreira", "Rua Arthur Sampaio Moreira"], "descricao": "R. Arthur Sampaio Moreira (CEP 09911-010; no OSM: Artur)"},
+        {"inciso": "Centro 8", "via": ["Rua Izaurino Lopes da Silva"], "descricao": "R. Izaurino Lopes da Silva (CEP 09911-090)"},
+        {"inciso": "Centro 9", "via": ["Avenida São Judas Tadeu", "Rua São Judas Tadeu"], "descricao": "R. São Judas Tadeu (CEP 09911-100; no OSM: Avenida)"},
+        {"inciso": "Centro 10", "via": ["Avenida Nossa Senhora das Vitórias"], "descricao": "Av. Nossa Senhora das Vitórias (CEP 09910-140/09910-970)"},
+        {"inciso": "Centro 11", "via": ["Avenida Santa Maria"], "descricao": "Av. Santa Maria (CEP 09911-110)"},
+        {"inciso": "Jd. Eldorado 1", "via": ["Avenida Nossa Senhora dos Navegantes"], "descricao": "Av. Nossa Senhora dos Navegantes (CEP 09972-260/09972-385/09972-970/09974-420)"},
+        {"inciso": "Jd. Eldorado 2", "via": ["Avenida Frei Ambrósio de Oliveira Luz"], "descricao": "Av. Frei Ambrósio de Oliveira Luz (CEP 09972-061)"},
+        {"inciso": "Jd. Eldorado 3", "via": ["Rua João Antônio Araújo", "Rua João Antônio de Araújo"], "descricao": "R. João Antônio de Araújo (CEP 09972-001; no OSM: João Antônio Araújo)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3513801_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

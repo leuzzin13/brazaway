@@ -1,0 +1,285 @@
+{
+ "category": "rio_capital",
+ "sources": [
+  {
+   "name": "D.O. Rio, API de busca e download de edições",
+   "url": "https://doweb.rio.rj.gov.br/busca/busca/buscar/query/1/?1=1&q=%22circula%C3%A7%C3%A3o%20de%20caminh%C3%B5es%22",
+   "verdict": "confirmed",
+   "note": "HTTP 200 (JSON, 129 KB). Download /portal/edicoes/download/{id} funciona: baixei cerca de 60 edições, todas com 200. Confirmei que buscas por frase muitas vezes devolvem hits=[] e só trazem os ids em aggregations.Edicoes. Mais duas ressalvas: frases numéricas como \"45.433\" dão falso positivo em 2025 e 2026 (são frações de valores e CNPJ), e as contagens são baixas e pouco confiáveis (1 a 6 páginas por ano para 'circulação de caminhões'). Serve como fonte primária, mas não para inventário."
+  },
+  {
+   "name": "Querido Diário, Rio (3304557)",
+   "url": "https://queridodiario.ok.org.br/api/gazettes?territory_ids=3304557&querystring=%22circula%C3%A7%C3%A3o%20de%20caminh%C3%B5es%22",
+   "verdict": "corrected",
+   "note": "No 1º teste deu 200 (9,5 KB). Nos testes seguintes deu 302 do Cloudflare para api.queridodiario.org.br e depois HTTP 500. A URL canônica mudou e a API é instável. Os PDFs em data.queridodiario.ok.org.br responderam 200 nos 7 testes (2017-11-10, 2018-12-10, 2018-12-11, 2020-03-20, 2020-07-21, 2022-09-06, 2023-07-26, 2024-07-19)."
+  },
+  {
+   "name": "Res. SMTR 2.204/2012 (Linha Vermelha), DO 19/03/2012",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 17,1 MB, 88 p. Na p. 38–39 o texto confere: art. 1º I.3, II.2 (caminhão de qualquer espécie, caminhão-tanque, articulado, provido de reboque), II.4 (caminhão trator), IV (PP, Res. ANTT 420/2004) e V (valores). Parágrafo único: art. 29, VII do CTB. Art. 3º: excepcionalidades pela CRV após análise da CET-Rio. Art. 4º: guinchos e veículos a serviço da CET-Rio. Nenhum horário."
+  },
+  {
+   "name": "Res. SMTR 2.063/2010 (Linha Amarela), DO 15/12/2010",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1085",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 4,6 MB. Na p. 45 o texto confere: veículos de carga, dias úteis, 6h–10h e 17h–20h. Exceções I–IV. Revoga a Portaria TR/CRV 2.622/2007. O DO cita a resolução até 2021 (última em 13/05/2021, ed. 4946); depois disso não achei citação."
+  },
+  {
+   "name": "Portaria TR/SUB/CRV 24.914/2003 (corredor Rebouças), DO 25/11/2003",
+   "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7379",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 86 MB (PDF regerado em 10/06/2025). O OCR da p. 36–37 confere: PBT igual ou superior a 6,4 t e reboques, exceto COMLURB, nas 6 vias. Revoga a 9.729/1998."
+  },
+  {
+   "name": "Res. SMTR 3.055/2018 e Res. SMTR 3.254/2020",
+   "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf",
+   "verdict": "confirmed",
+   "note": "Os dois PDFs deram 200. A 3.055 (p. 24–26) confere: ARP com 27 incisos, ARM/ARV com 26 incisos, art. 4º (vias limítrofes), art. 5º com 12 exceções, art. 9º (AEVC de até 2 anos). A 3.254 (DO 20/03/2020, p. 42) suspende a 3.055 'por prazo indeterminado'. Ponto que o resultado não menciona: a CRV continuou publicando autorizações 'no horário e área delimitada pela Resolução nº 3.055' em 2021 e 2022, com validade até 2024. Isso é um sinal contrário à suspensão."
+  },
+  {
+   "name": "1746, API Zendesk do artigo de horários de carga",
+   "url": "https://www.1746.rio/api/v2/help_center/pt-br/articles/10872428930203.json",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 8,3 KB, updated_at e edited_at 2026-06-08 (criado em 2022-12-02). O texto reproduz a Res. 3.254 com a suspensão. A página HTML dá 403, como dito. O resto do texto descreve as regras de 2018 como se valessem: é conteúdo desatualizado e não deve ser usado como prova de regime."
+  },
+  {
+   "name": "SMTR, página da AEVC",
+   "url": "https://transportes.prefeitura.rio/autorizacao-especial-para-veiculos-de-carga-aevc/",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 185 KB, 'Atualizado em 03/03/2023 - 16:39'. O aviso está em maiúsculas: 'AS RESTRIÇÕES ... ESTÃO SUSPENSAS POR TEMPO INDETERMINADO, CONFORME RESOLUÇÃO SMTR Nº 3.254, DE 19/03/2020'."
+  },
+  {
+   "name": "IPP CadLog, Trechos de Logradouros",
+   "url": "https://pgeo3.rio.rj.gov.br/arcgis/rest/services/CadLog/Trechos_Logradouros/FeatureServer/0",
+   "verdict": "corrected",
+   "note": "Confere: 200, count=132.064, licença CC BY 4.0 (item 899168c8, 'Logradouros'). Erros de geometria: (1) 'Avenida Presidente João Goulart' tem 128 trechos e 35,2 km JÁ COM o Vidigal (48 trechos, 2,3 km); sem ele, a Linha Vermelha tem 80 trechos e cerca de 32,9 km. (2) A Orla Conde EXISTE no CadLog como 'Orla da Guanabara Prefeito Luiz Paulo Conde' (Centro). (3) No Centro a rua está grafada 'Rua São Jose', sem acento, com 7 trechos; o filtro 'Rua São José' com bairro=Centro devolve 0. (4) Praça XV aparece como 'Praça Quinze de Novembro'; o Freyssinet aparece como 'Avenida Engenheiro Freyssinet'. A consulta por nome_completo dá erro 400; o campo correto é 'completo'."
+  },
+  {
+   "name": "OpenStreetMap via Overpass",
+   "url": "https://overpass-api.de/api/interpreter",
+   "verdict": "corrected",
+   "note": "200. 652 ways (o resultado dizia 653), hgv=no 157, hgv:conditional 33, maxheight 435; a Linha Vermelha tem 79 de 87 ways com hgv=no. Correções: (1) o Elevado Rufino de Almeida Pizzarro JÁ tem hgv=no (6 ways com name=Linha Vermelha e esse official_name); (2) há 5 ways da Rua Medina com valor inválido hgv='no @ Mo-Fr 6:00-10:00, 17:00-21:00', não citadas; (3) das 33 condicionais, só 29 têm o horário da Res. 3.055 (6–10/17–21); as 2 da Av. Atlântica dizem 'Mo-Fr 6:00-19:00,17:00-20:00' e as da R. Equador e da R. Nelson Carneiro dizem 'Mo-Fr 06:00-21:00'."
+  },
+  {
+   "name": "anttlegis, Res. ANTT 1.713/2006 e 5.936/2021",
+   "url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00001713&seqAto=000&valorAno=2006&orgao=DG/ANTT/MT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+   "verdict": "confirmed",
+   "note": "200 nas duas páginas. A 1.713 consta 'Revogada pela Resolução 6000/2022' e proíbe as classes 1, 2.1, 2.3, 3, 4, 5 e 8. A 5.936 inclui o art. 4º-A (Av. Portuária). Falta um detalhe: a Res. 6.000 entrou em vigor em 01/07/2023 e só revoga a 1.713 'após 1 ano', ou seja, a partir de 01/07/2024."
+  },
+  {
+   "name": "Notícias da Av. Brasil (CET-Rio, prefeitura.rio) e COR WP API",
+   "url": "https://cetrio.prefeitura.rio/noticias/cet-rio-implanta-sinalizacao-especifica-de-restricoes-a-circulacao-de-caminhoes-na-av-brasil/",
+   "verdict": "confirmed",
+   "note": "Página da CET-Rio: 200, 'Publicado em 07/03/2024 | Atualizado em 10/03/2024', com os horários e o aviso de adiamento. prefeitura.rio: 200, publicado em 10/03/2024. COR WP REST: 200. Dos 100 posts com 'caminhões' depois de 11/03/2024, nenhum trata de restrição de caminhões na Av. Brasil."
+  },
+  {
+   "name": "Ecoponte (concessionária)",
+   "url": "https://www.ecoponte.com.br/",
+   "verdict": "untestable",
+   "note": "O 403 se repetiu no curl. Não deu para ver conteúdo."
+  },
+  {
+   "name": "DOU (in.gov.br) sobre a Ponte",
+   "url": "https://www.in.gov.br/consulta/-/buscar/dou?q=%22Ponte%20Rio%20Niter%C3%B3i%22&s=todos&exactDate=all&sortType=0",
+   "verdict": "confirmed",
+   "note": "200. Busquei de 01/2024 a 10/2026 por 'Ponte Presidente Costa e Silva': só aparecem decisões SUROD de eventos, Portaria 228/2026 (trecho de acesso) e atos orçamentários. Nada sobre restrição de caminhões ou PP."
+  }
+ ],
+ "rules": [
+  {
+   "where": "Linha Vermelha, Res. SMTR 2.204/2012",
+   "verdict": "confirmed",
+   "note": "O texto do DO 19/03/2012, p. 38–39 confere: proibição sem horário de caminhão de qualquer espécie, caminhão trator, reboques, PP e valores. Exceções: art. 29, VII, e arts. 3º e 4º. A CRV continua tratando a via como municipal (Portaria 5.145/2025 interdita faixa na 'Via Expressa Pres. João Goulart (Linha Vermelha)'). Geometria: o CadLog dá 128 trechos COM o Vidigal; sem ele, 80 trechos e cerca de 32,9 km."
+  },
+  {
+   "where": "Linha Amarela, Res. SMTR 2.063/2010",
+   "verdict": "confirmed",
+   "note": "DO 15/12/2010, p. 45: veículos de carga, dias úteis, 6h–10h e 17h–20h, com as 4 exceções. Vigência atual sem prova recente: a última citação no DO é de 05/2021. Manter confiança média."
+  },
+  {
+   "where": "Corredor Rebouças, Portaria TR/SUB/CRV 24.914/2003",
+   "verdict": "corrected",
+   "note": "Dias, veículos (PBT igual ou superior a 6,4 t e reboques), vias e exceção da COMLURB conferem. Autorização da CRV publicada em 03/01/2022 e válida até 31/12/2022 confere. Erros de geometria: no OSM o Elevado Rufino Pizzarro JÁ tem hgv=no (como parte da Linha Vermelha), além dos túneis. No CadLog o Freyssinet aparece como 'Avenida Engenheiro Freyssinet' e a Av. Vital Brasil está no Rio Comprido (4 trechos)."
+  },
+  {
+   "where": "Centro, Portaria TR/SUBG/CRV 10.798/2017",
+   "verdict": "corrected",
+   "note": "DO 10/11/2017, p. 61 confere: 'entrada e circulação de caminhões' na Praça XV, na R. Primeiro de Março, na R. São José e na Orla Conde, sem exceções. A geometria está errada: a Orla Conde existe no CadLog ('Orla da Guanabara Prefeito Luiz Paulo Conde'), a rua do Centro está grafada 'Rua São Jose', sem acento (o filtro proposto devolve 0), e a praça aparece como 'Praça Quinze de Novembro'."
+  },
+  {
+   "where": "Transoeste, Res. SMTR 2.242/2012, art. 5º",
+   "verdict": "confirmed",
+   "note": "DO 24/07/2012, p. 27–28 confere: Túnel da Grota Funda nos dois sentidos e pista central da Av. das Américas entre a Ayrton Senna e a Alceu de Carvalho, exceto o trecho do Viaduto Orlando Raso. O art. 8º revoga a 2.228/2012. A CRV autorizou placas no Túnel José Alencar em 17/01/2020. Ressalva: portarias de evento (2017, 2018, 2019 e 07/2022) desviam o tráfego 'inclusive os caminhões' pelo Túnel Vice-Presidente José Alencar. É exceção pontual."
+  },
+  {
+   "where": "Santa Cruz, Res. SMTR 2.242/2012, art. 4º",
+   "verdict": "confirmed",
+   "note": "O texto confere: caminhões, em quaisquer faixas, de segunda a sexta das 6h às 20h, nos 5 trechos listados."
+  },
+  {
+   "where": "Rua Gonzaga Duque (Ramos), Portaria 8.083/2024",
+   "verdict": "confirmed",
+   "note": "DO 19/07/2024 confere: toda a extensão; exceções para emergência, concessionárias e coleta de lixo. No CadLog: 9 trechos, só em Ramos."
+  },
+  {
+   "where": "Ruas João Borges e Duque Estrada (Gávea), Portaria 1.451/2023",
+   "verdict": "confirmed",
+   "note": "DO 26/07/2023 confere: arts. 1º e 2º, toda a extensão, sem exceções."
+  },
+  {
+   "where": "Caminho da Canoa, Portaria TR/CRV 4.536/2020",
+   "verdict": "confirmed",
+   "note": "DO 21/07/2020 confere: toda a extensão."
+  },
+  {
+   "where": "Estr. Roberto Burle Marx (Grumari), portaria sazonal",
+   "verdict": "corrected",
+   "note": "O número é legível: Portaria TR/SUBG/CRV nº 5.142, de 14/10/2025 ('Operação Verão', Barra de Guaratiba), art. 2º, DO 15/10/2025, p. 26–27. Conteúdo confere: caminhões e carga e descarga proibidos sáb, dom e feriados, 6h–22h, de 18/10/2025 a 01/03/2026, exceto utilidade pública e militares. A validade TERMINOU em 01/03/2026. O mesmo texto saiu em 01/2021, 11/2022, 09/2023 e 01/2025."
+  },
+  {
+   "where": "Maracanã em dia de jogo",
+   "verdict": "corrected",
+   "note": "O número é legível: Portaria TR/SUBEX/CRV nº 1.549, de 05/09/2022 (DO 06/09/2022). Proíbe circulação e estacionamento de caminhões e de utilitários (van, kombi, furgão) nas vias adjacentes, em dias de evento esportivo."
+  },
+  {
+   "where": "Av. Brasil, faixa exclusiva (Res. SMTR 3.718 e 3.726/2024)",
+   "verdict": "corrected",
+   "note": "3.718 (DO extra 27/03/2024) e 3.726 (DO 17/04/2024, p. 16, § 3º 'vedado o trânsito de caminhões ... em qualquer dia ou horário', efeitos a partir de 23/04/2024) conferem. Faltou a Res. SMTR nº 3.951, de 08/09/2026 (DO 09/09/2026, p. 15), que inclui o § 4º: reboques, guinchos, caminhões-guincho e plataformas de socorro veicular ficam fora da vedação. Também houve a Res. 3.758/2024 (60 km/h) e o Dec. 56.495/2025 (táxis intermunicipais)."
+  },
+  {
+   "where": "Av. Brasil, restrição horária anunciada em 2024",
+   "verdict": "confirmed",
+   "note": "A página da CET-Rio (07/03/2024, atualizada em 10/03) traz os horários: central Irajá–Caju todos os dias 4h–22h; lateral sentido Centro dias úteis 5h–9h; lateral sentido Santa Cruz Caju–Ramos dias úteis 16h–20h. Também traz o adiamento. A pauta da CPLOG está no DO 14/12/2023 (Edital SMTR 01/2023). Não achei ato posterior no DO nem post no COR até 10/2026."
+  },
+  {
+   "where": "ARP do Centro (Res. 3.055, art. 2º), suspensa",
+   "verdict": "confirmed",
+   "note": "Texto e suspensão (Res. 3.254/2020) conferem. A suspensão aparece também no parecer da CET no DO de 11/01/2024, p. 17, na SMTR (2023) e no 1746 (2026). Ressalva: a CRV publicou cerca de 20 páginas por ano em 2021–2022 com autorizações excepcionais baseadas no art. 5º da 3.055 (ex.: Portarias 2.800–2.838 de 06/01/2022, válidas até 07/01/2024). Indica inércia administrativa, não revogação."
+  },
+  {
+   "where": "ARM/ARV (Res. 3.055, art. 3º), suspensa",
+   "verdict": "confirmed",
+   "note": "Dias úteis, 6h–10h e 17h–21h, 26 incisos (do Francisco Bicalho à Av. Min. Ivan Lins). Confere."
+  },
+  {
+   "where": "Conceitos do Dec. 45.433/2018",
+   "verdict": "confirmed",
+   "note": "Confere: art. 1º, § 1º, VI (VUC de 2,50 × 7,20 × 3,50 m), VII (caminhão) e VIII (AEVC); art. 2º; art. 8º revoga os Decs. 42.272/2016 e 43.970/2017. Detalhe: a ART restringe também o VUC."
+  },
+  {
+   "where": "Joá, Joatinga, Elevado das Bandeiras e Túnel de São Conrado (portaria de 13/12/2012)",
+   "verdict": "confirmed",
+   "note": "DO 14/12/2012, p. 38: caminhões proibidos nos dois sentidos, 60 km/h e altura de 4,00 m no sentido São Conrado. O art. 4º fixa validade de 17/12/2012 a 17/12/2013. O motivo eram obras de reforço do Elevado das Bandeiras. O número da portaria segue incerto, porque as colunas do PDF se misturam. A regra está expirada."
+  },
+  {
+   "where": "Ponte Rio–Niterói e Av. Portuária (ANTT)",
+   "verdict": "corrected",
+   "note": "As classes da 1.713 e o art. 4º-A conferem. A data está errada: a Res. 6.000/2022 entrou em vigor em 01/07/2023 e revogou a 1.713 só 'após 1 ano', ou seja, o regime vale até cerca de 01/07/2024, não 2023. Os arts. 188–190 da 6.000 passam a restrição contínua para a PRF (segurança e fluidez) ou para a ANTT (perigosas), por ato próprio. A notícia de 12/2024 atribui as janelas por eixo à PRF. Não achei ato vigente no DOU de 2024 a 2026: não verificável."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "A Res. SMTR 3.254/2020 suspende por prazo indeterminado a Res. 3.055/2018 (DO 20/03/2020, p. 42).",
+   "verdict": "confirmed",
+   "note": "Texto lido no PDF do QD, p. 42, art. 1º."
+  },
+  {
+   "fact": "O artigo do 1746 citava a suspensão em 08/06/2026.",
+   "verdict": "confirmed",
+   "note": "updated_at e edited_at são 2026-06-08T14:49Z. O corpo reproduz a Res. 3.254, mas mistura texto desatualizado de 2018."
+  },
+  {
+   "fact": "A página da AEVC da SMTR (03/03/2023) avisa que as restrições estão suspensas.",
+   "verdict": "confirmed",
+   "note": "O aviso está em maiúsculas e cita a Res. 3.254. A página diz 'Atualizado em 03/03/2023 - 16:39'."
+  },
+  {
+   "fact": "O parecer da CET-Rio no DO de 11/01/2024, p. 17, diz que o Dec. 45.433 e a Res. 3.055 estão suspensos pelo Dec. 47.285/2020.",
+   "verdict": "confirmed",
+   "note": "Trecho literal achado na página 17 da edição 6145. Em 2025–2026 não achei repetição: os hits de \"45.433\" eram falsos positivos."
+  },
+  {
+   "fact": "Polígonos e horários da Res. 3.055 (ARP 6h–21h; ARM/ARV 6h–10h e 17h–21h; 12 exceções).",
+   "verdict": "confirmed",
+   "note": "Arts. 2º–5º conferem."
+  },
+  {
+   "fact": "VUC carioca: 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura; isenção com AEVC.",
+   "verdict": "confirmed",
+   "note": "Dec. 45.433, art. 1º, § 1º, VI. A isenção com AEVC está no art. 5º, I, da Res. 3.055. O VUC de SP no repo (vehicle.ts) não tem limite de altura."
+  },
+  {
+   "fact": "Res. 2.204/2012: proibição sem horário na Linha Vermelha.",
+   "verdict": "confirmed",
+   "note": "Texto lido."
+  },
+  {
+   "fact": "Res. 2.063/2010: Linha Amarela, dias úteis, 6h–10h e 17h–20h.",
+   "verdict": "confirmed",
+   "note": "Texto lido."
+  },
+  {
+   "fact": "Portaria 24.914/2003 e autorizações da CRV até 31/12/2022.",
+   "verdict": "confirmed",
+   "note": "OCR lido. A autorização publicada em 03/01/2022 (ed. 5202) cita a 24.914 e vale até 31/12/2022. Em 05/2021 também houve autorizações citando a 24.914."
+  },
+  {
+   "fact": "Res. 2.242/2012, art. 5º (Grota Funda e pista central da Av. das Américas).",
+   "verdict": "confirmed",
+   "note": "Texto lido."
+  },
+  {
+   "fact": "Horários anunciados para a Av. Brasil e adiamento em 10/03/2024.",
+   "verdict": "confirmed",
+   "note": "Os horários estão na página da CET-Rio. A página citada (prefeitura.rio) só trata do adiamento (publicada em 10/03/2024)."
+  },
+  {
+   "fact": "A Res. 3.726/2024 veda caminhões na faixa exclusiva a qualquer dia ou horário.",
+   "verdict": "corrected",
+   "note": "O § 3º confere. Desde 09/09/2026, a Res. 3.951/2026 abre exceção (§ 4º) para reboques, guinchos e plataformas de socorro."
+  },
+  {
+   "fact": "A Av. Brasil está sob administração municipal (Dec. 19.593/2001; convênio de 13/09/2001; Dec. Estadual 18.512/1993).",
+   "verdict": "confirmed",
+   "note": "Está nos considerandos da 3.718."
+  },
+  {
+   "fact": "A Res. ANTT 5.936/2021 incluiu o art. 4º-A (Av. Portuária); a 1.713 foi revogada pela 6.000/2022.",
+   "verdict": "corrected",
+   "note": "O conteúdo confere, mas a revogação só produziu efeito a partir de 01/07/2024 (6.000 em vigor em 01/07/2023 e revogação 'após 1 ano')."
+  },
+  {
+   "fact": "O CadLog tem 132.064 trechos, CC BY 4.0.",
+   "verdict": "confirmed",
+   "note": "returnCountOnly=132064; a licença CC BY 4.0 está no item do ArcGIS Online."
+  },
+  {
+   "fact": "No OSM: Linha Vermelha com hgv=no em 79/86, Linha Amarela sem condicional e 33 hgv:conditional 'Mo-Fr 06:00-10:00,17:00-21:00'.",
+   "verdict": "corrected",
+   "note": "São 79 de 87 ways, e a Linha Amarela só tem 11 'discouraged'. Das 33 condicionais, 29 têm o horário citado; Av. Atlântica (2), R. Equador e R. Nelson Carneiro têm outros horários. Há também 5 ways da R. Medina com hgv='no @ ...' inválido."
+  },
+  {
+   "fact": "A Portaria 10.798/2017 proíbe caminhões na Praça XV, na Primeiro de Março, na São José e na Orla Conde.",
+   "verdict": "confirmed",
+   "note": "Texto lido."
+  },
+  {
+   "fact": "A Portaria 8.083/2024 proíbe caminhões na R. Gonzaga Duque, com exceções.",
+   "verdict": "confirmed",
+   "note": "Texto lido."
+  }
+ ],
+ "extra_findings": [
+  "REGRA NOVA NÃO LISTADA: Portaria TR/SUBG/CRV nº 10.417, de 04/08/2026 (DO 05/08/2026, republicada por incorreção em 06/08/2026). Proíbe a circulação de ônibus e caminhões na Av. Afonso de Taunay (Barra da Tijuca), a partir da Av. Alda Garrido. Exceções: emergência, concessionárias e coleta de lixo. No CadLog: 11 trechos; no OSM: 10 ways, sem hgv. https://doweb.rio.rj.gov.br/portal/edicoes/download/14897",
+  "Res. SMTR nº 3.951, de 08/09/2026 (DO 09/09/2026, p. 15). Inclui o § 4º no art. 2º da Res. 3.718: reboques, guinchos, caminhões-guincho e plataformas de socorro ficam fora da vedação de caminhões na faixa da Av. Brasil. Cita a Res. SMTR 3.929/2026, que não li. https://doweb.rio.rj.gov.br/portal/edicoes/download/14941",
+  "Outras alterações da Res. 3.718: Res. SMTR 3.758/2024 (60 km/h nas faixas, DO 25/07/2024) https://doweb.rio.rj.gov.br/portal/edicoes/download/6698 e Dec. Rio 56.495/2025 (táxis intermunicipais na 2ª faixa) https://doweb.rio.rj.gov.br/portal/edicoes/download/7532",
+  "Sinal contrário à suspensão, não mencionado no resultado. A CRV continuou publicando autorizações 'no horário e área delimitada pela Resolução nº 3.055' em 2021 e 2022, cerca de 20 páginas por ano, com validade até 2024 (ex.: Portarias TR/SUBG/CRV 2.800–2.838, de 06/01/2022). Em 2023 só 2 páginas citam a 3.055. https://doweb.rio.rj.gov.br/portal/edicoes/download/5208",
+  "Res. ANTT 6.000/2022: entrou em vigor em 01/07/2023, revoga a 1.713 só a partir de 01/07/2024 e, nos arts. 188–190, define que restrições contínuas são fixadas por ato da PRF ou da ANTT. É o caminho para achar o ato atual da Ponte (provável ato da PRF, segundo a notícia de 12/2024). https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00006000&seqAto=000&valorAno=2022&orgao=DG/ANTT/MI&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+  "Grafias no CadLog que derrubam o casamento por nome: 'Rua São Jose' no Centro (sem acento, 7 trechos), 'Orla da Guanabara Prefeito Luiz Paulo Conde', 'Praça Quinze de Novembro', 'Avenida Engenheiro Freyssinet', 'Elevado Rufino de Almeida Pizzarro', 'Tunel Vice Presidente José Alencar' (Recreio). O campo de consulta é 'completo', não 'nome_completo'. https://pgeo3.rio.rj.gov.br/arcgis/rest/services/CadLog/Trechos_Logradouros/FeatureServer/0",
+  "OSM: 5 ways da Rua Medina têm o valor inválido hgv='no @ Mo-Fr 6:00-10:00, 17:00-21:00', também resíduo da 3.055. O Elevado Rufino Pizzarro já tem hgv=no (name=Linha Vermelha). https://overpass-api.de/api/interpreter",
+  "Portarias de evento (DO 29/09/2017, 24/09/2018, 28/09/2018, 20/09/2019, 10/07/2022) desviam o tráfego 'inclusive os caminhões' pelo Túnel Vice-Presidente José Alencar. São exceções temporárias à Res. 2.242, art. 5º. https://doweb.rio.rj.gov.br/portal/edicoes/download/5386",
+  "Proibições temporárias de obra achadas no inventário, que não se aplicam como permanentes: Portaria TR/SUBG/CRV 4.952/2025 (ônibus e caminhões na Av. João XXIII, Santa Cruz, de 06 a 18/10/2025) e portaria de 06/06/2023, art. 6º (caminhões acima de 3 eixos, 30 t, na Av. Cesário de Melo, nas Ruas Pontes Leme, Aratanha, Teixeira de Aragão, Ilhéus e Luiz Barata). https://doweb.rio.rj.gov.br/portal/edicoes/download/7619",
+  "A portaria sazonal do Grumari para o verão 2026/27 ainda não foi achada até 10/10/2026. A anterior (5.142/2025) saiu em 15/10, então convém vigiar o DO nas próximas semanas."
+ ]
+}

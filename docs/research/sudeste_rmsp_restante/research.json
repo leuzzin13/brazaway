@@ -1,0 +1,604 @@
+{
+ "category": "rmsp_restante",
+ "summary": "Fiz a varredura completa dos 32 municípios da Grande SP que faltavam. São os 39 da RMSP menos SP, Osasco, Barueri, Guarulhos, Cajamar, Santana de Parnaíba e Ribeirão Pires; a lista da pista repetia Itapecerica. Cada município recebeu um status: regra com ato, regra oficial sem ato, pista, placa pontual, sem restrição declarada, confirmou que não tem ou não achou. Não refiz o que o tema restricoes_rmsp_municipios já tinha.\n\n**Regras novas com ato primário lido:**\n- **Arujá:** Dec. 8.183/2023. São 10 vias. Vale 24h para PBT acima de 31,5 t em todas elas, 24h para qualquer caminhão em 5 vias e das 5h às 23h59 nas outras 5. Não isenta VUC.\n- **Itapecerica da Serra:** Dec. 2.184/2010. São 4 vias, seg–sex 5h–21h e sáb 5h–14h, com Cartão-Caminhão. Radares de restrição foram instalados nessas mesmas vias em 2023.\n- **Caieiras:** leis lidas na Câmara.\n  - Lei 5.486/2021: 4 vias na Vila Rosina, 24h, VUC liberado.\n  - Lei 3.560/2004: 13 t e 12 m em todas as vias e produtos perigosos proibidos.\n  - Lei 5.233/2019: autoriza rodízio par/ímpar das 6h às 20h, mas o decreto que lista as vias não foi achado.\n- **Mogi das Cruzes:** Lei 2.903/1985, Dec. 899/1985 (redação do 1.782/2000) e Dec. 8.375/2008. Área central com perímetro de 16 logradouros. Na prática, segundo a prefeitura, o limite é 3,5 t das 10h às 20h, por sinalização.\n\n**Regras confirmadas em fonte oficial, sem o ato:**\n- **Suzano:** é a primeira base estruturada municipal da RMSP fora da capital. O GeoSuzano publica o ArcGIS FeatureService \"MOB-Restrição trânsito de caminhões\", com 2 polígonos e horário seg–sáb 7h–21h; perecíveis estão liberados.\n- **Diadema:** API JSON do e-Processo, serviço 55. São 11 vias no Centro e 3 no Jd. Eldorado, para caminhão acima de 2,20 m ou acima de 6,30 m, seg–sex 6h–20h e sáb 6h–14h.\n- **Taboão da Serra:** restrição no município inteiro, seg–sex 5h–21h e sáb 10h–14h. O serviço Cartão Caminhão está ativo na Conam.\n- **Mauá:** a SEMOB lista 3 pontos de fiscalização eletrônica de restrição a veículos de carga, sem regra publicada.\n\n**Mairiporã:** Lei 4.391/2025. Proíbe caminhão com mais de 2 eixos e ônibus de fretamento em 3 avenidas da Serra da Cantareira. Só li a ementa e a imprensa, não o texto.\n\n**Pistas não confirmadas:** Itaquaquecetuba, Juquitiba, Santa Isabel, São Caetano, Itapevi e Poá.\n\n**Placas pontuais:** Cotia (já registrado na rodada anterior), Embu das Artes e Franco da Rocha.\n\n**Sem restrição declarada pela prefeitura à imprensa:** Ferraz de Vasconcelos e Guararema.\n\n**Confirmou que não tem (indício forte):** Santo André. A lista oficial de legislação de mobilidade não traz nenhuma restrição.\n\n**Não achou:** SBC, Biritiba-Mirim, Carapicuíba, Embu-Guaçu, Francisco Morato, Jandira, Pirapora, Rio Grande da Serra, Salesópolis, São Lourenço da Serra e Vargem Grande Paulista.\n\n**Achado de método:** o site Pé na Estrada/Trucão compila restrições de 28 municípios da RMSP. Tem erros comprovados (Barueri e Cotia aparecem \"sem restrição\", e o rodízio de Caieiras está atribuído a Mairiporã). Só serve como checklist.\n\nNotas e amostras em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/rmsp_restante/NOTES.md.",
+ "rules": [
+  {
+   "jurisdiction": "Arujá (3503901)",
+   "kind": "via",
+   "where": "Todas as vias do Anexo I do Dec. 8.183/2023: R. Oscar Schiavon; Av. Mário Covas (Av. Fatec → Estr. dos Vados); Av. dos Expedicionários (sentido bairro/centro, Pça Narciso José Lopes → Rot. Dalila Ferreira Barbosa); Av. Amazonas (sentido bairro/centro); Av. Hans Ossamu Suzuki; Av. Getúlio Vargas; Av. Antônio Afonso de Lima; Al. Capelinha; R. Duque de Caxias; R. Licínio Rodrigues de Paiva",
+   "days_hours": "24h, todos os dias (art. 8º, I)",
+   "vehicles": "Caminhão, caminhão-trator, reboque e semirreboque com PBT > 31.500 kg ou PBTC > 33.075 kg",
+   "exceptions": "Quem está instalado no trecho ou prova que o trecho é passagem obrigatória (par. único do art. 8º). Cadastro e Autorização Especial do DMT com validade de 1 ano, nas 13 categorias do art. 7º §3º. Vigência desde 08/03/2023; revoga o Dec. 5.557/2010; regulamenta a Lei 2.295/2010.",
+   "act": "Decreto municipal 8.183 de 08/03/2023, art. 8º, I e Anexo I",
+   "act_url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome. Teste: 7 dos 10 nomes com match exato. Trechos e sentidos precisam de corte manual."
+  },
+  {
+   "jurisdiction": "Arujá (3503901)",
+   "kind": "via",
+   "where": "Incisos I, IV, V, VI e VII do Anexo I: R. Oscar Schiavon; Av. Amazonas (só sentido bairro/centro); Av. Hans Ossamu Suzuki; Av. Getúlio Vargas; Av. Antônio Afonso de Lima",
+   "days_hours": "24h, todos os dias (art. 8º, II)",
+   "vehicles": "Qualquer veículo do tipo caminhão (caminhão, caminhão-trator, reboque, semirreboque). Não há isenção de VUC nem exceção por porte (art. 7º §2º).",
+   "exceptions": "Só com cadastro ou Autorização Especial do DMT: socorro, imprensa, obras de emergência, acesso a garagem própria, concretagem, feirantes, mudança, perecíveis, perigosos de consumo local, valores, serviços essenciais e entrega de material com NF. Fiscalização por radar (art. 17).",
+   "act": "Decreto municipal 8.183/2023, art. 8º, II",
+   "act_url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome; a Av. Amazonas tem restrição com sentido"
+  },
+  {
+   "jurisdiction": "Arujá (3503901)",
+   "kind": "via",
+   "where": "Incisos II, III, VIII, IX e X do Anexo I: Av. Mário Covas entre a Av. Fatec e a Estr. dos Vados (2 sentidos); Av. dos Expedicionários (bairro/centro, trecho citado); Al. Capelinha; R. Duque de Caxias; R. Licínio Rodrigues de Paiva",
+   "days_hours": "Todos os dias, das 05:00 às 23:59; liberado das 00:00 às 04:59 (art. 8º, III)",
+   "vehicles": "Qualquer veículo do tipo caminhão",
+   "exceptions": "Mesmas do cadastro e Autorização Especial do DMT",
+   "act": "Decreto municipal 8.183/2023, art. 8º, III",
+   "act_url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome mais corte de trecho"
+  },
+  {
+   "jurisdiction": "Itapecerica da Serra (3522208)",
+   "kind": "via",
+   "where": "Toda a extensão de: Av. XV de Novembro, R. Manoel Maximino da Rosa, R. Treze de Maio, Estr. Ary Domingues Mandu",
+   "days_hours": "seg–sex 5h–21h; sáb 5h–14h; dom livre",
+   "vehicles": "Caminhões e carretas, sem limite de PBT e sem definição de VUC no ato",
+   "exceptions": "Precisam de CARTÃO-CAMINHÃO do Depto de Trânsito (art. 3º): carga e descarga para o comércio local, combustível ou gás de consumo local, lixo, valores, perecíveis, socorro mecânico, obras de emergência, serviços essenciais, mudança, presos e bombeiros. Efeitos 30 dias após a publicação (cerca de jan/2011). Em 15/08/2023 a prefeitura noticiou radares de restrição de veículos e controle de caminhões de passagem nessas mesmas vias.",
+   "act": "Decreto municipal 2.184 de 27/12/2010, arts. 1º a 3º (art. 4º da Lei 2.162/2010)",
+   "act_url": "http://www.ecrie.com.br/sistema/conteudos/arquivo/arquivo_5_18102018164433.pdf",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome (teste no Overpass falhou: servidor ocupado)"
+  },
+  {
+   "jurisdiction": "Caieiras (3509007)",
+   "kind": "via",
+   "where": "R. Narciso Degrandi Ernesto, R. Esmeraldo Felipe Santiago, Av. David Kasitzky e Av. Rodolfo Polidoro (Vila Rosina)",
+   "days_hours": "Proibição permanente (24h, todos os dias); a lei não fixa janela",
+   "vehicles": "Caminhão e carreta, exceto VUC. A lei não define VUC.",
+   "exceptions": "Veículos oficiais, concessionárias (Elektro, Sabesp etc.), bombeiros, PM, gás, Correios, guinchos e entrega com NF nas próprias vias. Vigência desde 22/06/2021.",
+   "act": "Lei municipal 5.486 de 22/06/2021, arts. 1º e 2º",
+   "act_url": "https://camaraonline.org/cm_caieiras/doc_legis/2021/HTM/LEI5486_2021.htm",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome. Só 1 dos 4 nomes deu match (Av. Rodolfo Polidoro); o resto precisa de alias ou digitalização."
+  },
+  {
+   "jurisdiction": "Caieiras (3509007)",
+   "kind": "zona",
+   "where": "Todas as avenidas e ruas do município; não vale para as rodovias estaduais SP-332/SP-348, que não são municipais",
+   "days_hours": "Permanente",
+   "vehicles": "Carga acima de 13 t (o texto diz 'limite máximo para o transporte de cargas', o que pode ser carga útil ou PBT) ou comprimento acima de 12 m. Produtos perigosos proibidos em todas as ruas (art. 2º).",
+   "exceptions": "Autorização especial do Depto de Trânsito para quem comprovar a necessidade (art. 3º). Multa do art. 4º com redação da Lei 3.780/2006. A Lei 2.386/1994 (15 t nas ruas centrais, a listar por decreto) continua citada. O diagnóstico oficial de 2017 diz que a fiscalização é feita 'mediante disponibilidade'.",
+   "act": "Lei municipal 3.560 de 17/06/2004, arts. 1º a 4º",
+   "act_url": "https://camaraonline.org/cm_caieiras/doc_legis/2004/HTM/LEI3560_2004.htm",
+   "confidence": "media",
+   "geometry_source": "Polígono municipal do IBGE menos as rodovias. Sugestão: aplicar como aviso e penalizar só comprimento acima de 12 m, por causa da ambiguidade do peso."
+  },
+  {
+   "jurisdiction": "Caieiras (3509007)",
+   "kind": "via",
+   "where": "Vias que um decreto especificaria (não localizado). O Pé na Estrada, fonte secundária, lista R. João Dartora/R. Waldemar Gomes Marino, Av. Prof. Carvalho Pinto, Av. Paulicéia e Av. Maestro Luiz Milano Filho.",
+   "days_hours": "seg–sáb, exceto feriados, 6h–20h: placa de final par em dia par e de final ímpar em dia ímpar",
+   "vehicles": "Caminhão e carreta, incluindo reboque e semirreboque",
+   "exceptions": "Placas de Caieiras, oficiais, serviços essenciais e entrega local com NF mais cadastro no DEMUTRAN 3 dias antes. Entra em vigor 60 dias após a publicação.",
+   "act": "Lei municipal 5.233 de 18/09/2019 (autorizativa; o decreto de vias não foi achado)",
+   "act_url": "https://camaraonline.org/cm_caieiras/doc_legis/2019/HTM/LEI5233_2019.htm",
+   "confidence": "baixa",
+   "geometry_source": "Nenhuma: decreto não localizado. Não implementar até confirmar. Exige final de placa no perfil do veículo."
+  },
+  {
+   "jurisdiction": "Diadema (3513801)",
+   "kind": "via",
+   "where": "Centro: R. São Manoel, R. Santo Antonio, R. São Francisco de Assis, R. São Joaquim, R. São Jorge, Av. São José, R. Arthur Sampaio Moreira, R. Izaurino Lopes da Silva, R. São Judas Tadeu, Av. N. Sra. das Vitórias e Av. Santa Maria (com CEPs no serviço)",
+   "days_hours": "seg–sex 6h–20h; sáb 6h–14h",
+   "vehicles": "Caminhão com mais de 2,20 m (o serviço diz 'altura', provavelmente largura) ou mais de 6,30 m de comprimento. Na prática, VUC é quem tem até 2,20 x 6,30 m.",
+   "exceptions": "Cadastro de caminhões para vias de restrição (serviço 55 do e-Processo). A notícia de 2011 citava perecíveis e serviços essenciais. O decreto de 2011 não foi localizado.",
+   "act": "Serviço oficial 55 'Cadastro de caminhões para vias de restrição' da Prefeitura de Diadema (Processamento/Trânsito); ato normativo não localizado",
+   "act_url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome. Teste: 11 dos 14 nomes com match exato (faltam R. Arthur Sampaio Moreira, R. São Judas Tadeu e R. João Antônio de Araújo)."
+  },
+  {
+   "jurisdiction": "Diadema (3513801)",
+   "kind": "via",
+   "where": "Jd. Eldorado: Av. N. Sra. dos Navegantes, Av. Frei Ambrósio de Oliveira Luz, R. João Antônio de Araújo",
+   "days_hours": "seg–sex 6h–20h; sáb 6h–14h",
+   "vehicles": "Mais de 2,20 m de largura ou mais de 6,30 m de comprimento",
+   "exceptions": "Cadastro pelo serviço 55",
+   "act": "Serviço oficial 55 da Prefeitura de Diadema",
+   "act_url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55",
+   "confidence": "alta",
+   "geometry_source": "OSM por nome"
+  },
+  {
+   "jurisdiction": "Mogi das Cruzes (3530607)",
+   "kind": "zona",
+   "where": "Área central dentro do perímetro do Dec. 1.782/2000: R. Prof. Olegário Paiva, Av. Ver. Narciso Yague Guimarães, R. Duarte de Freitas, Av. Antonio Nascimento Costa, R. Cel. Cardoso de Siqueira, R. São João, R. Mal. Floriano Peixoto, Pça Galdino Pinheiro Franco, R. Rafael Fernandes, Av. Brasil, Av. Pedro Machado, R. das Primaveras, R. Jardelina de Almeida Lopes, R. Dr. Fernando Tancredi, R. Pres. Campos Salles e Av. Francisco Rodrigues Filho",
+   "days_hours": "Lei 2.903/1985: tráfego proibido das 6h às 22h. Dec. 1.782/2000: carga e descarga só das 20h às 9h. Prática declarada pela prefeitura em 2023/2025: veículo acima de 3,5 t não circula das 10h às 20h. Os dias não são especificados.",
+   "vehicles": "Pela lei, 'veículos de transporte pesado'; pelo decreto, PBT acima de 1.000 kg; na prática sinalizada, acima de 3,5 t",
+   "exceptions": "Autorização de carga e descarga com 5 dias de antecedência (SEI). Horários diferentes por sinalização (Dec. 8.375/2008, art. 1º-A). Calçadão R. Dr. Deodato Wertheimer só até 9h.",
+   "act": "Lei 2.903 de 17/04/1985, art. 1º; Dec. 899/1985, arts. 1º e 2º (redação do Dec. 1.782 de 21/02/2000); Dec. 8.375 de 07/02/2008",
+   "act_url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga",
+   "confidence": "media",
+   "geometry_source": "Polígono montado com as 16 vias-limite pelo OSM: 11 dos 16 nomes com match exato e 14 com variantes. As vias-limite ficam livres."
+  },
+  {
+   "jurisdiction": "Suzano (3552502)",
+   "kind": "zona",
+   "where": "Região central: 2 polígonos oficiais do GeoSuzano. A imprensa cita o 1º quarteirão da R. Benjamin Constant, R. Gen. Francisco Glicério, R. Mal. Deodoro, R. Mons. Nuno e Av. Armando de Salles Oliveira.",
+   "days_hours": "seg–sáb 07:00–21:00 (campo Dt_Ho)",
+   "vehicles": "Caminhões. A imprensa, citando a Secretaria de Transportes, diz acima de 3,5 t de PBT.",
+   "exceptions": "Carga perecível devidamente identificada (campo Obs). Autorização da secretaria para casos excepcionais, como mudança.",
+   "act": "Camada oficial 'MOB-Restrição trânsito de caminhões' do Depto de Geotecnologias (última edição em 18/03/2025); ato normativo não localizado (site com Cloudflare 403)",
+   "act_url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson",
+   "confidence": "alta",
+   "geometry_source": "Polígonos oficiais prontos (ArcGIS FeatureService, GeoJSON EPSG:4326)"
+  },
+  {
+   "jurisdiction": "Taboão da Serra (3552809)",
+   "kind": "zona",
+   "where": "Todas as ruas e avenidas municipais. As rodovias que cruzam a cidade (Régis Bittencourt/BR-116) não são municipais.",
+   "days_hours": "seg–sex 5h–21h; sáb 10h–14h (liberado seg–sex 21h–5h e sáb a partir das 14h); vigente desde 06/12/2010",
+   "vehicles": "Caminhões sem autorização; não há definição de PBT ou VUC na fonte",
+   "exceptions": "Cartão Caminhão (RCC) só para quem tem destino ou origem no município: exige 2 NF de entrega ou retirada em Taboão nos últimos 120 dias. Infração 5746-3 (art. 187 do CTB).",
+   "act": "Ato normativo não localizado. Regra confirmada pelo serviço oficial 'Concessão de Cartão Caminhão – Digital' (2026) e pela imprensa de 2010/2011. A 'Portaria SETRAM GS 003/2021' citada num resumo de busca NÃO foi confirmada.",
+   "act_url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b",
+   "confidence": "media",
+   "geometry_source": "Polígono municipal do IBGE menos as rodovias, tratado como zona com exceção de destino local"
+  },
+  {
+   "jurisdiction": "Mairiporã (3528502)",
+   "kind": "via",
+   "where": "Av. Ver. Belarmino Pereira de Carvalho (SP-023 → Av. José Gianesella); Av. José Gianesella; Av. Sen. José Ermírio de Moraes (entrada do Pq. Águas Claras → Av. Dr. Luiz Felippe França Ramos), na subida da Serra da Cantareira",
+   "days_hours": "Permanente (a imprensa não cita horário)",
+   "vehicles": "Caminhões com mais de 2 eixos e ônibus de fretamento",
+   "exceptions": "Autorização prévia em eventos excepcionais. Multa municipal de R$ 5.104 (R$ 10.208 na reincidência). Há projeto de alteração em tramitação (nov/2025) que incluiria 2 eixos e VUC.",
+   "act": "Lei municipal 4.391/2025, sancionada em 11/04/2025. Ementa: 'tráfego de veículos de carga na Av. Ver. Belarmino Pereira de Carvalho e Av. José Gianesella'. Texto integral não lido (espelhos com Cloudflare 403).",
+   "act_url": "https://leggicomunali.it/a/sp/m/mairipora/lei-ordinaria/2025/440/4391/lei-ordinaria-n-4391-2025-dispoe-sobre-o-trafego-de-veiculos-de-carga-na-avenida-vereador-belarmino-pereira-de-carvalho-e-avenida-jose-gianesella",
+   "confidence": "media",
+   "geometry_source": "OSM por nome: 2 dos 3 nomes com match dentro do município"
+  },
+  {
+   "jurisdiction": "Mauá (3529401)",
+   "kind": "via",
+   "where": "Pontos com fiscalização eletrônica (piezo) de 'restrição de circulação de veículos de carga (caminhões)': Viaduto Mário Covas Júnior x Av. Capitão João (sentido B/C); R. Onze de Junho, perto do nº 166 (B/C); R. Aquidabam, perto do nº 383 (C/B)",
+   "days_hours": "Não publicado",
+   "vehicles": "Caminhões; critério de peso ou eixos não publicado",
+   "exceptions": "Não publicado",
+   "act": "Lista oficial de equipamentos de fiscalização da SEMOB Mauá (ago–set/2025); ato não localizado",
+   "act_url": "https://www.maua.sp.gov.br/public/docs/locais/2567c20a9d4d6b4110e1581e2a185c21.pdf",
+   "confidence": "baixa",
+   "geometry_source": "Pontos (endereço); só para aviso"
+  },
+  {
+   "jurisdiction": "Embu das Artes (3515004)",
+   "kind": "via",
+   "where": "Conversão à direita da Av. Elias Yazbek para a R. Muni Stemberg (Cercado Grande, perto do pronto-socorro)",
+   "days_hours": "Permanente (sinalização desde 26/05/2025)",
+   "vehicles": "Ônibus e caminhões",
+   "exceptions": "Veículos autorizados",
+   "act": "Notícia oficial da Prefeitura (Semob), sinalização R-9/R-4; sem ato",
+   "act_url": "https://cidadeembudasartes.sp.gov.br/nova-sinalizacao-no-cercado-grande-onibus-e-caminhoes-estao-proibidos-de-circular-na-rua-muni-stemberg/",
+   "confidence": "media",
+   "geometry_source": "Restrição de conversão (turn restriction) no OSM"
+  },
+  {
+   "jurisdiction": "Itaquaquecetuba (3523107)",
+   "kind": "zona",
+   "where": "Vila Japão, Vila Maria Augusta e Centro (perímetros não publicados)",
+   "days_hours": "Não confirmado. Carga e descarga no centro: 9–20h (2022/2023) ou 20h–9h (2025); as fontes se contradizem.",
+   "vehicles": "Caminhões sem Cartão-Caminhão",
+   "exceptions": "Cartão-Caminhão da Secretaria de Transportes (Cobrasin), validade de 1 ano",
+   "act": "Não localizado. Site oficial migrou (404/403). Fonte secundária: Diário de Suzano 2023/2025.",
+   "act_url": "https://www.diariodesuzano.com.br/regiao/circulacao-de-caminhoes-segue-com-horarios-restritos-na-regiao/73354/",
+   "confidence": "baixa",
+   "geometry_source": "Nenhuma"
+  },
+  {
+   "jurisdiction": "Santa Isabel (3546801)",
+   "kind": "via",
+   "where": "Av. da República (as transversais são livres)",
+   "days_hours": "seg–sáb 11h–20h para carga e descarga; domingo e feriado livres",
+   "vehicles": "Caminhões para carga e descarga; VUC até 7,30 m pode usar vaga comum",
+   "exceptions": "Não detalhado",
+   "act": "Decreto municipal 5.568 (data não confirmada, texto não lido); citado pelo Diário de Suzano em 2022 e 2025",
+   "act_url": "https://www.diariodesuzano.com.br/regiao/carga-e-descarga-tem-horario-definido-para-caminhoes/66768/",
+   "confidence": "baixa",
+   "geometry_source": "OSM por nome; é regra de carga e descarga, não de trânsito, então só aviso"
+  },
+  {
+   "jurisdiction": "Juquitiba (3526209)",
+   "kind": "via",
+   "where": "Estrada Márcia (ou Martha) Maria de Jesus",
+   "days_hours": "seg–sex 24h (fonte secundária)",
+   "vehicles": "3 ou 4 eixos",
+   "exceptions": "Não informado",
+   "act": "Não localizado; só a compilação Pé na Estrada/Trucão (2022)",
+   "act_url": "https://penaestrada.com.br/restricoes/juquitiba/",
+   "confidence": "baixa",
+   "geometry_source": "Nenhuma até confirmar"
+  },
+  {
+   "jurisdiction": "Franco da Rocha (3516408)",
+   "kind": "via",
+   "where": "R. Cel. Domingos Ortiz, subida centro/bairro (mão única só para leves); ônibus e caminhões desviam pela R. Cel. Fagundes e R. Dr. Franco da Rocha",
+   "days_hours": "Permanente (mudança de 09/03/2015)",
+   "vehicles": "Ônibus e caminhões (veículos pesados)",
+   "exceptions": "Não informado",
+   "act": "Notícia oficial da Prefeitura de 06/03/2015; sem ato",
+   "act_url": "https://www.francodarocha.sp.gov.br/noticia/2015/03/06/projeto-de-revitalizacao-do-centro-alterara-3-ruas/",
+   "confidence": "baixa",
+   "geometry_source": "OSM (hgv=no em um trecho); conferir se ainda vale"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "O Dec. 8.183/2023 de Arujá restringe caminhão (inclusive reboque e semirreboque, sem isenção de VUC) em 10 vias: 24h para PBT acima de 31.500 kg ou PBTC acima de 33.075 kg em todas, 24h para qualquer caminhão em 5 delas e das 05:00 às 23:59 nas outras 5. Revoga o Dec. 5.557/2010.",
+   "source_url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf"
+  },
+  {
+   "fact": "Suzano publica um ArcGIS FeatureService público ('MOB-Restrição trânsito de caminhões') com 2 polígonos da região central, horário 'Segunda a Sábado - 07:00 - 21:00' e exceção para perecíveis identificados. Última edição em 18/03/2025; não declara licença. É a única camada de restrição de caminhão encontrada no ArcGIS Online para a RMSP.",
+   "source_url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson"
+  },
+  {
+   "fact": "O portal e-Processo de Diadema expõe por API JSON o serviço 55, 'Cadastro de caminhões para vias de restrição'. Ele lista caminhões acima de 2,20 m ou acima de 6,30 m proibidos em 11 vias do Centro e 3 do Jd. Eldorado, seg–sex 6h–20h e sáb 6h–14h.",
+   "source_url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55"
+  },
+  {
+   "fact": "O Dec. 2.184/2010 de Itapecerica da Serra proíbe caminhões e carretas na Av. XV de Novembro, R. Manoel Maximino da Rosa, R. Treze de Maio e Estr. Ary Domingues Mandu, seg–sex 5h–21h e sáb 5h–14h, com exceções mediante Cartão-Caminhão.",
+   "source_url": "http://www.ecrie.com.br/sistema/conteudos/arquivo/arquivo_5_18102018164433.pdf"
+  },
+  {
+   "fact": "Em 15/08/2023 a Prefeitura de Itapecerica anunciou radares com 'restrição de veículos' e controle de caminhões de passagem na R. Treze de Maio, Av. Quinze de Novembro e Estr. Ary Domingues Mandu, as vias do Dec. 2.184/2010.",
+   "source_url": "https://www.itapecerica.sp.gov.br/noticias/seguranca-publica/informe-transito-e-transporte"
+  },
+  {
+   "fact": "A Lei 5.486/2021 de Caieiras proíbe caminhão e carreta, exceto VUC, nas R. Narciso Degrandi Ernesto, R. Esmeraldo Felipe Santiago, Av. David Kasitzky e Av. Rodolfo Polidoro (Vila Rosina).",
+   "source_url": "https://camaraonline.org/cm_caieiras/doc_legis/2021/HTM/LEI5486_2021.htm"
+  },
+  {
+   "fact": "A Lei 3.560/2004 de Caieiras fixa 13 t de carga e 12 m de comprimento máximos em todas as ruas do município e proíbe produtos perigosos, salvo autorização especial.",
+   "source_url": "https://camaraonline.org/cm_caieiras/doc_legis/2004/HTM/LEI3560_2004.htm"
+  },
+  {
+   "fact": "A Lei 5.233/2019 de Caieiras autoriza um rodízio de caminhões por final de placa (par em dia par, ímpar em dia ímpar), seg–sáb 6h–20h, nas vias que um decreto especificar. O decreto não foi localizado.",
+   "source_url": "https://camaraonline.org/cm_caieiras/doc_legis/2019/HTM/LEI5233_2019.htm"
+  },
+  {
+   "fact": "A Lei 2.903/1985 de Mogi das Cruzes proíbe veículos de transporte pesado nas ruas centrais das 6h às 22h. O Dec. 1.782/2000 limita a carga e descarga de veículos com PBT acima de 1.000 kg na área central das 20h às 9h e delimita o perímetro com 16 logradouros.",
+   "source_url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga"
+  },
+  {
+   "fact": "A prefeitura de Mogi informou à imprensa que veículos acima de 3,5 t não circulam na área central das 10h às 20h. Ferraz de Vasconcelos e Guararema declararam não ter restrição. Poá declarou não ter restrição de horário, só placas.",
+   "source_url": "https://www.diariodesuzano.com.br/regiao/circulacao-de-caminhoes-segue-com-horarios-restritos-na-regiao/73354/"
+  },
+  {
+   "fact": "Taboão da Serra mantém em 2026 o serviço digital 'Concessão de Cartão Caminhão', que exige NF de entrega ou retirada no município. A restrição em todo o município (seg–sex 5h–21h, sáb 10h–14h) existe desde 06/12/2010.",
+   "source_url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b"
+  },
+  {
+   "fact": "A SEMOB de Mauá lista 3 equipamentos de fiscalização eletrônica (piezo) de 'restrição de circulação de veículos de carga (caminhões)': Viaduto Mário Covas Jr. x Av. Capitão João, R. Onze de Junho ~166 e R. Aquidabam ~383.",
+   "source_url": "https://www.maua.sp.gov.br/public/docs/locais/2567c20a9d4d6b4110e1581e2a185c21.pdf"
+  },
+  {
+   "fact": "A Lei 4.391/2025 de Mairiporã (sancionada em 11/04/2025) proíbe caminhões com mais de 2 eixos e ônibus de fretamento nas avenidas da subida da Serra da Cantareira, com multa municipal de R$ 5.104.",
+   "source_url": "https://conace.org.br/2025/11/07/conace-em-mairipora-esclarecimentos-tecnicos-sobre-os-reais-impactos-da-restricao-de-caminhoes-na-serra-da-cantareira/"
+  },
+  {
+   "fact": "A lista oficial de legislação de mobilidade de Santo André (Observatório da Mobilidade) não inclui nenhuma restrição a caminhão.",
+   "source_url": "https://portais.santoandre.sp.gov.br/observatoriomob/legislacao/"
+  },
+  {
+   "fact": "O Guia de Serviços de São Bernardo do Campo não tem cadastro ou autorização para via restrita a caminhões, só acompanhamento de cargas especiais (Resolução ST 004/2015). É indício de que não há zona de restrição.",
+   "source_url": "https://guiadeservicos.saobernardo.sp.gov.br/guia-de-servicos/servicos/211653/mostrar"
+  },
+  {
+   "fact": "No Querido Diário, só 7 municípios da RMSP têm texto pesquisável (nível 3) em 10/10/2026. Nas frases testadas para Santo André, SBC, Suzano, Itapevi e Jandira não apareceu nenhum ato de restrição a caminhão.",
+   "source_url": "https://queridodiario.ok.org.br/api/cities"
+  },
+  {
+   "fact": "A compilação Pé na Estrada/Trucão cobre 28 municípios da RMSP, mas tem erros comprovados: Barueri e Cotia aparecem 'sem restrição', Guarulhos '8–20h centro', e o rodízio de Caieiras está atribuído a Mairiporã.",
+   "source_url": "https://penaestrada.com.br/restricoes/mairipora/"
+  }
+ ],
+ "sources": [
+  {
+   "name": "GeoSuzano – MOB-Restrição trânsito de caminhões (ArcGIS FeatureService)",
+   "publisher": "Prefeitura de Suzano – Depto de Geotecnologias (Sec. Planejamento Urbano e Habitação)",
+   "url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer",
+   "access": "REST público sem token: query?where=1=1&outFields=*&outSR=4326&f=geojson",
+   "format": "GeoJSON / Esri JSON (polígonos)",
+   "license": "Não declarada (licenseInfo vazio). Acesso público; uso comercial não esclarecido. Atribuir a 'Prefeitura de Suzano/GeoSuzano'.",
+   "tested": true,
+   "test_result": "HTTP 200. Camada 0 com 2 feições (65.988 m² com 14 anéis e 3.695 m²), campos Dt_Ho e Obs. Última edição em 18/03/2025; item modificado em 30/03/2026. Camada 1 é a zona azul (63 linhas). Salvo em suzano/suzano_restricao_caminhoes.geojson (7,6 KB).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador importers/sources/rmsp_suzano.py baixa o GeoJSON e grava em data_features (layer_id restricoes_rmsp, kind=zona) com janelas seg–sáb 07–21 e exceção de perecíveis. Refresh semanal comparando editingInfo.lastEditDate. Entra em restricoes_rmsp.layer.ts sem mudar o schema.",
+   "geo_coverage": "Centro de Suzano",
+   "record_count": "2 polígonos"
+  },
+  {
+   "name": "Decreto 8.183/2023 de Arujá (restrição ao trânsito de caminhões)",
+   "publisher": "Prefeitura de Arujá",
+   "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+   "access": "PDF direto. O padrão /Atos/Decretos/Livro110_OCR/DECRETO%20N.NNN_AAAA_OCR.pdf permite vigiar decretos novos.",
+   "format": "PDF com OCR (8 p.)",
+   "license": "Ato oficial (art. 8º, IV, Lei 9.610/98), uso livre",
+   "tested": true,
+   "test_result": "HTTP 200, 4.884.769 B; texto extraído com pdftotext. Art. 8º e Anexo I lidos.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Três regras em data/raw/rmsp/regras.json (art. 8º I, II e III) e importador rmsp_aruja.py que casa os nomes com o OSM (7 de 10 com match) e corta trechos e sentidos (Av. Mário Covas, Expedicionários, Amazonas). O inciso I usa alvo.qualquer [{campo:'pbt_t',acima:31.5}].",
+   "geo_coverage": "Arujá",
+   "record_count": "10 vias, 3 regras"
+  },
+  {
+   "name": "Portal de Atendimento e-Processo de Diadema – serviço 55",
+   "publisher": "Prefeitura de Diadema – Processamento/Trânsito",
+   "url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55",
+   "access": "API JSON pública (GET); a página /atendimento/servico-info/55 é uma SPA",
+   "format": "JSON com HTML na descrição",
+   "license": "Informação pública oficial; sem licença explícita",
+   "tested": true,
+   "test_result": "HTTP 200. Lista 11 vias do Centro e 3 do Jd. Eldorado com CEPs, limites de 2,20 m e 6,30 m e horários. Salvo em diadema/servico55.json.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regras diadema_centro e diadema_eldorado em regras.json, alvo.qualquer [{comprimento_m>6.3},{largura_m>2.2}], vias pelo nome no OSM (11 de 14 com match). Importador rmsp_diadema.py pode baixar o JSON e avisar quando a descrição mudar.",
+   "geo_coverage": "Diadema",
+   "record_count": "14 vias"
+  },
+  {
+   "name": "Decreto 2.184/2010 de Itapecerica da Serra",
+   "publisher": "Prefeitura de Itapecerica da Serra (arquivo no CMS ecrie.com.br do portal)",
+   "url": "http://www.ecrie.com.br/sistema/conteudos/arquivo/arquivo_5_18102018164433.pdf",
+   "access": "PDF direto",
+   "format": "PDF texto (1 p.)",
+   "license": "Ato oficial, uso livre",
+   "tested": true,
+   "test_result": "HTTP 200, 42.606 B; texto completo lido. A notícia oficial de 15/08/2023 (HTTP 200) confirma radares nessas vias.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra itapecerica_centro (4 vias, seg–sex 5–21, sáb 5–14, autorizacao='Cartão-Caminhão') e importador rmsp_itapecerica.py por nome no OSM. O teste no Overpass falhou por servidor ocupado; refazer com o PBF local.",
+   "geo_coverage": "Itapecerica da Serra",
+   "record_count": "4 vias"
+  },
+  {
+   "name": "Sistema de Legislação da Câmara de Caieiras (camaraonline)",
+   "publisher": "Câmara Municipal de Caieiras",
+   "url": "https://camaraonline.org/cm_caieiras/leis/resultado.php?subject=caminh&page=1",
+   "access": "HTML com busca GET (subject, lawtext, number, fromYear) e texto consolidado em /doc_legis/AAAA/HTM/LEInnnn_AAAA.htm",
+   "format": "HTML e PDF",
+   "license": "Atos oficiais, uso livre",
+   "tested": true,
+   "test_result": "HTTP 200. Busca 'caminh' devolveu 74 normas; lidas as Leis 5.486/2021, 5.233/2019, 3.560/2004, 2.386/1994, 3.237/2002 e 4.358/2010. A busca em /decretos/ devolve 0 (decretos não indexados).",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regras caieiras_vila_rosina (Lei 5.486) e caieiras_13t_12m (Lei 3.560; só comprimento acima de 12 m com penalidade, peso como aviso). O rodízio da Lei 5.233 fica fora até achar o decreto. Vias por OSM e alias (só 1 de 4 com match).",
+   "geo_coverage": "Caieiras",
+   "record_count": "6 leis relevantes"
+  },
+  {
+   "name": "Serviço 'Autorização de Carga ou Descarga' de Mogi das Cruzes (Lei 2.903/1985 e Decretos 1.782/2000 e 8.375/2008)",
+   "publisher": "Prefeitura de Mogi das Cruzes",
+   "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga",
+   "access": "Página HTML com PDFs em /public/site/doc/*.pdf",
+   "format": "HTML e PDF (o Dec. 1.782 é imagem; lido renderizando a página)",
+   "license": "Atos oficiais, uso livre",
+   "tested": true,
+   "test_result": "HTTP 200 nos 4 PDFs (63–150 KB). Perímetro de 16 logradouros transcrito.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regra mogi_area_central (kind=zona) com polígono montado pelas 16 vias no OSM (14 de 16 com variantes), janela operacional 10–20h e alvo pbt>3,5, citando que a lei diz 6–22h. Importador rmsp_mogi.py.",
+   "geo_coverage": "Centro de Mogi das Cruzes",
+   "record_count": "1 zona"
+  },
+  {
+   "name": "Concessão de Cartão Caminhão – Digital (Taboão da Serra, plataforma Conam)",
+   "publisher": "Prefeitura de Taboão da Serra – SETRAM",
+   "url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b",
+   "access": "Página HTML pública",
+   "format": "HTML",
+   "license": "Informação pública oficial",
+   "tested": true,
+   "test_result": "HTTP 200, serviço ativo. Exige 2 NF de entrega ou retirada no município. Não traz o horário nem o ato; o horário vem da imprensa de 2010/2011.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Regra taboao_municipio (kind=zona = polígono IBGE menos rodovias), seg–sex 5–21 e sáb 10–14, com excecao_destino_local=true e aviso de ato não localizado.",
+   "geo_coverage": "Taboão da Serra",
+   "record_count": "1 zona"
+  },
+  {
+   "name": "Lista de equipamentos de fiscalização eletrônica – SEMOB Mauá",
+   "publisher": "Prefeitura de Mauá – Secretaria de Mobilidade Urbana",
+   "url": "https://www.maua.sp.gov.br/public/docs/locais/2567c20a9d4d6b4110e1581e2a185c21.pdf",
+   "access": "PDF direto",
+   "format": "PDF digitalizado com OCR ruim (41 p.)",
+   "license": "Informação pública oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 9,99 MB (ago–set/2025). Página 3: 3 equipamentos de restrição de veículos de carga. Guardei só a página e o texto.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só aviso pontual em restricoes_rmsp (kind=ponto) até achar a regra. A mesma técnica (lista de radares exigida pelo CONTRAN) serve de vigilância em outros municípios.",
+   "geo_coverage": "Mauá",
+   "record_count": "3 pontos"
+  },
+  {
+   "name": "Lista de fiscalização eletrônica – SEMOB São Caetano do Sul",
+   "publisher": "Prefeitura de São Caetano do Sul",
+   "url": "https://www.saocaetanodosul.sp.gov.br/storage/uploads/tWYSkb58tbwrXVtPKCrJHAxCyRs3LeHs5d3lELlO.pdf",
+   "access": "PDF direto",
+   "format": "PDF (1 p., 18/04/2023)",
+   "license": "Informação pública oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 362 KB. Dois equipamentos de 'restrição de circulação de veículos' (Terminal Nicolau Delic; R. Manoel Coelho 536), sem dizer que são de caminhão.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar; usar como pista",
+   "geo_coverage": "São Caetano do Sul",
+   "record_count": "2 pontos"
+  },
+  {
+   "name": "Observatório da Mobilidade de Santo André – Legislação",
+   "publisher": "Prefeitura de Santo André",
+   "url": "https://portais.santoandre.sp.gov.br/observatoriomob/legislacao/",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Pública",
+   "tested": true,
+   "test_result": "HTTP 200. A lista municipal de mobilidade não tem norma de restrição de caminhão.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Serve de evidência negativa; o WFS de feiras livres da rodada anterior segue como única restrição temporal",
+   "geo_coverage": "Santo André",
+   "record_count": "lista de cerca de 13 normas municipais"
+  },
+  {
+   "name": "Guia de Serviços de São Bernardo do Campo",
+   "publisher": "Prefeitura de SBC",
+   "url": "https://guiadeservicos.saobernardo.sp.gov.br/guia-de-servicos/servicos/buscar?buscahome=caminh%C3%A3o",
+   "access": "HTML com busca GET",
+   "format": "HTML",
+   "license": "Pública",
+   "tested": true,
+   "test_result": "HTTP 200. Nenhum serviço de autorização ou cadastro para via restrita; só cargas especiais (Res. ST 004/2015) e estacionamento especial.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Evidência negativa",
+   "geo_coverage": "SBC",
+   "record_count": "16 serviços com 'caminhão'"
+  },
+  {
+   "name": "Pé na Estrada / Trucão – Restrições por município",
+   "publisher": "Trucão Comunicação em Transporte (privado)",
+   "url": "https://penaestrada.com.br/restricoes/sao-caetano-do-sul/",
+   "access": "HTML (dropdown com 55 municípios)",
+   "format": "HTML",
+   "license": "Conteúdo de terceiros, © 2022; sem licença de reuso. Não usar como dado do app.",
+   "tested": true,
+   "test_result": "HTTP 200 nas 28 páginas da RMSP raspadas (penaestrada/penaestrada_rmsp.json). Erros comprovados contra fontes primárias: Barueri, Cotia, Guarulhos, Cajamar e Mairiporã/Caieiras.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só checklist interno de pistas (Itapevi, Juquitiba, Poá, São Caetano, Caieiras)",
+   "geo_coverage": "28 municípios da RMSP",
+   "record_count": "28 páginas"
+  },
+  {
+   "name": "Diário de Suzano – matérias sobre restrição no Alto Tietê (2019, 2022, 2023, 2025)",
+   "publisher": "Diário de Suzano (imprensa)",
+   "url": "https://www.diariodesuzano.com.br/cidades/regras-para-circulacao-de-40-mil-caminhoes-na-regiao-sao-aplicadas/84656/",
+   "access": "HTML",
+   "format": "HTML",
+   "license": "Imprensa; citar, não reproduzir",
+   "tested": true,
+   "test_result": "Lido via WebFetch (4 matérias). Traz falas das prefeituras de Suzano, Mogi, Itaquá, Ferraz, Poá, Guararema, Arujá e Santa Isabel.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Fonte secundária para status 'sem restrição declarada' e pistas",
+   "geo_coverage": "Alto Tietê",
+   "record_count": "4 matérias"
+  },
+  {
+   "name": "Querido Diário API (frases por município)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://queridodiario.ok.org.br/api/gazettes",
+   "access": "API pública; frases simples; 10–60 s por consulta, erros 500/520/503 ocasionais",
+   "format": "JSON",
+   "license": "Atos oficiais; projeto aberto",
+   "tested": true,
+   "test_result": "Cobertura conferida de novo (só 7 da RMSP com texto). 28 consultas novas em Santo André, SBC, Suzano, Itapevi e Jandira sem ato de restrição. Excertos removidos por conterem dados pessoais.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Vigilância semanal (já proposta no tema anterior) com as frases 'restrição de circulação', 'trânsito de caminhões', 'veículos pesados' e 'Cartão-Caminhão'",
+   "geo_coverage": "7 municípios da RMSP com texto",
+   "record_count": "28 consultas"
+  },
+  {
+   "name": "SAPL das Câmaras (API norma/normajuridica)",
+   "publisher": "Câmaras municipais (Interlegis)",
+   "url": "https://sapl.embuguacu.sp.leg.br/api/norma/normajuridica/?ementa__icontains=caminh",
+   "access": "API REST pública",
+   "format": "JSON",
+   "license": "CC-BY 4.0 (rodapé SAPL)",
+   "tested": true,
+   "test_result": "Testei 33 hosts sapl.<slug>.sp.leg.br. Só Embu-Guaçu (2.428 normas, nenhuma de restrição), Juquitiba (0) e Mairiporã (0) existem; o resto não tem DNS.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma",
+   "geo_coverage": "3 câmaras",
+   "record_count": "2.428 normas (Embu-Guaçu)"
+  },
+  {
+   "name": "Prefeitura de Suzano – Leis e Decretos e notícias",
+   "publisher": "Prefeitura de Suzano",
+   "url": "https://www.suzano.sp.gov.br/web/transparencia/leis-e-decretos/",
+   "access": "Bloqueado",
+   "format": "HTML",
+   "license": "Pública",
+   "tested": true,
+   "test_result": "HTTP 403 Cloudflare (curl e WebFetch). O ato da restrição central não foi obtido.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Pedir o ato por LAI ou tentar navegador real; a geometria já vem do GeoSuzano",
+   "geo_coverage": "Suzano",
+   "record_count": "n/d"
+  },
+  {
+   "name": "leismunicipais.com.br e espelho leggicomunali.it",
+   "publisher": "Leis Municipais (privado)",
+   "url": "https://leggicomunali.it/a/sp/m/mairipora/lei-ordinaria/2025/440/4391/lei-ordinaria-n-4391-2025-dispoe-sobre-o-trafego-de-veiculos-de-carga-na-avenida-vereador-belarmino-pereira-de-carvalho-e-avenida-jose-gianesella",
+   "access": "Cloudflare (desafio JS)",
+   "format": "HTML",
+   "license": "Compilação privada",
+   "tested": true,
+   "test_result": "HTTP 403 nos dois domínios. Só a ementa da Lei 4.391/2025 de Mairiporã aparece no título da URL.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Ler a Lei 4.391/2025 no Diário Oficial de Mairiporã ou na Câmara antes de implementar",
+   "geo_coverage": "Brasil",
+   "record_count": "n/d"
+  }
+ ],
+ "reused_from_existing": [
+  "restricoes_rmsp_municipios (NOTES.md, research.json, verify.json): regras já mapeadas de Osasco, Barueri, Guarulhos, Cajamar, Santana de Parnaíba e Ribeirão Pires; não foram retestadas",
+  "restricoes_rmsp_municipios: cancelamento da restrição regional do ABC (2012), registrado como revogado e não refeito",
+  "restricoes_rmsp_municipios: Cotia (Estr. Velha de Cotia >2 eixos; R. Rio Maicure só VUC) e o WFS de Santo André com 70 feiras livres; só referenciados",
+  "restricoes_rmsp_municipios: hierarquia viária de SBC em shapefile e GeoMogi sem camada de restrição; não retestados",
+  "restricoes_rmsp_municipios: método e script do Querido Diário (qd_busca.py), adaptado e estendido com frases novas, sem repetir as consultas já feitas",
+  "restricoes_rmsp_municipios: contagem OSM por município (hgv, maxweight, *:conditional) da rodada anterior, sem refazer o recorte do PBF",
+  "restricoes_rmsp_municipios: conclusão de que o casamento por nome com o OSM resolve 65–90%, aplicada aos novos municípios",
+  "restricoes_rmsp_municipios: SETCESP/IPTC (guia pago) e Diadema/SETCESP 2011 como pistas, agora confirmadas para Diadema pelo serviço oficial",
+  "carga_perigosa: Guarulhos sem lei municipal de produtos perigosos; a Lei 3.560/2004 de Caieiras, que proíbe perigosos nas ruas, é novidade",
+  "api/src/layers/restricoes_rmsp.layer.ts e data/raw/rmsp/regras.json: schema Regra (alvo.qualquer, vuc, excecao_destino_local, sentido) usado para propor a integração",
+  "CONVENCOES_IMPLEMENTACAO.md: estender a camada restricoes_rmsp por município (código IBGE), sem camada nova"
+ ],
+ "gaps": [
+  "Arujá: não sei se houve decreto posterior alterando o 8.183/2023. A busca de atos do site (/cti/atos/) é JavaScript e não foi automatizada.",
+  "Caieiras: o decreto que deveria listar as vias do rodízio par/ímpar (Lei 5.233/2019) e o das 'ruas centrais' de 15 t (Lei 2.386/1994) não foram achados; a busca de decretos da Câmara volta vazia. Também não sei se a sinalização da Lei 5.486/2021 foi implantada.",
+  "Caieiras: na Lei 3.560/2004, '13 t de carga' pode ser carga útil ou PBT, e não está claro como se combina com a 2.386/1994 (15 t no centro).",
+  "Diadema: o decreto de 2011 não foi localizado. O serviço oficial diz '2,20 m de altura', provavelmente erro por largura.",
+  "Mogi das Cruzes: a janela vigente (10–20h, >3,5 t) vem de fala da prefeitura e da sinalização. O ato diz 6–22h (lei) e PBT >1 t (carga e descarga). Os dias da semana não estão definidos.",
+  "Suzano: o ato normativo não foi obtido (site com Cloudflare 403). O limite de 3,5 t vem da imprensa; o GeoSuzano não declara licença.",
+  "Taboão da Serra: o ato (decreto ou portaria de 2010; a 'Portaria SETRAM GS 003/2021' não foi confirmada) não foi localizado. Não sei se há isenção para VUC nem se o horário mudou depois de 2011.",
+  "Mairiporã: o texto integral da Lei 4.391/2025 não foi lido (Cloudflare). Faltam o horário, os limites exatos dos trechos e o andamento do projeto de alteração.",
+  "Mauá e São Caetano: há fiscalização eletrônica de restrição, mas não o horário nem o critério. A pista de São Caetano (Av. Goiás e centro 6–22h) não foi confirmada.",
+  "Itaquaquecetuba: o site migrou ('Itaquá Digital', URLs antigas dão 404/403). Os perímetros de Vila Japão, Maria Augusta e Centro e o horário não foram obtidos.",
+  "Santa Isabel (Dec. 5.568), Juquitiba (Estr. Márcia/Martha Maria de Jesus), Itapevi (15 vias) e Poá (R. Padre Eustáquio, Av. Nove de Julho) dependem só de imprensa ou da compilação do Pé na Estrada.",
+  "Biritiba-Mirim, Carapicuíba, Embu-Guaçu, Francisco Morato, Jandira, Pirapora do Bom Jesus, Rio Grande da Serra, Salesópolis, São Lourenço da Serra e Vargem Grande Paulista não têm busca textual nos diários (Querido Diário nível 0 ou 1). 'Não achou' não prova que não exista.",
+  "SBC: não achei restrição, mas há ~43 ways hgv=no no OSM (19,8 km, boa parte da Imigrantes) cuja origem legal não foi verificada.",
+  "O teste de nomes no Overpass falhou para Itapecerica (servidor ocupado); falta repetir com o PBF local (data/valhalla/sudeste-latest.osm.pbf), mas o osmium não está instalado.",
+  "O orçamento de WebSearch da sessão (200) acabou no fim; buscas adicionais para São Caetano, Juquitiba e Santa Isabel não foram feitas.",
+  "Nenhuma regra nova está no OSM (hgv:conditional = 0 fora da capital, conforme a rodada anterior)."
+ ],
+ "recommendations": [
+  "Implementar já, em restricoes_rmsp (regras.json + importadores rmsp_<municipio>.py), as regras de alta confiança: Suzano (polígonos prontos do GeoSuzano, esforço baixo), Diadema (14 vias; JSON oficial), Itapecerica (4 vias, Dec. 2.184/2010) e Arujá (3 regras do Dec. 8.183/2023, com o predicado PBT >31,5 t / PBTC >33,075 t no inciso I).",
+  "Implementar com aviso e menor peso: Mogi (zona central, >3,5 t, 10–20h, citando a divergência com a lei), Taboão (município inteiro com exceção de destino local), Caieiras Lei 5.486 (4 vias, VUC livre) e Caieiras Lei 3.560 (penalizar comprimento >12 m em todo o município; peso só como aviso).",
+  "Não implementar o rodízio par/ímpar de Caieiras (lei autorizativa, decreto não achado; o perfil do veículo não tem final de placa). Registrar como 'autorizada, não regulamentada'.",
+  "Antes de implementar Mairiporã, ler o texto da Lei 4.391/2025 no Diário Oficial de Mairiporã ou na Câmara para fixar trechos e horário. A regra (>2 eixos, 3 avenidas da Cantareira) é forte candidata a exclusão 24h.",
+  "Estender o schema Regra com 'fonte_tipo' (ato | servico_oficial | dado_oficial | imprensa) e 'ato_localizado': bool, para que o app mostre ao motorista quando a regra vem de serviço oficial sem ato publicado (Diadema, Suzano, Taboão).",
+  "Vigilância automática barata: (a) GeoSuzano lastEditDate; (b) hash do JSON do serviço 55 de Diadema; (c) padrão de URL dos decretos de Arujá (/Atos/Decretos/LivroNNN_OCR/); (d) busca 'caminh' no sistema da Câmara de Caieiras; (e) Querido Diário semanal nos 7 municípios com texto.",
+  "Usar as listas de radares que o CONTRAN obriga a publicar como detector: Mauá (3 pontos de restrição de carga) e São Caetano (2) mostram que existe regra. Pedir o ato por LAI (e-SIC) a Mauá, São Caetano, Suzano, Taboão, Itaquaquecetuba e Santa Isabel.",
+  "Repetir o casamento de nomes com o PBF local (instalar osmium ou usar pyosmium) para Itapecerica e Mogi. Criar uma tabela de aliases por município para as falhas já conhecidas (Diadema 3, Arujá 3, Caieiras 3, Mogi 2).",
+  "Tratar a compilação do Pé na Estrada/Trucão só como checklist; nunca como dado do app (erros comprovados e sem licença).",
+  "Para os 10 municípios 'não achou', manter status 'sem regra municipal conhecida' no app (sem afirmar que não existe) e rodar vigilância pelos diários quando o Querido Diário passar a indexá-los."
+ ]
+}

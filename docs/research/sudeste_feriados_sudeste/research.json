@@ -1,0 +1,703 @@
+{
+ "category": "feriados_sudeste",
+ "summary": "Pesquisa refeita por inteiro: leis estaduais conferidas no texto primário, municipais conferidas em decreto, atos dos tribunais baixados e parseados e bases comunitárias comparadas. Pasta: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/feriados_sudeste (NOTES.md, parsers, CSVs). O repositório não foi alterado.\n\nFERIADOS ESTADUAIS (texto primário):\n- RJ tem quatro feriados gerais além dos nacionais, todos com ficha \"Em vigor\" na ALERJ:\n  - terça de Carnaval (Lei 5.243/2008; a ADI 4131 não foi conhecida, trânsito em julgado em 2018);\n  - São Jorge, 23/4 (Lei 5.198/2008);\n  - Corpus Christi (Lei 11.002/2025; o STF julgou a ADI 7898 improcedente em 19/06/2026);\n  - 20/11 (Lei 4.007/2002, hoje também nacional).\n- RJ tem ainda o 2º domingo de maio (Lei 8.174/2018). A Quarta de Cinzas é feriado só bancário (Lei 8.217/2018) e não vale para trânsito.\n- ES: Nossa Senhora da Penha (Lei 11.010/2019), na segunda-feira 8 dias após a Páscoa (13/04/2026).\n- MG: só 21/4 (CE-MG art. 256, I), que coincide com o nacional. 16/7 e 8/12 são datas cívicas, não feriados.\n- SP: 9/7 já está no seed.\n\nBASE ESTRUTURADA NACIONAL DE FERIADOS MUNICIPAIS: não existe uma confiável com licença clara.\n- A CNJ Rec. 44/2020 obriga TJ, TRF e TRT a publicar até 19/12 o ato de \"feriados locais\" do ano seguinte. Esse é o agregador oficial de fato, mas é por comarca-sede, em PDF ou HTML, e incompleto:\n  - TJMG (Portaria Conjunta 1798/2026): 297 comarcas e 1.278 datas, parseadas.\n  - TJSP (edital CSM de 2026): 318 comarcas e 1.290 datas, parseadas a partir da republicação. A página do TJSP está vazia e o DJE não baixou.\n  - TJRJ: não tem lista municipal.\n  - TJES: só traz Vitória.\n  - TRT3: 272 linhas, das quais 196 citam a lei municipal.\n- Datasets comunitários:\n  - joaopbini (MIT) tem 2.284 linhas genéricas no Sudeste e erros. O conjunto de datas locais coincide com o TJMG em 169 de 296 comarcas e com o TJSP em 250 de 316.\n  - feriados.dev usa aniversários tirados da Wikipedia.\n  - Nager.Date só tem os nacionais e SP.\n  - FEBRABAN tem reCAPTCHA.\n  - python-holidays (MIT) cobre bem os estaduais, mas não tem o Corpus Christi do RJ nem os municipais.\n\nFONTE MUNICIPAL MAIS CONFIÁVEL: o decreto anual de \"feriados e pontos facultativos\", achado pelo Querido Diário.\n- Confirmados para 2026: Osasco, Barueri, Campinas, Santos, Vitória, Serra e Contagem.\n- O decreto separa feriado, ponto facultativo e \"emenda\". Exemplo: em Barueri, 26/03 é só ponto facultativo.\n- Os atos dos tribunais erram ou atrasam: o TJSP omite o Dia do Evangélico de Campinas (Lei 16.785/2025) e o Corpus Christi de Santos.\n- Há feriados avulsos: Rio, Lei 8.881/2025 (BRICS); Niterói, Lei 4.125/2026; e projetos pendentes em BH e Campinas.\n\nEntregue: 65 datas curadas para 2026 (165 linhas para 2026–2028) no formato da tabela holidays, com base legal, URL e confiança.\n\nRISCO DE INTEGRAÇÃO ACHADO NO CÓDIGO:\n- legalDayInfo usa uf='SP' por padrão.\n- restricoes_rmsp.layer.ts e routing.ts não passam a UF.\n- Fora de SP, isso aplicaria o 9/7 paulista e ignoraria os feriados estaduais de RJ e ES.",
+ "rules": [
+  {
+   "jurisdiction": "Estado do Rio de Janeiro",
+   "kind": "outro",
+   "where": "Todos os 92 municípios do RJ (geometria = UF)",
+   "days_hours": "Terça-feira de Carnaval = Páscoa−47, dia inteiro. 2026-02-17; 2027-02-09; 2028-02-29",
+   "vehicles": "Todos. É calendário: suspende regras municipais/estaduais que dizem 'exceto feriados' e marca 'feriado prolongado'",
+   "act": "Lei estadual RJ 5.243/2008, art. 1º. A ADI 4131 não foi conhecida (decisão de 21/09/2018, trânsito em julgado em 25/10/2018)",
+   "act_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/063f7c027766eab48325744a007a4ab0?OpenDocument",
+   "confidence": "alta",
+   "exceptions": "Segunda de Carnaval e Quarta de Cinzas não são feriado (em 2026 o Decreto RJ 50.133 deu ponto facultativo em 13, 16 e 18/02). Em SP, MG e ES o Carnaval é ponto facultativo, salvo lei municipal.",
+   "geometry_source": "Malha de UF do IBGE (ou ibge_code com prefixo 33)"
+  },
+  {
+   "jurisdiction": "Estado do Rio de Janeiro",
+   "kind": "outro",
+   "where": "Todo o RJ",
+   "days_hours": "23/04 (fixo), dia inteiro",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei estadual RJ 5.198/2008, art. 1º",
+   "act_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/1baf90ca125ff96f8325740a00776600?OpenDocument",
+   "confidence": "alta",
+   "exceptions": "—",
+   "geometry_source": "UF (IBGE 33)"
+  },
+  {
+   "jurisdiction": "Estado do Rio de Janeiro",
+   "kind": "outro",
+   "where": "Todo o RJ",
+   "days_hours": "Corpus Christi = Páscoa+60 (primeira quinta após 60 dias do domingo de Páscoa). 2026-06-04; 2027-05-27; 2028-06-15",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei estadual RJ 11.002/2025, art. 1º (DO 23/10/2025). ADI 7898 julgada improcedente pelo STF em 19/06/2026",
+   "act_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/46837e4d22b01f3503258d2c0048abda?OpenDocument",
+   "confidence": "alta",
+   "exceptions": "Vigência a partir de 23/10/2025. O seed não deve gerar a data para anos anteriores.",
+   "geometry_source": "UF (IBGE 33)"
+  },
+  {
+   "jurisdiction": "Estado do Rio de Janeiro",
+   "kind": "outro",
+   "where": "Todo o RJ",
+   "days_hours": "20/11; também nacional pela Lei 14.759/2023",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei estadual RJ 4.007/2002, art. 1º",
+   "act_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/80a541c3a5a9d63183256c7d0057bf25?OpenDocument",
+   "confidence": "alta",
+   "exceptions": "Redundante com o nacional; não precisa de linha própria",
+   "geometry_source": "UF (IBGE 33)"
+  },
+  {
+   "jurisdiction": "Estado do Rio de Janeiro",
+   "kind": "outro",
+   "where": "Todo o RJ",
+   "days_hours": "2º domingo de maio (Dia das Mães). 2026-05-10; 2027-05-09; 2028-05-14",
+   "vehicles": "Todos (calendário). Impacto mínimo, porque cai sempre num domingo",
+   "act": "Lei estadual RJ 8.174/2018, art. 1º",
+   "act_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/3cccdcce2b127d8d0325835900593894?OpenDocument",
+   "confidence": "alta",
+   "exceptions": "A Quarta-feira de Cinzas é feriado SÓ bancário (Lei RJ 8.217/2018). Não deve entrar na tabela holidays.",
+   "geometry_source": "UF (IBGE 33)"
+  },
+  {
+   "jurisdiction": "Estado do Espírito Santo",
+   "kind": "outro",
+   "where": "Todos os 78 municípios do ES",
+   "days_hours": "Nossa Senhora da Penha = segunda-feira 8 dias após a Páscoa (Páscoa+8). 2026-04-13; 2027-04-05; 2028-04-24",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei estadual ES 11.010/2019, art. 1º e parágrafo único (data magna, feriado estadual; DO 04/07/2019)",
+   "act_url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI110102019.html",
+   "confidence": "alta",
+   "exceptions": "Não há outro feriado estadual geral no ES. 23/05 (Colonização) é municipal em Vila Velha, segundo dado não oficial.",
+   "geometry_source": "UF (IBGE 32)"
+  },
+  {
+   "jurisdiction": "Estado de Minas Gerais",
+   "kind": "outro",
+   "where": "Todo MG",
+   "days_hours": "21/04 (data magna; coincide com Tiradentes)",
+   "vehicles": "Todos (calendário)",
+   "act": "Constituição do Estado de MG, art. 256, I. Os incisos II (16/07, Dia de Minas) e III (08/12, Dia dos Gerais) são datas cívicas, NÃO feriados",
+   "act_url": "https://www.almg.gov.br/legislacao-mineira/texto/CON/1989/1989/?cons=1",
+   "confidence": "alta",
+   "exceptions": "Não há feriado estadual adicional em MG. O Carnaval é ponto facultativo.",
+   "geometry_source": "UF (IBGE 31)"
+  },
+  {
+   "jurisdiction": "Município do Rio de Janeiro (IBGE 3304557)",
+   "kind": "outro",
+   "where": "Município do Rio de Janeiro",
+   "days_hours": "20/01 (São Sebastião)",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei Orgânica do Município do Rio de Janeiro, art. 26, como citada pelo TJRJ. Feriado avulso: Lei Rio 8.881/2025 (07/07/2025, Cúpula do BRICS)",
+   "act_url": "https://www.tjrj.jus.br/documents/d/portal-conhecimento/suspensao-prazos-comarca-capital-e-2a-inst_2026_seesc",
+   "confidence": "media",
+   "exceptions": "A Sexta-feira Santa como feriado municipal do Rio não foi confirmada: o TJRJ cita só a lei forense. Os feriados avulsos por evento são criados por lei com cerca de 3 meses de antecedência.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Niterói (IBGE 3303302)",
+   "kind": "outro",
+   "where": "Niterói",
+   "days_hours": "Corpus Christi (Páscoa+60)",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal Niterói 4.125/2026, art. 1º (28/05/2026), redundante com a Lei RJ 11.002/2025",
+   "act_url": "https://data.queridodiario.ok.org.br/3303302/2026-05-29/12c64af5c74cccd04c5f2bd09d2d104c7e5f08ed.pdf",
+   "confidence": "alta",
+   "exceptions": "Os outros feriados de Niterói (24/06 São João; 22/11 aniversário) não foram confirmados em ato primário; só aparecem no dataset joaopbini.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Belo Horizonte (IBGE 3106200)",
+   "kind": "outro",
+   "where": "Belo Horizonte",
+   "days_hours": "Sexta-feira da Paixão (Páscoa−2); Corpus Christi (Páscoa+60); 15/08 Assunção; 08/12 Imaculada Conceição. 2026: 03/04, 04/06, 15/08, 08/12",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal BH 11.397/2022, Anexo V (consolidação), citada na Portaria Conjunta TJMG 1798/2026 (considerandos e art. 2º, I e II). 20/11 pela Lei BH 11.680/2024, hoje nacional",
+   "act_url": "https://www8.tjmg.jus.br/institucional/at/pdf/pc17982026.pdf",
+   "confidence": "media",
+   "exceptions": "O PL que torna a terça de Carnaval feriado foi vetado em 07/2026; o veto ainda pode ser derrubado. Não há decreto anual de BH no Querido Diário (cobertura até 03/2026).",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Contagem (IBGE 3118601)",
+   "kind": "outro",
+   "where": "Contagem",
+   "days_hours": "Jubileu de Nossa Senhora das Dores 27/03/2026 (sexta antes do Domingo de Ramos = Páscoa−9, por inferência); Paixão (Páscoa−2); Corpus Christi (Páscoa+60)",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal Contagem 3.484/2001; Decreto Contagem 1.829/2026 (Anexo Único)",
+   "act_url": "https://data.queridodiario.ok.org.br/3118601/2026-01-15/05e78c7f8f884fd697293b98d5098e1edfd033ac.txt",
+   "confidence": "alta",
+   "exceptions": "30/08 (Dia do Município) é ponto facultativo. 08/12 NÃO é feriado: o dataset joaopbini erra. A regra Páscoa−9 para o Jubileu é inferência; conferir na Lei 3.484/2001 antes de gerar 2027+.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Vitória (IBGE 3205309)",
+   "kind": "outro",
+   "where": "Vitória",
+   "days_hours": "Paixão (Páscoa−2); Nossa Senhora da Penha (Páscoa+8, também estadual); Corpus Christi (Páscoa+60); 08/09 Nossa Senhora da Vitória. 2026: 03/04, 13/04, 04/06, 08/09",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal Vitória 1.732/1967; Decreto Vitória 25.991/2025 (DOM ed. 2788, 18/12/2025). O 08/09 também consta do Ato Normativo TJES 176/2026, art. 3º",
+   "act_url": "https://data.queridodiario.ok.org.br/3205309/2025-12-18/eead519ad248c6c6258e304f4c71eb0f89cd08cc.txt",
+   "confidence": "alta",
+   "exceptions": "Carnaval, Cinzas, 30/10 e vésperas de Natal e Ano Novo são ponto facultativo.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município da Serra/ES (IBGE 3205002)",
+   "kind": "outro",
+   "where": "Serra (Civit, polo logístico)",
+   "days_hours": "Paixão (Páscoa−2); 29/06 São Pedro; 08/12 Nossa Senhora da Conceição; 26/12 Dia do Serrano",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal Serra 4.950/2019; Decreto Serra 1.908/2025 (Anexo Único)",
+   "act_url": "https://data.queridodiario.ok.org.br/3205002/2025-12-29/c949d9bb8d6ed6cee21f7b449559a342fd8cba47.txt",
+   "confidence": "alta",
+   "exceptions": "Corpus Christi é ponto facultativo na Serra, NÃO feriado. Não aplicar o Corpus Christi como regra geral no ES.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Osasco (IBGE 3534401)",
+   "kind": "outro",
+   "where": "Osasco (VER e ZMRC da camada restricoes_rmsp)",
+   "days_hours": "19/02 Emancipação; Paixão (Páscoa−2); Corpus Christi (Páscoa+60); 13/06 Santo Antônio",
+   "vehicles": "Todos (calendário). Suspende as VER de Osasco (Dec. 10.676/2012 art. 5º, 'exceto feriados'); a ZMRC de Osasco vale em feriado",
+   "act": "Decreto Osasco 14.952/2025, art. 2º (IOMO nº 2937, 10/12/2025)",
+   "act_url": "https://data.queridodiario.ok.org.br/3534401/2025-12-10/345eee294061976e82b7a4c0a707745901ff8f63.pdf",
+   "confidence": "alta",
+   "exceptions": "Carnaval, Cinzas, Endoenças e as 'emendas' (02/01, 20/02, 20/04, 05/06, 10/07) são ponto facultativo do serviço público, NÃO feriado.",
+   "geometry_source": "Malha municipal IBGE (já usada pela camada restricoes_rmsp)"
+  },
+  {
+   "jurisdiction": "Município de Barueri (IBGE 3505708)",
+   "kind": "outro",
+   "where": "Barueri (VER de Alphaville/Tamboré)",
+   "days_hours": "Paixão (Páscoa−2); Corpus Christi (Páscoa+60); 24/06 São João Batista",
+   "vehicles": "Todos (calendário). Suspende as VER de Barueri (Dec. 9.025/2019, 'exceto feriados')",
+   "act": "Decreto Barueri 10.264/2025, art. 1º (Jornal Oficial de Barueri, 12/11/2025)",
+   "act_url": "https://data.queridodiario.ok.org.br/3505708/2025-11-12/69b29e7186711a0d5cb33220355c9a6c339fb4a8.pdf",
+   "confidence": "alta",
+   "exceptions": "26/03 (Emancipação) e 21/11 (Nossa Senhora da Escada) são PONTO FACULTATIVO, apesar de o jornal oficial e o joaopbini chamarem de feriado. 27/03, 20/04, 05/06 e 10/07 são só 'dia sem expediente'.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Campinas (IBGE 3509502)",
+   "kind": "outro",
+   "where": "Campinas",
+   "days_hours": "Paixão (Páscoa−2); Corpus Christi (Páscoa+60); 12/08 Dia do Evangélico; 08/12 Nossa Senhora da Conceição",
+   "vehicles": "Todos (calendário)",
+   "act": "Lei municipal Campinas 173/1949; Lei 16.785/2025 (Dia do Evangélico); Decreto Campinas 24.240/2026, art. 1º",
+   "act_url": "https://data.queridodiario.ok.org.br/3509502/2026-01-15/575909ad6e742f0f05c0635d703b561bb3b9a033.txt",
+   "confidence": "alta",
+   "exceptions": "O edital do TJSP de 2026 não traz o 12/08. O PLO 85/2026 (14/07, aniversário) está pendente.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Município de Santos (IBGE 3548500)",
+   "kind": "outro",
+   "where": "Santos (Porto)",
+   "days_hours": "26/01 aniversário; Paixão; Corpus Christi; 08/09 Nossa Senhora do Monte Serrat; 20/11",
+   "vehicles": "Todos (calendário). Usado pelo 'feriado prolongado' de rodovias_horario (Anchieta)",
+   "act": "Portaria da Mesa da Câmara Municipal de Santos 01/2026 (DO Santos 08/01/2026). Edital CSM/TJSP 2026",
+   "act_url": "https://data.queridodiario.ok.org.br/3548500/2026-01-08/8dacfa3adb9aee0d3910d99c231193b52d435227.txt",
+   "confidence": "media",
+   "exceptions": "O edital do TJSP não lista o Corpus Christi. O decreto do Executivo de 2026 não foi achado; o ato usado é o calendário da Câmara.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Municípios da RMSP com regra na camada restricoes_rmsp",
+   "kind": "outro",
+   "where": "Guarulhos 3518800; Cajamar 3509205; Santana de Parnaíba 3547304; Ribeirão Pires 3543303",
+   "days_hours": "Guarulhos: Sexta Santa, Corpus Christi, 08/12 (+20/11). Cajamar: 20/01, 18/02, Sexta Santa, Corpus Christi. Santana de Parnaíba: Sexta Santa, Corpus Christi, 26/07, 14/11. Ribeirão Pires: 19/03, Sexta Santa, Corpus Christi (+20/11). Datas de 2026",
+   "vehicles": "Todos (calendário). Só as regras com 'exceto feriados' mudam; Guarulhos ZRCC-TB vale em feriado",
+   "act": "Edital CSM/TJSP 'Relação de feriados municipais para 2026' (DJE 25/11/2025, proc. 2018/206016)",
+   "act_url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/",
+   "confidence": "media",
+   "exceptions": "Fonte secundária (republicação CNB-SP/INR do DJE). Cajamar, Santana e Ribeirão Pires não estão no Querido Diário; Guarulhos só até 06/2026.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Baixada Santista e ABC (municípios já consultados por rodovias_horario.layer.ts)",
+   "kind": "outro",
+   "where": "Cubatão 3513504; Guarujá 3518701; São Bernardo do Campo 3548708; São Vicente 3551009; Praia Grande 3541000",
+   "days_hours": "Cubatão: Sexta Santa, 09/04, 15/08, Finados. Guarujá: 15/01, Sexta Santa, 30/06 (+Finados, 20/11). SBC: Sexta Santa, Corpus Christi, 20/08 (+20/11). São Vicente: 22/01, Sexta Santa, Corpus Christi (+20/11). Praia Grande: Sexta Santa, Corpus Christi, 29/06. Datas de 2026",
+   "vehicles": "Todos. Alimenta a detecção de 'feriado prolongado' (Anchieta, Portaria SUP/DER-084/2023)",
+   "act": "Edital CSM/TJSP 'Relação de feriados municipais para 2026'",
+   "act_url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/",
+   "confidence": "media",
+   "exceptions": "Sem decreto municipal conferido. Cubatão e Guarujá não estão no Querido Diário.",
+   "geometry_source": "Malha municipal IBGE"
+  },
+  {
+   "jurisdiction": "Minas Gerais: 297 comarcas-sede",
+   "kind": "outro",
+   "where": "Municípios-sede de comarca do TJMG (Juiz de Fora, Uberlândia, Uberaba, Betim, Contagem, Ipatinga, Montes Claros, Pouso Alegre, Sete Lagoas, Extrema, Varginha etc.)",
+   "days_hours": "Lista por comarca, 1.278 datas em 2026. Exemplos: Juiz de Fora 03/04, 04/06, 13/06; Uberlândia 03/04, 04/06, 15/08, 31/08; Betim 03/04, 04/06, 16/07; Extrema 03/04, 22/05, 04/06, 18/09",
+   "vehicles": "Todos (calendário)",
+   "act": "Portaria Conjunta TJMG 1798/PR/2026, art. 3º e Anexo Único (na redação da PC 1860/2026). Exige ato legislativo municipal (até 4 religiosos + 1 civil)",
+   "act_url": "https://www8.tjmg.jus.br/institucional/at/pdf/pc17982026.pdf",
+   "confidence": "media",
+   "exceptions": "Cobre só a sede de comarca (297 dos 853 municípios). Não traz o número da lei (o TRT3 traz, para 196 linhas). O PDF contém também o anexo original, que não deve ser usado.",
+   "geometry_source": "Malha municipal IBGE (nome da comarca → código IBGE: 296 de 297 casaram)"
+  },
+  {
+   "jurisdiction": "São Paulo: 318 comarcas-sede",
+   "kind": "outro",
+   "where": "Municípios-sede de comarca do TJSP",
+   "days_hours": "Lista por comarca, 1.290 datas em 2026",
+   "vehicles": "Todos (calendário)",
+   "act": "Edital CSM/TJSP 'Relação de feriados municipais para 2026' (sessão de 24/11/2025; DJE 25/11/2025)",
+   "act_url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/",
+   "confidence": "media",
+   "exceptions": "O próprio edital avisa que 'poderão ocorrer alterações'. Omissões confirmadas: Campinas 12/08 e Santos Corpus Christi. Lista 20/11 como municipal. Cobre só sedes de comarca (318 dos 645 municípios).",
+   "geometry_source": "Malha municipal IBGE (314 de 316 nomes casaram)"
+  },
+  {
+   "jurisdiction": "Espírito Santo: subseções da Justiça Federal",
+   "kind": "outro",
+   "where": "Cachoeiro de Itapemirim 29/06; Colatina 12/06; São Mateus 21/09; Serra 29/06; Vitória 08/09",
+   "days_hours": "Datas de 2026 (Colatina 12/06 = Sagrado Coração, móvel)",
+   "vehicles": "Todos (calendário)",
+   "act": "Portaria PRES/TRF2 nº 845/2025, art. 2º",
+   "act_url": "https://trf2.jus.br/sites/default/publico/2025-12/PORTARIA%20PRES-TRF2%20N%C2%BA%20845_0.pdf",
+   "confidence": "media",
+   "exceptions": "Lista só feriados em dia útil e só nas sedes de subseção. O TJES não publica lista municipal.",
+   "geometry_source": "Malha municipal IBGE"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "Lei federal 9.093/1995: feriados civis são os de lei federal, a data magna do Estado fixada em lei estadual e o início e o término do centenário do município. Os religiosos são declarados em lei municipal, no máximo quatro, incluída a Sexta-Feira da Paixão. Por isso Paixão e Corpus Christi são, juridicamente, municipais (ou estaduais no RJ).",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9093.htm"
+  },
+  {
+   "fact": "A CNJ Recomendação 44/2020 (vigente) manda TJs, TRFs e TRTs editar ato que consolide os feriados locais da jurisdição, publicá-lo num link 'feriados locais' e renová-lo até 19/12 de cada ano para o ano seguinte. É o agregador oficial de fato dos feriados municipais.",
+   "source_url": "https://atos.cnj.jus.br/atos/detalhar/4838"
+  },
+  {
+   "fact": "RJ: a ficha da ALERJ da Lei 5.243/2008 (terça de Carnaval como feriado estadual) diz 'Em Vigor'. A ADI 4131 contra ela não foi conhecida (Min. Fux, 21/09/2018; trânsito em julgado em 25/10/2018).",
+   "source_url": "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2636281"
+  },
+  {
+   "fact": "RJ: a Lei 11.002/2025 instituiu Corpus Christi como feriado estadual, na primeira quinta-feira após 60 dias do domingo de Páscoa. O STF manteve a lei, por unanimidade, na ADI 7898, concluída em 19/06/2026.",
+   "source_url": "https://noticias.stf.jus.br/postsnoticias/stf-valida-criacao-de-feriado-de-corpus-christi-no-estado-do-rio-de-janeiro/"
+  },
+  {
+   "fact": "RJ: a Lei 5.198/2008 instituiu o 23 de abril (São Jorge) como feriado estadual. A Lei 8.217/2018 fez da Quarta-feira de Cinzas um feriado só para bancários, sem expediente bancário.",
+   "source_url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef/1baf90ca125ff96f8325740a00776600?OpenDocument"
+  },
+  {
+   "fact": "ES: a Lei 11.010/2019 declarou data magna e feriado estadual o dia de Nossa Senhora da Penha, sempre na segunda-feira, oitavo dia após o domingo de Páscoa (13/04/2026).",
+   "source_url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI110102019.html"
+  },
+  {
+   "fact": "MG: a Constituição Estadual, art. 256, fixa 21 de abril como data magna. 16 de julho (Dia de Minas) e 8 de dezembro (Dia dos Gerais) são só datas de celebração cívica.",
+   "source_url": "https://www.almg.gov.br/legislacao-mineira/texto/CON/1989/1989/?cons=1"
+  },
+  {
+   "fact": "TJMG: a Portaria Conjunta 1798/2026 (na redação da PC 1860/2026) consolida os feriados municipais de 297 comarcas em 2026. Parse: 1.278 datas; Paixão em 296 comarcas e Corpus Christi em 288. Na capital, cita a Lei BH 11.397/2022, Anexo V (Paixão, Corpus Christi, Assunção, Imaculada Conceição e Consciência Negra).",
+   "source_url": "https://www8.tjmg.jus.br/institucional/at/pdf/pc17982026.pdf"
+  },
+  {
+   "fact": "TJMG mantém o portal 'Feriados Locais' com consulta GET por comarca, mês e ano (2016–2028): index.jsp?comarca=&mes=&ano=. Mistura feriados com suspensões forenses (ex.: 30/10, 20–31/12).",
+   "source_url": "http://www8.tjmg.jus.br/servicos/gj/calendario/"
+  },
+  {
+   "fact": "O Conselho Superior da Magistratura do TJSP aprovou em 24/11/2025 a 'Relação de feriados municipais para 2026' por comarca. Parse da republicação: 318 comarcas e 1.290 datas. Exemplo: OSASCO – 19/02, Sexta-Feira Santa, Corpus Christi, 13/06 e Finados.",
+   "source_url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/"
+  },
+  {
+   "fact": "Osasco, Decreto 14.952/2025 (feriados de 2026): feriados municipais em 19/02, 03/04, 13/06 e 04/06. Carnaval, Endoenças e as 'emendas' (02/01, 20/02, 20/04, 05/06, 10/07) são só pontos facultativos.",
+   "source_url": "https://data.queridodiario.ok.org.br/3534401/2025-12-10/345eee294061976e82b7a4c0a707745901ff8f63.pdf"
+  },
+  {
+   "fact": "Barueri, Decreto 10.264/2025 (2026): Paixão, Corpus Christi e 24/06 (São João Batista) são feriados. 26/03 (Emancipação) e 21/11 (Nossa Senhora da Escada) são ponto facultativo.",
+   "source_url": "https://data.queridodiario.ok.org.br/3505708/2025-11-12/69b29e7186711a0d5cb33220355c9a6c339fb4a8.pdf"
+  },
+  {
+   "fact": "Campinas, Decreto 24.240/2026: os feriados municipais são Paixão, Corpus Christi, 12/08 (Dia do Evangélico, Lei 16.785/2025) e 08/12. O edital do TJSP de 2026 não traz o 12/08.",
+   "source_url": "https://data.queridodiario.ok.org.br/3509502/2026-01-15/575909ad6e742f0f05c0635d703b561bb3b9a033.txt"
+  },
+  {
+   "fact": "Vitória, Decreto 25.991/2025: os feriados municipais de 2026 pela Lei 1.732/1967 são Paixão (03/04), Nossa Senhora da Penha (13/04), Corpus Christi (04/06) e Nossa Senhora da Vitória (08/09).",
+   "source_url": "https://data.queridodiario.ok.org.br/3205309/2025-12-18/eead519ad248c6c6258e304f4c71eb0f89cd08cc.txt"
+  },
+  {
+   "fact": "Serra/ES, Decreto 1.908/2025: Corpus Christi é ponto facultativo, não feriado. Os feriados municipais, pela Lei 4.950/2019, são Paixão, 29/06, 08/12 e 26/12.",
+   "source_url": "https://data.queridodiario.ok.org.br/3205002/2025-12-29/c949d9bb8d6ed6cee21f7b449559a342fd8cba47.txt"
+  },
+  {
+   "fact": "Contagem, Decreto 1.829/2026: os feriados municipais, pela Lei 3.484/2001, são 27/03 (Jubileu de Nossa Senhora das Dores), Paixão e Corpus Christi. 30/08 (Dia do Município) é ponto facultativo.",
+   "source_url": "https://data.queridodiario.ok.org.br/3118601/2026-01-15/05e78c7f8f884fd697293b98d5098e1edfd033ac.txt"
+  },
+  {
+   "fact": "Rio de Janeiro: a Lei municipal 8.881, de 14/04/2025, declarou feriado o dia 07/07/2025 (Cúpula do BRICS). Feriados avulsos por evento são criados por lei, com antecedência de semanas a meses.",
+   "source_url": "https://data.queridodiario.ok.org.br/3304557/2025-04-15/77795bb0799b1567cdbd9b4389a24c81133474c8.pdf"
+  },
+  {
+   "fact": "Niterói: a Lei 4.125, de 28/05/2026, declarou Corpus Christi feriado municipal, embora o RJ já o tivesse como feriado estadual desde 10/2025.",
+   "source_url": "https://data.queridodiario.ok.org.br/3303302/2026-05-29/12c64af5c74cccd04c5f2bd09d2d104c7e5f08ed.pdf"
+  },
+  {
+   "fact": "TJES, Ato Normativo 176/2026: lista só os feriados nacionais e estaduais (com Nossa Senhora da Penha, Lei 11.010/2019) e, de municipal, só Vitória (08/09, Lei 1.732/1967). Corpus Christi vale como ponto facultativo onde não houver lei municipal.",
+   "source_url": "https://www.tjes.jus.br/corregedoria/?p=48540"
+  },
+  {
+   "fact": "TRF2, Portaria PRES 845/2025 (Seção Judiciária do ES, 2026): Vitória 08/09, Cachoeiro 29/06, Colatina 12/06, São Mateus 21/09 e Serra 29/06. Corpus Christi entra como ponto facultativo.",
+   "source_url": "https://trf2.jus.br/sites/default/publico/2025-12/PORTARIA%20PRES-TRF2%20N%C2%BA%20845_0.pdf"
+  },
+  {
+   "fact": "TRT3, Anexo da Portaria 991/2025 (feriados locais de MG em 2026): 272 linhas, das quais 196 citam a lei ou o decreto municipal (ex.: Betim, Corpus Christi, Lei 4.731/2008) e 65 são suspensões só do tribunal (RA 109/2025).",
+   "source_url": "https://portal.trt3.jus.br/internet/institucional/calendario/feriados-locais-1/anexo-unico-portaria-trt3-segp-991-de-3-de-novembro-de-2025-ass.pdf"
+  },
+  {
+   "fact": "BH: o PL que tornaria a terça de Carnaval feriado municipal foi vetado pelo prefeito em 07/2026, com base na Lei 9.093/1995. O veto voltou à Câmara (fonte jornalística).",
+   "source_url": "https://diariodocomercio.com.br/legislacao/veto-feriado-carnaval-bh/"
+  }
+ ],
+ "sources": [
+  {
+   "name": "ALERJ: legislação estadual (fichas das Leis 5.243/2008, 5.198/2008, 11.002/2025, 4.007/2002, 8.174/2018, 8.217/2018)",
+   "publisher": "Assembleia Legislativa do Estado do Rio de Janeiro",
+   "url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef?SearchView&Query=feriado&SearchMax=200",
+   "access": "scrape",
+   "format": "HTML (Lotus Notes), com ficha técnica: situação, ADI",
+   "license": "Ato oficial, domínio público (Lei 9.610/1998 art. 8º IV); uso comercial livre",
+   "tested": true,
+   "test_result": "HTTP 200. A busca 'feriado' devolveu 7 leis estaduais; as 6 fichas foram baixadas (≈10–13 KB cada). Situação: 'Em Vigor'. A 11.002 aparece como 'Declarado Constitucional' (ADI 7898).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regras declarativas (fixa ou Páscoa±n) num config versionado, ex.: config/holidays-sudeste.json, lido pelo gerador que já existe (scripts/gen-zones-seed.py ou um importador feriados_sudeste com SEED_SQL e RECORD_COUNT, como o cet_suspensoes). Grava em holidays (scope='state', uf='RJ') com legal_basis. Sem camada nova: a camada core_legal já cobre o calendário.",
+   "geo_coverage": "Estado do RJ",
+   "record_count": "4 feriados gerais + 1 dominical + 1 bancário",
+   "caveats": "Texto em ISO-8859-1. É preciso olhar a ficha (ADI, revogação) antes de cada atualização."
+  },
+  {
+   "name": "ALES: Lei estadual 11.010/2019 (Nossa Senhora da Penha)",
+   "publisher": "Assembleia Legislativa do Espírito Santo",
+   "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI110102019.html",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial, domínio público; uso comercial livre",
+   "tested": true,
+   "test_result": "HTTP 200, 103 KB. Art. 1º e parágrafo único: data magna e feriado estadual na segunda-feira, 8º dia após a Páscoa.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra Páscoa+8 em holidays (scope='state', uf='ES').",
+   "geo_coverage": "Estado do ES",
+   "record_count": "1 regra"
+  },
+  {
+   "name": "ALMG: Constituição do Estado de MG, art. 256",
+   "publisher": "Assembleia Legislativa de Minas Gerais",
+   "url": "https://www.almg.gov.br/legislacao-mineira/texto/CON/1989/1989/?cons=1",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial; uso livre",
+   "tested": true,
+   "test_result": "HTTP 200, 548 KB. Art. 256: I data magna 21/04; II Dia de Minas 16/07; III Dia dos Gerais 08/12 (datas cívicas, sem feriado).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Nenhuma linha nova: 21/04 já é nacional. Documentar que 16/07 e 08/12 não suspendem regras.",
+   "geo_coverage": "Estado de MG"
+  },
+  {
+   "name": "Lei federal 9.093/1995 (limites para feriados civis e religiosos)",
+   "publisher": "Presidência da República (Planalto)",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9093.htm",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial; uso livre",
+   "tested": true,
+   "test_result": "HTTP 200, 5,3 KB. Arts. 1º e 2º lidos (civis; religiosos ≤ 4 em lei municipal, incluída a Paixão).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Fundamenta o modelo de dados: Paixão e Corpus Christi são municipais (ou estaduais no RJ), não nacionais. O seed atual já trata Paixão e Corpus Christi como municipais em SP.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "CNJ Recomendação 44/2020 (calendário de feriados locais)",
+   "publisher": "Corregedoria Nacional de Justiça",
+   "url": "https://atos.cnj.jus.br/atos/detalhar/4838",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200. Arts. 1º e 2º lidos; situação 'Vigente'.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Base do monitoramento anual: até 19/12, baixar os atos de TJMG, TJSP, TRT1/2/3/15/17 e TRF2 do ano seguinte e comparar com o calendário curado.",
+   "geo_coverage": "Brasil (todos os tribunais)"
+  },
+  {
+   "name": "TJMG: Portaria Conjunta 1798/PR/2026, Anexo Único (feriados municipais das comarcas)",
+   "publisher": "Tribunal de Justiça de Minas Gerais",
+   "url": "https://www8.tjmg.jus.br/institucional/at/pdf/pc17982026.pdf",
+   "access": "pdf",
+   "format": "PDF de texto (121 p.), anexo 'Comarca / I - dd de mês: nome;'",
+   "license": "Ato oficial (Lei 9.610/1998 art. 8º IV); uso comercial livre",
+   "tested": true,
+   "test_result": "HTTP 200, 1,93 MB. Parser próprio (parse_tjmg.py): 297 comarcas e 1.278 datas, 1 item sem parse (Vazante, '2 e 3 de maio'). 296 de 297 nomes casaram com o IBGE. O PDF tem 2 anexos (o vigente, PC 1860/2026, e o original); só o primeiro deve ser usado.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador importers/sources/feriados_tjmg.py (LAYER_ID='core_legal', SOURCE='tjmg-feriados', SEED_SQL e RECORD_COUNT próprios). Grava holidays scope='municipal', uf='MG', ibge_code pelo nome (API IBGE) e legal_basis='PC TJMG 1798/2026'. Roda anualmente em dezembro e falha se o formato mudar.",
+   "geo_coverage": "297 sedes de comarca de MG (de 853 municípios)",
+   "record_count": "1.278 datas (2026)",
+   "caveats": "Lista só a sede da comarca, sem número de lei. Mistura alterações posteriores (PC 1814, 1828 e 1860/2026). BH fica no art. 2º, fora do anexo."
+  },
+  {
+   "name": "TJMG: portal 'Feriados Locais' (consulta por comarca, mês e ano)",
+   "publisher": "Tribunal de Justiça de Minas Gerais",
+   "url": "http://www8.tjmg.jus.br/servicos/gj/calendario/index.jsp?comarca=null&mes=null&ano=2026",
+   "access": "scrape",
+   "format": "HTML (ISO-8859-1), formulário GET, comarca por id interno",
+   "license": "Ato oficial; o site avisa que não substitui a publicação oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 69 KB. Anos de 2016 a 2028, 298 comarcas no select (BH id 24, Contagem 79). Sem comarca, devolve só nacionais, estaduais e forenses.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Só conferência anual: comparar com a PC consolidada. Ignorar linhas forenses (Susp. Expediente, Dia da Justiça, recesso).",
+   "geo_coverage": "Comarcas de MG"
+  },
+  {
+   "name": "TRT3: Anexo Único da Portaria TRT3/SEGP/991/2025 (feriados locais 2026)",
+   "publisher": "Tribunal Regional do Trabalho da 3ª Região",
+   "url": "https://portal.trt3.jus.br/internet/institucional/calendario/feriados-locais-1/anexo-unico-portaria-trt3-segp-991-de-3-de-novembro-de-2025-ass.pdf",
+   "access": "pdf",
+   "format": "PDF tabular (DATA | MUNICÍPIO | MOTIVO/LEGISLAÇÃO), 13 p.",
+   "license": "Ato oficial; uso livre",
+   "tested": true,
+   "test_result": "HTTP 200, 158 KB. 272 linhas; 196 citam lei ou decreto municipal; 65 são 'Suspensão do expediente (RA 109/2025)' e devem ser descartadas.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Preencher legal_basis (número da lei municipal) nas linhas vindas do TJMG e conferir divergências.",
+   "geo_coverage": "Municípios de MG com Vara do Trabalho",
+   "record_count": "272 linhas (2026)"
+  },
+  {
+   "name": "TJSP: edital CSM 'Relação de feriados municipais para 2026' (via republicação CNB-SP/INR do DJE de 25/11/2025)",
+   "publisher": "Conselho Superior da Magistratura / TJSP (republicado pelo Colégio Notarial do Brasil – SP)",
+   "url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/",
+   "access": "scrape",
+   "format": "HTML, texto corrido 'COMARCA – dd/mm, Sexta-Feira Santa, Corpus Christi e ...'",
+   "license": "O edital é ato oficial (domínio público); a página do CNB-SP é republicação",
+   "tested": true,
+   "test_result": "HTTP 200, 192 KB. Parser próprio (parse_tjsp.py): 318 comarcas e 1.290 datas, 3 itens sem parse (Birigui 'Terça-Feira de Carnaval', 1 fragmento, rodapé). 314 de 316 nomes casaram com o IBGE. A página do TJSP 'Feriados/Interior' está vazia ('Nenhum comunicado cadastrado') e o download do caderno do DJE (dje.tjsp.jus.br e esaj) falhou.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador feriados_tjsp.py com a mesma estrutura do TJMG, uf='SP', confiança média. Prioridade: municípios da camada restricoes_rmsp e os 6 já consultados por rodovias_horario.layer.ts. Onde houver decreto municipal (Querido Diário), ele prevalece.",
+   "geo_coverage": "318 sedes de comarca de SP (de 645 municípios)",
+   "record_count": "1.290 datas (2026)",
+   "caveats": "Omissões confirmadas (Campinas 12/08; Santos Corpus Christi). O próprio edital admite alterações ao longo do ano. Fonte primária (DJE) não baixada."
+  },
+  {
+   "name": "TJRJ: calendários de suspensão de prazos 2026 (capital e 1ª/2ª instância)",
+   "publisher": "Tribunal de Justiça do Estado do Rio de Janeiro",
+   "url": "https://portaltj.tjrj.jus.br/documents/d/portal-conhecimento/suspensao-prazos-1a-e-2a-instancia_2026_seesc",
+   "access": "pdf",
+   "format": "PDF (39 p.) e PDF da capital (6 p.)",
+   "license": "Informativo (não substitui a publicação oficial)",
+   "tested": true,
+   "test_result": "HTTP 200, 1,0 MB e 435 KB. A capital traz 20/01 (Lei Orgânica do Rio, art. 26), 23/04 (Lei 5.198), Corpus Christi (Lei 11.002/2025) e 20/11 (Lei 4.007). O de 1ª instância por comarca traz só suspensões avulsas (chuva, energia) e não a lista de feriados municipais.",
+   "value": "medium",
+   "effort": "high",
+   "integration_plan": "Só para a capital e para conferir os estaduais do RJ. Para o interior do RJ não há lista oficial consolidada achada.",
+   "geo_coverage": "RJ"
+  },
+  {
+   "name": "TJES: Ato Normativo 176/2026 (relação de feriados 2026)",
+   "publisher": "Tribunal de Justiça do Espírito Santo",
+   "url": "https://www.tjes.jus.br/corregedoria/?p=48540",
+   "access": "scrape",
+   "format": "HTML",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 78 KB. Nacionais e estaduais; de municipal, só Vitória (08/09). Corpus Christi é ponto facultativo onde não houver lei.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Conferir o feriado estadual do ES e o 08/09 de Vitória.",
+   "geo_coverage": "ES"
+  },
+  {
+   "name": "TRF2: Portaria PRES 845/2025 (Seção Judiciária do ES, 2026)",
+   "publisher": "Tribunal Regional Federal da 2ª Região",
+   "url": "https://trf2.jus.br/sites/default/publico/2025-12/PORTARIA%20PRES-TRF2%20N%C2%BA%20845_0.pdf",
+   "access": "pdf",
+   "format": "PDF (3 p.)",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 189 KB. Art. 2º com 5 subseções: Vitória 08/09, Cachoeiro 29/06, Colatina 12/06, São Mateus 21/09, Serra 29/06.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Conferência para o ES (o TRF2 também publica para o RJ, em outra portaria, não testada).",
+   "geo_coverage": "5 municípios do ES"
+  },
+  {
+   "name": "Querido Diário: API de diários oficiais municipais (decretos anuais de feriados e pontos facultativos)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://api.queridodiario.org.br/gazettes",
+   "access": "rest_api",
+   "format": "JSON (gazettes, excerpts) + PDF e TXT do diário",
+   "license": "Diários oficiais: domínio público; plataforma aberta (citar a OKBR)",
+   "tested": true,
+   "test_result": "O host mudou: queridodiario.ok.org.br/api → 302 → api.queridodiario.org.br. Decretos de 2026 achados e lidos no TXT: Osasco 14.952/2025, Barueri 10.264/2025, Campinas 24.240/2026, Vitória 25.991/2025, Serra 1.908/2025, Contagem 1.829/2026, Câmara de Santos 01/2026; e as leis Niterói 4.125/2026 e Rio 8.881/2025. Sem cobertura: Cajamar, Santana de Parnaíba, Ribeirão Pires, Cubatão, Guarujá, Cariacica. Defasados: Guarulhos (último 09/06/2026), BH (25/03/2026), Duque de Caxias (25/08/2025), Vila Velha (29/05/2025).",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Vigia mensal, de novembro a janeiro e depois mensal, por município de interesse, com consulta '\"feriados\" \"pontos facultativos\" ANO' e 'feriado municipal'. O parse do anexo vira proposta de linhas em holidays com legal_basis = decreto e URL, sempre com revisão humana (o formato varia por cidade). Também detecta feriados avulsos (lei por evento).",
+   "geo_coverage": "Municípios cobertos pelo QD (parcial no Sudeste)",
+   "caveats": "Cobertura irregular; o TXT vem de OCR com ruído; os decretos misturam feriado, ponto facultativo e 'emenda': só 'feriado' conta."
+  },
+  {
+   "name": "python-holidays (vacanza/holidays)",
+   "publisher": "Vacanza Team (comunidade)",
+   "url": "https://github.com/vacanza/holidays",
+   "access": "bulk_download",
+   "format": "Biblioteca Python (PyPI)",
+   "license": "MIT; uso comercial livre",
+   "tested": true,
+   "test_result": "Versão 0.83 rodada localmente (Python 3.9): RJ 23/04, ES Nossa Senhora da Penha 13/04/2026, MG 21/04, SP 09/07. A versão 0.106 (Python ≥ 3.10; o importer usa 3.12) acrescenta o Carnaval do RJ (Lei 5.243). Nenhuma versão tem o Corpus Christi do RJ (Lei 11.002/2025) nem municipais. Corpus Christi e Carnaval só como 'optional' nacional.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só conferência dos estaduais (como o --check-brasilapi do gen-zones-seed.py). Não usar como fonte.",
+   "geo_coverage": "Brasil, por UF"
+  },
+  {
+   "name": "Nager.Date API",
+   "publisher": "Nager (comunidade)",
+   "url": "https://date.nager.at/api/v3/PublicHolidays/2026/BR",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Código MIT; API pública sem chave",
+   "tested": true,
+   "test_result": "HTTP 200, 15 datas. Só nacionais e SP (09/07, counties BR-SP). Corpus Christi e Sexta-feira Santa como nacionais 'Public'; Carnaval 'Bank/Optional'. Não tem os estaduais de RJ, MG e ES.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não usar.",
+   "geo_coverage": "Brasil (só nacional + SP)"
+  },
+  {
+   "name": "joaopbini/feriados-brasil (dataset CSV, JSON e SQL)",
+   "publisher": "João Pedro Bini (comunidade)",
+   "url": "https://github.com/joaopbini/feriados-brasil",
+   "access": "bulk_download",
+   "format": "CSV/JSON/SQL por ano, com codigo_ibge",
+   "license": "MIT (repositório); procedência dos dados não declarada",
+   "tested": true,
+   "test_result": "Municipal 2026: 527 KB. Sudeste: SP 1.201 linhas (582 municípios), MG 1.410 (601), RJ 223 (91), ES 177 (76); 2.284 com nome genérico 'Feriado Municipal'. Erros: ES estadual em 28/04/2026 com o rótulo 'Aniversário do Estado'; falta o Corpus Christi do RJ; Barueri 26/03 (é ponto facultativo); Contagem 08/12 (não é feriado). Contra os atos oficiais, sem contar Paixão e Corpus Christi, coincide em 169 de 296 comarcas do TJMG e 250 de 316 do TJSP. Marca Corpus Christi em só 32 de 287 sedes mineiras onde ele é feriado.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só como pista para municípios sem fonte oficial, nunca para suspender regra.",
+   "geo_coverage": "Brasil",
+   "record_count": "8.545 linhas municipais (2026)"
+  },
+  {
+   "name": "feriados-dev/feriados-dev-oss",
+   "publisher": "feriados.dev (comunidade)",
+   "url": "https://github.com/feriados-dev/feriados-dev-oss",
+   "access": "bulk_download",
+   "format": "SQL seeds (PostgreSQL) + API Express self-hosted",
+   "license": "Código MIT; dados derivados da Wikipedia PT (CC BY-SA) e da FeriadosAPI (proprietária). A licença dos dados é incerta",
+   "tested": true,
+   "test_result": "Seeds baixados. A migration 21 declara 'Fontes: Wikipedia PT (aniversários), FeriadosAPI'. Aniversários entram como feriado municipal (ex.: Barueri, que é ponto facultativo). Tem o Corpus Christi do RJ em 2026 (correção manual).",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não usar (risco de licença e de falso positivo).",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "FEBRABAN: Feriados Bancários (estaduais e municipais)",
+   "publisher": "Federação Brasileira de Bancos",
+   "url": "https://feriadosbancarios.febraban.org.br/Municipais/Listar",
+   "access": "scrape",
+   "format": "HTML com POST",
+   "license": "Proprietário; sem licença de reuso",
+   "tested": true,
+   "test_result": "HTTP 200 na página. O POST exige token reCAPTCHA v3 (grecaptcha.execute) e devolveu 400 sem ele. Não é automatizável sem burlar o CAPTCHA, o que não foi feito. Também mede feriado bancário, não civil.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Não usar.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "IBGE: API de Localidades (municípios por UF)",
+   "publisher": "IBGE",
+   "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/33/municipios",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Dados públicos IBGE (citar a fonte)",
+   "tested": true,
+   "test_result": "HTTP 200: MG 853, ES 78, RJ 92, SP 645 municípios. Usada para casar o nome da comarca com o código IBGE (falharam só grafias: Brazópolis, Ipauçu, Santa Rosa do Viterbo).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Tabela de apoio no importador para resolver ibge_code; o banco já tem a malha municipal usada por restricoes_rmsp.",
+   "geo_coverage": "Sudeste"
+  },
+  {
+   "name": "Invertexto API / feriadosapi.com / Calendarific",
+   "publisher": "Privados",
+   "url": "https://feriadosapi.com",
+   "access": "rest_api",
+   "format": "JSON",
+   "license": "Comercial / termos próprios (exigem cadastro e chave)",
+   "tested": false,
+   "test_result": "Não testados: exigem cadastro ou chave de API, e criar conta está fora do permitido. O feriadosapi.com anuncia 5.570 municípios e plano grátis de 100 requisições por mês (README do joaopbini), sem procedência legal declarada.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Avaliar só se o usuário criar a conta e aceitar os termos. Mesmo assim, só para conferência.",
+   "geo_coverage": "Brasil"
+  },
+  {
+   "name": "TRT1: calendário de feriados (RJ)",
+   "publisher": "Tribunal Regional do Trabalho da 1ª Região",
+   "url": "https://www.trt1.jus.br/calendario",
+   "access": "scrape",
+   "format": "HTML (Liferay)",
+   "license": "Ato oficial",
+   "tested": true,
+   "test_result": "/calendario dá HTTP 200, mas sem lista municipal no HTML; /calendario-2024, 2025 e 2026 dão 404, e só existem páginas até 2023. A AASP republica notícias mensais do TRT1 com feriados municipais (não baixadas).",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Tentar de novo em dezembro (ato de 2027 pela Rec. CNJ 44). Hoje não há fonte consolidada para os municípios do interior do RJ.",
+   "geo_coverage": "RJ"
+  }
+ ],
+ "reused_from_existing": [
+  "db/seed/0004_holidays.sql e scripts/gen-zones-seed.py (holidays_for/easter): nacionais, estadual de SP (Lei 9.497/1997) e municipais da capital de 2026 a 2028. O modelo de cálculo pela lei (fixa ou Páscoa±n) é o que se propõe estender.",
+  "docs/research/rodovias_restricoes (fonte 'BrasilAPI: feriados nacionais', já testada): 14 datas em 2026, com Carnaval e Corpus Christi como nacionais, sem estaduais nem municipais. Não foi testada de novo; continua só para conferência.",
+  "docs/research/rodovias_restricoes: Portaria DIOP/PRF 121/2026 (janelas da PRF não seguem a lista de feriados) e DER-MG Portaria 4.162/2025. Não testadas de novo.",
+  "docs/research/restricoes_rmsp_municipios: Querido Diário já usado para atos de trânsito. Aqui foi usado com nova finalidade (decretos de feriados) e se constatou a mudança do host da API para api.queridodiario.org.br.",
+  "docs/layers/restricoes_rmsp.md (linhas 154 e 201): lacuna declarada 'feriados municipais desses municípios não estão em holidays'. Esta pesquisa fecha a lacuna para Osasco e Barueri (decretos 2026) e dá a lista do TJSP para Guarulhos, Cajamar, Santana de Parnaíba e Ribeirão Pires.",
+  "docs/research/legislacao_limites e restricoes_sp_capital: histórico de suspensões da CET (sem novo teste) e a lacuna 'calendário de feriados municipais e estaduais não consolidado'.",
+  "docs/layers/core_legal.md: decisão de não usar a BrasilAPI e de tratar o Carnaval como ponto facultativo em SP. Mantida, com a ressalva de que no RJ a terça de Carnaval é feriado estadual.",
+  "api/src/layers/rodovias_horario.layer.ts: já consulta holidays para 3548500, 3513504, 3548708, 3550308, 3541000 e 3551009. Os dados do edital do TJSP aqui levantados preenchem exatamente esses municípios.",
+  "scratchpad/sudeste/CONVENCOES_IMPLEMENTACAO.md, item 2: usar a tabela holidays (scope state/municipal, uf, ibge_code), sem camada nova."
+ ],
+ "gaps": [
+  "Não existe base nacional estruturada, oficial e com licença clara de feriados municipais. Os atos dos tribunais (CNJ Rec. 44/2020) cobrem só as sedes de comarca: 297 de 853 em MG e 318 de 645 em SP.",
+  "RJ interior: não foi achada lista consolidada oficial de feriados municipais. O TJRJ só publica suspensões avulsas; o TRT1 não tem páginas de 2024–2026; o TRF2-RJ não foi testado. Duque de Caxias, Itaguaí, Volta Redonda, Resende, Macaé e São Gonçalo ficam sem confirmação primária. Niterói tem só o Corpus Christi confirmado.",
+  "ES: o TJES não lista municipais. Vila Velha, Cariacica, Viana, Linhares e Aracruz não foram confirmados (o Querido Diário não cobre Cariacica e para Vila Velha vai só até 05/2025).",
+  "Rio de Janeiro capital: o texto da Lei Orgânica, art. 26, não foi baixado (só a citação do TJRJ). Não se confirmou se a Sexta-feira Santa é feriado municipal no Rio. A prefeitura não publica decreto anual consolidado.",
+  "Belo Horizonte: o texto primário da Lei 11.397/2022, Anexo V, não abriu (a página da CMBH é dinâmica e o DOM exige JS). A data vem da citação do TJMG. Falta acompanhar o veto ao Carnaval (07/2026).",
+  "TJSP: o DJE primário de 25/11/2025 não foi baixado (a página 'Feriados/Interior' está vazia e o download do caderno falhou). Usada a republicação do CNB-SP, com omissões confirmadas (Campinas 12/08, Santos Corpus Christi).",
+  "Contagem: a regra Páscoa−9 para o Jubileu de Nossa Senhora das Dores é inferência a partir de 2026; falta conferir o texto da Lei 3.484/2001.",
+  "Datas fixas do edital do TJSP sem lei conhecida (ex.: Cajamar 18/02, Santana de Parnaíba 14/11) só valem para 2026. Para 2027+ é preciso o novo edital ou o decreto municipal.",
+  "Feriados avulsos por evento (Rio 07/07/2025, BRICS) e pontos facultativos de última hora não têm feed: só o Querido Diário, com atraso e cobertura parcial.",
+  "Invertexto, feriadosapi.com e Calendarific não foram testados (exigem cadastro ou chave). FEBRABAN bloqueia por reCAPTCHA.",
+  "Não foi verificado quais regras de circulação fora de SP (Rio, BH, Vitória, DER-RJ, DER-ES) dizem 'exceto feriados'. Isso é das frentes rio_capital e rodovias; aqui só se entrega o calendário.",
+  "Validade jurídica: muitos feriados municipais (aniversários) e estaduais (RJ) excedem a Lei 9.093/1995. O STF validou o São Jorge e o Corpus Christi do RJ por patrimônio cultural, mas a validade dos municipais não foi analisada caso a caso."
+ ],
+ "recommendations": [
+  "Correção antes de expandir para RJ, MG e ES: em api/src/services/calendar.ts, derivar a UF dos 2 primeiros dígitos do código IBGE (31=MG, 32=ES, 33=RJ, 35=SP) em vez do padrão uf='SP'. Hoje restricoes_rmsp.layer.ts chama legalDayInfo(at, ibge) sem UF, e routing.ts e core_legal chamam legalDayInfo(at) só com SP. Num município fluminense isso aplicaria o 9/7 paulista e ignoraria o São Jorge, o Carnaval e o Corpus Christi do RJ. O aviso 'holiday' do routing.ts deve citar o município ou a UF da rota, não só SP.",
+  "Estender o gerador já existente, sem dependência nova: um config versionado (ex.: config/holidays-sudeste.json) com regras declarativas (fixa ou Páscoa±n, vigência inicial e final, escopo, uf, ibge_code, legal_basis, source_url, confiança), consumido por scripts/gen-zones-seed.py ou por um importador feriados_sudeste com SEED_SQL e RECORD_COUNT, como o cet_suspensoes. Ponto de partida: o arquivo feriados_sudeste_curado_2026_2028.csv (165 linhas). Esforço: baixo (1–2 dias).",
+  "Estaduais (alta confiança, entrar já): RJ terça de Carnaval (Páscoa−47, desde 2009), 23/04, Corpus Christi (Páscoa+60, só a partir de 23/10/2025) e o 2º domingo de maio; ES Páscoa+8 (desde 2019). Não incluir a Quarta de Cinzas do RJ (só bancária) nem 16/07 e 08/12 de MG (datas cívicas).",
+  "Prioridade municipal: os municípios cujas regras já estão no app e dizem 'exceto feriados'. Osasco (Dec. 14.952/2025) e Barueri (Dec. 10.264/2025) fecham a lacuna de docs/layers/restricoes_rmsp.md. Depois os 6 municípios já consultados por rodovias_horario.layer.ts (Santos, Cubatão, SBC, São Vicente, Praia Grande; a capital já existe), que hoje não têm linhas.",
+  "Importadores anuais dos atos dos tribunais (CNJ Rec. 44/2020), em dezembro: feriados_tjmg.py (PDF da Portaria Conjunta; parser testado, 297 comarcas) e feriados_tjsp.py (edital CSM; parser testado, 318 comarcas). Gravam scope='municipal' com confiança média e legal_basis do ato. Preencher o número da lei pelo anexo do TRT3 quando houver. Falhar (sem gravar) se o formato mudar, como já faz o prf_feriados.py. Esforço: médio (2–3 dias com testes).",
+  "Hierarquia de fontes por município: decreto anual ou lei municipal (Querido Diário ou diário oficial) > ato do TJ/TRT/TRF > nada. Nunca suspender restrição com base em dataset comunitário (joaopbini, feriados.dev) nem em APIs comerciais sem procedência: no Sudeste esses dados divergem dos atos oficiais em 20–43% das sedes de comarca.",
+  "Na tabela holidays só entra 'feriado'. Ponto facultativo, 'emenda' e 'dia sem expediente' não suspendem regra de trânsito (ex.: Barueri 26/03, Serra Corpus Christi, Carnaval em SP, MG e ES). Manter a decisão conservadora do core_legal: na dúvida, a restrição continua.",
+  "Vigia do Querido Diário (novo host api.queridodiario.org.br) por município de interesse, em nov–jan e depois mensal, com as consultas '\"feriados\" \"pontos facultativos\" <ano>' e 'feriado municipal'. Gera proposta de mudança para revisão humana. Pega leis novas (Campinas 16.785/2025, Niterói 4.125/2026) e feriados avulsos (Rio, Lei 8.881/2025). Onde o QD não cobre (Cajamar, Santana de Parnaíba, Ribeirão Pires, Cubatão, Guarujá, Cariacica), fica o edital do TJSP ou a curadoria manual.",
+  "Avançar o horizonte: hoje holiday_years = [2026, 2028]. As datas fixas tiradas do edital do TJSP sem lei identificada devem valer só no ano do edital; as regras com lei (fixa ou Páscoa) podem ser projetadas.",
+  "Cobrir o interior do RJ e do ES (Duque de Caxias/REDUC, Itaguaí, Volta Redonda, Resende, Macaé, Vila Velha, Cariacica, Viana, Aracruz) por curadoria manual da lei municipal, ou esperar os atos de 2027 do TRT1/TRT17/TRF2 (até 19/12/2026). Enquanto isso, marcar esses municípios como 'feriados municipais desconhecidos' e não suspender as regras (lado seguro)."
+ ]
+}

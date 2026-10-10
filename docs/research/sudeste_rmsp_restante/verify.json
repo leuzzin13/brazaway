@@ -1,0 +1,304 @@
+{
+ "category": "rmsp_restante",
+ "sources": [
+  {
+   "name": "GeoSuzano – MOB-Restrição trânsito de caminhões (ArcGIS FeatureService)",
+   "url": "https://services8.arcgis.com/q05L6PnVEyBJZq9L/arcgis/rest/services/Restricao_transito_de_caminhoes/FeatureServer",
+   "verdict": "corrected",
+   "note": "HTTP 200, 2 feições com Dt_Ho 'Segunda a Sábado - 07:00 - 21:00' e Obs de perecíveis. Duas correções. (1) O 18/03/2025 é o lastEditDate e o schemaLastEditDate; o dataLastEditDate é 30/06/2021, então os polígonos são de 2021. (2) O item se descreve como 'Vias com restrição transito de caminhões' e não como zona. O polígono maior tem anel externo de 110 vértices e 13 furos (quarteirões), com 66 mil m² e 13 km de perímetro, ou seja, é a superfície das ruas. Licença vazia; accessInformation pede atribuição ao Depto de Geotecnologias."
+  },
+  {
+   "name": "Decreto 8.183/2023 de Arujá",
+   "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 4.884.769 B. Li o texto inteiro com pdftotext. O art. 8º I/II/III, o Anexo I com 10 vias, o art. 7º §2º–§3º (13 categorias) e o art. 20 (revoga o Dec. 5.557/2010) batem com o resultado."
+  },
+  {
+   "name": "e-Processo Diadema – serviço 55",
+   "url": "https://eprocesso.diadema.sp.gov.br/externo-portal-backend/v1/servicos/55",
+   "verdict": "confirmed",
+   "note": "HTTP 200, JSON. Traz 11 vias do Centro e 3 do Jd. Eldorado com CEPs, seg–sex 6–20h e sáb 6–14h. O texto diz literalmente '2,20 m de altura' e '6,30 de comprimento'."
+  },
+  {
+   "name": "Decreto 2.184/2010 de Itapecerica da Serra",
+   "url": "http://www.ecrie.com.br/sistema/conteudos/arquivo/arquivo_5_18102018164433.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 42.606 B. Li o texto inteiro: 4 vias, seg–sex 5–21h e sáb 5–14h, exceções do art. 2º, Cartão-Caminhão no art. 3º e efeitos 30 dias após a publicação."
+  },
+  {
+   "name": "Câmara de Caieiras – sistema de legislação",
+   "url": "https://camaraonline.org/cm_caieiras/leis/resultado.php?subject=caminh&page=1",
+   "verdict": "confirmed",
+   "note": "HTTP 200 com '74 resultados'. As Leis 5.486/2021, 3.560/2004 e 5.233/2019 conferem com o resultado. A mesma base tem a Lei 2.497/1995 (carga e descarga nas ruas centrais) e a Lei 3.237/2002, que não entraram como regra."
+  },
+  {
+   "name": "Mogi das Cruzes – Autorização de Carga ou Descarga",
+   "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga",
+   "verdict": "confirmed",
+   "note": "HTTP 200 nos 4 PDFs. Li a Lei 2.903/1985 (6–22h), o Dec. 8.375/2008 (art. 1º-A) e o Dec. 1.782/2000, que é imagem. Esse decreto fixa carga e descarga das 20h às 9h, PBT acima de 1.000 kg e o perímetro de 16 logradouros, que confere. Ele nasceu experimental por 60 dias (art. 3º). O 4º PDF é um formulário de 2026, não um ato."
+  },
+  {
+   "name": "Taboão da Serra – Concessão de Cartão Caminhão (Conam)",
+   "url": "https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b",
+   "verdict": "corrected",
+   "note": "HTTP 200. A própria página traz em 'Legislações' a 'PORTARIA SETRAM Nº GS 003/2021 - Regulamentar áreas e vias com restrição ao trânsito de caminhões...'. O resultado diz que esse ato 'NÃO foi confirmado', mas ele está no HTML que o pesquisador salvou (taboao/conam.html). A página não traz horário. O formulário anexo fala em 'áreas e vias' (corredores, zona especial de restrição, vias de trânsito seletivo), o que põe em dúvida a regra 'município inteiro'."
+  },
+  {
+   "name": "Lista de fiscalização eletrônica – SEMOB Mauá",
+   "url": "https://www.maua.sp.gov.br/public/docs/locais/2567c20a9d4d6b4110e1581e2a185c21.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 9.997.359 B, 41 p., criado em 27/08/2025 e modificado em 23/09/2025. Bloco 'RESTRIÇÃO DE CIRCULAÇÃO DE VEÍCULOS DE CARGA – 3 EQUIPAMENTOS – PIEZO' com os 3 locais citados."
+  },
+  {
+   "name": "Lista de fiscalização eletrônica – São Caetano do Sul",
+   "url": "https://www.saocaetanodosul.sp.gov.br/storage/uploads/tWYSkb58tbwrXVtPKCrJHAxCyRs3LeHs5d3lELlO.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 362.008 B. Dois equipamentos de 'RESTRIÇÃO DE CIRCULAÇÃO DE VEÍCULOS' (Terminal Nicolau Delic; R. Manoel Coelho 536), sem dizer que são de caminhão."
+  },
+  {
+   "name": "Observatório da Mobilidade de Santo André – Legislação",
+   "url": "https://portais.santoandre.sp.gov.br/observatoriomob/legislacao/",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 13 normas municipais, nenhuma de caminhão. A lista é de leis gerais de mobilidade (LOM, Código de Obras, Plano Diretor, LUOPS…) e não cataloga decretos ou portarias de regulamentação viária. É evidência negativa fraca, não um 'indício forte'."
+  },
+  {
+   "name": "Guia de Serviços de São Bernardo do Campo",
+   "url": "https://guiadeservicos.saobernardo.sp.gov.br/guia-de-servicos/servicos/buscar?buscahome=caminh%C3%A3o",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 16 serviços com 'caminhão', nenhum de via restrita. Buscas por 'restrição', 'carga' e 'trânsito' também não trazem cadastro de restrição. O serviço 211653 é de cargas especiais (Res. ST 004/2015)."
+  },
+  {
+   "name": "Pé na Estrada / Trucão – restrições por município",
+   "url": "https://penaestrada.com.br/restricoes/sao-caetano-do-sul/",
+   "verdict": "confirmed",
+   "note": "HTTP 200. O dropdown tem 53 municípios, não 55; 28 são da RMSP sem contar SP, o que confere. Barueri e Cotia aparecem como 'Não possui restrições' e Guarulhos como '8h às 20h, toda região central', o que confere. A página de Caieiras lista 4 vias com restrição 24h todos os dias e Autorização Especial, não rodízio."
+  },
+  {
+   "name": "Diário de Suzano (matérias 2022, 2023, 2025)",
+   "url": "https://www.diariodesuzano.com.br/regiao/2023/07/09/circulacao-de-caminhoes-segue-com-horarios-restritos-na-regiao.html",
+   "verdict": "confirmed",
+   "note": "As URLs /73354/, /66768/ e /84656/ redirecionam (301) para URLs .html com data. Conteúdo lido. Há informação que o resultado não usou: em 2022, VUC isento em Suzano; em 2023, perímetro de Mogi diferente do decreto; em 2025, Santa Isabel com restrição de circulação, não só de carga e descarga."
+  },
+  {
+   "name": "Querido Diário API",
+   "url": "https://api.queridodiario.org.br/cities",
+   "verdict": "confirmed",
+   "note": "Após redirect, 200. Nível 3 na RMSP: Guarulhos, Itapevi, Jandira, Osasco, Santo André, SBC e Suzano, ou seja, 7. Jandira tem texto, então a lacuna que a põe entre os sem busca textual está errada."
+  },
+  {
+   "name": "SAPL das Câmaras",
+   "url": "https://sapl.embuguacu.sp.leg.br/api/norma/normajuridica/?ementa__icontains=caminh",
+   "verdict": "confirmed",
+   "note": "Embu-Guaçu tem 2.428 normas e nenhuma de restrição. O SAPL de Mairiporã responde, mas tem 0 normas. Os hosts de Diadema, Taboão, Suzano e Mauá não resolvem."
+  },
+  {
+   "name": "Prefeitura de Suzano – Leis e Decretos",
+   "url": "https://www.suzano.sp.gov.br/web/transparencia/leis-e-decretos/",
+   "verdict": "confirmed",
+   "note": "HTTP 403 (Cloudflare), confere."
+  },
+  {
+   "name": "leismunicipais / leggicomunali (Lei 4.391/2025 de Mairiporã)",
+   "url": "https://leggicomunali.it/a/sp/m/mairipora/lei-ordinaria/2025/440/4391/lei-ordinaria-n-4391-2025-dispoe-sobre-o-trafego-de-veiculos-de-carga-na-avenida-vereador-belarmino-pereira-de-carvalho-e-avenida-jose-gianesella",
+   "verdict": "corrected",
+   "note": "O espelho continua 403, mas o texto integral é acessível na fonte primária: Imprensa Oficial de Mairiporã, edição 1443 de 11/04/2025 (https://ecrie.com.br/Sistema/Conteudos/Diariooficial/edicoes/158/947-imprensaoficial_edicao_1443_assinado.pdf), achada pela listagem /imprensaoficial?mes=4&ano=2025. A lacuna 'texto não lido' tinha solução."
+  }
+ ],
+ "rules": [
+  {
+   "where": "Arujá – Dec. 8.183/2023 art. 8º I (10 vias, PBT>31,5 t / PBTC>33,075 t, 24h)",
+   "verdict": "confirmed",
+   "note": "O texto do decreto confere: 24h, todos os dias, todas as vias do Anexo I; exceção do parágrafo único para quem está instalado no trecho ou usa passagem obrigatória. A vigência é 'na data da publicação'; o carimbo de publicação está ilegível, então 08/03/2023 é a data do ato, não necessariamente a da vigência."
+  },
+  {
+   "where": "Arujá – Dec. 8.183/2023 art. 8º II (Anexo I incisos I, IV, V, VI, VII; 24h)",
+   "verdict": "confirmed",
+   "note": "Confere, inclusive Av. Amazonas só no sentido bairro/centro. O art. 7º §2º diz que não há exceção por porte, e o art. 17 prevê fiscalização por radar."
+  },
+  {
+   "where": "Arujá – Dec. 8.183/2023 art. 8º III (incisos II, III, VIII, IX, X; 05h00–23h59)",
+   "verdict": "confirmed",
+   "note": "Confere com o art. 8º III e o Anexo I, inclusive os trechos da Av. Mário Covas (2 sentidos) e da Av. dos Expedicionários (bairro/centro). O Diário de Suzano de 2023 reproduz a mesma regra."
+  },
+  {
+   "where": "Itapecerica da Serra – Dec. 2.184/2010 (4 vias, seg–sex 5–21h, sáb 5–14h)",
+   "verdict": "confirmed",
+   "note": "O texto do decreto confere em vias, horários, exceções e Cartão-Caminhão. O complemento sobre radares de 2023 está exagerado: a notícia lista uns 25 equipamentos pela cidade, com funções misturadas (velocidade, restrição, cerco, leitura de placas), e os das vias do decreto aparecem como 'JÁ EXISTENTES'. Ela não liga a função 'restrição' a essas vias. Fala ainda em 'controle de acesso de caminhões que circulam apenas como rota de passagem', o que pode indicar um regime mais novo."
+  },
+  {
+   "where": "Caieiras – Lei 5.486/2021 (Vila Rosina, 4 vias, VUC liberado)",
+   "verdict": "confirmed",
+   "note": "O texto confere: proibição sem horário, VUC excetuado e exceções do art. 2º. O art. 3º tipifica a infração no art. 187 do CTB."
+  },
+  {
+   "where": "Caieiras – Lei 3.560/2004 (13 t / 12 m em todas as ruas; perigosos)",
+   "verdict": "confirmed",
+   "note": "O texto confere. O art. 4º tem redação da Lei 3.780/2006 (R$ 600), e o art. 5º manda regulamentar por decreto em 30 dias. A ambiguidade carga útil x PBT existe no texto."
+  },
+  {
+   "where": "Caieiras – Lei 5.233/2019 (rodízio par/ímpar 6–20h)",
+   "verdict": "corrected",
+   "note": "O texto da lei confere: é autorizativa, as vias ficam para decreto (art. 1º §1º), placas de Caieiras estão isentas e a vigência é 60 dias após a publicação. Mas as 4 vias atribuídas ao rodízio pelo Pé na Estrada (R. João Dartora/Waldemar G. Marino, Av. Prof. Carvalho Pinto, Av. Paulicéia, Av. Maestro Luiz Milano Filho) aparecem lá como restrição 24h todos os dias com Autorização Especial, não como rodízio. Além disso, R. João Dartora e Av. Prof. Carvalho Pinto estão na Lei 2.497/1995 (carga e descarga nas ruas centrais 5h–8h30 e 19h–24h). Associar essas vias ao rodízio não se sustenta."
+  },
+  {
+   "where": "Diadema – Centro (11 vias, seg–sex 6–20h, sáb 6–14h)",
+   "verdict": "confirmed",
+   "note": "O JSON do serviço 55 confere em vias, CEPs e horários. A fonte diz '2,20 m de altura', e o resultado marca corretamente que isso deve ser largura. O ato normativo não foi achado."
+  },
+  {
+   "where": "Diadema – Jd. Eldorado (3 vias)",
+   "verdict": "corrected",
+   "note": "Vias e horários conferem. O campo vehicles afirma 'mais de 2,20 m de largura' sem ressalva, mas a fonte oficial diz 'altura'. É interpretação e precisa da mesma ressalva da regra do Centro."
+  },
+  {
+   "where": "Mogi das Cruzes – área central (Lei 2.903/1985; Dec. 899/1.782/8.375)",
+   "verdict": "corrected",
+   "note": "A lei (6–22h, 'transporte pesado') e o Dec. 1.782/2000 (carga e descarga 20h–9h, PBT>1.000 kg, 16 logradouros) conferem. Três correções. (1) A regra de '>3,5 t, 10–20h' aparece só na matéria de 2023; a de 2025 diz que horários e regras variam por sinalização e região. (2) A matéria de 2023 dá outro perímetro, com 9 vias: Olegário Paiva, Narciso Yague Guimarães, Ten. Luiz Marcondes dos Santos, D. Antônio Cândido de Alvarenga, Av. Fernando Costa, R. Ipiranga, Maj. Arouche de Toledo, Primeiro de Setembro e Cel. Cardoso de Siqueira. Ela também diz que a carga e descarga vai das 20h às 10h. Montar o polígono pelos 16 logradouros de 2000 e aplicar a janela de 2023 mistura fontes. (3) O Dec. 1.782 nasceu experimental (art. 3º)."
+  },
+  {
+   "where": "Suzano – região central (GeoSuzano, seg–sáb 7–21h)",
+   "verdict": "corrected",
+   "note": "Os atributos Dt_Ho e Obs conferem. Três correções. (1) A geometria representa ruas, não zona: o item se descreve como 'Vias com restrição' e o polígono tem furos nos quarteirões. (2) Os dados são de 30/06/2021; o 18/03/2025 é edição de schema. (3) Falta a exceção de VUC: a matéria de 2022 diz que 'a medida não se aplica ao VUC' nem a perecíveis identificados. O limite de 3,5 t vem da matéria de 2023. O ato não foi localizado."
+  },
+  {
+   "where": "Taboão da Serra – município inteiro (seg–sex 5–21h, sáb 10–14h)",
+   "verdict": "corrected",
+   "note": "O ato existe e está citado na página oficial usada como fonte: Portaria SETRAM GS 003/2021, 'Regulamentar áreas e vias com restrição ao trânsito de caminhões'. O formulário RCC lista categorias de 'Área ou via com restrição' (corredores, zona especial de restrição de circulação, vias de trânsito seletivo). Isso sugere que o regime de 2021 é por áreas e vias, e o 'município inteiro' e os horários de 2010 podem estar desatualizados. A página oficial não traz horário. O texto da portaria não foi lido: o site da prefeitura dá 403."
+  },
+  {
+   "where": "Mairiporã – Lei 4.391/2025 (3 avenidas da Cantareira)",
+   "verdict": "confirmed",
+   "note": "Li a fonte primária: Imprensa Oficial edição 1443, 11/04/2025. São veículos de carga com mais de 2 eixos e transporte coletivo de fretamento, nos dois sentidos, nos 3 trechos exatamente como descritos. Não há horário (é permanente). O art. 2º permite eventos excepcionais com autorização prévia e, se preciso, escolta. A multa é de 145 UFM-M, em dobro (290) na reincidência em 12 meses. Revoga a Lei 1.757/1997 e entrou em vigor na publicação (11/04/2025)."
+  },
+  {
+   "where": "Mauá – 3 pontos de fiscalização de restrição de carga",
+   "verdict": "confirmed",
+   "note": "A lista oficial (pág. com 'RESTRIÇÃO DE CIRCULAÇÃO DE VEÍCULOS DE CARGA – 3 EQUIPAMENTOS – PIEZO') confere nos 3 locais e sentidos. A regra (horário, critério) não está publicada."
+  },
+  {
+   "where": "Embu das Artes – conversão Av. Elias Yazbek → R. Muni Stemberg",
+   "verdict": "confirmed",
+   "note": "A notícia oficial de 26/05/2025 confere: ônibus e caminhões proibidos de converter à direita, exceto autorizados, por causa do aclive. A menção às placas R-9/R-4 não está no texto da notícia."
+  },
+  {
+   "where": "Itaquaquecetuba – Vila Japão, Maria Augusta e Centro",
+   "verdict": "corrected",
+   "note": "Em 2023 a imprensa cita restrição em Vila Japão e Maria Augusta e diz que a área central é 'liberada das 9h às 20h'; não põe o Centro como restrito. 'Centro' e '24h' vêm só do Pé na Estrada. Em 2025, carga e descarga no centro das 20h às 9h, via Cobrasin. Continua como pista de baixa confiança."
+  },
+  {
+   "where": "Santa Isabel – Av. da República",
+   "verdict": "corrected",
+   "note": "A matéria de 2025 do Diário de Suzano diz que a circulação de caminhões na Av. da República é restrita seg–sáb das 11h às 20h, com transversais livres. É restrição de trânsito, não só de carga e descarga como o resultado classifica ('só aviso'). O Dec. 5.568 (2022) era de carga e descarga. O Pé na Estrada diz que Santa Isabel não tem restrição, o que contradiz a matéria."
+  },
+  {
+   "where": "Juquitiba – Estrada Márcia Maria de Jesus",
+   "verdict": "unverifiable",
+   "note": "Só o Pé na Estrada: '3 ou 4 eixos', seg–sex 24h, sábado livre, sem cartão. Não há fonte oficial."
+  },
+  {
+   "where": "Franco da Rocha – R. Cel. Domingos Ortiz",
+   "verdict": "confirmed",
+   "note": "A notícia oficial de 06/03/2015 confere: mão única para subir só com veículos leves; ônibus e caminhões desviam pela R. Cel. Fagundes e R. Dr. Franco da Rocha, e pesados também pela R. Antonio Muzzi Sobrinho. Pode estar desatualizado (2015). O Pé na Estrada diz que Franco não tem restrição."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "Dec. 8.183/2023 de Arujá: 10 vias; 24h para PBT>31.500 kg ou PBTC>33.075 kg em todas, 24h em 5 e 05:00–23:59 em 5; sem isenção de VUC; revoga o Dec. 5.557/2010.",
+   "verdict": "confirmed",
+   "note": "Arts. 8º e 20 e Anexo I lidos no PDF oficial."
+  },
+  {
+   "fact": "GeoSuzano publica 2 polígonos centrais com 'Segunda a Sábado - 07:00 - 21:00' e exceção de perecíveis; última edição em 18/03/2025; única camada da RMSP no ArcGIS Online.",
+   "verdict": "corrected",
+   "note": "Os atributos conferem. A data dos dados é 30/06/2021; 18/03/2025 é edição de schema. Os polígonos são superfícies de rua ('Vias com restrição'). A afirmação de ser a 'única camada do ArcGIS Online' não pôde ser verificada."
+  },
+  {
+   "fact": "Serviço 55 do e-Processo de Diadema: caminhões acima de 2,20 m ou 6,30 m proibidos em 11 vias do Centro e 3 do Jd. Eldorado, seg–sex 6–20h e sáb 6–14h.",
+   "verdict": "confirmed",
+   "note": "O JSON confere. A dimensão de 2,20 m está descrita como altura."
+  },
+  {
+   "fact": "Dec. 2.184/2010 de Itapecerica proíbe caminhões e carretas em 4 vias, seg–sex 5–21h e sáb 5–14h, com Cartão-Caminhão.",
+   "verdict": "confirmed",
+   "note": "Texto integral lido."
+  },
+  {
+   "fact": "Em 15/08/2023 a Prefeitura de Itapecerica anunciou radares de 'restrição de veículos' nas vias do Dec. 2.184/2010.",
+   "verdict": "corrected",
+   "note": "A notícia de 15/08/2023 existe, mas lista uns 25 locais de equipamentos com funções misturadas (velocidade, restrição, cerco, leitura de placas) pela cidade toda. Os pontos nas vias do decreto já existiam antes. Ela não diz que os de 'restrição' estão nessas vias."
+  },
+  {
+   "fact": "Lei 5.486/2021 de Caieiras proíbe caminhão e carreta, exceto VUC, em 4 vias da Vila Rosina.",
+   "verdict": "confirmed",
+   "note": "Texto lido na Câmara."
+  },
+  {
+   "fact": "Lei 3.560/2004 de Caieiras fixa 13 t e 12 m em todas as ruas e proíbe produtos perigosos, salvo autorização especial.",
+   "verdict": "confirmed",
+   "note": "Texto lido; art. 4º com redação da Lei 3.780/2006."
+  },
+  {
+   "fact": "Lei 5.233/2019 de Caieiras autoriza rodízio par/ímpar seg–sáb 6–20h nas vias que decreto especificar; decreto não localizado.",
+   "verdict": "confirmed",
+   "note": "Texto lido. Não achei o decreto; a busca da Câmara cobre só leis."
+  },
+  {
+   "fact": "Lei 2.903/1985 de Mogi proíbe transporte pesado no centro das 6h às 22h; Dec. 1.782/2000 limita carga e descarga (PBT>1.000 kg) das 20h às 9h e delimita perímetro de 16 logradouros.",
+   "verdict": "confirmed",
+   "note": "A lei foi lida em PDF com texto. O Dec. 1.782 foi lido como imagem: os 16 logradouros conferem, e o decreto era experimental (art. 3º)."
+  },
+  {
+   "fact": "Mogi informou que veículos acima de 3,5 t não circulam no centro das 10h às 20h; Ferraz e Guararema sem restrição; Poá sem restrição de horário, só placas.",
+   "verdict": "confirmed",
+   "note": "Confere com a matéria de 09/07/2023. Na mesma matéria, porém, o perímetro de Mogi é outro (9 vias) e a carga e descarga vai das 20h às 10h. Na matéria de 2025, Poá diz não ter restrição alguma."
+  },
+  {
+   "fact": "Taboão mantém em 2026 o serviço 'Concessão de Cartão Caminhão' (NF de entrega ou retirada no município) e a restrição em todo o município (seg–sex 5–21h, sáb 10–14h) existe desde 06/12/2010.",
+   "verdict": "corrected",
+   "note": "O serviço e a exigência de 2 NF em 120 dias conferem. A página não traz horário nem 'município inteiro'. Ela cita a Portaria SETRAM GS 003/2021 ('áreas e vias com restrição'), que o resultado deu como não confirmada. O dado de 2010 vem só da imprensa e pode estar superado."
+  },
+  {
+   "fact": "SEMOB Mauá lista 3 equipamentos piezo de restrição de circulação de veículos de carga.",
+   "verdict": "confirmed",
+   "note": "PDF de ago–set/2025 lido."
+  },
+  {
+   "fact": "Lei 4.391/2025 de Mairiporã (11/04/2025) proíbe caminhões com mais de 2 eixos e ônibus de fretamento na subida da Cantareira, com multa de R$ 5.104.",
+   "verdict": "confirmed",
+   "note": "Confirmado na fonte primária (Imprensa Oficial ed. 1443, 11/04/2025). São 145 UFM-M, o que dá R$ 5.104 com a UFM de 2025 citada pela CONACE (R$ 35,20). A fonte citada (CONACE) não é primária e não traz a data de sanção."
+  },
+  {
+   "fact": "A lista oficial de legislação de mobilidade de Santo André não inclui restrição a caminhão.",
+   "verdict": "confirmed",
+   "note": "Literalmente correto. Mas a lista não cataloga regulamentação viária, então não sustenta 'confirmou que não tem (indício forte)' no resumo."
+  },
+  {
+   "fact": "O Guia de Serviços de SBC não tem cadastro para via restrita a caminhões, só cargas especiais (Res. ST 004/2015).",
+   "verdict": "confirmed",
+   "note": "Confere, inclusive com buscas extras ('restrição', 'carga', 'trânsito')."
+  },
+  {
+   "fact": "No Querido Diário só 7 municípios da RMSP têm nível 3.",
+   "verdict": "confirmed",
+   "note": "Guarulhos, Itapevi, Jandira, Osasco, Santo André, SBC e Suzano."
+  },
+  {
+   "fact": "Pé na Estrada cobre 28 municípios da RMSP com erros comprovados: Barueri e Cotia 'sem restrição', Guarulhos '8–20h centro', rodízio de Caieiras atribuído a Mairiporã.",
+   "verdict": "corrected",
+   "note": "28 confere (53 municípios no dropdown, não 55). Barueri, Cotia e Guarulhos conferem como estão na página. O 'rodízio de Caieiras atribuído a Mairiporã' é inferência, não erro comprovado. A página de Mairiporã traz rodízio par/ímpar 'em toda área urbana'; não há prova primária de que Mairiporã não tenha tido rodízio (a Lei 4.391/2025 revogou a Lei 1.757/1997, de conteúdo não verificado). A página de Caieiras lista 4 vias 24h, não rodízio."
+  }
+ ],
+ "extra_findings": [
+  "Mairiporã: o texto integral da Lei 4.391/2025 está na Imprensa Oficial, edição 1443 de 11/04/2025, https://ecrie.com.br/Sistema/Conteudos/Diariooficial/edicoes/158/947-imprensaoficial_edicao_1443_assinado.pdf. A lacuna 'texto não lido' tinha solução. Os detalhes estão na regra de Mairiporã. A lei revoga a Lei 1.757/1997, que pode ser a origem do 'rodízio de Mairiporã' do Pé na Estrada.",
+  "Taboão da Serra: a página oficial https://protocolo.cidadao.conam.com.br/taboao/servicos/novo/c308daa0-f621-480a-a546-4b076121969b cita a Portaria SETRAM GS 003/2021 ('Regulamentar áreas e vias com restrição ao trânsito de caminhões'). O formulário RCC está em https://cloud.smti.sp.gov.br/index.php/s/PFrBr3QsS259JW9. As categorias do formulário sugerem regime por áreas e vias, então é preciso obter o texto da portaria antes de implementar 'município inteiro'.",
+  "Suzano: a matéria de 02/10/2022 diz que a restrição 'não se aplica ao VUC' nem a perecíveis identificados (https://www.diariodesuzano.com.br/regiao/2022/10/02/carga-e-descarga-tem-horario-definido-para-caminhoes.html). Falta essa exceção na regra. Os dados da camada GeoSuzano são de 30/06/2021, e as feições são superfícies de rua, não zona.",
+  "Mogi das Cruzes: a matéria de 09/07/2023 (https://www.diariodesuzano.com.br/regiao/2023/07/09/circulacao-de-caminhoes-segue-com-horarios-restritos-na-regiao.html) dá um perímetro de 9 vias diferente das 16 do Dec. 1.782/2000. Inclui Ten. Luiz Marcondes dos Santos, D. Antônio Cândido de Alvarenga, Av. Fernando Costa, R. Ipiranga, Maj. Arouche de Toledo e Primeiro de Setembro. É preciso decidir qual perímetro usar.",
+  "Caieiras: Lei 2.497/1995 limita carga e descarga de caminhões e carretas nas ruas centrais às faixas 5h–8h30 e 19h–24h (https://camaraonline.org/cm_caieiras/doc_legis/1995/HTM/LEI2497_1995.htm). São 6 ruas: R. Ambrosina do Carmo Buonaguide, R. João Dartora, Av. Prof. Carvalho Pinto, Av. 14 de Dezembro, Av. Dr. Armando Pinto e R. José do Carmo Leite. Ela coincide em parte com as vias que o Pé na Estrada dá como restritas 24h.",
+  "Caieiras: Lei 3.237/2002 proíbe caminhões de lixo e resíduos químicos e industriais na área central, com perímetro por decreto (https://camaraonline.org/cm_caieiras/doc_legis/2002/HTM/LEI3237_2002.htm). O resultado leu a lei, mas não a registrou como regra.",
+  "Santa Isabel: em 20/04/2025 a prefeitura declarou restrição de circulação de caminhões na Av. da República seg–sáb 11h–20h (https://www.diariodesuzano.com.br/cidades/2025/04/20/regras-para-circulacao-de-40-mil-caminhoes-na-regiao-sao-aplicadas.html). É restrição de trânsito, não só de carga e descarga.",
+  "O Pé na Estrada marca 'Não possui restrições' para 9 dos 11 municípios do grupo 'não achou': Carapicuíba, Biritiba-Mirim, Embu-Guaçu, Francisco Morato, Jandira, Pirapora, Salesópolis, São Lourenço e VGP (ex.: https://penaestrada.com.br/restricoes/carapicuiba/). É indício secundário fraco, mas o resultado não o registrou.",
+  "Lacuna incorreta: Jandira tem nível 3 no Querido Diário (https://api.queridodiario.org.br/cities), mas está listada entre os municípios sem busca textual.",
+  "Itapecerica: a notícia de 15/08/2023 fala em 'controle de acesso de caminhões que circulam no município apenas como rota de passagem' e lista uns 25 equipamentos pela cidade (https://www.itapecerica.sp.gov.br/noticias/seguranca-publica/informe-transito-e-transporte). Pode haver regime novo além do Dec. 2.184/2010; vale conferir na Imprensa Oficial do município.",
+  "Itaquaquecetuba: o domínio novo é https://itaqua.sp.gov.br/ (o antigo redireciona). O Cartão Caminhão é emitido via Cobrasin, segundo a matéria de 2025."
+ ]
+}

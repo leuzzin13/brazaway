@@ -1,0 +1,371 @@
+{
+ "category": "feriados_sudeste",
+ "sources": [
+  {
+   "name": "ALERJ: fichas das Leis 5.243/2008, 5.198/2008, 11.002/2025, 4.007/2002, 8.174/2018 e 8.217/2018",
+   "url": "http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef?SearchView&Query=feriado&SearchMax=200",
+   "verdict": "corrected",
+   "note": "A busca deu HTTP 200. As 6 fichas abriram (9,8–12,7 KB), mas só com requisições em série: em paralelo vieram respostas vazias e HTTP 500. O problema está na leitura. A ficha diz 'Em Vigor' para as Leis 8.174/2018 e 8.217/2018, mas o próprio cabeçalho avisa 'Norma submetida a ação de inconstitucionalidade', e o STF declarou as duas inconstitucionais (ADI 6133 e ADI 6083). Por isso 'Em Vigor' na ficha da ALERJ não basta: é preciso abrir a ADI no STF. A ficha da 11.002 diz 'Em Vigor com alterações' e 'Declarado Constitucional'."
+  },
+  {
+   "name": "ALES: Lei estadual 11.010/2019",
+   "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI110102019.html",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 103 KB. O art. 1º e o parágrafo único conferem: data magna, feriado estadual, na segunda-feira, 8º dia após o domingo de Páscoa. Publicada no DO de 04/07/2019, depois da data de 2019 (29/04), por isso só vale a partir de 2020. O python-holidays também começa em 2020."
+  },
+  {
+   "name": "ALMG: Constituição do Estado de MG, art. 256",
+   "url": "https://www.almg.gov.br/legislacao-mineira/texto/CON/1989/1989/?cons=1",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 548 KB. O inciso I é a data magna em 21/04. Os incisos II e III (16/07 e 08/12) são 'Dia de Minas' e 'Dia dos Gerais'; o §1º fala em 'celebrações cívicas'. Nenhum dos dois é feriado."
+  },
+  {
+   "name": "Lei federal 9.093/1995",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9093.htm",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 5,3 KB. Arts. 1º (I–III) e 2º conferem, inclusive o limite de quatro feriados religiosos com a Sexta-Feira da Paixão."
+  },
+  {
+   "name": "CNJ Recomendação 44/2020",
+   "url": "https://atos.cnj.jus.br/atos/detalhar/4838",
+   "verdict": "confirmed",
+   "note": "HTTP 200, situação 'Vigente'. Ressalva: é uma RECOMENDAÇÃO ('RECOMENDAR ... que editem'), e o resumo diz que ela 'obriga'. Na prática há atraso: o ato consolidado do TJMG para 2026 só saiu em 13/04/2026."
+  },
+  {
+   "name": "TJMG: Portaria Conjunta 1798/PR/2026",
+   "url": "https://www8.tjmg.jus.br/institucional/at/pdf/pc17982026.pdf",
+   "verdict": "corrected",
+   "note": "HTTP 200, 1,93 MB, md5 igual ao arquivo do pesquisador. Contagem independente no 1º anexo: 297 comarcas e 1.278 itens (confere). Duas correções: (1) o PDF tem QUATRO versões do Anexo Único (PC 1860, PC 1828, PC 1814 e a original), não duas, e só a primeira vale; (2) a Paixão (03/04) aparece em 297 comarcas, não 296. O art. 2º (BH: Corpus Christi e Assunção) e os considerandos que citam a Lei BH 11.397/2022, Anexo V, conferem."
+  },
+  {
+   "name": "TJMG: portal Feriados Locais",
+   "url": "http://www8.tjmg.jus.br/servicos/gj/calendario/index.jsp?comarca=null&mes=null&ano=2026",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 69 KB. O seletor tem 298 comarcas mais 'Todas' (BH = 24, Contagem = 79) e anos de 2016 a 2028."
+  },
+  {
+   "name": "TRT3: Anexo da Portaria 991/2025",
+   "url": "https://portal.trt3.jus.br/internet/institucional/calendario/feriados-locais-1/anexo-unico-portaria-trt3-segp-991-de-3-de-novembro-de-2025-ass.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 158 KB. Tem 272 linhas datadas, das quais 65 são 'RA 109/2025'. Betim aparece com Corpus Christi pela Lei 4.731/2008. O TRT3 diverge do TJMG em algumas datas: Aimorés 18/09 contra 21/09 e Almenara 13/01 contra 12/01."
+  },
+  {
+   "name": "TJSP: edital CSM 2026 republicado pelo CNB-SP",
+   "url": "https://cnbsp.org.br/2025/11/25/dje-csm-divulga-edital-sobre-aprovacao-de-feriados-municipais-para-2026/",
+   "verdict": "corrected",
+   "note": "HTTP 200, 192 KB. As entradas citadas (Osasco, Campinas, Santos, Guarulhos, Cajamar, Santana do Parnaíba, Ribeirão Pires, Cubatão, Guarujá, SBC, São Vicente, Praia Grande, Barueri) conferem com a republicação. Mas o resumo diz que a página do TJSP é 'vazia', e isso está errado: o TJSP tem consulta oficial por município, em JSON, em /CanaisComunicacao/Feriados/PesquisarFeriados, e ela já traz alterações posteriores do CSM (Campinas 12/08 incluído em 10/04/2026; Guarujá 30/06 antecipado para 29/06). O edital republicado está desatualizado."
+  },
+  {
+   "name": "TJRJ: calendários de suspensão de prazos 2026",
+   "url": "https://portaltj.tjrj.jus.br/documents/d/portal-conhecimento/suspensao-prazos-1a-e-2a-instancia_2026_seesc",
+   "verdict": "corrected",
+   "note": "Os dois PDFs deram HTTP 200 (1,0 MB e 435 KB). O da capital cita 20/01 (Lei Orgânica, art. 26), 23/04 (Lei 5.198), Corpus Christi (Lei 11.002) e 20/11 (Lei 4.007), e o Decreto RJ 50.133 com ponto facultativo em 13, 16 e 18/02. O resumo diz que o TJRJ 'não tem lista municipal', e isso foi refutado: a mesma página do Portal do Conhecimento traz 'NUR's - Feriados Municipais' (2º ao 11º NUR), com PDFs por município."
+  },
+  {
+   "name": "TJES: Ato Normativo 176/2026",
+   "url": "https://www.tjes.jus.br/corregedoria/?p=48540",
+   "verdict": "confirmed",
+   "note": "HTTP 200 (redireciona para /2026/09/30/ato-normativo-no-176-2026-disp-30-09-2026/). É a republicação de 29/09/2026 da relação de 2026 e revoga o AN 319/2025. Traz N. Sra. da Penha 13/04 (Lei 11.010/2019); art. 2º Corpus Christi como ponto facultativo onde não houver lei; art. 3º Vitória 08/09."
+  },
+  {
+   "name": "TRF2: Portaria PRES 845/2025 (SJES)",
+   "url": "https://trf2.jus.br/sites/default/publico/2025-12/PORTARIA%20PRES-TRF2%20N%C2%BA%20845_0.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 189 KB. O art. 2º confere: Vitória 08/09, Cachoeiro 29/06, Colatina 12/06, São Mateus 21/09, Serra 29/06. Corpus Christi entra como ponto facultativo (art. 1º, VIII)."
+  },
+  {
+   "name": "Querido Diário (API e arquivos)",
+   "url": "https://api.queridodiario.org.br/gazettes",
+   "verdict": "confirmed",
+   "note": "queridodiario.ok.org.br/api responde 302 para api.queridodiario.org.br (confere). Todos os 9 arquivos citados deram HTTP 200 e o texto confere: Osasco Dec. 14.952, Barueri Dec. 10.264 (conferido na imagem da p. 11), Campinas Dec. 24.240, Vitória Dec. 25.991, Serra Dec. 1.908, Contagem Dec. 1.829, Câmara de Santos Port. 01/2026, Niterói Lei 4.125 e Rio Lei 8.881. Última edição indexada confere: BH 25/03/2026, Guarulhos 09/06/2026, Vila Velha 29/05/2025."
+  },
+  {
+   "name": "python-holidays (vacanza/holidays)",
+   "url": "https://github.com/vacanza/holidays",
+   "verdict": "corrected",
+   "note": "No PyPI a versão é 0.106 (requer Python ≥ 3.10). O brazil.py da main confere: RJ tem Carnaval (≥ 2009) e São Jorge, mas não tem o Corpus Christi do RJ; ES tem a Penha só a partir de 2020. Correção: há sim um municipal, a subdivisão da capital paulista (25/01 e Corpus Christi)."
+  },
+  {
+   "name": "Nager.Date",
+   "url": "https://date.nager.at/api/v3/PublicHolidays/2026/BR",
+   "verdict": "confirmed",
+   "note": "HTTP 200 com 15 datas. Só o 09/07 tem counties BR-SP. Carnaval como Bank/Optional; Sexta-feira Santa e Corpus Christi como Public."
+  },
+  {
+   "name": "joaopbini/feriados-brasil",
+   "url": "https://github.com/joaopbini/feriados-brasil",
+   "verdict": "confirmed",
+   "note": "Licença MIT (API do GitHub). O CSV municipal de 2026, baixado de novo, tem 8.545 linhas. SP tem 1.201 linhas em 582 municípios, MG 1.410 em 601, RJ 223 em 91 e ES 177 em 76. São 2.284 linhas genéricas. Os erros apontados conferem: ES 28/04 'Aniversário do Estado', Barueri 26/03 e Contagem 08/12. As coincidências 169/296 e 250/316 não foram recalculadas."
+  },
+  {
+   "name": "feriados-dev/feriados-dev-oss",
+   "url": "https://github.com/feriados-dev/feriados-dev-oss",
+   "verdict": "confirmed",
+   "note": "Licença MIT. O cabeçalho da migration 21 diz 'Fontes: Wikipedia PT (aniversários), FeriadosAPI'."
+  },
+  {
+   "name": "FEBRABAN Feriados Bancários",
+   "url": "https://feriadosbancarios.febraban.org.br/Municipais/Listar",
+   "verdict": "confirmed",
+   "note": "HTTP 200. A página carrega recaptcha/api.js?render= e chama grecaptcha.execute (reCAPTCHA v3)."
+  },
+  {
+   "name": "IBGE Localidades",
+   "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/33/municipios",
+   "verdict": "confirmed",
+   "note": "MG 853, ES 78, RJ 92, SP 645."
+  },
+  {
+   "name": "Invertexto / feriadosapi.com / Calendarific",
+   "url": "https://feriadosapi.com",
+   "verdict": "untestable",
+   "note": "A página inicial do feriadosapi.com deu HTTP 200, mas a API exige chave. Não foi testada (criar conta não é permitido)."
+  },
+  {
+   "name": "TRT1 calendário",
+   "url": "https://www.trt1.jus.br/calendario",
+   "verdict": "confirmed",
+   "note": "/calendario-2024 e /calendario-2026 dão 404; os links só vão até 2023. Mas a conclusão de que 'não há fonte para o interior do RJ' cai: o TJRJ (NUR) e a JFRJ (TRF2, Portaria 844/2025) têm listas municipais."
+  }
+ ],
+ "rules": [
+  {
+   "where": "Estado do RJ – terça de Carnaval (Lei 5.243/2008)",
+   "verdict": "confirmed",
+   "note": "Texto do art. 1º e ficha 'Em Vigor' conferem. STF, andamentos da ADI 4131: 'NÃO CONHEÇO' (Fux, 21/09/2018), trânsito em julgado em 25/10/2018. O calendário do TJRJ mostra o Dec. 50.133/2026 com ponto facultativo só em 13, 16 e 18/02, o que é coerente com o 17/02 ser feriado. Datas (Páscoa−47) conferem: 17/02/2026, 09/02/2027, 29/02/2028."
+  },
+  {
+   "where": "Estado do RJ – 23/04 São Jorge (Lei 5.198/2008)",
+   "verdict": "confirmed",
+   "note": "Art. 1º e ficha 'Em Vigor' conferem, sem ADI registrada na ficha. O TJRJ cita a lei para 23/04/2026."
+  },
+  {
+   "where": "Estado do RJ – Corpus Christi (Lei 11.002/2025)",
+   "verdict": "confirmed",
+   "note": "Art. 1º confere (DO 23/10/2025). ADI 7898: sessão virtual de 12 a 19/06/2026, improcedente por unanimidade; acórdão publicado em 02/07/2026; trânsito em julgado em 13/08/2026. Datas (Páscoa+60): 04/06/2026, 27/05/2027, 15/06/2028."
+  },
+  {
+   "where": "Estado do RJ – 20/11 (Lei 4.007/2002)",
+   "verdict": "confirmed",
+   "note": "Art. 1º e ficha 'Em Vigor' conferem. A ficha registra a Representação de Inconstitucionalidade 146/2002 do TJRJ, julgada improcedente."
+  },
+  {
+   "where": "Estado do RJ – 2º domingo de maio (Lei 8.174/2018)",
+   "verdict": "refuted",
+   "note": "O STF declarou a Lei 8.174/2018 INCONSTITUCIONAL na ADI 6133 (Plenário virtual de 5 a 15/06/2020, por maioria; trânsito em julgado em 25/08/2020). A ficha da ALERJ avisa que a norma foi 'submetida a ação de inconstitucionalidade - ADI 6133'. Não é feriado e as 3 linhas 'alta' do CSV curado (2026-05-10, 2027-05-09, 2028-05-14) devem sair. A exceção também erra: a Lei 8.217/2018 (Quarta de Cinzas bancária) foi declarada formalmente inconstitucional na ADI 6083 (29/11/2019; trânsito em julgado em 28/02/2020). Não é nem feriado bancário."
+  },
+  {
+   "where": "Estado do ES – Nossa Senhora da Penha (Lei 11.010/2019)",
+   "verdict": "confirmed",
+   "note": "Art. 1º e parágrafo único conferem. Datas Páscoa+8: 13/04/2026, 05/04/2027, 24/04/2028. TJES, TRF2 e TRT17 aplicam o 13/04/2026. Detalhe: só vale a partir de 2020 (publicada em 04/07/2019). O TRT17 cita também a Lei estadual 3.599/1983, que é só autorizativa."
+  },
+  {
+   "where": "Estado de MG – 21/04 (CE-MG art. 256)",
+   "verdict": "confirmed",
+   "note": "Texto do art. 256 confere. O TJMG trata 21/04 como 'Tiradentes e Data Magna'."
+  },
+  {
+   "where": "Município do Rio de Janeiro – 20/01",
+   "verdict": "confirmed",
+   "note": "O calendário do TJRJ da capital (atualizado em 11/09/2026) cita 'Lei Orgânica Município Rio de Janeiro, art. 26' para 20/01. O texto da Lei Orgânica não foi aberto (lacuna já declarada). A Lei Rio 8.881/2025 confere (14/04/2025, feriado em 07/07/2025, BRICS). O art. 2º dela exclui comércio, bares, hotéis etc. do feriado."
+  },
+  {
+   "where": "Município de Niterói – Corpus Christi (Lei 4.125/2026)",
+   "verdict": "corrected",
+   "note": "A Lei 4.125 de 28/05/2026 confere ('quinta-feira seguinte ao domingo da Santíssima Trindade' = Páscoa+60). A exceção erra ao dizer que os outros feriados de Niterói 'só aparecem no joaopbini': o calendário oficial do TJRJ do 2º NUR traz Niterói 24/06 (São João, com nota sobre a Lei 3.511/2020). Esse calendário foi atualizado em 13/10/2022, então ainda precisa conferir a vigência."
+  },
+  {
+   "where": "Município de Belo Horizonte",
+   "verdict": "confirmed",
+   "note": "A PC TJMG 1798/2026 cita a Lei BH 11.397/2022, Anexo V (Paixão, Corpus Christi, Assunção, Imaculada e Consciência Negra). O art. 2º, I e II traz 04/06 e 15/08; a Paixão e o 08/12 caem em feriados forenses do art. 1º. O veto do prefeito ao Carnaval está no Diário do Comércio de 14/07/2026. O desfecho na Câmara não foi verificado, e o texto primário da Lei 11.397 não abriu."
+  },
+  {
+   "where": "Município de Contagem",
+   "verdict": "confirmed",
+   "note": "O Decreto 1.829 de 15/01/2026 (Anexo Único) confere: 27/03 Jubileu, 03/04 e 04/06 são feriados pela Lei 3.484/2001; 30/08 é facultativo pela Lei 1.981/1989. Não tem 08/12. A regra Páscoa−9 confere em 2026, mas para outros anos continua inferência."
+  },
+  {
+   "where": "Município de Vitória",
+   "verdict": "confirmed",
+   "note": "O Decreto 25.991 (DOM ed. 2788, 18/12/2025) confere: 03/04, 13/04, 04/06 e 08/09 são feriados municipais pela Lei 1.732/1967. Carnaval, Cinzas, 30/10, 24/12 e 31/12 são ponto facultativo."
+  },
+  {
+   "where": "Município da Serra/ES",
+   "verdict": "confirmed",
+   "note": "O Decreto 1.908 de 23/12/2025 confere: Paixão, 29/06, 08/12 e 26/12 pela Lei 4.950/2019. O Corpus Christi está como 'Ponto facultativo Nacional'."
+  },
+  {
+   "where": "Município de Osasco",
+   "verdict": "confirmed",
+   "note": "O Decreto 14.952 de 09/12/2025 (IOMO 2937, 10/12/2025), art. 2º, confere: feriados municipais em 19/02, 03/04, 13/06 e 04/06; pontos facultativos e as emendas 02/01, 20/02, 20/04, 05/06 e 10/07. A cláusula 'exceto feriados' das VER (Dec. 10.676/2012, art. 5º) não foi conferida em texto primário; o próprio repositório registra que o decreto-base não está online."
+  },
+  {
+   "where": "Município de Barueri",
+   "verdict": "confirmed",
+   "note": "O Decreto 10.264 de 03/11/2025 (Jornal Oficial ed. 1.918, 12/11/2025, p. 11, conferido na imagem) traz Paixão, Corpus Christi e 24/06 como feriado. 26/03 e 21/11 são ponto facultativo; 27/03, 20/04, 05/06 e 10/07 são 'dia sem expediente'. A consulta do TJSP também só traz 24/06 como municipal."
+  },
+  {
+   "where": "Município de Campinas",
+   "verdict": "corrected",
+   "note": "O Decreto 24.240/2026, art. 1º, confere, com a Lei 16.785 de 01/09/2025. A exceção está desatualizada: o edital de novembro de 2025 omitia o 12/08, mas a consulta oficial atual do TJSP já traz 'DIA DO EVANGÉLICO - INCLUÍDO NA 16ª SESSÃO VIRTUAL DO CSM DE 10/04/2026'."
+  },
+  {
+   "where": "Município de Santos",
+   "verdict": "confirmed",
+   "note": "A Portaria 01/2026 da Mesa da Câmara (DO Santos 08/01/2026) confere: 26/01, 03/04, 04/06, 08/09 e 20/11 como feriado municipal. A consulta do TJSP traz 26/01 e 08/09 como municipais; o Corpus Christi entra como forense para todo o estado. Confiança média é adequada."
+  },
+  {
+   "where": "RMSP: Guarulhos, Cajamar, Santana de Parnaíba, Ribeirão Pires",
+   "verdict": "confirmed",
+   "note": "As datas conferem com o edital republicado e com a consulta oficial do TJSP de hoje: Guarulhos 08/12; Cajamar 20/01 e 18/02; Santana 26/07 e 14/11; Ribeirão Pires 19/03. Existe fonte primária que não foi usada: o JSON do TJSP e o calendário do TRT2 (Portaria 50/GP/2025), que traz o número da lei municipal."
+  },
+  {
+   "where": "Baixada Santista e ABC: Cubatão, Guarujá, SBC, São Vicente, Praia Grande",
+   "verdict": "corrected",
+   "note": "Erro no Guarujá: o 30/06 foi 'ANTECIPADA CSM 12/12/2025' para 29/06/2026, segundo a consulta oficial do TJSP. A linha 2026-06-30 do CSV curado está errada. As outras datas conferem: Cubatão 09/04 e 15/08; SBC 20/08; São Vicente 22/01; Praia Grande 29/06; Guarujá 15/01 (o TRT2 cita a Lei 968/1968)."
+  },
+  {
+   "where": "MG – 297 comarcas (PC TJMG 1798/2026)",
+   "verdict": "corrected",
+   "note": "297 comarcas e 1.278 datas no 1º anexo conferem, assim como os exemplos (Juiz de Fora, Uberlândia, Betim, Extrema). Correção: o PDF tem 4 versões do anexo, não 2. O TRT3 diverge do TJMG em algumas datas, então a escolha da fonte importa."
+  },
+  {
+   "where": "SP – 318 comarcas (edital CSM/TJSP 2026)",
+   "verdict": "corrected",
+   "note": "O edital confere como documento de 24/11/2025, mas está superado. O TJSP mantém uma consulta oficial por município (/CanaisComunicacao/Feriados/PesquisarFeriados?nomeMunicipio=&codigoMunicipio=0&ano=2026) que já traz alterações posteriores: Campinas 12/08 e Guarujá 29/06. Ela também lista Carnaval, Endoenças e Corpus Christi do Provimento CSM 2.813/2025 para todas as comarcas, como dia forense, e isso precisa ser filtrado."
+  },
+  {
+   "where": "ES – subseções da JF (TRF2 Portaria 845/2025)",
+   "verdict": "confirmed",
+   "note": "O art. 2º confere com as 5 subseções e datas citadas."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "Lei 9.093/1995: feriados civis e no máximo 4 religiosos em lei municipal, incluída a Paixão",
+   "verdict": "confirmed",
+   "note": "O texto dos arts. 1º e 2º no Planalto confere."
+  },
+  {
+   "fact": "CNJ Rec. 44/2020 manda os tribunais publicar o ato de feriados locais até 19/12",
+   "verdict": "corrected",
+   "note": "O ato é uma RECOMENDAÇÃO ('RECOMENDAR ... que editem'), não uma obrigação. O prazo de 19/12 do art. 2º confere. O TJMG publicou o ato consolidado de 2026 só em 14/04/2026."
+  },
+  {
+   "fact": "Lei RJ 5.243/2008 'Em Vigor'; ADI 4131 não conhecida (Fux, 21/09/2018; trânsito em julgado em 25/10/2018)",
+   "verdict": "confirmed",
+   "note": "Andamentos do STF, incidente 2636281, conferidos."
+  },
+  {
+   "fact": "Lei RJ 11.002/2025 (Corpus Christi); STF manteve a lei na ADI 7898, concluída em 19/06/2026",
+   "verdict": "confirmed",
+   "note": "A notícia do STF de 24/06/2026 e os andamentos (improcedente, unânime, trânsito em julgado em 13/08/2026) conferem."
+  },
+  {
+   "fact": "Lei RJ 5.198/2008 (São Jorge); a Lei 8.217/2018 é feriado só bancário",
+   "verdict": "corrected",
+   "note": "A Lei 5.198 confere. A Lei 8.217/2018 foi declarada formalmente INCONSTITUCIONAL pelo STF na ADI 6083 (sessão virtual de 22 a 28/11/2019; trânsito em julgado em 28/02/2020). Não vale nem como feriado bancário. Está certo não incluí-la, mas o motivo dado está errado."
+  },
+  {
+   "fact": "ES Lei 11.010/2019: Penha na segunda-feira, 8º dia após a Páscoa (13/04/2026)",
+   "verdict": "confirmed",
+   "note": "O texto da ALES confere. Vale a partir de 2020."
+  },
+  {
+   "fact": "MG CE art. 256: 21/04 é a data magna; 16/07 e 08/12 são datas cívicas",
+   "verdict": "confirmed",
+   "note": "O texto da ALMG confere."
+  },
+  {
+   "fact": "TJMG PC 1798/2026: 297 comarcas e 1.278 datas; Paixão em 296 e Corpus Christi em 288",
+   "verdict": "corrected",
+   "note": "Confere: 297 comarcas, 1.278 itens e Corpus Christi em 288. Erro: a Paixão está em 297 comarcas, não 296. O PDF traz 4 versões do anexo."
+  },
+  {
+   "fact": "Portal TJMG Feriados Locais com consulta GET de 2016 a 2028",
+   "verdict": "confirmed",
+   "note": "298 comarcas mais 'Todas'; anos de 2016 a 2028."
+  },
+  {
+   "fact": "Edital CSM/TJSP de 24/11/2025: 318 comarcas; Osasco 19/02, Sexta Santa, Corpus Christi, 13/06 e Finados",
+   "verdict": "confirmed",
+   "note": "Confere no texto republicado. Ressalva: a lista oficial atual do TJSP já mudou depois do edital."
+  },
+  {
+   "fact": "Osasco, Decreto 14.952/2025: feriados em 19/02, 03/04, 13/06 e 04/06",
+   "verdict": "confirmed",
+   "note": "Texto do IOMO 2937 conferido."
+  },
+  {
+   "fact": "Barueri, Decreto 10.264/2025: Paixão, Corpus Christi e 24/06 são feriado; 26/03 e 21/11 são ponto facultativo",
+   "verdict": "confirmed",
+   "note": "Conferido na imagem da p. 11 do Jornal Oficial ed. 1.918 de 12/11/2025. O decreto é de 03/11/2025."
+  },
+  {
+   "fact": "Campinas, Decreto 24.240/2026: Paixão, Corpus Christi, 12/08 e 08/12; o edital do TJSP não traz o 12/08",
+   "verdict": "corrected",
+   "note": "O decreto confere. O edital de novembro de 2025 de fato omitia o 12/08, mas a consulta oficial do TJSP inclui o 12/08 desde a 16ª sessão virtual do CSM, de 10/04/2026. Logo, o TJSP não 'omite' mais essa data."
+  },
+  {
+   "fact": "Vitória, Decreto 25.991/2025: 03/04, 13/04, 04/06 e 08/09 pela Lei 1.732/1967",
+   "verdict": "confirmed",
+   "note": "Anexo Único conferido."
+  },
+  {
+   "fact": "Serra, Decreto 1.908/2025: Corpus Christi é ponto facultativo; Paixão, 29/06, 08/12 e 26/12 são feriados",
+   "verdict": "confirmed",
+   "note": "Anexo Único conferido."
+  },
+  {
+   "fact": "Contagem, Decreto 1.829/2026: 27/03, Paixão e Corpus Christi; 30/08 é ponto facultativo",
+   "verdict": "confirmed",
+   "note": "Anexo Único conferido."
+  },
+  {
+   "fact": "Rio, Lei 8.881 de 14/04/2025: feriado em 07/07/2025 (BRICS)",
+   "verdict": "confirmed",
+   "note": "DO Rio de 15/04/2025 conferido. Pelo art. 2º, o comércio e outros setores funcionam normalmente."
+  },
+  {
+   "fact": "Niterói, Lei 4.125 de 28/05/2026: Corpus Christi como feriado municipal",
+   "verdict": "confirmed",
+   "note": "Texto conferido."
+  },
+  {
+   "fact": "TJES AN 176/2026: nacionais e estaduais; de municipal, só Vitória 08/09; Corpus Christi como ponto facultativo onde não houver lei",
+   "verdict": "confirmed",
+   "note": "Confere. É a republicação de 29/09/2026 (revoga o AN 319/2025)."
+  },
+  {
+   "fact": "TRF2 Portaria 845/2025 (SJES): Vitória, Cachoeiro, Colatina, São Mateus e Serra",
+   "verdict": "confirmed",
+   "note": "Art. 2º conferido."
+  },
+  {
+   "fact": "TRT3 Portaria 991/2025: 272 linhas, 196 com lei e 65 de suspensão",
+   "verdict": "confirmed",
+   "note": "Confere: 272 linhas datadas e 65 de 'RA 109/2025'. As 196 com lei não foram recontadas."
+  },
+  {
+   "fact": "BH: PL do Carnaval vetado em 07/2026, veto devolvido à Câmara",
+   "verdict": "confirmed",
+   "note": "Diário do Comércio, 14/07/2026. A situação atual do veto não foi verificada (sem orçamento de busca)."
+  }
+ ],
+ "extra_findings": [
+  "ERRO GRAVE: a Lei RJ 8.174/2018 (2º domingo de maio) foi declarada inconstitucional pelo STF na ADI 6133, com trânsito em julgado em 25/08/2020. Tirar do resumo, das regras, das recomendações e as 3 linhas 'alta' do CSV curado: https://portal.stf.jus.br/processos/detalhe.asp?incidente=5693442",
+  "A Lei RJ 8.217/2018 (Quarta de Cinzas bancária) foi declarada formalmente inconstitucional na ADI 6083 (trânsito em julgado em 28/02/2020): https://portal.stf.jus.br/processos/detalhe.asp?incidente=5641237. Lição de método: a ficha da ALERJ diz 'Em Vigor' mesmo depois de decisão do STF. É preciso abrir sempre o link de ADI que aparece no cabeçalho da ficha.",
+  "FONTE QUE FALTOU (SP, a mais importante): a consulta oficial do TJSP devolve JSON por município, sem CAPTCHA. Página: https://www.tjsp.jus.br/CanaisComunicacao/Feriados/ExpedienteForense. Endpoint: https://www.tjsp.jus.br/CanaisComunicacao/Feriados/PesquisarFeriados?nomeMunicipio=Campinas&codigoMunicipio=0&ano=2026. Já traz as alterações do CSM depois do edital (Campinas 12/08 em 10/04/2026; Guarujá 30/06 antecipado para 29/06 em 12/12/2025). Deve substituir o parse da republicação do CNB-SP. É preciso filtrar as linhas '(PROVIMENTO CSM Nº 2.813/2025)', que são forenses e valem para todo o estado.",
+  "CORREÇÃO DE DADO: no CSV curado, o Guarujá (3518701) em 2026-06-30 deve virar 2026-06-29, conforme a consulta do TJSP ('EMANCIPAÇÃO POLÍTICO ADMINISTRATIVA (ANTECIPADA CSM 12/12/2025)').",
+  "FONTE QUE FALTOU (RJ interior): o TJRJ tem listas municipais por Núcleo Regional ('NUR's - Feriados Municipais') em https://www.tjrj.jus.br/web/portal-conhecimento/feriados-locais-e-suspensao-de-prazos. Ex.: https://www.tjrj.jus.br/documents/5736540/6175653/calend_4_nurc.pdf traz Duque de Caxias 13/06, atualizado em 03/09/2026. Cobrem também Itaguaí, Volta Redonda (17/07), Resende (29/09), Macaé (29/07), São Gonçalo (10/01 e 22/09) e Niterói (24/06). As datas de atualização variam de 2022 a 2026. Isso refuta 'o TJRJ não tem lista municipal' e 'RJ interior sem lista oficial'.",
+  "FONTE QUE FALTOU (RJ): o calendário da JFRJ (TRF2, Portarias PRES 843 e 844/2025), com feriados por subseção (Campos 15/01, Rio e Três Rios 20/01 etc.): https://www.trf2.jus.br/jfrj/atendimento/calendario-de-prazos-suspensos-feriados",
+  "FONTE QUE FALTOU (ES): o TRT17, Ato PRESI SECOR 44/2025 (calendário de 2026), traz feriados municipais com o número da lei (Aracruz, Cachoeiro, Colatina, Guarapari, Linhares, Nova Venécia, São Mateus, Venda Nova, Alegre, Mimoso do Sul, Afonso Cláudio). O download exige Referer: https://www.trt17.jus.br/documents/652773/1081244/ATO+PRESI+SECOR+n%C2%BA+44-2025+-+CALEND%C3%81RIO+2026+%28REPUBLICA%C3%87%C3%83O%29.pdf (portal: https://app.trt17.jus.br/principal/calendario/index)",
+  "FONTE QUE FALTOU (RMSP e Baixada): o calendário do TRT2 (Portaria 50/GP, de 02/10/2025) traz o número da lei municipal. Ex.: Guarujá 15/01, Lei 968/1968; Osasco 19/02, Lei 3.830/2004. Preenche o legal_basis onde a pesquisa diz 'sem decreto municipal conferido': https://ww2.trt2.jus.br/servicos/agenda/feriados-e-suspensoes-de-expediente",
+  "Fonte não testada a fundo: a página 'Feriados Municipais' do TRT15 (interior de SP): https://trt15.jus.br/transparencia/feriados-municipais",
+  "Afirmação sem respaldo nas lacunas: 'O STF validou o São Jorge'. A ficha da ALERJ da Lei 5.198/2008 diz 'Ação de Inconstitucionalidade: Não Consta', e a notícia do STF sobre a ADI 7898 só trata do Corpus Christi (cita o ARE 1549615 do Maranhão). Fica como não verificável.",
+  "Risco de integração maior que o descrito: além de routing.ts, core_legal e restricoes_rmsp, também chamam legalDayInfo sem UF: ver.layer.ts:451/479, perigosos.layer.ts:388, carga_descarga.layer.ts:127-128, etaHorario.ts:80 e tollCost.ts:201. Todos herdam uf='SP' de api/src/services/calendar.ts:24.",
+  "Os tribunais divergem entre si (TJMG contra TRT3: Aimorés 21/09 contra 18/09; Almenara 12/01 contra 13/01). Quando duas fontes do Judiciário divergem, o importador deve marcar a data como conflito e não escolher uma delas em silêncio.",
+  "O ES só tem o feriado da Penha a partir de 2020: a Lei 11.010 foi publicada em 04/07/2019, depois de 29/04/2019. A recomendação 'desde 2019' deve virar 'desde 2020'.",
+  "Pasta de verificação com os downloads: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/feriados_sudeste_verif/ (fichas ALERJ, andamentos do STF, PDFs NUR do TJRJ, Ato 44/2025 do TRT17, JSON do TJSP, decretos do QD)."
+ ]
+}

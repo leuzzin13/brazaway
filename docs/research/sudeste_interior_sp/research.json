@@ -1,0 +1,565 @@
+{
+ "category": "interior_sp",
+ "summary": "Sobre \"por que não fez tudo\": esta rodada cobriu as 9 cidades das pistas e mais Jacareí, São Vicente e São José do Rio Preto. Algumas ficaram sem resposta por três motivos:\n- o limite de 200 WebSearch da sessão acabou logo no início;\n- Ribeirão Preto e o boletim de Jacareí são sites só em JavaScript, que não consegui ler;\n- alguns PDFs são escaneados ou saem sem os anexos.\n\nDaí em diante trabalhei só com fontes primárias e APIs, todas testadas: Querido Diário, WordPress das prefeituras e da EMDEC, SAPL das câmaras, portais de legislação e Overpass.\n\n**Como as regras chegam:** nenhum município do interior ou do litoral publica a restrição como dado estruturado. Tudo está em resolução, decreto, lei ou página de serviço, como na Grande SP. O OSM tem hgv:conditional = 0 nos 12 municípios consultados, e em Sorocaba as tags hgv=no estão em vias diferentes das que o ato vigente proíbe.\n\n**Regras confirmadas em fonte primária:**\n1. Campinas, Res. SETRANSP 079/2017, em vigor e fiscalizada por radar desde 18/08/2025:\n   - Anel Rodoviário: veículo de carga com mais de 14 m proibido seg–sex 6–9h e 16–20h, sáb 9–14h;\n   - Distrito de Nova Aparecida: mais de 14 m proibido em qualquer horário, só quando é passagem;\n   - Anel de Integração Eng. Rebouças: mais de 6,30 m proibido seg–sex 6–20h, sáb 6–14h.\n2. Sorocaba, Res. SEMOB 02/25 (vigente desde 12/08/2025): caminhão proibido 24 h na Av. Dom Aguirre, na Av. Carlos Reinaldo Mendes e nas vias com placa. São isentos o VUC (até 5,50 × 2,20 m) e o VLC (até 6,30 × 2,20 m).\n3. Jacareí, Dec. 247/2017 (Rota de Cargas Pesadas):\n   - caminhão pesado só circula nas 7 rotas liberadas, ou fora delas com autorização (AETC);\n   - pico 7–9h e 17–19h restrito nas zonas definidas pelo decreto;\n   - veículo leve (até 7,99 t, 7,20 m e 2 eixos) circula livre;\n   - treminhão é proibido no município.\n4. São Vicente, Lei 2163-A/2009: área central fechada a caminhão seg–sáb 10–19h, exceto feriados. Em 2025, a Lei 4.633 revogou 215 leis de rua sobre caminhão, mas não esta.\n\n**Regras com confiança média, sem o ato normativo:**\n- Piracicaba: 17 trechos centrais restritos e 15 pontos de radar para caminhão com mais de 3 eixos, conforme página da secretaria de trânsito (SEMUTTRAN) atualizada em 03/2026.\n- Santos: zona do Gonzaga, 12–20h todos os dias, citada no Diário Oficial de Santos em 2002 e com radares de fiscalização listados em 2014.\n- Guarujá: R. Valdomiro Macário proibida a caminhão, com barreira física desde 2025.\n\n**Não aplicar:**\n- São José do Rio Preto: a Lei 14.748/2024 foi declarada inconstitucional pelo TJSP em 03/09/2025.\n- Jundiaí: não tem zona; o projeto de lei de 2025 que criaria zonas e horários foi vetado e o veto mantido.\n\n**Sem ato encontrado:** São José dos Campos, Taubaté e Ribeirão Preto.\n\n**Achado transversal:** o mesmo sistema de autorização de caminhões (\"Sistema Observa\") é usado em Jacareí, Campinas e Piracicaba e, segundo Jacareí, foi replicado em mais 7 cidades.\n\n**Arquivos:**\n- notas: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/interior_sp/NOTES.md\n- regras no formato do data/raw/rmsp/regras.json: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/interior_sp/regras_interior_sp.json\n- a pasta tem ao todo 25 MB de amostras.",
+ "rules": [
+  {
+   "jurisdiction": "Campinas (IBGE 3509502)",
+   "kind": "zona",
+   "where": "Área interna do Anel Rodoviário (Anel de Contorno): polígono das rodovias Dom Pedro I (SP-065), Anhanguera (SP-330) e José Roberto Magalhães Teixeira (SP-083)",
+   "days_hours": "seg–sex 06h–09h e 16h–20h; sáb 09h–14h; o ato não excetua feriados",
+   "vehicles": "qualquer veículo de carga com comprimento acima de 14 m",
+   "exceptions": "art. 2º: emergência (CTB art. 29 VII e VIII) e obras de emergência comunicadas à EMDEC; art. 6º com Anexos II e III: entradas e roteiros liberados (Av. Prestes Maia, Av. São José dos Campos, R. Pe. José de Quadros, Av. Lix da Cunha, Av. Com. Aladino Selmi, Av. Carolina Florence)",
+   "act": "Resolução SETRANSP nº 079/2017, art. 3º e Anexos I–III (DOM Campinas 20/02/2017, p. 19–20). Vigente: a Res. 349/2019 a cita; revogou a Res. 013/2013",
+   "act_url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf",
+   "geometry_source": "OSM: as três rodovias, fechando o polígono (o ato não traz coordenadas)",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "Campinas (IBGE 3509502)",
+   "kind": "zona",
+   "where": "Distrito de Nova Aparecida: polígono da R. Batista Raffi, SP-330, Rod. Adalberto Panzan, Rod. Jorn. Francisco Aguirre Proença e divisas com Hortolândia e Sumaré",
+   "days_hours": "todos os dias, 24 h (proibida a circulação de passagem)",
+   "vehicles": "veículo de carga com comprimento acima de 14 m",
+   "exceptions": "destino comercial ou industrial no distrito para os serviços do art. 8º §1º, com ACC (art. 8º §2º); morador com ACM (art. 9º)",
+   "act": "Resolução SETRANSP nº 079/2017, art. 4º",
+   "act_url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf",
+   "geometry_source": "OSM (vias e rodovias) + IBGE (divisas municipais)",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "Campinas (IBGE 3509502)",
+   "kind": "zona",
+   "where": "Área interna do Anel de Integração Eng. Rebouças, polígono de 20 vias: Av. Dr. Abelardo Pompeu do Amaral, R. Dr. Pedro Salomão José Kassab, Av. Pref. José Roberto Magalhães Teixeira, R. Plínio Pereira Neves, Av. Dr. Ângelo Simões, Av. Monte Castelo, Av. Ayrton Senna da Silva, Av. Princesa do Oeste, Av. José de Souza Campos, Av. Júlio Prestes, R. Dona Luísa de Gusmão, acesso e Av. Dr. Heitor Penteado, Av. Pe. Almeida Garret, Av. Dr. Theodureto de Almeida Camargo, Av. Luís Smânio, Av. Andrade Neves, Av. Dr. Alberto Sarmento, R. Joaquim Vilac, Av. Barão de Monte Alegre",
+   "days_hours": "seg–sex 06h–20h; sáb 06h–14h",
+   "vehicles": "veículo de carga com comprimento acima de 6,30 m. O ato não usa o termo VUC: até 6,30 m circula",
+   "exceptions": "arts. 7º–9º: ACC (mudança, perecível não embalado, material de construção, limpeza de fossa, água para hemodiálise, reciclável de cooperativa, resíduo hospitalar) e ACM (morador com vaga própria), só seg–sex 9h–16h e sáb 6h–9h; arts. 10–11: concretagem, imprensa, caçambas, combustível/O2/GLP a granel sem autorização, nos mesmos horários. Fiscalização por radar na Av. Prestes Maia (antes da Av. Pref. Faria Lima) e na Av. Brasil (altura da Av. Barão de Itapura), sentido centro, desde 18/08/2025",
+   "act": "Resolução SETRANSP nº 079/2017, art. 5º; EMDEC 11/08/2025 e 18/08/2025 (radares, Sistema Observa)",
+   "act_url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf",
+   "geometry_source": "OSM: as 20 vias do art. 5º, parágrafo único",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "Sorocaba (IBGE 3552205)",
+   "kind": "via",
+   "where": "Av. Dom Aguirre, Av. Carlos Reinaldo Mendes e demais vias urbanas com sinalização regulamentadora (sem lista publicada)",
+   "days_hours": "proibição sem janela horária: 24 h, todos os dias",
+   "vehicles": "caminhões. Isentos: VUC (comprimento ≤ 5,50 m, largura ≤ 2,20 m, carga útil > 1.500 kg) e VLC (> 5,50 até 6,30 m, largura ≤ 2,20 m, carga útil > 1.500 kg)",
+   "exceptions": "CTB art. 29 VII e VIII; autorização por requerimento à SEMOB com 5 dias de antecedência (24 h em urgência justificada)",
+   "act": "Resolução SEMOB 02/25 (Secretaria de Mobilidade de Sorocaba), arts. 1º–3º; vigência 12/08/2025; revoga a Res. 014/2003",
+   "act_url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf",
+   "geometry_source": "OSM pelo nome da via (as 'demais vias sinalizadas' exigem levantamento ou LAI)",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "Piracicaba (IBGE 3538709)",
+   "kind": "via",
+   "where": "17 trechos da área central, entre eles R. Benjamin Constant (Voluntários de Piracicaba–Riachuelo), R. Gov. Pedro de Toledo, R. Santo Antônio, R. Boa Morte, R. Alferes José Caetano, R. do Rosário, Tv. Prof. Newton de Almeida Mello, R. Voluntários de Piracicaba, R. 13 de Maio, R. Prudente de Moraes, R. São José (2 trechos), R. Moraes Barros, R. XV de Novembro, R. Rangel Pestana, R. Dom Pedro II e R. Dom Pedro I (até a Av. Armando de Salles Oliveira)",
+   "days_hours": "não informado na fonte (a página trata como restrição permanente, liberada por autorização com dias e horários)",
+   "vehicles": "qualquer caminhão que precise acessar a área restrita do Centro (o cadastro no Sistema Observa vale para qualquer tipo de caminhão)",
+   "exceptions": "autorização prévia (até 6 meses) pelo Sem Papel/Observa; quem vem de fora pode recorrer da multa com nota fiscal de entrega no município",
+   "act": "Página de serviço da SEMUTTRAN, atualizada em 06/03/2026. Ato normativo não localizado no DOM",
+   "act_url": "https://piracicaba.sp.gov.br/servicos/autorizacao-para-circulacao-de-caminhoes-acima-de-3-eixos-pelas-vias-da-cidade/",
+   "geometry_source": "OSM pelos nomes e cruzamentos ('entre X e Y')",
+   "confidence": "media"
+  },
+  {
+   "jurisdiction": "Piracicaba (IBGE 3538709)",
+   "kind": "via",
+   "where": "Rotas restritas com radar para caminhão de mais de 3 eixos: Av. Armando Dedini (Shopping, 2 sentidos), Av. Independência 3832, Av. 1º de Agosto 420, Av. Fioravante Cenedesi, PIR-330 km 0+650 (2 sentidos), Av. Dr. Paulo de Moraes 374, Av. Com. Luciano Guidotti 2933, Av. São Paulo 1807, Av. Mons. Martinho Salgot 313, Av. Limeira perto da Av. Conde do Pinhal, Av. Prof. Vollet Sachs 4017 e 2929, Av. Pádua Dias perto da Av. Com. Pedro Morganti",
+   "days_hours": "não informado (fiscalização eletrônica contínua desde 10/12/2024)",
+   "vehicles": "caminhão com mais de 3 eixos sem autorização",
+   "exceptions": "autorização com itinerário definido pela SEMUTTRAN; rotas alternativas: SP-127, SP-308, SP-373, SP-304, acesso 155/308, Anel Viário Com. Leopoldo Dedini, Av. Rio Claro",
+   "act": "Página de serviço da SEMUTTRAN (06/03/2026) e notícia de 09/12/2024 (7 equipamentos para caminhão com mais de 3 eixos). Ato não localizado",
+   "act_url": "https://piracicaba.sp.gov.br/servicos/autorizacao-para-circulacao-de-caminhoes-acima-de-3-eixos-pelas-vias-da-cidade/",
+   "geometry_source": "OSM: as avenidas inteiras ou os trechos em torno dos radares (posição por endereço, CNEFE)",
+   "confidence": "media"
+  },
+  {
+   "jurisdiction": "Jacareí (IBGE 3524402)",
+   "kind": "zona",
+   "where": "Município inteiro fora das 7 Rotas de Cargas Pesadas (RCP: Av. Lucas Nogueira Garcez, Rod. Euryale de Jesus Zerbine, Av. Getúlio Vargas, Av. Malek Assad, Av. Castelo Branco/Industrial, Rod. Nilo Máximo, Rod. Geraldo Scavone/Av. do Cristal etc.). ZRMC (centro, Anexo I) e ZREC (regiões N/S/L/O, Anexo II)",
+   "days_hours": "VCP fora das RCP só com AETC, em qualquer horário. Horário de restrição (HRT) todos os dias 07h–09h e 17h–19h na ZRMC e na ZREC; nas RCP circula sem AETC",
+   "vehicles": "VCP (caminhão e cavalo com semirreboque fora da definição de VCL); VCL (até 7,99 t, 7,20 m e 2 eixos) circula livre; bitrem (VCPB) só nas RCP e com AETC; produto perigoso só com AETC; treminhão (VCPT) proibido no município",
+   "exceptions": "art. 9º: utilidade pública, urgência, obras de infraestrutura e de urgência, socorro mecânico, combustível para postos do município; trajeto até o local de guarda no HRT (com AETC); placa de fora com NF ou manifesto para o município ganha AETC pontual (art. 12)",
+   "act": "Decreto municipal 247/2017, arts. 2º–12 (em vigor 90 dias após 10/08/2017); complementado pelos Decs. 1.085/2020 e 359/2022, não lidos",
+   "act_url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf",
+   "geometry_source": "RCP: OSM pelos nomes. ZRMC e ZREC: os Anexos I e II não estão no PDF (pedir via LAI)",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "São Vicente (IBGE 3551009)",
+   "kind": "zona",
+   "where": "ARC (Área de Restrição de Caminhões), centro: R. Mem de Sá × Av. Pres. Wilson → R. Benjamin Constant → R. Campos Salles → R. Frei Gaspar → Av. Capitão-Mor Aguiar → R. do Colégio → Pça. 22 de Janeiro → Av. Emb. Pedro de Toledo → Av. Antônio Rodrigues → R. Mem de Sá",
+   "days_hours": "seg–sáb 10h–19h, exceto feriados",
+   "vehicles": "caminhões (definição do CTB)",
+   "exceptions": "guinchos, bombeiros, polícias e urgência; com Autorização Especial da SETRANS: concessionárias, Forças Armadas, perecíveis, mudanças, geradores e estabelecimentos da área (§3º na redação da Lei 2315-A/2010, que foi revogada pela Lei 4.633/2025)",
+   "act": "Lei municipal 2163-A/2009, art. 1º; não consta da Lei 4.633/2025, que revogou 215 leis de trânsito e estacionamento de caminhão. O art. 3º permite ao Executivo mudar perímetro e horário por decreto (nenhum decreto encontrado)",
+   "act_url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2009/5641/lei_a2163.pdf",
+   "geometry_source": "OSM: perímetro descrito no texto",
+   "confidence": "media"
+  },
+  {
+   "jurisdiction": "São Vicente (IBGE 3551009)",
+   "kind": "ponte",
+   "where": "Ponte Pênsil",
+   "days_hours": "permanente",
+   "vehicles": "ônibus e caminhões",
+   "exceptions": "não lidas (PDF escaneado, sem texto)",
+   "act": "Lei 2.320/1990 (não revogada pela Lei 4.633/2025). O OSM já tem hgv=no e maxweight=12",
+   "act_url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1990/6149/lei_2320.pdf",
+   "geometry_source": "OSM (ways 'Ponte Pênsil' com hgv=no)",
+   "confidence": "media"
+  },
+  {
+   "jurisdiction": "São Vicente (IBGE 3551009)",
+   "kind": "via",
+   "where": "Restrições de rua que continuam em vigor: Jardim Pombeba (todas as vias, caminhão com mais de 3 eixos, Lei 633-A/1998); R. Ver. Oswaldo Toschi (tráfego de caminhão, Lei 3339-A/2015); R. Campos, Vila Voturuá (Lei 1169-A/2002); Ruas Argentina, Venezuela, Bolívia e Equador, Pq. São Vicente (mais de 2 eixos, Lei 669-A/1998)",
+   "days_hours": "permanente",
+   "vehicles": "conforme cada lei: caminhão, mais de 2 eixos ou mais de 3 eixos",
+   "exceptions": "não especificadas",
+   "act": "Leis 633-A/1998, 3339-A/2015, 1169-A/2002 e 669-A/1998, não listadas na revogação da Lei 4.633/2025",
+   "act_url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/1998/2563/lei_a0633.pdf",
+   "geometry_source": "OSM pelos nomes de rua; o Jardim Pombeba exige polígono do bairro",
+   "confidence": "baixa"
+  },
+  {
+   "jurisdiction": "Santos (IBGE 3548500)",
+   "kind": "zona",
+   "where": "Zona de Restrição do Gonzaga: quadrilátero das Avenidas Bernardino de Campos, Presidente Wilson, Vicente de Carvalho, Conselheiro Nébias e Francisco Glicério",
+   "days_hours": "todos os dias, 12h–20h (segundo o DO de 2002); vigência atual não confirmada",
+   "vehicles": "caminhões",
+   "exceptions": "caminhões autorizados pela CET-Santos (em geral perecíveis)",
+   "act": "Ato normativo não localizado. DO Santos 16/02/2002 (CET fiscaliza a restrição); DO Santos 03/12/2014 lista radares 'semáforo + restrição à circulação de caminhões' na Av. Pres. Wilson × Av. Bernardino de Campos e na Pça. Narciso de Andrade × Av. Ana Costa, e 'velocidade + restrição' na Av. Martins Fontes 465. Completa a pesquisa porto_santos_terminais",
+   "act_url": "https://data.queridodiario.ok.org.br/3548500/2002-02-16/753d564ad06d46137027617cc3ad6158a9693b61.pdf",
+   "geometry_source": "OSM: as 5 avenidas",
+   "confidence": "baixa"
+  },
+  {
+   "jurisdiction": "Guarujá (IBGE 3518701)",
+   "kind": "via",
+   "where": "R. Valdomiro Macário, Jd. Conceiçãozinha, a partir do segundo trecho (depois do acesso ao Assaí)",
+   "days_hours": "permanente; barreira física (esferas de concreto) desde maio de 2025",
+   "vehicles": "caminhões (trânsito e estacionamento)",
+   "exceptions": "caminhões com destino ao Assaí Atacadista; rota indicada para os terminais: Rod. Cônego Domênico Rangoni, km 7",
+   "act": "Notícias da Prefeitura de 15/04/2025 e 30/04/2025; nenhum ato citado",
+   "act_url": "https://www.guaruja.sp.gov.br/guaruja-instala-nova-sinalizacao-para-caminhoes-na-rua-valdomiro-macario",
+   "geometry_source": "OSM (a barreira física também deveria entrar como barrier no OSM)",
+   "confidence": "media"
+  },
+  {
+   "jurisdiction": "Campinas / concessionária Rota das Bandeiras",
+   "kind": "rodovia",
+   "where": "Acesso do km 116 da SP-332 (Rod. Prof. Zeferino Vaz), Real Parque, Barão Geraldo",
+   "days_hours": "seg–sex 06h–09h e 16h–20h; sáb 06h–14h (em 2013)",
+   "vehicles": "caminhões",
+   "exceptions": "retornos no km 119 (sentido Paulínia) e na SP-065 (sentido Campinas)",
+   "act": "Medida da concessionária com a Polícia Militar Rodoviária, divulgada pela EMDEC em 20/05/2013; vigência atual não confirmada",
+   "act_url": "https://www.emdec.com.br/trafego-de-caminhoes-no-acesso-do-km-116-da-rodovia-zeferino-vaz-tem-restricao/",
+   "geometry_source": "OSM (alça de acesso) + marcos km da ARTESP",
+   "confidence": "baixa"
+  },
+  {
+   "jurisdiction": "São José do Rio Preto (IBGE 3549805)",
+   "kind": "outro",
+   "where": "Município (lei de restrição de tráfego de veículos pesados)",
+   "days_hours": "não se aplica: norma inválida",
+   "vehicles": "veículos pesados",
+   "exceptions": "—",
+   "act": "Lei municipal 14.748/2024, declarada inconstitucional pelo TJSP (Órgão Especial, ADI 2155355-95.2025.8.26.0000, j. 03/09/2025), segundo as razões de veto publicadas na Imprensa Oficial de Jundiaí em 25/09/2025. Registrar como revogada e não aplicar",
+   "act_url": "https://data.queridodiario.ok.org.br/3525904/2025-09-25/072462a38130425fb9bbe44dc0a2321847f9432e.pdf",
+   "geometry_source": "—",
+   "confidence": "alta"
+  },
+  {
+   "jurisdiction": "Jundiaí (IBGE 3525904)",
+   "kind": "outro",
+   "where": "Município: não há zona nem horário geral de restrição a caminhão",
+   "days_hours": "—",
+   "vehicles": "—",
+   "exceptions": "apenas placas R-9 pontuais (por exemplo, R. Barão de Jundiaí em frente à Pça. Rui Barbosa, segundo indicação de 2013)",
+   "act": "PL 14.649/2025 ('autoriza o Executivo a delimitar zonas e horários para circulação de caminhões') com veto total, mantido pela Câmara (IOM 10/10/2025)",
+   "act_url": "https://data.queridodiario.ok.org.br/3525904/2025-09-25/072462a38130425fb9bbe44dc0a2321847f9432e.pdf",
+   "geometry_source": "—",
+   "confidence": "alta"
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "Campinas: a Res. SETRANSP 079/2017 proíbe veículo de carga com mais de 14 m no Anel Rodoviário (seg–sex 6–9h e 16–20h, sáb 9–14h), com mais de 14 m de passagem em Nova Aparecida a qualquer hora e com mais de 6,30 m no Anel Rebouças (seg–sex 6–20h, sáb 6–14h).",
+   "source_url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf"
+  },
+  {
+   "fact": "Campinas: a Res. 349/2019 (carga e descarga) revoga a Res. 080/2017 e manda observar a Res. 079/2017, o que confirma a 079 como vigente em 11/2019.",
+   "source_url": "https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf"
+  },
+  {
+   "fact": "Campinas: desde 18/08/2025, radares na Av. Prestes Maia e na Av. Brasil (sentido centro) autuam veículo de carga com mais de 6,3 m sem autorização no Sistema Observa da EMDEC; o total segue em 144 pontos de fiscalização.",
+   "source_url": "https://www.emdec.com.br/dois-radares-vao-monitorar-veiculos-de-carga-a-partir-desta-segunda-18-08/"
+  },
+  {
+   "fact": "Sorocaba: a Res. SEMOB 02/25, vigente desde 12/08/2025, proíbe caminhão na Av. Dom Aguirre, na Av. Carlos Reinaldo Mendes e nas vias sinalizadas; isenta o VUC (até 5,50 × 2,20 m) e o VLC (até 6,30 × 2,20 m) e revoga a Res. 014/2003.",
+   "source_url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf"
+  },
+  {
+   "fact": "Sorocaba: há limitadores físicos de altura de 4,3 m em dois pontos da Av. Dom Aguirre e de 3,3 m na Pça. da Bandeira/R. Luiz Gama, além de um na Av. General Osório × Afonso Vergueiro, todos antes de pontilhões ferroviários.",
+   "source_url": "https://noticias.sorocaba.sp.gov.br/prefeitura-de-sorocaba-instala-novo-limitador-de-altura-de-caminhoes-na-regiao-central-de-sorocaba/"
+  },
+  {
+   "fact": "Sorocaba no OSM: hgv=no em 51 ways da Av. Itavuvu, 45 da Av. Ipanema e 7 da Av. Afonso Vergueiro, e nenhuma tag na Dom Aguirre nem na Carlos Reinaldo Mendes, que são as vias do ato vigente (Overpass, 10/10/2026).",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "Piracicaba: a SEMUTTRAN publica 17 trechos centrais restritos, 15 pontos de radar para caminhão com mais de 3 eixos e 9 rotas alternativas (SP-127, SP-308, SP-373, SP-304, Anel Viário etc.). A página foi atualizada em 06/03/2026 e não cita o ato.",
+   "source_url": "https://piracicaba.sp.gov.br/servicos/autorizacao-para-circulacao-de-caminhoes-acima-de-3-eixos-pelas-vias-da-cidade/"
+  },
+  {
+   "fact": "Piracicaba: 7 equipamentos para caminhão com mais de 3 eixos passaram a multar em 10/12/2024, e o cadastro no Sistema Observa começou em 27/12/2024.",
+   "source_url": "https://piracicaba.sp.gov.br/noticias/prefeitura-integra-nova-plataforma-para-cadastro-obrigatorio-de-caminhoes-acima-de-tres-eixos/"
+  },
+  {
+   "fact": "Jacareí: o Dec. 247/2017 cria 7 Rotas de Cargas Pesadas, o horário de restrição 7–9h e 17–19h nas zonas centrais e residenciais, a isenção do veículo leve (até 7,99 t, 7,20 m e 2 eixos), o bitrem só com AETC e a proibição do treminhão.",
+   "source_url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf"
+  },
+  {
+   "fact": "Jacareí: a Rota de Cargas Pesadas foi complementada pelos Decs. 1.085/2020 e 359/2022. Caminhões na área urbana caíram de 7.500 para 2.900 por dia, e há cerca de 19 mil cadastros (10/2023).",
+   "source_url": "https://www.jacarei.sp.gov.br/aplicativo-e-plataforma-online-que-autorizam-rota-de-cargas-pesadas-em-jacarei-passam-por-atualizacao/"
+  },
+  {
+   "fact": "Jacareí diz que o Sistema Observa, que ela criou, foi replicado em mais 7 cidades. Campinas (EMDEC) e Piracicaba usam o mesmo nome de sistema.",
+   "source_url": "https://www.jacarei.sp.gov.br/prefeitura-de-jacarei-recebe-premio-por-projeto-que-regula-o-trafego-de-caminhoes-no-municipio/"
+  },
+  {
+   "fact": "São Vicente: a Lei 2163-A/2009 proíbe caminhão na Área de Restrição de Caminhões (ARC) do centro, seg–sáb 10–19h, exceto feriados.",
+   "source_url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2009/5641/lei_a2163.pdf"
+  },
+  {
+   "fact": "São Vicente: a Lei 4.633/2025 (21/03/2025) revogou 215 leis sobre trânsito e estacionamento de caminhões. A 2163-A/2009 (ARC) e a 2.320/1990 (Ponte Pênsil) não estão na lista.",
+   "source_url": "https://sapl.saovicente.sp.leg.br/media/sapl/public/normajuridica/2025/9410/l4633.pdf"
+  },
+  {
+   "fact": "Santos: o Diário Oficial de 16/02/2002 descreve a Zona de Restrição do Gonzaga, com caminhão proibido das 12h às 20h todos os dias, salvo os autorizados pela CET.",
+   "source_url": "https://data.queridodiario.ok.org.br/3548500/2002-02-16/753d564ad06d46137027617cc3ad6158a9693b61.pdf"
+  },
+  {
+   "fact": "Santos: o Diário Oficial de 03/12/2014 lista radares com função 'restrição à circulação de caminhões' na Av. Pres. Wilson × Bernardino de Campos, na Pça. Narciso de Andrade × Av. Ana Costa e na Av. Martins Fontes 465.",
+   "source_url": "https://data.queridodiario.ok.org.br/3548500/2014-12-03/9e4a8546291438f2dfb2c427c9cc6785b357f86c.pdf"
+  },
+  {
+   "fact": "Guarujá: a R. Valdomiro Macário (Conceiçãozinha) foi fechada a caminhão, exceto para quem vai ao Assaí, com esferas de concreto a partir de 30/04/2025. A rota indicada é o km 7 da Rod. Cônego Domênico Rangoni.",
+   "source_url": "https://www.guaruja.sp.gov.br/prefeitura-autoriza-obras-para-limitar-o-transito-de-caminhoes-na-rua-valdomiro-macario"
+  },
+  {
+   "fact": "Jundiaí: o Executivo vetou o PL 14.649/2025, que autorizaria zonas e horários para caminhão, e a Câmara manteve o veto. O município não tem regra geral.",
+   "source_url": "https://data.queridodiario.ok.org.br/3525904/2025-09-25/072462a38130425fb9bbe44dc0a2321847f9432e.pdf"
+  },
+  {
+   "fact": "São José do Rio Preto: o TJSP declarou inconstitucional a Lei 14.748/2024 (restrição a veículos pesados) na ADI 2155355-95.2025.8.26.0000, julgada em 03/09/2025. A de Mirassol (Lei 4.206/2019) também caiu.",
+   "source_url": "https://data.queridodiario.ok.org.br/3525904/2025-09-25/072462a38130425fb9bbe44dc0a2321847f9432e.pdf"
+  },
+  {
+   "fact": "Querido Diário: dos municípios testados, só Campinas, Jundiaí, SJC (desde 2015), Santos, Taubaté (desde 12/2022), Itu, Marília, Paulínia, Sumaré, Valinhos e Vinhedo têm texto indexado (nível 3). Sorocaba, Ribeirão Preto, Piracicaba, Guarujá e Jacareí estão no nível 1.",
+   "source_url": "https://api.queridodiario.org.br/cities?levels=1&levels=2&levels=3"
+  },
+  {
+   "fact": "OSM: hgv:conditional = 0 nos 12 municípios consultados (Campinas, Jundiaí, Sorocaba, SJC, Santos, Guarujá, Ribeirão Preto, Piracicaba, Taubaté, Jacareí, São Vicente e Rio Preto).",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Res. SETRANSP 079/2017 de Campinas no DOM (via Querido Diário)",
+   "publisher": "Prefeitura de Campinas / Secretaria Municipal de Transportes",
+   "url": "https://data.queridodiario.ok.org.br/3509502/2017-02-20/6132077d619c3ede9c8cf1ed92681eefedb4ffe1.pdf",
+   "access": "PDF público, sem autenticação",
+   "format": "PDF com texto",
+   "license": "Ato oficial, domínio público (Lei 9.610/98, art. 8º, IV); uso comercial livre com citação",
+   "tested": true,
+   "test_result": "200, 559.508 B; pdftotext extraiu os arts. 1–28 e os Anexos I–IV",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regras em data/raw/sp_interior/regras.json (campinas_anel_rodoviario, campinas_nova_aparecida, campinas_anel_reboucas), aplicadas por comprimento. Os polígonos saem do OSM pelas vias e rodovias do ato. Na camada genérica restricoes_rmsp (exclusions + annotate), com aviso de ACC e ACM.",
+   "geo_coverage": "Campinas",
+   "record_count": "3 zonas, 20 vias no perímetro do Anel Rebouças",
+   "caveats": "O texto do Anel Rodoviário de 2017 (3 rodovias) é diferente do de 2011 (6 vias); valem as 3 de 2017. Não há geometria oficial."
+  },
+  {
+   "name": "Res. 349/2019 de Campinas (carga e descarga), que cita a 079/2017",
+   "publisher": "Prefeitura de Campinas / SETRANSP",
+   "url": "https://data.queridodiario.ok.org.br/3509502/2019-11-12/e8e5153e6a4c31e5b7ecf6974b29a2a7cafb98aa.pdf",
+   "access": "PDF público",
+   "format": "PDF com texto",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200, 2.171.260 B; o art. 1º, parágrafo único, cita a Res. 079/2017; o art. 8º diz que veículo com mais de 6,30 m só estaciona em vaga de carga e descarga",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só como base_legal de vigência da 079. Opcional: aviso de estacionamento para veículo com mais de 6,30 m.",
+   "geo_coverage": "Campinas"
+  },
+  {
+   "name": "EMDEC: API WordPress de notícias",
+   "publisher": "EMDEC (Campinas)",
+   "url": "https://www.emdec.com.br/wp-json/wp/v2/search?search=caminh%C3%B5es",
+   "access": "API REST pública",
+   "format": "JSON",
+   "license": "Sem licença declarada; usar só fatos e link",
+   "tested": true,
+   "test_result": "200; 30+ resultados; posts lidos por slug: 2010, 2011 (Res. 101/2011, AECE), 2012 (Res. 50/2012, combustível), 2013 (SP-332 km 116) e 2025 (radares)",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitorar mudanças de regra e radar (job semanal na busca 'veículos de carga'). Não é fonte de geometria.",
+   "geo_coverage": "Campinas"
+  },
+  {
+   "name": "Resolução SEMOB 02/25 de Sorocaba",
+   "publisher": "Secretaria de Mobilidade de Sorocaba / URBES",
+   "url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf",
+   "access": "PDF público",
+   "format": "PDF com texto",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200, 166.846 B; texto completo, arts. 1–6",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra 'sorocaba_res_02_2025' (via, 24 h) com VUC e VLC isentos por dimensão. Geometria pelo nome no OSM (Av. Dom Aguirre e Av. Carlos Reinaldo Mendes), pelo importador municipal genérico com costLines.",
+   "geo_coverage": "Sorocaba",
+   "record_count": "2 vias nominadas + 'demais sinalizadas'",
+   "caveats": "As 'demais vias sinalizadas' não estão listadas. O OSM marca outras vias (Itavuvu, Ipanema) com hgv=no."
+  },
+  {
+   "name": "Notícias da Prefeitura de Sorocaba (API WordPress): limitadores de altura",
+   "publisher": "Prefeitura de Sorocaba",
+   "url": "https://noticias.sorocaba.sp.gov.br/wp-json/wp/v2/posts?slug=prefeitura-de-sorocaba-instala-novo-limitador-de-altura-de-caminhoes-na-regiao-central-de-sorocaba",
+   "access": "API REST pública",
+   "format": "JSON",
+   "license": "Sem licença declarada; usar fatos e link",
+   "tested": true,
+   "test_result": "200; 4 posts (2022–2023) com local e altura (4,3 m e 3,3 m)",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Pontos curados para a camada altura_osm ou oae como barrier=height_restrictor. Conferir se estão no OSM (há 1 height_restrictor em Sorocaba).",
+   "geo_coverage": "Sorocaba (4 pontos)"
+  },
+  {
+   "name": "SEMUTTRAN Piracicaba: páginas de serviço de circulação de caminhão com mais de 3 eixos",
+   "publisher": "Prefeitura de Piracicaba / SEMUTTRAN",
+   "url": "https://piracicaba.sp.gov.br/servicos/autorizacao-para-circulacao-de-caminhoes-acima-de-3-eixos-pelas-vias-da-cidade/",
+   "access": "HTML público (também na API WP)",
+   "format": "HTML",
+   "license": "Sem licença declarada; fatos com citação",
+   "tested": true,
+   "test_result": "200, 67.125 B; 17 trechos centrais, 15 pontos de radar, 9 rotas alternativas; atualizada em 06/03/2026",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regras 'piracicaba_centro' (via) e 'piracicaba_3_eixos_radares' (via, eixos > 3) com status a_confirmar e aviso. Trechos 'entre X e Y' casados no OSM pelo importador genérico.",
+   "geo_coverage": "Piracicaba",
+   "record_count": "17 trechos + 15 pontos",
+   "caveats": "Sem ato normativo nem horário. É preciso pedir via LAI."
+  },
+  {
+   "name": "Diário Oficial de Piracicaba (busca)",
+   "publisher": "Prefeitura de Piracicaba",
+   "url": "https://diariooficial.piracicaba.sp.gov.br/?s=circula%C3%A7%C3%A3o+de+caminh%C3%B5es",
+   "access": "HTML; a busca só funciona com cookie de sessão",
+   "format": "HTML + PDF (files.pmp.sp.gov.br/semad/diariooficial/AAAA/MM/AAAAMMDD.pdf)",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200 com cookie: 20 resultados para 'circulação de caminhões' (contratos de radar), 0 para 'acima de 3 eixos' e 'veículo urbano de carga'; o ato não foi achado",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Job de monitoramento por frase exata para achar o ato da restrição.",
+   "geo_coverage": "Piracicaba"
+  },
+  {
+   "name": "Decreto 247/2017 de Jacareí (Rota de Cargas Pesadas)",
+   "publisher": "Prefeitura de Jacareí",
+   "url": "http://www.jacarei.sp.gov.br/wp-content/uploads/2017/08/decreto_247_rotas_cargas.pdf",
+   "access": "PDF público",
+   "format": "PDF com texto (5 páginas)",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200, 258.952 B; arts. 1–15 completos; os Anexos I (ZRMC) e II (ZREC) não estão no arquivo; o link espelho em ccpjacarei.com.br deu 404",
+   "value": "high",
+   "effort": "high",
+   "integration_plan": "Regra 'jacarei_rcp': classes de veículo (VCL, VCP, VCPB, VCPT) mapeadas do perfil (PBT, comprimento, eixos, combinação). RCP como corredor livre. Fora das RCP, VCP fica proibido sem AETC: exclusion do município menos o buffer das RCP, com aviso de AETC quando o destino está em Jacareí. HRT 7–9h e 17–19h nas ZRMC e ZREC (falta o anexo).",
+   "geo_coverage": "Jacareí",
+   "record_count": "7 rotas (35 km)",
+   "caveats": "Os Decs. 1.085/2020 e 359/2022 não foram lidos. O Boletim Oficial (geosiap) é uma SPA."
+  },
+  {
+   "name": "Notícias da Prefeitura de Jacareí (API WordPress)",
+   "publisher": "Prefeitura de Jacareí",
+   "url": "https://www.jacarei.sp.gov.br/wp-json/wp/v2/search?search=Cargas%20Pesadas",
+   "access": "API REST pública",
+   "format": "JSON",
+   "license": "Sem licença declarada; fatos e link",
+   "tested": true,
+   "test_result": "200; 11 resultados; posts de 2017, 2018, 2021, 2023 e 2024 lidos (decretos complementares, números, Sistema Observa)",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitoramento e base_legal secundária.",
+   "geo_coverage": "Jacareí"
+  },
+  {
+   "name": "SAPL da Câmara de São Vicente (API de normas)",
+   "publisher": "Câmara Municipal de São Vicente (SAPL/Interlegis)",
+   "url": "https://sapl.saovicente.sp.leg.br/api/norma/normajuridica/?ementa__icontains=caminh&page_size=100",
+   "access": "API REST pública, paginada",
+   "format": "JSON + PDF (texto_integral)",
+   "license": "Atos oficiais, domínio público",
+   "tested": true,
+   "test_result": "200; 269 normas com 'caminh'; PDFs das Leis 4.633/2025 (189.723 B), 2163-A/2009 (93.113 B), 2315-A, 633-A e 3339-A com texto; 2320/1990 e 250-A/1994 escaneadas",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador 'municipal_sao_vicente' com a regra 'sao_vicente_arc' (zona, perímetro do texto montado no OSM) e as leis de rua não revogadas (costLines). Cruzar a lista da Lei 4.633/2025 para ignorar as revogadas.",
+   "geo_coverage": "São Vicente",
+   "record_count": "1 zona + cerca de 6 leis de rua vigentes",
+   "caveats": "O SAPL não marca a revogação; foi preciso cruzar com a Lei 4.633. Algumas leis estão escaneadas."
+  },
+  {
+   "name": "SAPL das câmaras de Campinas, Praia Grande, Franca e Cubatão (API)",
+   "publisher": "Câmaras Municipais (Interlegis)",
+   "url": "https://sapl.campinas.sp.leg.br/api/norma/normajuridica/?ementa__icontains=caminh&page_size=100",
+   "access": "API REST pública",
+   "format": "JSON",
+   "license": "Atos oficiais, domínio público",
+   "tested": true,
+   "test_result": "200; Campinas 88 normas (nenhuma regra vigente de circulação; regras estão em resolução da SETRANSP); Praia Grande 3 (sem regra); Franca 0; Cubatão 0. Os demais municípios testados não têm SAPL em sapl.<cidade>.sp.leg.br",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Monitoramento de leis novas (job mensal).",
+   "geo_coverage": "Campinas, Praia Grande, Franca, Cubatão"
+  },
+  {
+   "name": "Diário Oficial de Santos de 2002 e 2014 (via Querido Diário)",
+   "publisher": "Prefeitura de Santos / CET-Santos",
+   "url": "https://data.queridodiario.ok.org.br/3548500/2002-02-16/753d564ad06d46137027617cc3ad6158a9693b61.pdf",
+   "access": "PDF público",
+   "format": "PDF com texto",
+   "license": "Publicação oficial; fatos com citação",
+   "tested": true,
+   "test_result": "200, 2.179.392 B (2002) e 5.273.684 B (2014); zona do Gonzaga 12–20h e radares de restrição de caminhão",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Regra 'santos_gonzaga' com status a_confirmar e só aviso até haver ato. Polígono pelas 5 avenidas no OSM.",
+   "geo_coverage": "Santos (Gonzaga)",
+   "caveats": "Sem ato normativo; a Lei 221/1996 não foi localizada no Legis Santos."
+  },
+  {
+   "name": "Querido Diário API (busca de texto e cobertura)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://api.queridodiario.org.br/gazettes",
+   "access": "API REST pública",
+   "format": "JSON + PDFs",
+   "license": "Os PDFs são atos oficiais; os termos da API não foram verificados",
+   "tested": true,
+   "test_result": "200 em /cities (955) e /gazettes; '+frase' com sort_by=relevance funciona; erros 500, 503 e 520 intermitentes",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Job de vigilância por município de nível 3 ('+\"veículos de carga\" +restrição', '+\"circulação de caminhões\"'), que gera tarefas de curadoria para o regras.json.",
+   "geo_coverage": "11 municípios de nível 3 entre os testados",
+   "caveats": "Sorocaba, Ribeirão Preto, Piracicaba, Guarujá e Jacareí estão no nível 1, sem texto."
+  },
+  {
+   "name": "Imprensa Oficial de Jundiaí de 25/09/2025 (veto ao PL 14.649/2025)",
+   "publisher": "Prefeitura de Jundiaí",
+   "url": "https://data.queridodiario.ok.org.br/3525904/2025-09-25/072462a38130425fb9bbe44dc0a2321847f9432e.pdf",
+   "access": "PDF público",
+   "format": "PDF com texto",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200, 5.033.345 B; razões do veto, com a jurisprudência do TJSP (Rio Preto e Mirassol)",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Registrar Jundiaí como 'sem regra geral' e Rio Preto como revogada (kind=revogada), para não aplicar.",
+   "geo_coverage": "Jundiaí; São José do Rio Preto (citado)"
+  },
+  {
+   "name": "Prefeitura de Guarujá: notícias da R. Valdomiro Macário",
+   "publisher": "Prefeitura de Guarujá",
+   "url": "https://www.guaruja.sp.gov.br/guaruja-instala-nova-sinalizacao-para-caminhoes-na-rua-valdomiro-macario",
+   "access": "HTML público (busca ?s=)",
+   "format": "HTML",
+   "license": "Sem licença declarada; fatos e link",
+   "tested": true,
+   "test_result": "200; 2 notícias (15/04/2025 e 30/04/2025) lidas",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Regra 'guaruja_valdomiro_macario' (via, a_confirmar) com exceção de destino. Avisar a comunidade OSM sobre a barreira física.",
+   "geo_coverage": "Guarujá (1 via)"
+  },
+  {
+   "name": "Portal de legislação de São José dos Campos",
+   "publisher": "Prefeitura de São José dos Campos",
+   "url": "https://servicos.sjc.sp.gov.br/Legislacao/?Tipo=&Numero=&Ano=&Palavra=caminh%C3%B5es",
+   "access": "HTML público (GET)",
+   "format": "HTML + PDF",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200; só leis, LCs e decretos (portarias e resoluções da SEMOB não entram); nenhuma restrição de circulação de caminhão",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhuma por ora. Pedir via LAI à SEMOB-SJC as portarias de restrição.",
+   "geo_coverage": "São José dos Campos"
+  },
+  {
+   "name": "Diário Oficial de Ribeirão Preto (CESPRO)",
+   "publisher": "Prefeitura de Ribeirão Preto",
+   "url": "https://cespro.com.br/visualizarDiarioOficial.php?cdMunicipio=9314",
+   "access": "HTML com conteúdo carregado por JavaScript",
+   "format": "HTML/JS",
+   "license": "Ato oficial, domínio público",
+   "tested": true,
+   "test_result": "200, 45 KB de casca JS; sem endpoint de busca identificado; não raspado",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Pendente: engenharia reversa do _data/api.php do CESPRO ou LAI à Transerp.",
+   "geo_coverage": "Ribeirão Preto"
+  },
+  {
+   "name": "OpenStreetMap via Overpass (tags de caminhão por município)",
+   "publisher": "OpenStreetMap",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "API pública (User-Agent e Accept obrigatórios)",
+   "format": "JSON",
+   "license": "ODbL 1.0",
+   "tested": true,
+   "test_result": "200; contagens em 12 municípios: hgv:conditional = 0 em todos; Sorocaba 106 ways hgv; Taubaté 48 ways maxweight=25 (Rod. Oswaldo Cruz); Ponte Pênsil hgv=no maxweight=12",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Só geometria (casamento por nome) e validação. As regras vêm dos atos.",
+   "geo_coverage": "12 municípios"
+  }
+ ],
+ "reused_from_existing": [
+  "restricoes_rmsp_municipios: formato de data/raw/rmsp/regras.json (janelas, alvo, vuc, base_legal), técnica do Querido Diário, padrão da API SAPL (testado em Barueri) e conclusão de que não há dado estruturado municipal. Nada retestado lá.",
+  "porto_santos_terminais: zona do Gonzaga 12–20h (ali sem fonte primária; aqui confirmada no DO 2002 e nos radares de 2014), Rangel Pestana com mais de 2 eixos (não retestada), novo domínio do Querido Diário (api.queridodiario.org.br), Legis Santos e contagens OSM da Baixada (Ponte Pênsil hgv=no). Guarujá e São Vicente estavam 'sem nada' e foram complementados aqui.",
+  "legislacao_limites e restricoes_sp_capital: definição de caminhão (PBT acima de 3,5 t, CTB Anexo I) e de VUC na capital, usadas para comparar com as definições locais (Sorocaba VUC 5,50 m, VLC 6,30 m; Jacareí VCL 7,99 t, 7,20 m e 2 eixos; Campinas 6,30 m).",
+  "rodovias_restricoes: marcos quilométricos da ARTESP e da CETESB como base para a regra da concessionária no acesso do km 116 da SP-332. Não retestados.",
+  "CONVENCOES_IMPLEMENTACAO.md (scratchpad/sudeste): estender restricoes_rmsp para a camada genérica por código IBGE, sem camada nova por cidade."
+ ],
+ "gaps": [
+  "O orçamento de WebSearch da sessão (200) acabou logo no início. A busca aberta por portarias de SJC, Taubaté, Ribeirão Preto, Bauru, Limeira, Americana, Indaiatuba, São Carlos, Araraquara, Franca e Marília não foi feita.",
+  "São José dos Campos: nenhum ato de restrição a caminhão no portal de legislação (que não traz portarias) nem no Querido Diário desde 2015.",
+  "Taubaté: nada no Querido Diário (só desde 12/2022); portal sem busca usável.",
+  "Ribeirão Preto: o DOM está no CESPRO, carregado por JavaScript; não há SAPL; nenhum ato encontrado.",
+  "Piracicaba: o ato normativo dos 17 trechos centrais e das rotas com mais de 3 eixos não foi achado; a página de serviço não dá horário.",
+  "Jacareí: faltam os Anexos I e II (mapas de ZRMC e ZREC) do Dec. 247/2017 e o texto dos Decs. 1.085/2020 e 359/2022.",
+  "Santos: não há ato da zona do Gonzaga; a Lei 221/1996 não foi localizada (busca do Legis Santos com timeout); vigência atual não confirmada.",
+  "São Vicente: as Leis 2.320/1990 (Ponte Pênsil), 250-A/1994 e 2.355/1990 ('zonas 1 e 2') estão escaneadas ou não foram lidas.",
+  "Guarujá: regra só por notícia, sem ato, e só uma via conhecida.",
+  "Sorocaba: as 'demais vias sinalizadas' da Res. 02/25 não têm lista publicada.",
+  "Nenhum município oferece geometria oficial (WFS ou GeoJSON); todas as zonas terão de ser montadas sobre o OSM.",
+  "Os termos de uso da API do Querido Diário não foram verificados."
+ ],
+ "recommendations": [
+  "Implementar primeiro Campinas (3 zonas, alta confiança, regra por comprimento), Sorocaba (2 vias, 24 h, VUC e VLC por dimensão) e a ARC de São Vicente. São regras de ato primário e geometria simples no OSM: cerca de 1,5 dia na camada genérica restricoes_rmsp por código IBGE.",
+  "Adicionar ao perfil e ao regras.json o alvo 'comprimento_m_gt' (Campinas usa comprimento, não PBT) e as classes por município (VUC e VLC de Sorocaba; VCL, VCP, VCPB e VCPT de Jacareí). A definição de VUC é sempre local.",
+  "Jacareí: modelar como 'fora da RCP só com AETC': exclusion do município menos o buffer das 7 rotas, com aviso de autorização quando o destino está em Jacareí, e treminhão sempre proibido. Pedir os Anexos I e II e os decretos de 2020 e 2022 via LAI antes de aplicar o horário de pico.",
+  "Piracicaba, Santos (Gonzaga) e Guarujá: entrar como status 'a_confirmar', só com aviso (annotate), sem exclusão, até achar o ato.",
+  "Registrar São José do Rio Preto (Lei 14.748/2024, inconstitucional) e Jundiaí (PL vetado) para que ninguém os aplique por engano, como foi feito com o ABC 2012.",
+  "Pedidos via LAI: SEMUTTRAN Piracicaba, SEMOB SJC, Taubaté, Transerp/Ribeirão Preto, CET-Santos, Guarujá e Jacareí (anexos). Perguntar também quais cidades usam o Sistema Observa (Jacareí, Campinas, Piracicaba e outras 5): é um indicador direto de cidade com restrição fiscalizada por radar.",
+  "Criar jobs de vigilância no Querido Diário (municípios de nível 3) e nos SAPL de São Vicente e Campinas, e acompanhar os posts WP da EMDEC, de Jacareí, de Sorocaba e de Piracicaba (wp-json/wp/v2/search) para detectar regra nova ou revogada.",
+  "Avaliar levar os limitadores de altura de Sorocaba (4,3 m na Dom Aguirre; 3,3 m na Luiz Gama) para a camada altura_osm e conferir se estão no OSM; e revisar as tags hgv=no da Itavuvu e da Ipanema, que podem vir de restrição de obra já encerrada."
+ ]
+}
