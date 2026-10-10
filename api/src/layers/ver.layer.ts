@@ -459,7 +459,15 @@ const layer: RouteLayer = {
     const trechos = (await loadTrechos()).filter((t) => (vigente(t.props) || t.props.paragrafo === 5)
       && intersects(t.bbox, [rb[0] - pad, rb[1] - pad, rb[2] + pad, rb[3] + pad]));
     if (!trechos.length) return {};
-    const day = await legalDayInfo(ctx.at);
+    // Feriado e suspensões valem no DIA/INSTANTE DA PASSAGEM, não no da saída: quem sai às 23h59 de um feriado chega de
+    // madrugada num dia útil (e vice-versa). Memo por minuto da passagem (poucas VER por rota).
+    const dias = new Map<string, Promise<LegalDayInfo>>();
+    const diaDe = (t: DateTime): Promise<LegalDayInfo> => {
+      const k = t.toFormat("yyyy-LL-dd'T'HH:mm");
+      let p = dias.get(k);
+      if (!p) { p = legalDayInfo(t.toJSDate()); dias.set(k, p); }
+      return p;
+    };
     const dep = DateTime.fromJSDate(ctx.at).setZone(ctx.tz);
     const idx = new RouteIndex(coords);
     const totalKm = idx.totalKm || route.distance_km;
@@ -490,6 +498,7 @@ const layer: RouteLayer = {
     const summary: string[] = [];
     const data: Record<string, unknown>[] = [];
     const excecoesAvisadas = new Set<string>();
+    const feriadosNaPassagem = new Map<string, string>(); // dd/MM → nome do feriado que liberou alguma VER usada
     let avisouP49 = false;
     const pertoDaPonta = (km: number) => km < 0.3 || totalKm - km < 0.3;
 
@@ -508,9 +517,11 @@ const layer: RouteLayer = {
         }
         continue;
       }
+      const day = await diaDe(eta);
       const d = decide(p, v, eta, day);
-      data.push({ id: u.t.id, nome: u.t.name, paragrafo: p.paragrafo, inciso: p.inciso, horario_passagem: hora, metros: Math.round(u.metros),
-        proibido: d.proibido, motivo: d.motivo, norma: p.norma });
+      if (d.codigo === 'feriado' && day.holiday) feriadosNaPassagem.set(eta.toFormat('dd/LL'), day.holiday.name);
+      data.push({ id: u.t.id, nome: u.t.name, paragrafo: p.paragrafo, inciso: p.inciso, horario_passagem: hora,
+        data_passagem: eta.toISODate(), metros: Math.round(u.metros), proibido: d.proibido, motivo: d.motivo, norma: p.norma });
       if (d.proibido) {
         const via = u.t.name.split(/ sentido | \(/)[0].trim();
         const g = proib.get(`${p.paragrafo}|${via}`);
@@ -548,7 +559,7 @@ const layer: RouteLayer = {
           + `${g.borda ? ' Horário no limite da restrição: confira a hora de passagem.' : ' Mude o horário de saída ou o trajeto.'} Base: ${g.norma}.`,
       });
     }
-    if (day.holiday && summary.length) summary.unshift(`Feriado (${day.holiday.name}): as VER não se aplicam.`);
+    for (const [dia, nome] of [...feriadosNaPassagem].reverse()) summary.unshift(`Feriado na passagem (${nome}, ${dia}): as VER não se aplicam.`);
     const proibidas = data.filter((x) => x.proibido).length;
     return {
       warnings: warnings.slice(0, 10),
