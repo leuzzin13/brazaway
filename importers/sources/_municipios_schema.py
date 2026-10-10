@@ -173,6 +173,8 @@ def coerencia(doc: dict, nome_arquivo: str | None = None, existe=lambda rel: Tru
                 out.append(f'{rid}: variante "{v.get("classe")}" sem condição em "quando"')
         if r.get('zona_vinculada') and r['zona_vinculada'] not in zonas:
             out.append(f'{rid}: zona_vinculada "{r["zona_vinculada"]}" não é uma regra-zona deste arquivo')
+        if 'od_raio_m' in r and r.get('tipo') != 'zona':
+            out.append(f'{rid}: od_raio_m (raio de acesso da origem/destino) só para regra do tipo zona')
         if r.get('excecao_destino_local_incisos') and not r.get('excecao_destino_local'):
             out.append(f'{rid}: excecao_destino_local_incisos sem excecao_destino_local')
         if 'ibge' in r and r['ibge'] is not None and r['ibge'] != ibge:
