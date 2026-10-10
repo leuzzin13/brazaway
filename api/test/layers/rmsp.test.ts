@@ -294,6 +294,17 @@ describe('regras por município (módulo da camada)', () => {
     expect(sab.warnings!.some((w) => w.code === 'rmsp_via_restrita_na_rota')).toBe(false);
   });
 
+  it('rota longa (Rio → SP): o corredor de vias enviadas ao Valhalla fica limitado a 15 km do segmento O–D', async () => {
+    const rio = { lat: -22.9, lon: -43.2 }, sp = { lat: -23.52, lon: -46.58 };
+    // 22h30: só as vias 24h de Santana (PBT > 15 t) estão ativas, a ~25 km do destino — fora do corredor
+    const noite = await layer.costLines!(ctxOf(rio, sp, '2026-10-13T22:30', CARRETA) as any);
+    expect(noite.length).toBe(0);
+    // 18h: o trevo de Bonsucesso (Guarulhos), a ~7 km do segmento e na Dutra, entra; Santana e Cajamar não
+    const pico = await layer.costLines!(ctxOf(rio, sp, '2026-10-13T18:00', CARRETA) as any);
+    expect(pico.some((c) => c.item.type === 'ZRCC-TB')).toBe(true);
+    expect(pico.some((c) => /Santana|Cajamar/.test(c.item.name ?? ''))).toBe(false);
+  });
+
   it('Barueri: trechos com sentido do decreto (XV Aruanã, XVI Paiol Velho) só num sentido; demais VER nos dois', async () => {
     const O = { lat: -23.495, lon: -46.850 }, D = { lat: -23.497, lon: -46.828 };
     const lines = await layer.costLines!(ctxOf(O, D, '2026-10-13T18:00', CARRETA) as any);

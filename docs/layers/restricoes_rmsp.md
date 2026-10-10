@@ -14,7 +14,7 @@ Peças:
 | Importadores | `importers/sources/rmsp_*.py` (`rmsp_municipios.py` também é a biblioteca comum) |
 | Seeds | `db/seed/layers/restricoes_rmsp__<fonte>.sql` |
 | API | `api/src/layers/restricoes_rmsp.layer.ts` |
-| Testes | `api/test/layers/rmsp.test.ts` (24 testes, contra a API) e `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) |
+| Testes | `api/test/layers/rmsp.test.ts` (25 testes, contra a API) e `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) |
 
 Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendário legal `holidays`).
 
@@ -54,7 +54,8 @@ a sede da empresa.
 - **Vias** (`kind=via`): `costLines()` com fator 1000 ("proibido salvo sem alternativa"). O `linear_cost_factors` do
   Valhalla vale **só no sentido do desenho** (testado): vias de mão dupla entram nos dois sentidos; mão única e trechos
   com sentido do decreto (Barueri XIII–XVI), num só. Só entram as vias a até max(2,5 km; 40% da distância O–D) do
-  segmento origem–destino.
+  segmento origem–destino, **limitado a 15 km**: numa rota longa (Rio–SP) os 40% pegavam a Grande SP inteira e
+  centenas de linhas iam ao Valhalla e à checagem do `routing.ts` (a rota de teste do `altura_osm` estourava 120 s).
 - **Linhas curtas**: no import, cada via é cortada em pedaços de até ~400 m e o encadeamento de trechos contíguos para
   em 400 m / 40 vértices. O `routing.ts` e o `annotate` só consideram que a rota "usa" o trecho quando cobre metade da
   linha: com as cadeias de até 4,9 km de antes, uma rota que rodava 2 km da Estr. Tenente Marques dava razão 0,35 e não
@@ -66,14 +67,18 @@ a sede da empresa.
 - **Vias da zona** (`zona_vinculada`): as 12 vias do art. 3º de Osasco seguem a política da ZMRC — com origem ou
   destino dentro da zona, não entram (o aviso de origem/destino na zona já sai).
 - `annotate()`:
+  - acha as vias perto da rota com a rota subdividida (`ST_Subdivide`, 32 vértices) para o índice espacial não
+    devolver a Grande SP inteira numa rota longa;
   - estima o horário de passagem (saída + duração × posição na rota) e avisa quando a rota entra numa zona/via que
     estará ativa nesse momento (`rmsp_zona_ativa_na_passagem`, `rmsp_via_ativa_na_passagem`);
   - mede o uso de cada via com amostras a cada ~15 m (`usoDaLinha`): conta como uso metade da linha **ou** 100 m dela
-    a até 15 m da rota; em via de mão única/sentido do ato, só quando a rota anda no mesmo sentido (a pista do sentido
-    livre da Av. Aruanã/Paiol Velho em Barueri não conta);
-  - `rmsp_via_restrita_na_rota` (**danger**): regra ativa na saída e a rota usa a via, mas o `routing.ts` não vai
-    avisar (via fora do corredor enviado ao Valhalla, ou uso parcial da linha). Quando o `routing.ts` já cobre a rua
-    (`uses_restricted_way`), a camada não repete;
+    a até 10 m da rota; em via de mão única/sentido do ato, só quando a rota anda no mesmo sentido (a pista do sentido
+    livre da Av. Aruanã/Paiol Velho em Barueri não conta). 10 m e não os 15 m do `routing.ts`: rota e linhas saem da
+    mesma malha (uso real a 1–3 m), e a 15 m o começo de uma alça colada à pista principal contava como uso (alça do
+    trevo de Bonsucesso na rota Rio–SP pela Dutra: 56% a 15 m, 21% a 8 m);
+  - `rmsp_via_restrita_na_rota` (**danger**): regra ativa na saída **e no horário estimado de passagem**, e a rota usa
+    a via, mas o `routing.ts` não vai avisar (via fora do corredor enviado ao Valhalla, ou uso parcial da linha).
+    Quando o `routing.ts` já cobre a rua (`uses_restricted_way`), a camada não repete;
   - avisa VUC com cadastro (Barueri), isenção de VUC não confirmada (Osasco), trechos aproximados e entrega local;
     resumo por município em `layers.restricoes_rmsp.summary` e os cruzamentos em `data.hits` (com `uso_m`).
 - Mapa: `features()` devolve zonas e vias (estilo linha vermelha), com regra legível e ato em `description`/`source`.
@@ -202,6 +207,9 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   de sobreposição do `routing.ts` e as demais camadas).
 - O `routing.ts` só checa as linhas que recebeu e usa razão ≥ 50%: os casos que ele não vê (via fora do corredor,
   uso parcial) são cobertos pelo aviso `rmsp_via_restrita_na_rota` da camada, não por desvio.
-- O uso de via é geométrico (15 m): numa via de mão dupla sem sentido no ato, uma rua paralela a menos de 15 m
+- O uso de via é geométrico (10 m): numa via de mão dupla sem sentido no ato, uma rua paralela a menos de 10 m
   (marginal colada) usada por mais de 100 m pode contar como uso (falso positivo raro; nas de sentido único o rumo da
-  rota filtra).
+  rota filtra). O `routing.ts` usa 15 m: numa rota pela Dutra no pico da ZRCC-TB, o começo de uma alça colada à pista
+  pode gerar `uses_restricted_way` falso (follow-up do núcleo: tolerância menor ou recorte das pontas das alças).
+- Rotas longas: o corredor de 15 km deixa de fora vias distantes do segmento O–D; se a rota desviar e usar uma delas,
+  não há desvio, só o aviso `rmsp_via_restrita_na_rota`.

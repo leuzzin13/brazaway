@@ -147,12 +147,17 @@ async function zones(): Promise<Row[]> {
   return r.rows;
 }
 
-/** vias a até `raio` do segmento origem–destino (máx(2,5 km; 40% da distância O–D)): o resto não entra no request */
+/**
+ * vias a até `raio` do segmento origem–destino: máx(2,5 km; 40% da distância O–D), limitado a 15 km — numa rota longa
+ * (Rio–SP) o raio de 40% pegava a Grande SP inteira e centenas de linhas iam ao Valhalla e à checagem do routing.ts.
+ * Via usada fora do corredor (desvio grande) ainda gera aviso no annotate (rmsp_via_restrita_na_rota).
+ */
+const CORREDOR_M_MAX = 15000;
 const CORREDOR_SQL = `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)
      select %COLS%
        from data_features f, s
       where f.layer_id = $1 and f.kind = 'via'
-        and ST_DWithin(f.geom::geography, s.g::geography, greatest(2500, 0.4 * ST_Length(s.g::geography)))
+        and ST_DWithin(f.geom::geography, s.g::geography, greatest(2500, least(${CORREDOR_M_MAX}, 0.4 * ST_Length(s.g::geography))))
         and (f.valid_to is null or f.valid_to > now())`;
 async function viasNoCorredor(ctx: RouteCtx): Promise<Row[]> {
   const r = await query<Row>(CORREDOR_SQL.replace('%COLS%', 'f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry'),
@@ -317,15 +322,16 @@ const layer: RouteLayer = {
       zones(),
       municipiosOD(ctx).catch(() => ({ origem: null, destino: null })),
       idsNoCorredor(ctx),
-      query<Row & { fraction: number; dist_m: number }>(
-        `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) as g)
+      query<Row & { fraction: number }>(
+        // rota subdividida em pedaços de até 32 vértices: o índice espacial só devolve as vias perto de cada pedaço
+        // (com a rota inteira, o bbox de uma rota longa cobre a Grande SP toda e cada via era medida contra 5 mil pontos)
+        `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) as g),
+              p as (select ST_Subdivide(l.g, 32) as g from l),
+              c as (select distinct f.id from data_features f join p on f.geom && ST_Expand(p.g, 0.0002) and ST_DWithin(f.geom::geography, p.g::geography, 8)
+                     where f.layer_id = $1 and f.kind = 'via' and (f.valid_to is null or f.valid_to > now()))
          select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry,
-                ST_LineLocatePoint(l.g, ST_ClosestPoint(f.geom, l.g))::float as fraction,
-                ST_Distance(f.geom::geography, l.g::geography)::float as dist_m
-           from data_features f, l
-          where f.layer_id = $1 and f.kind = 'via' and f.geom && ST_Expand(l.g, 0.0002)
-            and ST_DWithin(f.geom::geography, l.g::geography, 8)
-            and (f.valid_to is null or f.valid_to > now())`,
+                ST_LineLocatePoint(l.g, ST_ClosestPoint(f.geom, l.g))::float as fraction
+           from data_features f join c using (id), l`,
         [LAYER, JSON.stringify(geom)],
       ).then((r) => r.rows),
     ]);
@@ -382,9 +388,9 @@ const layer: RouteLayer = {
         ...n, uso,
         local: destinoLocal(n.props, od),
         dispensada: !!n.props.zona_vinculada && naZona.has(n.props.zona_vinculada),
-        // o routing.ts só checa as linhas que recebeu (corredor) e só vê o uso quando >= 50% da linha está na rota;
-        // com folga (70%) para não deixar buraco entre os dois critérios
-        coberta: corredor.has(n.id) && uso.ratio >= 0.7,
+        // o routing.ts só checa as linhas que recebeu (corredor) e só vê o uso quando >= 50% da linha está a 15 m da rota;
+        // aqui a régua é mais estrita (10 m, 70%): "coberta" implica que o routing.ts avisa
+        coberta: corredor.has(n.id) && uso.ratio >= 0.7,   // (e a regra ativa na saída: só então a linha foi enviada)
       });
       porRegra.set(n.props.regra_id, g);
     }
@@ -413,12 +419,13 @@ const layer: RouteLayer = {
         // o routing.ts avisa uma vez por via (id do item = regra + inciso + nome): via com algum pedaço "coberto" já tem aviso
         const viaKey = (x: Usada) => `${x.props.inciso ?? '-'}:${x.props.via ?? x.name}`;
         const vistas = new Set(restritas.filter((x) => x.coberta).map(viaKey));
-        const descobertas = restritas.filter((x) => !vistas.has(viaKey(x)));
-        if (ativa && descobertas.length) {
-          // ativa na saída e usada pela rota, mas o routing.ts não vai avisar (fora do corredor ou uso parcial da linha)
+        const descobertas = ativa ? restritas.filter((x) => !vistas.has(viaKey(x))) : restritas;
+        if (ativa && ativaR && descobertas.length) {
+          // ativa na saída e na passagem, e a rota usa a via, mas o routing.ts não vai avisar (fora do corredor ou uso
+          // parcial da linha). Ativa na saída mas não na passagem (rota longa): passa fora do horário, sem aviso.
           const p0 = lines(descobertas[0].geometry)[0]?.[0];
           warnings.push({ code: 'rmsp_via_restrita_na_rota', severity: 'danger', id: descobertas[0].id, lon: p0?.[0], lat: p0?.[1],
-            message: `A rota passa por ${r.regime} de ${r.municipio} (${nomesDe(descobertas)}) no horário de restrição (${ruleLabel(r, e)}). Confira a regra e a autorização antes de seguir.` });
+            message: `A rota passa por ${r.regime} de ${r.municipio} (${nomesDe(descobertas)}) por volta das ${local(tR).toFormat("HH'h'mm")}, no horário de restrição (${ruleLabel(r, e)}). Confira a regra e a autorização antes de seguir.` });
         } else if (!ativa && ativaR) {
           warnings.push({ code: 'rmsp_via_ativa_na_passagem', severity: 'warn', id: rf.id,
             message: `A rota passa por ${r.regime} de ${r.municipio} (${nomesDe(restritas)}) por volta das ${local(tR).toFormat("HH'h'mm")}, dentro do horário de restrição (${ruleLabel(r, e)}).` });
@@ -483,7 +490,12 @@ function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[
 
 // ---------------------------------------------------------------- uso de uma linha pela rota
 
-const TOL_M = 15;
+/**
+ * Tolerância do uso: a rota (shape do Valhalla) e as linhas (OSM/grafo do Valhalla) saem da mesma malha, então o uso
+ * real fica a 1–3 m. 10 m (e não os 15 m do routing.ts) evita contar como uso o começo de uma alça que corre colada à
+ * pista principal (ex.: alça do trevo de Bonsucesso na rota Rio–SP pela Dutra: 56% a 15 m, 21% a 8 m).
+ */
+const TOL_M = 10;
 export interface Uso { ratio: number; metros: number }
 const bearingDiff = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
 
@@ -502,11 +514,11 @@ function routePiecesNear(route: [number, number][], bb: [number, number, number,
 }
 
 /**
- * Quanto da linha restrita a rota percorre: amostras a cada ~15 m da linha; conta a amostra a até 15 m da rota e,
+ * Quanto da linha restrita a rota percorre: amostras a cada ~15 m da linha; conta a amostra a até `tolM` da rota e,
  * se `directional` (mão única ou sentido fixado pelo ato), só quando o rumo da rota ali difere menos de 90° do rumo da
  * linha — a rota pela pista do sentido livre não "usa" o trecho (falso positivo do Barueri XV/XVI).
  */
-export function usoDaLinha(route: [number, number][], c: [number, number][], directional: boolean): Uso {
+export function usoDaLinha(route: [number, number][], c: [number, number][], directional: boolean, tolM = TOL_M): Uso {
   if (c.length < 2 || route.length < 2) return { ratio: 0, metros: 0 };
   const pad = 0.0004;   // ~40 m
   const xs = c.map((p) => p[0]), ys = c.map((p) => p[1]);
@@ -519,7 +531,7 @@ export function usoDaLinha(route: [number, number][], c: [number, number][], dir
     total += len;
     if (!pieces.length) continue;
     const brg = turf.bearing(a, b);
-    const k = Math.max(1, Math.ceil(len / TOL_M));
+    const k = Math.max(1, Math.ceil(len / 15));
     for (let j = 0; j < k; j++) {
       const t = (j + 0.5) / k;
       const p = turf.point([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
@@ -534,7 +546,7 @@ export function usoDaLinha(route: [number, number][], c: [number, number][], dir
         const idx = Math.min(np.properties.index ?? 0, rc.length - 2);
         sameWay = bearingDiff(brg, turf.bearing(rc[idx], rc[idx + 1])) < 90;
       }
-      if (best <= TOL_M && sameWay) hit += len / k;
+      if (best <= tolM && sameWay) hit += len / k;
     }
   }
   return { ratio: total > 0 ? hit / total : 0, metros: hit };
