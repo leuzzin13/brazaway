@@ -1,0 +1,117 @@
+{
+  "_note": "Correções LOCAIS aplicadas ao PBF do OpenStreetMap antes do build dos tiles do Valhalla (scripts/osm-overrides/apply.sh). Não editam o OSM público. Só entra como 'ativa' uma correção com ato oficial vigente que contradiz a tag; o resto fica 'pendente_confirmacao' até haver prova (ato, ofício do órgão ou verificação em campo). Ao confirmar, o ideal é corrigir também no OSM público (ação da comunidade), e então remover a regra daqui.",
+  "rules": [
+    {
+      "id": "rio-res-smtr-3055-suspensa",
+      "status": "ativa",
+      "descricao": "Remove as hgv:conditional 'Mo-Fr 06:00-10:00,17:00-21:00' do município do Rio de Janeiro, resíduo da Res. SMTR 3.055/2018 (ARM/ARV), suspensa por prazo indeterminado.",
+      "bbox": [
+        -43.8,
+        -23.09,
+        -43.09,
+        -22.74
+      ],
+      "match": {
+        "type": "way",
+        "tag": "hgv:conditional",
+        "value_contains": "Mo-Fr 06:00-10:00,17:00-21:00"
+      },
+      "action": {
+        "remove_tags": [
+          "hgv:conditional"
+        ]
+      },
+      "base_legal": "Res. SMTR 3.254/2020, art. 1º (DO Rio 20/03/2020, p. 42) suspende por prazo indeterminado a Res. SMTR 3.055/2018; Dec. Rio 47.285/2020, art. 1º, 'r'.",
+      "evidencias": [
+        "Página da SMTR (2023) e artigo oficial do 1746 (atualizado em 08/06/2026) citam a suspensão",
+        "Parecer da CET-Rio no DO de 11/01/2024, p. 17: Dec. 45.433/2018 e Res. 3.055/2018 'temporariamente estão suspensos'",
+        "Nenhuma revogação da suspensão no DO Rio até set/2026"
+      ],
+      "pesquisa": "docs/research/sudeste_rio_capital",
+      "conferido_em": "2026-10-10"
+    },
+    {
+      "id": "rio-condicionais-outras",
+      "status": "pendente_confirmacao",
+      "descricao": "Rio: 4 ways com hgv:conditional de horários que NÃO batem com a Res. SMTR 3.055/2018 — Av. Atlântica (ways 30969384, 30969386: 'Mo-Fr 6:00-19:00,17:00-20:00'), R. Equador (245132809: 'Mo-Fr 06:00-21:00') e R. Nelson Carneiro (370553813: 'Mo-Fr 6:00-21:00').",
+      "bbox": [
+        -43.8,
+        -23.09,
+        -43.09,
+        -22.74
+      ],
+      "match": {
+        "type": "way",
+        "tag": "hgv:conditional",
+        "value_in": [
+          "no @ (Mo-Fr 6:00-19:00,17:00-20:00)",
+          "no @ (Mo-Fr 06:00-21:00)",
+          "no @ (Mo-Fr 6:00-21:00)"
+        ]
+      },
+      "action": {
+        "remove_tags": [
+          "hgv:conditional"
+        ]
+      },
+      "motivo_pendente": "Os horários lembram a ARP do Centro (6h–21h) da Res. 3.055, mas não há prova de que vieram dela; a Av. Atlântica tem janela que não existe na 3.055. Confirmar com a SMTR/CET-Rio (portarias pontuais da CRV) antes de ativar.",
+      "pesquisa": "docs/research/sudeste_rio_capital",
+      "conferido_em": "2026-10-10"
+    },
+    {
+      "id": "es060-contorno-guarapari-hgv-no",
+      "status": "pendente_confirmacao",
+      "descricao": "ES-060 (Rod. José Ribeiro Tristão), km ~51–65, Contorno de Guarapari → Meaípe: 25 ways com hgv=no + maxweight=15 no OSM, sem ato vigente encontrado. Barra todo caminhão.",
+      "bbox": [
+        -40.6,
+        -20.8,
+        -40.4,
+        -20.6
+      ],
+      "match": {
+        "type": "way",
+        "tag": "hgv",
+        "value_equals": "no",
+        "ref_contains": "ES-060"
+      },
+      "action": {
+        "remove_tags": [
+          "hgv",
+          "maxweight"
+        ]
+      },
+      "motivo_pendente": "A pesquisa não achou ato, mas também não provou que a tag está errada (pode haver placa ou ato não publicado no DIO). Confirmar com DER-ES/CETURB ou em campo antes de ativar.",
+      "pesquisa": "docs/research/sudeste_vitoria_es",
+      "conferido_em": "2026-10-10"
+    },
+    {
+      "id": "sorocaba-hgv-no-itavuvu-ipanema",
+      "status": "pendente_confirmacao",
+      "descricao": "Sorocaba: hgv=no em 51 ways da Av. Itavuvu, 45 da Av. Ipanema e 7 da Av. Afonso Vergueiro, vias que não constam da Res. SEMOB 02/25 (que proíbe a Av. Dom Aguirre e a Av. Carlos Reinaldo Mendes 'e as vias sinalizadas').",
+      "bbox": [
+        -47.6,
+        -23.6,
+        -47.35,
+        -23.4
+      ],
+      "match": {
+        "type": "way",
+        "tag": "hgv",
+        "value_equals": "no",
+        "name_in": [
+          "Avenida Itavuvu",
+          "Avenida Ipanema",
+          "Avenida Afonso Vergueiro"
+        ]
+      },
+      "action": {
+        "remove_tags": [
+          "hgv"
+        ]
+      },
+      "motivo_pendente": "A resolução cobre também 'as demais vias sinalizadas', sem lista publicada; as tags podem ser placas reais ou restrição de obra já encerrada. Confirmar com a URBES/SEMOB ou em campo.",
+      "pesquisa": "docs/research/sudeste_interior_sp",
+      "conferido_em": "2026-10-10"
+    }
+  ]
+}
