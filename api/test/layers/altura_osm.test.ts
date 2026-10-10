@@ -26,6 +26,33 @@ const EXACT = { preset: 'truck', height_m: 4.3 }; // igual ao limite
 const SALIM_S = { lat: -23.5790, lon: -46.5690 };
 const SALIM_N = { lat: -23.5380, lon: -46.5830 };
 
+/**
+ * Nó em vias de MÃO DUPLA (achado da revisão: avisos repetidos). Nó 8681030908 (maxheight=2.35, portaria de garagem em
+ * São Paulo) é a ponta de DUAS ways de serviço de mão dupla (679175662 e 936905177): costLines manda 4 linhas (2 ways x 2
+ * sentidos) com o mesmo item. VUC (3,20 m) de leste para oeste não tem alternativa e passa por ele: o aviso
+ * uses_restricted_way tem de aparecer UMA vez (antes, uma por linha usada).
+ */
+const TWO_WAY = { osm: 8681030908, east: { lat: -23.5504912, lon: -46.6644031 }, west: { lat: -23.5503999, lon: -46.6647593 } };
+const VUC = { preset: 'vuc', is_vuc: true };
+
+/**
+ * Túnel curto (45 m) da Av. Santos Dumont (way 114358445, trunk, sem maxheight) em Santo André/São Caetano: a rota que
+ * PERCORRE o túnel conta; a rua que cruza POR CIMA dele (deixa ~10 m do túnel no buffer de 5 m) não conta.
+ */
+const SHORT_TUNNEL = {
+  via_id: 114358445,
+  through: { origin: { lat: -23.66515, lon: -46.51668 }, destination: { lat: -23.66432, lon: -46.51388 } },
+  over: { origin: { lat: -23.66577, lon: -46.51492 }, destination: { lat: -23.66370, lon: -46.51564 } },
+};
+
+/** Cada item/aviso de altura_osm aparece uma vez só (routing.ts deduplica por layer+id). */
+function expectNoDuplicates(body: any) {
+  const av = body.avoided.filter((a: any) => a.layer === 'altura_osm').map((a: any) => a.id);
+  expect(new Set(av).size, `avoided repetido: ${av}`).toBe(av.length);
+  const ws = body.warnings.filter((w: any) => w.layer === 'altura_osm' && w.id).map((w: any) => `${w.code}|${w.id}`);
+  expect(new Set(ws).size, `aviso repetido: ${ws}`).toBe(ws.length);
+}
+
 async function featureByNode(layer: string, osmNode: number) {
   const r = await pool.query(`select id::text, kind, name, props, ST_X(geom) as lon, ST_Y(geom) as lat from data_features
                                where layer_id = $1 and (props->>'osm_node')::bigint = $2`, [layer, osmNode]);
@@ -97,6 +124,7 @@ describe('altura_osm: limitador de altura gravado em nó do OSM (Av. Humberto de
     expect(lay.data.evitados.map((e: any) => e.id)).toContain(featureId);
     expect(lay.summary.join(' ')).toMatch(/Desvia de 1 ponto/);
     expect(r.body.valhalla.cost_lines_count).toBeGreaterThan(0);
+    expectNoDuplicates(r.body);
   });
 
   it('truck de 4,20 m passa pelo limitador, com aviso de pouca folga', async () => {
@@ -130,6 +158,22 @@ describe('altura_osm: limitador de altura gravado em nó do OSM (Av. Humberto de
     expect(truck.status).toBe(200);
     expect(minDistM(truck.body, { lat: dutra.lat, lon: dutra.lon })).toBeLessThan(5);
     expect(truck.body.avoided.map((a: any) => a.id)).not.toContain(dutra.id);
+    expectNoDuplicates(carreta.body);
+  }, 600_000); // duas rotas de ~450 km com todas as camadas: minutos com o ambiente compartilhado carregado
+
+  it('nó em vias de mão dupla (4 linhas, mesmo item): aviso e item aparecem uma vez só', async () => {
+    const [f] = await featureByNode('altura_osm', TWO_WAY.osm);
+    expect(f?.props.max_height_m, 'rode o importador osm_altura_nos').toBe(2.35);
+    expect(f.props.lines.length).toBe(2);
+    expect(f.props.lines.every((l: any) => l.oneway === false)).toBe(true);
+    const r = await route({ origin: TWO_WAY.east, destination: TWO_WAY.west, vehicle: VUC, departure_at: DEP });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    // sem alternativa: passa pelo nó e o routing.ts avisa (danger) — uma vez
+    const used = r.body.warnings.filter((w: any) => w.code === 'uses_restricted_way' && w.id === f.id);
+    expect(used.length).toBe(1);
+    expect(used[0].severity).toBe('danger');
+    expect(r.body.layers.altura_osm.data.enviados.linhas).toBeGreaterThanOrEqual(4);
+    expectNoDuplicates(r.body);
   });
 
   it('features() mostra o ponto no mapa e, de perto, o trecho bloqueado', async () => {
@@ -141,6 +185,12 @@ describe('altura_osm: limitador de altura gravado em nó do OSM (Av. Humberto de
     expect(pt.properties).toMatchObject({ altura_max_m: 4.3, tipo: 'limitador de altura', osm: `https://www.openstreetmap.org/node/${NODE.osm}` });
     const z16 = await get(`/api/layers/altura_osm/features?bbox=${bbox}&zoom=16`);
     expect(z16.body.features.some((f: any) => f.geometry.type === 'LineString' && String(f.properties.id).startsWith(`${featureId}-`))).toBe(true);
+    // zoom fracionário (outros clientes da API não arredondam)
+    const z165 = await get(`/api/layers/altura_osm/features?bbox=${bbox}&zoom=16.5`);
+    expect(z165.status).toBe(200);
+    expect(z165.body.features.some((f: any) => f.geometry.type === 'LineString')).toBe(true);
+    const z95 = await get(`/api/layers/altura_osm/features?bbox=${bbox}&zoom=9.5`);
+    expect(z95.body.features).toEqual([]);
   });
 });
 
@@ -172,9 +222,21 @@ describe('lacunas_osm: passagens sem altura conhecida (informativa)', () => {
     const names: string[] = lay.data.passagens.map((p: any) => p.name);
     expect(names.filter((n) => n.startsWith('Avenida Salim Farah Maluf sob')).length).toBeGreaterThanOrEqual(3);
     expect(names.filter((n) => /^(Rua Montesina|Rua Orfanato|Viaduto Pires do Rio)/.test(n))).toEqual([]);
-    // a mesma estrutura não é contada duas vezes (via de baixo picada em dois ways)
-    const spots = lay.data.passagens.map((p: any) => `${p.lat.toFixed(4)},${p.lon.toFixed(4)}`);
-    expect(new Set(spots).size).toBe(spots.length);
+    // a mesma estrutura não é contada duas vezes (via de baixo picada em dois ways, pistas paralelas): duas passagens que
+    // compartilham estrutura por cima ficam a 30 m ou mais uma da outra (o raio do dedupe da camada)
+    const ids = lay.data.passagens.filter((p: any) => p.kind === 'passagem_sem_altura').map((p: any) => p.id);
+    const est = await pool.query(`select id::text, props->'estruturas' as e from data_features where id = any($1::bigint[])`, [ids]);
+    const overs = new Map<string, Set<number>>(est.rows.map((x: any) => [x.id, new Set((x.e ?? []).map((o: any) => o.way_id))]));
+    const ps = lay.data.passagens.filter((p: any) => p.kind === 'passagem_sem_altura');
+    for (let i = 0; i < ps.length; i++) {
+      for (let j = i + 1; j < ps.length; j++) {
+        const a = overs.get(ps[i].id)!, b = overs.get(ps[j].id)!;
+        if (![...a].some((w) => b.has(w))) continue;
+        const d = turf.distance(turf.point([ps[i].lon, ps[i].lat]), turf.point([ps[j].lon, ps[j].lat]), { units: 'meters' });
+        expect(d, `${ps[i].name} / ${ps[j].name}`).toBeGreaterThanOrEqual(30);
+      }
+    }
+    expect(overs.size).toBe(ids.length);
     const w = r.body.warnings.find((x: any) => x.code === 'height_unknown_crossings');
     expect(w?.severity).toBe('info');
     expect(w?.message).toMatch(/reporte/);
@@ -213,6 +275,23 @@ describe('lacunas_osm: passagens sem altura conhecida (informativa)', () => {
     expect(names.filter((n: string) => /Humberto de Campos/.test(n))).toEqual([]);
   });
 
+  it('túnel curto: a rota que o percorre conta; a rua que cruza por cima não conta (Av. Santos Dumont, 45 m)', async () => {
+    const t = await pool.query(`select id::text, ST_AsGeoJSON(geom)::json as g from data_features
+                                 where layer_id = 'lacunas_osm' and kind = 'tunel_sem_altura' and (props->>'via_id')::bigint = $1`, [SHORT_TUNNEL.via_id]);
+    expect(t.rows.length, 'rode o importador osm_lacunas').toBe(1);
+    const tunnel = t.rows[0];
+    expect(turf.length(turf.lineString(tunnel.g.coordinates), { units: 'meters' })).toBeLessThan(60);
+    const through = await route({ ...SHORT_TUNNEL.through, vehicle: TRUCK, departure_at: DEP });
+    expect(through.status, JSON.stringify(through.body)).toBe(200);
+    expect(through.body.layers.lacunas_osm.data.passagens.map((p: any) => p.id)).toContain(tunnel.id);
+    const over = await route({ ...SHORT_TUNNEL.over, vehicle: TRUCK, departure_at: DEP });
+    expect(over.status, JSON.stringify(over.body)).toBe(200);
+    // a rota cruza a linha do túnel (por cima) ...
+    expect(turf.lineIntersect(turf.lineString(over.body.geometry.coordinates), turf.lineString(tunnel.g.coordinates)).features.length).toBeGreaterThan(0);
+    // ... e o túnel não entra na contagem
+    expect(over.body.layers.lacunas_osm.data.passagens.map((p: any) => p.id)).not.toContain(tunnel.id);
+  });
+
   it('features() devolve a fila de coleta com pedido de reporte', async () => {
     const bbox = [-46.585, -23.58, -46.565, -23.535].join(',');
     const fc = await get(`/api/layers/lacunas_osm/features?bbox=${bbox}&zoom=15`);
@@ -223,6 +302,23 @@ describe('lacunas_osm: passagens sem altura conhecida (informativa)', () => {
     expect(p.properties.link).toMatch(/^https:\/\/www\.openstreetmap\.org\/way\//);
     const z11 = await get(`/api/layers/lacunas_osm/features?bbox=${bbox}&zoom=11`);
     expect(z11.body.features).toEqual([]);
+  });
+
+  it('features() aceita zoom fracionário (antes: HTTP 500 "invalid input syntax for type integer")', async () => {
+    const bbox = [-46.585, -23.58, -46.565, -23.535].join(',');
+    const z145 = await get(`/api/layers/lacunas_osm/features?bbox=${bbox}&zoom=14.5`);
+    expect(z145.status, JSON.stringify(z145.body).slice(0, 300)).toBe(200);
+    expect(z145.body.features.length).toBeGreaterThan(0);
+    // valores > 7 m (maxheight_suspeito) só a partir do zoom 14: Av. Vereador José Diniz (7,5 m)
+    const jd = [-46.6816, -23.6239, -46.6756, -23.6179].join(',');
+    const susp = (fc: any) => fc.features.filter((f: any) => f.properties.tipo === 'altura suspeita no mapa').length;
+    const a = await get(`/api/layers/lacunas_osm/features?bbox=${jd}&zoom=13.5`);
+    const b = await get(`/api/layers/lacunas_osm/features?bbox=${jd}&zoom=14.5`);
+    expect(a.status).toBe(200);
+    expect(b.status).toBe(200);
+    expect(susp(a.body)).toBe(0);
+    expect(susp(b.body)).toBeGreaterThan(0);
+    expect((await get(`/api/layers/lacunas_osm/features?bbox=${bbox}&zoom=11.9`)).body.features).toEqual([]);
   });
 
   it('/api/layers e /api/sources registram as fontes e a licença ODbL', async () => {

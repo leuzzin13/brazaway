@@ -10,7 +10,7 @@ por cima dele. Esta camada aplica esses limites na rota **só para o veículo ac
 |---|---|
 | Importador | `importers/sources/osm_altura_nos.py` → seed `db/seed/layers/altura_osm__osm.sql` (0,2 MB) |
 | API | `api/src/layers/altura_osm.layer.ts` (`costLines`, `annotate`, `features`) |
-| Testes | `api/test/layers/altura_osm.test.ts` (16 casos, junto com `lacunas_osm`) |
+| Testes | `api/test/layers/altura_osm.test.ts` (19 casos, junto com `lacunas_osm`) e `importers/tests/test_osm_altura.py` (14 testes unitários dos importadores) |
 
 ## Fonte e licença
 
@@ -26,7 +26,9 @@ Nós com `maxheight`, `maxheight:physical`, `maxwidth`, `maxwidth:physical` ou `
 trafegável por caminhão (classes com `truck_forward=true` no `graph.lua`: motorway…tertiary, unclassified, residential,
 living_street, service, road, track e links).
 
-- Valores: `4.3`, `4,3`, `4.3 m`, `430 cm`, pés/polegadas → metros. Com `maxheight` e `maxheight:physical`, vale o menor.
+- Valores: `4.3`, `4,3`, `4.3 m`, `4,5 metros`, `4 meters`, `430 cm`, `14'6"`, `12 inches` → metros. Com `maxheight` e
+  `maxheight:physical`, vale o menor. (Até a revisão, `metros`/`meters`/`inches` não eram reconhecidos: o regex casava
+  `m`/`in` antes da palavra inteira. Nenhum nó do Sudeste usa essas grafias hoje.)
   `default`, `none`, `below_default`, texto → não é número (vai para a camada `lacunas_osm`).
 - Faixa válida: altura 0,5–15 m, largura 0,3–15 m; fora disso o valor é descartado (erro de digitação).
 - `maxweight` em nó: número sem unidade = t (padrão OSM), vírgula decimal aceita, `kg`/`lb` convertidos; valor < 1 t ou
@@ -61,8 +63,13 @@ São Bernardo, Av. Dom Aguirre 4,3 m em Sorocaba, Rua Anhanguera 3,7 m em Americ
 3. Cada trecho vira `linear_cost_factors` com **fator 100000** (os dois sentidos em via de mão dupla). Penaliza **só a
    via**: a rua que cruza por cima/baixo do ponto continua livre (por isso não usamos `exclude_polygons`).
 4. Cada trecho é validado uma vez por perfil de veículo (cache em memória): se o Valhalla não casar a linha com as
-   arestas (erro 233 "Failed to edge walk", ex.: a própria via já tem `maxheight` menor), o pedido inteiro falharia;
-   tentamos as duas metades e descartamos o que não casar.
+   arestas (erro 233 "Failed to edge walk" ou 173 "No edges near start/end", ex.: a própria via já tem `maxheight`
+   menor), o pedido inteiro falharia; tentamos as duas metades e descartamos o que não casar. A validação vai em
+   **lotes** de até 64 linhas numa requisição só (o Valhalla recusa o lote se qualquer linha falhar, seja qual for a
+   origem/destino — conferido no 3.9.1); lote recusado é dividido ao meio até isolar as linhas ruins. Antes era uma
+   requisição por linha (~90 numa rota Rio→SP), que com o Valhalla ocupado estourava o timeout de 5 s e descartava
+   linhas boas (a rota então passava pelo nó). Timeout agora de 12 s, com uma nova tentativa; o que continuar sem
+   resposta não vai nesta rota e aparece em `enviados.sem_validacao`.
 
 **Por que 100000 e não o 1000 sugerido em `types.ts`:** o Valhalla aplica a média do fator na aresta inteira
 (`custom_cost_t::avg_factor`); o trecho de ~120 m numa aresta longa de rodovia dilui o 1000, e em rota longa o Valhalla
@@ -79,11 +86,15 @@ na doc do Valhalla. Continua sendo "proibido salvo sem alternativa": se não hou
     não foi enviada ao Valhalla (fora do corredor, filtro de distância, linha que não casou). Severidade igual à do
     `uses_restricted_way` do `routing.ts` para a mesma situação: o veículo excede o limite mapeado (placa/limitador).
 - `data`: `na_rota` (nós percorridos, com o que o veículo excede), `evitados` (nós que a rota livre usaria),
-  `enviados` (quantas linhas foram ao Valhalla e quantas foram descartadas e por quê).
+  `enviados` (quantas linhas foram ao Valhalla e quantas foram descartadas e por quê: `descartadas_paralelas`,
+  `descartadas_longe`, `sem_casamento`, `sem_validacao`).
+- Itens e avisos **não se repetem**: o mesmo nó vai em várias linhas (via de mão dupla = 2 sentidos; nó em 2+ ways), e o
+  `routing.ts` deduplica `avoided` e os avisos por camada + id (commit "rota: uso de trecho penalizado sensível ao
+  sentido; dedup…"). Ele também só conta que a rota "usa" a linha quando a percorre **no mesmo sentido** dela.
 - "Percorre" = algum trecho do nó com ≥ 60% a até 5 m da rota. Passar por cima/baixo do ponto não conta.
 
 `features(bbox, {zoom})`: pontos a partir do zoom 10 (tipo, limite, via, link do nó no OSM); a partir do zoom 16
-também o trecho bloqueado.
+também o trecho bloqueado. Zoom fracionário (`16.5`) é aceito.
 
 ## Desempenho (medido no ambiente local)
 
@@ -92,26 +103,36 @@ também o trecho bloqueado.
 | Av. Humberto de Campos (1,3 km) | — | 0,2–0,4 s |
 | SP→Rio, carreta (421 km) | 3,5 s | 4,0 s (16 linhas enviadas) |
 
-A maior parte do custo extra é a comparação do `routing.ts` (turf, ~10 ms por linha numa rota de 400 km) e as consultas
-de uso, que picam a rota (`ST_Subdivide`) e medem em UTM SIRGAS 2000 (EPSG 31978–31985) só perto de cada trecho.
+(Medido antes da integração, com o ambiente livre.) A maior parte do custo extra é a comparação do `routing.ts` (turf,
+por linha enviada) e as consultas de uso, que picam a rota (`ST_Subdivide`) e medem em UTM SIRGAS 2000
+(EPSG 31978–31985) só perto de cada trecho.
+
+Depois da integração (17 camadas, 189 linhas penalizadas numa Rio→SP de carreta, 17 delas desta camada), a rota
+Rio→SP leva de 1,5 a 3 minutos no ambiente compartilhado carregado (load ~15, várias suítes ao mesmo tempo); a maior
+parte é de outras camadas (`corredores_onibus.annotate` ~110 s, `oae.annotate` ~40 s) e da comparação do `routing.ts`.
+Isolada, com o mesmo Valhalla ocupado (só a rota livre levava 8–27 s), esta camada levou 16–30 s em `costLines` (rota
+livre própria + consultas) e 5–20 s em `annotate`. O teste Rio→SP tem timeout de 10 min por isso.
 
 ## Como atualizar
 
 Sempre que o PBF do Valhalla for atualizado (os trechos precisam casar com os tiles):
 
 ```sh
-# na raiz do repo (data/valhalla/*.osm.pbf é achado sozinho); pyosmium está em importers/requirements.txt
-docker compose --profile import build importer   # uma vez, para instalar o pyosmium na imagem
+# na raiz do repo (data/valhalla/*.osm.pbf é achado sozinho); pyosmium (osmium==4.0.2) está em importers/requirements.txt
+docker compose --profile import build importer   # se a imagem for anterior à integração (sem pyosmium)
 docker compose --profile import run --rm importer osm_altura_nos osm_lacunas
-# imagem antiga sem pyosmium:
+# num worktree sem data/valhalla: monte o PBF do repo principal e aponte OSM_PBF
 docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e PGPASSWORD=truck -e PGDATABASE=truck_router \
-  -e DATA_DIR=/data -e SEED_DIR=/seed/layers -v $(pwd)/importers:/app -v $(pwd)/data:/data -v $(pwd)/db/seed:/seed \
-  --entrypoint sh truck-router-importer -c "pip install -q osmium==4.0.2 && python run.py osm_altura_nos osm_lacunas"
+  -e DATA_DIR=/data -e SEED_DIR=/seed/layers -e OSM_PBF=/pbf/sudeste-latest.osm.pbf \
+  -v $(pwd)/importers:/app -v $(pwd)/data:/data -v $(pwd)/db/seed:/seed \
+  -v /caminho/do/repo/data/valhalla/sudeste-latest.osm.pbf:/pbf/sudeste-latest.osm.pbf:ro \
+  truck-router-importer osm_altura_nos osm_lacunas
+# testes unitários dos importadores (sem PBF/banco/rede)
+docker run --rm -v $(pwd)/importers:/app --entrypoint python truck-router-importer -m unittest tests.test_osm_altura -v
 ```
 
-Leva ~1 min cada no PBF do Sudeste. `OSM_PBF=/caminho/arquivo.osm.pbf` troca o PBF (ex.: num worktree sem
-`data/valhalla`). O seed é determinístico. Os `id` em `data_features` mudam a cada carga: use `props.osm_node`.
-Reinicie a API depois (o cache de validação é em memória).
+Leva ~1–1,5 min cada no PBF do Sudeste. O seed é determinístico (o mesmo PBF gera o mesmo arquivo). Os `id` em
+`data_features` mudam a cada carga: use `props.osm_node`. Reinicie a API depois (o cache de validação é em memória).
 
 ## Limitações e decisões
 
@@ -119,8 +140,9 @@ Reinicie a API depois (o cache de validação é em memória).
   em nó; na prática os limitadores ficam um em cada pista).
 - **Corredor**: nó fora da caixa origem–destino ou longe da rota livre não é enviado. Se a rota final passar por ele, o
   aviso `osm_node_limit_on_route` (danger) aparece, mas a rota não foi desviada.
-- **`avoided` do `routing.ts`**: usa 15 m de tolerância. Com o filtro de paralelas o caso comum (pista do outro sentido)
-  sumiu, mas uma linha enviada que corra paralela à rota final (não à livre) ainda pode aparecer como evitada/usada.
+- **`avoided` do `routing.ts`**: usa 15 m de tolerância e, desde a integração, confere o sentido. Com o filtro de
+  paralelas e o teste de sentido o caso comum (pista do outro sentido) sumiu; uma linha enviada que corra paralela à
+  rota final **no mesmo sentido** a menos de 15 m (marginal colada à expressa) ainda pode aparecer como evitada/usada.
 - **Rota longa**: como o Valhalla poda vias locais no meio de rotas longas, um nó em rodovia pode gerar desvio grande
   (Dutra 4,3 m: +38 km para carreta Rio→SP). Perto da origem/destino o desvio é local (+0,4 km no mesmo ponto).
 - **Qualidade do dado**: é o que está no OSM. Nenhum nó tem `source:maxheight`; poucos têm `source`.
@@ -129,11 +151,26 @@ Reinicie a API depois (o cache de validação é em memória).
 
 ### A conferir (dado que muda rota de veículo legal de 4,40 m)
 
+4,40 m é a altura máxima sem AET/AE (Res. CONTRAN 882/2021, art. 4º, II; texto do DOU de 24/12/2021, seção 1, p. 153).
+A camada não aplica esse valor: só compara o limite do nó com a altura informada do veículo (os perfis vêm de
+`config/vehicle-presets.json`, conferidos pela frente `core_legal`).
+
 - Nó **3908618328**, Rodovia Presidente Dutra (pista sentido SP), Volta Redonda (-22.5329, -44.1957): `maxheight=4.3`,
-  `source=signpost`, via sem `maxheight`. Faz carreta de 4,40 m desviar no sentido Rio→SP. Confirmar em campo; se for
-  erro, corrigir no OSM (nota/edição com fonte própria) e reimportar.
+  `source=signpost`, via sem `maxheight`. Faz carreta de 4,40 m desviar no sentido Rio→SP. Conferido na API do OSM em
+  09/10/2026: versão 2, de 29/05/2019, só com essas duas tags (ninguém mexeu desde então). Falta conferir em campo ou
+  por imagem de rua; se for erro, corrigir no OSM (nota/edição com fonte própria) e reimportar.
 - Nós **7867297145** e **8528811679**, Av. Humberto de Campos sob o Rodoanel (São Bernardo): limitadores de 4,3 m nas duas
   pistas (usados nos testes).
+
+### Pendências
+
+- Conferir em campo o nó 3908618328 da Dutra (acima).
+- `costLines` calcula a sua própria rota livre e o `routing.ts` calcula outra igual depois (`freeRoute()`): uma chamada
+  a mais ao Valhalla por rota (1–3 s numa rota longa com o Valhalla livre, bem mais com ele ocupado). Compartilhar a
+  rota livre exigiria um campo novo em `RouteCtx`/`routing.ts` (núcleo); não foi feito.
+- Infra decidida na integração (não é mais pendência): `osmium==4.0.2` em `importers/requirements.txt` (também usado
+  pelo `toll_osm` do pedágio; a imagem `truck-router-importer` já o tem) e os seeds em `db/seed/layers/` seguindo o
+  `docs/LAYERS.md`.
 
 ## Testes (`api/test/layers/altura_osm.test.ts`)
 
@@ -143,4 +180,11 @@ Caso real conferido no PBF com pyosmium: nó 7867297145 (`barrier=height_restric
 - pela API, a carreta desvia (passa a > 50 m do nó; `avoided` e `evitados` com o nó; a pista paralela não entra);
 - truck de 4,20 m passa (aviso `osm_node_tight_height`); veículo de exatamente 4,30 m passa;
 - rota longa Rio→SP: carreta desvia do nó da Dutra, truck 4,20 m passa por ele;
-- `features()` devolve ponto e trecho; `exceeded()` cobre altura, largura e peso.
+- **mão dupla**: nó 8681030908 (portaria de garagem 2,35 m na ponta de duas ways de serviço de mão dupla → 4 linhas com
+  o mesmo item); VUC de 3,20 m sem alternativa passa por ele e recebe **um** aviso `uses_restricted_way` (antes, um por
+  linha usada). Nos demais casos de rota o teste confere que nenhum id de `altura_osm` se repete em `avoided`/avisos;
+- `features()` devolve ponto e trecho, também com zoom fracionário; `exceeded()` cobre altura, largura e peso.
+
+`importers/tests/test_osm_altura.py`: `parse_length` (metros/meters/metres/cm/pés/polegadas/`''`), `parse_weight`,
+`valhalla_weight` (vírgula lida como o Valhalla lê), `oneway_dir` e as regras do `osm_lacunas` (limitador sem valor
+independente da ordem das ways, `source_id` sem colisão).

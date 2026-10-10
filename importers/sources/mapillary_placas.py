@@ -1,16 +1,17 @@
 """OPCIONAL — placas de altura/peso/largura/comprimento detectadas pelo Mapillary (visão computacional) na Grande SP.
 
 Só roda com MAPILLARY_TOKEN no ambiente (token de cliente gratuito: https://www.mapillary.com/dashboard/developers ->
-"Register application" -> copie o "Client Token", que começa com MLY|). Sem token o importador para com erro explicativo
-e NÃO mexe no que já está no banco.
+"Register application" -> copie o "Client Token", que começa com MLY|). Sem token: em `run.py all` é PULADO (REQUIRES_ENV,
+não conta como falha); chamado pelo nome, para com erro explicativo. Nos dois casos NÃO mexe no que já está no banco.
 
 As classes de placa de altura/peso do Mapillary NÃO trazem o número (só as de velocidade trazem), então cada detecção vira
 um ponto "placa detectada, valor desconhecido" na camada lacunas_osm (fonte 'mapillary'): serve para a fila de coleta e
 para avisar caminhões altos/pesados. Nunca bloqueia rota.
 
 API: GET https://graph.mapillary.com/map_features (bbox < 0,01 grau², até 2.000 resultados; subdividimos o bbox).
-Licença: conteúdo dos usuários em CC BY-SA 4.0; uso comercial só nos termos da seção 12 dos Termos de Uso (15/02/2024);
-atribuição obrigatória (logo + link para mapillary.com) ao exibir dados extraídos. Ver docs/layers/lacunas_osm.md.
+Licença: conteúdo dos usuários em CC BY-SA 4.0 (Termos de Uso Mapillary, https://www.mapillary.com/terms, vigência
+15/02/2024, seção 3); uso comercial só nos termos da seção 12; atribuição obrigatória pela seção 11 (Additional Terms for
+Developers): ao integrar dado extraído pela API, exibir o logo do Mapillary com link para a home. Ver docs/layers/lacunas_osm.md.
 """
 from __future__ import annotations
 import json, os, time
@@ -20,7 +21,9 @@ from common import CACHE_DIR, UA
 LAYER_ID = 'lacunas_osm'
 SOURCE = 'mapillary'
 SOURCE_URL = 'https://graph.mapillary.com/map_features'
-LICENSE = 'CC BY-SA 4.0 — contribuidores do Mapillary (uso comercial: Termos de Uso Mapillary, seção 12; atribuição com logo e link)'
+LICENSE = ('CC BY-SA 4.0 — contribuidores do Mapillary (Termos de Uso Mapillary de 15/02/2024: uso comercial na seção 12; '
+           'atribuição com logo e link para mapillary.com na seção 11)')
+REQUIRES_ENV = ('MAPILLARY_TOKEN',)   # opcional: run.py all pula sem o token
 NOTES = 'Detecções automáticas de placas (sem o valor). Bbox padrão da Grande SP; MAPILLARY_BBOX=minLon,minLat,maxLon,maxLat muda.'
 
 # bbox da Grande SP usado na pesquisa (contém os 39 municípios da RMSP)

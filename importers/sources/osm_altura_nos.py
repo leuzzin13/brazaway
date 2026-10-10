@@ -47,11 +47,14 @@ def pbf_path() -> str:
 
 
 # ---------- leitura de valores (corrige os casos que o Valhalla lê errado) ----------
-_LEN_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(m|meters?|metros?|cm|ft|feet|foot|'|in|inch|inches|\"|'')?", re.I)
+# Alternativas da MAIS LONGA para a mais curta: o regex tenta na ordem e 'm' casaria antes de 'metros' (sobraria 'etros'
+# e o valor viraria None); idem 'in' antes de 'inches' e "'" antes de "''".
+_LEN_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(metros?|meters?|metres?|mts?|cm|m|feet|foot|ft|inches|inch|in|''|'|\")?", re.I)
 
 
 def parse_length(v: str | None) -> float | None:
-    """'4.5', '4,5', '4.5 m', '450 cm', 14'6\" -> metros. 'default', 'none', texto -> None."""
+    """'4.5', '4,5', '4.5 m', '4,5 metros', '450 cm', 14'6\", 12 inches -> metros. 'default', 'none', texto -> None.
+    Casos conferidos em importers/tests/test_osm_altura.py."""
     if not v:
         return None
     s = v.strip().lower()
@@ -68,7 +71,7 @@ def parse_length(v: str | None) -> float | None:
         pos = m.end()
         num = float(m.group(1).replace(',', '.'))
         unit = (m.group(2) or 'm').lower()
-        if unit in ('m', 'meter', 'meters', 'metro', 'metros'):
+        if unit in ('m', 'mt', 'mts', 'meter', 'meters', 'metre', 'metres', 'metro', 'metros'):
             total += num
         elif unit == 'cm':
             total += num / 100
