@@ -1,7 +1,7 @@
 import * as turf from '@turf/turf';
 import { featuresInBbox, featuresNearRoute, type DataFeatureRow, type NearRouteRow } from './data.js';
 import type { LayerWarning, RouteLayer } from './types.js';
-import { brl, describeSource, noTollRoute, priceFor, round2, tollProfile, type Tariff, type TollPrice } from '../services/tollCost.js';
+import { brl, describeSource, noTollRoute, priceFor, round2, tollProfile, type Tariff, type TollPrice, type VehicleTollProfile } from '../services/tollCost.js';
 
 /**
  * Pedágio: praças e pórticos (ANTT, ARTESP, OSM) e custo estimado da rota para o veículo.
@@ -16,6 +16,8 @@ import { brl, describeSource, noTollRoute, priceFor, round2, tollProfile, type T
  *     pesam a favor). A tarifa oficial manda; a `charge` do OSM é reserva (marcada como estimada, com a data).
  *  4. Praças oficiais coladas na rota (≤ POSSIBLE_M) sem NENHUM nó de pedágio do OSM a até OSM_COVER_M (lacuna do mapa)
  *     são listadas como "possíveis", sem somar.
+ *  5. Praça oficial com `cobranca_suspensa` (concessão encerrada ou caducada; o CKAN ainda a lista como ativa): listada
+ *     como "cobrança suspensa", fora do total, sem usar o valor do OSM (que pode ser de antes da suspensão).
  * Não bloqueia nem penaliza nada: só anota.
  */
 const ID = 'pedagio';
@@ -76,6 +78,8 @@ function bearingAt(line: GeoJSON.Feature<GeoJSON.LineString>, lenKm: number, f: 
   return (turf.bearing(a, b) + 360) % 360;
 }
 
+interface Suspensao { desde: string; motivo: string; fonte?: string }
+
 export interface PlazaOnRoute {
   nome: string;
   tipo: 'praca' | 'portico';
@@ -98,6 +102,8 @@ export interface PlazaOnRoute {
   valor_osm?: number | null;
   data_osm?: string | null;
   valor_oficial_sem_tag?: number | null;
+  /** concessão encerrada/caducada: a praça não cobra (desde, motivo, fonte) */
+  cobranca_suspensa?: Suspensao | null;
   osm_id: string;
   oficial_id: string | null;
   oficial_fonte: string | null;
@@ -149,6 +155,88 @@ function matchOfficial(rep: DataFeatureRow, officials: NearRouteRow[], used: Set
   return best?.row ?? null;
 }
 
+interface LineCharge {
+  plazas: PlazaOnRoute[];
+  ignored: string[];
+  otherWay: string[];
+  osmNear: NearRouteRow[];
+  officials: NearRouteRow[];
+  used: Set<string>;
+}
+
+/**
+ * Pontos de cobrança por onde uma linha (rota) passa, no sentido dela, com o valor para o perfil do veículo.
+ * Usada na rota principal e na alternativa sem pedágio (que o Valhalla pode fazer passar por pórtico free flow que o
+ * grafo não marca como pedágio).
+ */
+async function plazasOnLine(lineF: GeoJSON.Feature<GeoJSON.LineString>, totalKm: number, prof: VehicleTollProfile): Promise<LineCharge> {
+  const line = lineF.geometry;
+  const [osmNear, officials] = await Promise.all([
+    featuresNearRoute(ID, line, OSM_NEAR_M, { where: `source = 'osm'`, limit: 3000 }),
+    featuresNearRoute(ID, line, OFFICIAL_M, { where: `source <> 'osm'`, limit: 2000 }),
+  ]);
+  const hits = osmNear.filter((h) => h.distance_m <= HIT_M);
+  const lenKm = turf.length(lineF, { units: 'kilometers' });
+
+  // nós do OSM sobre a rota -> praças (agrupadas ao longo da rota)
+  const clusters: NearRouteRow[][] = [];
+  for (const h of hits) {
+    const last = clusters[clusters.length - 1];
+    if (last && (h.fraction - last[last.length - 1].fraction) * totalKm <= CLUSTER_KM) last.push(h);
+    else clusters.push([h]);
+  }
+  const used = new Set<string>();
+  const plazas: PlazaOnRoute[] = [];
+  const ignored: string[] = [];
+  const otherWay: string[] = [];
+  for (const c0 of clusters) {
+    // cabine em via de mão dupla com `direction` que só cobra o outro sentido: não conta
+    const c = c0.filter((h) => chargedHere(h, bearingAt(lineF, lenKm, h.fraction)));
+    if (!c.length) { otherWay.push(...c0.map((h) => h.source_id)); continue; }
+    const rep = c.find((h) => (h.props as Props).tarifa && h.kind === 'praca') ?? c.find((h) => (h.props as Props).tarifa) ?? c[0];
+    const off = matchOfficial(rep, officials, used, bearingAt(lineF, lenKm, rep.fraction));
+    if (looksPrivate(rep, off)) { ignored.push(rep.source_id); continue; }
+    if (off) used.add(off.id);
+    const op = (off?.props ?? {}) as Props;
+    const rp = rep.props as Props;
+    const pap = !!op.ponto_a_ponto;
+    const susp = (op.cobranca_suspensa ?? null) as Suspensao | null;
+    const osmPrice = priceFor(rp.tarifa as Tariff | null, prof);
+    let price: TollPrice | null = pap || susp ? null : (priceFor(op.tarifa as Tariff | null, prof) ?? osmPrice);
+    // o OSM guarda o valor de cabine (sem desconto de TAG): compara com o oficial sem TAG
+    const officialManual = prof.tag ? priceFor(op.tarifa as Tariff | null, { ...prof, tag: false }) : null;
+    if (price && price.valor === 0) price = { ...price, observacao: 'tarifa zero na fonte (ponto sem cobrança)' };
+    const [lon, lat] = coord(rep);
+    plazas.push({
+      nome: plazaLabel(off, rep),
+      tipo: rep.kind === 'portico' || off?.kind === 'portico' ? 'portico' : 'praca',
+      km_rota: round2(rep.fraction * totalKm),
+      lat, lon,
+      rodovia: op.rodovia ?? rp.rodovia ?? null,
+      operador: op.operador ?? rp.operador ?? null,
+      free_flow: !!(rp.free_flow || op.free_flow || rep.kind === 'portico') && !pap,
+      ponto_a_ponto: pap,
+      cobranca: op.cobranca ?? null,
+      valor: susp ? 0 : price?.valor ?? null,
+      regra: susp ? `cobrança suspensa desde ${fmtBr(susp.desde)}: ${susp.motivo}`
+        : price?.regra ?? (pap ? 'sistema ponto a ponto: cobra só quem aderiu com TAG, no lugar da praça' : null),
+      estimado: price?.estimado ?? false,
+      fonte: susp ? (off?.source ?? '').toUpperCase() || null : price?.fonte ?? null,
+      data: susp ? susp.desde : price?.data ?? null,
+      url: susp ? susp.fonte : price?.url,
+      observacao: price?.observacao,
+      valor_osm: osmPrice?.valor ?? null,
+      data_osm: osmPrice?.data ?? null,
+      valor_oficial_sem_tag: officialManual?.valor ?? price?.valor ?? null,
+      cobranca_suspensa: susp,
+      osm_id: rep.source_id,
+      oficial_id: off?.id ?? null,
+      oficial_fonte: off?.source ?? null,
+    });
+  }
+  return { plazas, ignored, otherWay, osmNear, officials, used };
+}
+
 const layer: RouteLayer = {
   meta: {
     id: ID,
@@ -197,7 +285,8 @@ const layer: RouteLayer = {
             rodovia: p.rodovia ?? null,
             km: p.km ?? null,
             operador: p.operador ?? null,
-            tarifa_por_eixo: eixo != null ? brl(eixo) : 'não publicada',
+            tarifa_por_eixo: p.cobranca_suspensa ? `cobrança suspensa desde ${fmtBr(p.cobranca_suspensa.desde)}` : eixo != null ? brl(eixo) : 'não publicada',
+            cobranca_suspensa: p.cobranca_suspensa?.motivo ?? null,
             tarifa_fonte: t ? `${t.fonte}${t.data ? ` (${t.data})` : ''}` : null,
             cobranca: p.cobranca ?? null,
             sentido: p.sentido ?? null,
@@ -210,69 +299,9 @@ const layer: RouteLayer = {
   },
 
   async annotate(ctx, route) {
-    const line = route.line.geometry;
     const totalKm = route.distance_km;
-    const [osmNear, officials] = await Promise.all([
-      featuresNearRoute(ID, line, OSM_NEAR_M, { where: `source = 'osm'`, limit: 3000 }),
-      featuresNearRoute(ID, line, OFFICIAL_M, { where: `source <> 'osm'`, limit: 2000 }),
-    ]);
-    const hits = osmNear.filter((h) => h.distance_m <= HIT_M);
     const prof = tollProfile(ctx.vehicle, ctx.at);
-    const lenKm = turf.length(route.line, { units: 'kilometers' });
-
-    // 1) nós do OSM sobre a rota -> praças (agrupadas ao longo da rota)
-    const clusters: NearRouteRow[][] = [];
-    for (const h of hits) {
-      const last = clusters[clusters.length - 1];
-      if (last && (h.fraction - last[last.length - 1].fraction) * totalKm <= CLUSTER_KM) last.push(h);
-      else clusters.push([h]);
-    }
-    const used = new Set<string>();
-    const plazas: PlazaOnRoute[] = [];
-    const ignored: string[] = [];
-    const otherWay: string[] = [];
-    for (const c0 of clusters) {
-      // cabine em via de mão dupla com `direction` que só cobra o outro sentido: não conta
-      const c = c0.filter((h) => chargedHere(h, bearingAt(route.line, lenKm, h.fraction)));
-      if (!c.length) { otherWay.push(...c0.map((h) => h.source_id)); continue; }
-      const rep = c.find((h) => (h.props as Props).tarifa && h.kind === 'praca') ?? c.find((h) => (h.props as Props).tarifa) ?? c[0];
-      const off = matchOfficial(rep, officials, used, bearingAt(route.line, lenKm, rep.fraction));
-      if (looksPrivate(rep, off)) { ignored.push(rep.source_id); continue; }
-      if (off) used.add(off.id);
-      const op = (off?.props ?? {}) as Props;
-      const rp = rep.props as Props;
-      const pap = !!op.ponto_a_ponto;
-      const osmPrice = priceFor(rp.tarifa as Tariff | null, prof);
-      let price: TollPrice | null = pap ? null : (priceFor(op.tarifa as Tariff | null, prof) ?? osmPrice);
-      // o OSM guarda o valor de cabine (sem desconto de TAG): compara com o oficial sem TAG
-      const officialManual = prof.tag ? priceFor(op.tarifa as Tariff | null, { ...prof, tag: false }) : null;
-      if (price && price.valor === 0) price = { ...price, observacao: 'tarifa zero na fonte (ponto sem cobrança)' };
-      const [lon, lat] = coord(rep);
-      plazas.push({
-        nome: plazaLabel(off, rep),
-        tipo: rep.kind === 'portico' || off?.kind === 'portico' ? 'portico' : 'praca',
-        km_rota: round2(rep.fraction * totalKm),
-        lat, lon,
-        rodovia: op.rodovia ?? rp.rodovia ?? null,
-        operador: op.operador ?? rp.operador ?? null,
-        free_flow: !!(rp.free_flow || op.free_flow || rep.kind === 'portico') && !pap,
-        ponto_a_ponto: pap,
-        cobranca: op.cobranca ?? null,
-        valor: price?.valor ?? null,
-        regra: price?.regra ?? (pap ? 'sistema ponto a ponto: cobra só quem aderiu com TAG, no lugar da praça' : null),
-        estimado: price?.estimado ?? false,
-        fonte: price?.fonte ?? null,
-        data: price?.data ?? null,
-        url: price?.url,
-        observacao: price?.observacao,
-        valor_osm: osmPrice?.valor ?? null,
-        data_osm: osmPrice?.data ?? null,
-        valor_oficial_sem_tag: officialManual?.valor ?? price?.valor ?? null,
-        osm_id: rep.source_id,
-        oficial_id: off?.id ?? null,
-        oficial_fonte: off?.source ?? null,
-      });
-    }
+    const { plazas, ignored, otherWay, osmNear, officials, used } = await plazasOnLine(route.line, totalKm, prof);
 
     // 2) praças oficiais coladas na rota SEM nenhum nó de pedágio do OSM por perto (lacuna do mapa): "possíveis",
     //    não somadas. Se o OSM tem cabine perto da praça e a rota não passou por ela, a rota não cruza a cabine
@@ -280,7 +309,7 @@ const layer: RouteLayer = {
     const plazaPts = plazas.map((p) => [p.lon, p.lat] as [number, number]);
     const osmPts = osmNear.map((h) => coord(h));
     const possiveis = officials
-      .filter((o) => !used.has(o.id) && o.distance_m <= POSSIBLE_M && !(o.props as Props).ponto_a_ponto)
+      .filter((o) => !used.has(o.id) && o.distance_m <= POSSIBLE_M && !(o.props as Props).ponto_a_ponto && !(o.props as Props).cobranca_suspensa)
       .filter((o) => plazaPts.every((pp) => distM(pp, coord(o)) > 1000))
       .filter((o) => osmPts.every((op) => distM(op, coord(o)) > OSM_COVER_M))
       .map((o) => {
@@ -290,8 +319,9 @@ const layer: RouteLayer = {
       });
 
     // 3) total
-    const charged = plazas.filter((p) => p.valor != null && !p.ponto_a_ponto);
-    const unknown = plazas.filter((p) => p.valor == null && !p.ponto_a_ponto);
+    const suspended = plazas.filter((p) => p.cobranca_suspensa);
+    const charged = plazas.filter((p) => p.valor != null && !p.ponto_a_ponto && !p.cobranca_suspensa);
+    const unknown = plazas.filter((p) => p.valor == null && !p.ponto_a_ponto && !p.cobranca_suspensa);
     const total = round2(charged.reduce((s, p) => s + (p.valor ?? 0), 0));
     const estimated = charged.filter((p) => p.estimado);
 
@@ -299,22 +329,35 @@ const layer: RouteLayer = {
     let alternativa: Record<string, unknown> | null = null;
     if (charged.some((p) => (p.valor ?? 0) > 0) || unknown.length) {
       try {
-        const nt = await noTollRoute(ctx, ID);
-        alternativa = nt
-          ? {
-              disponivel: true,
-              distance_km: round2(nt.distance_km),
-              duration_s: Math.round(nt.duration_s),
-              delta_km: round2(nt.distance_km - route.distance_km),
-              delta_min: Math.round((nt.duration_s - route.duration_s) / 60),
-              economia: total,
-              economia_parcial: unknown.length > 0,
-              pedagio_na_ponta: nt.has_toll,
-              restricoes_parciais: nt.falhas.length > 0,
-              restricoes_com_falha: nt.falhas,
-              metodo: 'Valhalla costing_options.truck.exclude_tolls=true, mesmas restrições da rota',
-            }
-          : { disponivel: false, motivo: 'sem_caminho' };
+        // mesmas restrições da rota principal (routing.ts as passa prontas; sem elas, noTollRoute consulta de novo)
+        const nt = await noTollRoute(ctx, ID, route.restrictions);
+        if (!nt) alternativa = { disponivel: false, motivo: 'sem_caminho' };
+        else {
+          // O `exclude_tolls` só evita o que o grafo marca como pedágio: pórtico free flow em via sem toll=yes (ex.:
+          // RIOSP na BR-101, Itaguaí) fica no caminho. A alternativa é cobrada com a mesma regra da rota principal.
+          const alt = await plazasOnLine(turf.lineString(nt.coordinates), nt.distance_km, prof);
+          const altPts = alt.plazas.filter((p) => !p.ponto_a_ponto && !p.cobranca_suspensa && (p.valor == null || p.valor > 0));
+          const altTotal = round2(altPts.reduce((sum, p) => sum + (p.valor ?? 0), 0));
+          const mainPts = [...charged.filter((p) => (p.valor ?? 0) > 0), ...unknown];
+          const altIds = new Set(altPts.map((p) => p.osm_id));
+          const evitados = mainPts.filter((p) => !altIds.has(p.osm_id));
+          const economia = round2(total - altTotal);
+          const base = {
+            distance_km: round2(nt.distance_km),
+            duration_s: Math.round(nt.duration_s),
+            delta_km: round2(nt.distance_km - route.distance_km),
+            delta_min: Math.round((nt.duration_s - route.duration_s) / 60),
+            pedagio_na_ponta: nt.has_toll,
+            restricoes_parciais: nt.falhas.length > 0,
+            restricoes_com_falha: nt.falhas,
+            pedagio_restante: altPts.length ? { valor: altTotal, pontos: altPts.map((p) => p.nome), sem_tarifa: altPts.filter((p) => p.valor == null).length } : null,
+            metodo: 'Valhalla costing_options.truck.exclude_tolls=true, mesmas restrições da rota; pontos de cobrança da alternativa conferidos pela geometria',
+          };
+          const semGanho = altPts.length > 0 && (!evitados.length || (economia <= 0 && !evitados.some((p) => p.valor == null)));
+          alternativa = semGanho
+            ? { disponivel: false, motivo: 'mesmos_pontos', ...base }
+            : { disponivel: true, ...base, economia: altPts.length ? economia : total, economia_parcial: unknown.length > 0 || altPts.some((p) => p.valor == null) };
+        }
       } catch (e) {
         alternativa = { disponivel: false, motivo: `falha ao calcular: ${(e as Error).message}` };
       }
@@ -328,10 +371,11 @@ const layer: RouteLayer = {
       summary.push('Nenhuma praça de pedágio conhecida na rota.');
     } else {
       const n = charged.length;
-      summary.push(`Pedágio estimado: ${brl(total)}${unknown.length ? ' + praças sem tarifa' : ''} — ${n} ponto${n === 1 ? '' : 's'} de cobrança, ${eixosTxt}${prof.fim_de_semana ? ', fim de semana' : ''}${prof.tag ? ', com TAG' : ''}.`);
+      summary.push(`Pedágio estimado: ${brl(total)}${unknown.length ? ' + praças sem tarifa' : ''} — ${n} ponto${n === 1 ? '' : 's'} de cobrança${suspended.length ? ` (e ${suspended.length} com cobrança suspensa)` : ''}, ${eixosTxt}${prof.fim_de_semana ? ', fim de semana' : ''}${prof.tag ? ', com TAG' : ''}.`);
       for (const p of plazas.slice(0, 10)) {
-        const val = p.ponto_a_ponto ? 'ponto a ponto (não somado)' : p.valor == null ? 'tarifa não encontrada' : brl(p.valor);
-        const src = p.valor != null ? ` · ${describeSource({ fonte: p.fonte ?? '', data: p.data } as TollPrice)}${p.estimado ? ' · estimado' : ''}` : '';
+        const val = p.cobranca_suspensa ? `cobrança suspensa desde ${fmtBr(p.cobranca_suspensa.desde)} (não somada)`
+          : p.ponto_a_ponto ? 'ponto a ponto (não somado)' : p.valor == null ? 'tarifa não encontrada' : brl(p.valor);
+        const src = p.valor != null && !p.cobranca_suspensa ? ` · ${describeSource({ fonte: p.fonte ?? '', data: p.data } as TollPrice)}${p.estimado ? ' · estimado' : ''}` : '';
         summary.push(`• km ${Math.round(p.km_rota)}: ${p.nome}: ${val}${src}`);
       }
       if (plazas.length > 10) summary.push(`• … mais ${plazas.length - 10} ponto(s); ver dados da camada.`);
@@ -341,13 +385,20 @@ const layer: RouteLayer = {
       if (alternativa.disponivel) {
         const dk = alternativa.delta_km as number, dm = alternativa.delta_min as number;
         const sign = (x: number, u: string) => `${x >= 0 ? '+' : '−'}${Math.abs(x).toFixed(u === 'km' ? 1 : 0).replace('.', ',')} ${u}`;
-        summary.push(`Sem pedágio: ${sign(dk, 'km')} e ${sign(dm, 'min')} para economizar ${brl(total)}${unknown.length ? ' (ou mais)' : ''}${alternativa.pedagio_na_ponta ? '; ainda pode haver pedágio perto da origem/destino' : ''}.`);
+        const rest = alternativa.pedagio_restante as { valor: number; pontos: string[] } | null;
+        const eco = alternativa.economia as number;
+        summary.push(rest
+          ? `Com menos pedágio: ${sign(dk, 'km')} e ${sign(dm, 'min')} para economizar ${brl(eco)}${alternativa.economia_parcial ? ' (estimado)' : ''}; a alternativa ainda passa por ${rest.pontos.length} ponto(s) de cobrança (${rest.pontos.slice(0, 2).join('; ')}).`
+          : `Sem pedágio: ${sign(dk, 'km')} e ${sign(dm, 'min')} para economizar ${brl(total)}${unknown.length ? ' (ou mais)' : ''}${alternativa.pedagio_na_ponta ? '; ainda pode haver pedágio perto da origem/destino' : ''}.`);
         const falhas = (alternativa.restricoes_com_falha as string[] | undefined) ?? [];
         if (falhas.length) summary.push(`Atenção: a rota sem pedágio foi calculada sem as restrições de ${falhas.join(', ')} (falha na consulta). Confira antes de usar.`);
       } else {
+        const rest = alternativa.pedagio_restante as { pontos: string[] } | null | undefined;
         summary.push(alternativa.motivo === 'sem_caminho'
           ? 'Não há rota sem pedágio para este veículo.'
-          : `Alternativa sem pedágio indisponível agora (${alternativa.motivo}).`);
+          : alternativa.motivo === 'mesmos_pontos'
+            ? `Rota sem pedágio não encontrada: a alternativa calculada passa pelos mesmos pontos de cobrança${rest?.pontos.length ? ` (${rest.pontos.slice(0, 2).join('; ')})` : ''}; pórtico free flow nem sempre está marcado como pedágio no mapa.`
+            : `Alternativa sem pedágio indisponível agora (${alternativa.motivo}).`);
       }
     }
     if (plazas.length) {
@@ -361,7 +412,14 @@ const layer: RouteLayer = {
         message: `Sem tarifa nas fontes importadas para ${unknown.length} ponto(s) de cobrança (${unknown.slice(0, 3).map((p) => p.nome).join('; ')}). O total não inclui esses valores; confira na concessionária.`,
       });
     }
-    const ff = plazas.filter((p) => p.free_flow && !p.ponto_a_ponto);
+    if (suspended.length) {
+      const ex = suspended[0];
+      warnings.push({
+        code: 'toll_suspended', severity: 'info', lat: ex.lat, lon: ex.lon,
+        message: `${suspended.length} praça(s) da rota com cobrança suspensa, fora do total (ex.: ${ex.nome}: ${ex.cobranca_suspensa!.motivo}). Confira na ANTT/DNIT se a cobrança voltou.`,
+      });
+    }
+    const ff = plazas.filter((p) => p.free_flow && !p.ponto_a_ponto && !p.cobranca_suspensa);
     if (ff.length) {
       const federal = ff.some((p) => p.oficial_fonte === 'antt' || /^BR/i.test(p.rodovia ?? ''));
       warnings.push({

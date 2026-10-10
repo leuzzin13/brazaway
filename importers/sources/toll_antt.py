@@ -5,6 +5,10 @@
 - Tarifas: página "tarifas-de-pedagio" de cada concessão em gov.br/antt (tabela HTML: categoria, eixos, rodagem,
   multiplicador e valor por praça; algumas com coluna de fim de semana "FDS"). Guardamos a data "Atualizado em" da página.
   Regra das tabelas ANTT: veículo comercial de rodagem dupla paga multiplicador = nº de eixos; rodagem simples 2/3/4 eixos = 1/1,5/2.
+- Pórtico de free flow de ponto único (ex.: RIOSP "Free Flow Paraty" = coluna P8; Motiva Paraná "FREE FLOW P2 MAUÁ DA
+  SERRA" = coluna P2) recebe a tarifa da sua coluna. Os pares entrada/saída da Dutra (PFE…/PFS…) não têm tarifa publicada.
+- Concessões em que a cobrança parou mas cujas praças o CKAN ainda lista como "Ativo" (COBRANCA_SUSPENSA) ficam com
+  `cobranca_suspensa` e sem tarifa: a API não cobra nem usa o valor do OSM nelas.
 """
 from __future__ import annotations
 import csv, io, json, re, unicodedata
@@ -30,6 +34,23 @@ SLUG = {
     'PANTANAL': 'motiva-pantanal', 'NOVA 364': 'nova-364', 'NOVA 381': 'nova-381', 'RODOVIA DO AÇO': 'rodovia-do-aco-caducidade-declarada',
     'NOVA ROTA DO OESTE': 'rota-do-oeste', 'ROTA VERDE GOIÁS': 'rota-verde-goias', 'VIA BRASIL': 'via-brasil', 'VIA ARAUCÁRIA': 'via-araucaria',
     'VIA SUL': 'viasul', 'VIA COSTEIRA': 'ccr-viacosteira', 'VIA CAMPO': 'via-campos', 'VIA CRISTAIS': 'via-cristais', 'WAY 262': 'way-262',
+    # slugs que não seguem o nome (títulos conferidos em 09/10/2026): "Motiva Paraná" = pr-vias; "Way-153" = rota-sertaneja
+    'MOTIVA PARANÁ': 'pr-vias', 'WAY 153': 'rota-sertaneja',
+}
+# Cobrança encerrada/suspensa (as praças seguem "Ativo" no CKAN). Conferido em 09/10/2026.
+COBRANCA_SUSPENSA = {
+    'ECOSUL': {
+        'desde': '2026-03-04',
+        'motivo': 'fim do contrato de concessão do Polo de Pelotas (03/03/2026); o DNIT administra a BR-116/BR-392 sem '
+                  'pedágio até a nova concessão',
+        'fonte': f'{LIST_URL}/ecosul-contrato-encerrado',
+    },
+    'RODOVIA DO AÇO': {
+        'desde': '2025-06-10',
+        'motivo': 'caducidade da concessão da K-Infra Rodovia do Aço (Decreto 12.479/2025, art. 1º; Lei 8.987/1995, art. 38); '
+                  'o DNIT administra a BR-393/RJ sem pedágio (há disputa judicial: confira se a cobrança voltou)',
+        'fonte': 'https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/decreto/D12479.htm',
+    },
 }
 STOP = {'em', 'de', 'da', 'do', 'das', 'dos', 'e', 'a', 'o', 'sp', 'rj', 'mg', 'es', 'pr', 'sc', 'rs', 'go', 'ms', 'mt', 'ba', 'df', 'to',
         'norte', 'sul', 'leste', 'oeste', 'praca', 'pedagio', 'pracas', 'km', 'br', 'na', 'no'}
@@ -341,6 +362,36 @@ def load_concession(slug: str) -> tuple[dict | None, list[dict], list[str]]:
     return page, loc, tried
 
 
+FF_PAIR_RE = re.compile(r'(P[FP][EF]\d+)\s*(?:Sul|Norte)?\s*-\s*(\S+)')
+
+
+def free_flow_entry(name: str) -> str | None:
+    """Pórtico de entrada de um par entrada/saída ('Free Flow PFE004 - PFS003 Sul' -> 'PFE004'). None = pórtico de
+    ponto único ('Free Flow Paraty', 'FREE FLOW P2 MAUÁ DA SERRA'), que tem coluna própria no quadro de tarifas."""
+    m = FF_PAIR_RE.search(name or '') or re.match(r'.*\b(P[FP][EF]\d+)\b', name or '')
+    return m.group(1) if m else None
+
+
+def single_gantry_tariff(page: dict, name: str, loc: list[dict] | None, rod: str | None, km: float | None,
+                         trusted: bool) -> dict | None:
+    """Tarifa de um pórtico de free flow de ponto único: a coluna dele no quadro, achada como a de uma praça
+    (nº no nome, página de localização ou texto acima do quadro), sem as palavras "free flow"."""
+    idx = plaza_index(re.sub(r'(?i)\bfree\s*flow\b', ' ', name), plaza_index_map(page['tables'][0]['desc']), loc, rod, km)
+    return tariff_for(page, name, idx if trusted else None)
+
+
+def same_place(pa: dict, ga: list[float], pb: dict, gb: list[float]) -> bool:
+    """Duas linhas do CKAN são a mesma praça (troca de concessionária)? Mesma rodovia e: km a até 3 (com coordenadas a
+    até ~3 km) ou, com coordenadas precisas, a até ~150 m mesmo com referência de km diferente (RIOSP "Viúva Graça
+    Norte" km 207,1 = ECOVIAS RIO MINAS "P04 Viúva Graça" km 211,7, a 20 m)."""
+    if _rod_num(pa['rodovia']) != _rod_num(pb['rodovia']):
+        return False
+    dx, dy = abs(ga[0] - gb[0]), abs(ga[1] - gb[1])
+    near_km = pa['km'] is not None and pb['km'] is not None and abs(pa['km'] - pb['km']) <= 3 and dx <= 0.03 and dy <= 0.03
+    precise = max(pa.get('coord_precisao_m') or 1000, pb.get('coord_precisao_m') or 1000) <= 100
+    return near_km or (precise and dx <= 0.0015 and dy <= 0.0015)
+
+
 def display_name(name: str, municipio: str) -> str:
     """'P 01' -> 'P 01 (Onda Verde)'; '1 Norte (Mairiporã)' fica como está."""
     if not re.match(r'(?i)^p?\s*\d', name) or norm(municipio) in norm(name):
@@ -363,6 +414,9 @@ def fetch():
     sem_pagina: list[str] = []
     for conc in sorted({r['concessionaria'].strip() for r in rows}):
         slug = SLUG.get(conc)
+        if conc in COBRANCA_SUSPENSA:
+            pages[conc] = None
+            continue
         if not slug:
             pages[conc] = None
             sem_pagina.append(f'{conc} (sem slug)')
@@ -402,18 +456,35 @@ def fetch():
             'coord_precisao_m': 1000 if decimals <= 2 else 100 if decimals == 3 else 10,
             'free_flow': is_ff, 'tarifa': None,
         }
+        if conc in COBRANCA_SUSPENSA:
+            props['cobranca_suspensa'] = COBRANCA_SUSPENSA[conc]
         if is_ff:
             # 'Free Flow PFE004 - PFS003 Sul' -> um ponto por pórtico de entrada; tarifa por par entrada/saída não é publicada
-            m = re.search(r'(P[FP][EF]\d+)\s*(?:Sul|Norte)?\s*-\s*(\S+)', name)
-            ent = m.group(1) if m else name
+            ent_pair = free_flow_entry(name)
+            ent = ent_pair or name
             key = (conc, ent, round(lat, 5), round(lon, 5))
             if key in seen_ff:
                 continue
             seen_ff.add(key)
-            props['saidas'] = sorted({re.search(r'-\s*(\S+)', x['praca_de_pedagio']).group(1) for x in rows
-                                      if x['concessionaria'].strip() == conc and ent in x['praca_de_pedagio'] and '-' in x['praca_de_pedagio']})
+            page = pages.get(conc)
+            if ent_pair:
+                props['tipo_free_flow'] = 'entrada_saida'
+                props['saidas'] = sorted({re.search(r'-\s*(\S+)', x['praca_de_pedagio']).group(1) for x in rows
+                                          if x['concessionaria'].strip() == conc and ent in x['praca_de_pedagio'] and '-' in x['praca_de_pedagio']})
+            else:
+                props['tipo_free_flow'] = 'ponto_unico'
+                if page:
+                    # pórtico de ponto único: tarifa da coluna dele no quadro (RIOSP Paraty = P8; Motiva Paraná P2 Mauá da Serra)
+                    t = single_gantry_tariff(page, name, locs.get(conc), r.get('rodovia'), props['km'], trust.get(conc, False))
+                    if t:
+                        t.update({'fonte': 'ANTT', 'data': page.get('data'), 'url': page.get('url')})
+                        props['tarifa'] = t
+                        with_tariff += 1
+                    else:
+                        no_col.append(f'{conc}: {name}')
+            nome_ff = f'Free flow {ent} ({conc})' if ent_pair else (name if re.search(r'(?i)free\s*flow', name) else f'Free flow {name}')
             out.append({'source_id': stable_id(conc, ent, lat, lon), 'geometry': {'type': 'Point', 'coordinates': [lon, lat]},
-                        'name': f'Free flow {ent} ({conc})', 'kind': 'portico', 'props': props})
+                        'name': nome_ff, 'kind': 'portico', 'props': props})
             continue
         page = pages.get(conc)
         t = None
@@ -429,7 +500,7 @@ def fetch():
         out.append({'source_id': stable_id(conc, name, r.get('rodovia'), r.get('km_m'), sentido),
                     'geometry': {'type': 'Point', 'coordinates': [lon, lat]},
                     'name': display_name(name, r.get('municipal') or r.get('municipio') or conc),
-                    'kind': 'praca', 'props': props})
+                    'kind': 'praca', 'props': props, '_ckan': f'{conc}: {name}'})
     # mesma praça listada por duas concessionárias (troca de contrato; ex.: CONCER -> ELOVIAS na BR-040, ambas "Ativo" no
     # CKAN): fica a de tabela mais recente
     dropped: list[str] = []
@@ -442,25 +513,26 @@ def fetch():
         for b in pracas:
             if a is b or a['props']['operador'] == b['props']['operador'] or a.get('_drop') or b.get('_drop'):
                 continue
-            pa, pb = a['props'], b['props']
-            if _rod_num(pa['rodovia']) != _rod_num(pb['rodovia']) or pa['km'] is None or pb['km'] is None or abs(pa['km'] - pb['km']) > 3:
+            if not same_place(a['props'], a['geometry']['coordinates'], b['props'], b['geometry']['coordinates']):
                 continue
             (lo, hi) = (a, b) if tdate(a) < tdate(b) else (b, a)
             if tdate(lo) == tdate(hi):
-                continue
-            ax, ay = lo['geometry']['coordinates']
-            bx, by = hi['geometry']['coordinates']
-            if abs(ax - bx) > 0.03 or abs(ay - by) > 0.03:
                 continue
             lo['_drop'] = True
             dropped.append(f"{lo['props']['operador']} {lo['name']} (substituída por {hi['props']['operador']} {hi['name']})")
     if dropped:
         print(f'  praças repetidas por troca de concessionária, mantida a de tabela mais recente: {"; ".join(dropped)}')
         with_tariff -= sum(1 for f in out if f.get('_drop') and f['props']['tarifa'])
+        gone = {f.get('_ckan') for f in out if f.get('_drop')}
+        no_col = [x for x in no_col if x not in gone]
         out = [f for f in out if not f.get('_drop')]
+    for f in out:
+        f.pop('_ckan', None)
+        f.pop('_drop', None)
     if no_col:
         print(f'  ! {len(no_col)} praça(s) com quadro de tarifas mas sem coluna identificada: {"; ".join(no_col[:12])}')
     NOTES = (f'{len(out)} pontos ({with_tariff} com tarifa oficial ANTT); CKAN atualizado em {pkg.get("metadata_modified", "")[:10]}. '
              f'Sem quadro de tarifas: {", ".join(sem_pagina) or "nenhuma"}. Praças sem coluna identificada no quadro: {len(no_col)}. '
-             f'Repetidas por troca de concessionária (descartadas): {len(dropped)}.')
+             f'Repetidas por troca de concessionária (descartadas): {len(dropped)}. '
+             f'Cobrança suspensa (sem tarifa): {", ".join(sorted(COBRANCA_SUSPENSA))}.')
     return out
