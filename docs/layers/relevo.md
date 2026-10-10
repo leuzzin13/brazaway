@@ -482,7 +482,12 @@ cd api && API_URL=http://localhost:3125 npx vitest run test/layers/relevo.test.t
 - linha no mar (sem DEM): `{}`, e a rota seguinte (em terra) é anotada normalmente (a sonda não "envenena" o cache).
 
 Sem elevação no Valhalla, os testes que dependem dela são pulados com aviso no console. Resultado em 09/10/2026 contra a
-API desta branch (porta 3125): `relevo.test.ts` 27 passaram, 1 pulado; suíte inteira: {{NSUITE}}.
+API desta branch (porta 3125): `relevo.test.ts` 27 passaram, 1 pulado. Suíte inteira (16 arquivos, 205 testes), com o
+ambiente compartilhado sob carga (load ~15, o Postgres reiniciando várias vezes com `malloc(): invalid size` num backend
+PostGIS, e a API caindo junto): 178 passaram, 16 falharam, 11 pulados. Refeitos: `placas_gabarito` 19/19 (as falhas
+eram "database system is in recovery mode"); os 3 testes da BR-459 em `rodovias_horario` falham igual contra a API da
+`main` (3000), sem relação com esta camada; `core_legal` e `altura_osm` estouraram o tempo (120 s) em rotas/hooks sob a
+mesma carga. Esta camada não muda rota (só anota) e leva < 1 s por rota.
 
 ## Decisões
 
