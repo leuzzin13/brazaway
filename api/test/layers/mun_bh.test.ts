@@ -61,7 +61,7 @@ describe('Belo Horizonte — regras importadas', () => {
       where layer_id = $1 and source = 'belo-horizonte' group by 1, 2 order by 1`, [LAYER]);
     const kinds = Object.fromEntries(q.rows.map((r) => [r.id, r.kind]));
     expect(kinds).toEqual({
-      bh_area_central: 'zona', bh_corredores: 'via', bh_contorno_toboga: 'via', bh_nsra_carmo: 'via',
+      bh_area_central: 'zona', bh_area_central_vias_limite: 'via', bh_corredores: 'via', bh_contorno_toboga: 'via', bh_nsra_carmo: 'via',
       bh_lei_7794_1999: 'desativada', bh_lei_7648_1999: 'revogada',
     });
     for (const id of Object.keys(kinds)) {
@@ -73,6 +73,7 @@ describe('Belo Horizonte — regras importadas', () => {
     const area = await regra('bh_area_central');
     expect(area.base_legal.map((b) => b.ato)).toEqual(expect.arrayContaining(['Portaria BHTRANS DPR 138/2009', 'Portaria BHTRANS DPR 077/2014', 'Portaria BHTRANS DPR 004/2019']));
     expect(describeJanelas(area.janelas)).toBe('seg–sex 7h–20h; sáb 7h–15h');
+    expect(describeJanelas((await regra('bh_area_central_vias_limite')).janelas)).toBe('seg–sex 7h–20h; sáb 7h–15h');
     expect(describeJanelas((await regra('bh_corredores')).janelas)).toBe('seg–sex 7h–9h e 17h–20h; sáb 7h–9h');
     expect(describeJanelas((await regra('bh_contorno_toboga')).janelas)).toBe('todos os dias o dia todo');
     expect(describeJanelas((await regra('bh_nsra_carmo')).janelas)).toBe('seg–sex 7h–20h; sáb 7h–15h');
@@ -88,6 +89,24 @@ describe('Belo Horizonte — regras importadas', () => {
       from data_features where layer_id = $1 and source = 'belo-horizonte' and kind = 'via'`, [LAYER]);
     expect(v.rows[0].max_m).toBeLessThan(450);
     expect(v.rows[0].sem_teste).toBe(0);
+  });
+
+  it('6º-7 (Av. Pedro II): da Av. Carlos Luz até a Lagoinha, nas duas pistas, cada uma no seu sentido', async () => {
+    const q = await pool.query(`select ST_AsGeoJSON(geom)::json g, ST_Length(geom::geography)::float m,
+        ST_Distance(geom::geography, ST_SetSRID(ST_MakePoint(-43.948, -19.9128), 4326)::geography)::float d
+      from data_features where layer_id = $1 and source = 'belo-horizonte' and props->>'inciso' = '6º-7'`, [LAYER]);
+    // ponto da Pedro II entre a Lagoinha e o Carlos Prates (antes ficava fora: a N. Sra. de Fátima era encaixada no Carlos Prates)
+    expect(Math.min(...q.rows.map((r) => r.d))).toBeLessThan(10);
+    const km = q.rows.reduce((a, r) => a + r.m, 0) / 1000;
+    expect(km).toBeGreaterThan(4.2);
+    expect(km).toBeLessThan(4.8);
+    const xs = q.rows.flatMap((r) => (r.g.coordinates as number[][]).map((c) => c[0]));
+    expect(Math.max(...xs)).toBeGreaterThan(-43.9450);   // ponta leste: início da Pedro II na Lagoinha
+    expect(Math.min(...xs)).toBeLessThan(-43.9620);      // ponta oeste: Av. Carlos Luz
+    // perto da Lagoinha: uma pista rumo oeste (sentido Carlos Luz) e outra rumo leste (sentido Lagoinha)
+    const rumos = new Set(q.rows.filter((r) => Math.max(...(r.g.coordinates as number[][]).map((c) => c[0])) > -43.947)
+      .map((r) => { const c = r.g.coordinates as number[][]; return c[c.length - 1][0] - c[0][0] < 0 ? 'oeste' : 'leste'; }));
+    expect(rumos).toEqual(new Set(['oeste', 'leste']));
   });
 
   it('Lei 7.648/1999 registrada como revogada (Lei 12.016/2026) e fora do mapa; Lei 7.794/1999 desativada', async () => {
@@ -193,6 +212,32 @@ describe('Belo Horizonte — exclusões, linhas de custo e avisos (módulo da ca
       const dx = c.coordinates[c.coordinates.length - 1][0] - c.coordinates[0][0];
       expect(c.item.id.includes(':1º-a:') ? dx < 0 : dx > 0, c.item.id).toBe(true);
     }
+  });
+
+  it('Av. Afonso Pena entre a R. dos Inconfidentes e a Contorno (Portaria 138/2009, art. 2º): fora do polígono recuado, entra como via da Área Central', async () => {
+    const r = await regra('bh_area_central_vias_limite');
+    expect(r.zona_vinculada).toBe('bh_area_central');
+    expect(r.base_legal[0].artigo).toMatch(/art\. 2º.*art\. 8º/);
+    const PONTO = [-43.92657, -19.93834];                                          // Afonso Pena, entre a Inconfidentes e a Contorno
+    const inset = turf.buffer(zona as any, -0.02, { units: 'kilometers' }) ?? zona;
+    expect(turf.booleanPointInPolygon(turf.point(PONTO), inset as any), 'pré-condição: fora do polígono recuado 20 m').toBe(false);
+    const perim = async (o: typeof NORTE, when: string, v: Record<string, unknown>) =>
+      (await layer.costLines!(ctxOf(o, SUL, when, v) as any)).filter((c) => c.item.type === 'Área Central (via do perímetro)');
+    const dez = await perim(NORTE, '2026-10-14T10:00', TOCO);
+    expect(dez.length).toBeGreaterThan(0);
+    const dist = Math.min(...dez.map((c) => turf.pointToLineDistance(turf.point(PONTO), turf.lineString(c.coordinates), { units: 'meters' })));
+    expect(dist).toBeLessThan(10);
+    // pista dupla de mão única: cada linha só no sentido do desenho (nenhuma vai também invertida)
+    const key = (c: [number, number][]) => c.map((p) => p.join(',')).join(';');
+    const enviados = new Set(dez.map((c) => key(c.coordinates)));
+    for (const c of dez) expect(enviados.has(key([...c.coordinates].reverse()))).toBe(false);
+    expect((await perim(NORTE, '2026-10-17T14:00', TOCO)).length).toBeGreaterThan(0);              // sábado 14h
+    expect(await perim(NORTE, '2026-10-14T21:00', TOCO)).toEqual([]);
+    expect(await perim(NORTE, '2026-10-18T10:00', TOCO)).toEqual([]);                             // domingo
+    expect((await perim(NORTE, '2026-10-18T03:00', CARRETA)).length).toBeGreaterThan(0);          // carreta 24 h
+    expect(await perim(NORTE, '2026-10-14T10:00', { ...PEQUENO, payload_t: 4 })).toEqual([]);      // 6,3 m e 4 t: livre
+    // origem na Área Central: segue a política da zona (não restringe; o annotate avisa)
+    expect(await perim(PRACA_SETE, '2026-10-14T10:00', TOCO)).toEqual([]);
   });
 
   it('Contorno nos corredores (Portaria 077/2014, art. 1º, parágrafo único): 6º-15a no sentido horário e 6º-15b no anti-horário', async () => {

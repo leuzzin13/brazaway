@@ -8,10 +8,10 @@ código do núcleo (importador, schema e `restricoes_rmsp.layer.ts`).
 |---|---|
 | Regras | `data/raw/municipios/3106200.json` (`fonte_id` `belo-horizonte`) |
 | Área Central (polígono curado) | `data/raw/municipios/geo/3106200_area_central.geojson` |
-| Corredores, tobogã e Av. N. Sra. do Carmo (vias do OSM pelo nome) | `data/raw/municipios/geo/3106200_vias.geojson` (`construir: trechos`) |
+| Corredores, tobogã, Av. N. Sra. do Carmo e a via do perímetro da Área Central (vias do OSM pelo nome) | `data/raw/municipios/geo/3106200_vias.geojson` (`construir: trechos`) |
 | Lei 7.648/1999 (revogada, registro histórico) | `data/raw/municipios/geo/3106200_lei_7648_contorno.geojson` |
-| Seed | `db/seed/layers/restricoes_rmsp__belo-horizonte.sql` (260 feições, 0,7 MB) |
-| Teste | `api/test/layers/mun_bh.test.ts` (14 testes; 4 rotas reais) |
+| Seed | `db/seed/layers/restricoes_rmsp__belo-horizonte.sql` (268 feições, 0,7 MB) |
+| Teste | `api/test/layers/mun_bh.test.ts` (16 testes; 4 rotas reais) |
 
 Pesquisa usada: `bh_capital` (`research.json` com as correções do `verify.json`), com o texto integral dos atos baixado
 da API do Diário Oficial do Município (`api-dom.pbh.gov.br`). Atos conferidos em 10/10/2026.
@@ -38,6 +38,7 @@ camada fica com o lado seguro (a regra vale se valer com alguma capacidade poss�
 | id | Tipo | Onde | Horário | Status (confiança) | Ato e artigo |
 |---|---|---|---|---|---|
 | `bh_area_central` | zona | Área Central: Hipercentro, Savassi, Lourdes, Assembleia/Barro Preto e Área Hospitalar (7,52 km²) | seg–sex 7h–20h; sáb 7h–15h; carretas e cavalos 24 h, todos os dias | ativa (alta) | Portaria BHTRANS DPR 138/2009, arts. 1º a 5º (perímetros), art. 1º, I a III, art. 8º (áreas dos arts. 2º a 5º na regra do art. 1º) e art. 9º (autorização); Portaria 077/2014, art. 2º; Portaria 004/2019, art. 1º |
+| `bh_area_central_vias_limite` | via | Av. Afonso Pena entre a R. dos Inconfidentes e a Av. do Contorno, nos dois sentidos (via do perímetro citada no art. 2º que ficou na borda externa do polígono) | igual à Área Central: seg–sex 7h–20h; sáb 7h–15h; carretas e cavalos 24 h | ativa (alta) | Portaria 138/2009, art. 2º (inclui a Av. Afonso Pena entre a R. dos Timbiras e a Av. do Contorno), art. 8º, art. 1º, II e III, e art. 9º; Portaria 077/2014, art. 2º; Portaria 004/2019, art. 1º |
 | `bh_corredores` | via | 16 trechos de corredores de acesso (tabela abaixo) | seg–sex 7h–9h e 17h–20h; sáb 7h–9h (carretas também) | ativa (alta) | Portaria 138/2009, art. 6º e inciso II; Portaria 077/2014, art. 1º, parágrafo único (trechos da Contorno) e art. 2º; Portaria 004/2019, art. 1º |
 | `bh_contorno_toboga` | via | Tobogã da Av. do Contorno: R. dos Inconfidentes → R. Ceará e R. Andaluzita → Av. Afonso Pena, só nesse sentido | 24 h, todos os dias (carretas também) | ativa (alta) | Portaria 077/2014, art. 1º, I e II (desde 01/07/2014), art. 3º (autorização) e art. 4º (revoga a 139/2013); Portaria 004/2019, art. 1º |
 | `bh_nsra_carmo` | via | Av. Nossa Senhora do Carmo (BR-356), entre a Av. do Contorno e a R. Professor Rodrigues Seabra, nos dois sentidos | seg–sex 7h–20h; sáb 7h–15h; carretas e cavalos 24 h | ativa (alta) | Portaria 138/2009, art. 7º, I a III (desde 25/01/2010); Portarias 077/2014, art. 2º, e 004/2019, art. 1º |
@@ -61,7 +62,7 @@ Amazonas, sentido horário) por dois, de sentido único. O `inciso` `6º-n` é a
 | 6º-4 | Av. Amazonas, entre a Av. do Contorno e a Av. Silva Lobo | 2 pistas | 2,8 km |
 | 6º-5 | Av. Tereza Cristina, entre a Av. do Contorno e a Av. Silva Lobo | 2 pistas (`Tereza` e `Teresa`); a ponta é o Viaduto Deputado Ulysses Guimarães, por onde a Silva Lobo cruza a avenida | 4,4 km |
 | 6º-6 | Elevado Castelo Branco | `Via Elevada Dona Helena Greco` (`old_name` Elevado Castelo Branco) | 1,8 km |
-| 6º-7 | Av. Pedro II, entre a Av. N. Sra. de Fátima e a Av. Carlos Luz | `Avenida Dom Pedro II` | 2,9 km |
+| 6º-7 | Av. Pedro II, entre a Av. N. Sra. de Fátima e a Av. Carlos Luz | `Avenida Dom Pedro II`, do início dela na Lagoinha (onde começa a N. Sra. de Fátima) à Carlos Luz; uma pista por trecho, cada uma no seu sentido | 4,5 km |
 | 6º-8 | Av. Antônio Carlos, entre a Av. N. Sra. de Fátima e a Av. Bernardo Vasconcelos | do início da avenida no Complexo da Lagoinha (a 380 m da N. Sra. de Fátima) à Bernardo Vasconcelos; **aproximado** | 6,2 km |
 | 6º-9 | Túneis Presidente Tancredo Neves e Prefeito Souza Lima (Lagoinha) | os dois túneis (sem as pistas do BRT MOVE) | 0,8 km |
 | 6º-10 | Av. Cristiano Machado, entre os túneis e a Av. Silviano Brandão | 2 pistas | 1,6 km |
@@ -88,8 +89,21 @@ Inconfidentes à Ceará e o corredor continua da Ceará à Amazonas; no anti-hor
   anotou o verify). **Domingo**: livre, porque os atos só fixam horário de segunda a sábado (a tabela da BHTrans, página
   "Áreas de carga, descarga e com restrições", atualizada em 07/10/2021, diz o mesmo).
 - **Origem ou destino dentro da Área Central**: a zona não é excluída e a rota avisa (`rmsp_origem_na_zona` /
-  `rmsp_destino_na_zona`). É política do app (como na ZMRC de SP); o ato não traz essa exceção. Os corredores, o tobogã e
-  a N. Sra. do Carmo continuam valendo (não têm `zona_vinculada`).
+  `rmsp_destino_na_zona`). É política do app (como na ZMRC de SP); o ato não traz essa exceção. A via do perímetro
+  (`bh_area_central_vias_limite`) segue a zona (`zona_vinculada: bh_area_central`): com origem ou destino na Área Central,
+  ela também não restringe. Os corredores, o tobogã e a N. Sra. do Carmo continuam valendo (não têm `zona_vinculada`).
+- **Via do perímetro fora do polígono** (`bh_area_central_vias_limite`): o art. 2º inclui expressamente a "Av. Afonso Pena
+  entre Rua dos Timbiras e Av. do Contorno", e o art. 8º aplica a ela a regra do art. 1º. Da Timbiras à Inconfidentes a
+  avenida é interna à Área Central (entre as áreas dos arts. 2º e 5º); da Inconfidentes à Contorno ela fica na borda
+  externa do polígono (recorte junto ao tobogã) e, com o recuo de 20 m, ficaria livre. Esse trecho (cerca de 130 m por
+  pista) entra como via, com as janelas, o alvo e a variante de carreta da Área Central. Os demais trechos-limite citados
+  nos arts. 2º a 5º são internos à união das áreas e já estão na zona. Sobram pontas de 15 a 30 m da Afonso Pena junto à
+  esquina com a Inconfidentes, dentro da faixa de 20 m do recuo, como em toda esquina do polígono.
+- **Pedro II (6º-7)**: a Av. N. Sra. de Fátima não cruza a Pedro II. Ela começa na Lagoinha, a cerca de 70 m do início
+  da Pedro II, e segue paralela a ela até o Carlos Prates. O ponto de partida do trecho é o início da Pedro II na Lagoinha,
+  o mesmo marco usado no 6º-8, e o mapa BHTrans de 14/02/2019 desenha a Pedro II restrita da Carlos Luz até a Lagoinha.
+  A primeira versão encaixava a N. Sra. de Fátima onde ela chega a 25 m da Pedro II, no Carlos Prates (lon -43,9517), e
+  deixava cerca de 0,8 km por pista sem restrição; corrigido na revisão.
 - **Carga e descarga**: os atos proíbem também a operação de carga e descarga; o app só trata a circulação.
 - **Vigência registrada (`vigencia_inicio`)**: 29/01/2019, data da redação atual (5,5 t; Portaria 004/2019, art. 2º:
   vigência na publicação). Histórico nas notas: hipercentro desde 13/10/2009 (Portaria 111/2009, consolidada no art. 1º);
@@ -129,7 +143,9 @@ Inconfidentes à Ceará e o corredor continua da Ceará à Amazonas; no anti-hor
   arts. 1º a 5º: as bordas são Contorno, Andradas (só a pista sul), Goitacazes e Rio Grande do Sul (canto noroeste, fora
   das áreas), Caetés, Rio de Janeiro, Guaicurus e Espírito Santo (recorte da Praça da Estação), Getúlio Vargas e
   Bernardo Guimarães (recorte do art. 5º) e Inconfidentes/Afonso Pena (recorte junto ao tobogã). A rota recua o polígono
-  20 m, então as vias-limite ficam livres. Por ser ajustado ao OSM, o polígono é derivado do OSM (ODbL).
+  20 m, então as vias-limite ficam livres, exceto a Av. Afonso Pena entre a R. dos Inconfidentes e a Contorno, que o
+  art. 2º inclui expressamente e entra como via (`bh_area_central_vias_limite`; ver Decisões). Por ser ajustado ao OSM,
+  o polígono é derivado do OSM (ODbL).
   Para refazer: rodar o georreferenciamento da pesquisa (`bh_capital/georef/`) e repetir o ajuste às quadras (PBF de
   `data/valhalla/sudeste-latest.osm.pbf`, recorte com `osmium extract`, `shapely.ops.polygonize`).
 - **Vias** (`construir: trechos`): montadas pelo construtor do núcleo a partir dos nomes e das transversais do ato. O OSM
@@ -139,10 +155,12 @@ Inconfidentes à Ceará e o corredor continua da Ceará à Amazonas; no anti-hor
     construtor descarta (`L.length > 5`), o que corta o caminho; cada pista foi montada como trecho próprio, com a pista
     sentido bairro em duas partes (ponta `lonlat` dos dois lados do way curto);
   - 6º-5: a Av. Silva Lobo termina a 64 m da Tereza Cristina e cruza a avenida pelo Viaduto Deputado Ulysses Guimarães;
+  - 6º-7: uma pista por trecho (`sentido: true`), com a ponta da Lagoinha em coordenada: início do way 314275940 (pista
+    sentido Carlos Luz) e fim do way 497948131 (pista sentido Lagoinha);
   - 6º-8: as pistas da Antônio Carlos não se encontram na ponta sul; cada pista foi montada separada (`aproximado`);
   - 6º-13: R. Pouso Alegre em duas partes, por causa do sentido das mãos.
   `pendencias` do arquivo: nenhuma.
-- **Validação no Valhalla** (import): 385 pedaços de até 400 m → 205 linhas encadeadas. Três pedaços não passam no
+- **Validação no Valhalla** (import): 396 pedaços de até 400 m → 213 linhas encadeadas. Três pedaços não passam no
   `edge walk` do `linear_cost_factors` nem reencaixados: Raja Gabáglia (way 701522829, 316 m, pista sentido Contorno) e
   Amazonas (ways 244672379, 239 m, sentido bairro, e 964682951, 74 m, sentido Contorno), perto de (-43.966, -19.931) e
   (-43.956, -19.963). Testado à parte: nem a própria forma da rota do Valhalla nesses trechos passa no edge walk. Ficaram
@@ -153,7 +171,8 @@ Inconfidentes à Ceará e o corredor continua da Ceará à Amazonas; no anti-hor
 
 - Área Central: `exclusions` (bloqueio duro, polígono recuado 20 m) no horário de saída; origem/destino dentro: não exclui
   e avisa.
-- Corredores, tobogã e N. Sra. do Carmo: `costLines` com fator 1000; as pistas de mão única só no sentido do desenho
+- Corredores, tobogã, N. Sra. do Carmo e a via do perímetro: `costLines` com fator 1000 (a via do perímetro sai com
+  origem ou destino na Área Central); as pistas de mão única só no sentido do desenho
   (o tobogã e os trechos 6º-15a/b só no sentido do ato).
 - `annotate`: passagem estimada, via restrita usada sem checagem do `routing.ts`, capacidade não informada, trecho
   aproximado (6º-8) e a Lei 7.794/1999 desativada.
