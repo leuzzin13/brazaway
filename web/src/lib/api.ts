@@ -47,6 +47,7 @@ export interface RouteResult {
   geometry: GeoJSON.LineString; distance_km: number; duration_s: number; departure_at: string;
   avoided: AvoidedItem[]; warnings: Warning[]; rest_stops: RestStop[]; driving_plan: DrivingPlan;
   layers: Record<string, { label: string; group: string; summary?: string[]; data?: any }>;
+  eta_horario?: { duration_s: number; faixa_s: [number, number]; duration_sem_transito_s: number; fator_medio: number; fracao_urbana: number; chegada_estimada: string; fonte: string; nota: string } | null;
 }
 export interface LayerStyle { kind: 'circle' | 'line' | 'fill' | 'heatmap' | 'symbol'; color: string; icon?: string; minzoom?: number; radius?: number; width?: number; opacity?: number }
 export interface LayerMeta {

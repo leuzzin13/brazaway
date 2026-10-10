@@ -8,6 +8,7 @@ import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, reportToRing, type ReportRow } from './restrictions.js';
 import { activeZones, describeWindows, pointInZone, zoneApplies, zoneRings, type ZoneRow } from './zones.js';
 import { legalDayInfo } from './calendar.js';
+import { etaPorHorario, type EtaHorario } from './etaHorario.js';
 import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
 import { loadLayers } from '../layers/index.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLine } from '../layers/types.js';
@@ -36,9 +37,11 @@ export interface RouteResponse {
   warnings: Warning[];
   rest_stops: RestStop[];
   driving_plan: DrivingPlan;
+  /** tempo de viagem ajustado pelo horário de saída (fator CET; null fora da área ou se falhar) */
+  eta_horario: EtaHorario | null;
   /** resultado de cada camada de dados (resumo + dados próprios) */
   layers: Record<string, { label: string; group: string; summary?: string[]; data?: unknown }>;
-  valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number };
+  valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number; timings_ms?: Record<string, number> };
 }
 
 export class RouteBlockedError extends Error {
@@ -190,15 +193,16 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   const ctx: RouteCtx = { vehicle, at, departureLocal, origin: req.origin, destination: req.destination, tz: env.tz };
   const layers = await loadLayers();
   const costLines: LayerCostLine[] = [];
+  const timings: Record<string, number> | null = TIMINGS ? {} : null;
   await Promise.all(layers.map(async (l) => {
     try {
       if (l.exclusions) {
-        for (const ex of await l.exclusions(ctx)) {
+        for (const ex of await timed(timings, `pre:${l.meta.id}`, () => l.exclusions!(ctx))) {
           const poly = ex.rings.length === 1 ? turf.polygon([closeRing(ex.rings[0])]) : turf.multiPolygon(ex.rings.map((r) => [closeRing(r)]));
           exclusions.push({ item: ex.item, rings: ex.rings, polygon: poly });
         }
       }
-      if (l.costLines) costLines.push(...(await l.costLines(ctx)));
+      if (l.costLines) costLines.push(...(await timed(timings, `pre:${l.meta.id}`, () => l.costLines!(ctx))));
     } catch (err) {
       warnings.push({ code: 'layer_error', layer: l.meta.id, severity: 'info', message: `Camada "${l.meta.label}" indisponível nesta rota: ${(err as Error).message}` });
     }
@@ -209,12 +213,12 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   const restrictedOpts = { ...base, excludePolygons, costLines: costLines.map((c) => ({ coordinates: c.coordinates, factor: c.factor })) };
   const hasRestrictions = exclusions.length > 0 || costLines.length > 0;
   let freeCache: Promise<valhalla.ValhallaRouteResult | null> | null = null;
-  const freeRoute = () => (freeCache ??= valhalla.route(base).catch(() => null));
+  const freeRoute = () => (freeCache ??= timed(timings, 'valhalla:livre', () => valhalla.route(base)).catch(() => null));
 
   // 3) Rota restrita
   let restricted: valhalla.ValhallaRouteResult;
   try {
-    restricted = await valhalla.route(restrictedOpts);
+    restricted = await timed(timings, 'valhalla:restrita', () => valhalla.route(restrictedOpts));
   } catch (e) {
     if (!(e instanceof NoRouteError)) throw e;
     // Descobrir quem bloqueou: rota livre e interseção com as exclusões
@@ -299,7 +303,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   await Promise.all(layers.map(async (l) => {
     if (!l.annotate) return;
     try {
-      const a = await l.annotate(ctx, routeGeom);
+      const a = await timed(timings, `post:${l.meta.id}`, () => l.annotate!(ctx, routeGeom));
       for (const w of a.warnings ?? []) warnings.push({ ...w, layer: w.layer ?? l.meta.id } as Warning & LayerWarning);
       if (a.summary?.length || a.data !== undefined) layerOut[l.meta.id] = { label: l.meta.label, group: l.meta.group, summary: a.summary, data: a.data };
     } catch (err) {
@@ -331,10 +335,11 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     vehicle,
     avoided,
     warnings,
+    eta_horario: await etaPorHorario(line.geometry, restricted.duration_s, at).catch(() => null),
     rest_stops: restStops,
     driving_plan: plan,
     layers: layerOut,
-    valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length },
+    valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length, ...(timings ? { timings_ms: timings } : {}) },
   };
 }
 
@@ -346,6 +351,14 @@ export function describeReport(r: { type: string; value_num: number | null }): s
   };
   const unit = r.type === 'weight_limit' || r.type === 'steep_grade' ? 't' : 'm';
   return `${labels[r.type] ?? r.type}${r.value_num != null ? ` ${String(r.value_num).replace('.', ',')} ${unit}` : ''}`;
+}
+
+/** Medição de tempo por etapa/camada (só com ROUTE_TIMINGS=1; vai em valhalla.timings_ms e no log). */
+const TIMINGS = process.env.ROUTE_TIMINGS === '1';
+async function timed<T>(t: Record<string, number> | null, key: string, fn: () => Promise<T>): Promise<T> {
+  if (!t) return fn();
+  const t0 = performance.now();
+  try { return await fn(); } finally { t[key] = Math.round((t[key] ?? 0) + performance.now() - t0); }
 }
 
 function closeRing(r: [number, number][]): [number, number][] {

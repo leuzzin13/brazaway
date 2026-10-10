@@ -32,6 +32,9 @@ interface Opts {
  * weight,axle_load,axle_count,hazmat}; exclude_polygons = [[[lon,lat],...],...];
  * date_time = {type:1 (departure), value:"YYYY-MM-DDThh:mm"}.
  */
+/** Velocidade máxima do caminhão (CTB art. 61, II, a/b: 90 km/h para os demais veículos em rodovia). */
+export const TRUCK_TOP_SPEED_KMH = Number(process.env.TRUCK_TOP_SPEED_KMH ?? 90);
+
 export async function route(o: Opts): Promise<ValhallaRouteResult> {
   const v = o.vehicle;
   const body: Record<string, unknown> = {
@@ -49,6 +52,8 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
         axle_load: v.axle_load_t,
         axle_count: v.axle_count,
         hazmat: v.hazmat,
+        // CTB art. 61: 90 km/h para "demais veículos" em rodovia sem placa (o padrão do Valhalla é 120)
+        top_speed: TRUCK_TOP_SPEED_KMH,
       },
     },
     units: 'kilometers',
