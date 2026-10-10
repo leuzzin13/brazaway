@@ -9,8 +9,8 @@ nenhum código do núcleo foi alterado.
 | Regras (ato, artigo, URL, horários, alvo, VUC, status, confiança) | `data/raw/municipios/3304557.json` (fonte `rio-de-janeiro`) |
 | Vias restritas (OSM curado) | `data/raw/municipios/geo/3304557_vias.geojson` |
 | Polígonos aproximados da regra geral suspensa (ARP e ARM/ARV) | `data/raw/municipios/geo/3304557_res3055_zonas.geojson` |
-| Seed | `db/seed/layers/restricoes_rmsp__rio-de-janeiro.sql` (407 feições, 1,1 MB) |
-| Teste | `api/test/layers/mun_rio.test.ts` (14 testes: regras, camada e 3 cenários de rota real) |
+| Seed | `db/seed/layers/restricoes_rmsp__rio-de-janeiro.sql` (406 feições, 1,0 MB) |
+| Teste | `api/test/layers/mun_rio.test.ts` (17 testes: regras, revisão, camada e 3 cenários de rota real) |
 
 Pesquisa e verificação de 10/10/2026 (tema `rio_capital`: `research.json` + `verify.json`, com as correções do
 verify aplicadas). Os atos foram lidos no D.O. Rio (busca e download de edições) e no Querido Diário.
@@ -75,9 +75,13 @@ Por isso todas as regras por via têm `vuc: null` e uma `vuc_nota` (o VUC é tra
   Almeida Pizarro e na parte que passa por Duque de Caxias/São João de Meriti. A extensão vem do CadLog/IPP
   ("Avenida Presidente João Goulart", sem o homônimo do Vidigal): da Pavuna ao Caju. Junto ao rio São João de Meriti
   a malha generalizada do IBGE põe a via em Duque de Caxias, mas o cadastro do Rio a tem como logradouro do
-  município (Cordovil, Pavuna) — prevaleceu o cadastro. O Elevado Rufino Pizarro (logradouro próprio no CadLog) fica
-  no corredor Rebouças (inciso VI). Cerca de 1,5 km do cadastro em São Cristóvão (ligações com a Ponte e o
-  Gasômetro, que no OSM são outras vias) não entra.
+  município (Cordovil) — prevaleceu o cadastro. Na Pavuna, o cadastro tem só ~40 m, que coincidem com a ponte do way
+  997177619 (já com hgv=no no OSM): só ela entra. O critério "a até 120 m do CadLog" tinha puxado também os ways
+  15091902, 757987510, 758007474 e 209956172 (~0,5 km, long. -43,3460 a -43,3437), fora do cadastro e, pela malha do
+  IBGE, quase todos em São João de Meriti (209956172 e 758007474 inteiros, 67 m do 757987510; o 15091902 só encosta no
+  cadastro): saíram na revisão de 10/10/2026, para a regra municipal não valer fora do município. O Elevado Rufino
+  Pizarro (logradouro próprio no CadLog) fica no corredor Rebouças (inciso VI). Cerca de 1,5 km do cadastro em São
+  Cristóvão (ligações com a Ponte e o Gasômetro, que no OSM são outras vias) não entra.
 - **Corredor Rebouças: "igual ou superior a 6,4 t"** está gravado como `pbt_t` acima de 6,399 t: o formato só tem
   `acima` (>) e `ate` (<=), e o PBT do CRLV tem duas casas decimais (o teste confere 6,40 t dentro e 6,39 t fora).
   "Reboques" = carreta, caminhão + reboque e CVC; reboque atrás de veículo leve não é avaliado.
@@ -100,6 +104,9 @@ Por isso todas as regras por via têm `vuc: null` e uma `vuc_nota` (o VUC é tra
 - **Santa Cruz desativada.** Confiança baixa na pesquisa (o verify confirmou o texto do art. 4º, mas não a aplicação
   atual nem as exceções; outras portarias de caminhão em Santa Cruz foram revogadas em 2018). Fica registrada e só
   avisa. A Rua Antares (ponta do inciso III) não está no OSM: o trecho é aproximado.
+- **Gávea sem inciso.** A Portaria 1.451/2023 tem só artigos (art. 1º, R. João Borges; art. 2º, R. Duque Estrada):
+  as feições têm `inciso: null` (o item da rota mostraria "inc. art. 1º") e o artigo vai no `trecho` e em
+  `base_legal.artigo`.
 - **Centro, só no bairro Centro.** Há Rua São José em 15 bairros e Rua Primeiro de Março em outros dois; só as do
   Centro entram. A Praça XV aberta a veículos é a pista do Largo do Paço (alt_name Praça 15 de Novembro); a Orla Conde
   é quase toda de pedestres e VLT: entram só os trechos de serviço. O sentido contrário dessas duas pistas de serviço
@@ -129,7 +136,7 @@ da Linha Vermelha sobre a baía ficam).
 
 | Regra | Seleção no OSM |
 |---|---|
-| Linha Vermelha | name=Linha Vermelha (consulta por bbox: as pontes sobre a baía ficam fora da área administrativa do OSM), sem official_name=Elevado Rufino de Almeida Pizzarro, a até 120 m do CadLog "Avenida Presidente João Goulart" (sem o Vidigal) |
+| Linha Vermelha | name=Linha Vermelha (consulta por bbox: as pontes sobre a baía ficam fora da área administrativa do OSM), sem official_name=Elevado Rufino de Almeida Pizzarro, a até 120 m do CadLog "Avenida Presidente João Goulart" (sem o Vidigal); na Pavuna, só o way 997177619 (o único que coincide com o cadastro) |
 | Linha Amarela | name=Linha Amarela e Túnel Engenheiro Raymundo de Paula Soares |
 | Corredor Rebouças | Viaduto Saint-Hilaire; Túnel Antônio Rebouças; Túnel André Rebouças; Avenida Vital Brasil; Viaduto Engenheiro Freyssinet; Viaduto Professor Rufino de Almeida Pizarro, Elevado Professor Engenheiro Rufino de Almeida Pizarro e os ways name=Linha Vermelha com official_name=Elevado Rufino de Almeida Pizzarro |
 | Centro | way 258032015 (Largo do Paço); Rua Primeiro de Março e Rua São José no bbox do Centro (-43.185, -22.910, -43.168, -22.893); Orla (da Guanabara) Prefeito Luiz Paulo Conde só `service` |
@@ -139,7 +146,7 @@ da Linha Vermelha sobre a baía ficam).
 | Grumari | Estrada Roberto Burle Marx ao sul de -23.0516 (junção com a Estrada de Grumari) até o fim, em Barra de Guaratiba |
 
 No import (`run.py municipios:3304557`), as linhas foram cortadas em até 400 m, testadas no Valhalla e encadeadas:
-526 linhas → 389 vias, todas `valhalla_validado`.
+522 linhas → 388 vias, todas `valhalla_validado`.
 
 **Zonas da Res. 3.055/2018 (`3304557_res3055_zonas.geojson`)**: os Anexos I e II só existem como imagem no DO. Os
 polígonos foram **reconstruídos** encadeando as vias-limite na ordem dos incisos (junção = ponto mais próximo entre uma
@@ -185,6 +192,15 @@ nela) e desvia às 8h; **passa pela região** — caminhão Centro → Tijuca à
 suspensa sem exclusão e recebe o aviso; Av. das Américas — o caminhão vai pelas laterais e o utilitário usa a pista
 central (~10 km).
 
+**Efeito num teste do núcleo (para o merge).** Com a fonte `rio-de-janeiro` no banco, `rmsp.test.ts` › "rota longa
+(Rio → SP)" falha em `expect(noite.length).toBe(0)`: a origem (-22,9; -43,2) fica no Rio, e as vias 24 h do Rio a até
+15 km do segmento O–D (Linha Vermelha, Rebouças, Centro, Transoeste e as ruas pontuais) entram nas
+`costLines` às 22h30 (275 linhas, a até 13,6 km do segmento). É o comportamento previsto da camada; a premissa do teste
+é que caiu. A frente não altera esse arquivo (passo 7 de `restricoes_municipais.md`). Filtrar só o Rio não basta: no
+banco compartilhado, Arujá e Mairiporã (outra frente) também entram (90 linhas). O ajuste que não depende de quais
+municípios estão no banco é conferir o próprio invariante do teste: toda linha com algum ponto a até 15 km do
+segmento O–D e nenhuma de Santana de Parnaíba às 22h30.
+
 ## Limitações
 
 - Janela avaliada no horário de saída (o `annotate` estima a passagem e avisa).
@@ -194,7 +210,10 @@ central (~10 km).
 - Grumari: o ato inclui os feriados em dia útil, mas o formato não tem "feriado como dia da janela"; esses dias ficam
   sem restrição. A proibição de carga e descarga não é modelada.
 - Regras por faixa (Av. Brasil) não são representáveis.
-- A regra geral suspensa gera aviso informativo em boa parte das rotas dentro da cidade (a ARM/ARV cobre ~210 km²).
+- A regra geral suspensa gera aviso informativo em boa parte das rotas dentro da cidade (a ARM/ARV cobre ~210 km²). A
+  ARP fica dentro da ARM/ARV: a rota pelo Centro recebe dois avisos (o núcleo avisa uma vez por regra). Para não pesar,
+  o `status_motivo` (que vai no texto do aviso) cita só a suspensão (Res. SMTR 3.254/2020, art. 1º; Dec. 47.285/2020,
+  art. 1º, "r"); as confirmações da SMTR, do 1746 e da CET-Rio ficam na `nota`.
 
 ## Vigilância (o que pode mudar)
 
