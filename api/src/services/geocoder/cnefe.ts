@@ -332,7 +332,7 @@ export class CnefeGeocoder {
     const r = await query<PointRow & { km_m: number }>(
       `select distinct on (p.street_id) ${PT_COLS}
          from addr_point p left join addr_bairro b on b.id = p.bairro_id
-        where p.street_id = any($1::int[]) and p.km and p.km_m between $2::int - 3000 and $2::int + 3999
+        where p.street_id = any($1::int[]) and p.km and p.km_m between $3::int - 3000 and $4::int + 3000
         order by p.street_id, (p.km_m between $3::int and $4::int) desc, abs(p.km_m - $2::int), p.nv_geo, p.n desc`,
       [streets.map((s) => s.id), alvo, lo, hi]);
     return r.rows.map((x) => {
