@@ -98,6 +98,9 @@ def _download(url: str, dest) -> None:
 
 # Agregação (roda dentro da transação do município, sobre a tabela temporária cnefe_raw)
 SQL_AGG = r"""
+-- as junções por 3 colunas de texto têm estimativa ruim (rows=6) e viram nested loop de minutos
+set local enable_nestloop = off;
+
 create temp table m_street on commit drop as
   select tipo_raw, titulo_raw, nome_raw,
          coalesce(geo_canon(tipo_raw), '') as tipo,
@@ -171,13 +174,21 @@ select street_id, null, false, bairro_id,
   from cnefe_rec where numero is null
  group by street_id, bairro_id, round(lat::numeric, 4), round(lon::numeric, 4);
 
+-- daqui em diante só os pontos deste município (temporária pelo índice street_id): sem ela cada passo abaixo varria
+-- os ~5 M pontos de addr_point (hash join com nested loop desligado), 1–2 min por município
+set local enable_nestloop = on;
+
+create temp table m_pt on commit drop as
+  select p.street_id, p.bairro_id, p.lat, p.lon
+    from addr_street s join addr_point p on p.street_id = s.id where s.cod_mun = %(m)s;
+analyze m_pt;
+
 -- ponto representativo do logradouro = endereço real mais perto do centroide; desvio = mediana da distância a ele
 create temp table st_c on commit drop as
-  select p.street_id, avg(p.lat) clat, avg(p.lon) clon, count(*) n
-    from addr_point p join addr_street s on s.id = p.street_id where s.cod_mun = %(m)s group by p.street_id;
+  select street_id, avg(lat) clat, avg(lon) clon, count(*) n from m_pt group by street_id;
 create temp table st_med on commit drop as
   select distinct on (p.street_id) p.street_id, p.lat, p.lon
-    from addr_point p join st_c c using (street_id)
+    from m_pt p join st_c c using (street_id)
    order by p.street_id, (p.lat - c.clat) ^ 2 + ((p.lon - c.clon) * cos(radians(c.clat))) ^ 2;
 update addr_street s set n = c.n, lat = m.lat, lon = m.lon
   from st_c c join st_med m using (street_id) where s.id = c.street_id;
@@ -186,24 +197,23 @@ delete from addr_street s
  where s.cod_mun = %(m)s and s.n = 0 and not exists (select 1 from addr_point a where a.street_id = s.id);
 update addr_street s set desvio_m = d.dm
   from (select p.street_id,
-               percentile_cont(0.5) within group (order by sqrt(((p.lat - s2.lat) * 111320) ^ 2 + ((p.lon - s2.lon) * 111320 * cos(radians(s2.lat))) ^ 2)) dm
-          from addr_point p join addr_street s2 on s2.id = p.street_id where s2.cod_mun = %(m)s group by p.street_id) d
+               percentile_cont(0.5) within group (order by sqrt(((p.lat - m.lat) * 111320) ^ 2 + ((p.lon - m.lon) * 111320 * cos(radians(m.lat))) ^ 2)) dm
+          from m_pt p join st_med m using (street_id) group by p.street_id) d
  where s.id = d.street_id;
 
 -- mesmo para bairros
 create temp table br_c on commit drop as
-  select p.bairro_id, avg(p.lat) clat, avg(p.lon) clon, count(*) n
-    from addr_point p join addr_bairro b on b.id = p.bairro_id where b.cod_mun = %(m)s group by p.bairro_id;
+  select bairro_id, avg(lat) clat, avg(lon) clon, count(*) n from m_pt where bairro_id is not null group by bairro_id;
 create temp table br_med on commit drop as
   select distinct on (p.bairro_id) p.bairro_id, p.lat, p.lon
-    from addr_point p join br_c c using (bairro_id)
+    from m_pt p join br_c c using (bairro_id)
    order by p.bairro_id, (p.lat - c.clat) ^ 2 + ((p.lon - c.clon) * cos(radians(c.clat))) ^ 2;
 update addr_bairro b set n = c.n, lat = m.lat, lon = m.lon
   from br_c c join br_med m using (bairro_id) where b.id = c.bairro_id;
 update addr_bairro b set desvio_m = d.dm
   from (select p.bairro_id,
-               percentile_cont(0.5) within group (order by sqrt(((p.lat - b2.lat) * 111320) ^ 2 + ((p.lon - b2.lon) * 111320 * cos(radians(b2.lat))) ^ 2)) dm
-          from addr_point p join addr_bairro b2 on b2.id = p.bairro_id where b2.cod_mun = %(m)s group by p.bairro_id) d
+               percentile_cont(0.5) within group (order by sqrt(((p.lat - m.lat) * 111320) ^ 2 + ((p.lon - m.lon) * 111320 * cos(radians(m.lat))) ^ 2)) dm
+          from m_pt p join br_med m using (bairro_id) group by p.bairro_id) d
  where b.id = d.bairro_id;
 delete from addr_bairro where cod_mun = %(m)s and n = 0;
 """
@@ -216,8 +226,6 @@ def _load_municipio(conn, cod: int, path, nome_arquivo: str) -> dict:
         # banco compartilhado: não fica horas esperando lock de outra sessão (falha e tenta de novo)
         cur.execute("set local lock_timeout = '5min'")
         cur.execute("set local synchronous_commit = off")
-        # as junções por 3 colunas de texto têm estimativa ruim (rows=6) e viram nested loop de minutos
-        cur.execute("set local enable_nestloop = off")
         with zipfile.ZipFile(path) as z:
             name = next(n for n in z.namelist() if n.lower().endswith('.csv'))
             with z.open(name) as fh:
@@ -268,6 +276,19 @@ def _load_municipio(conn, cod: int, path, nome_arquivo: str) -> dict:
     return {'cod': cod, 'nome': nome, 'uf': uf, 'registros': n_raw, 'enderecos': n_pts, 'logradouros': n_st}
 
 
+def _reconnect(max_wait_s: int = 600):
+    """Nova conexão, esperando o servidor voltar (ex.: Postgres em recuperação depois de uma queda)."""
+    t0 = time.time()
+    while True:
+        try:
+            return _pg_conn()
+        except Exception as e:  # noqa: BLE001
+            if time.time() - t0 > max_wait_s:
+                raise
+            print(f'  ! sem conexão ({str(e)[:100]}); aguardando o banco', flush=True)
+            time.sleep(10)
+
+
 def fetch():
     global NOTES, RECORD_COUNT
     cods = municipios()
@@ -291,29 +312,44 @@ def fetch():
                 try:
                     done.append(_load_municipio(conn, cod, path, fname))
                     break
-                except Exception as e:  # noqa: BLE001 — lock_timeout, queda de conexão...
+                except Exception as e:  # noqa: BLE001 — lock_timeout, queda de conexão, reinício do servidor...
                     print(f'  ! {cod}: falhou ({type(e).__name__}: {str(e)[:160]}); tentativa {attempt + 1}/3', flush=True)
-                    if conn.closed:
-                        conn = _pg_conn()
                     time.sleep(10 * (attempt + 1))
+                    if conn.closed or conn.broken:
+                        conn = _reconnect()
             else:
                 failed.append(cod)
         if 3550308 in [d['cod'] for d in done]:
             # capital recarregada: confere a orientação dos segmentos do GeoSampa pelos endereços (se já importados)
-            with conn.transaction(), conn.cursor() as cur:
-                cur.execute('select exists (select 1 from addr_segment where cod_mun = 3550308)')
-                if cur.fetchone()[0]:
-                    cur.execute('select * from addr_segment_orient(3550308)')
-                    print('    GeoSampa: segmentos conferidos (r >= 0,3)/invertidos/fracos ou sem dado = %s' % (cur.fetchone(),), flush=True)
-        conn.autocommit = True
-        with conn.cursor() as cur:
-            cur.execute('vacuum analyze addr_point')
-            cur.execute('analyze addr_street')
-            cur.execute('analyze addr_bairro')
+            for attempt in range(3):
+                try:
+                    if conn.closed or conn.broken:
+                        conn = _reconnect()
+                    with conn.transaction(), conn.cursor() as cur:
+                        cur.execute('select exists (select 1 from addr_segment where cod_mun = 3550308)')
+                        if cur.fetchone()[0]:
+                            cur.execute('select * from addr_segment_orient(3550308)')
+                            print('    GeoSampa: segmentos conferidos (r >= 0,3)/invertidos/fracos ou sem dado = %s'
+                                  % (cur.fetchone(),), flush=True)
+                    break
+                except Exception as e:  # noqa: BLE001
+                    print(f'  ! orientação do GeoSampa falhou ({str(e)[:160]}); tentativa {attempt + 1}/3', flush=True)
+                    time.sleep(10)
+        # estatística atualizada (o planner usa o índice street_id); falha aqui não desfaz a carga, que já foi gravada
+        try:
+            if conn.closed or conn.broken:
+                conn = _reconnect()
+            conn.autocommit = True
+            with conn.cursor() as cur:
+                cur.execute('vacuum analyze addr_point')
+                cur.execute('analyze addr_street')
+                cur.execute('analyze addr_bairro')
+        except Exception as e:  # noqa: BLE001
+            print(f'  ! vacuum/analyze falhou ({str(e)[:160]}); fica para o autovacuum', flush=True)
     finally:
         conn.close()
     # cobertura de TODOS os municípios já carregados (o runner substitui as feições desta fonte a cada carga)
-    with _pg_conn() as c2, c2.cursor() as cur:
+    with _reconnect() as c2, c2.cursor() as cur:
         cur.execute('select count(*), coalesce(sum(n_enderecos), 0), coalesce(sum(n_registros), 0) from addr_municipio')
         n_mun, n_pts, n_reg = cur.fetchone()
         cur.execute("""select m.cod_mun, m.nome, m.uf, m.n_enderecos, m.n_registros, m.n_logradouros,
