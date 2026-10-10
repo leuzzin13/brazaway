@@ -28,7 +28,7 @@ dá para modelar com segurança, a regra ficou conservadora ou desligada, e isso
 | `api/src/layers/core_legal.layer.ts` | Camada "Calendário legal de SP": aviso `cet_suspension` quando há suspensão publicada no horário de saída e a rota toca a zona |
 | `api/src/services/restrictions.ts`, `api/src/services/routing.ts` | Núcleo, mudança mínima: VUC só isento de `truck_ban` com AETC; vínculo do motorista passado ao plano de jornada |
 | `api/src/services/restStops.ts` | Plano de jornada pelo CTB art. 67-C e pela CLT art. 235-C, já com a ADI 5322 |
-| `web/src/components/VehicleForm.tsx` | Seção "Autorizações e carga": AETC, tipo de carga, motorização, ano de fabricação, nº ONU |
+| `web/src/components/VehicleForm.tsx` | Seção "Autorizações e carga": AETC, tipo de carga, motorização, ano de fabricação, nº ONU, vínculo do motorista |
 | `api/test/layers/core_legal.test.ts` | Testes de regra (sem rede) e de rota contra a API |
 
 ## Fontes e licenças
