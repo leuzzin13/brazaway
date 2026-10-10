@@ -10,11 +10,20 @@ por ano em cada subpasta: Ocorrências (Registros), Veículo e Vítimas, ligados
 Os arquivos de Registros têm ~100 MB por ano: são lidos em STREAMING direto do Drive e só um extrato compacto (gzip, por id
 de arquivo) fica em data/cache/reds_mg; nada passa inteiro pela memória.
 
-Divisão por jurisdição (igual à do Infosiga em SP):
-  - logradouro com código de BR (ou Fernão Dias como rodovia)  -> PRF (acidentes_prf), sempre descartado aqui;
+Divisão por jurisdição (parecida com a do Infosiga em SP, mas não igual: o REDS não tem o campo de circunscrição, e o
+código de BR no logradouro faz as vezes da circunscrição FEDERAL do Infosiga, que sai sempre):
+  - logradouro com código de BR (ou Fernão Dias como rodovia) -> PRF (acidentes_prf), descartado aqui, EXCETO fora das
+    células da PRF no corredor do Anel Rodoviário de BH e nas BRs que a PRF não registra em MG (ver abaixo);
   - logradouro "de rodovia" (tipo RODOVIA/ESTRADA, código MG/MGC/AMG/LMG, Anel Rodoviário) numa célula (±1) onde a PRF tem
     acidentes -> descartado (a PRF cobre aquele trecho);
   - demais (vias urbanas, rodovias estaduais e o Anel Rodoviário de BH fora das células da PRF) -> REDS (este módulo).
+Exceções da regra de BR (seguem a regra de rodovia: saem nas células da PRF e ficam no resto):
+  - Anel Rodoviário: a PM registra parte dos acidentes do Anel como "BR 381" ou "BR 040", e não como "ANEL RODOVIARIO". No
+    corredor do Anel (células, ±1, com acidentes de logradouro "ANEL RODOVIARIO"), o logradouro com código de BR é gravado
+    com o nome "Anel Rodoviário";
+  - BR sem PRF: na carga de 10/10/2026, a PRF tem de 154 a 10.210 acidentes em MG (jan/2023 a ago/2026) nas BRs que
+    patrulha e no máximo 5 nas demais (BR-265, BR-494, BR-135, BR-259...). Numa BR com menos de MIN_REGISTROS_PRF
+    registros da PRF em MG, o acidente do REDS não tem como duplicar a PRF e fica com o REDS (nome "BR-xxx").
 Coordenadas repetidas: o REDS geocodifica o endereço informado, e a mesma coordenada exata se repete muito (24% dos
 acidentes com caminhão caem em coordenadas com MIN_REPETICAO ou mais repetições; 93% no Anel Rodoviário). Conferido em
 10/10/2026: esses pontos ficam SOBRE a via informada (mediana de 19 m da via de mesmo nome no OSM) e se espalham ao longo
@@ -30,7 +39,7 @@ from __future__ import annotations
 import csv, datetime as dt, gzip, html, io, re, time
 from collections import Counter
 from common import CACHE_DIR, UA, http_get
-from sources.acidentes_infosiga import Hotspots, cell_of, in_bbox, janela, norm_txt, num, parse_hour, titulo
+from sources.acidentes_infosiga import Hotspots, cell_of, dilate, in_bbox, janela, norm_txt, num, parse_hour, titulo
 
 LAYER_ID = 'acidentes'
 SOURCE = 'sejusp-mg'
@@ -41,7 +50,8 @@ LICENSE = ('SEJUSP-MG/REDS (Painel de Sinistro de Trânsito) — sem licença no
            'transparência ativa "de livre utilização pela sociedade" (Decreto MG 48.383/2022, art. 22, observados o art. 6º '
            'da LGPD e a Lei 14.129/2021); atribuir SEJUSP-MG/REDS; confirmar uso comercial por pedido de acesso à informação')
 NOTES = ('Grade 250 m (EPSG:5880), janela de 3 anos, mínimo de 3 acidentes com caminhão por célula. Com e sem vítima. '
-         'BRs ficam com a PRF. Coordenada repetida (>= 5): saem os sem vítima e, se não for de um logradouro só, todos.')
+         'BRs ficam com a PRF, salvo fora das células dela no corredor do Anel Rodoviário de BH e nas BRs sem registro '
+         'regular da PRF em MG. Coordenada repetida (>= 5): saem os sem vítima e, se não for de um logradouro só, todos.')
 
 FOLDER = '1W_4SsAW8u5bvsaBoHhwInpUr72vES8yw'
 LIST = 'https://drive.google.com/embeddedfolderview?id={id}'
@@ -62,6 +72,7 @@ FALLBACK = {
 CAMINHAO = {'CAMINHAO', 'CAMINHAO/TRATOR', 'SEMI REBOQUE', 'REBOQUE'}   # norm_txt troca '-' por espaço
 MOTO = {'MOTOCICLETA', 'MOTONETA', 'CICLOMOTOR'}
 MG_BBOX = (-51.1, -23.0, -39.8, -14.2)   # estado de MG (com folga)
+MIN_REGISTROS_PRF = 20   # BR com menos registros da PRF em MG (anos em cache) não é patrulhada por ela (ver o docstring)
 MIN_REPETICAO = 5        # coordenada exata em >= 5 acidentes com caminhão na janela é "repetida" (endereço geocodificado)...
 PADRAO_NOME_DOMINANTE = 0.8   # ...e é centro de bairro/município se nenhum logradouro responde por 80% dos casos dela
 CACHE = 'reds_mg'
@@ -70,7 +81,13 @@ CACHE = 'reds_mg'
 # Logradouro: nome legível e classe de jurisdição
 # ----------------------------------------------------------------------------------------------------------------
 RE_BR = re.compile(r'\bBR\s*0*(\d{2,3})\b')
-RE_ESTADUAL = re.compile(r'^(MGC|MGT|AMG|LMG|MG)\s*0*(\d{1,3})\b')
+RE_ESTADUAL = re.compile(r'^(MGC|MGT|AMG|LMG|MG)\s*0*(\d{1,4})\b')
+# código interno do logradouro no cadastro do REDS (3 letras do município + 3 ou 4 dígitos), em geral no início
+# ('CRZ0072 - DO CONTORNO') e às vezes no meio ('PRESIDENTE CUV0310 - JUSCELINO KUBITSCHEK'); MGC/MGT/AMG/LMG são rodovias
+RE_COD_REDS = re.compile(r'\b(?!(?:MGC|MGT|AMG|LMG)\d)[A-Z]{3}\d{3,4}\b\s*-?\s*')
+RE_SN = re.compile(r'\s*[-,]?\s*\bS/N.*$')                      # "... - S/N", "..., S/N, CENTRO", ", S/NR"
+RE_SIGLA = re.compile(r'\b(Mgc|Mgt|Amg|Lmg|Mg)\s*-?\s*0*(\d{1,4})\b')   # sigla estadual dentro do nome já formatado
+RE_ROMANO = re.compile(r'(?=[IVX]{2})X{0,3}(IX|IV|V?I{0,3})')        # II, IV, XII, XXIII... (só com 2 letras ou mais)
 NOMES_FEDERAIS = ('FERNAO DIAS', 'RIO BAHIA')          # BR-381 e BR-116 em MG, quando o tipo é RODOVIA
 TIPOS_RODOVIA = {'RODOVIA', 'ESTRADA'}
 TIPOS_VIA = {'RUA': 'Rua', 'AVENIDA': 'Avenida', 'VIA': 'Via', 'PRACA': 'Praça', 'ESTRADA': 'Estrada', 'RODOVIA': 'Rodovia',
@@ -81,9 +98,20 @@ SEM_NOME = {'', 'NAN', 'DESCONHECIDO', 'NAO INFORMADO', 'INVALIDO', 'IGNORADO', 
 _MINUSC = {'De', 'Da', 'Do', 'Das', 'Dos', 'E'}
 
 
+def _limpa(nome: str | None) -> str:
+    """Nome do logradouro sem o código interno do REDS nem o "S/N" do endereço, em maiúsculas e espaços simples."""
+    s = RE_COD_REDS.sub('', ' '.join(str(nome or '').upper().split()))
+    return RE_SN.sub('', s).strip(' -,')
+
+
+def _sigla(m: re.Match) -> str:
+    return f'{m.group(1).upper()}-{int(m.group(2)):03d}'
+
+
 def classe_via(tipo: str | None, nome: str | None) -> int:
-    """0 = via comum (fica com o REDS); 1 = rodovia (descartada só nas células cobertas pela PRF); 2 = BR (sempre PRF)."""
-    t, n = norm_txt(tipo), norm_txt(nome).strip(' -')
+    """0 = via comum (fica com o REDS); 1 = rodovia (descartada só nas células cobertas pela PRF); 2 = BR (fica com a PRF,
+    salvo as exceções do docstring do módulo: corredor do Anel e BR sem registro regular da PRF em MG)."""
+    t, n = norm_txt(tipo), norm_txt(_limpa(nome)).strip(' -')
     if RE_BR.search(n) or (t == 'RODOVIA' and any(k in n for k in NOMES_FEDERAIS)):
         return 2
     if t in TIPOS_RODOVIA or RE_ESTADUAL.match(n) or 'ANEL RODOVIARIO' in n or 'RODOVIA' in n or 'FERNAO DIAS' in n:
@@ -93,8 +121,11 @@ def classe_via(tipo: str | None, nome: str | None) -> int:
 
 def nome_via(tipo: str | None, nome: str | None) -> str | None:
     """('RODOVIA', 'MG 050') -> 'MG-050'; ('AVENIDA', 'CRISTIANO MACHADO') -> 'Avenida Cristiano Machado';
-    ('RODOVIA', 'ANEL RODOVIARIO') -> 'Anel Rodoviário'. Tipos que não são via (fazenda, povoado...) ficam sem nome."""
-    t, n = norm_txt(tipo), norm_txt(nome).strip(' -')
+    ('RODOVIA', 'ANEL RODOVIARIO') -> 'Anel Rodoviário'; ('AVENIDA', 'CRZ0072 - DO CONTORNO') -> 'Avenida do Contorno';
+    ('AVENIDA', 'DOM PEDRO II') -> 'Avenida Dom Pedro II'; ('RODOVIA', 'RODOVIA ANEL VIARIO OESTE') -> 'Rodovia Anel
+    Viario Oeste'. Tipos que não são via (fazenda, povoado...) ficam sem nome."""
+    limpo = _limpa(nome)
+    t, n = norm_txt(tipo), norm_txt(limpo).strip(' -')
     if n in SEM_NOME:
         return None
     m = RE_BR.search(n)
@@ -102,14 +133,23 @@ def nome_via(tipo: str | None, nome: str | None) -> str | None:
         return f'BR-{int(m.group(1)):03d}'
     m = RE_ESTADUAL.match(n)
     if m:
-        return f'{m.group(1)}-{int(m.group(2)):03d}'
+        return _sigla(m)
     if 'ANEL RODOVIARIO' in n:
         return 'Anel Rodoviário'
     if t not in TIPOS_VIA:
         return None
-    words = ' '.join(str(nome).split()).strip(' -').title().split()
-    nome_fmt = ' '.join(w if i == 0 or w not in _MINUSC else w.lower() for i, w in enumerate(words))
-    return f'{TIPOS_VIA[t]} {nome_fmt}'
+    words = limpo.split()
+    if len(words) > 1 and norm_txt(words[0]) == t:        # tipo repetido no nome ('RODOVIA RODOVIA ...')
+        words = words[1:]
+    words = ' '.join(words).title().split()
+    fmt = []
+    for i, w in enumerate(words):
+        if RE_ROMANO.fullmatch(w.upper()) and not (w == 'Vi' and i and words[i - 1] == 'Te'):   # "Bem Te Vi" fica
+            w = w.upper()
+        elif w in _MINUSC:                  # o tipo vem antes, então vale também para a 1ª palavra ('Avenida do Contorno')
+            w = w.lower()
+        fmt.append(w)
+    return f'{TIPOS_VIA[t]} {RE_SIGLA.sub(_sigla, " ".join(fmt))}'
 
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -251,6 +291,17 @@ def _build_registros(rows, w) -> int:
     return n
 
 
+def _limpa_cache(usados: set[str]) -> None:
+    """Apaga os extratos de arquivos que saíram da carga: o arquivo do ano corrente troca de id todo mês ('Jan a Jul 2026'
+    -> 'Jan a Ago 2026') e, sem isso, data/cache/reds_mg cresceria ~10 MB por mês."""
+    pasta = CACHE_DIR / CACHE
+    for p in [*pasta.glob('*.csv.gz'), *pasta.glob('*.csv.part')]:
+        file_id = p.name.split('_', 1)[1].split('.csv', 1)[0] if '_' in p.name else ''
+        if file_id not in usados:
+            print(f'    cache: removido {p.name} (arquivo fora da carga)')
+            p.unlink(missing_ok=True)
+
+
 def _read(path) -> 'Iterator[list[str]]':
     with gzip.open(path, 'rt', encoding='utf-8', newline='') as fh:
         yield from csv.reader(fh, delimiter=';')
@@ -279,7 +330,10 @@ def fetch():
     # BRs em MG: células (±1) com acidentes da PRF
     from sources import acidentes_prf
     covered = acidentes_prf.covered_cells(MG_BBOX)
-    print(f'    {len(covered)} células cobertas pela PRF em MG')
+    por_br = acidentes_prf.registros_por_br('MG')
+    brs_prf = {b for b, n in por_br.items() if n >= MIN_REGISTROS_PRF}
+    print(f'    {len(covered)} células cobertas pela PRF em MG; BRs com registro regular da PRF: {len(brs_prf)}; '
+          f'abaixo de {MIN_REGISTROS_PRF}: {sorted((b, n) for b, n in por_br.items() if b not in brs_prf)}')
 
     truck, moto, obitos, ped = set(), set(), {}, set()
     regs = []
@@ -303,9 +357,9 @@ def fetch():
                 if start <= d <= end:
                     yield row
 
-    # 1ª passada: acidentes com caminhão (e contagem de coordenadas repetidas entre eles)
+    # 1ª passada: acidentes com caminhão
     skipped = Counter()
-    eventos, rep = [], {}
+    eventos = []
     n_truck_janela = 0
     for i, d, h, la, lo, vit, tipo, logr, mun in linhas():
         if i not in truck:
@@ -315,8 +369,36 @@ def fetch():
         if not in_bbox(lon, lat, MG_BBOX):
             skipped['sem_coord'] += 1
             continue
-        rep.setdefault((la, lo), Counter())[nome_via(tipo, logr) or ''] += 1
         eventos.append((i, h, la, lo, vit, tipo, logr, mun))
+
+    # corredor do Anel Rodoviário: células (±1) com acidentes de logradouro "ANEL RODOVIARIO"; ali, fora das células da
+    # PRF, o logradouro com código de BR ("BR 381", "BR 040") é o próprio Anel e fica com o REDS (ver o docstring)
+    anel = dilate({cell_of(float(lo), float(la)) for (_, _, la, lo, _, _, logr, _) in eventos if 'ANEL RODOVIARIO' in norm_txt(logr)})
+
+    def br_sem_prf(tipo: str, logr: str) -> bool:
+        nome = nome_via(tipo, logr) or ''            # 'BR-494'; Fernão Dias/Rio-Bahia sem código ficam com a PRF
+        return nome.startswith('BR-') and nome not in brs_prf
+
+    def jurisdicao(lon: float, lat: float, tipo: str, logr: str) -> str | None:
+        cls, c = classe_via(tipo, logr), cell_of(lon, lat)
+        if cls == 2 and (c in covered or not (c in anel or br_sem_prf(tipo, logr))):
+            return 'br_prf'
+        if cls == 1 and c in covered:
+            return 'rodovia_coberta'
+        return None
+
+    def via_de(lon: float, lat: float, tipo: str, logr: str) -> str | None:
+        """Nome da via de um acidente que passou pela jurisdição: BR no corredor do Anel é o Anel."""
+        if classe_via(tipo, logr) == 2 and cell_of(lon, lat) in anel:
+            return 'Anel Rodoviário'
+        return nome_via(tipo, logr)
+
+    # coordenadas repetidas entre os acidentes com caminhão, com o nome de via de cada um (BR no Anel conta como o Anel)
+    rep: dict[tuple[str, str], Counter] = {}
+    for i, h, la, lo, vit, tipo, logr, mun in eventos:
+        lon, lat = float(lo), float(la)
+        nome = via_de(lon, lat, tipo, logr) if jurisdicao(lon, lat, tipo, logr) is None else nome_via(tipo, logr)
+        rep.setdefault((la, lo), Counter())[nome or ''] += 1
 
     def _centro(nomes: Counter) -> bool:
         nome, k = nomes.most_common(1)[0]
@@ -333,15 +415,8 @@ def fetch():
             return 'coord_repetida_sem_vitima'
         return None
 
-    def jurisdicao(lon: float, lat: float, tipo: str, logr: str) -> str | None:
-        cls = classe_via(tipo, logr)
-        if cls == 2:
-            return 'br_prf'
-        if cls == 1 and cell_of(lon, lat) in covered:
-            return 'rodovia_coberta'
-        return None
-
     hs = Hotspots()
+    br_mantidas = Counter()
     for i, h, la, lo, vit, tipo, logr, mun in eventos:
         lon, lat = float(lo), float(la)
         ob = obitos.get(i, 0)
@@ -350,8 +425,11 @@ def fetch():
         if motivo:
             skipped[motivo] += 1
             continue
+        via = via_de(lon, lat, tipo, logr)
+        if classe_via(tipo, logr) == 2:
+            br_mantidas['anel' if via == 'Anel Rodoviário' else 'sem_prf'] += 1
         hs.add(lon, lat, truck=True, fatal=ob > 0, vitima=vitima, obitos=ob, moto=i in moto, pedestre=i in ped,
-               hour=int(h) if h != '' else None, via=nome_via(tipo, logr), municipio=_municipio(mun))
+               hour=int(h) if h != '' else None, via=via, municipio=_municipio(mun))
     celulas = set(hs.cells)
 
     # 2ª passada: as demais ocorrências (qualquer veículo) só para `total`/`fatais` das células que têm caminhão
@@ -369,8 +447,11 @@ def fetch():
     hs.n_events = n_validas + hs.n_truck   # Hotspots só viu as ocorrências das células com caminhão
 
     feats = hs.features(SOURCE, start, end, 'SEJUSP-MG (REDS)')
+    _limpa_cache({files[t][a][0] for t in files for a in anos})
     resumo = (f'{n_janela} ocorrências na janela, {n_truck_janela} com caminhão; {len(repetidas)} coordenadas com >= '
-              f'{MIN_REPETICAO} acidentes com caminhão, {len(centros)} delas sem logradouro dominante')
+              f'{MIN_REPETICAO} acidentes com caminhão, {len(centros)} delas sem logradouro dominante; acidentes com caminhão '
+              f'em logradouro de BR mantidos: {br_mantidas["anel"]} como Anel Rodoviário e {br_mantidas["sem_prf"]} em BR '
+              f'sem registro regular da PRF em MG')
     global NOTES
     NOTES = (f'{NOTES} Fonte: {PAGE_URL}. Janela {start}..{end}. {resumo}. {hs.summary(feats)}. '
              f'Descartados (com caminhão): {dict(skipped)}.')

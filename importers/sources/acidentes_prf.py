@@ -111,6 +111,18 @@ def covered_cells(bbox: tuple[float, float, float, float] | None = None) -> set[
     return dilate({cell_of(e['lon'], e['lat']) for e in _cached_events() if e['lon'] is not None and in_bbox(e['lon'], e['lat'], **kw)})
 
 
+def registros_por_br(uf: str) -> Counter:
+    """{'BR-381': n, ...}: acidentes da PRF (qualquer veículo, com ou sem coordenada) por BR na UF, nos anos em cache. Usado
+    pelo REDS em MG para saber quais BRs a PRF de fato registra (as demais não têm como duplicar a PRF)."""
+    out = Counter()
+    for e in _cached_events():
+        via = e['via'] or ''
+        m = re.search(r'BR-\d{3}', via)
+        if m and via.endswith(f'/{uf}'):
+            out[m.group(0)] += 1
+    return out
+
+
 def fetch():
     evs = _cached_events()
     start, end = janela(min(max(e['d'] for e in evs), dt.date.today()))
