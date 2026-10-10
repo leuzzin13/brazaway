@@ -36,6 +36,28 @@ CLUSTER_M = 25.0
 HALF_PIECE_M = 30.0
 KNOWN_NODE_M = 100.0   # nó com maxheight na via de baixo a até 100 m do cruzamento = altura conhecida (não é lacuna)
 OVER_LABEL = {'viaduto': 'viaduto', 'passarela': 'passarela', 'ferrovia': 'ponte ferroviária', 'ponte': 'ponte'}
+# prefixo do source_id das lacunas de via inteira: um por motivo (a mesma via pode ter mais de um motivo; com reason[:3]
+# 'maxheight_suspeito' e 'maxweight_suspeito' davam o mesmo 'max<id>' e validate() descartava um deles)
+SID_PREFIX = {'tunel_sem_altura': 'tun', 'altura_abaixo_padrao': 'abp', 'maxheight_suspeito': 'mh', 'maxweight_suspeito': 'mw'}
+ND = 6   # casas decimais das coordenadas no seed (~0,1 m): o seed tem 12 mil linhas
+
+
+def way_source_id(reason: str, way_id: int) -> str:
+    return f'{SID_PREFIX[reason]}{way_id}'
+
+
+def classify_restrictor(r: dict, way: tuple, hs: str) -> None:
+    """Via de um barrier=height_restrictor sem valor. Qualquer via trafegável com maxheight numérico prevalece
+    ('conhecida': o Valhalla aplica o limite da via, não é lacuna), independente da ordem das ways no arquivo; sem ela,
+    fica a primeira via trafegável vista (way_id, nome, highway)."""
+    if hs == 'numerico':
+        r['way'] = 'conhecida'
+    elif r['way'] is None:
+        r['way'] = way
+
+
+def _rc(coords) -> list:
+    return [[round(x, ND), round(y, ND)] for x, y in coords]
 
 
 def _layer(tags, default: int) -> int:
@@ -110,9 +132,8 @@ def fetch():
         if restrictors:
             for n in w.nodes:
                 r = restrictors.get(n.ref)
-                if r and r['way'] is None:
-                    # limitador sem valor numa via que já tem maxheight numérico: o Valhalla aplica o da via, não é lacuna
-                    r['way'] = 'conhecida' if hs == 'numerico' else (w.id, tags.get('name') or tags.get('ref'), hw)
+                if r:
+                    classify_restrictor(r, (w.id, tags.get('name') or tags.get('ref'), hw), hs)
         major = hw in MAJOR
         reasons = []
         if major and not _is_bridge(tags) and hs in ('sem_tag',):
@@ -238,6 +259,10 @@ def fetch():
             piece = substring(g, m_to_deg(a), m_to_deg(b))
             if piece.is_empty or piece.geom_type != 'LineString':
                 continue
+            # ~1 m de tolerância: a API só mede quanto do trecho fica a 5 m da rota; menos vértices = seed menor
+            ps = piece.simplify(0.00001, preserve_topology=False)
+            if not ps.is_empty and ps.geom_type == 'LineString' and ps.length > 0:
+                piece = ps
             p0 = cl[0][1]
             overs, seen_o = [], set()
             for _, _, oi in cl:
@@ -254,16 +279,22 @@ def fetch():
             okind = 'ferrovia' if 'ferrovia' in kinds else 'viaduto' if 'viaduto' in kinds else 'ponte' if 'ponte' in kinds else 'passarela'
             oname = next((o['nome'] for o in overs if o.get('nome')), None)
             uname = utags.get('name') or utags.get('ref')
-            hw = utags.get('highway')
             prio = 1 if okind == 'ferrovia' else 2 if okind in ('viaduto', 'ponte') else 3
             name = f"{uname or 'Via sem nome'} sob {OVER_LABEL[okind]}" + (f' ({oname})' if oname else '')
+            # props enxutos (11 mil linhas no seed): estruturas só com o way_id (a API usa para não contar a mesma estrutura
+            # duas vezes); tipo e nome da principal já estão em estrutura/estrutura_nome; sem chaves nulas
+            props = {'lat': round(p0.y, ND), 'lon': round(p0.x, ND), 'via_id': uwid, 'estrutura': okind,
+                     'estruturas': [{'way_id': o['way_id']} for o in overs[:3]], 'prioridade': prio}
+            if uname:
+                props['via'] = uname
+            if oname:
+                props['estrutura_nome'] = oname
             out.append({
                 'source_id': f'p{uwid}_{int(round(pos))}',
-                'geometry': {'type': 'LineString', 'coordinates': [[round(x, 7), round(y, 7)] for x, y in piece.coords]},
+                'geometry': {'type': 'LineString', 'coordinates': _rc(piece.coords)},
                 'name': name[:160],
                 'kind': 'passagem_sem_altura',
-                'props': {'lat': round(p0.y, 7), 'lon': round(p0.x, 7), 'via_id': uwid, 'via': uname, 'highway': hw,
-                          'estrutura': okind, 'estrutura_nome': oname, 'estruturas': overs[:3], 'prioridade': prio},
+                'props': props,
             })
             n_pass += 1
     print(f'  passagens inferiores sem altura: {n_pass}; com altura em nó da via (descartadas): {n_known} ({time.time()-t0:.0f}s)')
@@ -279,7 +310,7 @@ def fetch():
         nm = tags.get('name') or tags.get('ref') or tags.get('tunnel:name')
         mid = g.interpolate(0.5, normalized=True)
         for reason in reasons:
-            props = {'lat': round(mid.y, 7), 'lon': round(mid.x, 7), 'via_id': wid, 'via': nm, 'highway': tags.get('highway')}
+            props = {'lat': round(mid.y, ND), 'lon': round(mid.x, ND), 'via_id': wid, 'via': nm, 'highway': tags.get('highway')}
             if reason in ('maxheight_suspeito', 'altura_abaixo_padrao'):
                 props['maxheight'] = tags.get('maxheight')
             if reason == 'maxweight_suspeito':
@@ -306,7 +337,7 @@ def fetch():
                     provavel = mine
                 name = f"Peso suspeito ({tags.get('maxweight')}): {nm or 'via sem nome'}"
                 props.update(prioridade=2, valor_t=mine, valhalla_le_t=vh, provavel_t=provavel, motivo=motivo)
-            out.append({'source_id': f'{reason[:3]}{wid}', 'geometry': {'type': 'LineString', 'coordinates': [[round(x, 7), round(y, 7)] for x, y in gs.coords]},
+            out.append({'source_id': way_source_id(reason, wid), 'geometry': {'type': 'LineString', 'coordinates': _rc(gs.coords)},
                         'name': name[:160], 'kind': reason, 'props': props})
 
     # 5) limitadores de altura sem valor (em via trafegável)
@@ -314,9 +345,9 @@ def fetch():
         if not r['way'] or r['way'] == 'conhecida':
             continue
         wid, wname, hw = r['way']
-        out.append({'source_id': f'r{nid}', 'geometry': {'type': 'Point', 'coordinates': [round(r['lon'], 7), round(r['lat'], 7)]},
+        out.append({'source_id': f'r{nid}', 'geometry': {'type': 'Point', 'coordinates': [round(r['lon'], ND), round(r['lat'], ND)]},
                     'name': f"Limitador de altura sem valor: {wname or 'via sem nome'}", 'kind': 'restritor_sem_valor',
-                    'props': {'lat': round(r['lat'], 7), 'lon': round(r['lon'], 7), 'osm_node': nid, 'via_id': wid, 'via': wname,
+                    'props': {'lat': round(r['lat'], ND), 'lon': round(r['lon'], ND), 'osm_node': nid, 'via_id': wid, 'via': wname,
                               'highway': hw, 'prioridade': 1}})
     import collections
     print('  por tipo:', dict(collections.Counter(f['kind'] for f in out)), f'({time.time()-t0:.0f}s)')
