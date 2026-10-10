@@ -178,7 +178,7 @@ export interface Enquadramento {
   vucSoComCadastro?: boolean;
   vucIsento?: boolean;
   /** a decisão dependeu da capacidade de carga, que não foi informada: com o valor típico do perfil seria outra */
-  capacidadeSuposta?: { estimativa_t: number | null };
+  capacidadeSuposta?: { estimativa_t: number | null; com_estimativa?: { aplica: boolean; classe: string } };
 }
 
 const usaPayload = (r: Regra) => [r.alvo?.qualquer, r.alvo?.todas, ...(r.variantes ?? []).flatMap((x) => [x.quando?.qualquer, x.quando?.todas])]
@@ -202,7 +202,9 @@ export function enquadrar(r: Regra, v: Vehicle): Enquadramento {
   if (!payloadInformado(v) && usaPayload(r)) {
     // o mesmo veículo com a capacidade típica do perfil: se a decisão mudaria, a rota avisa que supôs o lado seguro
     const alt = v.payload_t === undefined ? null : enquadrarBase(r, { ...v, payload_t_aproximado: false });
-    if (!alt || alt.aplica !== e.aplica || alt.classe !== e.classe) e.capacidadeSuposta = { estimativa_t: v.payload_t ?? null };
+    if (!alt || alt.aplica !== e.aplica || alt.classe !== e.classe) {
+      e.capacidadeSuposta = { estimativa_t: v.payload_t ?? null, ...(alt ? { com_estimativa: { aplica: alt.aplica, classe: alt.classe } } : {}) };
+    }
   }
   return e;
 }
@@ -627,9 +629,10 @@ function noteCapacidade(r: Regra, e: Enquadramento, warnings: LayerWarning[], se
   const key = `cap:${r.regra_id}`;
   if (seen.has(key)) return;
   seen.add(key);
-  const est = e.capacidadeSuposta.estimativa_t;
+  const { estimativa_t: est, com_estimativa: alt } = e.capacidadeSuposta;
+  const efeito = !alt ? '' : !alt.aplica ? ' ela não valeria' : ` valeria como ${alt.classe}, não como ${e.classe}`;
   warnings.push({ code: 'municipal_capacidade_nao_informada', severity: 'info',
-    message: `${r.municipio}: "${r.nome}" depende da capacidade de carga, que não foi informada; a rota considerou a restrição (lado seguro)${est != null ? `. Com a capacidade típica do perfil (~${num(est)} t, aproximada) ela não valeria` : ''}. Informe a capacidade de carga do CRLV.` });
+    message: `${r.municipio}: "${r.nome}" depende da capacidade de carga, que não foi informada; a rota considerou a restrição (lado seguro)${est != null && efeito ? `. Com a capacidade típica do perfil (~${num(est)} t, aproximada)${efeito}` : ''}. Informe a capacidade de carga do CRLV.` });
 }
 
 function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[], seen: Set<string>) {

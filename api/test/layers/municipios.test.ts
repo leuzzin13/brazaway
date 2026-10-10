@@ -46,7 +46,7 @@ describe('regras do formato (sem banco)', () => {
   it('capacidade de carga: sem o dado vale o lado seguro (e marca a suposição); informada decide', () => {
     const z = regra('ficticio_area_central');   // capacidade acima de 5,5 t OU comprimento acima de 6,5 m
     const semDado = enquadrar(z, veic(PEQUENO));
-    expect(semDado).toMatchObject({ aplica: true, classe: 'caminhão', capacidadeSuposta: { estimativa_t: 5 } });
+    expect(semDado).toMatchObject({ aplica: true, classe: 'caminhão', capacidadeSuposta: { estimativa_t: 5, com_estimativa: { aplica: false } } });
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 5 }))).toMatchObject({ aplica: false });
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 5 })).capacidadeSuposta).toBeUndefined();
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 6 }))).toMatchObject({ aplica: true, classe: 'caminhão' });
@@ -159,6 +159,7 @@ describe('município fictício gravado no banco (fonte da fixture)', () => {
     const sem = await layer.annotate!(ctxOf(O, D, '2026-10-13T10:00', PEQUENO) as any, reta as any);
     const codes = sem.warnings!.map((w) => w.code);
     expect(codes).toContain('municipal_capacidade_nao_informada');
+    expect(sem.warnings!.find((w) => w.code === 'municipal_capacidade_nao_informada')!.message).toMatch(/~5 t, aproximada\) ela não valeria/);
     expect(codes).toContain('municipal_regra_nao_aplicada');
     expect(sem.warnings!.find((w) => w.code === 'municipal_regra_nao_aplicada')!.message).toMatch(/suspensa.*Portaria fictícia 2\/2026/);
     expect((sem.data as any).nao_aplicadas.map((x: any) => x.regra_id)).toEqual(['ficticio_suspensa']);
