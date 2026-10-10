@@ -14,7 +14,7 @@ Peças:
 | Importadores | `importers/sources/rmsp_*.py` (`rmsp_municipios.py` também é a biblioteca comum) |
 | Seeds | `db/seed/layers/restricoes_rmsp__<fonte>.sql` |
 | API | `api/src/layers/restricoes_rmsp.layer.ts` |
-| Testes | `api/test/layers/rmsp.test.ts` (24 testes) |
+| Testes | `api/test/layers/rmsp.test.ts` (24 testes, contra a API) e `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) |
 
 Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendário legal `holidays`).
 
