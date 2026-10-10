@@ -24,7 +24,9 @@ services:
     restart: unless-stopped
 
   db:
-    image: postgis/postgis:16-3.4
+    # imagem própria (db/Dockerfile): postgres:16 oficial + PostGIS, nativa em amd64 e arm64 (a postgis/postgis só tem amd64)
+    build: ./db
+    image: truck-router-db:16-postgis
     container_name: truck-router-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-truck}
@@ -35,7 +37,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_native:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-truck} -d ${POSTGRES_DB:-truck_router}"]
       interval: 5s
@@ -44,7 +46,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: postgis/postgis:16-3.4
+    image: truck-router-db:16-postgis
     container_name: truck-router-migrate
     depends_on:
       db:
@@ -134,4 +136,5 @@ services:
       - ./importers:/app
 
 volumes:
-  pgdata:
+  # volume do Postgres nativo (o antigo "pgdata", criado pela imagem amd64 emulada, fica para rollback)
+  pgdata_native:
