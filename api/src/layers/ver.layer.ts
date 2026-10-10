@@ -26,6 +26,15 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, Route
  */
 
 export const PORTARIA_49_VIGENTE = process.env.VER_PORTARIA_49_VIGENTE === '1';
+/**
+ * Última conferência do gatilho da Portaria 49/2021 (art. 3º: "conclusão das obras do trecho norte do Rodoanel e sua
+ * liberação"). Em 09/10/2026: trecho 1 (Dutra–Fernão Dias, km 129–153) liberado em 23/12/2025 — abertura parcial, NÃO
+ * dispara o art. 3º; trecho 2 (Fernão Dias–Av. Raimundo Pereira de Magalhães) previsto para o 2º semestre de 2026 e ainda
+ * sem liberação. Ao reconferir, atualizar esta data e docs/layers/ver.md.
+ */
+export const P49_CONFERIDA_EM = '09/10/2026';
+const P49_SITUACAO = `situação conferida em ${P49_CONFERIDA_EM}: trecho 1 do Rodoanel Norte (Dutra–Fernão Dias) liberado em 23/12/2025; `
+  + 'trecho 2 (Fernão Dias–Av. Raimundo Pereira de Magalhães) previsto para o 2º semestre de 2026';
 const DEBUG = process.env.VER_DEBUG === '1';
 const FACTOR = 1000;
 /** Até este número de cadeias candidatas, todas vão para a rota sem pré-seleção. */
@@ -380,11 +389,12 @@ async function selecionar(ctx: RouteCtx, day: LegalDayInfo, cands: Cand[]): Prom
   return [...sel.values()];
 }
 
-function itemOf(t: Trecho, c: Coord[], k: number): LayerItem {
+function itemOf(t: Trecho, c: Coord[]): LayerItem {
   const mid = c[Math.floor(c.length / 2)];
   const sentido = t.props.sentido && t.props.sentido !== AMBOS ? ` (${t.props.sentido})` : '';
   return {
-    kind: 'layer', layer: 'ver', id: `${t.id}:${k}`, name: t.name, type: `VER ${PAR_TXT[t.props.paragrafo] ?? ''}`.trim(),
+    // id do inciso (não da cadeia): o routing.ts deduplica avoided/avisos por id, então cada via aparece uma vez só
+    kind: 'layer', layer: 'ver', id: t.id, name: t.name, type: `VER ${PAR_TXT[t.props.paragrafo] ?? ''}`.trim(),
     rule: t.props.horario, lon: mid[0], lat: mid[1], note: `${t.name}${sentido}: ${t.props.horario}`,
   };
 }
@@ -446,7 +456,7 @@ const layer: RouteLayer = {
     const cands: Cand[] = [];
     for (const t of ativos) t.chains.forEach((c, k) => { if (c.length >= 2 && !bad.has(`${t.id}:${k}`)) cands.push({ t, k, c }); });
     const sel = await selecionar(ctx, day, cands);
-    return sel.map(({ t, k, c }) => ({ item: itemOf(t, c, k), coordinates: c, factor: FACTOR }));
+    return sel.map(({ t, c }) => ({ item: itemOf(t, c), coordinates: c, factor: FACTOR }));
   },
 
   async annotate(ctx, route: RouteGeom) {
@@ -512,8 +522,9 @@ const layer: RouteLayer = {
         if (p.paragrafo === 5 && !avisouP49) {
           avisouP49 = true;
           warnings.push({ code: 'ver_portaria_49', severity: 'info', id: u.t.id,
-            message: 'Marginal Tietê: a Portaria SMT 49/2021 vai proibir caminhões em qualquer horário quando o Rodoanel Norte for liberado '
-              + '(carga com origem/destino em SP seguirá liberada). Ainda não está valendo.' });
+            message: 'Marginal Tietê: a Portaria SMT 49/2021 vai proibir caminhões em qualquer horário quando o trecho norte do Rodoanel '
+              + 'estiver concluído e liberado (art. 3º; carga com origem/destino em SP seguirá liberada, art. 38-A). Ainda não está valendo '
+              + `(${P49_SITUACAO}).` });
         }
         continue;
       }
@@ -564,7 +575,7 @@ const layer: RouteLayer = {
     return {
       warnings: warnings.slice(0, 10),
       summary: summary.slice(0, 8),
-      data: { usadas: data, proibidas, portaria_49_vigente: PORTARIA_49_VIGENTE },
+      data: { usadas: data, proibidas, portaria_49_vigente: PORTARIA_49_VIGENTE, portaria_49_conferida_em: P49_CONFERIDA_EM },
     };
   },
 };
