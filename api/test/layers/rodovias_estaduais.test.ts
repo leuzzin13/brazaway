@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import * as turf from '@turf/turf';
 import { lineOf, midpointOf, pool, route, waitForStack } from '../helpers.js';
-import layer, { criterioTrechoAplica, motivoBloqueioPC, PROX_OD_M, type PontoCriticoProps } from '../../src/layers/rodovias_estaduais.layer.js';
+import layer, { criterioTrechoAplica, motivoBloqueioPC, type PontoCriticoProps } from '../../src/layers/rodovias_estaduais.layer.js';
 import { resolveVehicle } from '../../src/services/vehicle.js';
 import { pool as apiPool } from '../../src/db.js';
 import type { RouteCtx } from '../../src/layers/types.js';
@@ -34,6 +34,7 @@ const RJ_B = { lat: -22.52, lon: -43.735 };
 const CARRETA = { preset: 'carreta' };
 const TOCO = { preset: 'toco' };   // 16 t, 2 eixos
 const VUC = { preset: 'vuc', is_vuc: true };
+const UTILITARIO = { preset: 'utilitario' };   // 3,5 t: não é caminhão (CTB, Anexo I)
 
 afterAll(async () => { await pool.end(); await apiPool.end(); });
 
@@ -51,23 +52,25 @@ describe('Regras sem rota', () => {
   const util = resolveVehicle({ preset: 'utilitario' } as any);
   const truck = resolveVehicle({ preset: 'truck' } as any);
 
-  it('pista interrompida para pesados: bloqueia carreta e toco; libera VUC e utilitário', () => {
+  it('pista interrompida para pesados: bloqueia todo caminhão (PBT > 3,5 t), VUC inclusive; só o utilitário (3,5 t) passa', () => {
     const p = pc({ situacao: 'interrompida_pesados' });
-    expect(motivoBloqueioPC(p, carreta, 2026)?.code).toBe('pc_interrompida_pesados');
-    expect(motivoBloqueioPC(p, toco, 2026)?.code).toBe('pc_interrompida_pesados');
-    expect(motivoBloqueioPC(p, vuc, 2026)).toBeNull();
-    expect(motivoBloqueioPC(p, util, 2026)).toBeNull();
+    expect(motivoBloqueioPC(p, carreta)?.code).toBe('pc_interrompida_pesados');
+    expect(motivoBloqueioPC(p, toco)?.code).toBe('pc_interrompida_pesados');
+    expect(motivoBloqueioPC(p, vuc)?.code).toBe('pc_interrompida_pesados');
+    // a definição de VUC do app (Portaria SMT 137/2018 de SP) não limita o PBT: um "VUC" de 14 t continua pesado
+    expect(motivoBloqueioPC(p, resolveVehicle({ ...VUC, weight_t: 14 } as any))?.code).toBe('pc_interrompida_pesados');
+    expect(motivoBloqueioPC(p, util)).toBeNull();
   });
   it('pista interrompida (sem variante) bloqueia todos; com variante e meia-pista só avisam', () => {
-    expect(motivoBloqueioPC(pc({ situacao: 'interrompida' }), vuc, 2026)?.code).toBe('pc_interrompida');
-    expect(motivoBloqueioPC(pc({ situacao: 'interrompida_com_variante' }), carreta, 2026)).toBeNull();
-    expect(motivoBloqueioPC(pc({ situacao: 'meia_pista' }), carreta, 2026)).toBeNull();
+    expect(motivoBloqueioPC(pc({ situacao: 'interrompida' }), util)?.code).toBe('pc_interrompida');
+    expect(motivoBloqueioPC(pc({ situacao: 'interrompida_com_variante' }), carreta)).toBeNull();
+    expect(motivoBloqueioPC(pc({ situacao: 'meia_pista' }), carreta)).toBeNull();
   });
   it('ponto inativo nunca bloqueia; limite de carga só com valor', () => {
-    expect(motivoBloqueioPC(pc({ situacao: 'interrompida', ativo: false }), carreta, 2026)).toBeNull();
-    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: null }), carreta, 2026)).toBeNull();
-    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: 12 }), toco, 2026)?.code).toBe('pc_limite_carga');
-    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: 12 }), vuc, 2026)).toBeNull();
+    expect(motivoBloqueioPC(pc({ situacao: 'interrompida', ativo: false }), carreta)).toBeNull();
+    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: null }), carreta)).toBeNull();
+    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: 12 }), toco)?.code).toBe('pc_limite_carga');
+    expect(motivoBloqueioPC(pc({ limite_carga: 'Sim', limite_carga_t: 12 }), vuc)).toBeNull();
   });
   it('critério de trecho: PBT > 23 t (estrito) e "mais de 2 eixos ou PBT > 15 t" (Lei ES 4.463/1990)', () => {
     const c23 = { caminhoes: true, peso_acima_t: 23 };
@@ -85,12 +88,22 @@ describe('Regras sem rota', () => {
 describe('Ponto crítico de teste "pista interrompida para veículos pesados" (DER-MG)', () => {
   let ponto: [number, number];
   let fixtureId: string;
+  let livreLine: GeoJSON.Feature<GeoJSON.LineString>;
+  /** ponto `m` metros adiante do ponto de teste, sobre a rota livre */
+  const adiante = (m: number) => {
+    const len = turf.length(livreLine, { units: 'kilometers' });
+    const c = turf.along(livreLine, len / 2 + m / 1000, { units: 'kilometers' }).geometry.coordinates;
+    return { lon: c[0], lat: c[1] };
+  };
 
   beforeAll(async () => {
     await waitForStack();
     await pool.query(`delete from data_features where source = $1`, [TEST_SOURCE]);
-    const livre = await route({ origin: MG_A, destination: MG_B, vehicle: VUC, departure_at: DEP });
+    // o utilitário (3,5 t) nunca é bloqueado pelo ponto: a rota dele é a rota livre (carreta, VUC e utilitário fazem o
+    // mesmo caminho Lagoa Santa → Pedro Leopoldo pela LMG-800)
+    const livre = await route({ origin: MG_A, destination: MG_B, vehicle: UTILITARIO, departure_at: DEP });
     expect(livre.status, JSON.stringify(livre.body)).toBe(200);
+    livreLine = lineOf(livre.body);
     const m = midpointOf(livre.body);
     ponto = [m.lon, m.lat];
     const props: PontoCriticoProps = {
@@ -118,26 +131,56 @@ describe('Ponto crítico de teste "pista interrompida para veículos pesados" (D
     expect(warnsOf(r.body, 'pc_desvio').some((w: any) => w.id === fixtureId)).toBe(true);
   });
 
-  it('VUC passa pelo ponto, com aviso de que o DER-MG não define "pesado"', async () => {
+  it('VUC também desvia: o DER-MG não define "pesado" e a definição de VUC do app não limita o PBT', async () => {
     const r = await route({ origin: MG_A, destination: MG_B, vehicle: VUC, departure_at: DEP });
+    expect(r.status).toBe(200);
+    expect(distM(r.body, ponto)).toBeGreaterThan(25);
+    expect(r.body.avoided.some((a: any) => a.layer === 'rodovias_estaduais' && a.id === fixtureId)).toBe(true);
+    expect(warnsOf(r.body, 'pc_pesados_liberado').some((w: any) => w.id === fixtureId)).toBe(false);
+  });
+
+  it('utilitário (3,5 t, não é caminhão) passa pelo ponto, com aviso para conferir a sinalização', async () => {
+    const r = await route({ origin: MG_A, destination: MG_B, vehicle: UTILITARIO, departure_at: DEP });
     expect(r.status).toBe(200);
     expect(distM(r.body, ponto)).toBeLessThan(25);
     expect(r.body.avoided.some((a: any) => a.id === fixtureId)).toBe(false);
-    expect(warnsOf(r.body, 'pc_pesados_liberado').some((w: any) => w.id === fixtureId)).toBe(true);
+    const w = warnsOf(r.body, 'pc_pesados_liberado').find((x: any) => x.id === fixtureId);
+    expect(w?.severity).toBe('warn');
+    expect(w?.message).toMatch(/até 3,5 t/);
   });
 
-  it('ponto vencido (valid_to no passado) não bloqueia; origem junto ao ponto não bloqueia (só avisa)', async () => {
-    const ctx = (o: { lat: number; lon: number }): RouteCtx => ({
-      vehicle: resolveVehicle(CARRETA as any), at: new Date(), departureLocal: DEP, origin: o, destination: MG_B, tz: 'America/Sao_Paulo',
+  it('destino no próprio ponto: não bloqueia e avisa (pc_origem_destino, política da ZMRC)', async () => {
+    const r = await route({ origin: MG_A, destination: { lon: ponto[0], lat: ponto[1] }, vehicle: CARRETA, departure_at: DEP });
+    expect(r.status, JSON.stringify(r.body).slice(0, 500)).toBe(200);
+    expect(r.body.avoided.some((a: any) => a.id === fixtureId)).toBe(false);
+    const w = warnsOf(r.body, 'pc_origem_destino').find((x: any) => x.id === fixtureId);
+    expect(w?.severity).toBe('danger');
+    expect(w?.message).toMatch(/^O destino fica/);
+    expect(warnsOf(r.body, 'pc_bloqueio_na_rota').some((x: any) => x.id === fixtureId)).toBe(false);
+  });
+
+  it('destino ~300 m adiante, em outra aresta do grafo: a carreta continua desviando (sem isenção)', async () => {
+    const d = adiante(300);
+    const r = await route({ origin: MG_A, destination: d, vehicle: CARRETA, departure_at: DEP });
+    expect(r.status, JSON.stringify(r.body).slice(0, 500)).toBe(200);
+    expect(distM(r.body, ponto)).toBeGreaterThan(20);   // não entra no círculo de bloqueio
+    expect(r.body.avoided.some((a: any) => a.layer === 'rodovias_estaduais' && a.id === fixtureId)).toBe(true);
+    expect(warnsOf(r.body, 'pc_origem_destino').some((x: any) => x.id === fixtureId)).toBe(false);
+  });
+
+  it('isenção só na aresta cortada pelo círculo (/locate); ponto vencido (valid_to no passado) não bloqueia', async () => {
+    const ctx = (d: { lat: number; lon: number }): RouteCtx => ({
+      vehicle: resolveVehicle(CARRETA as any), at: new Date(), departureLocal: DEP, origin: MG_A, destination: d, tz: 'America/Sao_Paulo',
     });
-    const ids = async (o: { lat: number; lon: number }) => (await layer.exclusions!(ctx(o))).map((e) => e.item.id);
-    expect(await ids(MG_A)).toContain(fixtureId);
-    // origem a ~300 m do ponto: dentro de PROX_OD_M
-    const perto = turf.destination(turf.point(ponto), 0.3, 90, { units: 'kilometers' }).geometry.coordinates;
-    expect(PROX_OD_M).toBeGreaterThan(300);
-    expect(await ids({ lon: perto[0], lat: perto[1] })).not.toContain(fixtureId);
+    const ids = async (d: { lat: number; lon: number }) => (await layer.exclusions!(ctx(d))).map((e) => e.item.id);
+    expect(await ids(MG_B)).toContain(fixtureId);
+    // ~100 m adiante, fora do círculo (20 m) mas na mesma aresta da LMG-800 (535 m): o círculo tiraria a aresta inteira
+    // do grafo e isolaria o destino -> não bloqueia (annotate avisa)
+    expect(await ids(adiante(100))).not.toContain(fixtureId);
+    // ~300 m adiante, já na aresta seguinte: bloqueia
+    expect(await ids(adiante(300))).toContain(fixtureId);
     await pool.query(`update data_features set valid_to = now() - interval '1 minute' where id = $1`, [fixtureId]);
-    expect(await ids(MG_A)).not.toContain(fixtureId);
+    expect(await ids(MG_B)).not.toContain(fixtureId);
     await pool.query(`update data_features set valid_to = now() + interval '2 hours' where id = $1`, [fixtureId]);
   });
 });

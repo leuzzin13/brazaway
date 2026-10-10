@@ -1,4 +1,5 @@
 import * as turf from '@turf/turf';
+import { env } from '../config.js';
 import { query } from '../db.js';
 import * as valhalla from '../services/valhalla.js';
 import type { Ring } from '../services/valhalla.js';
@@ -14,11 +15,15 @@ import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, 
  *    Bloqueio duro, só no ponto (círculo de props.bloqueio.raio_m sobre a pista), e só quando o ponto está ATIVO (o
  *    importador só grava status 1/2/3; valid_to vence em 72 h sem nova carga) E o veículo é afetado:
  *      - 'interrompida' (Pista Interrompida, sem variante): todo veículo;
- *      - 'interrompida_pesados' (Pista interrompida para veículos pesados): caminhão (PBT > 3,5 t, CTB Anexo I) que não
- *        é VUC. O DER-MG não define "pesado"; VUC e veículo leve passam com aviso (decisão de produto, documentada);
+ *      - 'interrompida_pesados' (Pista interrompida para veículos pesados): todo caminhão (PBT > 3,5 t, CTB Anexo I),
+ *        VUC inclusive. O DER-MG não define "pesado"; só o veículo até 3,5 t passa, com aviso;
  *      - limite de carga com valor em t (qnt_carga_limite) e veículo mais pesado.
  *    Interrompida COM variante, meia-pista e limite de carga sem valor só avisam (a via segue passável).
- *    Origem ou destino a até PROX_OD_M de um ponto que bloquearia: não bloqueia e avisa (mesma política da ZMRC).
+ *    Origem ou destino DENTRO do círculo, ou numa aresta do grafo que o círculo corta (todas as arestas onde o /locate
+ *    do Valhalla encaixa o endereço saem com o círculo): não bloqueia e avisa (mesma política da ZMRC). Nos outros casos,
+ *    bloqueia — um endereço a poucos metros, mas numa aresta que segue no grafo (ex.: a outra cabeceira da ponte), é
+ *    alcançado pelo desvio.
+ *    "Na rota" = a rota passa dentro do círculo de bloqueio (como passaPor da camada oae); sem bloqueio, a até 30 m.
  * 2) Regras de trecho dos DERs (kind 'regra_trecho'; importadores rodovias_estaduais_der_es e _der_rj; curadoria em
  *    data/raw/ders_estaduais/regras.json). Regra `ativa` e vigente cujo critério alcança o veículo vira trecho
  *    penalizado (linear_cost_factors, fator 1000 = proibido salvo sem alternativa) recortado da própria rota, como em
@@ -27,10 +32,17 @@ import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, 
 
 const LAYER = 'rodovias_estaduais';
 const FACTOR = Number(process.env.RODOVIAS_ESTADUAIS_FATOR ?? 1000);
-/** distância máxima ponto crítico ↔ rota para dizer que a rota passa pelo ponto (pontos do DER-MG: mediana 4 m e p90 10 m da via do OSM) */
+/** ponto SEM bloqueio (variante, meia-pista, livre): distância máxima ponto da fonte ↔ rota para dizer que a rota passa
+ *  por ele (pontos do DER-MG: mediana 4 m e p90 10 m da via do OSM). Ponto COM bloqueio: a rota cruza o círculo. */
 const PERTO_ROTA_M = 30;
-/** origem/destino a até isto de um ponto de bloqueio: não bloqueia e avisa (o círculo tiraria do grafo a aresta onde o endereço está) */
-export const PROX_OD_M = 1000;
+/** busca de candidatos perto da rota: o importador leva o bloqueio até 80 m do ponto da fonte (BUSCA_RODOVIA_M) e o
+ *  círculo tem até 20 m de raio */
+const BUSCA_PC_M = 100;
+const RAIO_PADRAO_M = 20;
+/** origem/destino numa aresta do grafo que o círculo corta (o exclude_polygons tira a aresta inteira e isolaria o
+ *  endereço): /locate do Valhalla, só para origem/destino a até isto do ponto (aresta mais longa que isso é rara) */
+const OD_ARESTA_MAX_M = 5000;
+const LOCATE_TIMEOUT_MS = 5000;
 /** origem/destino a até isto de um trecho com regra: não penaliza e avisa (destino no próprio trecho) */
 const TRECHO_OD_M = 300;
 /** tolerância rota ↔ eixo do SRE (o SRE do DER-ES desenha uma linha só nas pistas duplas) e trecho mínimo */
@@ -72,18 +84,20 @@ export const SITUACAO_LABEL: Record<Situacao, string> = {
   a_definir: 'trafegabilidade a definir',
 };
 
-/** Veículo "pesado" para o DER-MG: caminhão (PBT > 3,5 t, CTB Anexo I) que não é VUC. O DER-MG não define o termo. */
-export function ehPesado(v: Vehicle, ano: number): boolean {
-  return v.is_truck && !isVucSP(v, ano);
+/** Veículo "pesado" para o DER-MG: caminhão (PBT > 3,5 t, CTB Anexo I), VUC inclusive. O DER-MG não define o termo; a
+ *  definição de VUC do app (Portaria SMT 137/2018 de São Paulo) só limita largura, comprimento e idade, não o PBT, e o
+ *  único caso ativo (MG-220, Santo Hipólito) é dano em OAE: só o veículo até 3,5 t passa. */
+export function ehPesado(v: Vehicle): boolean {
+  return v.is_truck;
 }
 
 export interface MotivoPC { code: 'pc_interrompida' | 'pc_interrompida_pesados' | 'pc_limite_carga'; regra: string; valor: number | null }
 
 /** Por que este ponto crítico bloqueia este veículo (null = não bloqueia). Só ponto ativo. */
-export function motivoBloqueioPC(p: PontoCriticoProps, v: Vehicle, ano: number): MotivoPC | null {
+export function motivoBloqueioPC(p: PontoCriticoProps, v: Vehicle): MotivoPC | null {
   if (p.ativo === false) return null;
   if (p.situacao === 'interrompida') return { code: 'pc_interrompida', regra: SITUACAO_LABEL.interrompida, valor: null };
-  if (p.situacao === 'interrompida_pesados' && ehPesado(v, ano)) return { code: 'pc_interrompida_pesados', regra: SITUACAO_LABEL.interrompida_pesados, valor: null };
+  if (p.situacao === 'interrompida_pesados' && ehPesado(v)) return { code: 'pc_interrompida_pesados', regra: SITUACAO_LABEL.interrompida_pesados, valor: null };
   const t = p.limite_carga_t;
   if (t != null && t > 0 && v.weight_t > t) return { code: 'pc_limite_carga', regra: `limite de carga ${fmtT(t)} t`, valor: t };
   return null;
@@ -124,12 +138,83 @@ function pontoDe(r: PcRow): Coord {
   return (r.props.bloqueio?.pontos?.[0] ?? (r.geometry as GeoJSON.Point).coordinates) as Coord;
 }
 
-/** Origem ou destino perto do ponto de bloqueio? */
-function odPerto(ctx: RouteCtx, pontos: Coord[], m: number): 'origem' | 'destino' | null {
-  const o: Coord = [ctx.origin.lon, ctx.origin.lat], d: Coord = [ctx.destination.lon, ctx.destination.lat];
-  if (pontos.some((p) => distM(p, o) <= m)) return 'origem';
-  if (pontos.some((p) => distM(p, d) <= m)) return 'destino';
+type OndeOD = 'origem' | 'destino' | null;
+
+/**
+ * Arestas do grafo (edge_id do /locate do Valhalla) por ponto. `maxM` = null: as arestas onde o ponto se encaixaria
+ * numa rota (raio 0, como a origem/destino); número: todas a até essa distância (as que o círculo de bloqueio corta).
+ * null se o Valhalla não responder.
+ */
+async function locateArestas(pts: { at: Coord; maxM: number | null }[]): Promise<Set<string>[] | null> {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), LOCATE_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${env.valhallaUrl}/locate`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, signal: ctrl.signal,
+      body: JSON.stringify({
+        costing: 'truck', verbose: true,
+        locations: pts.map((p) => ({ lon: p.at[0], lat: p.at[1], ...(p.maxM != null ? { radius: Math.ceil(p.maxM) } : {}) })),
+      }),
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { edges?: { distance?: number; edge_id?: { value?: number; tile_id?: number; level?: number; id?: number } }[] | null }[];
+    if (!Array.isArray(json) || json.length !== pts.length) return null;
+    return json.map((loc, i) => {
+      const max = pts[i].maxM;
+      // o /locate sempre devolve a aresta mais próxima, mesmo fora do raio
+      const edges = (loc?.edges ?? []).filter((e) => max == null || (e.distance ?? Infinity) <= max);
+      return new Set(edges.map((e) => String(e.edge_id?.value ?? `${e.edge_id?.level}/${e.edge_id?.tile_id}/${e.edge_id?.id}`)));
+    });
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+const isencoes = new WeakMap<RouteCtx, Map<string, Promise<OndeOD>>>();
+
+/**
+ * A origem ou o destino está dentro do círculo de bloqueio (a até raio_m do ponto) ou numa aresta que o círculo corta
+ * (todas as arestas onde o endereço se encaixa saem do grafo com o círculo)? Então o app não bloqueia (isolaria o
+ * endereço) e avisa — a política da ZMRC. Fora disso, bloqueia: um endereço em outra aresta, mesmo a poucos metros (a
+ * outra cabeceira de uma ponte de 40 m), segue alcançável pelo desvio. Mesmo resultado em exclusions() e annotate()
+ * (cache por rota).
+ */
+function odNoBloqueio(ctx: RouteCtx, id: string, b: Bloqueio): Promise<OndeOD> {
+  let m = isencoes.get(ctx);
+  if (!m) { m = new Map(); isencoes.set(ctx, m); }
+  let p = m.get(id);
+  if (!p) { p = calcOdNoBloqueio(ctx, b); m.set(id, p); }
+  return p;
+}
+
+async function calcOdNoBloqueio(ctx: RouteCtx, b: Bloqueio): Promise<OndeOD> {
+  const raio = b.raio_m || RAIO_PADRAO_M;
+  const od: [Exclude<OndeOD, null>, Coord][] = [['origem', [ctx.origin.lon, ctx.origin.lat]], ['destino', [ctx.destination.lon, ctx.destination.lat]]];
+  const dist = od.map(([, c]) => Math.min(...b.pontos.map((p) => distM(p, c))));
+  for (let i = 0; i < 2; i++) if (dist[i] <= raio) return od[i][0];
+  const perto = [0, 1].filter((i) => dist[i] <= OD_ARESTA_MAX_M);
+  if (!perto.length) return null;
+  const r = await locateArestas([...perto.map((i) => ({ at: od[i][1], maxM: null })), ...b.pontos.map((p) => ({ at: p, maxM: raio }))]);
+  if (!r) return null;   // sem Valhalla: mantém o bloqueio (a rota também não sai)
+  const cortadas = new Set(r.slice(perto.length).flatMap((s) => [...s]));
+  // isolado = TODAS as arestas candidatas do endereço saem com o círculo (no meio da aresta: ela e a de sentido oposto);
+  // num nó com outras arestas livres o endereço segue alcançável e o bloqueio fica
+  for (let k = 0; k < perto.length; k++) {
+    if (r[k].size && [...r[k]].every((e) => cortadas.has(e))) return od[perto[k]][0];
+  }
   return null;
+}
+
+/** A linha passa pelo ponto crítico? Com bloqueio: cruza o círculo (raio_m); sem bloqueio: a até PERTO_ROTA_M do ponto da fonte. */
+function passaPeloPC(line: GeoJSON.Feature<GeoJSON.LineString>, r: PcRow & { distance_m: number }): boolean {
+  const b = r.props.bloqueio;
+  if (b?.pontos?.length) {
+    const raio = b.raio_m || RAIO_PADRAO_M;
+    return b.pontos.some((pt) => turf.pointToLineDistance(turf.point(pt), line, { units: 'meters' }) <= raio);
+  }
+  return r.distance_m <= PERTO_ROTA_M;
 }
 
 function odPertoDoTrecho(ctx: RouteCtx, g: Trecho['geometry']): 'origem' | 'destino' | null {
@@ -245,7 +330,7 @@ function displayProps(r: DataFeatureRow): Record<string, unknown> {
       ativo_afetado: p.ativo_afetado, status_obra: p.status, previsao: fmtData(p.data_prevista),
       limite_carga: p.limite_carga_t != null ? `${fmtT(p.limite_carga_t)} t` : p.limite_carga === 'Sim' ? 'sim (valor não publicado)' : null,
       alternativa: p.obs_alternativa, editado_em: fmtData(p.editado_em), consultado_em: fmtData(p.consultado_em),
-      bloqueia: p.situacao === 'interrompida' ? 'todos os veículos' : p.situacao === 'interrompida_pesados' ? 'caminhões (exceto VUC)' : p.limite_carga_t ? `acima de ${fmtT(p.limite_carga_t)} t` : 'não (só aviso)',
+      bloqueia: p.situacao === 'interrompida' ? 'todos os veículos' : p.situacao === 'interrompida_pesados' ? 'caminhões (PBT acima de 3,5 t, VUC inclusive)' : p.limite_carga_t ? `acima de ${fmtT(p.limite_carga_t)} t` : 'não (só aviso)',
     };
   }
   const p = r.props as unknown as RegraTrechoProps;
@@ -262,7 +347,7 @@ const layer: RouteLayer = {
   meta: {
     id: LAYER,
     label: 'Rodovias estaduais (DER-MG, DER-ES, DER-RJ)',
-    description: 'Pontos críticos vivos do DER-MG (pista interrompida bloqueia; interrompida para pesados bloqueia caminhão que não é VUC; variante e meia-pista avisam) e restrições de trecho dos DERs do ES e do RJ com ato confirmado.',
+    description: 'Pontos críticos vivos do DER-MG (pista interrompida bloqueia; interrompida para pesados bloqueia caminhão acima de 3,5 t, VUC inclusive; variante e meia-pista avisam) e restrições de trecho dos DERs do ES e do RJ com ato confirmado.',
     group: 'restricoes',
     sources: [
       { name: 'DER-MG/SEINFRA — Pontos críticos (Observatório da Infraestrutura, painel público)', url: 'https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pontos_criticos_publico/FeatureServer/0', license: 'Não declarada (licenseInfo vazio); site do DER-MG: reutilização com fonte e crédito. Risco de uso comercial: ver docs/layers/rodovias_estaduais.md' },
@@ -296,15 +381,14 @@ const layer: RouteLayer = {
         limit 2000`,
       [LAYER, x0, y0, x1, y1],
     );
-    const ano = Number(ctx.departureLocal.slice(0, 4));
     const out: LayerExclusion[] = [];
     for (const row of r.rows) {
       const b = row.props.bloqueio;
       if (!b?.pontos?.length) continue;
-      const m = motivoBloqueioPC(row.props, ctx.vehicle, ano);
+      const m = motivoBloqueioPC(row.props, ctx.vehicle);
       if (!m) continue;
-      if (odPerto(ctx, b.pontos, PROX_OD_M)) continue;   // annotate avisa
-      out.push({ item: itemPC(row, m), rings: b.pontos.map((pt) => circleRing(pt, b.raio_m || 20)) });
+      if (await odNoBloqueio(ctx, row.id, b)) continue;   // endereço na aresta do bloqueio: annotate avisa
+      out.push({ item: itemPC(row, m), rings: b.pontos.map((pt) => circleRing(pt, b.raio_m || RAIO_PADRAO_M)) });
     }
     return out;
   },
@@ -322,15 +406,19 @@ const layer: RouteLayer = {
     const warnings: (LayerWarning & { _f?: number })[] = [];
     const summary: string[] = [];
 
-    // ---- 1) pontos críticos do DER-MG perto da rota restrita e da rota livre
-    const near = new Map<string, PcRow & { fraction: number; naRota: boolean; naLivre: boolean }>();
-    for (const r of await featuresNearRoute(LAYER, line.geometry, PERTO_ROTA_M, { where: `kind = 'ponto_critico'` })) {
-      near.set(r.id, { ...(r as unknown as PcRow & { fraction: number }), naRota: true, naLivre: false });
+    // ---- 1) pontos críticos do DER-MG na rota restrita e na rota livre (círculo de bloqueio; sem bloqueio, 30 m)
+    type Near = PcRow & { fraction: number; distance_m: number; naRota: boolean; naLivre: boolean };
+    const near = new Map<string, Near>();
+    for (const r of await featuresNearRoute(LAYER, line.geometry, BUSCA_PC_M, { where: `kind = 'ponto_critico'` })) {
+      const row = r as unknown as Near;
+      if (passaPeloPC(line, row)) near.set(r.id, { ...row, naRota: true, naLivre: false });
     }
     if (free) {
-      for (const r of await featuresNearRoute(LAYER, free.geometry, PERTO_ROTA_M, { where: `kind = 'ponto_critico'` })) {
+      for (const r of await featuresNearRoute(LAYER, free.geometry, BUSCA_PC_M, { where: `kind = 'ponto_critico'` })) {
+        const row = r as unknown as Near;
+        if (!passaPeloPC(free, row)) continue;
         const e = near.get(r.id);
-        if (e) e.naLivre = true; else near.set(r.id, { ...(r as unknown as PcRow & { fraction: number }), fraction: 1, naRota: false, naLivre: true });
+        if (e) e.naLivre = true; else near.set(r.id, { ...row, fraction: 1, naRota: false, naLivre: true });
       }
     }
     const cont: Record<string, number> = {};
@@ -339,32 +427,33 @@ const layer: RouteLayer = {
     for (const r of near.values()) {
       const p = r.props;
       if (p.fonte_ultima_edicao && (!ultimaEdicao || p.fonte_ultima_edicao > ultimaEdicao)) ultimaEdicao = p.fonte_ultima_edicao;
-      const m = motivoBloqueioPC(p, v, ano);
+      const m = motivoBloqueioPC(p, v);
       const [lon, lat] = pontoDe(r);
       const base = { layer: LAYER, id: r.id, lat, lon, _f: r.fraction };
       const desc = descrevePC(p);
       const det = detalhesPC(p, hoje);
       if (r.naRota) cont[p.situacao] = (cont[p.situacao] ?? 0) + 1;
-      pcData.push({ id: r.id, objectid: p.objectid, rodovia: p.rodovia, municipio: p.municipio, situacao: p.situacao, bloqueia_veiculo: !!m, na_rota: r.naRota, desviado: !r.naRota && r.naLivre && !!m });
+      // origem/destino no ponto: isento do bloqueio (mesma decisão de exclusions(), em cache por rota)
+      const onde = m && p.bloqueio?.pontos?.length ? await odNoBloqueio(ctx, r.id, p.bloqueio) : null;
+      pcData.push({ id: r.id, objectid: p.objectid, rodovia: p.rodovia, municipio: p.municipio, situacao: p.situacao, bloqueia_veiculo: !!m && !onde, isento_origem_destino: onde, na_rota: r.naRota, desviado: !r.naRota && r.naLivre && !!m && !onde });
       if (m) {
-        const onde = p.bloqueio?.pontos?.length ? odPerto(ctx, p.bloqueio.pontos, PROX_OD_M) : null;
         if (r.naRota) {
           warnings.push({
             ...base, severity: 'danger', code: onde ? 'pc_origem_destino' : 'pc_bloqueio_na_rota',
             message: onde
-              ? `${onde === 'origem' ? 'A origem' : 'O destino'} fica junto a um ponto crítico do DER-MG (${desc}). O app não bloqueou o ponto para não isolar o endereço: confira o acesso antes de sair (${det}).`
+              ? `${onde === 'origem' ? 'A origem' : 'O destino'} fica no trecho de um ponto crítico do DER-MG (${desc}). O app não bloqueou o ponto para não isolar o endereço: confira o acesso antes de sair (${det}).`
               : p.bloqueio?.pontos?.length
                 ? `A rota passa por ponto crítico do DER-MG sem alternativa razoável (${desc}). Não siga sem confirmar a passagem (${det}).`
                 : `A rota passa por ponto crítico do DER-MG (${desc}) que o app não conseguiu localizar na pista para bloquear. Procure outro caminho (${det}).`,
           });
-        } else if (r.naLivre) {
+        } else if (r.naLivre && !onde) {   // isento (endereço no ponto): a camada não o excluiu, não houve desvio por ele
           warnings.push({ ...base, severity: 'warn', code: 'pc_desvio', message: `Rota desviada de ponto crítico do DER-MG (${desc}; ${det}).` });
         }
         continue;
       }
       if (!r.naRota) continue;
       if (p.situacao === 'interrompida_pesados') {
-        warnings.push({ ...base, severity: 'warn', code: 'pc_pesados_liberado', message: `Ponto crítico do DER-MG (${desc}). O DER-MG não define "veículo pesado"; o app liberou o seu veículo (VUC ou até 3,5 t). Confira a sinalização no local (${det}).` });
+        warnings.push({ ...base, severity: 'warn', code: 'pc_pesados_liberado', message: `Ponto crítico do DER-MG (${desc}). O DER-MG não define "veículo pesado"; o app só libera veículo de até 3,5 t de PBT (não é caminhão pelo CTB, Anexo I), como o seu. Confira a sinalização no local (${det}).` });
       } else if (p.situacao === 'interrompida_com_variante') {
         warnings.push({ ...base, severity: 'warn', code: 'pc_variante', message: `Ponto crítico do DER-MG (${desc}). A passagem é pela variante, que pode ser estreita ou de terra para veículo grande: confira antes (${det}).` });
       } else if (p.situacao === 'meia_pista') {
@@ -380,7 +469,7 @@ const layer: RouteLayer = {
     if (nNaRota) {
       const partes = (['interrompida', 'interrompida_pesados', 'interrompida_com_variante', 'meia_pista', 'livre', 'a_definir'] as Situacao[])
         .filter((s) => cont[s]).map((s) => `${cont[s]} ${SITUACAO_LABEL[s]}`);
-      summary.push(`${nNaRota} ponto(s) crítico(s) do DER-MG a até ${PERTO_ROTA_M} m da rota: ${partes.join('; ')}.${ultimaEdicao ? ` Última edição na fonte: ${fmtData(ultimaEdicao)}.` : ''}`);
+      summary.push(`${nNaRota} ponto(s) crítico(s) do DER-MG na rota: ${partes.join('; ')}.${ultimaEdicao ? ` Última edição na fonte: ${fmtData(ultimaEdicao)}.` : ''}`);
     }
 
     // ---- 2) regras de trecho (DER-ES, DER-RJ)
