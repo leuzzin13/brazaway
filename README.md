@@ -63,6 +63,19 @@ docker compose --profile import run --rm importer all       # todos (minutos; al
 | **Geocodificação própria** (CNEFE 2022 do IBGE + CEPs + GeoSampa) | ver `docs/layers/geocoding.md` (`cnefe_municipios`, `cnefe_enderecos --no-seed`, `cep_ipea --no-seed`, `geosampa_logradouro --no-seed`) | ~25 min, ~750 MB no banco | `/api/geocode` cai no Photon público (impreciso para endereço com número) |
 | **Relevo** (ANADEM, CC BY 4.0) nos tiles do Valhalla | `./scripts/build-elevation.sh` e depois a troca descrita em `docs/layers/relevo.md` | ~6 min + 6,3 GB de download, ~5,5 GB em disco | a camada de relevo não anota rampas |
 
+### Reconstruir os tiles (correções do OSM + relevo)
+
+O `docker compose up` numa máquina limpa constrói os tiles direto do PBF da Geofabrik. Para o grafo de produção, use:
+
+```bash
+./scripts/build-tiles.sh --swap
+```
+
+Ele aplica as **correções locais do OSM** (`data/osm-overrides/overrides.json`: tags de caminhão que contradizem ato
+oficial vigente, ver `docs/OSM_OVERRIDES.md`), reaproveita ou gera o relevo (ANADEM) e constrói os tiles numa pasta
+separada (`data/valhalla_build`, ~3 min com o relevo pronto). Com `--swap`, troca o Valhalla principal com um restart de
+~30 s e guarda o grafo anterior em `data/cache/valhalla_anterior` para rollback.
+
 ### Trocar a região (Brasil inteiro)
 
 No `.env`:
