@@ -1,13 +1,38 @@
 export interface LatLon { lat: number; lon: number }
+export type CargoType = 'general' | 'perishable' | 'hazmat' | 'concrete' | 'moving' | 'other';
+export type Powertrain = 'diesel' | 'electric' | 'hybrid' | 'gas' | 'hydrogen';
 export interface Vehicle {
   preset?: string; height_m: number; width_m: number; length_m: number; weight_t: number;
   axle_load_t: number; axle_count: number; hazmat: boolean; is_vuc: boolean; plate_last_digit?: number;
+  /** SP: Autorização Especial de Trânsito de Caminhão (exigida para a isenção do VUC, perecíveis etc.) */
+  has_aetc?: boolean;
+  manufacture_year?: number;
+  cargo_type?: CargoType;
+  powertrain?: Powertrain;
+  /** nº ONU do produto perigoso (4 dígitos) */
+  hazmat_un?: string;
+  /** perigoso fracionado para consumo local (Anexo II da Portaria SMT.GAB 051/2024) */
+  hazmat_local_delivery?: boolean;
+  employment?: 'employee' | 'autonomous';
 }
-export interface Preset extends Vehicle { id: string; label: string }
+export interface Preset extends Vehicle {
+  id: string; label: string;
+  /** norma e artigo que justificam os valores */
+  legal_basis?: string;
+  vehicle_class?: 'light' | 'rigid' | 'semitrailer' | 'truck_trailer' | 'cvc';
+  requires_aet?: boolean;
+}
+export interface PresetsResponse { _note: string; legal_basis?: string[]; aliases?: Record<string, string>; presets: Preset[] }
 export interface AvoidedItem { kind: 'report' | 'zone' | 'layer'; layer?: string; id: string; type?: string; value_num?: number | null; name?: string; rule?: string; lat?: number; lon?: number; note?: string | null }
 export interface Warning { code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string }
 export interface RestStop { id: string; name: string | null; kind: string; lat: number; lon: number; distance_km: number; eta_s: number; off_route_m: number; tags: Record<string, string> }
-export interface DrivingPlan { driving_s: number; total_with_breaks_s: number; required_breaks: number; suggested_stops: { after_s: number; stop: RestStop | null; message: string }[]; notes: string[] }
+export interface DrivingPlan {
+  driving_s: number; total_with_breaks_s: number; required_breaks: number;
+  suggested_stops: { after_s: number; stop: RestStop | null; message: string; kind?: 'break' | 'meal' | 'daily_rest'; duration_s?: number }[];
+  notes: string[];
+  /** descansos diários de 11 h seguidas (CTB art. 67-C §3º; STF, ADI 5322) */
+  daily_rests?: number; regime?: 'employee' | 'autonomous' | 'unknown'; max_daily_driving_s?: number; legal_basis?: string[];
+}
 export interface RouteResult {
   geometry: GeoJSON.LineString; distance_km: number; duration_s: number; departure_at: string;
   avoided: AvoidedItem[]; warnings: Warning[]; rest_stops: RestStop[]; driving_plan: DrivingPlan;
@@ -39,7 +64,7 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  presets: () => req<{ _note: string; presets: Preset[] }>('/api/vehicles/presets'),
+  presets: () => req<PresetsResponse>('/api/vehicles/presets'),
   zones: () => req<GeoJSON.FeatureCollection>('/api/zones'),
   geocode: (q: string, near?: LatLon) =>
     req<{ label: string; lat: number; lon: number }[]>(`/api/geocode?q=${encodeURIComponent(q)}${near ? `&lat=${near.lat}&lon=${near.lon}` : ''}`),

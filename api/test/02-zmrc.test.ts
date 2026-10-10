@@ -29,7 +29,7 @@ describe('Rota que atravessa a ZMRC', () => {
     expect(r.body.avoided.find((a: any) => a.kind === 'zone')?.name).toMatch(/ZMRC/);
   });
 
-  it('VUC passa sempre (10h de terça)', async () => {
+  it('VUC com AETC passa sempre (10h de terça)', async () => {
     const r = await route({ origin: PTS.zmrcA, destination: PTS.zmrcB, vehicle: VUC_320, departure_at: '2026-10-13T10:00' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
     expect(crossesZone(r.body, zmrc)).toBe(true);
