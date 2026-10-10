@@ -108,10 +108,9 @@ docker compose --profile import run --rm importer cnefe_enderecos --no-seed
 #    outros conjuntos: -e CNEFE_MUNICIPIOS=nucleo  (capital + Guarulhos, Osasco, Barueri, Cajamar, Santos, Guarujá)
 #                      -e CNEFE_MUNICIPIOS=3550308,3518800   (códigos IBGE)
 
-# 4) CEPs (928.905 CEPs do Brasil; precisa de pyarrow, já listado em importers/requirements.txt). SEM seed:
+# 4) CEPs (928.905 CEPs do Brasil; precisa de pyarrow, já listado em importers/requirements.txt e na imagem atual).
+#    Marca os centroides não confiáveis (cep_centroid_flag()). SEM seed:
 docker compose --profile import run --rm importer cep_ipea --no-seed
-#    com a imagem antiga, sem rebuild:
-#    docker run ... --entrypoint sh truck-router-importer -c "pip install -q pyarrow==17.0.0 && python run.py cep_ipea --no-seed"
 
 # 5) GeoSampa, segmentos com faixa de numeração (capital). SEM seed:
 docker compose --profile import run --rm importer geosampa_logradouro --no-seed
@@ -127,24 +126,40 @@ próprias (`addr_*`, `cep_centroid`, `addr_segment`) e devolvem ao runner só fe
 por município ou UF, com as contagens em `props`. Um seed desses numa máquina limpa registraria cobertura sem os
 dados. Sem os passos 3–5, a API continua funcionando, só que cai em município ou Photon.
 
+**Recarga num banco em uso.** Cada município é gravado numa transação própria, então o `/api/geocode` nunca vê a base
+pela metade. Mesmo assim, no ambiente de desenvolvimento (Mac ARM com Colima) a imagem `postgis/postgis:16-3.4` só
+existe para amd64 e roda emulada (qemu). Em 09/10/2026, com várias APIs e suítes usando o mesmo banco, a recarga do
+CNEFE direto no banco compartilhado derrubou o Postgres várias vezes (`server process exited with exit code 2`,
+`malloc(): invalid size`). A mesma carga num Postgres separado não caiu nenhuma vez. Nesse caso, carregue num
+Postgres à parte (mesma imagem, migrations `0001`, `0006` e `0116` + seed `geocoding__ibge-malhas.sql`). Depois copie
+`addr_*` e `addr_segment` para tabelas `*_new` no banco em uso e troque por `rename` numa transação curta, que só
+segura o `/api/geocode` durante a troca. Foi assim que a base atual foi recarregada.
+
 A ordem entre 3 e 5 não importa. A orientação dos segmentos do GeoSampa é conferida pelos endereços do CNEFE
 (`addr_segment_orient()`) por quem rodar por último, desde que a capital esteja carregada.
 
-### Tamanho e tempo (medidos em 09/10/2026, banco compartilhado, M4 Pro / Colima 8 vCPU)
+### Tamanho e tempo (recarga de 09/10/2026 com a regra nova do "D", Postgres à parte, M4 Pro / Colima 8 vCPU)
 
 | | Linhas | Espaço | Tempo |
 |---|---|---|---|
-| CNEFE, 48 municípios | 11.246.706 registros → **5.279.656 pontos**, 121.617 logradouros | `addr_point` 504 MB + `addr_street` 82 MB + `addr_bairro` 5 MB | capital: 61 s de COPY + 300 s de agregação; os outros 47, de 3 a 60 s cada (cerca de 20 min no total, mais o download) |
-| Capital | 5.689.391 → 2.428.327 pontos, 50.612 logradouros | | |
-| CEPs (IPEA) | 928.905 | 97 MB | 19 s |
-| GeoSampa | 216.547 segmentos (79.786 conferidos pelo CNEFE, dos quais 13.424 foram invertidos) | 159 MB | cerca de 150 s + 5 min de conferência |
+| CNEFE, 48 municípios | 11.246.706 registros → **5.281.394 pontos**, 121.669 logradouros (nenhum sem ponto) | `addr_point` 475 MB + `addr_street` 36 MB + `addr_bairro` 1,5 MB (com índices, recém-criados) | capital: 96 s de COPY + 494 s de agregação; os outros 47, de 2 a 19 s de agregação cada (cerca de 40 min no total com o download dos zips) |
+| Capital | 5.689.391 → 2.428.883 pontos, 50.621 logradouros | | |
+| CEPs (IPEA) | 928.905 (36.975 com centroide não confiável) | 100 MB | 33 s |
+| GeoSampa | 216.547 segmentos (73.580 conferidos pelo CNEFE com r >= 0,3, dos quais 13.425 foram invertidos) | 57 MB | cerca de 150 s de download + 10 min de conferência |
 | Municípios (IBGE) | 1.668 polígonos (SP, RJ, MG, ES) | seed de 3,1 MB | 3 s |
 
-Total aproximado: **850 MB no banco**. A RMSP inteira coube folgada, então não foi preciso recuar para só a capital
+Com a regra nova do "D", a base ganhou 1.738 pontos e 52 logradouros: ruas com letra que antes eram fundidas
+("RUA 1 D" de Guarulhos agora tem 16 pontos próprios, e "RUA 1", 390) ou descartadas ("RUA D", que virava nome
+vazio: só na capital são 292 pontos em "Rua D" e 193 em "Viela D").
+
+Total aproximado: **670 MB no banco** (850 MB antes da recarga, por inchaço das tabelas). A RMSP inteira coube folgada, então não foi preciso recuar para só a capital
 e os polos logísticos. A opção `CNEFE_MUNICIPIOS=nucleo` ficou disponível para máquinas menores.
 
 Na primeira carga, um município (Guarujá) ficou cerca de 2 h parado, provavelmente esperando lock de outra sessão
-no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de novo até 3 vezes por município.
+no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de novo até 3 vezes por município,
+reconectando se o banco cair. Os agregados por município (ponto representativo e desvio de ruas e bairros) partem de
+uma temporária com os pontos do município: antes, cada passo varria os 5 M pontos de `addr_point`, e um município
+pequeno levava de 60 a 80 s; agora leva de 2 a 20 s.
 
 ## Precisão medida
 
@@ -193,7 +208,7 @@ no banco compartilhado. O importador agora usa `lock_timeout = 5min` e tenta de 
 - **Tabelas próprias em vez de `data_features`.** São 5 M de pontos, que precisam de índice `(street_id, numero)` e
   de trigramas por nome. `data_features` fica só com a cobertura (mapa e `/api/sources`) e com os polígonos de município.
 - **Um ponto por endereço único** (logradouro + número + bairro). É a média das coordenadas de nível 1–2; 98,6% dos
-  pontos têm nível 1 (coordenada original de campo). São 274.909 pontos "s/n", 1.546 com km de rodovia e
+  pontos têm nível 1 (coordenada original de campo). São 275.125 pontos "s/n", 1.546 com km de rodovia e
   1,01 milhão com nome de estabelecimento. "Sem número" fica agrupado em células de cerca de 11 m. Mantive o bairro na chave para não
   fundir homônimos.
 - **`lat`/`lon` em `real` (float4)**, com resolução de cerca de 0,4 m, e **sem índice espacial** em `addr_point`.
