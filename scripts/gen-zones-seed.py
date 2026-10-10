@@ -15,8 +15,9 @@ O polígono do GeoSampa contém o corredor inteiro das marginais (as duas margen
 `--measure` mede, ao longo da borda, a distância até a pista do Minianel mais afastada, sobre o eixo de logradouros do
 PRÓPRIO GeoSampa (geoportal:segmento_logradouro, CC-BY-SA 4.0 — mesma fonte e licença do polígono; nada do OSM):
   1. amostra a borda a cada `spacing_m`;
-  2. pega os segmentos com nome de via do Minianel (denominações oficiais em config) e os pontos deles (a cada 10 m)
-     dentro do polígono; cada ponto cai no trecho da borda mais próximo;
+  2. pega os segmentos com nome de via do Minianel (denominações oficiais em config) e os acessos a elas (tipo em
+     `access_types`, ex.: "AC DOIS A AV PRES CASTELO BRANCO") e os pontos deles (a cada 10 m) dentro do polígono; cada
+     ponto cai no trecho da borda mais próximo;
   3. um ponto só alarga o corredor se o raio borda→ponto não cruzar, depois da primeira pista, uma rua local paralela à
      borda (não engole quadras entre pistas, como em Bom Retiro, onde a Av. Pres. Castelo Branco entra no bairro);
   4. largura do trecho = maior distância + `margin_m` (mínimo `min_width_m`); vales mais curtos que 2 x `gap_fill_m`
@@ -352,22 +353,33 @@ def measure(mian_geom):
     B = Border(ring)
     R = B.P
     classes = {_norm(n): float(lc['max_dist_m']) for lc in c['lanes'] for n in lc['names']}
+    acc_types = set(c.get('access_types', []))
+
+    def lane_cap(name, tipo):
+        """Distância máxima da borda se o segmento é pista do Minianel; acessos (tipo AC) cujo nome oficial cita uma via do
+        Minianel ("AC DOIS A AV PRES CASTELO BRANCO") contam como pista: são a entrada e a saída das vias (art. 2º §2º)."""
+        if name in classes:
+            return classes[name]
+        if tipo in acc_types:
+            return next((cap for ln, cap in classes.items() if name.endswith(' ' + ln)), None)
+        return None
     no_block = set(c.get('non_blocking_types', []))
     feats = fetch_segments(ring)
 
     lanes, blockers, bnames, dropped = [], [], [], {}
     for f in feats:
         name = seg_name(f['properties'])
+        cap = lane_cap(name, (f['properties'].get('cd_tipo_logradouro') or '').strip())
         for ln in _lines(f['geometry']):
             xy = [to_xy(p) for p in ln]
             if len(xy) < 2:
                 continue
-            if name in classes:
+            if cap is not None:
                 pts = [p for p in _densify(xy) if point_in_ring(p[0], p[1], R)]
                 if not pts:
                     continue
                 near = [B.nearest(x, y) for x, y in pts]
-                if max(n[0] for n in near) > classes[name]:   # homônimo longe da borda (ex.: Anhaia Mello fora do trecho)
+                if max(n[0] for n in near) > cap:   # homônimo longe da borda (ex.: Anhaia Mello fora do trecho)
                     dropped[name] = dropped.get(name, 0) + 1
                     continue
                 lanes.append((name, pts, near))
