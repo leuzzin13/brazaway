@@ -24,6 +24,9 @@ const TRUCK = { preset: 'truck' };         // 12 m, 2,6 m, 23 t: dentro dos limi
 // o excedente "puro": o SIAET/DNIT (camada federal_restricoes) tem restrição temporária de 15 m de comprimento na
 // BR-459/SP km 0–32,2 (10/2026), que tira dali a carreta e o rodotrem em qualquer dia.
 const LARGO = { preset: 'truck', width_m: 2.8 };
+// Serra da Anchieta fechada: o desvio tem ~213 km, e o annotate de outras camadas nessa rota (corredores_onibus ~30 s,
+// oae ~10 s) leva a resposta a 35–50 s; com várias suítes em paralelo no mesmo Valhalla passa dos 120 s padrão.
+const SLOW_MS = 300_000;
 const layerWarnings = (r: any) => r.body.warnings.filter((w: any) => w.layer === LAYER);
 const costLines = (r: any) => r.body.layers?.[LAYER]?.data?.cost_lines ?? 0;
 
@@ -225,7 +228,7 @@ describe('Camada rodovias_horario (PRF feriados + serra da Anchieta)', () => {
     expect(w.message).toMatch(/Próxima janela: ter 13\/10 23:00 às qua 14\/10 05:00/);
     expect(w.message).toMatch(/SUP\/DER-084-01\/11\/2023/);
     expect(costLines(r)).toBeGreaterThan(0);
-  });
+  }, SLOW_MS);
 
   it('mesmo veículo às 23h30 de terça: janela aberta → desce pela Anchieta, só aviso info', async () => {
     const r = await route({ origin: P.sp, destination: P.santos, vehicle: RODOTREM, departure_at: '2026-10-13T23:30' });
@@ -243,7 +246,7 @@ describe('Camada rodovias_horario (PRF feriados + serra da Anchieta)', () => {
     const w = layerWarnings(r).find((x: any) => /^anchieta_cvc_aet_(desvio|na_rota)$/.test(x.code));
     expect(w, JSON.stringify(r.body.warnings)).toBeTruthy();
     expect(w.message).toMatch(/Próxima janela: ter 13\/10 23:00/);
-  });
+  }, SLOW_MS);
 
   it('segunda de Carnaval (16/02/2026 01:30, § 5º cita o Carnaval): serra fechada; próxima janela só depois do Carnaval', async () => {
     const r = await route({ origin: P.sp, destination: P.santos, vehicle: RODOTREM, departure_at: '2026-02-16T01:30' });
@@ -255,7 +258,7 @@ describe('Camada rodovias_horario (PRF feriados + serra da Anchieta)', () => {
     // seg 01h, seg→ter e ter→qua (começa na terça de Carnaval) bloqueadas; a de quarta 23h (Cinzas) já vale
     expect(w.message).toMatch(/Próxima janela: qua 18\/02 23:00 às qui 19\/02 05:00/);
     expect(costLines(r)).toBeGreaterThan(0);
-  });
+  }, SLOW_MS);
 
   it('quarta de Cinzas 23h30 (18/02/2026): fora do feriado prolongado, janela aberta', async () => {
     const r = await route({ origin: P.sp, destination: P.santos, vehicle: RODOTREM, departure_at: '2026-02-18T23:30' });

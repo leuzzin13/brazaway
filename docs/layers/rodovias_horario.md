@@ -153,6 +153,8 @@ docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e P
 
 `importers/tests/test_prf_feriados.py` (6 testes, sem rede e sem banco) cobre a escolha das portarias por ano: outubro (só a vigente é lida; a de 2025 não quebra a carga), janeiro sem portaria nova (fica a cauda do Fim de Ano), portaria nova antes do fim da cauda (ficam as duas), revisão de dezembro mais a do ano seguinte, e as falhas (a do ano corrente derruba a carga; a do ano anterior é tolerada e registrada). Rodar: `docker run --rm -v $(pwd)/importers:/app --entrypoint python truck-router-importer -m unittest tests.test_prf_feriados -v`.
 
+Os três testes com a serra fechada (desvio de ~213 km) têm timeout de 300 s (`SLOW_MS`): sozinhos levam 35–55 s, mas com várias suítes em paralelo no mesmo Valhalla passaram dos 120 s padrão (ver Desempenho).
+
 As datas são as da portaria de 2026. Quando as janelas de 2026 saírem do banco (a partir de 2027 o importador guarda do ano anterior só o que ainda não acabou), atualize as datas dos testes.
 
 ## Desempenho
