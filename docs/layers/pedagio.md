@@ -3,6 +3,10 @@
 Arquivos: `api/src/layers/pedagio.layer.ts`, `api/src/services/tollCost.ts`,
 `importers/sources/toll_antt.py`, `toll_artesp.py`, `toll_osm.py`, testes em `api/test/layers/pedagio.test.ts` (API)
 e `importers/tests/test_pedagio_parsers.py` (parsers, sem rede nem banco).
+Concessões **estaduais do RJ e de MG e municipais** (fontes `agetransp`, `artemig`, `municipais`; importadores
+`toll_agetransp.py`, `toll_artemig.py`, `toll_municipais.py`): ver [pedagio_estaduais.md](pedagio_estaduais.md),
+com as regras por concessão (ato e artigo), a janela da TBA da Via Lagos, a tabela não linear da Rota 116, o free flow
+da MG-459 e os registros inativos. O ES não tem pedágio estadual desde 22/12/2023.
 
 A camada **não bloqueia nem penaliza nada**. Depois da rota calculada, ela:
 
@@ -92,7 +96,8 @@ concedidas entra em vigor em 1º de julho"; Entrevias em 6 de julho). O cabeçal
    PaP = `(PaP)` ou a palavra `PaP` no nome da linha do PDF (palavra inteira: "AV. PAPA JOÃO XXIII", praças 7 e
    Leste 1 da SPMar, são praças comuns e são cobradas).
 5. **Reserva OSM.** Sem tarifa oficial, usa a `charge` do nó (ex.: `14.50BRL/hgv/axle`, ou `Mo-Fr …;Sa-Su …`), marcada
-   como **estimada** e com a data `check_date`.
+   como **estimada** e com a data `check_date`. Valor condicionado ao dia só vale no próprio período (o de `Sa-Su` não
+   serve de reserva num dia útil).
 6. Cabine do OSM sem tarifa, sem rodovia e sem praça oficial perto (estacionamento, condomínio) é ignorada.
 7. **Praças "possíveis".** Praça oficial a até 60 m da rota sem nenhum nó de pedágio do OSM a até 300 m (lacuna do mapa)
    é listada à parte, **sem somar**. Se o OSM tem cabine perto e a rota não passou por ela, a rota não cruza a cabine
@@ -126,7 +131,9 @@ concedidas entra em vigor em 1º de julho"; Entrevias em 6 de julho). O cabeçal
 
 ### Alternativa sem pedágio
 
-`noTollRoute()` chama o Valhalla com `costing_options.truck.exclude_tolls = true` e as **mesmas restrições** da rota
+`noTollRoute()` chama o Valhalla com `costing_options.truck.exclude_tolls = true`, um anel de 25 m em volta de cada
+ponto de cobrança da rota principal (praça em via sem `toll=yes` no grafo, comum nas concessões estaduais; ponto a
+menos de 300 m da origem/destino fica de fora) e as **mesmas restrições** da rota
 principal (zonas por horário, reportes que bloqueiam o veículo, exclusões e trechos penalizados das outras camadas).
 As restrições não são consultadas de novo: `routing.ts` entrega às camadas, em `RouteGeom.restrictions`, os
 `exclude_polygons` e `linear_cost_factors` que usou na rota principal, e a alternativa usa exatamente esses.
@@ -207,7 +214,9 @@ docker compose --profile import run --rm importer toll_osm toll_antt toll_artesp
   os dois valores, mas o total usa a tabela oficial.
 - Mais eixos que a tabela: valor estendido pela regra do multiplicador (estimado). Rodagem simples com 5+ eixos não
   existe nas tabelas por categoria: fica "tarifa não encontrada" (ARTESP por eixo: estimado).
-- Feriados não acionam a tarifa de fim de semana; descontos de usuário frequente não são modelados.
+- Feriados não acionam a coluna de fim de semana das tabelas ANTT; só a janela da TBA da Via Lagos (`janela_fds`,
+  com feriados nacionais da tabela `holidays`, no horário estimado de passagem). Descontos de usuário frequente não
+  são modelados.
 - A cobrança depende do nó de pedágio do OSM: praça sem nó no OSM vira "possível" (não somada). Na região do
   Valhalla (Sudeste), 178 de 210 pontos ARTESP e 93 de 164 pontos ANTT têm nó do OSM a até 300 m (o restante são,
   em boa parte, pórticos de free flow e pontos com coordenada de 2 casas decimais).

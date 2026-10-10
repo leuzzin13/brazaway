@@ -1,7 +1,8 @@
 # Camada `balancas` — postos de pesagem no sentido da rota
 
 Arquivos: `api/src/layers/balancas.layer.ts`, `importers/sources/weigh_antt_ppv.py`, `weigh_artesp.py`,
-`weigh_dersp.py`, testes em `api/test/layers/balancas.test.ts`.
+`weigh_dersp.py`, `weigh_dermg.py` (DER-MG, ver [pedagio_estaduais.md](pedagio_estaduais.md)), testes em
+`api/test/layers/balancas.test.ts` e `balancas_dermg.test.ts`.
 
 A camada **só informa** as balanças que ficam no sentido da rota. **Nunca sugere desvio de balança**: não tem
 `exclusions`/`costLines`, não calcula rota alternativa e os textos não falam em evitar o posto. Deixar de entrar na
@@ -19,6 +20,7 @@ Infração - grave; Penalidade - multa"; conferido em planalto.gov.br em 09/10/2
 | DER-SP "Pontos para pesagem de veículos" (tabela HTML) | rodovia, km+m, sentido, trecho, administrador (DR ou concessionária), FIXO/MÓVEL. **Sem coordenadas** | sem licença aberta; rodapé do portal cms.sp.gov.br: "todos os direitos reservados" | 136 pontos |
 | DER-SP ArcGIS `Balancas_DER_DBO` | balanças da malha DER com lat/lon, rodovia, km, trecho | idem | 87 pontos (62 casados com a tabela; 25 só na camada) |
 | DER-SP ArcGIS `pontos_1km_rodovias` | marcos de km das rodovias de SP | idem | usado para posicionar 74 pontos da tabela sem par |
+| DER-MG "Praças de pesagem" (tabela do site) + Observatório da Infraestrutura `00_PUBLICACOES/pracas_pesagem` + SRE-MG 2026_02 (fonte `der-mg`, 10/10/2026) | 43 postos em operação (URG, rodovia, km, município, operação 24 h ou estratégica); coordenada da camada pública (40) ou rodovia+km no SRE (2); **sem lado da pista** (`precisao: 'aprox'`, sentido "não confirmado") | site: reutilização com fonte e crédito; camadas sem licença declarada (a `Balancas_V2` é de "uso restrito DER-MG" e não é usada) | 42 postos (MGC-354 km 94,5 sem posição); detalhes em [pedagio_estaduais.md](pedagio_estaduais.md) |
 
 Licença DER-SP/ARTESP (portal): não há licença aberta declarada e o rodapé diz "todos os direitos reservados".
 **Antes de uso comercial, pedir autorização ao DER-SP ou parecer jurídico.** ANTT e o KMZ ARTESP são CC-BY
