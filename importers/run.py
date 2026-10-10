@@ -7,6 +7,10 @@
 
 Importador opcional: o módulo declara REQUIRES_ENV = ('VAR', ...). Em `all`, se faltar alguma dessas variáveis ele é
 PULADO (não conta como falha nem mexe no banco); chamado pelo nome, roda e falha com a mensagem dele.
+
+Importador com várias fontes (ex.: municipios, uma fonte por município): o módulo expõe runs(arg) -> [{source,
+source_url, license, notes, fetch}] e cada item vira um seed e uma carga próprios. `nome:arg` passa um filtro
+(ex.: `municipios:3106200`).
 """
 import importlib, pkgutil, sys, time, traceback
 import common
@@ -24,7 +28,8 @@ def main(argv):
         for n in available():
             mod = importlib.import_module(f'sources.{n}')
             opt = f" [opcional: {', '.join(mod.REQUIRES_ENV)}]" if getattr(mod, 'REQUIRES_ENV', None) else ''
-            print(f'{n:32s} layer={mod.LAYER_ID:22s} source={mod.SOURCE:14s} {mod.LICENSE}{opt}')
+            multi = ' [várias fontes: nome:filtro]' if hasattr(mod, 'runs') else ''
+            print(f'{n:32s} layer={mod.LAYER_ID:22s} source={mod.SOURCE:14s} {mod.LICENSE}{opt}{multi}')
         return 0
     seed_only = '--seed-only' in argv
     no_seed = '--no-seed' in argv
@@ -35,8 +40,27 @@ def main(argv):
     failed, skipped = [], []
     for n in names:
         t0 = time.time()
+        n, _, arg = n.partition(':')
         try:
             mod = importlib.import_module(f'sources.{n}')
+            if hasattr(mod, 'runs'):
+                for job in mod.runs(arg or None):
+                    t1 = time.time()
+                    try:
+                        print(f'==> {n}:{job["source"]} ({mod.LAYER_ID}/{job["source"]})')
+                        feats = common.validate(job['fetch']())
+                        if not no_seed:
+                            p = common.write_seed(mod.LAYER_ID, job['source'], feats, job['source_url'], job['license'], job.get('notes'))
+                            print(f'    seed: {p} ({p.stat().st_size/1e6:.1f} MB)')
+                        if not seed_only:
+                            common.load_db(mod.LAYER_ID, job['source'], feats, job['source_url'], job['license'], job.get('notes'))
+                        print(f'    ok: {len(feats)} feições em {time.time()-t1:.0f}s')
+                    except Exception:
+                        traceback.print_exc()
+                        failed.append(f'{n}:{job["source"]}')
+                continue
+            if arg:
+                raise SystemExit(f'{n} não aceita filtro (":{arg}")')
             if run_all and missing_env(mod):
                 print(f'==> {n}: pulado (opcional; falta {", ".join(missing_env(mod))})')
                 skipped.append(n)

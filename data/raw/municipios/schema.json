@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "truck-router/data/raw/municipios/schema.json",
+  "title": "Restrições municipais a caminhões — um arquivo por município (data/raw/municipios/<ibge>.json)",
+  "description": "Formato lido pelo importador genérico importers/sources/municipios.py (camada restricoes_rmsp). Validado no import (importers/sources/_municipios_schema.py) com as regras deste schema e as checagens de coerência descritas em docs/layers/restricoes_municipais.md. Dias: 1=seg ... 7=dom. Horários no fuso America/Sao_Paulo, 'to' exclusivo, '24:00' permitido; janela que vira a noite deve ser dividida em duas.",
+  "type": "object",
+  "required": ["formato", "ibge", "municipio", "uf", "fonte_id", "fonte", "verificado_em", "vuc", "regras"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "formato": { "const": 1, "description": "Versão do formato." },
+    "ibge": { "type": "string", "pattern": "^[1-5][0-9]{6}$", "description": "Código IBGE do município (7 dígitos); igual ao nome do arquivo." },
+    "municipio": { "type": "string", "minLength": 2 },
+    "uf": { "enum": ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"], "description": "Tem de bater com os 2 primeiros dígitos do código IBGE." },
+    "fonte_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Nome curto da fonte em data_layer_runs e no seed db/seed/layers/restricoes_rmsp__<fonte_id>.sql (ex.: belo-horizonte)." },
+    "fonte": {
+      "type": "object",
+      "required": ["url", "licenca"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "minLength": 8, "description": "URL(s) dos atos (texto livre; várias separadas por ' ; ')." },
+        "licenca": { "type": "string", "minLength": 3, "description": "Licença real dos atos e da geometria (ex.: ato oficial, domínio público, Lei 9.610/98 art. 8º IV; OSM ODbL 1.0)." },
+        "notas": { "type": "string" }
+      }
+    },
+    "verificado_em": { "$ref": "#/$defs/data", "description": "Data em que os atos foram conferidos na fonte primária." },
+    "vuc": {
+      "description": "Definição local de VUC (vale para todas as regras que não trazem a sua). null = o município não define VUC (ou a isenção não foi confirmada): VUC é tratado como caminhão.",
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/vuc" }]
+    },
+    "vuc_nota": { "type": "string", "description": "Nota sobre o VUC herdada pelas regras que não trazem vuc_nota." },
+    "notas": { "type": "string" },
+    "regras": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/regra" } }
+  },
+  "$defs": {
+    "data": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "hora": { "type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$|^24:00$" },
+    "janela": {
+      "type": "object",
+      "required": ["days", "from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "days": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "integer", "minimum": 1, "maximum": 7 } },
+        "from": { "$ref": "#/$defs/hora" },
+        "to": { "$ref": "#/$defs/hora" }
+      }
+    },
+    "condicao": {
+      "description": "Predicado sobre o veículo. pbt_t = peso bruto total; payload_t = capacidade de carga (lotação; sem o dado, a regra assume o lado seguro); tipo = classe do veículo (light, rigid, semitrailer, truck_trailer, cvc). Exatamente um operador: acima (>), ate (<=) ou em (lista, só para tipo).",
+      "type": "object",
+      "required": ["campo"],
+      "additionalProperties": false,
+      "properties": {
+        "campo": { "enum": ["pbt_t", "payload_t", "comprimento_m", "largura_m", "altura_m", "eixos", "tipo"] },
+        "acima": { "type": "number", "minimum": 0 },
+        "ate": { "type": "number", "minimum": 0 },
+        "em": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["light", "rigid", "semitrailer", "truck_trailer", "cvc"] } }
+      },
+      "oneOf": [
+        { "required": ["acima"], "not": { "anyOf": [{ "required": ["ate"] }, { "required": ["em"] }] } },
+        { "required": ["ate"], "not": { "anyOf": [{ "required": ["acima"] }, { "required": ["em"] }] } },
+        { "required": ["em"], "not": { "anyOf": [{ "required": ["acima"] }, { "required": ["ate"] }] } }
+      ]
+    },
+    "predicado": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "qualquer = basta uma condição (OU); todas = todas as condições (E). Com as duas, valem as duas.",
+      "properties": {
+        "qualquer": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condicao" } },
+        "todas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condicao" } }
+      }
+    },
+    "alvo": {
+      "type": "object",
+      "required": ["caminhao"],
+      "additionalProperties": false,
+      "description": "A quem a regra se aplica: sempre só caminhão (PBT acima de 3,5 t, CTB Anexo I) e, se houver, que atenda ao predicado.",
+      "properties": {
+        "caminhao": { "const": true },
+        "qualquer": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condicao" } },
+        "todas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/condicao" } }
+      }
+    },
+    "variante": {
+      "type": "object",
+      "required": ["classe", "quando", "janelas"],
+      "additionalProperties": false,
+      "description": "Janelas próprias de uma classe de veículo (ex.: carreta). A primeira variante cujo predicado vale substitui as janelas da regra.",
+      "properties": {
+        "classe": { "type": "string", "minLength": 1 },
+        "quando": { "$ref": "#/$defs/predicado" },
+        "janelas": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/janela" } }
+      }
+    },
+    "vuc": {
+      "type": "object",
+      "required": ["largura_max_m", "comprimento_max_m", "exige_cadastro", "artigo"],
+      "additionalProperties": false,
+      "description": "Definição de VUC do município: o veículo é VUC ali se cabe em TODOS os limites informados. payload_max_t sem a capacidade informada no veículo = não é VUC (lado seguro).",
+      "properties": {
+        "largura_max_m": { "type": "number", "exclusiveMinimum": 0 },
+        "comprimento_max_m": { "type": "number", "exclusiveMinimum": 0 },
+        "altura_max_m": { "type": "number", "exclusiveMinimum": 0 },
+        "pbt_max_t": { "type": "number", "exclusiveMinimum": 0 },
+        "payload_max_t": { "type": "number", "exclusiveMinimum": 0 },
+        "eixos_max": { "type": "integer", "minimum": 2 },
+        "exige_cadastro": { "type": "boolean", "description": "true = o VUC só fica isento com cadastro/autorização (a rota mantém a restrição e avisa)." },
+        "orgao": { "type": "string" },
+        "artigo": { "type": "string", "minLength": 3, "description": "Ato e artigo que definem o VUC." },
+        "nota": { "type": "string" }
+      }
+    },
+    "base_legal": {
+      "type": "object",
+      "required": ["ato", "artigo", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "ato": { "type": "string", "minLength": 5 },
+        "artigo": { "type": "string", "minLength": 1, "description": "Artigo(s) do ato que fixam horário/limite. Fonte sem artigo (mapa, notícia): diga o que é (ex.: 'legenda do mapa')." },
+        "url": { "type": "string", "pattern": "^https?://" },
+        "nota": { "type": "string" }
+      }
+    },
+    "trecho": {
+      "type": "object",
+      "required": ["inciso", "via", "descricao"],
+      "additionalProperties": false,
+      "description": "Trecho 'rua X entre Y e Z' do ato, montado no OSM pelo nome (construir: trechos).",
+      "properties": {
+        "inciso": { "type": "string" },
+        "via": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Nome da via e variantes como aparecem no OSM." },
+        "de": { "$ref": "#/$defs/ponta" },
+        "ate": { "$ref": "#/$defs/ponta" },
+        "ate_extremo": { "enum": ["leste", "oeste", "norte", "sul"] },
+        "sentido": { "type": "boolean", "description": "true = só no sentido de → ate (o ato fixa o sentido)." },
+        "caminho": { "const": "valhalla", "description": "Trecho entre dois pontos lonlat percorrido pela malha do Valhalla." },
+        "corredor_m": { "type": "number", "exclusiveMinimum": 0 },
+        "tolerancia_m": { "type": "number", "exclusiveMinimum": 0 },
+        "largura_m": { "type": "number", "exclusiveMinimum": 0 },
+        "descricao": { "type": "string" },
+        "nota": { "type": "string" },
+        "aproximado": { "type": "boolean" }
+      }
+    },
+    "ponta": {
+      "oneOf": [
+        { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        { "type": "object", "required": ["lonlat"], "additionalProperties": false,
+          "properties": { "lonlat": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } } } }
+      ]
+    },
+    "entorno": {
+      "type": "object",
+      "required": ["centro", "raio_m"],
+      "additionalProperties": false,
+      "properties": {
+        "centro": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "raio_m": { "type": "number", "exclusiveMinimum": 0 },
+        "vias": { "type": "array", "items": { "type": "string" } },
+        "classes_ramo": { "type": "array", "items": { "type": "string" } },
+        "excluir_nomes": { "type": "array", "items": { "type": "string" } },
+        "inciso": { "type": "string" },
+        "nome_ramo": { "type": "string" },
+        "aproximado": { "type": "boolean" }
+      }
+    },
+    "geometria": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "De onde vem a geometria. Exatamente uma origem: arquivo (GeoJSON relativo a data/raw/), geojson (embutido, para geometria pequena) ou municipios (união dos limites IBGE).",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "arquivo": { "type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.geojson$" },
+        "construir": { "enum": ["manual", "trechos", "entorno"], "description": "Como (re)gerar o arquivo quando ausente ou com MUNICIPIOS_REBUILD=1: trechos (OSM pelo nome, a partir de regra.trechos), entorno (vias num raio) ou manual (curado à mão; o import falha se faltar)." },
+        "como_gerar": { "type": "string", "description": "Instrução mostrada quando um arquivo manual falta." },
+        "entorno": { "$ref": "#/$defs/entorno" },
+        "geojson": { "type": "object", "required": ["type"] },
+        "municipios": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[1-5][0-9]{6}$" } },
+        "simplificar": { "type": "number", "exclusiveMinimum": 0, "description": "Tolerância de simplificação em graus (só para municipios)." },
+        "casas": { "type": "integer", "minimum": 4, "maximum": 8 },
+        "formato": { "const": "eixos", "description": "Linhas com {nome, oneway} (ex.: eixos casados de um mapa): vira via/nome_osm/mao_unica/sentido." },
+        "props": { "type": "object", "description": "Propriedades acrescentadas a cada feição (ex.: fonte_trecho, aproximado)." },
+        "omitir_ways_de": { "type": "array", "items": { "type": "string" }, "description": "Descarta feições cujo osm_way_id aparece nas geometrias com estes ids (a outra prevalece)." }
+      },
+      "oneOf": [
+        { "required": ["arquivo"], "not": { "anyOf": [{ "required": ["geojson"] }, { "required": ["municipios"] }] } },
+        { "required": ["geojson"], "not": { "anyOf": [{ "required": ["arquivo"] }, { "required": ["municipios"] }] } },
+        { "required": ["municipios"], "not": { "anyOf": [{ "required": ["arquivo"] }, { "required": ["geojson"] }] } }
+      ]
+    },
+    "regra": {
+      "type": "object",
+      "required": ["id", "tipo", "regime", "nome", "status", "confianca", "janelas", "feriados", "alvo", "excecoes", "base_legal", "geometria"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$", "description": "Id estável da regra (regra_id), único no projeto. Prefixe com o município (ex.: bh_area_central)." },
+        "tipo": { "enum": ["zona", "via", "ponte"], "description": "zona = polígono (exclusions, recuo de 20 m; origem/destino dentro: não exclui e avisa); via e ponte = linhas (costLines, fator 1000, só a via)." },
+        "regime": { "type": "string", "minLength": 2, "description": "Rótulo curto (ex.: ZMRC, VER, Corredor)." },
+        "nome": { "type": "string", "minLength": 3 },
+        "status": { "enum": ["ativa", "desativada", "suspensa", "revogada"], "description": "Só 'ativa' é aplicada na rota. desativada = confiança insuficiente ou decisão de produto; suspensa = ato suspenso; revogada = registro histórico." },
+        "status_motivo": { "type": "string", "minLength": 10, "description": "Obrigatório quando status não é 'ativa'." },
+        "confianca": { "enum": ["alta", "media", "baixa", "unverifiable"], "description": "Do verify da pesquisa. baixa/unverifiable = a regra entra desativada." },
+        "verificado_em": { "$ref": "#/$defs/data" },
+        "municipio": { "type": "string", "description": "Só para registro regional (vários municípios): sobrepõe o nome do arquivo." },
+        "ibge": { "type": ["string", "null"], "description": "Só para registro regional: null." },
+        "abrangencia_ibge": { "type": "array", "items": { "type": "string", "pattern": "^[1-5][0-9]{6}$" } },
+        "source_id": { "type": "string", "description": "Id fixo da feição (só para regra com uma única feição, ex.: registro revogado)." },
+        "janelas": { "type": "array", "items": { "$ref": "#/$defs/janela" }, "description": "Vazio só em regra não ativa." },
+        "variantes": { "type": "array", "items": { "$ref": "#/$defs/variante" } },
+        "feriados": { "enum": ["suspende", "aplica"], "description": "suspende = o ato excetua feriados; aplica = o ato não excetua (vale também em feriado)." },
+        "alvo": { "$ref": "#/$defs/alvo" },
+        "vuc": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/vuc" }], "description": "Ausente = herda a definição do município." },
+        "vuc_nota": { "type": "string" },
+        "excecao_destino_local": { "type": "boolean", "description": "Carga com ENTREGA no município fica fora da regra (só com destino no município)." },
+        "excecao_destino_local_incisos": { "type": "array", "items": { "type": "string" }, "description": "Só nestes incisos; ausente = todos." },
+        "excecao_destino_local_artigo": { "type": "string" },
+        "zona_vinculada": { "type": "string", "description": "id de uma regra-zona do mesmo arquivo: via dispensada quando origem/destino está na zona." },
+        "origem_destino_dentro": { "const": "avisa" },
+        "autorizacao": { "type": "string" },
+        "excecoes": { "type": "array", "items": { "type": "string" } },
+        "base_legal": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/base_legal" } },
+        "nota": { "type": "string" },
+        "fonte_geometria": { "type": "string" },
+        "vigencia_inicio": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/data" }] },
+        "vigencia_fim": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/data" }], "description": "Obrigatória para revogada (data da revogação)." },
+        "trechos": { "type": "array", "items": { "$ref": "#/$defs/trecho" } },
+        "geometria": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/geometria" } }
+      }
+    }
+  }
+}
