@@ -54,7 +54,7 @@ vale confirmar por SIC/Fala.BR. A camada só publica agregados, o que reduz o ri
    Os sem vítima pesam pouco porque só ARTESP e PRF os publicam (o Infosiga não): assim o nível fica comparável entre
    vias urbanas e rodovias. `muito_alto` ≥ 15, `alto` ≥ 8, senão `moderado`. Carga de 09/10/2026:
    ARTESP 2.829 células (9 muito alto, 118 alto), PRF 3.912 (33 / 316), Infosiga 317 (1 / 23). Carga de 10/10/2026 da
-   SEJUSP-MG: 7.523 células (8 / 57).
+   SEJUSP-MG: 7.722 células (8 / 60).
 
 ### Divisão por jurisdição (sem dupla contagem)
 
@@ -65,9 +65,11 @@ fonte só.
 - rodovias federais → **PRF**;
 - demais vias (municipais, como as Marginais, e estaduais do DER) → **Infosiga**.
 
-Em MG vale a mesma divisão, com a SEJUSP-MG (REDS) no papel do Infosiga: logradouro de BR fica sempre com a PRF, e as
-rodovias estaduais e o Anel Rodoviário de BH só saem do REDS nas células (±1) onde a PRF tem acidentes. O trecho central do
-Anel quase não tem registro da PRF (2 em 3 anos). Detalhes e números em [seguranca_mg.md](seguranca_mg.md).
+Em MG vale a mesma divisão, com a SEJUSP-MG (REDS) no papel do Infosiga: logradouro de BR fica com a PRF, e as rodovias
+estaduais e o Anel Rodoviário de BH só saem do REDS nas células (±1) onde a PRF tem acidentes. O trecho central do Anel
+quase não tem registro da PRF (2 em 3 anos). Duas exceções seguem a regra de rodovia: o logradouro de BR no corredor do
+Anel (a PM grava parte do Anel como "BR 381" ou "BR 040") e as BRs que a PRF não registra em MG (menos de 20 acidentes de
+jan/2023 a ago/2026, como BR-494 e BR-259). Detalhes e números em [seguranca_mg.md](seguranca_mg.md).
 
 No Infosiga são descartados os sinistros com `administracao` CONCESSIONÁRIA/ARTESP/DNIT ou `circunscricao` FEDERAL e,
 como o campo `administracao` não é confiável, também os sinistros "de rodovia" (administração ≠ PREFEITURA,
@@ -103,8 +105,10 @@ Conferido em 09/10/2026 com os acidentes com caminhão de 2025:
   hora aproximada de passagem, nº de acidentes com caminhão, mortes e a faixa do dia com mais acidentes.
   O resumo traz quantos pontos (por nível) e trechos, o total de acidentes com caminhão e as mortes; `data.trechos`
   traz até 50 trechos com todos os números.
-- `features`: pontos com `weight` = score/15 (entre 0,15 e 1) para o heatmap. Zoom < 7 só "muito alto"; < 9 alto e
-  muito alto; a partir de 9 todos. Propriedades legíveis, no máximo 12 exibíveis (o popup genérico do mapa corta em 12):
+- `features`: pontos com `weight` = score/15 (entre 0,15 e 1) para o heatmap. Zoom < 7 só "muito alto"; < 10 alto e
+  muito alto; a partir de 10 todos (no zoom 9, uma tela larga em torno de BH já passava do limite de 6.000 pontos com as
+  células da SEJUSP-MG). Até 6.000 pontos por resposta, com os mais graves primeiro: se o bbox passar do limite, o corte
+  só tira moderados. Propriedades legíveis, no máximo 12 exibíveis (o popup genérico do mapa corta em 12):
   nível, acidentes com caminhão/com vítima/com morte, óbitos, `por_faixa_do_dia` ("madrugada 0 · manhã 2 · ..."),
   período dos dados, fonte, acidentes com todos os veículos e score.
 - Severidade nunca é `danger`: não há restrição legal, só risco.
