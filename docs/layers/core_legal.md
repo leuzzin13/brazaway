@@ -253,6 +253,9 @@ docker exec -i truck-router-db psql -U truck -d truck_router < db/seed/0004_holi
 O antigo `importers/sources/feriados_sp.py` saiu: ele gravava no banco por conta própria, fora do
 contrato do runner, e não estava na lista de arquivos da frente.
 
+Feriados estaduais do RJ e do ES e municipais das capitais e polos fora de São Paulo capital (com a situação
+jurídica e a confiança de cada um, e a UF derivada do IBGE em `calendar.ts`): `docs/layers/feriados_sudeste.md`.
+
 ### Suspensões da CET
 
 O Decreto 58.584/2018 art. 8º permite à SMT suspender o rodízio por portaria (§2º: só um período do

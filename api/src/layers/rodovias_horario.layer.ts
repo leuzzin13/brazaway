@@ -4,6 +4,7 @@ import { query } from '../db.js';
 import { env } from '../config.js';
 import * as valhalla from '../services/valhalla.js';
 import type { Vehicle } from '../services/vehicle.js';
+import { onlyIfMissingColumn } from '../services/calendar.js';
 import { featuresInBbox } from './data.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
@@ -87,6 +88,10 @@ interface Hit {
 
 // ------------------------------------------------------------------------------------------- dados
 let rulesCache: { at: number; p: Promise<Rules> } | null = null;
+const HOLIDAYS_SQL = `select to_char(day, 'YYYY-MM-DD') as day, name from holidays
+  where day between current_date - 400 and current_date + 400 %ACTIVE%
+    and (scope = 'national' or (scope = 'state' and uf = 'SP')
+         or (scope = 'municipal' and ibge_code in ('3548500','3513504','3548708','3550308','3541000','3551009')))`;
 
 async function loadRules(): Promise<Rules> {
   if (rulesCache && Date.now() - rulesCache.at < RULES_TTL_MS) return rulesCache.p;
@@ -96,12 +101,11 @@ async function loadRules(): Promise<Rules> {
         `select id::text, name, kind, props,
                 case when kind = 'regra_semanal' then ST_AsGeoJSON(geom, 6)::json end as geometry
            from data_features where layer_id = $1 and kind in ('janela', 'regra_semanal')`, [LAYER]),
-      // feriados (se o calendário estiver carregado): nacionais, estaduais de SP e municipais da Baixada/ABC/capital
-      query<{ day: string; name: string }>(
-        `select to_char(day, 'YYYY-MM-DD') as day, name from holidays
-          where day between current_date - 400 and current_date + 400
-            and (scope = 'national' or (scope = 'state' and uf = 'SP')
-                 or (scope = 'municipal' and ibge_code in ('3548500','3513504','3548708','3550308','3541000','3551009')))`)
+      // feriados (se o calendário estiver carregado): nacionais, estaduais de SP e municipais da Baixada/ABC/capital.
+      // Só os aplicáveis (active, migration 0202). A consulta antiga, sem o filtro, só quando a coluna não existe
+      // (banco sem a 0202, onde ainda não há linha desativada); outro erro (conexão, tempo limite) fica sem feriados.
+      query<{ day: string; name: string }>(HOLIDAYS_SQL.replace('%ACTIVE%', 'and active'))
+        .catch(onlyIfMissingColumn(() => query<{ day: string; name: string }>(HOLIDAYS_SQL.replace('%ACTIVE%', ''))))
         .catch(() => ({ rows: [] as { day: string; name: string }[] })),
     ]);
     const windows: PrfWindow[] = [];
