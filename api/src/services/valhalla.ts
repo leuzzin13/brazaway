@@ -99,8 +99,9 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
  * com /trace_route (mesmo costing, mesmas opções e date_time, sem as penalidades). edge_walk sobre a shape devolvida
  * pelo próprio /route reproduz o tempo do /route sem penalidade (diferença < 0,1 s, ~10 ms); map_snap é o reserva
  * (limite de 200 km no serviço). Se os dois falharem, fica o tempo do /route (inflado) e um aviso no log.
+ * Exportada para quem monta o próprio /route com linear_cost_factors (ex.: services/tollCost.ts).
  */
-async function retime(shapes: string[], routeBody: Record<string, unknown>, distanceKm: number): Promise<number | null> {
+export async function retime(shapes: string[], routeBody: Record<string, unknown>, distanceKm: number): Promise<number | null> {
   const modes: ('edge_walk' | 'map_snap')[] = distanceKm < 190 ? ['edge_walk', 'map_snap'] : ['edge_walk'];
   for (const mode of modes) {
     try {
