@@ -7,7 +7,7 @@ import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, reportToRing, type ReportRow } from './restrictions.js';
 import { activeZones, describeWindows, pointInZone, zoneApplies, zoneRings, type ZoneRow } from './zones.js';
-import { legalDayInfo } from './calendar.js';
+import { endpointHolidays, legalDayInfo, type EndpointHolidays, type Holiday } from './calendar.js';
 import { etaPorHorario, type EtaHorario } from './etaHorario.js';
 import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
 import { loadLayers } from '../layers/index.js';
@@ -165,8 +165,10 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   const exclusions: Exclusion[] = [];
 
   // 1) Zonas de restrição por horário (só horário de saída — limitação documentada)
-  const [zones, dayInfo] = await Promise.all([activeZones(), legalDayInfo(at)]);
+  const [zones, dayInfo, localHolidays] = await Promise.all([activeZones(), legalDayInfo(at), endpointHolidays(at, req.origin, req.destination).catch(() => [])]);
   if (dayInfo.holiday) warnings.push({ code: 'holiday', severity: 'info', message: `Feriado (${dayInfo.holiday.name}): ZMRC, rodízio e restrição de perigosos em SP não se aplicam; rodovias podem ter restrição de feriado.` });
+  // feriado estadual/municipal no município da origem ou do destino (ex.: São Jorge no RJ); o de SP capital já saiu acima
+  for (const w of holidayLocalWarnings(localHolidays, dayInfo.holidays, dep.toFormat('dd/LL/yyyy'))) warnings.push(w);
   for (const z of zones) {
     if (!zoneApplies(z.rules, vehicle, at, dayInfo)) continue;
     const oIn = pointInZone(z, req.origin);
@@ -341,6 +343,26 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     layers: layerOut,
     valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length, ...(timings ? { timings_ms: timings } : {}) },
   };
+}
+
+const SCOPE_PT: Record<string, string> = { state: 'estadual', municipal: 'municipal' };
+
+/**
+ * Aviso 'holiday_local': feriado estadual ou municipal do município da origem/destino (calendar.endpointHolidays), com a
+ * norma. Pula o que já está em `already` (feriados de São Paulo capital, que saem no aviso 'holiday').
+ */
+export function holidayLocalWarnings(list: EndpointHolidays[], already: Holiday[], dayLabel: string): Warning[] {
+  const seen = new Set(already.map((h) => h.id).filter(Boolean));
+  const out: Warning[] = [];
+  for (const e of list) {
+    const hs = e.holidays.filter((h) => !h.id || !seen.has(h.id));
+    if (!hs.length) continue;
+    const where = `${e.municipio.nome}/${e.municipio.uf} (${e.pontos.join(' e ')})`;
+    const what = hs.map((h) => `${h.name} — feriado ${SCOPE_PT[h.scope] ?? h.scope}${h.legal_basis ? ` (${h.legal_basis})` : ''}`).join('; ');
+    out.push({ code: 'holiday_local', severity: 'info', id: e.municipio.ibge,
+      message: `Feriado em ${where} em ${dayLabel}: ${what}. Regras locais que valem "exceto feriados" não se aplicam nesse dia; rodovias podem ter restrição de feriado.` });
+  }
+  return out;
 }
 
 export function describeReport(r: { type: string; value_num: number | null }): string {

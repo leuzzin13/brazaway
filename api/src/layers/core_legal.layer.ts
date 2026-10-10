@@ -5,10 +5,11 @@ import { activeZones, pointInZone, type ZoneRow } from '../services/zones.js';
 import type { LayerAnnotation, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
- * core_legal — calendário legal de São Paulo. As regras em si (ZMRC, rodízio, perigosos, feriados e suspensões) são
+ * core_legal — calendário legal (feriados do Sudeste: db/seed/0004_holidays.sql e importador feriados_sudeste; suspensões da
+ * CET em São Paulo). As regras em si (ZMRC, rodízio, perigosos, feriados e suspensões) são
  * aplicadas pelo núcleo (zones.ts + restriction_zones + calendar.ts); esta camada só AVISA as suspensões publicadas pela
- * CET (rule_suspensions, importador cet_suspensoes) que valem no horário de saída e tocam a rota. O aviso de feriado já
- * sai do routing.ts (code 'holiday').
+ * CET (rule_suspensions, importador cet_suspensoes) que valem no horário de saída e tocam a rota. Os avisos de feriado já
+ * saem do routing.ts: 'holiday' (São Paulo capital) e 'holiday_local' (estadual/municipal do município da origem e do destino).
  *
  * Base legal da suspensão: Decreto 58.584/2018 art. 8º (portaria da SMT; §2º permite suspender só um período do dia).
  * "MANTIDO para veículos pesados": a restrição continua para veículos de carga (leitura conservadora, ver zones.ts).
@@ -17,12 +18,13 @@ const LAYER = 'core_legal';
 
 const meta: RouteLayer['meta'] = {
   id: LAYER,
-  label: 'Calendário legal de SP (feriados e suspensões da CET)',
-  description: 'Feriados que suspendem ZMRC, rodízio e restrição de perigosos em São Paulo e suspensões publicadas pela CET. As zonas são aplicadas pelo núcleo; esta camada avisa as suspensões do dia que tocam a rota.',
+  label: 'Calendário legal (feriados do Sudeste e suspensões da CET)',
+  description: 'Feriados nacionais, estaduais (SP, RJ, ES; MG só tem o 21/04) e municipais das capitais e polos do Sudeste, que suspendem as regras "exceto feriados" (ZMRC, rodízio e perigosos em São Paulo; regras municipais pelo município da regra), e suspensões publicadas pela CET. As zonas são aplicadas pelo núcleo; esta camada avisa as suspensões do dia que tocam a rota e o routing.ts avisa o feriado do município da origem e do destino.',
   group: 'calendario',
   sources: [
     { name: 'CET — suspensões do rodízio e da ZMRC (Relatório anual)', url: 'https://webforms.cetsp.com.br/suspensaorodizio/Relatorio', license: 'Ato oficial (Decreto 58.584/2018 art. 8º; Lei 9.610/98 art. 8º IV). Página sem licença explícita: citar a fonte' },
     { name: 'Feriados: Leis 662/1949, 6.802/1980 e 14.759/2023; Lei estadual SP 9.497/1997; Lei municipal SP 14.485/2007 art. 10', url: 'https://www.planalto.gov.br/ccivil_03/leis/l0662.htm', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
+    { name: 'Feriados do Sudeste (importador feriados_sudeste): Leis estaduais RJ 5.243/2008, 5.198/2008 e 11.002/2025, Lei ES 11.010/2019, leis e decretos municipais (Querido Diário) e atos de feriados locais do TJMG, TJSP, TJRJ, TJES, TRF2, TRT3 e TRT17', url: 'http://alerjln1.alerj.rj.gov.br/contlei.nsf/f25edae7e64db53b032564fe005262ef?SearchView&Query=feriado&SearchMax=200', license: 'Ato oficial (Lei 9.610/98 art. 8º IV); cópias do Querido Diário (OKBR) e republicação do CNB-SP: citar a fonte' },
     { name: 'GeoSampa — restricao_circulacao_veiculo (ZMRC, Minianel) e segmento_logradouro (corredor do Minianel)', url: 'https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs', license: 'CC-BY-SA 4.0' },
   ],
   defaultVisible: false,
