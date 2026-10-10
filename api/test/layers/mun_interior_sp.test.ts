@@ -21,7 +21,14 @@ const routeOf = (coords: [number, number][], min = 10) => ({ line: turf.lineStri
 const FONTES = ['campinas', 'sorocaba', 'sao-vicente', 'santos', 'guaruja', 'piracicaba', 'jacarei', 'sao-jose-do-rio-preto', 'mirassol', 'jundiai'];
 const CARRETA = { preset: 'carreta' };                                   // 19,3 m, 5 eixos, 41,5 t
 const VLC_JACAREI = { preset: 'vuc', length_m: 7.0, width_m: 2.4, weight_t: 7.5, axle_count: 2 };   // VCL do Dec. 247/2017
-const VUC_SOROCABA = { preset: 'vuc', length_m: 6.0, width_m: 2.2 };    // VLC da Res. SEMOB 02/25
+const VUC_SOROCABA = { preset: 'vuc', length_m: 6.0, width_m: 2.2, payload_t: 3 };   // VLC da Res. SEMOB 02/25 (carga útil > 1,5 t)
+const BITREM = { preset: 'bitrem' };                                     // VCPB do Dec. 247/2017 (cvc)
+const ROMEU_JULIETA = { preset: 'romeu_julieta' };                       // VCPB (caminhão + reboque)
+/** Jacareí: pontos nas Rotas de Cargas Pesadas (Rod. Nilo Máximo, Av. Malek Assad, Av. Industrial) */
+const JAC = { nilo: { lat: -23.31102, lon: -45.93163 }, malek: { lat: -23.28878, lon: -45.96906 }, industrial: { lat: -23.29213, lon: -45.98684 } };
+const GUARAREMA = { lat: -23.4127, lon: -46.0359 }, SJC = { lat: -23.1790, lon: -45.8869 };   // vizinhos de Jacareí (fora do município)
+/** Guarujá: frente do Assaí na R. Valdomiro Macário e a Rod. Cônego Domênico Rangoni ao norte */
+const GUARUJA = { assai: { lat: -23.97350, lon: -46.26985 }, rodovia: { lat: -23.9500, lon: -46.2790 } };
 
 const regra = async (id: string): Promise<Regra> => {
   const q = await pool.query(`select props from data_features where layer_id = $1 and props->>'regra_id' = $2 limit 1`, [LAYER, id]);
@@ -63,14 +70,15 @@ describe('carga e registro', () => {
       campinas_anel_rodoviario: 'zona', campinas_nova_aparecida: 'zona', campinas_anel_reboucas: 'zona',
       sorocaba_res_semob_02_2025: 'via', sao_vicente_arc: 'zona', sao_vicente_ponte_pensil: 'via',
       sao_vicente_oswaldo_toschi: 'desativada', sao_vicente_rua_campos: 'desativada', sao_vicente_lei_669a: 'desativada',
-      guaruja_valdomiro_macario: 'via', jacarei_fora_rcp: 'zona',
+      guaruja_valdomiro_macario: 'via', jacarei_fora_rcp: 'zona', jacarei_vcpb_vcpt: 'zona',
       santos_gonzaga: 'desativada', piracicaba_area_central: 'desativada', piracicaba_radares_3_eixos: 'desativada',
       rio_preto_lei_14748_2024: 'revogada', mirassol_lei_4206_2019: 'revogada', jundiai_pl_14649_2025: 'revogada',
     });
     const rev = await pool.query(`select props->>'regra_id' as id, valid_to < now() as passou from data_features where layer_id = $1 and kind = 'revogada' and source = any($2)`, [LAYER, FONTES]);
     expect(rev.rows.map((x) => x.passou)).toEqual([true, true, true]);
-    // Jacareí: um polígono por pedaço do município fora das rotas
+    // Jacareí: um polígono por pedaço do município fora das rotas (art. 5º) e fora das rodovias (arts. 6º e 8º)
     expect(q.rows.find((x) => x.id === 'jacarei_fora_rcp').n).toBeGreaterThan(10);
+    expect(q.rows.find((x) => x.id === 'jacarei_vcpb_vcpt').n).toBeGreaterThan(5);
   });
 
   it('toda regra cita ato, artigo e URL; confiança baixa/unverifiable nunca está ativa', async () => {
@@ -112,13 +120,29 @@ describe('regras por município (módulo da camada)', () => {
     expect(enquadrar(reb, veic({ preset: 'truck' })).aplica).toBe(true);
     expect(enquadrar(reb, veic({ preset: 'vuc', length_m: 6.3, width_m: 2.2 })).aplica).toBe(false);
     expect(enquadrar(reb, veic({ preset: 'vuc' })).aplica).toBe(true);                   // VUC de SP: 7,20 m
+    // a zona é de Campinas: a faixa que o anel fechava em Valinhos (Av. Eng. Antônio Francisco de Paula Souza) ficou de fora
+    const valinhos = await pool.query(
+      `select bool_or(ST_Contains(geom, ST_SetSRID(ST_Point(-47.02337, -22.95339), 4326))) as dentro
+         from data_features where layer_id = $1 and props->>'regra_id' = 'campinas_anel_rodoviario'`, [LAYER]);
+    expect(valinhos.rows[0].dentro).toBe(false);
   });
 
-  it('Sorocaba (Res. SEMOB 02/25): caminhão proibido 24 h; VUC/VLC até 6,30 x 2,20 m isento', async () => {
+  it('Sorocaba (Res. SEMOB 02/25): caminhão proibido 24 h; VUC/VLC até 6,30 x 2,20 m com carga útil acima de 1,5 t isento', async () => {
     const r = await regra('sorocaba_res_semob_02_2025');
     expect(describeJanelas(r.janelas)).toBe('todos os dias o dia todo');
-    expect(enquadrar(r, veic(VUC_SOROCABA))).toMatchObject({ aplica: false, vucIsento: true });
-    expect(enquadrar(r, veic({ preset: 'vuc' })).aplica).toBe(true);                    // 7,20 x 2,50 m
+    expect(r.vuc ?? null).toBeNull();                                                   // a isenção está no alvo (art. 2º, I)
+    expect(enquadrar(r, veic(VUC_SOROCABA)).aplica).toBe(false);                        // 6,0 x 2,2 m, 3 t informadas
+    expect(enquadrar(r, veic({ ...VUC_SOROCABA, payload_t: 1.5 })).aplica).toBe(true);  // carga útil até 1,5 t: não é VUC/VLC
+    // sem a capacidade informada: aplica (lado seguro) e marca a suposição (aviso municipal_capacidade_nao_informada)
+    const { payload_t: _p, ...semCapacidade } = VUC_SOROCABA;
+    const e = enquadrar(r, veic(semCapacidade));
+    expect(e.aplica).toBe(true);
+    expect(e.capacidadeSuposta).toBeTruthy();
+    const o = { lat: -23.4660, lon: -47.4560 }, d = { lat: -23.5090, lon: -47.4540 };
+    const via = await pool.query(`select ST_AsGeoJSON(geom, 6)::json as g from data_features where layer_id = $1 and props->>'regra_id' = 'sorocaba_res_semob_02_2025' order by ST_Length(geom::geography) desc limit 1`, [LAYER]);
+    const a = await layer.annotate!(ctxOf(o, d, '2026-10-13T10:00', semCapacidade) as any, routeOf(via.rows[0].g.coordinates) as any);
+    expect(a.warnings!.find((w) => w.code === 'municipal_capacidade_nao_informada')?.message).toMatch(/Sorocaba.*capacidade de carga.*não foi informada.*lado seguro/);
+    expect(enquadrar(r, veic({ preset: 'vuc', payload_t: 3 })).aplica).toBe(true);      // 7,20 x 2,50 m
     expect(enquadrar(r, veic({ preset: 'toco' })).aplica).toBe(true);
   });
 
@@ -128,6 +152,15 @@ describe('regras por município (módulo da camada)', () => {
     expect(enquadrar(r, veic({ ...VLC_JACAREI, weight_t: 9 })).aplica).toBe(true);
     expect(enquadrar(r, veic({ ...VLC_JACAREI, axle_count: 3 })).aplica).toBe(true);
     expect(enquadrar(r, veic({ preset: 'toco' })).aplica).toBe(true);
+    // arts. 6º e 8º: bitrem e caminhão + reboque (VCPB) só com AETC, inclusive nas RCP; treminhão (VCPT) proibido
+    const b = await regra('jacarei_vcpb_vcpt');
+    expect(describeJanelas(b.janelas)).toBe('todos os dias o dia todo');
+    expect(b.base_legal[0].artigo).toMatch(/art\. 6º.*art\. 8º/);
+    expect(enquadrar(b, veic(BITREM)).aplica).toBe(true);
+    expect(enquadrar(b, veic(ROMEU_JULIETA)).aplica).toBe(true);
+    expect(enquadrar(b, veic({ preset: 'rodotrem' })).aplica).toBe(true);
+    expect(enquadrar(b, veic(CARRETA)).aplica).toBe(false);                              // cavalo + 1 semirreboque: VCP
+    expect(enquadrar(b, veic({ preset: 'toco' })).aplica).toBe(false);
   });
 
   it('São Vicente: ARC seg–sáb 10h–19h exceto feriados (Lei 2163-A/2009); Ponte Pênsil sempre; leis de rua só registradas', async () => {
@@ -151,12 +184,41 @@ describe('regras por município (módulo da camada)', () => {
   });
 
   it('Jacareí: com o destino num pedaço, só ele deixa de ser excluído (e a rota avisa); VCL não tem exclusão', async () => {
-    const nilo = { lat: -23.31102, lon: -45.93163 }, malek = { lat: -23.28878, lon: -45.96906 }, centro = { lat: -23.3040, lon: -45.9690 };
+    const { nilo, malek } = JAC, centro = { lat: -23.3040, lon: -45.9690 };
     const pecas = (ex: any[]) => ex.filter((e) => e.item.type === 'Rota de Cargas Pesadas').length;
     const todas = pecas(await layer.exclusions!(ctxOf(nilo, malek, '2026-10-13T10:00', CARRETA) as any));
     expect(todas).toBeGreaterThan(10);
     expect(pecas(await layer.exclusions!(ctxOf(nilo, centro, '2026-10-13T10:00', CARRETA) as any))).toBe(todas - 1);
     expect(pecas(await layer.exclusions!(ctxOf(nilo, malek, '2026-10-13T10:00', VLC_JACAREI) as any))).toBe(0);
+  });
+
+  it('Jacareí (arts. 6º e 8º): bitrem de passagem tem as RCP urbanas excluídas; com destino na Av. Industrial, o pedaço urbano fica e a rota avisa a AETC', async () => {
+    const vcpb = (ex: any[]) => ex.filter((e) => e.item.type === 'Bitrem, reboque e treminhão');
+    const cobre = (ex: any[], p: { lat: number; lon: number }) =>
+      ex.some((e) => e.rings.some((r: [number, number][]) => turf.booleanPointInPolygon(turf.point([p.lon, p.lat]), turf.polygon([r]))));
+    const passagem = vcpb(await layer.exclusions!(ctxOf(GUARAREMA, SJC, '2026-10-13T10:00', BITREM) as any));
+    expect(passagem.length).toBeGreaterThan(3);
+    for (const p of [JAC.malek, JAC.industrial, JAC.nilo]) expect(cobre(passagem, p)).toBe(true);   // RCP 4, 5 e 6
+    expect(vcpb(await layer.exclusions!(ctxOf(GUARAREMA, SJC, '2026-10-13T10:00', ROMEU_JULIETA) as any)).length).toBe(passagem.length);
+    expect(vcpb(await layer.exclusions!(ctxOf(GUARAREMA, SJC, '2026-10-13T10:00', CARRETA) as any)).length).toBe(0);   // VCP: RCP livres
+    // destino na Av. Industrial (RCP 5): antes, nenhum pedaço da zona fora das RCP tinha o destino e nada avisava
+    const ex = await layer.exclusions!(ctxOf(GUARAREMA, JAC.industrial, '2026-10-13T10:00', BITREM) as any);
+    expect(vcpb(ex).length).toBe(passagem.length - 1);
+    expect(cobre(vcpb(ex), JAC.malek)).toBe(false);
+    const a = await layer.annotate!(ctxOf(GUARAREMA, JAC.industrial, '2026-10-13T10:00', BITREM) as any,
+      routeOf([[GUARAREMA.lon, GUARAREMA.lat], [JAC.industrial.lon, JAC.industrial.lat]]) as any);
+    expect(a.warnings!.find((w) => w.code === 'rmsp_destino_na_zona' && /bitrem/.test(w.message))?.message)
+      .toMatch(/Exige AETC prévia para bitrem e caminhão \+ reboque.*treminhão é proibido/);
+  });
+
+  it('Guarujá: só o trecho a oeste do acesso ao Assaí leva custo (sem o começo da rua nem as alças da rodovia)', async () => {
+    const cl = (await layer.costLines!(ctxOf(GUARUJA.assai, GUARUJA.rodovia, '2026-10-13T10:00', { preset: 'toco' }) as any))
+      .filter((c) => c.item.type === 'Sinalização (R. Valdomiro Macário)');
+    expect(cl.length).toBeGreaterThan(0);
+    expect(Math.max(...cl.flatMap((c) => c.coordinates.map((x) => x[0])))).toBeLessThan(-46.2694);    // acesso ao Assaí: -46,26948
+    const m = cl.reduce((acc, c) => acc + turf.length(turf.lineString(c.coordinates), { units: 'meters' }), 0) / 2;   // ida e volta
+    expect(m).toBeGreaterThan(500);
+    expect(m).toBeLessThan(620);
   });
 
   it('Campinas: Nova Aparecida exclui a passagem de carreta a qualquer hora; caminhão de 12 m não', async () => {
@@ -223,6 +285,19 @@ describe('rotas reais (API)', () => {
     expect(vcl.status).toBe(200);
     expect(vcl.body.avoided.some((a: any) => a.layer === LAYER)).toBe(false);
     expect(car.body.distance_km).toBeGreaterThan(vcl.body.distance_km);
+  }, 180_000);
+
+  it('Jacareí: bitrem com destino na Av. Industrial (RCP 5) chega e recebe o aviso da AETC (arts. 6º e 8º)', async () => {
+    const r = await route({ origin: GUARAREMA, destination: JAC.industrial, vehicle: BITREM, departure_at: '2026-10-13T10:00' });
+    expect(r.status, JSON.stringify(r.body).slice(0, 300)).toBe(200);
+    const w = r.body.warnings.find((x: any) => x.layer === LAYER && x.code === 'rmsp_destino_na_zona' && /bitrem/.test(x.message));
+    expect(w?.message).toMatch(/AETC prévia para bitrem/);
+  }, 180_000);
+
+  it('Guarujá: caminhão saindo do Assaí para a rodovia não leva aviso de via restrita', async () => {
+    const r = await route({ origin: GUARUJA.assai, destination: GUARUJA.rodovia, vehicle: { preset: 'toco' }, departure_at: '2026-10-13T10:00' });
+    expect(r.status, JSON.stringify(r.body).slice(0, 300)).toBe(200);
+    expect(r.body.warnings.filter((w: any) => w.layer === LAYER && ['uses_restricted_way', 'rmsp_via_restrita_na_rota'].includes(w.code))).toEqual([]);
   }, 180_000);
 
   it('Campinas: carreta saindo do Centro às 7h passa pelo Anel Rodoviário e pelo Anel Rebouças (origem dentro: não exclui, avisa)', async () => {
