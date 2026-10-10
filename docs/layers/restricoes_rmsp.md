@@ -202,3 +202,6 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   de sobreposição do `routing.ts` e as demais camadas).
 - O `routing.ts` só checa as linhas que recebeu e usa razão ≥ 50%: os casos que ele não vê (via fora do corredor,
   uso parcial) são cobertos pelo aviso `rmsp_via_restrita_na_rota` da camada, não por desvio.
+- O uso de via é geométrico (15 m): numa via de mão dupla sem sentido no ato, uma rua paralela a menos de 15 m
+  (marginal colada) usada por mais de 100 m pode contar como uso (falso positivo raro; nas de sentido único o rumo da
+  rota filtra).
