@@ -18,7 +18,7 @@ Peças:
 | Importador | `importers/sources/municipios.py` (genérico; biblioteca `_municipios_lib.py`). Até 10/10/2026: `rmsp_*.py` |
 | Seeds | `db/seed/layers/restricoes_rmsp__<fonte>.sql` (fontes `osasco`, `barueri`, `guarulhos`, `cajamar`, `santana-parnaiba`, `ribeirao-pires`, `santo-andre` e `ibge` = limites) |
 | API | `api/src/layers/restricoes_rmsp.layer.ts` |
-| Testes | `api/test/layers/rmsp.test.ts` (25 testes, contra a API), `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) e `importers/tests/test_municipios.py` (os arquivos da RMSP montam as mesmas feições dos importadores antigos) |
+| Testes | `api/test/layers/rmsp.test.ts` (26 testes, contra a API), `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) e `importers/tests/test_municipios.py` (os arquivos da RMSP montam as mesmas feições dos importadores antigos) |
 
 Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendário legal `holidays`).
 
@@ -30,14 +30,15 @@ Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendári
 | Osasco | Dec. 10.676/2012, art. 5º (49 incisos; XI e XLVII–XLIX red./incl. pelo Dec. 13.704/2023, art. 2º); mapa; Portaria SETRAN art. 1º IV "a" | VER → **costLines** | seg–sex 7h–9h e 17h–19h, exceto feriados | caminhão | idem |
 | Barueri | Dec. 9.025/2019, arts. 4º–6º (JOB ed. 1.169) | VER → costLines (16 trechos; XIII–XVI só no sentido do decreto) | seg–sex 17h–20h, exceto feriados | caminhão | ≤ 2,20 x 6,30 m **só com cadastro** na Sec. de Segurança e Mobilidade Urbana → a rota mantém a restrição e avisa |
 | Guarulhos | Dec. 37.887/2021 (arts. 2º–4º) com a redação do Dec. 38.400/2021 (art. 3º) | ZRCC-TB → costLines (ramos do trevo + braços do contorno) | seg–sex 6h–9h e 17h–20h; sáb 10h–14h; vale em feriado | caminhão | ≤ 2,20 x 7,20 m isento |
-| Cajamar | Dec. 7.397/2025, arts. 2º, 4º, 5º, 7º e Anexos I–IV | costLines | Anexo I todos os dias: caminhão 7h–9h e 16h–20h, **carreta (> 3 eixos ou > 14 m) 6h–20h**; Anexo II seg–sex (mesma divisão); Anexos III e IV seg–sex 7h–9h e 16h–20h | caminhão/carreta | ≤ 2,20 x 7,20 m isento (o "até 3 t" de capacidade não é verificável) |
+| Cajamar | Dec. 7.397/2025, arts. 2º, 4º, 5º, 7º e Anexos I–IV | costLines | Anexo I todos os dias: caminhão 7h–9h e 16h–20h, **carreta (> 3 eixos, > 14 m ou capacidade > 14 t) 6h–20h**; Anexo II seg–sex (mesma divisão); Anexos III e IV seg–sex 7h–9h e 16h–20h | caminhão/carreta | ≤ 2,20 x 7,20 m **e capacidade de transporte ≤ 3 t** (art. 2º, I, c) isento; sem a capacidade informada não é VUC (lado seguro) e a rota avisa |
 | Santana de Parnaíba | Dec. 4.288/2019, art. 1º, I e II, e art. 3º (Imprensa Oficial ed. 298, p. 7) | costLines | Estr. Tenente Marques 16h–19h diariamente; 12 vias 24h | PBT > 15 t | — |
 | Santana de Parnaíba | idem, art. 2º, I | exceção de **entrega no município** | só quando o **destino** está no município, e só nas 10 vias de acesso do inciso I (II.1, II.2, II.4–II.11) | carga com nota fiscal para obra/residência/comércio no município | — |
 | Ribeirão Pires | Dec. 7.608/2025, arts. 1º, 4º–6º e 15 (DO ed. 44/2026) | ZRC → exclusão | período integral | > 2 eixos **ou** PBT > 16 t | — (AETE, Lei 5.972/2015) |
 | ABC (Santo André, SBC, São Caetano, Diadema) | restrição regional de 2012 | `kind=revogada`, `valid_to=2012-04-02` (arquivo de Santo André, fonte `santo-andre`) | — | — | cancelada pelo Consórcio em 02/04/2012, antes de vigorar (DGABC 03/04/2012); não aplicada |
 
 Caminhão = PBT acima de 3,5 t (CTB, Anexo I). A definição de VUC é **por município** (campo `vuc` do arquivo do município): a
-pergunta é se o veículo cabe nas dimensões máximas daquele município (largura e comprimento), não o `is_vuc` global.
+pergunta é se o veículo cabe nos limites daquele município (largura e comprimento e, onde o ato fixa, capacidade de
+carga: Cajamar 3 t), não o `is_vuc` global.
 
 **Santana de Parnaíba, art. 2º (texto conferido):** "Ficam excluídos da proibição, prevista no inciso II do art. 1º":
 I — veículos cuja carga, comprovada por nota fiscal, "deva ser entregue em obras, residências ou estabelecimentos
@@ -127,7 +128,8 @@ a sede da empresa.
 
 Carga atual (`data_features`, layer `restricoes_rmsp`): osasco 1 zona + 380 linhas (VER 67 km + vias da ZMRC 16 km);
 barueri 97 (24,4 km); guarulhos 37 (7,3 km); cajamar 69 (17,4 km); santana-parnaiba 182 (50,8 km);
-ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revogado (ABC 2012). Linha mais longa: 439 m.
+ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais; santo-andre 1 registro revogado (ABC 2012). Linha mais
+longa: 439 m.
 
 ### Trechos aproximados (`props.aproximado = true`, aviso `rmsp_trecho_aproximado`)
 
@@ -152,6 +154,13 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   polígonos recortados pelos eixos VER.
 - **VUC de Osasco** (6,30 m segundo o SETCESP 2012) não confirmado → regra desativada (VUC = caminhão), com aviso.
 - **VUC de Barueri** exige cadastro e o veículo da API não tem esse dado → a restrição vale para o VUC, com aviso.
+- **Cajamar, capacidade de transporte** (Dec. 7.397/2025, art. 2º; correção do `verify.json`: "3 t" e "14 t" são
+  capacidade de transporte, não PBT): o VUC exige também capacidade até 3 t (`vuc.payload_max_t`, art. 2º, I, c) e a
+  classe carreta vale também para capacidade acima de 14 t (o caminhão do art. 2º vai até 14 t; o veículo de até 14 m
+  fora dessa classe, por eixos ou capacidade, fica com o horário de carreta — lado seguro, como já era para 4+ eixos).
+  Sem a capacidade informada no veículo: não é VUC e, se o PBT permite carga acima de 14 t (ex.: perfil truck, 23 t),
+  fica com o horário de carreta nos Anexos I e II; a rota avisa `municipal_capacidade_nao_informada` dizendo o que
+  mudaria com a capacidade típica do perfil. Com a capacidade do CRLV informada, a regra usa o valor.
   Quando existir um campo de autorizações municipais no veículo, a regra já traz `vuc.exige_cadastro`.
 - **Santana, art. 2º**: só destino, só as vias do inciso I; o inciso II (betoneira/água de empresa com sede no
   município) não é aplicado (o veículo não informa carga nem sede).
@@ -192,8 +201,9 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
    com 23 m² de diferença simétrica.
 4. Carregar (com o Valhalla no ar — as linhas são validadas contra o grafo):
    `docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e PGPASSWORD=truck -e PGDATABASE=truck_router -e DATA_DIR=/data -e SEED_DIR=/seed/layers -e VALHALLA_URL=http://valhalla:8002 -v $(pwd)/importers:/app -v $(pwd)/data:/data -v $(pwd)/db/seed:/seed truck-router-importer municipios:ibge,3534401,3505708,3518800,3509205,3547304,3543303,3547809`
-   (só um município: `municipios:3505708`). Em 10/10/2026 só foram regravados os seeds sem vias (`ibge`,
-   `ribeirao-pires`, `santo-andre`); os de Osasco, Barueri, Guarulhos, Cajamar e Santana são os do importador antigo
+   (só um município: `municipios:3505708`). Em 10/10/2026 foram regravados os seeds sem vias (`ibge`,
+   `ribeirao-pires`, `santo-andre`) e o de Cajamar (capacidade de carga, com o Valhalla: 69 linhas, todas validadas,
+   mesmos `source_id` e geometria); os de Osasco, Barueri, Guarulhos e Santana são os do importador antigo
    (equivalentes, conferido por digest) até a próxima carga com o Valhalla.
 5. Vigilância sugerida: Querido Diário por município ("trânsito de caminhões", "circulação de caminhões", "10.676",
    "Vias Estruturais Restritas"); o diário de Barueri não tem busca para 2023–2026.

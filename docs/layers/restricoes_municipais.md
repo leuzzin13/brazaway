@@ -90,11 +90,20 @@ Condição: `{campo, acima | ate | em}` (exatamente um operador). `acima` é "ma
 `qualquer` = basta uma (OU); `todas` = todas (E); com as duas, valem as duas.
 
 **Capacidade de carga sem o dado.** O veículo da API tem `payload_t` opcional. Sem ele, o perfil traz um valor
-**típico e aproximado** (`config/vehicle-presets.json`, `payload_t_aproximado: true`), que **não decide** regra:
-toda condição sobre `payload_t` vale (a restrição se aplica: lado seguro) e uma definição de VUC com
-`payload_max_t` não é atendida. Quando o valor típico decidiria diferente, a rota avisa
-`municipal_capacidade_nao_informada` (info) pedindo a capacidade do CRLV. Com o valor informado pelo usuário, a regra
-usa o valor.
+**típico e aproximado** (`config/vehicle-presets.json`, `payload_t_aproximado: true`), que **não decide** regra. A
+camada enquadra o veículo com **cada capacidade possível** (0, cada limiar de `payload_t` da regra e logo acima dele,
+até o PBT — a capacidade nunca passa do PBT) e fica com o **lado seguro**:
+
+- a regra vale se valer com alguma capacidade (vale para `acima` e para `ate`, no `alvo` e nas variantes);
+- entre as classes que valem, fica a de horário que cobre os das outras (ex.: carreta 6h–20h cobre caminhão 7h–9h e
+  16h–20h); se nenhuma cobre, a rota usa a **união** dos horários (classe "caminhão ou leve"). Uma variante "classe
+  menor" (`payload_t` `ate` X) com janela mais curta nunca encurta a restrição de quem não informou a capacidade;
+- uma definição de VUC com `payload_max_t` não é atendida (sem o dado do CRLV, não é VUC ali).
+
+Quando a regra foi aplicada e a capacidade mudaria a decisão, a rota avisa `municipal_capacidade_nao_informada`
+(info) pedindo a capacidade do CRLV: com o efeito da capacidade típica do perfil quando ela decidiria diferente, e
+sempre que o veículo cabe no VUC local pelas dimensões mas o VUC exige capacidade máxima. Regra que não se aplica ao
+veículo (ex.: VUC isento por dimensões) não gera esse aviso. Com o valor informado pelo usuário, a regra usa o valor.
 
 ### Status e confiança
 
@@ -162,7 +171,8 @@ inteira com `Failed to edge walk`); a que não casa é reencaixada (`map_snap`) 
    - Vias do ato: `construir: "trechos"` + `trechos` com os nomes como estão no OSM; o import monta o arquivo e grava
      as `pendencias` (trechos não achados) dentro dele. Revise e corrija nomes/pontas até zerar.
    - Ponte: linha curta sobre a ponte (`tipo: "ponte"`), alvo pelo limite da placa ou do ato.
-4. **Validar sem banco nem rede:**
+4. **Validar sem banco nem rede** (não chama o Overpass nem a malha do IBGE e não grava nada em `data/raw`; geometria
+   que só o import gera aparece como "geometria a gerar no import"; geometria existente incoerente com a regra falha):
    ```bash
    docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data:/data -e DATA_DIR=/data \
      --entrypoint python truck-router-importer -m sources.municipios --validar
@@ -191,16 +201,19 @@ Feriados municipais/estaduais: a regra só diz se o ato excetua feriado (`feriad
 
 ## Testes
 
-- `importers/tests/test_municipios.py` (sem rede): validador, montagem da fixture, erros de formato e os **digests**:
-  `legado` prova que os 6 municípios da RMSP saem iguais aos dos importadores `rmsp_*` antigos; `exato` congela a
-  montagem atual (mudança intencional num arquivo da RMSP: `ATUALIZAR=1`).
+- `importers/tests/test_municipios.py` (sem rede): validador, montagem da fixture, erros de formato, `--validar`
+  offline, carga `ibge` sem o arquivo de limites (recusa) e os **digests**: `legado` prova que os 6 municípios da RMSP
+  saem iguais aos dos importadores `rmsp_*` antigos (as mudanças intencionais depois deles, como a capacidade de
+  Cajamar, ficam em `LEGADO_IGNORAR` e são desfeitas nos dois lados); `exato` congela a montagem atual (mudança
+  intencional num arquivo da RMSP: `ATUALIZAR=1`).
   ```bash
   docker run --rm -v $(pwd):/repo -w /repo/importers -e DATA_DIR=/repo/data --entrypoint python truck-router-importer \
     -m unittest tests.test_municipios tests.test_rmsp_linhas -v
   ```
 - `api/test/layers/municipios.test.ts`: a camada com o município fictício (geometria no oceano, gravada e apagada pelo
   teste, fonte `teste-municipio-ficticio`).
-- `api/test/layers/rmsp.test.ts`: os 25 testes da Grande SP, sem mudança.
+- `api/test/layers/rmsp.test.ts`: os 26 testes da Grande SP (o de Cajamar cobre a capacidade de 3 t do VUC e de 14 t
+  do caminhão).
 
 ## Licenças
 
@@ -212,11 +225,12 @@ real em `fonte.licenca` (vai para `data_layer_runs`, `GET /api/sources`).
 ## Limitações
 
 - Janela avaliada no horário de saída (o `annotate` só avisa a passagem estimada).
-- Capacidade de carga sem o dado do CRLV: a regra se aplica (lado seguro) e a rota avisa.
+- Capacidade de carga sem o dado do CRLV: lado seguro entre as capacidades possíveis até o PBT (a regra vale se valer
+  em alguma; nas variantes, o horário que cobre os outros ou a união) e a rota avisa.
 - O perfil do veículo não tem autorizações municipais (AETV, AETE, cadastro de VUC) nem tipo de carga/sede da empresa:
   essas exceções só aparecem nos avisos.
 - Regras por faixa (ex.: "caminhão na faixa da direita") não são representáveis no Valhalla.
-- Seeds de Osasco, Barueri, Guarulhos, Cajamar e Santana de Parnaíba ainda são os do importador antigo (props sem
+- Seeds de Osasco, Barueri, Guarulhos e Santana de Parnaíba ainda são os do importador antigo (props sem
   `uf`/`confianca`, status `vigente`), equivalentes; a próxima carga com o Valhalla (`municipios:<ibge>`) regrava no
-  formato novo. Nessa carga, os 6 braços da ZRCC-TB de Guarulhos mudam de `source_id` (o índice passou a ser por
+  formato novo (o de Cajamar já foi regravado, com a capacidade de carga). Nessa carga, os 6 braços da ZRCC-TB de Guarulhos mudam de `source_id` (o índice passou a ser por
   arquivo de geometria).

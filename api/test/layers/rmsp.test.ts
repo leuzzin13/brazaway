@@ -188,14 +188,34 @@ describe('regras por município (módulo da camada)', () => {
     expect(enquadrar(await regra('barueri_ver'), vuc63)).toMatchObject({ aplica: true, vucSoComCadastro: true });
   });
 
-  it('Cajamar: carreta (>3 eixos) tem janela 6h–20h no Centro; caminhão 7h–9h e 16h–20h', async () => {
+  it('Cajamar: carreta (>3 eixos, >14 m ou >14 t de capacidade) tem janela 6h–20h no Centro; caminhão 7h–9h e 16h–20h', async () => {
     const r = await regra('cajamar_anexo_1');
     const carreta = enquadrar(r, resolveVehicle({ preset: 'carreta' } as any));
-    const truck = enquadrar(r, resolveVehicle({ preset: 'truck' } as any));
+    const truck = enquadrar(r, resolveVehicle({ preset: 'truck', payload_t: 12 } as any));
     expect(carreta.classe).toBe('carreta');
     expect(janelaAtiva(carreta.janelas, at('2026-10-18T12:00'))).toBe(true);   // domingo também (Anexo I)
     expect(truck.classe).toBe('caminhão');
     expect(janelaAtiva(truck.janelas, at('2026-10-18T12:00'))).toBe(false);
+    // Dec. 7.397/2025, art. 2º: as 14 t do caminhão são capacidade de transporte. Sem a capacidade informada, o truck
+    // (PBT 23 t) pode passar de 14 t: fica com o horário de carreta (lado seguro) e a rota avisa
+    expect(enquadrar(r, resolveVehicle({ preset: 'truck' } as any))).toMatchObject({
+      classe: 'carreta', capacidadeSuposta: { estimativa_t: 14, com_estimativa: { aplica: true, classe: 'caminhão' } },
+    });
+    expect(enquadrar(r, resolveVehicle({ preset: 'truck', payload_t: 15 } as any)).classe).toBe('carreta');
+    // toco (PBT 16 t) também pode passar de 14 t; um caminhão de 12 t de PBT, não
+    expect(enquadrar(r, resolveVehicle({ preset: 'toco', weight_t: 12 } as any))).toMatchObject({ classe: 'caminhão' });
+  });
+
+  it('Cajamar: VUC (2,20 x 7,20 m) só com capacidade de transporte até 3 t informada (Dec. 7.397/2025, art. 2º, I, c)', async () => {
+    for (const id of ['cajamar_anexo_1', 'cajamar_anexo_2', 'cajamar_anexo_3', 'cajamar_anexo_4']) {
+      const r = await regra(id);
+      expect(r.vuc, id).toMatchObject({ largura_max_m: 2.2, comprimento_max_m: 7.2, payload_max_t: 3 });
+      const vuc = { preset: 'vuc', width_m: 2.2, length_m: 7.0 };
+      expect(enquadrar(r, resolveVehicle({ ...vuc, payload_t: 2.8 } as any)), id).toMatchObject({ aplica: false, vucIsento: true });
+      expect(enquadrar(r, resolveVehicle({ ...vuc, payload_t: 4 } as any)), id).toMatchObject({ aplica: true, classe: 'caminhão' });
+      // sem a capacidade: caminhão (lado seguro), com a suposição marcada para o aviso
+      expect(enquadrar(r, resolveVehicle(vuc as any)), id).toMatchObject({ aplica: true, classe: 'caminhão', capacidadeSuposta: { vuc_por_capacidade: true } });
+    }
   });
 
   it('Santana de Parnaíba (PBT > 15 t) e Ribeirão Pires (> 2 eixos ou > 16 t)', async () => {

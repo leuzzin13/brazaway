@@ -42,8 +42,23 @@ ATUALIZAR = os.environ.get('ATUALIZAR') == '1'
 NOVOS = {'uf', 'confianca', 'status_motivo', 'excecao_destino_local_artigo', 'abrangencia_ibge'}
 
 
+def _cajamar_sem_capacidade(p: dict) -> dict:
+    """Cajamar, mudança intencional da revisão de 10/10/2026 (verify da pesquisa; Dec. 7.397/2025, art. 2º): as 3 t do VUC
+    e as 14 t do caminhão são capacidade de transporte. Entraram vuc.payload_max_t, a condição payload_t na variante
+    carreta e as notas/artigo reescritos; o resto (geometria, janelas, alvo, eixos, comprimento) segue igual ao legado."""
+    p = copy.deepcopy(p)
+    p.pop('nota', None)
+    if p.get('vuc'):
+        for k in ('payload_max_t', 'nota', 'artigo'):
+            p['vuc'].pop(k, None)
+    for v in p.get('variantes', []):
+        v['quando']['qualquer'] = [c for c in v['quando'].get('qualquer', []) if c.get('campo') != 'payload_t']
+    return p
+
+
 # mudanças intencionais depois dos importadores antigos: desfeitas NOS DOIS LADOS antes do digest "legado"
-LEGADO_IGNORAR: dict = {}
+# (o digest legado da fonte foi recalculado da saída congelada dos importadores antigos com a mesma função)
+LEGADO_IGNORAR = {'cajamar': _cajamar_sem_capacidade}
 
 
 class Dirs:
