@@ -269,3 +269,159 @@ def comprimento_km(g: dict | None) -> float:
 
 def cos_lat(lat: float) -> float:
     return math.cos(math.radians(lat))
+
+
+# ------------------------------------------------------------------------------------------------ pontes (bloqueio sobre o tabuleiro)
+
+RAIO_PONTE_M = 15
+BUSCA_PONTE_M = 80
+
+
+def snap_ponte(ponto: tuple[float, float], rodovia: str | None) -> dict:
+    """Bloqueio sobre a ponte de um ato (coordenada do próprio ato): aresta marcada como ponte no OSM, de preferência com
+    o código da rodovia no nome, a até BUSCA_PONTE_M. Sem ponte perto, cai no snap da rodovia (snap_bloqueio). O raio
+    encolhe se outra via que não é a ponte nem a rodovia passar perto (ex.: rua ribeirinha sob a ponte)."""
+    res = locate([ponto], BUSCA_PONTE_M)
+    refs = refs_osm(rodovia)
+    if res is None:
+        return {'pontos': [[round(ponto[0], 6), round(ponto[1], 6)]], 'raio_m': RAIO_PONTE_M, 'ajuste': 'sem_valhalla', 'distancia_m': None}
+    edges = res[0]
+    pontes = [e for e in edges if e['bridge'] and not e['link']]
+    com_ref = [e for e in pontes if refs and _tem_ref(e, refs)]
+    alvo = (com_ref or pontes)[:1]
+    if not alvo:
+        b = snap_bloqueio([ponto], [rodovia], RAIO_PONTE_M)[0]
+        if b and b['ajuste'] in ('rodovia', 'via_mais_proxima'):
+            b['ajuste'] = f'{b["ajuste"]}_sem_ponte_osm'
+        return b
+    e = alvo[0]
+    q = (e['lon'], e['lat'])
+    nomes = set(e['names'])
+    raio = RAIO_PONTE_M
+    for o in edges:
+        if o['link'] or o['bridge'] or (set(o['names']) & nomes) or (refs and _tem_ref(o, refs)):
+            continue
+        d = dist_m(q, (o['lon'], o['lat']))
+        if d < raio + FOLGA_OUTRA_VIA_M:
+            raio = max(RAIO_MIN_M, round(d - FOLGA_OUTRA_VIA_M, 1))
+    return {'pontos': [[round(q[0], 6), round(q[1], 6)]], 'raio_m': raio, 'ajuste': 'ponte_osm' if com_ref else 'ponte_osm_sem_ref',
+            'distancia_m': [round(e['dist'], 1)], 'way_ids': [e['way_id']] if e.get('way_id') else []}
+
+
+def ponte_por_km_sre(code: str, km: float, rodovia: str | None, janela_km: float = 0.6) -> tuple[tuple[float, float] | None, dict | None]:
+    """Ato sem coordenada: amostra o SRE do km - janela ao km + janela a cada ~40 m, procura arestas de ponte do OSM com o
+    código da rodovia e fica com a mais próxima do km do ato. Devolve (ponto do km no SRE, bloqueio | None)."""
+    feats = sre_es(f"sre = '{code}'", cache=f'sre_es_{code}.json')
+    alvo = ponto_km_sre_es(code, km)
+    if not feats or alvo is None:
+        return None, None
+    f = feats[0]
+    p = f['properties']
+    c = _costura(_linhas(f['geometry']))
+    trecho = recorte_km(c, float(p['km_inicial']), float(p['km_final']), km - janela_km, km + janela_km)
+    if len(trecho) < 2:
+        return alvo, None
+    amostras: list[tuple[float, float]] = []
+    for i in range(1, len(trecho)):
+        a, b = trecho[i - 1], trecho[i]
+        n = max(1, int(dist_m(tuple(a), tuple(b)) // 40))
+        for k in range(n):
+            amostras.append((a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n))
+    res = locate(amostras, 40)
+    if res is None:
+        return alvo, None
+    refs = refs_osm(rodovia)
+    melhores = []
+    for edges in res:
+        for e in edges:
+            if e['bridge'] and not e['link'] and (not refs or _tem_ref(e, refs)):
+                melhores.append(e)
+    if not melhores:
+        return alvo, None
+    e = min(melhores, key=lambda x: dist_m(alvo, (x['lon'], x['lat'])))
+    b = snap_ponte((e['lon'], e['lat']), rodovia)
+    b['ajuste'] = 'km_sre+' + b['ajuste']
+    b['distancia_km_sre_m'] = round(dist_m(alvo, (e['lon'], e['lat'])), 1)
+    return alvo, b
+
+
+# ------------------------------------------------------------------------------------------------ traçado pelo Valhalla
+
+def _decode6(s: str) -> list[list[float]]:
+    idx = lat = lng = 0
+    out = []
+    while idx < len(s):
+        vals = []
+        for _ in range(2):
+            shift = res = 0
+            while True:
+                b = ord(s[idx]) - 63
+                idx += 1
+                res |= (b & 0x1f) << shift
+                shift += 5
+                if b < 0x20:
+                    break
+            vals.append(~(res >> 1) if res & 1 else res >> 1)
+        lat += vals[0]
+        lng += vals[1]
+        out.append([round(lng / 1e6, 6), round(lat / 1e6, 6)])
+    return out
+
+
+def rota_osm(de: list[float], para: list[float]) -> dict | None:
+    """Traçado de carro (costing auto) entre dois pontos no grafo do Valhalla (OSM). None se o Valhalla não responder."""
+    import os
+    import requests
+    url = os.environ.get('VALHALLA_URL', 'http://valhalla:8002').rstrip('/')
+    body = {'locations': [{'lon': de[0], 'lat': de[1]}, {'lon': para[0], 'lat': para[1]}], 'costing': 'auto', 'units': 'kilometers',
+            'directions_type': 'none'}
+    try:
+        r = requests.post(f'{url}/route', json=body, timeout=60)
+        r.raise_for_status()
+        shape = r.json()['trip']['legs'][0]['shape']
+    except (requests.RequestException, ValueError, KeyError) as e:
+        print(f'  ! Valhalla indisponível para traçar a rota ({e.__class__.__name__})')
+        return None
+    return {'type': 'LineString', 'coordinates': _decode6(shape)}
+
+
+# ------------------------------------------------------------------------------------------------ curadoria (regras.json)
+
+STATUS_REGRA = {'vigente', 'revogada', 'desativada'}
+CONFIANCA = {'alta', 'media', 'baixa', 'unverifiable'}
+
+
+def carrega_regras() -> dict:
+    """data/raw/ders_estaduais/regras.json, validado: toda regra cita ato e artigo/item; confiança baixa ou unverifiable
+    nunca fica ativa; revogada nunca fica ativa; ativa exige status vigente."""
+    import os
+    from common import DATA_DIR
+    path = os.environ.get('DERS_REGRAS_JSON') or str(DATA_DIR / 'raw' / 'ders_estaduais' / 'regras.json')
+    d = json.loads(open(path, encoding='utf-8').read())
+    for grupo in ('trechos', 'pontes'):
+        ids = set()
+        for r in d.get(grupo, []):
+            rid = r.get('regra_id')
+            if not rid or rid in ids:
+                raise ValueError(f'{grupo}: regra_id ausente ou repetido: {rid}')
+            ids.add(rid)
+            if not r.get('ato') or not re.search(r'\b(art\.|item|arts\.|Não há ato normativo)', r['ato']):
+                raise ValueError(f'{rid}: o ato precisa citar artigo ou item ({r.get("ato")})')
+            if r.get('status') not in STATUS_REGRA:
+                raise ValueError(f'{rid}: status inválido {r.get("status")}')
+            if r.get('confianca') not in CONFIANCA:
+                raise ValueError(f'{rid}: confiança inválida {r.get("confianca")}')
+            if r.get('ativa') and (r['status'] != 'vigente' or r['confianca'] in ('baixa', 'unverifiable')):
+                raise ValueError(f'{rid}: regra com status {r["status"]} ou confiança {r["confianca"]} não pode ficar ativa')
+            if not r.get('ativa') and r['status'] == 'vigente':
+                raise ValueError(f'{rid}: regra desligada deve ter status desativada (com motivo_inativa) ou revogada')
+            if not r.get('ativa') and not r.get('motivo_inativa'):
+                raise ValueError(f'{rid}: regra inativa sem motivo_inativa')
+    return d
+
+
+def feicao_trecho(r: dict, geometry: dict, info: dict | None = None) -> dict:
+    props = {k: v for k, v in r.items() if k not in ('geometria',) and v is not None}
+    if info:
+        props['geometria_info'] = info
+    return {'source_id': r['regra_id'], 'geometry': geometry, 'name': r['nome'], 'kind': 'regra_trecho', 'props': props}

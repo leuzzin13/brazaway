@@ -95,10 +95,9 @@ export function criterioTrechoAplica(c: CriterioTrecho | undefined, v: Vehicle, 
   if (c.exceto_vuc && isVucSP(v, ano)) return false;
   if (c.todos) return true;
   if (c.caminhoes && !v.is_truck) return false;
-  let ok = !!c.caminhoes;
-  if (c.peso_acima_t != null) ok = v.weight_t > c.peso_acima_t;
-  if (c.eixos_acima != null) ok = ok || v.axle_count > c.eixos_acima;
-  return ok;
+  // peso e eixos combinam com OU (ex.: Lei ES 4.463/1990: "mais de 2 eixos ou PBT acima de 15 t")
+  if (c.peso_acima_t == null && c.eixos_acima == null) return !!c.caminhoes;
+  return (c.peso_acima_t != null && v.weight_t > c.peso_acima_t) || (c.eixos_acima != null && v.axle_count > c.eixos_acima);
 }
 
 // ------------------------------------------------------------------------------------------------ utilidades
