@@ -6,8 +6,9 @@ confiança e a situação jurídica. Este importador calcula as datas dos anos c
 (lida por api/src/services/calendar.ts), não em data_features: fetch() devolve lista vazia e o runner usa
   - RECORD_COUNT: linhas geradas (vai para data_layer_runs.record_count);
   - SEED_SQL: conteúdo de db/seed/layers/core_legal__feriados-sudeste.sql (só linhas source = 'feriados-sudeste').
-Modelo: importers/sources/cet_suspensoes.py (fonte que grava em tabela própria). Os feriados nacionais, o estadual de SP
-e os municipais da capital paulista continuam em db/seed/0004_holidays.sql (scripts/gen-zones-seed.py).
+Modelo: o antigo importers/sources/feriados_sp.py (cálculo pela lei; saiu no commit 648bdf9 por gravar fora do contrato
+do runner), dentro do contrato como o cet_suspensoes.py. Os feriados nacionais, o estadual de SP e os municipais da
+capital paulista continuam em db/seed/0004_holidays.sql (scripts/gen-zones-seed.py).
 
 Aplicação (migration 0202): só linhas active = true são usadas pela API.
   - confiança 'baixa' ou 'unverifiable' => active = false, com o motivo em inactive_reason;
