@@ -3,7 +3,7 @@ import { query } from '../db.js';
 import { env } from '../config.js';
 
 export interface Holiday { name: string; scope: string; legal_basis?: string | null }
-export interface Suspension { scope: string; applies_to_heavy: boolean; description: string | null; period?: string | null; source_url?: string | null }
+export interface Suspension { scope: string; applies_to_heavy: boolean; description: string | null; period?: string | null; source_url?: string | null; raw_text?: string | null }
 
 export interface LegalDayInfo {
   /** feriado (nacional, estadual SP ou municipal do município informado) */
@@ -18,7 +18,7 @@ export const SAO_PAULO_IBGE = '3550308';
 
 /**
  * Feriados e suspensões vigentes no instante `at` para o município (default: São Paulo).
- * Feriados: seed db/seed/0004_holidays.sql (importers/sources/feriados_sp.py). Suspensões: importers/sources/cet_suspensoes.py.
+ * Feriados: seed db/seed/0004_holidays.sql (scripts/gen-zones-seed.py). Suspensões: importers/sources/cet_suspensoes.py.
  * Falha de banco (tabela ausente) não derruba a rota: devolve dia comum.
  */
 export async function legalDayInfo(at: Date, ibgeCode = SAO_PAULO_IBGE, uf = 'SP'): Promise<LegalDayInfo> {
@@ -34,7 +34,7 @@ export async function legalDayInfo(at: Date, ibgeCode = SAO_PAULO_IBGE, uf = 'SP
           where day = $1 and (scope = 'national' or (scope = 'state' and uf = $2) or (scope = 'municipal' and ibge_code = $3))`, [day, uf, ibgeCode]))
       .catch(() => ({ rows: [] as Holiday[] })),
     query<Suspension>(
-      `select scope, applies_to_heavy, description, period, source_url from rule_suspensions
+      `select scope, applies_to_heavy, description, period, source_url, raw_text from rule_suspensions
         where ibge_code = $1 and starts_at <= $2 and ends_at > $2`, [ibgeCode, at.toISOString()])
       .catch(() => query<Suspension>(
         `select scope, applies_to_heavy, description from rule_suspensions

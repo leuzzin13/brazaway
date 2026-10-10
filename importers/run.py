@@ -44,12 +44,17 @@ def main(argv):
             print(f'==> {n} ({mod.LAYER_ID}/{mod.SOURCE})')
             feats = common.validate(mod.fetch())
             notes = getattr(mod, 'NOTES', None)
+            # fontes que gravam em tabela própria (ex.: cet_suspensoes -> rule_suspensions) informam a contagem real
+            # (RECORD_COUNT) e o próprio seed (SEED_SQL); as demais usam as feições de data_features
+            count = getattr(mod, 'RECORD_COUNT', None)
+            seed_sql = getattr(mod, 'SEED_SQL', None)
             if not no_seed:
-                p = common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes)
+                p = (common.write_seed_sql(mod.LAYER_ID, mod.SOURCE, seed_sql) if seed_sql is not None
+                     else common.write_seed(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes))
                 print(f'    seed: {p} ({p.stat().st_size/1e6:.1f} MB)')
             if not seed_only:
-                common.load_db(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes)
-            print(f'    ok: {len(feats)} feições em {time.time()-t0:.0f}s')
+                common.load_db(mod.LAYER_ID, mod.SOURCE, feats, mod.SOURCE_URL, mod.LICENSE, notes, record_count=count)
+            print(f'    ok: {len(feats)} feições{"" if count is None else f", {count} registros"} em {time.time()-t0:.0f}s')
         except Exception:
             traceback.print_exc()
             failed.append(n)

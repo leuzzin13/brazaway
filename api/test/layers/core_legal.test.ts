@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
-import { crossesZone, get, pool, PTS, route, waitForStack } from '../helpers.js';
+import { crossesZone, DEVICE, get, midpointOf, pool, PTS, route, waitForStack } from '../helpers.js';
 import { resolveVehicle } from '../../src/services/vehicle.js';
 import { zoneApplies, type ZoneRules } from '../../src/services/zones.js';
 import { drivingPlan, DRIVING_RULES } from '../../src/services/restStops.js';
@@ -22,6 +22,20 @@ const HOLIDAY = { holiday: { name: 'teste' } };
 // Pontos: Osasco -> Penha pela Marginal Tietê (vias do Minianel); Santana -> Jabaquara atravessa a ZMRC.
 const OSASCO = { lat: -23.5320, lon: -46.7700 };
 const PENHA = { lat: -23.5250, lon: -46.5450 };
+const BUTANTA = { lat: -23.5700, lon: -46.7300 };
+const CASA_VERDE = { lat: -23.5050, lon: -46.6600 };
+// Dentro do Minianel, mas no corredor das vias-limite (cortado da zona de caminhões na rota): Vila Leopoldina e Bom Retiro
+const GASTAO_VIDIGAL = { lat: -23.5184, lon: -46.7416 };
+const SERGIO_TOMAS = { lat: -23.5204, lon: -46.6446 };
+const RODIZIO_CAMINHOES_ID = '22222222-2222-4222-8222-000000000002';
+const PERIGOSOS_ID = '22222222-2222-4222-8222-000000000003';
+// Dentro do centro expandido (e da ZMRC): Av. Paulista -> Vila Mariana
+const PAULISTA = { lat: -23.5614, lon: -46.6559 };
+const VILA_MARIANA = { lat: -23.5890, lon: -46.6340 };
+// Mooca (dentro do Minianel, fora da ZMRC): trecho curto para o reporte "proibido caminhão"
+const MOOCA_A = { lat: -23.5560, lon: -46.5990 };
+const MOOCA_B = { lat: -23.5630, lon: -46.5850 };
+const cetWarnings = (r: any) => r.body.warnings.filter((w: any) => w.code === 'cet_suspension').map((w: any) => w.message as string).join(' | ');
 const zoneNames = (r: any) => r.avoided.filter((a: any) => a.kind === 'zone').map((a: any) => a.name as string);
 
 describe('core_legal — regras (unitário)', () => {
@@ -118,6 +132,17 @@ describe('core_legal — regras (unitário)', () => {
     expect(zoneApplies(PERIGOSOS, resolveVehicle({ preset: 'carreta' }), at('2026-10-13T08:00'))).toBe(false);
   });
 
+  it('perigosos: grupos III e IV (consumo local/outros) podem circular na área interna (art. 3º parágrafo único)', () => {
+    const t = at('2026-10-13T08:00');
+    const glp = resolveVehicle({ preset: 'truck', hazmat_un: '1075', hazmat_local_delivery: true });   // GLP fracionado: Anexo II
+    expect(zoneApplies(PERIGOSOS, glp, t)).toBe(false);
+    expect(glp.legal_notes.join(' ')).toMatch(/evita só as vias do Minianel/);
+    expect(zoneApplies(PERIGOSOS, resolveVehicle({ preset: 'truck', hazmat_un: '2908' }), t)).toBe(false);   // Anexo III (outros)
+    expect(zoneApplies(PERIGOSOS, resolveVehicle({ preset: 'truck', hazmat_un: '1075' }), t)).toBe(true);    // GLP a granel: Anexo I
+    expect(zoneApplies(PERIGOSOS, resolveVehicle({ preset: 'truck', hazmat_un: '1005' }), t)).toBe(true);    // só no Anexo I
+    expect(zoneApplies(PERIGOSOS, resolveVehicle({ preset: 'truck', hazmat: true }), t)).toBe(true);         // sem nº ONU: conservador
+  });
+
   it('jornada: CTB 67-C (5h30, 11 h ininterruptas — ADI 5322) e CLT 235-C só para empregado', () => {
     const h = 3600;
     expect(DRIVING_RULES.max_continuous_driving_s).toBe(5.5 * h);
@@ -136,6 +161,20 @@ describe('core_legal — regras (unitário)', () => {
     expect(unk.regime).toBe('unknown');
     expect(unk.notes.join(' ')).toMatch(/Vínculo do motorista não informado/);
     expect(drivingPlan(20 * h, [], { employment: 'autonomous' }).daily_rests).toBe(1);
+  });
+
+  it('avisos legais: VUC com perigoso depende do grupo (art. 35), LETPP do DSV e idade do VUC com data-limite', () => {
+    const diesel = resolveVehicle({ preset: 'vuc', has_aetc: true, hazmat_un: '1202' }).legal_notes.join(' ');
+    expect(diesel).toMatch(/não tem exceção na ZMRC/);
+    expect(diesel).not.toMatch(/10h às 16h e com AETC/);
+    expect(diesel).toMatch(/LETPP, expedida pelo DSV/);
+    const glp = resolveVehicle({ preset: 'vuc', has_aetc: true, hazmat_un: '1075', hazmat_local_delivery: true }).legal_notes.join(' ');
+    expect(glp).toMatch(/só das 10h às 16h e com AETC \(art\. 35\)/);
+    expect(resolveVehicle({ preset: 'vuc', has_aetc: true, hazmat: true }).legal_notes.join(' ')).toMatch(/consumo local ou "outros"/);
+    const y = new Date().getFullYear();
+    expect(resolveVehicle({ preset: 'vuc', has_aetc: true, manufacture_year: y - 15 }).legal_notes.join(' ')).toMatch(new RegExp(`só até 31/12/${y}`));
+    expect(resolveVehicle({ preset: 'vuc', has_aetc: true, manufacture_year: y - 16 }).legal_notes.join(' ')).toMatch(/passou do limite de 15 anos/);
+    expect(resolveVehicle({ preset: 'vuc', has_aetc: true, manufacture_year: y - 5 }).legal_notes.join(' ')).not.toMatch(/15 anos/);
   });
 });
 
@@ -186,14 +225,18 @@ describe('core_legal — rotas (ponta a ponta)', () => {
   });
 
   it('feriado municipal (25/01/2027, aniversário de SP) também suspende a ZMRC', async () => {
-    const r = await route({ origin: PTS.zmrcA, destination: PTS.zmrcB, vehicle: { preset: 'carreta' }, departure_at: '2027-01-25T10:00' });
+    const r = await route({ origin: PTS.zmrcA, destination: PTS.zmrcB, vehicle: { preset: 'carreta', employment: 'autonomous' }, departure_at: '2027-01-25T10:00' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
     expect(zoneNames(r.body)).toEqual([]);
     expect(r.body.warnings.some((x: any) => x.code === 'holiday')).toBe(true);
+    // o vínculo informado chega ao plano de jornada (routing.ts -> drivingPlan)
+    expect(r.body.driving_plan.regime).toBe('autonomous');
   });
 
   it('rodízio: caminhão com placa do dia usa as marginais (vias do Minianel); utilitário não', async () => {
-    const base = { origin: OSASCO, destination: PENHA, departure_at: '2026-10-19T08:00' };
+    // Penha -> Casa Verde pela Marginal Tietê (sentido Castello Branco). Osasco -> Penha às 8h deixou de servir: a VER da
+    // Marginal Tietê sentido Ayrton Senna (camada ver) e a ZMRC de Osasco empurram a rota para dentro do Minianel.
+    const base = { origin: PENHA, destination: CASA_VERDE, departure_at: '2026-10-19T08:00' };
     const livre = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 3 } });
     const rod = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 1 } });
     expect(rod.status, JSON.stringify(rod.body)).toBe(200);
@@ -231,9 +274,91 @@ describe('core_legal — rotas (ponta a ponta)', () => {
     const mantido = await route({ ...base, departure_at: '2027-03-10T08:00' });
     expect(mantido.status, JSON.stringify(mantido.body)).toBe(200);
     expect(zoneNames(mantido.body).join()).toMatch(/Rodízio/);
+    expect(cetWarnings(mantido)).toMatch(/rodízio em 10\/03\/2027.*MANTIDO para veículos pesados/);   // camada core_legal
     const geral = await route({ ...base, departure_at: '2027-03-17T08:00' });
     expect(zoneNames(geral.body)).toEqual([]);
+    expect(cetWarnings(geral)).toMatch(/rodízio em 17\/03\/2027.*calculada sem essa restrição/);
+    expect(cetWarnings(geral)).not.toMatch(/ZMRC/);   // Osasco -> Penha não toca a ZMRC
     const zmrc = await route({ origin: PTS.zmrcA, destination: PTS.zmrcB, vehicle: { preset: 'carreta' }, departure_at: '2027-03-17T10:00' });
     expect(zoneNames(zmrc.body)).toEqual([]);
+    expect(cetWarnings(zmrc)).toMatch(/ZMRC em 17\/03\/2027/);
+    // dia sem suspensão: nenhum aviso
+    const comum = await route({ origin: PTS.zmrcA, destination: PTS.zmrcB, vehicle: { preset: 'carreta' }, departure_at: '2027-03-16T22:00' });
+    expect(cetWarnings(comum)).toBe('');
+  });
+
+  it('perigoso de consumo local (GLP fracionado) circula no centro expandido às 8h; gasolina não', async () => {
+    const inZone = (r: any) => r.body.warnings.filter((w: any) => /in_zone$/.test(w.code)).map((w: any) => w.zone_id);
+    const glp = await route({ origin: PAULISTA, destination: VILA_MARIANA, vehicle: { preset: 'vuc', hazmat_un: '1075', hazmat_local_delivery: true }, departure_at: '2026-10-13T08:00' });
+    expect(glp.status, JSON.stringify(glp.body)).toBe(200);
+    expect(inZone(glp)).not.toContain(PERIGOSOS_ID);
+    const gasolina = await route({ origin: PAULISTA, destination: VILA_MARIANA, vehicle: { preset: 'vuc', hazmat_un: '1203' }, departure_at: '2026-10-13T08:00' });
+    expect(gasolina.status, JSON.stringify(gasolina.body)).toBe(200);
+    expect(inZone(gasolina)).toContain(PERIGOSOS_ID);
+  });
+
+  it('reporte "proibido caminhão": VUC sem AETC desvia (é caminhão comum); com AETC e utilitário passam', async () => {
+    const dev = 'test-core-legal-vuc';
+    const base = { origin: MOOCA_A, destination: MOOCA_B, departure_at: '2026-10-13T22:30' };
+    const free = await route({ ...base, vehicle: { preset: 'vuc', has_aetc: true } });
+    expect(free.status, JSON.stringify(free.body)).toBe(200);
+    const p = midpointOf(free.body);
+    const { rows: [rep] } = await pool.query(
+      `insert into reports (type, geom, device_id, status, score) values ('truck_ban', ST_SetSRID(ST_MakePoint($1, $2), 4326), $3, 'active', 1) returning id`,
+      [p.lon, p.lat, dev]);
+    try {
+      const avoids = async (vehicle: Record<string, unknown>) => {
+        const r = await route({ ...base, vehicle });
+        expect(r.status, JSON.stringify(r.body)).toBe(200);
+        return r.body.avoided.some((a: any) => a.id === rep.id);
+      };
+      expect(await avoids({ preset: 'vuc' })).toBe(true);                    // sem AETC
+      expect(await avoids({ preset: 'vuc', has_aetc: true })).toBe(false);
+      expect(await avoids({ preset: 'utilitario' })).toBe(false);             // PBT 3,5 t: não é caminhão
+      expect(await avoids({ preset: 'toco' })).toBe(true);
+    } finally {
+      await pool.query('delete from reports where device_id = $1', [dev]);
+    }
+  });
+
+  it('rodízio: destino no corredor do Minianel (Av. Gastão Vidigal) continua dentro do rodízio', async () => {
+    const r = await route({ origin: OSASCO, destination: GASTAO_VIDIGAL, vehicle: { preset: 'carreta', plate_last_digit: 1 }, departure_at: '2026-10-19T08:00' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const w = r.body.warnings.find((x: any) => x.code === 'destination_in_zone');
+    expect(w?.zone_id).toBe(RODIZIO_CAMINHOES_ID);
+  });
+
+  it('rodízio: origem no corredor em Bom Retiro (R. Sérgio Tomás) sai com aviso, sem bloqueio', async () => {
+    const r = await route({ origin: SERGIO_TOMAS, destination: PENHA, vehicle: { preset: 'carreta', plate_last_digit: 1 }, departure_at: '2026-10-19T08:00' });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body.warnings.find((x: any) => x.code === 'origin_in_zone')?.zone_id).toBe(RODIZIO_CAMINHOES_ID);
+  });
+
+  it('rodízio: placa do dia passa pelo Cebolão (Marginal Tietê -> Marginal Pinheiros) sem desvio', async () => {
+    const base = { origin: { lat: -23.5085, lon: -46.6350 }, destination: BUTANTA, departure_at: '2026-10-19T08:00' };
+    const livre = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 3 } });
+    const rod = await route({ ...base, vehicle: { preset: 'carreta', plate_last_digit: 1 } });
+    expect(rod.status, JSON.stringify(rod.body)).toBe(200);
+    expect(zoneNames(rod.body)).toEqual([]);
+    expect(rod.body.distance_km).toBeLessThan(livre.body.distance_km * 1.05);
+  });
+
+  it('reporte "proibido caminhão" não vale para o utilitário de 3,5 t nem para o VUC (active_reports_for_vehicle, 0101)', async () => {
+    const c = await pool.connect();
+    try {
+      await c.query('begin');
+      const { rows: [rep] } = await c.query(
+        `insert into reports (type, geom, device_id, status, score)
+         values ('truck_ban', ST_SetSRID(ST_MakePoint(-46.70, -23.60), 4326), $1, 'active', 1) returning id`, [DEVICE]);
+      const blocks = async (weight: number, isVuc: boolean) => (await c.query(
+        `select count(*)::int as n from active_reports_for_vehicle(2.5, $1, 5.5, false, $2, now()) where id = $3`,
+        [weight, isVuc, rep.id])).rows[0].n === 1;
+      expect(await blocks(3.5, false)).toBe(false);   // utilitário: não é caminhão (CTB Anexo I)
+      expect(await blocks(16, false)).toBe(true);     // toco
+      expect(await blocks(9, true)).toBe(false);      // VUC
+    } finally {
+      await c.query('rollback');
+      c.release();
+    }
   });
 });

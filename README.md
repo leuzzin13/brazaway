@@ -105,6 +105,7 @@ tabela `data_features`, separada do OSM e dos reportes, com fonte e licença reg
 | Carga e descarga (Zona Azul Caminhão) | Serviços | avisa | 1.591 | GeoSampa zona_azul (CET/PMSP) (CC-BY-SA 4.0); GeoSampa vaga_especial, tipo CA (CET/PMSP) (CC-BY-SA 4.0) | [carga_descarga](docs/layers/carga_descarga.md) |
 | Pedágio | Custos | avisa | 1.153 | ANTT: praças de pedágio (dados.antt.gov.br) (CC-BY); ANTT: tarifas por concessão (gov.br/antt) (CC BY-ND 3.0 (rodapé gov.br)); ARTESP: tabelas de tarifas 2026 (PDF) (Não especificada (portal cms.sp.gov.br: todos os direitos reservados)); ARTESP: malha rodoviária por lote (KMZ) (CC-BY); OpenStreetMap: barrier=toll_booth / highway=toll_gantry (charge) (ODbL 1.0) | [pedagio](docs/layers/pedagio.md) |
 | Relevo e rampas | Relevo | avisa | 0 | ANADEM v1 (ANA/UFRGS), MDT 30 m; derivado do Copernicus DEM GLO-30 (© DLR e.V., © Airbus); modificado: reamostrado (bilinear) para HGT 1" e usado para estimar rampas (CC-BY-4.0); Licença Creative Commons Atribuição 4.0 (ANADEM) (CC-BY-4.0); OpenStreetMap (geometria das vias, via Valhalla) (ODbL-1.0) | [relevo](docs/layers/relevo.md) |
+| Calendário legal de SP (feriados e suspensões da CET) | Calendário | avisa | 90 | CET — suspensões do rodízio e da ZMRC (Ato oficial (Decreto 58.584/2018 art. 8º; Lei 9.610/98 art. 8º IV). Página sem licença explícita: citar a fonte); Feriados: Leis 662/1949, 6.802/1980 e 14.759/2023; Lei estadual SP 9.497/1997; Lei municipal SP 14.485/2007 art. 10 (Ato oficial (Lei 9.610/98 art. 8º IV)); GeoSampa — restricao_circulacao_veiculo e segmento_logradouro (CC-BY-SA 4.0) | [core_legal](docs/layers/core_legal.md) |
 <!-- camadas:fim -->
 
 Pesquisa das fontes (o que existe, o que não existe, licenças, contagens): `docs/research/` e o resumo para
@@ -178,7 +179,11 @@ Detalhes, normas e artigos em `docs/layers/core_legal.md`. Em resumo:
 - **VUC em SP**: até 2,50 m × 7,20 m, fabricação a partir de 2005 e até 15 anos (Portaria SMT 137/2018, red. 57/2021).
   Isenção na ZMRC e no rodízio só com **AETC** (`has_aetc`).
 - **ZMRC, rodízio e perigosos** não valem em feriados (`holidays`) e respeitam as suspensões publicadas pela CET
-  (`rule_suspensions`, importador `cet_suspensoes`). Exceções do rodízio pelo Decreto 58.584/2018.
+  (`rule_suspensions`, importador `cet_suspensoes`; a rota avisa a suspensão do dia, `cet_suspension`). Exceções do
+  rodízio pelo Decreto 58.584/2018. Caminhão com a placa do dia pode usar as vias do Minianel (art. 2º §2º): a zona do
+  rodízio de caminhões é o Minianel menos o corredor das vias-limite, medido no GeoSampa (`scripts/gen-zones-seed.py`).
+- **Perigosos dos grupos III e IV** (consumo local e outros) circulam na área interna do centro expandido; as vias do
+  Minianel ficam proibidas para eles pela camada `perigosos` (Portaria SMT.GAB 051/2024 art. 3º parágrafo único).
 - **Jornada** (Lei 13.103/2015 com a decisão do STF na ADI 5322) no plano de direção.
 - **Limitação:** as zonas usam o horário de saída; algumas camadas (perigosos, roubo de carga, acidentes) já estimam
   o horário de passagem ao longo da rota.

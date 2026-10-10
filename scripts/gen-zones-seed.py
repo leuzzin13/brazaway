@@ -11,18 +11,22 @@ Zonas geradas (ids estáveis):
   ...0004  Rodízio — veículos que não são caminhão (inclusive vias-limite)  geometria: mian (+25 m para fora)
 
 Corredor do Minianel (zona 0002; Decreto 58.584/2018 art. 2º §2º: caminhões podem circular pelas vias do Minianel).
-O polígono do GeoSampa contém o corredor inteiro das marginais (as duas margens e o rio), com até ~420 m de largura.
-`--measure` mede, ao longo da borda, a distância até a pista do Minianel mais afastada, usando o eixo de logradouros do
+O polígono do GeoSampa contém o corredor inteiro das marginais (as duas margens e o rio), com até ~430 m de largura.
+`--measure` mede, ao longo da borda, a distância até a pista do Minianel mais afastada, sobre o eixo de logradouros do
 PRÓPRIO GeoSampa (geoportal:segmento_logradouro, CC-BY-SA 4.0 — mesma fonte e licença do polígono; nada do OSM):
   1. amostra a borda a cada `spacing_m`;
-  2. pega os segmentos com nome de via do Minianel (lista em config, por denominação oficial) e os pontos deles (a cada
-     10 m) dentro do polígono; cada ponto cai no trecho da borda mais próximo;
-  3. um ponto só alarga o corredor se o raio borda→ponto não cruzar, depois da primeira pista, uma rua local paralela
-     à borda (evita engolir quadras entre pistas, como em Bom Retiro, onde a Av. Pres. Castelo Branco entra no bairro);
-  4. largura do trecho = maior distância + `margin_m` (mínimo `min_width_m`). Pistas que não couberem na faixa (as do
-     passo 3 e as que a verificação final não achar dentro da faixa) entram como linhas com buffer de `margin_m`.
-O seed recorta: ST_Difference(mian, faixas da borda ∪ linhas). `geom_endpoint` guarda o polígono inteiro: origem e destino
-são testados contra ele (um ponto no corredor continua "dentro do rodízio").
+  2. pega os segmentos com nome de via do Minianel (denominações oficiais em config) e os acessos a elas e às pontes
+     sobre os rios (tipo em `access_types` com o nome da via ou casando com `access_patterns`, ex.: "AC DOIS A AV PRES
+     CASTELO BRANCO", "AC A PONTE DO PIQUERI") e os pontos deles (a cada 10 m) dentro do polígono; cada ponto cai no
+     trecho da borda mais próximo;
+  3. um ponto só alarga o corredor se o raio borda→ponto não cruzar, depois da primeira pista, uma rua local paralela à
+     borda (não engole quadras entre pistas, como em Bom Retiro, onde a Av. Pres. Castelo Branco entra no bairro);
+  4. largura do trecho = maior distância + `margin_m` (mínimo `min_width_m`); vales mais curtos que 2 x `gap_fill_m`
+     entre trechos mais largos são preenchidos (fechamento 1D: o eixo do GeoSampa tem falhas, ex.: sob a Ponte do Jaguaré);
+  5. pistas que não couberem na faixa (as do passo 3 e as que a verificação final não achar dentro dela) entram como
+     linhas com buffer de `margin_m`.
+O seed recorta ST_Difference(mian, faixas da borda ∪ linhas) e grava o Minianel inteiro em `geom_endpoint`: origem e
+destino são testados contra ele (um endereço no corredor continua "dentro do rodízio").
 
 Uso:
   python3 scripts/gen-zones-seed.py                    # gera os dois seeds (só stdlib, sem rede)
@@ -59,6 +63,8 @@ def load(name):
     if not p.exists():
         return None
     d = json.load(open(p, encoding='utf-8'))
+    if len(d['features']) != 1:   # ex.: arquivo convertido de SHP por data/import/import-zmrc.sh com várias partes
+        raise SystemExit(f"data/raw/{name} tem {len(d['features'])} feições; o gerador espera uma só (o polígono da zona)")
     f = d['features'][0]
     geom = f['geometry']
     if geom['type'] == 'Polygon':
@@ -100,7 +106,7 @@ def point_in_ring(x, y, R):
 
 
 def winding(x, y, P):
-    """Número de voltas (regra não-zero): serve para polígonos que se cruzam (offset grande em curva convexa)."""
+    """Número de voltas (regra não-zero): serve para polígonos que se cruzam (faixa larga em curva fechada)."""
     w = 0
     for i in range(len(P)):
         (x1, y1), (x2, y2) = P[i], P[(i + 1) % len(P)]
@@ -133,19 +139,26 @@ class Border:
         self.left_inside = area > 0                      # anel anti-horário: o lado de dentro fica à esquerda
         self.segs, arc = [], 0.0
         for i in range(n):
-            (x1, y1), (x2, y2) = self.P[i], self.P[(i + 1) % n]
-            L = math.hypot(x2 - x1, y2 - y1)
+            p, q = self.P[i], self.P[(i + 1) % n]
+            L = math.hypot(q[0] - p[0], q[1] - p[1])
             if L > 0:
-                nx, ny = (-(y2 - y1) / L, (x2 - x1) / L) if self.left_inside else ((y2 - y1) / L, -(x2 - x1) / L)
-                self.segs.append((x1, y1, x2, y2, L, arc, nx, ny))
+                nx, ny = self.normal(p, q)
+                self.segs.append((p[0], p[1], q[0], q[1], L, arc, nx, ny))
             arc += L
         self.length = arc
         self.cell = 200.0
         self.grid = {}
-        for si, (x1, y1, x2, y2, *_ ) in enumerate(self.segs):
+        for si, (x1, y1, x2, y2, *_r) in enumerate(self.segs):
             for gx in range(int(min(x1, x2) // self.cell) - 1, int(max(x1, x2) // self.cell) + 2):
                 for gy in range(int(min(y1, y2) // self.cell) - 1, int(max(y1, y2) // self.cell) + 2):
                     self.grid.setdefault((gx, gy), []).append(si)
+
+    def normal(self, p, q):
+        L = math.hypot(q[0] - p[0], q[1] - p[1])
+        if L == 0:
+            return None
+        dx, dy = (q[0] - p[0]) / L, (q[1] - p[1]) / L
+        return (-dy, dx) if self.left_inside else (dy, -dx)
 
     def nearest(self, x, y, reach_m=600.0):
         """(distância, arco, ponto mais próximo) na borda."""
@@ -153,7 +166,7 @@ class Border:
         cx, cy, r = int(x // self.cell), int(y // self.cell), int(math.ceil(reach_m / self.cell))
         cand = {si for gx in range(cx - r, cx + r + 1) for gy in range(cy - r, cy + r + 1) for si in self.grid.get((gx, gy), ())}
         for si in cand:
-            x1, y1, x2, y2, L, a0, *_ = self.segs[si]
+            x1, y1, x2, y2, L, a0, *_r = self.segs[si]
             t = max(0.0, min(1.0, ((x - x1) * (x2 - x1) + (y - y1) * (y2 - y1)) / (L * L)))
             px, py = x1 + t * (x2 - x1), y1 + t * (y2 - y1)
             d = math.hypot(x - px, y - py)
@@ -173,14 +186,7 @@ class Border:
                 hi = mid - 1
         x1, y1, x2, y2, L, a0, nx, ny = self.segs[lo]
         t = min(1.0, max(0.0, (a - a0) / L))
-        return (x1 + t * (x2 - x1), y1 + t * (y2 - y1)), (nx, ny), lo
-
-    def normal(self, p, q):
-        L = math.hypot(q[0] - p[0], q[1] - p[1])
-        if L == 0:
-            return None
-        dx, dy = (q[0] - p[0]) / L, (q[1] - p[1]) / L
-        return (-dy, dx) if self.left_inside else (dy, -dx)
+        return (x1 + t * (x2 - x1), y1 + t * (y2 - y1)), (nx, ny)
 
     def subpath(self, a0, a1):
         """Pontos da borda do arco a0 ao a1 (a1 > a0; dá a volta no anel) e a normal para dentro de cada trecho entre eles."""
@@ -193,14 +199,13 @@ class Border:
                 if a0 < s0 + wrap < a1:
                     verts.append((s0 + wrap, (x1, y1)))
         pts = [self.at(a0)[0]] + [v for _, v in sorted(verts)] + [self.at(a1)[0]]
-        norms, last = [], None
-        for p, q in zip(pts, pts[1:]):
-            n = self.normal(p, q) or last
-            norms.append(n)
-            last = n
+        norms = [self.normal(p, q) for p, q in zip(pts, pts[1:])]
         first = next((n for n in norms if n), self.at(a0)[1])
-        norms = [n or first for n in norms]
-        return pts, norms
+        out, last = [], first
+        for n in norms:
+            last = n or last
+            out.append(last)
+        return pts, out
 
 
 def offset_polygon(pts, norms, W):
@@ -299,103 +304,128 @@ def _densify(line, step=10.0):
     return pts
 
 
+def _closing(width, k):
+    """Fechamento 1D (dilata e erode com janela de k trechos): preenche vales curtos sem alargar as pontas."""
+    n = len(width)
+    dil = [max(width[(i + j) % n] for j in range(-k, k + 1)) for i in range(n)]
+    return [max(width[i], min(dil[(i + j) % n] for j in range(-k, k + 1))) for i in range(n)]
+
+
+class _Index:
+    """Grade de 100 m sobre linhas (para cruzar raios com ruas e pistas)."""
+    cell = 100.0
+
+    def __init__(self, lines):
+        self.lines, self.g = lines, {}
+        for li, ln in enumerate(lines):
+            for k, ((x1, y1), (x2, y2)) in enumerate(zip(ln, ln[1:])):
+                for gx in range(int(min(x1, x2) // self.cell), int(max(x1, x2) // self.cell) + 1):
+                    for gy in range(int(min(y1, y2) // self.cell), int(max(y1, y2) // self.cell) + 1):
+                        self.g.setdefault((gx, gy), set()).add((li, k))
+
+    def hits(self, a, b, parallel_only=False):
+        """[(t, linha)] em que o raio ab cruza as linhas (t de 0 a 1). parallel_only: ignora o que atravessa o corredor."""
+        n = max(1, int(math.hypot(b[0] - a[0], b[1] - a[1]) // self.cell) + 1)
+        cand = set()
+        for j in range(n + 1):
+            x, y = a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n
+            for gx in (int(x // self.cell) - 1, int(x // self.cell), int(x // self.cell) + 1):
+                for gy in (int(y // self.cell) - 1, int(y // self.cell), int(y // self.cell) + 1):
+                    cand |= self.g.get((gx, gy), set())
+        rx, ry = b[0] - a[0], b[1] - a[1]
+        rl = math.hypot(rx, ry) or 1
+        out = []
+        for li, k in cand:
+            c0, c1 = self.lines[li][k], self.lines[li][k + 1]
+            if parallel_only:
+                sx, sy = c1[0] - c0[0], c1[1] - c0[1]
+                if abs(rx * sx + ry * sy) / (rl * (math.hypot(sx, sy) or 1)) > 0.7:   # ponte/acesso que atravessa o corredor
+                    continue
+            t = seg_cross(a, b, c0, c1)
+            if t is not None:
+                out.append((t, li))
+        return out
+
+
 def measure(mian_geom):
     c = cfg['minianel_corridors']
     spacing, margin, wmin = float(c['spacing_m']), float(c['margin_m']), float(c['min_width_m'])
     ring = outer_ring(mian_geom)
     B = Border(ring)
     R = B.P
-    classes = {_norm(n): (lc['class'], float(lc['max_dist_m'])) for lc in c['lanes'] for n in lc['names']}
+    classes = {_norm(n): float(lc['max_dist_m']) for lc in c['lanes'] for n in lc['names']}
+    acc_types = set(c.get('access_types', []))
+    acc_res = [re.compile(r) for r in c.get('access_patterns', [])]
+    acc_cap = max(classes.values()) if classes else 0.0
+
+    def lane_cap(name, tipo):
+        """Distância máxima da borda se o segmento é pista do Minianel. Acessos (tipo AC) cujo nome oficial cita uma via do
+        Minianel ou uma ponte sobre os rios ("AC DOIS A AV PRES CASTELO BRANCO", "AC A PONTE DO PIQUERI") contam como pista:
+        são a entrada e a saída das vias (art. 2º §2º)."""
+        if name in classes:
+            return classes[name]
+        if tipo in acc_types:
+            cap = next((cap for ln, cap in classes.items() if name.endswith(' ' + ln)), None)
+            if cap is None and any(r.search(name) for r in acc_res):
+                cap = acc_cap
+            return cap
+        return None
     no_block = set(c.get('non_blocking_types', []))
     feats = fetch_segments(ring)
 
     lanes, blockers, bnames, dropped = [], [], [], {}
     for f in feats:
         name = seg_name(f['properties'])
+        cap = lane_cap(name, (f['properties'].get('cd_tipo_logradouro') or '').strip())
         for ln in _lines(f['geometry']):
             xy = [to_xy(p) for p in ln]
             if len(xy) < 2:
                 continue
-            if name in classes:
-                cls, cap = classes[name]
+            if cap is not None:
                 pts = [p for p in _densify(xy) if point_in_ring(p[0], p[1], R)]
                 if not pts:
                     continue
                 near = [B.nearest(x, y) for x, y in pts]
-                if max(n[0] for n in near) > cap:          # não é a via-limite (ex.: Anhaia Mello fora do trecho do Minianel)
+                if max(n[0] for n in near) > cap:   # homônimo longe da borda (ex.: Anhaia Mello fora do trecho)
                     dropped[name] = dropped.get(name, 0) + 1
                     continue
                 lanes.append((name, pts, near))
             elif (f['properties'].get('cd_tipo_logradouro') or '').strip() not in no_block:
                 blockers.append(xy)
                 bnames.append(name)
-
-    # índice das ruas locais (bloqueiam o raio só se forem paralelas à borda) e das pistas (marcam a primeira pista do raio)
-    cell = 100.0
-
-    def index(lines):
-        g = {}
-        for li, ln in enumerate(lines):
-            for k, ((x1, y1), (x2, y2)) in enumerate(zip(ln, ln[1:])):
-                for gx in range(int(min(x1, x2) // cell), int(max(x1, x2) // cell) + 1):
-                    for gy in range(int(min(y1, y2) // cell), int(max(y1, y2) // cell) + 1):
-                        g.setdefault((gx, gy), set()).add((li, k))
-        return g
-
-    lane_lines = [[(p[0], p[1]) for p in pts] for _, pts, _ in lanes]
-    gb, gl = index(blockers), index(lane_lines)
-
-    def hits(g, lines, a, b, parallel_only):
-        """(t, linha) em que o raio ab cruza as linhas do índice (t de 0 a 1)."""
-        ts = []
-        n = max(1, int(math.hypot(b[0] - a[0], b[1] - a[1]) // cell) + 1)
-        cand = set()
-        for j in range(n + 1):
-            x, y = a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n
-            for gx in (int(x // cell) - 1, int(x // cell), int(x // cell) + 1):
-                for gy in (int(y // cell) - 1, int(y // cell), int(y // cell) + 1):
-                    cand |= g.get((gx, gy), set())
-        rx, ry = b[0] - a[0], b[1] - a[1]
-        rl = math.hypot(rx, ry) or 1
-        for li, k in cand:
-            c0, c1 = lines[li][k], lines[li][k + 1]
-            if parallel_only:
-                sx, sy = c1[0] - c0[0], c1[1] - c0[1]
-                sl = math.hypot(sx, sy) or 1
-                if abs(rx * sx + ry * sy) / (rl * sl) > 0.7:   # rua que atravessa o corredor (ponte, acesso): não bloqueia
-                    continue
-            t = seg_cross(a, b, c0, c1)
-            if t is not None:
-                ts.append((t, li))
-        return ts
+    gl, gb = _Index([pts for _, pts, _ in lanes]), _Index(blockers)
 
     nb = int(math.ceil(B.length / spacing))
     width = [0.0] * nb
-    counted, inland, blocked_by = [], [], {}                              # (bin, x, y) / pontos que vão como linha com buffer
-    for li, (name, pts, near) in enumerate(lanes):
+    counted, flags_by_lane, blocked_by = [], [], {}
+    for name, pts, near in lanes:
         flags = []
         for (x, y), (d, a, q) in zip(pts, near):
             ok = True
             if d > 30:
-                lt = [t for t, _ in hits(gl, lane_lines, q, (x, y), False) if t < 0.98]
+                lt = [t for t, _ in gl.hits(q, (x, y)) if t < 0.98]
                 first_lane = min(lt) if lt else None
-                bt = [bi for t, bi in hits(gb, blockers, q, (x, y), True) if first_lane is not None and first_lane < t < 0.97]
+                bt = [bi for t, bi in gb.hits(q, (x, y), True) if first_lane is not None and first_lane < t < 0.97]
                 ok = not bt
-                for bi in bt[:1]:
-                    blocked_by[(name, bnames[bi])] = blocked_by.get((name, bnames[bi]), 0) + 1
+                if bt:
+                    blocked_by[(name, bnames[bt[0]])] = blocked_by.get((name, bnames[bt[0]]), 0) + 1
             b = min(nb - 1, int(a // spacing))
             if ok:
                 width[b] = max(width[b], d)
                 counted.append((b, x, y))
             flags.append(ok)
-        inland.append(flags)
+        flags_by_lane.append(flags)
 
-    W = [0.0 if w == 0 else max(wmin, math.ceil((w + margin) / 5) * 5) for w in width]
+    W0 = [0.0 if w == 0 else max(wmin, w + margin) for w in width]
+    k = int(round(float(c.get('gap_fill_m', 0)) / spacing))
+    W1 = _closing(W0, k) if k else W0
+    W = [0 if w == 0 else int(math.ceil(w / 5) * 5) for w in W1]
 
     # verificação: cada ponto contado precisa cair na faixa do seu trecho (ou de um vizinho); o resto vai como linha
     polys = {}
 
     def poly(b):
+        b %= nb
         if b not in polys:
             pts, norms = B.subpath(b * spacing - 1.0, min((b + 1) * spacing, B.length) + 1.0)
             polys[b] = offset_polygon(pts, norms, W[b]) if W[b] > 0 else None
@@ -403,10 +433,10 @@ def measure(mian_geom):
 
     uncovered = set()
     for (b, x, y) in counted:
-        if not any(poly(k % nb) and winding(x, y, poly(k % nb)) != 0 for k in (b, b - 1, b + 1)):
+        if not any(poly(j) and winding(x, y, poly(j)) != 0 for j in (b, b - 1, b + 1)):
             uncovered.add((round(x, 3), round(y, 3)))
     extra = []
-    for (name, pts, near), flags in zip(lanes, inland):
+    for (name, pts, near), flags in zip(lanes, flags_by_lane):
         run = []
         for (x, y), ok in zip(pts, flags):
             if not ok or (round(x, 3), round(y, 3)) in uncovered:
@@ -433,34 +463,33 @@ def measure(mian_geom):
     ws = sorted(w for w in W if w > 0)
     stats = {
         'trechos_com_pista': len(ws), 'faixas': len(runs), 'largura_mediana_m': ws[len(ws) // 2] if ws else 0,
-        'largura_max_m': ws[-1] if ws else 0, 'segmentos_de_pista': len(lanes), 'pontos_de_pista': sum(len(p) for _, p, _ in lanes),
+        'largura_max_m': ws[-1] if ws else 0, 'trechos_preenchidos': sum(1 for a, b2 in zip(W0, W1) if b2 > a),
+        'segmentos_de_pista': len(lanes), 'pontos_de_pista': sum(len(p) for _, p, _ in lanes),
         'pontos_fora_da_faixa': sum(len(r) for r in extra), 'linhas_com_buffer': len(extra),
         'segmentos_descartados_longe_da_borda': dropped,
     }
-    for (ln, bn), k in sorted(blocked_by.items(), key=lambda kv: -kv[1])[:25]:
-        print(f'  bloqueado: {k:4d} pontos de {ln} por {bn}')
     print(json.dumps(stats, ensure_ascii=False))
+    for (ln, bn), n in sorted(blocked_by.items(), key=lambda kv: -kv[1])[:20]:
+        print(f'  raio bloqueado: {n:4d} pontos de {ln} por {bn}')
     return runs, extra, stats
 
 
 def corridor_cut_sql(mian_geom):
     """SQL do polígono do rodízio de caminhões: mian menos as faixas da borda e as linhas das pistas (buffer)."""
     c = cfg['minianel_corridors']
-    ring = outer_ring(mian_geom)
-    B = Border(ring)
+    B = Border(outer_ring(mian_geom))
     parts = []
     for lon, lat, a0, length, w in c.get('width_profile', []):
-        p, _, _ = B.at(a0)
-        if math.hypot(p[0] - to_xy((lon, lat))[0], p[1] - to_xy((lon, lat))[1]) > 2:
+        p, _ = B.at(a0)
+        q = to_xy((lon, lat))
+        if math.hypot(p[0] - q[0], p[1] - q[1]) > 2:
             raise SystemExit(f'a borda do Minianel mudou desde a medição (arco {a0} m): rode --measure de novo')
         pts, norms = B.subpath(a0 - 1.0, a0 + length + 1.0)
         P = offset_polygon(pts, norms, float(w))
-        g = {'type': 'Polygon', 'coordinates': [[to_ll(*q) for q in P + [P[0]]]]}
-        parts.append(f'ST_MakeValid({gj(g)})')
-    lines = [l for l in c.get('lane_buffers', []) if l]
+        parts.append(f"ST_MakeValid({gj({'type': 'Polygon', 'coordinates': [[to_ll(*v) for v in P + [P[0]]]]})})")
+    lines = [l if len(l) > 1 else [l[0], l[0]] for l in c.get('lane_buffers', []) if l]
     if lines:
-        mls = {'type': 'MultiLineString', 'coordinates': [l if len(l) > 1 else [l[0], l[0]] for l in lines]}
-        parts.append(f"ST_Buffer({gj(mls)}::geography, {float(c['margin_m'])})::geometry")
+        parts.append(f"ST_Buffer({gj({'type': 'MultiLineString', 'coordinates': lines})}::geography, {float(c['margin_m'])})::geometry")
     if not parts:
         return f'ST_Multi({gj(mian_geom)})'
     cut = 'ST_UnaryUnion(ST_Collect(ARRAY[\n      ' + ',\n      '.join(parts) + ']))'
@@ -560,6 +589,14 @@ def check_brasilapi(years, rows):
 
 
 # ----------------------------------------------------------------------------------------------------------- main
+def write_config():
+    txt = json.dumps(cfg, ensure_ascii=False, indent=2)
+    # perfis em uma linha por item (arquivo legível)
+    txt = re.sub(r'\[\s+(-?\d+\.\d+),\s+(-?\d+\.\d+),\s+(-?\d+(?:\.\d+)?),\s+(-?\d+(?:\.\d+)?),\s+(\d+)\s+\]', r'[\1, \2, \3, \4, \5]', txt)
+    txt = re.sub(r'\[\s+(-?\d+\.\d+),\s+(-?\d+\.\d+)\s+\]', r'[\1, \2]', txt)
+    cfg_path.write_text(txt + '\n', encoding='utf-8')
+
+
 m = load('geosampa_restricao_circulacao_veiculo_mian.geojson')
 
 if '--measure' in sys.argv:
@@ -570,11 +607,7 @@ if '--measure' in sys.argv:
     c['measured'] = {'date': dt.date.today().isoformat(), **stats}
     c['width_profile'] = runs
     c['lane_buffers'] = extra
-    txt = json.dumps(cfg, ensure_ascii=False, indent=2)
-    # perfis em uma linha por item (arquivo legível)
-    txt = re.sub(r'\[\s+(-?\d+\.\d+),\s+(-?\d+\.\d+),\s+(-?\d+(?:\.\d+)?),\s+(-?\d+(?:\.\d+)?),\s+(\d+)\s+\]', r'[\1, \2, \3, \4, \5]', txt)
-    txt = re.sub(r'\[\s+(-?\d+\.\d+),\s+(-?\d+\.\d+)\s+\]', r'[\1, \2]', txt)
-    cfg_path.write_text(txt + '\n', encoding='utf-8')
+    write_config()
     print(f'ok: {len(runs)} faixas e {len(extra)} linhas gravadas em {cfg_path.relative_to(root)}')
 
 zones = []  # (id, name, geom_sql, endpoint_sql, rules, source)
@@ -595,7 +628,7 @@ if m:
 
 out = ['-- GERADO por scripts/gen-zones-seed.py a partir de data/raw (GeoSampa WFS) e config/zmrc-rules.json. Não edite à mão.',
        '-- Regras conferidas nas normas em 09/10/2026 (ver docs/layers/core_legal.md). Requer a migration 0101 (geom_endpoint).',
-       '-- Dados: GeoSampa/Prefeitura de São Paulo, CC-BY-SA 4.0. Nenhum dado do OpenStreetMap.']
+       '-- Dados geográficos: GeoSampa/Prefeitura de São Paulo, CC-BY-SA 4.0. Nenhum dado do OpenStreetMap.']
 for id_, name, geom_sql, endpoint_sql, rules, src in zones:
     out.append(
         "insert into restriction_zones (id, name, geom, geom_endpoint, rules, source) values\n"
