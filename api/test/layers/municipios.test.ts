@@ -4,7 +4,7 @@ import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
 import { pool } from '../helpers.js';
 import layer, {
-  describeJanelas, enquadrar, fitsVuc, municipiosOD, regraAplicavel, ufDe, type Regra,
+  describeJanelas, enquadrar, fitsVuc, municipiosOD, regraAplicavel, ufDe, uniaoJanelas, type Regra,
 } from '../../src/layers/restricoes_rmsp.layer.js';
 import { resolveVehicle } from '../../src/services/vehicle.js';
 
@@ -46,7 +46,7 @@ describe('regras do formato (sem banco)', () => {
   it('capacidade de carga: sem o dado vale o lado seguro (e marca a suposição); informada decide', () => {
     const z = regra('ficticio_area_central');   // capacidade acima de 5,5 t OU comprimento acima de 6,5 m
     const semDado = enquadrar(z, veic(PEQUENO));
-    expect(semDado).toMatchObject({ aplica: true, classe: 'caminhão', capacidadeSuposta: { estimativa_t: 5, com_estimativa: { aplica: false } } });
+    expect(semDado).toMatchObject({ aplica: true, classe: 'caminhão', capacidadeSuposta: { estimativa_t: 5, com_estimativa: { aplica: false }, vuc_por_capacidade: true } });
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 5 }))).toMatchObject({ aplica: false });
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 5 })).capacidadeSuposta).toBeUndefined();
     expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 6 }))).toMatchObject({ aplica: true, classe: 'caminhão' });
@@ -56,6 +56,57 @@ describe('regras do formato (sem banco)', () => {
     expect(toco.capacidadeSuposta).toBeUndefined();
     // utilitário (PBT 3,5 t) não é caminhão: nunca entra
     expect(enquadrar(z, veic({ preset: 'utilitario' })).aplica).toBe(false);
+  });
+
+  it('capacidade sem o dado nas variantes: horário de classe menor não encurta a restrição (lado seguro)', () => {
+    const z = regra('ficticio_area_central');
+    const comLeve = (janelas: Regra['janelas']): Regra => ({
+      ...z, variantes: [...(z.variantes ?? []), { classe: 'leve', quando: { qualquer: [{ campo: 'payload_t', ate: 3 }] }, janelas }],
+    });
+    // horário da classe leve dentro do de caminhão: vale o de caminhão inteiro (o caminhão de 23 t sem a capacidade
+    // informada pode ter até 3 t de capacidade, mas a classe leve não tira a restrição das outras horas)
+    const dentro = comLeve([{ days: [1], from: '07:00', to: '08:00' }]);
+    const truck = enquadrar(dentro, veic({ preset: 'truck' }));
+    expect(truck).toMatchObject({ aplica: true, classe: 'caminhão' });
+    expect(describeJanelas(truck.janelas)).toBe('seg–sex 7h–20h; sáb 7h–15h');
+    expect(truck.capacidadeSuposta).toBeUndefined();                                 // a capacidade típica (14 t) decide igual
+    expect(enquadrar(dentro, veic({ preset: 'truck', payload_t: 2 }))).toMatchObject({ classe: 'leve', janelas: [{ days: [1], from: '07:00', to: '08:00' }] });
+    // horário da classe leve fora do de caminhão: soma os dois e avisa
+    const fora = comLeve([{ days: [7], from: '10:00', to: '12:00' }]);
+    const soma = enquadrar(fora, veic({ preset: 'truck' }));
+    expect(soma).toMatchObject({
+      aplica: true, classe: 'caminhão ou leve', classesPossiveis: ['caminhão', 'leve'],
+      capacidadeSuposta: { estimativa_t: 14, com_estimativa: { aplica: true, classe: 'caminhão' } },
+    });
+    expect(describeJanelas(soma.janelas)).toBe('seg–sex 7h–20h; sáb 7h–15h; dom 10h–12h');
+    // classe mais restrita acima de um limite de capacidade: só quando o PBT permite chegar lá
+    const pesado: Regra = { ...z, variantes: [{ classe: 'pesado', quando: { qualquer: [{ campo: 'payload_t', acima: 20 }] }, janelas: [{ days: [1, 2, 3, 4, 5, 6, 7], from: '00:00', to: '24:00' }] }] };
+    expect(enquadrar(pesado, veic({ preset: 'toco' })).classe).toBe('caminhão');     // PBT 16 t: a capacidade não passa de 20 t
+    expect(enquadrar(pesado, veic({ preset: 'truck' })).classe).toBe('pesado');      // PBT 23 t: pode passar (lado seguro)
+    expect(enquadrar(pesado, veic({ preset: 'truck', payload_t: 14 })).classe).toBe('caminhão');
+  });
+
+  it('uniaoJanelas: funde horários sobrepostos e contíguos por dia, em forma canônica', () => {
+    expect(uniaoJanelas([[{ days: [1, 2], from: '07:00', to: '09:00' }], [{ days: [2, 1], from: '08:00', to: '10:00' }, { days: [1], from: '10:00', to: '11:00' }]]))
+      .toEqual([{ days: [1], from: '07:00', to: '11:00' }, { days: [2], from: '07:00', to: '10:00' }]);
+    expect(uniaoJanelas([])).toEqual([]);
+  });
+
+  it('VUC isento só por dimensões e alvo por capacidade: sem o dado não aplica e não marca suposição', () => {
+    const z: Regra = { ...regra('ficticio_area_central'), vuc: { largura_max_m: 2.2, comprimento_max_m: 6.3, exige_cadastro: false, artigo: 'Portaria fictícia 1/2026, art. 2º' } };
+    const e = enquadrar(z, veic(PEQUENO));
+    expect(e).toMatchObject({ aplica: false, classe: 'VUC', vucIsento: true });
+    expect(e.capacidadeSuposta).toBeUndefined();
+  });
+
+  it('VUC que exige capacidade máxima: sem o dado é caminhão e marca a suposição mesmo quando a capacidade típica concorda', () => {
+    const z: Regra = { ...regra('ficticio_area_central'), alvo: { caminhao: true } };   // todo caminhão; VUC até 3 t herdado
+    expect(enquadrar(z, veic(PEQUENO))).toMatchObject({
+      aplica: true, classe: 'caminhão', capacidadeSuposta: { estimativa_t: 5, com_estimativa: { aplica: true, classe: 'caminhão' }, vuc_por_capacidade: true },
+    });
+    expect(enquadrar(z, veic({ ...PEQUENO, payload_t: 2.5 }))).toMatchObject({ aplica: false, classe: 'VUC', vucIsento: true });
+    // não cabe no VUC pelas dimensões: a capacidade não muda nada
+    expect(enquadrar(z, veic({ preset: 'toco' })).capacidadeSuposta).toBeUndefined();
   });
 
   it('variante por tipo de veículo: carreta e caminhão + reboque 24 h na zona', () => {
@@ -159,7 +210,8 @@ describe('município fictício gravado no banco (fonte da fixture)', () => {
     const sem = await layer.annotate!(ctxOf(O, D, '2026-10-13T10:00', PEQUENO) as any, reta as any);
     const codes = sem.warnings!.map((w) => w.code);
     expect(codes).toContain('municipal_capacidade_nao_informada');
-    expect(sem.warnings!.find((w) => w.code === 'municipal_capacidade_nao_informada')!.message).toMatch(/~5 t, aproximada\) ela não valeria/);
+    expect(sem.warnings!.find((w) => w.code === 'municipal_capacidade_nao_informada')!.message)
+      .toMatch(/cabe no VUC local pelas dimensões, mas o VUC também exige capacidade de carga até 3 t \(Portaria fictícia 1\/2026, art\. 2º\).*em "Área Central do Município Fictício".*~5 t, aproximada\), a regra não valeria/);
     expect(codes).toContain('municipal_regra_nao_aplicada');
     expect(sem.warnings!.find((w) => w.code === 'municipal_regra_nao_aplicada')!.message).toMatch(/suspensa.*Portaria fictícia 2\/2026/);
     expect((sem.data as any).nao_aplicadas.map((x: any) => x.regra_id)).toEqual(['ficticio_suspensa']);
@@ -181,7 +233,13 @@ describe('município fictício gravado no banco (fonte da fixture)', () => {
     expect((c.warnings ?? []).some((x) => /revogada|antiga/i.test(x.message))).toBe(false);
   });
 
-  it('mapa: features mostra só zona e vias aplicáveis da fixture', async () => {
+  it('mapa: features mostra só zona e vias aplicáveis e vigentes da fixture', async () => {
+    // cópia da área central com vigência futura: não aparece no mapa (nem na rota)
+    const fz = FIX.features.find((f: any) => f.props.regra_id === 'ficticio_area_central');
+    await pool.query(
+      `insert into data_features (layer_id, source, source_id, name, kind, geom, props, valid_from)
+       values ($1, $2, 'ficticio-futura', 'Zona futura', 'zona', ST_SetSRID(ST_GeomFromGeoJSON($3), 4326), $4::jsonb, '2099-01-01')`,
+      [LAYER, SOURCE, JSON.stringify(fz.geometry), JSON.stringify({ ...fz.props, regra_id: 'ficticio_futura', regime: 'Zona futura' })]);
     const fc = await layer.features!([-44.86, -24.82, -44.78, -24.79], { zoom: 14 });
     const nossas = fc.features.filter((f) => f.properties?.municipio === 'Município Fictício (teste)');
     expect(new Set(nossas.map((f) => f.properties?.regime))).toEqual(new Set(['Área Central', 'Corredor', 'Ponte (PBT até 12 t)']));

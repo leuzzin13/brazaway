@@ -144,7 +144,8 @@ function valor(v: Vehicle, c: Exclude<Campo, 'tipo'>): number | undefined {
 
 function condVale(v: Vehicle, c: Cond): boolean {
   if (c.campo === 'tipo') return !!c.em?.includes(v.vehicle_class ?? 'rigid');
-  // sem a capacidade informada, a condição vale (lado seguro: a restrição se aplica)
+  // chamada direta sem a capacidade informada: a condição vale. O enquadrar() não passa por aqui sem o dado: ele avalia
+  // cada capacidade possível (capacidadesPossiveis), o que também resolve "ate" e as variantes.
   if (c.campo === 'payload_t' && !payloadInformado(v)) return true;
   const x = valor(v, c.campo);
   if (x === undefined) return false;
@@ -177,18 +178,29 @@ export interface Enquadramento {
   /** VUC dentro da definição do município, mas a isenção exige cadastro (a regra continua valendo) */
   vucSoComCadastro?: boolean;
   vucIsento?: boolean;
-  /** a decisão dependeu da capacidade de carga, que não foi informada: com o valor típico do perfil seria outra */
-  capacidadeSuposta?: { estimativa_t: number | null; com_estimativa?: { aplica: boolean; classe: string } };
+  /** capacidade não informada e mais de uma classe possível sem janela que cubra as outras: `janelas` é a união delas */
+  classesPossiveis?: string[];
+  /**
+   * a decisão dependeu da capacidade de carga, que não foi informada (só quando a regra foi aplicada): com o valor típico
+   * do perfil seria outra (`com_estimativa`), ou o veículo cabe no VUC local pelas dimensões mas o VUC exige capacidade
+   * máxima (`vuc_por_capacidade`)
+   */
+  capacidadeSuposta?: { estimativa_t: number | null; com_estimativa?: { aplica: boolean; classe: string }; vuc_por_capacidade?: boolean };
 }
 
-const usaPayload = (r: Regra) => [r.alvo?.qualquer, r.alvo?.todas, ...(r.variantes ?? []).flatMap((x) => [x.quando?.qualquer, x.quando?.todas])]
-  .some((cs) => cs?.some((c) => c.campo === 'payload_t')) || r.vuc?.payload_max_t !== undefined;
+const condsDe = (r: Regra) => [r.alvo?.qualquer, r.alvo?.todas, ...(r.variantes ?? []).flatMap((x) => [x.quando?.qualquer, x.quando?.todas])]
+  .flatMap((cs) => cs ?? []);
+const usaPayload = (r: Regra) => condsDe(r).some((c) => c.campo === 'payload_t') || r.vuc?.payload_max_t !== undefined;
 
-function enquadrarBase(r: Regra, v: Vehicle): Enquadramento {
+/**
+ * `capacidadeReal = false`: a capacidade do veículo é uma hipótese (não foi informada), então o VUC que exige capacidade
+ * máxima não é concedido (lado seguro: sem o dado do CRLV, não é VUC ali).
+ */
+function enquadrarBase(r: Regra, v: Vehicle, capacidadeReal = true): Enquadramento {
   const base = { classe: 'caminhão', janelas: r.janelas };
   if (!(v.weight_t > TRUCK_MIN_PBT_T)) return { ...base, aplica: false };
   if (!predicadoVale(v, r.alvo)) return { ...base, aplica: false };
-  if (r.vuc && fitsVuc(v, r.vuc)) {
+  if (r.vuc && fitsVuc(v, r.vuc) && (capacidadeReal || r.vuc.payload_max_t === undefined)) {
     if (!r.vuc.exige_cadastro) return { ...base, classe: 'VUC', aplica: false, vucIsento: true };
     return { ...base, classe: 'VUC', aplica: true, vucSoComCadastro: true };
   }
@@ -197,15 +209,80 @@ function enquadrarBase(r: Regra, v: Vehicle): Enquadramento {
   return { ...base, aplica: true };
 }
 
-export function enquadrar(r: Regra, v: Vehicle): Enquadramento {
-  const e = enquadrarBase(r, v);
-  if (!payloadInformado(v) && usaPayload(r)) {
-    // o mesmo veículo com a capacidade típica do perfil: se a decisão mudaria, a rota avisa que supôs o lado seguro
-    const alt = v.payload_t === undefined ? null : enquadrarBase(r, { ...v, payload_t_aproximado: false });
-    if (!alt || alt.aplica !== e.aplica || alt.classe !== e.classe) {
-      e.capacidadeSuposta = { estimativa_t: v.payload_t ?? null, ...(alt ? { com_estimativa: { aplica: alt.aplica, classe: alt.classe } } : {}) };
+/**
+ * União das janelas, dia a dia, com os intervalos sobrepostos ou contíguos fundidos. Forma canônica (dias em ordem,
+ * intervalos em ordem): duas listas cobrem os mesmos horários se e só se a união delas sai igual.
+ */
+export function uniaoJanelas(listas: Janela[][]): Janela[] {
+  const porDia = new Map<number, [string, string][]>();
+  for (const js of listas) for (const j of js) for (const d of j.days) porDia.set(d, [...(porDia.get(d) ?? []), [j.from, j.to]]);
+  const grupos = new Map<string, number[]>();
+  for (const d of [...porDia.keys()].sort((a, b) => a - b)) {
+    const iv = porDia.get(d)!.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
+    const m: [string, string][] = [];
+    for (const [from, to] of iv) {
+      const u = m[m.length - 1];
+      if (u && from <= u[1]) { if (to > u[1]) u[1] = to; } else m.push([from, to]);
     }
+    const k = JSON.stringify(m);
+    grupos.set(k, [...(grupos.get(k) ?? []), d]);
   }
+  return [...grupos].flatMap(([k, days]) => (JSON.parse(k) as [string, string][]).map(([from, to]) => ({ days, from, to })));
+}
+
+const comCapacidade = (v: Vehicle, t: number): Vehicle => ({ ...v, payload_t: t, payload_t_aproximado: false });
+/** mesmo efeito na rota: as duas não se aplicam, ou se aplicam com a mesma classe e os mesmos horários */
+const chave = (e: Enquadramento) => (e.aplica ? `${e.classe}|${JSON.stringify(uniaoJanelas([e.janelas]))}` : '-');
+
+/**
+ * Capacidades que mudam o enquadramento: 0, cada limiar de capacidade da regra (alvo, variantes, VUC) e logo acima dele,
+ * e o PBT (a capacidade de carga nunca passa do PBT). Da maior para a menor.
+ */
+function capacidadesPossiveis(r: Regra, v: Vehicle): number[] {
+  const teto = Number.isFinite(v.weight_t) && v.weight_t > 0 ? v.weight_t : Number.POSITIVE_INFINITY;
+  const limiares = condsDe(r).filter((c) => c.campo === 'payload_t').flatMap((c) => [c.acima, c.ate]);
+  if (r.vuc?.payload_max_t !== undefined) limiares.push(r.vuc.payload_max_t);
+  const xs = [0, teto, ...limiares.filter((x): x is number => x !== undefined).flatMap((x) => [x, x + 0.001])].filter((x) => x <= teto);
+  return [...new Set(xs)].sort((a, b) => b - a);
+}
+
+/**
+ * Lado seguro entre as hipóteses de capacidade: a regra vale se valer em alguma; entre as que valem, fica a de horário
+ * que cobre todos os outros ou, se nenhuma cobre, a união dos horários (classe "carreta ou leve").
+ */
+function ladoSeguro(hs: Enquadramento[]): Enquadramento {
+  const ap = hs.filter((h) => h.aplica);
+  if (!ap.length) return { ...hs[0] };
+  const u = uniaoJanelas(ap.map((h) => h.janelas));
+  const ku = JSON.stringify(u);
+  const dominante = ap.find((h) => JSON.stringify(uniaoJanelas([h.janelas])) === ku);
+  if (dominante) return { ...dominante };
+  const classes = [...new Set(ap.map((h) => h.classe))];
+  return { aplica: true, classe: classes.join(' ou '), janelas: u, classesPossiveis: classes, ...(ap.some((h) => h.vucSoComCadastro) ? { vucSoComCadastro: true } : {}) };
+}
+
+/**
+ * Enquadramento do veículo na regra. Sem a capacidade de carga informada (o valor do perfil é só típico), avalia cada
+ * capacidade possível e fica com o lado seguro (ladoSeguro); quando a regra foi aplicada e a capacidade mudaria a decisão,
+ * marca `capacidadeSuposta` para o annotate avisar.
+ */
+export function enquadrar(r: Regra, v: Vehicle): Enquadramento {
+  if (payloadInformado(v) || !usaPayload(r)) return enquadrarBase(r, v);
+  const caps = capacidadesPossiveis(r, v);
+  const e = ladoSeguro(caps.map((t) => enquadrarBase(r, comCapacidade(v, t), false)));
+  // nenhuma capacidade faz a regra valer: não há suposição a avisar
+  if (!e.aplica) return e;
+  // a capacidade não muda nada (ex.: o comprimento já decide)
+  if (caps.every((t) => chave(enquadrarBase(r, comCapacidade(v, t))) === chave(e))) return e;
+  const vucPorCapacidade = !!r.vuc && r.vuc.payload_max_t !== undefined && fitsVuc(comCapacidade(v, 0), r.vuc);
+  const alt = v.payload_t === undefined ? null : enquadrarBase(r, comCapacidade(v, v.payload_t));
+  // o valor típico do perfil decidiria igual: só avisa quando o veículo podia ser VUC
+  if (alt && chave(alt) === chave(e) && !vucPorCapacidade) return e;
+  e.capacidadeSuposta = {
+    estimativa_t: v.payload_t ?? null,
+    ...(alt ? { com_estimativa: { aplica: alt.aplica, classe: alt.classe } } : {}),
+    ...(vucPorCapacidade ? { vuc_por_capacidade: true } : {}),
+  };
   return e;
 }
 
@@ -345,7 +422,9 @@ function itemOf(row: Row, rule: string): LayerItem {
 }
 
 const local = (d: Date) => DateTime.fromJSDate(d).setZone(env.tz);
-const ruleLabel = (r: Regra, e: Enquadramento) => `${describeJanelas(e.janelas)}${r.feriados === 'suspende' ? ', exceto feriados' : ''}`;
+/** horário da regra para o veículo; regra não ativa pode não ter janelas registradas (o schema aceita) */
+const horarioTexto = (js: Janela[] | undefined) => describeJanelas(js ?? []) || 'sem horário registrado';
+const ruleLabel = (r: Regra, e: Enquadramento) => `${horarioTexto(e.janelas)}${r.feriados === 'suspende' ? ', exceto feriados' : ''}`;
 const atoCurto = (r: Regra) => r.base_legal[0]?.ato.split('(')[0].replace(/,?\s*arts?\..*$/, '').trim() ?? '';
 
 // ---------------------------------------------------------------- camada
@@ -439,7 +518,8 @@ const layer: RouteLayer = {
               p as (select ST_Subdivide(l.g, 32) as g from l)
          select distinct on (f.id) f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry
            from data_features f join p on f.geom && ST_Expand(p.g, 0.0002) and ST_DWithin(f.geom::geography, p.g::geography, 8)
-          where f.layer_id = $1 and f.kind in ('desativada', 'suspensa') and (f.valid_to is null or f.valid_to > $3::timestamptz)`,
+          where f.layer_id = $1 and f.kind in ('desativada', 'suspensa')
+            and (f.valid_from is null or f.valid_from <= $3::timestamptz) and (f.valid_to is null or f.valid_to > $3::timestamptz)`,
         [LAYER, JSON.stringify(geom), ctx.at.toISOString()],
       ).then((r) => r.rows).catch(() => [] as Row[]),
     ]);
@@ -575,7 +655,7 @@ const layer: RouteLayer = {
               ST_AsGeoJSON(case when $6::boolean then ST_SimplifyPreserveTopology(geom, 0.00005) else geom end, 6)::json as geometry
          from data_features
         where layer_id = $1 and kind in ('zona', 'via') and geom && ST_MakeEnvelope($2, $3, $4, $5, 4326)
-          and (valid_to is null or valid_to > now())
+          and (valid_from is null or valid_from <= now()) and (valid_to is null or valid_to > now())
         limit 4000`,
       // zoom vem da query string (pode ser 12.5, NaN...): decide no JS e manda boolean
       [LAYER, ...bbox, !(Number.isFinite(zoom) && (zoom as number) >= 13)],
@@ -589,7 +669,7 @@ const layer: RouteLayer = {
           properties: {
             id: x.id, name: x.name, kind: x.kind, municipio: p.municipio, regime: p.regime, inciso: p.inciso ?? null,
             sentido: p.sentido ?? null, aproximado: !!p.aproximado,
-            description: `${describeJanelas(p.janelas)}${p.feriados === 'suspende' ? ', exceto feriados' : ''}. ${alvoTexto(p)}${p.trecho ? ` Trecho: ${p.trecho}.` : ''}`,
+            description: `${horarioTexto(p.janelas)}${p.feriados === 'suspende' ? ', exceto feriados' : ''}. ${alvoTexto(p)}${p.trecho ? ` Trecho: ${p.trecho}.` : ''}`,
             source: atoCurto(p), source_url: p.base_legal[0]?.url,
           },
         };
@@ -623,16 +703,37 @@ function alvoTexto(r: Regra): string {
   return `${c ? `Caminhões com ${c}.` : 'Caminhões.'}${vuc}`;
 }
 
-/** regra decidida sem a capacidade de carga informada (e o valor típico do perfil decidiria diferente) */
+/** efeito da capacidade típica do perfil (aproximada) em relação ao que a rota aplicou */
+function efeitoDaEstimativa(e: Enquadramento, alt: { aplica: boolean; classe: string } | undefined): string {
+  if (!alt) return '';
+  if (!alt.aplica) return alt.classe === 'VUC' ? 'seria VUC isento' : 'a regra não valeria';
+  if (alt.classe === e.classe) return '';
+  return e.classesPossiveis ? `valeria só como ${alt.classe}` : `valeria como ${alt.classe}, não como ${e.classe}`;
+}
+
+/** regra aplicada sem a capacidade de carga informada, quando a capacidade mudaria a decisão (ver enquadrar) */
 function noteCapacidade(r: Regra, e: Enquadramento, warnings: LayerWarning[], seen: Set<string>) {
-  if (!e.capacidadeSuposta) return;
+  const s = e.capacidadeSuposta;
+  if (!s || !e.aplica) return;
+  const est = s.estimativa_t;
+  const efeito = efeitoDaEstimativa(e, s.com_estimativa);
+  const comEstimativa = efeito && est != null ? `. Com a capacidade típica do perfil (~${num(est)} t, aproximada), ${efeito}` : '';
+  const pedido = 'Informe a capacidade de carga do CRLV.';
+  if (s.vuc_por_capacidade && r.vuc?.payload_max_t !== undefined) {
+    // sem efeito próprio da regra, um aviso por município e classe (ex.: os 4 anexos de Cajamar)
+    const key = efeito ? `cap:${r.regra_id}` : `cap:vuc:${r.municipio}:${e.classe}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    warnings.push({ code: 'municipal_capacidade_nao_informada', severity: 'info',
+      message: `${r.municipio}: o veículo cabe no VUC local pelas dimensões, mas o VUC também exige capacidade de carga até ${num(r.vuc.payload_max_t)} t (${r.vuc.artigo ?? atoCurto(r)}), que não foi informada; a rota o tratou como ${e.classe}${efeito ? ` em "${r.nome}"` : ''} (lado seguro)${comEstimativa}. ${pedido}` });
+    return;
+  }
   const key = `cap:${r.regra_id}`;
   if (seen.has(key)) return;
   seen.add(key);
-  const { estimativa_t: est, com_estimativa: alt } = e.capacidadeSuposta;
-  const efeito = !alt ? '' : !alt.aplica ? ' ela não valeria' : ` valeria como ${alt.classe}, não como ${e.classe}`;
+  const como = e.classesPossiveis ? `somou os horários das classes possíveis (${e.classe})` : e.classe !== 'caminhão' ? `aplicou a classe ${e.classe}` : 'considerou a restrição';
   warnings.push({ code: 'municipal_capacidade_nao_informada', severity: 'info',
-    message: `${r.municipio}: "${r.nome}" depende da capacidade de carga, que não foi informada; a rota considerou a restrição (lado seguro)${est != null && efeito ? `. Com a capacidade típica do perfil (~${num(est)} t, aproximada)${efeito}` : ''}. Informe a capacidade de carga do CRLV.` });
+    message: `${r.municipio}: "${r.nome}" depende da capacidade de carga, que não foi informada; a rota ${como} (lado seguro)${comEstimativa}. ${pedido}` });
 }
 
 function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[], seen: Set<string>) {
