@@ -69,6 +69,7 @@ Cada regra:
 | `excecoes`, `autorizacao` | textos citados nos avisos (o perfil do veículo não tem autorizações municipais) |
 | `excecao_destino_local` (+ `_incisos`, `_artigo`) | carga com **entrega** no município fica fora da regra (só com destino no município) |
 | `zona_vinculada` | id de uma regra-zona do mesmo arquivo: a via segue a política da zona com origem/destino dentro dela |
+| `od_raio_m` | só zona de **acesso** (ex.: janela de entrada e saída de um porto): origem/destino a até esse raio (m, até 200) do polígono **sem** recuo também contam como dentro da zona. O portão fica na via pública em frente à área, fora do polígono recuado |
 | `base_legal` | `[{ato, artigo, url, nota?}]`: **ato e artigo obrigatórios** (fonte sem artigo, como mapa ou notícia, diz o que é) |
 | `vigencia_inicio`, `vigencia_fim` | viram `valid_from`/`valid_to`; a rota compara com o horário de saída. Revogada exige `vigencia_fim` |
 | `geometria` | lista de origens de geometria (abaixo) |
@@ -142,7 +143,8 @@ inteira com `Failed to edge walk`); a que não casa é reencaixada (`map_snap`) 
 
 - **Zonas** ativas, para aquele veículo, no horário de **saída**, considerando feriado (`holidays` pelo IBGE e pela
   **UF** da regra): viram `exclude_polygons`. Origem ou destino dentro da zona: **não exclui** e avisa
-  (`rmsp_origem_na_zona` / `rmsp_destino_na_zona`), como a ZMRC de SP. Só entram zonas a até máx(50 km; 60% da
+  (`rmsp_origem_na_zona` / `rmsp_destino_na_zona`), como a ZMRC de SP. Em zona com `od_raio_m`, vale o mesmo para a
+  origem ou o destino a até esse raio do polígono sem recuo (o aviso diz "no acesso"). Só entram zonas a até máx(50 km; 60% da
   distância O–D) do segmento origem–destino (uma rota em SP não leva as zonas de BH ao Valhalla).
 - **Vias e pontes** ativas: `linear_cost_factors` com fator 1000 ("proibido salvo sem alternativa"), só as a até
   máx(2,5 km; 40% da distância O–D, limitado a 15 km) do segmento O–D.

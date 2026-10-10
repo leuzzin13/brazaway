@@ -14,7 +14,8 @@ import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, 
  * importers/sources/municipios.py a partir de um arquivo por município (data/raw/municipios/<ibge>.json, schema em
  * data/raw/municipios/schema.json; passo a passo em docs/layers/restricoes_municipais.md).
  *
- *  - zonas (kind=zona)          → exclusions (polígono recuado; origem/destino dentro = não exclui, avisa);
+ *  - zonas (kind=zona)          → exclusions (polígono recuado; origem/destino dentro = não exclui, avisa; em zona de
+ *                                 acesso com od_raio_m, também a origem/destino a até esse raio do polígono sem recuo);
  *  - vias e pontes (kind=via)   → costLines (linear_cost_factors, só a via; sentido único quando o ato fixa sentido);
  *  - kind=municipio             → localiza origem/destino (exceção de destino local); fora dos limites próprios, a malha
  *                                 do IBGE da camada geocoding (ibge-malhas);
@@ -72,6 +73,12 @@ export interface Regra {
   /** via que compõe uma zona (ex.: vias do art. 3º da ZMRC de Osasco): dispensada quando origem/destino está na zona */
   zona_vinculada?: string;
   origem_destino_dentro?: 'avisa';
+  /**
+   * zona de acesso (ex.: janela de entrada e saída de um porto): origem/destino a até `od_raio_m` metros do polígono SEM
+   * recuo também contam como "na zona" (não exclui, avisa). O portão fica na via pública em frente à área, fora do
+   * polígono recuado; sem o raio, o destino no portão não recebia o aviso da janela.
+   */
+  od_raio_m?: number;
   autorizacao?: string;
   excecoes?: string[];
   base_legal: BaseLegal[];
@@ -90,7 +97,11 @@ export interface Regra {
   nota_trecho?: string | null;
 }
 
-interface Row { id: string; name: string | null; kind: string; props: Regra; geometry: GeoJSON.Geometry; inset?: GeoJSON.Geometry | null }
+interface Row {
+  id: string; name: string | null; kind: string; props: Regra; geometry: GeoJSON.Geometry; inset?: GeoJSON.Geometry | null;
+  /** só zonas com od_raio_m: origem/destino a até od_raio_m do polígono sem recuo */
+  o_perto?: boolean; d_perto?: boolean;
+}
 
 // ---------------------------------------------------------------- regras (puras, exportadas para teste/reuso)
 
@@ -301,12 +312,17 @@ const odParams = (ctx: RouteCtx) => [ctx.origin.lon, ctx.origin.lat, ctx.destina
 const VIGENTE_SQL = `(f.valid_from is null or f.valid_from <= $6::timestamptz) and (f.valid_to is null or f.valid_to > $6::timestamptz)`;
 const SEGMENTO_SQL = `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)`;
 
-/** zonas a até máx(50 km; 60% da distância O–D) do segmento O–D (ver ZONA_RAIO_MIN_M) */
+/**
+ * zonas a até máx(50 km; 60% da distância O–D) do segmento O–D (ver ZONA_RAIO_MIN_M). Com od_raio_m (zona de acesso),
+ * o_perto/d_perto = origem/destino a até od_raio_m do polígono sem recuo (sem a propriedade, false).
+ */
 async function zones(ctx: RouteCtx): Promise<Row[]> {
   const r = await query<Row>(
     `${SEGMENTO_SQL}
      select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 7)::json as geometry,
-            ST_AsGeoJSON(ST_Multi(ST_SimplifyPreserveTopology(ST_Buffer(f.geom::geography, -$7::float)::geometry, 0.00003)), 7)::json as inset
+            ST_AsGeoJSON(ST_Multi(ST_SimplifyPreserveTopology(ST_Buffer(f.geom::geography, -$7::float)::geometry, 0.00003)), 7)::json as inset,
+            coalesce(ST_DWithin(f.geom::geography, ST_SetSRID(ST_Point($2, $3), 4326)::geography, (f.props->>'od_raio_m')::float), false) as o_perto,
+            coalesce(ST_DWithin(f.geom::geography, ST_SetSRID(ST_Point($4, $5), 4326)::geography, (f.props->>'od_raio_m')::float), false) as d_perto
        from data_features f, s
       where f.layer_id = $1 and f.kind = 'zona' and ${VIGENTE_SQL}
         and ST_DWithin(f.geom::geography, s.g::geography, greatest($8::float, $9::float * ST_Length(s.g::geography)))`,
@@ -383,9 +399,19 @@ export function destinoLocal(r: Regra, od: { origem: string | null; destino: str
   return !r.excecao_destino_local_incisos || (r.inciso != null && r.excecao_destino_local_incisos.includes(r.inciso));
 }
 
-/** regra_id das zonas (polígono recuado) que contêm a origem ou o destino */
+/**
+ * origem/destino "na zona": dentro do polígono recuado ou, em zona de acesso (od_raio_m), a até od_raio_m do polígono
+ * sem recuo (o portão na via pública em frente ao porto). `o`/`d` dizem quais; `noAcesso`, se algum só está no raio.
+ */
+function odNaZona(z: Row, ctx: RouteCtx): { o: boolean; d: boolean; noAcesso: boolean } {
+  const oDentro = pointIn(z.inset, ctx.origin), dDentro = pointIn(z.inset, ctx.destination);
+  const o = oDentro || !!z.o_perto, d = dDentro || !!z.d_perto;
+  return { o, d, noAcesso: (o && !oDentro) || (d && !dDentro) };
+}
+
+/** regra_id das zonas que contêm a origem ou o destino (polígono recuado ou raio de acesso: odNaZona) */
 function zonasComOD(zs: Row[], ctx: RouteCtx): Set<string> {
-  return new Set(zs.filter((z) => pointIn(z.inset, ctx.origin) || pointIn(z.inset, ctx.destination)).map((z) => z.props.regra_id));
+  return new Set(zs.filter((z) => { const x = odNaZona(z, ctx); return x.o || x.d; }).map((z) => z.props.regra_id));
 }
 
 function ringsOf(g: GeoJSON.Geometry | null | undefined): Ring[] {
@@ -460,8 +486,9 @@ const layer: RouteLayer = {
       const { ativa, e } = await regraAtiva(r, ctx.vehicle, ctx.at, holiday);
       if (!ativa) continue;
       if (destinoLocal(r, od)) continue;
-      // origem/destino dentro da zona: não exclui (o annotate avisa) — mesma política da ZMRC de SP
-      if (pointIn(z.inset, ctx.origin) || pointIn(z.inset, ctx.destination)) continue;
+      // origem/destino dentro da zona (ou no raio de acesso): não exclui (o annotate avisa) — mesma política da ZMRC de SP
+      const naZona = odNaZona(z, ctx);
+      if (naZona.o || naZona.d) continue;
       const rings = ringsOf(z.inset);
       if (rings.length) out.push({ item: itemOf(z, `${ruleLabel(r, e)} (${e.classe})`), rings });
     }
@@ -535,7 +562,8 @@ const layer: RouteLayer = {
     for (const z of zs) {
       const r = z.props;
       const e = enquadrar(r, v);
-      const oIn = pointIn(z.inset, ctx.origin), dIn = pointIn(z.inset, ctx.destination);
+      const od = odNaZona(z, ctx);
+      const oIn = od.o, dIn = od.d;
       const inter = z.inset && turf.booleanIntersects(line, z.inset as GeoJSON.Polygon);
       const evitada = !inter && !!route.free && !!z.inset && turf.booleanIntersects(route.free.line, z.inset as GeoJSON.Polygon);
       if (!inter && !oIn && !dIn && !evitada) continue;
@@ -552,7 +580,7 @@ const layer: RouteLayer = {
       if (e.aplica && (oIn || dIn) && (ativa || ativaPass)) {
         warnings.push({
           code: oIn && dIn ? 'rmsp_origem_destino_na_zona' : oIn ? 'rmsp_origem_na_zona' : 'rmsp_destino_na_zona', severity: 'warn', id: z.id,
-          message: `${oIn && dIn ? 'Origem e destino estão' : oIn ? 'Origem está' : 'Destino está'} dentro da ${r.nome} (${ruleLabel(r, e)}); a zona não foi excluída da rota.${r.autorizacao ? ` Exige ${r.autorizacao.split('(')[0].trim()}.` : ' Verifique autorização/exceção.'}`,
+          message: `${oIn && dIn ? 'Origem e destino estão' : oIn ? 'Origem está' : 'Destino está'} ${od.noAcesso ? `no acesso (a até ${r.od_raio_m} m)` : 'dentro'} da ${r.nome} (${ruleLabel(r, e)}); a zona não foi excluída da rota.${r.autorizacao ? ` Exige ${r.autorizacao.split('(')[0].trim()}.` : ' Verifique autorização/exceção.'}`,
         });
       } else if (e.aplica && inter && !ativa && ativaPass) {
         warnings.push({ code: 'rmsp_zona_ativa_na_passagem', severity: 'warn', id: z.id,

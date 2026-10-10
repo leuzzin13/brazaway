@@ -277,6 +277,12 @@ class Erros(unittest.TestCase):
     def test_zona_vinculada_inexistente(self):
         self.assertErro(lambda d: d['regras'][1].update(zona_vinculada='nao_existe'), 'zona_vinculada')
 
+    def test_od_raio_m_so_em_zona(self):
+        self.assertEqual(self.erros(lambda d: d['regras'][0].update(od_raio_m=50)), [])     # zona: aceito
+        self.assertErro(lambda d: d['regras'][1].update(od_raio_m=50), 'od_raio_m')          # via: recusado
+        self.assertErro(lambda d: d['regras'][0].update(od_raio_m=0), 'od_raio_m')           # > 0
+        self.assertErro(lambda d: d['regras'][0].update(od_raio_m=500), 'od_raio_m')         # <= 200
+
     def test_fonte_ibge_reservada(self):
         self.assertErro(lambda d: d.update(fonte_id='ibge'), 'reservado')
 

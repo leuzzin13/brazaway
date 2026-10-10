@@ -1,0 +1,194 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3205200",
+  "municipio": "Vila Velha",
+  "uf": "ES",
+  "fonte_id": "vila-velha",
+  "fonte": {
+    "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html (Dec. 161/2001; situação 'Em Vigor' em https://legislacao.vilavelha.es.gov.br/consulta-legislacao.aspx?tipo=6&numero=161&ano=2001&interno=0)",
+    "licenca": "Ato oficial da Prefeitura de Vila Velha: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap) — bairros (admin_level 10), vias e áreas portuárias do OSM, cortados à mão (data/raw/municipios/curadoria/grande_vitoria.py).",
+    "notas": "Dec. 161/2001 (assinado em 22/06/2001, Boletim Oficial de 15/08/2001, vigência 60 dias depois), sem alterações. O critério é o PBT; o município não define VUC. A Terceira Ponte (estadual, Sistema Rodovia do Sol) fica fora das zonas municipais e tem regra própria no arquivo de Vitória (es_terceira_ponte_lei_9602)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "O Dec. 161/2001 não define VUC: o critério é só o PBT (um VUC acima do limite de PBT é tratado como caminhão).",
+  "regras": [
+    {
+      "id": "vila_velha_centro_10t",
+      "tipo": "zona",
+      "regime": "Centro (PBT > 10 t)",
+      "nome": "Centro de Vila Velha: PBT acima de 10 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "11:00", "to": "19:00"},
+        {"days": [6], "from": "08:00", "to": "19:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 10}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial da Secretaria Municipal de Transportes e Trânsito — SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": [
+        "Art. 1º, §1º: veículos com destino às instalações portuárias e industriais adjacentes ao porto seguem o trajeto do art. 2º",
+        "Art. 1º, §1º, itens 1 a 4: manutenção de redes e coleta de lixo, manutenção e sinalização viária, socorro mecânico de emergência e veículos do art. 29, VII, do CTB",
+        "Art. 3º: Autorização Especial da SEMUT"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, I, a (PBT > 10 t, mesmo vazio, dias úteis 11h–19h, sábado 8h–19h, liberado aos domingos e feriados); art. 8º (vigência 60 dias após a publicação)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "nota": "Polígono = bairro Centro de Vila Velha do OSM (inclui a Prainha), sem a Terceira Ponte.",
+      "fonte_geometria": "OSM (ODbL): bairro admin_level 10",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria (na imagem do importador; ver o cabeçalho do script)"}]
+    },
+    {
+      "id": "vila_velha_centro_16t",
+      "tipo": "zona",
+      "regime": "Centro (PBT > 16 t, 24 h)",
+      "nome": "Centro de Vila Velha: PBT acima de 16 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial da SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": ["Art. 1º, §1º: destino portuário pelo trajeto do art. 2º; serviços de utilidade pública (itens 1 a 4)", "Art. 3º: Autorização Especial da SEMUT"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, I, b (PBT > 16 t, mesmo vazio, em qualquer dia e horário)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "fonte_geometria": "OSM (ODbL): bairro admin_level 10",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_gloria_10t",
+      "tipo": "zona",
+      "regime": "Glória (PBT > 10 t, dias úteis)",
+      "nome": "Glória: PBT acima de 10 t nos dias úteis",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "11:00", "to": "19:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 10}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial da SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": ["Livres: R. Santa Teresinha, Estrada Jerônimo Monteiro e Rod. Carlos Lindenberg (art. 1º, II, a)", "Art. 1º, §1º: destino portuário pelo trajeto do art. 2º; serviços de utilidade pública", "Art. 3º: Autorização Especial da SEMUT"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, II, a (PBT > 10 t, mesmo vazio, das 11h às 19h nos dias úteis; exceto R. Santa Teresinha, Estrada Jerônimo Monteiro e Rod. Carlos Lindenberg)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "nota": "Dias úteis: o feriado em dia de semana fica livre. O sábado está na regra vila_velha_gloria_10t_sabado (o inciso II não excetua feriados, só o I). As 3 vias livres (no OSM: Rua Santa Terezinha, Avenida Jerônimo Monteiro e Avenida Carlos Lindenberg) ficam fora do polígono (25 m + recuo de 20 m).",
+      "fonte_geometria": "OSM (ODbL): bairro admin_level 10 menos as 3 vias exceptuadas",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_gloria.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_gloria_10t_sabado",
+      "tipo": "zona",
+      "regime": "Glória (PBT > 10 t, sábado)",
+      "nome": "Glória: PBT acima de 10 t aos sábados",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [6], "from": "07:00", "to": "18:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 10}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial da SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": ["Livres: R. Santa Teresinha, Estrada Jerônimo Monteiro e Rod. Carlos Lindenberg (art. 1º, II, a)", "Art. 3º: Autorização Especial da SEMUT"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, II, a (PBT > 10 t, mesmo vazio, aos sábados das 7h às 18h)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "nota": "O inciso II não excetua feriados (o I diz 'liberado aos domingos e feriados'): sábado feriado continua restrito.",
+      "fonte_geometria": "OSM (ODbL): bairro admin_level 10 menos as 3 vias exceptuadas",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_gloria.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_gloria_16t",
+      "tipo": "zona",
+      "regime": "Glória (PBT > 16 t, 24 h)",
+      "nome": "Glória: PBT acima de 16 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial da SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": ["Livres: R. Santa Teresinha, Estrada Jerônimo Monteiro e Rod. Carlos Lindenberg (art. 1º, II, b)", "Art. 3º: Autorização Especial da SEMUT"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, II, b (PBT > 16 t em todo o bairro, em qualquer dia ou horário, exceto nas 3 vias)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "fonte_geometria": "OSM (ODbL): bairro admin_level 10 menos as 3 vias exceptuadas",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_gloria.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_orla_10t",
+      "tipo": "via",
+      "regime": "Orla (PBT > 10 t)",
+      "nome": "Orla de Praia da Costa, Itapuã e Itaparica: PBT acima de 10 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "10:00", "to": "20:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 10}]},
+      "autorizacao": "Autorização prévia da SEMUT (Dec. 161/2001, art. 1º, III, a)",
+      "excecoes": ["Autorização prévia da Secretaria Municipal de Transportes e Trânsito (art. 1º, III, a)"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, III, a (na Orla, PBT > 10 t, das 10h às 20h nos dias úteis, sábados, domingos e feriados)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "nota": "Confiança média: o ato não lista as vias da orla. Aplicada às avenidas da beira-mar dos 3 bairros no OSM (Av. Antônio Gil Veloso e Av. Estudante José Júlio de Souza), marcadas como aproximadas.",
+      "fonte_geometria": "OSM (ODbL): avenidas da orla recortadas nos 3 bairros",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_orla.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_praias_16t",
+      "tipo": "zona",
+      "regime": "Bairros de praia (PBT > 16 t)",
+      "nome": "Praia da Costa, Itapuã e Itaparica: PBT acima de 16 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "20:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização prévia da SEMUT (Dec. 161/2001, art. 1º, III, b)",
+      "excecoes": ["Autorização prévia da Secretaria Municipal de Transportes e Trânsito (art. 1º, III, b)", "Art. 1º, III, c: estacionamento de PBT > 16 t proibido em todas as ruas desses bairros (não representável na rota)"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 1º, III, b ('PBT maior que 16 t, entre 07:00h e 20:00h em qualquer dia ou horário em todas as ruas dos bairros') e c (estacionamento)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html", "nota": "redação ambígua; lida como todos os dias, das 7h às 20h"}
+      ],
+      "nota": "Confiança média: redação ambígua e bairros redesenhados depois de 2001 (Itaparica foi dividida). Polígono = bairros Praia da Costa, Itapuã e Praia de Itaparica do OSM; Nova Itaparica, Jockey de Itaparica e Coqueiral de Itaparica ficam fora. A ES-060 urbana (Rod. Comandante Octávio Schneider Queiroz, fora do Sistema Rodovia do Sol, que vai do km 0 ao 3,3 e do km 11 em diante) fica dentro: entre 7h e 20h a rota de mais de 16 t vai pela Rod. Darly Santos. A Terceira Ponte fica fora.",
+      "fonte_geometria": "OSM (ODbL): bairros admin_level 10",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_praias.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vila_velha_porto",
+      "tipo": "zona",
+      "regime": "Acesso ao porto (7h–9h e 17h–19h)",
+      "nome": "Instalações portuárias de Vila Velha (Capuaba, Paul): entrada e saída proibidas nos dias úteis das 7h às 9h e das 17h às 19h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "19:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "origem_destino_dentro": "avisa",
+      "od_raio_m": 50,
+      "autorizacao": "Autorização Especial da SEMUT (Dec. 161/2001, art. 3º)",
+      "excecoes": ["Rota obrigatória (art. 2º): entrada pela Rod. Carlos Lindenberg, Rod. Darly Santos e Av. Capuaba; saída pela Av. Capuaba e Rod. Darly Santos ou Rod. Carlos Lindenberg"],
+      "base_legal": [
+        {"ato": "Decreto municipal 161/2001 de Vila Velha (Boletim Oficial de 15/08/2001)", "artigo": "art. 2º, parágrafo único (sem acesso de entrada ou saída das instalações portuárias ou industriais adjacentes nos dias úteis das 7h às 9h ou das 17h às 19h, exceto sábados, domingos e feriados) e art. 2º, caput (trajeto)", "url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"}
+      ],
+      "nota": "Regra de acesso: a zona cobre só as áreas portuárias (industrial=port do OSM: Porto de Capuaba, Companhia Portuária de Vila Velha e terminais vizinhos), sem vias públicas; com origem ou destino dentro dela a rota não a exclui e avisa a janela. As vias públicas que margeiam a área (Av. Jerônimo Monteiro e R. José David Moscon, a 4–5 m do polígono; Estrada Joubert de Barros, a 8 m; R. Basílio Costalonga, a 11 m) ficam fora do polígono recuado. Com od_raio_m = 50, origem ou destino no portão, nessas vias, ou a até 50 m da área também recebem o aviso (as vias não entram na zona: isso barraria a passagem por elas na janela). Os nomes dos cais (Capuaba, Paul) vêm do REP Vports 2024, não do ato. A rota obrigatória não é imposta (só citada).",
+      "fonte_geometria": "OSM (ODbL): áreas industrial=port",
+      "vigencia_inicio": "2001-10-14",
+      "geometria": [{"arquivo": "municipios/geo/3205200_porto.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    }
+  ]
+}
