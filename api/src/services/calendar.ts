@@ -35,6 +35,20 @@ export function ufFromIbge(ibge?: string | null): string | null {
   return ibge && /^\d{7}$/.test(ibge) ? UF_BY_IBGE_PREFIX[ibge.slice(0, 2)] ?? null : null;
 }
 
+/**
+ * Erro de coluna ausente (Postgres 42703, undefined_column): banco sem a migration que criou a coluna.
+ * Só esse erro autoriza a consulta antiga, sem o filtro `active` (num banco sem a 0202 ainda não há linha desativada).
+ * Outro erro (conexão que caiu, tempo limite) não pode cair na consulta sem filtro: segue adiante e vira dia comum
+ * (o lado seguro: a regra "exceto feriados" continua valendo).
+ */
+export function isMissingColumn(err: unknown): boolean {
+  return (err as { code?: unknown } | null)?.code === '42703';
+}
+/** `.catch(onlyIfMissingColumn(() => consultaAntiga()))`: repassa qualquer erro que não seja de coluna ausente. */
+export function onlyIfMissingColumn<T>(fallback: () => Promise<T>): (err: unknown) => Promise<T> {
+  return (err) => (isMissingColumn(err) ? fallback() : Promise.reject(err));
+}
+
 const HOLIDAY_WHERE = `day = $1 and (scope = 'national' or (scope = 'state' and uf = $2) or (scope = 'municipal' and ibge_code = $3))`;
 const HOLIDAY_ORDER = `order by case scope when 'national' then 1 when 'state' then 2 else 3 end`;
 
@@ -45,7 +59,8 @@ const HOLIDAY_ORDER = `order by case scope when 'national' then 1 when 'state' t
  * Só feriados com active = true (migration 0202): os registrados com confiança baixa ou norma inconstitucional/revogada
  * nunca são aplicados.
  * Feriados: db/seed/0004_holidays.sql (nacionais, SP) e importers/sources/feriados_sudeste.py (RJ, MG, ES e municípios).
- * Suspensões: importers/sources/cet_suspensoes.py. Falha de banco (tabela ausente) não derruba a rota: devolve dia comum.
+ * Suspensões: importers/sources/cet_suspensoes.py. Falha de banco (tabela ausente, conexão, tempo limite) não derruba a
+ * rota: devolve dia comum. A consulta sem `active` só roda quando a coluna não existe (isMissingColumn).
  */
 export async function legalDayInfo(at: Date, ibgeCode = SAO_PAULO_IBGE, uf?: string | null): Promise<LegalDayInfo> {
   const day = DateTime.fromJSDate(at).setZone(env.tz).toISODate();
@@ -56,9 +71,10 @@ export async function legalDayInfo(at: Date, ibgeCode = SAO_PAULO_IBGE, uf?: str
       `select id::text, name, scope, uf, ibge_code, legal_basis, source_url, confidence from holidays
         where ${HOLIDAY_WHERE} and active ${HOLIDAY_ORDER}`, params)
       // banco sem a migration 0202 (sem active/source_url/confidence): ainda não há linha desativada
-      .catch(() => query<Holiday>(`select id::text, name, scope, uf, ibge_code, legal_basis from holidays where ${HOLIDAY_WHERE} ${HOLIDAY_ORDER}`, params))
+      .catch(onlyIfMissingColumn(() => query<Holiday>(`select id::text, name, scope, uf, ibge_code, legal_basis from holidays where ${HOLIDAY_WHERE} ${HOLIDAY_ORDER}`, params)))
       // banco sem a migration 0101 (sem legal_basis)
-      .catch(() => query<Holiday>(`select name, scope from holidays where ${HOLIDAY_WHERE}`, params))
+      .catch(onlyIfMissingColumn(() => query<Holiday>(`select name, scope from holidays where ${HOLIDAY_WHERE} ${HOLIDAY_ORDER}`, params)))
+      // outro erro: dia comum
       .catch(() => ({ rows: [] as Holiday[] })),
     query<Suspension>(
       `select scope, applies_to_heavy, description, period, source_url, raw_text from rule_suspensions
@@ -100,29 +116,46 @@ export async function municipiosAt(points: { lat: number; lon: number }[]): Prom
 
 export interface EndpointHolidays {
   municipio: Municipio;
-  /** 'origem', 'destino' ou os dois */
+  /** 'origem', 'destino' ou os dois (mesmo município e mesmo dia) */
   pontos: ('origem' | 'destino')[];
-  /** feriados estaduais e municipais do dia nesse município (o nacional fica no aviso 'holiday' do routing.ts) */
+  /** dia avaliado (AAAA-MM-DD, fuso da API): o da saída para a origem, o da chegada prevista para o destino */
+  day: string;
+  /** o dia é o da chegada prevista ao destino e difere do dia de saída */
+  chegada: boolean;
+  /**
+   * Feriados do dia nesse município: estaduais e municipais; no dia da chegada (diferente do da saída) também os
+   * nacionais, porque o aviso 'holiday' do routing.ts só fala do dia de saída.
+   */
   holidays: Holiday[];
 }
 
+type Pt = { lat: number; lon: number };
+const isoDay = (t: Date) => DateTime.fromJSDate(t).setZone(env.tz).toISODate() as string;
+
 /**
- * Feriados estaduais e municipais do dia no município da origem e no do destino. É o que a rota precisa saber do
- * município para o aviso: as regras locais com "exceto feriados" já consultam o feriado do próprio município da regra
- * (legalDayInfo(at, ibge) nas camadas). Falha de banco devolve lista vazia.
+ * Feriados no município da origem, no dia da saída (`at`), e no do destino, no dia da chegada prevista
+ * (`opts.arrivalAt`; sem ele, o dia da saída). É o que a rota precisa saber do município para o aviso: as regras
+ * locais com "exceto feriados" já consultam o feriado do próprio município da regra (legalDayInfo(at, ibge) nas
+ * camadas). `opts.municipios` evita refazer a busca espacial quando o chamador já tem [origem, destino].
+ * Falha de banco devolve lista vazia.
  */
-export async function endpointHolidays(at: Date, origin: { lat: number; lon: number }, destination: { lat: number; lon: number }): Promise<EndpointHolidays[]> {
-  const [o, d] = await municipiosAt([origin, destination]).catch(() => [null, null]);
-  const byIbge = new Map<string, EndpointHolidays>();
-  for (const [m, which] of [[o, 'origem'], [d, 'destino']] as const) {
+export async function endpointHolidays(
+  at: Date, origin: Pt, destination: Pt,
+  opts: { arrivalAt?: Date; municipios?: (Municipio | null)[] } = {},
+): Promise<EndpointHolidays[]> {
+  const [o, d] = opts.municipios ?? await municipiosAt([origin, destination]).catch(() => [null, null]);
+  const depDay = isoDay(at);
+  const groups = new Map<string, { e: EndpointHolidays; when: Date }>();
+  for (const [m, ponto, when] of [[o, 'origem', at], [d, 'destino', opts.arrivalAt ?? at]] as const) {
     if (!m) continue;
-    const cur = byIbge.get(m.ibge);
-    if (cur) { cur.pontos.push(which); continue; }
-    byIbge.set(m.ibge, { municipio: m, pontos: [which], holidays: [] });
+    const day = isoDay(when);
+    const cur = groups.get(`${m.ibge}:${day}`);
+    if (cur) { cur.e.pontos.push(ponto); continue; }
+    groups.set(`${m.ibge}:${day}`, { e: { municipio: m, pontos: [ponto], day, chegada: day !== depDay, holidays: [] }, when });
   }
-  await Promise.all([...byIbge.values()].map(async (e) => {
-    const info = await legalDayInfo(at, e.municipio.ibge, e.municipio.uf || undefined);
-    e.holidays = info.holidays.filter((h) => h.scope !== 'national');
+  await Promise.all([...groups.values()].map(async ({ e, when }) => {
+    const info = await legalDayInfo(when, e.municipio.ibge, e.municipio.uf || undefined);
+    e.holidays = e.chegada ? info.holidays : info.holidays.filter((h) => h.scope !== 'national');
   }));
-  return [...byIbge.values()].filter((e) => e.holidays.length);
+  return [...groups.values()].map((g) => g.e).filter((e) => e.holidays.length);
 }

@@ -2,7 +2,8 @@
  * feriados_sudeste: feriados estaduais de RJ/ES e municipais das capitais e polos na tabela holidays
  * (importador feriados_sudeste, migration 0202), UF derivada do IBGE em calendar.ts e aviso 'holiday_local' da rota.
  * Parte contra o banco (TEST_DATABASE_URL, mesmo DATABASE_URL da API) e parte ponta a ponta contra a API (API_URL).
- * Datas de 2026: São Jorge (RJ) cai numa quinta, 23/04 (Lei estadual RJ 5.198/2008, art. 1º).
+ * Datas de 2026: São Jorge (RJ) cai numa quinta, 23/04 (Lei estadual RJ 5.198/2008, art. 1º); 9/7 é feriado só em SP
+ * (Lei estadual SP 9.497/1997); 07/09 é nacional (Lei federal 662/1949).
  * Requer o seed db/seed/layers/core_legal__feriados-sudeste.sql (ou o importador) e a malha municipal do IBGE
  * (seed geocoding__ibge-malhas.sql).
  */
@@ -10,8 +11,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { DateTime } from 'luxon';
 import { pool, route, waitForStack } from '../helpers.js';
 import { pool as apiPool } from '../../src/db.js';
-import { endpointHolidays, legalDayInfo, municipiosAt, ufFromIbge } from '../../src/services/calendar.js';
-import { holidayLocalWarnings } from '../../src/services/routing.js';
+import { endpointHolidays, isMissingColumn, legalDayInfo, municipiosAt, ufFromIbge } from '../../src/services/calendar.js';
+import { holidayLocalWarnings, holidayWarnings } from '../../src/services/routing.js';
 import { resolveVehicle } from '../../src/services/vehicle.js';
 import rmsp from '../../src/layers/restricoes_rmsp.layer.js';
 
@@ -61,8 +62,14 @@ describe('feriados_sudeste — calendário (banco)', () => {
     expect(r.rows[0].inactive_reason).toContain('ADI 6133');
   });
 
-  it('confiança baixa/unverifiable fica desativada: Paixão no Rio não confirmada; Jubileu de Contagem 2027 inferido', async () => {
+  it('confiança baixa/unverifiable fica desativada: Paixão no Rio não confirmada; Jubileu de Contagem 2027 inferido; Duque de Caxias 13/06', async () => {
     expect((await legalDayInfo(at('2026-04-03T10:00'), RIO)).holidays).toEqual([]);
+    // calendário do TJRJ (4º NUR) mistura feriado e data comemorativa: registrado e não aplicado (correção da revisão)
+    expect((await legalDayInfo(at('2026-06-13T10:00'), '3301702')).holidays).toEqual([]);
+    const dc = await pool.query(`select active, status, confidence, inactive_reason from holidays where day = '2026-06-13' and ibge_code = '3301702' and source = 'feriados-sudeste'`);
+    expect(dc.rows).toHaveLength(1);
+    expect(dc.rows[0]).toMatchObject({ active: false, status: 'a_confirmar', confidence: 'baixa' });
+    expect(dc.rows[0].inactive_reason).toContain('datas comemorativas');
     expect(names((await legalDayInfo(at('2026-03-27T10:00'), '3118601')).holidays)).toEqual(['Jubileu de Nossa Senhora das Dores']);
     expect((await legalDayInfo(at('2027-03-19T10:00'), '3118601')).holidays).toEqual([]);
   });
@@ -94,9 +101,36 @@ describe('feriados_sudeste — calendário (banco)', () => {
     expect(mar).toBeNull();                                               // no mar, fora da malha
     const e = await endpointHolidays(at('2026-04-23T10:00'), RIO_A, RIO_B);
     expect(e).toHaveLength(1);
-    expect(e[0].pontos).toEqual(['origem', 'destino']);
+    expect(e[0]).toMatchObject({ pontos: ['origem', 'destino'], day: '2026-04-23', chegada: false });
     expect(names(e[0].holidays)).toEqual(['Dia de São Jorge']);
     expect(await endpointHolidays(at('2026-04-23T10:00'), SP_A, SP_B)).toEqual([]);
+  });
+
+  it('destino avaliado no dia da chegada prevista, não no da saída', async () => {
+    // SP -> Rio saindo 22/04 às 22h e chegando 23/04: São Jorge no destino
+    const ida = await endpointHolidays(at('2026-04-22T22:00'), SP_A, RIO_A, { arrivalAt: at('2026-04-23T05:30') });
+    expect(ida).toHaveLength(1);
+    expect(ida[0]).toMatchObject({ municipio: { ibge: RIO }, pontos: ['destino'], day: '2026-04-23', chegada: true });
+    expect(names(ida[0].holidays)).toEqual(['Dia de São Jorge']);
+    // Rio -> SP saindo 23/04 às 23h30: São Jorge só na origem; nada no destino em 24/04
+    const volta = await endpointHolidays(at('2026-04-23T23:30'), RIO_A, SP_A, { arrivalAt: at('2026-04-24T06:00') });
+    expect(volta.map((x) => [x.municipio.ibge, x.pontos, x.day])).toEqual([[RIO, ['origem'], '2026-04-23']]);
+    // mesmo município em dias diferentes: uma entrada por dia
+    const rio = await endpointHolidays(at('2026-04-22T23:50'), RIO_A, RIO_B, { arrivalAt: at('2026-04-23T00:10') });
+    expect(rio.map((x) => [x.pontos, x.day])).toEqual([[['destino'], '2026-04-23']]);
+    // no dia da chegada (diferente do da saída) entra também o nacional: 06/09 -> 07/09 (Independência)
+    const sete = await endpointHolidays(at('2026-09-06T22:00'), RIO_A, SP_A, { arrivalAt: at('2026-09-07T05:00') });
+    expect(sete).toHaveLength(1);
+    expect(sete[0]).toMatchObject({ municipio: { ibge: SAO_PAULO }, pontos: ['destino'], chegada: true });
+    expect(sete[0].holidays.map((h) => h.scope)).toContain('national');
+  });
+
+  it('só erro de coluna ausente (42703) cai na consulta sem o filtro active', () => {
+    expect(isMissingColumn({ code: '42703' })).toBe(true);
+    expect(isMissingColumn(new Error('Connection terminated unexpectedly'))).toBe(false);
+    expect(isMissingColumn(Object.assign(new Error('Query read timeout'), { code: undefined }))).toBe(false);
+    expect(isMissingColumn({ code: '57014' })).toBe(false);                 // statement_timeout
+    expect(isMissingColumn(null)).toBe(false);
   });
 
   it('feriado municipal real suspende regra "exceto feriados": VER de Osasco no 19/02/2026 (Dec. 14.952/2025), não na "emenda" de 20/02', async () => {
@@ -110,11 +144,31 @@ describe('feriados_sudeste — calendário (banco)', () => {
     const mun = { ibge: '3509502', nome: 'Campinas', uf: 'SP' };
     const nove = { id: '1', name: 'Revolução Constitucionalista', scope: 'state', legal_basis: 'Lei estadual SP 9.497/1997 art. 1º' };
     const evang = { id: '2', name: 'Dia do Evangélico', scope: 'municipal', legal_basis: 'Lei municipal Campinas 16.785/2025' };
-    expect(holidayLocalWarnings([{ municipio: mun, pontos: ['destino'], holidays: [nove] }], [nove], '09/07/2026')).toEqual([]);
-    const w = holidayLocalWarnings([{ municipio: mun, pontos: ['destino'], holidays: [evang] }], [], '12/08/2026');
+    expect(holidayLocalWarnings([{ municipio: mun, pontos: ['destino'], day: '2026-07-09', chegada: false, holidays: [nove] }], [nove])).toEqual([]);
+    const w = holidayLocalWarnings([{ municipio: mun, pontos: ['destino'], day: '2026-08-12', chegada: false, holidays: [evang] }], []);
     expect(w).toHaveLength(1);
-    expect(w[0]).toMatchObject({ code: 'holiday_local', severity: 'info', id: '3509502' });
+    expect(w[0]).toMatchObject({ code: 'holiday_local', severity: 'info', id: '3509502:2026-08-12' });
     expect(w[0].message).toContain('Campinas/SP (destino) em 12/08/2026: Dia do Evangélico — feriado municipal (Lei municipal Campinas 16.785/2025)');
+    const c = holidayLocalWarnings([{ municipio: mun, pontos: ['destino'], day: '2026-08-12', chegada: true, holidays: [evang] }], []);
+    expect(c[0].message).toContain('Campinas/SP (destino, na chegada prevista) em 12/08/2026');
+  });
+
+  it('aviso holiday (calendário de SP capital) só quando a rota toca a capital; fora dela, só o nacional e sem falar de SP', () => {
+    const nove = { id: '1', name: 'Revolução Constitucionalista de 1932 (data magna de SP)', scope: 'state', legal_basis: 'Lei estadual SP 9.497/1997' };
+    const indep = { id: '3', name: 'Independência do Brasil', scope: 'national', legal_basis: 'Lei federal 662/1949' };
+    const codes = (ws: { code: string }[]) => ws.map((w) => w.code);
+    expect(holidayWarnings([nove], false, [])).toEqual([]);                          // rota no Rio em 09/07
+    expect(holidayWarnings([nove], true, [])[0].message).toMatch(/^Feriado \(Revolução Constitucionalista.*ZMRC/);
+    const fora = holidayWarnings([indep], false, []);
+    expect(codes(fora)).toEqual(['holiday']);
+    expect(fora[0].message).toMatch(/^Feriado nacional \(Independência do Brasil\)/);
+    expect(fora[0].message).not.toMatch(/SP|ZMRC/);
+    // 9/7 fora da capital: o aviso sai como holiday_local do município paulista da origem/destino
+    const camp = { municipio: { ibge: '3509502', nome: 'Campinas', uf: 'SP' }, pontos: ['origem' as const], day: '2026-07-09', chegada: false, holidays: [nove] };
+    const w = holidayWarnings([nove], false, [camp]);
+    expect(codes(w)).toEqual(['holiday_local']);
+    expect(w[0].message).toContain('Campinas/SP (origem) em 09/07/2026: Revolução Constitucionalista');
+    expect(codes(holidayWarnings([nove], true, [camp]))).toEqual(['holiday']);       // já dito no aviso de SP
   });
 });
 
@@ -144,5 +198,29 @@ describe('feriados_sudeste — rota (API)', () => {
     const r = await route({ origin: RIO_A, destination: RIO_B, vehicle: truck, departure_at: '2026-04-24T10:00' });
     expect(r.status).toBe(200);
     expect(local(r)).toEqual([]);
+  });
+
+  it('rota no Rio em 09/07/2026: sem o aviso holiday do 9/7 paulista', async () => {
+    const r = await route({ origin: RIO_A, destination: RIO_B, vehicle: truck, departure_at: '2026-07-09T10:00' });
+    expect(r.status, JSON.stringify(r.body).slice(0, 300)).toBe(200);
+    expect(r.body.warnings.some((w: any) => w.code === 'holiday'), all(r)).toBe(false);
+    expect(all(r)).not.toMatch(/Revolução Constitucionalista/);
+  });
+
+  it('rota no Rio em feriado nacional (07/09/2026): aviso holiday sem falar de SP', async () => {
+    const r = await route({ origin: RIO_A, destination: RIO_B, vehicle: truck, departure_at: '2026-09-07T10:00' });
+    expect(r.status).toBe(200);
+    const w = r.body.warnings.filter((x: any) => x.code === 'holiday');
+    expect(w).toHaveLength(1);
+    expect(w[0].message).toMatch(/^Feriado nacional \(/);
+    expect(w[0].message).not.toMatch(/ZMRC|em SP/);
+  });
+
+  it('saída às 23h58 de 22/04 e chegada depois da meia-noite: São Jorge no destino, na chegada prevista', async () => {
+    const r = await route({ origin: RIO_A, destination: RIO_B, vehicle: truck, departure_at: '2026-04-22T23:58' });
+    expect(r.status).toBe(200);
+    const w = local(r);
+    expect(w).toHaveLength(1);
+    expect(w[0].message).toContain('Rio de Janeiro/RJ (destino, na chegada prevista) em 23/04/2026: Dia de São Jorge');
   });
 });

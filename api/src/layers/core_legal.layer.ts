@@ -9,7 +9,8 @@ import type { LayerAnnotation, LayerWarning, RouteCtx, RouteGeom, RouteLayer } f
  * CET em São Paulo). As regras em si (ZMRC, rodízio, perigosos, feriados e suspensões) são
  * aplicadas pelo núcleo (zones.ts + restriction_zones + calendar.ts); esta camada só AVISA as suspensões publicadas pela
  * CET (rule_suspensions, importador cet_suspensoes) que valem no horário de saída e tocam a rota. Os avisos de feriado já
- * saem do routing.ts: 'holiday' (São Paulo capital) e 'holiday_local' (estadual/municipal do município da origem e do destino).
+ * saem do routing.ts: 'holiday' (calendário de São Paulo capital quando a rota toca a capital; fora dela, só o nacional) e
+ * 'holiday_local' (feriado do município da origem, na saída, e do destino, na chegada prevista).
  *
  * Base legal da suspensão: Decreto 58.584/2018 art. 8º (portaria da SMT; §2º permite suspender só um período do dia).
  * "MANTIDO para veículos pesados": a restrição continua para veículos de carga (leitura conservadora, ver zones.ts).

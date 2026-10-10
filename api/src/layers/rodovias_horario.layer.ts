@@ -4,6 +4,7 @@ import { query } from '../db.js';
 import { env } from '../config.js';
 import * as valhalla from '../services/valhalla.js';
 import type { Vehicle } from '../services/vehicle.js';
+import { onlyIfMissingColumn } from '../services/calendar.js';
 import { featuresInBbox } from './data.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
@@ -101,9 +102,10 @@ async function loadRules(): Promise<Rules> {
                 case when kind = 'regra_semanal' then ST_AsGeoJSON(geom, 6)::json end as geometry
            from data_features where layer_id = $1 and kind in ('janela', 'regra_semanal')`, [LAYER]),
       // feriados (se o calendário estiver carregado): nacionais, estaduais de SP e municipais da Baixada/ABC/capital.
-      // Só os aplicáveis (active, migration 0202); sem a coluna, a consulta antiga (ainda não há linha desativada).
+      // Só os aplicáveis (active, migration 0202). A consulta antiga, sem o filtro, só quando a coluna não existe
+      // (banco sem a 0202, onde ainda não há linha desativada); outro erro (conexão, tempo limite) fica sem feriados.
       query<{ day: string; name: string }>(HOLIDAYS_SQL.replace('%ACTIVE%', 'and active'))
-        .catch(() => query<{ day: string; name: string }>(HOLIDAYS_SQL.replace('%ACTIVE%', '')))
+        .catch(onlyIfMissingColumn(() => query<{ day: string; name: string }>(HOLIDAYS_SQL.replace('%ACTIVE%', ''))))
         .catch(() => ({ rows: [] as { day: string; name: string }[] })),
     ]);
     const windows: PrfWindow[] = [];

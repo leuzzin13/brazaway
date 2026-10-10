@@ -9,7 +9,7 @@ Não é camada nova: as regras com "exceto feriados" das outras camadas e o núc
 |---|---|
 | Regras curadas (fonte da carga) | `data/raw/feriados/regras.json` |
 | Importador | `importers/sources/feriados_sudeste.py` (`LAYER_ID = core_legal`, `SOURCE = feriados-sudeste`) |
-| Seed versionado | `db/seed/layers/core_legal__feriados-sudeste.sql` (274 linhas de 2026 a 2028, 122 KB) |
+| Seed versionado | `db/seed/layers/core_legal__feriados-sudeste.sql` (274 linhas de 2026 a 2028, 122 KB: 227 aplicadas e 47 registradas sem aplicar, das quais 41 `a_confirmar` e 6 `inconstitucional`) |
 | Migration | `db/migrations/0202_feriados_sudeste.sql` |
 | API | `api/src/services/calendar.ts`, aviso `holiday_local` em `api/src/services/routing.ts` |
 | Testes | `api/test/layers/feriados_sudeste.test.ts`, `importers/tests/test_feriados_sudeste.py` |
@@ -23,13 +23,23 @@ Não é camada nova: as regras com "exceto feriados" das outras camadas e o núc
    e não valeria o São Jorge. Exemplo testado: a VER de Osasco fica suspensa no 19/02/2026 (Emancipação, Decreto Osasco
    14.952/2025, art. 2º) e vale no 20/02 (só "emenda", ponto facultativo).
 2. **Zonas de São Paulo capital** (ZMRC, rodízio, perigosos): continuam com o calendário da capital (`legalDayInfo(at)`,
-   sem mudança). O aviso `holiday` do `routing.ts` também continua o mesmo.
-3. **Aviso `holiday_local`**: a rota localiza o município da origem e o do destino e avisa os feriados estaduais e
-   municipais do dia nesses municípios, com a norma. Exemplo (rota no Rio em 23/04/2026):
+   sem mudança).
+3. **Aviso `holiday`** (`routing.ts`, `holidayWarnings`): o calendário de São Paulo capital só aparece quando a rota
+   toca a capital: origem ou destino no município 3550308 ou a linha cruzando uma zona que vale "exceto feriados"
+   (`routeTouchesSaoPaulo`). Aí o texto continua o mesmo ("Feriado (X): ZMRC, rodízio e restrição de perigosos em SP
+   não se aplicam; ..."). Fora da capital sai só o feriado nacional, sem falar de SP ("Feriado nacional (X): regras
+   locais que valem "exceto feriados" não se aplicam nesse dia; ..."); o 9/7 paulista e os municipais da capital não
+   aparecem numa rota no Rio. Se a malha não achar nem a origem nem o destino, fica o comportamento antigo (aviso de SP).
+4. **Aviso `holiday_local`**: a rota localiza o município da origem e o do destino e avisa os feriados estaduais e
+   municipais desses municípios, com a norma. A origem é avaliada no dia da saída; o destino, no dia da **chegada
+   prevista** (saída + tempo de direção + pausas e descansos do plano da Lei 13.103, `driving_plan.total_with_breaks_s`).
+   Se a chegada cai em outro dia, o aviso diz "(destino, na chegada prevista)" e inclui também o feriado nacional desse
+   dia. Exemplo (rota no Rio em 23/04/2026):
    "Feriado em Rio de Janeiro/RJ (origem e destino) em 23/04/2026: Dia de São Jorge — feriado estadual (Lei estadual RJ
    5.198/2008, art. 1º). Regras locais que valem "exceto feriados" não se aplicam nesse dia; rodovias podem ter
-   restrição de feriado." Não repete o que já saiu no aviso `holiday` (feriados de São Paulo capital, como o 9/7).
-4. **Feriado prolongado da Anchieta** (`rodovias_horario`, Portaria SUP/DER-084/2023 art. 3º § 5º): a camada já
+   restrição de feriado." Não repete o que já saiu no aviso `holiday`; o 9/7 numa rota paulista fora da capital
+   (ex.: Campinas) sai aqui, como feriado estadual do município da origem/destino.
+5. **Feriado prolongado da Anchieta** (`rodovias_horario`, Portaria SUP/DER-084/2023 art. 3º § 5º): a camada já
    consultava os municipais de Santos, Cubatão, São Bernardo, Praia Grande e São Vicente, que não tinham linha. Agora
    têm. A consulta passou a usar só linhas ativas.
 
@@ -39,11 +49,14 @@ O feriado que **suspende** uma regra é sempre o do município da própria regra
 isso a rota não precisa do município da origem/destino para aplicar regra nenhuma: só para **avisar** o motorista. O
 mínimo implementado foi `municipiosAt(pontos)` em `calendar.ts`, que acha o município pela malha municipal do IBGE já
 carregada em `data_features` (camada `geocoding`, fonte `ibge-malhas`: os 1.668 municípios do Sudeste, seed
-`geocoding__ibge-malhas.sql`; se faltar, os 39 limites da camada `restricoes_rmsp`), e `endpointHolidays(at, origem,
-destino)`, chamado uma vez por rota no `routing.ts` (uma consulta espacial com índice GiST, cerca de 1 ms).
+`geocoding__ibge-malhas.sql`; se faltar, os 39 limites da camada `restricoes_rmsp`), chamado uma vez por rota no
+`routing.ts` (uma consulta espacial com índice GiST, cerca de 1 ms), e `endpointHolidays(at, origem, destino,
+{ arrivalAt, municipios })`, que consulta o feriado da origem no dia da saída e o do destino no dia da chegada prevista.
 Limites: só origem e destino (municípios atravessados no meio da rota não geram aviso; as regras deles já usam o
-feriado certo pelo item 1); a malha é a "intermediária" do IBGE, então a poucos metros da divisa o município pode sair
-trocado; ponto fora da malha (mar, outro estado) não gera aviso.
+feriado certo pelo item 1); a chegada prevista não usa o fator de trânsito por horário (`eta_horario`), só direção,
+pausas e descansos; as zonas da capital continuam avaliadas só no horário de saída (limitação do núcleo); a malha é a
+"intermediária" do IBGE, então a poucos metros da divisa o município pode sair trocado; ponto fora da malha (mar, outro
+estado) não gera aviso.
 
 ### Política
 
@@ -87,7 +100,6 @@ Datas móveis pela Páscoa (algoritmo gregoriano, o mesmo de `scripts/gen-zones-
 | Rio de Janeiro/RJ (3304557) | São Sebastião (padroeiro) | 20/01 | fixa: 20 de janeiro | Lei Orgânica do Município do Rio de Janeiro, art. 26 (citada pelo TJRJ no calendário da Capital de 2026) | media |
 | Rio de Janeiro/RJ (3304557) | Feriado da Cúpula do BRICS | — | avulsa: 07/07/2025 | Lei municipal Rio 8.881/2025, art. 1º (14/04/2025) | alta |
 | Niterói/RJ (3303302) | Corpus Christi | 04/06 | Páscoa + 60 dias; desde 28/05/2026 | Lei municipal Niterói 4.125/2026, art. 1º (28/05/2026) | alta |
-| Duque de Caxias/RJ (3301702) | Santo Antônio (padroeiro) | 13/06 | fixa: 13 de junho | Deliberação municipal Duque de Caxias 1.543/1970 (citada no calendário do TJRJ, 4º NUR) | media |
 | Belo Horizonte/MG (3106200) | Sexta-feira da Paixão | 03/04 | Páscoa − 2 dias | Lei municipal BH 11.397/2022, Anexo V (consolidação; citada nos considerandos da Portaria Conjunta TJMG 1798/2026) | media |
 | Belo Horizonte/MG (3106200) | Corpus Christi | 04/06 | Páscoa + 60 dias | Lei municipal BH 11.397/2022, Anexo V; Portaria Conjunta TJMG 1798/2026, art. 2º, I (o TRT3 cita a Lei BH 1.327/1967) | media |
 | Belo Horizonte/MG (3106200) | Assunção de Nossa Senhora | 15/08 | fixa: 15 de agosto | Lei municipal BH 11.397/2022, Anexo V; Portaria Conjunta TJMG 1798/2026, art. 2º, II (o TRT3 cita a Lei BH 1.327/1967) | media |
@@ -178,6 +190,7 @@ Datas móveis pela Páscoa (algoritmo gregoriano, o mesmo de `scripts/gen-zones-
 | RJ | Quarta-feira de Cinzas (feriado bancário) | Páscoa − 46 dias | Lei estadual RJ 8.217/2018, art. 1º | alta / inconstitucional | Declarada formalmente inconstitucional pelo STF na ADI 6083 (sessão virtual de 22 a 28/11/2019; trânsito em julgado em 28/02/2020). Não vale nem como feriado bancário; nunca valeu para o trânsito. |
 | Rio de Janeiro/RJ | Sexta-feira da Paixão | Páscoa − 2 dias | Não confirmada (o TJRJ cita só a lei forense, Lei federal 5.010/1966) | unverifiable / a_confirmar | Não confirmado que a Sexta-feira da Paixão seja feriado municipal no Rio: o calendário do TJRJ cita só a lei forense e a prefeitura não publica decreto anual consolidado. Na dúvida, as restrições continuam. |
 | Niterói/RJ | São João (padroeiro) | fixa: 24 de junho | Calendário do TJRJ, 2º NUR (nota: Lei municipal Niterói 3.511/2020 só antecipou a data em 2020) | baixa / a_confirmar | Vigência a conferir: o calendário do TJRJ (2º NUR) foi atualizado em 13/10/2022 e não cita a lei que institui o feriado (correção do verify.json). |
+| Duque de Caxias/RJ | Santo Antônio (padroeiro) | fixa: 13 de junho | Deliberação municipal Duque de Caxias 1.543/1970 (citada no calendário do TJRJ, 4º NUR) | baixa / a_confirmar | Calendário do TJRJ (4º NUR, 'feriados e datas comemorativas') não separa feriado de data comemorativa; texto da Deliberação 1.543/1970 não conferido. Mesmo critério de Volta Redonda, Resende, Macaé, Itaguaí e São Gonçalo (correção da revisão). |
 | São Gonçalo/RJ | São Gonçalo do Amarante (patrono) | fixa: 10 de janeiro | Lei municipal São Gonçalo 291/2010 (citada no calendário do TJRJ, 2º NUR) | baixa / a_confirmar | Vigência a conferir: o calendário do TJRJ (2º NUR, 'feriados e datas comemorativas') foi atualizado em 13/10/2022 e não separa feriado de data comemorativa. |
 | São Gonçalo/RJ | Emancipação de São Gonçalo | fixa: 22 de setembro | Proc. Adm. TJRJ 2016-164570 (calendário do TJRJ, 2º NUR); lei municipal não identificada | baixa / a_confirmar | Sem lei municipal identificada; calendário do TJRJ (2º NUR) atualizado em 13/10/2022. |
 | Volta Redonda/RJ | Santo Antônio (padroeiro) | fixa: 13 de junho | Deliberações municipais de 1955–1965 e Lei municipal Volta Redonda 5.484/2018 (citadas no calendário do TJRJ, 5º NUR) | baixa / a_confirmar | Calendário do TJRJ (5º NUR, 'feriados e datas comemorativas') atualizado em 17/09/2024, sem separar feriado de data comemorativa; texto das normas não conferido. |
@@ -216,7 +229,7 @@ Datas móveis pela Páscoa (algoritmo gregoriano, o mesmo de `scripts/gen-zones-
 | Campinas, 12/08 | "o TJSP omite" | a consulta do TJSP já traz (16ª sessão virtual do CSM, 10/04/2026) | aplicado, confiança alta |
 | Niterói, outros feriados | "só no joaopbini" | o TJRJ (2º NUR) traz 24/06, calendário de 2022 | 24/06 registrado e desativado (vigência a conferir) |
 | ES, Penha | "desde 2019" | lei publicada em 04/07/2019: vale desde 2020 | `vigencia_de = 2020-01-01` |
-| TJRJ e interior do RJ | "sem lista municipal" | há listas por Núcleo Regional (NUR) | Duque de Caxias (NUR de 09/2026) aplicado; Volta Redonda, Resende, Macaé, Itaguaí e São Gonçalo registrados e desativados (calendários de 2022–2024 que misturam feriado e data comemorativa) |
+| TJRJ e interior do RJ | "sem lista municipal" | há listas por Núcleo Regional (NUR) | Duque de Caxias, Volta Redonda, Resende, Macaé, Itaguaí e São Gonçalo registrados e desativados: os calendários dos NUR ("feriados e datas comemorativas") misturam feriado e data comemorativa e não trazem o texto da norma. Duque de Caxias entrou aplicado e foi desativado na revisão (o NUR de 09/2026 tem o mesmo problema; a pesquisa recomenda tratar o município como "feriados municipais desconhecidos") |
 | TJSP | edital de 11/2025 | consulta oficial por município, em JSON, mais atual | datas do edital conferidas na consulta em 10/10/2026; conferência automática opcional no importador |
 | ES, polos | TJES só lista Vitória | TRT17 (Ato 44/2025) traz feriados com número da lei | Aracruz, Cachoeiro, Colatina, Linhares e São Mateus (confiança média) |
 | Contagem, Jubileu 2027+ | Páscoa − 9 inferida | "continua inferência" | 2027 e 2028 registrados e desativados; o anexo do TRT3 descreve o feriado como "sexta-feira que antecede a Sexta-feira da Paixão" (indício, sem o texto da Lei 3.484/2001) |
@@ -228,8 +241,17 @@ Migration `0202_feriados_sudeste.sql` (idempotente) acrescenta à `holidays`: `a
 (`vigente` | `a_confirmar` | `inconstitucional` | `revogada` | `suspensa`), `confidence` (`alta` | `media` | `baixa` |
 `unverifiable`), `inactive_reason`, `source_url`, `rule` (como a data é calculada), `rule_key` (id em `regras.json`),
 `notes` e `updated_at`. As linhas antigas (seed `0004_holidays.sql`, testes) ficam ativas e vigentes pelos padrões.
-Quem lê `holidays` filtra `active`: `calendar.ts` e `rodovias_horario.layer.ts` (com fallback para banco sem a 0202,
-onde ainda não existe linha desativada).
+Quem lê `holidays` filtra `active`: `calendar.ts` e `rodovias_horario.layer.ts`. A consulta antiga, sem o filtro, só
+roda quando a coluna não existe (erro 42703 do Postgres, banco sem a 0202, onde ainda não há linha desativada:
+`isMissingColumn`/`onlyIfMissingColumn` em `calendar.ts`). Outro erro (conexão que caiu, tempo limite) não cai na
+consulta sem filtro: o `calendar.ts` trata o dia como comum (a regra "exceto feriados" continua valendo) e a
+`rodovias_horario` fica sem feriados até a próxima carga das regras.
+
+**Todo código que lê `holidays` precisa filtrar `active`.** Código anterior a esta frente (o `calendar.ts` da main
+até o merge dela) não filtra e aplicaria as linhas desativadas que já estão no banco compartilhado (Quarta de Cinzas e
+Dia das Mães do RJ, inconstitucionais; Paixão no Rio; municipais do interior do RJ; Jubileu de Contagem 2027–2028)
+assim que passar a UF ou o IBGE de RJ/MG. Por isso esta frente tem de entrar na main antes de `municipios_core` e das
+frentes `mun_*`, ou essas têm de ser rebaseadas sobre ela.
 
 O importador só mexe nas linhas `source = 'feriados-sudeste'` (apaga e regrava numa transação; linha de outra origem
 com a mesma chave dia/escopo/UF/IBGE fica e é contada em `NOTES`). Regra inconsistente (data inválida, ativa com
@@ -269,13 +291,14 @@ fonte. O calendário do TJRJ é informativo (não substitui a publicação ofici
 - Base municipal: não existe base oficial nacional estruturada. Os atos dos tribunais cobrem só sedes de comarca
   (TJMG 297 de 853 municípios, TJSP 318 de 645). Aqui entraram só as capitais e os polos pesquisados. Importar as listas
   inteiras do TJMG e do TJSP (parsers testados na pesquisa) fica para outra frente, com conferência contra TRT3/TRT2.
-- Sem feriado municipal na tabela: Vila Velha, Cariacica, Viana, Duque de Caxias além do 13/06, interior do RJ em geral.
+- Sem feriado municipal aplicado: Vila Velha, Cariacica, Viana, Duque de Caxias (13/06 registrado e desativado),
+  interior do RJ em geral.
   Nesses municípios só valem os nacionais e os estaduais (lado seguro: a restrição continua).
 - Rio de Janeiro: texto da Lei Orgânica, art. 26, não aberto; Sexta-feira da Paixão não confirmada (desativada);
   feriados avulsos por evento (ex.: Lei 8.881/2025, BRICS) só aparecem quando a lei sai, e não há feed.
 - Belo Horizonte: texto primário da Lei 11.397/2022, Anexo V, não abriu; veto do Carnaval pendente na Câmara.
 - Santos: decreto anual do Executivo não achado (usada a Portaria da Mesa da Câmara 01/2026).
-- O aviso `holiday_local` cobre só origem e destino.
+- O aviso `holiday_local` cobre só origem e destino; o destino é avaliado na chegada prevista sem o fator de trânsito.
 - Os feriados de São Paulo capital, os nacionais e o 9/7 continuam em `db/seed/0004_holidays.sql`
   (`scripts/gen-zones-seed.py`). O antigo `importers/sources/feriados_sp.py` (cálculo pela lei, gravando em `holidays`)
   saiu do repositório no commit 648bdf9 porque gravava fora do contrato do runner. Este importador segue o mesmo modelo
@@ -287,7 +310,10 @@ fonte. O calendário do TJRJ é informativo (não substitui a publicação ofici
 - `api/test/layers/feriados_sudeste.test.ts` (banco + API): São Jorge (23/04/2026) aparece para rota no Rio
   (`holiday_local` com a Lei RJ 5.198/2008, art. 1º) e não para rota em São Paulo; o 9/7 paulista não vale no Rio; Lei
   RJ 8.174/2018 registrada e nunca aplicada; o banco recusa feriado ativo inconstitucional ou de confiança baixa;
-  Penha no ES; Corpus Christi em Vitória e não na Serra; Guarujá 29/06; Campinas 12/08; município da origem/destino;
-  VER de Osasco suspensa no 19/02/2026 e não no 20/02.
+  Penha no ES; Corpus Christi em Vitória e não na Serra; Guarujá 29/06; Campinas 12/08; Duque de Caxias 13/06
+  desativado; município da origem/destino; destino no dia da chegada prevista (SP → Rio saindo 22/04 às 22h e chegando
+  23/04; saída às 23h58 de 22/04 numa rota no Rio); só erro 42703 cai na consulta sem `active`; VER de Osasco suspensa
+  no 19/02/2026 e não no 20/02; rota no Rio em 09/07/2026 sem aviso `holiday`; rota no Rio em 07/09/2026 com o aviso
+  do feriado nacional sem falar de SP.
 - `importers/tests/test_feriados_sudeste.py` (sem rede e sem banco): datas pela Páscoa, regras de data, correções do
   verify.json, datas fixas de edital só em 2026, consistência ativo/motivo e falha em regra inconsistente.
