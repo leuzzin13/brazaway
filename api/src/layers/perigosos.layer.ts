@@ -996,6 +996,7 @@ function popupProps(kind: string, name: string | null, p: Record<string, any>): 
         name, tipo: p.ativa === false ? 'Trecho com regra de PP registrada (não aplicada)' : KIND_LABEL[kind],
         regra: `${p.regra}, ${p.janela}, ${p.sentidos} os sentidos`, norma: `${p.norma}, ${p.artigo}`, publicacao: p.publicacao,
         ...(p.regra_id ? {
+          regra_id: p.regra_id,
           classes: Array.isArray(p.classes_proibidas) ? fmtList(p.classes_proibidas) : 'todas',
           isencao: p.isencao_texto, situacao: p.ativa === false ? `desativada: ${p.motivo_inativa}` : (p.situacao ?? 'vigente'),
         } : {}),
