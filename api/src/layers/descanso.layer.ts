@@ -149,8 +149,9 @@ const layer: RouteLayer = {
     return { type: 'FeatureCollection', features: feats };
   },
 
-  async annotate(_ctx, route) {
-    const cands = await allCandidatesAlongRoute(route.line.geometry, route.distance_km, route.duration_s, NEAR_M);
+  async annotate(ctx, route) {
+    // validade do PPD conferida no dia em que o caminhão passa pelo ponto (saída + tempo de direção até ele)
+    const cands = await allCandidatesAlongRoute(route.line.geometry, route.distance_km, route.duration_s, NEAR_M, ctx.at);
     const by = (t: RestTier) => cands.filter((c) => c.tier === t);
     const [t1, t2, t3, t4] = [by(1), by(2), by(3), by(4)];
     const summary: string[] = [];

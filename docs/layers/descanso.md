@@ -2,7 +2,8 @@
 
 Arquivos: `api/src/layers/descanso.layer.ts` (mapa e anotação da rota), `api/src/services/restStopsData.ts`
 (candidatos do plano de direção e prioridade), importadores `importers/sources/descanso_ppd.py`, `descanso_artesp.py`,
-`descanso_antt.py`, `descanso_osm.py` (+ `_osm_pois.py`), testes em `api/test/layers/descanso.test.ts`.
+`descanso_antt.py`, `descanso_osm.py` (+ `_osm_pois.py`), testes em `api/test/layers/descanso.test.ts` e
+`importers/tests/test_descanso_postos.py` (data de validade do PPD).
 
 A camada **não muda a rota**. Ela faz três coisas:
 
@@ -36,7 +37,7 @@ Não usados: XLSX "Lista de PPDs certificados" (sem coordenadas, parado em maio/
 
 | Tier | O que entra | Pode ser o descanso de 11 h? |
 |---|---|---|
-| 1 — PPD válido | PPD certificado com validade ≥ hoje (horário de Brasília); PPD de concessão **entregue** | sim |
+| 1 — PPD válido | PPD certificado com validade ≥ dia em que o caminhão passa pelo ponto (saída da rota + tempo de direção até ele, horário de Brasília); PPD de concessão **entregue** | sim |
 | 2 — área de descanso de concessionária | ARTESP "Área de Descanso" | sim |
 | 3 — posto/pátio para caminhão | OSM (rest_area, services, truck_stop, estacionamento, posto com acesso de caminhão) e **PPD com certificação vencida** | sim |
 | 4 — SAU (apoio) | SAU da ANTT e da ARTESP; pontos do OSM com nome "SAU", "Base Operacional" ou "Atendimento ao Usuário" | **não** — só pausa curta |
@@ -49,13 +50,24 @@ janela estiver vazia, entre todos os candidatos antes do limite. `restStopsData.
 
     escore = tempo de direção até o ponto + (4 − tier) × 1h30   (crescente)
 
-- **dentro da janela** vence sempre o tier melhor (a diferença de bônus entre dois tiers é a largura da janela);
+- **dentro da janela** vence sempre o tier melhor (a diferença de bônus entre dois tiers é a largura da janela; no
+  empate exato — um ponto no início e outro no fim da janela — o tier melhor vai para o fim da lista e é o escolhido);
 - **fora da janela** (janela vazia) um tier melhor só vence se estiver até 1h30 por nível antes do outro: um PPD 2 h
   antes de um posto vence; um PPD 4 h antes, não (parar cedo demais encurta o dia de direção).
 
-**SAU nunca é o descanso de 11 h.** Depois de ordenar, o plano é simulado nos três regimes (empregado, autônomo, não
-informado). Se algum descanso diário cair num SAU, esse SAU sai da lista e a simulação se repete até estabilizar. O SAU
-continua valendo para a pausa de 30 min e continua no mapa e em `layers.descanso.data.apoio_sau`.
+**SAU nunca é o descanso de 11 h.** Depois de ordenar, o plano é simulado **no regime da rota** (`routing.ts` passa
+o `employment` do veículo a `restStopsAlongRoute`; empregado e "não informado" param nos mesmos pontos). Se o
+descanso diário cair num SAU, esse SAU sai da lista e a simulação se repete até estabilizar. O SAU que o plano usa só
+para a pausa de 30 min **fica** em `rest_stops` (e no plano). Exemplo do teste: pontos às 3h e 8h e um SAU às 11h30,
+20 h de direção, regime não informado (limite diário de 10 h): o plano para às 3h e às 8h, descansa 11 h às 10h (sem
+ponto mapeado) e faz a pausa seguinte no SAU. Só no autônomo (12 h) aquele SAU seria o descanso — e aí ele sai.
+
+Autônomo: enquanto a `main` chamar `drivingPlan` sem `employment` (o regime passa a ser usado com a branch
+`finish/core_legal`), o filtro simula o autônomo **e** o "não informado", para o SAU nunca virar descanso de 11 h em
+nenhum dos dois casos. Custo: no autônomo, um SAU que serviria só de pausa pode sair da lista. Depois da mudança, o
+"não informado" extra pode sair (`planRegimes` em `restStopsData.ts`).
+
+O SAU removido continua no mapa (`features`) e em `layers.descanso.data.apoio_sau`.
 
 Exemplo (teste ponta a ponta): Barueri → Barra da Tijuca, 521 km, 6h30 de direção. Na janela da 1ª pausa (4h00–5h30)
 há o PPD da CCR RioSP em Itatiaia (BR-116 km 319,6, 140 vagas, às 4h21) e quatro SAU depois dele. Com a lista em
@@ -65,7 +77,11 @@ prioridade, fica com o PPD. Antes desta camada o trecho nem tinha candidato (`re
 **Formato da resposta.** `rest_stops` e `driving_plan` mantêm todos os campos de antes. Cada parada ganhou `source`,
 `tier`, `category`, `daily_rest_ok`, `vagas` e `validade`; `kind` ganhou os valores `ppd`, `ppd_concessao`,
 `area_descanso` e `sau`. **`rest_stops` não vem mais ordenado pela posição na rota** (vem na ordem de prioridade do
-plano): para listar por posição, ordene por `distance_km`.
+plano): para listar por posição, ordene por `distance_km`. `rest_stops` inclui SAU (`daily_rest_ok: false`): o front
+conta os SAU à parte ("N ponto(s) de descanso + M SAU de apoio") e os desenha com outro marcador (ℹ️, cinza).
+
+A consulta dos candidatos da camada é feita uma vez por rota: `restStopsAlongRoute` (plano) e a anotação da camada
+recebem o mesmo objeto de geometria e reaproveitam o resultado.
 
 ## Saída na rota (`layers.descanso`)
 
@@ -86,8 +102,10 @@ docker compose --profile import run --rm importer descanso_osm
 
 - `descanso_ppd`: consulta os endpoints públicos do Power BI (`modelsAndExploration` + `querydata`, os mesmos que o
   navegador usa ao abrir o link do painel). Se falharem, usa a última resposta em `data/cache/descanso_ppd_powerbi.json`.
-  A validade é gravada como data (o painel grava meia-noite de Brasília em UTC: `1748736000000` = 31/05/2025); a API
-  decide na hora se o PPD está vigente, então um PPD que vence entre duas cargas cai sozinho para o tier 3.
+  A validade é gravada como data. A coluna é do tipo Date do Power BI, sem fuso, serializada como meia-noite **UTC**
+  (`1748736000000` = 2025-06-01T00:00Z = 01/06/2025); ler em -03 daria um dia antes. Confere com os 4 anos da Portaria
+  802/2025 §1º (portaria nº 109 de 09/02/2026 → válida até 09/02/2030). A API decide na hora se o PPD está vigente (no
+  dia em que o caminhão passa por ele), então um PPD que vence entre duas cargas cai sozinho para o tier 3.
   Novas certificações saem no DOU (ex.: Portaria nº 857/2026); o painel costuma ser atualizado depois.
 - `descanso_artesp`: `recursos.xlsx` do CKAN da ARTESP (atualizado a cada poucos meses).
 - `descanso_antt`: CSV do CKAN da ANTT (URL descoberta pelo `package_show`).
@@ -96,7 +114,7 @@ docker compose --profile import run --rm importer descanso_osm
 ## Limitações
 
 - **Na Grande SP só há 1 PPD certificado — e vencido**: Paradouro Batistella (Guararema, BR-116 km 177, 200 vagas),
-  certificação válida até 31/05/2025. Fora dele, o mais perto é o PPD de concessão da Dutra km 95 (Pindamonhangaba). O
+  certificação válida até 01/06/2025. Fora dele, o mais perto é o PPD de concessão da Dutra km 95 (Pindamonhangaba). O
   PPD da Dutra km 182 (Guararema/Jacareí) está em obras e aparece no mapa só com a posição do edital. No estado de SP
   há 2 PPD certificados (ambos vencidos) e 2 de concessão.
 - Áreas de descanso da ARTESP **sem número de vagas** (a planilha não traz). Ocupação em tempo real não existe em
@@ -108,4 +126,8 @@ docker compose --profile import run --rm importer descanso_osm
 - OSM: `highway=rest_area` e `highway=services` são usados para muita coisa no Brasil (há "rest_area" chamadas "Casa");
   `services` só entra com nome de posto/parada/rede. Bases do SAU marcadas como rest_area no OSM são reconhecidas pelo
   nome e tratadas como SAU.
-- O tempo até cada ponto é proporcional à distância ao longo da rota (mesma aproximação do plano).
+- O tempo até cada ponto é proporcional à distância ao longo da rota (mesma aproximação do plano). A validade do PPD
+  é conferida em saída + tempo de direção até o ponto, sem somar as paradas: numa viagem de vários dias, um PPD que
+  vence no meio dela pode ser dado como válido até ~1 dia a mais.
+- `rest_stops` não traz o SAU que o plano da rota usaria para o descanso de 11 h (ele sai da lista para o plano não
+  escolhê-lo); esse SAU segue no mapa e em `layers.descanso.data.apoio_sau`.

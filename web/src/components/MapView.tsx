@@ -128,8 +128,9 @@ export function MapView(p: MapViewProps) {
     const suggested = new Set(p.route.driving_plan?.suggested_stops.map((s) => s.stop?.id).filter(Boolean));
     for (const s of p.route.rest_stops ?? []) {
       const d = document.createElement('div');
-      d.className = 'rest-marker' + (suggested.has(s.id) ? ' suggested' : '');
-      d.textContent = '🅿️';
+      const sau = s.daily_rest_ok === false;   // SAU: só apoio (pausa curta), marcador diferente
+      d.className = 'rest-marker' + (sau ? ' sau' : '') + (suggested.has(s.id) ? ' suggested' : '');
+      d.textContent = sau ? 'ℹ️' : '🅿️';
       const h = Math.floor(s.eta_s / 3600), mi = Math.round((s.eta_s % 3600) / 60);
       const pop = new Popup({ offset: 14, maxWidth: '260px' }).setHTML(`<div class="pp"><div class="pp-title">${escapeHtml(s.name ?? REST_KINDS[s.kind] ?? s.kind)}</div><div class="pp-row">${escapeHtml(s.category ?? REST_KINDS[s.kind] ?? s.kind)}${s.vagas ? ` · ${s.vagas} vagas` : ''}</div><div class="pp-row pp-meta">km ${s.distance_km} · ~${h ? `${h}h${String(mi).padStart(2, '0')}` : `${mi} min`} de direção · ${Math.round(s.off_route_m)} m da rota${suggested.has(s.id) ? ' · <strong>parada sugerida</strong>' : ''}</div><div class="pp-row pp-meta">Fonte: ${escapeHtml(REST_SOURCES[s.source ?? 'osm'] ?? s.source ?? 'OpenStreetMap')}</div></div>`);
       restMarkers.current.push(new Marker({ element: d, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(pop).addTo(m));

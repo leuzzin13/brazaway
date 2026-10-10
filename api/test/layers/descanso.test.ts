@@ -7,8 +7,8 @@ import { request } from 'node:http';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { API, get, pool, waitForStack } from '../helpers.js';
 import { drivingPlan, DRIVING_RULES, type RestStop } from '../../src/services/restStops.js';
-import { classify, orderForPlan, withoutForbiddenDailyRest, type RestStopCandidate, type RestTier } from '../../src/services/restStopsData.js';
-import { cheapest, type PostoOnRoute } from '../../src/layers/postos_diesel.layer.js';
+import { classify, dayAtPoint, orderForPlan, planRegimes, withoutForbiddenDailyRest, type RestStopCandidate, type RestTier } from '../../src/services/restStopsData.js';
+import { cheapest, fonteTxt, type PostoOnRoute } from '../../src/layers/postos_diesel.layer.js';
 import { restGaps } from '../../src/layers/descanso.layer.js';
 
 const H = 3600;
@@ -44,8 +44,8 @@ function cand(id: string, etaH: number, tier: RestTier, extra: Partial<RestStopC
 describe('descanso — regras (unitário)', () => {
   it('classifica PPD pela validade, PPD de concessão pela entrega e SAU como apoio', () => {
     expect(classify('ppd', 'ppd-mt', { validade: '2029-08-01' }, '2026-10-09')).toMatchObject({ tier: 1, daily_rest_ok: true });
-    expect(classify('ppd', 'ppd-mt', { validade: '2025-05-31' }, '2026-10-09')).toMatchObject({ tier: 3 });
-    expect(classify('ppd', 'ppd-mt', { validade: '2025-05-31' }, '2026-10-09')!.category).toMatch(/vencida em 31\/05\/2025/);
+    expect(classify('ppd', 'ppd-mt', { validade: '2025-06-01' }, '2026-10-09')).toMatchObject({ tier: 3 });
+    expect(classify('ppd', 'ppd-mt', { validade: '2025-06-01' }, '2026-10-09')!.category).toMatch(/vencida em 01\/06\/2025/);
     expect(classify('ppd_concessao', 'ppd-mt', { operando: true })).toMatchObject({ tier: 1 });
     expect(classify('ppd_concessao', 'ppd-mt', { operando: false })).toBeNull();
     expect(classify('area_descanso', 'artesp', {})).toMatchObject({ tier: 2, daily_rest_ok: true });
@@ -66,6 +66,12 @@ describe('descanso — regras (unitário)', () => {
     expect(drivingPlan(7 * H, orderForPlan([cand('sau', 5.4, 4)], W)).suggested_stops[0].stop?.id).toBe('sau');
   });
 
+  it('empate de escore nas pontas da janela: vence o tier melhor', () => {
+    // PPD exatamente no início da janela (4h00) e área de descanso exatamente no limite (5h30): mesmo escore
+    expect(drivingPlan(7 * H, orderForPlan([cand('ppd', 4.0, 1), cand('area', 5.5, 2)], W)).suggested_stops[0].stop?.id).toBe('ppd');
+    expect(drivingPlan(7 * H, orderForPlan([cand('area', 4.0, 2), cand('posto', 5.5, 3)], W)).suggested_stops[0].stop?.id).toBe('area');
+  });
+
   it('fora da janela, tier melhor só vence se estiver até 1h30 por nível antes', () => {
     // nada na janela (4h–5h30). Escore = direção até o ponto + (4 − tier) × 1h30.
     // PPD às 2h00 (2h00 + 4h30 = 6h30) vence o posto às 3h45 (3h45 + 1h30 = 5h15)
@@ -79,13 +85,42 @@ describe('descanso — regras (unitário)', () => {
     const list = orderForPlan([cand('posto_cedo', 3.0, 3), cand('sau_dia', 9.8, 4), cand('sau_pausa', 8.0, 4)], W);
     for (const employment of [undefined, 'employee', 'autonomous'] as const) {
       const before = drivingPlan(20 * H, list, { employment });
-      const filtered = withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never);
-      const after = drivingPlan(20 * H, filtered, { employment });
-      for (const s of after.suggested_stops) if (s.kind === 'daily_rest' && s.stop) expect((s.stop as RestStopCandidate).daily_rest_ok).toBe(true);
-      expect(before.suggested_stops.length).toBeGreaterThan(0);
+      expect(before.suggested_stops.some((s) => s.kind === 'daily_rest' && s.stop?.id === 'sau_dia')).toBe(true);
+      const filtered = withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never, planRegimes(employment));
+      // o plano no regime da rota (e, para o autônomo, também o "não informado" que a main ainda usa) não descansa em SAU
+      for (const opts of [{ employment }, ...(employment === 'autonomous' ? [{}] : [])]) {
+        for (const s of drivingPlan(20 * H, filtered, opts).suggested_stops) {
+          if (s.kind === 'daily_rest' && s.stop) expect((s.stop as RestStopCandidate).daily_rest_ok).toBe(true);
+        }
+      }
     }
     const filtered = withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never);
     expect(filtered.some((c) => c.tier === 4)).toBe(true);   // SAU que só serve de pausa continua na lista
+  });
+
+  it('SAU que o plano do regime da rota usa só para a pausa de 30 min continua na lista (e no plano)', () => {
+    // regime não informado (limite diário de 10 h): o SAU às 11h30 fica DEPOIS do descanso diário e serve de pausa.
+    // No autônomo (12 h) ele seria o descanso de 11 h — mas a rota não é planejada nesse regime.
+    const list = orderForPlan([cand('p1', 3.0, 3), cand('p2', 8.0, 3), cand('sau', 11.5, 4)], W);
+    const filtered = withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never, planRegimes(undefined));
+    expect(filtered.map((c) => c.id)).toContain('sau');
+    const plan = drivingPlan(20 * H, filtered);
+    expect(plan.suggested_stops.map((s) => `${s.kind}@${s.stop?.id ?? '-'}`)).toEqual(['break@p1', 'break@p2', 'daily_rest@-', 'break@sau', 'break@-']);
+    // empregado para nos mesmos pontos (só a 1ª pausa vira refeição de 1 h)
+    expect(withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never, planRegimes('employee')).map((c) => c.id)).toContain('sau');
+    // autônomo: aí sim o SAU sairia do descanso de 11 h
+    const auto = withoutForbiddenDailyRest(list, 20 * H, drivingPlan as never, planRegimes('autonomous'));
+    expect(auto.map((c) => c.id)).not.toContain('sau');
+  });
+
+  it('validade do PPD conferida no dia em que o caminhão passa pelo ponto, não no dia da consulta', () => {
+    const saida = new Date('2026-10-09T20:00:00-03:00');
+    expect(dayAtPoint(saida, 0)).toBe('2026-10-09');
+    expect(dayAtPoint(saida, 6 * H)).toBe('2026-10-10');      // 02:00 do dia 10
+    expect(dayAtPoint(saida, 30 * H)).toBe('2026-10-11');
+    const ppd = { validade: '2026-10-10' };
+    expect(classify('ppd', 'ppd-mt', ppd, dayAtPoint(saida, 6 * H))).toMatchObject({ tier: 1 });
+    expect(classify('ppd', 'ppd-mt', ppd, dayAtPoint(saida, 30 * H))).toMatchObject({ tier: 3 });
   });
 
   it('trechos sem descanso: mais de 5h30 entre pontos (SAU não conta)', () => {
@@ -99,10 +134,16 @@ describe('descanso — regras (unitário)', () => {
     const p = (id: string, v: number | null, desvio: number): PostoOnRoute => ({
       id, nome: id, bandeira: null, cnpj: id, municipio: null, uf: null, endereco: null,
       diesel_s10: v === null ? null : { valor: v, data: '2026-10-01' }, diesel_s500: null, km_rota: 1, distancia_m: 10,
-      desvio_km: desvio, posicao: 'pmqc', aceita_caminhao: null, lat: 0, lon: 0,
+      desvio_km: desvio, posicao: 'pmqc', aceita_caminhao: null, fonte: 'Fonte: ANP', lat: 0, lon: 0,
     });
     const top = cheapest([p('a', 6.99, 0), p('b', 6.49, 2), p('c', null, 0), p('d', 6.49, 0.5), p('e', 7.2, 0)], 'diesel_s10', 3);
     expect(top.map((x) => x.id)).toEqual(['d', 'b', 'a']);
+  });
+
+  it('postos: atribuição do OSM quando a posição ou o acesso de caminhão vêm de lá', () => {
+    expect(fonteTxt({ coord_fonte: 'pmqc' })).toBe('Fonte: ANP (LPC, cadastro e PMQC)');
+    expect(fonteTxt({ coord_fonte: 'pmqc', osm: { id: 'n1' } })).toMatch(/^Fonte: ANP .* acesso de caminhão © colaboradores do OpenStreetMap \(ODbL\)$/);
+    expect(fonteTxt({ coord_fonte: 'cnefe+osm', osm: { id: 'n1' } })).toMatch(/posição e acesso de caminhão © colaboradores do OpenStreetMap/);
   });
 });
 
@@ -139,7 +180,7 @@ describe('descanso — ponta a ponta', () => {
     const fs = r.body.features as any[];
     const batistella = fs.find((f) => /Batistella/i.test(f.properties.name));
     expect(batistella?.properties.tipo).toBe('PPD com certificação vencida');
-    expect(batistella?.properties.validade).toBe('31/05/2025');
+    expect(batistella?.properties.validade).toBe('01/06/2025');
     expect(batistella?.properties.vagas).toBeGreaterThan(0);
     const ecovias = fs.find((f) => f.properties.tipo === 'Área de descanso de concessionária');
     expect(ecovias?.properties.prioridade).toMatch(/^2/);
@@ -156,6 +197,18 @@ describe('descanso — ponta a ponta', () => {
     expect(comPreco.length).toBeGreaterThan(5);
     expect(comPreco[0].properties.diesel_s10).toMatch(/^R\$ \d+,\d{2} \(coleta \d{2}\/\d{2}\/\d{4}\)$/);
     expect(comPreco[0].properties.fonte).toMatch(/Fonte: ANP/);
+    const doOsm = (r.body.features as any[]).find((f) => /OpenStreetMap/.test(f.properties.fonte ?? ''));
+    expect(doOsm, 'algum posto ligado ao OSM com a atribuição ODbL').toBeTruthy();
+  });
+
+  it('postos_diesel: nenhum ponto do PMQC repetido (centro da cidade/ponto padrão) — 3+ CNPJs no mesmo lugar', async () => {
+    const r = await pool.query(`select ST_AsText(geom) p, count(distinct props->>'cnpj')::int n from data_features
+      where layer_id = 'postos_diesel' group by geom having count(distinct props->>'cnpj') >= 3`);
+    expect(r.rows, JSON.stringify(r.rows.slice(0, 5))).toEqual([]);
+    // o ponto em S. João de Meriti (ao lado da Dutra) onde o PMQC punha 20 postos de 4 UFs
+    const meriti = await pool.query(`select count(*)::int n from data_features where layer_id = 'postos_diesel'
+      and ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(-43.3371, -22.7780), 4326)::geography, 30)`);
+    expect(meriti.rows[0].n).toBeLessThanOrEqual(1);
   });
 
   it('rota longa SP→Rio: a pausa de 30 min prioriza PPD/área de descanso da janela, não o ponto mais tardio', () => {
