@@ -1,5 +1,9 @@
 # Camada `restricoes_rmsp` — restrições de caminhão nos municípios da Grande SP
 
+> A camada é **genérica por município** desde 10/10/2026: formato, importador, status, capacidade de carga e o passo a
+> passo para uma frente adicionar um município estão em [`restricoes_municipais.md`](restricoes_municipais.md). O id
+> `restricoes_rmsp` foi mantido (decisão explicada lá). Este arquivo trata só da Grande SP.
+
 Restrições municipais a caminhões **fora da capital**: Osasco (ZMRC + VER), Barueri (VER), Guarulhos (ZRCC-TB, Trevo
 de Bonsucesso), Cajamar (Anexos I–IV), Santana de Parnaíba (PBT > 15 t) e Ribeirão Pires (ZRC). A restrição
 regional do ABC de 2012 fica registrada como **revogada** e nunca é aplicada.
@@ -8,13 +12,13 @@ Peças:
 
 | Peça | Arquivo |
 |---|---|
-| Regras legais (horários, dimensões, VUC, exceções, ato e artigo, URL conferida) | `data/raw/rmsp/regras.json` |
-| Geometria curada (versionada; o import não depende do Overpass) | `data/raw/rmsp/*.geojson` |
+| Regras legais (horários, dimensões, VUC, exceções, ato e artigo, URL conferida) | um arquivo por município: `data/raw/municipios/3534401.json` (Osasco), `3505708.json` (Barueri), `3518800.json` (Guarulhos), `3509205.json` (Cajamar), `3547304.json` (Santana de Parnaíba), `3543303.json` (Ribeirão Pires) e `3547809.json` (Santo André: registro revogado do ABC 2012). Até 10/10/2026: `data/raw/rmsp/regras.json` |
+| Geometria curada (versionada; o import não depende do Overpass) | `data/raw/rmsp/*.geojson` (referenciada nos arquivos de município) |
 | Curadoria do mapa vetorial de Osasco (georreferenciamento) | `data/raw/rmsp/curadoria/osasco_georef.py` + pontos de controle |
-| Importadores | `importers/sources/rmsp_*.py` (`rmsp_municipios.py` também é a biblioteca comum) |
-| Seeds | `db/seed/layers/restricoes_rmsp__<fonte>.sql` |
+| Importador | `importers/sources/municipios.py` (genérico; biblioteca `_municipios_lib.py`). Até 10/10/2026: `rmsp_*.py` |
+| Seeds | `db/seed/layers/restricoes_rmsp__<fonte>.sql` (fontes `osasco`, `barueri`, `guarulhos`, `cajamar`, `santana-parnaiba`, `ribeirao-pires`, `santo-andre` e `ibge` = limites) |
 | API | `api/src/layers/restricoes_rmsp.layer.ts` |
-| Testes | `api/test/layers/rmsp.test.ts` (25 testes, contra a API) e `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) |
+| Testes | `api/test/layers/rmsp.test.ts` (25 testes, contra a API), `importers/tests/test_rmsp_linhas.py` (corte/encadeamento das linhas, sem rede) e `importers/tests/test_municipios.py` (os arquivos da RMSP montam as mesmas feições dos importadores antigos) |
 
 Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendário legal `holidays`).
 
@@ -30,9 +34,9 @@ Não foi preciso migration (usa `data_features`/`data_layer_runs` e o calendári
 | Santana de Parnaíba | Dec. 4.288/2019, art. 1º, I e II, e art. 3º (Imprensa Oficial ed. 298, p. 7) | costLines | Estr. Tenente Marques 16h–19h diariamente; 12 vias 24h | PBT > 15 t | — |
 | Santana de Parnaíba | idem, art. 2º, I | exceção de **entrega no município** | só quando o **destino** está no município, e só nas 10 vias de acesso do inciso I (II.1, II.2, II.4–II.11) | carga com nota fiscal para obra/residência/comércio no município | — |
 | Ribeirão Pires | Dec. 7.608/2025, arts. 1º, 4º–6º e 15 (DO ed. 44/2026) | ZRC → exclusão | período integral | > 2 eixos **ou** PBT > 16 t | — (AETE, Lei 5.972/2015) |
-| ABC (Santo André, SBC, São Caetano, Diadema) | restrição regional de 2012 | `kind=revogada`, `valid_to=2012-04-03` | — | — | cancelada pelo Consórcio antes de vigorar (DGABC 03/04/2012); não aplicada |
+| ABC (Santo André, SBC, São Caetano, Diadema) | restrição regional de 2012 | `kind=revogada`, `valid_to=2012-04-02` (arquivo de Santo André, fonte `santo-andre`) | — | — | cancelada pelo Consórcio em 02/04/2012, antes de vigorar (DGABC 03/04/2012); não aplicada |
 
-Caminhão = PBT acima de 3,5 t (CTB, Anexo I). A definição de VUC é **por município** (`regras.json → vuc`): a
+Caminhão = PBT acima de 3,5 t (CTB, Anexo I). A definição de VUC é **por município** (campo `vuc` do arquivo do município): a
 pergunta é se o veículo cabe nas dimensões máximas daquele município (largura e comprimento), não o `is_vuc` global.
 
 **Santana de Parnaíba, art. 2º (texto conferido):** "Ficam excluídos da proibição, prevista no inciso II do art. 1º":
@@ -106,7 +110,7 @@ a sede da empresa.
   de Siqueira) a até 450 m do cruzamento (`guarulhos_vias.geojson`) **mais os dois braços** que o contorno desenha ao
   longo da transversal: Estr. Pres. JK até ~1 km ao sul (lado do Posto Shell) e Av. Dr. Arthur Marcondes de
   Siqueira/Estr. Capuava até ~0,6 km ao norte (`guarulhos_bracos.geojson`, pela malha do Valhalla entre as pontas de
-  `regras.json → trechos`). Escala estimada pela largura do trevo no anexo (~1,8 m/px). Pista principal e marginais
+  `trechos` da regra em `3518800.json`). Escala estimada pela largura do trevo no anexo (~1,8 m/px). Pista principal e marginais
   da Dutra ficam livres (testado: nenhuma linha corre sobre o eixo da Dutra).
 - **Ribeirão Pires**: o Anexo I é uma imagem sobre base Google; o contorno foi digitalizado à mão sobre a malha do OSM
   (faces entre Av. Pref. Valdírio Prisco, Av. Francisco Monteiro e Av. Capitão José Galo/Av. Kaethe Richers), 0,43 km².
@@ -141,7 +145,7 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
   ZMRC como o centro expandido que "compreende" as vias listadas. Lado seguro e leitura literal: cada via vale inteira
   dentro de Osasco no horário da ZMRC (somando as pistas no OSM: Av. Visconde de Nova Granada 4 km, Av. Santo
   Antônio 2,9 km, Av. das Nações Unidas 2,3 km). Se a SETRAN/DEMUTRAN confirmar que a ZMRC é só o centro, basta recortar `osasco_zmrc_vias` pelo
-  polígono (com folga) em `regras.json`.
+  polígono (com folga) no arquivo `3534401.json`.
 - **VER dentro da ZMRC de Osasco**: o mapa marca como VER vias que atravessam a ZMRC (Av. dos Autonomistas, Av. João
   Batista...). Sem o texto de 2012 não dá para saber se elas ficam liberadas fora do pico. A rota mantém a ZMRC inteira
   proibida no horário dela (lado seguro); se a SETRAN confirmar que as VER são corredores, basta trocar a zona por
@@ -176,16 +180,21 @@ ribeirao-pires 1 zona (0,43 km²); ibge 39 limites municipais + 1 registro revog
 
 ## Como atualizar
 
-1. Conferir o ato na fonte primária e editar `data/raw/rmsp/regras.json` (janelas, alvo, VUC, base legal, `trechos`).
-2. Refazer a geometria de nome/trecho: `RMSP_REBUILD=1` no importador (consulta o Overpass, cache em `data/cache/rmsp/`;
-   trechos `caminho: valhalla` usam o Valhalla) e revisar `pendencias` no GeoJSON gerado. Para refazer só um arquivo,
-   apague o GeoJSON curado correspondente (ex.: `guarulhos_bracos.geojson`).
+1. Conferir o ato na fonte primária e editar o arquivo do município em `data/raw/municipios/` (janelas, alvo, VUC, base
+   legal com ato e artigo, `trechos`); validar com `python -m sources.municipios --validar` (ver
+   `restricoes_municipais.md`). Mudança intencional: regravar os digests `exato` do teste (`ATUALIZAR=1`).
+2. Refazer a geometria de nome/trecho: `MUNICIPIOS_REBUILD=1` no importador (consulta o Overpass, cache em
+   `data/cache/municipios/`; trechos `caminho: valhalla` usam o Valhalla) e revisar `pendencias` no GeoJSON gerado.
+   Para refazer só um arquivo, apague o GeoJSON curado correspondente (ex.: `guarulhos_bracos.geojson`).
 3. Osasco: `WORK=/tmp/osasco python3 data/raw/rmsp/curadoria/osasco_georef.py` (fora da imagem do importador; requer
    numpy, scipy, shapely, pyproj, scikit-image, networkx, requests e poppler; `--refit` refaz os pontos de controle).
    A execução completa é lenta (uma rodada levou mais de 1 h: parsing de ~75 mil paths do PDF) e reproduziu a ZMRC
    com 23 m² de diferença simétrica.
 4. Carregar (com o Valhalla no ar — as linhas são validadas contra o grafo):
-   `docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e PGPASSWORD=truck -e PGDATABASE=truck_router -e DATA_DIR=/data -e SEED_DIR=/seed/layers -e VALHALLA_URL=http://valhalla:8002 -v $(pwd)/importers:/app -v $(pwd)/data:/data -v $(pwd)/db/seed:/seed truck-router-importer rmsp_municipios rmsp_osasco rmsp_barueri rmsp_guarulhos rmsp_cajamar rmsp_santana_parnaiba rmsp_ribeirao_pires`
+   `docker run --rm --network truck-router_default -e PGHOST=db -e PGUSER=truck -e PGPASSWORD=truck -e PGDATABASE=truck_router -e DATA_DIR=/data -e SEED_DIR=/seed/layers -e VALHALLA_URL=http://valhalla:8002 -v $(pwd)/importers:/app -v $(pwd)/data:/data -v $(pwd)/db/seed:/seed truck-router-importer municipios:ibge,3534401,3505708,3518800,3509205,3547304,3543303,3547809`
+   (só um município: `municipios:3505708`). Em 10/10/2026 só foram regravados os seeds sem vias (`ibge`,
+   `ribeirao-pires`, `santo-andre`); os de Osasco, Barueri, Guarulhos, Cajamar e Santana são os do importador antigo
+   (equivalentes, conferido por digest) até a próxima carga com o Valhalla.
 5. Vigilância sugerida: Querido Diário por município ("trânsito de caminhões", "circulação de caminhões", "10.676",
    "Vias Estruturais Restritas"); o diário de Barueri não tem busca para 2023–2026.
 
