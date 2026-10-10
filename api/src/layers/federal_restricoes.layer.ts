@@ -683,11 +683,13 @@ async function computeMatch(r: MatchReq): Promise<MatchResult> {
 export function matchLines(r: MatchReq, tileset: string): Promise<MatchResult> {
   const gh = geomHash(r);
   const k = `${r.key}|${r.mode}|${tileset}|${gh}`;
+  // a versão do algoritmo entra na chave: API com código antigo e novo no mesmo banco não sobrescrevem o cache uma da outra
+  const dbKey = `${r.key}@${MATCH_VERSION}`;
   let p = memCache.get(k);
   if (!p) {
     p = (async () => {
       const db = await query<{ ok: boolean; lines: LonLat[][] | null; info: Record<string, unknown> | null; geom_hash: string }>(
-        'select ok, lines, info, geom_hash from siaet_osm_match where feature_key = $1 and mode = $2 and tileset = $3', [r.key, r.mode, tileset],
+        'select ok, lines, info, geom_hash from siaet_osm_match where feature_key = $1 and mode = $2 and tileset = $3', [dbKey, r.mode, tileset],
       ).catch(() => ({ rows: [] as any[] }));
       const hit = db.rows[0];
       if (hit && hit.geom_hash === gh && Array.isArray(hit.info?.dirs)) {
@@ -698,7 +700,7 @@ export function matchLines(r: MatchReq, tileset: string): Promise<MatchResult> {
         `insert into siaet_osm_match (feature_key, mode, tileset, geom_hash, ok, lines, info) values ($1,$2,$3,$4,$5,$6,$7)
          on conflict (feature_key, mode, tileset) do update set geom_hash = excluded.geom_hash, ok = excluded.ok, lines = excluded.lines,
            info = excluded.info, created_at = now()`,
-        [r.key, r.mode, tileset, gh, m.ok, JSON.stringify(m.lines), JSON.stringify({ ...m.info, dirs: m.dirs })],
+        [dbKey, r.mode, tileset, gh, m.ok, JSON.stringify(m.lines), JSON.stringify({ ...m.info, dirs: m.dirs })],
       ).catch(() => {});
       return m;
     })();

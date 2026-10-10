@@ -6,7 +6,7 @@
 --    direto. A API casa a linha uma vez (trace_attributes), valida e guarda aqui por versão dos tiles.
 --    Conteúdo derivado do OSM (ODbL): uso interno no roteamento; não é exportado nem misturado aos dados de terceiros.
 create table if not exists siaet_osm_match (
-  feature_key text not null,          -- '<layer>:<source>:<source_id>'
+  feature_key text not null,          -- '<layer>:<source>:<source_id>@<versão do casamento>'
   mode        text not null,          -- 'segmento' | 'ponte'
   tileset     text not null,          -- tileset_last_modified do Valhalla (/status)
   geom_hash   text not null,          -- md5 da geometria de entrada (reimportação com outra geometria invalida o cache)

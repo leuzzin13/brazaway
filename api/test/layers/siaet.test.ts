@@ -22,6 +22,21 @@ const TEST_REVIEWER = 'teste-siaet';
 const ALERTA_DIAS = 120; // pontes_federais.layer.ts: alerta pendente só aparece nos 120 dias após a publicação
 
 const ids = (r: any) => (r.avoided ?? []).map((a: any) => a.id);
+
+/**
+ * Rota com as restrições do SIAET já casadas: o 1º cálculo de um trecho ainda não cacheado pode estourar o tempo de
+ * casamento (aviso siaet_nao_aplicado "em preparação"); o contrato da camada é recalcular em instantes.
+ */
+async function routeSettled(body: Record<string, unknown>, tries = 5): Promise<{ status: number; body: any }> {
+  let r = await route(body);
+  for (let i = 1; i < tries && r.status === 200; i++) {
+    const pend = (r.body.warnings ?? []).some((w: any) => w.code === 'siaet_nao_aplicado' && /prepara/.test(w.message));
+    if (!pend) break;
+    await new Promise((ok) => setTimeout(ok, 5000));
+    r = await route(body);
+  }
+  return r;
+}
 const codes = (r: any, layer?: string) => (r.warnings ?? []).filter((w: any) => !layer || w.layer === layer).map((w: any) => w.code);
 const veh = (input: Record<string, unknown>) => resolveVehicle(input as Parameters<typeof resolveVehicle>[0]);
 
@@ -121,7 +136,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   });
 
   it('carreta 41,5 t desvia do trecho de PBT 23 t da BR-365/MG', async () => {
-    const r = await route({ origin: O, destination: D, vehicle: CARRETA, departure_at: DEP });
+    const r = await routeSettled({ origin: O, destination: D, vehicle: CARRETA, departure_at: DEP });
     expect(r.status, JSON.stringify(r.body).slice(0, 500)).toBe(200);
     expect(ids(r.body)).toContain(SEG);
     const item = r.body.avoided.find((a: any) => a.id === SEG);
@@ -134,7 +149,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   });
 
   it('VUC passa pelo trecho (9 t ≤ 23 t, 7,2 m ≤ 15 m) e só recebe informação', async () => {
-    const r = await route({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
+    const r = await routeSettled({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
     expect(r.status).toBe(200);
     expect(ids(r.body)).not.toContain(SEG);
     const d = minDistM(r.body, ponte);
@@ -146,7 +161,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   });
 
   it('só o PBT excede e o segmento tem 1 OAE: desvia só da ponte OSM', async () => {
-    const r = await route({ origin: O, destination: D, vehicle: { preset: 'truck', weight_t: 30 }, departure_at: DEP });
+    const r = await routeSettled({ origin: O, destination: D, vehicle: { preset: 'truck', weight_t: 30 }, departure_at: DEP });
     expect(r.status).toBe(200);
     const item = r.body.avoided.find((a: any) => a.id === SEG);
     expect(item, JSON.stringify(r.body.avoided)).toBeTruthy();
@@ -156,7 +171,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   });
 
   it('nota técnica 1–2 vira aviso "warn" com pedido de reporte, nunca bloqueio', async () => {
-    const r = await route({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
+    const r = await routeSettled({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
     expect(r.status).toBe(200);
     const w = r.body.warnings.find((x: any) => x.code === 'ponte_nota_baixa' && /Rio das Velhas/.test(x.message));
     expect(w?.severity).toBe('warn');
@@ -168,7 +183,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   });
 
   it('alerta do DNIT pendente de revisão é só informação (caminhão 23 t ainda cruza a ponte)', async () => {
-    const r = await route({ origin: O, destination: D, vehicle: { preset: 'truck' }, departure_at: DEP });
+    const r = await routeSettled({ origin: O, destination: D, vehicle: { preset: 'truck' }, departure_at: DEP });
     expect(r.status).toBe(200);
     expect(ids(r.body).filter((x: string) => x.startsWith('alerta:'))).toEqual([]);
     expect(ids(r.body)).not.toContain(SEG); // 23 t não excede 23 t
@@ -191,12 +206,12 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
       `insert into dnit_alertas_curadoria (source_id, status, acao, peso_max_t, revisado_por, nota)
        values ($1, 'aprovado', 'limite_peso', 10, $2, 'teste automatizado') on conflict (source_id) do nothing`, [sid, TEST_REVIEWER]);
     try {
-      const r = await route({ origin: O, destination: D, vehicle: { preset: 'truck' }, departure_at: DEP });
+      const r = await routeSettled({ origin: O, destination: D, vehicle: { preset: 'truck' }, departure_at: DEP });
       expect(r.status).toBe(200);
       expect(ids(r.body)).toContain(`alerta:${sid}`);
       expect(minDistM(r.body, ponte)).toBeGreaterThan(200);
       expect(r.body.layers.federal_restricoes.summary.join(' ')).toMatch(/Evitado.*Rio das Velhas/);
-      const vuc = await route({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
+      const vuc = await routeSettled({ origin: O, destination: D, vehicle: VUC, departure_at: DEP });
       expect(ids(vuc.body)).not.toContain(`alerta:${sid}`); // 9 t < 10 t
     } finally {
       await pool.query(`delete from dnit_alertas_curadoria where source_id = $1 and revisado_por = $2`, [sid, TEST_REVIEWER]);
@@ -207,7 +222,7 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
     const seg = 'siaet:temporaria:259BES0015:15.3';
     const A = { lat: -19.66, lon: -40.40 }, B = { lat: -19.53, lon: -40.63 }; // João Neiva -> Colatina
     for (const vehicle of [{ preset: 'truck' }, { preset: 'utilitario' }]) {
-      const r = await route({ origin: A, destination: B, vehicle, departure_at: DEP });
+      const r = await routeSettled({ origin: A, destination: B, vehicle, departure_at: DEP });
       expect(r.status).toBe(200);
       expect(ids(r.body), JSON.stringify(vehicle)).toContain(seg);
       expect(r.body.avoided.find((x: any) => x.id === seg).rule).toMatch(/impedido/);
@@ -218,12 +233,12 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   it('0 fora da jurisdição federal (Marginal Tietê): carreta passa com informação; rodotrem recebe aviso de AET', async () => {
     const seg = 'siaet:temporaria:116BSP2550:230.6';
     const A = { lat: -23.515, lon: -46.6 }, B = { lat: -23.52, lon: -46.7 };
-    const c = await route({ origin: A, destination: B, vehicle: CARRETA, departure_at: '2026-10-13T23:00' });
+    const c = await routeSettled({ origin: A, destination: B, vehicle: CARRETA, departure_at: '2026-10-13T23:00' });
     expect(c.status).toBe(200);
     expect(ids(c.body)).not.toContain(seg);
     const info = c.body.warnings.find((w: any) => w.code === 'siaet_aet_bloqueada' && w.id === seg);
     expect(info?.severity).toBe('info');
-    const r = await route({ origin: A, destination: B, vehicle: { preset: 'rodotrem' }, departure_at: '2026-10-13T23:00' });
+    const r = await routeSettled({ origin: A, destination: B, vehicle: { preset: 'rodotrem' }, departure_at: '2026-10-13T23:00' });
     expect(r.status).toBe(200);
     expect(ids(r.body)).not.toContain(seg);
     expect(codes(r.body, 'federal_restricoes')).toContain('siaet_aet_outro_orgao');
@@ -232,11 +247,11 @@ describe('SIAET/DNIT — restrições federais e pontes na rota', () => {
   it('limite por sentido: altura 4,0 m só na pista 1 (crescente) da BR-101/RJ (Av. Brasil)', async () => {
     const seg = 'siaet:definitiva:101BRJ3210:350.4';
     const A = { lat: -22.815, lon: -43.3 }, B = { lat: -22.835, lon: -43.365 };
-    const ida = await route({ origin: A, destination: B, vehicle: { preset: 'truck' }, departure_at: '2026-10-13T22:00' }); // 4,20 m
+    const ida = await routeSettled({ origin: A, destination: B, vehicle: { preset: 'truck' }, departure_at: '2026-10-13T22:00' }); // 4,20 m
     expect(ida.status).toBe(200);
     expect(ids(ida.body)).toContain(seg);
     expect(ida.body.avoided.find((x: any) => x.id === seg).name).toMatch(/sentido crescente/);
-    const volta = await route({ origin: B, destination: A, vehicle: { preset: 'truck' }, departure_at: '2026-10-13T22:00' }); // pista 2: 4,9 m
+    const volta = await routeSettled({ origin: B, destination: A, vehicle: { preset: 'truck' }, departure_at: '2026-10-13T22:00' }); // pista 2: 4,9 m
     expect(volta.status).toBe(200);
     expect(ids(volta.body)).not.toContain(seg);
     const t = volta.body.layers.federal_restricoes.data.trechos.find((x: any) => x.id === seg);
