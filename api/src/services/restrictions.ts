@@ -1,7 +1,8 @@
 import * as turf from '@turf/turf';
 import { query } from '../db.js';
 import { env } from '../config.js';
-import type { Vehicle } from './vehicle.js';
+import { DateTime } from 'luxon';
+import { isVucSP, type Vehicle } from './vehicle.js';
 import type { Ring } from './valhalla.js';
 import type { ReportType } from '../schemas.js';
 
@@ -23,9 +24,12 @@ const SELECT = `select id, type, ST_AsGeoJSON(geom)::json as geometry, value_num
 /** Reportes ativos que bloqueiam ESTE veículo no horário informado (regras na função SQL). */
 export async function blockingReports(v: Vehicle, at: Date): Promise<ReportRow[]> {
   await query('select expire_stale_road_closed()');
+  // "proibido caminhão" não vale para VUC, mas só para o VUC que se enquadra (medidas e idade no ano da viagem) e tem AETC:
+  // sem isso ele é caminhão comum (Portaria SMT.GAB 137/2018 art. 18), como na ZMRC e no rodízio (zones.ts).
+  const vuc = isVucSP(v, DateTime.fromJSDate(at).setZone(env.tz).year) && !!v.has_aetc;
   const r = await query<ReportRow>(
     `${SELECT} from active_reports_for_vehicle($1,$2,$3,$4,$5,$6) r`,
-    [v.height_m, v.weight_t, v.length_m, v.hazmat, v.is_vuc, at.toISOString()],
+    [v.height_m, v.weight_t, v.length_m, v.hazmat, vuc, at.toISOString()],
   );
   return r.rows;
 }

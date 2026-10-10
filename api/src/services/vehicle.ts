@@ -88,14 +88,30 @@ export function isVucSP(v: Pick<Vehicle, 'is_vuc' | 'width_m' | 'length_m' | 'we
 /** Comprimento máximo sem AET por tipo (Res. CONTRAN 882/2021 art. 4º III, red. Res. 1.005/2024). */
 const MAX_LENGTH_BY_CLASS: Record<VehicleClass, number> = { light: 14, rigid: 14, semitrailer: 19.3, truck_trailer: 19.8, cvc: 19.8 };
 
-function legalNotes(v: Vehicle): string[] {
+/** Dimensões e ano mínimo do VUC de SP (sem a idade, que depende do ano da viagem). */
+function vucDimsOk(v: Vehicle): boolean {
+  if (!v.is_vuc || !isTruck(v)) return false;
+  if (v.width_m > VUC_SP.max_width_m || v.length_m > VUC_SP.max_length_m) return false;
+  return v.manufacture_year === undefined || v.manufacture_year >= VUC_SP.min_manufacture_year;
+}
+
+/**
+ * Avisos de enquadramento legal. Não dependem da data da viagem: a idade do VUC é dita com a data-limite explícita, para o
+ * aviso nunca contradizer a rota (a exceção da zona usa o ano da saída — zones.ts).
+ */
+function legalNotes(v: Vehicle, now = new Date()): string[] {
   const notes: string[] = [];
-  const year = new Date().getFullYear();
+  const year = now.getFullYear();
   if (!v.is_truck) notes.push('PBT até 3,5 t: não é caminhão (CTB, Anexo I). ZMRC não se aplica; rodízio sim, inclusive nas vias do Minianel.');
-  if (v.is_vuc && !isVucSP(v, year)) {
-    notes.push(`Fora da definição de VUC em SP (até ${String(VUC_SP.max_width_m).replace('.', ',')} m de largura e ${String(VUC_SP.max_length_m).replace('.', ',')} m de comprimento, fabricado a partir de 2005, até 15 anos): tratado como caminhão.`);
-  } else if (v.is_vuc && !v.has_aetc) {
-    notes.push('VUC sem AETC: em São Paulo é tratado como caminhão comum na ZMRC e no rodízio (Portaria SMT 137/2018 art. 18).');
+  if (v.is_vuc && !vucDimsOk(v)) {
+    notes.push(`Fora da definição de VUC em SP (até ${String(VUC_SP.max_width_m).replace('.', ',')} m de largura e ${String(VUC_SP.max_length_m).replace('.', ',')} m de comprimento, fabricado a partir de ${VUC_SP.min_manufacture_year}): tratado como caminhão.`);
+  } else if (v.is_vuc) {
+    if (v.manufacture_year !== undefined) {
+      const last = v.manufacture_year + VUC_SP.max_age_years;   // §3º: 15 anos, "excluído o ano de fabricação"
+      if (last < year) notes.push(`VUC fabricado em ${v.manufacture_year}: passou do limite de 15 anos em 1º/1/${last + 1} (Portaria SMT 137/2018 art. 18 §3º) e é tratado como caminhão.`);
+      else if (last <= year + 1) notes.push(`VUC fabricado em ${v.manufacture_year}: vale como VUC em São Paulo só até 31/12/${last} (15 anos, excluído o ano de fabricação — Portaria SMT 137/2018 art. 18 §3º).`);
+    }
+    if (!v.has_aetc) notes.push('VUC sem AETC: em São Paulo é tratado como caminhão comum na ZMRC e no rodízio (Portaria SMT 137/2018 art. 18).');
   }
   if (v.requires_aet && v.vehicle_class === 'cvc') {
     notes.push('CVC com AET (Res. CONTRAN 882/2021 art. 18): em pista simples só circula do amanhecer ao pôr do sol, a até 80 km/h (art. 20).');
@@ -103,11 +119,16 @@ function legalNotes(v: Vehicle): string[] {
     notes.push('Acima dos limites de largura, altura ou comprimento da Res. CONTRAN 882/2021 (art. 4º): só circula com AET do órgão da via.');
   }
   if (v.hazmat && !normalizeUn(v.hazmat_un)) notes.push('Carga perigosa: informe o nº ONU para conferir as exceções de São Paulo (Portaria SMT.GAB 051/2024).');
-  if (v.hazmat && v.is_vuc) notes.push('VUC com carga perigosa segue a regra de perigosos, não a do VUC (Portaria SMT 137/2018 art. 18 §4º): na ZMRC só 10h–16h com AETC (art. 35).');
-  if (isHazmatLocalOrOther(v)) {
-    notes.push('Perigoso de consumo local/outros: pode circular o dia todo dentro do centro expandido, mas não nas vias do Minianel das 7h às 10h e das 17h às 20h (Portaria SMT.GAB 051/2024 art. 3º). O app evita a área inteira nesses horários.');
+  if (v.hazmat && v.is_vuc) {
+    const base = 'VUC com carga perigosa segue a regra de perigosos, não a do VUC (Portaria SMT 137/2018 art. 18 §4º)';
+    if (isHazmatLocalOrOther(v)) notes.push(`${base}: na ZMRC, só das 10h às 16h e com AETC (art. 35).`);
+    else if (!normalizeUn(v.hazmat_un)) notes.push(`${base}: na ZMRC, só produto de consumo local ou "outros" tem exceção (10h às 16h, com AETC — art. 35).`);
+    else notes.push(`${base}: este produto não tem exceção na ZMRC no horário da restrição (art. 35 vale só para consumo local e "outros").`);
   }
-  if (v.hazmat) notes.push('Em São Paulo o transporte de perigoso exige LETPP da CET (Decreto 50.446/2009).');
+  if (isHazmatLocalOrOther(v)) {
+    notes.push('Perigoso de consumo local/outros: pode circular o dia todo dentro do centro expandido, mas não nas vias do Minianel de 2ª a 6ª das 7h às 10h e das 17h às 20h, exceto feriados (Portaria SMT.GAB 051/2024 art. 3º parágrafo único). Nesses horários o app evita só as vias do Minianel (camada perigosos).');
+  }
+  if (v.hazmat) notes.push('Em São Paulo o transporte de perigoso exige a LETPP, expedida pelo DSV, e o transportador inscrito no CTPP (Decreto municipal 50.446/2009 art. 5º; Portaria SMT 137/2018 art. 35 §1º).');
   return notes;
 }
 
