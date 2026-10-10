@@ -98,6 +98,51 @@ class TariffWithoutPlazaNumber(unittest.TestCase):
         self.assertTrue(toll_antt.numbering_ok(page, [3, 5]))
 
 
+class FreeFlowAndHandover(unittest.TestCase):
+    """Pórtico de free flow de ponto único tem coluna própria; par entrada/saída (Dutra) não. Praça listada por duas
+    concessionárias no mesmo lugar (troca de contrato) é uma só."""
+
+    def test_pair_or_single(self):
+        self.assertEqual(toll_antt.free_flow_entry('Free Flow PFE004 - PFS003 Sul'), 'PFE004')
+        self.assertEqual(toll_antt.free_flow_entry('Free Flow PPF001 - PFS001'), 'PPF001')
+        self.assertIsNone(toll_antt.free_flow_entry('Free Flow Paraty'))
+        self.assertIsNone(toll_antt.free_flow_entry('FREE FLOW P2 MAUÁ DA SERRA'))
+
+    def test_single_gantry_gets_its_column(self):
+        # RIOSP (página ANTT de 29/08/2025): P8 Paraty, P9 Mangaratiba e P10 Itaguaí viraram free flow e têm coluna FDS
+        html = _tariff_html(['Praça 7', 'Praça 8', 'Praça 9', 'Praça 10', 'P8 FDS', 'P9 FDS', 'P10 FDS'], [
+            ('7', 'Caminhão', '5', 'Dupla', '5,0', '72,50', '24,00', '24,00', '24,00', '39,50', '39,50', '39,50')])
+        html = html.replace('<p>Tarifas de Pedágio</p>', '<p>Praças de pedágio P7, em Itatiaia/RJ; P8, em Paraty/RJ, P9, em '
+                                                          'Mangaratiba/RJ e P10, em Itaguaí/RJ</p>')
+        page = toll_antt.parse_tariff_page(html)
+        t = toll_antt.single_gantry_tariff(page, 'Free Flow Paraty', [], 'BR-101', 538.5, True)
+        self.assertEqual(t['coluna'], 'Praça 8')
+        self.assertEqual(t['categorias'][0]['valor'], 24.0)
+        self.assertEqual(t['categorias'][0]['valor_fds'], 39.5)
+        # Motiva Paraná: 'FREE FLOW P2 MAUÁ DA SERRA' = coluna Praça 2
+        page2 = toll_antt.parse_tariff_page(_tariff_html(['Praça 1', 'Praça 2', 'Praça 3'], [
+            ('7', 'Caminhão', '5', 'Dupla', '5,0', '59,00', '54,00', '64,00')]))
+        self.assertEqual(toll_antt.single_gantry_tariff(page2, 'FREE FLOW P2 MAUÁ DA SERRA', [], 'BR-376', 294.8, True)
+                         ['categorias'][0]['valor'], 54.0)
+        self.assertIsNone(toll_antt.single_gantry_tariff(page2, 'Free Flow Sem Numero', [], 'BR-376', 1.0, True))
+
+    def test_same_place_with_other_km_reference(self):
+        # CKAN 10/2026: RIOSP "Viúva Graça Norte" km 207,1 e ECOVIAS RIO MINAS "P04 Viúva Graça" km 211,674, a ~20 m
+        riosp = {'rodovia': 'BR-116', 'km': 207.1, 'coord_precisao_m': 10}
+        eco = {'rodovia': 'BR-116', 'km': 211.674, 'coord_precisao_m': 10}
+        self.assertTrue(toll_antt.same_place(riosp, [-43.716697, -22.716155], eco, [-43.716858, -22.716277]))
+        # mesma rodovia, km parecido, mas 5 km de distância: outra praça
+        self.assertFalse(toll_antt.same_place(riosp, [-43.716697, -22.716155], {**eco, 'km': 208.0}, [-43.67, -22.716]))
+        # coordenada de 2 casas (~1 km): só vale o critério de km
+        self.assertFalse(toll_antt.same_place({**riosp, 'coord_precisao_m': 1000}, [-43.72, -22.72], eco, [-43.7205, -22.7205]))
+
+    def test_suspended_concessions(self):
+        self.assertEqual(set(toll_antt.COBRANCA_SUSPENSA), {'ECOSUL', 'RODOVIA DO AÇO'})
+        self.assertIn('12.479/2025', toll_antt.COBRANCA_SUSPENSA['RODOVIA DO AÇO']['motivo'])
+        self.assertEqual(toll_antt.SLUG['MOTIVA PARANÁ'], 'pr-vias')
+        self.assertEqual(toll_antt.SLUG['WAY 153'], 'rota-sertaneja')
+
+
 class ArtespPontoAPonto(unittest.TestCase):
     def test_papa_is_not_pap(self):
         self.assertTrue(toll_artesp.is_ponto_a_ponto('Pórtico Salto 1 (PaP)'))

@@ -45,9 +45,17 @@ export interface RouteLine {
   distance_km: number;
   duration_s: number;
 }
+export interface RouteRestrictions {
+  /** anéis enviados em exclude_polygons (zonas, reportes que bloqueiam o veículo, exclusões das camadas) */
+  excludePolygons: Ring[];
+  /** trechos enviados em linear_cost_factors (costLines das camadas) */
+  costLines: { coordinates: [number, number][]; factor: number }[];
+}
 export interface RouteGeom extends RouteLine {
   /** rota sem nenhuma restrição (se calculada) */
   free?: RouteLine;
+  /** restrições usadas na rota: camadas que calculam uma variante comparável (ex.: rota sem pedágio) reaproveitam */
+  restrictions?: RouteRestrictions;
 }
 
 export interface LayerWarning { code: string; message: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string }

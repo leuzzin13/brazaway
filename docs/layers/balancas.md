@@ -35,32 +35,51 @@ DNITGeo não tem camada de pesagem).
 
 ## Sentido da rota
 
-Para cada ponto a até 300 m da rota (pontos com posição aproximada só até 120 m):
+Para cada ponto a até 300 m da rota (pontos com posição aproximada só até 120 m), `directionVerdict()`:
 
-1. Rótulo `norte/sul/leste/oeste` (ARTESP/DER-SP) comparado com o rumo da rota no ponto: cosseno ≥ 0,35 = mesmo
-   sentido; ≤ −0,35 = oposto. É o sentido nominal da rodovia (ex.: Anhanguera "norte" = capital→interior, rumo NO).
-2. Posição exata e a ≥ 12 m da linha: **lado da via**. No Brasil o posto fica à direita de quem ele fiscaliza.
-   Conferido com os PPV da ANTT: Itapecerica (BR-116 km 296,3, crescente = sentido Curitiba) fica à direita indo para o
-   PR; Guararema (km 179,4, crescente = sentido São Paulo, a quilometragem da Dutra em SP cresce de Queluz para a
-   capital) fica à direita indo para SP. `crescente/decrescente` (ANTT) é resolvido só pelo lado.
-3. `crescente+decrescente` = atende os dois sentidos.
-4. Rótulo e lado discordam, ou nenhum dos dois decide: **"sentido não confirmado"** (a balança é listada assim).
-   As do sentido oposto são omitidas (contadas em `data.sentido_oposto_omitidas`).
+1. **Posição exata a ≥ 12 m da linha: decide o lado da via.** No Brasil o posto fica à direita de quem ele
+   fiscaliza. Conferido com os PPV da ANTT: Itapecerica (BR-116 km 296,3, crescente = sentido Curitiba) fica à direita
+   indo para o PR; Guararema (km 179,4, crescente = sentido São Paulo, a quilometragem da Dutra em SP cresce de Queluz
+   para a capital) fica à direita indo para SP. Se o rótulo da fonte discordar do lado, **o rótulo é ignorado** (fica
+   anotado em `como`). `crescente/decrescente` (ANTT) só é resolvido assim.
+2. Sem lado (posição aproximada, ou ponto a menos de 12 m da linha, que pode estar no próprio eixo): o rótulo
+   `norte/sul/leste/oeste` (ARTESP/DER-SP) é comparado com o **rumo geral da rota**, a corda da rota entre 4 km antes e
+   4 km depois do ponto (cosseno ≥ 0,35 = mesmo sentido). Não se usa o rumo local: o rótulo é o sentido NOMINAL da
+   rodovia e pode não bater com a direção da pista naquele trecho. Ex.: SP-332 km 44,5 (DER-SP tem dois postos,
+   "norte" e "sul", a 34 m um do outro): ali a via corre a 229° (sudoeste) no sentido norte; com o rumo local a balança
+   "norte" era omitida indo para Jundiaí.
+3. **Rótulo sozinho nunca omite.** Rótulo a favor = `provavel`; rótulo contra = `incerto` (listada como "sentido não
+   confirmado"). Sem lado nem rótulo, `incerto`.
+4. `crescente+decrescente` = atende os dois sentidos (`sim`).
 
-A mesma balança vinda de mais de uma fonte é juntada (mesma rodovia até 1 km ao longo da rota, senão 400 m), ficando
-com a posição exata e a fonte mais confiável (ANTT > ARTESP > DER-SP).
+Só a regra 1 omite balança (outro sentido). As omitidas são contadas em `data.sentido_oposto_omitidas` e listadas em
+`data.omitidas_outro_sentido` (id, nome, km na rota, fontes, regra).
+
+**Mesma balança em várias fontes** (ex.: PGF da ARTESP com posição exata + a mesma balança na tabela do DER-SP, por
+rodovia/km): as entradas são juntadas **antes** de filtrar o sentido, e o grupo fica com a posição, o nome e o veredito
+da fonte de melhor posição (exata > aproximada; ANTT > ARTESP > DER-SP). Se essa fonte não decide o sentido, vale o
+veredito de outra fonte do mesmo posto, com a fonte citada em `como`. Assim, a cópia aproximada (DER-SP) de um posto que
+o lado da via mostrou ser do outro sentido sai junto com ele; antes ela sobrava como "sentido não confirmado" (ex.:
+Anhanguera km 132 e Castello km 74 no sentido contrário). Critério de "mesmo posto": rótulos de sentido compatíveis
+(nunca junta "norte" com "sul"); nunca duas posições exatas que o lado da via põe em pistas opostas; e perto — mesma
+rodovia com km da fonte a até 0,5 km (e até 3 km ao longo da rota, porque a posição aproximada pode cair 1–2 km ao
+lado: Castello, DER-SP km 95,2 x ARTESP km 95) ou até 1 km ao longo da rota; rodovias diferentes, até 400 m.
 
 ## Saída na rota (`layers.balancas`)
 
-- `summary`: quantas no sentido da rota (fixas, PPM, HS-WIM), uma linha por balança com o km da rota e a nota do CTB.
+- `summary`: quantas no sentido da rota (fixas, PPM, HS-WIM) e, à parte, quantas com sentido não confirmado; uma
+  linha por balança com o km da rota (as não confirmadas marcadas) e a nota do CTB.
 - `warnings`: `weigh_station` (`info`) para balança fixa ou HS-WIM no sentido da rota (até 5), com lat/lon.
   "Entre se estiver sinalizada aberta (CTB art. 209)". Pontos móveis só aparecem no resumo (operação eventual).
 - `data.balancas[]`: id, nome, tipo, km na rota, rodovia, km, sentido da fonte, `no_sentido` (`sim`/`provavel`/
-  `incerto`), `como` (qual regra decidiu), administrador, precisão, fontes, disponibilidade (ANTT).
+  `incerto`), `como` (qual regra decidiu), `distancia_m` e `lado` (direita/esquerda de quem segue a rota),
+  administrador, precisão, fontes, disponibilidade (ANTT).
+- `data.sentido_oposto_omitidas` e `data.omitidas_outro_sentido[]`.
 
-Exemplo (09/10/2026): Lapa → Jundiaí pela Bandeirantes lista o PGF SP-348 km 40 (sentido norte, AutoBAn); na volta ele
-some e aparece o PGF SP-330 km 53 (sentido sul). SP → Juquitiba pela Régis lista o PPV de Itapecerica da Serra; na
-volta, não.
+Exemplos (09/10/2026): Lapa → Jundiaí pela Bandeirantes lista o PGF SP-348 km 40 (sentido norte, AutoBAn, 27,9 m à
+direita); na volta ele some e aparece o PGF SP-330 km 53 (sentido sul). SP → Juquitiba pela Régis lista o PPV de
+Itapecerica da Serra; na volta, não. SP-332 km 44,5: indo para Jundiaí lista a balança "norte" (rótulo x corda de
+4 km); indo para São Paulo lista a "sul" (13,4 m à direita) e não junta as duas.
 
 ## Como atualizar
 
@@ -77,4 +96,8 @@ Seeds em `db/seed/layers/balancas__*.sql` (≈ 0,2 MB). A disponibilidade ANTT u
   quando possível). No lote 11 os PGF vêm com nome "PPM …" (inconsistência da fonte; o tipo vem da pasta do KMZ).
 - DER-SP: 74 posições aproximadas por rodovia+km; a tabela não tem data de atualização.
 - PPM/pontos móveis indicam onde a fiscalização móvel pode operar, não que ela esteja lá.
+- Posição aproximada (DER-SP por rodovia+km) com rótulo contra o rumo da rota fica como "sentido não confirmado" em vez
+  de omitida (regra 3): em rodovia que corre na direção do rótulo (ex.: Castello, leste/oeste) é quase sempre a pista
+  oposta, mas o rótulo é nominal e não há lado para confirmar. Quando a mesma balança existe com posição exata em outra
+  fonte, o grupo segue o lado da via (ver acima).
 - A camada não estima excesso de peso nem tolerâncias (Lei 7.408/1985 e CONTRAN): isso é de outra frente.
