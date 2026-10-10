@@ -86,7 +86,7 @@ export function isVucSP(v: Pick<Vehicle, 'is_vuc' | 'width_m' | 'length_m' | 'we
 }
 
 /** Comprimento máximo sem AET por tipo (Res. CONTRAN 882/2021 art. 4º III, red. Res. 1.005/2024). */
-const MAX_LENGTH_BY_CLASS: Record<VehicleClass, number> = { light: 14, rigid: 14, semitrailer: 19.3, truck_trailer: 19.8, cvc: 19.8 };
+export const MAX_LENGTH_BY_CLASS: Record<VehicleClass, number> = { light: 14, rigid: 14, semitrailer: 19.3, truck_trailer: 19.8, cvc: 19.8 };
 
 function legalNotes(v: Vehicle): string[] {
   const notes: string[] = [];
