@@ -46,7 +46,12 @@ export interface Regra {
   alvo: { caminhao?: boolean; qualquer?: Cond[] };
   vuc: Vuc | null;
   vuc_nota?: string;
+  /** art. 2º do Dec. 4.288/2019 (Santana): carga com ENTREGA no município fica fora da proibição... */
   excecao_destino_local?: boolean;
+  /** ...só nas vias de acesso listadas no ato (ex.: Santana art. 2º, I não lista II.3 nem II.12); ausente = todas */
+  excecao_destino_local_incisos?: string[];
+  /** via que compõe uma zona (ex.: vias do art. 3º da ZMRC de Osasco): dispensada quando origem/destino está na zona */
+  zona_vinculada?: string;
   origem_destino_dentro?: 'avisa';
   autorizacao?: string;
   excecoes?: string[];
@@ -143,17 +148,22 @@ async function zones(): Promise<Row[]> {
 }
 
 /** vias a até `raio` do segmento origem–destino (máx(2,5 km; 40% da distância O–D)): o resto não entra no request */
-async function viasNoCorredor(ctx: RouteCtx): Promise<Row[]> {
-  const r = await query<Row>(
-    `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)
-     select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry
+const CORREDOR_SQL = `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)
+     select %COLS%
        from data_features f, s
       where f.layer_id = $1 and f.kind = 'via'
         and ST_DWithin(f.geom::geography, s.g::geography, greatest(2500, 0.4 * ST_Length(s.g::geography)))
-        and (f.valid_to is null or f.valid_to > now())`,
-    [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat],
-  );
+        and (f.valid_to is null or f.valid_to > now())`;
+async function viasNoCorredor(ctx: RouteCtx): Promise<Row[]> {
+  const r = await query<Row>(CORREDOR_SQL.replace('%COLS%', 'f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry'),
+    [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat]);
   return r.rows;
+}
+/** só os ids das vias que costLines() manda ao Valhalla (para saber o que o routing.ts consegue checar) */
+async function idsNoCorredor(ctx: RouteCtx): Promise<Set<string>> {
+  const r = await query<{ id: string }>(CORREDOR_SQL.replace('%COLS%', 'f.id::text'),
+    [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat]);
+  return new Set(r.rows.map((x) => x.id));
 }
 
 /** municípios (IBGE) da origem e do destino */
@@ -182,6 +192,21 @@ async function regraAtiva(r: Regra, v: Vehicle, at: Date, holiday: (ibge: string
   if (!e.aplica) return { ativa: false, e };
   if (r.feriados === 'suspende' && (await holiday(r.ibge))) return { ativa: false, e, feriado: true };
   return { ativa: janelaAtiva(e.janelas, at), e };
+}
+
+/**
+ * Exceção de entrega local (Santana de Parnaíba, Dec. 4.288/2019, art. 2º, I): vale só quando o DESTINO está no
+ * município ("carga ... que deva ser entregue em obras, residências ou estabelecimentos comerciais situados no perímetro
+ * do Município") e só nas vias de acesso listadas no inciso (II.3 e II.12 ficam de fora).
+ */
+export function destinoLocal(r: Regra, od: { origem: string | null; destino: string | null }): boolean {
+  if (!r.excecao_destino_local || !r.ibge || od.destino !== r.ibge) return false;
+  return !r.excecao_destino_local_incisos || (r.inciso != null && r.excecao_destino_local_incisos.includes(r.inciso));
+}
+
+/** regra_id das zonas (polígono recuado) que contêm a origem ou o destino */
+function zonasComOD(zs: Row[], ctx: RouteCtx): Set<string> {
+  return new Set(zs.filter((z) => pointIn(z.inset, ctx.origin) || pointIn(z.inset, ctx.destination)).map((z) => z.props.regra_id));
 }
 
 function ringsOf(g: GeoJSON.Geometry | null | undefined): Ring[] {
@@ -229,9 +254,10 @@ const layer: RouteLayer = {
       { name: 'Barueri: Dec. 9.025/2019 (Jornal Oficial ed. 1.169)', url: 'http://portal.barueri.sp.gov.br/Upload/Diario/pdf/JOB-1169-14Set2019-web_637039980038937304.pdf', license: 'Ato oficial (domínio público)' },
       { name: 'Guarulhos: Decs. 37.887/2021 e 38.400/2021 (ZRCC-TB)', url: 'https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/38400decr.pdf', license: 'Ato oficial (domínio público)' },
       { name: 'Cajamar: Dec. 7.397/2025 (DOM ed. 1358)', url: 'https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf', license: 'Ato oficial (domínio público)' },
-      { name: 'Santana de Parnaíba: Dec. 4.288/2019 (Imprensa Oficial ed. 298)', url: 'https://prefeitura.santanadeparnaiba.sp.gov.br/PortalComunicacao/imprensa-oficial/search?NUM_Ano=2019&DS_ArquivoConteudo=caminh%C3%B5es', license: 'Ato oficial (domínio público)' },
+      { name: 'Santana de Parnaíba: Dec. 4.288/2019 (Imprensa Oficial ed. 298, p. 7)', url: 'https://prefeitura.santanadeparnaiba.sp.gov.br/PortalComunicacao/arquivo/download/AMMJ0Fm5w6LYtdaONCo92UC4DZQCQ3ugj-qy7wONa8-oMYIdWrgdyeVWYw_JrvDLZvcB6g2#page=7', license: 'Ato oficial (domínio público)' },
       { name: 'Ribeirão Pires: Dec. 7.608/2025 (DO ed. 44/2026)', url: 'https://www.ribeiraopires.sp.gov.br/uploads/diario_oficial_26_01_2026_26033144.pdf', license: 'Ato oficial (domínio público)' },
-      { name: 'Geometria das vias: OpenStreetMap', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0 (© colaboradores do OpenStreetMap)' },
+      { name: 'Geometria das vias e do contorno de Ribeirão Pires: OpenStreetMap', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0 (© colaboradores do OpenStreetMap)' },
+      { name: 'Polígono da ZMRC de Osasco: mapa oficial georreferenciado sobre os eixos do OpenStreetMap (ICP + thin-plate spline)', url: 'https://www.openstreetmap.org/copyright', license: 'Derivado do OSM: ODbL 1.0 (© colaboradores do OpenStreetMap)' },
       { name: 'Limites municipais: IBGE Malha Municipal', url: 'https://servicodados.ibge.gov.br/api/docs/malhas', license: 'Dados públicos IBGE (citar a fonte)' },
     ],
     style: { kind: 'line', color: '#dc2626', width: 3, minzoom: 10, icon: '⛔', opacity: 0.8 },
@@ -246,7 +272,7 @@ const layer: RouteLayer = {
       const r = z.props;
       const { ativa, e } = await regraAtiva(r, ctx.vehicle, ctx.at, holiday);
       if (!ativa) continue;
-      if (r.excecao_destino_local && r.ibge && (od.origem === r.ibge || od.destino === r.ibge)) continue;
+      if (destinoLocal(r, od)) continue;
       // origem/destino dentro da zona: não exclui (o annotate avisa) — mesma política da ZMRC de SP
       if (pointIn(z.inset, ctx.origin) || pointIn(z.inset, ctx.destination)) continue;
       const rings = ringsOf(z.inset);
@@ -256,15 +282,18 @@ const layer: RouteLayer = {
   },
 
   async costLines(ctx) {
-    const [vs, od] = await Promise.all([viasNoCorredor(ctx), municipiosOD(ctx).catch(() => ({ origem: null, destino: null }))]);
+    const [vs, od, zs] = await Promise.all([viasNoCorredor(ctx), municipiosOD(ctx).catch(() => ({ origem: null, destino: null })), zones()]);
     const holiday = holidayCache(ctx.at);
-    // os trechos contíguos de cada via já vêm encadeados e validados contra o grafo do Valhalla pelo importador
+    const naZona = zonasComOD(zs, ctx);
+    // as linhas já vêm cortadas (<= 400 m), encadeadas e validadas contra o grafo do Valhalla pelo importador
     const out: LayerCostLine[] = [];
     for (const v of vs) {
       const r = v.props;
       const { ativa, e } = await regraAtiva(r, ctx.vehicle, ctx.at, holiday);
       if (!ativa) continue;
-      if (r.excecao_destino_local && r.ibge && (od.origem === r.ibge || od.destino === r.ibge)) continue;
+      if (destinoLocal(r, od)) continue;
+      // via que compõe a zona: com origem/destino dentro da zona, segue a política da zona (não restringe, avisa)
+      if (r.zona_vinculada && naZona.has(r.zona_vinculada)) continue;
       const item = itemOf(v, `${ruleLabel(r, e)} (${e.classe})`);
       for (const c of lines(v.geometry)) {
         if (c.length < 2) continue;
@@ -279,9 +308,10 @@ const layer: RouteLayer = {
   async annotate(ctx, route) {
     const geom = route.line.geometry;
     const holiday = holidayCache(ctx.at);
-    const [zs, od, near] = await Promise.all([
+    const [zs, od, corredor, near] = await Promise.all([
       zones(),
       municipiosOD(ctx).catch(() => ({ origem: null, destino: null })),
+      idsNoCorredor(ctx),
       query<Row & { fraction: number; dist_m: number }>(
         `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) as g)
          select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry,
@@ -332,29 +362,59 @@ const layer: RouteLayer = {
       noteVuc(r, e, v, warnings, seen);
     }
 
-    // 2) vias da rota: passagem estimada, VUC com cadastro, destino local
-    const porRegra = new Map<string, { r: Regra; rows: (Row & { fraction: number })[] }>();
+    // 2) vias da rota: passagem estimada, VUC com cadastro, destino local, via restrita usada sem checagem do routing.ts
+    const naZona = zonasComOD(zs, ctx);
+    const routeCoords = geom.coordinates as [number, number][];
+    type Usada = Row & { fraction: number; uso: Uso; local: boolean; dispensada: boolean; coberta: boolean };
+    const porRegra = new Map<string, { r: Regra; rows: Usada[] }>();
     for (const n of near) {
-      if (!lines(n.geometry).some((c) => usesLine(line, c))) continue;
+      const directional = n.props.sentido === 'unico' || !!n.props.mao_unica;
+      const usos = lines(n.geometry).map((c) => usoDaLinha(routeCoords, c, directional));
+      const uso = usos.reduce((a, b) => (b.metros > a.metros ? b : a), { ratio: 0, metros: 0 });
+      if (!usaLinha(uso)) continue;
       const g = porRegra.get(n.props.regra_id) ?? { r: n.props, rows: [] };
-      g.rows.push(n); porRegra.set(n.props.regra_id, g);
+      g.rows.push({
+        ...n, uso,
+        local: destinoLocal(n.props, od),
+        dispensada: !!n.props.zona_vinculada && naZona.has(n.props.zona_vinculada),
+        // o routing.ts só checa as linhas que recebeu (corredor) e só vê o uso quando >= 50% da linha está na rota;
+        // com folga (70%) para não deixar buraco entre os dois critérios
+        coberta: corredor.has(n.id) && uso.ratio >= 0.7,
+      });
+      porRegra.set(n.props.regra_id, g);
     }
+    const nomesDe = (rows: Usada[]) => [...new Set(rows.map((x) => x.props.via ?? x.name).filter(Boolean))].slice(0, 3).join(', ');
     for (const { r, rows } of porRegra.values()) {
       const e = enquadrar(r, v);
-      const local_ = r.excecao_destino_local && r.ibge && (od.origem === r.ibge || od.destino === r.ibge);
       const { ativa } = await regraAtiva(r, v, ctx.at, holiday);
       const first = rows.reduce((a, b) => (a.fraction <= b.fraction ? a : b));
       const tPass = passAt(first.fraction);
       const ativaPass = (await regraAtiva(r, v, tPass, holiday)).ativa;
-      const nomes = [...new Set(rows.map((x) => x.props.via ?? x.name).filter(Boolean))].slice(0, 3).join(', ');
-      hits.push({ regra_id: r.regra_id, municipio: r.municipio, regime: r.regime, vias: nomes, ativa_na_saida: ativa, ativa_na_passagem: ativaPass, passagem: local(tPass).toFormat('HH:mm'), enquadramento: e.classe, destino_local: !!local_ });
-      summary.push(`${r.municipio} — ${r.regime} (${nomes}): ${ruleLabel(r, e)}${!e.aplica ? ' — não se aplica a este veículo' : local_ ? ' — exceção de destino local' : ''}.`);
-      if (e.aplica && local_) {
-        warnings.push({ code: 'rmsp_destino_local', severity: 'info', id: first.id,
-          message: `${r.municipio}: a rota usa vias proibidas a PBT acima de 15 t (${nomes}) porque a carga tem origem/destino no município (${atoCurto(r)}, art. 2º). Leve a nota fiscal da entrega.` });
-      } else if (e.aplica && !ativa && ativaPass) {
-        warnings.push({ code: 'rmsp_via_ativa_na_passagem', severity: 'warn', id: first.id,
-          message: `A rota passa por ${r.regime} de ${r.municipio} (${nomes}) por volta das ${local(tPass).toFormat("HH'h'mm")}, dentro do horário de restrição (${ruleLabel(r, e)}).` });
+      const locais = rows.filter((x) => x.local);
+      const restritas = rows.filter((x) => !x.local && !x.dispensada);
+      const nomes = nomesDe(rows);
+      hits.push({ regra_id: r.regra_id, municipio: r.municipio, regime: r.regime, vias: nomes, ativa_na_saida: ativa, ativa_na_passagem: ativaPass,
+        passagem: local(tPass).toFormat('HH:mm'), enquadramento: e.classe, destino_local: locais.length > 0, dispensada_pela_zona: rows.some((x) => x.dispensada),
+        uso_m: Math.round(rows.reduce((a, x) => a + x.uso.metros, 0)) });
+      summary.push(`${r.municipio} — ${r.regime} (${nomes}): ${ruleLabel(r, e)}${!e.aplica ? ' — não se aplica a este veículo' : locais.length && !restritas.length ? ' — exceção de entrega no município' : ''}.`);
+      if (e.aplica && locais.length) {
+        warnings.push({ code: 'rmsp_destino_local', severity: 'info', id: locais[0].id,
+          message: `${r.municipio}: a rota usa vias proibidas a PBT acima de 15 t (${nomesDe(locais)}) pela exceção de carga com entrega no município (${atoCurto(r)}, art. 2º, I). Leve a nota fiscal da entrega.` });
+      }
+      if (e.aplica && restritas.length) {
+        const rf = restritas.reduce((a, b) => (a.fraction <= b.fraction ? a : b));
+        const tR = passAt(rf.fraction);
+        const ativaR = (await regraAtiva(r, v, tR, holiday)).ativa;
+        const descobertas = restritas.filter((x) => !x.coberta);
+        if (ativa && descobertas.length) {
+          // ativa na saída e usada pela rota, mas o routing.ts não vai avisar (fora do corredor ou uso parcial da linha)
+          const p0 = lines(descobertas[0].geometry)[0]?.[0];
+          warnings.push({ code: 'rmsp_via_restrita_na_rota', severity: 'danger', id: descobertas[0].id, lon: p0?.[0], lat: p0?.[1],
+            message: `A rota passa por ${r.regime} de ${r.municipio} (${nomesDe(descobertas)}) no horário de restrição (${ruleLabel(r, e)}). Confira a regra e a autorização antes de seguir.` });
+        } else if (!ativa && ativaR) {
+          warnings.push({ code: 'rmsp_via_ativa_na_passagem', severity: 'warn', id: rf.id,
+            message: `A rota passa por ${r.regime} de ${r.municipio} (${nomesDe(restritas)}) por volta das ${local(tR).toFormat("HH'h'mm")}, dentro do horário de restrição (${ruleLabel(r, e)}).` });
+        }
       }
       if (rows.some((x) => x.props.aproximado)) {
         const key = `aprox:${r.regra_id}`;
@@ -369,12 +429,13 @@ const layer: RouteLayer = {
   async features(bbox, { zoom }) {
     const r = await query<Row>(
       `select id::text, name, kind, props,
-              ST_AsGeoJSON(case when $6 < 13 then ST_SimplifyPreserveTopology(geom, 0.00005) else geom end, 6)::json as geometry
+              ST_AsGeoJSON(case when $6::boolean then ST_SimplifyPreserveTopology(geom, 0.00005) else geom end, 6)::json as geometry
          from data_features
         where layer_id = $1 and kind in ('zona', 'via') and geom && ST_MakeEnvelope($2, $3, $4, $5, 4326)
           and (valid_to is null or valid_to > now())
         limit 4000`,
-      [LAYER, ...bbox, zoom ?? 12],
+      // zoom vem da query string (pode ser 12.5, NaN...): decide no JS e manda boolean
+      [LAYER, ...bbox, !(Number.isFinite(zoom) && (zoom as number) >= 13)],
     );
     return {
       type: 'FeatureCollection',
@@ -412,11 +473,66 @@ function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[
   }
 }
 
-/** a rota usa a linha? (>= 50% dos pontos a até 15 m — mesmo critério do routing.ts) */
-function usesLine(route: GeoJSON.Feature<GeoJSON.LineString>, c: [number, number][]): boolean {
-  const pts = c.length > 20 ? c.filter((_, i) => i % Math.ceil(c.length / 20) === 0) : c;
-  const hit = pts.filter((p) => turf.pointToLineDistance(turf.point(p), route, { units: 'meters' }) <= 15).length;
-  return hit / pts.length >= 0.5;
+// ---------------------------------------------------------------- uso de uma linha pela rota
+
+const TOL_M = 15;
+export interface Uso { ratio: number; metros: number }
+const bearingDiff = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
+
+/** trechos contíguos da rota cujos segmentos tocam o bbox (evita percorrer a rota inteira a cada amostra) */
+function routePiecesNear(route: [number, number][], bb: [number, number, number, number]): GeoJSON.Feature<GeoJSON.LineString>[] {
+  const out: GeoJSON.Feature<GeoJSON.LineString>[] = [];
+  let cur: [number, number][] = [];
+  for (let i = 0; i < route.length - 1; i++) {
+    const a = route[i], b = route[i + 1];
+    const touches = Math.max(a[0], b[0]) >= bb[0] && Math.min(a[0], b[0]) <= bb[2] && Math.max(a[1], b[1]) >= bb[1] && Math.min(a[1], b[1]) <= bb[3];
+    if (touches) { if (!cur.length) cur.push(a); cur.push(b); }
+    else if (cur.length) { out.push(turf.lineString(cur)); cur = []; }
+  }
+  if (cur.length >= 2) out.push(turf.lineString(cur));
+  return out;
 }
+
+/**
+ * Quanto da linha restrita a rota percorre: amostras a cada ~15 m da linha; conta a amostra a até 15 m da rota e,
+ * se `directional` (mão única ou sentido fixado pelo ato), só quando o rumo da rota ali difere menos de 90° do rumo da
+ * linha — a rota pela pista do sentido livre não "usa" o trecho (falso positivo do Barueri XV/XVI).
+ */
+export function usoDaLinha(route: [number, number][], c: [number, number][], directional: boolean): Uso {
+  if (c.length < 2 || route.length < 2) return { ratio: 0, metros: 0 };
+  const pad = 0.0004;   // ~40 m
+  const xs = c.map((p) => p[0]), ys = c.map((p) => p[1]);
+  const pieces = routePiecesNear(route, [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad]);
+  let total = 0, hit = 0;
+  for (let i = 0; i < c.length - 1; i++) {
+    const a = c[i], b = c[i + 1];
+    const len = turf.distance(a, b, { units: 'meters' });
+    if (!(len > 0)) continue;
+    total += len;
+    if (!pieces.length) continue;
+    const brg = turf.bearing(a, b);
+    const k = Math.max(1, Math.ceil(len / TOL_M));
+    for (let j = 0; j < k; j++) {
+      const t = (j + 0.5) / k;
+      const p = turf.point([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      let best = Infinity, sameWay = false;
+      for (const pc of pieces) {
+        const np = turf.nearestPointOnLine(pc, p, { units: 'meters' });
+        const d = np.properties.dist ?? Infinity;
+        if (d >= best) continue;
+        best = d;
+        if (!directional) { sameWay = true; continue; }
+        const rc = pc.geometry.coordinates;
+        const idx = Math.min(np.properties.index ?? 0, rc.length - 2);
+        sameWay = bearingDiff(brg, turf.bearing(rc[idx], rc[idx + 1])) < 90;
+      }
+      if (best <= TOL_M && sameWay) hit += len / k;
+    }
+  }
+  return { ratio: total > 0 ? hit / total : 0, metros: hit };
+}
+
+/** a rota usa a linha? metade dela (critério do routing.ts) OU ao menos 100 m dela (linha longa usada em parte) */
+export const usaLinha = (u: Uso) => u.ratio >= 0.5 || u.metros >= 100;
 
 export default layer;
