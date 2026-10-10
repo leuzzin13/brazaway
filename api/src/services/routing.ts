@@ -240,7 +240,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
 
   // 6) Pontos de descanso ao longo da rota + plano de direção (Lei 13.103)
   let restStops: RestStop[] = [];
-  try { restStops = await restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s); } catch { /* tabela vazia/erro: segue sem */ }
+  try { restStops = await restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s, undefined, { at, employment: vehicle.employment }); } catch { /* tabela vazia/erro: segue sem */ }
   const plan = drivingPlan(restricted.duration_s, restStops);
   for (const n of plan.notes) warnings.push({ code: 'driving_time', message: n });
   for (const sgt of plan.suggested_stops) if (!sgt.stop) warnings.push({ code: 'no_rest_stop', message: sgt.message });
