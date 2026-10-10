@@ -1,8 +1,9 @@
 # Grande Vitória (ES): restrições municipais a caminhões (frente `mun_vitoria`)
 
 Vitória, Vila Velha e Serra no formato por município da camada de restrições municipais (`layer_id`
-`restricoes_rmsp`; formato e mecânica em [`../restricoes_municipais.md`](../restricoes_municipais.md)). A frente só
-acrescenta arquivos: nenhum código do núcleo foi alterado. Fonte das regras: pesquisa `vitoria_es` (research.json com
+`restricoes_rmsp`; formato e mecânica em [`../restricoes_municipais.md`](../restricoes_municipais.md)). No núcleo, a
+frente acrescentou só a propriedade opcional `od_raio_m` da regra-zona (camada, schema, validador e doc do formato; ver
+Decisões, portos). Fonte das regras: pesquisa `vitoria_es` (research.json com
 as correções do verify.json), conferida no texto dos atos em 10/10/2026.
 
 O critério é sempre o **PBT** ("peso bruto total ... maior que"); nenhum dos três municípios define VUC (`vuc: null`:
@@ -13,6 +14,7 @@ excluída e a rota avisa (`rmsp_origem_na_zona` / `rmsp_destino_na_zona`).
 |---|---|
 | Regras | `data/raw/municipios/3205309.json` (Vitória + Terceira Ponte), `3205200.json` (Vila Velha), `3205002.json` (Serra) |
 | Geometria curada (OSM) | `data/raw/municipios/geo/3205309_*.geojson`, `3205200_*.geojson`, `3205002_vias_curadas.geojson` |
+| Limite de Vitória (IBGE, recortado) | `data/raw/municipios/geo/3205309_municipio.geojson` (zonas do art. 1º, IV) |
 | Trechos montados pelo importador | `data/raw/municipios/geo/3205309_vias.geojson`, `3205002_vias.geojson` (`construir: trechos`) |
 | Script de curadoria | `data/raw/municipios/curadoria/grande_vitoria.py` |
 | Seeds | `db/seed/layers/restricoes_rmsp__vitoria.sql`, `__vila-velha.sql`, `__serra.sql` |
@@ -33,7 +35,7 @@ art. 29, VII, do CTB.
 
 | Regra (`id`) | Onde | Quando | Quem | Ato e artigo | Status |
 |---|---|---|---|---|---|
-| `vitoria_municipio_23t` | todas as vias do município (zona = limite do IBGE) | dias úteis 6h–10h e 16h–20h; sáb 6h–14h; feriado livre | PBT > 23 t | Dec. 16.243/2015, art. 1º, IV, a | ativa, alta |
+| `vitoria_municipio_23t` | todas as vias do município (zona = limite do IBGE sem Trindade e Martim Vaz) | dias úteis 6h–10h e 16h–20h; sáb 6h–14h; feriado livre | PBT > 23 t | Dec. 16.243/2015, art. 1º, IV, a | ativa, alta |
 | `vitoria_municipio_45t` | todo o município | 24 h, todos os dias | PBT > 45 t | art. 1º, IV, b | ativa, alta |
 | `vitoria_cegonheira_16t` | todo o município | dias úteis 6h–20h; sáb 6h–14h | cegonheira com PBT > 16 t | art. 1º, IV, c | **desativada** (o perfil não informa cegonheira) |
 | `vitoria_centro_16t` | Centro (§3º: da R. Sebastião Tourinho/R. Raimundo Nonato, no Forte São João, à Ponte Seca, na Vila Rubim) | dias úteis 6h–20h; sáb 6h–14h | PBT > 16 t | art. 1º, III, a e §3º | ativa, alta |
@@ -42,7 +44,7 @@ art. 29, VII, do CTB.
 | `vitoria_beira_mar_16t` | Av. Mal. Mascarenhas de Moraes (Beira-Mar), da R. Josué Prado à Av. Paulino Muller, nos dois sentidos | 24 h | PBT > 16 t | art. 1º, II, a | ativa, alta |
 | `vitoria_maruipe_paulino_muller_16t` | sentido Centro: Av. Maruípe (Rod. Serafim Derenzi → R. José Cassiano dos Santos), R. José Cassiano dos Santos e Av. Paulino Muller (→ Av. Vitória) | 24 h (o ato não fixa horário) | PBT > 16 t | Dec. 16.575/2015, art. 1º (art. 1º, IV, d, do 16.243) | ativa, alta (desde 05/01/2016) |
 | `vitoria_mercado_vila_rubim_16t` | Mercado da Vila Rubim (§2º) | dias úteis 6h–20h; sáb 6h–14h | PBT > 16 t | art. 2º, III e §2º | ativa, alta |
-| `vitoria_porto_centro` | instalações portuárias do Centro (Cais Comercial) | dias úteis 7h–9h (entrada e saída) | caminhão | Dec. 18.103/2020, art. 2º (art. 2º, §1º, do 16.243) | ativa, alta (desde 09/09/2020) |
+| `vitoria_porto_centro` | instalações portuárias do Centro (Cais Comercial) e o portão a até 50 m (`od_raio_m`) | dias úteis 7h–9h (entrada e saída) | caminhão | Dec. 18.103/2020, art. 2º (art. 2º, §1º, do 16.243) | ativa, alta (desde 09/09/2020) |
 | `vitoria_porto_centro_17h_19h` | idem | dias úteis 17h–19h | caminhão | Dec. 16.301/2015, art. 1º; caiu com o Dec. 18.103/2020, art. 2º | **revogada** (05/05/2015 a 09/09/2020) |
 | `vitoria_carga_descarga_centro` | Centro, do Forte São João à Ilha do Príncipe | proibida a carga e descarga dias úteis 6h–19h e sáb até 14h (permitida 19h–6h, sáb 14h–24h, domingo e feriado) | carga e descarga | Lei 6.490/2005, arts. 1º a 5º | **desativada** (regra de destino, não de circulação) |
 
@@ -64,7 +66,7 @@ Assinado em 22/06/2001 (o portal mostra 22/07; vale o texto), Boletim Oficial de
 | `vila_velha_gloria_16t` | idem | 24 h | PBT > 16 t | art. 1º, II, b | ativa, alta |
 | `vila_velha_orla_10t` | orla de Praia da Costa, Itapuã e Itaparica (Av. Antônio Gil Veloso e Av. Estudante José Júlio de Souza) | todos os dias 10h–20h | PBT > 10 t | art. 1º, III, a | ativa, **média** (o ato não lista as vias) |
 | `vila_velha_praias_16t` | todas as ruas de Praia da Costa, Itapuã e Praia de Itaparica | todos os dias 7h–20h | PBT > 16 t | art. 1º, III, b (c: estacionamento) | ativa, **média** (redação ambígua) |
-| `vila_velha_porto` | instalações portuárias (Capuaba, Paul e terminais vizinhos) | dias úteis 7h–9h e 17h–19h (entrada e saída) | caminhão | art. 2º, parágrafo único | ativa, alta |
+| `vila_velha_porto` | instalações portuárias (Capuaba, Paul e terminais vizinhos) e o portão a até 50 m (`od_raio_m`) | dias úteis 7h–9h e 17h–19h (entrada e saída) | caminhão | art. 2º, parágrafo único | ativa, alta |
 
 ### Serra (3205002) — Dec. 5.881/2020 e alterações
 
@@ -120,7 +122,10 @@ Está no arquivo de Vitória como registro regional (`ibge: null`, `abrangencia_
 
 - **Vitória inteira como zona.** O art. 1º, IV, vale nas "demais vias do município da Capital"; o verify corrigiu a
   pesquisa: o ato **não** exclui as vias estaduais ou federais (a exclusão era inferência). A zona é o limite do IBGE
-  (`municipios: ["3205309"]`, simplificado a ~20 m). Na prática a carreta que não vai a Vitória passa pela BR-101
+  simplificado a ~20 m e **recortado no bbox da Grande Vitória** (`geo/3205309_municipio.geojson`, gerado por
+  `grande_vitoria.py municipio`): a malha do IBGE inclui as ilhas oceânicas de Trindade e Martim Vaz (4 das 5 partes,
+  lon −29,3/−28,8), que mandavam 4 anéis a mais ao Valhalla em toda rota com a zona ativa e desenhavam a zona sobre
+  Trindade no mapa. A parte continental ficou idêntica à da união de municípios usada antes. Na prática a carreta que não vai a Vitória passa pela BR-101
   (Contorno) no pico; quem tem origem ou destino em Vitória não perde a zona e recebe o aviso.
 - **Setor do art. 1º, I = Cidade Alta.** No OSM as cinco vias formam uma cadeia de mão única (R. Henrique Novaes e Av.
   Jerônimo Monteiro para oeste, R. General Osório e R. Thiers Velloso para norte, R. José de Anchieta — o "Padre José
@@ -135,6 +140,15 @@ Está no arquivo de Vitória como registro regional (`ibge: null`, `abrangencia_
   regras de entrada e saída das instalações. A zona cobre só a área do cais (sem vias públicas: só `service` dentro),
   então nunca afeta o trânsito de passagem; com origem ou destino no porto a rota não a exclui e avisa a janela. A
   rota obrigatória dos atos é citada nas exceções, não imposta. As "indústrias adjacentes" não foram delimitadas.
+- **Portão do porto = destino na zona (`od_raio_m: 50`).** Como o aviso é o único efeito dessas regras, ele tem de sair
+  quando o destino é o portão, que fica na via pública em frente à área, fora do polígono recuado 20 m (R. Jurema
+  Barroso, onde começa a saída do art. 2º, I, b, a 0–6 m do polígono do Cais Comercial; Av. Elias Miguel e Av. Getúlio
+  Vargas a 9–13 m; em Vila Velha, Av. Jerônimo Monteiro e R. José David Moscon a 4–5 m, Estrada Joubert de Barros a 8 m,
+  R. Basílio Costalonga a 11 m). Antes, uma rota até a R. Jurema Barroso às 8h de dia útil não avisava a janela. A
+  propriedade `od_raio_m` (núcleo) faz a origem ou o destino a até 50 m do polígono **sem** recuo contar como dentro da
+  zona: não exclui e avisa ("Destino está no acesso (a até 50 m) da ..."). Não se estendeu o polígono às vias: a zona
+  passaria a barrar o trânsito de passagem nelas na janela. 50 m (e não 80) cobre as duas margens da avenida em frente
+  e deixa de fora a quadra seguinte do Centro (o Centro de Vitória do teste, a 127 m, não recebe o aviso do porto).
 - **Desativadas com o motivo.** Cegonheira (o perfil do veículo não tem tipo de carroceria) e carga e descarga da Lei
   6.490/2005 (regra de destino: como zona, barraria a passagem pelo Centro). Ficam como aviso
   `municipal_regra_nao_aplicada` quando a rota passa nelas.
@@ -161,7 +175,7 @@ Está no arquivo de Vitória como registro regional (`ibge: null`, `abrangencia_
 |---|---|---|
 | Atos (decretos de Vitória, Vila Velha e Serra; Lei 6.490/2005; Lei estadual 9.602/2010) | portais oficiais (URLs em cada regra) | domínio público (Lei 9.610/1998, art. 8º, IV) |
 | Bairros, vias, ponte e áreas portuárias | OpenStreetMap, extrato do Sudeste usado pelo Valhalla | ODbL 1.0 (© colaboradores do OpenStreetMap); mantido em `data_features`, nunca exportado para o OSM |
-| Limite de Vitória (zonas do município) | IBGE, Malha Municipal (API v3) | dados públicos, citar a fonte |
+| Limite de Vitória (zonas do município) | IBGE, Malha Municipal (API v3), recortado no bbox da Grande Vitória (sem Trindade e Martim Vaz) | dados públicos, citar a fonte |
 
 Não foram usados os bairros do GeoWeb Vitória nem os do IJSN/GEOBASES (sem licença declarada). A licença de cada
 município está em `fonte.licenca` (vai para `data_layer_runs`, `GET /api/sources`).
@@ -178,7 +192,7 @@ novo sobre o mesmo PBF, gera arquivos idênticos.
 docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/valhalla/sudeste-latest.osm.pbf:/pbf/sudeste.osm.pbf:ro \
   -e WORK=/data/cache/grande_vitoria --entrypoint python truck-router-importer \
   /data/raw/municipios/curadoria/grande_vitoria.py recorte /pbf/sudeste.osm.pbf
-# (mesmo comando com) extrair · geometria · cache-overpass
+# (mesmo comando com) extrair · geometria · cache-overpass · municipio (limite de Vitória sem as ilhas oceânicas)
 # 2. validar sem banco nem rede
 docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data:/data -e DATA_DIR=/data \
   --entrypoint python truck-router-importer -m sources.municipios --validar
@@ -194,15 +208,23 @@ full-text; com `&subtheme=dom` cobre o DOM-AMUNES de Viana, Guarapari e Fundão)
 
 ## Testes
 
-`api/test/layers/mun_vitoria.test.ts` (13 testes; banco e API locais, `API_URL`):
+`api/test/layers/mun_vitoria.test.ts` (15 testes; banco e API locais, `API_URL`):
 
-- regras no banco (status x kind, UF, confiança, ato com artigo, revogada vencida, registro regional da ponte);
-  janelas, feriados e alvos (PBT "maior que", ponte com mais de 2 eixos OU mais de 15 t);
+- regras no banco (status x kind, UF, confiança, ato com artigo, revogada vencida, registro regional da ponte, zona do
+  município sem as ilhas oceânicas); janelas, feriados e alvos (PBT "maior que", ponte com mais de 2 eixos OU mais de
+  15 t);
 - módulo da camada: zona de pico de Vitória (pico, sábado, domingo, origem dentro, feriado municipal de Vitória x de
-  Vila Velha), Vila Velha (sábado feriado), portos, Terceira Ponte, Serra e o mapa;
+  Vila Velha), Vila Velha (sábado feriado), portos (destino no porto e no portão da R. Jurema Barroso e da Estrada
+  Joubert de Barros não exclui; a 127 m exclui), janela 17h–19h revogada nunca em `exclusions`/`costLines` (nem em
+  2019, dentro da vigência antiga), Terceira Ponte, Serra e o mapa (nada sobre Trindade);
 - rotas reais: carreta Vila Velha → Serra às 8h de terça **desvia** de Vitória e às 11h **passa** por Vitória (mais
-  curta); destino no Centro de Vitória às 10h avisa sem excluir; caminhão de 3 eixos e 14 t dá a volta na Terceira
-  Ponte e o toco de 14 t cruza.
+  curta); destino no Centro de Vitória às 10h avisa sem excluir; toco da Serra até o portão da R. Jurema Barroso às 8h
+  de terça recebe `rmsp_destino_na_zona` da janela do porto; caminhão de 3 eixos e 14 t dá a volta na Terceira Ponte e
+  o toco de 14 t cruza.
+
+Conferido também com a `main` mesclada sem commit (calendário com a coluna `active` dos feriados): typecheck, os 15
+testes e os 18 de `municipios.test.ts` passam; com o feriado real de Vitória no banco (08/09/2026, padroeira) a carreta
+Vila Velha → Serra às 8h atravessa Vitória (21,5 km) e uma semana depois desvia (35,3 km).
 
 ```bash
 cd api && API_URL=http://localhost:3000 npx vitest run test/layers/mun_vitoria.test.ts
@@ -219,8 +241,12 @@ cd api && API_URL=http://localhost:3000 npx vitest run test/layers/mun_vitoria.t
 - Estacionamento (> 16 t nos bairros de praia de Vila Velha) e rotas obrigatórias dos portos não são representáveis.
 - Lei 3.499/1987 de Vitória (estacionamento de caminhões para carga e descarga na zona central, 7h–10h) aparece sem nota
   de revogação e pode conflitar com a Lei 6.490/2005 (verify): não revisada.
-- Feriados municipais: o calendário (`holidays` por `ibge_code`) é da frente de feriados. Vitória: Lei 1.732/1967 (em
-  2026: 03/04, 13/04, 04/06 e 08/09, Dec. 25.991/2025); Vila Velha e Serra não levantados nesta pesquisa.
+- Feriados municipais: o calendário (`holidays` por `ibge_code`) é da frente de feriados (`feriados_sudeste`, já na
+  `main`). Vitória (3205309) está coberta: 9 linhas de 2026 a 2028 (Sexta-feira da Paixão, Corpus Christi e 8/9,
+  Lei 1.732/1967 e Dec. 25.991/2025); a Serra (3205002) também (12 linhas, Lei 4.950/2019); o estadual de 13/04
+  (Lei estadual 11.010/2019) vale para os três. **Falta Vila Velha (3205200)**: sem feriado municipal na tabela, as
+  regras de Vila Velha com `feriados: suspende` (Centro, Glória em dia útil, porto) continuam valendo nos feriados
+  locais (lado seguro: restringe a mais, nunca a menos).
 - Cariacica, Viana, Guarapari e Fundão: sem regra municipal confirmada (Cariacica informou à imprensa, em 2022, que
   não tem lei; o portal de legislação dela não busca).
 - Interdição temporária da 2ª Ponte (SEMOBI, 02/09 a 20/12/2026, 21h–5h, pesados desviados para as Cinco Pontes;
