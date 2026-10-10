@@ -1,0 +1,57 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3528502",
+  "municipio": "Mairiporã",
+  "uf": "SP",
+  "fonte_id": "mairipora",
+  "fonte": {
+    "url": "https://ecrie.com.br/Sistema/Conteudos/Diariooficial/edicoes/158/947-imprensaoficial_edicao_1443_assinado.pdf (Imprensa Oficial de Mairiporã, ed. 1443, 11/04/2025, p. 4: Lei 4.391/2025)",
+    "licenca": "Lei municipal de Mairiporã: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla.",
+    "notas": "Subida da Serra da Cantareira: Av. Ver. Belarmino Pereira de Carvalho (da SP-023 até a Av. José Gianesella) e Av. José Gianesella (da entrada do Parque Águas Claras, na Av. Sen. José Ermírio de Moraes, até a Av. Dr. Luiz Felippe França Ramos), nos dois sentidos, sem horário."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "A Lei 4.391/2025 restringe pelo número de eixos: caminhão de até 2 eixos (inclusive VUC) circula livre.",
+  "regras": [
+    {
+      "id": "mairipora_cantareira",
+      "tipo": "via",
+      "regime": "Mais de 2 eixos (Lei 4.391/2025)",
+      "nome": "Mairiporã — Av. Ver. Belarmino Pereira de Carvalho e Av. José Gianesella, proibidas a veículo de carga com mais de 2 eixos (Lei 4.391/2025)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 2}]},
+      "autorizacao": "Autorização prévia do órgão de trânsito para eventos excepcionais, com escolta se necessário (Lei 4.391/2025, art. 2º).",
+      "excecoes": [
+        "Eventos excepcionais autorizados mediante solicitação prévia ao órgão de trânsito, inclusive para veículos registrados no município (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 4.391/2025 (Mairiporã), arts. 1º a 4º",
+          "artigo": "art. 1º (proibição a veículos de carga com mais de dois eixos e a ônibus de fretamento, nos dois sentidos, nos trechos citados), art. 2º (eventos excepcionais), arts. 3º e 4º (art. 187, I do CTB e multa de 145 UFM-M, em dobro na reincidência em 12 meses)",
+          "url": "https://ecrie.com.br/Sistema/Conteudos/Diariooficial/edicoes/158/947-imprensaoficial_edicao_1443_assinado.pdf",
+          "nota": "Imprensa Oficial ed. 1443, 11/04/2025, p. 4. Em vigor na publicação (art. 7º); revoga a Lei 1.757/1997 (art. 6º). Projeto de alteração (2 eixos e VUC) em tramitação em nov/2025."
+        }
+      ],
+      "nota": "O art. 1º cita a Av. Sen. José Ermírio de Moraes 'na entrada do Parque Águas Claras' como ponta do trecho que vai até a Av. Dr. Luiz Felippe França Ramos: no OSM esse trecho é a Av. José Gianesella inteira (começa no entroncamento com a Ermírio de Moraes, na entrada do Núcleo Águas Claras do Parque Estadual da Cantareira). A ementa da lei também fala só da Belarmino e da Gianesella. A pesquisa leu '3 avenidas'; a Av. Sen. José Ermírio de Moraes (ao sul do parque) não foi restringida. O ônibus de fretamento também é proibido, mas o app só trata caminhões.",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local",
+      "vigencia_inicio": "2025-04-11",
+      "trechos": [
+        {
+          "inciso": "art. 1º (Av. Ver. Belarmino Pereira de Carvalho)",
+          "via": ["Avenida Vereador Belarmino Pereira de Carvalho"],
+          "descricao": "Av. Ver. Belarmino Pereira de Carvalho, da Rodovia SP-023 (rotatória Dr. Antônio S. Neto) até a Av. José Gianesella, nos dois sentidos (a avenida inteira no OSM)"
+        },
+        {
+          "inciso": "art. 1º (Av. José Gianesella)",
+          "via": ["Avenida José Gianesella"],
+          "descricao": "Av. José Gianesella, da Av. Sen. José Ermírio de Moraes (entrada do Parque Águas Claras) até a Av. Dr. Luiz Felippe França Ramos, nos dois sentidos (a avenida inteira no OSM)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3528502_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

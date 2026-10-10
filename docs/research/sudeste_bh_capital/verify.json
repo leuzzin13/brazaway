@@ -1,0 +1,265 @@
+{
+ "category": "restricoes_municipais_bh_rmbh",
+ "sources": [
+  {
+   "name": "API do Diário Oficial do Município de Belo Horizonte (DOM)",
+   "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/pesquisar",
+   "verdict": "confirmed",
+   "note": "Testei de novo em 10/10/2026 com script próprio (bh_capital_verif/fetch_ato.py e v_dom_search.py). Respondeu HTTP 200 em JSON (Elasticsearch). A busca exata 'Portaria BHTRANS DPR' deu 4.174 hits e 'veículos de carga' deu 301, iguais ao resultado. O texto integral de cada ato vem em /edicoes/atos/{id}/publicado (baixei 199503, 293524, 375340, 276691, 58857, 53738, 483485, 419727, 443020, 28850 e 490523). A licença está correta: Lei 9.610/98, art. 8º, IV. Um detalhe para a vigilância: desde 2024 as portarias saem como 'PORTARIA BHTRANS Nº xx/2026', sem 'DPR'. A busca por 'Portaria BHTRANS DPR' só as encontra quando citam a DPR 70/2013."
+  },
+  {
+   "name": "Portarias BHTRANS DPR 138/2009, 077/2014 e 004/2019",
+   "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado",
+   "verdict": "confirmed",
+   "note": "Textos conferidos artigo por artigo. Datas de publicação no DOM: 138/2009 em 18/12/2009 (ed. 3487), 077/2014 em 27/06/2014 (ed. 4585), 004/2019 em 29/01/2019 (ed. 5702). Busquei '138/2009', '077/2014', 'caminhões-trator' e 'cavalos mecânicos' e não achei alteração posterior a 2019. A 080/2014 que aparece na busca valeu só para o dia 08/07/2014 (Copa) e não altera nada."
+  },
+  {
+   "name": "Mapa BHTrans 'Restrição CD' (5,5 t)",
+   "url": "https://prefeitura.pbh.gov.br/sites/default/files/estrutura-de-governo/bhtrans/2021/mapa-restricao-cd-55ton-portal.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 176.922 B, 1 página A4. Metadados: título 'MAPA - RESTRIÇÃO CD - 14-02-19', CorelDRAW 9.337, criado em 14/02/2019. Não refiz a contagem de desenhos (1.024; 5 polígonos laranja), porque o PyMuPDF não está instalado aqui. A área do polígono georreferenciado deu 7,46 km² no meu cálculo, consistente com 7,47. O GeoJSON diz 'afim por 5 praças' e o resumo diz 'similaridade por 3 pontos': a procedência está inconsistente."
+  },
+  {
+   "name": "BHTrans: páginas Áreas de carga/descarga e restrições, DTLP, AETV e Rotativo Digital – Carga e Descarga",
+   "url": "https://prefeitura.pbh.gov.br/bhtrans/carga-urbana/areas-de-carga-descarga-e-com-restricoes",
+   "verdict": "corrected",
+   "note": "As quatro responderam 200 e as datas 'atualizado em' batem: 07/10/2021, 03/09/2026 (DTLP), 21/05/2026 (AETV) e 10/10/2025 (Rotativo). A tabela, os 18 itens de corredores e trechos e as janelas estão corretos. Duas correções. (1) A página do Rotativo diz que 'a maioria das vagas de carga e descarga NA Área Central' tem Rotativo Digital. Não diz que a maioria das 2.445 vagas fica na Área Central; o sistema foi estendido às demais áreas em 19/06/2019. (2) A página DTLP cita só 138/2009 e 077/2014. Não menciona a 004/2019 nem 5,5 t, então não 'confirma' a regra vigente; quem mostra 5,5 t é a página 'Áreas', de 2021."
+  },
+  {
+   "name": "IDE-BHGeo / BHMap WFS",
+   "url": "https://bhmap.pbh.gov.br/v2/api/idebhgeo/wfs?service=WFS&request=GetCapabilities",
+   "verdict": "confirmed",
+   "note": "GetCapabilities deu 200 com 354 FeatureTypes. CIRCULACAO_VIARIA tem numberMatched=231028. Não há camada com CAMINH, CARGA ou DESCARGA; a única com RESTRI é RESTRICAO_VOO_DRONE. Faltou dizer que o WFS tem a camada ide_bhgeo:REDE_PRIORIZACAO_ONIBUS, alternativa ao CSV do CKAN que já vem em EPSG:4326. A licença CC-BY no WFS é dedução a partir do CKAN, não está declarada no serviço."
+  },
+  {
+   "name": "Portal de dados abertos da PBH (CKAN)",
+   "url": "https://dados.pbh.gov.br/dataset/rede-prioritaria-onibus",
+   "verdict": "confirmed",
+   "note": "A API de ckan.pbh.gov.br exige User-Agent; sem ele, devolve 'Acesso Bloqueado'. Licença cc-by. Baixei de novo os CSVs 20260901. Rede prioritária: 711 trechos (150 pista exclusiva, 354 faixa exclusiva, 207 preferencial, 176 BRT), sem coluna de horário. Estacionamento rotativo: 1.103 faces, sem tipo carga/descarga. Fiscalização eletrônica: 447 equipamentos, 20 no Anel (18 a 70 km/h, 1 a 60, 1 a 50) e nenhum DTLP de caminhão. package_search por 'descarga' e por 'caminhão' deu 0."
+  },
+  {
+   "name": "Notícias e release da PBH sobre o Novo Anel",
+   "url": "https://prefeitura.pbh.gov.br/noticias/placas-no-novo-anel-reforcam-regra-de-circulacao-para-veiculos-pesados",
+   "verdict": "confirmed",
+   "note": "Todas responderam 200. Notícia de 03/06/2025: 22,4 km municipalizados, 4,1 km da BR-381 seguem com o DNIT, e a PBH propõe limite de até 70 km/h. Notícia de 18/03/2026: 88 placas (29 + 59 R-9) 'começam a ser implantadas' a partir de 19/03; CTB art. 29, IV; infração média, 4 pontos, R$ 130,16; fiscalização pela GCM. Release PDF: 3 páginas, criado em 15/05/2026. Traz as faixas 1 e 2 proibidas da BR-356/BR-040 até o pontilhão do Betânia, os escapes nos km 540 e 539 e 22 pontos de radar com 62 faixas. Não traz nenhum número de velocidade."
+  },
+  {
+   "name": "Estado de Minas: 'Municipalizado há um ano, Anel passa por reconfiguração'",
+   "url": "https://www.em.com.br/gerais/2026/06/7439379-municipalizado-ha-um-ano-anel-passa-por-reconfiguracao.html",
+   "verdict": "confirmed",
+   "note": "200, datePublished 12/06/2026. Confirma o que o resultado atribui à matéria: leves a 70 km/h e caminhões a 60 km/h na pista central, marginais a 60 km/h, trechos com pedestres a 40–50 km/h, 22 radares e 62 faixas. É imprensa, não ato oficial."
+  },
+  {
+   "name": "Querido Diário API (Contagem 3118601, Betim 3106705)",
+   "url": "https://queridodiario.ok.org.br/api/gazettes",
+   "verdict": "confirmed",
+   "note": "Contagens refeitas: Contagem 4.239, Betim 3.524, ambos atualizados até 09/10/2026. Nova Lima tem 0. Também têm 0 diários Sabará (3156700), Santa Luzia (3157807), Ribeirão das Neves (3154606), Ibirité (3129806), Vespasiano (3171204) e Lagoa Santa (3137601). Com UA de navegador e filtros de data, a API às vezes devolve 302 do Cloudflare."
+  },
+  {
+   "name": "Lei 5.797/2014 de Betim (Órgão Oficial de 02/12/2014)",
+   "url": "https://data.queridodiario.ok.org.br/3106705/2014-12-02/66990b2c984ef6e33617482c370154edfa0ecbd5.pdf",
+   "verdict": "confirmed",
+   "note": "PDF de 1,47 MB. Extraí o texto e ele bate: arts. 1º e 2º, exceções do §1º, promulgação pelo Presidente da Câmara em 19/11/2014. Conferi também o diário de 14/08/2014: veto total à Proposição de Lei 6.053/2014, de mesma ementa, 'por razão de inconstitucionalidade'. No Querido Diário de Betim não há nenhuma menção posterior a '5.797'."
+  },
+  {
+   "name": "OpenStreetMap: extrato local do PBF Sudeste (bbox da RMBH)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "verdict": "corrected",
+   "note": "Recontei no rmbh_highways.jsonl: 101.719 vias e 0 hgv:conditional no bbox inteiro. No Anel, o resultado ('maxspeed/maxspeed:hgv 80 em cerca de 22 km') está impreciso. Por extensão de pista (cada sentido contado à parte): maxspeed=80 em 22,1 km, 70 em 33,0 km e 60 em 19,8 km; maxspeed:hgv=80 em só 9,9 km e =60 em 14,0 km. Então o OSM já marca caminhão a 60 em parte do Anel."
+  },
+  {
+   "name": "Política de Logística Urbana de BH (2017)",
+   "url": "https://prefeitura.pbh.gov.br/sites/default/files/imagens/authenticated%2C%20editor_a_bhtrans/Pol%C3%ADtica%20de%20logistica%20urbana%20-%20Final%202017%2003%2002%20REV04%20(1).pdf",
+   "verdict": "confirmed",
+   "note": "200, 6,4 MB, 124 páginas. O benchmark atribui o 'Decreto nº 11.178/2010' a Campo Grande/MS, e a bibliografia o cita como 'Decreto n. 11.178 de 20 de abril de 2010', de Campo Grande."
+  }
+ ],
+ "rules": [
+  {
+   "where": "BH – Área Central (Hipercentro, Savassi, Lourdes, Assembleia/Barro Preto, Hospitalar)",
+   "verdict": "confirmed",
+   "note": "Conferido na 138/2009. Arts. 1º a 5º: perímetros. Art. 1º II: proibidos circulação e carga e descarga acima de 5 t (hoje 5,5 t) ou 6,50 m, seg–sex 07–20 e sáb 07–15. Art. 1º III: carretas e caminhões-trator proibidos em qualquer horário. Art. 8º: unifica a regra após um ano. Art. 9º: autorização da BHTrans. Lotação virou 'capacidade de carga' pelo art. 2º da 077/2014, e 5,5 t vem do art. 1º da 004/2019. O ato não fala em feriado nem em domingo; 'Domingo livre' vem da tabela da BHTrans, e aplicar no feriado é interpretação do silêncio do ato. A lista de exemplos do AETV vem da página da BHTrans, não do art. 9º. 'Origem/destino: avisar, não excluir' é escolha de produto: o ato não excetua origem ou destino na zona. O perímetro cobre só 'vias internas', mais os trechos-limite que os arts. 2º a 5º citam."
+  },
+  {
+   "where": "BH – 16 trechos de corredores (art. 6º)",
+   "verdict": "confirmed",
+   "note": "O art. 6º lista 15 itens, e o parágrafo único do art. 1º da 077/2014 troca o trecho do Contorno por dois: R. Ceará–Av. Amazonas no sentido horário e Av. Amazonas–R. Andaluzita no anti-horário. Ficam 16. As janelas batem com o inciso II, inclusive carretas: seg–sex 07–09 e 17–20, sáb 07–09. Vigência a partir de 21/02/2011."
+  },
+  {
+   "where": "BH – Tobogã da Av. do Contorno",
+   "verdict": "confirmed",
+   "note": "Art. 1º, I e II, da 077/2014: Inconfidentes→Ceará e Andaluzita→Afonso Pena, 'neste sentido', a partir de 01/07/2014. Proíbe circulação e carga e descarga em qualquer horário, inclusive carretas. O art. 3º prevê autorização e o art. 4º revoga a 139/2013. Publicada no DOM em 27/06/2014."
+  },
+  {
+   "where": "BH – Av. (Nossa) Senhora do Carmo entre Contorno e R. Prof. Rodrigues Seabra (Portaria)",
+   "verdict": "confirmed",
+   "note": "Art. 7º da 138/2009: a partir de 25/01/2010, seg–sex 07–20 e sáb 07–15; inciso III proíbe carretas e cavalos mecânicos em qualquer horário. Ato do DOM de 2012 (id 262496): equipamento de fiscalização eletrônica no nº 2.135, sentido bairro/Centro, nas 3 faixas, 24 h. A página DTLP cita o posto 24 h na BR-356 (Ponteio)."
+  },
+  {
+   "where": "BH – Lei 7.794/1999 (N. Sra. do Carmo, acima de 2 t)",
+   "verdict": "confirmed",
+   "note": "Texto conferido: art. 1º proíbe caminhões com capacidade acima de 2.000 kg e ônibus interestaduais das 7 às 20 h. Publicada no DOM em 04/09/1999. Não aparece nos Anexos da Lei 11.520/2023 nem da 12.016/2026, e a busca exata 'Lei nº 7.794' no DOM só devolve a própria lei. A vigência real é incerta, e a confiança 'baixa' está adequada. Tentei o portal da CMBH, mas o backend não é acessível daqui."
+  },
+  {
+   "where": "BH – Lei 7.648/1999 (revogada)",
+   "verdict": "corrected",
+   "note": "A revogação está confirmada: Lei 12.016/2026, publicada no DOM em 22/05/2026, Anexo I item LXV; vigência 90 dias depois, perto de 20/08/2026. O art. 1º da 11.520/2023 revoga as leis dos Anexos I a VI. Ajuste: a lei tem 12 incisos, que são a área do Contorno (inclusive) mais 11 corredores, e não 'área e 12 corredores'. O critério exige mais de 1 eixo E capacidade acima de 8 t. A lei tinha ainda um art. 2º de carga e descarga no hipercentro (acima de 8 t; acima de 4 t das 13 às 20 h; carretas)."
+  },
+  {
+   "where": "BH – Vagas de carga e descarga do Rotativo Digital",
+   "verdict": "corrected",
+   "note": "A página confirma 2.445 vagas, 1 h, gratuidade, 8–18 h seg–sex, 8–13 h sáb e Estação Pampulha 8–20/8–15. Errado é 'a maioria na Área Central': o texto diz que a maioria das vagas da Área Central tem o sistema, e que ele foi estendido às demais áreas em 19/06/2019. Não há norma citada na página."
+  },
+  {
+   "where": "BH – Novo Anel, faixa da direita (Olhos D'Água–Estação São Gabriel)",
+   "verdict": "confirmed",
+   "note": "Notícia de 18/03/2026: 29 placas de pesados na faixa da direita e 59 R-9 nos dois sentidos, CTB art. 29, IV, infração média, R$ 130,16, fiscalização pela GCM. A notícia diz que as placas 'começam a ser implantadas' a partir de 19/03; 'desde 19/03 há placas' exagera um pouco. A regra do CTB vale independentemente das placas."
+  },
+  {
+   "where": "BH – Descida do Betânia (faixas 1 e 2)",
+   "verdict": "confirmed",
+   "note": "Release criado em 15/05/2026 ('nesta sexta-feira (15)'): 'reforço na proibição' dos pesados nas faixas 1 e 2, entre o entroncamento BR-356/BR-040 e o pontilhão ferroviário do Betânia, faixa 3 obrigatória, monitoramento eletrônico, escapes nos km 540 e 539. Não traz data de implantação. A busca no DOM por 'faixa da direita' não achou portaria."
+  },
+  {
+   "where": "BH – Novo Anel, velocidades",
+   "verdict": "corrected",
+   "note": "CKAN: 18 dos 20 radares do Anel a 70 km/h. Caminhão a 60 km/h só aparece no Estado de Minas. Ajustes: (a) o release de 15/05/2026 não traz números, só 'padronização'; o 70 km/h vem como 'proposta' na notícia da PBH de 03/06/2025 e nos radares do CKAN; (b) dizer que o OSM tem '80 em cerca de 22 km' em maxspeed/maxspeed:hgv está errado, porque maxspeed:hgv=80 cobre só ~10 km e já há maxspeed:hgv=60 em ~14 km."
+  },
+  {
+   "where": "BH – Pistas MOVE e faixas exclusivas de ônibus",
+   "verdict": "corrected",
+   "note": "A Portaria Conjunta SUMOB/BHTRANS 009/2024 (DOM 03/07/2024) só autoriza táxis. Ela lista as 4 pistas MOVE e as 8 faixas em que o táxi pode trafegar, não a rede completa nem o regime de horário. O 'permanente' é inferência (o táxi deve andar com farol aceso '24 horas'). A base para caminhões é o CTB, art. 184, III. Ato novo: a Portaria Conjunta 007/2026 (DOM 15/09/2026) suspende por 90 dias o inciso II do art. 4º da 009/2024, para táxis na trincheira José de Souza Machado. A rede completa está no CKAN (711 trechos, sem horário) e na camada WFS REDE_PRIORIZACAO_ONIBUS."
+  },
+  {
+   "where": "Betim – Lei 5.797/2014 (Av. Amazonas e R. Dr. Gravatá; carga e descarga no centro)",
+   "verdict": "confirmed",
+   "note": "Texto conferido no PDF do Querido Diário. Art. 1º: mais de 1 eixo E acima de 8 t, seg–sex 7h–19h30, Av. Amazonas até o quarteirão do Centro Administrativo e R. Dr. Gravatá; 7 exceções no §1º. Art. 2º: acima de 8 t seg–sex 7–20; acima de 4 t das 13 às 20 h, sem dia definido; carretas seg–sex 7–20; 'centro de Betim' não delimitado. Veto total de 11/08/2014 (DO de 14/08/2014) 'por razão de inconstitucionalidade'. Confiança baixa está adequada."
+  },
+  {
+   "where": "Contagem – sem regra de área",
+   "verdict": "unverifiable",
+   "note": "É afirmação de ausência. As minhas buscas no Querido Diário ('circulação de veículos de carga', 'trânsito de caminhões', 'proibida a circulação de caminhões') também não acharam norma de área. Confirmei o Requerimento 497/2026 pedindo estudo à Transcon. Achei ainda a ata do DO de 13/03/2025, em que um vereador pergunta sobre estudos da Transcon para restringir caminhões. Não consegui confirmar os exemplos de indicações (2632/2021, R. Dahir Diniz; 600/2025, R. Japurá): a busca devolve ruído."
+  },
+  {
+   "where": "BH – Bairro Buritis / Anel (projeto de restrição)",
+   "verdict": "confirmed",
+   "note": "Lei 11.442/2022 (LOA 2023, DOM 30/12/2022), item 180: R$ 40.000 'para a implantação do projeto de restrição de circulação de caminhões pesados no Bairro Buritis, Rodovia Anel Rodoviário Celso Mello Azevedo, nas imediações na Rua Moisés Kalil'. O item reaparece na Mensagem da LOA de 01/10/2024 (DOM, id 448498). Não achei ato de implantação."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "Portaria BHTRANS DPR 138/2009 (DOM 18/12/2009) consolida Área Central, corredores e N. Sra. do Carmo",
+   "verdict": "confirmed",
+   "note": "DOM ed. 3487, de 18/12/2009. Arts. 1º–5º, 6º, 7º e 8º conferidos no texto integral."
+  },
+  {
+   "fact": "Portaria 077/2014: tobogã 24 h desde 01/07/2014; troca 'lotação' por 'capacidade de carga'; revoga a 139/2013",
+   "verdict": "confirmed",
+   "note": "Arts. 1º, 2º e 4º conferidos. DOM de 27/06/2014. Na época o limite era 5 t."
+  },
+  {
+   "fact": "Portaria 004/2019 (DOM 29/01/2019) eleva de 5 t para 5,50 t",
+   "verdict": "confirmed",
+   "note": "Art. 1º e parágrafo único conferidos; DOM ed. 5702, de 29/01/2019."
+  },
+  {
+   "fact": "A página da BHTrans resume a tabela vigente e lista 18 corredores e trechos",
+   "verdict": "confirmed",
+   "note": "Página atualizada em 07/10/2021. Tem 18 marcadores: 14 corredores e 4 trechos do Contorno, incluindo os 2 do tobogã."
+  },
+  {
+   "fact": "O mapa oficial (PDF CorelDRAW de 14/02/2019) é vetorial, com 5 polígonos da Área Central etc.",
+   "verdict": "confirmed",
+   "note": "Metadados conferidos (CorelDRAW 9.337; título com 14-02-19). Não refiz a contagem de polígonos e linhas."
+  },
+  {
+   "fact": "A página DTLP, atualizada em 03/09/2026, ainda cita 138/2009 e 077/2014; fiscalização eletrônica e posto 24 h na BR-356 (Ponteio)",
+   "verdict": "confirmed",
+   "note": "Confere. Mas a página não cita a 004/2019 nem 5,5 t, então não serve de 'confirmação' do valor vigente."
+  },
+  {
+   "fact": "A Lei 12.016/2026 inclui a Lei 7.648/1999 no Anexo I da 11.520/2023; vigência 90 dias após 22/05/2026",
+   "verdict": "confirmed",
+   "note": "Item LXV. DOM ed. 7504, de 22/05/2026. Art. 4º: 90 dias."
+  },
+  {
+   "fact": "Lei 7.794/1999: acima de 2.000 kg na N. Sra. do Carmo das 7 às 20 h; fora das listas de revogação",
+   "verdict": "confirmed",
+   "note": "Texto e ausência nas Leis 11.520 e 12.016 conferidos; DOM de 04/09/1999."
+  },
+  {
+   "fact": "Novo Anel (22,4 km) municipalizado em 03/06/2025; 4,1 km seguem com o DNIT",
+   "verdict": "confirmed",
+   "note": "Notícia PBH de 03/06/2025 conferida. Os 4,1 km são da BR-381, entre BH e Caeté."
+  },
+  {
+   "fact": "Desde 19/03/2026, 88 placas (29 + 59 R-9) entre Olhos D'Água e a Estação São Gabriel; CTB art. 29, IV; R$ 130,16",
+   "verdict": "confirmed",
+   "note": "Confere. O texto diz que a implantação 'começa' em 19/03."
+  },
+  {
+   "fact": "Release de 15/05/2026: pesados proibidos nas faixas 1 e 2 até o pontilhão do Betânia; escapes nos km 540 e 539; fiscalização eletrônica",
+   "verdict": "confirmed",
+   "note": "PDF de 3 páginas conferido; data de criação 15/05/2026."
+  },
+  {
+   "fact": "Rotativo de carga e descarga: 2.445 vagas, gratuitas, 1 h; ativação seg–sex 8–18 e sáb 8–13",
+   "verdict": "confirmed",
+   "note": "Números conferidos. Ver a correção sobre 'maioria na Área Central' na regra."
+  },
+  {
+   "fact": "A BHTrans emite AETV para cargas indivisíveis e veículos especiais (betoneiras, guindastes, mudança, utilidade pública)",
+   "verdict": "confirmed",
+   "note": "Página AETV atualizada em 21/05/2026, conferida."
+  },
+  {
+   "fact": "Betim, Lei 5.797/2014: acima de 8 t e mais de 1 eixo, seg–sex 7h–19h30, Av. Amazonas e R. Dr. Gravatá; promulgada após veto",
+   "verdict": "confirmed",
+   "note": "Texto da lei e veto (DO de 14/08/2014, Proposição 6.053/2014) conferidos."
+  },
+  {
+   "fact": "Contagem: 'em 15/06/2026 a Câmara aprovou o Requerimento 497/2026'",
+   "verdict": "corrected",
+   "note": "O requerimento e a aprovação unânime estão confirmados. Mas 15/06/2026 é a data do Diário Oficial que publica a ata; a data da sessão não foi estabelecida."
+  },
+  {
+   "fact": "A Portaria Conjunta SUMOB/BHTRANS 009/2024 lista as pistas MOVE e as faixas exclusivas",
+   "verdict": "confirmed",
+   "note": "As listas conferem, mas o ato é de autorização de táxi e cita só as faixas liberadas ao táxi. Foi alterado pela Portaria Conjunta 007/2026 (DOM 15/09/2026)."
+  },
+  {
+   "fact": "CKAN: rede prioritária com 711 trechos (150/354/207), CSV mensal WKT EPSG:31983, CC-BY, sem horário",
+   "verdict": "confirmed",
+   "note": "CSV 20260901 baixado de novo; contagens, colunas e licença conferem (176 trechos BRT)."
+  },
+  {
+   "fact": "WFS IDE-BHGeo: 354 camadas, GeoJSON 4326; CIRCULACAO_VIARIA com 231.028; sem camada de restrição ou de carga e descarga",
+   "verdict": "confirmed",
+   "note": "Conferido. Existe também a camada REDE_PRIORIZACAO_ONIBUS."
+  },
+  {
+   "fact": "O 'Decreto 11.178/2010' é de Campo Grande/MS, citado na Política de Logística Urbana de BH",
+   "verdict": "confirmed",
+   "note": "Benchmark e bibliografia do PDF de 124 páginas conferidos."
+  },
+  {
+   "fact": "Lei 11.442/2022: emenda para a restrição de caminhões pesados no Buritis; sem ato de implantação",
+   "verdict": "confirmed",
+   "note": "Item 180 conferido (R$ 40.000, imediações da R. Moisés Kalil, Anel)."
+  }
+ ],
+ "extra_findings": [
+  "Por que a pesquisa ficou incompleta: a sessão inteira tem um teto de 200 buscas na web. Aqui também tentei 3 buscas (Contagem, Nova Lima e 60 km/h no Anel) e todas foram recusadas com '200 of 200 WebSearch calls'. O limite pode ser aumentado com CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION. Além disso, o Querido Diário tem 0 diários de Nova Lima, Sabará, Santa Luzia, Ribeirão das Neves, Ibirité, Vespasiano e Lagoa Santa, não só de Nova Lima. Nesses municípios é preciso ir ao diário de cada prefeitura (URLs não testadas por falta de busca).",
+  "Testei o app local (POST http://localhost:8080/api/route, só leitura): caminhão de 16 t e 10 m, quarta 14/10/2026 às 10:00, Floresta → Barro Preto. A rota passa pela R. dos Guaicurus, R. da Bahia e Av. Amazonas, a 16 m da Praça Sete. Retorno: warnings=[], avoided=[] e cost_lines_count=0. Está confirmado que hoje o app manda caminhão proibido pela Área Central. O schemas.ts só tem weight_t, sem campo de capacidade de carga, o que confirma a lacuna de payload_t.",
+  "REFUTADO em reused_from_existing ('a jurisdição do SNV fica desatualizada no Anel'). O seed do próprio repo, db/seed/layers/federal_restricoes__siaet.sql (SNV 202607A, ref. 10/2026), já marca os trechos do Anel como 'administracao':'Municipal': 262BMG0550, 262BMG0570, 262BMG0590, 040BMG0370 e 040BMG0390. Só o 262BMG0530 (km 312,5–316,5, BR-262/381) está como Federal, e esse é o trecho que segue com o DNIT. Fonte: https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes/restricao-definitiva/10-2026/mg.pdf",
+  "Exagero no resumo: 'confirmada pela BHTrans em 03/09/2026'. A página DTLP atualizada nessa data cita só as Portarias 138/2009 e 077/2014 e não fala em 5,5 t nem na 004/2019. Quem traz a tabela com 5,5 t é a página 'Áreas de carga, descarga e com restrições', atualizada em 07/10/2021.",
+  "Ato novo não citado: a Portaria Conjunta SUMOB/BHTRANS 007/2026 (DOM 15/09/2026) altera a 009/2024 por 90 dias (táxi na trincheira José de Souza Machado, Pedro I–Vilarinho). Afeta só táxis. https://api-dom.pbh.gov.br/api/v1/edicoes/atos/490523/publicado",
+  "Local exato da fiscalização na N. Sra. do Carmo, útil para o aviso: equipamento eletrônico no nº 2.135, sentido bairro/Centro, nas 3 faixas, 24 h, desde 11/12/2012, além de PMV e posto integrado na BR-356. https://api-dom.pbh.gov.br/api/v1/edicoes/atos/262496/publicado",
+  "Para a camada corredores_onibus, o WFS do BHMap tem a camada ide_bhgeo:REDE_PRIORIZACAO_ONIBUS (GeoJSON em EPSG:4326 direto), alternativa ao CSV em 31983: https://bhmap.pbh.gov.br/v2/api/idebhgeo/wfs?service=WFS&request=GetCapabilities",
+  "Mais um indício de que Contagem não tem regra de área: ata da Câmara publicada no DO de 13/03/2025, em que um vereador 'indagou sobre estudos da Transcon para restrição do trânsito de caminhões'. https://data.queridodiario.ok.org.br/3118601/2025-03-13/c929a30677162b5df6e0058e37e13b7b05dbe5f5.pdf. O Plano Diretor de Contagem (DO de 29/09/2023) só traz a diretriz de 'regulamentação do trânsito' de veículos de carga, sem regra concreta.",
+  "O projeto de restrição de caminhões no Buritis reaparece no orçamento seguinte, como 'LOA 367' na Mensagem do DOM de 01/10/2024: https://api-dom.pbh.gov.br/api/v1/edicoes/atos/448498/publicado",
+  "OSM no Anel, valores corretos por extensão de pista: maxspeed 80=22,1 km, 70=33,0 km, 60=19,8 km; maxspeed:hgv 80=9,9 km e 60=14,0 km. O OSM não está uniformemente em 80 para caminhões; qualquer correção deve tratar trecho a trecho.",
+  "A procedência do georreferenciamento está inconsistente: as properties do GeoJSON dizem 'afim por 5 praças + ICP', enquanto o resumo e a NOTES.md dizem 'similaridade por 3 pontos + ICP'. A área (7,46 km² no meu cálculo) confere.",
+  "A situação jurídica da Lei 7.794/1999 poderia ser resolvida no sistema de legislação da Câmara Municipal de BH (https://www.cmbh.mg.gov.br/atividade-legislativa/pesquisar-legislacao), que costuma mostrar se a norma está revogada ou foi declarada inconstitucional. A página responde 200, mas o backend (cmbhsilint.cmbh.mg.gov.br) não é acessível daqui: não testado."
+ ]
+}

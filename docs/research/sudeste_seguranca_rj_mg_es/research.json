@@ -1,0 +1,338 @@
+{
+ "category": "seguranca_rj_mg_es",
+ "summary": "Todas as pistas do tema foram conferidas. Comparado com SP, o quadro fora do estado é bem desigual.\n\n**MG tem a melhor fonte nova.** É a base completa do Painel de Sinistro de Trânsito da SEJUSP (REDS), num Google Drive público que dá para listar sem login.\n- Traz um CSV por ano, de 2012 até ago/2026, com cada ocorrência com e sem vítima, e lat/lon em 99% delas. Também traz hora, logradouro e causa.\n- O tipo de veículo vem numa tabela ligada pela ocorrência.\n- Em 2025 foram 312.700 ocorrências. Dessas, 36.074 envolvem caminhão (98,1% com coordenada); 3.825 tiveram vítima e 436 tiveram morte.\n- Ela entra na camada `acidentes` com o mesmo método do Infosiga, pelo novo importador `acidentes_reds_mg`. As BRs ficam com a PRF.\n- O RENAEST de MG é essa mesma base (312.061 registros em 2025), então não acrescenta nada.\n\n**Roubo de carga não tem coordenada em nenhum dos três estados.**\n- **MG:** os microdados do REDS trazem hora, tipo de local e município. Os números são pequenos: 132 casos em 2025, igual ao Sinesp. 54% acontecem em rodovia e 44% de madrugada.\n- **RJ:** só há série mensal por CISP (3.113 casos em 2025). Os polígonos das 137 CISPs são públicos. As 10 CISPs com mais casos, na Baixada e na Zona Norte, concentram 61% dos roubos.\n- **RJ, microdados:** os pedidos ao ISP vêm desagregados no máximo por CISP ou bairro. A Portaria ISP 127/2022 proíbe comercializar o que é fornecido sob pedido.\n- **ES:** foram 7 roubos de carga em 2025, o que não justifica camada.\n\n**Acidentes no RJ:** não há fonte estadual com coordenada.\n- O RENAEST-RJ tem coordenada em 0% dos registros até 2025 e nenhum com tipo caminhão.\n- O data.rio só tem tabelas agregadas. As ocorrências do COR do Rio exigem BigQuery, têm licença CC BY-ND, e a API estava fora do ar (503).\n- Fica valendo só a PRF, que já está integrada.\n\n**Acidentes no ES:** o DETRAN-ES publica só agregados, e o Observatório é um painel SAS sem download. O RENAEST-ES tem 50% de coordenada, mas só 37 de 1.544 acidentes com caminhão de 2025 têm ponto. Fica valendo a PRF (BR-101 e BR-262).\n\n**BH:** a base de pontos da BHTrans (CC-BY) é redundante com o REDS.\n\nNão há regra de circulação neste tema, por isso a lista de regras está vazia. Os dados guardados ficaram em cerca de 16 MB; os arquivos grandes foram lidos em streaming.",
+ "rules": [],
+ "key_facts": [
+  {
+   "fact": "A SEJUSP-MG publica a base do Painel de Sinistro de Trânsito (REDS) numa pasta pública do Google Drive. Ela tem as subpastas Ocorrências, Veículo, Vítimas, Via e Condições, com um CSV por ano de 2012 até 'Jan a Ago 2026', atualizado em 15/09/2026. O link 'Acesse a Base de Dados do Painel' está na página.",
+   "source_url": "https://www.seguranca.mg.gov.br/index.php/component/sppagebuilder/page/289"
+  },
+  {
+   "fact": "REDS-MG 2025 (Registros, ID do Drive 1KI90qtnejfpJXK2euTTFpFnJH8segtRb, 103 MB): 312.700 ocorrências, 241.580 sem vítima e 71.120 com vítima. Lat/lon (latitude_sirgas2000/longitude_sirgas2000) em 98,9% delas. Também traz horário, logradouro, bairro, município, causa presumida e unidade que registrou.",
+   "source_url": "https://drive.google.com/embeddedfolderview?id=1j3mPiUd_7xYWxAQKKxgtITMyhWaDh3Dq"
+  },
+  {
+   "fact": "REDS-MG 2025: 36.074 ocorrências envolvem caminhão (CAMINHAO, CAMINHAO/TRATOR, SEMI-REBOQUE ou REBOQUE), cruzando com o CSV de Veículos (ID 1s5DsZqHiZ9_gcqoKrJhnZj8zICmnD6lT). Isso é 11,5% do total, com 98,1% georreferenciadas e 3.825 com vítima. Cruzando com a base de vítimas, 436 tiveram vítima fatal (495 óbitos).",
+   "source_url": "https://drive.google.com/embeddedfolderview?id=1vgEEcRTRgigZuKYMx2nWlJ4S8oX2OwC_"
+  },
+  {
+   "fact": "REDS-MG 2025, casos com caminhão: a Delegacia Virtual registrou 15.780 dos 36.074 (44%), quase todos sem vítima. Desses, 21% caem em coordenadas repetidas 5 vezes ou mais, ou seja, um ponto padrão do logradouro. O manual do painel avisa que as coordenadas do REDS vêm de SAD-69 e são aproximadas.",
+   "source_url": "https://www.seguranca.mg.gov.br/images/0_planilhas-e-pdfs/dados%20abertos/painel%20de%20transito/2026-06-09%20-%20DIS%20-%20Manual%20de%20Dados%20-%20Painel%20de%20Sinistro%20de%20Trnsito%20MG%201.pdf"
+  },
+  {
+   "fact": "Divisão por jurisdição em MG (2025): 6.569 casos com caminhão do REDS têm logradouro de BR ou do Anel Rodoviário, e outros 1.948 caem a até 1 célula de 250 m de acidentes da PRF. Sobram 26.868 casos, que formam 2.013 células com 3 ou mais casos. Com só 1 ano de dados, 2 células saem 'muito alto' e 10 'alto'. A PRF tem 3.142 acidentes com caminhão nas BRs de MG em 2025.",
+   "source_url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf"
+  },
+  {
+   "fact": "Decreto MG 48.383/2022, art. 22: 'Os dados disponibilizados pelos prestadores de serviços públicos e qualquer informação de transparência ativa são de livre utilização pela sociedade'. Os conjuntos da SEJUSP no CKAN não têm licença nomeada.",
+   "source_url": "https://www.almg.gov.br/legislacao-mineira/texto/DEC/48383/2022/"
+  },
+  {
+   "fact": "SEJUSP-MG, roubo consumado com alvo 'Cargas' (base completa por REDS, 635.714 linhas de 2015 a ago/2026, sem coordenada e sem nome de logradouro): 662 casos em 2015, 217 em 2024, 132 em 2025 e 59 em jan-ago/2026. Em 2025-26 (191 casos): 54% em RODOVIA, 44% entre 0h e 6h e 65% com arma de fogo. Por município: Contagem 25, BH 24, Betim 16.",
+   "source_url": "https://www.seguranca.mg.gov.br/index.php/transparencia/dados-abertos"
+  },
+  {
+   "fact": "O Sinesp VDE 2025 dá roubo de carga MG = 132, igual à SEJUSP; ES = 7; RJ = 3.777; SP = 3.470.",
+   "source_url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file"
+  },
+  {
+   "fact": "A Portaria ISP nº 127/2022 regula os microdados fornecidos pelo ISP sob pedido. Pelo art. 2º §2º, a desagregação vai no máximo até CISP, AISP, RISP, bairro e município (sem coordenada). Pelo art. 3º §1º, o que for fornecido não pode ser comercializado 'em nenhuma hipótese' nem repassado a terceiros.",
+   "source_url": "http://arquivo.proderj.rj.gov.br/isp_imagens/Uploads/PortariaISP127_Fornecimento_Microdados.pdf"
+  },
+  {
+   "fact": "O ISP-RJ publica os polígonos das 137 CISPs (shapefile WGS84 com cisp, aisp e areakm2; mediana de 169 km²; last-modified 14/08/2026). Os códigos batem 100% com a série mensal por CISP.",
+   "source_url": "https://www.ispdados.rj.gov.br/Arquivos/CISPshp.rar"
+  },
+  {
+   "fact": "ISP-RJ, roubo de carga em 2025: 3.113 casos em 87 CISPs com pelo menos 1, 37 CISPs com 12 ou mais e 17 com 50 ou mais. Maiores: CISP 59 Duque de Caxias Centro (402, 40,8 km²), 60 Campos Elyseos (287), 64 São João de Meriti (212), 21 Bonsucesso/Maré (194, 14,8 km²), 39 Pavuna (165). As 10 maiores CISPs somam 61% de 2025-26. A série vai até 08/2026, sem horário.",
+   "source_url": "https://www.ispdados.rj.gov.br/Arquivos/BaseDPEvolucaoMensalCisp.csv"
+  },
+  {
+   "fact": "RENAEST 05-2026 (zip de 529 MB, lido em streaming): o RJ tem 16 a 22 mil acidentes por ano, com coordenada em 0% de 2018 a 2025 (2.055 de 9.502 em 2026) e nenhum acidente com tipo caminhão. Em MG, 2025 tem 312.061 acidentes, 98,8% com coordenada e 35.915 com caminhão, os mesmos números do REDS. No ES, 2025 tem 43.110 acidentes com 50% de coordenada, mas só 37 de 1.544 com caminhão (2023: 930 de 1.720).",
+   "source_url": "https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip"
+  },
+  {
+   "fact": "PRF 2025, acidentes com caminhão: RJ 1.115 de 6.428 (40 mortos; BR-116, 101, 040, 393, 493), MG 3.142 de 9.570 (110 mortos; BR-381, 040, 116, 262, 365), ES 631 de 2.642 (27 mortos; BR-101, 262, 259). Esses dados já entram na camada acidentes.",
+   "source_url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf"
+  },
+  {
+   "fact": "SESP-ES no dados.es.gov.br: 42 conjuntos com licença CC-BY e nenhum de roubo de carga. O 'roubo-veiculo' tem 6.239 BOs de 2023-2025, cada um com data, hora, município, bairro, logradouro e tipo de veículo, mas sem coordenada. Só 77 envolvem caminhão ou carreta em 3 anos.",
+   "source_url": "https://dados.es.gov.br/dataset/roubo-veiculo"
+  },
+  {
+   "fact": "DETRAN-ES (CC0) publica só agregados: 53.446 sinistros em 2024, sendo 39.609 sem vítima, 12.924 com vítimas e 919 fatais. O Observatório de Trânsito é um painel SAS Visual Analytics sem download.",
+   "source_url": "https://dados.es.gov.br/dataset/sinistros-de-transito-com-e-sem-vitimas"
+  },
+  {
+   "fact": "BHTrans: a base 'ocorrencia-sinistro-transito-com-vitima' (CC-BY, mensal, pontos em EPSG:31983) tem 132.935 sinistros com vítima de 2016 a 22/08/2026, sem tipo de veículo. As bases si-bol e si-veic, que trazem o tipo de veículo, são anuais (até 2024) e têm licença ODbL (share-alike): 484 boletins com caminhão em 2024.",
+   "source_url": "https://dados.pbh.gov.br/dataset/ocorrencia-sinistro-transito-com-vitima"
+  },
+  {
+   "fact": "O boletim 'Trânsito em Números 2025' do Detran-RJ é só PDF agregado. Os números de sinistros vêm do ISP e o tipo de veículo vem dos Bombeiros. Os 2.375 homicídios culposos de 2025 batem com a soma de hom_culposo do ISP.",
+   "source_url": "https://www.detran.rj.gov.br/images/transparencia/outros/boletim_estatistico_transito_transito_em_numeros_2025.pdf"
+  },
+  {
+   "fact": "Prefeitura do Rio: as ocorrências do COR (datario.adm_cor_comando.ocorrencias, desde 2015) só existem via BigQuery e têm licença 'CC BY-NoDerivatives 3.0'. A api.dados.rio respondeu HTTP 503 em 10/10/2026.",
+   "source_url": "https://www.arcgis.com/sharing/rest/content/items/4b21231ce02243e99b5f080b8a0ff821?f=json"
+  }
+ ],
+ "sources": [
+  {
+   "name": "SEJUSP-MG: base do Painel de Sinistro de Trânsito (REDS), com Ocorrências, Veículo, Vítimas, Via e Condições",
+   "publisher": "Secretaria de Estado de Justiça e Segurança Pública de MG (Observatório de Segurança Pública)",
+   "url": "https://drive.google.com/drive/folders/1W_4SsAW8u5bvsaBoHhwInpUr72vES8yw",
+   "access": "Pasta pública do Google Drive, listável sem login por https://drive.google.com/embeddedfolderview?id=<pasta>. Download por https://drive.usercontent.google.com/download?id=<ID>&export=download&confirm=t. Link na página https://www.seguranca.mg.gov.br/index.php/component/sppagebuilder/page/289",
+   "format": "CSV ';' UTF-8 com BOM, decimal com vírgula, um arquivo por ano e por tabela, ligados por numero_ocorrencia_associado (hash)",
+   "license": "Nenhuma licença nomeada. O Decreto MG 48.383/2022, art. 22, declara os dados de transparência ativa de livre utilização pela sociedade. Entendemos que o uso comercial é permitido com atribuição (SEJUSP/REDS), mas convém confirmar por pedido de acesso à informação.",
+   "tested": true,
+   "test_result": "HTTP 200 nos dois arquivos de 2025. Registros: 103.028.851 bytes, lidos em streaming, 312.700 ocorrências, coordenada em 99%. Veículos: 20.985.783 bytes, 551.161 linhas. 36.074 ocorrências com caminhão, 98,1% com lat/lon. Os arquivos de 2026 (70,7 MB e 14,3 MB) foram conferidos por Range, até ago/2026.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Novo importador importers/sources/acidentes_reds_mg.py na camada existente `acidentes` (LAYER_ID='acidentes', SOURCE='sejusp-mg'), seguindo as convenções do Sudeste.\n- Descoberta: listar a pasta pelo embeddedfolderview e pegar os IDs de Registros, Veículo e Vítimas dos anos da janela de 3 anos. Quando houver duas versões do ano corrente ('Jan a Jul' e 'Jan a Ago'), ficar com a mais recente.\n- Leitura: baixar Veículos primeiro e montar o conjunto de ocorrências com caminhão. Depois ler Registros em streaming e guardar só essas linhas (cerca de 12 MB por ano no cache). Ler Vítimas só para contar óbitos (condicao_fisica FATAL).\n- Jurisdição: descartar logradouro BR ou Anel Rodoviário e células (±1) cobertas pela PRF, como já é feito no Infosiga.\n- Coordenadas imprecisas: tratar como imprecisas as que se repetem 5 vezes ou mais (pontos padrão, sobretudo da Delegacia Virtual) e excluí-las do posicionamento.\n- Agregação: grade de 250 m em EPSG:5880, mínimo de 3 casos, score = com vítima + 2 × fatal + 0,2 × sem vítima, mesmos níveis, props e período por faixa do dia.\n- API: o acidentes.layer.ts não muda; só o meta.sources ganha a SEJUSP-MG.\n- Esforço: de 1 a 2 dias, mais um teste em api/test/layers/seguranca.test.ts com rota em Contagem/BH (Via Expressa ou Cardeal Eugênio Pacelli).",
+   "record_count": "312.700 ocorrências em 2025 (36.074 com caminhão); cerca de 129 mil em jan-ago/2026",
+   "geo_coverage": "MG inteiro: vias urbanas, estaduais e também BRs",
+   "caveats": "As coordenadas vêm de SAD-69 e são aproximadas, segundo o manual. 44% dos casos com caminhão vêm da Delegacia Virtual e são sem vítima. As BRs se sobrepõem à PRF. A pasta do Drive pode mudar de ID."
+  },
+  {
+   "name": "SEJUSP-MG: Vítimas de Acidente de Trânsito (CKAN)",
+   "publisher": "SEJUSP-MG",
+   "url": "https://dados.mg.gov.br/dataset/sejusp_vitimas_acidentes_transito",
+   "access": "CKAN aberto, CSV por ano de 2011 a 2026",
+   "format": "CSV ';' UTF-8, uma linha por vítima, com latitude_sirgas2000 e longitude_sirgas2000",
+   "license": "license_id vazio no CKAN; Decreto MG 48.383/2022, art. 22 (livre utilização)",
+   "tested": true,
+   "test_result": "vitimas_acidente_transito_2025.csv: HTTP 200, 24.542.814 bytes, 90.295 vítimas, lat/lon em 98,9%, 2.236 vítimas fatais. Não tem tipo de veículo nem hora.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não entra como fonte própria. Serve só como alternativa à subpasta Vítimas do Drive para contar óbitos por ocorrência no importador acidentes_reds_mg.",
+   "record_count": "90.295 vítimas em 2025",
+   "geo_coverage": "MG",
+   "caveats": "Não identifica o caminhão. Repete o ponto da ocorrência para cada vítima."
+  },
+  {
+   "name": "SEJUSP-MG: Furtos e Roubos por Alvo, base completa (alvo 'Cargas')",
+   "publisher": "SEJUSP-MG",
+   "url": "https://drive.google.com/drive/folders/1CjziaHx_ehpY6XozeV5FIR-zoCfCjh8k",
+   "access": "Drive público. Arquivo 'Alvo - Roubo Consumado - Jan 2015 a Ago 2026.csv', ID 1zDmcqFeiQJ80Na4l7TrULDV7xl-y2H2u. A versão agrupada fica no site da SEJUSP (transparencia/dados-abertos).",
+   "format": "CSV ';' UTF-8, uma linha por REDS: data, hora, faixa, alvo, meio, local imediato, tipo de logradouro, bairro e município",
+   "license": "Nenhuma nomeada; Decreto MG 48.383/2022, art. 22",
+   "tested": true,
+   "test_result": "HTTP 200, 197.301.215 bytes lidos em streaming, 635.714 linhas, 4.456 com alvo 'Cargas'. 2025 = 132, igual ao Sinesp. Não tem lat/lon nem nome do logradouro.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Opcional: importers/sources/roubo_carga_sejusp_mg.py na camada `roubo_carga` (SOURCE='sejusp-mg').\n- Geometria: polígono do município, porque não há ponto. A malha municipal do IBGE não foi testada aqui.\n- Corte: só municípios com 3 ou mais casos em 2 anos (hoje cerca de 15).\n- Propriedades: `periodo` por faixa calculado a partir da hora (existe), `local` (rodovia/via pública/posto) e nivel.\n- Na API, o aviso por horário já funciona, porque há hora. O texto deve dizer 'no município', não 'na região'.\n- Valor baixo pelo volume (132 casos por ano), mas mostra que em MG o roubo é de madrugada e em rodovia, ao contrário de SP.",
+   "record_count": "191 roubos de carga em 2025 e jan-ago/2026",
+   "geo_coverage": "MG, por município",
+   "caveats": "Não há coordenada nem nome do logradouro. Muitos bairros vêm como 'DESCONHECIDO' nas rodovias."
+  },
+  {
+   "name": "SEJUSP-MG: Veículos roubados, base completa",
+   "publisher": "SEJUSP-MG",
+   "url": "https://drive.google.com/drive/folders/1CjziaHx_ehpY6XozeV5FIR-zoCfCjh8k",
+   "access": "Drive público, 'Veiculos - Roubo - Jan 2015 a Ago 2026.csv', ID 1M2mDDct3VQbwLjixls4TL9I0p3SewMbN",
+   "format": "CSV ';' por REDS e veículo, com tipo de veículo, hora, local, bairro e município",
+   "license": "Nenhuma nomeada; Decreto MG 48.383/2022, art. 22",
+   "tested": true,
+   "test_result": "HTTP 200, 40.496.631 bytes em streaming, 126.778 linhas. Em 2025: CAMINHAO 154, CAMINHAO/TRATOR 54, SEMI-REBOQUE 65, REBOQUE 24. Sem coordenada.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só como contexto ou soma ao roubo de carga municipal (roubo de caminhão) no mesmo importador roubo_carga_sejusp_mg, se ele for feito.",
+   "record_count": "297 caminhões, semirreboques e reboques roubados em 2025",
+   "geo_coverage": "MG, por município",
+   "caveats": "Sem coordenada."
+  },
+  {
+   "name": "ISP-RJ: polígonos das CISPs e série mensal por CISP (roubo_carga)",
+   "publisher": "Instituto de Segurança Pública do RJ",
+   "url": "https://www.ispdados.rj.gov.br/Arquivos/CISPshp.rar",
+   "access": "Download direto. A série é https://www.ispdados.rj.gov.br/Arquivos/BaseDPEvolucaoMensalCisp.csv, já testada no tema seguranca_acidentes_roubo.",
+   "format": "Shapefile WGS84 dentro de RAR v5 (campos cisp, aisp, areakm2) e CSV ';' latin1 mensal por CISP",
+   "license": "Nenhuma licença nos arquivos públicos. A Portaria ISP 127/2022 proíbe comercializar dados fornecidos sob pedido (art. 3º §1º); os dados de transparência ativa seguem as 'condições tecnológicas' dos portais (§4º), sem proibição explícita. Incerto: confirmar uso comercial com o ISP.",
+   "tested": true,
+   "test_result": "CISPshp.rar: HTTP 200, 2.346.562 bytes, 137 polígonos, last-modified 14/08/2026, todos os códigos batem com o CSV. CSV com last-modified 17/09/2026, até 08/2026. roubo_carga 2025 = 3.113; top 10 CISPs = 61%.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Novo importador importers/sources/roubo_carga_isp_rj.py na camada `roubo_carga` (SOURCE='isp-rj').\n- Geometria: o polígono da CISP. Não dá para converter em células de 1 km sem inventar precisão.\n- Leitura do RAR: a biblioteca padrão do Python não lê RAR. Usar bsdtar (libarchive) na imagem do importador, ou guardar o GeoJSON derivado em data/raw/isp com checagem do last-modified.\n- Propriedades: total dos últimos 12 e 24 meses, roubos/km², bairros (de Relacao_RISPxAISPxCISP.csv), `granularidade:'cisp'` e nivel por contagem anual (sugestão: muito_alto ≥ 150, alto ≥ 50, moderado ≥ 12).\n- API: o roubo_carga.layer.ts precisa de um caminho sem `periodo`. Quando não houver hora, avisar pelo total (ex.: 'área da 59ª DP, Duque de Caxias: 402 roubos de carga em 2025; a fonte não informa o horário').\n- Esforço: cerca de 1 a 2 dias.",
+   "record_count": "137 CISPs; 3.113 roubos de carga em 2025 e 2.035 em jan-ago/2026",
+   "geo_coverage": "Estado do RJ inteiro, por área de delegacia (mediana de 169 km²)",
+   "caveats": "Granularidade grossa e sem horário. O número difere do Sinesp (3.777) por metodologia. O ISPGeo, plataforma com pontos, é de uso policial (só vi isso em busca, sem fonte primária)."
+  },
+  {
+   "name": "ISP-RJ: microdados sob pedido (Portaria ISP nº 127/2022)",
+   "publisher": "ISP-RJ",
+   "url": "http://arquivo.proderj.rj.gov.br/isp_imagens/Uploads/PortariaISP127_Fornecimento_Microdados.pdf",
+   "access": "Pedido ao ISP com Termo de Responsabilidade",
+   "format": "CSV entregue sob pedido",
+   "license": "Proíbe comercializar e repassar a terceiros (art. 3º §1º); uso restrito a estudos próprios",
+   "tested": true,
+   "test_result": "PDF baixado (HTTP 200, 1.093.457 bytes) e texto lido. A desagregação máxima é CISP, AISP, RISP, bairro e município; não há coordenada.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Não usar num app comercial.",
+   "record_count": "n/a",
+   "geo_coverage": "RJ",
+   "caveats": "Bloqueio jurídico ao uso comercial."
+  },
+  {
+   "name": "RENAEST (SENATRAN), zip mensal 05-2026, recorte RJ, MG e ES",
+   "publisher": "Ministério dos Transportes / SENATRAN",
+   "url": "https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip",
+   "access": "CKAN aberto; zip de 529 MB",
+   "format": "Zip com Acidentes (2,7 GB), TipoVeiculo, Vitimas e Localidade, CSV ';'",
+   "license": "Other (Public Domain), conforme o CKAN (tema anterior)",
+   "tested": true,
+   "test_result": "Acidentes e TipoVeiculo lidos por HTTP Range com descompressão em streaming (o servidor cortou a conexão 2 vezes e o script retomou). RJ: coordenada em 0% de 2018 a 2025 e nenhum caminhão. MG: 312.061 em 2025, 98,8% com coordenada, igual ao REDS. ES: 43.110 em 2025, 50% com coordenada, mas só 37 de 1.544 acidentes com caminhão com ponto.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Não importar para RJ, MG nem ES. Para MG o REDS é a mesma base, com mais campos. Para RJ e ES não há ponto útil para caminhão. Reavaliar quando o RJ passar a ter coordenadas (começou em 2026, com 22%).",
+   "record_count": "RJ 22.215, MG 312.061, ES 43.110 acidentes em 2025",
+   "geo_coverage": "Brasil (avaliado só RJ, MG e ES)",
+   "caveats": "O arquivo é pesado e a conexão cai. A qualidade varia muito por UF e por ano."
+  },
+  {
+   "name": "SESP-ES: Roubo de Veículo (microdados por BO)",
+   "publisher": "Secretaria de Segurança Pública e Defesa Social do ES",
+   "url": "https://dados.es.gov.br/dataset/roubo-veiculo",
+   "access": "CKAN aberto (o download redireciona para S3 assinado)",
+   "format": "CSV ';' latin1 por BO e veículo: data, hora, município, bairro, logradouro, tipo de local e tipo de veículo",
+   "license": "CC-BY (Creative Commons Attribution), conforme o CKAN",
+   "tested": true,
+   "test_result": "HTTP 200 depois de seguir o redirecionamento, 1.826.082 bytes, 6.239 linhas de 2023 a 2025. 77 envolvem caminhão, caminhão trator, semirreboque ou reboque. Sem coordenada. A SESP-ES não publica roubo de carga (busca 'carga' no CKAN: 0 resultados).",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Não integrar: o volume é irrelevante (no Sinesp, o ES teve 7 roubos de carga em 2025). Manter só como referência.",
+   "record_count": "6.239 roubos de veículo de 2023 a 2025, 77 de caminhão",
+   "geo_coverage": "ES",
+   "caveats": "Sem coordenada; o logradouro exigiria geocodificação."
+  },
+  {
+   "name": "DETRAN-ES: sinistros agregados (CKAN) e Observatório de Trânsito",
+   "publisher": "DETRAN-ES",
+   "url": "https://dados.es.gov.br/dataset/sinistros-de-transito-com-e-sem-vitimas",
+   "access": "CKAN aberto. O observatório (https://analytics-detran.sides.es.gov.br/observatorio-transito) é um SAS Visual Analytics sem download.",
+   "format": "CSV agregado (uma linha por ano)",
+   "license": "CC0 (CC Zero), conforme o CKAN",
+   "tested": true,
+   "test_result": "HTTP 200: 2024 teve 53.446 sinistros (39.609 sem vítima, 12.924 com vítimas, 919 fatais). Os outros conjuntos (período, perfil das vítimas) também são agregados. O PDA 2025 do DETRAN-ES é PDF escaneado, sem texto extraível.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar. Para o ES, os acidentes com caminhão ficam com a PRF (BR-101 e BR-262), já importada.",
+   "record_count": "agregados de 2024",
+   "geo_coverage": "ES",
+   "caveats": "Nada georreferenciado em download."
+  },
+  {
+   "name": "BHTrans: sinistros de trânsito com vítima (pontos) e si-bol/si-veic",
+   "publisher": "BHTrans / Prefeitura de Belo Horizonte",
+   "url": "https://dados.pbh.gov.br/dataset/ocorrencia-sinistro-transito-com-vitima",
+   "access": "CKAN aberto (ckan.pbh.gov.br). si-bol: https://dados.pbh.gov.br/dataset/relacao-de-ocorrencias-de-acidentes-de-transito-com-vitima; si-veic: https://dados.pbh.gov.br/dataset/relacao-dos-veiculos-envolvidos-nos-acidentes-de-transito-com-vitima",
+   "format": "CSV ';' com geometria WKT em EPSG:31983 (mensal, acumulado desde 2016); si-bol e si-veic em CSV latin1 anual",
+   "license": "Sinistros com vítima: CC-BY. si-bol e si-veic: ODbL (share-alike).",
+   "tested": true,
+   "test_result": "20260901_sinistro_transito_vitima.csv: HTTP 200, 15.125.853 bytes, 132.935 pontos (2016-01-01 a 2026-08-22), 1.266 fatais. si-bol-2024: 13.266 boletins; si-veic-2024: 24.840 veículos, 484 boletins com caminhão (95% com coordenada).",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Não importar: o REDS já cobre BH com tipo de veículo e com os casos sem vítima. Usar só para validar a posição dos pontos do REDS em BH. Se algum dia for usar, evitar misturar si-veic (ODbL) com outras bases.",
+   "record_count": "132.935 sinistros com vítima de 2016 a 2026",
+   "geo_coverage": "Município de Belo Horizonte",
+   "caveats": "A base de pontos não tem tipo de veículo. A base com veículo é anual e ODbL."
+  },
+  {
+   "name": "Prefeitura do Rio (data.rio / Escritório de Dados): ocorrências do COR",
+   "publisher": "Prefeitura da Cidade do Rio de Janeiro",
+   "url": "https://www.arcgis.com/sharing/rest/content/items/4b21231ce02243e99b5f080b8a0ff821?f=json",
+   "access": "Só BigQuery (datario.adm_cor_comando.ocorrencias), que exige conta no Google Cloud. A API https://api.dados.rio/v1/ respondeu 503.",
+   "format": "Tabela BigQuery",
+   "license": "CC BY-NoDerivatives 3.0 Unported, conforme o item do data.rio (restringe obras derivadas)",
+   "tested": false,
+   "test_result": "Só os metadados foram lidos (HTTP 200). A API api.dados.rio respondeu HTTP 503 em 10/10/2026, e o link de download do Hub cai numa página 404. Não confirmei se há colunas de lat/lon nem tipos de acidente com caminhão. Na busca do data.rio por 'acidente', 'sinistro' e 'trânsito', só aparecem tabelas agregadas do ISP e da Saúde.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Não integrar por enquanto. A licença ND (sem derivadas) conflita com agregar em células. Exigiria consulta jurídica e conta GCP.",
+   "record_count": "não confirmado",
+   "geo_coverage": "Município do Rio",
+   "caveats": "Licença ND, acesso por BigQuery e API fora do ar."
+  },
+  {
+   "name": "Detran-RJ: boletim 'Trânsito em Números 2025'",
+   "publisher": "DETRAN-RJ",
+   "url": "https://www.detran.rj.gov.br/images/transparencia/outros/boletim_estatistico_transito_transito_em_numeros_2025.pdf",
+   "access": "PDF público",
+   "format": "PDF de 22 páginas",
+   "license": "Não informada",
+   "tested": true,
+   "test_result": "HTTP 200, 1.640.916 bytes. O boletim declara que usa dados do ISP para sinistros e dos Bombeiros (CBMERJ) para o tipo de veículo. Não há microdados nem coordenadas.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só contexto (ex.: caminhões e caminhões-trator são 2,3% da frota do RJ, 195.615 unidades). Não entra no app.",
+   "record_count": "n/a",
+   "geo_coverage": "RJ",
+   "caveats": "Agregado."
+  },
+  {
+   "name": "Sinesp VDE 2025 (reaproveitado)",
+   "publisher": "MJSP",
+   "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+   "access": "Download direto",
+   "format": "XLSX",
+   "license": "Sem licença nomeada (tema anterior)",
+   "tested": true,
+   "test_result": "Fonte já testada no tema seguranca_acidentes_roubo. Baixei de novo (HTTP 200, 26.643.031 bytes) só para obter os valores de MG (132) e ES (7) em 2025, que o tema anterior não listou.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só para conferir os totais por UF no importador (ex.: comparar a soma do REDS com o Sinesp, que hoje dá 132 = 132).",
+   "record_count": "n/a",
+   "geo_coverage": "Brasil por UF",
+   "caveats": "Só por UF."
+  },
+  {
+   "name": "Juiz de Fora: SISURB, camada de acidentes 2018-2023",
+   "publisher": "Prefeitura de Juiz de Fora",
+   "url": "https://sisurb.pjf.mg.gov.br/server/rest/services/PEUS_13_11_R004_MIL1/MapServer/69?f=pjson",
+   "access": "ArcGIS REST",
+   "format": "Feature layer",
+   "license": "Não verificada",
+   "tested": true,
+   "test_result": "O serviço respondeu {code:404, 'Service ... not found'} em 10/10/2026. A URL veio de um resultado de busca.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhum. O REDS já cobre Juiz de Fora (624 ocorrências com caminhão em 2025).",
+   "record_count": "n/a",
+   "geo_coverage": "Juiz de Fora",
+   "caveats": "Serviço fora do ar ou com URL mudada."
+  }
+ ],
+ "reused_from_existing": [
+  "seguranca_acidentes_roubo / PRF DATATRAN: a fonte e os IDs do Drive não foram retestados. A PRF já cobre as BRs de RJ, MG e ES na camada `acidentes` (importador acidentes_prf, BR_BBOX do Brasil). Só reprocessei o CSV de 2025 para contar casos com caminhão por UF (RJ 1.115, MG 3.142, ES 631) e para montar as células de exclusão de jurisdição em MG.",
+  "seguranca_acidentes_roubo / ISP-RJ BaseDPEvolucaoMensalCisp.csv: URL e totais reaproveitados (3.113 em 2025). Baixei de novo só para a análise por CISP e para cruzar com os polígonos, que são a novidade.",
+  "seguranca_acidentes_roubo / Sinesp VDE: reaproveitado, com nova leitura só para os valores de MG e ES.",
+  "seguranca_acidentes_roubo / RENAEST: reaproveitados os metadados e a licença. A lacuna 'taxa de lat/lon fora de SP não medida' foi fechada aqui com o zip 05-2026 lido em streaming.",
+  "seguranca_acidentes_roubo / ANTT, acidentes das concessões federais (só km): não retestado. Continua sendo a única fonte das concessões federais de RJ, MG e ES (RIOSP, Motiva Minas SP, etc.) e precisa de referenciamento linear.",
+  "seguranca_acidentes_roubo / Fogo Cruzado API (cobre o RJ e exige autorização): não retestado.",
+  "Método da camada acidentes (docs/layers/acidentes.md): grade de 250 m, mínimo de 3, score = com vítima + 2 × fatal + 0,2 × sem vítima, divisão por jurisdição em que a PRF fica com as BRs. Aplicado sem mudanças na simulação do REDS-MG.",
+  "Método da camada roubo_carga (docs/layers/roubo_carga.md): faixas do dia e aviso por horário. Proposto um caminho sem horário para as CISPs do RJ.",
+  "Convenção do Sudeste (scratchpad/sudeste/CONVENCOES_IMPLEMENTACAO.md, item 4): fontes novas de segurança entram como importadores das camadas acidentes e roubo_carga, sem camada nova."
+ ],
+ "gaps": [
+  "RJ, acidentes: não há fonte aberta com coordenada fora das BRs. O RENAEST-RJ tem 0% de coordenada até 2025. As vias urbanas críticas para caminhão (Av. Brasil, Linha Vermelha, Linha Amarela, Arco Metropolitano fora da PRF) ficam sem cobertura.",
+  "RJ, roubo de carga: só há agregado por CISP (mediana de 169 km²), sem horário e sem tipo de local. Os microdados sob pedido não podem ser usados comercialmente (Portaria ISP 127/2022, art. 3º §1º). O ISPGeo é de uso policial, mas isso só foi visto em busca, sem fonte primária.",
+  "MG, roubo de carga: há microdados com hora, mas sem coordenada nem nome do logradouro. Só dá para agregar por município, e o volume é pequeno (132 casos em 2025).",
+  "ES: não há base aberta de roubo de carga, e o volume é irrelevante (7 casos em 2025). Os acidentes com caminhão fora das BRs não têm ponto (RENAEST-ES: 37 de 1.544 em 2025).",
+  "MG, REDS: as coordenadas são aproximadas (vêm de SAD-69, segundo o manual). 44% dos casos com caminhão vêm da Delegacia Virtual, e 21% deles caem em pontos padrão repetidos. Também não há óbitos por ocorrência no arquivo de registros; é preciso cruzar com a base de vítimas.",
+  "Licenças: a SEJUSP-MG não nomeia licença (vale o Decreto 48.383/2022, art. 22, livre utilização). O ISP-RJ não nomeia licença para os dados públicos. As ocorrências do COR-Rio são CC BY-ND, o que impede agregação derivada.",
+  "Concessões estaduais do RJ, MG e ES (ex.: Via Lagos, Rota 116, Rodosol, MG-050): nenhuma base aberta de acidentes foi encontrada nem testada. As concessões federais estão só na ANTT, sem coordenada.",
+  "Não testei a malha municipal do IBGE, que seria necessária para mostrar o roubo de carga de MG por município. Também não testei o referenciamento linear da ANTT pelo SNV (o importador snv_dnit existe no repo).",
+  "Faltam dados de exposição (volume de caminhões) para normalizar os pontos críticos de RJ, MG e ES, assim como em SP."
+ ],
+ "recommendations": [
+  "Prioridade 1: importador acidentes_reds_mg (SOURCE='sejusp-mg') na camada `acidentes`.\n- Fonte: Drive da SEJUSP, com janela de 3 anos (Registros + Veículo + Vítimas, filtrando caminhão em streaming).\n- Jurisdição: BRs e Anel Rodoviário ficam com a PRF; o resto fica com o REDS.\n- Coordenadas: descartar as repetidas 5 vezes ou mais.\n- Método: o mesmo score e os mesmos níveis.\n- Teste de rota: Via Expressa de Contagem ou Av. Cardeal Eugênio Pacelli.\n- É a única fonte nova que dá ao interior e à Grande BH a mesma qualidade da RMSP.",
+  "Prioridade 2: importador roubo_carga_isp_rj (SOURCE='isp-rj') com os polígonos das CISPs.\n- Corte: só CISPs com 12 ou mais roubos por ano (37 em 2025).\n- API: ajustar roubo_carga.layer.ts para aceitar áreas sem `periodo`, com aviso pelo total e o texto 'a fonte não informa horário'.\n- Por que vale: o RJ teve 3.777 roubos de carga em 2025, mais que SP (Sinesp). Hoje o app não avisa nada na Av. Brasil, na Dutra fluminense nem na Washington Luís.",
+  "Antes de publicar dados do ISP num produto comercial, pedir ao ISP, por escrito, confirmação de que os dados de transparência ativa (CSV por CISP e shapefile) podem ser usados comercialmente com atribuição. A Portaria 127/2022 proíbe só o que é fornecido sob pedido, mas o texto é restritivo.",
+  "Prioridade 3 (opcional): roubo_carga_sejusp_mg por município, com aviso por horário (os dados têm hora). Mostrar só municípios com 3 ou mais casos em 2 anos. Em MG o padrão é madrugada e rodovia (44% entre 0h e 6h, 54% em rodovia), diferente de SP, o que muda o conselho de 'evite parar' para as paradas noturnas.",
+  "ES: não criar fonte nova. Manter a PRF (BR-101 e BR-262) e dizer no resumo da rota que a cobertura de segurança no ES é só das BRs federais.",
+  "RJ, acidentes: no curto prazo, mostrar no resumo da rota que fora das BRs não há dados. Testar o referenciamento linear dos CSVs da ANTT (RIOSP/Dutra, BR-040, BR-116 Teresópolis, BR-101 Norte) sobre o SNV, porque o importador snv_dnit já existe. Reavaliar o RENAEST-RJ a cada trimestre, já que as coordenadas começaram a aparecer em 2026 (22%).",
+  "Não usar RENAEST para MG (é o mesmo REDS), nem BHTrans (redundante, e si-veic é ODbL), nem as ocorrências do COR-Rio (CC BY-ND e só BigQuery).",
+  "No ETL mensal, conferir a soma anual de roubo de carga da SEJUSP contra o Sinesp (hoje 132 = 132). No RJ, conferir a soma das CISPs contra o total estadual do ISP.",
+  "Na interface e no meta.sources, atribuir 'SEJUSP-MG/REDS' e 'ISP-RJ'. Registrar a base legal de MG (Decreto 48.383/2022, art. 22) e a incerteza de licença do ISP na tabela de fontes (data_layer_runs)."
+ ]
+}

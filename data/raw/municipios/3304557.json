@@ -1,0 +1,510 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3304557",
+  "municipio": "Rio de Janeiro",
+  "uf": "RJ",
+  "fonte_id": "rio-de-janeiro",
+  "fonte": {
+    "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681 (Res. SMTR 2.204/2012, Linha Vermelha) ; https://doweb.rio.rj.gov.br/portal/edicoes/download/1085 (Res. SMTR 2.063/2010, Linha Amarela) ; https://doweb.rio.rj.gov.br/portal/edicoes/download/7379 (Portaria CRV 24.914/2003, Rebouças) ; https://doweb.rio.rj.gov.br/portal/edicoes/download/1823 (Res. SMTR 2.242/2012, Transoeste e Santa Cruz) ; https://data.queridodiario.ok.org.br/3304557/2017-11-10/4f492f351d6ceeb8e6c34613bfa68e07df7b2968.pdf (Portaria CRV 10.798/2017, Centro) ; https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf (Res. SMTR 3.055/2018, suspensa) ; https://data.queridodiario.ok.org.br/3304557/2020-03-20/85f5557eced5715b37a1e80a6e95645afea9536f.pdf (Res. SMTR 3.254/2020, suspensão)",
+    "licenca": "Atos oficiais do Município do Rio de Janeiro (D.O. Rio): domínio público (Lei 9.610/1998, art. 8º, IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap), conferida com o CadLog/IPP (Trechos de Logradouros, Instituto Pereira Passos, CC BY 4.0: extensão da Linha Vermelha e numeração da Av. Afonso de Taunay). Polígonos aproximados da Res. SMTR 3.055/2018 (regra suspensa): derivados do OSM (ODbL 1.0) e recortados pelo limite municipal do IBGE (dados públicos, citar a fonte).",
+    "notas": "A regra geral de caminhões do Rio (Dec. 45.433/2018 + Res. SMTR 3.055/2018: ARP no Centro e ARM/ARV) está SUSPENSA desde 20/03/2020 (Res. SMTR 3.254/2020) e é só registrada. Valem as proibições por via: Linha Vermelha, Linha Amarela, corredor Rebouças, Centro, Transoeste e ruas pontuais. Pesquisa e verificação de 10/10/2026 (docs/layers/municipios/mun_rio.md)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": {
+    "largura_max_m": 2.5,
+    "comprimento_max_m": 7.2,
+    "altura_max_m": 3.5,
+    "exige_cadastro": true,
+    "orgao": "SMTR (AEVC)",
+    "artigo": "Dec. Rio 45.433/2018, art. 1º, § 1º, VI (VUC: até 2,50 m de largura, 7,20 m de comprimento e 3,50 m de altura) e VIII (AEVC); isenção só com AEVC na Res. SMTR 3.055/2018, art. 5º, I",
+    "nota": "Definição da regra geral, SUSPENSA desde 20/03/2020 (Res. SMTR 3.254/2020). Só as regras da Res. 3.055/2018 herdam este VUC; as proibições por via em vigor não isentam o VUC (vuc: null nelas)."
+  },
+  "regras": [
+    {
+      "id": "rio_linha_vermelha",
+      "tipo": "via",
+      "regime": "Linha Vermelha",
+      "nome": "Rio de Janeiro — Linha Vermelha: caminhão de qualquer espécie, 24 h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A Res. SMTR 2.204/2012 proíbe \"caminhão, de qualquer espécie\" na Linha Vermelha (art. 1º, II, 2, a): o VUC não é isento, nem com AEVC.",
+      "autorizacao": "excepcionalidade provisória da CRV/SMTR, após análise da CET-Rio (Res. SMTR 2.204/2012, art. 3º)",
+      "excecoes": [
+        "Veículos de socorro e emergência do art. 29, VII do CTB (art. 1º, parágrafo único)",
+        "Caminhões-guincho de socorro na Linha Vermelha e veículos a serviço da CET-Rio (art. 4º)",
+        "Excepcionalidades autorizadas provisoriamente pela CRV/SMTR após análise da CET-Rio (art. 3º; houve autorizações por placa em 2020)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 2.204, de 16/03/2012 (DO Rio 19/03/2012, p. 38–39)",
+          "artigo": "art. 1º, I, 3 (reboque e semirreboque tracionados por cavalo mecânico), II, 2, a, h, i, j (caminhão de qualquer espécie, caminhão-tanque, articulado, provido de reboque) e II, 4, a (caminhão-trator); parágrafo único e arts. 3º e 4º (exceções)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1681",
+          "nota": "Sem horário: 24 h, todos os dias. Também proíbe produtos perigosos (art. 1º, IV, camada perigosos) e valores (art. 1º, V). Via municipal por cessão do Estado."
+        }
+      ],
+      "nota": "No OSM, 79 de 87 ways já têm hgv=no; a camada completa as demais e avisa. Extensão pelo CadLog/IPP (Av. Pres. João Goulart, sem o homônimo do Vidigal); o Elevado Rufino Pizarro fica no corredor Rebouças.",
+      "fonte_geometria": "OSM (ODbL) name=Linha Vermelha no corredor do CadLog/IPP",
+      "vigencia_inicio": "2012-03-19",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_linha_amarela",
+      "tipo": "via",
+      "regime": "Linha Amarela",
+      "nome": "Rio de Janeiro — Linha Amarela: veículos de carga em dias úteis, 6h–10h e 17h–20h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "10:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "20:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A Res. SMTR 2.063/2010 proíbe \"veículos de carga\" sem isentar o VUC: o app trata o VUC como caminhão. Veículos de carga com PBT até 3,5 t também são atingidos pelo ato, mas a camada só avalia caminhões (PBT acima de 3,5 t).",
+      "autorizacao": "autorização por placa da CRV/SMTR",
+      "excecoes": [
+        "Socorro e emergência (art. 29, VII do CTB) — art. 2º, I",
+        "Utilidade pública (art. 29, VIII do CTB; Res. CONTRAN 268/2008) — art. 2º, II",
+        "Mudança residencial — art. 2º, III",
+        "Combustíveis e lubrificantes que abastecem os aeroportos da Cidade — art. 2º, IV",
+        "Autorizações por placa da CRV/SMTR (citadas no DO até 05/2021)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 2.063, de 14/12/2010 (DO Rio 15/12/2010, p. 45)",
+          "artigo": "art. 1º (veículos de carga, dias úteis, 6h–10h e 17h–20h), art. 2º, I a IV (exceções) e art. 3º (vigência; revoga a Portaria TR/CRV 2.622/2007)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1085"
+        }
+      ],
+      "nota": "Confiança média (verify): texto conferido, mas a última citação no DO é de 05/2021. Ativa: sem revogação. \"Dias úteis\": feriado suspende.",
+      "fonte_geometria": "OSM (ODbL) name=Linha Amarela e Túnel da Covanca",
+      "vigencia_inicio": "2010-12-15",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_corredor_reboucas",
+      "tipo": "via",
+      "regime": "Corredor Rebouças",
+      "nome": "Rio de Janeiro — Corredor Rebouças: caminhões com PBT igual ou superior a 6,4 t e reboques, 24 h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [{"campo": "pbt_t", "acima": 6.399}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]
+      },
+      "vuc": null,
+      "vuc_nota": "A regra é por PBT (igual ou superior a 6,4 t) e reboques, não por VUC.",
+      "autorizacao": "autorização por placa da CRV/SMTR",
+      "excecoes": [
+        "Caminhões da COMLURB (art. 1º)",
+        "Autorizações por placa da CRV/SMTR (houve em 05/2021 e em 01/2022, válidas até 31/12/2022)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUB/CRV nº 24.914, de 24/11/2003 (DO Rio 25/11/2003, p. 36–37)",
+          "artigo": "art. 1º, I a VI (Viaduto Saint Hilaire, Túneis Antônio e André Rebouças, Av. Vital Brasil, Elevados Eng. Freyssinet e Eng. Rufino de Almeida Pizarro; PBT igual ou superior a 6,4 t e reboques; exceção da COMLURB)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7379",
+          "nota": "Sem horário: 24 h. \"Igual ou superior a 6,4 t\" gravado como acima de 6,399 t (o formato só tem > e <=; o PBT do CRLV tem 2 casas). Revoga a Portaria 9.729/1998."
+        }
+      ],
+      "nota": "Confiança média (verify corrigiu só a geometria). Reboques: carreta, caminhão + reboque e CVC.",
+      "fonte_geometria": "OSM (ODbL): os 6 logradouros do art. 1º",
+      "vigencia_inicio": "2003-11-25",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_centro_10798",
+      "tipo": "via",
+      "regime": "Centro",
+      "nome": "Rio de Janeiro — Centro: Praça XV, R. Primeiro de Março, R. São José e Orla Conde (caminhões, 24 h)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"caminhões\" sem isentar o VUC; a definição de VUC e a AEVC (Dec. 45.433/2018 e Res. SMTR 3.055/2018) são da regra geral, suspensa desde 2020. O app trata o VUC como caminhão aqui.",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUBG/CRV nº 10.798, de 09/11/2017 (DO Rio 10/11/2017, p. 61)",
+          "artigo": "art. 1º, I a IV (\"entrada e circulação de caminhões\" na Praça XV de Novembro, Rua Primeiro de Março, Rua São José e Orla Prefeito Luiz Paulo Conde) e art. 2º (vigência com a sinalização)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2017-11-10/4f492f351d6ceeb8e6c34613bfa68e07df7b2968.pdf",
+          "nota": "Sem horário e sem exceções no ato. Ementa: \"proíbe a circulação de caminhões em vias do bairro Centro\"."
+        }
+      ],
+      "nota": "Confiança média (verify corrigiu só a geometria). Só as vias do bairro Centro (há Rua São José em 15 bairros).",
+      "fonte_geometria": "OSM (ODbL): Largo do Paço, R. Primeiro de Março e R. São José no Centro, trechos de serviço da Orla Conde",
+      "vigencia_inicio": "2017-11-10",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_transoeste",
+      "tipo": "via",
+      "regime": "Transoeste",
+      "nome": "Rio de Janeiro — Túnel da Grota Funda e pista central da Av. das Américas (caminhões e reboques, 24 h)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A resolução proíbe \"caminhões e reboques\" sem isentar o VUC: o app trata o VUC como caminhão. Nas pistas laterais da Av. das Américas o caminhão circula.",
+      "autorizacao": "autorização por placa da CRV/SMTR",
+      "excecoes": [
+        "Autorizações por placa da CRV/SMTR (houve para o túnel em 2020)",
+        "Desvios de evento por portaria temporária (não aplicados)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 2.242, de 23/07/2012 (DO Rio 24/07/2012, p. 27–28)",
+          "artigo": "art. 5º, I (Túnel da Grota Funda, nos dois sentidos) e II (Av. das Américas, pista central, entre a Av. Ayrton Senna e a Estr. Ver. Alceu de Carvalho, exceto o trecho do Viaduto Alm. Orlando Raso); art. 8º (revoga a Res. 2.228/2012)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1823",
+          "nota": "\"Em quaisquer faixas\", sem horário: 24 h."
+        }
+      ],
+      "nota": "Confiança média (verify confirmou o texto). Pista central = pista expressa junto ao BRT (trunk no OSM); laterais livres.",
+      "fonte_geometria": "OSM (ODbL): Túnel José Alencar e pista trunk da Av. das Américas",
+      "vigencia_inicio": "2012-07-24",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_gonzaga_duque",
+      "tipo": "via",
+      "regime": "Proibição de caminhões",
+      "nome": "Rio de Janeiro — Rua Gonzaga Duque (Ramos): caminhões, 24 h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"caminhões\" sem isentar o VUC: o app trata o VUC como caminhão.",
+      "excecoes": ["Veículos de emergência, de serviços de concessionárias e de coleta de lixo (art. 1º, parágrafo único)"],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUBTT/CRV nº 8.083, de 18/07/2024 (DO Rio 19/07/2024, p. 20)",
+          "artigo": "art. 1º (Rua Gonzaga Duque, em toda a extensão) e parágrafo único (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2024-07-19/d793403922afdf3c1d759a172bde047e45a48a5b.pdf"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) name=Rua Gonzaga Duque (só em Ramos, como no CadLog)",
+      "vigencia_inicio": "2024-07-19",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_gavea_1451",
+      "tipo": "via",
+      "regime": "Proibição de caminhões",
+      "nome": "Rio de Janeiro — Ruas João Borges e Duque Estrada (Gávea): caminhões, 24 h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"caminhões\" sem isentar o VUC: o app trata o VUC como caminhão.",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUBTT/CRV nº 1.451, de 25/07/2023 (DO Rio 26/07/2023, p. 28)",
+          "artigo": "art. 1º (Rua João Borges, em toda a extensão) e art. 2º (Rua Duque Estrada, em toda a extensão)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2023-07-26/e1f4304846662e28c57b9ac7d46337e5717af80a.pdf",
+          "nota": "Sem horário e sem exceções no trecho lido."
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) name=Rua João Borges e Rua Duque Estrada (Gávea)",
+      "vigencia_inicio": "2023-07-26",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_caminho_da_canoa",
+      "tipo": "via",
+      "regime": "Proibição de caminhões",
+      "nome": "Rio de Janeiro — Caminho da Canoa (São Conrado): caminhões, 24 h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"caminhões\" sem isentar o VUC: o app trata o VUC como caminhão.",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/CRV nº 4.536, de 20/07/2020 (DO Rio 21/07/2020, p. 38)",
+          "artigo": "art. 1º (Caminho da Canoa, em toda a extensão)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2020-07-21/4436fb6fedf70785a492afc7c1a16f5fcf81fcc6.pdf"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) name=Caminho das Canoas (official_name Rua Canoa da Pedra Bonita), conferido com o CadLog/IPP (Caminho da Canoa, São Conrado)",
+      "vigencia_inicio": "2020-07-21",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_afonso_de_taunay",
+      "tipo": "via",
+      "regime": "Proibição de caminhões e ônibus",
+      "nome": "Rio de Janeiro — Av. Afonso de Taunay (Barra da Tijuca), a partir da Av. Alda Garrido: caminhões e ônibus, 24 h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"ônibus e caminhões\" sem isentar o VUC: o app trata o VUC como caminhão.",
+      "excecoes": ["Veículos de emergência, de serviços de concessionárias e de coleta de lixo (art. 1º, parágrafo único)"],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUBG/CRV nº 10.417, de 04/08/2026 (DO Rio 05/08/2026; republicada por incorreção no DO Rio 06/08/2026, p. 17)",
+          "artigo": "art. 1º (Av. Afonso de Taunay, a partir da Av. Alda Garrido) e parágrafo único (exceções)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/14897",
+          "nota": "Achado do verify (regra nova, não estava na pesquisa); texto conferido na edição de 06/08/2026."
+        }
+      ],
+      "nota": "Confiança média: achada só no verify; o sentido de \"a partir da Av. Alda Garrido\" veio da numeração do CadLog/IPP (cresce da orla para a Av. Armando Lombardi): trecho Alda Garrido–Armando Lombardi.",
+      "fonte_geometria": "OSM (ODbL) name=Avenida Afonso de Taunay ao norte da Av. Alda Garrido",
+      "vigencia_inicio": "2026-08-05",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_grumari_verao_2025",
+      "tipo": "via",
+      "regime": "Operação Verão (Grumari)",
+      "nome": "Rio de Janeiro — Estr. Roberto Burle Marx, Grumari–Praia do Canto: caminhões nos fins de semana do verão 2025/26",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [6, 7], "from": "06:00", "to": "22:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A portaria proíbe \"caminhões\" sem isentar o VUC: o app trata o VUC como caminhão.",
+      "excecoes": ["Veículos de serviços de utilidade pública e militares (art. 2º)"],
+      "base_legal": [
+        {
+          "ato": "Portaria TR/SUBG/CRV nº 5.142, de 14/10/2025 (DO Rio 15/10/2025, p. 26–27)",
+          "artigo": "art. 2º (trânsito de caminhões e carga e descarga proibidos na Estr. Roberto Burle Marx entre a Estrada do Grumari e a Praia do Canto, de 18/10/2025 a 01/03/2026, sábados, domingos e feriados, 6h–22h)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/7632",
+          "nota": "Número corrigido pelo verify (a pesquisa não o leu). Portaria sazonal (\"Operação Verão\"), repetida desde 2021."
+        }
+      ],
+      "nota": "Vigência gravada (18/10/2025 a 01/03/2026): hoje vencida; a do verão 2026/27 não saiu até 10/10/2026. Feriado em dia útil e carga e descarga não modelados.",
+      "fonte_geometria": "OSM (ODbL) name=Estrada Roberto Burle Marx ao sul da junção com a Estrada de Grumari (ponta da Praia do Canto aproximada)",
+      "vigencia_inicio": "2025-10-18",
+      "vigencia_fim": "2026-03-02",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_santa_cruz_2242",
+      "tipo": "via",
+      "regime": "Santa Cruz (Res. 2.242/2012)",
+      "nome": "Rio de Janeiro — Santa Cruz: caminhões em 5 trechos, seg–sex 6h–20h (NÃO aplicada)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa na pesquisa: o texto do art. 4º confere (verify), mas não há evidência de aplicação atual nem das exceções, e outras portarias de caminhão em Santa Cruz foram revogadas pela Portaria CRV 16.374/2018. Registrada e não aplicada até confirmar a vigência e a sinalização.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 2.242, de 23/07/2012 (DO Rio 24/07/2012, p. 28)",
+          "artigo": "art. 4º, I a V (caminhões, em quaisquer faixas, de segunda a sexta, das 6 h às 20 h)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/1823",
+          "nota": "\"De segunda a sexta-feira\" (o ato não excetua feriados)."
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL), trechos entre as transversais do ato no bairro Santa Cruz (aproximados)",
+      "vigencia_inicio": "2012-07-24",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "curadoria da frente mun_rio sobre o OSM (Overpass): nomes, classes e trechos descritos em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_res3055_arp",
+      "tipo": "zona",
+      "regime": "ARP (Res. 3.055/2018)",
+      "nome": "Área de Restrição Parcial (ARP) do Centro do Rio — regra geral SUSPENSA desde 2020, não aplicada",
+      "status": "suspensa",
+      "status_motivo": "Suspensa por prazo indeterminado pela Res. SMTR 3.254/2020, art. 1º (DO Rio 20/03/2020, p. 42), e pelo Dec. Rio 47.285/2020, art. 1º, \"r\".",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "21:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "autorizacao": "AEVC da SMTR (Dec. 45.433/2018, art. 1º, § 1º, VIII; Res. SMTR 3.055/2018, arts. 5º a 9º)",
+      "excecoes": [
+        "VUC com AEVC (art. 5º, I)",
+        "Socorro e emergência (art. 29, VII do CTB) (art. 5º, II)",
+        "Transporte de valores (art. 5º, III)",
+        "Mudança residencial com AEVC e permissão da CET-Rio (Res. SMTR 1.599/2006) (art. 5º, IV)",
+        "Utilidade pública com AEVC (art. 5º, V)",
+        "Combustíveis e lubrificantes dos aeroportos com AEVC (art. 5º, VI)",
+        "Serviços postais com AEVC (art. 5º, VII)",
+        "Obras e serviços públicos com AEVC (art. 5º, VIII)",
+        "Reportagem com AEVC (art. 5º, IX)",
+        "Gases medicinais com AEVC, limitado a um eixo traseiro (art. 5º, X)",
+        "Caminhão-pipa com AEVC (art. 5º, XI)",
+        "Veículos com garagem na área, com AEVC (art. 5º, XII)",
+        "Vias limítrofes liberadas para circulação (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 3.055, de 10/12/2018 (DO Rio 11/12/2018, p. 24–26)",
+          "artigo": "art. 2º (ARP: caminhões em dias úteis, 6h–21h, circulação e carga e descarga; 27 vias-limite e Anexo I), art. 4º (vias limítrofes liberadas) e art. 5º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf"
+        },
+        {
+          "ato": "Dec. Rio nº 45.433, de 07/12/2018 (DO Rio 10/12/2018)",
+          "artigo": "art. 1º, § 1º, II (ARP), VI (VUC), VII (caminhão) e VIII (AEVC); § 2º (polígonos por ato da SMTR)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-10/a16190d5cc381041229e3c1513ba718db6f20c02.pdf"
+        },
+        {
+          "ato": "Res. SMTR nº 3.254, de 19/03/2020 (DO Rio 20/03/2020, p. 42) — suspensão",
+          "artigo": "art. 1º (suspende, por prazo indeterminado, a Res. SMTR 3.055/2018)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2020-03-20/85f5557eced5715b37a1e80a6e95645afea9536f.pdf"
+        },
+        {
+          "ato": "Dec. Rio nº 47.285, de 23/03/2020 (DO Rio 23/03/2020, 2ª edição) — suspensão",
+          "artigo": "art. 1º, \"r\" (suspende as restrições de circulação e de carga e descarga de veículos de carga)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/4485",
+          "nota": "Cita os Decs. 42.272/2016 e 43.970/2017, já revogados; o parecer da CET-Rio no DO de 11/01/2024 (p. 17) o lê como suspensão do Dec. 45.433/2018 e da Res. 3.055/2018."
+        }
+      ],
+      "nota": "Registro da regra geral, NUNCA aplicada: a rota que passa na área recebe só um aviso informativo. Suspensão confirmada pela SMTR (página da AEVC, 03/03/2023), pelo 1746 (08/06/2026) e por parecer da CET-Rio (DO 11/01/2024, p. 17); sem revogação da suspensão no DO até 10/2026. Polígono aproximado: o Anexo I só existe como imagem; fica dentro da ARM/ARV (a rota pelo Centro recebe um aviso de cada regra). Sinal contrário à suspensão (verify): a CRV publicou autorizações com base na Res. 3.055 em 2021–2022, válidas até 2024 (inércia administrativa, não revogação). As hgv:conditional do OSM herdadas desta regra são removidas no build dos tiles da main (osm/overrides.json).",
+      "fonte_geometria": "Derivado do OSM (ODbL): 27 vias-limite do art. 2º encadeadas na ordem dos incisos e a orla (limite do IBGE)",
+      "vigencia_inicio": "2018-12-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_res3055_zonas.geojson",
+          "construir": "manual",
+          "como_gerar": "polígonos aproximados dos Anexos I e II da Res. SMTR 3.055/2018, reconstruídos pelas vias-limite (OSM) e pela orla (IBGE): método em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    },
+    {
+      "id": "rio_res3055_arm_arv",
+      "tipo": "zona",
+      "regime": "ARM/ARV (Res. 3.055/2018)",
+      "nome": "Áreas de Restrição Matutina e Vespertina (ARM/ARV) do Rio — regra geral SUSPENSA desde 2020, não aplicada",
+      "status": "suspensa",
+      "status_motivo": "Suspensa por prazo indeterminado pela Res. SMTR 3.254/2020, art. 1º (DO Rio 20/03/2020, p. 42), e pelo Dec. Rio 47.285/2020, art. 1º, \"r\".",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "10:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "21:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "autorizacao": "AEVC da SMTR (Dec. 45.433/2018, art. 1º, § 1º, VIII; Res. SMTR 3.055/2018, arts. 5º a 9º)",
+      "excecoes": [
+        "As do art. 5º (VUC com AEVC, socorro, valores, mudança, utilidade pública, combustível de aeroporto, Correios, obras públicas, reportagem, gases medicinais, caminhão-pipa, garagem na área)",
+        "Vias limítrofes liberadas para circulação (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Res. SMTR nº 3.055, de 10/12/2018 (DO Rio 11/12/2018, p. 24–26)",
+          "artigo": "art. 3º (ARM e ARV: caminhões em dias úteis, 6h–10h e 17h–21h, circulação e carga e descarga; 26 vias-limite e Anexo II), art. 4º (vias limítrofes liberadas) e art. 5º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-11/a411269d9f5587cfa0a45fd655d8fe1794a193b2.pdf"
+        },
+        {
+          "ato": "Dec. Rio nº 45.433, de 07/12/2018 (DO Rio 10/12/2018)",
+          "artigo": "art. 1º, § 1º, III (ARM), IV (ARV), VI (VUC), VII (caminhão) e VIII (AEVC)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2018-12-10/a16190d5cc381041229e3c1513ba718db6f20c02.pdf"
+        },
+        {
+          "ato": "Res. SMTR nº 3.254, de 19/03/2020 (DO Rio 20/03/2020, p. 42) — suspensão",
+          "artigo": "art. 1º (suspende, por prazo indeterminado, a Res. SMTR 3.055/2018)",
+          "url": "https://data.queridodiario.ok.org.br/3304557/2020-03-20/85f5557eced5715b37a1e80a6e95645afea9536f.pdf"
+        },
+        {
+          "ato": "Dec. Rio nº 47.285, de 23/03/2020 (DO Rio 23/03/2020, 2ª edição) — suspensão",
+          "artigo": "art. 1º, \"r\" (suspende as restrições de circulação e de carga e descarga de veículos de carga)",
+          "url": "https://doweb.rio.rj.gov.br/portal/edicoes/download/4485"
+        }
+      ],
+      "nota": "Registro da regra geral, NUNCA aplicada: a rota que passa na área recebe só um aviso informativo. Suspensão confirmada pela SMTR (página da AEVC, 03/03/2023), pelo 1746 (08/06/2026) e por parecer da CET-Rio (DO 11/01/2024, p. 17); sem revogação da suspensão no DO até 10/2026. Polígono aproximado (o Anexo II só existe como imagem): do Caju/Francisco Bicalho pela Av. Dom Hélder Câmara até Cascadura, Campinho, Cândido Benício, Geremário Dantas, Estr. de Jacarepaguá, Itanhangá e Barra (Av. Min. Ivan Lins) até a orla; cobre Centro, Zona Sul, Grande Tijuca e parte da Zona Norte e de Jacarepaguá.",
+      "fonte_geometria": "Derivado do OSM (ODbL): 26 vias-limite do art. 3º encadeadas na ordem dos incisos e a orla (limite do IBGE)",
+      "vigencia_inicio": "2018-12-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3304557_res3055_zonas.geojson",
+          "construir": "manual",
+          "como_gerar": "polígonos aproximados dos Anexos I e II da Res. SMTR 3.055/2018, reconstruídos pelas vias-limite (OSM) e pela orla (IBGE): método em docs/layers/municipios/mun_rio.md (seção Geometria)"
+        }
+      ]
+    }
+  ]
+}

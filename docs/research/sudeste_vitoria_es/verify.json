@@ -1,0 +1,365 @@
+{
+ "category": "vitoria_es",
+ "sources": [
+  {
+   "name": "DIO-ES – busca full-text (Elasticsearch)",
+   "url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22Setiba%22",
+   "verdict": "corrected",
+   "note": "Re-testado: HTTP 200, JSON, sem autenticação. Achei as IS 001/002/003-N/2024, a IS 009-N/2023, a NC CETURB 001/2024 e 21 atos 'PROIBIR o tráfego' em 16 páginas. Dois pontos estão errados. (1) 'Não indexa diários municipais' é falso: com &subtheme=dom a mesma API busca o DOM-AMUNES (tipo_edicao 13), onde publicam Viana, Guarapari e Fundão. (2) Dos 21 atos, 17 são pontes e 4 são trechos: Itapina/ES-164 (2018, fora da RMGV), IS 009-N (revogada), km 33–39 e Acesso 9020. Logo, '4 delas na RMGV/ES-060' na verdade são 3, uma delas revogada."
+  },
+  {
+   "name": "Legislação Municipal de Vitória (Atos Normativos)",
+   "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/?url=legislacao",
+   "verdict": "corrected",
+   "note": "A busca e os PDFs funcionam. O motivo do HTTP 500, porém, não é a falta de cookie ou de X-Requested-With. O POST responde 200 sem nenhum dos dois, desde que envie todos os campos do formulário (datainicio=, datafim=, palavrachave= vazios); sem eles dá 500. As remissões do sistema para o Dec. 16.243 listam só o 18.103 e o 16.301 e omitem o 16.575."
+  },
+  {
+   "name": "Legislação Online de Vila Velha",
+   "url": "https://legislacao.vilavelha.es.gov.br/consulta-legislacao.aspx?tipo=6&numero=161&ano=2001&interno=0",
+   "verdict": "confirmed",
+   "note": "HTTP 200 em cerca de 0,8 s, 'Situação: Em Vigor'. O texto em /Arquivo/Documents/legislacao/html/D1612001.html bate com a regra. O portal mostra 'Data: 22/07/2001', mas o texto diz 22 de junho de 2001."
+  },
+  {
+   "name": "Prefeitura Sem Papel da Serra – legislação",
+   "url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html",
+   "verdict": "corrected",
+   "note": "A URL agora responde 301 para https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html. Com o redirect, o texto compilado (105 KB) confere. D60562024, D28722022 e D33122018 também respondem 200 pelo novo host."
+  },
+  {
+   "name": "ALES – Lei 9.602/2010",
+   "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html",
+   "verdict": "confirmed",
+   "note": "HTTP 200, art. 2º conferido. A consulta da ALES (consulta-legislacao.aspx?numero=9602&ano=2010) mostra 'Situação: Em Vigor', o que fecha a lacuna apontada."
+  },
+  {
+   "name": "GEOBASES / IDE-ES – WFS",
+   "url": "https://ide.geobases.es.gov.br/geoserver/ows?service=WFS&request=GetCapabilities",
+   "verdict": "confirmed",
+   "note": "São 674 feature types (eram 670). der_rodovias_es_epsg_31984 tem 894 segmentos. 060EES0110 vai do km 31,859 ao 39,79 e 060EES9020-A do km 0 ao 6,349 (situação EOP). 060EES9020-B não tem km. O CSW tem dct:modified 2026-05-20 e nenhum campo de direitos. ijsn_limite_bairro_2020_UTF8 tem 1.471 bairros."
+  },
+  {
+   "name": "GeoWeb Vitória – Opendata/HubGeoweb",
+   "url": "https://gis.vitoria.es.gov.br/arcgis/rest/services/Opendata/HubGeoweb/MapServer",
+   "verdict": "confirmed",
+   "note": "Contagens: camada 32 = 80, 59 = 9.624, 66 = 178.651, 73 = 1. maxRecordCount = 2000. Nenhuma das 76 camadas trata de carga, caminhão ou restrição."
+  },
+  {
+   "name": "OpenStreetMap via Overpass",
+   "url": "https://overpass-api.de/api/interpreter",
+   "verdict": "confirmed",
+   "note": "O Overpass deu 504 numa tentativa e 200 em outra; os espelhos kumi e private.coffee deram 500. Pela API do OSM, os ways 48496350, 318855448, 1057658099 e 1057658100 da Terceira Ponte têm maxweight=15 e hgv:conditional com dois '@', sem maxaxles; os quatro foram editados em 2026-09-28. Há 25 ways 'Rodovia José Ribeiro Tristão' (ES-060) com hgv=no + maxweight=15 e 9 ways da ES-469 com hgv=no. No código do Valhalla (pbfgraphparser.cc), só entra regra com tokens.size()==2, então a tag da ponte é descartada."
+  },
+  {
+   "name": "Querido Diário API",
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=3205002&querystring=caminh%C3%B5es&size=3",
+   "verdict": "confirmed",
+   "note": "Vitória tem 3.769 diários desde 2014-07-21, Vila Velha 1.272 desde 2020-08-20 e Serra 1.428 desde 2021-01-01. Cariacica, Viana, Guarapari e Fundão têm 0."
+  },
+  {
+   "name": "Vports – REP 2024",
+   "url": "https://vports.com.br/wp-content/uploads/2024/02/REP_2024_Porto.pdf",
+   "verdict": "corrected",
+   "note": "HTTP 200, 64 páginas. As seções 8.3.1–8.3.4 e 18.4.1 conferem e o regulamento não fixa janela horária. 'SGP/CADWeb' não aparece no REP: vem do site da Vports (service.vports.com.br/online/sgp). O REP só cita um 'sistema de monitoramento de tráfego terrestre' e uma Instrução de Procedimentos para Cadastramento."
+  },
+  {
+   "name": "Calendário de feriados de Vitória",
+   "url": "https://www.vitoria.es.gov.br/prefeitura/calendario-de-feriados-do-municipio",
+   "verdict": "confirmed",
+   "note": "Confere com o Decreto 25.991/2025, a fonte primária: 03/04, 13/04, 04/06 e 08/09/2026 são feriados municipais pela Lei 1.732/1967."
+  },
+  {
+   "name": "Notícia oficial de Vitória (2018)",
+   "url": "https://m.vitoria.es.gov.br/noticia/guarda-civil-fiscaliza-trafego-de-caminhoes-e-carretas-em-vitoria-26744",
+   "verdict": "confirmed",
+   "note": "HTTP 200. Infração média, R$ 130,16 e 4 pontos, citando o Dec. 16.243/15."
+  },
+  {
+   "name": "dados.es.gov.br – Fluxo Rodosol",
+   "url": "https://dados.es.gov.br/api/3/action/package_show?id=portal-da-transparencia-fluxo-de-veiculos-rodosol",
+   "verdict": "confirmed",
+   "note": "HTTP 200. CSVs anuais até 2023."
+  },
+  {
+   "name": "Vale – Regulamento TU/TPM",
+   "url": "https://vale.com/documents/d/guest/regulamento-portuario-tuetpm-pt_rev1",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 28 páginas. Só cita a BR-101 e a BR-262."
+  },
+  {
+   "name": "Portal de legislação de Cariacica",
+   "url": "https://cariacica.es.gov.br/legislacao",
+   "verdict": "confirmed",
+   "note": "Dá 'Nenhum registro encontrado' até para 'decreto'. A busca está quebrada, então o resultado não permite concluir nada."
+  },
+  {
+   "name": "Imprensa (A Gazeta 26/01/2022 etc.)",
+   "url": "https://www.agazeta.com.br/es/cotidiano/quais-as-regras-para-veiculos-pesados-trafegarem-nas-ruas-de-vitoria-0122",
+   "verdict": "confirmed",
+   "note": "HTTP 200. Cariacica 'informou não existir legislação municipal' e a fiscalização ocorre na BR-262 e na ES-080. O nome 'ES-477' aparece também no DOM de Vila Velha de 25/01/2024. A Tribuna Online e a Folha Vitória não foram retestadas."
+  }
+ ],
+ "rules": [
+  {
+   "where": "Vitória – todo o município, PBT > 23 t (Dec. 16.243 art. 1º IV a)",
+   "verdict": "corrected",
+   "note": "Dias, horários e PBT conferem no PDF. A exclusão de vias estaduais e federais não está no ato, que diz 'demais vias do município da Capital'. Ela é inferência sobre a competência dada pelo art. 24 do CTB."
+  },
+  {
+   "where": "Vitória – PBT > 45 t 24h (art. 1º IV b)",
+   "verdict": "confirmed",
+   "note": "Texto conferido."
+  },
+  {
+   "where": "Vitória – cegonheira > 16 t (art. 1º IV c)",
+   "verdict": "confirmed",
+   "note": "Dias úteis 6–20h e sábado 6–14h, exceto domingo e feriado."
+  },
+  {
+   "where": "Vitória – setor à direita das 5 vias do Centro (art. 1º I)",
+   "verdict": "confirmed",
+   "note": "> 10 t: dias úteis 7–19h, sábado 8–14h. > 16 t: em qualquer dia e horário."
+  },
+  {
+   "where": "Vitória – demais vias do Centro (art. 1º III e §3º)",
+   "verdict": "confirmed",
+   "note": "> 16 t: dias úteis 6–20h, sábado 6–14h. O §1º manda o tráfego do porto para a rota do art. 2º, e o §3º define o perímetro."
+  },
+  {
+   "where": "Vitória – Beira-Mar entre a R. Josué Prado e a Av. Paulino Muller",
+   "verdict": "confirmed",
+   "note": "> 16 t em qualquer dia e horário, nos dois sentidos. No OSM há 55 ways e nenhuma tag de caminhão."
+  },
+  {
+   "where": "Vitória – Maruípe, José Cassiano dos Santos e Paulino Muller, sentido Centro (Dec. 16.575/2015)",
+   "verdict": "confirmed",
+   "note": "Lido pela imagem. Alínea d do inciso IV, > 16 t. Assinado em 21/12/2015, DOMV de 05/01/2016, vigência na publicação."
+  },
+  {
+   "where": "Vitória – Mercado da Vila Rubim (art. 2º III, §2º)",
+   "verdict": "confirmed",
+   "note": "Texto e perímetro conferidos."
+  },
+  {
+   "where": "Vitória – acesso ao porto do Centro (Dec. 18.103/2020)",
+   "verdict": "confirmed",
+   "note": "Assinado em 29/05/2020, DOMV de 09/09/2020. Proibido só nos dias úteis das 7h às 9h. As rotas de entrada e saída conferem."
+  },
+  {
+   "where": "Vitória – Berço 909 (Dec. 16.301/2015)",
+   "verdict": "confirmed",
+   "note": "§4º com trajeto das 22h às 6h. As rotas de entrada e saída conferem. Errata de 12/05/2015 só troca o secretário."
+  },
+  {
+   "where": "Vitória – carga e descarga no Centro (Lei 6.490/2005)",
+   "verdict": "confirmed",
+   "note": "Janelas e art. 2º conferidos; publicada n'A Tribuna de 10/12/2005, sem remissão no sistema. A Lei 3.499/1987 (estacionamento de caminhões para carga e descarga na zona central das 7h às 10h) aparece sem nota de revogação; avaliar se conflita."
+  },
+  {
+   "where": "Vila Velha – Centro (Dec. 161/2001 art. 1º I)",
+   "verdict": "confirmed",
+   "note": "> 10 t: dias úteis 11–19h, sábado 8–19h. > 16 t: sempre. Situação: Em Vigor."
+  },
+  {
+   "where": "Vila Velha – Glória (art. 1º II)",
+   "verdict": "confirmed",
+   "note": "Dias úteis 11–19h e sábado 7–18h; as 3 vias exceptuadas conferem."
+  },
+  {
+   "where": "Vila Velha – orla de Praia da Costa, Itapuã e Itaparica (art. 1º III a)",
+   "verdict": "confirmed",
+   "note": "> 10 t das 10h às 20h todos os dias. O ato não lista as vias da orla."
+  },
+  {
+   "where": "Vila Velha – todas as ruas dos bairros de praia (art. 1º III b e c)",
+   "verdict": "confirmed",
+   "note": "> 16 t das 7h às 20h e estacionamento proibido. A redação é ambígua, como dito."
+  },
+  {
+   "where": "Vila Velha – porto (art. 2º)",
+   "verdict": "confirmed",
+   "note": "Rota pela Carlos Lindenberg, Darly Santos e Av. Capuaba; proibido nos dias úteis das 7h às 9h e das 17h às 19h. Os nomes dos cais vêm do REP, não do ato."
+  },
+  {
+   "where": "Serra – Av. Norte-Sul, Av. Central (trecho inicial), R. Carioca e R. M (Dec. 5.881 art. 1º I)",
+   "verdict": "confirmed",
+   "note": "Dias úteis 7–9h e 17–19h. Art. 6º: PBT > 23 t, e > 16 t na Av. Central."
+  },
+  {
+   "where": "Serra – Av. Central, da Norte-Sul ao final (art. 1º II e §1º)",
+   "verdict": "confirmed",
+   "note": "Dias úteis 8–19h e sábado 8–14h."
+  },
+  {
+   "where": "Serra – arts. 2º a 4º-A (24h)",
+   "verdict": "confirmed",
+   "note": "São 11 vias no art. 2º. A alínea 'l' do art. 2º foi revogada pelo Dec. 2.872/2022, mas a mesma estrada continua no art. 3º. O art. 4º-A é do Dec. 2.872 (DOM de 26/05/2022), e o art. 5º VI foi revogado pelo Dec. 6.056/2024."
+  },
+  {
+   "where": "Terceira Ponte (Lei 9.602/2010)",
+   "verdict": "confirmed",
+   "note": "> 2 eixos OU > 15 t; 'Em Vigor' na ALES. A guarita do km 3,3, sentido norte, está na NC CETURB 001/2024 (DIO 23/08/2024)."
+  },
+  {
+   "where": "ES-060 km 33–39 (IS 003-N/2024)",
+   "verdict": "confirmed",
+   "note": "DIO de 24/01/2024, págs. 34–35: PBT > 23 t do km 33 (Village do Sol) ao km 39 (Setiba)."
+  },
+  {
+   "where": "ES-060 Acesso 9020, km 0–8,5 (IS 002-N/2024)",
+   "verdict": "confirmed",
+   "note": "Texto conferido, até o entroncamento com a ES-388 em Amarelos (BR-101)."
+  },
+  {
+   "where": "IS 009-N/2023 (revogada)",
+   "verdict": "corrected",
+   "note": "O texto não está truncado; continua na página seguinte do DIO de 22/12/2023 (págs. 96–97). O trecho vai do entroncamento com a Rod. Darly Santos (Vila Velha) ao entroncamento com a Rod. Jones dos Santos Neves (ES-060), em Guarapari. A IS 001-N de 23/01/2024 a tornou insubsistente."
+  },
+  {
+   "where": "Ponte do Rio Jacarandá, ES-476 km 6,11, Viana",
+   "verdict": "confirmed",
+   "note": "12 t, OAE-476EES0010-003, coordenadas conferidas (DIO 04/12/2024). Não achei ato que a libere depois."
+  },
+  {
+   "where": "Ponte do Rio Calçado, ES-388 km 2,44, Guarapari",
+   "verdict": "confirmed",
+   "note": "IS 010-N de 06/11/2025 (DIO 07/11/2025): 10 t, OAE388EES0010-004, coordenadas conferidas."
+  },
+  {
+   "where": "Ponte do Rio Fundão, ES-261 km 104, Fundão",
+   "verdict": "confirmed",
+   "note": "16 t, OAE-261EES0110-019, coordenadas conferidas (DIO 31/08/2026, ato de 28/08/2026). O número provável é IS 007-N/2026 (processo 2026-XJVWX)."
+  },
+  {
+   "where": "OSM – ES-060 'Rodovia José Ribeiro Tristão' com hgv=no + maxweight=15",
+   "verdict": "unverifiable",
+   "note": "As tags existem: 25 ways, lat −20,63 a −20,74. Também não achei ato no DIO. O trecho faz parte do Sistema Rodovia do Sol operado pela CETURB (Contorno de Guarapari até Meaípe), e a base legal segue sem confirmação."
+  },
+  {
+   "where": "OSM – janelas de hgv:conditional da Terceira Ponte",
+   "verdict": "unverifiable",
+   "note": "A tag existe e o Valhalla a descarta (dois '@'). Não há ato que sustente as janelas das 10h às 16h e das 22h às 6h."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "Dec. 16.243/2015: > 23 t, > 45 t e cegonheira; revogou o Dec. 10.364/1999",
+   "verdict": "confirmed",
+   "note": "PDF relido, arts. 1º e 9º."
+  },
+  {
+   "fact": "Dec. 18.103/2020 reduziu a janela do porto para 7–9h e mudou as rotas",
+   "verdict": "confirmed",
+   "note": "Assinado em 29/05/2020, DOMV de 09/09/2020."
+  },
+  {
+   "fact": "Dec. 16.575/2015: > 16 t no sentido Centro (Maruípe, José Cassiano e Paulino Muller)",
+   "verdict": "confirmed",
+   "note": "PDF escaneado, lido pela imagem."
+  },
+  {
+   "fact": "O sistema de atos de Vitória exige cookie de sessão e X-Requested-With (sem eles, 500)",
+   "verdict": "corrected",
+   "note": "Testado: dá 200 sem cookie e sem o header. O 500 aparece quando faltam os campos vazios do formulário (datainicio, datafim, palavrachave)."
+  },
+  {
+   "fact": "A página de 2018 cita a multa média de R$ 130,16 e 4 pontos",
+   "verdict": "confirmed",
+   "note": "Página retestada."
+  },
+  {
+   "fact": "Lei 6.490/2005: janelas de carga e descarga no Centro",
+   "verdict": "confirmed",
+   "note": "PDF conferido."
+  },
+  {
+   "fact": "Feriados municipais de Vitória em 2026",
+   "verdict": "confirmed",
+   "note": "Dec. 25.991/2025 (DOMV de 18/12/2025), Anexo Único."
+  },
+  {
+   "fact": "Dec. 161/2001 de Vila Velha 'Em Vigor', com as regras citadas",
+   "verdict": "confirmed",
+   "note": "Portal e texto conferidos."
+  },
+  {
+   "fact": "Dec. 5.881/2020 da Serra: > 23 t (> 16 t na Av. Central), proíbe carga e descarga e revogou o 3.312/2018",
+   "verdict": "confirmed",
+   "note": "Texto conferido. A citação da Tribuna Online de 2025 não foi verificada."
+  },
+  {
+   "fact": "O Dec. 6.056/2024 revogou o art. 5º VI",
+   "verdict": "confirmed",
+   "note": "Texto conferido; publicado no DOM Serra de 23/04/2024."
+  },
+  {
+   "fact": "Lei 9.602/2010, art. 2º",
+   "verdict": "confirmed",
+   "note": "Texto conferido; 'Em Vigor' na ALES."
+  },
+  {
+   "fact": "NC CETURB 001/2024: guarita no km 3,3; gestão delegada à CETURB pela LC 1.060/2023",
+   "verdict": "corrected",
+   "note": "A guarita confere. A delegação foi feita pelo Contrato de Programa SEMOBI nº 2024000013.35101.01, com base nas LCs 876/877/2017 e 1.060/2023. A NC 006/2025 alterou a NC 001/2024."
+  },
+  {
+   "fact": "Pedágio extinto a partir de 22/12/2023",
+   "verdict": "confirmed",
+   "note": "Página da SEMOBI. 22/12/2023 foi uma sexta-feira."
+  },
+  {
+   "fact": "IS 003-N, 002-N e 001-N/2024",
+   "verdict": "confirmed",
+   "note": "DIO de 24/01/2024, págs. 40–41 do PDF."
+  },
+  {
+   "fact": "A busca do DIO-ES achou 21 IS do DER-ES com PBT máximo por ponte",
+   "verdict": "corrected",
+   "note": "São 21 atos de 'PROIBIR o tráfego', mas só 17 são pontes; os outros 4 são trechos de rodovia. A API também indexa o DOM-AMUNES (&subtheme=dom)."
+  },
+  {
+   "fact": "Três pontes estaduais na RMGV (Viana 12 t, Guarapari 10 t, Fundão 16 t)",
+   "verdict": "confirmed",
+   "note": "As outras 14 pontes ficam fora da RMGV (longitude −41,x ou municípios do interior)."
+  },
+  {
+   "fact": "GEOBASES: 894 segmentos, 060EES0110 do km 31,859 ao 39,79, atualizado em 20/05/2026",
+   "verdict": "confirmed",
+   "note": "WFS e CSW retestados."
+  },
+  {
+   "fact": "GeoWeb: 80 bairros, 9.624 linhas, 178.651 endereços",
+   "verdict": "confirmed",
+   "note": "Contagem via returnCountOnly."
+  },
+  {
+   "fact": "OSM: conditional inválido na Terceira Ponte, maxweight=15 em 4 ways, sem maxaxles; 25 ways com hgv=no na ES-060",
+   "verdict": "confirmed",
+   "note": "Conferido pela API do OSM, pelo Overpass e pelo código-fonte do Valhalla."
+  },
+  {
+   "fact": "REP Vports: portarias e agendamento SGP/CADWeb; sem janela horária",
+   "verdict": "corrected",
+   "note": "As portarias e a ausência de janela conferem. O SGP vem do site da Vports, não do REP."
+  },
+  {
+   "fact": "Cobertura do Querido Diário no ES",
+   "verdict": "confirmed",
+   "note": "Totais e datas iniciais idênticos aos informados."
+  }
+ ],
+ "extra_findings": [
+  "DOM-AMUNES (Diário Oficial dos Municípios do ES) pode ser buscado em texto completo pela mesma API do DIO-ES, acrescentando &subtheme=dom. Viana, Guarapari e Fundão publicam nele (milhares de ocorrências); Cariacica não. Nas buscas por 'circulação de veículos de carga', 'Peso Bruto Total' e 'tráfego de veículos pesados', não apareceu nenhum ato desses três municípios; os achados foram de Colatina (Dec. 31.286/2025) e Itarana (Dec. 2.351/2026), fora da RMGV. Exemplo: https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2015-01-01/df:2026-10-10/?1=1&q=%22circula%C3%A7%C3%A3o%20de%20caminh%C3%B5es%22&subtheme=dom",
+  "Restrição vigente que ficou de fora: a SEMOBI interdita totalmente a 2ª Ponte (Ponte Gerson Camata) de 02/09/2026 a 20/12/2026, das 21h às 5h, e desvia os veículos comerciais pesados para as Cinco Pontes (DIO 31/08/2026, pág. 31): https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2026-08-31/df:2026-08-31/?1=1&q=%22Gerson%20Camata%22",
+  "A Lei 9.602/2010 aparece como 'Em Vigor' na consulta da ALES, o que fecha essa lacuna: https://www3.al.es.gov.br/legislacao/consulta-legislacao.aspx?numero=9602&ano=2010",
+  "Texto completo da IS 009-N/2023 (revogada): do entroncamento com a Rod. Darly Santos (Vila Velha) ao entroncamento com a Rod. Jones dos Santos Neves (ES-060), em Guarapari; DIO de 22/12/2023, págs. 96–97: https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2023-12-22/df:2023-12-22/?1=1&q=%22Diretor-presidente%20do%20DER-ES%22",
+  "Fonte primária dos feriados de Vitória em 2026: Dec. 25.991/2025, https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2025/D25991.PDF",
+  "Vitória tem atos de carga e descarga que não foram revisados. A Lei 3.499/1987 regula o estacionamento de caminhões para carga e descarga na zona central das 7h às 10h e não traz nota de revogação; pode conflitar com a Lei 6.490/2005. A Lei 6.705/2006 (Anexo 11, áreas de carga e descarga) foi alterada pela Lei 8.303/2012. PDF da primeira: https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/1987/L3499.PDF",
+  "O sistema de Vitória não lista o Dec. 16.575/2015 entre os alteradores do 16.243. Um monitor que dependa só do campo 'Alterado por' perderia esse decreto.",
+  "O host de legislação da Serra mudou para https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html (o endereço antigo responde 301).",
+  "O DOM Serra de 24/02/2026 diz que o município 'avalia a restrição do tráfego de caminhões pesados' na antiga rodovia e no Viaduto de Carapina. Vale monitorar: https://api.queridodiario.org.br/gazettes?territory_ids=3205002&querystring=%22tr%C3%A1fego%20de%20caminh%C3%B5es%22",
+  "Normas da CETURB (NC 001/2024, 006/2025 e 013/2025) definem o Sistema Rodovia do Sol como Terceira Ponte, ES-060 do km 0 ao 3,3 e do km 11 ao 67,5, e Contorno de Guarapari até o Trevo de Meaípe. A autoridade de trânsito é o DER-ES. Isso indica a quem perguntar sobre o hgv=no da 'Rodovia José Ribeiro Tristão'.",
+  "O próprio DOM de Vila Velha (25/01/2024), e não só a imprensa, chamou o Acesso 9020 de 'ES-477'.",
+  "Os 4 ways da Terceira Ponte com maxweight=15 foram editados em 2026-09-28 e continuam sem maxaxles e com o conditional inválido.",
+  "Na GEOBASES, o segmento 060EES9020-A está como EOP (em obras) e o 9020-B não tem km. O DIO de 17/01/2025 anuncia a inauguração da ligação Rodovia do Sol–BR-101 (Amarelos), então a geometria do SRE pode estar desatualizada."
+ ]
+}

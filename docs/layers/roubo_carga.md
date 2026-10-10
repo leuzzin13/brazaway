@@ -80,8 +80,8 @@ arquivo do ano corrente mensalmente. Na virada do ano, o importador passa sozinh
 
 ## Limitações
 
-- **Só o estado de SP.** Para outros estados há apenas números por UF (Sinesp VDE) ou por distrito policial (ISP-RJ),
-  sem coordenada; não entram aqui.
+- **Só o estado de SP.** Para outros estados há apenas números por UF (Sinesp VDE), por município (SEJUSP-MG) ou por
+  área de delegacia (ISP-RJ), sem coordenada; não entram aqui (ver a seção seguinte).
 - **Subnotificação e local do BO**: a coordenada é a do local informado no BO; parte dos roubos é registrada onde a
   carga/veículo foi achado ou onde a vítima foi liberada.
 - **Células de 1 km**: a ocorrência pode ter sido numa rua paralela à rota, não na via usada; por isso o texto fala em
@@ -91,3 +91,44 @@ arquivo do ano corrente mensalmente. Na virada do ano, o importador passa sozinh
 - **Volume absoluto**, sem normalizar pela quantidade de caminhões que passam.
 - Os anos são os de **estatística** da SSP (`ANO_ESTATISTICA`); algumas ocorrências de 2025 têm data de 2024 (BO
   registrado depois).
+
+## Rio de Janeiro, Minas Gerais e Espírito Santo: sem coordenada (não implementado)
+
+Pesquisa de 10/10/2026 (`seguranca_rj_mg_es`, com as correções da verificação). Nenhum dos três estados publica roubo de
+carga com coordenada, então nada entra no mapa nem na rota com o método de SP (células de 1 km). A tarefa admitia um aviso
+informativo por município ou por área de delegacia **só com dado agregado de licença clara**. Nenhuma fonte cumpre essa
+condição, por isso **não há importador nem aviso** para esses estados.
+
+| UF | O que existe | Granularidade | Licença | Decisão |
+|---|---|---|---|---|
+| MG | SEJUSP, base completa por REDS no Google Drive (pasta `1CjziaHx_ehpY6XozeV5FIR-zoCfCjh8k`): `Alvo - Roubo Consumado - Jan 2015 a Ago 2026.csv` (197 MB, 635.714 linhas) e `Alvo - Furto Consumado - Jan 2022 a Ago 2026.csv`. Também há um agrupado (município × mês × alvo) no portal da SEJUSP | Município. Tem data, hora, faixa, meio, tipo de local e bairro; **não tem lat/lon nem nome do logradouro** | Nenhuma licença nomeada (CKAN da SEJUSP com `license_id` vazio). Base legal genérica: Decreto MG 48.383/2022, art. 22 (dados de transparência ativa de livre utilização, observados o art. 6º da LGPD e a Lei 14.129/2021). Para uso comercial, a própria pesquisa recomenda confirmar por pedido de acesso à informação | Não implementado |
+| RJ | ISP: série mensal por CISP (`BaseDPEvolucaoMensalCisp.csv`, até 08/2026) e polígonos das 137 CISPs (`CISPshp.rar`, RAR v5, WGS84, mediana de 169,4 km²) | Área de delegacia (CISP), **sem horário** e sem tipo de local | Nenhuma licença nos arquivos públicos. A Portaria ISP nº 127/2022, art. 3º §1º, diz que as bases disponibilizadas pelo ISP não podem ser comercializadas "em nenhuma hipótese". O texto não limita isso de forma expressa aos dados fornecidos sob pedido. Licença **incerta** | Não implementado; pedir ao ISP, por escrito, autorização para uso comercial dos dados de transparência ativa |
+| ES | SESP-ES não publica roubo de carga (busca "carga" no CKAN: 0 resultados). O `roubo-veiculo` (CC-BY) tem 6.239 linhas por veículo (6.116 BOs) de 2023 a 2025, 77 com caminhão, sem coordenada | — | — | Não implementado: 7 roubos de carga no estado em 2025 (Sinesp VDE) |
+
+**Números conferidos (verificação de 10/10/2026):**
+- **MG, roubo de carga (alvo "Cargas")**: 662 em 2015, 217 em 2024, 132 em 2025 e 59 em jan–ago/2026. O total de 2025
+  bate com o Sinesp VDE (132). Em 2025–26 (191 casos): 104 em rodovia (54%), 84 entre 0h e 6h (44%), 124 com arma de
+  fogo (65%). Municípios: Contagem 25, Belo Horizonte 24, Betim 16. O padrão é madrugada e rodovia, diferente de SP.
+- **MG, furto de carga**: 536 em 2025 e 297 em jan–ago/2026, cerca de 4 vezes o roubo; 48% em rodovia em 2025–26.
+- **MG, veículos roubados**: em 2025, 297 caminhões, caminhões-trator, semirreboques e reboques. Sem coordenada.
+- **RJ, roubo de carga (ISP)**: 3.113 em 2025 (o Sinesp dá 3.777, por diferença de metodologia) e 2.035 em jan–ago/2026,
+  em 87 CISPs com pelo menos 1 caso. Maiores em 2025: CISP 59 Duque de Caxias (Centro) 402, 60 Campos Elyseos 287,
+  64 São João de Meriti 212, 21 Bonsucesso/Maré 194 e 39 Pavuna 165. As 10 maiores somam 60,7% de 2025–26.
+- **Sinesp VDE 2025**: RJ 3.777, SP 3.470, MG 132, ES 7. Para roubo de carga nesses estados a coluna de município vem
+  "NÃO INFORMADO", então o Sinesp só serve por UF.
+- **Microdados do ISP sob pedido** (Portaria ISP 127/2022, art. 2º §2º): desagregação máxima CISP, AISP, RISP, bairro e
+  município, sem coordenada, e com proibição de comercializar e de repassar a terceiros. Não servem para o app.
+- **Rio, data.rio**: o mapa antigo "Roubo de Cargas" aponta para um serviço ArcGIS que responde 404. Não há pontos.
+
+**Por que não implementar, além da licença:**
+- MG: 132 roubos de carga por ano no estado inteiro, espalhados por município (Belo Horizonte tem 331 km²). Um aviso como
+  "no município de Contagem houve 25 roubos em 20 meses" pouco ajuda a decidir onde parar.
+- RJ: o volume é alto (mais que SP no Sinesp), mas a CISP mediana tem 169 km² e não há horário. O aviso não poderia
+  depender da hora de passagem, que é o que dá valor à camada em SP.
+
+**Se a licença for confirmada**, o caminho já está desenhado na pesquisa:
+- RJ: importador `roubo_carga_isp_rj` (`SOURCE = 'isp-rj'`) com o polígono da CISP, só CISPs com 12 ou mais casos por ano
+  (37 em 2025). O `CISPshp.rar` exige `bsdtar` (pacote `libarchive-tools`) na imagem do importador, ou guardar o GeoJSON
+  já convertido. A API precisa de um caminho sem `periodo`, com aviso pelo total e o texto "a fonte não informa o horário".
+- MG: importador `roubo_carga_sejusp_mg` com roubo **e** furto de carga por município (malha municipal do IBGE), aviso por
+  faixa do dia (há hora) e texto "no município", não "na região". Conferir a soma anual contra o Sinesp.

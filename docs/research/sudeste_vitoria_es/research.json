@@ -1,0 +1,717 @@
+{
+ "category": "vitoria_es",
+ "summary": "Esta rodada fecha o tema da Grande Vitória (RMGV) com fonte primária para Vitória, Vila Velha, Serra, Terceira Ponte, Rodovia do Sol e pontes estaduais. Os textos dos atos foram baixados e lidos; um PDF escaneado foi lido pela imagem. As fontes de dados foram testadas com curl e python.\n\n**Conclusão central.** Nenhuma prefeitura do ES publica restrição de caminhão como dado geográfico. Tudo está em decreto (texto), e o critério é sempre PBT. Nenhum dos três municípios define VUC. O OSM não tem nenhuma regra municipal e está errado em três pontos de rodovia estadual.\n\n**Regras confirmadas**\n\n- **Vitória**, Dec. 16.243/2015, alterado pelos Decs. 16.301/2015, 16.575/2015 e 18.103/2020:\n  - PBT > 23 t proibido em todo o município: dias úteis 6–10h e 16–20h, sábado 6–14h.\n  - PBT > 45 t proibido sempre.\n  - Cegonheira > 16 t: dias úteis 6–20h, sábado 6–14h.\n  - Centro: PBT > 16 t das 6h às 20h; > 10 t das 7h às 19h no setor das R. Henrique Novaes, Jerônimo Monteiro, General Osório, Thiers Velloso e Padre Anchieta; nesse mesmo setor, > 16 t proibido 24h.\n  - Beira-Mar, entre a R. Josué Prado e a Av. Paulino Muller: > 16 t proibido 24h.\n  - No sentido Centro, Av. Maruípe, R. José Cassiano dos Santos e Av. Paulino Muller: > 16 t proibido 24h.\n  - Porto (Cais Comercial): rota obrigatória e proibição de entrar ou sair nos dias úteis das 7h às 9h.\n  - Domingo e feriado são livres, exceto as regras 24h.\n  - Lei 6.490/2005: carga e descarga no Centro só das 19h às 6h nos dias úteis e a partir das 14h no sábado.\n- **Vila Velha**, Dec. 161/2001 (situação \"Em Vigor\", sem alterações):\n  - Centro: > 10 t das 11h às 19h nos dias úteis e das 8h às 19h no sábado; > 16 t proibido 24h.\n  - Glória: as mesmas faixas de peso, com três vias livres.\n  - Orla de Praia da Costa, Itapuã e Itaparica: > 10 t das 10h às 20h todos os dias.\n  - Todas as ruas desses três bairros: > 16 t das 7h às 20h.\n  - Porto (Capuaba/Paul): rota pela Rod. Carlos Lindenberg, Rod. Darly Santos e Av. Capuaba; acesso proibido nos dias úteis das 7h às 9h e das 17h às 19h.\n- **Serra**, Dec. 5.881/2020 (texto compilado com os Decs. 2.872/2022 e 6.056/2024; o Dec. 3.312/2018, citado pela imprensa em 2025, está revogado):\n  - Vale para PBT > 23 t; na Av. Central, para > 16 t.\n  - Av. Norte-Sul, Av. Central, R. Carioca e R. M: dias úteis 7–9h e 17–19h.\n  - Av. Central no trecho norte: 8–19h nos dias úteis e 8–14h no sábado.\n  - 11 ruas de Serra Sede, Av. Guarapari, uma estrada rural (coordenadas UTM) e Novo Horizonte: proibido 24h, inclusive carga e descarga.\n- **Estado**:\n  - Terceira Ponte: Lei 9.602/2010 proíbe veículo de carga com mais de 2 eixos **ou** PBT acima de 15 t, 24h. Uma guarita no km 3,3, sentido norte, barra caminhões (Norma CETURB 001/2024). Não há pedágio desde 22/12/2023, e a gestão é da SEMOBI/CETURB.\n  - Rodovia do Sol: as IS DER-ES 002-N e 003-N/2024 proíbem PBT > 23 t, 24h, no km 33–39 da ES-060 (Village do Sol → Setiba) e no Acesso 9020 (Village do Sol → ES-388/BR-101, Amarelos). A imprensa chamou este segundo trecho de \"ES-477\", o que está errado. A IS 001-N tornou insubsistente a IS 009-N/2023, que limitava a rodovia inteira.\n\n**Fonte nova e valiosa: busca full-text do DIO-ES.** É uma API JSON aberta, sem anti-bot. Por ela achei 21 Instruções de Serviço do DER-ES com PBT máximo por ponte, com código OAE, km e coordenadas SIRGAS. Três ficam na RMGV:\n\n| Ponte | Rodovia | Município | Limite |\n|---|---|---|---|\n| Rio Jacarandá | ES-476 km 6,11 | Viana | 12 t |\n| Rio Calçado | ES-388 km 2,44 | Guarapari | 10 t |\n| Rio Fundão | ES-261 km 104 | Fundão | 16 t |\n\n**Geometria aberta (sem licença declarada).**\n- GeoWeb Vitória (ArcGIS REST): 80 bairros e 9.624 linhas de hierarquia viária.\n- GEOBASES/IDE-ES (WFS): 894 segmentos do SRE do DER-ES com km inicial e final, o que permite referência linear do km 33–39, e bairros IJSN de Vila Velha e Serra.\n- Os nomes de vias dos decretos existem no OSM.\n\n**Problemas do OSM que o Valhalla herda.**\n- Na Terceira Ponte, o `hgv:conditional` tem dois `@` e o Valhalla ignora. Sobra `maxweight=15` em 4 ways e falta `maxaxles=2`, então um caminhão de 3 eixos com até 15 t passa.\n- A ES-060 do km ~51 ao ~65 (Contorno de Guarapari) tem `hgv=no` + `maxweight=15` sem ato encontrado. Isso barra todo caminhão.\n- As regras vigentes de 23 t da Rodovia do Sol não estão no OSM.\n\n**Lacunas.** Cariacica não foi confirmada: o portal de legislação não devolve nada, nem para \"trânsito\", e o município não está no Querido Diário. Viana, Guarapari e Fundão (municipais) também ficaram em aberto, assim como os feriados de Vila Velha e Serra e a origem das janelas 10–16h e 22–6h que o OSM atribui à Terceira Ponte.\n\nRascunho pronto: `regras_rmgv.json` no esquema de `data/raw/rmsp/regras.json`. Amostras, CSV dos atos do DER-ES e NOTES.md estão em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/sudeste/vitoria_es/ (16 MB).",
+ "rules": [
+  {
+   "jurisdiction": "Vitória (IBGE 3205309)",
+   "kind": "zona",
+   "where": "Todas as vias do município ('demais vias do município da Capital'), exceto as de jurisdição estadual ou federal (ex.: Terceira Ponte)",
+   "days_hours": "Dias úteis 06:00–10:00 e 16:00–20:00; sábado 06:00–14:00; livre domingo e feriado",
+   "vehicles": "Veículo de carga, carregado ou não, com PBT > 23 t",
+   "act": "Decreto municipal 16.243/2015, art. 1º, IV, a (DOMV 06/03/2015; vigência 60 dias após a publicação, art. 8º)",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "Art. 1º §2º: redes de energia, água/esgoto, gás, telecom, coleta de lixo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro mecânico; veículos do art. 29 VII do CTB. Art. 3º: AET da Secretaria de Transportes. §4º (Dec. 16.301/2015): veículos do Berço 909 (Jesus de Nazareth) usam rota fixa das 22h às 6h. O decreto não define VUC; o critério é só PBT",
+   "geometry_source": "Limite municipal IBGE; GeoWeb Vitória camada 32 (bairros) para subáreas"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "zona",
+   "where": "Todo o município",
+   "days_hours": "Qualquer dia e horário (24h, inclusive feriado)",
+   "vehicles": "PBT > 45 t",
+   "act": "Decreto 16.243/2015, art. 1º, IV, b",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "AET (art. 3º); Berço 909 com rota fixa 22h–6h (§4º, red. Dec. 16.301/2015)",
+   "geometry_source": "Limite municipal IBGE"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "zona",
+   "where": "Todo o município",
+   "days_hours": "Dias úteis 06:00–20:00; sábado 06:00–14:00; livre domingo e feriado",
+   "vehicles": "Cegonheira com PBT > 16 t",
+   "act": "Decreto 16.243/2015, art. 1º, IV, c",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "AET (art. 3º). O perfil do veículo no app não tem 'tipo', então a regra entra só como aviso",
+   "geometry_source": "Limite municipal IBGE"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "zona",
+   "where": "Centro de Vitória: 'sistema viário à direita do sentido de circulação' da R. Henrique Novaes, Av. Jerônimo Monteiro, R. General Osório, R. Thiers Velloso e R. Padre José de Anchieta",
+   "days_hours": "PBT > 10 t: dias úteis 07:00–19:00, sábado 08:00–14:00, livre domingo e feriado. PBT > 16 t: qualquer dia e horário",
+   "vehicles": "Veículo de carga, mesmo vazio, com PBT > 10 t (com horário) e > 16 t (24h)",
+   "act": "Decreto 16.243/2015, art. 1º, I, a e b",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "media",
+   "exceptions": "Art. 1º §2º (utilidade pública); art. 3º (AET)",
+   "geometry_source": "Curadoria manual: o texto define a área pelo lado das 5 vias, que existem no OSM; o polígono ainda não existe"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "zona",
+   "where": "Demais vias do Centro: da R. Sebastião Tourinho e R. Raimundo Nonato (Forte São João) até a Ponte Moacyr Avidos (Ponte Seca), na Vila Rubim (art. 1º §3º)",
+   "days_hours": "Dias úteis 06:00–20:00; sábado 06:00–14:00; livre domingo e feriado",
+   "vehicles": "PBT > 16 t",
+   "act": "Decreto 16.243/2015, art. 1º, III e §3º",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "§1º: veículos com destino às instalações portuárias ou industriais adjacentes ao Porto de Vitória seguem a rota do art. 2º; §2º utilidade pública; AET",
+   "geometry_source": "Aproximação pelos bairros da Região I (GeoWeb camada 32: Centro, Parque Moscoso, Vila Rubim, Piedade, Santa Clara, Do Moscoso, Fonte Grande) mais parte do Forte São João; a Ilha do Príncipe fica fora"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "via",
+   "where": "Av. Mal. Mascarenhas de Moraes (Beira-Mar), entre a R. Josué Prado e a Av. Paulino Muller, nos dois sentidos",
+   "days_hours": "Qualquer dia e horário",
+   "vehicles": "PBT > 16 t",
+   "act": "Decreto 16.243/2015, art. 1º, II",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "AET; o trecho entre a Av. N. Sra. dos Navegantes e a R. Amenóphis de Assis é rota do Berço 909 das 22h às 6h (Dec. 16.301/2015)",
+   "geometry_source": "OSM por nome ('Avenida Marechal Mascarenhas de Moraes', 55 ways, 7,8 km; 'Rua Josué Prado' e 'Avenida Paulino Muller' presentes)"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "via",
+   "where": "No sentido Centro: Av. Maruípe (da Rod. Serafim Derenzi à R. José Cassiano dos Santos), R. José Cassiano dos Santos e Av. Paulino Muller (da R. José Cassiano dos Santos à Av. Vitória)",
+   "days_hours": "Qualquer dia e horário (o ato não fixa horário)",
+   "vehicles": "PBT > 16 t",
+   "act": "Decreto 16.575/2015 (acresce a alínea d ao art. 1º, IV, do Dec. 16.243/2015); DOMV 05/01/2016, vigência na publicação",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16575.PDF",
+   "confidence": "alta",
+   "exceptions": "AET (art. 3º do Dec. 16.243)",
+   "geometry_source": "OSM por nome e sentido (Avenida Maruípe 45 ways; Rua José Cassiano dos Santos 11; Avenida Paulino Muller 32). O PDF é escaneado e foi lido pela imagem"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "zona",
+   "where": "Mercado da Vila Rubim (entre a R. Elias Miguel, a R. Pedro Nolasco e a Av. Marcos de Azevedo, da Av. Duarte Lemos à R. Pedro Nolasco)",
+   "days_hours": "Dias úteis 06:00–20:00; sábado 06:00–14:00; livre domingo e feriado",
+   "vehicles": "PBT > 16 t",
+   "act": "Decreto 16.243/2015, art. 2º, III e §2º",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF",
+   "confidence": "alta",
+   "exceptions": "AET",
+   "geometry_source": "Curadoria das quadras entre as vias citadas"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "outro",
+   "where": "Acesso às instalações portuárias e industriais do Centro de Vitória (Cais Comercial; portaria principal na Av. Elias Miguel, Vila Rubim)",
+   "days_hours": "Entrada e saída proibidas nos dias úteis das 07:00 às 09:00 (até 2020 também das 17:00 às 19:00)",
+   "vehicles": "Veículos de carga que atendem o porto e as indústrias adjacentes",
+   "act": "Decreto 16.243/2015, art. 2º, I e §1º, na redação do Decreto 18.103/2020 (DOMV 09/09/2020)",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF",
+   "confidence": "alta",
+   "exceptions": "Rota obrigatória. Entrada: Ponte Florentino Avidos (Cinco Pontes) ou Ponte Mal. Costa e Silva (Ponte do Príncipe), Av. Alexandre Buaiz, Av. Elias Miguel e Av. Getúlio Vargas. Saída: Av. Jurema Barroso, Av. Elias Miguel, R. Beresford Martins Moreira, nova via na praça, Av. Nair Azevedo Silva, Ponte do Príncipe ou Cinco Pontes, Av. Pres. Florentino Avidos. Indústrias adjacentes: vias entre as Cinco Pontes e a Ponte do Príncipe até a Av. República, exceto a R. Pedro Nolasco",
+   "geometry_source": "Ponto da portaria (REP Vports 2024, 18.4.1.1) e rota pelas vias nomeadas no OSM"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "outro",
+   "where": "Berço 909 do porto organizado de Vitória (Jesus de Nazareth)",
+   "days_hours": "Circulação só das 22:00 às 06:00, por rota fixa",
+   "vehicles": "Veículos de carga com destino ao Berço 909 (exceção ao art. 1º, IV)",
+   "act": "Decreto 16.301/2015 (acresce §4º ao art. 1º do Dec. 16.243/2015)",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16301.PDF",
+   "confidence": "alta",
+   "exceptions": "Entrada: Av. Fernando Ferrari, R. Dona Maria Rosa, Av. Leitão da Silva, Av. Mal. Mascarenhas de Moraes (Av. N. Sra. dos Navegantes → R. Amenóphis de Assis), R. Profª Emília Franklin Mululo, R. Cel. Schwab Filho, R. Amenóphis de Assis e R. Afonso Sarlo. Saída: R. Afonso Sarlo, Beira-Mar, Av. Leitão da Silva, Av. Maruípe, Av. N. Sra. da Penha e Av. Fernando Ferrari",
+   "geometry_source": "OSM por nome"
+  },
+  {
+   "jurisdiction": "Vitória",
+   "kind": "outro",
+   "where": "Carga e descarga em estabelecimentos comerciais e de serviços no perímetro urbano do Centro (do Forte São João à Ilha do Príncipe)",
+   "days_hours": "Permitida só nos dias úteis das 19:00 às 06:00, no sábado das 14:00 às 24:00 e livre no domingo e feriado",
+   "vehicles": "Qualquer veículo em operação de carga e descarga de bens ou mercadorias",
+   "act": "Lei municipal 6.490/2005, arts. 1º a 4º",
+   "act_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2005/L6490.PDF",
+   "confidence": "media",
+   "exceptions": "Art. 2º: carga de valores, mercadorias destinadas ao consumidor final e a hospitais e clínicas. Pena: apreensão do veículo e multa de R$ 300 atualizada pelo IPCA",
+   "geometry_source": "Bairros do Forte São João à Ilha do Príncipe (GeoWeb camada 32); vale como aviso por destino"
+  },
+  {
+   "jurisdiction": "Vila Velha (IBGE 3205200)",
+   "kind": "zona",
+   "where": "Centro de Vila Velha (inclui o sítio histórico da Prainha)",
+   "days_hours": "PBT > 10 t: dias úteis 11:00–19:00, sábado 08:00–19:00, livre domingo e feriado. PBT > 16 t: qualquer dia e horário",
+   "vehicles": "Veículo de carga, mesmo vazio, com PBT > 10 t (com horário) e > 16 t (24h)",
+   "act": "Decreto municipal 161/2001, art. 1º, I, a e b (assinado em 22/06/2001; Boletim Oficial de 15/08/2001; vigência 60 dias; situação 'Em Vigor', sem remissões)",
+   "act_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html",
+   "confidence": "alta",
+   "exceptions": "§1º itens 1 a 4: utilidade pública, manutenção viária, socorro mecânico, art. 29 VII do CTB. Veículos com destino ao porto seguem o art. 2º. Art. 3º: Autorização Especial da SEMUT. Não define VUC",
+   "geometry_source": "Bairro 'Centro Vila Velha' (IJSN bairros 2020, GEOBASES WFS ijsn_limite_bairro_2020_UTF8)"
+  },
+  {
+   "jurisdiction": "Vila Velha",
+   "kind": "zona",
+   "where": "Bairro Glória, exceto a R. Santa Teresinha, a Estrada Jerônimo Monteiro e a Rod. Carlos Lindenberg",
+   "days_hours": "PBT > 10 t: dias úteis 11:00–19:00 e sábado 07:00–18:00. PBT > 16 t: qualquer dia e horário",
+   "vehicles": "PBT > 10 t (com horário) e > 16 t (24h)",
+   "act": "Decreto 161/2001, art. 1º, II, a e b",
+   "act_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html",
+   "confidence": "alta",
+   "exceptions": "As 3 vias citadas ficam livres; art. 3º (Autorização Especial)",
+   "geometry_source": "Bairro 'Glória' (IJSN 2020) menos as 3 vias (OSM)"
+  },
+  {
+   "jurisdiction": "Vila Velha",
+   "kind": "via",
+   "where": "Orla de Praia da Costa, Itapuã e Itaparica",
+   "days_hours": "Todos os dias, inclusive domingo e feriado, das 10:00 às 20:00",
+   "vehicles": "PBT > 10 t",
+   "act": "Decreto 161/2001, art. 1º, III, a",
+   "act_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html",
+   "confidence": "media",
+   "exceptions": "Autorização prévia da SEMUT",
+   "geometry_source": "Curadoria: o ato não lista as vias da orla"
+  },
+  {
+   "jurisdiction": "Vila Velha",
+   "kind": "zona",
+   "where": "Todas as ruas de Praia da Costa, Itapuã e Itaparica",
+   "days_hours": "07:00–20:00 'em qualquer dia' (redação ambígua). Estacionamento de PBT > 16 t proibido sempre",
+   "vehicles": "PBT > 16 t",
+   "act": "Decreto 161/2001, art. 1º, III, b e c",
+   "act_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html",
+   "confidence": "media",
+   "exceptions": "Autorização prévia da SEMUT",
+   "geometry_source": "Bairros IJSN 2020 'Praia da Costa', 'Itapuã', 'Praia de Itaparica'. Conferir se Nova Itaparica, Jockey de Itaparica e Coqueiral de Itaparica entram"
+  },
+  {
+   "jurisdiction": "Vila Velha",
+   "kind": "outro",
+   "where": "Instalações portuárias e industriais de Vila Velha (Cais de Capuaba, pela Estrada de Capuaba; Cais de Paul, pela Av. Anésio José Simões)",
+   "days_hours": "Entrada e saída proibidas nos dias úteis das 07:00 às 09:00 e das 17:00 às 19:00",
+   "vehicles": "Veículos de carga que atendem o porto e as indústrias adjacentes",
+   "act": "Decreto 161/2001, art. 2º e parágrafo único",
+   "act_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html",
+   "confidence": "alta",
+   "exceptions": "Rota obrigatória: entrada pela Rod. Carlos Lindenberg, Rod. Darly Santos e Av. Capuaba; saída pela Av. Capuaba e Rod. Darly Santos ou Rod. Carlos Lindenberg",
+   "geometry_source": "Portarias do REP Vports 2024 (18.4.1.2 e 18.4.1.3); vias no OSM"
+  },
+  {
+   "jurisdiction": "Serra (IBGE 3205002)",
+   "kind": "via",
+   "where": "Av. Norte-Sul (da confluência da Av. Rio Amazonas e Av. João Palácio até a Av. Região Sudeste, Barcelona); Av. Central (do início, na Av. Eudes Scherrer de Souza/Valparaíso, até a Av. Norte-Sul); R. Carioca e R. M (da BR-101 à Av. Norte-Sul, N. Sra. do Rosário de Fátima)",
+   "days_hours": "Dias úteis (seg–sex) 07:00–09:00 e 17:00–19:00; livre em feriado (dia não útil)",
+   "vehicles": "Caminhão, mesmo vazio, com PBT > 23 t (na Av. Central, PBT > 16 t). Também proíbe a operação de carga e descarga",
+   "act": "Decreto municipal 5.881/2020, art. 1º, I, e art. 6º (red. Dec. 2.872/2022)",
+   "act_url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html",
+   "confidence": "alta",
+   "exceptions": "Art. 5º I–V: redes de serviço, lixo, imprensa, transporte de valores, transporte coletivo, manutenção viária, socorro, polícia e fiscalização, socorro mecânico. O inciso VI (empresas situadas nas vias) foi revogado pelo Dec. 6.056/2024. Art. 7º: autorização especial da Sec. de Defesa Social, pedida com 3 dias úteis",
+   "geometry_source": "OSM por nome recortado no limite de Serra (Avenida Norte-Sul 84 ways; Avenida Central 62; Rua Carioca 12). Anexo I (planta) não baixado"
+  },
+  {
+   "jurisdiction": "Serra",
+   "kind": "via",
+   "where": "Av. Central, da Av. Norte-Sul ao final, na Av. Eudes Scherrer de Souza (rotatória do Hospital Dório Silva)",
+   "days_hours": "Dias úteis 08:00–19:00; sábado 08:00–14:00",
+   "vehicles": "PBT > 16 t, mesmo vazio; inclui carga e descarga",
+   "act": "Decreto 5.881/2020, art. 1º, II e §1º; art. 6º",
+   "act_url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html",
+   "confidence": "alta",
+   "exceptions": "Arts. 5º e 7º",
+   "geometry_source": "OSM por nome"
+  },
+  {
+   "jurisdiction": "Serra",
+   "kind": "via",
+   "where": "Art. 2º: R. Um, R. Elesbão Alexandre Miranda, R. Floriano Peixoto, R. Presciliano Biluia, R. Santos Pintos, R. das Acácias, R. Major Pissarra, R. Dom Pedro II, R. Cassiano Castelo, Av. Jones dos Santos Neves e R. Maestro Antonio Cícero. Art. 3º: estrada rural Calogi/Muribeca, acesso no km 247 sul da BR-101, de UTM SIRGAS2000 x 356072,659 / y 7780151,775 a x 356005,984 / y 7780025,833. Art. 4º: Av. Guarapari, entre a Av. Anchieta e a R. Santos Dumont. Art. 4º-A: Av. Brasil, R. Papagaio e R. Gaivota (Novo Horizonte)",
+   "days_hours": "Qualquer dia e horário (24h, inclusive feriado)",
+   "vehicles": "Caminhão, mesmo vazio, com PBT > 23 t; inclui carga e descarga",
+   "act": "Decreto 5.881/2020, arts. 2º a 4º; art. 4º-A incluído pelo Decreto 2.872/2022 (DOM Serra de 26/05/2022, vigência 30 dias depois); art. 5º VI revogado pelo Decreto 6.056/2024",
+   "act_url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html",
+   "confidence": "alta",
+   "exceptions": "Arts. 5º (I–V) e 7º",
+   "geometry_source": "OSM por nome dentro de Serra (atenção a nomes repetidos; 'Rua Gaivota' e 'Rua Gaivotas' coexistem); art. 3º por coordenada UTM 24S"
+  },
+  {
+   "jurisdiction": "Estado do ES (SEMOBI/CETURB-ES; fiscalização BPTran)",
+   "kind": "ponte",
+   "where": "Ponte Deputado Darcy Castello de Mendonça (Terceira Ponte, ES-060, Vitória–Vila Velha), toda a extensão",
+   "days_hours": "Qualquer dia e horário (24h)",
+   "vehicles": "Qualquer veículo automotor de carga com mais de 2 eixos OU PBT > 15 t",
+   "act": "Lei estadual 9.602/2010, art. 2º (DOE 27/12/2010). A guarita de controle no km 3,3, sentido norte, lado de Vila Velha, barra caminhões (CETURB/ES, Norma Complementar 001/2024, DIO-ES 23/08/2024)",
+   "act_url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html",
+   "confidence": "alta",
+   "exceptions": "Nenhuma no texto. O PL 475/2020 (isenção para utilidade pública) não foi confirmado como lei. Sem pedágio desde 22/12/2023",
+   "geometry_source": "OSM: ways 'Ponte Deputado Darcy Castello de Mendonça' (ES-060); DER-ES SRE 060EES0010"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "rodovia",
+   "where": "ES-060 (Rodovia do Sol), do km 33 (retorno, B. Village do Sol) ao km 39 (retorno, trevo de Setiba), em Guarapari",
+   "days_hours": "Qualquer dia e horário",
+   "vehicles": "Caminhão com PBT > 23 t",
+   "act": "Instrução de Serviço DER-ES 003-N, de 23/01/2024, art. 1º (DIO-ES 24/01/2024, p. 35)",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22Setiba%22",
+   "confidence": "alta",
+   "exceptions": "Nenhuma no ato",
+   "geometry_source": "DER-ES SRE 060EES0110 (km 31,859–39,79), com referência linear km 33–39 (GEOBASES WFS der_rodovias_es_epsg_31984)"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "rodovia",
+   "where": "ES-060, Acesso 9020, do km 0 (entr. Rodovia do Sol, B. Village do Sol) ao km 8,5 (entr. ES-388, B. Amarelos/BR-101), em Guarapari. A imprensa chamou o trecho de 'ES-477'",
+   "days_hours": "Qualquer dia e horário",
+   "vehicles": "Caminhão com PBT > 23 t",
+   "act": "Instrução de Serviço DER-ES 002-N, de 23/01/2024, art. 1º (DIO-ES 24/01/2024, p. 34)",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22Acesso%209020%22",
+   "confidence": "alta",
+   "exceptions": "Nenhuma no ato",
+   "geometry_source": "DER-ES SRE 060EES9020-A (km 0–6,349) + 060EES9020-B (até a BR-101 em Amarelos)"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "rodovia",
+   "where": "ES-060, do entr. Rod. Darly Santos (Vila Velha) ao entr. Rod. Jones [dos Santos Neves] (texto truncado na busca). Revogada",
+   "days_hours": "Revogada (vigorou de 22/12/2023 a 24/01/2024)",
+   "vehicles": "PBT > 23 t",
+   "act": "IS DER-ES 009-N, de 21/12/2023 (DIO-ES 22/12/2023), tornada insubsistente pela IS 001-N, de 23/01/2024",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22TORNAR%20INSUBSISTENTE%22",
+   "confidence": "alta",
+   "exceptions": "Registrar como revogada (não aplicar)",
+   "geometry_source": "—"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "ponte",
+   "where": "Ponte sobre o Rio Jacarandá, ES-476 km 6,11, Viana (OAE-476EES0010-003; -20.45340, -40.49225)",
+   "days_hours": "Por tempo indeterminado, 24h",
+   "vehicles": "PBT > 12 t",
+   "act": "Instrução de Serviço DER-ES (DIO-ES 04/12/2024, p. 65)",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-12-04/df:2024-12-04/?1=1&q=%22Rio%20Jacarand%C3%A1%22",
+   "confidence": "alta",
+   "exceptions": "—",
+   "geometry_source": "Coordenada SIRGAS 2000 do próprio ato"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "ponte",
+   "where": "Ponte sobre o Rio Calçado, ES-388 km 2,44, Guarapari (OAE-388EES0010-004; -20.522150, -40.564403)",
+   "days_hours": "Por tempo indeterminado, 24h",
+   "vehicles": "PBT > 10 t",
+   "act": "Instrução de Serviço DER-ES 010-N, de 06/11/2025 (DIO-ES 07/11/2025, p. 37–38)",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2025-11-07/df:2025-11-07/?1=1&q=%22OAE388EES0010-004%22",
+   "confidence": "alta",
+   "exceptions": "—",
+   "geometry_source": "Coordenada do ato"
+  },
+  {
+   "jurisdiction": "Estado do ES (DER-ES)",
+   "kind": "ponte",
+   "where": "Ponte sobre o Rio Fundão, ES-261 km 104, Fundão (OAE-261EES0110-019; -19.937199, -40.402547)",
+   "days_hours": "Por tempo indeterminado, 24h",
+   "vehicles": "PBT > 16 t",
+   "act": "Instrução de Serviço DER-ES (DIO-ES 31/08/2026, assinada em 28/08/2026)",
+   "act_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2026-08-31/df:2026-08-31/?1=1&q=%22Rio%20Fund%C3%A3o%22",
+   "confidence": "alta",
+   "exceptions": "—",
+   "geometry_source": "Coordenada do ato"
+  },
+  {
+   "jurisdiction": "OSM (sem ato encontrado)",
+   "kind": "rodovia",
+   "where": "ES-060 'Rodovia José Ribeiro Tristão', do km ~51 ao ~65 (Contorno de Guarapari → Meaípe; SRE 060EES0140/0150), 25 ways",
+   "days_hours": "Tag permanente",
+   "vehicles": "hgv=no + maxweight=15 no OSM (barra todo caminhão no Valhalla)",
+   "act": "Nenhum ato vigente encontrado. A IS 009-N/2023 caiu; a Lei 9.602/2010 só proíbe na ponte; a busca no DIO-ES por 'PROIBIR o tráfego' não acha nada para esse trecho",
+   "act_url": "https://overpass-api.de/api/interpreter",
+   "confidence": "baixa",
+   "exceptions": "Provável tag herdada da concessão Rodosol (encerrada em 22/12/2023). Confirmar com DER-ES/CETURB ou em campo antes de corrigir",
+   "geometry_source": "OSM ways 28580161, 42434123, 99273514, 437093639 etc. (rmgv_hgv.json)"
+  },
+  {
+   "jurisdiction": "OSM (sem ato encontrado)",
+   "kind": "ponte",
+   "where": "Terceira Ponte: hgv:conditional = yes @ (10:00-16:00 AND weight<10); yes @ (22:00-06:00 AND weight<15)",
+   "days_hours": "10–16h para < 10 t e 22–06h para < 15 t, segundo o OSM e um resumo de imprensa",
+   "vehicles": "Caminhões até 10 t e até 15 t",
+   "act": "Não encontrado no DIO-ES nem na ALES. A lei vigente (9.602/2010) só proíbe > 2 eixos ou > 15 t, sem horário",
+   "act_url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html",
+   "confidence": "baixa",
+   "exceptions": "O Valhalla ignora a tag (valor com dois '@'). Conferir com a CETURB",
+   "geometry_source": "OSM ways 24617264, 48542116, 876419537 etc."
+  }
+ ],
+ "key_facts": [
+  {
+   "fact": "Dec. 16.243/2015 de Vitória: em todo o município, PBT > 23 t proibido nos dias úteis 6–10h e 16–20h e no sábado 6–14h; PBT > 45 t proibido sempre; cegonheira > 16 t proibida nos dias úteis 6–20h e no sábado 6–14h. Domingo e feriado são livres. Revogou o Dec. 10.364/1999",
+   "source_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"
+  },
+  {
+   "fact": "O Dec. 18.103/2020 de Vitória reduziu a janela proibida de acesso ao porto do Centro a dias úteis das 7h às 9h (antes também 17–19h) e mudou a rota de entrada (inclui a Av. Getúlio Vargas) e de saída",
+   "source_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"
+  },
+  {
+   "fact": "O Dec. 16.575/2015 de Vitória (PDF escaneado, sem texto) proíbe PBT > 16 t no sentido Centro na Av. Maruípe, na R. José Cassiano dos Santos e na Av. Paulino Muller",
+   "source_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16575.PDF"
+  },
+  {
+   "fact": "O sistema de atos de Vitória responde por POST em aberto/op/legislacao-buscar.cfm, mas só com cookie de sessão e o header X-Requested-With (sem eles, HTTP 500). O PDF fica em /atosnormativos/arquivos/AAAA/D{num}.PDF",
+   "source_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/?url=legislacao"
+  },
+  {
+   "fact": "A página oficial da Prefeitura de Vitória (10/01/2018) resume o Dec. 16.243/2015 com os mesmos limites de PBT e diz que a infração é média (multa de R$ 130,16 e 4 pontos)",
+   "source_url": "https://m.vitoria.es.gov.br/noticia/guarda-civil-fiscaliza-trafego-de-caminhoes-e-carretas-em-vitoria-26744"
+  },
+  {
+   "fact": "Lei 6.490/2005 de Vitória: carga e descarga no Centro (do Forte São João à Ilha do Príncipe) só nos dias úteis das 19h às 6h, no sábado das 14h às 24h e livre no domingo e feriado",
+   "source_url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2005/L6490.PDF"
+  },
+  {
+   "fact": "Feriados municipais de Vitória em 2026 (Lei 1.732/1967): Paixão de Cristo (03/04), N. Sra. da Penha (13/04), Corpus Christi (04/06) e N. Sra. da Vitória (08/09)",
+   "source_url": "https://www.vitoria.es.gov.br/prefeitura/calendario-de-feriados-do-municipio"
+  },
+  {
+   "fact": "Dec. 161/2001 de Vila Velha ('Em Vigor', sem remissões): Centro com > 10 t proibido nos dias úteis das 11h às 19h e no sábado das 8h às 19h, e > 16 t sempre. Glória, orla e bairros de praia têm regras próprias. Acesso ao porto proibido nos dias úteis das 7h às 9h e das 17h às 19h",
+   "source_url": "https://legislacao.vilavelha.es.gov.br/Arquivo/Documents/legislacao/html/D1612001.html"
+  },
+  {
+   "fact": "Dec. 5.881/2020 da Serra (texto compilado): as restrições só valem para PBT > 23 t (na Av. Central, > 16 t) e proíbem também a carga e descarga. Ele revogou o Dec. 3.312/2018, que a Tribuna Online ainda citava em 02/01/2025",
+   "source_url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"
+  },
+  {
+   "fact": "O Dec. 6.056/2024 da Serra revogou a isenção para caminhões de empresas situadas nas vias restritas (art. 5º VI, incluída em 2022)",
+   "source_url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D60562024.html"
+  },
+  {
+   "fact": "Lei estadual 9.602/2010, art. 2º: na Terceira Ponte é proibido 'qualquer tipo de veículo automotor de carga com mais de 02 eixos ou com peso bruto total acima de 15 toneladas'",
+   "source_url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html"
+  },
+  {
+   "fact": "A CETURB/ES (Norma Complementar 001/2024) cita a guarita de controle no km 3,3, sentido norte, lado de Vila Velha, que barra o acesso de caminhões, ciclistas, pedestres e animais à Terceira Ponte. A gestão do Sistema Rodovia do Sol foi delegada à CETURB pela LC 1.060/2023",
+   "source_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-08-23/df:2024-08-23/?1=1&q=%22guarita%20de%20controle%20de%20acesso%22"
+  },
+  {
+   "fact": "Pedágio da Terceira Ponte e da Rodovia do Sol extinto a partir de 22/12/2023, com a operação assumida pelo Estado",
+   "source_url": "https://semobi.es.gov.br/terceira-ponte-e-rodovia-do-sol"
+  },
+  {
+   "fact": "IS DER-ES 003-N/2024 proíbe caminhão com PBT > 23 t na ES-060 do km 33 ao 39 (Village do Sol a Setiba). A IS 002-N/2024 faz o mesmo no Acesso 9020, do km 0 ao 8,5 (até a ES-388/BR-101, Amarelos). A IS 001-N/2024 tornou insubsistente a IS 009-N/2023",
+   "source_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22Acesso%209020%22"
+  },
+  {
+   "fact": "A busca full-text do DIO-ES é uma API JSON aberta (Elasticsearch): /busca/busca/buscar/query/{pag}/di:/df:/?q=. Ela devolve o texto de cada página do Diário do Estado e achou 21 IS do DER-ES com PBT máximo por ponte, código OAE, km e coordenadas",
+   "source_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2015-01-01/df:2026-10-10/?1=1&q=%22PROIBIR%20o%20tr%C3%A1fego%22"
+  },
+  {
+   "fact": "Pontes estaduais com limite de PBT na RMGV: Rio Jacarandá (ES-476 km 6,11, Viana, 12 t), Rio Calçado (ES-388 km 2,44, Guarapari, 10 t) e Rio Fundão (ES-261 km 104, Fundão, 16 t)",
+   "source_url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2025-11-07/df:2025-11-07/?1=1&q=%22OAE388EES0010-004%22"
+  },
+  {
+   "fact": "GEOBASES (IDE-ES) WFS: der_rodovias_es_epsg_31984 tem 894 segmentos do SRE com km_inicial e km_final (atualizado em 20/05/2026). O segmento 060EES0110 cobre o km 31,859–39,79 e o 060EES9020-A cobre o Acesso 9020, km 0–6,349",
+   "source_url": "https://ide.geobases.es.gov.br/geoserver/ows?service=WFS&request=GetCapabilities"
+  },
+  {
+   "fact": "GeoWeb Vitória (ArcGIS REST, geoJSON): bairros (80 polígonos), hierarquia viária PDU 2018 (9.624 linhas), ZEIU 1 Centro e endereços (178.651 pontos). Sem licença declarada",
+   "source_url": "https://gis.vitoria.es.gov.br/arcgis/rest/services/Opendata/HubGeoweb/MapServer"
+  },
+  {
+   "fact": "OSM na RMGV: a Terceira Ponte tem hgv:conditional com dois '@', que o Valhalla ignora. Sobra maxweight=15 em 4 ways e não há maxaxles. Na ES-060, km ~51–65, há hgv=no + maxweight=15 em 25 ways sem ato vigente encontrado. As regras de 23 t da Rodovia do Sol não aparecem no OSM",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "REP Vports 2024: as portarias ficam na Av. Elias Miguel (Cais Comercial), na Estrada de Capuaba e na Av. Anésio José Simões (Paul). Acesso por agendamento no SGP/CADWeb. Só a concessionária pode implantar pátio regulador. O regulamento não fixa janela horária para caminhão",
+   "source_url": "https://vports.com.br/wp-content/uploads/2024/02/REP_2024_Porto.pdf"
+  },
+  {
+   "fact": "Querido Diário cobre Vitória (desde 2014-07), Vila Velha (desde 2020-08) e Serra (desde 2021-01). Cariacica, Viana, Guarapari e Fundão têm 0 diários",
+   "source_url": "https://api.queridodiario.org.br/gazettes?territory_ids=3201308&size=1"
+  }
+ ],
+ "sources": [
+  {
+   "name": "DIO-ES – busca full-text do Diário Oficial do Estado (Elasticsearch)",
+   "publisher": "Departamento de Imprensa Oficial do ES (DIO-ES)",
+   "url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-01-24/df:2024-01-24/?1=1&q=%22Setiba%22",
+   "access": "Aberto, GET sem autenticação; paginação /query/{n}; filtros di:/df: por data",
+   "format": "JSON (hits com o texto completo de cada página, data, diario_id e pagina)",
+   "license": "Texto de ato oficial (não protegido por direito autoral, Lei 9.610/98 art. 8º, IV); uso comercial do texto permitido",
+   "tested": true,
+   "test_result": "HTTP 200, cerca de 15 KB por consulta. Achei as IS 001/002/003-N/2024, a IS 009-N/2023, a Norma CETURB 001/2024 e 21 atos 'PROIBIR o tráfego' do DER-ES (16 páginas). O índice tem só o Diário do Estado (tipo_edicao 1). Atos que quebram de página exigem buscar a página seguinte",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador oae_der_es.py (camada oae, SOURCE=der_es_is): consulta mensal por 'PROIBIR' + 'toneladas de PBT', faz o parse de OAE, km, PBT, eixo e coordenada e grava peso_max_t com bloqueio no ponto, como em oae_restricoes_curadas. As IS de trecho (Rodovia do Sol) vão para a camada municipal/regional genérica como kind=via",
+   "geo_coverage": "Espírito Santo inteiro (atos estaduais)",
+   "record_count": "21 IS de restrição de tráfego do DER-ES (2018–2026), 4 delas na RMGV/ES-060 além das 3 pontes",
+   "caveats": "Achar todos os atos depende da busca por frase. Não indexa diários municipais. A numeração das IS reinicia a cada ano"
+  },
+  {
+   "name": "Legislação Municipal de Vitória (Atos Normativos)",
+   "publisher": "Prefeitura Municipal de Vitória (SEMFA/Sub-TI)",
+   "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/?url=legislacao",
+   "access": "POST em aberto/op/legislacao-buscar.cfm com cookie de sessão e o header X-Requested-With (sem isso, 500); PDF por URL direta",
+   "format": "HTML (resultados) + PDF (ato; alguns escaneados)",
+   "license": "Texto legal (Lei 9.610 art. 8º, IV)",
+   "tested": true,
+   "test_result": "Buscas por número e por palavra-chave funcionaram. Baixei os Decs. 16.243, 16.301, 16.575 (escaneado) e 18.103 e a Lei 6.490 (HTTP 200, de 17 a 726 KB). Remissões: 'Alterado por 18.103'",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Curadoria manual em regras.json, no formato de data/raw/rmsp, com chave IBGE 3205309. Importador mun_es_vitoria.py usando rmsp_municipios.py como biblioteca. Geometria: limite IBGE para a zona do município; bairros do GeoWeb para o Centro; vias por nome no OSM",
+   "geo_coverage": "Vitória",
+   "record_count": "5 atos vigentes de caminhão/carga",
+   "caveats": "Não há situação 'vigente/revogado' explícita; conferir de novo a cada trimestre"
+  },
+  {
+   "name": "Legislação Online de Vila Velha",
+   "publisher": "Prefeitura Municipal de Vila Velha",
+   "url": "https://legislacao.vilavelha.es.gov.br/consulta-legislacao.aspx?tipo=6&numero=161&ano=2001&interno=0",
+   "access": "Aberto. A busca por número é rápida (cerca de 1 s); a full-text leva cerca de 150 s, e a paginação é por JS",
+   "format": "HTML (texto compilado em /Arquivo/Documents/legislacao/html/D{num}{ano}.html) + TIF (original)",
+   "license": "Texto legal",
+   "tested": true,
+   "test_result": "Dec. 161/2001: HTTP 200, 21 KB, situação 'Em Vigor', sem remissão. Busca 'veículos de carga': 12 resultados, 10 vistos (só o Dec. 161 é de restrição)",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regras em regras.json (IBGE 3205200); importador mun_es_vila_velha.py; zonas pelos bairros IJSN 2020 (GEOBASES); orla curada à mão",
+   "geo_coverage": "Vila Velha",
+   "record_count": "1 decreto (6 regras)",
+   "caveats": "Ato de 2001 sem revisão; redação ambígua no art. 1º III b"
+  },
+  {
+   "name": "Prefeitura Sem Papel da Serra – legislação (HTML compilado)",
+   "publisher": "Prefeitura Municipal da Serra",
+   "url": "https://prefeiturasempapel.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html",
+   "access": "GET direto no caminho /Arquivo/Documents/legislacao/html/D{num}{ano}.html. O caminho /image/*.pdf virou SPA, e a API /api/v1/legislation exige login",
+   "format": "HTML (Word exportado, windows-1252)",
+   "license": "Texto legal",
+   "tested": true,
+   "test_result": "D58812020: HTTP 200, 105 KB, compilado com as alterações de 2022 e 2024. D60562024, D28722022 e D33122018 também OK. A API responde 400 'Usuário não tem permissão'",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Regras em regras.json (IBGE 3205002); importador mun_es_serra.py; vias por nome no OSM recortadas no limite municipal; estrada rural pelas coordenadas UTM do art. 3º",
+   "geo_coverage": "Serra",
+   "record_count": "1 decreto vigente (+2 alteradores, 1 revogado)",
+   "caveats": "As plantas anexas (Anexos I–V) não foram baixadas; a data de publicação de 2020 não foi conferida"
+  },
+  {
+   "name": "ALES – Legislação estadual (Lei 9.602/2010)",
+   "publisher": "Assembleia Legislativa do ES",
+   "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html",
+   "access": "GET aberto",
+   "format": "HTML em UTF-16",
+   "license": "Texto legal",
+   "tested": true,
+   "test_result": "HTTP 200, 105 KB; texto lido (arts. 2º a 4º)",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Regra kind=via (24h, eixos > 2 OU PBT > 15 t) na camada regional genérica, com a geometria dos ways da ponte no OSM. Usar exclusions/costLines só quando axle_count > 2 ou peso > 15 t",
+   "geo_coverage": "Terceira Ponte",
+   "record_count": "1",
+   "caveats": "Situação da lei e alterações (PL 475/2020) não conferidas no portal ALES"
+  },
+  {
+   "name": "GEOBASES / IDE-ES – WFS (DER-ES SRE, bairros IJSN, rodovias PDUI)",
+   "publisher": "GEOBASES (Governo do ES) – DER-ES, IJSN",
+   "url": "https://ide.geobases.es.gov.br/geoserver/ows?service=WFS&request=GetCapabilities",
+   "access": "WFS 2.0 aberto; outputFormat application/json; srsName EPSG:4326",
+   "format": "GeoJSON/GML",
+   "license": "Não declarada (o CSW do DER não tem dc:rights; o IJSN traz um código ISO genérico). Uso comercial não confirmado",
+   "tested": true,
+   "test_result": "670 feature types. der_rodovias_es_epsg_31984: 894 segmentos, com sre, sigla, km_inicial, km_final e situação, atualizado em 20/05/2026. ijsn_limite_bairro_2020_UTF8: 1.471 bairros (Vila Velha 92, Serra 129, Cariacica 0). pdui_rodovias_rmgv: 152",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Usar no import (sem camada própria): referência linear dos km das IS do DER-ES (ES-060 km 33–39, Acesso 9020) e polígonos de bairro de Vila Velha e Serra. Gravar a geometria curada em data/raw/<municipios>/es/*.geojson, como no RMSP",
+   "geo_coverage": "Espírito Santo",
+   "record_count": "894 segmentos SRE; 1.471 bairros",
+   "caveats": "A extensão geométrica difere do km oficial (060EES0010: 9,58 km de geometria contra 3,59 km nominais); interpolar por segmento"
+  },
+  {
+   "name": "GeoWeb Vitória – ArcGIS REST Opendata/HubGeoweb",
+   "publisher": "Prefeitura de Vitória (SEMFA/GEO)",
+   "url": "https://gis.vitoria.es.gov.br/arcgis/rest/services/Opendata/HubGeoweb/MapServer",
+   "access": "ArcGIS REST aberto (query com f=geojson; maxRecordCount 2000)",
+   "format": "GeoJSON/JSON",
+   "license": "Não declarada (o item diz 'envie e-mail para geoweb@vitoria.es.gov.br'); uso comercial não confirmado",
+   "tested": true,
+   "test_result": "Camada 32 (bairros): 80 polígonos, 1,8 MB. Camada 59 (hierarquia PDU 2018): 9.624 linhas. Camada 73 (ZEIU 1): 1. Camada 66 (endereços): 178.651. Não há camada de restrição de caminhão nem de sinalização pública",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Geometria auxiliar no import (Centro de Vitória, Vila Rubim). Os endereços podem reforçar o geocoding (tema enderecos_geocoding)",
+   "geo_coverage": "Vitória",
+   "record_count": "80 bairros; 9.624 trechos viários",
+   "caveats": "Licença indefinida; preferir os bairros do IBGE/IJSN se for publicar"
+  },
+  {
+   "name": "OpenStreetMap via Overpass (tags de caminhão na RMGV)",
+   "publisher": "OpenStreetMap contributors",
+   "url": "https://overpass-api.de/api/interpreter",
+   "access": "Overpass (com os headers do enunciado); houve 504 e 500 intermitentes (overpass-api.de e kumi)",
+   "format": "JSON",
+   "license": "ODbL",
+   "tested": true,
+   "test_result": "7 municípios da RMGV: 135 elementos (hgv=no 45, hgv:conditional 14 só na Terceira Ponte, maxweight 31, maxheight 90). Na consulta de nomes, 940 ways com os nomes dos decretos. Detalhes em osm/rmgv_hgv.json",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Validação e diagnóstico. Propor correção no OSM (maxaxles=2 e hgv:conditional válido na Terceira Ponte; revisar hgv=no na ES-060 km 51–65) só com confirmação oficial. Até lá, sobrepor pela camada (exclusion para eixos > 2) e registrar o caso em lacunas_osm",
+   "geo_coverage": "RMGV",
+   "record_count": "135 ways/nós com tag de caminhão",
+   "caveats": "O Valhalla ignora hgv:conditional com dois '@'. Um hgv=no indevido não se desfaz com costLines (precisa de patch no PBF ou edição no OSM)"
+  },
+  {
+   "name": "Querido Diário API (cobertura ES)",
+   "publisher": "Open Knowledge Brasil",
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=3205002&querystring=caminh%C3%B5es&size=3",
+   "access": "API aberta",
+   "format": "JSON + PDF",
+   "license": "Diários oficiais (domínio público); API aberta",
+   "tested": true,
+   "test_result": "Vitória com 3.769 diários (desde 2014-07), Vila Velha com 1.272 (desde 2020-08), Serra com 1.428 (desde 2021-01). Cariacica, Viana, Guarapari e Fundão: 0. Achou o Dec. 2.872/2022 e o Dec. 6.056/2024 da Serra. Consultas com OR e aspas deram 500/520",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Monitoramento (cron) de novos decretos de caminhão nos 3 municípios cobertos, no mesmo esquema do RMSP; alerta para revisão manual",
+   "geo_coverage": "Vitória, Vila Velha, Serra",
+   "record_count": "6.469 diários nos 3 municípios",
+   "caveats": "Sem Cariacica/Viana/Guarapari/Fundão; Serra só a partir de 2021"
+  },
+  {
+   "name": "Vports – Regulamento de Exploração do Porto (REP 2024) e página de acesso",
+   "publisher": "Vports (concessionária dos portos de Vitória e Barra do Riacho)",
+   "url": "https://vports.com.br/wp-content/uploads/2024/02/REP_2024_Porto.pdf",
+   "access": "PDF aberto",
+   "format": "PDF (64 p.)",
+   "license": "Documento de empresa (uso informativo; sem licença aberta)",
+   "tested": true,
+   "test_result": "HTTP 200, 1,38 MB. Seções 8.3.1–8.3.4 (acesso rodoviário, pátios reguladores, agendamento) e 18.4.1 (portarias). Sem janela horária para caminhão",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Pontos de portaria (Cais Comercial, Capuaba, Paul) como destinos com janela municipal (Vitória 7–9h; Vila Velha 7–9h/17–19h) e aviso de agendamento obrigatório, no estilo porto_santos_terminais",
+   "geo_coverage": "Porto de Vitória (Vitória e Vila Velha)",
+   "record_count": "3 complexos / 4 portarias",
+   "caveats": "Sem coordenadas no REP; geocodificar pelo endereço ou OSM"
+  },
+  {
+   "name": "Calendário de feriados de Vitória 2026",
+   "publisher": "Prefeitura de Vitória",
+   "url": "https://www.vitoria.es.gov.br/prefeitura/calendario-de-feriados-do-municipio",
+   "access": "HTML aberto",
+   "format": "HTML",
+   "license": "Informação oficial",
+   "tested": true,
+   "test_result": "HTTP 200. Feriados municipais (Lei 1.732/1967): 03/04, 13/04, 04/06 e 08/09/2026, mais os pontos facultativos",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Tabela holidays (scope municipal, ibge 3205309) com importador modelado em feriados_sp; as regras com 'exceto feriados' usam legalDayInfo(at, ibge)",
+   "geo_coverage": "Vitória",
+   "record_count": "4 feriados municipais/ano",
+   "caveats": "Vila Velha e Serra não levantados"
+  },
+  {
+   "name": "Página oficial de fiscalização de caminhões (Prefeitura de Vitória, 2018)",
+   "publisher": "Prefeitura de Vitória",
+   "url": "https://m.vitoria.es.gov.br/noticia/guarda-civil-fiscaliza-trafego-de-caminhoes-e-carretas-em-vitoria-26744",
+   "access": "HTML aberto",
+   "format": "HTML",
+   "license": "Notícia oficial",
+   "tested": true,
+   "test_result": "HTTP 200, 226 KB. Tabela de limites por PBT igual ao Dec. 16.243/2015 (sem a alínea d de 2016)",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só validação cruzada",
+   "geo_coverage": "Vitória",
+   "record_count": "—",
+   "caveats": "Secundária; anterior ao Dec. 18.103/2020"
+  },
+  {
+   "name": "dados.es.gov.br – Fluxo de veículos Rodosol (ARSP) e séries do DETRAN-ES",
+   "publisher": "Governo do ES (ARSP, DETRAN-ES)",
+   "url": "https://dados.es.gov.br/api/3/action/package_show?id=portal-da-transparencia-fluxo-de-veiculos-rodosol",
+   "access": "CKAN aberto",
+   "format": "CSV",
+   "license": "CC-BY (ARSP); CC0 (DETRAN)",
+   "tested": true,
+   "test_result": "Fluxo diário por praça e categoria de 2009 a 2023 (o CSV de 2023 tem 730 linhas e termina com o fim da concessão). Nenhum dataset de restrição ou malha DER",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar; quando muito, contexto histórico de volume de pesados (categorias 2–9) na Terceira Ponte e na Rodovia do Sol",
+   "geo_coverage": "Terceira Ponte / Rodovia do Sol",
+   "record_count": "cerca de 730 linhas/ano",
+   "caveats": "Série encerrada em 2023"
+  },
+  {
+   "name": "Vale – Regulamento dos Terminais de Tubarão e Praia Mole 2025",
+   "publisher": "Vale S.A.",
+   "url": "https://vale.com/documents/d/guest/regulamento-portuario-tuetpm-pt_rev1",
+   "access": "PDF aberto",
+   "format": "PDF (28 p.)",
+   "license": "Documento de empresa",
+   "tested": true,
+   "test_result": "HTTP 200, 815 KB. Só cita acesso terrestre pela BR-101/BR-262; nenhuma regra para caminhão",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar",
+   "geo_coverage": "Tubarão/Praia Mole",
+   "record_count": "—",
+   "caveats": "Operação majoritariamente ferroviária e marítima"
+  },
+  {
+   "name": "Portal de legislação de Cariacica",
+   "publisher": "Prefeitura Municipal de Cariacica",
+   "url": "https://cariacica.es.gov.br/legislacao",
+   "access": "GET com o parâmetro busca",
+   "format": "HTML",
+   "license": "Texto legal",
+   "tested": true,
+   "test_result": "HTTP 200, mas 'Nenhum registro encontrado' para 'caminhões', 'veículos de carga', 'veículos pesados' e até 'trânsito'. A busca parece quebrada; resultado inconclusivo",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Nenhum até confirmar por outra via (Câmara/camarasempapel, LAI ou SETRAN de Cariacica)",
+   "geo_coverage": "Cariacica",
+   "record_count": "0",
+   "caveats": "Não indexado no Querido Diário"
+  },
+  {
+   "name": "Imprensa (A Gazeta 26/01/2022, ES Brasil 24/01/2024, Tribuna Online 02/01/2025, ALES notícia 15/09/2020)",
+   "publisher": "Diversos",
+   "url": "https://www.agazeta.com.br/es/cotidiano/quais-as-regras-para-veiculos-pesados-trafegarem-nas-ruas-de-vitoria-0122",
+   "access": "HTML (Folha Vitória responde 403 ao curl; es360 sem DNS)",
+   "format": "HTML",
+   "license": "Direitos reservados (só referência)",
+   "tested": true,
+   "test_result": "Pistas úteis (Dec. 161 de Vila Velha, Lei 9.602, Dec. 3.312 da Serra), mas com erros: 'ES-477' (é o Acesso 9020 da ES-060); o decreto da Serra citado em 2025 já estava revogado",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar; só pistas",
+   "geo_coverage": "RMGV",
+   "record_count": "—",
+   "caveats": "Desatualizadas ou imprecisas"
+  }
+ ],
+ "reused_from_existing": [
+  "restricoes_rmsp_municipios: esquema data/raw/rmsp/regras.json (janelas, feriados suspende/aplica, alvo, vuc, base_legal), política zona→exclusions / via→costLines com fator 1000, 'origem/destino dentro da zona → avisa', corte de linhas em 400 m e validação no Valhalla. A API do Querido Diário, já testada lá, aqui só foi consultada para conferir a cobertura do ES",
+  "CONVENCOES_IMPLEMENTACAO.md (sudeste): estender restricoes_rmsp a uma camada genérica por código IBGE (sem camada por cidade); feriados municipais na tabela holidays (escopo municipal) com importador no modelo de feriados_sp",
+  "rodovias_restricoes: Portaria DIOP/PRF 121/2026 e importador prf_feriados.py (já tratam o ES; restrição em feriado só em pista simples federal). Não retestado",
+  "pontes_federais: siaet_restricoes.py já baixa o PDF do ES (UFS inclui 'es'); PROARTE/oae_sgo do DNIT cobrem pontes federais do ES. Não retestado",
+  "osm_qualidade_valhalla: regra de parsing do Valhalla (hgv:conditional só com um '@'; qualificadores weight/axles e PH ignorados; maxaxles lido para caminhão), usada para diagnosticar a Terceira Ponte",
+  "porto_santos_terminais: modelo de destino portuário com agendamento e janela, aplicado ao Cais Comercial, Capuaba e Paul",
+  "legislacao_limites: Res. CONTRAN 882/2021 (base citada nas IS do DER-ES, art. 61) e o CTB; caminhão = PBT > 3,5 t"
+ ],
+ "gaps": [
+  "Cariacica: nenhuma fonte primária. A busca do portal de legislação está quebrada (zero resultados até para 'trânsito'), o município não está no Querido Diário, e A Gazeta (2022) diz que não há lei municipal. Falta confirmar pela Câmara (camarasempapel), pela SETRAN ou por LAI",
+  "Viana, Guarapari e Fundão (municipais): não pesquisados a fundo e ausentes do Querido Diário. Só as pontes estaduais do DER-ES nesses municípios foram cobertas",
+  "Terceira Ponte: não achei o ato que daria as janelas 10–16h (<10 t) e 22–6h (<15 t) presentes no OSM e num resumo de imprensa. O PL 475/2020 (isenção de utilidade pública) não foi confirmado como lei. A situação da Lei 9.602/2010 no portal da ALES não foi verificada",
+  "ES-060 do km ~51 ao ~65 (Contorno de Guarapari → Meaípe): o OSM tem hgv=no + maxweight=15 sem ato vigente encontrado. Pode ser tag velha da Rodosol ou existir placa/ato não publicado no DIO. Falta confirmar com DER-ES/CETURB. O mesmo vale para a ES-469 (hgv=no, 9 ways) e para a ponte da Rod. Jones dos Santos Neves (maxweight=15)",
+  "Geometrias que o ato não define: o 'sistema viário à direita' das 5 ruas do Centro de Vitória; o perímetro exato do Centro (R. Sebastião Tourinho/Raimundo Nonato até a Ponte Seca); a 'Orla' de Vila Velha; se bairros IJSN como Nova Itaparica, Jockey e Coqueiral de Itaparica entram no ato de 2001",
+  "Plantas anexas dos decretos da Serra (Anexos I a V) não baixadas; data de publicação do Dec. 5.881/2020 (início de vigência) não conferida",
+  "Feriados municipais de Vila Velha e Serra não levantados (os de Vitória sim, Lei 1.732/1967). Feriado estadual do ES não verificado",
+  "Vila Velha: 2 dos 12 resultados da busca 'veículos de carga' não foram vistos (paginação por JS); o Plano Diretor (LC 128/2026) pode ter rotas de carga e não foi lido",
+  "Licença dos dados geográficos estaduais e municipais (GEOBASES, GeoWeb Vitória) não declarada; uso comercial não confirmado",
+  "Fiscalização: não achei dado aberto de autuações do art. 187 I por local para medir onde a regra é cobrada de fato (o DETRAN-ES só tem ranking agregado)"
+ ],
+ "recommendations": [
+  "Prioridade 1, esforço baixo: incluir no rascunho regras_rmgv.json, no esquema do RMSP, a Terceira Ponte (Lei 9.602/2010) e a Rodovia do Sol (IS 002-N e 003-N/2024), como kind=via com IBGE 3205309/3205200/3202405. A geometria vem do OSM (ponte) e do SRE DER-ES via GEOBASES (km 33–39, Acesso 9020). Na ponte, bloquear caminhão com axle_count > 2 ou peso > 15 t, 24h: hoje o Valhalla deixa passar um caminhão de 3 eixos com até 15 t",
+  "Prioridade 1, esforço baixo: criar o importador oae_der_es.py (camada oae) lendo a busca JSON do DIO-ES ('PROIBIR' + 'toneladas de PBT'). Ele extrai código OAE, km, PBT, PBT por eixo e coordenada SIRGAS e grava peso_max_t com bloqueio pontual. São 17 pontes no ES hoje, 3 na RMGV (Viana 12 t, Guarapari 10 t, Fundão 16 t). Rodar mensalmente e tratar também 'LIBERAR o tráfego'",
+  "Prioridade 2, esforço médio: generalizar restricoes_rmsp por IBGE (conforme as convenções) e implantar Vitória, Vila Velha e Serra, com importadores mun_es_vitoria/mun_es_vila_velha/mun_es_serra que reusem rmsp_municipios.py. Em Vitória, a zona do município (PBT > 23 t nos picos; > 45 t 24h) usa o limite IBGE; as vias vêm do OSM por nome; o Centro vem dos bairros do GeoWeb. Em Vila Velha, as zonas vêm dos bairros IJSN. Na Serra, as vias vêm do OSM recortado no município. Como nenhum ato define VUC, o critério é só PBT (alvo.pbt_t_min), sem a lógica de VUC por dimensão",
+  "Prioridade 2, esforço baixo: carregar os feriados municipais de Vitória (Lei 1.732/1967) na tabela holidays. Levantar os de Vila Velha e Serra antes de ligar as regras que dizem 'exceto feriados' ou 'dias úteis'",
+  "Prioridade 2, esforço baixo: avisos por destino (annotate) para o porto. No Cais Comercial (Av. Elias Miguel), proibido nos dias úteis das 7h às 9h, com rota obrigatória pelas Cinco Pontes ou Ponte do Príncipe. Em Capuaba e Paul, proibido das 7h às 9h e das 17h às 19h, com rota pela Carlos Lindenberg, Darly Santos e Av. Capuaba. Em todos, agendamento no SGP/CADWeb da Vports. Em Vitória, a Lei 6.490/2005 restringe a carga e descarga no Centro (aviso de janela)",
+  "Antes de mexer no OSM: confirmar com DER-ES/CETURB (ou em campo, Mapillary) o hgv=no + maxweight=15 da ES-060 km 51–65 e as janelas condicionais da Terceira Ponte. Se o hgv=no estiver errado, ele barra todo caminhão e não se desfaz com costLines. A correção precisa ser feita no OSM (decisão do usuário, ação pública) ou por patch no PBF local. Registrar os casos na camada lacunas_osm",
+  "Monitoramento: cron no Querido Diário (Vitória, Vila Velha e Serra) e no DIO-ES ('PROIBIR o tráfego', 'Instrução de Serviço' + 'PBT') para detectar novos atos. Para Cariacica, Viana, Guarapari e Fundão, pedir por LAI às SETRANs municipais a lista de restrições vigentes",
+  "Não usar como fonte as matérias de imprensa: elas citam o Dec. 3.312/2018 da Serra (revogado) e chamam o Acesso 9020 de 'ES-477'"
+ ]
+}

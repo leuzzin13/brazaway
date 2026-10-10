@@ -223,9 +223,14 @@ describe('pedágio: pórtico free flow de ponto único (RIOSP, Itaguaí, BR-101/
       const line = turf.lineString(nt.trip.legs.flatMap((l: any) => decodePolyline6(l.shape)));
       const passes = turf.pointToLineDistance(turf.point([ff.lon, ff.lat]), line, { units: 'meters' }) <= 3;
       if (passes) {
-        expect(alt.disponivel, JSON.stringify(alt)).toBe(false);
-        expect(alt.motivo).toBe('mesmos_pontos');
-        expect(r.body.layers.pedagio.summary.join('\n')).toMatch(/Rota sem pedágio não encontrada/);
+        // a camada tenta de novo com um anel em volta de cada ponto de cobrança (praça em via sem toll=yes): ou a
+        // alternativa deixa de passar pelo pórtico, ou não promete economia ("mesmos pontos"/"sem economia")
+        if (alt.disponivel) {
+          expect((alt.pedagio_restante?.pontos ?? []).some((n: string) => /Itagua/.test(n)), JSON.stringify(alt)).toBe(false);
+        } else {
+          expect(['mesmos_pontos', 'sem_economia']).toContain(alt.motivo);
+          expect(r.body.layers.pedagio.summary.join('\n')).toMatch(/Rota sem pedágio não encontrada/);
+        }
       } else {
         expect(alt.disponivel).toBe(true);
         expect(alt.pedagio_restante).toBeNull();
