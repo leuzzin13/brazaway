@@ -19,6 +19,8 @@ const MAX_TRECHO_KM = 3;
 export const TOP_N = 5;
 /** score em que a célula já é "muito alto" (igual a NIVEL_MUITO_ALTO do importador); usado para normalizar o peso do heatmap */
 const SCORE_MAX = 15;
+/** máximo de pontos por resposta de `features` */
+const MAX_FEATURES = 6000;
 
 type Nivel = 'muito_alto' | 'alto' | 'moderado';
 const NIVEL_ORDEM: Record<Nivel, number> = { muito_alto: 3, alto: 2, moderado: 1 };
@@ -167,9 +169,17 @@ const layer: RouteLayer = {
 
   async features(bbox, { zoom }) {
     const z = zoom ?? 12;
-    // longe: só os piores; perto: todos os pontos críticos publicados
-    const niveis = z < 7 ? ['muito_alto'] : z < 9 ? ['muito_alto', 'alto'] : ['muito_alto', 'alto', 'moderado'];
-    const rows = await featuresInBbox(LAYER, bbox, { limit: 6000, where: 'kind = any($7)', params: [niveis] });
+    // longe: só os piores; perto (zoom >= 10): todos os pontos críticos publicados. Com as ~7,5 mil células da SEJUSP-MG,
+    // uma tela larga em torno de BH no zoom 9 já passava de MAX_FEATURES; por isso o "moderado" só entra no zoom 10
+    const niveis: Nivel[] = z < 7 ? ['muito_alto'] : z < 10 ? ['muito_alto', 'alto'] : ['muito_alto', 'alto', 'moderado'];
+    // os mais graves primeiro: se o bbox passar do limite, o corte só tira moderados (a consulta não tem ORDER BY)
+    const graves = await featuresInBbox(LAYER, bbox, {
+      limit: MAX_FEATURES, where: 'kind = any($7)', params: [niveis.filter((n) => n !== 'moderado')],
+    });
+    const moderados = niveis.includes('moderado') && graves.length < MAX_FEATURES
+      ? await featuresInBbox(LAYER, bbox, { limit: MAX_FEATURES - graves.length, where: `kind = 'moderado'` })
+      : [];
+    const rows = [...graves, ...moderados];
     return {
       type: 'FeatureCollection',
       // até 12 propriedades exibíveis (o popup genérico do mapa mostra 12; id e weight ficam de fora)
