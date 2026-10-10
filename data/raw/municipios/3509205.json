@@ -1,0 +1,260 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3509205",
+  "municipio": "Cajamar",
+  "uf": "SP",
+  "fonte_id": "cajamar",
+  "fonte": {
+    "url": "https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf (DOM ed. 1358, 10/01/2025)",
+    "licenca": "Ato oficial de Cajamar: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Trechos I.1, II e III.2 aproximados (rotatórias/números/rua não identificados no OSM): aplicados num trecho maior que o do decreto."
+  },
+  "verificado_em": "2026-10-09",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 7.2,
+    "payload_max_t": 3,
+    "exige_cadastro": false,
+    "nota": "Capacidade de transporte (carga útil) até 3 t (art. 2º, I, c): sem a capacidade informada no veículo, o app não o trata como VUC (lado seguro) e a rota avisa.",
+    "artigo": "Dec. 7.397/2025, art. 2º, I e parágrafo único; capacidade até 3 t na alínea c"
+  },
+  "regras": [
+    {
+      "id": "cajamar_anexo_1",
+      "tipo": "via",
+      "regime": "Anexo I (Centro/Água Fria)",
+      "nome": "Cajamar — Centro e Água Fria (Anexo I)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "16:00", "to": "20:00"}
+      ],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "eixos", "acima": 3}, {"campo": "comprimento_m", "acima": 14}, {"campo": "payload_t", "acima": 14}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "20:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Caminhões e carretas devem se cadastrar no Departamento de Mobilidade Urbana e Trânsito (art. 7º); carga e descarga nestas vias só das 20h às 6h (art. 5º, I).",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.397/2025, arts. 2º, 4º, 5º, 7º e Anexo I (todos os dias; caminhão até 3 eixos 7h–9h e 16h–20h; carreta acima de 3 eixos 6h–20h)",
+          "artigo": "arts. 2º (classes), 4º, 5º e 7º e Anexo I",
+          "url": "https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf",
+          "nota": "DOM Cajamar ed. 1358, 10/01/2025, p. 1–5; consolida e revoga os Decs. 5.237/2015, 6.058/2019, 6.364/2020, 6.529/2021, 6.969/2023 e 7.366/2024"
+        }
+      ],
+      "nota": "Classes do art. 2º: VUC até 2,20 x 7,20 m e até 3 t de capacidade de transporte (I, c); caminhão de 7,21 a 14 m, até 14 t de capacidade e até 3 eixos; carreta acima de 14 m. As 3 t e as 14 t são capacidade de transporte (carga útil), não PBT: o app usa a capacidade de carga do veículo (payload_t). Carreta no app = mais de 3 eixos, mais de 14 m ou capacidade acima de 14 t (lado seguro para o veículo de até 14 m que não cabe em 'caminhão' por eixos ou capacidade). Sem a capacidade informada, o veículo não é VUC e, se o PBT permite carga acima de 14 t, fica com o horário de carreta; a rota avisa (municipal_capacidade_nao_informada). O art. 3º delega ao Departamento de Mobilidade alterar as vias dos anexos por ato próprio.",
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "vigencia_inicio": "2025-01-10",
+      "trechos": [
+        {
+          "inciso": "I.1",
+          "via": ["Avenida Professor Walter Ribas de Andrade", "Rua Professor Walter Ribas de Andrade"],
+          "aproximado": true,
+          "descricao": "Av. Prof. Walter Ribas de Andrade, entre a rotatória defronte ao Paço Municipal (nº 400) e a continuação com a R. Alexandrino Pinto da Silva",
+          "nota": "A rotatória do Paço não está identificada no OSM: aplicado em toda a via."
+        },
+        {
+          "inciso": "I.2",
+          "via": ["Rua Alexandrino Pinto da Silva"],
+          "descricao": "R. Alexandrino Pinto da Silva, em toda a extensão"
+        },
+        {
+          "inciso": "I.3",
+          "via": ["Rua Dorva Banharo Salgueiro"],
+          "descricao": "R. Dorva Banharo Salgueiro, em toda a extensão"
+        },
+        {
+          "inciso": "I.4",
+          "via": ["Rua Lázaro Dalcin"],
+          "de": ["Rua Dorva Banharo Salgueiro"],
+          "ate": ["Rua Antônio Pereira de Lima"],
+          "descricao": "R. Lázaro Dalcin, entre a R. Dorva Banharo Salgueiro e a R. Antônio Pereira de Lima"
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/cajamar_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "cajamar_anexo_2",
+      "tipo": "via",
+      "regime": "Anexo II (Av. Tenente Marques)",
+      "nome": "Cajamar — Av. Tenente Marques, Polvilho (Anexo II)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:00", "to": "20:00"}
+      ],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "eixos", "acima": 3}, {"campo": "comprimento_m", "acima": 14}, {"campo": "payload_t", "acima": 14}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 7.2,
+        "payload_max_t": 3,
+        "exige_cadastro": false,
+        "nota": "Capacidade de transporte (carga útil) até 3 t (art. 2º, I, c): sem a capacidade informada no veículo, o app não o trata como VUC (lado seguro) e a rota avisa.",
+        "artigo": "Dec. 7.397/2025, art. 2º, I; capacidade até 3 t na alínea c"
+      },
+      "autorizacao": "Cadastro no Departamento de Mobilidade Urbana e Trânsito (art. 7º).",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.397/2025, Anexo II (seg–sex; caminhão 7h–9h e 16h–20h; carreta 6h–20h)",
+          "artigo": "Anexo II",
+          "url": "https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf"
+        }
+      ],
+      "nota": "Classes do art. 2º: VUC até 2,20 x 7,20 m e até 3 t de capacidade de transporte (I, c); caminhão de 7,21 a 14 m, até 14 t de capacidade e até 3 eixos; carreta acima de 14 m. As 3 t e as 14 t são capacidade de transporte (carga útil), não PBT: o app usa a capacidade de carga do veículo (payload_t). Carreta no app = mais de 3 eixos, mais de 14 m ou capacidade acima de 14 t (lado seguro para o veículo de até 14 m que não cabe em 'caminhão' por eixos ou capacidade). Sem a capacidade informada, o veículo não é VUC e, se o PBT permite carga acima de 14 t, fica com o horário de carreta; a rota avisa (municipal_capacidade_nao_informada). O art. 3º delega ao Departamento de Mobilidade alterar as vias dos anexos por ato próprio.",
+      "fonte_geometria": "OSM (ODbL)",
+      "vigencia_inicio": "2025-01-10",
+      "trechos": [
+        {
+          "inciso": "II",
+          "via": ["Avenida Tenente Marques"],
+          "de": {"lonlat": [-46.85569, -23.40742]},
+          "ate": {"lonlat": [-46.82554, -23.40986]},
+          "aproximado": true,
+          "descricao": "Av. Tenente Marques (Polvilho), entre a rotatória defronte ao Estádio Municipal Antonio Fachina (nº 2600) e a rotatória defronte à R. Padre Luiz Chrispim (nº 1400)",
+          "nota": "Estádio e R. Padre Luiz Chrispim não estão no OSM: aplicado entre as duas rotatórias da avenida no Polvilho (trecho maior que o do decreto).",
+          "caminho": "valhalla"
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/cajamar_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "cajamar_anexo_3",
+      "tipo": "via",
+      "regime": "Anexo III (Jordanésia)",
+      "nome": "Cajamar — Jordanésia (Anexo III)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:00", "to": "20:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 7.2,
+        "payload_max_t": 3,
+        "exige_cadastro": false,
+        "nota": "Capacidade de transporte (carga útil) até 3 t (art. 2º, I, c): sem a capacidade informada no veículo, o app não o trata como VUC (lado seguro) e a rota avisa.",
+        "artigo": "Dec. 7.397/2025, art. 2º, I; capacidade até 3 t na alínea c"
+      },
+      "autorizacao": "Cadastro no Departamento de Mobilidade Urbana e Trânsito (art. 7º).",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.397/2025, Anexo III (seg–sex; caminhão e carreta 7h–9h e 16h–20h)",
+          "artigo": "Anexo III",
+          "url": "https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf"
+        }
+      ],
+      "nota": "Classes do art. 2º: VUC até 2,20 x 7,20 m e até 3 t de capacidade de transporte (I, c); caminhão de 7,21 a 14 m, até 14 t de capacidade e até 3 eixos; carreta acima de 14 m. Neste anexo caminhão e carreta têm o mesmo horário. As 3 t são capacidade de transporte (carga útil), não PBT: sem a capacidade informada, o veículo não é VUC (lado seguro) e a rota avisa (municipal_capacidade_nao_informada). O art. 3º delega ao Departamento de Mobilidade alterar as vias dos anexos por ato próprio.",
+      "fonte_geometria": "OSM (ODbL)",
+      "vigencia_inicio": "2025-01-10",
+      "trechos": [
+        {
+          "inciso": "III.1",
+          "via": ["Avenida Jordano Mendes"],
+          "de": ["Avenida Vereador Joaquim Pereira Barbosa"],
+          "ate": ["Rua Vereador Mário Marcolongo"],
+          "descricao": "Av. Jordano Mendes, entre a Av. Ver. Joaquim Pereira Barbosa e a R. Ver. Mário Marcolongo"
+        },
+        {
+          "inciso": "III.2",
+          "via": ["Avenida Jordano Mendes"],
+          "de": ["Avenida Alfonso Leopoldo Vogel"],
+          "ate": ["Rua Guapiara"],
+          "ate_extremo": "leste",
+          "aproximado": true,
+          "descricao": "Av. Jordano Mendes, entre a Av. Alfonso Leopoldo Vogel e a R. Guapiara (acesso à Rod. Anhanguera)",
+          "nota": "A R. Guapiara não está no OSM: aplicado da Av. Alfonso Leopoldo Vogel até a ponta leste da avenida (lado da Anhanguera)."
+        },
+        {
+          "inciso": "III.3",
+          "via": ["Avenida Vereador Joaquim Pereira Barbosa"],
+          "de": ["Avenida Deovair Cruz de Oliveira"],
+          "ate": ["Avenida Jordano Mendes"],
+          "descricao": "Av. Ver. Joaquim Pereira Barbosa, entre a Av. Deovair Cruz de Oliveira e a Av. Jordano Mendes"
+        },
+        {
+          "inciso": "III.4",
+          "via": ["Rua Vereador Mário Marcolongo"],
+          "de": ["Avenida Deovair Cruz de Oliveira"],
+          "ate": ["Avenida Jordano Mendes"],
+          "descricao": "R. Ver. Mário Marcolongo, entre a Av. Deovair Cruz de Oliveira e a Av. Jordano Mendes"
+        },
+        {
+          "inciso": "III.5",
+          "via": ["Avenida Doutor Antônio João Abdalla"],
+          "de": {"lonlat": [-46.84975, -23.34462]},
+          "ate": {"lonlat": [-46.84598, -23.34055]},
+          "descricao": "Av. Dr. João Antônio Abdalla, entre a Av. Ribeirão dos Cristais e a Av. Alfonso Leopoldo Vogel",
+          "aproximado": true,
+          "nota": "No OSM o trecho entre a Av. Ribeirão dos Cristais e a Av. Alfonso Leopoldo Vogel não tem nome: definido pelos dois cruzamentos e percorrido pela malha viária.",
+          "caminho": "valhalla",
+          "corredor_m": 60
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/cajamar_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "cajamar_anexo_4",
+      "tipo": "via",
+      "regime": "Anexo IV (Av. José Marques Ribeiro)",
+      "nome": "Cajamar — Av. José Marques Ribeiro (Anexo IV)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:00", "to": "20:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 7.2,
+        "payload_max_t": 3,
+        "exige_cadastro": false,
+        "nota": "Capacidade de transporte (carga útil) até 3 t (art. 2º, I, c): sem a capacidade informada no veículo, o app não o trata como VUC (lado seguro) e a rota avisa.",
+        "artigo": "Dec. 7.397/2025, art. 2º, I; capacidade até 3 t na alínea c"
+      },
+      "autorizacao": "Cadastro no Departamento de Mobilidade Urbana e Trânsito (art. 7º).",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.397/2025, Anexo IV (seg–sex; caminhão e carreta 7h–9h e 16h–20h)",
+          "artigo": "Anexo IV",
+          "url": "https://cajamar.sp.gov.br/diariooficial/wp-content/uploads/sites/3/edicao-no1358.pdf"
+        }
+      ],
+      "nota": "Classes do art. 2º: VUC até 2,20 x 7,20 m e até 3 t de capacidade de transporte (I, c); caminhão de 7,21 a 14 m, até 14 t de capacidade e até 3 eixos; carreta acima de 14 m. Neste anexo caminhão e carreta têm o mesmo horário. As 3 t são capacidade de transporte (carga útil), não PBT: sem a capacidade informada, o veículo não é VUC (lado seguro) e a rota avisa (municipal_capacidade_nao_informada). O art. 3º delega ao Departamento de Mobilidade alterar as vias dos anexos por ato próprio.",
+      "fonte_geometria": "OSM (ODbL)",
+      "vigencia_inicio": "2025-01-10",
+      "trechos": [
+        {
+          "inciso": "IV",
+          "via": ["Avenida José Marques Ribeiro", "Rua José Marques Ribeiro"],
+          "descricao": "Av. José Marques Ribeiro, em toda a extensão (Guaturinho e Portais)"
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/cajamar_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

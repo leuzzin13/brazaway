@@ -147,6 +147,10 @@ export function resolveVehicle(input: z.infer<typeof VehicleInput>): Vehicle {
   for (const k of ['height_m', 'width_m', 'length_m', 'weight_t', 'axle_load_t', 'axle_count', 'hazmat', 'is_vuc', ...EXTRA_KEYS] as const) {
     if (input[k] !== undefined) (v as unknown as Record<string, unknown>)[k] = input[k];
   }
+  // capacidade de carga: informada pelo usuário (CRLV) ou o valor típico do perfil, marcado como aproximado. As regras
+  // municipais por capacidade só usam o valor informado; sem ele, ficam no lado seguro (restricoes_rmsp.layer.ts).
+  if (input.payload_t !== undefined) { v.payload_t = input.payload_t; v.payload_t_aproximado = false; }
+  else v.payload_t_aproximado = true;
   // carga perigosa declarada por qualquer um dos campos
   if (v.cargo_type === 'hazmat' || parseUns(v.hazmat_un).length) v.hazmat = true;
   if (v.hazmat && v.cargo_type === undefined) v.cargo_type = 'hazmat';

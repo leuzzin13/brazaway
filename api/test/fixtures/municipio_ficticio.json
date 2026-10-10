@@ -1,0 +1,490 @@
+{
+ "gerado_por": "importers/tests/test_municipios.py (ATUALIZAR=1)",
+ "fonte_id": "teste-municipio-ficticio",
+ "features": [
+  {
+   "source_id": "65024be945ae24ed",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -44.81,
+       -24.81
+      ],
+      [
+       -44.8,
+       -24.81
+      ],
+      [
+       -44.8,
+       -24.8
+      ],
+      [
+       -44.81,
+       -24.8
+      ],
+      [
+       -44.81,
+       -24.81
+      ]
+     ]
+    ]
+   },
+   "name": "Área Central do Município Fictício",
+   "kind": "zona",
+   "props": {
+    "regra_id": "ficticio_area_central",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "zona",
+    "regime": "Área Central",
+    "nome": "Área Central do Município Fictício",
+    "status": "ativa",
+    "confianca": "alta",
+    "janelas": [
+     {
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "from": "07:00",
+      "to": "20:00"
+     },
+     {
+      "days": [
+       6
+      ],
+      "from": "07:00",
+      "to": "15:00"
+     }
+    ],
+    "variantes": [
+     {
+      "classe": "carreta",
+      "quando": {
+       "qualquer": [
+        {
+         "campo": "tipo",
+         "em": [
+          "semitrailer",
+          "truck_trailer",
+          "cvc"
+         ]
+        }
+       ]
+      },
+      "janelas": [
+       {
+        "days": [
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7
+        ],
+        "from": "00:00",
+        "to": "24:00"
+       }
+      ]
+     }
+    ],
+    "feriados": "aplica",
+    "alvo": {
+     "caminhao": true,
+     "qualquer": [
+      {
+       "campo": "payload_t",
+       "acima": 5.5
+      },
+      {
+       "campo": "comprimento_m",
+       "acima": 6.5
+      }
+     ]
+    },
+    "origem_destino_dentro": "avisa",
+    "autorizacao": "Autorização especial do órgão de trânsito (art. 9º)",
+    "excecoes": [
+     "Autorização especial (art. 9º)"
+    ],
+    "base_legal": [
+     {
+      "ato": "Portaria fictícia 1/2026 (fixture de teste)",
+      "artigo": "art. 1º (área e horários), art. 2º (VUC) e art. 9º (autorização)",
+      "url": "https://example.org/diario-oficial/portaria-1-2026.pdf"
+     }
+    ],
+    "vigencia_inicio": "2026-01-01",
+    "vuc": {
+     "largura_max_m": 2.2,
+     "comprimento_max_m": 6.3,
+     "payload_max_t": 3,
+     "exige_cadastro": false,
+     "artigo": "Portaria fictícia 1/2026, art. 2º"
+    },
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": "2026-01-01",
+   "valid_to": null
+  },
+  {
+   "source_id": "5f9b29c08aa7e28e",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -44.795,
+      -24.812
+     ],
+     [
+      -44.795,
+      -24.805
+     ],
+     [
+      -44.795,
+      -24.798
+     ]
+    ]
+   },
+   "name": "Município Fictício (teste): Corredor — Avenida Fictícia",
+   "kind": "via",
+   "props": {
+    "regra_id": "ficticio_corredor",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "via",
+    "regime": "Corredor",
+    "nome": "Corredor de acesso (Av. Fictícia)",
+    "status": "ativa",
+    "confianca": "alta",
+    "janelas": [
+     {
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "from": "17:00",
+      "to": "20:00"
+     }
+    ],
+    "feriados": "suspende",
+    "alvo": {
+     "caminhao": true,
+     "todas": [
+      {
+       "campo": "eixos",
+       "acima": 2
+      },
+      {
+       "campo": "pbt_t",
+       "acima": 10
+      }
+     ]
+    },
+    "vuc": null,
+    "vuc_nota": "A regra é por eixos e PBT, não por VUC.",
+    "excecoes": [],
+    "base_legal": [
+     {
+      "ato": "Portaria fictícia 1/2026 (fixture de teste)",
+      "artigo": "art. 6º",
+      "url": "https://example.org/diario-oficial/portaria-1-2026.pdf"
+     }
+    ],
+    "inciso": "I",
+    "via": "Avenida Fictícia",
+    "sentido": "ambos",
+    "mao_unica": false,
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": null,
+   "valid_to": null
+  },
+  {
+   "source_id": "1c88975ef68c012f",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -44.79,
+      -24.805
+     ],
+     [
+      -44.789,
+      -24.805
+     ]
+    ]
+   },
+   "name": "Município Fictício (teste): Ponte (PBT até 12 t) — Ponte Fictícia",
+   "kind": "via",
+   "props": {
+    "regra_id": "ficticio_ponte",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "ponte",
+    "regime": "Ponte (PBT até 12 t)",
+    "nome": "Ponte Fictícia",
+    "status": "ativa",
+    "confianca": "alta",
+    "janelas": [
+     {
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "from": "00:00",
+      "to": "24:00"
+     }
+    ],
+    "feriados": "aplica",
+    "alvo": {
+     "caminhao": true,
+     "qualquer": [
+      {
+       "campo": "pbt_t",
+       "acima": 12
+      }
+     ]
+    },
+    "vuc": null,
+    "excecoes": [],
+    "base_legal": [
+     {
+      "ato": "Portaria fictícia 3/2026 (fixture de teste)",
+      "artigo": "art. 1º",
+      "url": "https://example.org/diario-oficial/portaria-3-2026.pdf"
+     }
+    ],
+    "via": "Ponte Fictícia",
+    "sentido": "ambos",
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": null,
+   "valid_to": null
+  },
+  {
+   "source_id": "568f194b9bb01662",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -44.815,
+      -24.812
+     ],
+     [
+      -44.815,
+      -24.805
+     ],
+     [
+      -44.815,
+      -24.798
+     ]
+    ]
+   },
+   "name": "Município Fictício (teste): Lei antiga (capacidade acima de 2 t) — Rua Antiga",
+   "kind": "desativada",
+   "props": {
+    "regra_id": "ficticio_lei_antiga",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "via",
+    "regime": "Lei antiga (capacidade acima de 2 t)",
+    "nome": "Rua Antiga (lei de vigência incerta)",
+    "status": "desativada",
+    "status_motivo": "Confiança baixa: a lei não foi revogada no diário, mas o órgão de trânsito aplica a portaria (situação jurídica incerta).",
+    "confianca": "baixa",
+    "janelas": [
+     {
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "from": "07:00",
+      "to": "20:00"
+     }
+    ],
+    "feriados": "aplica",
+    "alvo": {
+     "caminhao": true,
+     "qualquer": [
+      {
+       "campo": "payload_t",
+       "acima": 2
+      }
+     ]
+    },
+    "vuc": null,
+    "excecoes": [],
+    "base_legal": [
+     {
+      "ato": "Lei fictícia 100/1999 (fixture de teste)",
+      "artigo": "art. 1º",
+      "url": "https://example.org/diario-oficial/lei-100-1999.pdf"
+     }
+    ],
+    "via": "Rua Antiga",
+    "sentido": "ambos",
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": null,
+   "valid_to": null
+  },
+  {
+   "source_id": "2bb8aee22959d99d",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -44.83,
+       -24.81
+      ],
+      [
+       -44.825,
+       -24.81
+      ],
+      [
+       -44.825,
+       -24.805
+      ],
+      [
+       -44.83,
+       -24.805
+      ],
+      [
+       -44.83,
+       -24.81
+      ]
+     ]
+    ]
+   },
+   "name": "Zona com restrição suspensa",
+   "kind": "suspensa",
+   "props": {
+    "regra_id": "ficticio_suspensa",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "zona",
+    "regime": "Zona suspensa",
+    "nome": "Zona com restrição suspensa",
+    "status": "suspensa",
+    "status_motivo": "Suspensa por 90 dias pela Portaria fictícia 2/2026, art. 1º (fixture de teste).",
+    "confianca": "alta",
+    "janelas": [
+     {
+      "days": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "from": "06:00",
+      "to": "22:00"
+     }
+    ],
+    "feriados": "aplica",
+    "alvo": {
+     "caminhao": true
+    },
+    "vuc": null,
+    "excecoes": [],
+    "base_legal": [
+     {
+      "ato": "Portaria fictícia 2/2026 (fixture de teste)",
+      "artigo": "art. 1º (suspensão)",
+      "url": "https://example.org/diario-oficial/portaria-2-2026.pdf"
+     }
+    ],
+    "fonte_geometria": "desenho de teste",
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": null,
+   "valid_to": null
+  },
+  {
+   "source_id": "ficticio-revogada",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -44.85,
+       -24.81
+      ],
+      [
+       -44.845,
+       -24.81
+      ],
+      [
+       -44.845,
+       -24.805
+      ],
+      [
+       -44.85,
+       -24.805
+      ],
+      [
+       -44.85,
+       -24.81
+      ]
+     ]
+    ]
+   },
+   "name": "Zona antiga (REVOGADA, não aplicada)",
+   "kind": "revogada",
+   "props": {
+    "regra_id": "ficticio_revogada",
+    "municipio": "Município Fictício (teste)",
+    "ibge": "3599999",
+    "uf": "SP",
+    "tipo": "zona",
+    "regime": "Zona revogada",
+    "nome": "Zona antiga (REVOGADA, não aplicada)",
+    "status": "revogada",
+    "status_motivo": "Revogada pela Lei fictícia 200/2020, art. 1º (fixture de teste).",
+    "confianca": "alta",
+    "janelas": [],
+    "feriados": "aplica",
+    "alvo": {
+     "caminhao": true
+    },
+    "vuc": null,
+    "excecoes": [],
+    "base_legal": [
+     {
+      "ato": "Lei fictícia 200/2020 (fixture de teste)",
+      "artigo": "art. 1º (revogação)",
+      "url": "https://example.org/diario-oficial/lei-200-2020.pdf"
+     }
+    ],
+    "vigencia_fim": "2020-01-01",
+    "verificado_em": "2026-10-10"
+   },
+   "valid_from": null,
+   "valid_to": "2020-01-01"
+  }
+ ]
+}

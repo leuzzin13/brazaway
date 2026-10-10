@@ -1,0 +1,160 @@
+{
+  "$schema": "../../../../data/raw/municipios/schema.json",
+  "formato": 1,
+  "ibge": "3599999",
+  "municipio": "Município Fictício (teste)",
+  "uf": "SP",
+  "fonte_id": "teste-municipio-ficticio",
+  "fonte": {
+    "url": "https://example.org/diario-oficial/portaria-1-2026.pdf (FIXTURE DE TESTE, não é ato real)",
+    "licenca": "Fixture de teste (sem ato real). Geometria desenhada no oceano, longe de qualquer via.",
+    "notas": "Município fictício usado pelos testes do formato (importers/tests/test_municipios.py) e da camada (api/test/layers/municipios.test.ts)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "payload_max_t": 3,
+    "exige_cadastro": false,
+    "artigo": "Portaria fictícia 1/2026, art. 2º"
+  },
+  "regras": [
+    {
+      "id": "ficticio_area_central",
+      "tipo": "zona",
+      "regime": "Área Central",
+      "nome": "Área Central do Município Fictício",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "20:00"},
+        {"days": [6], "from": "07:00", "to": "15:00"}
+      ],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 5.5}, {"campo": "comprimento_m", "acima": 6.5}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial do órgão de trânsito (art. 9º)",
+      "excecoes": ["Autorização especial (art. 9º)"],
+      "base_legal": [
+        {
+          "ato": "Portaria fictícia 1/2026 (fixture de teste)",
+          "artigo": "art. 1º (área e horários), art. 2º (VUC) e art. 9º (autorização)",
+          "url": "https://example.org/diario-oficial/portaria-1-2026.pdf"
+        }
+      ],
+      "vigencia_inicio": "2026-01-01",
+      "geometria": [
+        {"geojson": {"type": "Polygon", "coordinates": [[[-44.81, -24.81], [-44.8, -24.81], [-44.8, -24.8], [-44.81, -24.8], [-44.81, -24.81]]]}}
+      ]
+    },
+    {
+      "id": "ficticio_corredor",
+      "tipo": "via",
+      "regime": "Corredor",
+      "nome": "Corredor de acesso (Av. Fictícia)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "20:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "todas": [{"campo": "eixos", "acima": 2}, {"campo": "pbt_t", "acima": 10}]},
+      "vuc": null,
+      "vuc_nota": "A regra é por eixos e PBT, não por VUC.",
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Portaria fictícia 1/2026 (fixture de teste)", "artigo": "art. 6º", "url": "https://example.org/diario-oficial/portaria-1-2026.pdf"}
+      ],
+      "geometria": [
+        {
+          "geojson": {"type": "LineString", "coordinates": [[-44.795, -24.812], [-44.795, -24.805], [-44.795, -24.798]]},
+          "props": {"inciso": "I", "via": "Avenida Fictícia", "sentido": "ambos", "mao_unica": false}
+        }
+      ]
+    },
+    {
+      "id": "ficticio_ponte",
+      "tipo": "ponte",
+      "regime": "Ponte (PBT até 12 t)",
+      "nome": "Ponte Fictícia",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 12}]},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Portaria fictícia 3/2026 (fixture de teste)", "artigo": "art. 1º", "url": "https://example.org/diario-oficial/portaria-3-2026.pdf"}
+      ],
+      "geometria": [
+        {"geojson": {"type": "LineString", "coordinates": [[-44.79, -24.805], [-44.789, -24.805]]}, "props": {"via": "Ponte Fictícia", "sentido": "ambos"}}
+      ]
+    },
+    {
+      "id": "ficticio_lei_antiga",
+      "tipo": "via",
+      "regime": "Lei antiga (capacidade acima de 2 t)",
+      "nome": "Rua Antiga (lei de vigência incerta)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa: a lei não foi revogada no diário, mas o órgão de trânsito aplica a portaria (situação jurídica incerta).",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "20:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 2}]},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Lei fictícia 100/1999 (fixture de teste)", "artigo": "art. 1º", "url": "https://example.org/diario-oficial/lei-100-1999.pdf"}
+      ],
+      "geometria": [
+        {"geojson": {"type": "LineString", "coordinates": [[-44.815, -24.812], [-44.815, -24.805], [-44.815, -24.798]]}, "props": {"via": "Rua Antiga", "sentido": "ambos"}}
+      ]
+    },
+    {
+      "id": "ficticio_suspensa",
+      "tipo": "zona",
+      "regime": "Zona suspensa",
+      "nome": "Zona com restrição suspensa",
+      "status": "suspensa",
+      "status_motivo": "Suspensa por 90 dias pela Portaria fictícia 2/2026, art. 1º (fixture de teste).",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "22:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Portaria fictícia 2/2026 (fixture de teste)", "artigo": "art. 1º (suspensão)", "url": "https://example.org/diario-oficial/portaria-2-2026.pdf"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3599999_suspensa.geojson", "construir": "manual"}]
+    },
+    {
+      "id": "ficticio_revogada",
+      "tipo": "zona",
+      "regime": "Zona revogada",
+      "nome": "Zona antiga (REVOGADA, não aplicada)",
+      "status": "revogada",
+      "status_motivo": "Revogada pela Lei fictícia 200/2020, art. 1º (fixture de teste).",
+      "confianca": "alta",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Lei fictícia 200/2020 (fixture de teste)", "artigo": "art. 1º (revogação)", "url": "https://example.org/diario-oficial/lei-200-2020.pdf"}
+      ],
+      "vigencia_fim": "2020-01-01",
+      "source_id": "ficticio-revogada",
+      "geometria": [
+        {"geojson": {"type": "Polygon", "coordinates": [[[-44.85, -24.81], [-44.845, -24.81], [-44.845, -24.805], [-44.85, -24.805], [-44.85, -24.81]]]}}
+      ]
+    }
+  ]
+}

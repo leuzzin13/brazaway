@@ -1,18 +1,14 @@
-"""Camada restricoes_rmsp — base comum + limites municipais (IBGE) + registro da restrição REVOGADA do ABC (2012).
+"""Biblioteca da camada de restrições municipais (layer_id `restricoes_rmsp`): geometria das regras.
 
-Este módulo é ao mesmo tempo:
-  * o importador `rmsp_municipios` (SOURCE='ibge'): grava os limites dos 39 municípios da RMSP (kind='municipio'),
-    usados pela API para saber em que município está a origem/destino (exceção de destino local, feriado
-    municipal) e um registro kind='revogada' para a restrição regional do ABC de 2012 (nunca aplicada);
-  * a biblioteca dos demais importadores rmsp_* (regras em data/raw/rmsp/regras.json, geometria curada em
-    data/raw/rmsp/*.geojson, construtor de trechos "rua X entre Y e Z" a partir do OSM).
+Usada pelo importador genérico `municipios` (importers/sources/municipios.py), que lê um arquivo por município em
+data/raw/municipios/<ibge>.json. Aqui ficam só as ferramentas de geometria, sem regra legal:
+  * limites municipais (arquivo curado da RMSP ou malha do IBGE, com cache) para recortar as vias;
+  * construtor de trechos "rua X entre Y e Z" a partir do OSM (Overpass, com cache) e pela malha do Valhalla;
+  * corte das linhas em pedaços de até 400 m, validação contra o grafo do Valhalla (linear_cost_factors) e encadeamento.
 
-Regras legais (horários, dimensões, VUC, exceções) ficam em data/raw/rmsp/regras.json, cada uma com o ato, o artigo
-e a URL da fonte primária conferida. A geometria das vias vem do OSM (ODbL) casada pelo NOME e pelo TRECHO do
-decreto; a de Osasco vem do mapa oficial georreferenciado (data/raw/rmsp/curadoria/osasco_georef.py).
 Os GeoJSON curados são versionados: o import é determinístico e não depende do Overpass. Para refazer a geometria
-de um município a partir do OSM, apague o GeoJSON curado (ou rode com RMSP_REBUILD=1): o importador consulta o
-Overpass (cache em data/cache/rmsp/) e regrava o arquivo.
+a partir do OSM, apague o GeoJSON curado (ou rode com MUNICIPIOS_REBUILD=1): o importador consulta o Overpass
+(cache em data/cache/municipios/) e regrava o arquivo.
 """
 from __future__ import annotations
 
@@ -23,20 +19,17 @@ import re
 import time
 import unicodedata
 
-from common import DATA_DIR, http_get, stable_id
+from common import CACHE_DIR, DATA_DIR, http_get, stable_id
 
 LAYER_ID = 'restricoes_rmsp'
-SOURCE = 'ibge'
-SOURCE_URL = ('https://servicodados.ibge.gov.br/api/v3/malhas/estados/SP?formato=application/vnd.geo%2Bjson'
-              '&qualidade=maxima&intrarregiao=municipio (39 municípios da RMSP, simplificado a ~10 m)')
-LICENSE = 'IBGE — Malha Municipal (dados públicos, uso livre com citação da fonte: IBGE)'
-NOTES = ('Limites municipais para localizar origem/destino (exceção de destino local e feriado municipal) e o registro '
-         'da restrição regional do ABC de 2012, CANCELADA pelo Consórcio Intermunicipal antes de vigorar (kind=revogada, não aplicada).')
-
-RAW = pathlib.Path(os.environ.get('RMSP_RAW_DIR', str(DATA_DIR / 'raw' / 'rmsp')))
-CACHE = DATA_DIR / 'cache' / 'rmsp'
+# caminhos de geometria nos arquivos de município são relativos a data/raw/
+RAW_DIR = pathlib.Path(os.environ.get('MUNICIPIOS_RAW_DIR', str(DATA_DIR / 'raw')))
+CACHE = DATA_DIR / 'cache' / 'municipios'
 OVERPASS = os.environ.get('OVERPASS_URL', 'https://overpass-api.de/api/interpreter')
-ABC_IBGE = {'3547809': 'Santo André', '3548708': 'São Bernardo do Campo', '3548807': 'São Caetano do Sul', '3513801': 'Diadema'}
+# limites curados (mais precisos que a malha "intermediária" do geocoding): fonte 'ibge' da camada
+LIMITES_RMSP = 'rmsp/ibge_rmsp_municipios.geojson'
+IBGE_MALHA_URL = ('https://servicodados.ibge.gov.br/api/v3/malhas/municipios/{ibge}'
+                  '?formato=application/vnd.geo%2Bjson&qualidade=maxima')
 
 
 # ----------------------------------------------------------------------------- utilidades
@@ -46,25 +39,43 @@ def norm(s: str | None) -> str:
     return re.sub(r'\s+', ' ', s).strip()
 
 
-def load_rules() -> dict:
-    return json.loads((RAW / 'regras.json').read_text())
+def raw_path(rel: str) -> pathlib.Path:
+    """Caminho de um arquivo de geometria referenciado num arquivo de município (relativo a data/raw/)."""
+    p = (RAW_DIR / rel).resolve()
+    if RAW_DIR.resolve() not in p.parents:
+        raise ValueError(f'caminho fora de data/raw: {rel}')
+    return p
 
 
-def rule(rule_id: str) -> dict:
-    r = load_rules()['regras'][rule_id]
-    return {'regra_id': rule_id, **{k: v for k, v in r.items() if k != 'trechos'}}
+class GeometriaAusente(RuntimeError):
+    """Geometria que só o import gera (Overpass, malha do IBGE): a validação offline (--validar) não a constrói."""
 
 
 def municipios() -> list[dict]:
-    return json.loads((RAW / 'ibge_rmsp_municipios.geojson').read_text())['features']
+    """Limites curados da RMSP (39 municípios, IBGE qualidade máxima simplificada a ~10 m). Arquivo ausente = [] (o
+    municipio_geom cai na malha do IBGE); a carga 'ibge' (municipios.limites) recusa a lista vazia."""
+    p = raw_path(LIMITES_RMSP)
+    return json.loads(p.read_text())['features'] if p.exists() else []
 
 
-def municipio_geom(ibge: str):
+def municipio_geom(ibge: str, rede: bool = True):
+    """Limite do município: o curado da RMSP ou, fora dela, a malha do IBGE (API v3, qualidade máxima, com cache).
+    `rede=False`: só o curado ou o cache (sem cache, GeometriaAusente)."""
     from shapely.geometry import shape
     for f in municipios():
         if f['properties']['ibge'] == ibge:
             return shape(f['geometry'])
-    raise KeyError(ibge)
+    cache = f'municipios/ibge_malha_{ibge}.geojson'
+    if not rede:
+        if not (CACHE_DIR / cache).exists():
+            raise GeometriaAusente(f'limite do município {ibge} (malha do IBGE, baixada no import)')
+        d = json.loads((CACHE_DIR / cache).read_text())
+    else:
+        d = json.loads(http_get(IBGE_MALHA_URL.format(ibge=ibge), cache=cache, max_age_h=24 * 365))
+    feats = d.get('features') or ([d] if d.get('type') == 'Feature' else [])
+    if not feats:
+        raise KeyError(f'limite do município {ibge} não encontrado no IBGE')
+    return shape(feats[0]['geometry'])
 
 
 def _utm():
@@ -349,28 +360,31 @@ def _extreme_point(comps, which: str):
     return max(ends, key=key)
 
 
-def curated_path(name: str) -> pathlib.Path:
-    return RAW / name
+def rebuild_requested() -> bool:
+    return os.environ.get('MUNICIPIOS_REBUILD') == '1' or os.environ.get('RMSP_REBUILD') == '1'
 
 
-def build_or_load(name: str, builder) -> dict:
-    """Lê o GeoJSON curado; se não existir (ou RMSP_REBUILD=1), constrói com `builder()` e grava."""
-    p = curated_path(name)
-    if p.exists() and os.environ.get('RMSP_REBUILD') != '1':
+def build_or_load(rel: str, builder) -> dict:
+    """Lê o GeoJSON curado; se não existir (ou MUNICIPIOS_REBUILD=1), constrói com `builder()` e grava."""
+    p = raw_path(rel)
+    if p.exists() and not rebuild_requested():
         return json.loads(p.read_text())
     fc = builder()
+    p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(fc, ensure_ascii=False, separators=(',', ':')))
     return fc
 
 
-def street_rules_fc(rule_ids: list[str], ibge: str, osm_loader) -> dict:
-    """Constrói o GeoJSON curado (vias) de um município a partir dos trechos de regras.json."""
-    regras = load_rules()['regras']
+def street_rules_fc(rules: list[dict], ibge: str, osm_loader) -> dict:
+    """Constrói o GeoJSON curado (vias) a partir dos `trechos` das regras ({id, trechos}) de um município.
+    O OSM só é consultado quando algum trecho não é `caminho: valhalla`."""
     clip = to_utm(municipio_geom(ibge)).buffer(40)
-    osm = osm_loader()
+    precisa_osm = any(t.get('caminho') != 'valhalla' for r in rules for t in r.get('trechos', []))
+    osm = osm_loader() if precisa_osm else []
     feats, issues = [], []
-    for rid in rule_ids:
-        for t in regras[rid].get('trechos', []):
+    for r in rules:
+        rid = r['id']
+        for t in r.get('trechos', []):
             fs, iss = build_trecho(osm, t, clip)
             issues.extend(f'{rid} inc. {t.get("inciso")}: {i}' for i in iss)
             for f in fs:
@@ -380,27 +394,6 @@ def street_rules_fc(rule_ids: list[str], ibge: str, osm_loader) -> dict:
                     'aproximado': bool(t.get('aproximado')), 'nota_trecho': t.get('nota'), **f}})
     return {'type': 'FeatureCollection', 'features': feats, 'pendencias': issues,
             'gerado_em': time.strftime('%Y-%m-%d'), 'fonte_geometria': 'OpenStreetMap (ODbL 1.0) via Overpass'}
-
-
-def features_from_fc(fc: dict, kind_default: str = 'via') -> list[dict]:
-    """Junta geometria curada + regra (regras.json) em feições do runner."""
-    regras = load_rules()
-    out = []
-    for i, f in enumerate(fc['features']):
-        p = dict(f['properties'])
-        rid = p['regra_id']
-        r = rule(rid)
-        status = r.get('status', 'vigente')
-        nome = p.get('via') or p.get('nome_osm') or 'via sem nome no OSM'
-        out.append({
-            'source_id': stable_id(rid, p.get('inciso'), p.get('osm_way_id'), i, json.dumps(f['geometry'])[:200]),
-            'geometry': f['geometry'],
-            'name': f"{r['municipio']}: {r['regime']} — {nome}" if r.get('tipo') == 'via' else r['nome'],
-            'kind': r.get('tipo', kind_default) if status == 'vigente' else 'revogada',
-            'props': {**r, **{k: v for k, v in p.items() if k != 'regra_id'}, 'verificado_em': regras.get('verificado_em')},
-            'valid_from': r.get('vigencia_inicio'), 'valid_to': r.get('vigencia_fim'),
-        })
-    return valhalla_check(out)
 
 
 # Tamanho máximo de cada linha de custo. O routing.ts (usesCostLine) e o annotate da camada consideram que a rota "usa"
@@ -631,21 +624,36 @@ def merge_chains(feats: list[dict], ok) -> list[dict]:
     return out
 
 
-# ----------------------------------------------------------------------------- importador 'ibge'
-def fetch():
-    from shapely.geometry import mapping, shape
-    from shapely.ops import unary_union
-    out = []
-    for f in municipios():
-        p = f['properties']
-        out.append({'source_id': f"mun-{p['ibge']}", 'geometry': f['geometry'], 'name': p['nome'], 'kind': 'municipio',
-                    'props': {'ibge': p['ibge'], 'municipio': p['nome'], 'fonte': 'IBGE Malha Municipal'}})
-    # restrição regional do ABC (2012): cancelada antes de vigorar — registro histórico, nunca aplicada
-    abc = [shape(f['geometry']) for f in municipios() if f['properties']['ibge'] in ABC_IBGE]
-    if abc:
-        g = unary_union(abc).simplify(0.002)
-        r = rule('abc_2012')
-        out.append({'source_id': 'abc-2012-revogada', 'geometry': round_geojson(mapping(g), 5), 'name': r['nome'], 'kind': 'revogada',
-                    'props': {**r, 'verificado_em': load_rules().get('verificado_em')},
-                    'valid_from': r.get('vigencia_inicio'), 'valid_to': r.get('vigencia_fim')})
-    return out
+# ----------------------------------------------------------------------------- vias no entorno de um ponto (trevo)
+def entorno_fc(rule_id: str, cfg: dict) -> dict:
+    """Vias a até `raio_m` de `centro` ([lon, lat]): ramos (classes em `classes_ramo`, ex.: *_link) e vias com os nomes de
+    `vias`, sem rodovias (motorway/trunk) nem os nomes de `excluir_nomes`. Para zonas desenhadas só como imagem em torno
+    de um cruzamento (ex.: ZRCC-TB de Guarulhos, trevo de Bonsucesso): as pistas principais continuam livres."""
+    from shapely.geometry import LineString, Point
+    lon, lat = cfg['centro']
+    raio = float(cfg['raio_m'])
+    c = to_utm(Point(lon, lat)).buffer(raio)
+    pad_lat, pad_lon = (raio + 450) / 111000.0, (raio + 450) / 96000.0
+    osm = overpass_bbox_ways((lat - pad_lat, lon - pad_lon, lat + pad_lat, lon + pad_lon), f'entorno_{rule_id}')
+    vias = {norm(n) for n in cfg.get('vias', [])}
+    excl = {norm(n) for n in cfg.get('excluir_nomes', [])}
+    classes = set(cfg.get('classes_ramo', []))
+    feats = []
+    for e in osm:
+        t = e.get('tags', {})
+        nm = norm(t.get('name'))
+        if nm in excl or t.get('highway') in ('motorway', 'trunk'):
+            continue
+        if not (t.get('highway') in classes or nm in vias):
+            continue
+        L = to_utm(LineString([(n['lon'], n['lat']) for n in e['geometry']]))
+        if is_oneway(t) == -1:
+            L = LineString(list(L.coords)[::-1])
+        G = L.intersection(c)
+        for g in [g for g in getattr(G, 'geoms', [G]) if g.geom_type == 'LineString' and g.length >= 10]:
+            ow = is_oneway(t) != 0
+            feats.append({'type': 'Feature', 'geometry': round_geojson(to_ll(g).__geo_interface__), 'properties': {
+                'regra_id': rule_id, 'inciso': cfg.get('inciso'), 'via': t.get('name') or (cfg.get('nome_ramo', 'alça') if 'link' in t.get('highway', '') else None),
+                'nome_osm': t.get('name'), 'osm_way_id': e['id'], 'highway': t.get('highway'), 'mao_unica': ow,
+                'sentido': 'unico' if ow else 'ambos', 'comprimento_m': round(g.length), 'aproximado': bool(cfg.get('aproximado', True))}})
+    return {'type': 'FeatureCollection', 'features': feats, 'fonte_geometria': 'OpenStreetMap (ODbL 1.0) via Overpass'}

@@ -35,6 +35,7 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
     vehicle.hazmat && `perigoso${vehicle.hazmat_un ? ` ONU ${vehicle.hazmat_un}` : ''}`,
     vehicle.powertrain && vehicle.powertrain !== 'diesel' && POWER.find(([k]) => k === vehicle.powertrain)?.[1],
     vehicle.manufacture_year && String(vehicle.manufacture_year),
+    vehicle.payload_t !== undefined && `carga ${String(vehicle.payload_t).replace('.', ',')} t`,
     vehicle.employment && (vehicle.employment === 'autonomous' ? 'autônomo' : 'CLT'),
   ].filter(Boolean) as string[];
 
@@ -60,7 +61,8 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
           const p = presets.find((x) => x.id === e.target.value);
           if (!p) return;
           const dims = Object.fromEntries(DIM_KEYS.map((k) => [k, p[k]])) as Partial<Vehicle>;
-          setVehicle({ ...vehicle, ...dims, preset: p.id });
+          // capacidade de carga é do veículo informado pelo usuário: troca de perfil limpa (o típico do perfil vira dica)
+          setVehicle({ ...vehicle, ...dims, payload_t: undefined, preset: p.id });
         }}>
           {presets.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
         </select>
@@ -107,6 +109,12 @@ export function VehicleForm({ presets, vehicle, setVehicle, note }: Props) {
               <select value={vehicle.powertrain ?? 'diesel'} onChange={(e) => set({ powertrain: e.target.value as Powertrain })}>
                 {POWER.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
               </select>
+            </div>
+            <div className="field" title="Capacidade de carga (lotação) do CRLV. Alguns municípios restringem por ela (ex.: Belo Horizonte, acima de 5,5 t). Sem o valor, a rota considera a restrição (lado seguro).">
+              <label>Capacidade de carga (t)</label>
+              <input type="number" inputMode="decimal" min={0} step={0.5}
+                placeholder={preset?.payload_t !== undefined ? `aprox. ${String(preset.payload_t).replace('.', ',')}` : 'do CRLV'} value={vehicle.payload_t ?? ''}
+                onChange={(e) => set({ payload_t: e.target.value === '' ? undefined : Math.max(0, Number(e.target.value)) })} />
             </div>
             <div className="field"><label>Ano de fabricação</label>
               <input type="number" inputMode="numeric" min={1950} max={year + 1} placeholder="ex.: 2018" value={vehicle.manufacture_year ?? ''}

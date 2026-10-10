@@ -4,6 +4,8 @@ export type Powertrain = 'diesel' | 'electric' | 'hybrid' | 'gas' | 'hydrogen';
 export interface Vehicle {
   preset?: string; height_m: number; width_m: number; length_m: number; weight_t: number;
   axle_load_t: number; axle_count: number; hazmat: boolean; is_vuc: boolean; plate_last_digit?: number;
+  /** capacidade de carga (lotação do CRLV), em t; só é enviada quando o usuário informa (restrições municipais, ex.: BH 5,5 t) */
+  payload_t?: number;
   /** SP: Autorização Especial de Trânsito de Caminhão (exigida para a isenção do VUC, perecíveis etc.) */
   has_aetc?: boolean;
   manufacture_year?: number;
@@ -27,6 +29,8 @@ export interface Preset extends Vehicle {
   legal_basis?: string;
   vehicle_class?: 'light' | 'rigid' | 'semitrailer' | 'truck_trailer' | 'cvc';
   requires_aet?: boolean;
+  /** payload_t do perfil é típico (aproximado), não o do veículo */
+  payload_t_aproximado?: boolean;
 }
 export interface PresetsResponse { _note: string; legal_basis?: string[]; aliases?: Record<string, string>; presets: Preset[] }
 export interface AvoidedItem { kind: 'report' | 'zone' | 'layer'; layer?: string; id: string; type?: string; value_num?: number | null; name?: string; rule?: string; lat?: number; lon?: number; note?: string | null }

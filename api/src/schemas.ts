@@ -10,6 +10,10 @@ export const VehicleInput = z.object({
   weight_t: z.number().positive().max(200).optional(),
   axle_load_t: z.number().positive().max(30).optional(),
   axle_count: z.number().int().min(2).max(12).optional(),
+  // capacidade de carga (lotação, CTB Anexo I), em t: restrições municipais por capacidade (ex.: BH, Portaria BHTRANS
+  // DPR 138/2009 art. 1º II, com o art. 2º da 077/2014 e o art. 1º da 004/2019: acima de 5,5 t). Sem o campo, o perfil
+  // traz um valor típico (aproximado) que não decide regra: a restrição por capacidade vale (lado seguro).
+  payload_t: z.number().nonnegative().max(150).optional(),
   hazmat: z.boolean().optional(),
   is_vuc: z.boolean().optional(),
   plate_last_digit: z.number().int().min(0).max(9).optional(),

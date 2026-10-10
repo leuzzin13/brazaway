@@ -1,4 +1,4 @@
-"""Testes unitários do corte/encadeamento das linhas da camada restricoes_rmsp (sem rede e sem banco).
+"""Testes unitários do corte/encadeamento das linhas da camada restricoes_rmsp (sem rede e sem banco); a biblioteca é a do importador municipios.
 
 Rodar (na imagem do importador):
   docker run --rm -v $(pwd)/importers:/app --entrypoint python truck-router-importer -m unittest discover -s tests -v
@@ -8,7 +8,7 @@ import pathlib, sys, unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
-from sources import rmsp_municipios as b  # noqa: E402
+from sources import _municipios_lib as b  # noqa: E402
 
 
 def _reta(n_pts: int, passo_graus: float = 0.0005, lon0: float = -46.85, lat0: float = -23.47):

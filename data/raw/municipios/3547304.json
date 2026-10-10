@@ -1,0 +1,128 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3547304",
+  "municipio": "Santana de Parnaíba",
+  "uf": "SP",
+  "fonte_id": "santana-parnaiba",
+  "fonte": {
+    "url": "https://prefeitura.santanadeparnaiba.sp.gov.br/PortalComunicacao/arquivo/download/AMMJ0Fm5w6LYtdaONCo92UC4DZQCQ3ugj-qy7wONa8-oMYIdWrgdyeVWYw_JrvDLZvcB6g2#page=7 (Imprensa Oficial ed. 298, 20–26/09/2019, p. 7)",
+    "licenca": "Ato oficial de Santana de Parnaíba: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Regra por PBT (> 15 t). Exceção de entrega local (art. 2º, I): a API deixa de restringir as vias 24h listadas no inciso (II.1, II.2, II.4–II.11) só quando o DESTINO está no município; Av. Pérola Byington (II.3) e R. D'Alessandro Carmine (II.12) continuam."
+  },
+  "verificado_em": "2026-10-09",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "santana_parnaiba_ten_marques",
+      "tipo": "via",
+      "regime": "PBT > 15 t (16h–19h)",
+      "nome": "Santana de Parnaíba — Estrada Tenente Marques (PBT > 15 t, 16h–19h)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "16:00", "to": "19:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 15}]},
+      "vuc": null,
+      "vuc_nota": "A regra é por peso (PBT acima de 15 t), não por VUC.",
+      "excecoes": [
+        "Serviços essenciais e de utilidade pública cadastrados (Eletropaulo, SABESP, Bombeiros, gás GLP, serviço municipal) — art. 3º"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.288/2019, art. 1º, I ('Estrada Tenentes Marques: nos horários das 16:00 às 19:00 horas, diariamente') e art. 3º",
+          "artigo": "art. 1º, I (horário) e art. 3º (exceções)",
+          "url": "https://prefeitura.santanadeparnaiba.sp.gov.br/PortalComunicacao/arquivo/download/AMMJ0Fm5w6LYtdaONCo92UC4DZQCQ3ugj-qy7wONa8-oMYIdWrgdyeVWYw_JrvDLZvcB6g2#page=7",
+          "nota": "Imprensa Oficial ed. 298 (20–26/09/2019); revoga os Decs. 2.693/2005, 3.154/2009, 3.160/2009 e 3.308/2011"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome",
+      "vigencia_inicio": "2019-09-20",
+      "trechos": [
+        {
+          "inciso": "I",
+          "via": ["Estrada Tenente Marques", "Estrada Tenentes Marques"],
+          "descricao": "Estrada Tenente Marques (em Santana de Parnaíba)"
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/santana_parnaiba_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "santana_parnaiba_24h",
+      "tipo": "via",
+      "regime": "PBT > 15 t (24h)",
+      "nome": "Santana de Parnaíba — vias proibidas a PBT > 15 t (24h)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 15}]},
+      "vuc": null,
+      "vuc_nota": "A regra é por peso (PBT acima de 15 t), não por VUC.",
+      "excecao_destino_local": true,
+      "excecao_destino_local_incisos": [
+        "II.1",
+        "II.2",
+        "II.4",
+        "II.5",
+        "II.6",
+        "II.7",
+        "II.8",
+        "II.9",
+        "II.10",
+        "II.11"
+      ],
+      "excecao_destino_local_artigo": "art. 2º, I",
+      "excecoes": [
+        "Carga com nota fiscal (ou documento equivalente) para ENTREGA em obra, residência ou comércio no município, com acesso pelas vias do art. 2º, I (todas as do art. 1º, II, menos a Av. Pérola Byington e a R. D'Alessandro Carmine) — a rota aplica quando o destino está no município",
+        "Água e concreto (betoneira) de empresas com sede no município, para entrega no município, com acesso pelas vias do art. 2º, II (inclui a Av. Pérola Byington) — não aplicado: o perfil do veículo não informa a carga nem a sede",
+        "Serviços essenciais cadastrados (art. 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.288/2019, art. 1º, II ('em qualquer dia e horário'), arts. 2º e 3º",
+          "artigo": "art. 1º, II (24 h), art. 2º, I e II (exceções de entrega) e art. 3º",
+          "url": "https://prefeitura.santanadeparnaiba.sp.gov.br/PortalComunicacao/arquivo/download/AMMJ0Fm5w6LYtdaONCo92UC4DZQCQ3ugj-qy7wONa8-oMYIdWrgdyeVWYw_JrvDLZvcB6g2#page=7",
+          "nota": "Imprensa Oficial ed. 298 (20–26/09/2019), p. 7. Art. 2º, I: exceção só para carga que 'deva ser entregue em obras, residências ou estabelecimentos comerciais situados no perímetro do Município' (destino), com acesso por Paiol Velho, Al. das Américas, Marcos Penteado de Ulhôa Rodrigues, Yojiro Takaoka, Alphanorte, Estr. da Bela Vista, Benedito Crispim de Oliveira, Angola, Líbano e Luiz Maximiliano Chiló."
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome",
+      "vigencia_inicio": "2019-09-20",
+      "trechos": [
+        {"inciso": "II.1", "via": ["Avenida Paiol Velho"], "descricao": "Av. Paiol Velho"},
+        {"inciso": "II.2", "via": ["Alameda das Américas", "Alameda América"], "descricao": "Al. das Américas"},
+        {"inciso": "II.3", "via": ["Avenida Pérola Byington"], "descricao": "Av. Pérola Byington"},
+        {
+          "inciso": "II.4",
+          "via": ["Avenida Marcos Penteado de Ulhôa Rodrigues", "Avenida Marcos Penteado de Ulhoa Rodrigues"],
+          "descricao": "Av. Marcos Penteado de Ulhôa Rodrigues"
+        },
+        {
+          "inciso": "II.5",
+          "via": ["Avenida Yojiro Takaoka", "Avenida Doutor Yojiro Takaoka", "Estrada Doutor Yojiro Takaoka"],
+          "descricao": "Av. Yojiro Takaoka"
+        },
+        {"inciso": "II.6", "via": ["Avenida Alphanorte", "Avenida Alfa Norte"], "descricao": "Av. Alphanorte"},
+        {
+          "inciso": "II.7",
+          "via": ["Estrada da Bela Vista", "Estrada Municipal Bela Vista"],
+          "descricao": "Estrada da Bela Vista"
+        },
+        {"inciso": "II.8", "via": ["Rua Benedito Crispim de Oliveira"], "descricao": "R. Benedito Crispim de Oliveira"},
+        {"inciso": "II.9", "via": ["Avenida Angola"], "descricao": "Av. Angola"},
+        {"inciso": "II.10", "via": ["Rua Líbano", "Rua Libano"], "descricao": "R. Líbano"},
+        {
+          "inciso": "II.11",
+          "via": ["Rua Luiz Maximiliano Chiló", "Estrada Luiz Maximilano Chiló", "Estrada Luiz Maximiliano Chiló"],
+          "descricao": "R. Luiz Maximiliano Chiló (Recanto Maravilha III)"
+        },
+        {
+          "inciso": "II.12",
+          "via": ["Rua D'Alessandro Carmine", "Rua Doutor Alessandro Carmine"],
+          "descricao": "R. D'Alessandro Carmine (Parque dos Monteiros)"
+        }
+      ],
+      "geometria": [{"arquivo": "rmsp/santana_parnaiba_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

@@ -29,7 +29,7 @@ O mapa é VETORIAL no PDF mas não tem coordenadas. Passos (reproduzíveis):
 
 Requisitos (fora da imagem do importador): python3 com numpy scipy shapely pyproj scikit-image networkx
 requests; poppler (pdftocairo); Valhalla em VALHALLA_URL; Overpass. Este script NÃO roda no import: o
-importador (importers/sources/rmsp_osasco.py) só lê os GeoJSON curados.
+importador (importers/sources/municipios.py, arquivo data/raw/municipios/3534401.json) só lê os GeoJSON curados.
 LICENÇA: ato oficial (Lei 9.610/1998 art. 8º IV). As linhas VER usam a geometria do OSM (ODbL 1.0, ©
 colaboradores do OpenStreetMap) — base derivada mantida separada do OSM.
 """

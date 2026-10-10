@@ -8,15 +8,18 @@ import type { Ring } from '../services/valhalla.js';
 import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteLayer } from './types.js';
 
 /**
- * Restrições a caminhões dos municípios da Grande SP (exceto a capital): Osasco (ZMRC + VER), Barueri (VER),
- * Guarulhos (ZRCC-TB, Trevo de Bonsucesso), Cajamar (Anexos I–IV), Santana de Parnaíba (PBT > 15 t) e
- * Ribeirão Pires (ZRC). Regras e geometria em data_features (layer_id = restricoes_rmsp), geradas pelos importadores
- * importers/sources/rmsp_*.py a partir de data/raw/rmsp/regras.json (atos conferidos na fonte primária).
+ * Restrições municipais a caminhões (camada genérica por município, código IBGE). O id `restricoes_rmsp` é histórico
+ * (a camada nasceu com a Grande SP) e foi mantido: dados, seeds, testes, códigos de aviso e o front usam esse id.
+ * Regras e geometria em data_features (layer_id = restricoes_rmsp), geradas pelo importador genérico
+ * importers/sources/municipios.py a partir de um arquivo por município (data/raw/municipios/<ibge>.json, schema em
+ * data/raw/municipios/schema.json; passo a passo em docs/layers/restricoes_municipais.md).
  *
- *  - zonas (kind=zona)  → exclusions (polígono recuado; origem/destino dentro = não exclui, avisa);
- *  - vias  (kind=via)   → costLines (linear_cost_factors, só a via; sentido único quando o ato fixa sentido);
- *  - kind=municipio     → localiza origem/destino (feriado municipal, exceção de destino local);
- *  - kind=revogada      → restrição do ABC (2012), cancelada: nunca aplicada (valid_to no passado).
+ *  - zonas (kind=zona)          → exclusions (polígono recuado; origem/destino dentro = não exclui, avisa);
+ *  - vias e pontes (kind=via)   → costLines (linear_cost_factors, só a via; sentido único quando o ato fixa sentido);
+ *  - kind=municipio             → localiza origem/destino (exceção de destino local); fora dos limites próprios, a malha
+ *                                 do IBGE da camada geocoding (ibge-malhas);
+ *  - kind=desativada/suspensa   → nunca aplicadas; o annotate avisa (info) quando a rota passa nelas;
+ *  - kind=revogada              → registro histórico (ex.: ABC 2012), nunca aplicado (valid_to no passado).
  * Como na ZMRC de SP, a janela é avaliada no horário de SAÍDA; o annotate estima o horário de passagem e avisa
  * quando a rota cruza uma restrição que estará ativa nesse momento.
  */
@@ -28,28 +31,44 @@ const ZONE_INSET_M = 20;
 const FACTOR = 1000;
 /** PBT acima de 3,5 t = caminhão (CTB, Anexo I) */
 const TRUCK_MIN_PBT_T = 3.5;
+/**
+ * Zonas consideradas na rota: a até máx(50 km; 60% da distância O–D) do segmento origem–destino. Folga larga (a rota
+ * real raramente se afasta tanto da reta); evita mandar ao Valhalla, em toda rota do Sudeste, as zonas de outras cidades.
+ */
+const ZONA_RAIO_MIN_M = 50000;
+const ZONA_RAIO_FRAC = 0.6;
 
 interface Janela { days: number[]; from: string; to: string }
-interface Cond { campo: 'pbt_t' | 'eixos' | 'comprimento_m' | 'largura_m'; acima: number }
-interface Vuc { largura_max_m: number; comprimento_max_m: number; exige_cadastro: boolean; orgao?: string; artigo?: string; nota?: string }
-interface BaseLegal { ato: string; url: string; nota?: string }
+type Campo = 'pbt_t' | 'payload_t' | 'comprimento_m' | 'largura_m' | 'altura_m' | 'eixos' | 'tipo';
+/** predicado sobre o veículo: exatamente um operador (acima: >, ate: <=, em: lista de classes para `tipo`) */
+interface Cond { campo: Campo; acima?: number; ate?: number; em?: string[] }
+/** qualquer = OU; todas = E; com os dois, valem os dois */
+interface Predicado { qualquer?: Cond[]; todas?: Cond[] }
+interface Vuc {
+  largura_max_m: number; comprimento_max_m: number; altura_max_m?: number; pbt_max_t?: number; payload_max_t?: number; eixos_max?: number;
+  exige_cadastro: boolean; orgao?: string; artigo?: string; nota?: string;
+}
+interface BaseLegal { ato: string; artigo?: string; url: string; nota?: string }
 export interface Regra {
   regra_id: string;
   municipio: string;
   ibge: string | null;
-  tipo: 'zona' | 'via';
+  /** ausente nas cargas antigas (só SP) */
+  uf?: string;
+  tipo: 'zona' | 'via' | 'ponte';
   regime: string;
   nome: string;
   janelas: Janela[];
-  variantes?: { classe: string; quando: { qualquer: Cond[] }; janelas: Janela[] }[];
+  variantes?: { classe: string; quando: Predicado; janelas: Janela[] }[];
   feriados: 'suspende' | 'aplica';
-  alvo: { caminhao?: boolean; qualquer?: Cond[] };
+  alvo: { caminhao?: boolean } & Predicado;
   vuc: Vuc | null;
   vuc_nota?: string;
   /** art. 2º do Dec. 4.288/2019 (Santana): carga com ENTREGA no município fica fora da proibição... */
   excecao_destino_local?: boolean;
   /** ...só nas vias de acesso listadas no ato (ex.: Santana art. 2º, I não lista II.3 nem II.12); ausente = todas */
   excecao_destino_local_incisos?: string[];
+  excecao_destino_local_artigo?: string;
   /** via que compõe uma zona (ex.: vias do art. 3º da ZMRC de Osasco): dispensada quando origem/destino está na zona */
   zona_vinculada?: string;
   origem_destino_dentro?: 'avisa';
@@ -57,7 +76,10 @@ export interface Regra {
   excecoes?: string[];
   base_legal: BaseLegal[];
   nota?: string;
+  /** 'ativa' (formato novo) ou 'vigente' (cargas antigas) = aplicada; 'desativada' | 'suspensa' | 'revogada' = nunca */
   status: string;
+  status_motivo?: string;
+  confianca?: 'alta' | 'media' | 'baixa' | 'unverifiable';
   // por feição
   inciso?: string | null;
   via?: string | null;
@@ -95,13 +117,57 @@ export function describeJanelas(js: Janela[]): string {
   }).join('; ');
 }
 
-function campo(v: Vehicle, c: Cond['campo']): number {
-  return c === 'pbt_t' ? v.weight_t : c === 'eixos' ? v.axle_count : c === 'comprimento_m' ? v.length_m : v.width_m;
+/** regra aplicável na rota (as demais ficam registradas, nunca aplicadas) */
+export const regraAplicavel = (r: Pick<Regra, 'status'>) => r.status === 'ativa' || r.status === 'vigente';
+
+/** UF pelo código IBGE (2 primeiros dígitos): o calendário de feriados filtra estaduais pela UF */
+const UF_IBGE: Record<string, string> = {
+  '11': 'RO', '12': 'AC', '13': 'AM', '14': 'RR', '15': 'PA', '16': 'AP', '17': 'TO', '21': 'MA', '22': 'PI', '23': 'CE', '24': 'RN',
+  '25': 'PB', '26': 'PE', '27': 'AL', '28': 'SE', '29': 'BA', '31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP', '41': 'PR', '42': 'SC',
+  '43': 'RS', '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF',
+};
+export const ufDe = (r: Pick<Regra, 'uf' | 'ibge'>) => r.uf ?? (r.ibge ? UF_IBGE[r.ibge.slice(0, 2)] : undefined) ?? 'SP';
+
+/** a capacidade de carga só conta quando o usuário informou (o valor do perfil é aproximado) */
+export const payloadInformado = (v: Vehicle) => v.payload_t !== undefined && v.payload_t_aproximado === false;
+
+function valor(v: Vehicle, c: Exclude<Campo, 'tipo'>): number | undefined {
+  switch (c) {
+    case 'pbt_t': return v.weight_t;
+    case 'payload_t': return v.payload_t;
+    case 'eixos': return v.axle_count;
+    case 'comprimento_m': return v.length_m;
+    case 'largura_m': return v.width_m;
+    case 'altura_m': return v.height_m;
+  }
 }
-const condOk = (v: Vehicle, cs: Cond[]) => cs.some((c) => campo(v, c.campo) > c.acima);
+
+function condVale(v: Vehicle, c: Cond): boolean {
+  if (c.campo === 'tipo') return !!c.em?.includes(v.vehicle_class ?? 'rigid');
+  // chamada direta sem a capacidade informada: a condição vale. O enquadrar() não passa por aqui sem o dado: ele avalia
+  // cada capacidade possível (capacidadesPossiveis), o que também resolve "ate" e as variantes.
+  if (c.campo === 'payload_t' && !payloadInformado(v)) return true;
+  const x = valor(v, c.campo);
+  if (x === undefined) return false;
+  if (c.acima !== undefined) return x > c.acima;
+  if (c.ate !== undefined) return x <= c.ate + 1e-9;
+  return false;
+}
+/** sem condição = vale (o alvo base é "caminhão"); qualquer = OU; todas = E */
+export function predicadoVale(v: Vehicle, p: Predicado | undefined): boolean {
+  if (p?.qualquer?.length && !p.qualquer.some((c) => condVale(v, c))) return false;
+  if (p?.todas?.length && !p.todas.every((c) => condVale(v, c))) return false;
+  return true;
+}
 
 export function fitsVuc(v: Vehicle, d: Vuc): boolean {
-  return v.width_m <= d.largura_max_m + 1e-9 && v.length_m <= d.comprimento_max_m + 1e-9;
+  if (!(v.width_m <= d.largura_max_m + 1e-9 && v.length_m <= d.comprimento_max_m + 1e-9)) return false;
+  if (d.altura_max_m !== undefined && v.height_m > d.altura_max_m + 1e-9) return false;
+  if (d.pbt_max_t !== undefined && v.weight_t > d.pbt_max_t + 1e-9) return false;
+  if (d.eixos_max !== undefined && v.axle_count > d.eixos_max) return false;
+  // capacidade sem o dado informado: não dá para dizer que cabe (lado seguro: não é VUC ali)
+  if (d.payload_max_t !== undefined && !(payloadInformado(v) && (v.payload_t as number) <= d.payload_max_t + 1e-9)) return false;
+  return true;
 }
 
 export interface Enquadramento {
@@ -112,19 +178,112 @@ export interface Enquadramento {
   /** VUC dentro da definição do município, mas a isenção exige cadastro (a regra continua valendo) */
   vucSoComCadastro?: boolean;
   vucIsento?: boolean;
+  /** capacidade não informada e mais de uma classe possível sem janela que cubra as outras: `janelas` é a união delas */
+  classesPossiveis?: string[];
+  /**
+   * a decisão dependeu da capacidade de carga, que não foi informada (só quando a regra foi aplicada): com o valor típico
+   * do perfil seria outra (`com_estimativa`), ou o veículo cabe no VUC local pelas dimensões mas o VUC exige capacidade
+   * máxima (`vuc_por_capacidade`)
+   */
+  capacidadeSuposta?: { estimativa_t: number | null; com_estimativa?: { aplica: boolean; classe: string }; vuc_por_capacidade?: boolean };
 }
 
-export function enquadrar(r: Regra, v: Vehicle): Enquadramento {
+const condsDe = (r: Regra) => [r.alvo?.qualquer, r.alvo?.todas, ...(r.variantes ?? []).flatMap((x) => [x.quando?.qualquer, x.quando?.todas])]
+  .flatMap((cs) => cs ?? []);
+const usaPayload = (r: Regra) => condsDe(r).some((c) => c.campo === 'payload_t') || r.vuc?.payload_max_t !== undefined;
+
+/**
+ * `capacidadeReal = false`: a capacidade do veículo é uma hipótese (não foi informada), então o VUC que exige capacidade
+ * máxima não é concedido (lado seguro: sem o dado do CRLV, não é VUC ali).
+ */
+function enquadrarBase(r: Regra, v: Vehicle, capacidadeReal = true): Enquadramento {
   const base = { classe: 'caminhão', janelas: r.janelas };
   if (!(v.weight_t > TRUCK_MIN_PBT_T)) return { ...base, aplica: false };
-  if (r.alvo?.qualquer?.length && !condOk(v, r.alvo.qualquer)) return { ...base, aplica: false };
-  if (r.vuc && fitsVuc(v, r.vuc)) {
+  if (!predicadoVale(v, r.alvo)) return { ...base, aplica: false };
+  if (r.vuc && fitsVuc(v, r.vuc) && (capacidadeReal || r.vuc.payload_max_t === undefined)) {
     if (!r.vuc.exige_cadastro) return { ...base, classe: 'VUC', aplica: false, vucIsento: true };
     return { ...base, classe: 'VUC', aplica: true, vucSoComCadastro: true };
   }
-  const variante = r.variantes?.find((x) => condOk(v, x.quando.qualquer));
+  const variante = r.variantes?.find((x) => (x.quando?.qualquer?.length || x.quando?.todas?.length) && predicadoVale(v, x.quando));
   if (variante) return { aplica: true, classe: variante.classe, janelas: variante.janelas };
   return { ...base, aplica: true };
+}
+
+/**
+ * União das janelas, dia a dia, com os intervalos sobrepostos ou contíguos fundidos. Forma canônica (dias em ordem,
+ * intervalos em ordem): duas listas cobrem os mesmos horários se e só se a união delas sai igual.
+ */
+export function uniaoJanelas(listas: Janela[][]): Janela[] {
+  const porDia = new Map<number, [string, string][]>();
+  for (const js of listas) for (const j of js) for (const d of j.days) porDia.set(d, [...(porDia.get(d) ?? []), [j.from, j.to]]);
+  const grupos = new Map<string, number[]>();
+  for (const d of [...porDia.keys()].sort((a, b) => a - b)) {
+    const iv = porDia.get(d)!.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
+    const m: [string, string][] = [];
+    for (const [from, to] of iv) {
+      const u = m[m.length - 1];
+      if (u && from <= u[1]) { if (to > u[1]) u[1] = to; } else m.push([from, to]);
+    }
+    const k = JSON.stringify(m);
+    grupos.set(k, [...(grupos.get(k) ?? []), d]);
+  }
+  return [...grupos].flatMap(([k, days]) => (JSON.parse(k) as [string, string][]).map(([from, to]) => ({ days, from, to })));
+}
+
+const comCapacidade = (v: Vehicle, t: number): Vehicle => ({ ...v, payload_t: t, payload_t_aproximado: false });
+/** mesmo efeito na rota: as duas não se aplicam, ou se aplicam com a mesma classe e os mesmos horários */
+const chave = (e: Enquadramento) => (e.aplica ? `${e.classe}|${JSON.stringify(uniaoJanelas([e.janelas]))}` : '-');
+
+/**
+ * Capacidades que mudam o enquadramento: 0, cada limiar de capacidade da regra (alvo, variantes, VUC) e logo acima dele,
+ * e o PBT (a capacidade de carga nunca passa do PBT). Da maior para a menor.
+ */
+function capacidadesPossiveis(r: Regra, v: Vehicle): number[] {
+  const teto = Number.isFinite(v.weight_t) && v.weight_t > 0 ? v.weight_t : Number.POSITIVE_INFINITY;
+  const limiares = condsDe(r).filter((c) => c.campo === 'payload_t').flatMap((c) => [c.acima, c.ate]);
+  if (r.vuc?.payload_max_t !== undefined) limiares.push(r.vuc.payload_max_t);
+  const xs = [0, teto, ...limiares.filter((x): x is number => x !== undefined).flatMap((x) => [x, x + 0.001])].filter((x) => x <= teto);
+  return [...new Set(xs)].sort((a, b) => b - a);
+}
+
+/**
+ * Lado seguro entre as hipóteses de capacidade: a regra vale se valer em alguma; entre as que valem, fica a de horário
+ * que cobre todos os outros ou, se nenhuma cobre, a união dos horários (classe "carreta ou leve").
+ */
+function ladoSeguro(hs: Enquadramento[]): Enquadramento {
+  const ap = hs.filter((h) => h.aplica);
+  if (!ap.length) return { ...hs[0] };
+  const u = uniaoJanelas(ap.map((h) => h.janelas));
+  const ku = JSON.stringify(u);
+  const dominante = ap.find((h) => JSON.stringify(uniaoJanelas([h.janelas])) === ku);
+  if (dominante) return { ...dominante };
+  const classes = [...new Set(ap.map((h) => h.classe))];
+  return { aplica: true, classe: classes.join(' ou '), janelas: u, classesPossiveis: classes, ...(ap.some((h) => h.vucSoComCadastro) ? { vucSoComCadastro: true } : {}) };
+}
+
+/**
+ * Enquadramento do veículo na regra. Sem a capacidade de carga informada (o valor do perfil é só típico), avalia cada
+ * capacidade possível e fica com o lado seguro (ladoSeguro); quando a regra foi aplicada e a capacidade mudaria a decisão,
+ * marca `capacidadeSuposta` para o annotate avisar.
+ */
+export function enquadrar(r: Regra, v: Vehicle): Enquadramento {
+  if (payloadInformado(v) || !usaPayload(r)) return enquadrarBase(r, v);
+  const caps = capacidadesPossiveis(r, v);
+  const e = ladoSeguro(caps.map((t) => enquadrarBase(r, comCapacidade(v, t), false)));
+  // nenhuma capacidade faz a regra valer: não há suposição a avisar
+  if (!e.aplica) return e;
+  // a capacidade não muda nada (ex.: o comprimento já decide)
+  if (caps.every((t) => chave(enquadrarBase(r, comCapacidade(v, t))) === chave(e))) return e;
+  const vucPorCapacidade = !!r.vuc && r.vuc.payload_max_t !== undefined && fitsVuc(comCapacidade(v, 0), r.vuc);
+  const alt = v.payload_t === undefined ? null : enquadrarBase(r, comCapacidade(v, v.payload_t));
+  // o valor típico do perfil decidiria igual: só avisa quando o veículo podia ser VUC
+  if (alt && chave(alt) === chave(e) && !vucPorCapacidade) return e;
+  e.capacidadeSuposta = {
+    estimativa_t: v.payload_t ?? null,
+    ...(alt ? { com_estimativa: { aplica: alt.aplica, classe: alt.classe } } : {}),
+    ...(vucPorCapacidade ? { vuc_por_capacidade: true } : {}),
+  };
+  return e;
 }
 
 export function janelaAtiva(js: Janela[], at: Date): boolean {
@@ -136,15 +295,24 @@ export function janelaAtiva(js: Janela[], at: Date): boolean {
 
 // ---------------------------------------------------------------- acesso a dados
 
-async function zones(): Promise<Row[]> {
+/** O–D da rota e instante de saída como parâmetros SQL ($2..$6 = lonO, latO, lonD, latD, saída) */
+const odParams = (ctx: RouteCtx) => [ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat, ctx.at.toISOString()];
+/** feição vigente no instante da saída ($6) */
+const VIGENTE_SQL = `(f.valid_from is null or f.valid_from <= $6::timestamptz) and (f.valid_to is null or f.valid_to > $6::timestamptz)`;
+const SEGMENTO_SQL = `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)`;
+
+/** zonas a até máx(50 km; 60% da distância O–D) do segmento O–D (ver ZONA_RAIO_MIN_M) */
+async function zones(ctx: RouteCtx): Promise<Row[]> {
   const r = await query<Row>(
-    `select id::text, name, kind, props, ST_AsGeoJSON(geom, 7)::json as geometry,
-            ST_AsGeoJSON(ST_Multi(ST_SimplifyPreserveTopology(ST_Buffer(geom::geography, -$2::float)::geometry, 0.00003)), 7)::json as inset
-       from data_features
-      where layer_id = $1 and kind = 'zona' and (valid_to is null or valid_to > now())`,
-    [LAYER, ZONE_INSET_M],
+    `${SEGMENTO_SQL}
+     select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 7)::json as geometry,
+            ST_AsGeoJSON(ST_Multi(ST_SimplifyPreserveTopology(ST_Buffer(f.geom::geography, -$7::float)::geometry, 0.00003)), 7)::json as inset
+       from data_features f, s
+      where f.layer_id = $1 and f.kind = 'zona' and ${VIGENTE_SQL}
+        and ST_DWithin(f.geom::geography, s.g::geography, greatest($8::float, $9::float * ST_Length(s.g::geography)))`,
+    [LAYER, ...odParams(ctx), ZONE_INSET_M, ZONA_RAIO_MIN_M, ZONA_RAIO_FRAC],
   );
-  return r.rows;
+  return r.rows.filter((z) => regraAplicavel(z.props));
 }
 
 /**
@@ -153,49 +321,55 @@ async function zones(): Promise<Row[]> {
  * Via usada fora do corredor (desvio grande) ainda gera aviso no annotate (rmsp_via_restrita_na_rota).
  */
 const CORREDOR_M_MAX = 15000;
-const CORREDOR_SQL = `with s as (select ST_MakeLine(ST_SetSRID(ST_Point($2, $3), 4326), ST_SetSRID(ST_Point($4, $5), 4326)) as g)
+const CORREDOR_SQL = `${SEGMENTO_SQL}
      select %COLS%
        from data_features f, s
       where f.layer_id = $1 and f.kind = 'via'
         and ST_DWithin(f.geom::geography, s.g::geography, greatest(2500, least(${CORREDOR_M_MAX}, 0.4 * ST_Length(s.g::geography))))
-        and (f.valid_to is null or f.valid_to > now())`;
+        and ${VIGENTE_SQL}`;
 async function viasNoCorredor(ctx: RouteCtx): Promise<Row[]> {
   const r = await query<Row>(CORREDOR_SQL.replace('%COLS%', 'f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry'),
-    [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat]);
-  return r.rows;
+    [LAYER, ...odParams(ctx)]);
+  return r.rows.filter((v) => regraAplicavel(v.props));
 }
 /** só os ids das vias que costLines() manda ao Valhalla (para saber o que o routing.ts consegue checar) */
 async function idsNoCorredor(ctx: RouteCtx): Promise<Set<string>> {
-  const r = await query<{ id: string }>(CORREDOR_SQL.replace('%COLS%', 'f.id::text'),
-    [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat]);
+  const r = await query<{ id: string }>(CORREDOR_SQL.replace('%COLS%', 'f.id::text'), [LAYER, ...odParams(ctx)]);
   return new Set(r.rows.map((x) => x.id));
 }
 
-/** municípios (IBGE) da origem e do destino */
-async function municipiosOD(ctx: RouteCtx): Promise<{ origem: string | null; destino: string | null }> {
+/**
+ * municípios (IBGE) da origem e do destino: o limite próprio da camada (kind=municipio, RMSP com qualidade máxima) ou,
+ * fora dele, a malha do IBGE da camada geocoding (ibge-malhas, todos os municípios do Sudeste).
+ */
+export async function municipiosOD(ctx: Pick<RouteCtx, 'origin' | 'destination'>): Promise<{ origem: string | null; destino: string | null }> {
   const r = await query<{ which: string; ibge: string }>(
-    `select p.which, f.props->>'ibge' as ibge
+    `select distinct on (p.which) p.which, coalesce(f.props->>'ibge', f.props->>'cod_ibge') as ibge
        from (values ('o', $2::float, $3::float), ('d', $4::float, $5::float)) as p(which, lon, lat)
-       join data_features f on f.layer_id = $1 and f.kind = 'municipio' and ST_Intersects(f.geom, ST_SetSRID(ST_Point(p.lon, p.lat), 4326))`,
+       join data_features f on f.kind = 'municipio' and (f.layer_id = $1 or (f.layer_id = 'geocoding' and f.source = 'ibge-malhas'))
+                           and ST_Intersects(f.geom, ST_SetSRID(ST_Point(p.lon, p.lat), 4326))
+      order by p.which, (f.layer_id = $1) desc`,
     [LAYER, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat],
   );
   return { origem: r.rows.find((x) => x.which === 'o')?.ibge ?? null, destino: r.rows.find((x) => x.which === 'd')?.ibge ?? null };
 }
 
-/** feriado por município (nacional/estadual/municipal) com cache por chamada */
-function holidayCache(at: Date) {
+type HolidayFn = (r: Pick<Regra, 'ibge' | 'uf'>) => Promise<{ name: string } | null>;
+/** feriado do município da regra (nacional, estadual da UF ou municipal) com cache por chamada */
+function holidayCache(at: Date): HolidayFn {
   const m = new Map<string, Promise<{ name: string } | null>>();
-  return (ibge: string | null) => {
-    const k = ibge ?? '-';
-    if (!m.has(k)) m.set(k, legalDayInfo(at, ibge ?? '0000000').then((d) => d.holiday).catch(() => null));
+  return (r) => {
+    const uf = ufDe(r);
+    const k = `${r.ibge ?? '-'}|${uf}`;
+    if (!m.has(k)) m.set(k, legalDayInfo(at, r.ibge ?? '0000000', uf).then((d) => d.holiday).catch(() => null));
     return m.get(k)!;
   };
 }
 
-async function regraAtiva(r: Regra, v: Vehicle, at: Date, holiday: (ibge: string | null) => Promise<{ name: string } | null>) {
+async function regraAtiva(r: Regra, v: Vehicle, at: Date, holiday: HolidayFn) {
   const e = enquadrar(r, v);
-  if (!e.aplica) return { ativa: false, e };
-  if (r.feriados === 'suspende' && (await holiday(r.ibge))) return { ativa: false, e, feriado: true };
+  if (!regraAplicavel(r) || !e.aplica) return { ativa: false, e };
+  if (r.feriados === 'suspende' && (await holiday(r))) return { ativa: false, e, feriado: true };
   return { ativa: janelaAtiva(e.janelas, at), e };
 }
 
@@ -248,7 +422,9 @@ function itemOf(row: Row, rule: string): LayerItem {
 }
 
 const local = (d: Date) => DateTime.fromJSDate(d).setZone(env.tz);
-const ruleLabel = (r: Regra, e: Enquadramento) => `${describeJanelas(e.janelas)}${r.feriados === 'suspende' ? ', exceto feriados' : ''}`;
+/** horário da regra para o veículo; regra não ativa pode não ter janelas registradas (o schema aceita) */
+const horarioTexto = (js: Janela[] | undefined) => describeJanelas(js ?? []) || 'sem horário registrado';
+const ruleLabel = (r: Regra, e: Enquadramento) => `${horarioTexto(e.janelas)}${r.feriados === 'suspende' ? ', exceto feriados' : ''}`;
 const atoCurto = (r: Regra) => r.base_legal[0]?.ato.split('(')[0].replace(/,?\s*arts?\..*$/, '').trim() ?? '';
 
 // ---------------------------------------------------------------- camada
@@ -256,8 +432,8 @@ const atoCurto = (r: Regra) => r.base_legal[0]?.ato.split('(')[0].replace(/,?\s*
 const layer: RouteLayer = {
   meta: {
     id: LAYER,
-    label: 'Restrições municipais (Grande SP)',
-    description: 'Zonas e vias com horário para caminhão em Osasco, Barueri, Guarulhos, Cajamar, Santana de Parnaíba e Ribeirão Pires.',
+    label: 'Restrições municipais',
+    description: 'Zonas, vias e pontes com restrição a caminhão definidas pelos municípios (horário, peso, capacidade de carga, dimensões, eixos), com o ato e o artigo de cada regra. Um arquivo por município (código IBGE); a lista de municípios carregados está nas fontes.',
     group: 'restricoes',
     sources: [
       { name: 'Osasco: Dec. 10.676/2012 (red. Dec. 13.704/2023), mapa DEMUTRAN (IOMO 2434) e Portaria SETRAN (IOMO 2487)', url: 'https://osasco.sp.gov.br/wp-content/uploads/2023/03/iomo-2408.pdf', license: 'Ato oficial (domínio público, Lei 9.610/98 art. 8º IV)' },
@@ -269,13 +445,14 @@ const layer: RouteLayer = {
       { name: 'Geometria das vias e do contorno de Ribeirão Pires: OpenStreetMap', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0 (© colaboradores do OpenStreetMap)' },
       { name: 'Polígono da ZMRC de Osasco: mapa oficial georreferenciado sobre os eixos do OpenStreetMap (ICP + thin-plate spline)', url: 'https://www.openstreetmap.org/copyright', license: 'Derivado do OSM: ODbL 1.0 (© colaboradores do OpenStreetMap)' },
       { name: 'Limites municipais: IBGE Malha Municipal', url: 'https://servicodados.ibge.gov.br/api/docs/malhas', license: 'Dados públicos IBGE (citar a fonte)' },
+      { name: 'Demais municípios: ato, artigo e URL de cada regra em data/raw/municipios/<ibge>.json; URL e licença de cada município em GET /api/sources (fonte = município)', url: 'https://www.planalto.gov.br/ccivil_03/leis/l9610.htm', license: 'Ato oficial (domínio público, Lei 9.610/98 art. 8º IV); geometria OSM (ODbL 1.0)' },
     ],
     style: { kind: 'line', color: '#dc2626', width: 3, minzoom: 10, icon: '⛔', opacity: 0.8 },
     defaultVisible: true,
   },
 
   async exclusions(ctx) {
-    const [zs, od] = await Promise.all([zones(), municipiosOD(ctx).catch(() => ({ origem: null, destino: null }))]);
+    const [zs, od] = await Promise.all([zones(ctx), municipiosOD(ctx).catch(() => ({ origem: null, destino: null }))]);
     const holiday = holidayCache(ctx.at);
     const out: LayerExclusion[] = [];
     for (const z of zs) {
@@ -292,7 +469,7 @@ const layer: RouteLayer = {
   },
 
   async costLines(ctx) {
-    const [vs, od, zs] = await Promise.all([viasNoCorredor(ctx), municipiosOD(ctx).catch(() => ({ origem: null, destino: null })), zones()]);
+    const [vs, od, zs] = await Promise.all([viasNoCorredor(ctx), municipiosOD(ctx).catch(() => ({ origem: null, destino: null })), zones(ctx)]);
     const holiday = holidayCache(ctx.at);
     const naZona = zonasComOD(zs, ctx);
     // as linhas já vêm cortadas (<= 400 m), encadeadas e validadas contra o grafo do Valhalla pelo importador
@@ -318,8 +495,8 @@ const layer: RouteLayer = {
   async annotate(ctx, route) {
     const geom = route.line.geometry;
     const holiday = holidayCache(ctx.at);
-    const [zs, od, corredor, near] = await Promise.all([
-      zones(),
+    const [zs, od, corredor, near, naoAplicadas] = await Promise.all([
+      zones(ctx),
       municipiosOD(ctx).catch(() => ({ origem: null, destino: null })),
       idsNoCorredor(ctx),
       query<Row & { fraction: number }>(
@@ -328,12 +505,23 @@ const layer: RouteLayer = {
         `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) as g),
               p as (select ST_Subdivide(l.g, 32) as g from l),
               c as (select distinct f.id from data_features f join p on f.geom && ST_Expand(p.g, 0.0002) and ST_DWithin(f.geom::geography, p.g::geography, 8)
-                     where f.layer_id = $1 and f.kind = 'via' and (f.valid_to is null or f.valid_to > now()))
+                     where f.layer_id = $1 and f.kind = 'via'
+                       and (f.valid_from is null or f.valid_from <= $3::timestamptz) and (f.valid_to is null or f.valid_to > $3::timestamptz))
          select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry,
                 ST_LineLocatePoint(l.g, ST_ClosestPoint(f.geom, l.g))::float as fraction
            from data_features f join c using (id), l`,
-        [LAYER, JSON.stringify(geom)],
-      ).then((r) => r.rows),
+        [LAYER, JSON.stringify(geom), ctx.at.toISOString()],
+      ).then((r) => r.rows.filter((x) => regraAplicavel(x.props))),
+      // regras registradas mas não aplicadas (desativada por confiança, suspensa): só avisam
+      query<Row>(
+        `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($2), 4326) as g),
+              p as (select ST_Subdivide(l.g, 32) as g from l)
+         select distinct on (f.id) f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry
+           from data_features f join p on f.geom && ST_Expand(p.g, 0.0002) and ST_DWithin(f.geom::geography, p.g::geography, 8)
+          where f.layer_id = $1 and f.kind in ('desativada', 'suspensa')
+            and (f.valid_from is null or f.valid_from <= $3::timestamptz) and (f.valid_to is null or f.valid_to > $3::timestamptz)`,
+        [LAYER, JSON.stringify(geom), ctx.at.toISOString()],
+      ).then((r) => r.rows).catch(() => [] as Row[]),
     ]);
     const warnings: LayerWarning[] = [];
     const summary: string[] = [];
@@ -371,6 +559,7 @@ const layer: RouteLayer = {
           message: `A rota entra na ${r.nome} por volta das ${local(tPass).toFormat("HH'h'mm")}, dentro do horário de restrição (${ruleLabel(r, e)}). Saia mais cedo ou mais tarde.` });
       }
       noteVuc(r, e, v, warnings, seen);
+      noteCapacidade(r, e, warnings, seen);
     }
 
     // 2) vias da rota: passagem estimada, VUC com cadastro, destino local, via restrita usada sem checagem do routing.ts
@@ -410,7 +599,7 @@ const layer: RouteLayer = {
       summary.push(`${r.municipio} — ${r.regime} (${nomes}): ${ruleLabel(r, e)}${!e.aplica ? ' — não se aplica a este veículo' : locais.length && !restritas.length ? ' — exceção de entrega no município' : ''}.`);
       if (e.aplica && locais.length) {
         warnings.push({ code: 'rmsp_destino_local', severity: 'info', id: locais[0].id,
-          message: `${r.municipio}: a rota usa vias proibidas a PBT acima de 15 t (${nomesDe(locais)}) pela exceção de carga com entrega no município (${atoCurto(r)}, art. 2º, I). Leve a nota fiscal da entrega.` });
+          message: `${r.municipio}: a rota usa vias proibidas a ${condsTexto(r.alvo) || 'caminhões'} (${nomesDe(locais)}) pela exceção de carga com entrega no município (${atoCurto(r)}${r.excecao_destino_local_artigo ? `, ${r.excecao_destino_local_artigo}` : ''}). Leve a nota fiscal da entrega.` });
       }
       if (e.aplica && restritas.length) {
         const rf = restritas.reduce((a, b) => (a.fraction <= b.fraction ? a : b));
@@ -436,9 +625,28 @@ const layer: RouteLayer = {
         if (!seen.has(key)) { seen.add(key); warnings.push({ code: 'rmsp_trecho_aproximado', severity: 'info', message: `${r.municipio}: o trecho restrito de ${nomes} foi delimitado de forma aproximada (ponta do trecho não existe no mapa). Confira a placa no local.` }); }
       }
       noteVuc(r, e, v, warnings, seen);
+      noteCapacidade(r, e, warnings, seen);
     }
-    if (!hits.length) return {};
-    return { summary: [...new Set(summary)].slice(0, 8), warnings, data: { hits, municipio_origem: od.origem, municipio_destino: od.destino } };
+
+    // 3) regras registradas e NÃO aplicadas (desativada, suspensa) no caminho: aviso informativo, uma vez por regra
+    const naoAplicadasHits: Record<string, unknown>[] = [];
+    for (const n of naoAplicadas) {
+      const r = n.props;
+      if (seen.has(`nao:${r.regra_id}`) || !enquadrar(r, v).aplica) continue;
+      const usada = r.tipo === 'zona'
+        ? turf.booleanIntersects(line, n.geometry as GeoJSON.Polygon)
+        : lines(n.geometry).some((c) => usaLinha(usoDaLinha(routeCoords, c, r.sentido === 'unico' || !!r.mao_unica)));
+      if (!usada) continue;
+      seen.add(`nao:${r.regra_id}`);
+      naoAplicadasHits.push({ regra_id: r.regra_id, municipio: r.municipio, nome: r.nome, status: r.status, motivo: r.status_motivo ?? null });
+      warnings.push({ code: 'municipal_regra_nao_aplicada', severity: 'info', id: n.id,
+        message: `${r.municipio}: a rota passa por "${r.nome}" (${ruleLabel(r, enquadrar(r, v))}), regra ${r.status === 'suspensa' ? 'suspensa' : 'desativada'} que o app NÃO aplica${r.status_motivo ? `: ${r.status_motivo}` : '.'} Confira a sinalização no local.` });
+    }
+    if (!hits.length && !naoAplicadasHits.length) return {};
+    return {
+      summary: [...new Set(summary)].slice(0, 8), warnings,
+      data: { hits, municipio_origem: od.origem, municipio_destino: od.destino, ...(naoAplicadasHits.length ? { nao_aplicadas: naoAplicadasHits } : {}) },
+    };
   },
 
   async features(bbox, { zoom }) {
@@ -447,7 +655,7 @@ const layer: RouteLayer = {
               ST_AsGeoJSON(case when $6::boolean then ST_SimplifyPreserveTopology(geom, 0.00005) else geom end, 6)::json as geometry
          from data_features
         where layer_id = $1 and kind in ('zona', 'via') and geom && ST_MakeEnvelope($2, $3, $4, $5, 4326)
-          and (valid_to is null or valid_to > now())
+          and (valid_from is null or valid_from <= now()) and (valid_to is null or valid_to > now())
         limit 4000`,
       // zoom vem da query string (pode ser 12.5, NaN...): decide no JS e manda boolean
       [LAYER, ...bbox, !(Number.isFinite(zoom) && (zoom as number) >= 13)],
@@ -461,7 +669,7 @@ const layer: RouteLayer = {
           properties: {
             id: x.id, name: x.name, kind: x.kind, municipio: p.municipio, regime: p.regime, inciso: p.inciso ?? null,
             sentido: p.sentido ?? null, aproximado: !!p.aproximado,
-            description: `${describeJanelas(p.janelas)}${p.feriados === 'suspende' ? ', exceto feriados' : ''}. ${alvoTexto(p)}${p.trecho ? ` Trecho: ${p.trecho}.` : ''}`,
+            description: `${horarioTexto(p.janelas)}${p.feriados === 'suspende' ? ', exceto feriados' : ''}. ${alvoTexto(p)}${p.trecho ? ` Trecho: ${p.trecho}.` : ''}`,
             source: atoCurto(p), source_url: p.base_legal[0]?.url,
           },
         };
@@ -470,10 +678,62 @@ const layer: RouteLayer = {
   },
 };
 
+const num = (x: number) => String(x).replace('.', ',');
+const TIPO_TEXTO: Record<string, string> = { light: 'utilitário', rigid: 'caminhão simples', semitrailer: 'carreta (cavalo + semirreboque)', truck_trailer: 'caminhão + reboque', cvc: 'CVC (bitrem/rodotrem)' };
+function condTexto(c: Cond): string {
+  if (c.campo === 'tipo') return (c.em ?? []).map((t) => TIPO_TEXTO[t] ?? t).join(' ou ');
+  if (c.campo === 'eixos') return c.acima !== undefined ? `mais de ${c.acima} eixos` : `até ${c.ate} eixos`;
+  const rot = { pbt_t: 'PBT', payload_t: 'capacidade de carga', comprimento_m: 'comprimento', largura_m: 'largura', altura_m: 'altura' }[c.campo];
+  const un = c.campo.endsWith('_t') ? 't' : 'm';
+  return c.acima !== undefined ? `${rot} acima de ${num(c.acima)} ${un}` : `${rot} até ${num(c.ate as number)} ${un}`;
+}
+/** "PBT acima de 15 t ou mais de 2 eixos"; com `todas`: "(...) e ..." */
+function condsTexto(p: Predicado | undefined): string {
+  const q = p?.qualquer?.map(condTexto).join(' ou ') ?? '';
+  const t = p?.todas?.map(condTexto).join(' e ') ?? '';
+  return q && t ? `(${q}) e ${t}` : q || t;
+}
+
 function alvoTexto(r: Regra): string {
-  const c = r.alvo?.qualquer?.map((x) => (x.campo === 'pbt_t' ? `PBT acima de ${x.acima} t` : x.campo === 'eixos' ? `mais de ${x.acima} eixos` : `${x.campo} acima de ${x.acima}`)).join(' ou ');
-  const vuc = r.vuc ? ` VUC (até ${String(r.vuc.largura_max_m).replace('.', ',')} x ${String(r.vuc.comprimento_max_m).replace('.', ',')} m) ${r.vuc.exige_cadastro ? 'isento só com cadastro' : 'isento'}.` : '';
+  const c = condsTexto(r.alvo);
+  const d = r.vuc;
+  const extra = d ? [d.altura_max_m !== undefined && `altura até ${num(d.altura_max_m)} m`, d.pbt_max_t !== undefined && `PBT até ${num(d.pbt_max_t)} t`,
+    d.payload_max_t !== undefined && `capacidade até ${num(d.payload_max_t)} t`, d.eixos_max !== undefined && `até ${d.eixos_max} eixos`].filter(Boolean) : [];
+  const vuc = d ? ` VUC (até ${num(d.largura_max_m)} x ${num(d.comprimento_max_m)} m${extra.length ? `, ${extra.join(', ')}` : ''}) ${d.exige_cadastro ? 'isento só com cadastro' : 'isento'}.` : '';
   return `${c ? `Caminhões com ${c}.` : 'Caminhões.'}${vuc}`;
+}
+
+/** efeito da capacidade típica do perfil (aproximada) em relação ao que a rota aplicou */
+function efeitoDaEstimativa(e: Enquadramento, alt: { aplica: boolean; classe: string } | undefined): string {
+  if (!alt) return '';
+  if (!alt.aplica) return alt.classe === 'VUC' ? 'seria VUC isento' : 'a regra não valeria';
+  if (alt.classe === e.classe) return '';
+  return e.classesPossiveis ? `valeria só como ${alt.classe}` : `valeria como ${alt.classe}, não como ${e.classe}`;
+}
+
+/** regra aplicada sem a capacidade de carga informada, quando a capacidade mudaria a decisão (ver enquadrar) */
+function noteCapacidade(r: Regra, e: Enquadramento, warnings: LayerWarning[], seen: Set<string>) {
+  const s = e.capacidadeSuposta;
+  if (!s || !e.aplica) return;
+  const est = s.estimativa_t;
+  const efeito = efeitoDaEstimativa(e, s.com_estimativa);
+  const comEstimativa = efeito && est != null ? `. Com a capacidade típica do perfil (~${num(est)} t, aproximada), ${efeito}` : '';
+  const pedido = 'Informe a capacidade de carga do CRLV.';
+  if (s.vuc_por_capacidade && r.vuc?.payload_max_t !== undefined) {
+    // sem efeito próprio da regra, um aviso por município e classe (ex.: os 4 anexos de Cajamar)
+    const key = efeito ? `cap:${r.regra_id}` : `cap:vuc:${r.municipio}:${e.classe}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    warnings.push({ code: 'municipal_capacidade_nao_informada', severity: 'info',
+      message: `${r.municipio}: o veículo cabe no VUC local pelas dimensões, mas o VUC também exige capacidade de carga até ${num(r.vuc.payload_max_t)} t (${r.vuc.artigo ?? atoCurto(r)}), que não foi informada; a rota o tratou como ${e.classe}${efeito ? ` em "${r.nome}"` : ''} (lado seguro)${comEstimativa}. ${pedido}` });
+    return;
+  }
+  const key = `cap:${r.regra_id}`;
+  if (seen.has(key)) return;
+  seen.add(key);
+  const como = e.classesPossiveis ? `somou os horários das classes possíveis (${e.classe})` : e.classe !== 'caminhão' ? `aplicou a classe ${e.classe}` : 'considerou a restrição';
+  warnings.push({ code: 'municipal_capacidade_nao_informada', severity: 'info',
+    message: `${r.municipio}: "${r.nome}" depende da capacidade de carga, que não foi informada; a rota ${como} (lado seguro)${comEstimativa}. ${pedido}` });
 }
 
 function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[], seen: Set<string>) {
@@ -482,7 +742,7 @@ function noteVuc(r: Regra, e: Enquadramento, v: Vehicle, warnings: LayerWarning[
   if (e.vucSoComCadastro && r.vuc) {
     seen.add(key);
     warnings.push({ code: 'rmsp_vuc_cadastro', severity: 'info', message: `${r.municipio}: VUC só fica isento se cadastrado${r.vuc.orgao ? ` na ${r.vuc.orgao}` : ''} (${r.vuc.artigo ?? atoCurto(r)}). A rota considerou a restrição.` });
-  } else if (v.is_vuc && e.aplica && !r.vuc && !r.alvo?.qualquer?.length && r.vuc_nota) {
+  } else if (v.is_vuc && e.aplica && !r.vuc && !r.alvo?.qualquer?.length && !r.alvo?.todas?.length && r.vuc_nota) {
     seen.add(key);
     warnings.push({ code: 'rmsp_vuc_nao_confirmado', severity: 'info', message: `${r.municipio}: ${r.vuc_nota}` });
   }

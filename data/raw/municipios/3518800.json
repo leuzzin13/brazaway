@@ -1,0 +1,115 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3518800",
+  "municipio": "Guarulhos",
+  "uf": "SP",
+  "fonte_id": "guarulhos",
+  "fonte": {
+    "url": "https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/37887decr.pdf ; https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/38400decr.pdf",
+    "licenca": "Atos oficiais de Guarulhos: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Recorte aproximado do Anexo Único (imagem sem coordenadas): ramos do trevo e vias transversais a até 450 m do cruzamento, mais os braços do contorno na via transversal (~1 km ao sul, ~0,6 km ao norte; pontas estimadas pela escala do anexo)."
+  },
+  "verificado_em": "2026-10-09",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 7.2,
+    "exige_cadastro": false,
+    "artigo": "Dec. 37.887/2021, art. 2º, II e art. 4º, I"
+  },
+  "regras": [
+    {
+      "id": "guarulhos_zrcc_tb",
+      "tipo": "via",
+      "regime": "ZRCC-TB",
+      "nome": "ZRCC-TB — Trevo de Bonsucesso (Guarulhos)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "20:00"},
+        {"days": [6], "from": "10:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "VUC",
+        "lixo público",
+        "zoonoses",
+        "obras e serviços públicos essenciais",
+        "Correios",
+        "sinalização de trânsito",
+        "socorro mecânico",
+        "carro-forte",
+        "betoneira em operação",
+        "insumos para unidades de saúde (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 37.887/2021, arts. 2º–4º (ZRCC-TB, VUC 2,20 x 7,20 m, exceções)",
+          "artigo": "arts. 2º a 4º (zona, VUC e exceções)",
+          "url": "https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/37887decr.pdf",
+          "nota": "DOM original de 01/04/2021: https://www.guarulhos.sp.gov.br/uploads/pdf/1488431877.pdf (em vigor desde 05/04/2021)"
+        },
+        {
+          "ato": "Decreto municipal 38.400/2021, art. 1º (nova redação do art. 3º: seg–sex 6h–9h e 17h–20h, sáb 10h–14h)",
+          "artigo": "art. 1º (nova redação do art. 3º do Dec. 37.887/2021: horários)",
+          "url": "https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/38400decr.pdf",
+          "nota": "DOM original de 08/10/2021: https://www.guarulhos.sp.gov.br/uploads/pdf/1921264457.pdf (em vigor desde 11/10/2021)"
+        }
+      ],
+      "fonte_geometria": "Anexo Único (imagem, sem coordenadas) do Dec. 37.887/2021: alças e ramos do trevo da Dutra com a Av. Papa João Paulo I / Estr. Pres. Juscelino Kubitschek. Modelado como os ramos (*_link) e as vias transversais do OSM a até 450 m do cruzamento e, além disso, os dois braços que o contorno desenha ao longo da via transversal (trechos 'braço sul' e 'braço norte', pela malha do Valhalla). Pistas principais e marginais da Dutra ficam livres.",
+      "nota": "O mapa do anexo não tem coordenadas. Escala estimada pela largura do trevo (~1,8 m/px): o braço do lado do Posto Shell (sul, Estr. Pres. Juscelino Kubitschek) vai a ~1 km do trevo e o do lado oposto (norte, Av. Dr. Arthur Marcondes de Siqueira/Estr. Capuava) a ~0,6 km. As pontas são aproximadas.",
+      "vigencia_inicio": "2021-10-08",
+      "trechos": [
+        {
+          "inciso": "Anexo Único (braço sul)",
+          "via": ["Estrada Presidente Juscelino Kubitschek de Oliveira"],
+          "de": {"lonlat": [-46.4057, -23.4303]},
+          "ate": {"lonlat": [-46.4057, -23.4357]},
+          "caminho": "valhalla",
+          "corredor_m": 60,
+          "aproximado": true,
+          "descricao": "Estr. Pres. Juscelino Kubitschek, do trevo até ~1 km ao sul (braço do contorno do Anexo Único, lado do Posto Shell)"
+        },
+        {
+          "inciso": "Anexo Único (braço norte)",
+          "via": ["Avenida Doutor Arthur Marcondes de Siqueira", "Estrada Capuava"],
+          "de": {"lonlat": [-46.4071, -23.4237]},
+          "ate": {"lonlat": [-46.407, -23.4214]},
+          "caminho": "valhalla",
+          "corredor_m": 60,
+          "aproximado": true,
+          "descricao": "Av. Dr. Arthur Marcondes de Siqueira / Estr. Capuava, do trevo até ~0,6 km ao norte (braço do contorno do Anexo Único)"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "ramos",
+          "arquivo": "rmsp/guarulhos_vias.geojson",
+          "construir": "entorno",
+          "entorno": {
+            "centro": [-46.4068, -23.4268],
+            "raio_m": 450,
+            "vias": [
+              "Avenida Papa João Paulo I",
+              "Estrada Presidente Juscelino Kubitschek de Oliveira",
+              "Avenida Doutor Arthur Marcondes de Siqueira"
+            ],
+            "classes_ramo": ["motorway_link", "trunk_link", "primary_link", "secondary_link", "tertiary_link"],
+            "excluir_nomes": ["Rodovia Presidente Dutra", "Via Marginal Rodovia Presidente Dutra", "Avenida Marginal"],
+            "inciso": "Anexo Único",
+            "nome_ramo": "alça do trevo",
+            "aproximado": true
+          }
+        },
+        {
+          "id": "bracos",
+          "arquivo": "rmsp/guarulhos_bracos.geojson",
+          "construir": "trechos",
+          "props": {"aproximado": true, "highway": null}
+        }
+      ]
+    }
+  ]
+}
