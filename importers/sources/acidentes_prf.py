@@ -104,9 +104,23 @@ def _cached_events() -> list[dict]:
     return _events
 
 
-def covered_cells() -> set[tuple[int, int]]:
-    """Células de 250 m (com 1 célula de folga) das BRs em SP: usadas pelo Infosiga para não duplicar acidentes."""
-    return dilate({cell_of(e['lon'], e['lat']) for e in _cached_events() if e['lon'] is not None and in_bbox(e['lon'], e['lat'])})
+def covered_cells(bbox: tuple[float, float, float, float] | None = None) -> set[tuple[int, int]]:
+    """Células de 250 m (com 1 célula de folga) com acidentes da PRF dentro do bbox (padrão: estado de SP). Usadas pelas
+    fontes estaduais (Infosiga em SP, SEJUSP/REDS em MG) para não duplicar acidentes das BRs."""
+    kw = {'bbox': bbox} if bbox else {}
+    return dilate({cell_of(e['lon'], e['lat']) for e in _cached_events() if e['lon'] is not None and in_bbox(e['lon'], e['lat'], **kw)})
+
+
+def registros_por_br(uf: str) -> Counter:
+    """{'BR-381': n, ...}: acidentes da PRF (qualquer veículo, com ou sem coordenada) por BR na UF, nos anos em cache. Usado
+    pelo REDS em MG para saber quais BRs a PRF de fato registra (as demais não têm como duplicar a PRF)."""
+    out = Counter()
+    for e in _cached_events():
+        via = e['via'] or ''
+        m = re.search(r'BR-\d{3}', via)
+        if m and via.endswith(f'/{uf}'):
+            out[m.group(0)] += 1
+    return out
 
 
 def fetch():

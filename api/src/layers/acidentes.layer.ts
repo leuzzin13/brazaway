@@ -3,7 +3,7 @@ import { featuresInBbox, featuresNearRoute, type DataFeatureRow, type NearRouteR
 import type { LayerWarning, RouteLayer } from './types.js';
 
 /**
- * Pontos críticos de acidentes com caminhão (Infosiga SP, ARTESP e PRF), agregados pelos importadores numa grade de 250 m
+ * Pontos críticos de acidentes com caminhão (Infosiga SP, ARTESP, PRF e SEJUSP-MG/REDS), agregados pelos importadores numa grade de 250 m
  * com janela de 3 anos e mínimo de 3 acidentes com caminhão por célula. Nenhum registro individual chega à API.
  * A camada é INFORMATIVA: não muda a rota; avisa dos trechos críticos que a rota atravessa (top N) e resume a contagem.
  * Ver docs/layers/acidentes.md.
@@ -19,6 +19,8 @@ const MAX_TRECHO_KM = 3;
 export const TOP_N = 5;
 /** score em que a célula já é "muito alto" (igual a NIVEL_MUITO_ALTO do importador); usado para normalizar o peso do heatmap */
 const SCORE_MAX = 15;
+/** máximo de pontos por resposta de `features` */
+const MAX_FEATURES = 6000;
 
 type Nivel = 'muito_alto' | 'alto' | 'moderado';
 const NIVEL_ORDEM: Record<Nivel, number> = { muito_alto: 3, alto: 2, moderado: 1 };
@@ -138,7 +140,7 @@ const layer: RouteLayer = {
   meta: {
     id: LAYER,
     label: 'Acidentes com caminhão',
-    description: 'Pontos críticos de acidentes com caminhão nos últimos 3 anos (grade de 250 m; SP e rodovias federais).',
+    description: 'Pontos críticos de acidentes com caminhão nos últimos 3 anos (grade de 250 m; SP, MG e rodovias federais).',
     group: 'seguranca',
     sources: [
       { name: 'Infosiga SP (Detran-SP)', url: 'https://infosiga.detran.sp.gov.br/', license: 'Dados abertos Detran-SP (uso e redistribuição livres com atribuição e mesmos termos de abertura)' },
@@ -151,6 +153,15 @@ const layer: RouteLayer = {
           'Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); ' +
           'o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR',
       },
+      {
+        name: 'SEJUSP-MG — Painel de Sinistro de Trânsito (REDS)',
+        url: 'https://drive.google.com/drive/folders/1W_4SsAW8u5bvsaBoHhwInpUr72vES8yw',
+        // mesma redação do LICENSE de importers/sources/acidentes_reds_mg.py e de docs/layers/seguranca_mg.md
+        license:
+          'SEJUSP-MG/REDS (Painel de Sinistro de Trânsito) — sem licença nomeada nos arquivos nem no CKAN; dados de ' +
+          'transparência ativa "de livre utilização pela sociedade" (Decreto MG 48.383/2022, art. 22, observados o art. 6º ' +
+          'da LGPD e a Lei 14.129/2021); atribuir SEJUSP-MG/REDS; confirmar uso comercial por pedido de acesso à informação',
+      },
     ],
     style: { kind: 'heatmap', color: '#dc2626', radius: 16, opacity: 0.65, icon: '⚠️' },
     defaultVisible: false,
@@ -158,9 +169,17 @@ const layer: RouteLayer = {
 
   async features(bbox, { zoom }) {
     const z = zoom ?? 12;
-    // longe: só os piores; perto: todos os pontos críticos publicados
-    const niveis = z < 7 ? ['muito_alto'] : z < 9 ? ['muito_alto', 'alto'] : ['muito_alto', 'alto', 'moderado'];
-    const rows = await featuresInBbox(LAYER, bbox, { limit: 6000, where: 'kind = any($7)', params: [niveis] });
+    // longe: só os piores; perto (zoom >= 10): todos os pontos críticos publicados. Com as ~7,5 mil células da SEJUSP-MG,
+    // uma tela larga em torno de BH no zoom 9 já passava de MAX_FEATURES; por isso o "moderado" só entra no zoom 10
+    const niveis: Nivel[] = z < 7 ? ['muito_alto'] : z < 10 ? ['muito_alto', 'alto'] : ['muito_alto', 'alto', 'moderado'];
+    // os mais graves primeiro: se o bbox passar do limite, o corte só tira moderados (a consulta não tem ORDER BY)
+    const graves = await featuresInBbox(LAYER, bbox, {
+      limit: MAX_FEATURES, where: 'kind = any($7)', params: [niveis.filter((n) => n !== 'moderado')],
+    });
+    const moderados = niveis.includes('moderado') && graves.length < MAX_FEATURES
+      ? await featuresInBbox(LAYER, bbox, { limit: MAX_FEATURES - graves.length, where: `kind = 'moderado'` })
+      : [];
+    const rows = [...graves, ...moderados];
     return {
       type: 'FeatureCollection',
       // até 12 propriedades exibíveis (o popup genérico do mapa mostra 12; id e weight ficam de fora)
@@ -194,7 +213,7 @@ const layer: RouteLayer = {
     const rows = await featuresNearRoute(LAYER, route.line.geometry, NEAR_M, { limit: 3000 });
     if (!rows.length) {
       return {
-        summary: ['Nenhum ponto crítico de acidente com caminhão na rota (3 anos; cobre o estado de SP e as rodovias federais).'],
+        summary: ['Nenhum ponto crítico de acidente com caminhão na rota (3 anos; cobre os estados de SP e MG e as rodovias federais).'],
         data: { pontos: 0, trechos: [] },
       };
     }
@@ -237,6 +256,9 @@ const layer: RouteLayer = {
     if (criticos.length < trechos.filter((t) => t.nivel !== 'moderado').length) {
       summary.push(`Avisos mostram os ${criticos.length} trechos mais graves; os demais estão em "dados" e no mapa.`);
     }
+    // atribuição das fontes dos pontos desta rota (a SEJUSP-MG pede citação "SEJUSP-MG/REDS"), na ordem em que aparecem
+    const fontes = [...new Set(rows.map((r) => props(r).fonte ?? r.source))];
+    summary.push(`Fonte${fontes.length > 1 ? 's' : ''}: ${fontes.join('; ')}.`);
 
     return {
       summary,

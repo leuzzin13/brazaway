@@ -26,7 +26,8 @@ describe('Camadas de segurança: acidentes e roubo de carga', () => {
       expect(l.affects_route).toBe(false);          // informativas: não mudam a rota
       expect(l.sources.every((s: any) => s.license && s.url)).toBe(true);
     }
-    expect(ac.runs.map((x: any) => x.source).sort()).toEqual(['artesp', 'infosiga', 'prf']);
+    // outras UFs entram como novas fontes da mesma camada (ex.: sejusp-mg, ver seguranca_mg.test.ts)
+    expect(ac.runs.map((x: any) => x.source)).toEqual(expect.arrayContaining(['artesp', 'infosiga', 'prf']));
     expect(rc.runs.map((x: any) => x.source)).toEqual(['ssp-sp']);
   });
 
