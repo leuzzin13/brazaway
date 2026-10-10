@@ -11,14 +11,8 @@
     "notas": "Só as duas avenidas que o art. 1º nomeia. As 'demais vias urbanas identificadas pela sinalização regulamentadora' não têm lista publicada e não foram modeladas. O OSM tem hgv=no na Av. Itavuvu, na Av. Ipanema e na Av. Afonso Vergueiro (talvez de restrição antiga ou de obra) e nada nas vias do ato."
   },
   "verificado_em": "2026-10-10",
-  "vuc": {
-    "largura_max_m": 2.2,
-    "comprimento_max_m": 6.3,
-    "exige_cadastro": false,
-    "orgao": "Secretaria de Mobilidade de Sorocaba",
-    "artigo": "Res. SEMOB 02/25, art. 2º, I, a (VUC até 5,50 x 2,20 m) e b (VLC de 5,50 a 6,30 x 2,20 m)",
-    "nota": "VUC e VLC juntos: até 6,30 m de comprimento e 2,20 m de largura. O ato também exige carga útil acima de 1.500 kg nas duas classes; o formato não tem capacidade mínima, então o app não confere esse piso (caminhão com PBT acima de 3,5 t nessas dimensões costuma passar de 1,5 t)."
-  },
+  "vuc": null,
+  "vuc_nota": "A Res. SEMOB 02/25 isenta o VUC (até 5,50 x 2,20 m) e o VLC (de 5,50 a 6,30 x 2,20 m), os dois com carga útil acima de 1.500 kg (art. 2º, I, a e b). Como a isenção também exige capacidade mínima, ela está no alvo da regra (vale para quem não é VUC/VLC: comprimento acima de 6,30 m, largura acima de 2,20 m ou carga útil até 1,5 t), e não numa definição de VUC: sem a capacidade informada, a rota aplica a regra (lado seguro) e avisa.",
   "regras": [
     {
       "id": "sorocaba_res_semob_02_2025",
@@ -29,11 +23,12 @@
       "confianca": "alta",
       "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
       "feriados": "aplica",
-      "alvo": {"caminhao": true},
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 6.3}, {"campo": "largura_m", "acima": 2.2}, {"campo": "payload_t", "ate": 1.5}]},
+      "vuc": null,
       "autorizacao": "autorização da Secretaria de Mobilidade, pedida com 5 dias de antecedência ou 24 h em urgência justificada (art. 3º)",
       "excecoes": [
         "Veículos do CTB, art. 29, VII e VIII (art. 2º)",
-        "VUC até 5,50 x 2,20 m e VLC até 6,30 x 2,20 m, com carga útil acima de 1.500 kg (art. 2º, I)",
+        "VUC até 5,50 x 2,20 m e VLC de 5,50 a 6,30 x 2,20 m, os dois com carga útil acima de 1.500 kg (art. 2º, I, a e b): no app, o alvo exclui quem tem até 6,30 x 2,20 m e carga útil informada acima de 1,5 t",
         "Autorização da Secretaria de Mobilidade em casos não previstos ou excepcionais (art. 3º)"
       ],
       "base_legal": [
@@ -43,7 +38,7 @@
           "url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf"
         }
       ],
-      "nota": "Proibição sem janela horária (24 h, todos os dias, inclusive feriados). Trechos das avenidas têm ref de rodovia no OSM (SPA-103/079, SP-079, BR-478): o ato nomeia as avenidas inteiras. Há limitadores físicos de altura na Av. Dom Aguirre (4,3 m, dois pontos) e na Pça. da Bandeira/R. Luiz Gama (3,3 m), da camada de altura, não desta regra.",
+      "nota": "Proibição sem janela horária (24 h, todos os dias, inclusive feriados). Alvo = caminhão que não é VUC/VLC do art. 2º, I: comprimento acima de 6,30 m, largura acima de 2,20 m ou carga útil até 1,5 t; sem a capacidade de carga informada, o app aplica a regra (lado seguro) e avisa municipal_capacidade_nao_informada. Trechos das avenidas têm ref de rodovia no OSM (SPA-103/079, SP-079, BR-478): o ato nomeia as avenidas inteiras. Há limitadores físicos de altura na Av. Dom Aguirre (4,3 m, dois pontos) e na Pça. da Bandeira/R. Luiz Gama (3,3 m), da camada de altura, não desta regra.",
       "fonte_geometria": "OSM (ODbL) pelo nome das duas avenidas, em toda a extensão",
       "vigencia_inicio": "2025-08-12",
       "trechos": [

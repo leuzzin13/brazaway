@@ -10,14 +10,16 @@ determinístico e não consulta o Overpass quando o arquivo existe).
     /data/raw/municipios/geo/curadoria/mun_interior_sp_geo.py [campinas|sao-vicente|santos|jacarei|vias] [--refazer]
 
 Zonas (polígonos):
-  * campinas: Anel Rodoviário (área interna às pistas e marginais da SP-065, SP-330 e SP-083, com as alças), Distrito
+  * campinas: Anel Rodoviário (área interna às pistas e marginais da SP-065, SP-330 e SP-083, com as alças, recortada
+    pelo limite de Campinas), Distrito
     de Nova Aparecida (R. Batista Raffi, SP-330, Rod. Adalberto Panzan, SP-101 e as divisas com Hortolândia e Sumaré) e
     Anel de Integração Eng. Rebouças (as 20 vias do art. 5º, parágrafo único, da Res. 079/2017, cada uma entre a anterior
     e a seguinte);
   * sao-vicente: ARC do centro (perímetro descrito no art. 1º da Lei 2163-A/2009);
   * santos: Zona de Restrição do Gonzaga (quadrilátero das 5 avenidas citadas no DO de 16/02/2002);
   * jacarei: município (IBGE) menos as 7 Rotas de Cargas Pesadas do Dec. 247/2017 e as rodovias estaduais e federais com
-    as alças, em pedaços (um por feição).
+    as alças, em pedaços (um por feição; art. 5º); e, para VCPB e VCPT (arts. 6º e 8º), o município menos só as
+    rodovias estaduais e federais que não são RCP (as RCP ficam dentro).
 Vias (construir "trechos"): monta pelo importador genérico (municipios.compilar), mas com o Overpass restrito aos nomes
 citados nos trechos (a consulta de todas as vias com nome de cidades grandes, como Sorocaba e Piracicaba, é pesada).
 """
@@ -164,10 +166,19 @@ def campinas_anel_rodoviario() -> None:
     # alças que tocam as três rodovias (inclusive as de ligação entre elas): ficam livres; as que levam ao interior
     # terminam em vias internas, que continuam dentro da zona
     alcas = [g for g in (linha(e) for e in els if e['tags']['highway'].endswith('_link')) if g.intersects(ru)]
-    P = buraco_com(anel + alcas, 25, pt(-47.0611, -22.9030))       # Catedral Metropolitana
+    catedral = pt(-47.0611, -22.9030)
+    P = buraco_com(anel + alcas, 25, catedral)                     # Catedral Metropolitana
     if P is None:
         raise SystemExit('anel rodoviário: polígono interno não fechou')
-    P = P.simplify(8)
+    # a resolução é de Campinas: o que o anel fecha do outro lado da divisa (0,24 km² em Valinhos, entre a SP-330 e o
+    # limite) sai. Recorte depois de simplificar, para nenhum vértice simplificado voltar a passar da divisa.
+    camp = lib.to_utm(lib.municipio_geom('3509502'))
+    P = P.simplify(8).intersection(camp)
+    P = next((p for p in getattr(P, 'geoms', [P]) if p.geom_type == 'Polygon' and p.contains(catedral)), None)
+    if P is None:
+        raise SystemExit('anel rodoviário: recorte pelo limite de Campinas perdeu o Centro')
+    fora = P.difference(camp).area
+    assert fora < 1.0, f'anel rodoviário: {fora:.1f} m² fora de Campinas'
     for nome, lon, lat, esperado in [('Centro', -47.0611, -22.9030, True), ('Taquaral', -47.0500, -22.8740, True),
                                      ('Barão Geraldo', -47.0750, -22.8200, False), ('Sousas', -46.9700, -22.8800, False),
                                      ('Viracopos', -47.1340, -23.0070, False), ('Nova Aparecida', -47.1538, -22.8574, False)]:
@@ -176,7 +187,8 @@ def campinas_anel_rodoviario() -> None:
     gravar('municipios/geo/3509502_anel_rodoviario.geojson', [feat(P, {'nome': 'Área interna do Anel Rodoviário'})], {
         'fonte_geometria': (f'{OSM_LIC}: região fechada pelas pistas e marginais da Rod. Dom Pedro I (SP-065), Rod. Anhanguera '
                             '(SP-330) e Rod. José Roberto Magalhães Teixeira (SP-083) e pelas alças que as tocam, a 25 m do eixo '
-                            'mais interno (a API recua mais 20 m); simplificada a 8 m'),
+                            'mais interno (a API recua mais 20 m); simplificada a 8 m e recortada pelo limite municipal de '
+                            'Campinas (IBGE, Malha Municipal, qualidade máxima): a parte em Valinhos ficou de fora'),
         'ato': 'Res. SETRANSP 079/2017 de Campinas, art. 3º, parágrafo único'})
 
 
@@ -424,11 +436,92 @@ def _ligar_rotas(els: list[dict], livres: list[dict], rcp: list[dict], ancora: s
     return novas
 
 
-def jacarei_fora_rcp() -> None:
+def _jacarei_vias() -> list[dict]:
     q = ('[out:json][timeout:180];area["boundary"="administrative"]["admin_level"="8"]["IBGE:GEOCODIGO"="3524402"]->.a;'
          'way(area.a)["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link|'
          'secondary_link|tertiary_link|unclassified|residential)$"];out geom tags;')
-    els = overpass(q, 'jacarei_vias')
+    return overpass(q, 'jacarei_vias')
+
+
+def _pedacos(mun, corte, rotulo: str) -> tuple[list[dict], float]:
+    """Município menos o corte, um polígono por pedaço (sem os que somem no recuo de 20 m da API); simplificado a 6 m."""
+    pedacos = [p for p in getattr(mun.difference(corte), 'geoms', [mun.difference(corte)])]
+    feats, buracos, nv = [], 0, 0
+    for p in sorted(pedacos, key=lambda x: -x.area):
+        if p.buffer(-20).area < 5000:       # some no recuo de 20 m da API (canteiros, miolo de trevo e rotatória)
+            continue
+        if p.interiors:
+            buracos += len(p.interiors)
+            print(f'  ! {rotulo}: pedaço de {p.area / 1e6:.2f} km² com {len(p.interiors)} buraco(s) (trecho isolado?): '
+                  f'{[tuple(round(c, 5) for c in lib.to_ll(Polygon(r)).centroid.coords[0]) for r in p.interiors][:5]}')
+        s = sem_buracos(p).simplify(6)
+        if s.is_empty or not s.is_valid:
+            s = sem_buracos(p).simplify(3)
+        nv += len(s.exterior.coords)
+        feats.append(feat(s, {'parte': len(feats) + 1, 'aproximado': True}))
+    area = sum(lib.to_utm(Polygon(f['geometry']['coordinates'][0])).area for f in feats)
+    print(f'  {rotulo}: {len(feats)} pedaços, {nv} vértices, {buracos} buraco(s); '
+          f'{area / 1e6:.1f} km² de {mun.area / 1e6:.1f} km² do município')
+    return feats, area
+
+
+# Rodovias de Jacareí que o Dec. 247/2017 NÃO lista como Rota de Cargas Pesadas: a Dutra (BR-116/SP-060), a Carvalho Pinto
+# (SP-070), a D. Pedro I (SP-065), a Henrique Eroles (SP-066) e a Nicola Capucci (SPA 172/060), com as alças. As rodovias
+# que o decreto lista como RCP (Euryale de Jesus Zerbine e Geraldo Scavone, da SP-066, e Nilo Máximo, da SP-077) seguem o
+# regime das RCP.
+def _rodovia_fora_rcp(e: dict, rcp_n: set[str]) -> bool:
+    t = e['tags']
+    nm = t.get('name') or ''
+    if t['highway'] in ('motorway', 'trunk', 'motorway_link', 'trunk_link'):
+        return True
+    return nm.startswith('Rodovia ') and lib.norm(nm) not in rcp_n
+
+
+def jacarei_vcpb_vcpt() -> None:
+    """Arts. 6º e 8º: o VCPB (caminhão + reboque, bitrem, rodotrem) só circula com AETC, inclusive nas RCP, e o VCPT
+    (treminhão) é proibido no município. Zona = limite do IBGE menos só as rodovias estaduais e federais que não são RCP
+    (e as alças, rotatórias e conectores sem nome entre elas): as 7 RCP ficam DENTRO da zona."""
+    els = _jacarei_vias()
+    rcp_n = {lib.norm(n) for n in RCP}
+    rod = [e for e in els if _rodovia_fora_rcp(e, rcp_n)]
+    ids_rod = {e['id'] for e in rod}
+    base = [linha(e) for e in rod]
+    bu = unary_union(base).buffer(60)
+    extra = []
+    for e in els:
+        if e['id'] in ids_rod:
+            continue
+        t = e['tags']
+        nome_rcp = lib.norm(t.get('name') or '') in rcp_n
+        rot = t.get('junction') in ('roundabout', 'circular')
+        alca = t['highway'].endswith('_link')
+        conector = not t.get('name') and t['highway'] in ('primary', 'secondary', 'tertiary')
+        g = linha(e)
+        # só o que liga as rodovias entre si (as duas pontas no corredor delas); via de RCP nunca sai da zona
+        if not nome_rcp and (rot or alca or (conector and g.length < 400)) and bu.contains(Point(g.coords[0])) and bu.contains(Point(g.coords[-1])):
+            extra.append(g)
+    nomes = sorted({e['tags'].get('name') or e['tags']['highway'] for e in rod if e['tags'].get('name')})
+    print(f'  Jacareí VCPB/VCPT: {len(rod)} vias de rodovia fora das RCP ({", ".join(nomes)}), {len(extra)} alças/rotatórias/conectores')
+    corte = unary_union([g.buffer(20, quad_segs=2) for g in base + extra])
+    mun = lib.to_utm(lib.municipio_geom('3524402'))
+    feats, area = _pedacos(mun, corte, 'Jacareí VCPB/VCPT')
+    assert 0.9 < area / mun.area < 0.995
+    # as RCP ficam dentro: Av. Malek Assad, Av. Industrial, Av. Getúlio Vargas e Rod. Nilo Máximo (rota 6)
+    P = unary_union([lib.to_utm(Polygon(f['geometry']['coordinates'][0])) for f in feats])
+    for nome, lon, lat in [('Malek Assad', -45.96906, -23.28878), ('Nilo Máximo', -45.93163, -23.31102)]:
+        assert P.buffer(-20).contains(pt(lon, lat)), nome
+    gravar('municipios/geo/3524402_vcpb_vcpt.geojson', feats, {
+        'fonte_geometria': (f'Limite municipal de Jacareí (IBGE, Malha Municipal, qualidade máxima) menos um corredor de 20 m '
+                            f'para cada lado do eixo das rodovias estaduais e federais que o Dec. 247/2017 não lista como Rota de '
+                            f'Cargas Pesadas ({", ".join(nomes)}) e das alças, rotatórias e conectores sem nome entre elas '
+                            f'({OSM_LIC}); a API recua mais 20 m. As 7 RCP ficam dentro da zona (art. 6º: VCPB só com AETC, '
+                            'inclusive nelas). Um polígono por pedaço; pedaços que somem no recuo foram descartados; '
+                            'simplificado a 6 m'),
+        'ato': 'Dec. 247/2017 de Jacareí, art. 2º, VIII e IX, art. 6º e art. 8º'})
+
+
+def jacarei_fora_rcp() -> None:
+    els = _jacarei_vias()
     rcp_n = {lib.norm(n) for n in RCP}
     rod, rcp, resto = [], [], []
     for e in els:
@@ -460,24 +553,8 @@ def jacarei_fora_rcp() -> None:
     extra = [linha(e) for e in extra_e + pontes]
     corte = unary_union([g.buffer(20, quad_segs=2) for g in base + extra])
     mun = lib.to_utm(lib.municipio_geom('3524402'))
-    pedacos = [p for p in getattr(mun.difference(corte), 'geoms', [mun.difference(corte)])]
-    feats, buracos, nv = [], 0, 0
-    for p in sorted(pedacos, key=lambda x: -x.area):
-        if p.buffer(-20).area < 5000:       # some no recuo de 20 m da API (canteiros, miolo de trevo e rotatória)
-            continue
-        if p.interiors:
-            buracos += len(p.interiors)
-            print(f'  ! pedaço de {p.area / 1e6:.2f} km² com {len(p.interiors)} buraco(s) (trecho de rota isolado?): '
-                  f'{[tuple(round(c, 5) for c in lib.to_ll(Polygon(r)).centroid.coords[0]) for r in p.interiors][:5]}')
-        s = sem_buracos(p).simplify(6)
-        if s.is_empty or not s.is_valid:
-            s = sem_buracos(p).simplify(3)
-        nv += len(s.exterior.coords)
-        feats.append(feat(s, {'parte': len(feats) + 1, 'aproximado': True}))
-    print(f'  Jacareí: {len(rod)} vias de rodovia, {len(rcp)} das RCP, {len(extra)} rotatórias/alças/conectores; '
-          f'{len(feats)} pedaços, {nv} vértices, {buracos} buraco(s)')
-    area = sum(lib.to_utm(Polygon(f['geometry']['coordinates'][0])).area for f in feats)
-    print(f'  área dos pedaços: {area / 1e6:.1f} km² de {mun.area / 1e6:.1f} km² do município')
+    print(f'  Jacareí: {len(rod)} vias de rodovia, {len(rcp)} das RCP, {len(extra)} rotatórias/alças/conectores')
+    feats, area = _pedacos(mun, corte, 'Jacareí fora das RCP')
     assert 0.8 < area / mun.area < 0.99
     gravar('municipios/geo/3524402_fora_rcp.geojson', feats, {
         'fonte_geometria': (f'Limite municipal de Jacareí (IBGE, Malha Municipal, qualidade máxima) menos um corredor de 20 m '
@@ -513,6 +590,66 @@ def _seis_casas(f: dict) -> list[dict]:
     return out
 
 
+def _emendar_mesmo_way(fs: list[dict], tol_m: float = 1.0) -> list[dict]:
+    """Junta os pedaços contíguos de um mesmo way do OSM (mão dupla, mesma regra/inciso/via). O trecho com ponta
+    (de/ate/ate_extremo) sai do build_trecho partido em cada nó onde outra via encosta, com as pontas dos pedaços a
+    centímetros uma da outra (R. Valdomiro Macário, Guarujá: 5 pedaços, um de 38 m na esquina da Av. Santos Dumont, que o
+    routing.ts dava como usado por quem só cruzava a esquina). Emenda as pontas a até `tol_m` (sem repetir o ponto da
+    emenda nem deixar vértices a menos de 0,5 m um do outro); o _seis_casas recorta depois em pedaços parecidos de até
+    400 m."""
+    def chave(f):
+        pr = f['properties']
+        if f['geometry']['type'] == 'LineString' and pr.get('osm_way_id') and pr.get('sentido') == 'ambos' and not pr.get('mao_unica'):
+            return (pr.get('regra_id'), pr.get('inciso'), pr.get('via'), pr.get('trecho'), pr['osm_way_id'])
+        return None
+    grupos: dict = {}
+    for f in fs:
+        if chave(f) is not None:
+            grupos.setdefault(chave(f), []).append(f)
+    perto = lambda a, b: lib._dist_m(a, b) <= tol_m
+    out, feitos = [], set()
+    for f in fs:                                   # mantém a ordem do arquivo (o grupo sai no lugar do 1º pedaço)
+        k = chave(f)
+        if k is None or len(grupos[k]) == 1:
+            out.append(f)
+            continue
+        if k in feitos:
+            continue
+        feitos.add(k)
+        g = grupos[k]
+        resto = [list(map(list, x['geometry']['coordinates'])) for x in g]
+        while resto:
+            cad = resto.pop(0)
+            cresceu = True
+            while cresceu:
+                cresceu = False
+                for i, c in enumerate(resto):
+                    if perto(cad[-1], c[0]):
+                        cad += c[1:]
+                    elif perto(cad[-1], c[-1]):
+                        cad += c[::-1][1:]
+                    elif perto(cad[0], c[-1]):
+                        cad = c[:-1] + cad
+                    elif perto(cad[0], c[0]):
+                        cad = c[::-1][:-1] + cad
+                    else:
+                        continue
+                    resto.pop(i)
+                    cresceu = True
+                    break
+            # o corte do build_trecho cai a centímetros do nó do OSM: sobram dois vértices quase iguais na emenda
+            limpa = [cad[0]]
+            for c in cad[1:-1]:
+                if lib._dist_m(limpa[-1], c) >= 0.5:
+                    limpa.append(c)
+            if lib._dist_m(limpa[-1], cad[-1]) < 0.5 and len(limpa) > 1:
+                limpa.pop()
+            limpa.append(cad[-1])
+            out.append({'type': 'Feature', 'geometry': {'type': 'LineString', 'coordinates': limpa},
+                        'properties': {**g[0]['properties'], 'comprimento_m': round(lib.line_length_m(limpa))}})
+    return out
+
+
 def vias(ibge: str) -> None:
     doc = M.carregar(M.MUNICIPIOS_DIR / f'{ibge}.json')
     nomes = sorted({n for r in doc['regras'] for t in r.get('trechos', [])
@@ -532,7 +669,8 @@ def vias(ibge: str) -> None:
         p = lib.raw_path(a)
         fc = json.loads(p.read_text())
         grupos, outras = {}, []
-        for f in fc['features']:
+        ativas = [f for f in fc['features'] if f['properties'].get('regra_id') not in nao_ativas]
+        for f in [f for f in fc['features'] if f['properties'].get('regra_id') in nao_ativas] + _emendar_mesmo_way(ativas):
             pr = f['properties']
             if pr.get('regra_id') in nao_ativas and f['geometry']['type'] == 'LineString':
                 grupos.setdefault((pr['regra_id'], pr.get('inciso'), pr.get('via'), pr.get('trecho')), []).append(f)
@@ -561,7 +699,7 @@ ALVOS = {
     'campinas': [campinas_anel_rodoviario, campinas_nova_aparecida, campinas_anel_reboucas],
     'sao-vicente': [sao_vicente_arc],
     'santos': [santos_gonzaga],
-    'jacarei': [jacarei_fora_rcp],
+    'jacarei': [jacarei_fora_rcp, jacarei_vcpb_vcpt],
     'vias': [lambda: vias('3552205'), lambda: vias('3551009'), lambda: vias('3538709'), lambda: vias('3518701')],
 }
 
