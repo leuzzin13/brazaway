@@ -1,0 +1,56 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3552205",
+  "municipio": "Sorocaba",
+  "uf": "SP",
+  "fonte_id": "sorocaba",
+  "fonte": {
+    "url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf (Res. SEMOB 02/25, vigência 12/08/2025)",
+    "licenca": "Ato oficial de Sorocaba (Secretaria de Mobilidade): domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Só as duas avenidas que o art. 1º nomeia. As 'demais vias urbanas identificadas pela sinalização regulamentadora' não têm lista publicada e não foram modeladas. O OSM tem hgv=no na Av. Itavuvu, na Av. Ipanema e na Av. Afonso Vergueiro (talvez de restrição antiga ou de obra) e nada nas vias do ato."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "exige_cadastro": false,
+    "orgao": "Secretaria de Mobilidade de Sorocaba",
+    "artigo": "Res. SEMOB 02/25, art. 2º, I, a (VUC até 5,50 x 2,20 m) e b (VLC de 5,50 a 6,30 x 2,20 m)",
+    "nota": "VUC e VLC juntos: até 6,30 m de comprimento e 2,20 m de largura. O ato também exige carga útil acima de 1.500 kg nas duas classes; o formato não tem capacidade mínima, então o app não confere esse piso (caminhão com PBT acima de 3,5 t nessas dimensões costuma passar de 1,5 t)."
+  },
+  "regras": [
+    {
+      "id": "sorocaba_res_semob_02_2025",
+      "tipo": "via",
+      "regime": "Res. SEMOB 02/25",
+      "nome": "Sorocaba — Av. Dom Aguirre e Av. Eng. Carlos Reinaldo Mendes (caminhão proibido)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "autorização da Secretaria de Mobilidade, pedida com 5 dias de antecedência ou 24 h em urgência justificada (art. 3º)",
+      "excecoes": [
+        "Veículos do CTB, art. 29, VII e VIII (art. 2º)",
+        "VUC até 5,50 x 2,20 m e VLC até 6,30 x 2,20 m, com carga útil acima de 1.500 kg (art. 2º, I)",
+        "Autorização da Secretaria de Mobilidade em casos não previstos ou excepcionais (art. 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução SEMOB nº 02/25 da Secretaria de Mobilidade de Sorocaba",
+          "artigo": "art. 1º (caminhão proibido nas Av. Dom Aguirre e Carlos Reinaldo Mendes, sem janela de horário), art. 2º (isentos: CTB art. 29 VII e VIII, VUC e VLC), art. 3º (autorização) e art. 6º (vigência em 12/08/2025; revoga a Res. 014/2003)",
+          "url": "https://urbes.com.br/uploads/resolucao-0002-2025.pdf"
+        }
+      ],
+      "nota": "Proibição sem janela horária (24 h, todos os dias, inclusive feriados). Trechos das avenidas têm ref de rodovia no OSM (SPA-103/079, SP-079, BR-478): o ato nomeia as avenidas inteiras. Há limitadores físicos de altura na Av. Dom Aguirre (4,3 m, dois pontos) e na Pça. da Bandeira/R. Luiz Gama (3,3 m), da camada de altura, não desta regra.",
+      "fonte_geometria": "OSM (ODbL) pelo nome das duas avenidas, em toda a extensão",
+      "vigencia_inicio": "2025-08-12",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Avenida Dom Aguirre"], "descricao": "Av. Dom Aguirre, em toda a extensão"},
+        {"inciso": "art. 1º", "via": ["Avenida Engenheiro Carlos Reinaldo Mendes"], "descricao": "Av. Eng. Carlos Reinaldo Mendes, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3552205_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}
