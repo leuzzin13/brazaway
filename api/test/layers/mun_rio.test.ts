@@ -109,6 +109,38 @@ describe('Rio de Janeiro — regras importadas (banco, sem rota)', () => {
     expect(janelaAtiva(r.janelas, at('2026-10-17T08:00'))).toBe(false);          // sábado
   });
 
+  it('Linha Vermelha na Pavuna: só a ponte do cadastro (way 997177619), nada dos ways vizinhos em São João de Meriti', async () => {
+    const ls = await linhasDe('rio_linha_vermelha');
+    expect(ls.length).toBeGreaterThan(50);
+    // a ponte do cadastro vai de -43.3450 a -43.3448; os ways tirados (15091902, 757987510, 758007474, 209956172) iam até -43.3460
+    for (const c of ls) for (const [lon] of c) expect(lon).toBeGreaterThan(-43.3452);
+    const q = await pool.query(`select count(*)::int n from data_features where layer_id = $1 and source = $2
+      and props->>'regra_id' = 'rio_linha_vermelha'
+      and (props->>'osm_way_id' = '997177619' or coalesce(props->'osm_way_ids', '[]'::jsonb) @> '997177619'::jsonb)`, [LAYER, SOURCE]);
+    expect(q.rows[0].n).toBeGreaterThan(0);
+  });
+
+  it('Gávea (Portaria 1.451/2023, só artigos): sem inciso; o artigo vai no trecho', async () => {
+    const q = await pool.query(`select props from data_features where layer_id = $1 and source = $2 and props->>'regra_id' = 'rio_gavea_1451'`, [LAYER, SOURCE]);
+    expect(q.rows.length).toBeGreaterThan(0);
+    for (const { props } of q.rows) {
+      expect(props.inciso).toBeNull();
+      expect(props.trecho).toMatch(/em toda a extensão \(art\. [12]º\)$/);
+    }
+    const o = { lat: -22.9740, lon: -43.2400 }, d = { lat: -22.9800, lon: -43.2300 };
+    const cl = (await layer.costLines!(ctxOf(o, d, '2026-10-13T12:00', { preset: 'toco' }) as any)).filter((c) => /João Borges|Duque Estrada/.test(c.item.name ?? ''));
+    expect(cl.length).toBeGreaterThan(0);
+    for (const c of cl) expect(c.item.note).toBe('Rio de Janeiro');               // sem "inc. art. 1º"
+  });
+
+  it('regra geral suspensa: motivo curto (só a suspensão); as confirmações ficam na nota', async () => {
+    for (const id of ['rio_res3055_arp', 'rio_res3055_arm_arv']) {
+      const r = await regra(id);
+      expect(r.status_motivo).toBe('Suspensa por prazo indeterminado pela Res. SMTR 3.254/2020, art. 1º (DO Rio 20/03/2020, p. 42), e pelo Dec. Rio 47.285/2020, art. 1º, "r".');
+      expect(r.nota).toMatch(/SMTR \(página da AEVC, 03\/03\/2023\), pelo 1746 \(08\/06\/2026\) e por parecer da CET-Rio/);
+    }
+  });
+
   it('Av. Afonso de Taunay: só o trecho da Av. Alda Garrido à Av. Armando Lombardi', async () => {
     const ls = await linhasDe('rio_afonso_de_taunay');
     expect(ls.length).toBeGreaterThan(0);
@@ -177,6 +209,8 @@ describe('Rio de Janeiro — camada na rota (módulo)', () => {
     expect(nao.every((w) => w.severity === 'info')).toBe(true);
     expect((a.data as any).nao_aplicadas.map((x: any) => x.regra_id).sort()).toEqual(['rio_res3055_arm_arv', 'rio_res3055_arp']);
     expect(nao[0].message).toMatch(/suspensa que o app NÃO aplica: Suspensa por prazo indeterminado pela Res\. SMTR 3\.254\/2020/);
+    // ARP dentro da ARM/ARV: dois avisos (um por regra), cada um curto
+    for (const w of nao) expect(w.message.length, w.message).toBeLessThan(420);
     // Rua Felipe Cardoso (Santa Cruz, Res. 2.242/2012 art. 4º, desativada por confiança baixa)
     const fc = (await linhasDe('rio_santa_cruz_2242')).sort((x, y) => turf.length(turf.lineString(y)) - turf.length(turf.lineString(x)))[0];
     const b = await layer.annotate!(ctxOf({ lon: fc[0][0], lat: fc[0][1] }, { lon: fc[fc.length - 1][0], lat: fc[fc.length - 1][1] }, '2026-10-13T08:00', { preset: 'truck' }) as any,
