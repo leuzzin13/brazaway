@@ -1,6 +1,5 @@
 import { query } from '../db.js';
-import { featuresNearRoute } from './data.js';
-import { RouteIndex, angleDiff180, distM, fmtNum } from './federal_restricoes.layer.js';
+import { RouteIndex, angleDiff180, dbg, distM, fmtNum, nearRoute } from './federal_restricoes.layer.js';
 import type { LayerWarning, RouteLayer } from './types.js';
 
 /**
@@ -101,9 +100,10 @@ const layer: RouteLayer = {
   },
 
   async annotate(ctx, route) {
+    const t0 = Date.now();
     const coords = route.line.geometry.coordinates as LonLat[];
     const idx = new RouteIndex(coords);
-    const rows = (await featuresNearRoute('pontes_federais', route.line.geometry, 35, { limit: 4000, where: `f.source in ('dnit', 'antt')` })) as (Row & { fraction: number; props: any })[];
+    const rows = (await nearRoute(route.line.geometry, 'pontes_federais', `f.source in ('dnit', 'antt')`, 0.00035, 6000)) as Row[];
 
     // a OAE é "da rota" se a rota passa POR ela (não por baixo): ponto a ≤30 m com rumo da rota alinhado ao da OAE
     // (rotação do DNITGeo + 90° = rumo da rodovia; conferido na pesquisa: mediana 0,9°) ou, na ANTT, início e fim a ≤30 m.
@@ -122,6 +122,7 @@ const layer: RouteLayer = {
       }
       return false;
     });
+    dbg(`pontes: ${rows.length} perto, ${onRoute.length} na rota`, t0);
     const dnit = onRoute.filter((r) => r.source === 'dnit');
     const antt = onRoute.filter((r) => r.source === 'antt').filter((a) => {
       const c = (a.geometry.type === 'LineString' ? a.geometry.coordinates[0] : (a.geometry as GeoJSON.Point).coordinates) as LonLat;
@@ -131,7 +132,8 @@ const layer: RouteLayer = {
     const warnings: LayerWarning[] = [];
     const porNota: Record<string, number> = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, sem: 0 };
     for (const d of dnit) porNota[d.props.nota ? String(d.props.nota) : 'sem']++;
-    const baixas = dnit.filter((d) => d.props.nota === 1 || d.props.nota === 2).sort((a, b) => a.fraction - b.fraction);
+    const pos = (r: Row) => idx.nearest((r.geometry.type === 'Point' ? r.geometry.coordinates : (r.geometry as GeoJSON.LineString).coordinates[0]) as LonLat).seg;
+    const baixas = dnit.filter((d) => d.props.nota === 1 || d.props.nota === 2).sort((a, b) => pos(a) - pos(b));
     for (const b of baixas.slice(0, 6)) {
       const [lon, lat] = (b.geometry as GeoJSON.Point).coordinates;
       const vist = ano(b.props.data_vistoria);
@@ -154,12 +156,12 @@ const layer: RouteLayer = {
 
     // alertas do DNIT perto da rota (pendentes = só informação; aprovados já entram como restrição na federal_restricoes)
     const al = await query<Row & { status: string; acao: string | null }>(
-      `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) as g)
+      `with l as (select ST_SimplifyPreserveTopology(ST_SetSRID(ST_GeomFromGeoJSON($1), 4326), 0.0001) as g)
        select f.id::text, f.source, f.source_id, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry,
               coalesce(c.status, 'pendente_revisao') as status, c.acao
          from data_features f left join dnit_alertas_curadoria c on c.source_id = f.source_id, l
         where f.layer_id = 'pontes_federais' and f.source = 'dnit-alertas'
-          and f.geom && ST_Expand(l.g, 0.01) and ST_DWithin(f.geom::geography, l.g::geography, 300)
+          and ST_DWithin(f.geom, l.g, 0.003)
           and coalesce(c.status, 'pendente_revisao') <> 'rejeitado'
           and (c.status = 'aprovado' or f.valid_from is null or f.valid_from > now() - interval '${ALERTA_DIAS} days')
         order by f.valid_from desc nulls last limit 20`,
@@ -173,6 +175,7 @@ const layer: RouteLayer = {
         : { code: 'alerta_dnit_pendente', severity: 'info', id: a.source_id, lat, lon, message: `Alerta do DNIT perto da rota, ainda não revisado: “${a.name}” (${dataBr(p.publicado_em) ?? 'sem data'}). Confira a sinalização no local.` });
     }
 
+    dbg('pontes: alertas', t0);
     const total = dnit.length + antt.length;
     const summary: string[] = [];
     if (total) {

@@ -4,7 +4,6 @@ import { env } from '../config.js';
 import { query } from '../db.js';
 import { decodePolyline6 } from '../services/polyline.js';
 import type { Vehicle } from '../services/vehicle.js';
-import { featuresNearRoute } from './data.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
@@ -28,7 +27,7 @@ export type Dim = 'altura' | 'largura' | 'peso' | 'comprimento';
 const DIMS: Dim[] = ['altura', 'largura', 'peso', 'comprimento'];
 const PROP: Record<Dim, 'altura_m' | 'largura_m' | 'peso_t' | 'comprimento_m'> = { altura: 'altura_m', largura: 'largura_m', peso: 'peso_t', comprimento: 'comprimento_m' };
 const UNIT: Record<Dim, string> = { altura: 'm', largura: 'm', peso: 't', comprimento: 'm' };
-const LABEL: Record<Dim, string> = { altura: 'altura máx.', largura: 'largura útil', peso: 'PBT máx.', comprimento: 'comprimento máx.' };
+const LABEL: Record<Dim, string> = { altura: 'altura máx.', largura: 'largura máx.', peso: 'PBT máx.', comprimento: 'comprimento máx.' };
 
 /** Res. CONTRAN 882/2021: art. 4º I–II (largura 2,60 m; altura 4,40 m sem AET) e art. 18 (CVC com PBTC > 57 t ou > 19,80 m só com AET). */
 export const SEM_AET = { altura_m: 4.4, largura_m: 2.6, peso_t: 57, comprimento_m: 19.8 } as const;
@@ -39,6 +38,8 @@ export interface SiaetProps {
   ref_mes: string; atualizado_em: string | null;
   altura_m: number | null; largura_m: number | null; peso_t: number | null; comprimento_m: number | null;
   aet_bloqueada: Dim[];
+  /** limites por pista: 1 = sentido crescente do km (= sentido da geometria do SNV), 2 = decrescente */
+  pista1?: PistaLimits | null; pista2?: PistaLimits | null;
   n_oae: number;
   oae_unica: { nome: string | null; tipo: string | null; km: number | null; lon: number; lat: number; cod_obra?: string } | null;
   geom_metodo: string; geom_aprox: boolean;
@@ -53,6 +54,15 @@ export interface SiaetProps {
  *  - 0 (AET bloqueada) em trecho que não é de administração federal: o DNIT não emite AET ali (art. 1º, parágrafo
  *    único) e a autorização é do órgão estadual/municipal (ex.: 116BSP2550, Marginal Tietê).
  */
+export interface PistaLimits { altura_m: number | null; largura_m: number | null; peso_t: number | null; comprimento_m: number | null }
+
+/** limites de uma pista no formato de `violations` (0 = AET bloqueada naquela grandeza) */
+function pistaProps(pl: PistaLimits, base: Pick<SiaetProps, 'tipo' | 'administracao'>) {
+  const lim = (x: number | null | undefined) => (x != null && x > 0 ? x : null);
+  const zeros = DIMS.filter((d) => pl[PROP[d]] === 0);
+  return { altura_m: lim(pl.altura_m), largura_m: lim(pl.largura_m), peso_t: lim(pl.peso_t), comprimento_m: lim(pl.comprimento_m), aet_bloqueada: zeros, tipo: base.tipo, administracao: base.administracao };
+}
+
 export interface Violation { dim: Dim; limite: number; valor: number; aet: boolean; bloqueia: boolean; motivo?: string }
 
 const ADM_NAO_FEDERAL = /estadual|municipal|^der$/i;
@@ -199,12 +209,29 @@ export function angleDiff180(a: number, b: number): number {
   return Math.min(d, 180 - d);
 }
 
-/** Mesmo critério do routing.ts ("a rota usa o trecho"): ≥50% de até 40 pontos da linha a ≤15 m da rota. */
-function routingUses(route: GeoJSON.Feature<GeoJSON.LineString>, coords: LonLat[]): boolean {
+/** Mesmo critério do routing.ts ("a rota usa o trecho"): ≥50% de até 40 pontos da linha a ≤15 m da rota (via índice). */
+function routingUses(idx: RouteIndex, coords: LonLat[]): boolean {
   if (!coords.length) return false;
   const pts = coords.length > 40 ? coords.filter((_, i) => i % Math.ceil(coords.length / 40) === 0) : coords;
-  const hits = pts.filter((c) => turf.pointToLineDistance(turf.point(c), route, { units: 'meters' }) <= 15).length;
+  const hits = pts.filter((c) => idx.nearest(c).d <= 15).length;
   return hits / pts.length >= 0.5;
+}
+
+/**
+ * Feições a ~`deg` graus da rota (ST_DWithin planar, usa o índice GIST). O ST_DWithin em geography com linhas longas
+ * (segmentos do SNV x rota de centenas de km) levava >10 s; a medida fina é feita depois em JS (RouteIndex).
+ */
+export async function nearRoute(line: GeoJSON.LineString, layerId: string, where: string, deg: number, limit: number) {
+  const r = await query<{ id: string; source: string; source_id: string; name: string | null; kind: string | null; props: any; geometry: GeoJSON.Geometry; valid_from: string | null }>(
+    `with l as (select ST_SimplifyPreserveTopology(ST_SetSRID(ST_GeomFromGeoJSON($1), 4326), 0.00005) as g)
+     select f.id::text, f.source, f.source_id, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry, f.valid_from
+       from data_features f, l
+      where f.layer_id = $2 and ST_DWithin(f.geom, l.g, $3) and (f.valid_to is null or f.valid_to > now())
+        and (${where})
+      limit $4`,
+    [JSON.stringify(line), layerId, deg, limit],
+  );
+  return r.rows;
 }
 
 // ------------------------------------------------------------------------------------------------ Valhalla
@@ -258,18 +285,29 @@ export async function tilesetVersion(): Promise<string | null> {
   }
 }
 
-interface TraceEdge { way_id?: number; bridge?: boolean; length?: number; begin_shape_index: number; end_shape_index: number }
-interface Trace { shape: LonLat[]; edges: TraceEdge[] }
+interface TraceEdge {
+  way_id?: number; bridge?: boolean; length?: number; traversability?: 'forward' | 'backward' | 'both'; names?: string[]; road_class?: string;
+  begin_shape_index: number; end_shape_index: number;
+}
+interface Trace { shape: LonLat[]; edges: TraceEdge[]; medianM: number }
 
+/** Casa uma linha com o grafo (map matching). Recusa casamento ruim: mediana da distância ponto→via > 45 m. */
 async function trace(coords: LonLat[]): Promise<Trace | null> {
   if (coords.length < 2) return null;
   const r = await valhallaPost('trace_attributes', {
     shape: coords.map(([lon, lat]) => ({ lon, lat })), costing: 'auto', shape_match: 'map_snap',
     trace_options: { search_radius: 60 },
-    filters: { attributes: ['edge.way_id', 'edge.bridge', 'edge.length', 'edge.begin_shape_index', 'edge.end_shape_index', 'shape'], action: 'include' },
+    filters: {
+      attributes: ['edge.way_id', 'edge.bridge', 'edge.length', 'edge.traversability', 'edge.names', 'edge.begin_shape_index', 'edge.end_shape_index', 'shape',
+        'edge.road_class', 'matched.distance_from_trace_point', 'matched.type'],
+      action: 'include',
+    },
   });
   if (!r.ok || typeof r.json?.shape !== 'string' || !Array.isArray(r.json.edges) || !r.json.edges.length) return null;
-  return { shape: decodePolyline6(r.json.shape), edges: r.json.edges };
+  const ds = (r.json.matched_points ?? []).filter((m: any) => m.type === 'matched').map((m: any) => Number(m.distance_from_trace_point ?? 0)).sort((x: number, y: number) => x - y);
+  const medianM = ds.length ? ds[Math.floor(ds.length / 2)] : 0;
+  if (medianM > 45) return null;
+  return { shape: decodePolyline6(r.json.shape), edges: r.json.edges, medianM };
 }
 
 /** trechos contínuos do casamento (quebra onde o fim de uma aresta não encosta no começo da próxima) */
@@ -287,6 +325,16 @@ function runs(t: Trace): TraceEdge[][] {
 function shapeOf(t: Trace, es: TraceEdge[]): LonLat[] {
   return t.shape.slice(es[0].begin_shape_index, es[es.length - 1].end_shape_index + 1);
 }
+/** sub-trechos consecutivos de mão dupla ('both') e de mão única (pista dupla, alças) */
+function byTraversability(run: TraceEdge[]): { twoWay: boolean; edges: TraceEdge[] }[] {
+  const out: { twoWay: boolean; edges: TraceEdge[] }[] = [];
+  for (const e of run) {
+    const tw = e.traversability === 'both';
+    const last = out[out.length - 1];
+    if (last && last.twoWay === tw) last.edges.push(e); else out.push({ twoWay: tw, edges: [e] });
+  }
+  return out;
+}
 
 /** linear_cost_factors é recusado inteiro (erro 233) se uma linha não fizer edge walk: valida cada linha antes de usar. */
 async function validLine(line: LonLat[]): Promise<boolean> {
@@ -299,58 +347,169 @@ async function validLine(line: LonLat[]): Promise<boolean> {
   return r.ok;
 }
 
-interface MatchResult { ok: boolean; lines: LonLat[][]; info: Record<string, unknown> }
+/** sentido coberto pela linha: 'ambos' = ida-e-volta (mão dupla); 'crescente' = sentido do km (pista 1); 'decrescente' = pista 2 */
+export type Dir = 'ambos' | 'crescente' | 'decrescente';
+interface MatchResult { ok: boolean; lines: LonLat[][]; dirs: Dir[]; info: Record<string, unknown> }
+/** muda quando o formato/algoritmo do cache muda (força recasar) */
+const MATCH_VERSION = 'v5';
 
-/** Linhas válidas para os dois sentidos: ida-e-volta numa linha só (pista simples) ou ida + volta (pista dupla). */
-async function bothDirections(fwd: LonLat[], revInput: () => Promise<LonLat[] | null>): Promise<LonLat[][]> {
-  const oab = [...fwd, ...fwd.slice(0, -1).reverse()];
-  if (await validLine(oab)) return [oab];
-  const out: LonLat[][] = [];
-  if (await validLine(fwd)) out.push(fwd);
-  const rev = await revInput();
-  if (rev && rev.length > 1 && (await validLine(rev))) out.push(rev);
+/**
+ * Linhas para os dois sentidos. O grafo do Valhalla tem as duas arestas dirigidas mesmo em via de mão única, e o
+ * linear_cost_factors é por aresta dirigida: por isso
+ *  - trecho de mão dupla ('both') -> uma linha ida-e-volta (cobre os dois sentidos e o aviso geométrico sai uma vez só);
+ *  - trecho de mão única (pista dupla) -> a linha casada no sentido do km ('crescente') e, à parte, a outra pista,
+ *    casada com a geometria invertida ('decrescente').
+ */
+async function directional(fwd: Trace, fwdEdges: TraceEdge[], rev: () => Promise<{ t: Trace; edges: TraceEdge[] } | null>): Promise<{ lines: LonLat[][]; dirs: Dir[] }> {
+  const out: { lines: LonLat[][]; dirs: Dir[] } = { lines: [], dirs: [] };
+  const push = async (l: LonLat[], d: Dir) => { if (lineLenM(l) >= 10 && (await validLine(l))) { out.lines.push(l); out.dirs.push(d); } };
+  const subs = byTraversability(fwdEdges);
+  const len = (es: TraceEdge[]) => es.reduce((n, e) => n + (e.length ?? 0), 0);
+  const total = len(fwdEdges) || 1;
+  const mostlyTwoWay = subs.filter((x) => x.twoWay).reduce((n, x) => n + len(x.edges), 0) >= 0.8 * total;
+  // em via de mão dupla, pedaços curtos de mão única (alças de entroncamento) não entram
+  const keep = (x: { twoWay: boolean; edges: TraceEdge[] }) => x.twoWay || !mostlyTwoWay || len(x.edges) >= 0.5;
+  let oneWay = false;
+  for (const sub of subs.filter(keep)) {
+    const l = shapeOf(fwd, sub.edges);
+    if (sub.twoWay) await push([...l, ...l.slice(0, -1).reverse()], 'ambos');
+    else { oneWay = true; await push(l, 'crescente'); }
+  }
+  if (oneWay) {
+    const r = await rev();
+    if (r) for (const sub of byTraversability(r.edges).filter(keep)) if (!sub.twoWay) await push(shapeOf(r.t, sub.edges), 'decrescente');
+  }
   return out;
 }
 
-function trimRun(t: Trace, run: TraceEdge[]): TraceEdge[] {
+function trimRun(run: TraceEdge[]): TraceEdge[] {
   // a 1ª e a última aresta começam/terminam no ponto projetado (meio da aresta); sem elas a volta acontece num nó
   return run.length >= 3 ? run.slice(1, -1) : run;
 }
 
+/** desloca a linha `m` metros para a direita do sentido de percurso */
+function offsetLine(c: LonLat[], m: number): LonLat[] {
+  return c.map((p, i) => {
+    const a = c[Math.max(0, i - 1)], b = c[Math.min(c.length - 1, i + 1)];
+    const k = Math.cos((p[1] * Math.PI) / 180);
+    const dx = (b[0] - a[0]) * k, dy = b[1] - a[1];
+    const L = Math.hypot(dx, dy) || 1;
+    return [p[0] + ((dy / L) * m) / 111_320 / k, p[1] + ((-dx / L) * m) / 111_320] as LonLat;
+  });
+}
+
+/**
+ * Pistas paralelas do mesmo sentido (expressa/local, ex.: Av. Brasil): a restrição da "pista 1/2" do SIAET vale para o
+ * sentido inteiro. Casa a linha deslocada ±25/±40 m e aceita só vias de mão única do mesmo nome/ref da principal,
+ * bem ajustadas (mediana ≤ 15 m) e ainda não cobertas. Só roda em trecho de pista dupla.
+ */
+async function parallelLanes(chunk: LonLat[], fwd: Trace, rev: Trace | null, dirsFound: Dir[]): Promise<{ line: LonLat[]; dir: Dir }[]> {
+  const out: { line: LonLat[]; dir: Dir }[] = [];
+  const names = new Set<string>();
+  const seen = new Set<number>();
+  for (const t of [fwd, rev]) for (const e of t?.edges ?? []) { (e.names ?? []).forEach((n) => names.add(n)); if (e.way_id != null) seen.add(e.way_id); }
+  if (!names.size) return out;
+  const sentidos: { dir: Dir; base: LonLat[] }[] = [];
+  if (dirsFound.includes('crescente')) sentidos.push({ dir: 'crescente', base: chunk });
+  if (dirsFound.includes('decrescente')) sentidos.push({ dir: 'decrescente', base: [...chunk].reverse() });
+  for (const { dir, base } of sentidos) {
+    for (const off of [-40, -25, 25, 40]) {
+      const t = await trace(offsetLine(base, off));
+      if (!t || t.medianM > 15) continue;
+      for (const run of runs(t).map(trimRun)) {
+        for (const sub of byTraversability(run)) {
+          if (sub.twoWay) continue;
+          const novos = sub.edges.filter((e) => e.way_id != null && !seen.has(e.way_id));
+          const lenAll = sub.edges.reduce((n, e) => n + (e.length ?? 0), 0);
+          const lenSame = sub.edges.filter((e) => (e.names ?? []).some((n) => names.has(n))).reduce((n, e) => n + (e.length ?? 0), 0);
+          if (!novos.length || lenAll < 0.3 || lenSame < 0.6 * lenAll) continue;
+          const l = shapeOf(t, sub.edges);
+          if (await validLine(l)) { out.push({ line: l, dir }); sub.edges.forEach((e) => e.way_id != null && seen.add(e.way_id)); }
+        }
+      }
+    }
+  }
+  return out;
+}
+
+const RUIM = new Set(['residential', 'service_other']);
+const kmOf = (es: TraceEdge[]) => es.reduce((n, e) => n + (e.length ?? 0), 0);
+
+/** corridas boas: sem as arestas parciais das pontas e com no máx. 50% em rua residencial/serviço (casou fora da BR) */
+function goodRuns(t: Trace): TraceEdge[][] {
+  return runs(t).map(trimRun).filter((r) => {
+    const total = kmOf(r);
+    return total >= 0.03 && kmOf(r.filter((e) => RUIM.has(e.road_class ?? ''))) <= 0.5 * total;
+  });
+}
+
+/** sub-trechos a usar: em via predominantemente de mão dupla, ignora pedaços curtos de mão única (alças) */
+function keptSubs(run: TraceEdge[]) {
+  const subs = byTraversability(run);
+  const total = kmOf(run) || 1;
+  const mostlyTwoWay = subs.filter((x) => x.twoWay).reduce((n, x) => n + kmOf(x.edges), 0) >= 0.8 * total;
+  return subs.filter((x) => x.twoWay || !mostlyTwoWay || kmOf(x.edges) >= 0.5);
+}
+
+/**
+ * Segmento inteiro. O grafo do Valhalla tem as duas arestas dirigidas mesmo em via de mão única e o
+ * linear_cost_factors é por aresta dirigida, então:
+ *  - mão dupla ('both') -> uma linha ida-e-volta (cobre os dois sentidos; o aviso geométrico sai uma vez só);
+ *  - mão única (pista dupla) -> a pista casada no sentido do km ('crescente') e a outra pista, casada com a
+ *    geometria invertida ('decrescente'), mais as pistas paralelas do mesmo sentido (expressa/local).
+ * O casamento invertido também cobre o caso em que o eixo do SNV está desenhado sobre uma pista de mão única no
+ * sentido contrário (ex.: Ponte General Dutra, Campos/RJ).
+ */
 async function matchSegment(geometry: GeoJSON.Geometry): Promise<MatchResult> {
   const lines: LonLat[][] = [];
-  let edges = 0, matchedM = 0;
+  const dirs: Dir[] = [];
+  let pts = 0, matchedM = 0;
+  const push = async (l: LonLat[], d: Dir) => {
+    if (lineLenM(l) < 10 || !(await validLine(l))) return false;
+    lines.push(l); dirs.push(d); pts += l.length; return true;
+  };
   for (const part of partsOf(geometry)) {
     const dense = densify(part, 80);
     for (let i = 0; i < dense.length - 1; i += 1500) {
       const chunk = dense.slice(i, i + 1501);
+      const chunkKm = lineLenM(chunk) / 1000;
       const tf = await trace(chunk);
-      if (!tf) continue;
-      const fruns = runs(tf).map((r) => trimRun(tf, r)).filter((r) => r.length);
-      let revCache: Trace | null | undefined;
-      for (const run of fruns) {
-        const fwd = shapeOf(tf, run);
-        if (lineLenM(fwd) < 30) continue;
-        const got = await bothDirections(fwd, async () => {
-          if (revCache === undefined) revCache = await trace([...chunk].reverse());
-          if (!revCache) return null;
-          // trecho do casamento reverso mais próximo desta corrida
-          const rr = runs(revCache).map((r) => trimRun(revCache!, r)).filter((r) => r.length);
-          const mid = fwd[Math.floor(fwd.length / 2)];
-          let best: LonLat[] | null = null, bd = Infinity;
-          for (const r of rr) {
-            const s = shapeOf(revCache, r);
-            const d = Math.min(...s.filter((_, k) => k % 10 === 0).map((c) => distM(c, mid)));
-            if (d < bd) { bd = d; best = s; }
+      const covered = new Set<number>();
+      const chunkDirs = new Set<Dir>();
+      let fwdKm = 0, oneWay = false;
+      for (const run of tf ? goodRuns(tf) : []) {
+        fwdKm += kmOf(run);
+        for (const sub of keptSubs(run)) {
+          const l = shapeOf(tf!, sub.edges);
+          const ok = sub.twoWay ? await push([...l, ...l.slice(0, -1).reverse()], 'ambos') : await push(l, 'crescente');
+          if (!ok) continue;
+          chunkDirs.add(sub.twoWay ? 'ambos' : 'crescente');
+          if (sub.twoWay) sub.edges.forEach((e) => e.way_id != null && covered.add(e.way_id)); else oneWay = true;
+          matchedM += lineLenM(l);
+        }
+      }
+      let tr: Trace | null = null;
+      const fwdFalhou = fwdKm < 0.5 * chunkKm;
+      if (oneWay || fwdFalhou) {
+        tr = await trace([...chunk].reverse());
+        for (const run of tr ? goodRuns(tr) : []) {
+          for (const sub of keptSubs(run)) {
+            const l = shapeOf(tr!, sub.edges);
+            if (!sub.twoWay) {
+              if (await push(l, 'decrescente')) { chunkDirs.add('decrescente'); if (fwdFalhou) matchedM += lineLenM(l); }
+            } else if (fwdFalhou) {
+              const novo = kmOf(sub.edges.filter((e) => e.way_id == null || !covered.has(e.way_id)));
+              if (novo >= 0.5 * kmOf(sub.edges) && (await push([...l, ...l.slice(0, -1).reverse()], 'ambos'))) { chunkDirs.add('ambos'); matchedM += lineLenM(l); }
+            }
           }
-          return bd < 2000 ? best : null;
-        });
-        for (const l of got) { lines.push(l); edges += l.length; }
-        if (got.length) matchedM += lineLenM(fwd);
+        }
+      }
+      if (tf && [...chunkDirs].some((d) => d !== 'ambos')) {
+        for (const par of await parallelLanes(chunk, tf, tr, [...chunkDirs])) { lines.push(par.line); dirs.push(par.dir); pts += par.line.length; }
       }
     }
   }
-  return { ok: lines.length > 0, lines, info: { modo: 'segmento', pontos: edges, casado_km: Math.round(matchedM / 100) / 10 } };
+  return { ok: lines.length > 0, lines, dirs, info: { modo: 'segmento', pontos: pts, casado_km: Math.round(matchedM / 100) / 10 } };
 }
 
 function bridgeGroups(t: Trace): TraceEdge[][] {
@@ -367,12 +526,12 @@ function bridgeGroups(t: Trace): TraceEdge[][] {
   return out;
 }
 
-function nearestGroup(t: Trace, focus: LonLat, maxM: number): LonLat[] | null {
-  let best: LonLat[] | null = null, bd = Infinity;
+function nearestGroup(t: Trace, focus: LonLat, maxM: number): TraceEdge[] | null {
+  let best: TraceEdge[] | null = null, bd = Infinity;
   for (const g of bridgeGroups(t)) {
-    const s = shapeOf(t, g);
-    const d = Math.min(...s.map((c, i) => (i < s.length - 1 ? segDistM(focus, c, s[i + 1]) : distM(focus, c))));
-    if (d < bd) { bd = d; best = s; }
+    const sh = shapeOf(t, g);
+    const d = Math.min(...sh.map((c, i) => (i < sh.length - 1 ? segDistM(focus, c, sh[i + 1]) : distM(focus, c))));
+    if (d < bd) { bd = d; best = g; }
   }
   return bd <= maxM ? best : null;
 }
@@ -393,16 +552,25 @@ async function matchBridge(geometry: GeoJSON.Geometry, focus: LonLat): Promise<M
   const total = turf.length(ls, { units: 'kilometers' });
   const slice = turf.lineSliceAlong(ls, Math.max(0, loc - 1.5), Math.min(total, loc + 1.5), { units: 'kilometers' }).geometry.coordinates as LonLat[];
   const input = densify(slice, 60);
-  const tf = await trace(input);
-  if (!tf) return null;
-  const fwd = nearestGroup(tf, focus, 250);
-  if (!fwd) return null;
-  const lines = await bothDirections(fwd, async () => {
-    const tr = await trace([...input].reverse());
-    return tr ? nearestGroup(tr, focus, 250) : null;
+  let tf = await trace(input);
+  let g = tf ? nearestGroup(tf, focus, 250) : null;
+  let inv = false;
+  if (!g) {
+    // eixo do SNV desenhado contra a mão de uma ponte de mão única: casa invertido
+    tf = await trace([...input].reverse());
+    g = tf ? nearestGroup(tf, focus, 250) : null;
+    inv = true;
+  }
+  if (!tf || !g) return null;
+  const t0 = tf;
+  const got = await directional(t0, g, async () => {
+    const tr = await trace(inv ? input : [...input].reverse());
+    const rg = tr ? nearestGroup(tr, focus, 250) : null;
+    return tr && rg ? { t: tr, edges: rg } : null;
   });
-  if (!lines.length) return null;
-  return { ok: true, lines, info: { modo: 'ponte', pontos: lines.reduce((s, l) => s + l.length, 0), ponte_m: Math.round(lineLenM(fwd)) } };
+  if (inv) got.dirs = got.dirs.map((d) => (d === 'crescente' ? 'decrescente' : d === 'decrescente' ? 'crescente' : d));
+  if (!got.lines.length) return null;
+  return { ok: true, lines: got.lines, dirs: got.dirs, info: { modo: 'ponte', pontos: got.lines.reduce((n, l) => n + l.length, 0), ponte_m: Math.round(lineLenM(shapeOf(tf, g))) } };
 }
 
 const memCache = new Map<string, Promise<MatchResult>>();
@@ -410,7 +578,7 @@ const memCache = new Map<string, Promise<MatchResult>>();
 interface MatchReq { key: string; mode: 'segmento' | 'ponte'; geometry: GeoJSON.Geometry; focus?: LonLat }
 
 function geomHash(r: MatchReq): string {
-  return createHash('md5').update(JSON.stringify([r.geometry, r.focus ?? null])).digest('hex');
+  return createHash('md5').update(JSON.stringify([MATCH_VERSION, r.geometry, r.focus ?? null])).digest('hex');
 }
 
 async function computeMatch(r: MatchReq): Promise<MatchResult> {
@@ -434,13 +602,17 @@ export function matchLines(r: MatchReq, tileset: string): Promise<MatchResult> {
         'select ok, lines, info, geom_hash from siaet_osm_match where feature_key = $1 and mode = $2 and tileset = $3', [r.key, r.mode, tileset],
       ).catch(() => ({ rows: [] as any[] }));
       const hit = db.rows[0];
-      if (hit && hit.geom_hash === gh) return { ok: hit.ok, lines: hit.lines ?? [], info: hit.info ?? {} };
+      if (hit && hit.geom_hash === gh) {
+        const lines = hit.lines ?? [];
+        const dirs = (Array.isArray(hit.info?.dirs) ? hit.info!.dirs : lines.map(() => 'ambos')) as Dir[];
+        return { ok: hit.ok, lines, dirs, info: hit.info ?? {} };
+      }
       const m = await computeMatch(r);
       await query(
         `insert into siaet_osm_match (feature_key, mode, tileset, geom_hash, ok, lines, info) values ($1,$2,$3,$4,$5,$6,$7)
          on conflict (feature_key, mode, tileset) do update set geom_hash = excluded.geom_hash, ok = excluded.ok, lines = excluded.lines,
            info = excluded.info, created_at = now()`,
-        [r.key, r.mode, tileset, gh, m.ok, JSON.stringify(m.lines), JSON.stringify(m.info)],
+        [r.key, r.mode, tileset, gh, m.ok, JSON.stringify(m.lines), JSON.stringify({ ...m.info, dirs: m.dirs })],
       ).catch(() => {});
       return m;
     })();
@@ -457,7 +629,9 @@ interface Row { id: string; source: string; source_id: string; name: string | nu
 interface Candidate {
   row: Row;
   itemId: string;
+  /** violações que bloqueiam: união dos sentidos, e por sentido (pista 1 = crescente, pista 2 = decrescente) */
   viols: Violation[];
+  byDir: { crescente: Violation[]; decrescente: Violation[] };
   mode: 'segmento' | 'ponte';
   focus?: LonLat;
   label: string;
@@ -503,18 +677,51 @@ async function siaetCandidates(ctx: RouteCtx): Promise<Candidate[]> {
   const out: Candidate[] = [];
   for (const row of r.rows) {
     const p = row.props as SiaetProps;
-    const viols = violations(p, v).filter((x) => x.bloqueia);
+    const block = (x: Violation[]) => x.filter((y) => y.bloqueia);
+    // pista 2 publicada (pista dupla): cada sentido com seus limites; senão os da pista 1 valem para os dois
+    const temP2 = !!p.pista2 && DIMS.some((d) => p.pista2![PROP[d]] != null);
+    const v1 = p.pista1 ? block(violations(pistaProps(p.pista1, p), v)) : block(violations(p, v));
+    const v2 = temP2 ? block(violations(pistaProps(p.pista2!, p), v)) : v1;
+    const viols = mergeViols(v1, v2);
     if (!viols.length) continue;
     const onlyWeight = viols.every((x) => x.dim === 'peso' && !x.aet);
     const ponte = onlyWeight && p.oae_unica ? p.oae_unica : null;
     const label = `${row.name ?? `BR-${p.br}/${p.uf}`}${ponte ? ` — ${ponte.nome ?? 'ponte'}` : ''}`;
     out.push({
-      row, itemId: `siaet:${row.source_id}`, viols, mode: ponte ? 'ponte' : 'segmento', focus: ponte ? [ponte.lon, ponte.lat] : undefined,
-      label, desc: describeViolations(viols), rule: `${describeViolations(viols)} — SIAET/DNIT ${p.tipo === 'temporaria' ? 'temporária' : 'definitiva'} ${p.ref_mes}`,
+      row, itemId: `siaet:${row.source_id}`, viols, byDir: { crescente: v1, decrescente: v2 }, mode: ponte ? 'ponte' : 'segmento',
+      focus: ponte ? [ponte.lon, ponte.lat] : undefined, label, desc: describeViolations(viols),
+      rule: `${describeViolations(viols)} — SIAET/DNIT ${p.tipo === 'temporaria' ? 'temporária' : 'definitiva'} ${p.ref_mes}`,
       valueNum: viols.find((x) => x.dim === 'peso')?.limite ?? viols[0].limite, prio: prioOf(ctx, row.geometry),
     });
   }
   return out;
+}
+
+/** BRs coincidentes (ex.: BR-101 e BR-356 na mesma ponte) viram um candidato só: um aviso e uma linha por trecho */
+function mergeCoincident(cs: Candidate[]): Candidate[] {
+  const by = new Map<string, Candidate>();
+  for (const c of cs) {
+    const k = createHash('md5').update(JSON.stringify([c.row.geometry, c.mode, c.focus ?? null])).digest('hex');
+    const o = by.get(k);
+    if (!o) { by.set(k, { ...c }); continue; }
+    const viols = mergeViols(o.viols, c.viols);
+    by.set(k, {
+      ...o, viols, byDir: { crescente: mergeViols(o.byDir.crescente, c.byDir.crescente), decrescente: mergeViols(o.byDir.decrescente, c.byDir.decrescente) },
+      label: o.label.includes(c.row.name ?? '§') ? o.label : `${o.label} / ${c.row.name}`,
+      desc: describeViolations(viols), rule: o.rule.replace(o.desc, describeViolations(viols)),
+    });
+  }
+  return [...by.values()];
+}
+
+/** união por grandeza, ficando com o limite mais restritivo */
+function mergeViols(a: Violation[], b: Violation[]): Violation[] {
+  const m = new Map<Dim, Violation>();
+  for (const x of [...a, ...b]) {
+    const o = m.get(x.dim);
+    if (!o || (x.aet && !o.aet) || (!x.aet && !o.aet && x.limite < o.limite)) m.set(x.dim, x);
+  }
+  return DIMS.filter((d) => m.has(d)).map((d) => m.get(d)!);
 }
 
 /** Alertas do DNIT aprovados na curadoria (dnit_alertas_curadoria.status = 'aprovado'). */
@@ -538,7 +745,7 @@ async function alertCandidates(ctx: RouteCtx): Promise<Candidate[]> {
     const ponto = row.props?.ponto as LonLat | undefined;
     const regra = row.acao === 'interdicao' ? 'ponte interditada' : describeViolations(viols);
     out.push({
-      row, itemId: `alerta:${row.source_id}`, viols, mode: ponto && row.geometry.type !== 'Point' ? 'ponte' : 'segmento', focus: ponto,
+      row, itemId: `alerta:${row.source_id}`, viols, byDir: { crescente: viols, decrescente: viols }, mode: ponto && row.geometry.type !== 'Point' ? 'ponte' : 'segmento', focus: ponto,
       label: `${row.props?.oae_nome ?? 'Ponte'} BR-${row.props?.br}/${row.props?.uf}${row.props?.km != null ? ` km ${fmtKm(Number(row.props.km))}` : ''}`,
       desc: regra, rule: `${regra} — alerta do DNIT revisado (${row.props?.publicado_em ?? ''})`, valueNum: viols[0].limite || null, prio: prioOf(ctx, row.geometry),
     });
@@ -588,6 +795,9 @@ function warmUp() {
 
 // ------------------------------------------------------------------------------------------------ camada
 
+const DEBUG = process.env.FEDERAL_RESTRICOES_DEBUG === '1';
+export function dbg(label: string, t0: number) { if (DEBUG) console.error(`[federal_restricoes] ${label}: ${Date.now() - t0} ms`); }
+
 const layer: RouteLayer = {
   meta: {
     id: 'federal_restricoes',
@@ -628,7 +838,7 @@ const layer: RouteLayer = {
           properties: {
             id: row.id, item_id: `siaet:${row.source_id}`, name: row.name,
             'Restrição': p.tipo === 'temporaria' ? 'temporária' : 'definitiva',
-            'PBT máx.': lim(p.peso_t, 't'), 'Altura máx.': lim(p.altura_m, 'm'), 'Largura útil': lim(p.largura_m, 'm'),
+            'PBT máx.': lim(p.peso_t, 't'), 'Altura máx.': lim(p.altura_m, 'm'), 'Largura máx.': lim(p.largura_m, 'm'),
             'Comprimento máx.': lim(p.comprimento_m, 'm'),
             'AET bloqueada': p.aet_bloqueada?.length ? p.aet_bloqueada.join(', ') : null,
             'OAEs no trecho': p.n_oae, 'Ponte': p.oae_unica?.nome ?? null,
@@ -643,13 +853,15 @@ const layer: RouteLayer = {
   },
 
   async costLines(ctx) {
+    const t0 = Date.now();
     warmUp();
     const memo: Memo = { lines: [], byItem: new Map(), pendentes: 0, sem_casamento: [] };
     memos.set(ctx, memo);
-    const cands = [...(await siaetCandidates(ctx)), ...(await alertCandidates(ctx))].sort((a, b) => a.prio - b.prio);
+    const cands = mergeCoincident([...(await siaetCandidates(ctx)), ...(await alertCandidates(ctx))]).sort((a, b) => a.prio - b.prio);
     if (!cands.length) return [];
     const ts = await tilesetVersion();
     if (!ts) { memo.sem_casamento.push(...cands); return []; }
+    dbg(`candidatos (${cands.length})`, t0);
     const deadline = Date.now() + MATCH_BUDGET_MS;
     const results = await Promise.all(cands.map(async (c) => {
       const p = matchLines({ key: `${c.row.source === 'siaet' ? 'federal_restricoes' : 'pontes_federais'}:${c.row.source}:${c.row.source_id}`, mode: c.mode, geometry: c.row.geometry, focus: c.focus }, ts);
@@ -660,6 +872,7 @@ const layer: RouteLayer = {
       ]);
       return { c, res };
     }));
+    dbg('casamento', t0);
     let budget = EDGE_BUDGET;
     for (const { c, res } of results) {
       if (res === 'timeout') { memo.pendentes++; memo.sem_casamento.push(c); continue; }
@@ -668,27 +881,36 @@ const layer: RouteLayer = {
       if (n > budget) { memo.sem_casamento.push(c); continue; }
       budget -= n;
       const isBridge = res.info?.modo === 'ponte';
-      const [lon, lat] = centerOf(res.lines, c.row.geometry);
-      const item: LayerItem = {
-        kind: 'layer', layer: 'federal_restricoes', id: c.itemId, name: isBridge || c.mode === 'segmento' ? c.label : `${c.row.name}`,
-        type: c.row.source === 'siaet' ? `siaet_${c.row.kind}` : 'alerta_dnit', rule: c.rule, value_num: c.valueNum, lat, lon,
-        note: isBridge ? 'Aplicado só na ponte (único OAE do segmento).' : c.row.props?.geom_aprox ? 'Geometria do trecho aproximada.' : null,
-      };
-      memo.byItem.set(c.itemId, { cand: c, lines: res.lines, bridge: isBridge });
-      for (const l of res.lines) {
+      const applied: LonLat[][] = [];
+      res.lines.forEach((l, k) => {
+        const dir = res.dirs[k] ?? 'ambos';
+        const vs = dir === 'ambos' ? c.viols : c.byDir[dir];
+        if (!vs.length) return; // pista dupla: este sentido não tem restrição para o veículo
+        applied.push(l);
+        const [lon, lat] = centerOf([l], c.row.geometry);
+        const sentido = dir === 'ambos' ? '' : dir === 'crescente' ? ' (sentido crescente do km)' : ' (sentido decrescente do km)';
+        const item: LayerItem = {
+          kind: 'layer', layer: 'federal_restricoes', id: c.itemId, name: `${isBridge || c.mode === 'segmento' ? c.label : `${c.row.name}`}${sentido}`,
+          type: c.row.source === 'siaet' ? `siaet_${c.row.kind}` : 'alerta_dnit',
+          rule: vs === c.viols ? c.rule : c.rule.replace(c.desc, describeViolations(vs)), value_num: c.valueNum, lat, lon,
+          note: isBridge ? 'Aplicado só na ponte (único OAE do segmento).' : c.row.props?.geom_aprox ? 'Geometria do trecho aproximada.' : null,
+        };
         const dirLen = l.length > 2 && distM(l[0], l[l.length - 1]) < 1 ? lineLenM(l) / 2 : lineLenM(l);
         memo.lines.push({ item, coordinates: l, factor: factorFor(dirLen) });
-      }
+      });
+      if (applied.length) memo.byItem.set(c.itemId, { cand: c, lines: applied, bridge: isBridge });
     }
     return memo.lines;
   },
 
   async annotate(ctx, route) {
+    const t0 = Date.now();
     const memo = memos.get(ctx);
     const v = ctx.vehicle;
     const coords = route.line.geometry.coordinates as LonLat[];
     const idx = new RouteIndex(coords);
-    const rows = await featuresNearRoute('federal_restricoes', route.line.geometry, 50, { limit: 600, where: `f.source = 'siaet'` });
+    const rows = await nearRoute(route.line.geometry, 'federal_restricoes', `f.source = 'siaet'`, 0.0005, 800);
+    dbg(`annotate: ${rows.length} feições perto`, t0);
     const warnings: LayerWarning[] = [];
     const onRoute: { row: typeof rows[number]; p: SiaetProps; usedKm: number; viols: Violation[] }[] = [];
     for (const row of rows) {
@@ -699,6 +921,7 @@ const layer: RouteLayer = {
       onRoute.push({ row, p, usedKm: used / 1000, viols: violations(p, v) });
     }
 
+    dbg('annotate: na rota', t0);
     // uso de uma linha penalizada (ida-e-volta conta só um sentido): ponte = ≥50% dela; segmento = ≥400 m ou ≥50%
     const dirLen = (l: LonLat[]) => (l.length > 2 && distM(l[0], l[l.length - 1]) < 1 ? lineLenM(l) / 2 : lineLenM(l));
     const usesLines = (ri: RouteIndex, a: Applied) => a.lines.some((l) => {
@@ -716,7 +939,7 @@ const layer: RouteLayer = {
       }
       violadas.add(id);
       // routing.ts já avisa ('uses_restricted_way') quando a rota usa ≥50% da linha penalizada; aqui cobre o resto
-      if (!a.lines.some((l) => routingUses(route.line, l))) {
+      if (!a.lines.some((l) => routingUses(idx, l))) {
         warnings.push({
           code: 'siaet_restricao_na_rota', severity: 'danger', id, lat: a.cand.row.props?.oae_unica?.lat, lon: a.cand.row.props?.oae_unica?.lon,
           message: `A rota passa por ${a.cand.label}, onde ${a.cand.desc} (${a.cand.row.source === 'siaet' ? 'SIAET/DNIT' : 'alerta do DNIT revisado'}). Sem desvio razoável encontrado: confira a sinalização e a AET antes de seguir.`,
@@ -724,41 +947,66 @@ const layer: RouteLayer = {
       }
     }
 
+    // linhas definitiva/temporária do mesmo PNV e BRs coincidentes têm a mesma geometria: um aviso por (trecho, tipo)
+    const grupos = new Map<string, typeof onRoute>();
     for (const o of onRoute) {
-      const itemId = `siaet:${o.row.source_id}`;
-      for (const x of o.viols.filter((y) => !y.bloqueia)) {
-        warnings.push(x.motivo === 'definitiva_comprimento'
-          ? { code: 'siaet_restricao_geometrica', severity: 'warn', id: itemId,
-              message: `${o.row.name}: o SIAET registra comprimento máx. ${fmtNum(x.limite)} m (restrição definitiva, cadastrada para AET); veículo de ${fmtNum(x.valor)} m. Confira a placa R-18 e as curvas do trecho antes de seguir.` }
-          : { code: 'siaet_aet_outro_orgao', severity: 'warn', id: itemId,
-              message: `${o.row.name}: trecho fora da jurisdição federal (${o.p.administracao ?? 'não federal'}); o DNIT não emite AET aqui. Peça a autorização ao órgão com circunscrição sobre a via.` });
-      }
-      if (o.viols.some((y) => y.bloqueia)) {
-        if (!memo?.byItem.has(itemId) && !violadas.has(itemId)) {
+      const k = JSON.stringify(o.row.geometry);
+      grupos.set(k, [...(grupos.get(k) ?? []), o]);
+    }
+    const ja = new Set<string>();
+    const folgas = new Map<string, string[]>();
+    const push = (gk: string, w: LayerWarning) => {
+      const k = `${gk}|${w.code}`;
+      if (ja.has(k)) return;
+      ja.add(k);
+      warnings.push(w);
+    };
+    for (const [gk, grupo] of grupos) {
+      const nomes = [...new Set(grupo.map((o) => o.row.name ?? ''))].join(' / ');
+      const ids = grupo.map((o) => `siaet:${o.row.source_id}`);
+      const aplicada = ids.some((id) => memo?.byItem.has(id) || violadas.has(id)) || [...(memo?.byItem.values() ?? [])].some((a) => JSON.stringify(a.cand.row.geometry) === gk);
+      for (const o of grupo) {
+        const itemId = `siaet:${o.row.source_id}`;
+        for (const x of o.viols.filter((y) => !y.bloqueia)) {
+          push(gk, x.motivo === 'definitiva_comprimento'
+            ? { code: 'siaet_restricao_geometrica', severity: 'warn', id: itemId,
+                message: `${nomes}: o SIAET registra comprimento máx. ${fmtNum(x.limite)} m (restrição definitiva, cadastrada para AET); veículo de ${fmtNum(x.valor)} m. Confira a placa R-18 e as curvas do trecho antes de seguir.` }
+            : { code: 'siaet_aet_outro_orgao', severity: 'warn', id: itemId,
+                message: `${nomes}: trecho fora da jurisdição federal (${o.p.administracao ?? 'não federal'}); o DNIT não emite AET aqui. Peça a autorização ao órgão com circunscrição sobre a via.` });
+        }
+        const bloq = o.viols.filter((y) => y.bloqueia);
+        if (bloq.length) {
           // viola mas não virou linha penalizada (fora do mapa carregado, casamento falhou ou ainda pendente)
-          warnings.push({
-            code: 'siaet_restricao_na_rota', severity: 'danger', id: itemId,
-            message: `A rota usa ${o.row.name} (${o.usedKm.toFixed(1).replace('.', ',')} km), onde o SIAET/DNIT registra ${describeViolations(o.viols.filter((y) => y.bloqueia))}. A restrição não pôde ser aplicada no cálculo: confira a sinalização e a AET antes de seguir.`,
+          if (!aplicada) {
+            push(gk, {
+              code: 'siaet_restricao_na_rota', severity: 'danger', id: itemId,
+              message: `A rota usa ${nomes} (${o.usedKm.toFixed(1).replace('.', ',')} km), onde o SIAET/DNIT registra ${describeViolations(bloq)}. A restrição não pôde ser aplicada no cálculo: confira a sinalização e a AET antes de seguir.`,
+            });
+          }
+          continue;
+        }
+        const zeros = (o.p.aet_bloqueada ?? []).filter((z) => !aetDims(v).has(z) && !o.viols.some((y) => y.dim === z));
+        if (zeros.length) {
+          push(gk, {
+            code: 'siaet_aet_bloqueada', severity: 'warn', id: itemId,
+            message: `${nomes}: o SIAET marca AET bloqueada (${zeros.join(', ')}) neste trecho. Não há limite para veículo sem AET, mas pode haver obra ou interdição: confira os alertas do DNIT.`,
           });
         }
-        continue;
+        const folga: string[] = [];
+        for (const d of DIMS) {
+          const lim = o.p[PROP[d]];
+          const val = vehicleValue(v, d);
+          if (lim != null && lim > 0 && val <= lim && lim - val < (d === 'peso' ? 0.5 : 0.05)) folga.push(`${LABEL[d]} ${fmtNum(lim)} ${UNIT[d]}`);
+        }
+        for (const f of folga) folgas.set(f, [...new Set([...(folgas.get(f) ?? []), nomes])]);
       }
-      const zeros = (o.p.aet_bloqueada ?? []).filter((z) => !aetDims(v).has(z) && !o.viols.some((y) => y.dim === z));
-      if (zeros.length) {
-        warnings.push({
-          code: 'siaet_aet_bloqueada', severity: 'warn', id: itemId,
-          message: `${o.row.name}: o SIAET marca AET bloqueada (${zeros.join(', ')}) neste trecho. Não há limite para veículo sem AET, mas pode haver obra ou interdição: confira os alertas do DNIT.`,
-        });
-      }
-      const folga: string[] = [];
-      for (const d of DIMS) {
-        const lim = o.p[PROP[d]];
-        const val = vehicleValue(v, d);
-        if (lim != null && lim > 0 && val <= lim && lim - val < (d === 'peso' ? 1 : 0.1)) folga.push(`${LABEL[d]} ${fmtNum(lim)} ${UNIT[d]}`);
-      }
-      if (folga.length) {
-        warnings.push({ code: 'siaet_folga_minima', severity: 'info', id: itemId, message: `${o.row.name}: veículo no limite do SIAET (${folga.join(', ')}). Sem margem para carga mais alta ou mais pesada.` });
-      }
+    }
+
+    for (const [lim, trechos] of folgas) {
+      warnings.push({
+        code: 'siaet_folga_minima', severity: 'info',
+        message: `Veículo no limite do SIAET (${lim}) em ${trechos.length} trecho(s): ${trechos.slice(0, 3).join('; ')}${trechos.length > 3 ? ` e mais ${trechos.length - 3}` : ''}. Sem margem para carga mais alta ou mais pesada.`,
+      });
     }
 
     if (memo?.sem_casamento.length) {
@@ -771,6 +1019,7 @@ const layer: RouteLayer = {
       });
     }
 
+    dbg('annotate: avisos', t0);
     const refs = [...new Set(onRoute.map((o) => o.p.ref_mes))];
     const ref = refs[0] ?? (rows[0]?.props as any)?.ref_mes ?? null;
     if (ref) {
@@ -782,7 +1031,7 @@ const layer: RouteLayer = {
 
     const summary: string[] = [];
     if (onRoute.length) {
-      summary.push(`${onRoute.length} trecho(s) federal(is) da rota com restrição no SIAET/DNIT (ref. ${refs.join(', ')}).`);
+      summary.push(`${grupos.size} trecho(s) federal(is) da rota com restrição cadastrada no SIAET/DNIT (ref. ${refs.join(', ')}).`);
       const mins: string[] = [];
       for (const d of DIMS) {
         const vals = onRoute.map((o) => ({ v: o.p[PROP[d]], n: o.row.name })).filter((x) => x.v != null && x.v > 0) as { v: number; n: string }[];
