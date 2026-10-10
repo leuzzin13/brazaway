@@ -1,0 +1,248 @@
+{
+ "category": "elevacao_rampas",
+ "sources": [
+  {
+   "name": "ANADEM v1 (ANA/UFRGS)",
+   "url": "https://metadados.snirh.gov.br/files/anadem_v1_tiles/anadem_v1_23K.tif",
+   "verdict": "confirmed",
+   "note": "Re-testei hoje: HTTP 200, 2.045.901.471 bytes, Last-Modified 20/08/2025. gdalinfo mostra COG DEFLATE, Float32, 22273x30264 px, NoData -9999; valor na Sé = 757,74 m. A licença CC BY 4.0, com uso comercial permitido, está no metadado SNIRH 93664c15-1ff8-4e87-bbed-2bb69d321309. Esse metadado lista exatamente os mesmos 52 tiles da pesquisa; conferi o tamanho de 5 deles por HEAD e todos batem, e a soma dá 63,98 GB. O artigo (Remote Sensing 2024) confirma o viés de 9,6 m para 1,5 m. Ressalva: o ANADEM é derivado do Copernicus, então as obrigações de aviso do Copernicus passam para quem redistribuir."
+  },
+  {
+   "name": "GEDTM30 v1.2 (OpenLandMap)",
+   "url": "https://s3.opengeohub.org/global/dtm/v1.2/gedtm_rf_m_30m_s_20060101_20151231_go_epsg.4326.3855_v1.2.tif",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 432,4 GB. gdalinfo: 1296009x540009 px, Float32, tag Scale 0.1. O valor bruto na Sé é 755,6, então já está em metros, e a tag está mesmo errada. CC BY 4.0 confirmada no Zenodo 18887460 (v1.2.0 de 06/03/2026) e no README do Codeberg. Ressalvas: (1) o Zenodo traz o aviso 'Use for testing purposes only', um risco para produção que a pesquisa não citou; (2) o COG de 30 m tem Last-Modified de 23/09/2026, posterior à data de versão. Também há espelho no S3 do OpenTopography (raster/GEDTM30/)."
+  },
+  {
+   "name": "LiDAR PMSP M3DC — EPT",
+   "url": "https://ept-m3dc-pmsp.s3.sa-east-1.amazonaws.com/ept.json",
+   "verdict": "confirmed",
+   "note": "HTTP 200. O ept.json diz points=31730305220, EPSG:31983, laszip; Last-Modified 21/03/2020, mas os dados são do voo de 2017. A GPL-3.0 está confirmada no registro awslabs/open-data-registry (pmsp-lidar.yaml). Ressalva de licença: o repositório de documentação citado no registro (geoinfo-smdu/M3DC) é um fork do Potree com licença NOASSERTION, e o metadado do GeoSampa tem useConstraints='license' sem texto. Ou seja, a GPL só aparece no registro da AWS; vale pedir licença explícita à GEOINFO. Teste próprio: DTM de 1 m de 0,48 km² em Perdizes via PDAL em cerca de 9 s."
+  },
+  {
+   "name": "LiDAR PMSP — bucket LAZ",
+   "url": "https://laz-m3dc-pmsp.s3.sa-east-1.amazonaws.com/",
+   "verdict": "confirmed",
+   "note": "Paginei a listagem S3 inteira: 5.544 objetos .laz e 193.685.675.870 bytes (193,7 GB decimal, ou 180,4 GiB). O nome segue o padrão MDS_color_XXXX-XXX.laz."
+  },
+  {
+   "name": "GeoSampa MDT/MDS 2017 e 2020 (metadados + download)",
+   "url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/intranet/api/records/6f659d23-762a-4e16-9506-e0bd4f535417",
+   "verdict": "confirmed",
+   "note": "Os dois metadados respondem 200. 2017: MDT/MDS de 0,50 m, 5 a 30 pts/m², PEC-PCD classe A, município inteiro, accessConstraints semRestricoes e useConstraints 'license' sem texto. 2020 (f2ddd371): MDS de 0,50 m, 10 pts/m², 1.544,00 km², PEC-PCD A. A página _SBC.aspx devolve o desafio F5 (TSPD/bobcmn), o que confirma o anti-bot. O 'voo mai–jul/2017' NÃO aparece no metadado nem no Termo de Referência anexado."
+  },
+  {
+   "name": "Mapeamento aerofotogramétrico + laser do Estado de SP",
+   "url": "https://www.cdhu.sp.gov.br/documents/20143/231046/Encontro-Regional-RM-CAMPINAS.pdf/d993e468-b3c8-246f-56cd-9285fb7a18ae",
+   "verdict": "untestable",
+   "note": "O PDF continua voltando text/html com 1.161 bytes. Uma fonte secundária (LiDAR News) diz que o IGC-SP está montando um repositório LiDAR do estado inteiro, então o levantamento provavelmente existe. Mas não achei acesso, licença nem portal de download, e o valor 'medium' depende de algo não confirmado."
+  },
+  {
+   "name": "DNIT IPR-706 (1999)",
+   "url": "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/ipr/coletanea-de-manuais/vigentes/706_manual_de_projeto_geometrico.pdf",
+   "verdict": "confirmed",
+   "note": "O HEAD dá 403, mas o GET com User-Agent dá 200: 43.258.858 bytes, 228 páginas, sem camada de texto (escaneado). Renderizei a página 154 do PDF (página 124 do manual): Quadro 5.5.2.1 com Classe 0 3/4/5%, I 3/4,5/6%, II 3/5/7%, III 4/6/8%, IV-A 4/6/8%, IV-B 6/8/10%*, e a nota '*' de rampas acima de 8% limitadas a 300 m contínuos. Bate com a pesquisa. O OCR da pesquisa tinha perdido o 5% da Classe 0, mas a tabela final está certa."
+  },
+  {
+   "name": "Lei 16.402/2016 — Quadro 2B",
+   "url": "https://gestaourbana.prefeitura.sp.gov.br/wp-content/uploads/2016/03/004-QUADRO_2B_FINAL.docx",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 37.542 bytes. Extraí a tabela do DOCX ('Quadro 2B - Parâmetros de parcelamento do solo (sistema viário)'): declividade máxima N1 6%, N2 6%, N3 8%, coletora 10%, local 15%, ciclovia 10%, pedestre 8,33%; mínima 0,5%. Vale só para vias novas de parcelamento. Não consegui confirmar se a Lei 18.081/2024 (revisão da LPUOS) alterou o quadro."
+  },
+  {
+   "name": "Resolução CONTRAN 882/2021",
+   "url": "https://www.in.gov.br/en/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699",
+   "verdict": "confirmed",
+   "note": "HTTP 200. Conferi no texto do DOU o art. 18 (CVC com mais de 2 unidades e PBTC acima de 57 t ou mais de 19,80 m precisa de AET) e o art. 19 §1º (6x4; vencer 6% carregada com u=0,45, Rr=11 kgf/t e rendimento de 90%), §2º (até 58,5 t pode ser 4x2/6x2) e §3º (faixa adicional em rampa >5% e >600 m). A fórmula do Anexo III, i = Ft/(10xG) − Rr/10, está confirmada na imagem original do DOU (_009.jpg). Recalculei a tabela de aderência e todos os valores batem (6,8%, 9,7%, 9,2%, 12,3%, 15,5% etc.). Ressalva de escopo: o critério de 6% vale só para as composições com AET do art. 18. O bitrem de 57 t com até 19,8 m entra pelo art. 6º I j, sem AET. Aplicar u=0,45 a carreta, truck e bitrem é extrapolação da própria pesquisa."
+  },
+  {
+   "name": "Código-fonte do Valhalla + issue #1191",
+   "url": "https://github.com/valhalla/valhalla",
+   "verdict": "confirmed",
+   "note": "No master e na tag 3.9.1: truckcost.cc, dynamiccost.cc e autocost.cc não citam grade, slope nem hill. sample.cc tem HGT_DIM=3601 e regex para .hgt(.gz|.lz4). Em elevationbuilder.cc: POSTING_INTERVAL=60, kMinimumInterval=10, clamp de ±3% em ponte e túnel e weighted=grade*.6+6.5. Em skadi/util.cc: rampa em % e clamp de −10 a +15 só no peso. Em directededge.cc: ceil, passo de 1 até 16 e de 4 até 76. trace_serializer.cc expõe max_upward_grade, max_downward_grade, weighted_grade e mean_elevation. Issue #1191 aberta desde 08/04/2018 com 0 comentários; release 3.9.1 de 06/10/2026. O script build_elevation baixa só de elevation-tiles-prod/skadi. Mas a afirmação de que o Valhalla local devolve /height null está DESATUALIZADA: hoje o /height dá 757 m na Sé (ver extra_findings)."
+  },
+  {
+   "name": "IBGE API (malhas v3 e regiões metropolitanas)",
+   "url": "https://servicodados.ibge.gov.br/api/v1/localidades/regioes-metropolitanas",
+   "verdict": "confirmed",
+   "note": "O HEAD dá 405, mas o GET dá 200: RM 04901 com 39 municípios. Recalculei com OGR a partir das malhas dos 39 municípios e cheguei aos mesmos 5 tiles (S24W046, S24W047, S24W048, S25W047, S25W048). Para o Brasil com qualidade=minima são 811 tiles, e só o S11W036 não tem tile Copernicus. Com qualidade=maxima são 816. Os tiles nível 2 do grafo local cobrem 112 células de 1° (o contorno IBGE do Sudeste dá 108)."
+  },
+  {
+   "name": "Copernicus DEM GLO-30",
+   "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S24_00_W047_00_DEM/Copernicus_DSM_COG_10_S24_00_W047_00_DEM.tif",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 42.276.212 bytes. O tileList.txt tem 26.450 tiles. A página COP-DEM do Copernicus Dataspace diz que a licença é livre e permite uso comercial. Ressalva: o aviso obrigatório é o texto exato 'produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved', mais a frase de isenção de responsabilidade. A atribuição curta proposta pela pesquisa não basta."
+  },
+  {
+   "name": "Skadi / AWS Terrain Tiles (SRTM)",
+   "url": "https://elevation-tiles-prod.s3.us-east-1.amazonaws.com/skadi/S24/S24W047.hgt.gz",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 11.934.130 bytes, Last-Modified 23/04/2016. Os docs do joerd (data-sources e attribution) confirmam SRTM e a atribuição 'courtesy of the U.S. Geological Survey'. No meu teste próprio também foi o pior DEM (MAE de 6,3–6,4 pp)."
+  },
+  {
+   "name": "NASADEM via S3 do OpenTopography",
+   "url": "https://opentopography.s3.sdsc.edu/raster/NASADEM/NASADEM_be/NASADEM_HGT_s24w047.tif",
+   "verdict": "confirmed",
+   "note": "HTTP 200 sem chave, 15.067.744 bytes."
+  },
+  {
+   "name": "ALOS AW3D30 (espelho OpenTopography)",
+   "url": "https://opentopography.s3.sdsc.edu/raster/AW3D30/AW3D30_global/ALPSMLC30_S024W047_DSM.tif",
+   "verdict": "corrected",
+   "note": "HTTP 200 sem chave, mas o arquivo tem 19.674.492 bytes (19,7 MB), não 25,9 MB. A página do OT confirma a V3.2 (jan/2021) e diz 'Use License: Not Provided'. A página da JAXA confirma a v4.1 (abr/2024), o uso comercial gratuito e o cadastro obrigatório. No JSON da rodada 2, a chave 'aw3d30_v4' rotula dados que na verdade são da v3.2."
+  },
+  {
+   "name": "OpenTopography Global DEM API",
+   "url": "https://portal.opentopography.org/API/globaldem?demtype=AW3D30",
+   "verdict": "confirmed",
+   "note": "HTTP 401 sem chave, confirmado. O bucket S3 público funciona com --no-sign-request."
+  },
+  {
+   "name": "CGIAR-CSI SRTM v4.1",
+   "url": "https://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_27_17.zip",
+   "verdict": "confirmed",
+   "note": "HEAD 200, 34,8 MB, Last-Modified 21/09/2008. O disclaimer proíbe 'any commercial, non-free resale, or redistribution without explicit written permission from CIAT'."
+  },
+  {
+   "name": "FABDEM",
+   "url": "https://data.bris.ac.uk/data/dataset/s5hqmjcdj8yo2ibzi9b4ew3sn",
+   "verdict": "untestable",
+   "note": "Timeout de 60 s de novo (terceira tentativa). A licença CC BY-NC-SA 4.0 está confirmada só em fonte secundária (gee-community-catalog). O descarte se mantém."
+  },
+  {
+   "name": "GraphHopper — custom models com slope",
+   "url": "https://github.com/graphhopper/graphhopper/blob/master/docs/core/custom-models.md",
+   "verdict": "corrected",
+   "note": "average_slope e max_slope estão confirmados nos docs. Mas o padrão de elevação do GraphHopper é 'srtm' (docs/core/elevation.md e config-example.yml), não 'cgiar' como o fato do CGIAR dá a entender. O 'cgiar' é só uma das opções."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "O costing truck do Valhalla não usa rampa; issue #1191 aberta desde 2018 com 0 comentários; última release 3.9.1 de 06/10/2026.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/valhalla/valhalla/issues/1191",
+   "note": "Pela API do GitHub: 'Add elevation logic to truck costing', open, criada em 2018-04-08 e 0 comentários. A release latest é 3.9.1, publicada em 2026-10-06. truckcost.cc, dynamiccost.cc e autocost.cc (master e tag 3.9.1) não citam grade, slope nem hill."
+  },
+  {
+   "fact": "valhalla_build_elevation baixa só Skadi; sample.cc lê só HGT 1\" com HGT_DIM=3601 (.hgt/.gz/.lz4); qualquer DEM serve se convertido; testado com ANADEM.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/valhalla/valhalla/blob/master/src/skadi/sample.cc",
+   "note": "HGT_DIM=3601 e a regex de nome com .gz/.lz4 conferem; o script baixa só de elevation-tiles-prod/skadi. Hoje o Valhalla do projeto (3.9.1-c803bdc2f) responde /height=757 m na Sé com os HGT do ANADEM, o que confirma a conversão. Detalhe que ficou de fora: o sample.cc também aceita additional_data.elevation_url para carregar HGT remoto."
+  },
+  {
+   "fact": "No Brasil, os tiles Skadi vêm do SRTM (atribuição USGS) e foram o pior DEM contra o LiDAR.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/tilezen/joerd/blob/master/docs/data-sources.md",
+   "note": "O joerd lista 'SRTM globally except high latitudes', e o attribution.md traz 'SRTM terrain data courtesy of the U.S. Geological Survey'. No meu teste independente em Perdizes (189–224 trechos de 60 m), o SRTM teve MAE de 6,3–6,4 pp, o pior de todos e ainda acima dos 4,1 da pesquisa."
+  },
+  {
+   "fact": "elevationbuilder amostra a cada 60 m, ignora arestas <10 m, limita ponte/túnel a ±3%; max_up_grade em % com ceil (1 até 16, passos de 4 até 76); weighted_grade = grade*0,6+6,5 limitado a −10..+15%.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/valhalla/valhalla/blob/master/src/baldr/directededge.cc",
+   "note": "Tudo confere no código. Correção menor de citação: as constantes ficam em src/mjolnir/elevationbuilder.cc e o clamp de −10..+15 em src/skadi/util.cc, não no directededge.cc. O clamp só afeta o weighted_grade, porque o max_up_grade é calculado antes dele."
+  },
+  {
+   "fact": "ANADEM v1: DTM 30 m da América do Sul derivado do Copernicus, viés de 9,6 para 1,5 m; CC BY 4.0; melhor DEM nacional no teste (MAE 1,34–2,45 pp).",
+   "verdict": "confirmed",
+   "source_url": "https://metadados.snirh.gov.br/geonetwork/srv/api/records/93664c15-1ff8-4e87-bbed-2bb69d321309",
+   "note": "O resumo do artigo (DOAJ/MDPI) diz 'reducing average errors (BIAS) from 9.6 m to 1.5 m'. O metadado SNIRH confirma CC BY 4.0 com uso comercial. No meu teste independente o ANADEM também foi o melhor DEM nacional, mas com MAE de 2,87–2,89 pp, numa caixa bem mais íngreme (46% dos trechos >8%). Em morro forte o erro pode passar da faixa citada."
+  },
+  {
+   "fact": "GEDTM30 v1.2: DTM global 1\", CC BY 4.0, COG público; tag Scale=0.1 mas valores em metros; segundo lugar (MAE 1,87–2,53 pp).",
+   "verdict": "confirmed",
+   "source_url": "https://zenodo.org/records/18887460",
+   "note": "Confirmado pelo Zenodo (v1.2.0, 06/03/2026, cc-by-4.0), pelo gdalinfo (Scale 0.1, valor 755,6 na Sé) e pelo meu teste, onde ficou em 2º lugar com MAE de 3,12–3,19 pp. Não medi os 22 s do recorte. O aviso 'Use for testing purposes only' do Zenodo não foi citado."
+  },
+  {
+   "fact": "FABDEM é CC BY-NC-SA 4.0 e proíbe uso comercial; o próprio GEDTM30 removeu o FABDEM por causa da licença.",
+   "verdict": "corrected",
+   "source_url": "https://codeberg.org/openlandmap/GEDTM30",
+   "note": "A licença do FABDEM está confirmada só por fonte secundária, porque data.bris.ac.uk dá timeout. Pelo README do Codeberg, quem foi removido por 'License issue of FABDEM' foi o EDTM v1 (fev/2023), antecessor do GEDTM30, e não o GEDTM30."
+  },
+  {
+   "fact": "O SRTM do CGIAR-CSI (padrão 'cgiar' do GraphHopper) proíbe uso comercial, revenda e redistribuição sem permissão escrita do CIAT.",
+   "verdict": "corrected",
+   "source_url": "https://srtm.csi.cgiar.org/disclaimer/",
+   "note": "A restrição do CIAT está confirmada no disclaimer. Mas o padrão do GraphHopper é 'srtm', não 'cgiar' (docs/core/elevation.md: 'Per default elevation is srtm'). O cgiar é só uma opção de provedor."
+  },
+  {
+   "fact": "AW3D30 v4.1 (abr/2024): uso comercial gratuito pelos termos da JAXA, download oficial exige cadastro; o OpenTopography serve a v3.2 sem chave.",
+   "verdict": "confirmed",
+   "source_url": "https://www.eorc.jaxa.jp/ALOS/en/dataset/aw3d30/aw3d30_e.htm",
+   "note": "A página da JAXA diz 'April 2024 ... Version 4.1', 'Any of the commercial and non-commercial purposes can be used free of charge' e exige conta para baixar. A página do OT diz 'supplying V3.2 (Jan 2021)'. A página de termos earth.jaxa.jp/policy continua sem conteúdo útil no WebFetch."
+  },
+  {
+   "fact": "O bucket S3 público do OpenTopography entrega NASADEM, COP30 e AW3D30 sem chave; a API REST exige chave (401).",
+   "verdict": "confirmed",
+   "source_url": "https://portal.opentopography.org/raster?opentopoID=OTALOS.112016.4326.2",
+   "note": "Os prefixos NASADEM/, COP30/ e AW3D30/ estão listados sem assinatura; a API responde 401. O mesmo bucket também tem ANADEM/ e GEDTM30/, o que a pesquisa não mencionou."
+  },
+  {
+   "fact": "LiDAR PMSP na AWS: EPT com 31.730.305.220 pontos e 5.544 LAZ (193,7 GB), GPL-3.0 segundo o registro AWS Open Data.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/awslabs/open-data-registry/blob/main/datasets/pmsp-lidar.yaml",
+   "note": "O ept.json e a listagem S3 paginada batem exatamente, e o registro AWS traz a GPL v3.0. A GPL não aparece nem no GeoSampa nem no repositório M3DC (licença NOASSERTION): é uma licença ambígua para dados, e a recomendação de leitura jurídica se mantém."
+  },
+  {
+   "fact": "MDT/MDS 2017 da PMSP: 0,50 m, 5–30 pts/m², PEC-PCD classe A, voo de mai–jul/2017, município inteiro.",
+   "verdict": "unverifiable",
+   "source_url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/intranet/api/records/6f659d23-762a-4e16-9506-e0bd4f535417",
+   "note": "Resolução de 0,50 m, '5 pontos/m² e 30 pontos/m²', PEC-PCD 'A' e município inteiro estão confirmados no metadado. O 'voo de mai–jul/2017' não aparece no metadado (data 2017-10-02) nem no Termo de Referência anexado. Esse detalhe fica sem confirmação."
+  },
+  {
+   "fact": "Levantamento LiDAR 2020 da PMSP: MDS 0,50 m, 10 pts/m², 1.544 km², PEC-PCD A; download por folha atrás de anti-bot.",
+   "verdict": "confirmed",
+   "source_url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/intranet/api/records/f2ddd371-389a-4505-9b72-1bcae549ac10",
+   "note": "O metadado confirma todos os números. O _SBC.aspx devolve o desafio F5 (TSPD, 'captcha')."
+  },
+  {
+   "fact": "LiDAR reamostrado para 1\" em HGT erra 0,49–1,17 pp (contra 1,3–4,1 dos DEMs globais), P/R de 0,74–0,87 para >8% em morro; quantização Int16 custa +0,1–0,2 pp.",
+   "verdict": "corrected",
+   "source_url": "https://ept-m3dc-pmsp.s3.sa-east-1.amazonaws.com/ept.json",
+   "note": "Os MAE batem com round2_lidar.json e com o meu teste independente (LiDAR 1\": MAE 0,63 pp; Int16: 0,65). A faixa de P/R para >8% em morro está errada: pela própria tabela é 0,77–0,90 (Sumaré 0,77/0,81; Freguesia do Ó 0,87/0,90), e o 0,74 é do limiar >15%. A comparação mede só a perda por reamostragem (mesma fonte), não a acurácia absoluta. No meu teste a quantização custou menos (+0,02 pp)."
+  },
+  {
+   "fact": "CONTRAN 882/2021, art. 19: tratora de CVC acima de 58,5 t deve ser 6x4 e vencer 6% carregada (u=0,45, 11 kgf/t, 90%); §3º faixa adicional em rampas >5% e >600 m; fórmula do Anexo III dá carreta com cavalo 6x2 ≈ 6,8% no molhado.",
+   "verdict": "confirmed",
+   "source_url": "https://www.in.gov.br/en/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699",
+   "note": "Texto e fórmula conferem com o DOU (imagem do Anexo III) e o 6,8% se reproduz (3825 kgf/485 − 1,1). Ressalva de escopo: o art. 19 §1º vale só para composições com AET (art. 18: mais de 2 unidades e PBTC acima de 57 t ou mais de 19,80 m). O resumo generaliza ('a tratora carregada precisa vencer 6%'), e o uso de u=0,45 em outros presets é extrapolação."
+  },
+  {
+   "fact": "DNIT IPR-706, Quadro 5.5.2.1: rampas de 3–5% (Classe 0) a 6–10% (IV-B); acima de 8%, limitar a 300 m contínuos.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/ipr/coletanea-de-manuais/vigentes/706_manual_de_projeto_geometrico.pdf",
+   "note": "Conferi visualmente a página 124 do manual (página 154 do PDF). Todos os valores e a nota sobre os 300 m batem."
+  },
+  {
+   "fact": "Lei 16.402/2016 de SP, Quadro 2B: máximo de 6% (N1/N2), 8% (N3), 10% (coletora), 15% (local); pelo LiDAR, 18,6% e 26,1% dos trechos de 60 m passam de 8% em Sumaré e Freguesia do Ó.",
+   "verdict": "confirmed",
+   "source_url": "https://gestaourbana.prefeitura.sp.gov.br/wp-content/uploads/2016/03/004-QUADRO_2B_FINAL.docx",
+   "note": "Os valores estão confirmados no DOCX oficial. 18,6% e 26,1% batem com round2_lidar.json (lidar_pct>8). Na minha caixa de Perdizes, 46% dos trechos passaram de 8%. A possível mudança pela Lei 18.081/2024 continua sem conferência."
+  },
+  {
+   "fact": "Cobertura HGT 1°×1°: RMSP = 5 tiles; Brasil = 811 (~21 GB); ANADEM completo = 52 COGs, 64 GB.",
+   "verdict": "confirmed",
+   "source_url": "https://servicodados.ibge.gov.br/api/v1/localidades/regioes-metropolitanas",
+   "note": "Recalculei com OGR: RMSP 5 (mesma lista), Brasil 811 com a malha 'minima' (816 com a 'maxima'), ANADEM 52 tiles (igual ao metadado SNIRH) e 63,98 GB. 811 × 25,9 MB dá cerca de 21 GB."
+  },
+  {
+   "fact": "GraphHopper oferece average_slope e max_slope em custom models (rampa no custo sem fork).",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/graphhopper/graphhopper/blob/master/docs/core/custom-models.md",
+   "note": "As linhas 109 e 116 do custom-models.md definem average_slope e max_slope, e há exemplo com 'average_slope > 4'."
+  }
+ ],
+ "extra_findings": [
+  "O estado do projeto mudou depois da pesquisa. O Valhalla local (3.9.1-c803bdc2f) já responde /height = 757 m na Sé, e data/valhalla/elevation_data tem 111 HGT, ou seja, 111 das 112 células do grafo (commits 823c148..fb887ea, 'Valhalla principal com elevação (ANADEM)'). A frase 'hoje o projeto roda sem elevação / /height devolve null' está desatualizada. O build_elevation continua 'False', o que é coerente com HGT próprio.",
+  "Há um espelho do ANADEM no S3 público do OpenTopography, sem chave: https://opentopography.s3.sdsc.edu/raster/ANADEM/ANADEM_be/anadem_v1_compressed_COG.tif. É um COG único de 70,9 GB, mais o VRT ANADEM_be.vrt, com LastModified 07/06/2026, e devolve o mesmo valor na Sé (757,74 m). Serve de fallback se o SNIRH ficar lento ou fora do ar. O mesmo bucket tem o GEDTM30 v1.2 (raster/GEDTM30/).",
+  "O registro do GEDTM30 no Zenodo diz 'This is the first release ... Use for testing purposes only'. Isso pesa contra usá-lo como fonte de produção, ainda que como plano B. Além disso, o COG de 30 m foi regravado em 23/09/2026, depois da data de versão v1.2 (06/03/2026): vale conferir se os valores mudaram. https://zenodo.org/records/18887460",
+  "O sample.cc do Valhalla aceita additional_data.elevation_url (com elevation_url_user_pw e elevation_dir) para baixar HGT de um servidor remoto via curl. Os HGT convertidos do ANADEM poderiam ser servidos de um bucket em vez de ficar em disco local. https://github.com/valhalla/valhalla/blob/master/src/skadi/sample.cc",
+  "A atribuição do Copernicus proposta ('contém dados Copernicus DEM © DLR/Airbus') não basta. A licença exige o texto exato 'produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved', a frase de isenção de responsabilidade e o repasse dessas obrigações a usuários subsequentes. https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+  "Fiz um teste independente em Perdizes: DTM de 1 m próprio via PDAL/EPT numa caixa de 0,48 km², 32–38 rotas aleatórias do Valhalla, 189–224 trechos de 60 m, 46% deles acima de 8%. MAE: LiDAR 1\" 0,63 pp; LiDAR 1\" Int16 0,65; ANADEM (via /height do Valhalla) 2,87–2,89; GEDTM30 3,12–3,19; Copernicus 3,58–3,62; SRTM/Skadi 6,32–6,41. A ordem da pesquisa se confirma, mas em morro forte os erros dos DEMs passam das faixas citadas.",
+  "Pela própria fórmula da pesquisa, a carreta com cavalo 6x2 chega a 6,8% no molhado, mas a tabela de presets põe o limite 'evitar' em 8%. Para esse cavalo, o corte fica acima do limite físico calculado, e o erro do ANADEM em morro (2–3 pp) piora a situação.",
+  "Algumas amostras são pequenas. Na Mooca, P/R >8% se apoia em só 10 trechos positivos no LiDAR, e em Sumaré os de >15% são cerca de 15 trechos. Os valores de recall >15% (0,33–0,40 no ANADEM) têm incerteza alta.",
+  "A licença do LiDAR da PMSP é ambígua. A GPL-3.0 aparece só no registro AWS. O repositório de documentação que o registro cita (https://github.com/geoinfo-smdu/M3DC) é um fork do Potree com licença NOASSERTION, e o metadado do GeoSampa tem useConstraints='license' sem texto. Vale pedir à GEOINFO (geosampa@prefeitura.sp.gov.br) uma licença explícita para os dados.",
+  "Escopo da CONTRAN 882: o bitrem de 7 eixos com 57 t e até 19,8 m circula sem AET pelo art. 6º I j. O critério do art. 19 (6x4, 6% com u=0,45) só alcança composições com AET, como o rodotrem. O commit 3dee4b3 do repo já corrigiu isso ('art. 18 só alcança o rodotrem; bitrem 57 t pelo art. 6º I j').",
+  "Pequenas inconsistências internas: o arquivo AW3D30 do OT tem 19,7 MB, não 25,9 MB, e o grade_round2_nasadem_aw3d30.json rotula como 'aw3d30_v4' dados que são da v3.2. O EPT do LiDAR tem Last-Modified de 2020, mas os dados são do voo de 2017."
+ ]
+}

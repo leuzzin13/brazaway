@@ -1,0 +1,238 @@
+{
+ "category": "Superfície e condição do pavimento (terra, obra, pavimento ruim) para a expansão Brasil",
+ "summary": "Cinco das seis pistas foram confirmadas com teste real. A pista 4 (CNT) foi alcançada, mas a falta de licença impede o uso comercial. O NOTES.md está em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/research2/superficie_pavimento/NOTES.md, junto com amostras e scripts. O repositório não foi editado.\n\nO que achei de mais importante: o Valhalla 3.9.1 trata como asfalto qualquer tertiary, unclassified ou residential sem a tag surface, tracktype ou smoothness (pbfgraphparser.cc). No Brasil, entre as unclassified que têm surface, 92 a 99% são de terra. Mas 23 a 75% delas não têm tag nenhuma, conforme 14 UFs consultadas no Overpass. Só no PBF do Sudeste são cerca de 207 mil km de unclassified sem tag, que o Valhalla considera asfalto. Por isso, exclude_unpaved sozinho não resolve.\n\nAlém disso, o custo do truck penaliza pouco a terra: soma só +0,1 a +0,5 ao fator da aresta. A velocidade não muda (secondary de cascalho a 44 km/h, igual à asfaltada), então o ETA em terra fica otimista. As manobras em terra vêm marcadas com rough:true, o que já permite avisar e ajustar o ETA sem chamada extra.\n\nExperimento com 260 rotas truck aleatórias de 45 t, origem e destino em via pavimentada:\n- Anel de 40 km da RMSP: 13% das rotas usam terra já marcada no OSM. Com exclude_unpaved, a rota fica cerca de 10% mais longa.\n- Sul de MG: 24% usam terra (mediana de 12 km, 19% da rota). Com exclude_unpaved, +63% de km e +42% de tempo.\n- Norte de MG: 18% usam terra (mediana de 17 km). Com exclude_unpaved, +128% de km.\n- Em 15 das 260 rotas, exclude_unpaved não achou caminho (erro 442). Portanto o roteamento precisa de fallback.\n\nFontes oficiais testadas:\n- SNV 202607A via WFS: números da pista conferidos e campo Obra presente. Bate com o OSM em 83 a 90% nos trechos LEN/IMP. Onde diverge, quase sempre o SNV está defasado.\n- DNIT ICM: o CKAN do próprio DNIT não exige token. Publica por mês, por km, inclusive para cerca de 5.400 km de federais de terra. Há prova forte de sazonalidade: 64% dos mesmos km pioram em março em relação a agosto (ICM médio em MT: 55 contra 25).\n- DER-SP (CC-BY-4.0): campo tipopista com 976 km IMP. Desses, 75 km ficam dentro da RMSP e 57 km no anel de 40 km.\n- DER-MG: via IDE-Sisema, com o campo superficie.\n- IBGE BC250 2025 (fonte nova): WFS nacional com revestimento e com tráfego \"Periódico\" em 17.235 trechos. A licença exige autorização do IBGE para uso comercial.\n- INMET: avisos com polígono e normais de chuva.\n- CNT 2025: dados por trecho de cerca de 10 km acessíveis pelo Power BI público, mas sem licença.\n- HeiGIT Planet: descartado, licença só não comercial.\n\nComo integrar:\n1. No roteamento, uma política por preset: calcular duas rotas (com e sem exclude_unpaved), usar fallback no erro 442 e somar tempo extra às manobras rough no ETA.\n2. Uma camada superfície: importadores do SNV, ICM e DER-SP, e um superficie.layer.ts. O costLines penaliza por preset e por época de chuva. O annotate gera os avisos de trecho sem pavimento, em obra ou com pavimento péssimo.\n3. Depois, com experimento antes e depois: pré-processar o PBF para marcar como terra as unclassified rurais sem tag.",
+ "key_facts": [
+  {
+   "fact": "SNV 202607A, consultado pelo WFS vgeo:vw_snv_rod: 7.673 segmentos. Extensão por Superficie_Federal: PAV 65.415 km, PLA 48.872, DUP 9.182, IMP 6.143, LEN 1.925, TRV 154 (bate com a pista). Campo Obra: EOD 1.044 km, EOP cerca de 1.057 km, EOI 28 km. Onde a federal é PLA, a estadual coincidente é IMP em 1.784 km e LEN em 1.390 km.",
+   "source_url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=vgeo:vw_snv_rod&outputFormat=application/json&CQL_FILTER=Versao_SNV='202607A'"
+  },
+  {
+   "fact": "No Sudeste, os trechos LEN e IMP do SNV aparecem como terra no Valhalla/OSM em 90% e 83% dos km. Os trechos IMP com obra EOP aparecem como terra em só 4%: as obras provavelmente terminaram e o SNV está defasado. Nas divergências conferidas, o OSM tem surface=asphalt explícito.",
+   "source_url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs"
+  },
+  {
+   "fact": "Valhalla 3.9.1 (commit c803bdc2f): sem surface, tracktype ou smoothness, as classes de motorway a residential viram PavedSmooth. O truck soma ao custo só kSurfaceFactor = +0,1 (compactada), +0,2 (terra), +0,5 (cascalho). exclude_unpaved proíbe entrar em terra vindo de asfalto. A velocidade da aresta não depende da superfície.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f/src/sif/truckcost.cc"
+  },
+  {
+   "fact": "Em 14 UFs medidas, 92 a 99% das highway=unclassified que têm surface são de terra. Mas 23 a 75% delas não têm surface (exemplos: MT 45%, PA 67%, CE 75%, PR 53%). O Valhalla trata essas sem tag como asfalto.",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "No PBF do Sudeste: SP tem 136.605 km de unclassified, 49% sem informação de superfície, e 95% das que têm tag são de terra. No anel de 40 km da RMSP há 6.354 km de unclassified e 1.488 km de tertiary com terra explícita, mais cerca de 4.880 km de unclassified sem tag.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf"
+  },
+  {
+   "fact": "Experimento com 260 rotas truck de 45 t: usam terra já marcada 13% no anel da RMSP, 24% no sul de MG e 18% no norte de MG. Com exclude_unpaved, a mediana do aumento de distância foi de +10%, +63% e +128%. Em 15 rotas não houve caminho (erro 442). Toda rota que passou por terra trouxe manobras com rough:true.",
+   "source_url": "http://localhost:8002/route"
+  },
+  {
+   "fact": "O CKAN do próprio DNIT não exige token. O pacote condicoes-do-pavimento (licença other-open) publica CSV mensal por km e sentido: em ago/2026, 93.334 linhas pavimentadas e 5.447 linhas não pavimentadas, com ICM e defeitos (panela, corrugação, poça d'água, poeira). O mês sai por volta do dia 10 do mês seguinte.",
+   "source_url": "https://servicos.dnit.gov.br/dadosabertos/api/3/action/package_show?id=condicoes-do-pavimento"
+  },
+  {
+   "fact": "Sazonalidade nas federais não pavimentadas: nos mesmos 4.660 km, 64% tiveram ICM pior em março/2026 do que em agosto/2026. ICM médio, março contra agosto: MT 55 x 25, RR 62 x 24, TO 56 x 21, PA 56 x 34.",
+   "source_url": "https://servicos.dnit.gov.br/dadosabertos/dataset/b41e3382-79f5-4b1d-b936-dc75aaa82dfa/resource/235299f0-9ba9-4765-9101-f457e5e3322f/download/levantamentos_nao_pavimentada_2026_03-1.csv"
+  },
+  {
+   "fact": "Referência linear do ICM no SNV (UF + BR + km): 99,9% das linhas casam. Das linhas não pavimentadas, 97,4% caem em segmentos SNV IMP/LEN.",
+   "source_url": "https://servicos.dnit.gov.br/dadosabertos/dataset/b41e3382-79f5-4b1d-b936-dc75aaa82dfa/resource/9b62b385-e7f8-4d39-a00b-792ae9973047/download/levantamentos_nao_pavimentada_2026_08.csv"
+  },
+  {
+   "fact": "Malha estadual do DER-SP, campo tipopista: PAV 13.330 km, DUP 6.602, IMP 976, PLAN 794. Dos trechos IMP, 75 km ficam dentro da RMSP (SP-008 Mairiporã, SP-043, SP-092, SP-102, SP-057) e 57 km no anel de 40 km. O OSM marca terra em só 70% desses km. Licença CC-BY-4.0 no CKAN do SP.",
+   "source_url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/Malha_Rodovi%C3%A1ria/FeatureServer/6"
+  },
+  {
+   "fact": "IBGE BC250 2025, camada rod_trecho_rodoviario_l: 124.687 trechos. Revestimento: 53.884 primário (solto), 44.961 pavimentados, 25.686 leito natural. Tráfego 'Periódico' em 17.235 trechos, 11.711 deles de leito natural. Na RMSP e no anel, só 60% do revestimento primário aparece como terra no OSM.",
+   "source_url": "https://geoservicos.ibge.gov.br/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=CCAR:BC250_2025_rod_trecho_rodoviario_l"
+  },
+  {
+   "fact": "Termo de uso da BC250 (2019): os dados são protegidos por direito autoral. É vedada a locação ou comercialização sem autorização escrita do IBGE, e o uso exige crédito.",
+   "source_url": "https://geoftp.ibge.gov.br/cartas_e_mapas/bases_cartograficas_continuas/bc250/versao2019/informacoes_tecnicas/BC250_termo_uso_2019.pdf"
+  },
+  {
+   "fact": "Pesquisa CNT 2025 via Power BI publish-to-web (chave 0e4868e3..., modelo 512570, cluster wabi-brazil-south-d): 13.780 unidades de pesquisa com cpavim/cgeral de 1 (Ótimo) a 5 (Péssimo), geometria WKT por trecho e tabela Em_Obras (1.182 unidades com 'Sim'). Não há licença declarada.",
+   "source_url": "https://app.powerbi.com/view?r=eyJrIjoiMGU0ODY4ZTMtMDZkYi00ZjdhLWFjZmQtNWY1NmM3YmUyMTFlIiwidCI6Ijg2MDliYzViLTdhY2EtNDIwNC1iNGIwLWNlOWNmOTAwMmU1MyJ9"
+  },
+  {
+   "fact": "HeiGIT no HDX: o OSM do Brasil tem 4,57 milhões de km de via, 47,4% sem informação de superfície, e o modelo Mapillary preenche só 1,1%. O conjunto Planet (surface, largura e passabilidade) é só para uso não comercial.",
+   "source_url": "https://data.humdata.org/dataset/brazil-planet-road-surface-data"
+  },
+  {
+   "fact": "INMET: os avisos ativos vêm em JSON com polígono GeoJSON, geocodes IBGE, descrição e severidade. A licença do RSS permite reprodução com citação da fonte. As normais 1991–2020 trazem a precipitação mensal de 221 estações.",
+   "source_url": "https://apiprevmet3.inmet.gov.br/avisos/ativos"
+  },
+  {
+   "fact": "DER-MG pela IDE-Sisema (WFS ide_0401_mg_rodovias_lin), estaduais: IMP 3.634 km, LEN 1.200 km, EOP 333 km. Dados de 12/2021; a restrição declarada é 'O acesso ao dado é livre'.",
+   "source_url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IDE%3Aide_0401_mg_rodovias_lin&outputFormat=csv"
+  }
+ ],
+ "sources": [
+  {
+   "name": "SNV — vgeo:vw_snv_rod (Superficie_Federal, Obra, Superficie_Estadual_Coincidente)",
+   "publisher": "DNIT / DNITGeo",
+   "url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs",
+   "access": "WFS 2.0 público, sem token; CQL_FILTER por Versao_SNV e UF; propertyName para baixar só atributos",
+   "format": "GeoJSON (EPSG:4326 via srsName)",
+   "license": "Sem licença explícita (Fees=NONE, AccessConstraints=NONE); dado público federal; o portal gov.br do DNIT usa CC BY-ND 3.0",
+   "tested": true,
+   "test_result": "HTTP 200. Atributos do Brasil (7.673 segmentos, 4,2 MB) em cerca de 2 s; 545 trechos LEN/IMP/obra com geometria (17 MB) em 41 s. Números da pista conferidos. No Sudeste, LEN e IMP aparecem como terra no Valhalla em 90% e 83% dos km.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador snv_superficie.py que reaproveita wfs_get, snv_version() e snv_uf() de siaet_restricoes.py. Filtrar superfície efetiva LEN/IMP ou Obra não nula; kind = leito_natural, implantada ou obra_*. A camada superficie.layer.ts usa costLines com fator por preset e época (validando o edge walk, erro 233), annotate com avisos 'trecho sem pavimento' e 'trecho em obra' e features para o mapa. Uso comercial como dado factual citando o DNIT."
+  },
+  {
+   "name": "Condições do Pavimento — ICM (pavimentada e não pavimentada)",
+   "publisher": "DNIT (CKAN próprio)",
+   "url": "https://servicos.dnit.gov.br/dadosabertos/api/3/action/package_show?id=condicoes-do-pavimento",
+   "access": "CKAN aberto do DNIT, sem token (o token só é exigido pela API nova do dados.gov.br); download direto dos recursos",
+   "format": "CSV ';' UTF-8 com BOM, decimal misto; meses antigos em XLSX",
+   "license": "other-open ('Outra (Aberta)'); dado aberto federal, uso comercial permitido com citação (licença não nomeada)",
+   "tested": true,
+   "test_result": "HTTP 200. Ago/2026: 93.334 linhas pavimentadas e 5.447 não pavimentadas, 1 linha por km. Referência linear no SNV casa 99,9%. Sazonalidade comprovada: 64% dos mesmos km pioram em março em relação a agosto.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador dnit_icm.py mensal (por volta do dia 12): package_show, pegar os dois CSVs mais recentes, parser tolerante, interpolar UF+BR+km na geometria do SNV. Guardar 12 meses do não pavimentado. Na camada, ICM Ruim/Péssimo vira fator alto em costLines, mais aviso 'pavimento péssimo' e ajuste de ETA."
+  },
+  {
+   "name": "Malha Rodoviária Estadual (tipopista PAV/DUP/IMP/PLAN) + IRI",
+   "publisher": "DER-SP",
+   "url": "https://mapas.der.sp.gov.br/server/rest/services/Hosted/Malha_Rodovi%C3%A1ria/FeatureServer/6",
+   "access": "ArcGIS REST público (maxRecordCount 2000); XLSX, SHP e KMZ no CKAN dadosabertos.sp.gov.br/dataset/sistema-rodoviario-estadual",
+   "format": "GeoJSON/JSON (REST), XLSX/SHP/KMZ",
+   "license": "CC-BY-4.0 (CKAN do SP); os serviços REST não trazem texto de licença",
+   "tested": true,
+   "test_result": "HTTP 200. 4.790 trechos; IMP 976 km, dos quais 75 km na RMSP e 57 km no anel de 40 km. O OSM marca terra em 70% desses km. A camada IRI tem 157.370 segmentos de vicinais municipais pavimentadas (16 mil km).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Importador dersp_malha_superficie.py (tipopista='IMP', outSR 4326) na mesma camada superficie. A camada IRI fica opcional, como evidência de vicinal pavimentada para não penalizar quando o OSM diz terra."
+  },
+  {
+   "name": "BC250 2025 — rod_trecho_rodoviario_l (revestimento, trafego, situacaofisica)",
+   "publisher": "IBGE",
+   "url": "https://geoservicos.ibge.gov.br/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=CCAR:BC250_2025_rod_trecho_rodoviario_l",
+   "access": "WFS público (bbox, propertyName, CSV/GeoJSON); download completo em geoftp (SHP de 798 MB, GPKG de 864 MB)",
+   "format": "GeoJSON, CSV, SHP, GPKG",
+   "license": "Termo de uso BC250 (2019): direito autoral do IBGE; é vedado comercializar sem autorização escrita; exige crédito. WFS com AccessConstraints=NONE",
+   "tested": true,
+   "test_result": "HTTP 200. 124.687 trechos; 64% sem pavimento; 17.235 com tráfego Periódico. Na RMSP e no anel, só 60% do revestimento primário aparece como terra no OSM; metade das divergências amostradas são ways sem tag.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Pedir autorização ao IBGE. Se liberada, importador ibge_bc250_revestimento.py guardando só revestimento não pavimentado ou trafego=Periódico. Casar por proximidade (escala 1:250k). Na camada, costLines com fator 1000 para carreta na época de chuva quando o tráfego é Periódico, e aviso 'tráfego periódico'."
+  },
+  {
+   "name": "Rodovias estaduais e federais de MG (superficie)",
+   "publisher": "DER-MG / SEMAD (IDE-Sisema)",
+   "url": "https://geoserver.meioambiente.mg.gov.br/IDE/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IDE%3Aide_0401_mg_rodovias_lin&outputFormat=SHAPE-ZIP",
+   "access": "WFS público (CSV, SHAPE-ZIP, XLSX)",
+   "format": "SHP/CSV/XLSX",
+   "license": "'O acesso ao dado é livre' (sem licença formal); confirmar uso comercial",
+   "tested": true,
+   "test_result": "HTTP 200. 3.444 trechos; estaduais com IMP 3.634 km, LEN 1.200 e EOP 333. Dados de 12/2021 (defasados).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Fonte complementar das estaduais de MG na camada superficie (mesmos códigos do SNV). Dar prioridade menor que SNV e BC250 por estar defasada."
+  },
+  {
+   "name": "Pesquisa CNT de Rodovias 2025 (Power BI público + API do SPA)",
+   "publisher": "CNT (Confederação Nacional do Transporte, entidade privada)",
+   "url": "https://pesquisarodovias.cnt.org.br/",
+   "access": "SPA Angular; api.cnt.org.br/pesquisacntrodovia/v1 (mapas e fotos); dados por trecho pelo Power BI publish-to-web (querydata, chave 0e4868e3-06db-4f7a-acfd-5f56c7be211e, modelo 512570)",
+   "format": "JSON (Power BI DSR), WKT LINESTRING",
+   "license": "Nenhuma declarada; obra de entidade privada; uso comercial não permitido sem autorização",
+   "tested": true,
+   "test_result": "querydata com HTTP 200 em wabi-brazil-south-d. 13.780 unidades de pesquisa com classe do pavimento (1–5), geometria WKT completa e Em_Obras (1.182 'Sim'). pbi.cnt.org.br não resolve DNS.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Não usar em produção. Serve para validação interna ou para propor parceria e licença com a CNT. Se licenciado: importador cnt_rodovias.py com o cliente de cnt/pbi.py, classe do pavimento e 'em obra' por trecho para os avisos."
+  },
+  {
+   "name": "Avisos meteorológicos ativos e normais climatológicas 1991–2020",
+   "publisher": "INMET",
+   "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
+   "access": "API JSON pública (hoje/futuro), RSS; normais em XLSX (portal.inmet.gov.br/uploads/normais/Normal-Climatologica-PREC.xlsx)",
+   "format": "JSON com polígono GeoJSON, RSS, XLSX",
+   "license": "'O conteúdo poderá ser reproduzido desde que citada a fonte' (RSS); uso comercial OK com citação",
+   "tested": true,
+   "test_result": "HTTP 200: 5 avisos hoje e 7 futuros com polígono, geocodes e severidade. Normais com 221 estações e precipitação mensal. alertas2.inmet.gov.br sem resposta.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Reaproveitar o importador de avisos do tema de interdições, se houver. Na camada superficie, aviso de Chuvas Intensas ou Acumulado (Perigo ou mais) sobre um trecho de terra eleva o fator ou vira bloqueio para carreta. As normais definem a época de chuva por região (mês acima de cerca de 150 mm)."
+  },
+  {
+   "name": "Andamento de Obras (SUPRA)",
+   "publisher": "DNIT (CKAN próprio)",
+   "url": "https://servicos.dnit.gov.br/dadosabertos/api/3/action/package_show?id=andamento-de-obras",
+   "access": "CKAN aberto, sem token",
+   "format": "XLSX mensal (uma aba por mês)",
+   "license": "other-pd (domínio público)",
+   "tested": true,
+   "test_result": "HTTP 200. Arquivo mais recente cobre jan–out/2025 (publicado em 2026-07-31, cerca de 9 meses de atraso). Cerca de 80 contratos por mês; km só no texto livre do objeto (22 de 67).",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Opcional: extrair BR e km do texto do objeto para avisos 'trecho em obra' complementares ao campo Obra do SNV."
+  },
+  {
+   "name": "Brazil: Road Surface Data (Mapillary + OSM)",
+   "publisher": "HeiGIT (HDX)",
+   "url": "https://downloads.ohsome.org/hdx/mapillary_road_surface/heigit_bra_roadsurface_lines.gpkg",
+   "access": "Download direto (HEAD e range testados)",
+   "format": "GPKG 4,5 GB / GeoJSON 10 GB",
+   "license": "ODbL (uso comercial OK, como o OSM)",
+   "tested": true,
+   "test_result": "HTTP 200. Dados de 2024-11. Acrescenta só 1,1% de cobertura de superfície no Brasil.",
+   "value": "low",
+   "effort": "medium",
+   "integration_plan": "Baixa prioridade. Usar pred_class só onde o OSM não tem tag, no pré-processamento do PBF (seção 5.3 do NOTES)."
+  },
+  {
+   "name": "Brazil: Planet Road Surface, Width, and Passability",
+   "publisher": "HeiGIT (HDX) / Planet Labs",
+   "url": "https://hot.storage.heigit.org/heigit-hdx-public/planet_road_data/heigit_BR_planet_roadsurface_lines.gpkg",
+   "access": "Download direto",
+   "format": "GPKG 225 MB",
+   "license": "Só uso não comercial (derivado de PlanetScope)",
+   "tested": true,
+   "test_result": "HTTP 200 no HEAD. Descartado pela licença.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não integrar (licença não comercial)."
+  },
+  {
+   "name": "OpenStreetMap: tags surface/tracktype/smoothness (PBF do Sudeste local + Overpass por UF)",
+   "publisher": "OpenStreetMap / Geofabrik",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "access": "PBF local (data/valhalla), pyosmium; Overpass count por UF",
+   "format": "PBF / JSON",
+   "license": "ODbL",
+   "tested": true,
+   "test_result": "Cobertura medida: unclassified sem surface em 23–75% conforme a UF, e 92–99% das que têm tag são de terra. Taginfo Brazil com 500; Overpass RS com 504/500.",
+   "value": "high",
+   "effort": "high",
+   "integration_plan": "Pré-processar o PBF antes do build dos tiles: marcar surface=unpaved em unclassified rural sem tag, e em tertiary sem tag só onde SNV, DER ou BC250 indicarem terra. Validar com exp_exclude_unpaved.py antes e depois."
+  }
+ ],
+ "gaps": [
+  "A legenda oficial EOP/EOD/EOI do SNV não foi confirmada no documento do DNIT: o PDF de Terminologias Rodoviárias v11.1 deu 503 duas vezes. A leitura usada (obras de pavimentação, duplicação e implantação) segue o padrão do SNV e os dados.",
+  "Cobertura de surface do OSM fora do Sudeste foi medida só em número de ways (Overpass), não em km; RS falhou (504/500). Não medi a comparação SNV × OSM fora do Sudeste porque os tiles locais só cobrem o Sudeste.",
+  "A estimativa de terra escondida entre as vias sem tag (por exemplo, cerca de 64 mil km de unclassified em SP) supõe que as vias sem tag se parecem com as que têm tag. O viés de quem marca é desconhecido; amostra BC250 × OSM: metade das divergências é sem tag e metade é asfalto explícito.",
+  "O uso comercial da BC250 como sinal interno (sem revenda) é zona cinzenta pelo termo de 2019; a versão 2025 não traz termo próprio. É preciso perguntar ao IBGE.",
+  "A licença do ICM do DNIT é 'Outra (Aberta)', sem nome. Assumi uso comercial com citação pelo Decreto 8.777/2016.",
+  "Pesquisa CNT: não há licença nem termo de uso público; a viabilidade depende de contato com a CNT. Também não paginei os 13.780 trechos de geometria (só amostra).",
+  "A velocidade realista de carreta em terra (seca ou chuva) não foi calibrada com dado oficial: os 30 e 20 km/h são propostas a calibrar com telemetria.",
+  "Malhas estaduais com superfície em MT, PR, RS, GO e BA não foram encontradas abertas nesta rodada (só o mapa ArcGIS do SINFRA-MT). A BC250 cobre parcialmente.",
+  "Os 'trechos em obra' das concessionárias (ARTESP, programação de obras) e as interdições do DNIT ficaram para o tema de interdições temporárias, sem nova verificação aqui.",
+  "O Postgres local entrou em crash recovery várias vezes durante a sessão; as primeiras quedas foram antes de qualquer consulta minha e há outro importer rodando. Não investiguei a causa."
+ ],
+ "recommendations": [
+  "Prioridade 1, só código: criar política unpaved por preset (carreta e bitrem evitam, truck penaliza até +25% do tempo, VUC permite). Em routing.ts, calcular a rota normal; se houver manobra rough:true, recalcular com costing_options.truck.exclude_unpaved=true e escolher pelo limiar. No erro 442, voltar à rota original com aviso 'acesso só por estrada sem pavimento'.",
+  "Ajustar o ETA nas manobras rough com teto de velocidade (por exemplo, 30 km/h seco e 20 km/h em época de chuva para carreta) e emitir aviso 'N km sem pavimento (vias X, Y)'. Não exige chamada extra.",
+  "Criar a camada superficie com importadores snv_superficie.py (reaproveita wfs_get, snv_uf e snv_version de siaet_restricoes.py), dnit_icm.py (CKAN do DNIT, mensal, referência linear no SNV) e dersp_malha_superficie.py (tipopista IMP, CC-BY-4.0), mais superficie.layer.ts com costLines por preset e época (validando edge walk como em perigosos.layer.ts) e annotate com avisos de terra, obra e pavimento péssimo.",
+  "Definir a época de chuva por região com as normais do INMET (mês acima de cerca de 150 mm) e avisos INMET ativos. Usar o ICM não pavimentado do mês: Ruim/Péssimo na chuva vira fator 1000 (proibido salvo sem alternativa) para carreta.",
+  "Prioridade 2: corrigir o grafo antes do build dos tiles com pré-processamento do PBF (pyosmium no entrypoint do Valhalla), marcando surface=unpaved em highway=unclassified rural sem surface, tracktype ou smoothness, e em tertiary sem tag só onde SNV, DER ou BC250 apontarem terra. Validar antes e depois com exp_exclude_unpaved.py.",
+  "Pedir ao IBGE autorização de uso comercial da BC250 2025 (revestimento e tráfego Periódico): é a única fonte nacional que cobre municipais e indica estradas só transitáveis em parte do ano.",
+  "Não usar os dados da Pesquisa CNT em produção sem licença escrita; avaliar parceria com a CNT (classe do pavimento e 'em obra' por trecho de cerca de 10 km nas estaduais).",
+  "Descartar HeiGIT/Planet (não comercial). O HeiGIT/Mapillary (ODbL) é opcional e de baixo ganho (cerca de 1% de cobertura).",
+  "Investigar à parte as quedas recorrentes do Postgres local (crash recovery às 22:25, 22:28 e 22:34) enquanto o importer roda."
+ ]
+}
