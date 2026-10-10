@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { pool, route, waitForStack } from '../helpers.js';
 import { inTariffWindow, priceFor, tollProfile, type Tariff, type TariffWindow } from '../../src/services/tollCost.js';
+import { freeFlowPayment, type PlazaOnRoute } from '../../src/layers/pedagio.layer.js';
 import type { Vehicle } from '../../src/services/vehicle.js';
 
 /**
@@ -56,11 +57,14 @@ describe('RJ-124 Via Lagos (AGETRANSP, Deliberação 1630/2025): Rio Bonito → 
     expect(warnings.some((w) => w.code === 'toll_tariff_divergence')).toBe(false);
   });
 
-  it('a alternativa sem pedágio desvia da praça (via sem toll=yes no mapa): não é "mesmos pontos"', async () => {
+  it('a alternativa sem pedágio desvia da praça (via sem toll=yes no mapa): disponível e sem passar pela Via Lagos', async () => {
     const { d } = await pedagio(RIO_BONITO, CABO_FRIO);
     const alt = d.alternativa_sem_pedagio;
     expect(alt, JSON.stringify(alt)).toBeTruthy();
-    expect(alt.motivo).not.toBe('mesmos_pontos');
+    expect(alt.disponivel, JSON.stringify(alt)).toBe(true);
+    expect(alt.delta_km).toBeGreaterThan(0);
+    const vl = d.pracas.find((p: any) => p.oficial_fonte === 'agetransp');
+    expect((alt.pedagio_restante?.pontos ?? []).includes(vl.nome), JSON.stringify(alt.pedagio_restante)).toBe(false);
   });
 });
 
@@ -147,14 +151,22 @@ describe('registros inativos (confiança baixa ou cobrança não iniciada)', () 
     }
   });
 
-  it('CRP Pirapetinga (cobrança contestada): o valor segue o do OSM (estimado) e a rota avisa da situação incerta', async () => {
-    const { d, warnings } = await pedagio({ lat: -21.7, lon: -42.3 }, { lat: -21.6, lon: -42.45 });
+  it('CRP Pirapetinga (cobrança suspensa na Justiça, confiança baixa): situação incerta, fora do total; o valor do OSM é só referência', async () => {
+    const { body, d, warnings } = await pedagio({ lat: -21.7, lon: -42.3 }, { lat: -21.6, lon: -42.45 });
     const p = d.pracas.find((x: any) => /Pirapetinga/.test(x.nome));
     expect(p, JSON.stringify(d.pracas)).toBeTruthy();
     expect(p.oficial_id).toBeNull();
-    expect(p.fonte).toBe('OSM');
     expect(p.registro_inativo?.fonte).toBe('municipais');
-    expect(warnings.some((w) => w.code === 'toll_status_uncertain')).toBe(true);
+    expect(p.valor).toBeNull();
+    expect(p.valor_osm).toBeGreaterThan(0);      // R$ 55,00 no OSM (11 x 5): antes era somado ao total
+    expect(d.total).toBe(0);
+    expect(d.alternativa_sem_pedagio).toBeNull(); // nada cobrado: sem alternativa e sem anel em volta do ponto
+    const summary = body.layers.pedagio.summary.join('\n');
+    expect(summary).toMatch(/Pedágio estimado: R\$\s0,00/);
+    expect(summary).toMatch(/situação incerta \(não somado; OSM: R\$/);
+    const w = warnings.find((x) => x.code === 'toll_status_uncertain');
+    expect(w?.message).toMatch(/fora do total/);
+    expect(warnings.some((x) => x.code === 'toll_estimated')).toBe(false);
   });
 });
 
@@ -209,6 +221,19 @@ describe('regras de preço das tabelas estaduais (unitário)', () => {
       { cat: 9, eixos: 7, rodagem: 'dupla', mult: 6, valor: 59.7 },
     ] };
     expect(priceFor(transol, tollProfile(v({ axle_count: 9 }), wed))).toBeNull();
+  });
+
+  it('free flow sem TAG: o texto de pagamento de um operador não vale para o pórtico de outro', () => {
+    const pl = (o: Partial<PlazaOnRoute>): PlazaOnRoute => ({ nome: 'x', tipo: 'portico', km_rota: 0, lat: 0, lon: 0, rodovia: null, operador: null, free_flow: true,
+      ponto_a_ponto: false, cobranca: null, valor: 10, regra: null, estimado: false, fonte: null, data: null, osm_id: 'n', oficial_id: null, oficial_fonte: null, ...o });
+    const mg459 = pl({ rodovia: 'MG-459', operador: 'EPR Sul de Minas', oficial_fonte: 'artemig', pagamento: 'pague em até 30 dias pelo app ou site da EPR' });
+    const sp340 = pl({ rodovia: 'SP-340', operador: 'Rota das Bandeiras', oficial_fonte: 'artesp' });
+    const br101 = pl({ rodovia: 'BR-101', operador: 'RIOSP', oficial_fonte: 'antt' });
+    expect(freeFlowPayment([mg459])).toBe('sem TAG, pague em até 30 dias pelo app ou site da EPR');
+    expect(freeFlowPayment([sp340])).toMatch(/^sem TAG, pague pelo site ou app da concessionária no prazo informado por ela$/);
+    const misto = freeFlowPayment([sp340, mg459]);
+    expect(misto).toBe('sem TAG: MG-459 (EPR Sul de Minas): pague em até 30 dias pelo app ou site da EPR; demais: pague pelo site ou app da concessionária no prazo informado por ela');
+    expect(freeFlowPayment([br101, mg459])).toMatch(/^sem TAG: pórticos federais: .*30 dias \(ANTT\); MG-459 \(EPR Sul de Minas\): .*EPR$/);
   });
 
   it('OSM: valor de fim de semana NÃO serve de reserva em dia útil', () => {

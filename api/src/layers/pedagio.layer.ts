@@ -23,6 +23,7 @@ import { env } from '../config.js';
  *     como "cobrança suspensa", fora do total, sem usar o valor do OSM (que pode ser de antes da suspensão).
  *  6. Fontes estaduais/municipais (AGETRANSP, ARTEMIG, concessões municipais; ver docs/layers/pedagio_estaduais.md):
  *     registro com `ativo: false` (confiança baixa, cobrança não iniciada) fica fora da conta e do mapa de cobrança;
+ *     cabine do OSM ao lado dele = "situação incerta": listada com o valor do OSM só como referência, fora do total;
  *     `casar_ate_m` limita a distância de associação (a posição já vem casada com o nó do OSM ou é oficial);
  *     pórtico oficial sem nó no OSM (`cobra_sem_no_osm`, ex.: free flow da MG-459) conta quando a rota passa a até
  *     `raio_m` dele no rumo da via (`rumo_via`, medido no grafo do Valhalla).
@@ -257,6 +258,34 @@ function buildPlaza(rep: NearRouteRow, off: DataFeatureRow | null, totalKm: numb
 }
 
 /**
+ * Registro oficial desativado (ativo=false) ao lado da cabine do OSM: a regra de confiança baixa nunca é aplicada, nem
+ * pelo valor do OSM. Como na cobrança suspensa, o ponto fica fora do total, das "praças sem tarifa" e dos anéis da
+ * alternativa sem pedágio; o valor do OSM fica só como referência (`valor_osm`, com a data de conferência).
+ */
+function markUncertain(pl: PlazaOnRoute, dead: DataFeatureRow): PlazaOnRoute {
+  const op = dead.props as Props;
+  const motivo = String(op.motivo_inativo ?? 'registro desativado');
+  return {
+    ...pl,
+    // nome e rodovia do registro oficial (o mesmo ponto que o mapa mostra; o nó do OSM perto dele fica escondido)
+    nome: plazaLabel(dead, dead),
+    rodovia: op.rodovia ?? pl.rodovia,
+    operador: op.operador ?? pl.operador,
+    valor: null,
+    regra: `situação incerta, fora do total: ${motivo}`,
+    estimado: false,
+    fonte: null,
+    data: null,
+    data_desc: null,
+    url: op.ato_url ?? undefined,
+    observacao: pl.valor_osm != null ? `valor do OpenStreetMap só como referência: ${brl(pl.valor_osm)}${pl.data_osm ? ` (conferido em ${fmtBr(pl.data_osm)})` : ''}` : undefined,
+    valor_oficial_sem_tag: null,
+    janela_alternativa: false,
+    registro_inativo: { nome: dead.name ?? null, fonte: dead.source, motivo, ato: op.ato ?? null, ato_url: op.ato_url ?? null },
+  };
+}
+
+/**
  * Pontos de cobrança por onde uma linha (rota) passa, no sentido dela, com o valor para o perfil do veículo.
  * Usada na rota principal e na alternativa sem pedágio (que o Valhalla pode fazer passar por pórtico free flow que o
  * grafo não marca como pedágio).
@@ -293,13 +322,9 @@ async function plazasOnLine(lineF: GeoJSON.Feature<GeoJSON.LineString>, totalKm:
     if (off) used.add(off.id);
     const pl = buildPlaza(rep, off, totalKm, prof, timing, 'osm');
     // cabine do OSM sem praça oficial ativa, mas com registro oficial DESATIVADO ao lado (ex.: CRP Pirapetinga, cobrança
-    // contestada na Justiça): o valor segue o do OSM (estimado), com o motivo do registro desativado
+    // suspensa na Justiça, confiança baixa): situação incerta, fora do total
     const dead = off ? null : inactive.find((o) => distM(coord(rep), coord(o)) <= INACTIVE_NEAR_M);
-    if (dead) {
-      const op = dead.props as Props;
-      pl.registro_inativo = { nome: dead.name ?? null, fonte: dead.source, motivo: op.motivo_inativo ?? 'registro desativado', ato: op.ato ?? null, ato_url: op.ato_url ?? null };
-    }
-    plazas.push(pl);
+    plazas.push(dead ? markUncertain(pl, dead) : pl);
   }
   // pórtico oficial sem nó no OSM (free flow da MG-459): a rota passa a até raio_m do ponto oficial, no rumo da via
   for (const o of officials) {
@@ -331,16 +356,54 @@ function avoidRings(points: PlazaOnRoute[], ctx: { origin: { lat: number; lon: n
   return out;
 }
 
-/** Feriados nacionais (YYYY-MM-DD) de um dia antes da saída até alguns dias depois (janela tarifária da ViaLagos). */
+/**
+ * Feriados nacionais (YYYY-MM-DD) de um dia antes da saída até alguns dias depois (janela tarifária da ViaLagos).
+ * Só os ativos (`holidays.active`): feriado com status a_confirmar/suspensa/revogada nunca aciona a TBA. Banco sem a
+ * coluna (sem a migration dos feriados do Sudeste; Postgres 42703) cai na consulta sem o filtro, onde não há linha
+ * desativada; qualquer outro erro vira "sem feriado" (TBP).
+ */
+const HOLIDAYS_SQL = (onlyActive: boolean) =>
+  `select to_char(day, 'YYYY-MM-DD') d from holidays where scope = 'national'${onlyActive ? ' and active' : ''} and day between $1 and $2`;
 async function nationalHolidays(at: Date, durationS: number): Promise<string[]> {
   const d0 = DateTime.fromJSDate(at).setZone(env.tz).minus({ days: 1 }).toISODate();
   const d1 = DateTime.fromJSDate(at).setZone(env.tz).plus({ seconds: durationS }).plus({ days: 2 }).toISODate();
   try {
-    const r = await query<{ d: string }>(`select to_char(day, 'YYYY-MM-DD') d from holidays where scope = 'national' and day between $1 and $2`, [d0, d1]);
+    const r = await query<{ d: string }>(HOLIDAYS_SQL(true), [d0, d1])
+      .catch((e: unknown) => ((e as { code?: unknown } | null)?.code === '42703' ? query<{ d: string }>(HOLIDAYS_SQL(false), [d0, d1]) : Promise.reject(e)));
     return r.rows.map((x) => x.d);
   } catch {
     return [];
   }
+}
+
+/**
+ * Como pagar o free flow sem TAG, por operador: pórtico federal (ANTT) tem 30 dias; o de outra concessão usa o texto
+ * da fonte dele (`pagamento`), que NÃO vale para pórtico de outro operador na mesma rota.
+ */
+const PAG_ANTT = 'pague pelo site ou app da concessionária em até 30 dias (ANTT)';
+const PAG_OUTROS = 'pague pelo site ou app da concessionária no prazo informado por ela';
+function isFederal(p: PlazaOnRoute): boolean {
+  return p.oficial_fonte ? p.oficial_fonte === 'antt' : /^BR/i.test(p.rodovia ?? '');
+}
+export function freeFlowPayment(ff: PlazaOnRoute[]): string {
+  const groups = new Map<string, { fed: boolean; operador: string | null; rodovias: Set<string>; pag: string | null }>();
+  for (const p of ff) {
+    const fed = isFederal(p);
+    const key = fed ? 'antt' : `${p.oficial_fonte ?? 'osm'}|${normTxt(p.operador)}`;
+    const g = groups.get(key) ?? { fed, operador: p.operador, rodovias: new Set<string>(), pag: fed ? PAG_ANTT : null };
+    if (p.rodovia) g.rodovias.add(p.rodovia);
+    if (!g.pag && p.pagamento) g.pag = p.pagamento;
+    groups.set(key, g);
+  }
+  const gs = [...groups.values()];
+  if (gs.length === 1) return `sem TAG, ${gs[0].pag ?? PAG_OUTROS}`;
+  const comPag = gs.filter((g) => g.pag);
+  if (!comPag.length) return `sem TAG, ${PAG_OUTROS}`;
+  const label = (g: (typeof gs)[number]) => g.fed ? 'pórticos federais'
+    : [[...g.rodovias].join('/'), g.operador ? `(${g.operador})` : ''].filter(Boolean).join(' ') || 'pórtico';
+  const parts = comPag.map((g) => `${label(g)}: ${g.pag}`);
+  if (comPag.length < gs.length) parts.push(`demais: ${PAG_OUTROS}`);
+  return `sem TAG: ${parts.join('; ')}`;
 }
 
 /** perfil de referência do mapa: carreta de 5 eixos, rodagem dupla, dia útil, sem TAG */
@@ -398,7 +461,7 @@ const layer: RouteLayer = {
             rodovia: p.rodovia ?? null,
             km: p.km ?? null,
             operador: p.operador ?? null,
-            tarifa_por_eixo: p.ativo === false ? `não cobrada pelo app: ${p.motivo_inativo ?? 'registro desativado'}`
+            tarifa_por_eixo: p.ativo === false ? `fora do total do app: ${p.motivo_inativo ?? 'registro desativado'}`
               : p.cobranca_suspensa ? `cobrança suspensa desde ${fmtBr(p.cobranca_suspensa.desde)}`
               : t?.nao_linear ? 'tabela não proporcional aos eixos (ver tarifa de 5 eixos)'
               : eixo != null ? brl(eixo) : 'não publicada',
@@ -439,9 +502,11 @@ const layer: RouteLayer = {
       });
 
     // 3) total
+    // fora do total: cobrança suspensa, ponto a ponto e situação incerta (registro oficial desativado ao lado da cabine)
     const suspended = plazas.filter((p) => p.cobranca_suspensa);
-    const charged = plazas.filter((p) => p.valor != null && !p.ponto_a_ponto && !p.cobranca_suspensa);
-    const unknown = plazas.filter((p) => p.valor == null && !p.ponto_a_ponto && !p.cobranca_suspensa);
+    const uncertain = plazas.filter((p) => p.registro_inativo);
+    const charged = plazas.filter((p) => p.valor != null && !p.ponto_a_ponto && !p.cobranca_suspensa && !p.registro_inativo);
+    const unknown = plazas.filter((p) => p.valor == null && !p.ponto_a_ponto && !p.cobranca_suspensa && !p.registro_inativo);
     const total = round2(charged.reduce((s, p) => s + (p.valor ?? 0), 0));
     const estimated = charged.filter((p) => p.estimado);
 
@@ -456,7 +521,7 @@ const layer: RouteLayer = {
           // O `exclude_tolls` só evita o que o grafo marca como pedágio: pórtico free flow em via sem toll=yes (ex.:
           // RIOSP na BR-101, Itaguaí) fica no caminho. A alternativa é cobrada com a mesma regra da rota principal.
           const alt = await plazasOnLine(turf.lineString(nt.coordinates), nt.distance_km, prof, { at: ctx.at, duration_s: nt.duration_s });
-          const altPts = alt.plazas.filter((p) => !p.ponto_a_ponto && !p.cobranca_suspensa && (p.valor == null || p.valor > 0));
+          const altPts = alt.plazas.filter((p) => !p.ponto_a_ponto && !p.cobranca_suspensa && !p.registro_inativo && (p.valor == null || p.valor > 0));
           const altTotal = round2(altPts.reduce((sum, p) => sum + (p.valor ?? 0), 0));
           const mainPts = [...charged.filter((p) => (p.valor ?? 0) > 0), ...unknown];
           // mesma praça = mesma praça oficial (a alternativa pode cruzar outra cabine/faixa da mesma praça) ou mesmo nó
@@ -493,12 +558,14 @@ const layer: RouteLayer = {
       summary.push('Nenhuma praça de pedágio conhecida na rota.');
     } else {
       const n = charged.length;
-      summary.push(`Pedágio estimado: ${brl(total)}${unknown.length ? ' + praças sem tarifa' : ''} — ${n} ponto${n === 1 ? '' : 's'} de cobrança${suspended.length ? ` (e ${suspended.length} com cobrança suspensa)` : ''}, ${eixosTxt}${prof.fim_de_semana ? ', fim de semana' : ''}${prof.tag ? ', com TAG' : ''}.`);
+      const fora = [suspended.length ? `${suspended.length} com cobrança suspensa` : '', uncertain.length ? `${uncertain.length} com situação incerta` : ''].filter(Boolean);
+      summary.push(`Pedágio estimado: ${brl(total)}${unknown.length ? ' + praças sem tarifa' : ''} — ${n} ponto${n === 1 ? '' : 's'} de cobrança${fora.length ? ` (fora do total: ${fora.join(' e ')})` : ''}, ${eixosTxt}${prof.fim_de_semana ? ', fim de semana' : ''}${prof.tag ? ', com TAG' : ''}.`);
       for (const p of plazas.slice(0, 10)) {
         const val = p.cobranca_suspensa ? `cobrança suspensa desde ${fmtBr(p.cobranca_suspensa.desde)} (não somada)`
+          : p.registro_inativo ? `situação incerta (não somado${p.valor_osm != null ? `; OSM: ${brl(p.valor_osm)}${p.data_osm ? ` em ${fmtBr(p.data_osm)}` : ''}` : ''})`
           : p.ponto_a_ponto ? 'ponto a ponto (não somado)' : p.valor == null ? 'tarifa não encontrada' : brl(p.valor);
         const src = p.valor != null && !p.cobranca_suspensa ? ` · ${describeSource({ fonte: p.fonte ?? '', data: p.data, data_desc: p.data_desc })}${p.estimado ? ' · estimado' : ''}` : '';
-        summary.push(`• km ${Math.round(p.km_rota)}: ${p.nome}: ${val}${src}${p.registro_inativo ? ' · situação incerta' : ''}`);
+        summary.push(`• km ${Math.round(p.km_rota)}: ${p.nome}: ${val}${src}`);
       }
       if (plazas.length > 10) summary.push(`• … mais ${plazas.length - 10} ponto(s); ver dados da camada.`);
     }
@@ -543,21 +610,19 @@ const layer: RouteLayer = {
         message: `${suspended.length} praça(s) da rota com cobrança suspensa, fora do total (ex.: ${ex.nome}: ${ex.cobranca_suspensa!.motivo}). Confira na ANTT/DNIT se a cobrança voltou.`,
       });
     }
-    const contest = plazas.filter((p) => p.registro_inativo);
-    if (contest.length) {
-      const ex = contest[0];
+    if (uncertain.length) {
+      const ex = uncertain[0];
+      const ref = ex.valor_osm != null ? ` O OpenStreetMap indica ${brl(ex.valor_osm)}${ex.data_osm ? ` (conferido em ${fmtBr(ex.data_osm)})` : ''}, só como referência.` : '';
       warnings.push({
         code: 'toll_status_uncertain', severity: 'info', lat: ex.lat, lon: ex.lon,
-        message: `Situação incerta em ${contest.length} ponto(s) de cobrança (ex.: ${ex.nome}: ${ex.registro_inativo!.motivo}). O valor somado é o do OpenStreetMap (estimado); confira na concessionária.`,
+        message: `Situação incerta em ${uncertain.length} ponto(s) de cobrança, fora do total (ex.: ${ex.nome}: ${ex.registro_inativo!.motivo}).${ref} Confira na concessionária se a cobrança está valendo.`,
       });
     }
-    const ff = plazas.filter((p) => p.free_flow && !p.ponto_a_ponto && !p.cobranca_suspensa);
+    const ff = plazas.filter((p) => p.free_flow && !p.ponto_a_ponto && !p.cobranca_suspensa && !p.registro_inativo);
     if (ff.length) {
-      const federal = ff.some((p) => p.oficial_fonte === 'antt' || /^BR/i.test(p.rodovia ?? ''));
-      const pag = ff.find((p) => p.pagamento)?.pagamento;
       warnings.push({
         code: 'toll_free_flow', severity: 'info', lat: ff[0].lat, lon: ff[0].lon,
-        message: `A rota passa por ${ff.length} pórtico(s) free flow (sem cabine). Com TAG o débito é automático; sem TAG, ${federal ? 'pague pelo site ou app da concessionária em até 30 dias (ANTT)' : pag ?? 'pague pelo site ou app da concessionária no prazo informado por ela'}. Não pagar é evasão de pedágio, infração grave (CTB art. 209-A).`,
+        message: `A rota passa por ${ff.length} pórtico(s) free flow (sem cabine). Com TAG o débito é automático; ${freeFlowPayment(ff)}. Não pagar é evasão de pedágio, infração grave (CTB art. 209-A).`,
       });
     }
     // tabela oficial mais antiga que a conferência no OSM e com valor diferente: provável reajuste não publicado na fonte
