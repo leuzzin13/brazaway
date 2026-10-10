@@ -246,7 +246,10 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   for (const sgt of plan.suggested_stops) if (!sgt.stop) warnings.push({ code: 'no_rest_stop', message: sgt.message });
 
   // 7) Anotações das camadas (pedágio, OAEs, acidentes, roubo de carga, relevo...)
-  const routeGeom: RouteGeom = { line, distance_km: restricted.distance_km, duration_s: restricted.duration_s, free: freeGeom };
+  const routeGeom: RouteGeom = {
+    line, distance_km: restricted.distance_km, duration_s: restricted.duration_s, free: freeGeom,
+    restrictions: { excludePolygons, costLines: restrictedOpts.costLines },
+  };
   const layerOut: RouteResponse['layers'] = {};
   await Promise.all(layers.map(async (l) => {
     if (!l.annotate) return;

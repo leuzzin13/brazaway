@@ -21,7 +21,7 @@ import { decodePolyline6 } from './polyline.js';
 import { activeZones, pointInZone, zoneApplies, zoneRings } from './zones.js';
 import { blockingReports, reportToRing } from './restrictions.js';
 import { legalDayInfo } from './calendar.js';
-import type { RouteCtx } from '../layers/types.js';
+import type { RouteCtx, RouteRestrictions } from '../layers/types.js';
 
 export interface TariffCategory { cat?: number; eixos: number; rodagem: 'simples' | 'dupla' | null; mult: number; valor: number; valor_fds?: number; valor_tag?: number }
 export interface Tariff {
@@ -187,8 +187,8 @@ interface Restrictions { rings: Ring[]; costLines: { coordinates: [number, numbe
 /**
  * Restrições que a rota principal também respeita (zonas por horário, reportes que bloqueiam o veículo e as outras
  * camadas), para que a alternativa sem pedágio seja comparável. Mesma lógica de services/routing.ts.
- * LIMITAÇÃO: routing.ts não entrega às camadas as restrições que já calculou (o contrato RouteGeom não as traz), então
- * elas são consultadas de novo aqui, em paralelo. Falha numa consulta não derruba a alternativa, mas fica em `falhas`.
+ * Só é usada quando quem chama não tem as restrições da rota (`RouteGeom.restrictions`, preenchido por routing.ts):
+ * aí elas são consultadas de novo, em paralelo. Falha numa consulta não derruba a alternativa, mas fica em `falhas`.
  */
 async function restrictionsFor(ctx: RouteCtx, skipLayer: string): Promise<Restrictions> {
   const rings: Ring[] = [];
@@ -228,11 +228,15 @@ async function restrictionsFor(ctx: RouteCtx, skipLayer: string): Promise<Restri
  * Rota sem pedágio: Valhalla `costing_options.truck.exclude_tolls = true`. Conferido no Valhalla 3.9.1 local
  * (Lapa→Jundiaí, 5 eixos): `use_tolls: 0` ainda passa no pedágio; `exclude_tolls` evita (doc api/route: "If exclude_tolls
  * is set to true it is allowed to start and end with tolls, but is not allowed to have them in the middle").
- * Devolve null se não houver caminho.
+ * `given` = as restrições que a rota principal usou (routing.ts as passa em `RouteGeom.restrictions`): com elas, nada é
+ * consultado de novo e a alternativa respeita exatamente o mesmo que a rota principal. Sem elas, consulta tudo de novo
+ * (menos a camada `skipLayer`). Devolve null se não houver caminho.
  */
-export async function noTollRoute(ctx: RouteCtx, skipLayer = 'pedagio'): Promise<NoTollRoute | null> {
+export async function noTollRoute(ctx: RouteCtx, skipLayer = 'pedagio', given?: RouteRestrictions): Promise<NoTollRoute | null> {
   const v = ctx.vehicle;
-  const { rings, costLines, falhas } = await restrictionsFor(ctx, skipLayer);
+  const { rings, costLines, falhas } = given
+    ? { rings: given.excludePolygons, costLines: given.costLines, falhas: [] as string[] }
+    : await restrictionsFor(ctx, skipLayer);
   const body: Record<string, unknown> = {
     locations: [
       { lat: ctx.origin.lat, lon: ctx.origin.lon, type: 'break' },
