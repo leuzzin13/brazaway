@@ -152,7 +152,8 @@ export function MapView(p: MapViewProps) {
       m.addSource(src, { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       const before = m.getLayer('route-casing') ? 'route-casing' : undefined;
       const mz = st.minzoom ?? 0;
-      if (st.kind === 'line') m.addLayer({ id: src, type: 'line', source: src, minzoom: mz, paint: { 'line-color': st.color, 'line-width': st.width ?? 2, 'line-opacity': st.opacity ?? 0.85 } }, before);
+      // a feição pode trazer a própria cor em properties.color (ex.: VER por parágrafo); sem ela, a cor da camada
+      if (st.kind === 'line') m.addLayer({ id: src, type: 'line', source: src, minzoom: mz, paint: { 'line-color': ['to-color', ['get', 'color'], st.color], 'line-width': st.width ?? 2, 'line-opacity': st.opacity ?? 0.85 } }, before);
       else if (st.kind === 'fill') {
         m.addLayer({ id: src, type: 'fill', source: src, minzoom: mz, paint: { 'fill-color': st.color, 'fill-opacity': st.opacity ?? 0.2 } }, before);
         m.addLayer({ id: `${src}-outline`, type: 'line', source: src, minzoom: mz, paint: { 'line-color': st.color, 'line-width': 1 } }, before);
