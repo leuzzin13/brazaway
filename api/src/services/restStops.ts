@@ -1,4 +1,5 @@
 import { query } from '../db.js';
+import { withLayerCandidates, type RestStopsOpts } from './restStopsData.js';
 
 export interface RestStop {
   id: string; name: string | null; kind: string; lat: number; lon: number;
@@ -9,8 +10,9 @@ export interface RestStop {
   off_route_m: number;   // distância do ponto até a rota
 }
 
-/** Pontos de descanso a até `radiusM` da rota, ordenados pela posição ao longo dela. */
-export async function restStopsAlongRoute(line: GeoJSON.LineString, distanceKm: number, durationS: number, radiusM = 500): Promise<RestStop[]> {
+/** Pontos de descanso a até `radiusM` da rota (OSM + camada descanso), na ordem de prioridade do plano (ver restStopsData.ts).
+ *  `opts`: saída (validade do PPD no dia da passagem) e o MESMO `employment` passado ao drivingPlan da rota. */
+export async function restStopsAlongRoute(line: GeoJSON.LineString, distanceKm: number, durationS: number, radiusM = 500, opts: RestStopsOpts = {}): Promise<RestStop[]> {
   const r = await query<{ id: string; name: string | null; kind: string; lat: number; lon: number; tags: Record<string, string>; fraction: number; off_route_m: number }>(
     `with l as (select ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) as g)
      select s.id, s.name, s.kind, ST_Y(s.geom) as lat, ST_X(s.geom) as lon, s.tags,
@@ -22,7 +24,7 @@ export async function restStopsAlongRoute(line: GeoJSON.LineString, distanceKm: 
       limit 60`,
     [JSON.stringify(line), radiusM],
   );
-  return r.rows.map((s) => ({ ...s, distance_km: +(s.fraction * distanceKm).toFixed(1), eta_s: Math.round(s.fraction * durationS) }));
+  return withLayerCandidates(r.rows.map((s) => ({ ...s, distance_km: +(s.fraction * distanceKm).toFixed(1), eta_s: Math.round(s.fraction * durationS) })), { line, distanceKm, durationS, radiusM }, { drivingPlan, DRIVING_RULES }, opts);
 }
 
 /**

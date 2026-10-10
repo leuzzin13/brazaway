@@ -1,0 +1,247 @@
+{
+ "category": "osm_qualidade_valhalla",
+ "sources": [
+  {
+   "name": "Código-fonte Valhalla (graph.lua, pbfgraphparser.cc, truckcost.cc, dynamiccost.h, timeparsing.cc, adminconstants.h)",
+   "url": "https://github.com/valhalla/valhalla/tree/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df",
+   "verdict": "corrected",
+   "note": "Baixei de novo do raw.githubusercontent no commit c803bdc2f e todos os arquivos voltaram com HTTP 200. Os principais são idênticos às amostras (diff vazio). /status do container local devolve 3.9.1-c803bdc2f. A licença é MIT (arquivo COPYING). Executei normalize_weight e normalize_measurement em Lua: '3,5'→3, '4,30'→4, '4500'→4500, 'default'→nil. Correção: o código NÃO é da release 3.9.1 de 2026-10-06. É um build do master, commit de 2026-10-08, 7 commits depois da tag 3.9.1 (entre eles o #6332, 'fix(lua): more :forward/:backward mode overrides'). A imagem base é ghcr.io/valhalla/valhalla-scripted:latest, que segue o master."
+  },
+  {
+   "name": "Valhalla local (/route, /locate verbose)",
+   "url": "http://localhost:8002",
+   "verdict": "confirmed",
+   "note": "Refiz os testes. Os tiles foram reconstruídos em 2026-10-09 20:00 UTC e os resultados não mudaram. Marginal Tietê: sem date_time 1,598 km; 2026-10-14T08:00 dá erro 442 'No path'; 12:00 dá 1,598 km. Way 153812960 (hgv=discouraged) sai com truck:false. Ponte da Vila Guilherme (maxweight=60) sai com access_restriction:true. Nó 6354358414 sem restrição. Nota de método: /locate com costing=truck esconde as arestas proibidas para caminhão (devolveu outra via); para ver o discouraged é preciso costing=auto."
+  },
+  {
+   "name": "Extratos OSM Geofabrik (Sudeste e Brasil)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "verdict": "confirmed",
+   "note": "O PBF local tem 860.862.119 bytes, seq 2485, 2026-10-08T20:21Z, igual ao relatado. A URL agora redireciona (307) para o arquivo de 2026-10-09: Sudeste 861.075.073 bytes, Brasil 2.093.228.837. Recorte RMSP refeito com osmium no meu próprio container: 2.734.786 ways e 18.561.797 nós. Licença ODbL."
+  },
+  {
+   "name": "taginfo Geofabrik Brasil (e sub-regiões)",
+   "url": "https://taginfo.geofabrik.de/south-america:brazil/api/4/key/stats?key=maxheight",
+   "verdict": "untestable",
+   "note": "No reteste, a instância do Brasil e a de 'sul' devolveram HTTP 500 várias vezes. A de Monaco devolveu 200. Pelo site/sources, havia uma atualização em andamento (update_start 2026-10-10 00:19). Os números foram corroborados por outros caminhos. Sudeste via osmium no mesmo PBF: maxheight 3.268, maxweight 1.083, hgv 2.156, exatos. Brasil via Overpass em 10/10: maxheight 10.039, default 3.057, hgv 5.093, hgv=discouraged 663, hgv:conditional 350, maxweight:conditional 318, hazmat 74, maxweight 4.226; todos a ±1%."
+  },
+  {
+   "name": "Overpass API",
+   "url": "https://overpass-api.de/api/interpreter",
+   "verdict": "confirmed",
+   "note": "Rodei de novo a mesma consulta (q_br_counts.ql): 123.406 pontes rodoviárias, 336 com maxweight, 773 com maxweight:signed=no, 3.862 túneis e 359 túneis com maxheight (base 2026-10-10T01:15Z). Também tomei 504 na primeira tentativa; private.coffee e kumi devolveram 500. A instabilidade relatada é real."
+  },
+  {
+   "name": "ohsome API (histórico OSM)",
+   "url": "https://api.ohsome.org/v1/elements/count",
+   "verdict": "confirmed",
+   "note": "Os dados vão até 2026-07-27. Com o filtro '... and type:way and highway=*' reproduzi exatamente: maxheight 332→1.067, hgv 20→414, maxweight 6→22, usuários 36/41/104/112/37/50/61/79. Atenção: o valor '2026' é o retrato de 2026-01-01, não o atual. Em 2026-07-27 eram 1.106 maxheight e 26 maxweight. Sem highway=*, maxweight sobe para 301 por causa de helipontos."
+  },
+  {
+   "name": "Osmose QA",
+   "url": "https://osmose.openstreetmap.fr/api/0.3/issues?item=7130&bbox=-47.21,-24.07,-45.69,-23.18",
+   "verdict": "confirmed",
+   "note": "Reproduzi: no bbox, 7130=95, 3350=236, 7012=224, 8320=0; no Brasil, 7130=775 e 3350=1.017. Ressalvas: (1) o bbox é um retângulo, não o polígono da RMSP, e pega parte da Baixada Santista e de municípios vizinhos; (2) o item 3350 junta várias classes (condicional ruim, estilo, condicional vencida, valor igual ao incondicional), não só condicional mal formada."
+  },
+  {
+   "name": "OSM API 0.6 (changesets e notas)",
+   "url": "https://api.openstreetmap.org/api/0.6/notes/search.json?q=caminh%C3%A3o&bbox=-47.21,-24.07,-45.69,-23.18&closed=-1",
+   "verdict": "confirmed",
+   "note": "Changeset 177544973: ftrebien, JOSM, source=Survey, 'Adicionado limite de altura', bbox em São Leopoldo/Novo Hamburgo (-29.8,-51.15). Notas no bbox: 'caminhão' 7 (6 fechadas, 1 aberta), 'altura' 7 (todas fechadas). A nota 2921189 (2021) diz que o maxheight foi tirado 'segundo imagens do Google Maps'."
+  },
+  {
+   "name": "Issues Valhalla #3487 e #4683",
+   "url": "https://github.com/valhalla/valhalla/issues/3487",
+   "verdict": "confirmed",
+   "note": "GitHub API: #3487 'maxheight tag on OSM nodes is not respected', aberta (2022-01-03, 10 comentários). #4683 'maxweight:hgv:conditional or maxweight:conditional is not supported?', aberta (2024-04-11)."
+  },
+  {
+   "name": "WikiProject Brazil/Importações",
+   "url": "https://wiki.openstreetmap.org/wiki/WikiProject_Brazil/Importa%C3%A7%C3%B5es",
+   "verdict": "corrected",
+   "note": "A página redireciona para 'Brazil/Importações'. O processo e o MMA (negou, 27/01/2010) estão corretos. A lista de autorizações omite a SEADE, que também aparece como autorizada. Confirmado: nada sobre GeoSampa/PMSP, DER, DNIT, ANTT ou CET."
+  },
+  {
+   "name": "OSMF Licence Compatibility",
+   "url": "https://osmfoundation.org/wiki/Licence/Licence_Compatibility",
+   "verdict": "confirmed",
+   "note": "Última edição em 20/11/2025. CC0 e domínio público são compatíveis, com verificação. Todo CC BY exige waiver explícito. CC BY-SA, NC e ND são incompatíveis. OGL 2.0/3.0 é compatível (a OGL 1.0 não). Dados sem licença determinável não servem."
+  },
+  {
+   "name": "OSMF Collective Database Guideline",
+   "url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Collective_Database_Guideline_Guideline",
+   "verdict": "confirmed",
+   "note": "Adotada pela diretoria da OSMF em 17/06/2016. A regra é 'all OSM or all non-OSM' por tipo de dado e recorte regional. Ligação por chave ou ID é permitida. Não exige separação física."
+  },
+  {
+   "name": "OSM Import Guidelines",
+   "url": "https://wiki.openstreetmap.org/wiki/Import/Guidelines",
+   "verdict": "confirmed",
+   "note": "Confirmado: fórum com as tags import e import-proposal, espera de 14 dias, apoio local obrigatório, página no wiki, conta '(SeuUsuario)_Import' com outro e-mail, licença compatível com ODbL com permissão do dono e Automated Edits code of conduct."
+  },
+  {
+   "name": "Fórum OSM — categoria Brasil",
+   "url": "https://community.openstreetmap.org/c/communities/br/55",
+   "verdict": "confirmed",
+   "note": "/c/55/show.json: id 55, 'Brasil (Brazil)', 588 tópicos. Busca dentro da categoria: 'maxheight' 0 e 'altura viaduto' 0. 'caminhão' traz 4 tópicos, todos de classificação viária; nenhum trata de roteamento de caminhão."
+  },
+  {
+   "name": "Proposta de importação Santo André/SP",
+   "url": "https://community.openstreetmap.org/t/importacao-e-melhoria-de-dados-de-santo-andre-sp/106397",
+   "verdict": "corrected",
+   "note": "Proposta de IgorEliezer em 26/11/2023, com tag import-proposal. Os dados são declarados ODbL (SIGA e e-mail). O tópico só tem o post inicial. Mas a importação foi executada, ao menos em parte. Existe a página no wiki 'Santo André, São Paulo/Importação PMSA 2023', e a conta IgorEliezer_import fez changesets em 18 e 26/12/2023 ('Adição de edificações', 'Adição de meios-fios'). A pesquisa disse que não havia confirmação."
+  },
+  {
+   "name": "Licença do GeoSampa",
+   "url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa",
+   "verdict": "confirmed",
+   "note": "WebFetch: CC-BY-SA-4.0, página de 03/04/2025 11:16, sem menção ao OSM. A página não fala explicitamente de uso comercial; a CC BY-SA 4.0 permite pelos próprios termos."
+  },
+  {
+   "name": "StreetComplete quest AddMaxHeight",
+   "url": "https://wiki.openstreetmap.org/wiki/StreetComplete/Quests",
+   "verdict": "corrected",
+   "note": "O arquivo local é idêntico ao master do GitHub (app/src/commonMain/.../max_height/AddMaxHeight.kt). 'Sem placa' grava maxheight:signed=no: correto. Faltou dizer que a quest também pergunta em amenity=parking_entrance (subterrâneo ou edifício-garagem) e em passagens de nível de ferrovia eletrificada, não só em height_restrictor, túneis e vias sob ponte. A URL citada é o wiki, não o código."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "O Valhalla em produção é 3.9.1-c803bdc2f e o código analisado é desse commit; o lua normaliza maxheight (fallback :physical), maxwidth (fallback :physical), maxlength, maxweight, maxaxleload, maxaxles, :forward/:backward, hazmat (A..E/water) e maxspeed:hgv.",
+   "verdict": "confirmed",
+   "note": "/status devolve 3.9.1-c803bdc2f. As linhas 1920-1921 do graph.lua confirmam o fallback :physical só para altura e largura; hazmat:A..E/water aparecem nas linhas 1938-1943; os tag_handlers estão no pbfgraphparser. Ressalva: é um build do master de 08/10, 7 commits depois da tag 3.9.1, e não a 'release 3.9.1'.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "hgv=discouraged e unsuitable são tratados como proibidos; 663 no Brasil e 13 (2,4 km) na RMSP; /locate local truck:false.",
+   "verdict": "confirmed",
+   "note": "A tabela truck (linhas 267-283) tem discouraged e unsuitable como 'false'. Overpass: 663 objetos (660 vias e 3 nós). Minha recontagem da RMSP: 13 vias, 2,4 km. Com /locate em costing=auto, a way 153812960 sai com truck:false.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "Condicionais de horário só valem com date_time; teste da Marginal Tietê: sem date_time passa, 08:00 de quarta dá 442, 12:00 passa.",
+   "verdict": "confirmed",
+   "note": "Em dynamiccost.h, quando current_time==0 o código faz 'continue'. Refiz no Valhalla local: 1,598 km / 442 'No path' / 1,598 km. 14/10/2026 é uma quarta-feira.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/valhalla/sif/dynamiccost.h"
+  },
+  {
+   "fact": "Condicionais com mais de um '@' são descartadas inteiras e qualificadores (weight>4, axles>3) são pulados, então a regra vale para todo caminhão.",
+   "verdict": "confirmed",
+   "note": "pbfgraphparser.cc só aceita a condicional quando tokens.size()==2; GetTagTokens é um split simples por '@'. Em timeparsing.cc, kUnknown, kNumber e kHoliday são 'ignorable', com o comentário 'Skipping them leaves the rule covering more than the tag says'. Conferi só no código; não testei em tiles.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/src/mjolnir/pbfgraphparser.cc"
+  },
+  {
+   "fact": "maxheight em nós e barrier=height_restrictor não são lidos (#3487 aberta); 107 nós na RMSP; a quest do StreetComplete grava altura nesses nós.",
+   "verdict": "confirmed",
+   "note": "nodes_proc não lê maxheight. Contagem com osmium no recorte da RMSP: 107 nós (73 soltos, 17 lift_gate, 15 height_restrictor, 2 gate). Teste mais forte que o da pesquisa: o nó 26130128 (maxheight=5.5) fica na Rodovia Presidente Dutra (way 56202970), e um caminhão de 6,0 m passa (0,585 km), igual a um de 4,0 m. A quest grava também em vias (túneis, vias sob ponte), não só em nós.",
+   "source_url": "https://github.com/valhalla/valhalla/issues/3487"
+  },
+  {
+   "fact": "maxweight:conditional com horário/estação não é suportado (#4683); Santa Maria 211 vias 7,5 t 24 h; BR-319/AM 92 vias com '17 @ (Dec-May)' ignorado.",
+   "verdict": "confirmed",
+   "note": "O lua só aceita 4 valores 'exceto destino' em conditional_access_restriction. No arquivo do Overpass: 208+3 vias com maxweight=7.5 em torno de (-29.69,-53.81), Santa Maria; 92 vias com '17 @ (Dec-May)' em torno de (-5.3,-62.0). A issue #4683 está aberta.",
+   "source_url": "https://github.com/valhalla/valhalla/issues/4683"
+  },
+  {
+   "fact": "normalize_weight não trata vírgula ('3,5'→3, '4,30'→4) e kg sem unidade vira milhares de t; normalize_measurement trata vírgula e m/cm/ft/in.",
+   "verdict": "confirmed",
+   "note": "Executei as funções do graph.lua no Lua 5.4: '3,5'→3.0, '4,30'→4.0, '4500'→4500.0, '45000 kg'→45.0, '4,5'→4.5, '450 cm'→4.5, 14'6\"→4.42. O impacto é pequeno: no Brasil só 8 objetos têm vírgula (4,30×4, 4,0×2, 3,5×2) e 8 têm kg sem unidade.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/lua/graph.lua"
+  },
+  {
+   "fact": "O costing truck não usa grade; padrões EUA 4,11 m / 2,6 m / 21,64 m / 21,77 t / eixo 9,07 t / 5 eixos; bloqueia só se maior que o limite.",
+   "verdict": "confirmed",
+   "note": "truckcost.cc não tem 'grade' nem 'elevation'. As constantes estão nas linhas 53-58. O teste é 'height_ > value*0.01', então um valor igual passa. Nota: desde o commit fb887ea (09/10, 21:51, depois da pesquisa) o Valhalla principal do projeto tem elevação ANADEM (/height devolve 742 m em SP); a frase do NOTES sobre build_elevation False está desatualizada, mas o costing continua ignorando rampa.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/c803bdc2f712358c0376e6b6cacf7ae6baf9b7df/src/sif/truckcost.cc"
+  },
+  {
+   "fact": "Brasil (08/10/2026): 10.100 maxheight, 3.587 não numéricos ignorados; 4.227 maxweight, 5.124 hgv, 350 hgv:conditional, 318 maxweight:conditional, 74 hazmat, 0 BR:R-14..R-18.",
+   "verdict": "corrected",
+   "note": "Os números batem com a amostra e com o Overpass de 10/10 (10.039 maxheight; default 3.057, exato; 350; 318; 74; maxweight 4.226). A taginfo do Brasil estava com HTTP 500 no reteste. Correção de interpretação: dos 4.226 objetos com maxweight, 1.108 são aeroway (helipontos) e só 3.077 têm highway=*. Na RMSP, 279 das 306 vias com maxweight são helipontos. A cobertura de peso em vias é ~26% menor do que '4.227' sugere.",
+   "source_url": "https://taginfo.geofabrik.de/south-america:brazil/api/4/key/values?key=maxheight"
+  },
+  {
+   "fact": "123.397 trechos de ponte rodoviária, 336 com maxweight (0,27%); 3.862 túneis, 359 com maxheight (9,3%).",
+   "verdict": "confirmed",
+   "note": "Rodei de novo no overpass-api.de em 10/10: 123.406 / 336 / 773 (signed=no) / 3.862 / 359. 'Ponte rodoviária' inclui service, residential e living_street.",
+   "source_url": "https://overpass-api.de/api/interpreter"
+  },
+  {
+   "fact": "maxheight saltou de 5.965 para 10.108 em 2026 por ação de um único mapeador (2.600 vias maxheight=default, Grande Porto Alegre); cobertura concentrada no Sul (5.213 vs 3.268).",
+   "verdict": "corrected",
+   "note": "O crescimento foi de +4.143. maxheight=default passou de 195 para 3.064 (+2.869, ~69% do salto). ftrebien é o ÚLTIMO editor (out meta) de 2.600 das 2.894 vias com default editadas desde 14/01, e não necessariamente quem pôs a tag; isso é ~63% do salto, não todo ele. Esses valores 'default' não trazem limite numérico e o Valhalla os ignora. Pela própria amostra regional, o Sul tem 3.239 valores não numéricos em 5.213 (~1.974 numéricos), e o Sudeste tem 222 em 3.268 (~3.046 numéricos, conferido com osmium). Em altura utilizável, o Sudeste tem MAIS cobertura que o Sul.",
+   "source_url": "https://api.openstreetmap.org/api/0.6/changeset/177544973.json"
+  },
+  {
+   "fact": "RMSP: 1.108 vias com maxheight, 257 < 4,40 m; 3.084 vias sob ponte/viaduto, 2.407 (78%) sem maxheight; 6 de 3.389 pontes com maxweight; nenhuma source:maxheight.",
+   "verdict": "corrected",
+   "note": "Recontei o export: 1.108, 1.015 numéricas, 257 abaixo de 4,40, 3.389 pontes, 6 com maxweight, 0 com source:maxheight, tudo exato. O recorte com osmium no PBF bate (1.118 ways com maxheight no total, 107 nós). Correção de definição: as 3.084 'passagens inferiores' incluem vias sob passarelas de pedestre ou ciclovia e sob ferrovias abandonadas (o layer da ponte é 1 por padrão). Só com pontes rodoviárias e ferroviárias são 2.181 vias, 1.709 sem maxheight (78%), e 1.880 / 1.438 nas principais. O texto diz 'ponte/viaduto rodoviário ou ferroviário'.",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf"
+  },
+  {
+   "fact": "Só 3 dos 103 trechos da Marginal Tietê (Expressa) têm hgv:conditional.",
+   "verdict": "confirmed",
+   "note": "Minha recontagem: 103 vias com name='Marginal Tietê (Expressa)', 3 com hgv:conditional. A way 4614918 tem 'no @ (Mo-Fr 05:00-09:00,17:00-21:00; Sa 10:00-14:00)' na API OSM.",
+   "source_url": "https://www.openstreetmap.org/way/4614918"
+  },
+  {
+   "fact": "GeoSampa é CC BY-SA 4.0 (comercial ok, share-alike); pela OSMF CC BY-SA é incompatível e CC BY 4.0 exige waiver.",
+   "verdict": "confirmed",
+   "note": "Página de 03/04/2025 (CC-BY-SA-4.0) e página de compatibilidade da OSMF (20/11/2025).",
+   "source_url": "https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa"
+  },
+  {
+   "fact": "Compatíveis com OSM: CC0, domínio público verificado, OGL 2/3; CC BY 4.0 só com waiver; sem licença determinável não serve.",
+   "verdict": "confirmed",
+   "note": "Texto conferido. A OGL 1.0 é listada como incompatível.",
+   "source_url": "https://osmfoundation.org/wiki/Licence/Licence_Compatibility"
+  },
+  {
+   "fact": "Guideline de base coletiva (17/06/2016): fora do share-alike se, por tipo de dado e região, tudo OSM ou nada OSM.",
+   "verdict": "confirmed",
+   "note": "Data e regra conferidas. A parte 'misturar tende a formar base derivada' é interpretação razoável, mas não é jurídica.",
+   "source_url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Collective_Database_Guideline_Guideline"
+  },
+  {
+   "fact": "Importar exige discussão local e no fórum (import/import-proposal, 14 dias), wiki, conta _import e permissão explícita.",
+   "verdict": "confirmed",
+   "note": "Conferido no wiki. A conta deve ser '(SeuUsuario)_Import', com e-mail diferente do da conta principal.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/Import/Guidelines"
+  },
+  {
+   "fact": "Lista BR de autorizações: GEOMINAS, IBGE, IPECE, IJSN, SEMAD-MG; MMA negou; nada de GeoSampa, DER, DNIT, ANTT, CET.",
+   "verdict": "corrected",
+   "note": "A lista também traz a SEADE como autorizada; o resto está correto.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/WikiProject_Brazil/Importa%C3%A7%C3%B5es"
+  },
+  {
+   "fact": "Proposta de 2023 de importar dados de Santo André sob ODbL; o fórum não indica se foi aprovada ou feita.",
+   "verdict": "corrected",
+   "note": "O tópico tem só 1 post, mas a importação foi executada ao menos em parte. A conta IgorEliezer_import fez changesets em 18 e 26/12/2023 (edificações, meios-fios), e há página no wiki com o andamento.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/Santo_Andr%C3%A9,_S%C3%A3o_Paulo/Importa%C3%A7%C3%A3o_PMSA_2023"
+  },
+  {
+   "fact": "Osmose 7130: 95 RMSP / 775 Brasil; 3350: 236 RMSP / 1.017 Brasil.",
+   "verdict": "confirmed",
+   "note": "Reproduzido exatamente. O 'RMSP' é um bbox retangular que pega parte da Baixada Santista. O 3350 cobre várias classes de problema em condicionais, não só as mal formadas.",
+   "source_url": "https://osmose.openstreetmap.fr/api/0.3/issues?item=7130&bbox=-47.21,-24.07,-45.69,-23.18"
+  },
+  {
+   "fact": "ohsome RMSP: maxheight 332→1.067 (2018→2026), hgv 20→414, maxweight 6→22; 36–112 usuários/ano.",
+   "verdict": "confirmed",
+   "note": "Reproduzido exatamente com filtro 'type:way and highway=*' e retrato em 2026-01-01. Em 2026-07-27 eram 1.106 maxheight e 26 maxweight.",
+   "source_url": "https://api.ohsome.org/v1/elements/count"
+  }
+ ],
+ "extra_findings": [
+  "A recomendação 'mandar sempre date_time' já está implementada no fluxo principal. api/src/services/routing.ts (computeRoute) usa DateTime.now().setZone(env.tz) quando não vem departure_at e repassa departureLocal a todas as chamadas valhalla.route; config.ts usa tz padrão America/Sao_Paulo. Isso vale desde o commit cbb7b7e (09/10, 11:22), antes da pesquisa. A frase 'sem ele, toda condicional é ignorada' só vale para chamadas diretas ao serviço sem departureLocal; em api/src não achei nenhuma fora dos testes.",
+  "O Valhalla principal do projeto já tem relevo. O commit fb887ea (09/10, 21:51) põe dados ANADEM em /custom_files/elevation_data, e /height devolve 742 m para (-23.55,-46.63). A variável build_elevation continua 'False' no docker-compose, por isso a frase do NOTES ficou desatualizada. O costing truck segue sem usar grade, e o README do projeto também diz isso.",
+  "A imagem é ghcr.io/valhalla/valhalla-scripted:latest (Dockerfile em valhalla/), e o container roda o master, 7 commits depois da tag 3.9.1 (inclui #6332, que muda os overrides :forward/:backward do lua). Um rebuild pode mudar o comportamento. Melhor fixar por digest ou por tag: https://github.com/valhalla/valhalla/compare/3.9.1...c803bdc2f712358c0376e6b6cacf7ae6baf9b7df",
+  "maxweight inclui helipontos. No Brasil, 1.108 de 4.226 objetos com maxweight são aeroway; só 3.077 têm highway (Overpass, 10/10). Na RMSP, 279 das 306 ways com maxweight são aeroway=helipad. Qualquer métrica de 'cobertura de peso' precisa filtrar por highway=*.",
+  "Teste mais forte para a lacuna de nó com maxheight: o nó 26130128 (maxheight=5.5, source=Mapillary) fica na Rodovia Presidente Dutra (way 56202970). No Valhalla local, um caminhão de 6,0 m faz a mesma rota de 0,585 km que um de 4,0 m. O nó usado na pesquisa (6354358414) é entrada de estacionamento subterrâneo privado, um caso fraco.",
+  "A lacuna 'Resolução CONTRAN nº 798' fica resolvida. O art. 12, §1º, II da Res. CONTRAN 798/2020, sobre fiscalização de velocidade, define veículo pesado incluindo 'qualquer outro veículo com peso bruto total superior a três mil e quinhentos quilogramas'. A definição é do contexto de medição de velocidade, não é uma definição geral. https://www.legisweb.com.br/legislacao/?id=401145 (também em https://www.normasbrasil.com.br/norma/resolucao-798-2020_401145.html)",
+  "Sobre o pré-processamento de discouraged: o truckcost já tem hgv_no_access_penalty. Se ficar abaixo de 43.200 s, transforma em penalidade TODA aresta sem acesso de caminhão (hgv=no e discouraged juntos). Não dá para distinguir discouraged de no sem mexer no PBF, o que reforça a recomendação de pré-processar (truckcost.cc, linhas 392-395 e 598).",
+  "Passagens inferiores: reproduzi 3.084 / 2.407 / 2.747 / 2.104 com o método da pesquisa. Cerca de 900 delas existem só por causa de passarelas de pedestre ou ciclovia, e de ferrovias abandonadas, porque o layer padrão da ponte é 1. Só com pontes rodoviárias e ferroviárias são 2.181 vias, 1.709 sem maxheight, e 1.880 / 1.438 nas principais. As passarelas também limitam altura, então incluí-las faz sentido, mas é preciso dizer isso no texto.",
+  "Página do wiki com o andamento da importação de Santo André (ODbL, conta IgorEliezer_import, changesets de dez/2023): https://wiki.openstreetmap.org/wiki/Santo_Andr%C3%A9,_S%C3%A3o_Paulo/Importa%C3%A7%C3%A3o_PMSA_2023",
+  "Detalhe de taginfo e regiões: o Sudeste tem mais maxheight numérico (~3.046) que o Sul (~1.974). O 'Sul 5.213' vem inflado por 3.239 valores default, none e afins. Para priorizar a expansão do app, use a contagem de valores numéricos."
+ ]
+}

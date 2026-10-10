@@ -16,6 +16,12 @@ function localNowIso() {
 }
 function fmtDuration(s: number) { const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}h${pad(m)}` : `${m} min`; }
 function pad(n: number) { return String(n).padStart(2, '0'); }
+/** SAU é só apoio (pausa curta), não ponto de descanso: conta à parte. */
+function restCount(stops?: RouteResult['rest_stops']) {
+  const all = stops ?? [];
+  const sau = all.filter((s) => s.daily_rest_ok === false).length;
+  return `${all.length - sau} ponto(s) de descanso a até 500 m da rota${sau ? ` + ${sau} SAU de apoio (só pausa curta)` : ''}.`;
+}
 function sev(s?: string) { return s === 'danger' ? 3 : s === 'warn' || !s ? 2 : 1; }
 
 export function App() {
@@ -174,9 +180,9 @@ export function App() {
                   {route.driving_plan && (
                     <>
                       <h4>Plano de direção · Lei 13.103</h4>
-                      <small className="muted">{fmtDuration(route.driving_plan.driving_s)} de direção · {route.driving_plan.required_breaks} parada(s) de 30 min · total ~{fmtDuration(route.driving_plan.total_with_breaks_s)}. {route.rest_stops?.length ?? 0} ponto(s) de descanso a até 500 m da rota.</small>
+                      <small className="muted">{fmtDuration(route.driving_plan.driving_s)} de direção · {route.driving_plan.required_breaks} parada(s) de 30 min · total ~{fmtDuration(route.driving_plan.total_with_breaks_s)}. {restCount(route.rest_stops)}</small>
                       {route.driving_plan.suggested_stops.length > 0 && (
-                        <ul className="list">{route.driving_plan.suggested_stops.map((s, i) => <li key={i}>{s.stop ? '🅿️' : '⚠️'} {s.message}</li>)}</ul>
+                        <ul className="list">{route.driving_plan.suggested_stops.map((s, i) => <li key={i}>{s.stop ? (s.stop.daily_rest_ok === false ? 'ℹ️' : '🅿️') : '⚠️'} {s.message}</li>)}</ul>
                       )}
                     </>
                   )}

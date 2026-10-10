@@ -1,0 +1,191 @@
+{
+ "category": "pontes_federais",
+ "sources": [
+  {
+   "name": "SIAET – Restrições Definitivas e Temporárias por UF (AET)",
+   "url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes",
+   "verdict": "corrected",
+   "note": "Baixei de novo os 54 PDFs de 10-2026: todos deram HTTP 200 e são byte a byte idênticos às amostras. O padrão .../restricao-{definitiva|temporaria}/{MM-AAAA}/{uf}.pdf funciona e o histórico 05-2026/ro.pdf responde 200. O cabeçalho traz 'Atualizado em: 05/10/2026' e os PDFs são gerados pelo Excel 2013. A posição da coluna Peso foi validada: na SP definitiva, o 150,0 cai em x=545–565, sob o cabeçalho 'Peso'. O rodapé do gov.br confirma CC BY-ND 3.0. CORREÇÃO DE NÚMEROS: o parse_aet.py descarta linhas porque agrupa as linhas por round(top). Meu parser independente achou 3.389 definitivas (não 3.374) e 1.541 temporárias (não 1.532). Entre as linhas perdidas há pesos: 497BMG0010 com 45 t, 242BTO0530 com 30 t e 428BPE0070 com 45 t. O total real é 612 segmentos com peso, não 608. Os números da RMSP (11+11 segmentos, 150 t na Dutra, 180 t na Régis, altura mínima de 5,0 m) estão corretos."
+  },
+  {
+   "name": "Painel Power BI 'Obras de Arte Especiais' (PROARTE) – PLANILHÃO e BASE BRÁULIOS",
+   "url": "https://app.powerbi.com/view?r=eyJrIjoiZWU3NWRjYjQtNGVmMS00ZmEwLTk2MmYtODM3NWIxYWRlZWZhIiwidCI6IjQ0MTBhNmY2LWM2MTMtNGNkNy05M2VjLTY1MzBhZjdhMzA1MyJ9",
+   "verdict": "confirmed",
+   "note": "Refiz a extração com um script próprio. modelsAndExploration em wabi-brazil-south-b-primary-api deu 200: modelo 5764495 'PROARTE_MAPA_REAB_MANUT', LastRefreshTime 2025-04-09T19:01:42. No conceptualschema, as tabelas PLANILHÃO e BASE BRÁULIOS não têm campo de trem-tipo nem de carga. O querydata devolveu 7.828 linhas no PLANILHÃO (IC=True) e 5.335 na BASE BRÁULIOS. As notas batem exatamente: 1=178, 2=758, 3=2.215, 4=3.579, 5=102, vazio=996. Os anos de vistoria também: 2020=4.679, 2021=1.277, 2022=2. Administração 6.178/1.145/338, 728 'Ponte de Madeira' (MT 157, PA 148, AM 126), SP 58, nenhuma na RMSP, 7.743 com lat/lon (1 coordenada malformada). A URL do painel aparece na matéria do SETCESP de 28/04/2025 (datePublished confirmado). Licença não declarada. Ressalva: o painel TEM 1.066 OAEs de 'Concessão Federal' com nota (RJ 262, SC 186, MG 174...). Só não cobre as concessões de SP/RMSP."
+  },
+  {
+   "name": "DNITGeo WFS – vgeo:oae_sgo",
+   "url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=vgeo:oae_sgo&outputFormat=application/json",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 3,76 MB, numberMatched=8.795, EPSG:4674, campos conforme descrito. 6.428 feições têm cod_sgo e 100% delas casam com o PLANILHÃO. A coordenada é idêntica (diferença menor que 1e-6) em 6.325 de 6.417, não em todas: a diferença máxima é de 0,02°. Na RMSP, usando o polígono rmsp_municipios.geojson, são 139 OAEs, 0 com cod_sgo, e a divisão por BR e tipo bate exatamente. O GetCapabilities tem Fees=NONE e AccessConstraints=NONE, com 128 FeatureTypes. Há mojibake nos textos ('PontilhÃ£o')."
+  },
+  {
+   "name": "SNV 202607A – vgeo:vw_snv_rod",
+   "url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=vgeo:vw_snv_rod&outputFormat=application/json&CQL_FILTER=Unidade_Federacao='SP'%20AND%20Versao_SNV='202607A'",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 2,8 MB, 416 segmentos em SP e 7.673 no Brasil para a versão 202607A (dt_ini 2026-07-28). O 116BSP2550 (Marginal Tietê) aparece com Administracao='Estadual', o que confirma a leitura do 0 como 'fora da jurisdição federal'. Pequena divergência: 6 PNVs do SIAET-SP não existem no SNV atual (101BSP3655, 116BSP2585, 116BSP2600, 116BSP9020, 116BSP9030, 153BSP1000), não 4. Também há linhas duplicadas sob códigos antigo e novo (101BSP3655 ≈ 116BSP2600). A licença 'Other (Open)' do dados.gov.br não foi verificada, porque a API exige token."
+  },
+  {
+   "name": "ANTT – Pontes e similares das rodovias concedidas",
+   "url": "https://dados.antt.gov.br/dataset/pontes-similares",
+   "verdict": "confirmed",
+   "note": "package_show deu 200 com license_id=cc-by ('Creative Commons Atribuição') e metadata_modified 2026-09-28. O CSV tem 583.959 bytes, Last-Modified 28/09/2026, cp1252 e separador ';'. São 3.513 linhas: 1.830 PONTE, 1.646 VIADUTO, 30 concessionárias e 3 coordenadas inválidas. Na RMSP são 130 (Motiva Minas SP 48, RIOSP 47, Régis 35), batendo exatamente. RESSALVA NÃO DOCUMENTADA: o cabeçalho tem 26 colunas, mas as linhas têm 24, porque faltam municipio_entrada e municipio_saida. Ler por nome de coluna desloca lat/lon (no meu primeiro teste, 3.513 'coordenadas inválidas'). É preciso parsear por posição."
+  },
+  {
+   "name": "OpenStreetMap – pontes BR (Geofabrik Sudeste)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "verdict": "confirmed",
+   "note": "A página da Geofabrik responde 200 e o PBF local existe (861 MB). Recontei a partir do extrato sudeste_bridges.geojsonseq, sem rodar o osmium de novo: 63.945 ways de ponte com highway, 7 com maxweight (BR-342 24, BR-267 '25 t', SP-055;BR-101 '12 t', BR-367 12 ×2, SP-125;BR-383 25 ×2), 15 maxheight, 21 hgv e 0 maxaxleload, tudo batendo. Com regex mais tolerante achei 4.566 refs BR, não 4.554. Os 7 maxweight equivalem a cerca de 5 pontes distintas (pistas duplicadas). Não verifiquei a taxa de casamento de 80–90% com OAEs da RMSP."
+  },
+  {
+   "name": "DNIT – Notícias 'Alerta de serviços'",
+   "url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/noticias-alerta-de-servicos",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 31 links de notícia na 1ª página; /RSS e /rss.xml dão 404. Piancó: publicada em 23/09/2026, interdição total a partir de 25/09 por 4 meses, com restrição anterior a veículos acima de 12 t e desvio a partir do km 84,7. Isso bate com o SIAET 361BPB0030 (km 84,7–89,7, 12 t). Baruaninha: publicada em 18/09/2026, km 80; a restrição vem de danos das chuvas de MAIO/2026, ou seja, o atraso do SIAET é maior que o sugerido. No SIAET-RR, a BR-432 só aparece entre os km 140,8 e 182,2. A página do Rio das Antas agora devolve {\"error_type\":\"TransformError\"}, mas o SIAET 116BRS3070 (km 79,5–115) tem peso 0, coerente com a interdição do km 95,7."
+  },
+  {
+   "name": "Norma DNIT 010/2024-PRO",
+   "url": "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/ipr/coletanea-de-normas/coletanea-de-normas/procedimento-pro/dnit_010_2024_pro.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 359.286 bytes, 22 páginas. Quadro 1: rotineira a cada 2 anos e especial a cada 5. Tabela de notas de 5 (Excelente) a 1 (Crítica), com a nota 1 citando 'restrição da carga na estrutura, interdição total ou parcial'. A ficha cadastral (Anexo A) tem 'Trem-Tipo' e 'Ano de Construção'. Licença: 'Direitos autorais exclusivos do DNIT, sendo permitida reprodução parcial ou total, desde que citada a fonte, mantido o texto original'."
+  },
+  {
+   "name": "Portarias MT nº 308 e 309/2026",
+   "url": "https://www.in.gov.br/web/dou/-/portaria-n-309-de-5-de-maio-de-2026-703399805",
+   "verdict": "confirmed",
+   "note": "As duas URLs do DOU respondem 200, publicadas em 06/05/2026. Na 309: art. 10 (SGE como 'cadastro geral unificado de todas as OAEs existentes na malha rodoviária federal'; §1º atualização pelas entidades vinculadas com jurisdição; §2º periodicidade anual; §3º prazo de 1 ano), art. 13 II (indicador de % de OAEs críticas) e art. 22 (LAI). Na 308: art. 6º (mapear as estruturas críticas no SGE). O art. 12 da 309 remete as concessões ANTT à Portaria MINFRA 929/2022 só quanto ao recebimento de bens."
+  },
+  {
+   "name": "Res. DNIT nº 11/2022 e Res. DNIT nº 1/2026",
+   "url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/resolucoes-aet/Resoluon11_2022PortugusBrasil.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 993.568 bytes. Art. 2º XXVIII: restrição temporária inclui 'pontes com limitação de peso'. Art. 24: consulta de viabilidade acima de 4,50 m, 5,30 m, 30 m ou 100 t. EVE, LTA e SGO estão definidos. A Res. 1/2026 (200, DOU nº 57 de 25/03/2026) só insere os arts. 23-A e 23-B, sobre AET digital. ATENÇÃO: o inciso XXVII (restrição definitiva) NÃO menciona trem-tipo. Ver o fato corrigido."
+  },
+  {
+   "name": "Res. CONTRAN nº 882/2021",
+   "url": "https://www.in.gov.br/en/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699",
+   "verdict": "corrected",
+   "note": "HTTP 200. Confirmados: art. 2º VII ('limite legal ... observado limite estabelecido pela sinalização da via'), art. 2º XXIV (OAE) e art. 19 I a) (PBTC ≤ 74 t). CORREÇÕES: (1) o art. 18 vale para CVC 'com mais de duas unidades' acima de 57 t ou de 19,80 m. CVC de 2 unidades pode chegar a 58,5 t sem AET (art. 6º I f). (2) A obrigação de informar as Forças Armadas sobre limitações das OAE está no art. 18 §3º, não no art. 6º III como diz o NOTES."
+  },
+  {
+   "name": "SGE/SGO do DNIT (acesso direto)",
+   "url": "https://servicos.dnit.gov.br/sge",
+   "verdict": "corrected",
+   "corrected_url": "https://servicos.dnit.gov.br/sgplan/prd/sge",
+   "note": "/sge dá 404, como relatado. Mas a URL de produção do SGE está linkada na página oficial do DNITGeo (gov.br/dnit/.../dnit-geo): https://servicos.dnit.gov.br/sgplan/prd/sge. É uma SPA 'SGE Gerencial' com login OIDC (login-dpp.dnit.gov.br), ou seja, não é pública, e a conclusão de 'sem acesso público' se mantém. O JS público mostra módulos 'Carga Limite' (ligado à AET), 'Estudo de Viabilidade Estrutural' e filtros 'Trem-Tipo' e 'Ano de Construção'. Isso reforça e precisa o pedido via LAI."
+  },
+  {
+   "name": "Pedido LAI (Fala.BR) – extração do SGE",
+   "url": "https://falabr.cgu.gov.br",
+   "verdict": "untestable",
+   "note": "O portal responde 200. Não é testável sem pedido formal. Sugestão: incluir explicitamente o cadastro 'Carga Limite' do SGE e os EVEs."
+  },
+  {
+   "name": "IN DNIT nº 2/2026 + Anexo I",
+   "url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/atos-normativos/tipo/instrucao-normativa/2026/instrucao-normativa-no-2-2026",
+   "verdict": "confirmed",
+   "note": "HTML 200 (publicado em 09/03/2026, retificado em 21/05/2026) e Anexo I em PDF 200. 'Atualização do trem-tipo' e o registro obrigatório no SGE estão no corpo. A meta 'Eliminar dos ativos do DNIT OAEs com notas 1 e 2' está no Anexo I, não no corpo."
+  },
+  {
+   "name": "Apresentação DNIT na CVT/Câmara (04/11/2025) e Ata da 10ª Reunião da Diretoria Colegiada (18/03/2025)",
+   "url": "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cvt/apresentacoes-em-eventos/eventos-2025/arquivos-de-eventos-2025/ap-25-11-04-fabio-pessoa-dnit",
+   "verdict": "confirmed",
+   "note": "PDF de 13 páginas, 200, com 'Existem 400 OAEs com notas 1 e 2' e 'Inspeções emergenciais ... totalizando 400 OAEs'. A ata (200, 4 páginas) registra 7815 OAEs e '4,62 OAE's por ano'. Ressalva: a própria ata diz que levaria cerca de 194 anos, o que implica cerca de 40 OAEs por ano; o número 4,62 é ambíguo."
+  },
+  {
+   "name": "Revista EnInfra/DNIT – Avaliação patrimonial de OAEs",
+   "url": "https://doi.org/10.70859/2764-9539.v4.n5.146",
+   "verdict": "refuted",
+   "note": "O DOI dá HTTP 404 no doi.org e a Crossref responde 'Resource not found'. O próprio url_checks.txt da pesquisa registrou o 404, mas o research.json mantém o DOI como fonte. Só existe o PDF local da 1ª rodada; não há URL pública verificável."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "O DNIT publica todo mês, por UF, as Restrições Definitivas e Temporárias do SIAET (altura, largura, peso, comprimento, raio de giro, por segmento PNV e pista); a edição de out/2026 é de 05/10/2026, e os meses anteriores continuam online.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes",
+   "note": "Os 54 PDFs de 10-2026 respondem 200. 'Atualizado em: 05/10/2026' consta no PDF e na metadata (CreationDate 05/10/2026). O 05-2026/ro.pdf também responde 200. Colunas por pista conferidas no cabeçalho."
+  },
+  {
+   "fact": "A Res. DNIT 11/2022 define a restrição temporária incluindo 'pontes com limitação de peso'; a definitiva inclui gabarito de pontes/viadutos/passarelas e o trem-tipo; a Res. DNIT 1/2026 (DOU 25/03/2026) só alterou a 11/2022 para tratar da AET digital.",
+   "verdict": "corrected",
+   "source_url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/resolucoes-aet/Resoluon11_2022PortugusBrasil.pdf",
+   "note": "A temporária com 'pontes com limitação de peso' está confirmada (art. 2º XXVIII), e a Res. 1/2026 também (DOU nº 57 de 25/03/2026, arts. 23-A e 23-B, AET digital). Mas o art. 2º XXVII da Res. 11/2022 define a definitiva como 'gabarito vertical e horizontal ... pontes, viadutos, passarelas, pórticos, postos de pesagem, mureta, defensa' e NÃO cita trem-tipo. O 'trem-tipo' vem do Manual Interno do SIAET (siaet_int.txt, 'VERSÃO PRELIMINAR', PDF de 2005), não da resolução."
+  },
+  {
+   "fact": "SIAET out/2026: 608 segmentos PNV com peso ou bloqueio (85 com 0, 24 <23 t, 133 entre 23–45 t (98 AM), 59 entre 45–57 t, 97 entre 57–74 t); na RMSP nenhum peso <150 t nem altura <5,0 m nos 11 segmentos federais.",
+   "verdict": "corrected",
+   "source_url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes/restricao-definitiva/10-2026/sp.pdf",
+   "note": "Com um parser independente sobre os 54 PDFs: 612 segmentos com peso (o parse_aet.py perdeu 15 linhas definitivas e 9 temporárias). Por faixa: 81 com peso = 0 (3.416 km); os '85' incluem 4 segmentos em que o 0 está em largura ou altura, com peso > 0, como 116BRS3110 (largura 0, peso 150). Depois: 25 abaixo de 23 t, 136 em [23,45) (99 no AM), 61 em [45,57], 98 em (57,74] e 211 acima de 74 t. A distribuição se concentra em valores regulatórios (23 t: 113 segmentos; 74 t: 87; 45 t: 30; 57 t: 24; 100 t: 45; 150 t: 40), o que sugere tetos de AET e não limite estrutural. Na RMSP está CONFIRMADO: 11+11 segmentos, peso de 150 t (Dutra) e 180 t (Régis), altura mínima de 5,0 m, e 116BSP2550 com 0 é 'Estadual' no SNV."
+  },
+  {
+   "fact": "O SIAET atrasa: a ponte do Rio Piancó (BR-361/PB) está interditada desde 25/09/2026, mas o SIAET de 05/10/2026 mostra 12 t; o Igarapé Baruaninha (BR-432/RR, km 80) foi restrito em 18/09/2026 e não aparece no SIAET.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/noticias-alerta-de-servicos/dnit-alerta-para-interdicao-total-da-ponte-sobre-o-rio-pianco-na-br-361-pb-a-partir-desta-sexta-feira-25",
+   "note": "Piancó: a notícia de 23/09 anuncia a interdição total a partir de 25/09. O SIAET temporária-PB 361BPB0030 (km 84,7–89,7) mostra 12,0 t, que é a restrição anterior a pesados. Baruaninha: a notícia é de 18/09/2026, mas a restrição decorre de danos de maio/2026. No SIAET-RR, a BR-432 só aparece nos km 140,8–182,2 (25,5 t). Correção de redação: 18/09 é a data da notícia, não do início da restrição."
+  },
+  {
+   "fact": "Painel Power BI PROARTE (modelo PROARTE_MAPA_REAB_MANUT, refresh 09/04/2025): 7.828 OAEs; notas 1=178, 2=758, 3=2.215, 4=3.579, 5=102, vazio=996; vistorias 2020=4.679 e 2021=1.277; SP 58 OAEs, nenhuma na RMSP.",
+   "verdict": "confirmed",
+   "source_url": "https://app.powerbi.com/view?r=eyJrIjoiZWU3NWRjYjQtNGVmMS00ZmEwLTk2MmYtODM3NWIxYWRlZWZhIiwidCI6IjQ0MTBhNmY2LWM2MTMtNGNkNy05M2VjLTY1MzBhZjdhMzA1MyJ9",
+   "note": "Extração independente pela API pública com resultado idêntico em todos os números (LastRefreshTime 2025-04-09T19:01:42). Em SP são Piquete, Ubatuba, Lorena, Aparecida, Brasilândia e Paulicéia; nenhuma OAE na bbox da RMSP. Detalhe: 7.743, e não 7.828, têm lat/lon."
+  },
+  {
+   "fact": "A Norma DNIT 010/2024-PRO define notas de 1 (crítica) a 5 (excelente), com a nota 1 podendo exigir restrição de carga ou interdição, inspeção rotineira a cada 2 anos e especial a cada 5; a ficha do SGE tem o campo 'Trem-Tipo', não publicado no WFS nem no Power BI.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/ipr/coletanea-de-normas/coletanea-de-normas/procedimento-pro/dnit_010_2024_pro.pdf",
+   "note": "Conferido no PDF (Quadro 1, Anexo A e tabela do Anexo C). O schema do Power BI e os campos do oae_sgo não têm trem-tipo. O JS da SPA do SGE confirma que 'Trem-Tipo' e 'Ano de Construção' existem no sistema interno."
+  },
+  {
+   "fact": "A Portaria MT 309/2026 (DOU 06/05/2026) faz do SGE o cadastro geral unificado de todas as OAEs federais, com atualização anual, prazo de 1 ano e citação da LAI.",
+   "verdict": "confirmed",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-n-309-de-5-de-maio-de-2026-703399805",
+   "note": "Art. 10 caput e §§1º–3º, art. 13 e art. 22 conferidos literalmente; publicada em 06/05/2026. 'Inclusive ANTT/concessões' é inferência razoável: o §1º atribui a atualização às 'entidades vinculadas que detêm a jurisdição'."
+  },
+  {
+   "fact": "O DNIT afirma ter 400 OAEs com notas 1 e 2, de risco elevado, e um plano de inspeções emergenciais (CVT/Câmara, 04/11/2025).",
+   "verdict": "confirmed",
+   "source_url": "https://www2.camara.leg.br/atividade-legislativa/comissoes/comissoes-permanentes/cvt/apresentacoes-em-eventos/eventos-2025/arquivos-de-eventos-2025/ap-25-11-04-fabio-pessoa-dnit",
+   "note": "O PDF de 13 páginas traz 'Existem 400 OAEs com notas 1 e 2, representando risco elevado' e 'Inspeções emergenciais ... totalizando 400 OAEs'. Contraste: o PLANILHÃO tem 936 OAEs com notas 1+2."
+  },
+  {
+   "fact": "O DNIT dispõe de 7.815 OAEs e o PROARTE atuou em média em 4,62 OAEs por ano (ata de 18/03/2025).",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/composicao/diretoria-colegiada/atas/2025/ata-da-10a-reuniao-ordinaria-da-colegiada-de-18-03-25.pdf",
+   "note": "O texto da ata confirma os dois números. A própria ata diz que 'levaria cerca de 194 anos', o que não fecha com 4,62/ano (daria cerca de 1.700 anos). O número provavelmente está mal registrado na ata; citar com cautela."
+  },
+  {
+   "fact": "O WFS vgeo:oae_sgo tem 8.795 OAEs sem peso, classe ou nota; as 139 da RMSP não têm cod_sgo; os 6.428 cod_sgo casam 100% com o Power BI e com coordenadas idênticas.",
+   "verdict": "corrected",
+   "source_url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetCapabilities",
+   "note": "Confirmados os 8.795 (numberMatched), os 139 da RMSP com 0 cod_sgo e o casamento de 6.428/6.428. 'Coordenadas idênticas' vale para 6.325 de 6.417 pares com lat/lon (98,6%). Os demais diferem até 0,02° (cerca de 2 km)."
+  },
+  {
+   "fact": "A ANTT publica 'Pontes e similares' (CC-BY, 28/09/2026): 3.513 OAEs de 30 concessionárias, sem peso, classe ou condição; 130 na RMSP (Motiva Minas SP 48, RIOSP 47, Régis 35).",
+   "verdict": "confirmed",
+   "source_url": "https://dados.antt.gov.br/dataset/pontes-similares",
+   "note": "CKAN license_id=cc-by, modificado em 2026-09-28, e o recontagem bate exatamente. Ressalva de formato não documentada: o cabeçalho tem 26 colunas e as linhas 24 (faltam municipio_entrada e municipio_saida), então é preciso ler por posição."
+  },
+  {
+   "fact": "Res. CONTRAN 882/2021: o limite legal observa a sinalização da via; CVC acima de 57 t ou acima de 19,80 m só circula com AET, com PBTC até 74 t.",
+   "verdict": "corrected",
+   "source_url": "https://www.in.gov.br/en/web/dou/-/resolucao-contran-n-882-de-13-de-dezembro-de-2021-370017699",
+   "note": "O art. 2º VII está confirmado. Mas o art. 18 exige AET só para CVC 'com mais de duas unidades, incluída a unidade tratora' acima de 57 t ou de 19,80 m. O art. 6º I f permite 58,5 t para CVC de 2 unidades (semirreboque de 4 eixos, ≥17,5 m) sem AET. O art. 19 I a) confirma PBTC ≤ 74 t. A menção às Forças Armadas é do art. 18 §3º, não do art. 6º III."
+  },
+  {
+   "fact": "No OSM do Sudeste há 4.554 ways de ponte com ref BR-xxx e só 7 com maxweight; a BR-367/MG com 12 t bate com o SIAET.",
+   "verdict": "confirmed",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "note": "Recontagem a partir do extrato local: 4.566 com regex tolerante, 7 maxweight, sendo 2 pares duplicados por pista. O SIAET definitiva-MG tem 367BMG0183/0190/0220 com 12 t, e a temporária 367BMG0183 também 12 t. Não refiz a extração do PBF."
+  }
+ ],
+ "extra_findings": [
+  "URL de produção do SGE, que ficou de fora (a pesquisa testou /sge e /sgplan/sge): https://servicos.dnit.gov.br/sgplan/prd/sge. Está linkada em https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/dnit-geo. É uma SPA 'SGE Gerencial' com login OIDC (https://login-dpp.dnit.gov.br/realms/production), portanto NÃO é pública e não tentei acessar. O JS público mostra os módulos 'Carga Limite' (/api/v1/CargaLimite, ligado à AET), 'EstudoViabilidadeEstrutural' e os filtros 'Trem-Tipo' e 'Ano de Construção'. O pedido via LAI deve pedir explicitamente o cadastro 'Carga Limite' por OAE e os EVEs. É o dado de limite de peso por ponte que a pesquisa diz não existir publicamente.",
+  "O PLANILHÃO do Power BI tem 1.145 OAEs de 'Concessão Federal', 1.066 delas com nota (RJ 262, SC 186, MG 174, GO 146, RS 98...). A afirmação do NOTES §5 de que 'concessões ANTT não têm condição pública' é falsa fora de SP. Isso serve, por exemplo, para a Fernão Dias no trecho MG e para a Dutra no RJ.",
+  "Bug no parse_aet.py: o agrupamento de linhas por round(top) descarta 15 linhas definitivas e 9 temporárias, entre elas pesos de 497BMG0010 (45 t), 242BTO0530 (30 t) e 428BPE0070 (45 t) e a altura de 4,0 m do 495BRJ0020 na temporária. Correção: agrupar por tolerância de cerca de 4 px. Meu parser de verificação está em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/verify/pontes_federais/myparse.py e a saída em myparse.json.",
+  "A semântica do 'Peso' do SIAET não está documentada como limite para veículo legal. Os valores se concentram em números regulatórios: 74 t (87 segmentos), 23 t (113), 45 t (30), 57 t (24), 100 t (45), 150 t (40). Os manuais do SIAET (interno, 2005, 'versão preliminar') não explicam o valor 0. Bloquear Truck, Carreta ou Bitrem com base em ≤57 t precisa de validação caso a caso; o Piancó (12 t) é um caso real confirmado. A recomendação de usar exclude_polygons para presets legais deve ser tratada como hipótese.",
+  "Itens do NOTES citados de forma imprecisa: (a) Forças Armadas é o art. 18 §3º da Res. CONTRAN 882, não o art. 6º III; (b) a meta de eliminar notas 1 e 2 está no Anexo I da IN 2/2026, não no corpo; (c) o DOI do EnInfra (https://doi.org/10.70859/2764-9539.v4.n5.146) dá 404 e não existe na Crossref.",
+  "SIAET RMSP, sem impacto para veículo legal mas não citado: a temporária 381BSP0850 (Fernão Dias, Atibaia–Mairiporã, km 36,4–64,9) tem largura de 3,0 m na Pista 2.",
+  "Fonte não testada que vale avaliar no tema de sinalização: detecções de placas de peso máximo do Mapillary (API v4 'map_features', exige token; licença CC BY-SA para imagens e termos próprios para os dados), https://www.mapillary.com/developer/api-documentation. Pode localizar placas R-14 junto às pontes, que o OSM quase não tem."
+ ]
+}

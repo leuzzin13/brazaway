@@ -1,0 +1,243 @@
+{
+ "category": "seguranca_acidentes_roubo",
+ "sources": [
+  {
+   "name": "PRF – Dados abertos de acidentes (DATATRAN), por ocorrência e por pessoa com todas as causas e tipos",
+   "url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf",
+   "verdict": "confirmed",
+   "note": "Página respondeu HTTP 200 e mostra 'Modificado em 28/07/2026'. Os IDs do Drive batem com os do relatório: 2025 por ocorrência 1-G3Mdm..., 2025 todas as causas 1-PJGRb..., 2026 1A3Iir... e 1EsGox.... Baixei via drive.usercontent (&confirm=t), todos com HTTP 200: 3.727.148, 13.004.584, 2.501.149 e 8.900.179 bytes. datatran2025 tem 72.529 linhas e datatran2026 tem 48.712 (até 31/08/2026), nenhuma sem lat/lon. O arquivo de todas as causas de 2025 tem 584.010 linhas. Licença conferida: a página diz 'sem restrição de licenças' e o rodapé diz CC BY-ND 3.0. Atenção para quem for raspar: o HTML tem links duplicados com texto vazio (o ID de 2025 aparece também junto aos rótulos de 2026), então é preciso casar o link pelo rótulo e não pela posição."
+  },
+  {
+   "name": "Infosiga SP – sinistros, pessoas e veículos (Detran-SP)",
+   "url": "https://infosiga.detran.sp.gov.br/painel/download/file/dados_infosiga.zip",
+   "verdict": "corrected",
+   "corrected_license": "CC BY 4.0. Os mesmos dados estão no catálogo oficial do Estado, dadosabertos.sp.gov.br, nos datasets sinistros-infosiga, eventos-de-sinistro, pessoas-envolvidas-em-sinistros e veiculos-envolvidos-em-sinistros, todos com license_id CC-BY-4.0.",
+   "note": "Os dados batem. GET /painel/dadosAbertos devolve os 4 links. minMaxDates = 20150101 a 20260831. O zip respondeu HTTP 200 com 146.677.105 bytes em 1,93 s e tem 10 entradas (929.324.534 bytes descompactado, arquivos de 16/09/2026). sinistros_2025-2026 tem 303.196 linhas, 120.638 delas na RMSP (pelos 39 códigos IBGE). Coordenadas em 62,1% do total, 89,1% dos fatais, 91,1% dos não fatais e 24,9% das notificações. A ressalva '3% vazias ou fora' só vale para 2022-2026 (9.401 de 9.736 válidas). Em 2025-26, os casos com caminhão na RMSP têm 8,3% sem coordenada. O item de licença estava incompleto: o catálogo estadual declara CC BY 4.0, o que resolve a dúvida sobre share-alike. A definição do Guia de Referência e o formato de citação das Perguntas Frequentes foram conferidos. O dicionário v1.7 só traz a categoria agregada CAMINHAO, sem distinguir caminhão-trator."
+  },
+  {
+   "name": "SSP-SP – SPDadosCriminais_2026.xlsx (microdados de BO)",
+   "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2026.xlsx",
+   "verdict": "confirmed",
+   "note": "HEAD e GET com HTTP 200, 126.209.129 bytes, last-modified 08/10/2026. Os arquivos de 2022 a 2025 têm entre 195,9 e 218,4 MB. Com um parser próprio em streaming, cheguei a 732.808 linhas nas abas JAN-JUN_2026 e JUL-DEZ_2026: ROUBO DE CARGA 1.638 (BOs únicos), FURTO DE CARGA 289, coordenada válida em 1.622 (99,0%). RMSP: 1.380 (84,2%). Capital pelo COD IBGE: 832; os 831 do relatório são pela coluna NOME_MUNICIPIO 'S.PAULO'. A grade de 0,01° dá 668 células, 61 com 5 casos ou mais. O total mês a mês é igual ao da API. Ressalva: o integration_plan fala em 'pico das 6h às 13h', número que vem de um erro de arredondamento (ver o fato sobre horário). Nenhuma licença aparece no arquivo. O catálogo estadual (dataset numeros-sem-misterio, CC BY 4.0) só aponta para as páginas de estatística da SSP e não cita este arquivo explicitamente."
+  },
+  {
+   "name": "SSP-SP – API OcorrenciasMensais/RecuperaDadosMensaisAgrupados",
+   "url": "https://www.ssp.sp.gov.br/v1/OcorrenciasMensais/RecuperaDadosMensaisAgrupados?ano=2025&grupoDelito=6&tipoGrupo=ESTADO&idGrupo=0",
+   "verdict": "confirmed",
+   "note": "JSON com HTTP 200, sem autenticação. ROUBO DE CARGA no estado: 6.063 (2023), 4.711 (2024), 3.470 (2025) e 1.638 (2026, 8 meses publicados). Com tipoGrupo=REGI%C3%83O, idGrupo 1 (Capital) dá 2.819, 2.257, 1.720 e 832, e idGrupo 2 (Grande SP sem a Capital) dá 1.757, 1.395, 1.161 e 548. /v1/Regioes/RecuperaRegioes confirma os IDs."
+  },
+  {
+   "name": "SSP-SP – VeiculosSubtraidos_2026.xlsx",
+   "url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/baseDados/veiculosSub/VeiculosSubtraidos_2026.xlsx",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 39.620.989 bytes, last-modified 28/09/2026. O arquivo de 2025 tem 69,4 MB. Baixei e li por inteiro: 136.213 linhas e 55 colunas, entre elas DESCR_TIPO_VEICULO, DESCR_OCORRENCIA_VEICULO, LATITUDE, LONGITUDE, PLACA_VEICULO, VERSAO e COD IBGE. Marcadas 'Roubado' há 910 linhas de Caminhão, 775 de Caminhão trator, 479 de Semi-reboque e 58 de Reboque, 2.222 no total, mas só 854 combinações únicas de BO e placa. Por isso a deduplicação é obrigatória. A aba METODOLOGIA diz que a base 'não constitui estatística oficial' e que cerca de 60% dos BOs são registrados fora da área do fato."
+  },
+  {
+   "name": "ARTESP – Acidentes nas rodovias estaduais concedidas",
+   "url": "https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=acidentes",
+   "verdict": "corrected",
+   "note": "CKAN com HTTP 200 e licença cc-by. acidentes_2025.csv tem 10.012.987 bytes e 44.134 linhas, e o arquivo de 2026 foi atualizado em 18/09/2026, como dito. Há dois erros. (1) A contagem de 'caminhão' casou o texto 'CAMINH' e por isso incluiu CAMINHONETE (picape): são 1.689 acidentes só com caminhonete, sem veículo pesado. Considerando CAMINHÃO, CARRETA, BITREM/CVC e SEMI-REBOQUE, ficam 9.447 acidentes (21,4%) e 406 de 1.270 mortes (32,0%). Na RMSP são 2.138 com caminhão e 69 mortes, com SP021 875, SP280 272, SP070 202, SP150 139 e SP348 138. (2) LATITUDE e LONGITUDE não estão 100% preenchidas: 1 linha nula e 58 zeradas. CAUSA_PROVAVEL vem 'NÃO INFORMADO' em 22,5% no estado; os 29% citados valem só para o recorte de caminhões da RMSP."
+  },
+  {
+   "name": "ARTESP – Malha rodoviária (XLSX e KMZ) e Ocorrências (panes)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=malha-rodoviaria",
+   "verdict": "corrected",
+   "note": "package_show com HTTP 200 e licença CC Attribution. São 23 KMZ (L01 a L35, não 'L01 a L22'), de 0,13 MB (L26) a 23,5 MB (L23 Ecovias Leste Paulista). malha_rodoviaria_sp.xlsx tem 14.372 trechos com KM_INICIAL e KM_FINAL, mas a única lat/lon é a do centróide do município: não há geometria. Baixei o l24.kmz (Rodoanel): 459 Placemarks com LineStrings de faixa de domínio e ramos e segmentos nomeados 'km x - km y'. Dá para fazer referenciamento linear, mas com trabalho; não é uma tabela pronta de km para coordenada. O KMZ também tem placemarks 'Neblina SP_021 km 6/27'. Em 'ocorrencias', os CSVs de panes têm de 59 a 86 MB por ano, atualizados em 09/10/2026."
+  },
+  {
+   "name": "ANTT – Demonstrativos de acidentes por concessionária",
+   "url": "https://dados.antt.gov.br/api/3/action/package_search?q=acidente",
+   "verdict": "confirmed",
+   "note": "package_search com HTTP 200: 'acidentes-rodovias' (46 recursos) e 'acidentes-quilometro-rodovias' (41), ambos com licença 'Creative Commons Atribuição', recursos de 28/09/2026. riosp tem 37.396 linhas (03/2022 a 08/2026), arb 97.814 (2010 a 08/2026), afd 117.976 (só até 12/2023) e motiva_minassp 22.474 (01/2024 a 08/2026). Nenhum tem coluna de lat/lon. Em 2025: RIOSP 8.199 ocorrências, 1.539 com caminhão e 40 mortos com caminhão; ARB 5.757 e 1.028; MOTIVA MINAS SP 8.298 e 1.240. Ressalva: a RIOSP inclui BR-116/RJ e BR-101 RJ/SP, então não é só a Dutra paulista."
+  },
+  {
+   "name": "ANTT – Áreas de escape implantadas",
+   "url": "https://dados.antt.gov.br/dataset/d95eece3-0403-47f0-868c-574e83c13f9e/resource/7865b755-6e70-4f8a-8143-0e8e1a4b1caf/download/informacoes-sobre-as-areas-de-escape-implantadas.csv",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 412 bytes, 4 registros com lat/lon. Um deles é na BR-116/SP km 353, em Miracatu (-24,0708/-47,2447)."
+  },
+  {
+   "name": "GeoSampa WFS – geoportal:acidente_cet",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:acidente_cet&outputFormat=application/json&srsName=EPSG:4326",
+   "verdict": "confirmed",
+   "note": "numberMatched e totalFeatures = 5.716. A amostra tem dt_acidente 2021-07-19 e dt_carga 2026-01-15, com os campos qt_caminhao e qt_fatal. A conclusão de que a camada está desatualizada se mantém."
+  },
+  {
+   "name": "RENAEST – dados abertos mensais (SENATRAN)",
+   "url": "https://dados.transportes.gov.br/api/3/action/package_show?id=42e2320b-ea67-4fdc-896f-71363e043fc6",
+   "verdict": "confirmed",
+   "note": "package_show com HTTP 200 e licença other-pd. Hoje (09/10/2026) saiu um zip mais novo, '05-2026' (renaest_dabertos_20260912.zip, 529.020.946 bytes); o de 04-2026 (522 MB) continua lá. Pelo diretório do zip: Acidentes ocupa 2.729.283.757 bytes descompactado, mais Localidade, TipoVeiculo e Vitimas. Lacuna fechada: li o CSV de Acidentes inteiro em streaming (8.659.572 linhas, eof confirmado). Para SP, 2018-2021 não têm coordenada, 2022 tem 36,7%, e de 2023 a 05/2026 há 646.357 acidentes, 95,1% com coordenada válida dentro do estado (cerca de 31,8 mil vêm com o placeholder '-0000000000'). SC, PR, PE, CE, MT, MA, SE e AM não têm nenhuma coordenada, e PA tem só 1 registro. A cobertura nacional é bem desigual."
+  },
+  {
+   "name": "Sinesp VDE – bancovde-2025.xlsx",
+   "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 26.643.031 bytes, 832.293 linhas. 'Roubo de carga' vem com municipio 'NÃO INFORMADO'. Brasil 8.565: RJ 3.777, SP 3.470, PE 296, BA 209, PR 141. RJ e SP somam 84,6%. As linhas com abrangência 'Polícia Federal' somam 0. A página lista os arquivos de 2015 a 2026."
+  },
+  {
+   "name": "ISP-RJ – BaseDPEvolucaoMensalCisp.csv",
+   "url": "https://www.ispdados.rj.gov.br/Arquivos/BaseDPEvolucaoMensalCisp.csv",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 7.167.961 bytes, 38.273 linhas de 2003 a 2026. Soma de roubo_carga: 3.113 em 2025 e 2.035 em 2026 (meses 1 a 8). A licença não foi verificada."
+  },
+  {
+   "name": "DATASUS SIM – DOSP2024.dbc",
+   "url": "ftp://ftp.datasus.gov.br/dissemin/publicos/SIM/CID10/DORES/DOSP2024.dbc",
+   "verdict": "confirmed",
+   "note": "Listagem do FTP OK. DOSP2024.dbc tem 29.254.325 bytes, Last-Modified 23/12/2025. Não baixei."
+  },
+  {
+   "name": "SP CARGA – painel Power BI",
+   "url": "https://app.powerbi.com/view?r=eyJrIjoiZTg2YzY5YzktN2RiZC00OTY3LWE5OGMtNWZiY2Y3ZDEzNmE0IiwidCI6IjNhNzhiMGNkLTdjOGUtNDkyOS04M2Q1LTE5MGE2Y2MwMTM2NSJ9",
+   "verdict": "confirmed",
+   "note": "A URL é a mesma do campo 'enderecoCarga' em https://www.ssp.sp.gov.br/assets/config/enderecos.json. O Plano de Dados Abertos (PDF) descreve o SP CARGA (Resolução SSP nº 30, de 11/05/2023) como 'painel interativo'."
+  },
+  {
+   "name": "SUSEP AUTOSEG",
+   "url": "https://www2.susep.gov.br/menuestatistica/Autoseg/principal.aspx",
+   "verdict": "untestable",
+   "note": "A página respondeu HTTP 200, mas o HTML não lista os nomes dos zips. Não reproduzi os 404 de 2024B e 2025A nem o arquivo Autoseg2021A.zip."
+  },
+  {
+   "name": "OSM (Geofabrik sudeste) – tags de perigo e segurança",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "verdict": "confirmed",
+   "note": "Rodei osmium no docker (osmq-img) sobre o PBF local, bbox -47.25,-24.1,-45.65,-23.15. hazard: 47 nós e 85 vias. amenity=police: 365 nós, 422 vias e 27 relações. highway=speed_camera: 1.594. type=enforcement: 94 relações. amenity=parking com chaves hgv: 6 objetos (o relatório diz 7; a diferença é de filtro)."
+  },
+  {
+   "name": "Fogo Cruzado API",
+   "url": "https://api.fogocruzado.org.br/",
+   "verdict": "confirmed",
+   "note": "A documentação cita RJ, PE, BA e PA e exige 'autorização prévia para uso'. Não cobre SP."
+  },
+  {
+   "name": "Pesquisa CNT de Rodovias",
+   "url": "https://pesquisarodovias.cnt.org.br/",
+   "verdict": "untestable",
+   "note": "Não testei; o pesquisador também não confirmou."
+  },
+  {
+   "name": "NTC&Logística – estatísticas de roubo de carga",
+   "url": "https://www.portalntc.org.br/",
+   "verdict": "corrected",
+   "corrected_url": "https://www.cnnbrasil.com.br/infra/roubo-de-cargas-cai-quase-17-em-2025-mas-prejuizo-segue-bilionario/",
+   "note": "Há sim um levantamento anual. A CNN Brasil (26/03/2026) atribui à NTC 8.750 roubos de carga no Brasil em 2025 (queda de 16,7%), cerca de R$ 900 milhões de prejuízo e 86,8% no Sudeste. Não achei o relatório primário nem uma planilha, e o levantamento não tem geodado. Serve só para contexto e pitch."
+  },
+  {
+   "name": "Waze for Cities",
+   "url": "https://www.waze.com/wazeforcities",
+   "verdict": "untestable",
+   "note": "Não testei. A conclusão de que exige parceria é plausível, mas não foi verificada."
+  },
+  {
+   "name": "Portal de dados abertos da Prefeitura de SP (CKAN)",
+   "url": "https://dados.prefeitura.sp.gov.br/api/3/action/package_search?q=acidente",
+   "verdict": "confirmed",
+   "note": "q=acidente devolve 3 resultados (reunioes-cipa-2026, cadastro-de-lombadas, equipamentos-de-seguranca-urbana) e q=sinistro devolve 0. Ressalva: 'equipamentos-de-seguranca-urbana' (CC BY, GeoJSON e WFS das unidades da GCM) pode servir de POI de apoio, como delegacia e batalhão."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "PRF 2025: caminhão em 26,2% dos acidentes (19.026 de 72.529) e em 46,9% dos mortos (2.836 de 6.043). Na RMSP são 358 acidentes com caminhão, com 32 de 79 mortos.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf",
+   "note": "Recalculei com datatran2025.csv e acidentes2025_todas_causas_tipos.csv, que baixei de novo. Considerei caminhão os tipos Caminhão, Caminhão-trator, Semireboque e Reboque. Resultado: 19.026 (26,23%) e 2.836 de 6.043 (46,93%). RMSP pelos 39 municípios do IBGE: 1.792 ocorrências, 358 com caminhão, 32 de 79 mortos. Em 2026 (até agosto) o padrão se repete: 26,2% e 48,6%."
+  },
+  {
+   "fact": "Na RMSP a PRF só cobre a BR-116 (283 casos com caminhão em 2025) e a BR-381 (75). Rodoanel, Anhanguera, Bandeirantes, Castello, Imigrantes e Ayrton Senna são estaduais.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf",
+   "note": "Casos com caminhão na RMSP por BR: 116 = 283 e 381 = 75. Há ainda 5 ocorrências com br=0, nenhuma com caminhão. As rodovias citadas aparecem como SP021, SP330, SP348, SP280, SP160 e SP070 na base ARTESP."
+  },
+  {
+   "fact": "PRF 2025, acidentes com caminhão: 'Condutor Dormindo' em 829 e 'Demais falhas mecânicas ou elétricas' em 1.264.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf",
+   "note": "Os números valem para a causa principal (campo causa_acidente do arquivo por ocorrência, ou causa_principal='Sim'). Contando qualquer causa no arquivo de todas as causas, são 1.403 e 1.498. Em 2026 (jan-ago), pela causa principal, são 521 e 891. A ligação com a Lei 13.103 é uma interpretação do pesquisador."
+  },
+  {
+   "fact": "Infosiga, RMSP, 2025 a 08/2026: 411 dos 3.480 óbitos (11,8%) foram em sinistros com caminhão. 224 vítimas eram motociclistas, 65 pedestres e 47 ocupantes de caminhão. 45% dos sinistros com caminhão envolvem moto.",
+   "verdict": "confirmed",
+   "source_url": "https://infosiga.detran.sp.gov.br/painel/download/file/dados_infosiga.zip",
+   "note": "Na RMSP (cod_ibge), 3.248 sinistros têm qtd_caminhao>0. Destes, 384 são fatais e somam 411 em qtd_gravidade_fatal; o total de óbitos na RMSP é 3.480. Pelo arquivo de pessoas, as 411 vítimas fatais se dividem, por tipo_veiculo_vitima ou modo_transporte_vitima, em: moto 224, sem veículo/pedestre 65, automóvel 60, caminhão 47, bicicleta 10, ônibus 4. Os casos com moto são 1.461 (44,98%). Detalhe: o NOTES diz que contou por tipo_de_vitima, mas os modais vêm de tipo_veiculo_vitima."
+  },
+  {
+   "fact": "Infosiga, RMSP, 2022 a 08/2026: 9.401 sinistros com caminhão georreferenciados. Na grade de ~500 m, 460 células têm 5 casos ou mais e 124 têm 10 ou mais. O topo é no Rodoanel, com 55 casos.",
+   "verdict": "confirmed",
+   "source_url": "https://infosiga.detran.sp.gov.br/painel/download/file/dados_infosiga.zip",
+   "note": "São 9.736 casos com caminhão: 9.428 com coordenada e 9.401 dentro do bbox. Na grade de 0,005° com arredondamento, há 3.707 células: 460 com 5 ou mais e 124 com 10 ou mais. A célula do topo fica em -23,4392/-46,7694, via SP 021, com 55 casos e 2 óbitos. Em seguida vêm SP 150 (43), Marginal Pinheiros (37) e células da BR 116 em Guarulhos. O resultado depende do método: com floor em vez de round, são 441 e 125 células e o máximo é 54. A célula do topo fica no noroeste da capital, junto da Anhanguera."
+  },
+  {
+   "fact": "O Infosiga registra só sinistros com vítima, mais notificações. Coordenada aparece em 89-91% dos fatais e não fatais e em só 25% das notificações.",
+   "verdict": "confirmed",
+   "source_url": "https://infosiga.detran.sp.gov.br/painel/dadosAbertos",
+   "note": "Medi 89,1% nos fatais, 91,1% nos não fatais e 24,9% nas notificações. O dicionário v1.7 define NOTIFICAÇÃO como 'registro de ocorrência na central sem boletim de ocorrência formal'. A ARTESP 2025 tem 24.884 acidentes sem ferido nem morto, e a ANTT classifica 'Sem vítima' à parte, o que confirma o complemento."
+  },
+  {
+   "fact": "ARTESP 2025: 11.068 acidentes com caminhão ou carreta (25,1%) e 442 de 1.270 mortes (34,8%). Na RMSP são 2.446 com caminhão, 870 deles no Rodoanel. Todos os registros têm lat/lon.",
+   "verdict": "corrected",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/5e3af2a0-3b6a-4ee6-8556-b59b5d813ffc/resource/c9db7f71-2a17-4aac-a3d0-49883e61f776/download/acidentes_2025.csv",
+   "note": "O pesquisador casou o texto 'CAMINH' e por isso contou CAMINHONETE (picape) como caminhão. Só reproduzi os 11.068, 442 e 2.446 com esse erro. Com veículos pesados (CAMINHÃO, CARRETA, BITREM/CVC e SEMI-REBOQUE), ficam 9.447 acidentes (21,4%) e 406 de 1.270 mortes (32,0%). Na RMSP são 2.138 com caminhão e 69 mortes. Por rodovia: SP021 875, SP280 272, SP070 202, SP150 139. Lat/lon: 1 linha nula e 58 zeradas (99,87% válidas, não 100%)."
+  },
+  {
+   "fact": "Roubo de carga no estado de SP (SSP): 6.063 (2023), 4.711 (2024), 3.470 (2025) e 1.638 (jan-ago/2026), ainda cerca de 200 por mês.",
+   "verdict": "confirmed",
+   "source_url": "https://www.ssp.sp.gov.br/v1/OcorrenciasMensais/RecuperaDadosMensaisAgrupados?ano=2025&grupoDelito=6&tipoGrupo=ESTADO&idGrupo=0",
+   "note": "A API devolve exatamente esses totais. 2026 tem 8 meses publicados, com média de 205 por mês."
+  },
+  {
+   "fact": "Em 2025, 83% dos roubos de carga foram na RMSP (Capital 1.720 e Grande SP 1.161, de 3.470). Nos microdados de 2026, a RMSP tem 1.380 de 1.638 (84%), sendo 831 na Capital.",
+   "verdict": "confirmed",
+   "source_url": "https://www.ssp.sp.gov.br/v1/OcorrenciasMensais/RecuperaDadosMensaisAgrupados?ano=2025&grupoDelito=6&tipoGrupo=REGI%C3%83O&idGrupo=1",
+   "note": "1.720 + 1.161 = 2.881 (83,0%). Nos microdados a RMSP soma 1.380 (84,2%), igual à soma da API de 2026: Capital 832 + Grande SP 548. Detalhe: a Capital tem 832 pelo COD IBGE; os 831 vêm da coluna NOME_MUNICIPIO 'S.PAULO'."
+  },
+  {
+   "fact": "Roubo de carga 2026 (microdados SSP): 67% entre 6h e 13h, com pico às 9h. 89% em 'Via Pública' urbana e só 6% em 'Rodovia/Estrada'. 68 em acostamento e 28 em posto.",
+   "verdict": "corrected",
+   "source_url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2026.xlsx",
+   "note": "O histograma por hora tem um erro de ponto flutuante: (fração*24)//1 joga parte dos horários cheios para a hora anterior (por exemplo, 0,41666… vira 9). Arredondando para minutos, das 1.495 horas preenchidas: 59,4% caem entre 6h00 e 12h59, 65,3% entre 6h00 e 13h59, e o pico fica às 10h (148), quase empatado com 9h (144); os 171 casos às 9h são artefato. Local: 'Via Pública' 1.460 (89,1%) e 'Rodovia/Estrada' 101 (6,2%; os 68 de acostamento estão dentro deles). Mas 190 registros em 'Via Pública' têm logradouro Rodovia ou Rodoanel. Somando, cerca de 18% acontece em rodovia, então chamar tudo de 'urbano' é exagero. Os 28 em posto de gasolina estão em 'Comércio e Serviços'. A conclusão de concentração de manhã se mantém."
+  },
+  {
+   "fact": "SPDadosCriminais_2026.xlsx traz 1.638 roubos de carga, igual ao total oficial, e 99% têm lat/lon.",
+   "verdict": "confirmed",
+   "source_url": "https://www.ssp.sp.gov.br/assets/estatistica/transparencia/spDados/SPDadosCriminais_2026.xlsx",
+   "note": "Parseei as 732.808 linhas: há 1.638 BOs únicos de ROUBO DE CARGA, e os totais por MES_ESTATISTICA (251, 199, 206, 211, 193, 187, 207, 184) são idênticos aos da API. 1.622 têm coordenada válida (99,0%). Chamar a base de 'íntegra' é forte demais: a conferência prova a contagem por natureza, não a precisão das coordenadas (14 registros vêm com 'VEDAÇÃO DA DIVULGAÇÃO')."
+  },
+  {
+   "fact": "Brasil 2025 (Sinesp VDE): 8.565 roubos de carga, sendo RJ 3.777 e SP 3.470 (84,6%). Não há detalhe por município.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+   "note": "Recalculado: 8.565, RJ 3.777, SP 3.470, 84,6%. O município vem como 'NÃO INFORMADO'. Para comparar: a NTC divulga 8.750 para 2025, com outra metodologia."
+  },
+  {
+   "fact": "O painel SP CARGA (Resolução SSP nº 30, de 11/05/2023) existe só em Power BI. A fonte integrável é o SPDadosCriminais.",
+   "verdict": "confirmed",
+   "source_url": "https://www.ssp.sp.gov.br/assets/download/Dados_Abertos.pdf",
+   "note": "O PDF (31 páginas, HTTP 200) descreve o SP CARGA como 'painel interativo', com a Resolução SSP nº 30 de 11/05/2023. O enderecos.json aponta enderecoCarga para app.powerbi.com."
+  },
+  {
+   "fact": "Os acidentes da ANTT incluem casos sem vítima, mas sem lat/lon. A RIOSP teve 8.199 ocorrências em 2025, 1.539 com caminhão. A Fernão Dias de 2024 em diante está no arquivo 'MOTIVA MINAS SP'.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.antt.gov.br/api/3/action/package_search?q=acidente",
+   "note": "Conferido: RIOSP 2025 tem 8.199 ocorrências (4.143 sem vítima), 1.539 com caminhão e 40 mortos com caminhão. Nenhum arquivo tem colunas de lat/lon. A afd termina em 12/2023, e a motiva_minassp vai de 01/2024 a 08/2026 (BR-381/MG e SP). Ressalva: os 8.199 cobrem a concessão inteira, que inclui BR-116/RJ e BR-101, não só a Dutra em SP."
+  },
+  {
+   "fact": "No OSM local da RMSP há só 47 nós e 85 vias com hazard=* e 7 estacionamentos marcados para caminhão.",
+   "verdict": "confirmed",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste.html",
+   "note": "osmium no PBF local, no mesmo bbox: hazard dá 47 nós e 85 vias. Estacionamentos (amenity=parking) com chaves hgv, parking:hgv, capacity:hgv ou access:hgv são 6 (2 nós e 4 vias); a diferença para 7 vem do filtro. A ordem de grandeza confirma que o OSM é irrelevante como fonte de risco."
+  }
+ ],
+ "extra_findings": [
+  "O Infosiga também está no catálogo oficial do Estado com licença explícita CC BY 4.0: https://dadosabertos.sp.gov.br/dataset/sinistros-infosiga. O dataset https://dadosabertos.sp.gov.br/dataset/eventos-de-sinistro tem CSVs mensais (sinistros_MM-AAAA.csv, 140 recursos), o que permite ETL incremental em vez do zip de 147 MB. Isso resolve a dúvida de licença que estava nas lacunas.",
+  "DER-SP publica os acidentes nas rodovias estaduais NÃO concedidas, inclusive sem vítima, em CC BY 4.0: https://dadosabertos.sp.gov.br/dataset/acidentes (por exemplo https://dersp.der.sp.gov.br/WebSite/Arquivos/DadosAbertos/Acidentes/Acidentes/Sinistros_DER_2025.xlsx, com 13.599 linhas em 2025, e Sinistros_DER_2026.xlsx, de 25/09/2026). Traz rodovia, km, sentido, tipo e vítimas, mas não tem lat/lon nem tipo de veículo. Cobre a lacuna 'rodovias do DER não concedidas'. No mesmo catálogo: https://dadosabertos.sp.gov.br/dataset/gestaodeocorrenciasrodoviariasdersp (OCORRENCIAS.zip, com panes etc.).",
+  "RENAEST, taxa de lat/lon medida lendo o CSV inteiro em streaming (zip 05-2026, https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip): em SP, 95,1% dos 646.357 acidentes de 2023 a 05/2026 têm coordenada válida, contra 0% em 2018-2021 e 36,7% em 2022. SC, PR, PE, CE, MT, MA, SE e AM têm 0% de coordenada, e PA tem só 1 registro. Na expansão nacional, o RENAEST não substitui fontes estaduais em vários estados.",
+  "ARTESP, recursos não citados no mesmo pacote 'acidentes': 'Registro óbitos da ARTESP e INFOSIGA' (obitos-do-mits-e-infosiga.csv, com conciliação de óbitos MITS × Infosiga e o motivo da divergência), útil para validar a deduplicação entre fontes; 'Acidentes por Fumaça e Neblina' (data.csv); e 'Acidentes nas Praças de Pedágio'. Ver https://dadosabertos.artesp.sp.gov.br/dataset/acidentes. Os KMZ de malha também têm placemarks de zonas de neblina (por exemplo, 'Neblina SP_021 km 6').",
+  "Bug a evitar no ETL da SSP: HORA_OCORRENCIA_BO é fração de dia, e floor(fração*24) erra em horários cheios. Use round(fração*1440) para minutos antes de agrupar por hora. Isso mudou o pico de 9h (171) para 10h (148).",
+  "Bug a evitar no ETL da ARTESP: VEICULOS_ENVOLVIDOS tem CAMINHONETE (picape). Filtrar por substring 'CAMINH' infla os caminhões em cerca de 17%. Use os tokens exatos CAMINHÃO, CARRETA, BITREM/CVC e SEMI-REBOQUE.",
+  "Contexto de mercado: a NTC&Logística divulgou 8.750 roubos de carga no Brasil em 2025, cerca de R$ 900 milhões de prejuízo e 86,8% no Sudeste (CNN Brasil, 26/03/2026): https://www.cnnbrasil.com.br/infra/roubo-de-cargas-cai-quase-17-em-2025-mas-prejuizo-segue-bilionario/. Não há geodado. O infográfico do Anuário FBSP 2026 está em https://forumseguranca.org.br/wp-content/uploads/2026/07/anuario-2026-infografico.pdf, mas não verifiquei o conteúdo.",
+  "Fora deste tema, mas relevante para o roteador: DER-SP 'Restrições ao Trânsito de Veículos de Carga' (CC BY 4.0), em https://dadosabertos.sp.gov.br/dataset/restricoes-ao-transito-de-veiculos-de-carga. O recurso é uma página, https://dersp.der.sp.gov.br/WebSite/Documentos/RestricaoCarga.aspx, não um arquivo estruturado.",
+  "Prefeitura de SP, 'equipamentos-de-seguranca-urbana' (CC BY, GeoJSON e WFS das unidades da GCM): https://dados.prefeitura.sp.gov.br/dataset/equipamentos-de-seguranca-urbana. Pode servir de POI de apoio nos alertas de roubo, junto com as delegacias e batalhões do GeoSampa.",
+  "Arquivos da verificação (scripts e saídas): /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/verify/seguranca_acidentes_roubo/ (prf/prf_v.py, infosiga/inf_v.py, infosiga/inf_hot_v.py, ssp/ssp_v.py, ssp/ssp_an_v2.py, ssp/veic_v.py, artesp/artesp_v.py, renaest/zstream4.py)."
+ ]
+}

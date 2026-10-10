@@ -1,0 +1,282 @@
+{
+ "category": "Balsas e travessias",
+ "summary": "A regra que a operadora aplica a caminhões no litoral de SP existe e é pública, mas não é estruturada. Ela está no HTML de cada travessia no site da Coordenadoria de Travessias da Semil, que sucedeu a DERSA (2020) e o DH. Cada página traz eixos permitidos, janelas por dia, feriado e lado de embarque, PBT, maré, regra de perigosos e tarifa por eixo (dia útil e fim de semana). Na página de Ilhabela vale também a Res. SEMIL 79/2023, com PBT máximo de 40 t, 3 ou mais eixos proibidos com maré abaixo de 0,5 m e janelas para 3 eixos e para 4 ou mais. Em Santos–Guarujá, caminhão de 2 ou 3 eixos de rodagem alta só embarca seg–sex das 00h às 08h, e acima de 3 eixos ou com inflamável nunca. Em Bertioga, só passa caminhão de 2 eixos que não seja de rodagem alta. Em Cananéia–Continente, nenhum caminhão.\n\nO site usa um JSON ao vivo aberto e não documentado (TravessiaService). Ele dá a espera em minutos em cada margem, a capacidade por hora, as embarcações e avisos como \"maré baixa impossibilitando veículos pesados\". Às 22:27 de 09/10 a espera em São Sebastião era de 240 min.\n\nA operação passa à AcquaVias SP (PPP de 20 anos, regulada pela ARTESP) em 09/11/2026. Tudo precisa ser revalidado depois disso.\n\nNo Valhalla local, as pistas do enunciado se confirmam, com correções:\n- Santos–Guarujá: o bloqueio vem de hgv=discouraged no berço e também nas vias de desembarque do Guarujá, mais hgv=no em outro berço. VUC e toco desviam 55 km mesmo na janela permitida.\n- Ilhabela: o \"No path\" da carreta vem do maxweight=40t nas avenidas de acesso aos terminais, não da balsa. Um truck de 3 eixos ou uma carreta de 40 t passam a qualquer hora, sem olhar janela nem maré.\n- O Valhalla já devolve has_ferry e as manobras 28/29, mas a API ignora.\n\nPela tábua do CHM de 2026, que parseei em 365 dias e 1.537 extremos, a maré em São Sebastião fica abaixo de 0,5 m em 32% do tempo, cerca de 7,7 h por dia. O modelo bateu com o aviso ao vivo.\n\nNo nível nacional:\n- SNV 202607A TRV: 27 segmentos e 153,9 km (25 travessias físicas). O SNV está defasado: Xambioá virou ponte em 18/11/2025. 21 dos 27 têm ferry no OSM.\n- ANTAQ: 93 linhas outorgadas (só localização).\n- O estudo da Chamada Pública ANTAQ 01/2026 (Manaus–Careiro) traz o fator de equivalência por tipo de veículo, o preço de carro em 58 linhas e a grade com saídas exclusivas para inflamáveis.\n- NORMAM-202 item 10.9 exige viagem exclusiva para inflamáveis e explosivos.\n- A Bahia (AGERBA Res. 16/2026) suspende caminhões no ferry de Salvador nos feriados, inclusive 09–14/10/2026.\n- O Maranhão (Cujupe) tem tarifa de carreta e bitrem e 5 saídas por dia.\n\nO túnel Santos–Guarujá só deve operar em 2031.\n\nPasta: /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/research2/balsas_travessias/. Lá estão NOTES.md, a amostra curada regras_travessias_sp.sample.json, mare_sao_sebastiao_2026.csv, snv_trv_202607A.geojson, os dados da ANTAQ, a extração OSM, os scripts e raw/. O repositório não foi alterado (git status limpo).",
+ "key_facts": [
+  {
+   "fact": "Santos–Guarujá (regra da operadora). Veículos de 2 ou 3 eixos de rodagem alta só embarcam seg–sex das 00h00 às 08h00 e ficam vedados em fim de semana e feriado. Acima de 3 eixos, carro-forte e carga inflamável ou explosiva ficam impedidos em qualquer dia e horário. Tarifa: caminhão 2 eixos R$ 43,30 e 3 eixos R$ 98,60, cobrada só no embarque no Guarujá e válida para os dois sentidos (Res. SLT-STM 001/2018).",
+   "source_url": "https://semil.sp.gov.br/travessias/travessias-automoveis/santos-guaruja/"
+  },
+  {
+   "fact": "São Sebastião–Ilhabela (Res. SEMIL 79/2023, vigente desde 16/10/2023):\n- PBT acima de 40 t é proibido.\n- Caminhões de 3 ou mais eixos não embarcam com maré abaixo de 0,5 m.\n- Há janelas restritas para 3 eixos (ex.: embarque em São Sebastião sex 10–24h, sáb 8–16h, dom 8–14h) e para 4 ou mais eixos (seg–qui 6–20h, sex 6–24h). VUC e toco de 2 eixos estão isentos das janelas.\n- Perigosos e resíduos exigem agendamento e viagem exclusiva.\n- Desconto de 20% entre 0h e 6h.\n- Tarifa de 3 eixos: R$ 151,50 em dia útil e R$ 227,30 em fim de semana.",
+   "source_url": "https://semil.sp.gov.br/travessias/travessias-automoveis/sao-sebastiao-ilhabela/"
+  },
+  {
+   "fact": "Bertioga–Guarujá impede sempre veículos de 2 eixos de rodagem alta, os de 3 ou mais eixos, caminhões de lixo, carros-fortes e inflamáveis. Cananéia–Continente impede caminhões e ônibus sempre. Iguape–Juréia e Cananéia–Ilha Comprida aceitam caminhões, mas vedam 3 eixos e reboque em sábado, domingo e feriado.",
+   "source_url": "https://semil.sp.gov.br/travessias/travessias-automoveis/bertioga-guaruja/"
+  },
+  {
+   "fact": "O JSON ao vivo aberto TravessiaService (GET, sem autenticação) traz, para 8 travessias, a espera em minutos em cada margem, a capacidade em veículos por hora, o número de embarcações e avisos. Às 22:27 de 09/10/2026 o aviso de Ilhabela era 'Travessia com maré baixa, impossibilitando o transporte de veículos pesados', com espera de 240 min em São Sebastião. Às 23:17 a espera era de 180 min.",
+   "source_url": "https://drivetis-travessias.brazilsouth.cloudapp.azure.com:1444/TravessiaService/PT"
+  },
+  {
+   "fact": "A AcquaVias SP Travessias SPE (grupo Internacional Marítima) assume as 14 linhas, entre elas Santos–Guarujá, Ilhabela e Bororé, na fase de operação a partir de 09/11/2026, conforme deliberação da ARTESP. Até 08/11 a operação é da Semil. O contrato foi assinado em 15/05/2026 e mantém a tarifa-base.",
+   "source_url": "https://www.metrocptm.com.br/acquavias-sp-assume-as-travessias-hidricas-em-novembro/"
+  },
+  {
+   "fact": "Pela tábua do CHM do Porto de São Sebastião 2026, parseada em 365 dias e 1.537 extremos com interpolação cossenoidal, a maré fica abaixo de 0,5 m em 32,3% do tempo, cerca de 7,7 h por dia (entre 3,3 h e 11 h). Nesses períodos caminhões de 3 ou mais eixos não embarcam para Ilhabela.",
+   "source_url": "https://www.marinha.mil.br/chm/sites/www.marinha.mil.br.chm/files/dados_de_mare/45%20-%20PORTO%20DE%20S%C3%83O%20SEBASTI%C3%83O%20-%20145%20-%20147.pdf"
+  },
+  {
+   "fact": "O Valhalla local confirma os sintomas.\n- Santos→Guarujá: 6,7 km de carro contra 55,2 km para VUC, truck e carreta; use_ferry não muda o resultado.\n- O bloqueio vem de hgv=discouraged no berço 199126828 e nas vias de desembarque do Guarujá (48452342 e 48452408), além de hgv=no no berço 199126708.\n- Carreta de 41,5 t para Ilhabela recebe 'No path' por causa do maxweight=40t nas avenidas de acesso aos terminais. Com 40 t ela passa a qualquer hora.",
+   "source_url": "http://localhost:8002/route"
+  },
+  {
+   "fact": "No SNV 202607A há 27 segmentos com Superficie_Federal='TRV', somando 153,9 km: AM 9, PA 6, BA 3, RS 3, TO 2, MG 2, SC 1 e AC 1. Dois pares no AM são coincidentes (BR-174/BR-319), o que dá 25 travessias físicas. O trecho da BR-153 em Xambioá ainda aparece como travessia, mas a ponte foi inaugurada em 18/11/2025.",
+   "source_url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=vgeo:vw_snv_rod&outputFormat=application/json&CQL_FILTER=Superficie_Federal='TRV'"
+  },
+  {
+   "fact": "A ANTAQ publica 93 linhas de travessia outorgadas (shape, KML e XLSX de mai/2025) com município, rio e coordenadas. Não há tarifa, horário nem restrição de veículo.",
+   "source_url": "https://www.gov.br/antaq/pt-br/central-de-conteudos/Linhasdetravessias06052025.zip"
+  },
+  {
+   "fact": "O estudo ANTAQ da Chamada Pública 01/2026 traz três coisas úteis:\n- Fator de equivalência por veículo, com automóvel = 1: carreta carregada 5,55, bitrem 9,85, rodotrem 12,30.\n- Preço de carro em 58 linhas (Manaus–Careiro R$ 47,25 em 12 km).\n- Grade da Res. 5.573-ANTAQ/2017, com 3 saídas por sentido exclusivas para inflamáveis.\nNa travessia autorizada o preço é livre (Lei 10.233/2001, art. 43).",
+   "source_url": "https://www.gov.br/antaq/pt-br/assuntos/chamamentos/chamada-publica-ndeg-01-2026/anexo-1-estudo-referencial-para-selecao-de-empresas-travessia-manaus-careiro-da-varzea.pdf/@@download/file"
+  },
+  {
+   "fact": "NORMAM-202/DPC item 10.9: o transporte de veículos com cargas inflamáveis ou explosivas deve ser feito em viagem exclusiva, sem passageiros nem outros veículos. A regra vale para toda navegação de travessia em águas interiores.",
+   "source_url": "https://assets.marinha.mil.br/sites/default/files/atos-normativos/dpc/normam/normam-202.pdf"
+  },
+  {
+   "fact": "A Res. AGERBA 16/2026 suspende ônibus, jamantas e caminhões simples e trucados no ferry Salvador–Itaparica nos feriados de 2026. Para N. Sra. Aparecida: ida de 09/10 05h até 10/10 15h e volta de 12/10 05h até 14/10 05h. Ficam de fora alimentos e perecíveis.",
+   "source_url": "https://www.ba.gov.br/agerba/sites/site-agerba/files/2026-04/Res162026.pdf"
+  },
+  {
+   "fact": "No ferry São Luís–Cujupe (cerca de 20 km, cerca de 1 h) a carreta paga R$ 660 vazia e R$ 820 carregada, e o bitrem R$ 865 e R$ 1.100. A Internacional Marítima tem 5 saídas por dia em cada sentido; a última sai de São Luís às 20h.",
+   "source_url": "https://internacionalmaritima.com.br/ferryboat/"
+  },
+  {
+   "fact": "O túnel Santos–Guarujá é uma PPP de 30 anos com Mota-Engil e CCCC, contrato assinado em 28/01/2026. 2026 é dedicado a projetos, a obra começa em 2027 e a operação está prevista para 2031. O túnel admite caminhões.",
+   "source_url": "https://www.parceriaseminvestimentos.sp.gov.br/sec-parcerias-investimentos/projetos/projetos-contratados/tunel-imerso-santos-guaruja"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Páginas das travessias de veículos (Coordenadoria de Travessias)",
+   "publisher": "Semil-SP (Coordenadoria de Travessias, ex-DH/DERSA)",
+   "url": "https://semil.sp.gov.br/travessias/travessias-automoveis/sao-sebastiao-ilhabela/",
+   "access": "HTTP GET aberto (WordPress); 6 páginas: santos-guaruja, sao-sebastiao-ilhabela, bertioga-guaruja, iguape-jureia, cananeia-continente, cananeia-ilha-comprida",
+   "format": "HTML (tabelas) + imagem GIF de pesos",
+   "license": "Sem licença declarada. Atos normativos e tarifas são fato público (Lei 9.610/98, art. 8º, IV). Uso comercial do conteúdo factual com atribuição: sim. Não reproduzir layout nem imagens.",
+   "tested": true,
+   "test_result": "200 em todas (71–103 KB). Tarifas, proibições por eixo e carga, janelas da Res. SEMIL 79/2023, PBT de 40 t e maré de 0,5 m extraídos para regras_travessias_sp.sample.json.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador travessias_sp.py: baixa as páginas, extrai as tabelas de tarifa e o hash do bloco de regras, e junta com a tabela curada versionada. Se o hash mudar, alerta para revisão humana. Alimenta travessias.layer.ts: exclusions para proibição absoluta, costLines com fator 1000 para janela e maré, annotate para tarifa e avisos. Revalidar após 09/11/2026 (AcquaVias)."
+  },
+  {
+   "name": "TravessiaService (status ao vivo das travessias)",
+   "publisher": "Semil-SP / contratada DriveTIS (Azure)",
+   "url": "https://drivetis-travessias.brazilsouth.cloudapp.azure.com:1444/TravessiaService/PT",
+   "access": "GET JSON sem autenticação, não documentado; descoberto no JS travessia-service-prd.js do site",
+   "format": "JSON",
+   "license": "Sem licença e sem termos. Uso comercial ambíguo: pedir acesso formal à Semil, ARTESP ou AcquaVias. Usar com cache e atribuição.",
+   "tested": true,
+   "test_result": "200, 8,9 KB, 8 travessias (Id 1950–1957), com EsperaPontoA/B, CapVeiculo, NumEmbarca e AvisoUsuario. Atualizou entre 22:27 e 23:17 (espera em São Sebastião foi de 240 para 180). /EN dá 404.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Serviço api/src/services/travessiasLive.ts com cache de 2–5 min e fallback silencioso. A espera entra no ETA e o aviso vira warning. Um poller opcional grava histórico para estimar a espera típica por hora e dia da semana. Deve quebrar ou mudar em 09/11/2026."
+  },
+  {
+   "name": "Tábua de marés – Porto de São Sebastião 2026",
+   "publisher": "Marinha do Brasil – Centro de Hidrografia da Marinha (CHM)",
+   "url": "https://www.marinha.mil.br/chm/sites/www.marinha.mil.br.chm/files/dados_de_mare/45%20-%20PORTO%20DE%20S%C3%83O%20SEBASTI%C3%83O%20-%20145%20-%20147.pdf",
+   "access": "PDF anual por porto, download aberto (link da própria Semil)",
+   "format": "PDF (3 páginas)",
+   "license": "Sem licença explícita. A edição impressa é vendida pela EMGEPRON. Uso comercial incerto; confirmar com o CHM.",
+   "tested": true,
+   "test_result": "200, 58 KB. Parser parse_mare_chm.py (pdftotext -bbox) gerou 365 dias e 1.537 extremos, conferidos com o texto. A maré fica abaixo de 0,5 m em 32% do tempo. O modelo bateu com o aviso ao vivo de maré baixa.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador mare_chm.py anual grava os extremos (kind=mare_extremo). A camada interpola a maré no instante de chegada à balsa. Para 3 ou mais eixos com maré abaixo de 0,5 m, avisa e soma a espera até a próxima maré acima de 0,5 m."
+  },
+  {
+   "name": "Agendamento de veículos com cargas perigosas e resíduos (Ilhabela)",
+   "publisher": "Semil-SP",
+   "url": "https://semil.sp.gov.br/consema/agendamento-veiculos-cargas-perigosas-e-residuos/",
+   "access": "Formulário web com Cloudflare Turnstile (não submetido)",
+   "format": "HTML",
+   "license": "Sem licença; informação pública",
+   "tested": true,
+   "test_result": "200. Confirma a regra da maré e o agendamento gratuito. Diz antecedência mínima de 2 h, contra 48 h na página da travessia.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Link e aviso 'agendamento_obrigatorio' no annotate quando o veículo for perigoso ou de resíduos e a rota cruzar Ilhabela."
+  },
+  {
+   "name": "SNV 202607A – travessias (Superficie_Federal=TRV)",
+   "publisher": "DNIT (DNITGeo GeoServer)",
+   "url": "https://servicos.dnit.gov.br/dnitgeo/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=vgeo:vw_snv_rod&outputFormat=application/json&CQL_FILTER=Superficie_Federal='TRV'",
+   "access": "WFS aberto (usar --data-urlencode no CQL)",
+   "format": "GeoJSON",
+   "license": "Sem licença explícita no WFS (Fees e AccessConstraints NONE; o portal gov.br do DNIT usa CC BY-ND 3.0). Mesma postura do snv_dnit.py: uso interno como referência.",
+   "tested": true,
+   "test_result": "200, 1,38 MB, 1.360 feições de todas as versões. Em 202607A: 27 segmentos e 153,9 km (AM 9, PA 6, BA 3, RS 3, TO 2, MG 2, SC 1, AC 1). 21 dos 27 têm ferry no OSM a até 2 km. Defasado em Xambioá (ponte desde 11/2025).",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Reaproveitar snv_dnit.py com SNV_UFS=ALL, mantendo TRV em vez de descartar, num importador travessias_brasil.py. Cada travessia leva regra_curada=false, gera aviso 'travessia sem regra verificada' e é cruzada com o OSM para achar balsas ausentes do grafo."
+  },
+  {
+   "name": "Linhas de travessia outorgadas (mai/2025)",
+   "publisher": "ANTAQ",
+   "url": "https://www.gov.br/antaq/pt-br/central-de-conteudos/Linhasdetravessias06052025.zip",
+   "access": "Download aberto (página Informações Geográficas)",
+   "format": "ZIP com SHP, KML, XLSX e DBF (SIRGAS 2000)",
+   "license": "Sem licença no arquivo; publicação gov.br. Uso factual com atribuição.",
+   "tested": true,
+   "test_result": "200, 47 KB. 93 linhas (79 nacionais e 14 internacionais); 31 sem coordenada; 9 citam diretriz de BR. Só localização e rio.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Importar no travessias_brasil.py como pontos de travessia conhecida, com vínculo ao SNV pelo nome da BR. Serve de base para a curadoria da expansão Norte e Nordeste."
+  },
+  {
+   "name": "Chamada Pública ANTAQ 01/2026 – estudo referencial Manaus–Careiro da Várzea",
+   "publisher": "ANTAQ",
+   "url": "https://www.gov.br/antaq/pt-br/assuntos/chamamentos/chamada-publica-ndeg-01-2026/anexo-1-estudo-referencial-para-selecao-de-empresas-travessia-manaus-careiro-da-varzea.pdf/@@download/file",
+   "access": "PDF aberto",
+   "format": "PDF (73 p.)",
+   "license": "Documento público de licitação; uso factual com atribuição",
+   "tested": true,
+   "test_result": "200, 4,3 MB. Extraídos: fator de equivalência por veículo (fee_antaq.csv), preço de carro em 58 linhas (antaq_preco_auto_58_linhas_2024.csv) e grade da Res. 5.573/2017 com saídas exclusivas para inflamáveis.",
+   "value": "high",
+   "effort": "low",
+   "integration_plan": "Tarifa estimada de caminhão nas travessias sem tabela = preço do carro × fator, marcada como 'estimada'. A grade de Manaus–Careiro vira janelas de partida, com espera até a próxima saída e slots separados para perigosos."
+  },
+  {
+   "name": "NORMAM-202/DPC (navegação interior) – Cap. 10, travessia",
+   "publisher": "Marinha do Brasil – DPC",
+   "url": "https://assets.marinha.mil.br/sites/default/files/atos-normativos/dpc/normam/normam-202.pdf",
+   "access": "PDF aberto",
+   "format": "PDF (662 p.)",
+   "license": "Ato normativo; sem proteção autoral (Lei 9.610/98, art. 8º, IV)",
+   "tested": true,
+   "test_result": "200, 9 MB. O item 10.9 exige viagem exclusiva para veículo com carga inflamável ou explosiva.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Regra nacional default da camada: para veículo perigoso em qualquer balsa, aviso de viagem exclusiva e espera maior, ou exclusão onde a operadora proíbe."
+  },
+  {
+   "name": "Resoluções AGERBA (ferry Salvador–Itaparica) e tarifas ITS",
+   "publisher": "AGERBA-BA / Internacional Travessias Salvador",
+   "url": "https://www.ba.gov.br/agerba/sites/site-agerba/files/2026-04/Res162026.pdf",
+   "access": "PDF e HTML abertos",
+   "format": "PDF e HTML",
+   "license": "Ato normativo; tarifas são fato público",
+   "tested": true,
+   "test_result": "200. A Res. 16/2026 suspende caminhões nos feriados de 2026 por sentido e janela. Tarifas pela Res. 11/2026 (caminhão simples R$ 196,00 em dia útil; jamanta R$ 383,10).",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Importador opcional travessias_feriados_ba.py transcreve as janelas. Na expansão Nordeste, a camada exclui ou penaliza o ferry nesses períodos e mostra a tarifa."
+  },
+  {
+   "name": "Ferry São Luís–Cujupe (horários e tarifas)",
+   "publisher": "Internacional Marítima (regulação MOB-MA)",
+   "url": "https://internacionalmaritima.com.br/ferryboat/",
+   "access": "HTML aberto",
+   "format": "HTML",
+   "license": "Site comercial; fato público, usar com atribuição",
+   "tested": true,
+   "test_result": "200. 5 saídas por dia em cada sentido e tarifas por tipo e por carregado ou vazio. Os PDFs da Portaria MOB 510 e do horário estão em 404.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Na expansão Nordeste: horários viram janelas de partida (espera até a próxima saída) e a tarifa entra no custo. Falta a grade da outra operadora (Servi-Porto)."
+  },
+  {
+   "name": "Notícias oficiais da PPP de travessias (ARTESP)",
+   "publisher": "ARTESP / Governo de SP",
+   "url": "https://www.artesp.sp.gov.br/artesp/noticias/governo+de+sp+assina+contrato+da+ppp+de+travessias+hidricas",
+   "access": "HTML aberto",
+   "format": "HTML",
+   "license": "n/a (notícia)",
+   "tested": true,
+   "test_result": "200. Contrato de 15/05/2026, 14 linhas, tarifa-base mantida. Início da operação em 09/11/2026 (via metrocptm, 07/10/2026).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Gatilho de revalidação: em 09/11/2026 rechecar páginas, endpoint ao vivo e regulamento, e procurar contrato e anexos na ARTESP ou SPI."
+  },
+  {
+   "name": "OSM route=ferry (extrato Sudeste local e Overpass)",
+   "publisher": "OpenStreetMap (Geofabrik / Overpass kumi)",
+   "url": "https://overpass.kumi.systems/api/interpreter",
+   "access": "PBF local data/valhalla/sudeste-latest.osm.pbf (pyosmium via imagem do importer); Overpass para o Norte",
+   "format": "PBF / JSON",
+   "license": "ODbL 1.0 (uso comercial permitido; share-alike em bases derivadas)",
+   "tested": true,
+   "test_result": "228 ways no Sudeste. hgv em 7, maxweight em 1, maxlength em 1 (Bororé, 10 m), hgv:conditional em 0. Nenhuma balsa do litoral com peso ou horário. overpass-api.de deu 504, mail.ru 504, private.coffee 500; o kumi funcionou depois de várias tentativas.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Overlay no PBF antes do build dos tiles: normalizar hgv em berços e acessos das balsas com regra curada (discouraged/no → yes) e copiar o maxweight=40 para a balsa de Ilhabela. A regra fica na camada. Base geométrica das linhas de balsa."
+  },
+  {
+   "name": "EMAE – balsas da Billings (Bororé, Taquacetuba, João Basso)",
+   "publisher": "EMAE",
+   "url": "https://emae.com.br/balsas/",
+   "access": "HTML aberto",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "200, mas sem nenhuma regra de veículo ou caminhão. Só informa 24 h e 3 embarcações. O OSM tem maxlength=10 no Bororé.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Pedir a regra à EMAE ou à AcquaVias (as linhas entram na PPP). Até lá, aviso 'regra não verificada' na Grande SP."
+  },
+  {
+   "name": "DNIT condições das rodovias (BR-319)",
+   "publisher": "DNIT",
+   "url": "http://servicos.dnit.gov.br/condicoes/condicoesdrf.asp?BR=319&Estado=Amazonas&drf=1",
+   "access": "Falhou",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "404: serviço descontinuado.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Nenhum."
+  },
+  {
+   "name": "Notícia ANTAQ 2021 sobre arquivos de linhas de travessia",
+   "publisher": "ANTAQ",
+   "url": "https://www.gov.br/antaq/pt-br/noticias/2021/disponibilizada-a-atualizacao-dos-arquivos-das-linhas-de-travessia-outorgadas-pela-antaq",
+   "access": "Falhou (exige login)",
+   "format": "HTML",
+   "license": "n/a",
+   "tested": true,
+   "test_result": "Redireciona para require_login. O arquivo atualizado está na página Informações Geográficas.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Usar o zip de mai/2025."
+  }
+ ],
+ "gaps": [
+  "Não há definição operacional de 'rodagem alta (veículos pesados, de suspensão alta)'. Não está claro se VUC e toco entram. A página de Bertioga tem tarifa para caminhão de 2 eixos e ao mesmo tempo veta o de rodagem alta.",
+  "O agendamento de perigosos em Ilhabela tem antecedência divergente: 48 h na página da travessia e 2 h na página do agendamento.",
+  "Regras, tarifas e endpoint ao vivo podem mudar com a AcquaVias a partir de 09/11/2026. Contrato e anexos operacionais da PPP não foram obtidos.",
+  "As balsas da Billings (Grande SP) e do Paraibuna não têm nenhuma regra de caminhão publicada. Há só o maxlength=10 do Bororé no OSM.",
+  "Nenhuma fonte publica dimensão ou peso máximos por embarcação. A NORMAM remete à capacidade autorizada da embarcação.",
+  "Não há série histórica de fila nem de caminhões transportados (Semil sem dados abertos). Só existe o dado ao vivo do litoral de SP.",
+  "No Norte não há regra centralizada. ANTAQ (preço livre), ARTRAN-PA, ARSEPAM-AM (não testada), MOB-MA e AGERBA publicam em PDF, site de operadora ou notícia.",
+  "Licença formal para uso comercial do TravessiaService e da tábua do CHM não foi confirmada.",
+  "O cruzamento SNV × OSM usou caixa de 2 km e pode ter casado ferries vizinhos (ex.: BR-163/PA). As linhas estaduais e as da ANTAQ fora de BR ficaram fora do cruzamento.",
+  "Os PDFs da Portaria MOB 510 e do horário da Internacional Marítima estão em 404. Falta a grade da Servi-Porto.",
+  "Não li o texto integral da ANTT Res. 5.998/2022 para confirmar que ela não trata de balsa."
+ ],
+ "recommendations": [
+  "Prioridade 1: fazer um overlay no PBF que normalize hgv nos berços e nos acessos das balsas com regra curada (Santos–Guarujá: ways 199126828, 48452342, 48452408 e 199126708) e copie o maxweight=40 para a balsa de Ilhabela. Sem isso, nenhuma camada consegue liberar o VUC na janela de 00–08h em dia útil. Testar após recompilar os tiles.",
+  "Prioridade 1: expor as balsas na API. Ler summary.has_ferry e as manobras 28/29 do Valhalla, estender RouteGeom com ferries[] (nome e instante de entrada e saída) e devolver 409 com motivo (ex.: 'Ilhabela: PBT acima de 40 t não embarca, Res. SEMIL 79/2023').",
+  "Criar travessias.layer.ts.\n- exclusions: polígono fino na água para proibições absolutas por veículo.\n- costLines com fator 1000 para janelas e maré, avaliados no instante de chegada à balsa (fazer 2 passadas de rota).\n- annotate: espera ao vivo, próxima janela e próxima maré acima de 0,5 m, viagem exclusiva para perigosos, agendamento e tarifa por eixo com o lado onde se paga.\n- O ETA soma espera, janela e maré.",
+  "Importadores: travessias_sp.py (páginas da Semil mais tabela curada versionada, com alerta por hash), mare_chm.py (parse_mare_chm.py; começar por São Sebastião) e travessias_brasil.py (SNV TRV de todas as UFs mais 93 linhas ANTAQ mais preço de carro × fator de equivalência para estimar tarifa).",
+  "Serviço travessiasLive.ts com cache de 2–5 min sobre o TravessiaService, com fallback silencioso. Pedir formalmente acesso ou licença à Semil e à ARTESP e, depois de 09/11/2026, à AcquaVias. Opcionalmente gravar histórico para aprender a espera típica.",
+  "Agendar a revalidação completa (regras, tarifas, endpoint, Billings) para a semana de 09/11/2026 e acompanhar o túnel Santos–Guarujá (operação prevista para 2031).",
+  "Na expansão Norte e Nordeste, curar primeiro as balsas no caminho de corredores de carga:\n- BR-319 Manaus–Careiro e Igapó-Açu (grade ANTAQ com saídas para inflamáveis);\n- BR-230 Tapajós (Itaituba–Miritituba);\n- São Luís–Cujupe;\n- Salvador–Itaparica, com as suspensões AGERBA nos feriados.\nTratar SNV e ANTAQ só como gatilho de aviso 'regra não verificada' e conferir pontes novas (Xambioá).",
+  "Tratar VUC e toco como 'rodagem alta' de forma conservadora em Santos–Guarujá e Bertioga, com aviso e o telefone 0800-77-33-711, até haver confirmação da operadora."
+ ]
+}
