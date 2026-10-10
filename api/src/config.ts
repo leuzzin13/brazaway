@@ -30,6 +30,10 @@ export interface VehiclePreset {
   /** Res. CONTRAN 882/2021 art. 20: CVC com AET só de dia, salvo pista dupla com separador e 2+ faixas */
   daylight_only_on_single_carriageway?: boolean;
   max_speed_kmh?: number;
+  /** capacidade de carga (lotação, CTB Anexo I) típica do perfil, em t; aproximada (o real está no CRLV) */
+  payload_t?: number;
+  /** true = payload_t é o valor típico do perfil, não o informado pelo usuário */
+  payload_t_aproximado?: boolean;
   /** norma e artigo que justificam os valores do preset */
   legal_basis?: string;
 }
