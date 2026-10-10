@@ -160,15 +160,22 @@ Itaguaí: a "rota sem pedágio" passava pelas mesmas praças e o resumo prometia
 
 - `summary`: total, uma linha por praça (km da rota, nome, valor, fonte e data), "possíveis", alternativa e notas legais.
 - `warnings` (todos `info`): `toll_price_unknown` (ponto sem tarifa nas fontes importadas, fora do total),
-  `toll_suspended` (praça com cobrança suspensa, fora do total), `toll_free_flow`
+  `toll_suspended` (praça com cobrança suspensa, fora do total), `toll_status_uncertain` (cabine do OSM ao lado de um
+  registro oficial desativado, ex.: CRP Pirapetinga; fora do total, com o valor do OSM só como referência), `toll_free_flow`
   (pórtico sem cabine; prazo de 30 dias da ANTT para quem não tem TAG, conforme FAQ do free flow da ANTT, conferido em
-  09/10/2026; evasão é infração grave, CTB art. 209-A), `toll_estimated`, `toll_tariff_divergence` (a tabela oficial é
+  09/10/2026; pórtico de outra concessão: o texto de pagamento da fonte dele, por operador; evasão é infração grave,
+  CTB art. 209-A), `toll_estimated`, `toll_tariff_divergence` (a tabela oficial é
   mais antiga que o valor conferido no OSM e difere dele: provável reajuste ainda não publicado na fonte; ex.: RIOSP,
   página ANTT de 29/08/2025 x OSM conferido em 01/09/2026).
-- `data`: `total`, `veiculo` (eixos cobrados, suspensos, rodagem, multiplicador, TAG, fim de semana), `pracas[]`
-  (nome, km na rota, valor, regra, fonte, data, url, `valor_osm`, `cobranca_suspensa`, ids), `possiveis[]`,
+- `data`: `total`, `veiculo` (eixos cobrados, suspensos, rodagem, multiplicador, TAG, fim de semana, feriados
+  nacionais), `pracas[]` (nome, km na rota, valor, regra, fonte, data, `data_desc`, url, `valor_osm`/`data_osm`,
+  `cobranca_suspensa`, `registro_inativo` (situação incerta: nome, fonte, motivo, ato; `valor` nulo, fora do total),
+  `passagem_estimada` (horário estimado de passagem, em praça com janela tarifária), `janela_alternativa`/`com_janela`
+  (a passagem caiu na janela, ex.: TBA da Via Lagos), `nao_linear` (tabela não proporcional aos eixos), `pagamento`
+  (free flow, quando a fonte informa), `deteccao` (`osm` ou `oficial_sem_osm`), ids), `possiveis[]`,
   `alternativa_sem_pedagio` (`disponivel`, `motivo`, `delta_km`, `delta_min`, `economia`, `pedagio_na_ponta`,
-  `pedagio_restante`, `restricoes_parciais`), `divergencias_oficial_osm[]`.
+  `pedagio_restante`, `restricoes_parciais`), `divergencias_oficial_osm[]`, `feriados_nacionais` (dias usados na
+  janela tarifária).
 
 Exemplos (09/10/2026, carreta 5 eixos, quarta 10h): Lapa → Jundiaí = R$ 72,50 (Campo Limpo, ARTESP 01/07/2026,
 R$ 14,50/eixo); sem pedágio +11,0 km e +48 min. Na volta cobra Caieiras (R$ 72,50), não Campo Limpo.
@@ -215,7 +222,7 @@ docker compose --profile import run --rm importer toll_osm toll_antt toll_artesp
 - Mais eixos que a tabela: valor estendido pela regra do multiplicador (estimado). Rodagem simples com 5+ eixos não
   existe nas tabelas por categoria: fica "tarifa não encontrada" (ARTESP por eixo: estimado).
 - Feriados não acionam a coluna de fim de semana das tabelas ANTT; só a janela da TBA da Via Lagos (`janela_fds`,
-  com feriados nacionais da tabela `holidays`, no horário estimado de passagem). Descontos de usuário frequente não
+  com os feriados nacionais ativos da tabela `holidays`, no horário estimado de passagem). Descontos de usuário frequente não
   são modelados.
 - A cobrança depende do nó de pedágio do OSM: praça sem nó no OSM vira "possível" (não somada). Na região do
   Valhalla (Sudeste), 178 de 210 pontos ARTESP e 93 de 164 pontos ANTT têm nó do OSM a até 300 m (o restante são,

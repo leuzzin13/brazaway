@@ -35,13 +35,20 @@ segunda** e **das 12h da véspera às 12h do dia seguinte aos feriados nacionais
 Deliberação 1630/2025, arts. 1º e 2º. Janela: comunicado da concessionária (Motiva, 07/2025,
 `rodovias.motiva.com.br/vialagos/noticias/2025/julho/...`); a página da AGETRANSP rotula a coluna como "Sáb. Dom. e
 feriados". Feriado estadual ou municipal não aciona a TBA (o comunicado fala só em feriados nacionais; dedução
-registrada como tal no verify). Feriados nacionais vêm da tabela `holidays` (`scope = 'national'`).
+registrada como tal no verify). Feriados nacionais vêm da tabela `holidays` (`scope = 'national'` e `active`: feriado
+desativado, com status `a_confirmar`/`suspensa`/`revogada`, não aciona a TBA; banco sem a coluna `active` usa todos).
 
 **Reajuste de agosto/2026 não localizado** (páginas da AGETRANSP ainda com "cobrança praticada a partir de
 01/08/2025"; deliberações online até a nº 1816, de 25/06/2026). Por isso a tabela tem `vigencia_fim = 2026-07-31` e,
 em viagem posterior, o valor sai **estimado** ("tabela vencida em 31/07/2026; pode ter havido reajuste"). O
 importador relê a página a cada carga: se a data mudar, usa os valores novos, registra a deliberação da página e
-recalcula a vigência (um ano). Ressalvas do verify: o art. 4º da Deliberação 1630 recomenda à concessionária avaliar
+recalcula a vigência (um ano). Antes disso, confere a **estrutura** da tabela: cada linha da página (multiplicador +
+eixos e rodagem do texto "eixos") tem de ser uma categoria da transcrição, e vice-versa (a categoria VIII da Rota 116,
+só no PDF da concessionária, é marcada `fora_da_pagina`). Se aparecer linha nova ou sumir categoria (ex.: a Rota 116
+passar a cobrar por eixo), os valores da página **não** são casados pelo multiplicador (a categoria "III a VI" receberia
+o valor da nova linha de 4 eixos): fica a transcrição, com a vigência encerrada na véspera da nova data da página (o
+valor sai estimado), a tarifa leva `estrutura_mudou` e o NOTES da carga diz "estrutura tarifária mudou na página;
+retranscrever". Ressalvas do verify: o art. 4º da Deliberação 1630 recomenda à concessionária avaliar
 não aplicar reajustes (modernização do contrato); a Deliberação 1698/2026 recomendou ao DER-RJ novo índice, DUF e
 regras de eixo suspenso para a Rota 116, então a estrutura pode mudar.
 
@@ -106,12 +113,19 @@ federal (Ecovias Capixaba, BR-101), já na fonte `antt`. Nada a importar.
 3. **Janela tarifária** (`janela_fds`): conferida no **horário estimado de passagem** pela praça = saída + fração da
    distância x duração da rota (`passagem_estimada` na praça). Sem janela, a coluna de fim de semana continua valendo
    sábado e domingo pela data de saída (ANTT).
-4. **Registro inativo** (`ativo: false`): fora da associação, da soma e das "praças possíveis". Se a rota cruza uma
-   cabine do OSM ao lado dele (CRP Pirapetinga), o valor continua o do OSM (estimado) e a rota avisa
-   `toll_status_uncertain` com o motivo.
+4. **Registro inativo** (`ativo: false`): fora da associação, da soma e das "praças possíveis"; regra de confiança
+   baixa nunca é aplicada, nem pelo valor do OSM. Se a rota cruza uma cabine do OSM a até 400 m dele (CRP
+   Pirapetinga), o ponto é listado como **situação incerta, fora do total** (`valor: null`, `registro_inativo` com
+   motivo e ato), com o valor do OSM só como referência (`valor_osm`, `data_osm`, na linha do resumo e no aviso
+   `toll_status_uncertain`). Como na cobrança suspensa, o ponto também fica fora das "praças sem tarifa", do aviso de
+   free flow e dos anéis da alternativa sem pedágio. No mapa, o registro inativo aparece com "fora do total do app:
+   <motivo>" (o nó do OSM a até 800 m fica escondido).
 5. **Pórtico oficial sem nó no OSM** (`cobra_sem_no_osm`, P8 do Lote 2): conta quando a rota passa a até 30 m do ponto
    oficial e no rumo da via (9,8°/189,8° na MG-459, medido no grafo do Valhalla com `/locate` em 10/10/2026), com
-   `deteccao: 'oficial_sem_osm'`; o aviso `toll_free_flow` traz o prazo de pagamento da fonte.
+   `deteccao: 'oficial_sem_osm'`; o aviso `toll_free_flow` traz o prazo de pagamento da fonte. O texto de pagamento
+   vale só para o operador que o publicou: rota com pórticos de operadores diferentes recebe a instrução por operador
+   (ex.: "MG-459 (EPR Sul de Minas): pague em até 30 dias…; demais: pague pelo site ou app da concessionária no prazo
+   informado por ela"; pórtico federal: 30 dias, ANTT).
 6. **Correção no OSM como reserva**: valor condicionado ao dia (`Mo-Fr`/`Sa-Su`) só vale no próprio período; o de fim
    de semana não serve mais de reserva num dia útil (a Via Lagos saía R$ 153,00 numa quarta).
 7. **Alternativa sem pedágio**: além de `exclude_tolls`, a consulta leva um anel de 25 m em volta de cada ponto de
@@ -132,6 +146,7 @@ Exemplos (API local, carreta 5 eixos, 10/10/2026):
 | Ouro Fino → Monte Sião (MG-459) | R$ 0,00 (pórtico ausente no OSM) | **R$ 50,50** (pórtico free flow) |
 | Lavras → Boa Esperança (Lote 3) | R$ 158,00 (OSM; "mesmos pontos") | **R$ 158,00** (ARTEMIG); sem pedágio: +29,3 km |
 | Transolímpica (sul → norte) | R$ 49,75 | **R$ 39,80** |
+| MGC-393 Pirapetinga (-21,7,-42,3 → -21,6,-42,45) | R$ 55,00 (OSM, somado) | **R$ 0,00**: "situação incerta (não somado; OSM: R$ 55,00…)" e aviso `toll_status_uncertain` |
 
 ## Balanças do DER-MG (`der-mg`)
 
@@ -145,7 +160,9 @@ Exemplos (API local, carreta 5 eixos, 10/10/2026):
   fica sem posição (o km cai em trecho coincidente, cadastrado no SRE sob outra sigla).
 - **Precisão `aprox`**: as coordenadas caem sobre a via ou o acesso do posto e não indicam o lado da pista; a camada
   não deduz o sentido e lista o posto como "sentido não confirmado". A fonte não traz sentido de fiscalização (só
-  "Ramo A/B" em Poços de Caldas e Arceburgo). Postos "Estratégica" levam "operação estratégica (eventual)" no nome.
+  "Ramo A/B" em Poços de Caldas e Arceburgo). Postos "Estratégica" levam ", operação estratégica" no nome (rótulo da
+  tabela). Não são eventuais: o site diz que "o funcionamento das balanças ocorre de forma permanente e estratégica
+  todos os dias da semana" (`props.operacao_obs`), sem horário por posto; posto sinalizado aberto obriga a entrar.
 - 12 pontos da camada que não estão na lista do site (previstos ou em obras em 2024) não são importados.
 - Base legal do aviso: CTB art. 209 (deixar de adentrar as áreas de pesagem, redação da Lei 14.157/2021).
 - RJ e ES: nenhuma lista aberta de balanças estaduais (DER-RJ sem dados; DER-ES só publica radares). A balança da
@@ -178,7 +195,11 @@ docker compose --profile import run --rm importer toll_agetransp toll_artemig to
 - **CRP Pirapetinga / Lote 1 P6 e P8**: ativar só com confirmação (decisão judicial; nó no OSM ou coordenada atual).
 - **Posição pelo OSM**: a âncora de cada praça é o grupo de nós identificado em 10/10/2026; se o OSM mudar o nó, o
   importador acha o novo nó do mesmo operador a até `raio_m`; sem nó, a praça fica na âncora com `precisao: 'aprox'`
-  e o log avisa. Rode depois do `toll_osm` (mesmo extrato do Valhalla).
+  e o log avisa. Os nós vêm do banco (fonte `osm`) só se a última carga do `toll_osm` for posterior ao PBF local
+  (`data/valhalla/*.osm.pbf`); se o PBF for mais novo, os três importadores leem os nós direto do PBF (uma vez por
+  processo) e o log avisa. Isso cobre o `run.py all`, que roda em ordem alfabética e chama `toll_agetransp`,
+  `toll_artemig` e `toll_municipais` **antes** do `toll_osm`. Mesmo assim, rode o `toll_osm` junto quando o extrato
+  mudar (a API casa a rota com os nós da fonte `osm` do banco).
 - **Testes**: `api/test/layers/pedagio_estaduais.test.ts`, `api/test/layers/balancas_dermg.test.ts` e
   `importers/tests/test_pedagio_estaduais.py` (sem rede: `docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data:/data
   --entrypoint python truck-router-importer -m unittest tests.test_pedagio_estaduais -v`).
@@ -208,3 +229,8 @@ docker compose --profile import run --rm importer toll_agetransp toll_artemig to
 - Registro inativo fica no banco, com `motivo_inativo` e `tarifa_registrada`, mas sem `tarifa`: nada o aplica.
 - A alternativa sem pedágio com anel em volta das praças vale para todas as fontes (antes, praça em via sem
   `toll=yes` gerava "mesmos pontos" e nenhum desvio).
+- **Revisão de 10/10/2026**: (1) a CRP Pirapetinga (inativa) era cobrada pelo valor do OSM e o mapa dizia "não
+  cobrada": agora o ponto fica fora do total, como a cobrança suspensa (a regra de confiança baixa nunca é aplicada);
+  (2) a AGETRANSP só tem os valores casados pelo multiplicador quando a estrutura da tabela é a mesma; (3) só feriado
+  nacional ativo aciona a TBA; (4) instrução de pagamento do free flow por operador; (5) "eventual" saiu do nome das
+  balanças "Estratégica" do DER-MG (não está na fonte); (6) nós do OSM do extrato mais novo (ordem do `run.py all`).
