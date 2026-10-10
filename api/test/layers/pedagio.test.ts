@@ -167,6 +167,87 @@ describe('pedágio: SPMar (Rodoanel Leste), "Papa João XXIII" não é ponto a p
   });
 });
 
+describe('pedágio: cobrança suspensa (Rodovia do Aço, BR-393/RJ)', () => {
+  it('lista a praça como suspensa, fora do total, sem usar o OSM e sem calcular alternativa', async () => {
+    await waitForStack();
+    const r = await route({ origin: { lat: -22.47, lon: -43.83 }, destination: { lat: -22.0, lon: -42.9 }, vehicle: { preset: 'carreta', axle_count: 5 }, departure_at: WEEKDAY });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const d = r.body.layers.pedagio.data;
+    const susp = d.pracas.filter((p: any) => p.cobranca_suspensa);
+    expect(susp.length, JSON.stringify(d.pracas)).toBeGreaterThanOrEqual(1);
+    for (const p of susp) {
+      expect(p.valor).toBe(0);
+      expect(p.operador).toBe('RODOVIA DO AÇO');
+      expect(p.cobranca_suspensa.motivo).toMatch(/Decreto 12\.479\/2025/);
+    }
+    expect(d.total).toBe(0);
+    expect(d.alternativa_sem_pedagio).toBeNull();
+    expect(r.body.warnings.some((w: any) => w.layer === 'pedagio' && w.code === 'toll_suspended')).toBe(true);
+    expect(r.body.warnings.some((w: any) => w.layer === 'pedagio' && w.code === 'toll_price_unknown')).toBe(false);
+  });
+
+  it('as praças da ECOSUL e da Rodovia do Aço estão sem tarifa e com o motivo', async () => {
+    const q = await pool.query(`select props->>'operador' op, props->'tarifa' t, props->'cobranca_suspensa'->>'desde' desde
+      from data_features where layer_id = 'pedagio' and source = 'antt' and props->>'operador' in ('ECOSUL', 'RODOVIA DO AÇO')`);
+    expect(q.rows.length).toBe(8);
+    for (const row of q.rows) {
+      expect(row.t).toBeNull();
+      expect(row.desde).toBe(row.op === 'ECOSUL' ? '2026-03-04' : '2025-06-10');
+    }
+  });
+});
+
+describe('pedágio: pórtico free flow de ponto único (RIOSP, Itaguaí, BR-101/RJ)', () => {
+  const A = { lat: -22.96, lon: -44.05 }, B = { lat: -22.86, lon: -43.78 };
+  it('cobra a tarifa ANTT da coluna do pórtico (P10) e não promete economia se o desvio passa pelo mesmo pórtico', async () => {
+    await waitForStack();
+    const r = await route({ origin: A, destination: B, vehicle: { preset: 'carreta', axle_count: 5 }, departure_at: WEEKDAY });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const d = r.body.layers.pedagio.data;
+    const ff = d.pracas.find((p: any) => /Itagua/.test(p.nome));
+    expect(ff, JSON.stringify(d.pracas)).toBeTruthy();
+    expect(ff.fonte).toBe('ANTT');
+    expect(ff.estimado).toBe(false);
+    const t = await tariffOf(ff.oficial_id);
+    expect((t as any).coluna).toBe('Praça 10');
+    expect(ff.valor).toBe(t.categorias!.find((c) => c.eixos === 5 && c.rodagem === 'dupla')!.valor);
+    // a rota do Valhalla com exclude_tolls passa pelo nó do pórtico? então não há "economia"
+    const nt = (await (await fetch(`${VALHALLA}/route`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({
+      locations: [{ ...A, type: 'break' }, { ...B, type: 'break' }], costing: 'truck',
+      costing_options: { truck: { axle_count: 5, height: 4.4, weight: 41.5, length: 18.6, width: 2.6, exclude_tolls: true } }, units: 'kilometers',
+    }) })).json()) as any;
+    const alt = d.alternativa_sem_pedagio;
+    if (nt.trip) {
+      const { decodePolyline6 } = await import('../../src/services/polyline.js');
+      const turf = await import('@turf/turf');
+      const line = turf.lineString(nt.trip.legs.flatMap((l: any) => decodePolyline6(l.shape)));
+      const passes = turf.pointToLineDistance(turf.point([ff.lon, ff.lat]), line, { units: 'meters' }) <= 3;
+      if (passes) {
+        expect(alt.disponivel, JSON.stringify(alt)).toBe(false);
+        expect(alt.motivo).toBe('mesmos_pontos');
+        expect(r.body.layers.pedagio.summary.join('\n')).toMatch(/Rota sem pedágio não encontrada/);
+      } else {
+        expect(alt.disponivel).toBe(true);
+        expect(alt.pedagio_restante).toBeNull();
+      }
+    }
+  });
+});
+
+describe('pedágio: importador ANTT (dados no banco)', () => {
+  it('praças repetidas por troca de concessionária: fica a da Ecovias Rio Minas em Viúva Graça', async () => {
+    const q = await pool.query(`select props->>'operador' op from data_features where layer_id = 'pedagio' and source = 'antt' and name ilike '%vi_va gra%'`);
+    expect(q.rows.map((r: any) => r.op).sort()).toEqual(['ECOVIAS RIO MINAS', 'ECOVIAS RIO MINAS']);
+  });
+
+  it('Motiva Paraná e Way 153 têm tarifa oficial (slugs pr-vias e rota-sertaneja)', async () => {
+    const q = await pool.query(`select props->>'operador' op, count(*) n, count(*) filter (where props->'tarifa' is not null and props->>'tarifa' <> 'null') t
+      from data_features where layer_id = 'pedagio' and source = 'antt' and props->>'operador' in ('MOTIVA PARANÁ', 'WAY 153') group by 1`);
+    expect(q.rows.length).toBe(2);
+    for (const row of q.rows) expect(Number(row.t), row.op).toBe(Number(row.n));
+  });
+});
+
 describe('regras de preço (unitário)', () => {
   const v = (o: Partial<Vehicle>): Vehicle => ({ id: 't', label: 't', height_m: 4, width_m: 2.6, length_m: 18, weight_t: 40, axle_load_t: 10, axle_count: 5, hazmat: false, is_vuc: false, ...o });
   const WED = new Date('2026-10-14T13:00:00Z');
