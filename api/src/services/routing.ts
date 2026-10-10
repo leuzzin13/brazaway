@@ -68,6 +68,28 @@ function overlapRatio(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [numbe
   return hits / pts.length;
 }
 /**
+ * Trecho contíguo da rota (do 1º ao último segmento) que toca o bbox da linha com folga de ~30 m. Fora dele nenhum
+ * ponto da rota fica a até 15 m da linha, então a checagem de uso dá o mesmo resultado olhando só ali — e não percorre
+ * a rota inteira (milhares de pontos) para cada uma das centenas de linhas de custo. null = rota longe da linha.
+ */
+function routeNearLine(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [number, number][], pad = 0.0003): GeoJSON.Feature<GeoJSON.LineString> | null {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const [x, y] of coords) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
+  const rc = route.geometry.coordinates;
+  let first = -1, last = -1;
+  for (let i = 0; i < rc.length - 1; i++) {
+    const a = rc[i], b = rc[i + 1];
+    if (Math.max(a[0], b[0]) >= x0 && Math.min(a[0], b[0]) <= x1 && Math.max(a[1], b[1]) >= y0 && Math.min(a[1], b[1]) <= y1) {
+      if (first < 0) first = i;
+      last = i;
+    }
+  }
+  if (first < 0) return null;
+  return turf.lineString(rc.slice(first, last + 2));
+}
+
+/**
  * A rota usa o trecho penalizado NO MESMO SENTIDO? (linhas de mão única ou penalizadas só num sentido:
  * a rota que passa pela pista contrária não "usa" o trecho). Amostra pontos da linha que ficam perto da rota e
  * compara o rumo local da linha com o rumo da rota no ponto mais próximo (diferença < 90°).
@@ -75,17 +97,19 @@ function overlapRatio(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [numbe
 function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostLine): boolean {
   const coords = cl.coordinates;
   if (coords.length < 2) return overlapRatio(route, coords) >= 0.5;
+  const sub = routeNearLine(route, coords);
+  if (!sub) return false;
   const step = Math.max(1, Math.ceil((coords.length - 1) / 30));
   let near = 0, same = 0, total = 0;
   for (let i = 0; i < coords.length - 1; i += step) {
     total++;
     const a = coords[i], b = coords[i + 1];
     const mid: [number, number] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    const np = turf.nearestPointOnLine(route, turf.point(mid), { units: 'meters' });
+    const np = turf.nearestPointOnLine(sub, turf.point(mid), { units: 'meters' });
     if ((np.properties.dist ?? Infinity) > 15) continue;
     near++;
-    const idx = Math.min(np.properties.index ?? 0, route.geometry.coordinates.length - 2);
-    const r0 = route.geometry.coordinates[idx], r1 = route.geometry.coordinates[idx + 1];
+    const idx = Math.min(np.properties.index ?? 0, sub.geometry.coordinates.length - 2);
+    const r0 = sub.geometry.coordinates[idx], r1 = sub.geometry.coordinates[idx + 1];
     const bl = turf.bearing(turf.point(a), turf.point(b));
     const br = turf.bearing(turf.point(r0 as [number, number]), turf.point(r1 as [number, number]));
     const diff = Math.abs(((bl - br + 540) % 360) - 180);
