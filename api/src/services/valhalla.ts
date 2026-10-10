@@ -32,6 +32,17 @@ interface Opts {
  * weight,axle_load,axle_count,hazmat}; exclude_polygons = [[[lon,lat],...],...];
  * date_time = {type:1 (departure), value:"YYYY-MM-DDThh:mm"}.
  */
+/** Remove vértices consecutivos iguais (após arredondar a 6 casas, a precisão em que as camadas trafegam). */
+export function dedupeCoords(cs: [number, number][]): [number, number][] {
+  const out: [number, number][] = [];
+  for (const [x, y] of cs) {
+    const p: [number, number] = [Math.round(x * 1e6) / 1e6, Math.round(y * 1e6) / 1e6];
+    const last = out[out.length - 1];
+    if (!last || last[0] !== p[0] || last[1] !== p[1]) out.push(p);
+  }
+  return out;
+}
+
 /** Velocidade máxima do caminhão (CTB art. 61, II, a/b: 90 km/h para os demais veículos em rodovia). */
 export const TRUCK_TOP_SPEED_KMH = Number(process.env.TRUCK_TOP_SPEED_KMH ?? 90);
 
@@ -62,11 +73,13 @@ export async function route(o: Opts): Promise<ValhallaRouteResult> {
   if (o.departureLocal) body.date_time = { type: 1, value: o.departureLocal };
   if (o.excludePolygons && o.excludePolygons.length) body.exclude_polygons = o.excludePolygons;
   if (o.costLines && o.costLines.length) {
-    body.linear_cost_factors = o.costLines.map((c) => ({
-      type: 'Feature',
-      geometry: { type: 'LineString', coordinates: c.coordinates },
-      properties: { factor: c.factor },
-    }));
+    // As geometrias saem do PostGIS com 6 casas (ST_AsGeoJSON(geom, 6)); depois do arredondamento, vértices
+    // consecutivos podem ficar iguais e o Valhalla recusa a linha ("Failed to edge walk line feature" → HTTP 400/502
+    // na rota inteira). Deduplicamos e descartamos linhas que ficam com menos de 2 pontos.
+    body.linear_cost_factors = o.costLines
+      .map((c) => ({ coords: dedupeCoords(c.coordinates), factor: c.factor }))
+      .filter((c) => c.coords.length >= 2)
+      .map((c) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: c.coords }, properties: { factor: c.factor } }));
   }
 
   const res = await fetch(`${env.valhallaUrl}/route`, {
