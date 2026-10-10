@@ -12,17 +12,16 @@ Mairiporã foi lida na Imprensa Oficial (ed. 1443), como o verify indicou.
 
 ## Regras
 
-**Aplicadas na rota** (via → `costLines`, fator 1000; zona → `exclusions` com recuo de 20 m):
+**Aplicadas na rota** (via → `costLines`, fator 1000; zona → `exclusions` com recuo de 20 m; nesta frente só há vias ativas):
 
 | Município (IBGE) | Regra (`regra_id`) | Quem | Quando | Ato e artigo | Confiança |
 |---|---|---|---|---|---|
-| Arujá (3503901) | `aruja_24h`: R. Oscar Schiavon, Av. Amazonas (só bairro/centro), Av. Hans Ossamu Suzuki, Av. Getúlio Vargas, Av. Antônio Afonso de Lima | todo caminhão (sem isenção de VUC, art. 7º, §2º) | todos os dias, 24 h | Dec. 8.183/2023, art. 8º, II e Anexo I, incs. I, IV, V, VI e VII | alta |
+| Arujá (3503901) | `aruja_24h`: R. Oscar Schiavon, Av. Amazonas (só bairro/centro, desde a ponta nordeste), Av. Hans Ossamu Suzuki, Av. Getúlio Vargas, Av. Antônio Afonso de Lima | todo caminhão (sem isenção de VUC, art. 7º, §2º) | todos os dias, 24 h | Dec. 8.183/2023, art. 8º, II e Anexo I, incs. I, IV, V, VI e VII | alta |
 | Arujá | `aruja_5h_24h`: Av. Mário Covas (Av. Fatec → Estr. dos Vados, 2 sentidos), Av. dos Expedicionários (bairro/centro, Pça Narciso José Lopes → rotatória Dalila Ferreira Barbosa), Al. Capelinha, R. Duque de Caxias, R. Licínio Rodrigues de Paiva | todo caminhão; **variantes 24 h**: PBT acima de 31,5 t (veículo simples) ou PBTC acima de 33,075 t (combinação) | todos os dias, 5h–23h59 (variantes: 24 h) | Dec. 8.183/2023, art. 8º, III e Anexo I, incs. II, III, VIII, IX e X; art. 8º, I e parágrafo único | alta |
 | Itapecerica da Serra (3522208) | `itapecerica_centro`: Av. XV de Novembro, R. Manoel Maximino da Rosa, R. Treze de Maio, Estr. Ary Domingues Mandu (toda a extensão) | caminhões e carretas | seg–sex 5h–21h; sáb 5h–14h (feriado não excetuado) | Dec. 2.184/2010, art. 1º, I e II; art. 2º (exceções); art. 3º (Cartão-Caminhão) | alta |
 | Caieiras (3509007) | `caieiras_vila_rosina`: R. Narciso Degrandi, Av. David Kasitzky, Av. Rodolfo Polidoro (R. Esmeraldo Felipe Santiago não existe no OSM) | caminhão e carreta; o VUC é excetuado pela lei, mas sem definição (a rota o trata como caminhão) | 24 h (a lei não fixa horário) | Lei 5.486/2021, arts. 1º e 2º | alta |
-| Caieiras | `caieiras_comprimento_12m` (zona): todas as ruas e avenidas municipais, **sem** as rodovias estaduais (SP-332, SP-348, SP-023, SP-354 e alças) | comprimento acima de 12 m | 24 h | Lei 3.560/2004, art. 1º (12 m) e art. 3º (autorização especial); mantida pela Lei 5.233/2019, art. 5º | média |
 | Mairiporã (3528502) | `mairipora_cantareira`: Av. Ver. Belarmino Pereira de Carvalho (SP-023 → Av. José Gianesella) e Av. José Gianesella (entrada do Parque Águas Claras → Av. Dr. Luiz Felippe França Ramos), 2 sentidos | veículo de carga com mais de 2 eixos | 24 h | Lei 4.391/2025, art. 1º (proibição), art. 2º (eventos excepcionais), arts. 3º e 4º (multa) | alta |
-| Diadema (3513801) | `diadema_vias_restricao`: 11 vias do Centro e 3 do Jd. Eldorado (lista do serviço oficial) | comprimento acima de 6,30 m **ou** largura acima de 2,20 m | seg–sex 6h–20h; sáb 6h–14h | Serviço 55 "Cadastro de caminhões para vias de restrição" (página oficial, sem artigo; decreto de 2011 não localizado) | alta |
+| Diadema (3513801) | `diadema_vias_restricao`: 11 vias do Centro e 3 do Jd. Eldorado (lista do serviço oficial; a R. São Jorge inclui o trecho que o OSM chama de Avenida São Jorge) | comprimento acima de 6,30 m **ou** largura acima de 2,20 m | seg–sex 6h–20h; sáb 6h–14h | Serviço 55 "Cadastro de caminhões para vias de restrição" (página oficial, sem artigo; decreto de 2011 não localizado) | alta |
 | Suzano (3552502) | `suzano_centro`: 24 ruas do Centro (eixos do OSM sob a camada oficial) | caminhão | seg–sáb 7h–21h | Camada oficial "MOB-Restrição trânsito de caminhões" do GeoSuzano, campos Dt_Ho e Obs (sem artigo; ato não localizado) | alta |
 
 **Registradas e NÃO aplicadas** (`kind=desativada`; a rota só avisa `municipal_regra_nao_aplicada` quando passa nelas
@@ -30,6 +29,7 @@ com veículo alvo):
 
 | Município | Regra | Motivo (resumo; texto completo em `status_motivo`) | Ato/fonte | Confiança |
 |---|---|---|---|---|
+| Caieiras (3509007) | `caieiras_comprimento_12m` (zona: todas as ruas e avenidas municipais, **sem** as rodovias estaduais SP-332, SP-348, SP-023, SP-354 e alças; comprimento acima de 12 m, 24 h) | decreto regulamentador do art. 5º não localizado e sinalização não confirmada; fiscalização "mediante disponibilidade" (diagnóstico de 2017); a pesquisa recomendou só avisar e penalizar, e a camada só tem zona como exclusão dura (~96 km²) | Lei 3.560/2004, art. 1º (12 m), art. 3º (autorização especial) e art. 5º (regulamento); mantida pela Lei 5.233/2019, art. 5º | média |
 | Caieiras | `caieiras_carga_13t` (zona) | "13 t para o transporte de cargas" pode ser carga útil ou PBT; sem decreto regulamentador; fiscalização eventual | Lei 3.560/2004, art. 1º | média |
 | Mogi das Cruzes (3530607) | `mogi_area_central` (zona aproximada) | Lei (6h–22h, "transporte pesado") x decreto (carga e descarga 20h–9h, PBT acima de 1 t, experimental) x prefeitura (acima de 3,5 t, 10h–20h, outro perímetro); sinalização define (Dec. 8.375/2008) | Lei 2.903/1985, art. 1º; Dec. 899/1985, arts. 1º e 2º (red. Dec. 1.782/2000); Dec. 8.375/2008 | média |
 | Taboão da Serra (3552809) | `taboao_municipio` (zona: município sem a BR-116) | Portaria SETRAM GS 003/2021 ("áreas e vias com restrição") não lida; "município inteiro" e horários de 2010 podem estar superados | Portaria SETRAM GS 003/2021 (só a ementa); imprensa 2010–2011 | média |
@@ -52,10 +52,27 @@ com veículo alvo):
   6,30 m de Barueri e Osasco) dá "largura acima de 2,20 m ou comprimento acima de 6,30 m". A rota aplica a união das
   duas leituras (lado seguro). A R. Santo Antônio é só a do Centro (há outra no sul do município).
 - **Caieiras, Lei 3.560/2004.** Vale "nas avenidas e ruas do município": a zona é o limite do IBGE menos uma faixa de
-  30 m (pontas redondas) em torno das rodovias estaduais do OSM, que seguem livres. O comprimento (12 m) é aplicado
-  (confiança média: lei de 2004 sem decreto regulamentador localizado); o peso (13 t) fica desativado pela ambiguidade.
-  Origem ou destino em Caieiras: a zona não é excluída e a rota avisa (`rmsp_origem_na_zona`/`rmsp_destino_na_zona`),
-  como na ZMRC. Proibição de produtos perigosos (art. 2º) não representada (ver pendências).
+  30 m (pontas redondas) em torno das rodovias estaduais do OSM, que seguem livres. As duas regras do art. 1º ficaram
+  **desativadas**: o peso (13 t) pela ambiguidade carga útil x PBT, e o comprimento (12 m) também, depois da revisão.
+  O texto do comprimento confere com a lei e com o verify (confiança média, que permitiria ativar), mas: (1) a
+  pesquisa recomendou "aplicar como aviso e penalizar só comprimento acima de 12 m", e o núcleo não tem zona com
+  penalidade, só exclusão dura (`exclude_polygons`); (2) ativa, a zona viraria um bloqueio de ~96 km² (o município
+  inteiro) para todo veículo com mais de 12 m e, pelo raio das zonas (máx. 50 km; 60% da distância O–D), iria ao
+  Valhalla em quase toda rota de carreta da Grande SP; (3) a lei é de 2004, o decreto que o art. 5º mandava editar
+  em 30 dias não foi localizado, a sinalização não foi confirmada e a fiscalização é "mediante disponibilidade"
+  (diagnóstico oficial de 2017). Desativada, a regra faz o que a pesquisa pediu ao alcance da camada: a rota não
+  desvia, e um veículo com mais de 12 m que passa pela zona (inclusive saindo de Caieiras ou chegando lá) recebe o
+  aviso `municipal_regra_nao_aplicada` (info) com o motivo. Para ativar (achado o decreto ou confirmada a placa), basta
+  `status: ativa` no `3509007.json` e importar de novo; a origem ou o destino na zona passa então a avisar
+  (`rmsp_origem_na_zona`/`rmsp_destino_na_zona`, como na ZMRC). Proibição de produtos perigosos (art. 2º) não
+  representada (ver pendências).
+- **Diadema, R. São Jorge.** No OSM, o trecho sul da rua (~115 m, do laço da R. Artur Sampaio Moreira até a Av. São
+  José, way 125916038) chama-se "Avenida São Jorge" e tem no meio um pedaço chamado "Rua São Jorge". Na base de CEP dos
+  Correios (ViaCEP, 10/10/2026), Diadema tem um só logradouro "São Jorge": a Rua São Jorge, Centro, CEP 09911-070, com
+  CEP único para a rua inteira. O trecho entrou como alias ("Avenida São Jorge" em `trechos[Centro 5].via`), como a
+  Avenida São Judas Tadeu.
+- **Arujá, Av. Amazonas.** O sentido bairro/centro começa na ponta nordeste da avenida: a pista de mão única de 66 m
+  desse sentido (way 200147067) é restrita e a pista ao lado, do sentido contrário (way 200147075), fica livre.
 - **Caieiras, Av. David Kasitzky.** Os dois pedaços de mão única do cruzamento com a SP-332 têm o nome da avenida no OSM,
   mas fazem parte do trevo da rodovia: ficaram de fora (com eles, a rota pela SP-332 recebia aviso de via restrita).
 - **Mairiporã, art. 1º.** O texto cita a Av. Sen. José Ermírio de Moraes "na entrada do Parque Águas Claras" como ponta
@@ -98,6 +115,18 @@ com veículo alvo):
 - **Limpeza** (`rmsp_restante_geo.py limpar <arquivo>`): tira vértices a menos de 0,3 m das vias montadas. O import valida
   as linhas com 7 casas decimais, mas a API as manda com 6: o vértice repetido fazia o Valhalla recusar a rota inteira
   ("Failed to edge walk line feature", HTTP 502) em Diadema. Rodar depois de regerar um arquivo de vias e importar de novo.
+  É um passo manual: um `MUNICIPIOS_REBUILD=1` (ou um GeoJSON de vias apagado) regera o arquivo sem a limpeza, e o
+  import seguinte grava de novo os vértices repetidos (o 502 volta em Diadema). Para não gravar no banco compartilhado
+  um arquivo sujo, gere só o GeoJSON (sem banco), limpe e importe:
+
+  ```bash
+  docker run --rm -e DATA_DIR=/data -e MUNICIPIOS_REBUILD=1 -v $(pwd)/importers:/app -v $(pwd)/data:/data \
+    --entrypoint python truck-router-importer -c "import pathlib, sys; sys.path.insert(0, '/app'); from sources import municipios as m; \
+    [m.compilar(m.carregar(pathlib.Path(f'/data/raw/municipios/{i}.json'))) for i in ['3503901', '3513801']]"
+  docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/raw/municipios/curadoria:/c --entrypoint python truck-router-importer \
+    /c/rmsp_restante_geo.py limpar 3503901_vias.geojson 3513801_vias.geojson
+  # depois, o passo 3 abaixo (import sem MUNICIPIOS_REBUILD), que regrava o banco e o seed
+  ```
 
 ```bash
 # 1) PBF -> cache do Overpass (só se for regerar a geometria)
@@ -127,10 +156,13 @@ Cada município registra a licença em `fonte.licenca` (vai para `data_layer_run
 
 ## Testes
 
-`api/test/layers/mun_rmsp_restante.test.ts` (19 testes; não grava no banco). Regras chamando o módulo da camada e 9 rotas
-reais: Itapecerica (toco desvia da Av. XV às 10h e passa às 22h), Mairiporã (carreta desvia da Belarmino/Gianesella,
-toco de 2 eixos passa), Caieiras (o leve corta pela Vila Rosina, toco e carreta desviam pela SP-332 sem aviso falso;
-carreta saindo do Centro recebe o aviso de origem na zona) e Diadema (caminhão desvia do Centro, VUC 2,20 x 6,30 passa).
+`api/test/layers/mun_rmsp_restante.test.ts` (20 testes; não grava no banco). Regras chamando o módulo da camada (inclui a
+geometria corrigida na revisão: o trecho "Avenida São Jorge" de Diadema e a ponta nordeste da Av. Amazonas de Arujá, só
+no sentido bairro/centro; e a zona de 12 m de Caieiras, desativada, que não exclui e só avisa a carreta) e 10 rotas reais:
+Itapecerica (toco desvia da Av. XV às 10h e passa às 22h), Mairiporã (carreta desvia da Belarmino/Gianesella, toco de 2
+eixos passa), Caieiras (o leve corta pela Vila Rosina, toco e carreta desviam pela SP-332 sem aviso falso; carreta
+saindo do Centro não é bloqueada e recebe o aviso informativo da regra de 12 m) e Diadema (caminhão desvia do Centro,
+VUC 2,20 x 6,30 passa).
 
 ```bash
 cd api && API_URL=http://localhost:3000 npx vitest run test/layers/mun_rmsp_restante.test.ts
@@ -138,6 +170,20 @@ cd api && API_URL=http://localhost:3000 npx vitest run test/layers/mun_rmsp_rest
 
 ## Limitações e pendências
 
+- **Teste do núcleo a ajustar no merge.** `api/test/layers/rmsp.test.ts`, teste "rota longa (Rio → SP)" (linha 321),
+  espera `noite.length === 0` às 22h30 com carreta. Com os dados desta frente, entram no corredor de 15 km do segmento
+  Rio–SP as vias 24 h de Arujá (`aruja_24h`), as de 5h–23h59 de Arujá (`aruja_5h_24h`, ativas às 22h30 para a carreta
+  pelo art. 8º, I) e as de Mairiporã (`mairipora_cantareira`): 90 linhas (28 + 30 + 32, contando os dois sentidos).
+  As outras ~275 são do Rio, de outra frente. O teste já falha na API principal, porque os seeds estão no banco
+  compartilhado. O teste é do núcleo e não foi alterado aqui; no merge, a asserção deve se restringir às fontes que
+  ela quer cobrir, como já faz a linha seguinte:
+  `expect(noite.filter((c) => /Santana|Cajamar/.test(c.item.name ?? '')).length).toBe(0)`.
+- **Vértice repetido nas 6 casas (núcleo).** As vias saem com `ST_AsGeoJSON(geom, 6)`, mas o importador valida no
+  Valhalla com 7 casas. Há linhas com vértice repetido nas 6 casas em outras fontes (Barueri, Cajamar, Belo Horizonte,
+  Serra, Vitória), e o Valhalla responde 502 ("Failed to edge walk line feature"). Esta frente só contorna o problema
+  com o `limpar` manual. A correção é do núcleo: `ST_AsGeoJSON(ST_RemoveRepeatedPoints(ST_SnapToGrid(f.geom, 0.000001)), 6)`
+  no `viasNoCorredor` e no `annotate`, e/ou arredondar para 6 casas e tirar os repetidos em
+  `_municipios_lib.py` (`valhalla_check`/`explode_and_split`) antes de validar e gravar.
 - Janela avaliada na saída (o `annotate` avisa a passagem estimada), como no resto da camada.
 - O perfil do veículo não tem autorizações municipais (Cartão-Caminhão de Itapecerica e Taboão, cadastro do DMT de
   Arujá, serviço 55 de Diadema, autorização especial de Caieiras): as exceções só aparecem nos avisos.

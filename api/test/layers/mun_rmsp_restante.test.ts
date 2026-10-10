@@ -20,7 +20,7 @@ const ctxOf = (o: P, d: P, when: string, vehicle: Record<string, unknown>) =>
 const routeOf = (coords: [number, number][], min = 10) => ({ line: turf.lineString(coords), distance_km: turf.length(turf.lineString(coords)), duration_s: min * 60 });
 
 const FONTES: Record<string, string[]> = {
-  aruja: ['via'], 'itapecerica-da-serra': ['via'], caieiras: ['desativada', 'via', 'zona'], mairipora: ['via'], diadema: ['via'],
+  aruja: ['via'], 'itapecerica-da-serra': ['via'], caieiras: ['desativada', 'via'], mairipora: ['via'], diadema: ['via'],
   suzano: ['via'], 'mogi-das-cruzes': ['desativada'], 'taboao-da-serra': ['desativada'], 'santa-isabel': ['desativada'],
   'franco-da-rocha': ['desativada'], maua: ['desativada'], 'embu-das-artes': ['desativada'],
 };
@@ -105,6 +105,20 @@ describe('carga: 12 municípios, status e base legal', () => {
     expect(q.rows[0]).toMatchObject({ sp332: false, sp348: false, centro: true });
     expect(q.rows[0].km2).toBeGreaterThan(90);   // município ~97 km²
   });
+
+  it('geometria: Av. São Jorge do OSM (Diadema, CEP 09911-070) e ponta nordeste da Av. Amazonas (Arujá, bairro/centro)', async () => {
+    // Diadema: way 125916038 ('Avenida São Jorge' no OSM, ~118 m, mão única para o sul) é a R. São Jorge do serviço 55
+    const avSaoJorge: [number, number][] = [[-46.6271052, -23.6878629], [-46.627187, -23.6879645], [-46.6274163, -23.688281],
+      [-46.6275027, -23.688383], [-46.6277603, -23.6886855], [-46.6277819, -23.6887208]];
+    expect(usoM(avSaoJorge, await linhas('diadema_vias_restricao', 'Rua São Jorge'), true)).toBeGreaterThan(100);
+    // Arujá: pista bairro→centro da ponta nordeste (way 200147067, 66 m) restrita; a pista ao lado, centro→bairro, livre
+    const amazonasNE: [number, number][] = [[-46.3114306, -23.3895251], [-46.311484, -23.3896059], [-46.3116693, -23.3898799], [-46.3117705, -23.3900295]];
+    const amazonasNEvolta: [number, number][] = [[-46.3117705, -23.3900295], [-46.3116793, -23.3899433], [-46.3115909, -23.3898996],
+      [-46.3114573, -23.3897821], [-46.3114121, -23.3897267], [-46.3113204, -23.3896409]];
+    const amazonas = await linhas('aruja_24h', 'Avenida Amazonas');
+    expect(usoM(amazonasNE, amazonas, true)).toBeGreaterThan(50);
+    expect(usoM(amazonasNEvolta, amazonas, true)).toBeLessThan(10);
+  });
 });
 
 describe('regras (módulo da camada)', () => {
@@ -151,12 +165,14 @@ describe('regras (módulo da camada)', () => {
     expect(enquadrar(r, veic({ preset: 'vuc', width_m: 2.5, length_m: 6.0 })).aplica).toBe(true);
   });
 
-  it('Caieiras: Vila Rosina 24 h para todo caminhão (VUC sem definição = caminhão); 12 m na zona; 13 t registrada e não aplicada', async () => {
+  it('Caieiras: Vila Rosina 24 h para todo caminhão (VUC sem definição = caminhão); 12 m e 13 t registradas e não aplicadas', async () => {
     const vr = await regra('caieiras_vila_rosina');
     expect(enquadrar(vr, veic({ preset: 'vuc', is_vuc: true })).aplica).toBe(true);
     const z12 = await regra('caieiras_comprimento_12m');
     expect(enquadrar(z12, veic({ preset: 'truck' })).aplica).toBe(false);       // 12,0 m: não passa de 12 m
-    expect(enquadrar(z12, veic({ preset: 'carreta' })).aplica).toBe(true);
+    expect(enquadrar(z12, veic({ preset: 'carreta' })).aplica).toBe(true);      // alvo do aviso
+    expect(regraAplicavel(z12)).toBe(false);
+    expect(z12.status_motivo).toMatch(/decreto regulamentador.*art\. 5º.*mediante disponibilidade.*penalizar/s);
     const z13 = await regra('caieiras_carga_13t');
     expect(regraAplicavel(z13)).toBe(false);
     expect(z13.status_motivo).toMatch(/carga útil ou PBT/);
@@ -171,17 +187,26 @@ describe('regras (módulo da camada)', () => {
 });
 
 describe('exclusões, custos e avisos (contexto da rota)', () => {
-  it('Caieiras: zona de 12 m exclui a carreta de passagem; não exclui caminhão de 12 m nem carreta com origem na cidade', async () => {
+  it('Caieiras: zona de 12 m (desativada) não exclui ninguém; a carreta que corta a cidade só recebe o aviso', async () => {
     const tem = (ex: any[]) => ex.some((e) => e.item.type === 'Comprimento máximo de 12 m (Lei 3.560/2004)');
-    expect(tem(await layer.exclusions!(ctxOf(FRANCO, PERUS, '2026-10-13T10:00', { preset: 'carreta' }) as any))).toBe(true);
-    expect(tem(await layer.exclusions!(ctxOf(FRANCO, PERUS, '2026-10-13T10:00', { preset: 'truck' }) as any))).toBe(false);
+    expect(tem(await layer.exclusions!(ctxOf(FRANCO, PERUS, '2026-10-13T10:00', { preset: 'carreta' }) as any))).toBe(false);
     expect(tem(await layer.exclusions!(ctxOf(CAIEIRAS_CENTRO, FRANCO, '2026-10-13T10:00', { preset: 'carreta' }) as any))).toBe(false);
+    // rota (sintética) pelo Centro de Caieiras: carreta (18,6 m) avisa; caminhão de 12,0 m não é alvo
+    const { lon: x, lat: y } = CAIEIRAS_CENTRO;
+    const coords: [number, number][] = [[x - 0.006, y], [x, y], [x + 0.006, y]];
+    const o = { lon: coords[0][0], lat: y }, d = { lon: coords[2][0], lat: y };
+    const doze = (ws: any[] | undefined) => (ws ?? []).filter((w) => w.code === 'municipal_regra_nao_aplicada' && /12 m/.test(w.message));
+    const carreta = await layer.annotate!(ctxOf(o, d, '2026-10-13T10:00', { preset: 'carreta' }) as any, routeOf(coords) as any);
+    expect(doze(carreta.warnings).map((w) => w.severity)).toEqual(['info']);
+    expect(doze(carreta.warnings)[0].message).toMatch(/NÃO aplica: Lei de 2004 sem o decreto regulamentador/);
+    const truck = await layer.annotate!(ctxOf(o, d, '2026-10-13T10:00', { preset: 'truck' }) as any, routeOf(coords) as any);
+    expect(doze(truck.warnings)).toEqual([]);
   });
 
   it('regras desativadas nunca entram em exclusões nem custos (Taboão, Mogi, Caieiras 13 t, Mauá...)', async () => {
     const q = await pool.query(`select id::text, props->>'regra_id' regra from data_features where layer_id = 'restricoes_rmsp' and kind = 'desativada' and source = any($1)`, [Object.keys(FONTES)]);
     const ids = new Set(q.rows.map((r: any) => r.id)), regras = new Set(q.rows.map((r: any) => r.regra));
-    expect(regras.size).toBe(7);
+    expect(regras.size).toBe(8);
     const taboao = { lat: -23.6100, lon: -46.7700 }, mogi = { lat: -23.5230, lon: -46.1900 }, maua = { lat: -23.6740, lon: -46.4570 };
     for (const [o, d] of [[taboao, { lat: -23.63, lon: -46.80 }], [mogi, { lat: -23.54, lon: -46.21 }], [maua, { lat: -23.68, lon: -46.47 }], [FRANCO, PERUS]] as [P, P][]) {
       const ctx = ctxOf(o, d, '2026-10-13T10:00', { preset: 'carreta' }) as any;
@@ -260,11 +285,12 @@ describe('rotas reais (API)', () => {
     }
   }, 300_000);
 
-  it('Caieiras: carreta saindo do Centro (dentro da zona de 12 m) não é bloqueada e recebe o aviso de origem na zona', async () => {
+  it('Caieiras: carreta saindo do Centro (dentro da zona de 12 m, desativada) não é bloqueada e recebe o aviso informativo', async () => {
     const r = await route({ origin: CAIEIRAS_CENTRO, destination: FRANCO, vehicle: { preset: 'carreta' }, departure_at: '2026-10-13T10:00' });
     expect(r.status, JSON.stringify(r.body)).toBe(200);
-    const w = r.body.warnings.find((x: any) => x.code === 'rmsp_origem_na_zona');
-    expect(w?.message).toMatch(/Caieiras.*12 m.*autorização especial do Departamento de Trânsito de Caieiras/);
+    expect(r.body.warnings.some((x: any) => x.code === 'rmsp_origem_na_zona' && /Caieiras/.test(x.message))).toBe(false);
+    const w = r.body.warnings.find((x: any) => x.code === 'municipal_regra_nao_aplicada' && /Caieiras.*12 m/.test(x.message));
+    expect(w?.severity).toBe('info');
   }, 120_000);
 
   it('Diadema: caminhão às 10h desvia das vias do Centro; VUC de 2,20 x 6,30 m passa', async () => {
