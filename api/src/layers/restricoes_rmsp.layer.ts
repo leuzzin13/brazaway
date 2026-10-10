@@ -227,12 +227,17 @@ function lines(g: GeoJSON.Geometry): [number, number][][] {
   return [];
 }
 
+/**
+ * Item de rota (avoided / aviso do routing.ts). As vias chegam cortadas em pedaços de até 400 m: o id do item é o da
+ * VIA (regra + inciso + nome), para o routing.ts (que deduplica por id) listar uma vez cada rua, não cada pedaço.
+ */
 function itemOf(row: Row, rule: string): LayerItem {
   const p = row.props;
   const ls = lines(row.geometry);
   const mid = ls.length ? ls[0][Math.floor(ls[0].length / 2)] : row.geometry.type === 'Polygon' ? turf.centroid(row.geometry as GeoJSON.Polygon).geometry.coordinates : undefined;
+  const id = row.kind === 'via' ? `${p.regra_id}:${p.inciso ?? '-'}:${p.via ?? row.name ?? row.id}` : row.id;
   return {
-    kind: 'layer', layer: LAYER, id: row.id, name: row.name ?? p.nome, type: p.regime,
+    kind: 'layer', layer: LAYER, id, name: row.name ?? p.nome, type: p.regime,
     rule, lon: mid?.[0], lat: mid?.[1], note: p.inciso ? `${p.municipio}, ${p.base_legal[0]?.ato.split(',')[0]} inc. ${p.inciso}` : p.municipio,
   };
 }
@@ -405,7 +410,10 @@ const layer: RouteLayer = {
         const rf = restritas.reduce((a, b) => (a.fraction <= b.fraction ? a : b));
         const tR = passAt(rf.fraction);
         const ativaR = (await regraAtiva(r, v, tR, holiday)).ativa;
-        const descobertas = restritas.filter((x) => !x.coberta);
+        // o routing.ts avisa uma vez por via (id do item = regra + inciso + nome): via com algum pedaço "coberto" já tem aviso
+        const viaKey = (x: Usada) => `${x.props.inciso ?? '-'}:${x.props.via ?? x.name}`;
+        const vistas = new Set(restritas.filter((x) => x.coberta).map(viaKey));
+        const descobertas = restritas.filter((x) => !vistas.has(viaKey(x)));
         if (ativa && descobertas.length) {
           // ativa na saída e usada pela rota, mas o routing.ts não vai avisar (fora do corredor ou uso parcial da linha)
           const p0 = lines(descobertas[0].geometry)[0]?.[0];
