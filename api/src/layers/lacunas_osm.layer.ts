@@ -121,7 +121,7 @@ const layer: RouteLayer = {
     group: 'infraestrutura',
     sources: [
       { name: 'OpenStreetMap — vias sob estruturas, túneis e valores sem altura/peso', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0 — © colaboradores do OpenStreetMap' },
-      { name: 'Mapillary — placas detectadas (opcional)', url: 'https://www.mapillary.com', license: 'CC BY-SA 4.0 — Termos de Uso Mapillary, seção 12; atribuição com logo e link' },
+      { name: 'Mapillary — placas detectadas (opcional)', url: 'https://www.mapillary.com/terms', license: 'CC BY-SA 4.0 — Termos de Uso Mapillary (15/02/2024): uso comercial na seção 12; atribuição com logo e link para mapillary.com na seção 11' },
     ],
     style: { kind: 'circle', color: '#f59e0b', icon: '📏', minzoom: 12, radius: 5 },
     defaultVisible: false,
@@ -208,12 +208,13 @@ const layer: RouteLayer = {
   },
 
   async features(bbox, { zoom }) {
-    const z = zoom ?? 12;
+    // zoom pode vir fracionário (14.5) ou inválido de outros clientes da API: compara como número, nunca como integer
+    const z = Number.isFinite(zoom) ? (zoom as number) : 12;
     if (z < 12) return { type: 'FeatureCollection', features: [] };
     const r = await query<{ id: string; kind: string; name: string | null; source: string; props: Record<string, any>; geometry: GeoJSON.Geometry }>(
       `select id::text, kind, name, source, props, ST_AsGeoJSON(geom, 6)::json as geometry from data_features
         where layer_id = $1 and geom && ST_MakeEnvelope($2,$3,$4,$5,4326) and (valid_to is null or valid_to > now())
-          and ($6 >= 14 or kind <> 'maxheight_suspeito')
+          and ($6::float8 >= 14 or kind <> 'maxheight_suspeito')
         order by (props->>'prioridade')::int nulls last
         limit 3000`,
       [LAYER, ...bbox, z],

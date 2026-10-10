@@ -15,7 +15,8 @@ import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteLayer } fro
  * Cuidado: se UMA linha de linear_cost_factors não casar com as arestas ("Failed to edge walk line feature", erro 233),
  * o Valhalla recusa o pedido inteiro. Isso acontece quando a via não é trafegável para ESTE veículo (ex.: a própria via
  * já tem maxheight menor, acesso privado) ou em casamentos frágeis. Por isso cada linha é validada uma vez por perfil de
- * veículo (cache em memória) e, se falhar, tentamos as duas metades (antes/depois do nó); o que não casar é descartado.
+ * veículo (cache em memória; em lotes, com busca binária quando o lote falha) e, se falhar, tentamos as duas metades
+ * (antes/depois do nó); o que não casar é descartado.
  *
  * Quais linhas vão para o Valhalla (comparando com a rota livre, calculada aqui antes):
  *  - NÃO vai a linha que corre paralela à rota livre a menos de 15 m sem ser usada por ela (pista do outro sentido,
@@ -67,50 +68,84 @@ interface NodeRow { id: string; name: string | null; kind: string | null; props:
 interface LineUseRow extends NodeRow { li: number; r_along: number; r_near: number; near_minor: boolean; near_main: boolean; fraction: number }
 
 /** o que costLines() mandou para o Valhalla nesta rota (annotate usa para a rede de segurança) */
-interface SentInfo { ids: Set<string>; lines: number; paralelas: number; longe: number; sem_casamento: number; rota_livre: boolean }
+interface SentInfo { ids: Set<string>; lines: number; paralelas: number; longe: number; sem_casamento: number; sem_validacao: number; rota_livre: boolean }
 const sentByCtx = new WeakMap<RouteCtx, SentInfo>();
 
 /** cache de validação do edge walk: chave = linha + sentido + perfil do veículo */
 const walkCache = new Map<string, boolean>();
 const WALK_CACHE_MAX = 50_000;
-const VALIDATE_CONCURRENCY = 8;
+/** linhas por requisição de validação (uma linha ruim derruba o lote; aí o lote é dividido ao meio até isolá-la) */
+const WALK_BATCH_MAX = 64;
+const WALK_CONCURRENCY = 4;
+/** timeout de cada validação; com o Valhalla ocupado (rotas longas de outros pedidos) 5 s não bastava */
+const WALK_TIMEOUT_MS = 12_000;
 
 function vehicleSig(v: Vehicle): string {
   return [v.height_m, v.width_m, v.length_m, v.weight_t, v.axle_load_t, v.axle_count, v.hazmat ? 1 : 0].join('|');
 }
 
-/** true = o Valhalla casa a linha com as arestas para este veículo; false = não casa; null = indeterminado (erro/timeout). */
-async function edgeWalkOk(coords: [number, number][], v: Vehicle): Promise<boolean | null> {
-  const a = coords[0], b = coords[coords.length - 1];
+/**
+ * Edge walk de VÁRIAS linhas numa requisição só (pontas da 1ª linha como locations: rota curta). O Valhalla casa todas as
+ * linhas antes de rotear e recusa o pedido se qualquer uma falhar (233 "Failed to edge walk", 173 "No edges near
+ * start/end"), seja qual for a origem/destino — conferido no 3.9.1.
+ * 'ok' = todas casam; 'falha' = alguma não casa (ou a pontas da 1ª linha estão fora de via deste veículo, 171/172);
+ * 'erro' = outro erro do Valhalla; 'timeout' = sem resposta/rede.
+ */
+async function edgeWalk(lines: [number, number][][], v: Vehicle): Promise<'ok' | 'falha' | 'erro' | 'timeout'> {
+  const a = lines[0][0], b = lines[0][lines[0].length - 1];
   const body = {
     locations: [{ lat: a[1], lon: a[0], type: 'break' }, { lat: b[1], lon: b[0], type: 'break' }],
     costing: 'truck',
     costing_options: { truck: { height: v.height_m, width: v.width_m, length: v.length_m, weight: v.weight_t, axle_load: v.axle_load_t, axle_count: v.axle_count, hazmat: v.hazmat } },
-    linear_cost_factors: [{ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: { factor: BLOCK_FACTOR } }],
+    linear_cost_factors: lines.map((coords) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: { factor: BLOCK_FACTOR } })),
     units: 'kilometers',
   };
   try {
-    const res = await fetch(`${env.valhallaUrl}/route`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(5000) });
-    if (res.ok) { await res.arrayBuffer(); return true; }
+    const res = await fetch(`${env.valhallaUrl}/route`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(WALK_TIMEOUT_MS) });
+    if (res.ok) { await res.arrayBuffer(); return 'ok'; }
     const j = (await res.json().catch(() => ({}))) as { error_code?: number; error?: string };
-    if (j.error_code === 442 || /no path/i.test(j.error ?? '')) return true;            // casou; só não há rota entre as pontas
-    if (j.error_code === 233 || /edge walk/i.test(j.error ?? '')) return false;
-    if (j.error_code === 171 || j.error_code === 172) return false;                     // pontas fora de via deste veículo
-    return null;
+    if (j.error_code === 442 || /no path/i.test(j.error ?? '')) return 'ok';                          // casou; só não há rota entre as pontas
+    if (j.error_code === 233 || j.error_code === 173 || /edge walk|linear cost feature/i.test(j.error ?? '')) return 'falha';
+    if (j.error_code === 171 || j.error_code === 172) return 'falha';                                 // pontas fora de via deste veículo
+    return 'erro';
   } catch {
-    return null;
+    return 'timeout';
   }
 }
 
-async function validated(key: string, coords: [number, number][], v: Vehicle): Promise<boolean> {
-  const k = `${key}|${vehicleSig(v)}`;
-  const hit = walkCache.get(k);
-  if (hit !== undefined) return hit;
-  const ok = await edgeWalkOk(coords, v);
-  if (ok === null) return false; // na dúvida não manda (uma linha ruim derrubaria a rota inteira); não cacheia
-  if (walkCache.size >= WALK_CACHE_MAX) walkCache.clear();
-  walkCache.set(k, ok);
-  return ok;
+/**
+ * Valida as linhas para este veículo: true = casa, false = não casa (cacheados), null = indeterminado (Valhalla sem
+ * resposta/erro; não cacheia e a linha não vai nesta rota — uma linha ruim derrubaria a rota inteira).
+ * Uma requisição por lote de até WALK_BATCH_MAX linhas; lote que falha é dividido ao meio (busca binária) até isolar as
+ * linhas que não casam. Antes era uma requisição por linha (~90 numa rota Rio-SP), que sob carga estourava o timeout e
+ * descartava linhas boas.
+ */
+async function validateAll(items: { key: string; coords: [number, number][] }[], v: Vehicle): Promise<(boolean | null)[]> {
+  const sig = vehicleSig(v);
+  const out: (boolean | null)[] = new Array(items.length).fill(null);
+  const todo: number[] = [];
+  items.forEach((it, i) => {
+    const hit = walkCache.get(`${it.key}|${sig}`);
+    if (hit !== undefined) out[i] = hit; else todo.push(i);
+  });
+  const put = (i: number, ok: boolean) => {
+    out[i] = ok;
+    if (walkCache.size >= WALK_CACHE_MAX) walkCache.clear();
+    walkCache.set(`${items[i].key}|${sig}`, ok);
+  };
+  const check = async (idx: number[]): Promise<void> => {
+    let r = await edgeWalk(idx.map((i) => items[i].coords), v);
+    if (r === 'timeout') r = await edgeWalk(idx.map((i) => items[i].coords), v);   // uma nova tentativa (Valhalla ocupado)
+    if (r === 'ok') { idx.forEach((i) => put(i, true)); return; }
+    if (r === 'timeout') return;                                                    // indeterminado: não divide (só pioraria a carga)
+    if (idx.length === 1) { if (r === 'falha') put(idx[0], false); return; }
+    const m = idx.length >> 1;
+    await Promise.all([check(idx.slice(0, m)), check(idx.slice(m))]);
+  };
+  const chunks: number[][] = [];
+  for (let i = 0; i < todo.length; i += WALK_BATCH_MAX) chunks.push(todo.slice(i, i + WALK_BATCH_MAX));
+  await mapLimit(chunks, WALK_CONCURRENCY, check);
+  return out;
 }
 
 async function mapLimit<T, R>(items: T[], limit: number, fn: (x: T) => Promise<R>): Promise<R[]> {
@@ -234,7 +269,7 @@ const layer: RouteLayer = {
   async costLines(ctx) {
     const v = ctx.vehicle;
     const nodes = (await blockingNodes(ctx)).filter((r) => exceeded(r.props, v).length);
-    const info: SentInfo = { ids: new Set(), lines: 0, paralelas: 0, longe: 0, sem_casamento: 0, rota_livre: false };
+    const info: SentInfo = { ids: new Set(), lines: 0, paralelas: 0, longe: 0, sem_casamento: 0, sem_validacao: 0, rota_livre: false };
     sentByCtx.set(ctx, info);
     if (!nodes.length) return [];
 
@@ -266,19 +301,26 @@ const layer: RouteLayer = {
         if (!l.oneway) cands.push({ key: `${r.id}|${l.way_id}|${li}|r`, item, coords: [...l.coords].reverse(), node: [r.lon, r.lat], nodeId: r.id });
       });
     }
-    const parts = await mapLimit(cands, VALIDATE_CONCURRENCY, async (c) => {
-      if (await validated(c.key, c.coords, v)) return [c.coords];
-      // casamento frágil: tenta as duas metades (antes e depois do nó); qualquer uma já impede passar pelo nó
+    const whole = await validateAll(cands, v);
+    const parts: [number, number][][][] = cands.map((c, i) => (whole[i] ? [c.coords] : []));
+    // casamento frágil (linha inteira não casa): tenta as duas metades (antes e depois do nó); qualquer uma já impede
+    // passar pelo nó. Indeterminado (timeout) não tenta metades.
+    const halves: { key: string; coords: [number, number][]; ci: number }[] = [];
+    cands.forEach((c, ci) => {
+      if (whole[ci] !== false) return;
       let k = 0;
       c.coords.forEach((p, i) => { if (sqDist(p, c.node) < sqDist(c.coords[k], c.node)) k = i; });
-      const halves = [c.coords.slice(0, k + 1), c.coords.slice(k)].filter((h) => h.length >= 2);
-      const ok: [number, number][][] = [];
-      for (const [i, h] of halves.entries()) if (await validated(`${c.key}|h${i}`, h, v)) ok.push(h);
-      return ok;
+      [c.coords.slice(0, k + 1), c.coords.slice(k)].forEach((h, i) => { if (h.length >= 2) halves.push({ key: `${c.key}|h${i}`, coords: h, ci }); });
     });
+    const hv = await validateAll(halves, v);
+    halves.forEach((h, i) => { if (hv[i]) parts[h.ci].push(h.coords); });
     const out: LayerCostLine[] = [];
     cands.forEach((c, i) => {
-      if (!parts[i].length) { info.sem_casamento++; return; }
+      if (!parts[i].length) {
+        if (whole[i] === null || (whole[i] === false && halves.some((h, j) => h.ci === i && hv[j] === null))) info.sem_validacao++;
+        else info.sem_casamento++;
+        return;
+      }
       info.ids.add(c.nodeId);
       for (const coords of parts[i]) out.push({ item: c.item, coordinates: coords, factor: BLOCK_FACTOR });
     });
@@ -336,13 +378,14 @@ const layer: RouteLayer = {
       summary, warnings,
       data: {
         na_rota: naRota, evitados,
-        enviados: sent ? { nos: sent.ids.size, linhas: sent.lines, descartadas_paralelas: sent.paralelas, descartadas_longe: sent.longe, sem_casamento: sent.sem_casamento, rota_livre: sent.rota_livre } : null,
+        enviados: sent ? { nos: sent.ids.size, linhas: sent.lines, descartadas_paralelas: sent.paralelas, descartadas_longe: sent.longe, sem_casamento: sent.sem_casamento, sem_validacao: sent.sem_validacao, rota_livre: sent.rota_livre } : null,
       },
     };
   },
 
   async features(bbox, { zoom }) {
-    if ((zoom ?? 12) < 10) return { type: 'FeatureCollection', features: [] };
+    const z = Number.isFinite(zoom) ? (zoom as number) : 12; // zoom fracionário/inválido de outros clientes
+    if (z < 10) return { type: 'FeatureCollection', features: [] };
     const r = await query<NodeRow>(
       `select id::text, name, kind, props, ST_X(geom) as lon, ST_Y(geom) as lat from data_features
         where layer_id = $1 and geom && ST_MakeEnvelope($2,$3,$4,$5,4326) and (valid_to is null or valid_to > now())
@@ -361,7 +404,7 @@ const layer: RouteLayer = {
       };
       features.push({ type: 'Feature', id: row.id, geometry: { type: 'Point', coordinates: [row.lon, row.lat] }, properties: props });
       // trecho penalizado (zoom alto)
-      if ((zoom ?? 12) >= 16) {
+      if (z >= 16) {
         for (const l of p.lines ?? []) features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: l.coords }, properties: { ...props, id: `${row.id}-${l.way_id}` } });
       }
     }
