@@ -288,7 +288,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
 
   // 6) Pontos de descanso ao longo da rota + plano de direção (Lei 13.103)
   let restStops: RestStop[] = [];
-  try { restStops = await restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s, undefined, { at, employment: vehicle.employment }); } catch { /* tabela vazia/erro: segue sem */ }
+  try { restStops = await withTimeout(restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s, undefined, { at, employment: vehicle.employment }), LAYER_POST_TIMEOUT_MS, 'pontos de descanso'); } catch { /* tabela vazia/erro: segue sem */ }
   // vínculo do motorista (CLT x autônomo): muda o limite de jornada (CLT art. 235-C só para empregado)
   const plan = drivingPlan(restricted.duration_s, restStops, { employment: vehicle.employment });
   for (const n of plan.notes) warnings.push({ code: 'driving_time', message: n });
@@ -335,7 +335,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     vehicle,
     avoided,
     warnings,
-    eta_horario: await etaPorHorario(line.geometry, restricted.duration_s, at).catch(() => null),
+    eta_horario: await withTimeout(etaPorHorario(line.geometry, restricted.duration_s, at), 10_000, 'tempo por horário').catch(() => null),
     rest_stops: restStops,
     driving_plan: plan,
     layers: layerOut,
@@ -355,7 +355,20 @@ export function describeReport(r: { type: string; value_num: number | null }): s
 
 /** Medição de tempo por etapa/camada (só com ROUTE_TIMINGS=1; vai em valhalla.timings_ms e no log). */
 const TIMINGS = process.env.ROUTE_TIMINGS === '1';
+/** Tempo máximo de cada camada por etapa (ms). Uma camada que não termina vira aviso, e a rota sai sem ela. */
+const LAYER_PRE_TIMEOUT_MS = Number(process.env.LAYER_PRE_TIMEOUT_MS ?? 20_000);
+const LAYER_POST_TIMEOUT_MS = Number(process.env.LAYER_POST_TIMEOUT_MS ?? 25_000);
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: NodeJS.Timeout | undefined;
+  const t = new Promise<never>((_, rej) => { timer = setTimeout(() => {
+    console.warn(`[rota] ${label} passou de ${ms} ms e foi ignorada nesta rota`);
+    rej(new Error(`tempo esgotado (${Math.round(ms / 1000)} s)`));
+  }, ms); });
+  return Promise.race([p, t]).finally(() => clearTimeout(timer));
+}
 async function timed<T>(t: Record<string, number> | null, key: string, fn: () => Promise<T>): Promise<T> {
+  const ms = key.startsWith('post:') ? LAYER_POST_TIMEOUT_MS : key.startsWith('pre:') ? LAYER_PRE_TIMEOUT_MS : 0;
+  if (ms) { const inner = fn; fn = () => withTimeout(inner(), ms, `camada ${key}`); }
   if (!t) return fn();
   const t0 = performance.now();
   try { return await fn(); } finally { t[key] = Math.round((t[key] ?? 0) + performance.now() - t0); }
