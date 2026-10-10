@@ -180,7 +180,7 @@ begin
   return n_nao;
 end $fn$;
 
--- consultas ao ViaCEP (só para CEP ausente de cep_centroid, ex.: grandes usuários -9xx), com cache
+-- consultas ao ViaCEP (só para CEP ausente de cep_centroid, ex.: grandes usuários -9xx, ou com confiavel = false), com cache
 create table if not exists cep_lookup_cache (
   cep        integer primary key,
   found      boolean not null,

@@ -85,7 +85,7 @@ Outras variáveis:
 | IBGE, API de malhas v3 e de localidades | `data_features` (`layer_id='geocoding'`, `kind='municipio'`) | Dado público do IBGE com citação | Polígonos simplificados ("intermediária"), só para reconhecer e validar município. Não servem como limite legal. |
 | IPEA, `ipea/padronizacao_cnefe` release v0.5.0, `municipio_cep.parquet` | `cep_centroid` | Dado derivado do CNEFE (IBGE, citar). O repositório **não declara licença**; o pacote `geocodebr`, que distribui esses dados, é MIT | **Licença do arquivo incerta.** Se isso pesar, dá para recalcular os centroides direto do `addr_point` (`group by cep`) para os municípios carregados. |
 | Prefeitura de SP, **GeoSampa** `geoportal:segmento_logradouro` (WFS) | `addr_segment` | **CC BY-SA 4.0** | Fica em tabela separada. Resultado que usa o segmento sai com `fonte: 'geosampa'` e o front mostra "GeoSampa (CC BY-SA)". |
-| ViaCEP (`viacep.com.br`) | `cep_lookup_cache` | Serviço gratuito sem licença declarada. A informação de CEP vem dos Correios (DNE, proprietário) | Só é consultado para CEP **ausente** de `cep_centroid`, com cache (180 dias quando acha, 7 quando não acha). Não tem coordenada: o ponto sai da cascata do CNEFE. Para desligar, use `VIACEP_URL=`. |
+| ViaCEP (`viacep.com.br`) | `cep_lookup_cache` | Serviço gratuito sem licença declarada. A informação de CEP vem dos Correios (DNE, proprietário) | Só é consultado para CEP **ausente** de `cep_centroid` (grande usuário `-9xx`, CEP novo) ou com centroide **não confiável** (`confiavel = false`), com cache (180 dias quando acha, 7 quando não acha). Não tem coordenada: o ponto sai da cascata do CNEFE. Para desligar, use `VIACEP_URL=`. |
 | Photon público (komoot), dados OSM | não guardado | Dados ODbL; o serviço avisa que "uso extensivo será limitado" | Só para POI. Antes de ter usuários reais, migrar para Photon auto-hospedado (dump BR de cerca de 706 MB, GraphHopper). |
 
 Nenhum desses dados vai para o OSM. O front mostra a fonte do ponto escolhido, por exemplo "Fonte: IBGE – CNEFE 2022".
@@ -226,8 +226,9 @@ pequeno levava de 60 a 80 s; agora leva de 2 a 20 s.
   Quem mudar essa regra precisa reaplicar a migration e reimportar `cnefe_enderecos` (as ruas já fundidas não se
   separam sozinhas); `addr_segment.core_norm` é recalculado pela migration.
 - **Números por extenso** são tratados como variantes na hora da busca, sem reescrever a base.
-- **O ViaCEP só entra para CEP que não está no centroide.** As coordenadas da BrasilAPI e da AwesomeAPI não são
-  usadas, conforme a pesquisa: proveniência e licença incertas, e erros de 5–10 km.
+- **O ViaCEP só entra para CEP que não está no centroide ou cujo centroide não é confiável**, e só para obter o
+  logradouro, que é geocodificado na base própria. As coordenadas da BrasilAPI e da AwesomeAPI não são usadas,
+  conforme a pesquisa: proveniência e licença incertas, e erros de 5–10 km.
 
 ## Limitações e próximos passos
 - **Cobertura com número: só RMSP + Baixada** (48 municípios). Fora disso a cascata dá CEP (Brasil todo), município

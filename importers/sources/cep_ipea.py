@@ -2,7 +2,8 @@
 
 O IPEA publica o CNEFE 2022 padronizado (base do pacote geocodebr). municipio_cep traz, para 928.905 CEPs do Brasil,
 a média das coordenadas dos endereços do CNEFE no CEP (n_casos) e o desvio em metros.
-CEPs de grandes usuários (-9xx, ex.: 05316-900 CEAGESP) NÃO estão: a API consulta o ViaCEP só nesses casos.
+CEPs de grandes usuários (-9xx, ex.: 05316-900 CEAGESP) NÃO estão: a API consulta o ViaCEP nesses casos e nos de
+centroide não confiável (abaixo).
 
 Centroides de CEP "coringa" (o CNEFE usa alguns CEPs para endereços espalhados pela cidade, ex.: 01001-000) ficam com
 confiavel = false (cep_centroid_flag(), na migration 0116) e a API não os devolve como precisão de CEP.
