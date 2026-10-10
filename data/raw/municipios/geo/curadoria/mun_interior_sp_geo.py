@@ -494,6 +494,25 @@ VIAS = {'3552205': (-23.60, -47.55, -23.40, -47.35), '3551009': (-23.995, -46.45
         '3538709': (-22.80, -47.75, -22.65, -47.55), '3518701': (-24.00, -46.32, -23.90, -46.20)}
 
 
+def _seis_casas(f: dict) -> list[dict]:
+    """Linha de regra ativa já cortada em pedaços de até 400 m e com 6 casas decimais. A API manda as linhas ao Valhalla
+    com 6 casas (ST_AsGeoJSON(geom, 6) em restricoes_rmsp.layer.ts) e o importador valida com a precisão do arquivo (7
+    casas): uma linha da Av. Dom Aguirre passava na validação e, arredondada, derrubava a rota inteira ('Failed to edge
+    walk line feature'). Com o arquivo já em 6 casas e sem pedaço acima de 440 m (o importador não corta de novo), o
+    que o importador testa é exatamente o que a API manda."""
+    out = []
+    for c in lib.split_long(f['geometry']['coordinates']):
+        cs = []
+        for x, y in c:
+            q = [round(x, 6), round(y, 6)]
+            if not cs or cs[-1] != q:
+                cs.append(q)
+        if len(cs) >= 2:
+            out.append({'type': 'Feature', 'properties': {**f['properties'], 'comprimento_m': round(lib.line_length_m(cs))},
+                        'geometry': {'type': 'LineString', 'coordinates': cs}})
+    return out
+
+
 def vias(ibge: str) -> None:
     doc = M.carregar(M.MUNICIPIOS_DIR / f'{ibge}.json')
     nomes = sorted({n for r in doc['regras'] for t in r.get('trechos', [])
@@ -506,7 +525,8 @@ def vias(ibge: str) -> None:
             lib.raw_path(a).unlink()
     feats = M.compilar(doc)
     # regras não aplicadas (desativada etc.) não passam pelo corte de 400 m nem pela validação no Valhalla: uma feição
-    # por via do ato (MultiLineString) em vez de uma por way do OSM deixa o seed pequeno (o aviso usa cada parte)
+    # por via do ato (MultiLineString) em vez de uma por way do OSM deixa o seed pequeno (o aviso usa cada parte).
+    # Regras ativas: pedaços de até 400 m com 6 casas decimais (ver _seis_casas)
     nao_ativas = {r['id'] for r in doc['regras'] if r['status'] != 'ativa'}
     for a in arquivos:
         p = lib.raw_path(a)
@@ -516,10 +536,10 @@ def vias(ibge: str) -> None:
             pr = f['properties']
             if pr.get('regra_id') in nao_ativas and f['geometry']['type'] == 'LineString':
                 grupos.setdefault((pr['regra_id'], pr.get('inciso'), pr.get('via'), pr.get('trecho')), []).append(f)
+            elif f['geometry']['type'] == 'LineString':
+                outras.extend(_seis_casas(f))
             else:
                 outras.append(f)
-        if not grupos:
-            continue
         for (rid, inc, via, trecho), fs in grupos.items():
             pr = {k: v for k, v in fs[0]['properties'].items() if k not in ('osm_way_id', 'comprimento_m', 'mao_unica', 'sentido')}
             pr.update({'osm_way_ids': sorted(f['properties'].get('osm_way_id') for f in fs if f['properties'].get('osm_way_id')),
