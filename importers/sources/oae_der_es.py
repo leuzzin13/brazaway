@@ -53,7 +53,8 @@ def fetch():
             'liberacao': None, 'liberacao_url': None, 'liberacao_data': None, 'liberacao_fonte': None,
             'verificado_em': verificado, 'orgao': 'DER-ES', 'obs': r.get('obs'),
         }
-        nome = f'{r["nome"]} — {r["rodovia"]}' + (f' km {str(km).replace(".", ",")}' if km is not None else '')
+        km_txt = (str(int(km)) if float(km).is_integer() else str(km).replace('.', ',')) if km is not None else None
+        nome = f'{r["nome"]} — {r["rodovia"]}' + (f' km {km_txt}' if km_txt else '')
         props = {
             'admin': 'estadual (DER-ES)', 'rodovia': r['rodovia'], 'km': km, 'municipio': r.get('municipio'),
             'oae_codigo': r['oae_codigo'], 'peso_max_t': pbt, 'eixo_max_t': eixo, 'altura_livre_m': None,
