@@ -7,9 +7,13 @@ Chave: CNPJ. Três conjuntos da ANP + OSM para posicionar:
      DIESEL S10 e DIESEL (S500) por posto e data da coleta. Guardamos a coleta MAIS RECENTE de cada produto.
   3. PMQC (qualidade, mensal): latitude/longitude do posto onde a amostra foi colhida e o produto amostrado.
      Usamos os últimos PMQC_MESES (padrão 12) arquivos publicados; coordenada = mediana das coletas do CNPJ.
+     O PMQC às vezes grava o centro da cidade ou um ponto padrão: descartamos a amostra cujo ponto exato aparece para
+     2+ CNPJs ou tem ≤ 3 casas decimais, o CNPJ com coletas espalhadas (> 500 m) e o ponto a mais de 1 km do polígono
+     do município do próprio posto (malha do IBGE da camada geocoding). Esses postos seguem para os passos abaixo.
 Posição (props.coord_fonte):
   - 'pmqc'        : coordenada do PMQC (CC-BY). Se houver amenity=fuel do OSM a ≤ 100 m, o posto é ligado a ele
-                    (props.osm: id, distância, hgv, fuel:HGV_diesel) — a posição continua a do PMQC;
+                    (props.osm: id, distância, nome, marca, hgv, fuel:HGV_diesel, horário — ODbL) — a posição continua
+                    a do PMQC;
   - 'cnefe+osm'   : sem PMQC, o endereço (logradouro + número) é achado no CNEFE 2022 do IBGE (tabelas do
                     geocodificador próprio, se carregadas) e a posição vem do amenity=fuel do OSM a ≤ 100 m
                     desse ponto (ODbL — atribuído em meta.sources);
@@ -41,12 +45,15 @@ LPC_URL = BASE + '/arquivos/shpc/qus/ultimas-4-semanas-diesel-gnv.csv'
 PMQC_PAGE = BASE + '/pmqc-programa-de-monitoramento-da-qualidade-dos-combustiveis'
 SOURCE_URL = f'{CADASTRO_URL} + {LPC_URL} + PMQC mensal ({PMQC_PAGE})'
 LICENSE = ('CC-BY — Fonte: ANP (cadastro de revendedores, Levantamento de Preços de Combustíveis e PMQC; dados.gov.br '
-           'license_id cc-by). Posições "cnefe+osm"/"osm_endereco": ODbL 1.0, © colaboradores do OpenStreetMap')
+           'license_id cc-by). Partes do OpenStreetMap, ODbL 1.0 (© colaboradores do OpenStreetMap): posições '
+           '"cnefe+osm"/"osm_endereco" e props.osm (id, nome, marca, hgv, fuel:diesel, horário) dos postos ligados ao OSM')
 NOTES = ''
 
 UFS = [u.strip().upper() for u in os.environ.get('POSTOS_UFS', 'SP,RJ,MG,ES').split(',') if u.strip()]
 PMQC_MESES = int(os.environ.get('PMQC_MESES', '12'))
 OSM_MAX_M = 100.0
+PMQC_MAX_DISP_M = 500.0      # dispersão máxima das coletas do mesmo CNPJ
+PMQC_MAX_FORA_MUN_M = 1000.0  # ponto a mais disso do município do posto = posição errada
 
 TIPOS = ['RUA', 'AVENIDA', 'ESTRADA', 'RODOVIA', 'ALAMEDA', 'TRAVESSA', 'PRACA', 'LARGO', 'VIADUTO', 'PARQUE', 'VIA',
          'MARGINAL', 'ACESSO', 'VIELA', 'LADEIRA', 'PASSAGEM', 'CAMINHO', 'VILA']
@@ -74,13 +81,35 @@ def split_tipo(street: str) -> tuple[str | None, str]:
     return None, ' '.join(words)
 
 
+_NUM_RE = re.compile(r'^(?:N[º°O.]?\s*)?(KM|QUIL[OÔ]METRO)?\s*(\d{1,6})(?:\.(\d{3})\b)?(?:[.,]\d+)?\b', re.I)
+_KM_NA_RUA_RE = re.compile(r'^(.*?)\s*[-,]?\s*\b(?:KM|QUIL[OÔ]METRO)\s*(\d{1,4})(?:[.,]\d+)?\b', re.I)
+
+
 def parse_endereco(endereco: str) -> tuple[str, int | None, bool]:
-    """'AVENIDA JOSE RUI LINO,  500' -> ('AVENIDA JOSE RUI LINO', 500, False); 'ROD PRES DUTRA, KM 210' -> (.., 210, True)."""
-    e = (endereco or '').strip()
-    m = re.match(r'^(.*?)[,\s]+(?:N[º°O.]?\s*)?(KM\s*)?(\d{1,6})(?:[.,]\d+)?\b.*$', e, re.I)
-    if m and m.group(1).strip():
-        return m.group(1).strip(' ,'), int(m.group(3)), bool(m.group(2))
-    return e.strip(' ,'), None, False
+    """Endereço do cadastro da ANP ('LOGRADOURO,  NÚMERO[, ...]') -> (logradouro, número, número é km?).
+
+    Separa na VÍRGULA, não no primeiro número: o nome do logradouro pode ter número ('RUA 24 DE MAIO,  1281',
+    'RODOVIA BR 101,  KM 578'). Ponto de milhar ('1.310') é juntado; fração de km ('KM 36,8') é descartada.
+    'RODOVIA BR 262 KM 169, S/N' -> km no próprio logradouro. Sem número ('S/N') -> (logradouro, None, False).
+    """
+    e = re.sub(r'\s+', ' ', endereco or '').strip()
+    segs = [x.strip() for x in e.split(',')]
+    rua = segs[0].strip(' -')
+    i = 1
+    if rua.upper().rstrip('.') in TIPOS or len(rua) < 3:   # 'AVENIDA , ARAGUAIA, 164'
+        while i < len(segs) and not segs[i]:
+            i += 1
+        if i < len(segs) and not _NUM_RE.match(segs[i]):
+            rua, i = f'{rua} {segs[i]}'.strip(), i + 1
+    for seg in segs[i:]:
+        m = _NUM_RE.match(seg)
+        if m:
+            km = bool(m.group(1))
+            return rua, int(m.group(2) + m.group(3)) if m.group(3) and not km else int(m.group(2)), km
+    m = _KM_NA_RUA_RE.match(rua)
+    if m and m.group(1).strip(' -,'):
+        return m.group(1).strip(' -,'), int(m.group(2)), True
+    return rua, None, False
 
 
 def cnpj(s) -> str:
@@ -163,9 +192,50 @@ def pmqc_urls() -> list[str]:
     return sorted(urls, key=ym, reverse=True)[:PMQC_MESES]
 
 
-def pmqc() -> tuple[dict[str, dict], list[str]]:
-    """CNPJ -> {lat, lon, n, ultima, diesel_s10, diesel_s500, dispersao_m}."""
-    pts: dict[str, list[tuple[float, float]]] = defaultdict(list)
+def _decimais(v: str | None) -> int:
+    t = (v or '').strip().replace(',', '.')
+    return len(t.split('.', 1)[1].rstrip('0')) if '.' in t else 0
+
+
+def pmqc_positions(amostras: dict[str, list[tuple[float, float, int]]]) -> tuple[dict[str, dict], dict[str, tuple[str, str]]]:
+    """Posição de cada CNPJ a partir das amostras do PMQC [(lat, lon, casas decimais)], sem os pontos-padrão.
+
+    O PMQC às vezes grava o centro da cidade (ou um ponto fixo) em vez do posto: o mesmo ponto aparece para vários
+    CNPJs (12 postos de S. J. do Rio Preto num ponto só; 20 postos de 4 UFs num ponto em S. João de Meriti). Por isso:
+      1. descarta a AMOSTRA cujo ponto exato (6 casas) aparece para 2+ CNPJs diferentes, ou que tem ≤ 3 casas decimais
+         (precisão de 100 m ou pior: não é a posição do posto);
+      2. posição = mediana das amostras que sobram; descarta o CNPJ se a dispersão (mediana da distância das amostras
+         à mediana) passar de PMQC_MAX_DISP_M.
+    Devolve (CNPJ -> {lat, lon, n, dispersao_m}, CNPJ -> (código, motivo) da rejeição). A conferência com o município
+    do posto é feita depois (fora_do_municipio), porque precisa do banco.
+    """
+    por_ponto: dict[tuple[float, float], set[str]] = defaultdict(set)
+    for c, ps in amostras.items():
+        for lat, lon, _d in ps:
+            por_ponto[(round(lat, 6), round(lon, 6))].add(c)
+    out: dict[str, dict] = {}
+    rejeitados: dict[str, tuple[str, str]] = {}
+    for c, ps in amostras.items():
+        boas = [(lat, lon) for lat, lon, d in ps if d >= 4 and len(por_ponto[(round(lat, 6), round(lon, 6))]) < 2]
+        if not boas:
+            rejeitados[c] = (('ponto_repetido', 'ponto do PMQC repetido em outros CNPJs (centro da cidade/ponto padrão)')
+                             if any(len(por_ponto[(round(la, 6), round(lo, 6))]) >= 2 for la, lo, _ in ps)
+                             else ('baixa_precisao', 'coordenada do PMQC com 3 casas decimais ou menos'))
+            continue
+        lat = statistics.median(p[0] for p in boas)
+        lon = statistics.median(p[1] for p in boas)
+        disp = statistics.median(dist_m(lat, lon, p[0], p[1]) for p in boas)
+        if disp > PMQC_MAX_DISP_M:
+            rejeitados[c] = ('espalhado', f'coletas do PMQC espalhadas ({round(disp)} m da mediana)')
+            continue
+        out[c] = {'lat': lat, 'lon': lon, 'n': len(boas), 'dispersao_m': round(disp)}
+    return out, rejeitados
+
+
+def pmqc() -> tuple[dict[str, dict], dict[str, dict], dict[str, tuple[str, str]], list[str]]:
+    """(CNPJ -> posição aceita {lat, lon, n, dispersao_m}, CNPJ -> info de TODAS as amostras {diesel_s10, diesel_s500,
+    ultima, municipio, uf}, CNPJ -> motivo da rejeição da posição, arquivos usados)."""
+    amostras: dict[str, list[tuple[float, float, int]]] = defaultdict(list)
     info: dict[str, dict] = {}
     usados = []
     for u in pmqc_urls():
@@ -179,13 +249,16 @@ def pmqc() -> tuple[dict[str, dict], list[str]]:
         txt = raw.decode('utf-8-sig', 'replace')
         seen_sample = set()
         for r in csv.DictReader(io.StringIO(txt), delimiter=';'):
-            if (r.get('Uf') or '').strip().upper() not in UFS:
+            uf = (r.get('Uf') or '').strip().upper()
+            if uf not in UFS:
                 continue
             c = cnpj(r.get('CnpjPosto'))
             lat, lon = fnum(r.get('Latitude')), fnum(r.get('Longitude'))
             prod = (r.get('Produto') or '').upper()
             d = iso(r.get('DataColeta') or '')
-            i = info.setdefault(c, {'diesel_s10': False, 'diesel_s500': False, 'ultima': None})
+            i = info.setdefault(c, {'diesel_s10': False, 'diesel_s500': False, 'ultima': None, 'uf': uf, 'municipio': ''})
+            if (r.get('Município') or '').strip():
+                i['municipio'] = r['Município'].strip()
             if 'DIESEL' in prod:
                 if 'S10' in prod:
                     i['diesel_s10'] = True
@@ -198,14 +271,41 @@ def pmqc() -> tuple[dict[str, dict], list[str]]:
                 continue
             seen_sample.add(sample)
             if -35 < lat < 6 and -75 < lon < -28:
-                pts[c].append((lat, lon))
-    out = {}
-    for c, ps in pts.items():
-        lat = statistics.median(p[0] for p in ps)
-        lon = statistics.median(p[1] for p in ps)
-        disp = statistics.median(dist_m(lat, lon, p[0], p[1]) for p in ps)
-        out[c] = {**info.get(c, {}), 'lat': lat, 'lon': lon, 'n': len(ps), 'dispersao_m': round(disp)}
-    return out, usados
+                amostras[c].append((lat, lon, min(_decimais(r.get('Latitude')), _decimais(r.get('Longitude')))))
+    pos, rejeitados = pmqc_positions(amostras)
+    return pos, info, rejeitados, usados
+
+
+# nome do município no cadastro da ANP -> nome do IBGE (só os que não casam pela normalização)
+MUN_ALIAS = {('SAO THOME DAS LETRAS', 'MG'): 'SAO TOME DAS LETRAS', ('BARAO DE MONTE ALTO', 'MG'): 'BARAO DO MONTE ALTO',
+             ('FLORINIA', 'SP'): 'FLORINEA'}
+
+
+def fora_do_municipio(pts: dict[str, tuple[float, float, str, str]]) -> dict[str, float] | None:
+    """CNPJ -> distância (m) do ponto ao polígono do município do próprio posto (camada geocoding, malha do IBGE;
+    0 = dentro). pts: CNPJ -> (lat, lon, município, UF). Só entram os CNPJs cujo município casou pelo nome.
+    None se a malha de municípios não estiver carregada (a conferência é pulada)."""
+    try:
+        from common import _pg_conn
+        with _pg_conn() as conn, conn.cursor() as cur:
+            cur.execute("select source_id, name, props->>'uf' from data_features where layer_id = 'geocoding' and kind = 'municipio'")
+            mun = {(norm(n), uf): sid for sid, n, uf in cur.fetchall()}
+            if not mun:
+                return None
+            cur.execute('create temp table pq (cnpj text, cod text, lon float8, lat float8)')
+            with cur.copy('copy pq from stdin') as cp:
+                for k, (lat, lon, m, uf) in pts.items():
+                    key = (norm(m), uf)
+                    cod = mun.get(key) or mun.get((MUN_ALIAS.get(key, ''), uf))
+                    if cod:
+                        cp.write_row((k, cod, lon, lat))
+            cur.execute("""
+              select pq.cnpj, ST_Distance(f.geom::geography, ST_SetSRID(ST_MakePoint(pq.lon, pq.lat), 4326)::geography)
+                from pq join data_features f on f.layer_id = 'geocoding' and f.kind = 'municipio' and f.source_id = pq.cod""")
+            return {r[0]: float(r[1]) for r in cur.fetchall()}
+    except Exception as e:  # noqa: BLE001
+        print(f'  ! malha de municípios indisponível ({e}); conferência do município pulada')
+        return None
 
 
 class Grid:
@@ -290,8 +390,9 @@ def fetch():
     global NOTES
     cad = cadastro()
     precos, (coleta_ini, coleta_fim) = lpc()
-    pm, meses = pmqc()
-    print(f'  cadastro {len(cad)} · LPC {len(precos)} postos com diesel · PMQC {len(pm)} CNPJs com coordenada ({len(meses)} arquivos)')
+    pm, pm_info, pm_rejeitado, meses = pmqc()
+    print(f'  cadastro {len(cad)} · LPC {len(precos)} postos com diesel · PMQC {len(pm_info)} CNPJs, {len(pm)} com posição '
+          f'aceita e {len(pm_rejeitado)} com ponto padrão/espalhado ({len(meses)} arquivos)')
     osm = osm_fuel()
     grid = Grid(osm)
     by_pc_hn: dict[tuple[str, str], list[dict]] = defaultdict(list)
@@ -318,7 +419,22 @@ def fetch():
                      'endereco': f"{p['rua']}, {p['numero']}".strip(', '), 'complemento': '', 'bairro': p['bairro'], 'cep': p['cep'],
                      'municipio': p['municipio'], 'uf': p['uf'], 'bandeira': p['bandeira'], 'autorizacao': '', 'no_cadastro': False}
 
-    # só quem tem evidência de diesel no LPC/PMQC precisa de posição; o OSM fuel:diesel entra depois da ligação
+    # PMQC fora do município do próprio posto (> 1 km do polígono do IBGE) = ponto errado: descarta a posição
+    fora = fora_do_municipio({c: (q['lat'], q['lon'], postos[c]['municipio'] or pm_info[c]['municipio'], postos[c]['uf'])
+                              for c, q in pm.items() if c in postos})
+    if fora is None:
+        print('  ! conferência do município pulada (camada geocoding/municipio não carregada)')
+    for c, d in (fora or {}).items():
+        if d > PMQC_MAX_FORA_MUN_M:
+            pm_rejeitado[c] = ('fora_municipio', f'coordenada do PMQC a {d / 1000:.1f} km do município do posto')
+            del pm[c]
+    motivos: dict[str, int] = defaultdict(int)
+    for c, (cod, _txt) in pm_rejeitado.items():
+        if c in postos:
+            motivos[cod] += 1
+    print('  posição do PMQC descartada: ' + ', '.join(f'{k} {v}' for k, v in sorted(motivos.items())))
+
+    # quem não tem posição aceita do PMQC (inclusive os descartados acima) tenta CNEFE+OSM e OSM por endereço
     sem_pmqc = {c: p for c, p in postos.items() if c not in pm}
     cn = cnefe_points(sem_pmqc)
     print(f'  CNEFE: {len(cn)} endereços achados (de {len(sem_pmqc)} postos sem PMQC)')
@@ -326,13 +442,15 @@ def fetch():
     used_osm: set[str] = set()
     out = []
     stats = defaultdict(int)
-    for c, p in postos.items():
+    # PMQC primeiro: o posto do OSM ao lado de um posto do PMQC é dele, não de um CNPJ achado pelo endereço
+    for c in sorted(postos, key=lambda k: k not in pm):
+        p = postos[c]
         pos = None
         osm_link = None
         if c in pm:
             q = pm[c]
             pos = (q['lat'], q['lon'], 'pmqc')
-            near = grid.near(q['lat'], q['lon'], OSM_MAX_M)
+            near = [x for x in grid.near(q['lat'], q['lon'], OSM_MAX_M) if x[1]['osm_id'] not in used_osm]
             if near:
                 osm_link = (near[0][0], near[0][1])
         elif c in cn:
@@ -357,7 +475,7 @@ def fetch():
             used_osm.add(osm_link[1]['osm_id'])
         t = osm_link[1]['tags'] if osm_link else {}
         pr = precos.get(c, {})
-        q = pm.get(c, {})
+        q = {**pm_info.get(c, {}), **pm.get(c, {})}
         evid = []
         if pr.get('s10') or pr.get('s500'):
             evid.append('preço no LPC')
@@ -390,6 +508,7 @@ def fetch():
                 'pmqc_s10': bool(q.get('diesel_s10')), 'pmqc_s500': bool(q.get('diesel_s500')),
                 'coord_fonte': fonte,
                 'pmqc_coletas': q.get('n'), 'pmqc_dispersao_m': q.get('dispersao_m'), 'pmqc_ultima': q.get('ultima'),
+                'pmqc_posicao_descartada': pm_rejeitado[c][1] if c in pm_rejeitado else None,
                 'osm': ({'id': osm_link[1]['osm_id'], 'dist_m': round(osm_link[0]), 'nome': t.get('name'), 'marca': t.get('brand'),
                          'hgv': t.get('hgv'), 'hgv_diesel': t.get('fuel:HGV_diesel'), 'diesel': t.get('fuel:diesel'),
                          'horario': t.get('opening_hours')} if osm_link else None),
@@ -399,6 +518,10 @@ def fetch():
     NOTES = (f'UFs {",".join(UFS)}. {len(out)} postos com diesel e posição ({com_preco} com preço do LPC, coletas de '
              f'{coleta_ini} a {coleta_fim}). Posição: PMQC {stats["pmqc"]}, CNEFE+OSM {stats["cnefe+osm"]}, '
              f'OSM por endereço {stats["osm_endereco"]}. Fora: {stats["sem_posicao"]} sem posição confiável, '
-             f'{stats["sem_evidencia_diesel"]} sem evidência de diesel. PMQC: {", ".join(meses)}.')
+             f'{stats["sem_evidencia_diesel"]} sem evidência de diesel. Posição do PMQC descartada em '
+             f'{sum(motivos.values())} postos (ponto repetido em outros CNPJs {motivos["ponto_repetido"]}, baixa precisão '
+             f'{motivos["baixa_precisao"]}, coletas espalhadas {motivos["espalhado"]}, fora do município {motivos["fora_municipio"]})'
+             f'{"" if fora is not None else " (sem conferência do município: malha do IBGE não carregada)"}. '
+             f'PMQC: {", ".join(meses)}.')
     print('  ' + NOTES)
     return out

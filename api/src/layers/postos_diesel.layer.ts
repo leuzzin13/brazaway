@@ -36,6 +36,8 @@ export interface PostoOnRoute {
   desvio_km: number;
   posicao: string;
   aceita_caminhao: string | null;
+  /** atribuição do item: ANP e, quando a posição ou o acesso de caminhão vêm do OSM, © OpenStreetMap (ODbL) */
+  fonte: string;
   lat: number;
   lon: number;
 }
@@ -47,6 +49,14 @@ const POS_TXT: Record<string, string> = {
   'cnefe+osm': 'endereço (CNEFE/IBGE) casado com posto do OSM a ≤ 100 m',
   osm_endereco: 'posto do OSM com o mesmo endereço',
 };
+
+const OSM_ATTR = '© colaboradores do OpenStreetMap (ODbL)';
+
+/** Atribuição de um posto: ANP (CC-BY) e, se ligado a um posto do OSM, o que veio de lá (ODbL). */
+export function fonteTxt(p: Record<string, any>): string {
+  const doOsm = p.coord_fonte && p.coord_fonte !== 'pmqc' ? 'posição e acesso de caminhão' : p.osm ? 'acesso de caminhão' : null;
+  return 'Fonte: ANP (LPC, cadastro e PMQC)' + (doOsm ? ` · ${doOsm} ${OSM_ATTR}` : '');
+}
 
 function hgvTxt(p: Props): string | null {
   const o = p.osm;
@@ -66,7 +76,7 @@ export function toPosto(r: NearRouteRow, distanceKm: number): PostoOnRoute {
     endereco: p.endereco ?? null, diesel_s10: p.diesel_s10 ?? null, diesel_s500: p.diesel_s500 ?? null,
     km_rota: Math.round(r.fraction * distanceKm * 10) / 10, distancia_m: Math.round(d),
     desvio_km: d < 150 ? 0 : Math.round((2 * d * DETOUR_FACTOR) / 100) / 10,
-    posicao: POS_TXT[p.coord_fonte] ?? p.coord_fonte ?? '?', aceita_caminhao: hgvTxt(p), lat: pt[1], lon: pt[0],
+    posicao: POS_TXT[p.coord_fonte] ?? p.coord_fonte ?? '?', aceita_caminhao: hgvTxt(p), fonte: fonteTxt(p), lat: pt[1], lon: pt[0],
   };
 }
 
@@ -123,7 +133,7 @@ const layer: RouteLayer = {
             diesel_s500: p.diesel_s500 ? `${brl(p.diesel_s500.valor)} (coleta ${dmy(p.diesel_s500.data)})` : null,
             endereco: p.endereco ?? null, municipio: p.municipio ? `${p.municipio}/${p.uf}` : null,
             caminhao: hgvTxt(p), cnpj: p.cnpj, posicao: POS_TXT[p.coord_fonte] ?? p.coord_fonte ?? null,
-            fonte: 'Fonte: ANP (LPC, cadastro e PMQC)' + (p.coord_fonte && p.coord_fonte !== 'pmqc' ? ' · posição © OpenStreetMap' : ''),
+            fonte: fonteTxt(p),
           },
         };
       }),
@@ -154,7 +164,9 @@ const layer: RouteLayer = {
     }
     const ultima = [s10?.coleta_ate, s500?.coleta_ate].filter(Boolean).sort().pop() as string | undefined;
     const primeira = [s10?.coleta_de, s500?.coleta_de].filter(Boolean).sort()[0] as string | undefined;
-    summary.push(`Fonte: ANP — Levantamento de Preços de Combustíveis, coletas de ${dmy(primeira)} a ${dmy(ultima)}. Preço de bomba na data da coleta; confira no posto.`);
+    const comOsm = top.some((x) => x.fonte.includes('OpenStreetMap'));
+    summary.push(`Fonte: ANP — Levantamento de Preços de Combustíveis, coletas de ${dmy(primeira)} a ${dmy(ultima)}. Preço de bomba na data da coleta; confira no posto.`
+      + (comOsm ? ` Posição/acesso de caminhão de parte dos postos: ${OSM_ATTR}.` : ''));
     const dep = DateTime.fromJSDate(ctx.at).setZone(ctx.tz);
     if (ultima && dep.diff(DateTime.fromISO(ultima, { zone: ctx.tz }), 'days').days > STALE_DAYS) {
       warnings.push({ code: 'diesel_price_stale', severity: 'info', message: `Os preços de diesel da ANP mais recentes nesta rota são de ${dmy(ultima)} (mais de ${STALE_DAYS} dias antes da saída): podem estar desatualizados.` });
@@ -167,7 +179,7 @@ const layer: RouteLayer = {
         mais_baratos_s10: top10, mais_baratos_s500: top500,
         raio_m: NEAR_M,
         desvio: 'aproximado: 2 × distância em linha reta até a rota × 1,4',
-        fonte: 'Fonte: ANP',
+        fonte: 'Fonte: ANP' + (list.some((x) => x.fonte.includes('OpenStreetMap')) ? ` · posição/acesso de caminhão de parte dos postos ${OSM_ATTR}` : ''),
       },
     };
   },
