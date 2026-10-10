@@ -1,0 +1,328 @@
+{
+ "category": "Interdições temporárias com prazo (alagamentos CGE, ocorrências e obras em rodovia, eventos e esquemas especiais da CET)",
+ "summary": "A capital tem quatro fontes gratuitas que se completam e bastam para uma camada própria de interdições com validade.\n\n1. **CGE-SP:** pontos de alagamento em tempo real em HTML simples, com status transitável/intransitável, sentido, referência e horário. O histórico diário vai pelo menos até 2008. Baixei 739 dias (out/2024 a out/2026): 1.358 ocorrências, 59% intransitáveis, duração mediana de 71 min (p90 de 273 min). Os 200 pontos mais frequentes cobrem 50% das ocorrências. O \"Estado de atenção\" sai no RSS feed_rss.jsp.\n2. **CET:** PDF semanal \"Eventos Notáveis do Fim de Semana\", de 174 páginas, com tabelas extraíveis por pdfplumber. Traz eventos, patolamento de guindaste, manutenção de túnel e zeladoria com data, horário e trecho, além da seção OBRAS com 92 obras longas, início e previsão. Essa lista substitui a SIURB, parada em 2020–22. Fecha o grupo o RSS de notícias com as interdições pontuais.\n3. **ARTESP `ocorrencias`:** CC BY, Parquet, dados até o dia anterior. São 11.505 alagamentos, erosões e quedas de talude desde 2020, com interdição e lat/lon. Serve para recorrência em rodovia, como a SPM-280E km 14, com 46 alagamentos.\n4. **DER-SP:** tabela HTML de interdições.\n\nFontes de contexto: GeoSampa (manchas de inundação TR5/TR25 com profundidade e ocorrências do SIGRC), INMET (avisos em JSON/CAP), CEMADEN (pluviômetros, por endpoint não documentado) e DNIT (alertas de serviço; o filtro atual só pega pontes).\n\nLimitações: o CGE fica atrás de CloudFront/WAF e bloqueia o IP com 403 por 15 a 20 min acima de ~1 req/s. A 1 req a cada 3 s não houve bloqueio. Nem o CGE nem a CET declaram licença. Não deu para automatizar o DOC-SP (\"Erro realizando pesquisa\"). O `programacao-de-obras` da ARTESP continua só com schema. A geocodificação do CGE na base própria acertou 47 de 74 cruzamentos e 5 de 6 números na primeira tentativa.\n\n`include_construction` não muda a rota de caminhão. Já `motor_vehicle:conditional` funciona no Valhalla local: no domingo a rota evita a Av. Paulista. O mecanismo proposto é uma camada `interdicoes` com início, fim e janela, que gera costLines sensíveis ao sentido e avisos.\n\nNOTES.md e as amostras estão em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/research2/interdicoes_temporarias_alagamentos/. O repositório não foi editado.",
+ "key_facts": [
+  {
+   "fact": "CGE alagamentos.jsp: HTTP 200, HTML UTF-8 sem JS. Em 09/10/2026 houve 6 pontos (4 ativos, 2 inativos), entre eles a Av. do Estado (sentido AMBOS, ref. R. Pres. Batista Pereira, ativo e transitável desde 18:12). Em 15/01/2026 houve 5 pontos. O status vem da classe CSS (ativo-intransitavel, inativo-transitavel...).",
+   "source_url": "https://www.cgesp.org/v3/alagamentos.jsp"
+  },
+  {
+   "fact": "O histórico do CGE por ?dataBusca=DD/MM/AAAA&enviaBusca=Buscar funciona pelo menos desde 2008: 2008-01-15 teve 23 pontos, 2010-01-21 teve 109 e 2020-02-10 teve 129. 2004 voltou vazio.",
+   "source_url": "https://www.cgesp.org/v3/alagamentos.jsp?dataBusca=15/01/2026&enviaBusca=Buscar"
+  },
+  {
+   "fact": "O CGE fica atrás de CloudFront com WAF. Depois de ~484 requisições em ~5 min (≈1,4 req/s), o IP recebeu 403 'Request blocked' por 15 a 20 min, inclusive na página do dia. A 1 req a cada 3 s, 255 dias seguidos passaram sem bloqueio. O robots.txt permite /v3/.",
+   "source_url": "https://www.cgesp.org/robots.txt"
+  },
+  {
+   "fact": "Histórico CGE de 11/10/2024 a 09/10/2026: 1.358 pontos-ocorrência em 146 dias, 799 (59%) intransitáveis. Duração mediana de 71 min (p90 de 273 min). 875 pontos distintos; os 200 mais frequentes cobrem 49,8% das ocorrências. Av. do Estado x R. Pres. Batista Pereira teve 12 ocorrências; Marginal Tietê x Pte. das Bandeiras, 9; Jacu-Pêssego x Ragueb Chohfi, 8.",
+   "source_url": "https://www.cgesp.org/v3/alagamentos.jsp"
+  },
+  {
+   "fact": "O 'Estado de atenção' do CGE sai no RSS feed_rss.jsp (ex.: 'Estado de atenção para alagamentos em toda a cidade, às 17h33' e 'Término... às 18h15'), e a notícia lista as zonas, inclusive Marginal Tietê e Marginal Pinheiros. O pubDate vem marcado como GMT, mas é hora local.",
+   "source_url": "https://www.cgesp.org/v3/feed_rss.jsp"
+  },
+  {
+   "fact": "A CET publica toda sexta (fechamento às 15h) o PDF 'Eventos Notáveis do Fim de Semana', de 174 páginas. Ele traz agenda com área, data, horário, nome e local; a seção 1.3 OBRAS com 92 obras em vigor, início e previsão (Linha 6 do Metrô, BRT Radial Leste, Pirituba–Lapa); o Programa Ruas Abertas; e fichas técnicas com horários de interdição por via (ex.: Palmeiras x Corinthians, Corrida contra o Câncer de Mama). O pdfplumber extraiu 237 linhas de tabela nas páginas 7–31.",
+   "source_url": "https://www.cetsp.com.br/consultas/eventos-notaveis-do-fim-de-semana.aspx"
+  },
+  {
+   "fact": "O RSS de notícias da CET traz 10 itens com HTML completo, por exemplo 'Ponte Eng. Ary Torres será interditada parcialmente... sábado (10), das 14h00 às 22h00', 'Viaduto Saioá... dias 12, 13, 17, 18, 23 e 24 de outubro, da 00h00 às 04h00' e 'Marginal Tietê... entre as pontes dos Remédios e Aricanduva, 22h00 às 04h30'.",
+   "source_url": "https://www.cetsp.com.br/noticias/rss.aspx"
+  },
+  {
+   "fact": "ARTESP CKAN 'ocorrencias' (CC BY, modificado em 09/10/2026): o recurso Alagamento/Erosão/Queda de Talude é Parquet de 663 KB com 11.505 linhas de 2020-01-01 a 2026-10-08 (D-1). 2.398 têm interdição; na RMSP são 1.658, 312 com interdição e 167 com faixa interditada. Alagamento com interdição dura 1,8 h na mediana (p90 de 10,6 h). SPM280E km 14 teve 46 alagamentos.",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/ocorrencias"
+  },
+  {
+   "fact": "ARTESP 'programacao-de-obras' continua sem dados: só circulares em PDF, templates XLSX, schema JSON R0 e GeoJSON de exemplo (campos km_inicial/final, data_inicial/final, detalhamento_servico).",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/programacao-de-obras"
+  },
+  {
+   "fact": "GeoSampa risco_ocorrencia_alagamento: 292 pontos, todos de 2026 (04/01 a 28/09), fonte SIGRC/Defesa Civil, dt_carga 2026-10-06, sem logradouro nem hora. Pelos metadados, a atualização é mensal e há histórico desde 2013. CC-BY-SA 4.0.",
+   "source_url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/srv/api/records/432c06b1-03a1-4b1f-9210-423e1b58e869"
+  },
+  {
+   "fact": "GeoSampa mancha_inundacao_5 tem 324.178 polígonos (TR5) com qt_profundidade_maxima, e mancha_inundacao_25 tem 488.360, ambas atualizadas em 2026-08-10. É uma base estática para marcar trechos que alagam.",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:mancha_inundacao_5&outputFormat=application/json&count=10"
+  },
+  {
+   "fact": "GeoSampa controle_uso_via_publica_geoinfra continua fraco: 1.902 pontos, todos EMERGENCIA (ENCERRADA ou INFORMADA), sem datas, dt_carga 2026-01-31. O CKAN 'controle de obras SIURB' tem dt_atualizacao máxima em 2022-01-03.",
+   "source_url": "https://dados.prefeitura.sp.gov.br/dataset/controle-de-obras-siurb"
+  },
+  {
+   "fact": "A página de interdições do DER-SP é uma tabela HTML server-side (SP, rodovia, km inicial e final, município, condição). Em 09/10/2026 havia 1 linha: SP-148 Caminho do Mar, km 58,8, Cubatão, interdição total por risco de queda da ponte do Rio Casqueiro.",
+   "source_url": "https://www.der.sp.gov.br/der/rodovias/interdicoes"
+  },
+  {
+   "fact": "Os avisos ativos do INMET estão em JSON com polígono, códigos IBGE, severidade e início/fim (ex.: Tempestade, Perigo Potencial, com SP capital incluída, 1.937 municípios). O RSS declara 'public domain', e a nota de uso permite reprodução citando a fonte.",
+   "source_url": "https://apiprevmet3.inmet.gov.br/avisos/ativos"
+  },
+  {
+   "fact": "CEMADEN getJson2.php?uf=SP traz 724 estações (79 na capital) com acumulados de 1 a 96 h, sem lat/lon. MapaInterativoWS/resources/horario/{idestacao}/24 traz lat/lon e as 24 h. A API oficial (PED) exige cadastro e token, com limite de 12 req/min para usuário externo.",
+   "source_url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=SP"
+  },
+  {
+   "fact": "Os alertas de serviços do DNIT tinham 30 itens em 3 semanas. Só 8 eram de ponte; 9 eram interdição, Pare e Siga, meia pista ou desvio, e 13 eram restrições e serviços que o filtro atual de dnit_alertas.py descarta.",
+   "source_url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/noticias-alerta-de-servicos"
+  },
+  {
+   "fact": "O Valhalla local está com mjolnir.include_construction=false. Ligar só adicionaria vias de construção que o costing bloqueia sem ignore_construction. Ele respeita motor_vehicle:conditional: no domingo às 10h, a rota de Haddock Lobo/Paulista a Treze de Maio deu 4,32 km sem a Paulista; na terça às 10h, 3,44 km pela Paulista.",
+   "source_url": "https://github.com/valhalla/valhalla/blob/master/docs/docs/api/turn-by-turn/api-reference.md"
+  },
+  {
+   "fact": "No PBF local sp.osm.pbf há 167 vias highway=construction, 160 motor_vehicle:conditional (Paulista 'no @ (Su 09:00-17:00)', Minhocão, Radial), 16 access:conditional, 6 hgv:conditional, 50 oneway:conditional e 18 flood_prone=yes.",
+   "source_url": "https://wiki.openstreetmap.org/wiki/Conditional_restrictions"
+  },
+  {
+   "fact": "No DOC-SP (ePubli/SEI), o POST de pesquisa de matérias com os campos de js/materias.js devolve 'Erro realizando pesquisa.' Há resquício de captcha em request.js. Não dá para automatizar sem navegador.",
+   "source_url": "https://diariooficial.prefeitura.sp.gov.br/md_epubli_controlador.php?acao=materias_pesquisar"
+  }
+ ],
+ "sources": [
+  {
+   "name": "CGE-SP – Pontos de alagamento (tempo real e histórico por data)",
+   "publisher": "Prefeitura de São Paulo – CGE/SMSU",
+   "url": "https://www.cgesp.org/v3/alagamentos.jsp",
+   "access": "HTTP GET público. Histórico em ?dataBusca=DD/MM/AAAA&enviaBusca=Buscar. Fica atrás de CloudFront/WAF: 403 no IP inteiro acima de ~1 req/s; usar ≤ 1 req a cada 3 s.",
+   "format": "HTML (div.ponto-de-alagamento; classes ativo/inativo-transitavel/intransitavel)",
+   "license": "Não declarada (órgão municipal); dados factuais",
+   "tested": true,
+   "test_result": "200. Hoje: 6 pontos, incluindo a Av. do Estado. 739 dias baixados (out/2024–out/2026): 1.358 ocorrências, 59% intransitáveis, mediana de 71 min. O parser cge_parse.py funciona. Bloqueio 403 por 15–20 min depois de 484 requisições rápidas.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "Importador cge_alagamentos.py, vivo a cada 5 min (1 req): upsert por (data, início, logradouro, referência, sentido), com fim nulo enquanto ativo. Geocodificação por cruzamento em addr_segment, número via /api/geocode ou tabela curada dos ~200 pontos recorrentes. Modo --historico (≤1 req/3 s) para a tabela de recorrência. No interdicoes.layer.ts: costLines com fator 1000 se intransitável e 5–10 se transitável, só no sentido afetado, valendo por ~duração típica do ponto; avisos alagamento_ativo e alagamento_recorrente."
+  },
+  {
+   "name": "CGE-SP – RSS de boletins (Estado de atenção/alerta)",
+   "publisher": "Prefeitura de São Paulo – CGE",
+   "url": "https://www.cgesp.org/v3/feed_rss.jsp",
+   "access": "HTTP GET público (sujeito ao mesmo WAF)",
+   "format": "RSS 2.0 (15 itens; pubDate marcado como GMT mas em hora local)",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "200. Trouxe 'Estado de atenção para alagamentos em toda a cidade, às 17h33' e 'Término... às 18h15'. A notícia lista as zonas, inclusive as Marginais.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "cge_estado.py a cada 10 min mantém o estado atual (zonas e hora). É o gatilho para pesar pontos recorrentes e trechos em mancha de inundação, e gera aviso no plano."
+  },
+  {
+   "name": "CET – Eventos Notáveis do Fim de Semana (Relatório de Atividades Operacionais)",
+   "publisher": "CET-SP / SEMTRA",
+   "url": "https://www.cetsp.com.br/consultas/eventos-notaveis-do-fim-de-semana.aspx",
+   "access": "HTTP GET público. A página aponta o PDF da semana (/media/<id>/rfdsDDeDDmesAA.pdf); os PDFs antigos somem (404).",
+   "format": "PDF (~170 p.) com tabelas: agenda (ÁREA|DATA|HORÁRIO|NOME|LOCAL), 1.3 OBRAS, Ruas Abertas e fichas técnicas por evento",
+   "license": "Não declarada (relatório oficial; fatos)",
+   "tested": true,
+   "test_result": "rfds10e12out26.pdf, 1,7 MB, 174 páginas. O pdfplumber extraiu 237 linhas nas páginas 7–31, entre elas 92 obras com início e previsão (ex.: Linha 6, R. João Ramalho, bloqueio total desde 17/10/21) e eventos como Palmeiras x Corinthians (R. Palestra Itália interditada a partir de 13h30).",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "cet_eventos_fds.py semanal (sexta 16h e a cada 6 h no fim de semana): arquiva o PDF, extrai as tabelas, normaliza datas e janelas ('22h00 às 04h30' vira janela noturna) e geocodifica 'R. X, entre a R. Y e a R. Z' como o trecho de X entre os cruzamentos. As fichas 3.x dão horários por via. Grava em data_features (layer interdicoes) com inicio/fim/janela; costLines com fator 1000 se total e 3–5 se parcial; avisos evento_interdicao e obra_longa."
+  },
+  {
+   "name": "CET – RSS de notícias (interdições pontuais e operações)",
+   "publisher": "CET-SP",
+   "url": "https://www.cetsp.com.br/noticias/rss.aspx",
+   "access": "HTTP GET público",
+   "format": "RSS com content:encoded (10 itens mais recentes)",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "200, 10 itens em 09/10: Ponte Eng. Ary Torres, Marginal Tietê (zeladoria), Viaduto Saioá, cruzamento Apinajés x Min. Gastão Mesquita, eventos no Nubank Parque e no Ibirapuera, e travessia de carreta superdimensionada. A extração por regex de horários e trechos funciona, mas é ruidosa.",
+   "value": "high",
+   "effort": "medium",
+   "integration_plan": "cet_noticias.py a cada hora (só 10 itens no feed): filtra o título e cria item pendente de curadoria (como dnit_alertas_curadoria), com extração por LLM ou regex de inicio/fim/janela/trechos. Item aprovado vira feição da camada interdicoes; antes disso, só aviso com confiança baixa."
+  },
+  {
+   "name": "ARTESP – Ocorrências (Alagamento, Erosão e Queda de Talude)",
+   "publisher": "ARTESP (dados das concessionárias)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/ocorrencias",
+   "access": "CKAN API (package_show) e download direto",
+   "format": "Parquet (rotulado CSV), 663 KB; também CSVs de panes (60–86 MB por ano)",
+   "license": "CC BY (Creative Commons Attribution)",
+   "tested": true,
+   "test_result": "11.505 linhas de 2020-01-01 a 2026-10-08 (D-1), 2.398 com interdição, 248 sem lat/lon. RMSP: 1.658 linhas, 167 com faixa interditada. SPM280E km 14 teve 46 alagamentos. Uma ocorrência está em aberto (SP308 km 153).",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "artesp_ocorrencias.py diário: recorrência por rodovia, km e sentido (alagamento e talude com interdição) como aviso rodovia_ocorrencia; ocorrência sem encerramento vira interdição em aberto. O km vira geometria pelos marcos quilométricos já usados em rodovias_horario."
+  },
+  {
+   "name": "ARTESP – Programação de Obras e Serviços de Conservação",
+   "publisher": "ARTESP",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/programacao-de-obras",
+   "access": "CKAN API",
+   "format": "PDF, XLSX templates, JSON schema R0, GeoJSON de exemplo",
+   "license": "CC BY",
+   "tested": true,
+   "test_result": "Ainda sem dados reais: só circulares de 2026, templates, schema e exemplo (obra-101, SP0000280 km 25,3). O schema é programação anual (data_inicial/final, km), não fechamento de faixa.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Monitorar o package_show; quando surgirem GeoJSONs reais, importar como obra_longa (aviso) com data_inicial/final."
+  },
+  {
+   "name": "DER-SP – Interdições em rodovias",
+   "publisher": "DER-SP",
+   "url": "https://www.der.sp.gov.br/der/rodovias/interdicoes",
+   "access": "HTTP GET público (portal com aviso de cookies)",
+   "format": "HTML (tabela SP | Rodovia | km inicial | km final | Município | Condição)",
+   "license": "Não declarada",
+   "tested": true,
+   "test_result": "200. 1 linha em 09/10/2026: SP-148 Caminho do Mar km 58,8, interdição total (ponte do Rio Casqueiro). O link 'Condições das rodovias' redireciona para uma página de câmeras e não serve.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "der_interdicoes.py a cada 6 h: cada linha vira trecho km_ini–km_fim (marcos/SNV), com severidade tirada do texto; vale enquanto estiver na página. costLines com fator 1000 se total."
+  },
+  {
+   "name": "GeoSampa – Mancha de inundação TR5/TR25/TR100",
+   "publisher": "Prefeitura de São Paulo – GeoSampa",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:mancha_inundacao_5&outputFormat=application/json",
+   "access": "WFS público, paginado",
+   "format": "GeoJSON polígonos (qt_profundidade_maxima, qt_tempo_retorno)",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "TR5 com 324.178 polígonos e TR25 com 488.360, dt_atualizacao 2026-08-10. Baixei amostra de 3.000.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "geosampa_mancha_inundacao.py mensal: cruza arestas OSM com TR5/TR25 e guarda prof_max por aresta. Só pesa (fator ~3) quando há gatilho (CGE em atenção ou alerta, ou chuva forte no CEMADEN perto). Serve também para priorizar a curadoria de passagens inferiores."
+  },
+  {
+   "name": "GeoSampa – risco_ocorrencia_alagamento / inundação / queda de árvore (SIGRC)",
+   "publisher": "Prefeitura de São Paulo – Defesa Civil / GeoSampa",
+   "url": "https://metadados.geosampa.prefeitura.sp.gov.br/geonetwork/srv/api/records/432c06b1-03a1-4b1f-9210-423e1b58e869",
+   "access": "WFS público",
+   "format": "GeoJSON pontos (dt_ocorrencia, subprefeitura)",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "Alagamento: 292 pontos de 2026. Inundação: 294. Queda de árvore: 1.836. dt_carga 2026-10-06. Sem logradouro nem hora; concentrados em áreas residenciais (106 em São Miguel Paulista).",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Só contexto: heatmap no mapa e calibração dos pontos do CGE. Não entra no custo da rota."
+  },
+  {
+   "name": "GeoSampa – controle_uso_via_publica_geoinfra",
+   "publisher": "Prefeitura de São Paulo – Geoinfra",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:controle_uso_via_publica_geoinfra&outputFormat=application/json",
+   "access": "WFS público",
+   "format": "GeoJSON pontos",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "1.902 pontos, só EMERGENCIA, ENCERRADA (977) ou INFORMADA (925), sem datas, dt_carga 2026-01-31.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não importar. A seção OBRAS do PDF da CET substitui."
+  },
+  {
+   "name": "GeoSampa – equipamento_feira_livre",
+   "publisher": "Prefeitura de São Paulo – GeoSampa",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:equipamento_feira_livre&outputFormat=application/json",
+   "access": "WFS público",
+   "format": "GeoJSON pontos com tx_dia_funcionamento e endereço",
+   "license": "CC-BY-SA 4.0",
+   "tested": true,
+   "test_result": "975 feiras (domingo 205, sábado 195...). Sem horário e sem extensão do trecho; dt_carga 2026-06-24.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "Fechamento semanal recorrente: supor o trecho (quadra do endereço) e a janela (~6h–14h) e gerar aviso, ou costLine fraca no dia certo. Alternativa: contribuir com access:conditional no OSM, que o Valhalla já respeita."
+  },
+  {
+   "name": "INMET – Avisos meteorológicos (JSON e RSS/CAP)",
+   "publisher": "INMET",
+   "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
+   "access": "HTTP GET público, sem token",
+   "format": "JSON {hoje, futuro} com polígono, geocodes IBGE e severidade; RSS em /avisos/rss",
+   "license": "Reprodução permitida citando a fonte; RSS declara public domain",
+   "tested": true,
+   "test_result": "200, 787 KB. 5 avisos 'hoje' e 7 'futuro'; Tempestade Perigo Potencial cobria SP capital. Granularidade grosseira (mais de 1.900 municípios por aviso). O link CAP individual deu timeout.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "inmet_avisos.py a cada 30 min: aviso que cobre o município da rota vira aviso informativo e, com severidade Perigo ou mais, ajuda a ativar os pontos recorrentes de alagamento."
+  },
+  {
+   "name": "CEMADEN – Pluviômetros (mapa interativo)",
+   "publisher": "CEMADEN/MCTI",
+   "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=SP",
+   "access": "HTTP GET público, sem documentação. Coordenadas por estação em mapservices.cemaden.gov.br/MapaInterativoWS/resources/horario/{id}/24. A API oficial (PED) exige cadastro e token (12 req/min).",
+   "format": "JSON",
+   "license": "Não declarada (endpoints não documentados)",
+   "tested": true,
+   "test_result": "724 estações em SP (79 na capital, 46 com dado recente). Acumulados de 1 a 96 h; a estação 4184 (Senai Pirituba) trouxe lat/lon e 24 h. A camada SGB Cemaden/MapServer tem só 242 estações no Brasil e nenhuma em SP.",
+   "value": "medium",
+   "effort": "medium",
+   "integration_plan": "cemaden_chuva.py a cada 15 min: acumulado de 1 h nas estações a até 3 km dos pontos recorrentes do CGE e dos trechos em mancha de inundação serve de gatilho. Para produção, preferir cadastro no PED."
+  },
+  {
+   "name": "DNIT – Alertas de serviços",
+   "publisher": "DNIT (gov.br)",
+   "url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/noticias-alerta-de-servicos",
+   "access": "HTML público (já raspado por dnit_alertas.py)",
+   "format": "HTML lista + notícia",
+   "license": "CC BY-ND 3.0 (gov.br): guardar só fatos",
+   "tested": true,
+   "test_result": "200, 30 alertas de 18/09 a 09/10/2026. 8 são de ponte; os demais são Pare e Siga, meia pista, interdição, desvio e restrição de faixa, fora do filtro atual.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Ampliar o regex de dnit_alertas.py para interdição, Pare e Siga, meia pista e desvio, mantendo a fila de curadoria. Item aprovado vira feição da camada interdicoes com validade."
+  },
+  {
+   "name": "OSM – highway=construction, *:conditional, flood_prone (via Valhalla)",
+   "publisher": "OpenStreetMap",
+   "url": "https://wiki.openstreetmap.org/wiki/Conditional_restrictions",
+   "access": "PBF local (data/cache/ver/sp.osm.pbf) e tiles do Valhalla",
+   "format": "OSM PBF",
+   "license": "ODbL",
+   "tested": true,
+   "test_result": "167 vias highway=construction, 160 motor_vehicle:conditional, 50 oneway:conditional e 18 flood_prone=yes. O Valhalla local respeita o condicional: domingo sem a Paulista (4,32 km), terça pela Paulista (3,44 km). include_construction=false hoje.",
+   "value": "medium",
+   "effort": "low",
+   "integration_plan": "Não ligar include_construction (não muda a rota). Fechamentos semanais recorrentes podem ficar no OSM ou na janela da camada. Tratar o erro 'No path' quando origem ou destino estão em via fechada pelo condicional."
+  },
+  {
+   "name": "DOC-SP – Diário Oficial da Cidade (ePubli/SEI)",
+   "publisher": "Prefeitura de São Paulo",
+   "url": "https://diariooficial.prefeitura.sp.gov.br/md_epubli_controlador.php?acao=materias_pesquisar",
+   "access": "Formulário POST com campos ocultos; resquício de captcha",
+   "format": "HTML (SEI)",
+   "license": "Atos oficiais (Lei 9.610 art. 8º IV)",
+   "tested": true,
+   "test_result": "FALHOU: GET 200, mas o POST de pesquisa (RAPIDA e AVANCADA) devolveu 'Erro realizando pesquisa.' Não dá para automatizar sem navegador.",
+   "value": "low",
+   "effort": "high",
+   "integration_plan": "Não usar para interdições, porque a CET (PDF e RSS) é mais completa. Só se precisar de portarias formais, via automação de navegador ou pedido por e-SIC."
+  },
+  {
+   "name": "CKAN Prefeitura SP – controle de obras SIURB / Eventos Autorizados (Penha)",
+   "publisher": "Prefeitura de São Paulo (SIURB, Subprefeituras)",
+   "url": "https://dados.prefeitura.sp.gov.br/dataset/controle-de-obras-siurb",
+   "access": "CKAN API",
+   "format": "XLSX/ODS",
+   "license": "ODC-BY (SIURB); CC BY (Eventos Autorizados Penha)",
+   "tested": true,
+   "test_result": "SIURB: 354 obras (prédios e equipamentos), dt_atualizacao máxima 2022-01-03. Eventos Autorizados só da Subprefeitura Penha, mensal em ODS.",
+   "value": "low",
+   "effort": "low",
+   "integration_plan": "Não importar. Está desatualizado e fragmentado; a CET cobre."
+  }
+ ],
+ "gaps": [
+  "Licença: nem o CGE nem a CET declaram licença em nenhuma página. Para uso comercial em escala, vale pedir autorização formal (e-SIC ou contato) e, se possível, um limite de taxa liberado no WAF do CGE.",
+  "O CGE só tem logradouro e referência, sem coordenada. A geocodificação automática acertou 64% dos cruzamentos; pontes, túneis, Marginais e abreviações (NSRA, CARD, S.C.) exigem fallback OSM e uma tabela curada.",
+  "Não há feed público de tempo real para rodovias (ARTESP, concessionárias, DER-SP, PRF). Só o D-1 da ARTESP, a tabela do DER e as notícias do DNIT. O Waze for Cities e a parceria PRF–Waze não são abertos.",
+  "Só o PDF da semana da CET fica no ar (o antigo dá 404); é preciso arquivar desde já para ter histórico e montar esquemas padrão por estádio.",
+  "O RSS da CET só mostra os 10 itens mais recentes e é texto livre: exige leitura frequente e curadoria ou extração assistida.",
+  "Não pesquisei interdições e alagamentos dos municípios da RMSP fora da capital (Guarulhos, Osasco, ABC, Barueri), que publicam principalmente em redes sociais.",
+  "O DOC-SP (portarias) não foi automatizável: o POST do SEI devolve erro e há indício de captcha.",
+  "O CEMADEN usa endpoints não documentados; a API oficial (PED) exige cadastro e token. O INMET é grosseiro demais para o nível de via.",
+  "Feiras livres no GeoSampa não têm horário nem extensão do trecho.",
+  "Não validei o comportamento de linear_cost_factors com fator 1000 em trecho de alagamento no sentido único versus ambos com a camada real; fica para os testes da camada."
+ ],
+ "recommendations": [
+  "Criar a camada `interdicoes` (data_features com props inicio/fim/janela/sentido/severidade/fonte/confianca) e o módulo api/src/layers/interdicoes.layer.ts usando costLines sensíveis ao sentido: fator 1000 se total ou intransitável, 3–5 se parcial, 5–10 se alagamento transitável. Evitar exclude_polygons, que bloquearia também a via que cruza por cima ou por baixo.",
+  "Primeiro importador: cge_alagamentos.py, vivo a cada 5 min com 1 requisição. O ponto ativo vale para saídas até agora + duração típica (mediana de 71 min, p90 de ~4,5 h); depois, só aviso. Respeitar ≤ 1 req a cada 3 s em qualquer backfill; acima de ~1 req/s o WAF bloqueia o IP por 15–20 min.",
+  "Fazer o backfill do histórico do CGE desde 2008, devagar (~1 req/3 s, cerca de 6,5 h), para montar a recorrência por ponto e a tabela curada dos ~200 pontos mais frequentes, que cobrem ~50% das ocorrências. Priorizar corredores de caminhão: Av. do Estado, Marginais, Jacu-Pêssego, Alcântara Machado, Santos Dumont.",
+  "Segundo importador: cet_eventos_fds.py (PDF semanal com pdfplumber), começando pela seção 1.3 OBRAS. Ela substitui o status da SIURB de 2020–21 e cobre bloqueios longos (Linha 6, BRT, Pirituba–Lapa). Em seguida, a agenda de eventos com janela horária. Arquivar todo PDF.",
+  "Usar o RSS de estado de atenção do CGE (e, depois, CEMADEN e INMET) como gatilho: com atenção ou alerta ativos, pontos recorrentes (≥3 ocorrências, ≥50% intransitáveis) e trechos em mancha de inundação TR5 com profundidade ≥ 0,3 m ganham fator ×3 e aviso no plano.",
+  "Tratar o RSS de notícias da CET e os alertas DNIT ampliados (Pare e Siga, meia pista, interdição) numa fila de curadoria única, no molde de dnit_alertas_curadoria, com extração por LLM propondo inicio/fim/janela/trechos.",
+  "Importar o Parquet de ocorrências da ARTESP (CC BY) como recorrência em rodovia estadual (aviso) e a tabela de interdições do DER-SP como interdição ativa, com geometria pelos marcos quilométricos já usados em rodovias_horario.",
+  "Não ligar include_construction no Valhalla. Para fechamentos semanais (Ruas Abertas, feiras), aproveitar que o Valhalla já respeita motor_vehicle:conditional, e tratar o erro 'No path' quando origem ou destino estão numa via fechada pelo condicional.",
+  "Formalizar com o CGE e a CET (e-SIC ou contato) a autorização de uso dos dados e o ritmo de coleta antes de escalar comercialmente."
+ ]
+}

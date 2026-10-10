@@ -124,10 +124,11 @@ Fluxo de `POST /api/route`:
    axle_load,axle_count,hazmat}`, `date_time.type=1`).
 5. Calcula também a rota **sem** exclusões para listar o que foi efetivamente **evitado**,
    e varre reportes perto da rota para os **avisos** ("rota passa a 50 m de reporte não confirmado").
-6. Busca os **pontos de descanso** a até 500 m da rota (`rest_stops`, derivados do OSM) e monta o
-   **plano de direção** da Lei 13.103 (`driving_plan`): parada de 30 min a cada 5h30 de direção,
-   sugerindo o ponto de descanso mais próximo antes do limite, e alerta ao passar de 8h (ou 10h com
-   prorrogação). O ETA de cada ponto é proporcional à distância ao longo da rota (aproximação).
+6. Busca os **pontos de descanso** a até 500 m da rota (OSM + camada `descanso`: PPD certificados e de concessão,
+   áreas de descanso das concessionárias, SAU só como apoio) e monta o **plano de direção** da Lei 13.103
+   (`driving_plan`): parada de 30 min a cada 5h30 de direção e descanso de 11 h, escolhendo na janela antes do limite
+   o ponto de maior prioridade (PPD válido > área de descanso > posto/pátio > SAU; ver `docs/layers/descanso.md`).
+   O ETA de cada ponto é proporcional à distância ao longo da rota (aproximação).
 7. Sem rota viável: `409 NO_ROUTE` com `blocked_by` dizendo quais restrições bloquearam.
 
 ### Licença ODbL (OpenStreetMap)
@@ -210,7 +211,6 @@ O schema usa só Postgres + PostGIS + `pgcrypto` (`gen_random_uuid`), todos disp
 ## TODO / fora do escopo
 
 - Navegação curva a curva, trânsito em tempo real, login/contas, app nativo, pagamentos.
-- Postos com diesel (ANP, CC-BY) e pontos de parada certificados (PPD) no plano de direção.
 - ETA dependente do horário (hoje o Valhalla não tem tráfego histórico na RMSP; ver `docs/research/trafego_tempo`).
 - Rampa no custo do Valhalla (o costing truck 3.9.1 ignora; hoje a camada de relevo só avisa).
 - Pedidos via LAI para gabarito e limite de peso de pontes/viadutos (ver `docs/DECISOES.md`).

@@ -25,7 +25,11 @@ export interface Preset extends Vehicle {
 export interface PresetsResponse { _note: string; legal_basis?: string[]; aliases?: Record<string, string>; presets: Preset[] }
 export interface AvoidedItem { kind: 'report' | 'zone' | 'layer'; layer?: string; id: string; type?: string; value_num?: number | null; name?: string; rule?: string; lat?: number; lon?: number; note?: string | null }
 export interface Warning { code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string }
-export interface RestStop { id: string; name: string | null; kind: string; lat: number; lon: number; distance_km: number; eta_s: number; off_route_m: number; tags: Record<string, string> }
+export interface RestStop {
+  id: string; name: string | null; kind: string; lat: number; lon: number; distance_km: number; eta_s: number; off_route_m: number; tags: Record<string, string>;
+  /** camada descanso: fonte, prioridade (1 PPD válido … 4 SAU), se serve para o descanso de 11 h */
+  source?: string; tier?: number; category?: string; daily_rest_ok?: boolean; vagas?: number | null; validade?: string | null;
+}
 export interface DrivingPlan {
   driving_s: number; total_with_breaks_s: number; required_breaks: number;
   suggested_stops: { after_s: number; stop: RestStop | null; message: string; kind?: 'break' | 'meal' | 'daily_rest'; duration_s?: number }[];
@@ -48,7 +52,8 @@ export const LAYER_GROUPS: Record<string, string> = {
   restricoes: 'Restrições', infraestrutura: 'Infraestrutura', seguranca: 'Segurança', servicos: 'Serviços e apoio',
   custos: 'Custos', relevo: 'Relevo', calendario: 'Calendário',
 };
-export const REST_KINDS: Record<string, string> = { rest_area: 'Área de descanso', service_area: 'Área de serviço / posto', truck_stop: 'Ponto de parada de caminhões', truck_parking: 'Estacionamento de caminhões', fuel_hgv: 'Posto com acesso a caminhão' };
+export const REST_KINDS: Record<string, string> = { rest_area: 'Área de descanso', service_area: 'Área de serviço / posto', truck_stop: 'Ponto de parada de caminhões', truck_parking: 'Estacionamento de caminhões', fuel_hgv: 'Posto com acesso a caminhão', ppd: 'Ponto de Parada e Descanso (PPD)', ppd_concessao: 'PPD de concessão', area_descanso: 'Área de descanso de concessionária', sau: 'SAU (apoio — só pausa curta)' };
+export const REST_SOURCES: Record<string, string> = { osm: 'OpenStreetMap', 'ppd-mt': 'Ministério dos Transportes (PPD)', artesp: 'ARTESP', antt: 'ANTT' };
 export interface Report {
   id: string; type: string; geometry: GeoJSON.Point | GeoJSON.LineString; value_num: number | null;
   time_window: { days: number[]; from: string; to: string } | null; note: string | null; score: number; status: string; confirmed: boolean; created_at: string;

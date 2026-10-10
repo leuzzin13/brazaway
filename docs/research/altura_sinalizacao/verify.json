@@ -1,0 +1,240 @@
+{
+ "category": "altura_sinalizacao",
+ "sources": [
+  {
+   "name": "Mapillary Graph API (map_features) e vector tiles de placas",
+   "url": "https://graph.mapillary.com/map_features",
+   "verdict": "confirmed",
+   "note": "Re-testado em 10/10/2026. Sem token, /map_features e /images dão HTTP 500 {\"message\":\"Invalid OAuth 2.0 Access Token\",\"code\":190}. Os tiles mly_map_feature_traffic_sign e mly1_public (14/6067/9293) dão HTTP 403. A doc oficial confirma bbox < 0,01 grau², limit 2.000, tiles de placas só em z14 e rate limits de 60k/min (entity), 10k/min (search) e 50k/dia (tiles). As classes de altura e peso não trazem o valor, o que confirmei também na página oficial https://www.mapillary.com/developer/api-documentation/traffic-signs. Ali existe ainda regulatory--height-limit--g2, ausente da lista da pesquisa. Os termos (vigência 15/02/2024) confirmam CC BY-SA 4.0, a seção 12 (uso comercial restrito, proibição de reidentificar, aviso a vendor-incident@meta.com) e a seção 13 (OSM/Overture). Ponto não citado: a seção 5 proíbe copiar ou criar obras derivadas dos 'Mapillary Services', o que reforça a cautela antes de redistribuir dados extraídos. A cobertura em SP continua sem medição. Value medium é razoável."
+  },
+  {
+   "name": "KartaView (OpenStreetCam) API",
+   "url": "https://api.openstreetcam.org/1.0/list/nearby-photos/",
+   "verdict": "corrected",
+   "note": "O POST continua dando HTTP 200 (749 KB) com totalFilteredItems=8.995. Erro de interpretação das datas: as 154 fotos atribuídas a '2021' têm shot_date em 16/02/2012; 2021-06 é só a data de envio (date_added). As outras 846 são de set–dez/2020. Ou seja, as fotos são ainda mais antigas do que o informado. Value low mantido."
+  },
+  {
+   "name": "Panoramax (STAC API)",
+   "url": "https://api.panoramax.xyz/api/search",
+   "verdict": "confirmed",
+   "note": "A busca no bbox -47.21,-24.07,-45.69,-23.18 dá HTTP 200 com 36 fotos (30 de 2026) em 8 coleções. Bate com a pesquisa. Value low correto."
+  },
+  {
+   "name": "DER-SP Sinalização Vertical",
+   "url": "https://dersp.der.sp.gov.br/WebSite/Arquivos/DadosAbertos/AtivosRodoviarios/SinalizacaoVertical/Sinaliza%C3%A7%C3%A3o%20Vertical.xlsx",
+   "verdict": "confirmed",
+   "note": "XLSX: HTTP 200, 24.110.924 bytes, SHA1 idêntico ao da amostra. Last-Modified do servidor é 25/09/2026; o '2025-04-15' citado é só a data do recurso no CKAN, cujo metadata_modified é 13/08/2026. Licença CC-BY-4.0 confirmada no package_show do dadosabertos.sp.gov.br. Contei de forma independente: 427.785 linhas; R-15 180, A-37 141, R-14 211, R-9 116, R-18 58 (mais 2 registros 'R-18-R-14'), R-16 7, R-17 9. Na RMSP (mesmo polígono): R-15 20, A-37 13, R-14 17, R-18 14, R-9 6. Cruzei com o OSM baixado agora pelo Overpass (ways highway com maxheight/maxheight:physical e nós maxheight do estado de SP, raio de 300 m): R-15 30/180 (28 só com ways), A-37 16/141, R-14 5/211, R-9 2/116. O FeatureServer mapas.der.sp.gov.br/.../Sinalizacao_Vertical_DBO/FeatureServer/0 responde com count=427.785, tem os mesmos 10 campos, sem campo de valor e sem anexos (hasAttachments=false). O OAE_DBO do DER também não tem altura, só comprimento, largura e área."
+  },
+  {
+   "name": "GeoSampa WFS: obra_arte e sac_placa_transito",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:obra_arte&outputFormat=application/json&srsName=EPSG:4326",
+   "verdict": "corrected",
+   "corrected_license": "CC-BY-SA-4.0: licença oficial dos dados do GeoSampa, publicada pela SMUL em 03/04/2025 (SEI 6066.2020/0003044-4) em https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa. Exige atribuição e share-alike.",
+   "note": "Os dados conferem: HTTP 200, 3,83 MB, 6.548 feições (PONTE 4.416, VIADUTO 1.129, PASSARELA 821, TUNEL 114, CALCADAO 68), ano de referência 2004 em 5.973 (91%), sem campos de altura nem de nome. O GetCapabilities tem 485 camadas, nenhuma com inventário de placas ou gabarito. A afirmação da pesquisa de que não há 'licença formal' está errada: a Prefeitura publicou a licença CC-BY-SA-4.0, então o 'CC-BY-SA 4.0' declarado em api/src/layers/oae.layer.ts está correto. Re-rodei o cruzamento viadutos × OSM e o resultado é coerente com o script (175/86/38)."
+  },
+  {
+   "name": "CET-SP: datasets no CKAN da Prefeitura",
+   "url": "https://dados.prefeitura.sp.gov.br/api/3/action/organization_show?id=cet&include_datasets=true",
+   "verdict": "confirmed",
+   "note": "HTTP 200 JSON: a org CET tem 6 datasets (folha, fluxo de caixa, lentidão, ciclovias, lombadas, fiscalização eletrônica) e nenhum de sinalização vertical. Busquei 'sinalização' no package_search e só veio 1 resultado (auditorias-e-notas-tecnicas-cgm), o que confirma que a busca está quebrada. Pequena correção: a licença não é só 'CC Atribuição'; 3 datasets são cc-zero e 3 são cc-by."
+  },
+  {
+   "name": "CET: E.T. SDAAE e MSU Vol. 03 Advertência",
+   "url": "https://ssl.cetsp.com.br/media/1091607/SDAAE.pdf",
+   "verdict": "confirmed",
+   "note": "SDAAE.pdf: HTTP 200, 703 KB, 16 páginas. O texto confirma o gatilho de 4,40 m ou a altura da R-15 local e a fiscalização pelo art. 231, IV. Ele cita a Res. CONTRAN 210/2006, hoje revogada pela 882/2021. O PDF do MSU Vol. 03 dá HTTP 200 com 3,4 MB."
+  },
+  {
+   "name": "ANTT: Detecção de Altura / Estação Meteorológica",
+   "url": "https://dados.antt.gov.br/dataset/daf08c28-7a47-43f8-ae38-a0f927dae20a/resource/c06463b7-4edc-457d-b52c-91e4ffe05700/download/informacoes-sobre-os-equipamentos-de-deteccao-de-altura-estacao-meteorologica.csv",
+   "verdict": "confirmed",
+   "note": "CSV: HTTP 200, 14.450 bytes. 124 equipamentos, dos quais 65 'Detecção de Altura', todos 'Ativo', em 15 concessionárias. Por UF: RJ 16, SC 13, PR 9, MG 8, SP 7, RS 5, ES 4, GO 2, MT 1. Os 7 de SP estão na BR-116 Régis (Itapecerica, Juquiá, Miracatu), e 1 fica na RMSP (km 296,2, Itapecerica da Serra). Licença cc-by; recursos atualizados em 09/09/2026."
+  },
+  {
+   "name": "ANTT: Pontes e similares das rodovias concedidas",
+   "url": "https://dados.antt.gov.br/dataset/f9cdb7dc-549f-4bd3-97aa-a35bdff94c26/resource/80cd0864-b0ca-4ab5-bf5a-ffcbeec33235/download/pontes-e-similares-das-rodovias-concedidas.csv",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 583.959 bytes, 3.513 linhas mais cabeçalho. Os campos são de tipo, nome, extensão, km e coordenadas de entrada e saída, sem altura ou gabarito."
+  },
+  {
+   "name": "ARTESP: Passarelas (Cadastro de Ativos)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/491d79c5-ee09-4fe8-a3ce-1b425fe60bbe/resource/d864ec43-a93b-4803-9b48-1fee98a98fe7/download/passarelas.xlsx",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 63.885 bytes. 444 passarelas, ALTURA preenchida em 409; mínimo 2,4, que aparece duas vezes e é provável erro, e o seguinte já é 5,38. RMSP: 81 passarelas, 71 com altura, mínimo 5,42. Contra o OSM de hoje, só 3 (raio de 20 m) a 6 (raio de 40–60 m) das 81 têm maxheight, o que bate com os '76 de 81 sem'. Licença cc-by; recurso de 05/08/2026."
+  },
+  {
+   "name": "DNIT SIAET: restrições de AET por segmento (altura)",
+   "url": "https://siaet.dnit.gov.br",
+   "verdict": "corrected",
+   "corrected_url": "https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes/restricao-definitiva/10-2026/sp.pdf",
+   "note": "A homepage do SIAET dá HTTP 200 e o rodapé confirma CC BY-ND 3.0. Mas os PDFs de restrição estão no gov.br/dnit (…/restricao-definitiva/10-2026/<uf>.pdf). O de SP dá HTTP 200 (531 KB) e tem SHA1 idêntico ao da amostra. Contagens conferidas no CSV: definitiva 3.374 segmentos (2.652 com altura), temporária 1.532 (1.211 com altura). Erros: (1) 'BR-116 SP com 5,4–7,1 m' está errado. Na definitiva a BR-116/SP vai de 5,0 m (km 414,0–446,5) a 11,2/11,7 m (km 8,0–13,6); a temporária tem valores 0,0, que são ruído. (2) O NOTES chama o SIAET de 'única fonte oficial com altura livre', mas o PDF traz a altura máxima admitida para AET por segmento PNV, não o gabarito de cada estrutura. BR-050 km 0–5,7 com 4,4 m confirmado. A conversão do PDF para CSV pode desalinhar colunas, porque células vazias somem no texto extraído (ex.: BR-116 km 117,3–127,6, p2_altura 9,9), então convém revisar."
+  },
+  {
+   "name": "OpenStreetMap: maxheight, pontes, túneis e traffic_sign (PBF Sudeste)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "verdict": "confirmed",
+   "note": "Recontei com osmium no mesmo PBF (replicação 2026-10-08T20:21:06Z) e todos os números batem: 3.242 ways com maxheight, 99 com maxheight:physical, 63.959 com bridge!=no, 2.812 com tunnel!=no, 235 nós maxheight, 46 height_restrictor e 3.591 traffic_sign. Pelo Overpass (10/10/2026), no Brasil: 325 nós maxheight, 127 ways maxheight:physical e 11 placas maxheight/R-15, também conferidos. Re-rodei analyze.py (saídas redirecionadas) e reproduzi RMSP 1.502/1.145 e capital 778/587. Ressalvas de método: (a) ways com maxheight:signed=no, a resposta 'sem placa' do StreetComplete, contam como 'sem maxheight'; tratando-as como levantadas dá RMSP 1.131 e capital 578. (b) O '27 de 279' usa o mh do primeiro par de cada cluster; 58 clusters com maxheight ficaram com mh=None, então o total numérico pode chegar a 337. Licença ODbL ok."
+  },
+  {
+   "name": "Overture Maps: transportation/segment access_restrictions",
+   "url": "s3://overturemaps-us-west-2/release/2026-09-23.1/theme=transportation/type=segment/*",
+   "verdict": "confirmed",
+   "note": "A release 2026-09-23.1 é a mais recente no bucket. Refiz a consulta com DuckDB filtrando pela dimensão 'height' do struct (mais rigoroso que o ILIKE da pesquisa) e obtive 1.231 segmentos, com 3.021 referências, todas OpenStreetMap/ODbL e 0 segmentos sem fonte OSM. Detalhe: a área é um bbox (-47.21,-24.07,-45.69,-23.18), não o polígono da RMSP."
+  },
+  {
+   "name": "LiDAR aéreo da PMSP (M3DC) via EPT na AWS",
+   "url": "https://ept-m3dc-pmsp.s3.sa-east-1.amazonaws.com/ept.json",
+   "verdict": "corrected",
+   "corrected_license": "O registro da AWS (pmsp-lidar.yaml) declara GPL-3.0, mas o gestor é o GeoSampa, cuja licença oficial de dados (03/04/2025) é CC-BY-SA-4.0. Tratar como share-alike/copyleft e confirmar com geosampa@prefeitura.sp.gov.br. O repositório GitHub geoinfo-smdu/M3DC citado na documentação é só um fork do Potree e não esclarece nada.",
+   "note": "ept.json: HTTP 200; 31.730.305.220 pontos, EPSG:31983, LAZ. Recalculei as estatísticas a partir de clearance_sample_result.csv: mediana 2,53 (p10 1,47, p90 3,07), Pearson r=0,724, sem maxheight 0/4/8/31; 25 e 43 válidos. Rodei de novo o PDAL (pdal/pdal:latest) na janela do Euclides Figueiredo: 99.108 linhas e 399 pontos classe 9 com mediana 756,9, idênticos ao piloto. Classes presentes: 2, 5, 9, 19 e 20. No padrão ASPRS a classe 9 é água e a 17 é tabuleiro de ponte, então o esquema é próprio e a semântica continua sem documentação (o metadado GeoNetwork também não traz). Leitura: topo−pista de 6,0–7,0 m é compatível com placas de 4,4–4,6 m na calibração (ex.: mh 4,4 → 5,82; mh 4,5 → 5,86), então os '4 suspeitos' não são necessariamente restritivos para 4,40 m."
+  },
+  {
+   "name": "HERE Routing: cobertura de restrições de caminhão",
+   "url": "https://docs.here.com/routing/docs/routing-v8-truck-routing-coverage",
+   "verdict": "confirmed",
+   "note": "A página lista o Brasil como 'Full motorway coverage', definido como 'truck restrictions available along motorways and main roads'. Argentina, Chile e Colômbia estão na mesma categoria. A API não foi testada (é paga)."
+  },
+  {
+   "name": "TomTom Logistics (restrições de caminhão)",
+   "url": "https://download.tomtom.com/open/banners/Logistics-product-sheet.pdf",
+   "verdict": "untestable",
+   "note": "O PDF dá HTTP 200 (2 MB), mas é material de vendas. A página de cobertura da TomTom Routing API só lista Calculate Route e Real-time Traffic (Brasil ✔), sem truck routing. A Azure Maps, que usa dados TomTom, marca o Brasil com 'Truck route ✓' (ver extra_findings), sem dizer a profundidade da cobertura de altura."
+  },
+  {
+   "name": "Normas: CONTRAN 882/2021, MBST Vol. I (R-15), Res. CONTRAN 973/2022",
+   "url": "https://www.legisweb.com.br/legislacao/?id=434344",
+   "verdict": "confirmed",
+   "note": "O id=434344 é de fato a Res. CONTRAN 973 de 18/07/2022, com 9 volumes do MBST (I–IX). O MBST Vol. I responde a GET com HTTP 200 no gov.br/dnit (6.379.045 bytes, 209 páginas, edição 2022, SHA1 idêntico ao mbst_vol1.pdf local). O 'HEAD 403' era artefato do teste, então a lacuna está resolvida. O texto da R-15 confere: obstáculos físicos (pontes, viadutos, túneis, passarelas), 'Deve-se adotar uma margem de segurança', uma casa decimal, antecedida da A-37, art. 231, IV. CONTRAN 882: o conteúdo (art. 4º, II, 4,40 m, redação da Res. 994/2023; MERCOSUL com caminhão 4,3 m e ônibus 4,1 m) confere na página certa, que é a id=425133. A URL id=424573 usada no key_fact é outra norma (ver facts)."
+  },
+  {
+   "name": "StreetComplete: quest AddMaxHeight",
+   "url": "https://github.com/streetcomplete/StreetComplete",
+   "verdict": "corrected",
+   "note": "O código atual (master) é idêntico à amostra. Confirmado: a quest cobre vias sob ponte (layer maior, sem nó comum, interseção), túneis, nós barrier=height_restrictor e parking_entrance em vias, e também cruzamentos com ferrovia eletrificada. Não há restrição por país. Erro: a pesquisa diz que a quest 'aceita respostas default/below_default/no_indications', mas o código só tem MaxHeight (grava maxheight=<valor>) e NoMaxHeightSign (grava maxheight:signed=no). Há 71 ways com maxheight:signed=no no extrato da Grande SP que o analyze.py conta como lacuna."
+  },
+  {
+   "name": "Google Street View",
+   "url": "https://www.google.com/maps",
+   "verdict": "untestable",
+   "note": "Não testado. A exclusão por termos é coerente com as políticas conhecidas, mas não conferi o texto."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "A altura máxima regulamentar de veículo sem AET é 4,40 m (Res. CONTRAN 882/2021, art. 4º, II).",
+   "verdict": "corrected",
+   "source_url": "https://www.legisweb.com.br/legislacao/?id=425133",
+   "note": "O conteúdo está correto: art. 4º, II, 'altura máxima: 4,40 m', redação da Res. 994/2023. A URL citada (legisweb id=424573) está errada: abre a Resolução CGGS nº 2/2021 (Garantia-Safra). A página correta da Res. CONTRAN 882 é a id=425133."
+  },
+  {
+   "fact": "MBST Vol. I, R-15: obstáculos físicos; margem de segurança; uma casa decimal; antecedida da A-37; infração do art. 231, IV do CTB.",
+   "verdict": "confirmed",
+   "source_url": "https://www.gov.br/dnit/pt-br/rodovias/operacoes-rodoviarias/faixa-de-dominio/regulamentacao-atual/microsoft-word-01-mbst-vol-i-sin-vert-regulamenta_347_343o.pdf",
+   "note": "O PDF da URL citada abre (GET HTTP 200, edição CONTRAN 2022) e o texto confere. O MBST não quantifica a margem, então 'valor da placa < altura física' é inferência razoável, mas o tamanho da margem é desconhecido."
+  },
+  {
+   "fact": "A Res. CONTRAN 973/2022 (18/07/2022) institui o Regulamento de Sinalização Viária com os 9 volumes do MBST.",
+   "verdict": "confirmed",
+   "source_url": "https://www.legisweb.com.br/legislacao/?id=434344",
+   "note": "Art. 2º lista os volumes I a IX (Anexos I–IX)."
+  },
+  {
+   "fact": "Mapillary exige token (HTTP 500 code 190 / 403); map_features com bbox < 0,01 grau² e limite de 2.000; tiles de placas só em z14; 50.000 tiles/dia.",
+   "verdict": "confirmed",
+   "source_url": "https://www.mapillary.com/developer/api-documentation",
+   "note": "Reproduzido em 10/10/2026 e conferido na documentação oficial."
+  },
+  {
+   "fact": "As classes Mapillary de altura e peso não carregam o valor numérico; só as de velocidade carregam.",
+   "verdict": "confirmed",
+   "source_url": "https://www.mapillary.com/developer/api-documentation/traffic-signs",
+   "note": "Confirmado na lista oficial de traffic signs e no mapillary_sprite_source (1.942 SVG). A lista oficial inclui também regulatory--height-limit--g2."
+  },
+  {
+   "fact": "Termos do Mapillary (15/02/2024): CC BY-SA; uso comercial restrito pela seção 12; a seção 13 libera uso para OSM/Overture.",
+   "verdict": "confirmed",
+   "source_url": "https://www.mapillary.com/terms",
+   "note": "Confere. Ressalva: a seção 5 proíbe copiar ou derivar os 'Mapillary Services'."
+  },
+  {
+   "fact": "DER-SP: 427.785 placas (CC-BY-4.0); R-15 180, A-37 141, R-14 211, R-9 116, R-18 58; sem campo de valor; só 30 das 180 R-15 com maxheight do OSM a ≤300 m.",
+   "verdict": "confirmed",
+   "source_url": "https://dadosabertos.sp.gov.br/dataset/sinalizacao-vertical",
+   "note": "Recontado de forma independente no XLSX baixado de novo e cruzado com o Overpass de hoje: 30/180 (28 só com ways). Há mais 2 registros 'R-18-R-14'."
+  },
+  {
+   "fact": "ANTT: 65 detectores de altura ativos (7 em SP, todos na Régis; 1 na RMSP, km 296,2 em Itapecerica da Serra), CC-BY.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.antt.gov.br/dataset/deteccao-de-altura",
+   "note": "CSV baixado de novo; contagens idênticas."
+  },
+  {
+   "fact": "O CKAN da PMSP tem só 6 datasets da CET e nenhum inventário de sinalização vertical; o GeoSampa não tem camada de placas nem de gabarito.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.prefeitura.sp.gov.br/organization/cet",
+   "note": "organization_show retorna 6 datasets. O GetCapabilities do GeoSampa (485 camadas) só tem camadas SAC de pedidos, nenhum inventário."
+  },
+  {
+   "fact": "A CET (09/12/2021) instalou sinalização em 9 pontos de colisão; no OSM: Euclides 4,1, Jânio Quadros 3,5, Av. do Estado × Linha 11 4,3.",
+   "verdict": "confirmed",
+   "source_url": "https://abcdoabc.com.br/sp-nova-sinalizacao-de-altura-evita-que-caminhoes-colidam-e-danifiquem-viadutos-e-tuneis/",
+   "note": "A notícia lista 9 locais. No Overpass de hoje: 23 de Maio 4.1, Túnel Presidente Jânio Quadros 3.5, Av. do Estado 4.3, Pacaembu 3.8, Cantareira 3.8, Otaviano 4.5–4.7. Ressalva: o suspeito do LiDAR na Gabriela Mistral fica sob o Viaduto Domingos Franciulli Netto (viaduto rodoviário). A CET fala em 'Vdto. Fepasa', e não foi confirmado que sejam a mesma estrutura."
+  },
+  {
+   "fact": "A E.T. SDAAE da CET usa 4,40 m ou a altura da R-15 local como gatilho.",
+   "verdict": "confirmed",
+   "source_url": "https://ssl.cetsp.com.br/media/1091607/SDAAE.pdf",
+   "note": "Confere no texto, que cita a Res. 210/2006, hoje revogada pela 882/2021."
+  },
+  {
+   "fact": "A HERE classifica o Brasil como 'motorway coverage' para restrições de caminhão.",
+   "verdict": "confirmed",
+   "source_url": "https://docs.here.com/routing/docs/routing-v8-truck-routing-coverage",
+   "note": "O texto exato é 'Full motorway coverage', definido como 'truck restrictions available along motorways and main roads'."
+  },
+  {
+   "fact": "Overture 2026-09-23.1: 1.231 restrições de altura na RMSP, 100% do OSM.",
+   "verdict": "confirmed",
+   "source_url": "https://docs.overturemaps.org/guides/transportation/",
+   "note": "Reproduzido com DuckDB (filtro por dimensão height): 1.231 segmentos, 3.021 fontes, todas OpenStreetMap/ODbL. A área é um bbox, não o polígono da RMSP."
+  },
+  {
+   "fact": "LiDAR PMSP (M3DC 2017) aberto na AWS sob GPL-3.0; topo−pista com r=0,72 contra o maxheight do OSM e diferença mediana de 2,53 m.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/awslabs/open-data-registry/blob/main/datasets/pmsp-lidar.yaml",
+   "note": "O registro diz GPL-3.0 e as estatísticas foram reproduzidas (r=0,724; mediana 2,53), assim como os pontos de uma janela via PDAL. Ressalva: a licença oficial do GeoSampa (gestor) é CC-BY-SA-4.0, então há ambiguidade de licença."
+  },
+  {
+   "fact": "O graph.lua do Valhalla só lê maxheight em ways; nodes_proc ignora maxheight e height_restrictor; Av. Guarulhos (maxheight 4,0): 1,07 km para 3,5 m e 6,74 km para 4,4 m.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/valhalla/valhalla/blob/master/lua/graph.lua",
+   "note": "Confere no master (linhas 1920–1929). O pbfgraphparser.cc só trata maxheight nos tag_handlers de way. O teste local reproduz 1,073 km e 6,741 km; com height 4.0 a rota passa e com 4.1 desvia, então a restrição é rígida e o critério é ≤. A tag no OSM é maxheight=4.0 (tunnel=yes). Contexto: dos 238 nós maxheight/height_restrictor da Sudeste, 164 estão em highway sem maxheight, mas só 83 em vias principais e só 7 abaixo de 4,40 m."
+  },
+  {
+   "fact": "A quest AddMaxHeight do StreetComplete pergunta maxheight sob pontes, túneis e height_restrictor, sem restrição por país.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/streetcomplete/StreetComplete/blob/master/app/src/commonMain/kotlin/de/westnordost/streetcomplete/quests/max_height/AddMaxHeight.kt",
+   "note": "Confere. Mas a resposta 'sem placa' grava maxheight:signed=no, e não default/below_default/no_indications como diz o test_result da fonte."
+  },
+  {
+   "fact": "Passarelas ARTESP: ALTURA preenchida em 409 de 444; na RMSP o mínimo é 5,42 m e 76 de 81 não têm maxheight no OSM.",
+   "verdict": "confirmed",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/cadastro-de-ativos",
+   "note": "XLSX baixado de novo: 409/444, RMSP 81 passarelas (71 com altura), mínimo 5,42. Contra o OSM de hoje, 75–78 de 81 não têm maxheight num raio de 20–60 m."
+  }
+ ],
+ "extra_findings": [
+  "Licença oficial do GeoSampa: CC-BY-SA-4.0, publicada pela SMUL em 03/04/2025 (SEI 6066.2020/0003044-4): https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa. Isso fecha a lacuna 'licença do GeoSampa não confirmada' e confirma o CC-BY-SA 4.0 declarado em api/src/layers/oae.layer.ts. Como o M3DC/LiDAR também é gerido pelo GeoSampa, há conflito com o GPL-3.0 do registro AWS.",
+  "Lacuna preenchida: ways highway com maxheight no Brasil inteiro = 9.660 (Overpass overpass-api.de, timestamp 2026-10-10T01:10:22Z, consulta way[highway][maxheight](area BR); out count). Também: 82 nós barrier=height_restrictor no Brasil. A consulta funcionou com header User-Agent; sem ele a instância respondeu 406.",
+  "URL de origem do MBST Vol. I confirmada: GET em https://www.gov.br/dnit/pt-br/rodovias/operacoes-rodoviarias/faixa-de-dominio/regulamentacao-atual/microsoft-word-01-mbst-vol-i-sin-vert-regulamenta_347_343o.pdf dá HTTP 200 (6.379.045 bytes, edição 2022), com SHA1 igual ao mbst_vol1.pdf local. O 403 era só no HEAD.",
+  "URL real dos dados AET do DNIT: https://www.gov.br/dnit/pt-br/assuntos/infraestrutura-rodoviaria/aet/restricoes/restricao-definitiva/10-2026/sp.pdf (e /<uf>.pdf). HTTP 200, idêntico à amostra. Corrigir 'BR-116 SP 5,4–7,1 m' para 5,0 (km 414–446,5) a 11,2 m (km 8,0–13,6) na definitiva.",
+  "Impacto real da recomendação 'converter nós maxheight/height_restrictor em exclusões' (Sudeste, PBF 08/10/2026): dos 238 nós, 164 estão em highway sem maxheight, 50 já têm maxheight no way e 24 estão soltos (muitos são portões ou entradas de estacionamento). Em vias principais (motorway..tertiary) são 83, e só 7 têm valor abaixo de 4,40 m. Vale fazer, mas o ganho para caminhão de 4,40 m é pequeno.",
+  "StreetComplete grava maxheight:signed=no quando não há placa. O analyze.py não reconhece essa tag. Há 71 ways assim na Grande SP; considerando-as, as lacunas caem para RMSP 1.131 (era 1.145) e capital 578 (era 587). O pipeline e o aviso 'via sem maxheight' devem tratar maxheight:signed=no como 'levantado, sem restrição sinalizada'.",
+  "Lista oficial de classes de placas do Mapillary (melhor fonte primária que o repositório de sprites): https://www.mapillary.com/developer/api-documentation/traffic-signs. Inclui regulatory--height-limit--g1/g2, warning--height-restriction--g2..g5 e information--weight-and-height-limit--g1, todas sem valor numérico.",
+  "Azure Maps (base de dados TomTom) marca o Brasil com suporte a 'Truck route': https://learn.microsoft.com/azure/azure-maps/routing-coverage (atualizado em 02/10/2026). Candidato a benchmark comercial além da HERE; a profundidade das restrições de altura no Brasil não é informada.",
+  "Correção de URL: a legisweb id=424573 (key_fact da CONTRAN 882) é a Resolução CGGS nº 2/2021 (Garantia-Safra). A página correta é https://www.legisweb.com.br/legislacao/?id=425133.",
+  "KartaView: as 154 fotos 'de 2021' perto da Paulista têm shot_date de 16/02/2012; 2021-06 é a data de upload.",
+  "A especificação SDAAE da CET e a notícia de 2021 citam a Res. CONTRAN 210/2006, revogada; para textos do app, citar a 882/2021.",
+  "Arquivos da verificação em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/verify/altura_sinalizacao/ (der_osm.py, sp_mh.json, br_counts*.json, analyze_signed.py, ov.py, osm/dump.txt, euclides_pts.csv, geosampa_lic.html, aet_sp.txt)."
+ ]
+}

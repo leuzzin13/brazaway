@@ -1,0 +1,265 @@
+{
+ "category": "enderecos_geocoding",
+ "sources": [
+  {
+   "name": "CNEFE 2022 – microdados CSV por município/UF",
+   "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/",
+   "verdict": "corrected",
+   "corrected_license": "Dado aberto federal: o Decreto 8.777/2016 (art. 2º, III) garante livre uso, limitado a creditar a fonte. A frase 'domínio público com citação' vem só de um e-mail do atendimento do IBGE de 2009, repostado na lista do OSM em 2013. Não achei termo de uso específico do CNEFE, e o termo geral do IBGE responde 403. Uso comercial: não achei proibição, mas também não há autorização expressa.",
+   "note": "Refiz o teste da URL: listagem HTTP 200, 645 zips em Municipio/35_SP. 3550308_SAO_PAULO.zip tem Content-Length 185.731.999 bytes (≈177 MiB) e é idêntico ao da amostra. UF SP = 1,0 G; GeoJSON UF35 = 1,1 G (pasta UF_20240910). Recalculei a capital com DuckDB e bateu: 5.689.391 registros, 2.528.403 log+num+mod, 51.366 logradouros, 46.907 CEPs, nv1 = 4.619.360 registros, espécie 6 = 570.229, 129.721 SN (2,3 %). O 97,9 % nv1 por endereço depende do critério: o script pega o nv do 1º registro visto. Com 'todos os registros nv1' dá 97,3 %; com 'algum registro nv1' dá 98,4 %. CSV ';' latin-1, sem acento, tudo maiúsculo: confirmado. Atenção: no IBGE, 'endereço' é COD_UNICO_ENDERECO, que é por unidade. Na capital são 5.649.276 códigos únicos, contra 2,53 milhões de pontos log+num+mod. Os 106,8 milhões do Brasil estão na unidade do IBGE, não em pontos de prédio."
+  },
+  {
+   "name": "CNEFE 2022 – Coordenadas_enderecos",
+   "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Coordenadas_enderecos/",
+   "verdict": "confirmed",
+   "note": "Listagem HTTP 200. Municipio/ datado de 2024-01-31; UF/35_SP.zip = 114 M. A capital (3550308.zip, 24.017.494 bytes) bate com o FTP. Conferi os 39 municípios da amostra contra a API de localidades do IBGE (RM 04901): lista idêntica. Recontei: 10.043.684 registros, nv1 84,03 %, nv1–3 99,23 %, espécie 6 = 996.620. Exatamente como relatado."
+  },
+  {
+   "name": "CNEFE 2022 – Agregados por CEP",
+   "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Agregados_por_CEP/Agregados_por_CEP_CNEFE_Censo_2022.zip",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 8.989.018 bytes (8,6 MiB), datado de 2024-06-14. Recontei: 931.499 CEPs, soma de TOT_END 106.814.877, 95.024 CEPs na faixa 01000000–09999999. Colunas: CEP, TOT_END, TOT_DP, TOT_TIPO_101..104, TOT_DOM_COND, TOT_DC, TOT_EAGRO, TOT_EENSINO, TOT_ESAUDE, TOT_ERELIG, TOT_EOF, TOT_ECR. Não tem lat/lon."
+  },
+  {
+   "name": "padronizacao_cnefe / geocodebr (IPEA)",
+   "url": "https://github.com/ipea/padronizacao_cnefe/releases/tag/v0.5.0",
+   "verdict": "confirmed",
+   "note": "API do GitHub: v0.5.0 publicada em 2026-09-15, 13 assets somando 2.094.672.093 bytes (2,09 GB decimais), license=None no repositório. CRAN: geocodebr 0.7.0, publicado em 2026-09-23, 'MIT + file LICENSE'. O código (R/cache.R) fixa data_release 'v0.5.0' e baixa de ipeaGIT/padronizacao_cnefe, que redireciona (301) para ipea/. Baixei de novo o municipio_cep.parquet (11.255.628 bytes): 928.905 linhas, mas só 928.481 CEPs distintos (há pares município×CEP). Faixa 01–09: 95.044 linhas, mediana de 98,5 m, p90 de 393,6 m. Brasil: mediana de 112,1 m, p90 de 555,7 m. 05316-900 e 11015-900 ausentes; 07750-020 Cajamar tem 4.725 casos e 5.956 m: tudo confirmado. Ressalvas: (1) existem 2.567 CEPs com sufixo 900–969 no arquivo, então 'faltam CEPs de grande usuário' vale para os exemplos, não para todos. (2) O código 'pm04' não existe. Os tipos são dn/da/dl/pn/pa/pl 01–04, dc01–02, db01 e dm01, mapeados para numero, numero_aproximado, logradouro, cep, localidade e municipio."
+  },
+  {
+   "name": "GeoSampa WFS – segmento_logradouro",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:segmento_logradouro&outputFormat=application/json",
+   "verdict": "confirmed",
+   "note": "Pedido com count=1: HTTP 200, totalFeatures = numberMatched = 218.768, LineString. Campos cd_numero_inicial/final_par/impar, codlog e qt_leito_carrocavel conferem. resultType=hits devolve numberMatched=10200 (bug confirmado). Licença CC-BY-SA 4.0 confirmada na página oficial 'Licença para uso de dados do GeoSampa' (prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa, processo SEI 6066.2020/0003044-4). Teste dos 20 aleatórios recalculado a partir do res_geosampa_aleat.json: 17/20 com resultado, mediana de 32 m, máximo de 6.033 m. Ressalva: 'acertou 17 de 20' no JSON é impreciso; foram 17 retornos, um deles errado em 6 km."
+  },
+  {
+   "name": "GeoSampa WFS – lote_cidadao e edificacao",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal:lote_cidadao&outputFormat=application/json",
+   "verdict": "corrected",
+   "note": "O total de 1.687.982 feições está correto, mas não equivale a '1.687.982 lotes com número de porta'. Com CQL_FILTER: tx_situ_lote='ATIVO' = 1.612.618 e 'CANCELADO' = 10.282 (os outros ~65 mil têm outras situações); cd_numero_porta IS NULL = 25.490. É preciso filtrar ATIVO. edificacao = 2.817.745: confirmado. Lote CEAGESP (AV DR GASTAO VIDIGAL 1946): qt_area_terreno 503.425 m², ATIVO: confirmado. Distância centroide→portaria CNEFE: o centroide de área real (UTM 23S) fica a 393 m. Os 363 m relatados vêm da média dos vértices. A conclusão (centroide a ~400 m do portão) se mantém. Licença CC-BY-SA 4.0 confirmada."
+  },
+  {
+   "name": "Photon público (komoot)",
+   "url": "https://photon.komoot.io/api",
+   "verdict": "corrected",
+   "note": "Reproduzi os casos principais hoje: 'Rua Santos Dumont, 81, Santos' → Mallet-PR. 'Rua Joaquim Távora, 500, Santos' com viés lat/lon de SP → Vila Mariana, a 50.406 m. CEAGESP a 388 m. /structured city=Santos sem bbox → São Leopoldo-RS. Medianas recalculadas dos JSON salvos: 647 m (10 logísticos) e 124 m (30 aleatórios), com 3 erros acima de 10 km. Termos confirmados no README: 'Extensive usage will be throttled or completely banned'. CORREÇÃO: 'o Photon não interpola número' é falso como afirmação geral. O Photon expande as ways addr:interpolation do OSM em números individuais (PhotonDocInterpolationSet.java; CHANGELOG 0.3.0/0.5.0). O que ele não faz é interpolar ao longo da rua sem dado de faixa. Na RMSP há 4.153 ways de interpolação."
+  },
+  {
+   "name": "Nominatim público (OSMF)",
+   "url": "https://nominatim.openstreetmap.org/search",
+   "verdict": "confirmed",
+   "note": "Política confirmada: 'absolute maximum of 1 request per second'; 'Auto-complete search' proibido; cache obrigatório em bulk; scripts longos limitados a 4 req/min. Há um ponto não citado: apps cuja função principal é geocodificar, 'including package/vehicle tracking applications', devem rodar serviço próprio. Isso reforça o descarte do serviço público para um app de caminhões. Reproduzi 'Rua Indiana, 1212, São Paulo' com os mesmos parâmetros (limit=5, countrycodes=br): top em Presidente Prudente. Com limit=1, o top foi o Brooklin (SP). O resultado depende do limit, e 'São Paulo' é ambíguo entre cidade e estado."
+  },
+  {
+   "name": "OSM – endereços na RMSP (PBF sudeste)",
+   "url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "verdict": "confirmed",
+   "note": "Refiz tudo de forma independente: osmium 1.15 (docker) no mesmo PBF do repo (860.862.119 bytes, replicação de 2026-10-08T20:21:06Z), com polígono da RMSP montado por mim a partir da malha do IBGE (39 municípios, união). addr:housenumber = 121.745 n + 35.992 w + 1.049 r = 158.786. addr:interpolation = 4.153 ways. barrier=gate = 15.311 nós. entrance = 5.397. amenity=loading_dock = 0. building=warehouse/industrial = 3.011. Todos os números batem exatamente."
+  },
+  {
+   "name": "Overture Maps – addresses",
+   "url": "https://stac.overturemaps.org/2026-09-23.1/addresses/catalog.json",
+   "verdict": "confirmed",
+   "note": "Release mais recente no STAC: 2026-09-23.1. Doc (guides/addresses): 'BR 89,887,635'. Página de atribuição: 'IBGE ... Available under CC0. Distributed by AddressForAll. Accessed: 2024-10-13'. Consulta remota com DuckDB, minha: só 2 dos 64 itens STAC cruzam o bbox. Contagem no bbox da RMSP: 7.848.066. Na caixa da CEAGESP: 5.864 registros, todos com sources dataset='br/sp/statewide' e license='LicenseRef-Proprietary'. A inconsistência de licença está confirmada."
+  },
+  {
+   "name": "OpenAddresses – br/sp/statewide",
+   "url": "https://batch.openaddresses.io/api/job/927883",
+   "verdict": "confirmed",
+   "note": "Job 927883 (2026-10-02, Success): 17.434.203 registros, 15.737.603 válidos, 1.696.600 falhas em number, size 894.903.763. Licença: attribution=true, 'Instituto Brasileiro de Geografia e Estatística'. Ressalva: o source JSON aponta para um upload de 2026-07-28 feito pelo usuário 'jeffdefacto'. Não vi evidência de que esse arquivo tenha sido processado pela AddressForAll."
+  },
+  {
+   "name": "ViaCEP",
+   "url": "https://viacep.com.br/ws/{cep}/json/",
+   "verdict": "confirmed",
+   "note": "Testei 04204-002 e 05316-900: HTTP 200, sem lat/lon. 'complemento' traz a faixa ('de 1601/1602 ao fim') e 'unidade' traz o grande usuário ('Ceagesp - Companhia de Entrepostos...'). A home avisa: 'Uso massivo para validação de bases de dados locais, poderá automaticamente bloquear seu' [acesso]."
+  },
+  {
+   "name": "BrasilAPI CEP v2",
+   "url": "https://brasilapi.com.br/api/cep/v2/{cep}",
+   "verdict": "confirmed",
+   "note": "O código em lib/fetchGeocoordinateFromBrazilLocation.js (HTTP 200) usa PHOTON_API_URL e OPEN_METEO_API_URL. Ao vivo, 04204002 e 05316900 devolveram a mesma coordenada (-23.5475, -46.63611), que é o centro de São Paulo."
+  },
+  {
+   "name": "AwesomeAPI CEP",
+   "url": "https://cep.awesomeapi.com.br/json/{cep}",
+   "verdict": "confirmed",
+   "note": "05316900 → -23.5340988, -46.7352179, ≈48 m do ponto CNEFE da CEAGESP. Sem licença nem fonte documentadas."
+  },
+  {
+   "name": "OpenCEP / apicep / Postmon",
+   "url": "https://opencep.com/v1/{cep}",
+   "verdict": "confirmed",
+   "note": "OpenCEP: 200, sem coordenadas; o site diz '1.192.347 CEPs válidos'. apicep: 1º pedido 200, 2º 429. Postmon: conexão falhou (000)."
+  },
+  {
+   "name": "Correios e-DNE",
+   "url": "https://www.correios.com.br/comprar/loja-online/dne",
+   "verdict": "confirmed",
+   "note": "Página lida por curl (200): Básico R$ 2.950,00 (renovação trimestral R$ 590; anual R$ 2.270); Master R$ 6.950,00 (trimestral R$ 1.490; anual R$ 5.970). 'Periodicidade quinzenal' com cronograma de 2026. Restrições legais pelas Leis 10.695/2003, 9.610/1998 e 9.279/1996. Formatos .txt e .mdb. O conteúdo descrito é 'CEPs, logradouros, bairros e municípios'; a página não fala em coordenadas, e 'sem coordenadas' é uma inferência coerente. Há também a modalidade DNE-GU (sem ônus para grandes usuários, por contrato)."
+  },
+  {
+   "name": "IBGE – Base de faces de logradouros 2022",
+   "url": "https://geoftp.ibge.gov.br/recortes_para_fins_estatisticos/malha_de_setores_censitarios/censo_2022/base_de_faces_de_logradouros_versao_2022_censo_demografico/",
+   "verdict": "confirmed",
+   "note": "Listagem 200, datada de 2024-06-07. SP json = 311 M, shp = 377 M. Li o diretório central do zip remoto por range (56 KB): 645 arquivos, 39 da RMSP = 426,2 MB descompactados, capital = 172,9 MB (17,2 MB comprimido). Amostra de Cajamar: 4.882 feições LineString. Ressalva: as 1.339 'sem nome' têm SÓ CD_SETOR, sem quadra, face nem TOT_*. Essas não ligam ao CNEFE por setor+quadra+face. Licença: não achei termo na pasta; está apoiada só na regra geral do IBGE."
+  },
+  {
+   "name": "Receita Federal – CNPJ dados abertos",
+   "url": "https://arquivos.receitafederal.gov.br/index.php/s/YggdBLfdninEJX9",
+   "verdict": "confirmed",
+   "note": "Share: HTTP 200. PROPFIND público lista 2023-05 … 2026-09 + cnpj.tar.gz. Em 2026-09, Estabelecimentos0–9 somam 5.381.336.206 bytes (5,38 GB); Empresas ≈ 1,38 GB. dadosabertos.rfb.gov.br não conecta (000). A página gov.br 'dados-publicos-cnpj' redireciona para login. A proveniência oficial do token continua NÃO verificável: não achei página pública que o publique."
+  },
+  {
+   "name": "Photon auto-hospedado – dump Brasil (GraphHopper)",
+   "url": "https://download1.graphhopper.com/public/south-america/brazil/photon-dump-brazil-1.0-latest.jsonl.zst",
+   "verdict": "confirmed",
+   "note": "HEAD 200, Content-Length 706.081.277, Last-Modified 2026-10-05. A página indica Photon 0.7.x–1.x. photon-db-br-250720.tar.bz2 = 2G (21/07/2025). Não verifiquei a 'atualização semanal'. Geofabrik brazil-latest hoje: 2.093.228.837 bytes (09/10)."
+  },
+  {
+   "name": "Google Geocoding API (termos)",
+   "url": "https://cloud.google.com/maps-platform/terms/maps-service-terms",
+   "verdict": "confirmed",
+   "note": "Texto atual: '6.2 No use with a non-Google map. Customer must not use Google Maps Content from the Geocoding API in conjunction with a non-Google map' e '6.3.1 ... cache latitude (lat) and longitude (lng) ... for up to 30 consecutive calendar days'."
+  },
+  {
+   "name": "Mapbox Geocoding v6",
+   "url": "https://docs.mapbox.com/api/search/geocoding/",
+   "verdict": "confirmed",
+   "note": "A doc diz: 'Temporary results are not allowed to be cached'. Também: 'Using Permanent storage ... requires that you have a valid credit card on file or an active enterprise contract'."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "O CNEFE 2022 tem cerca de 106 milhões de endereços (111 milhões de espécies), com coordenadas divulgadas em 02/02/2024. 24,3 milhões não têm número. O próprio IBGE lista 'roteamento' entre os usos.",
+   "verdict": "confirmed",
+   "source_url": "https://agenciadenoticias.ibge.gov.br/media/com_mediaibge/arquivos/1902352705220d57ced6e2992f1452f9.pdf",
+   "note": "Baixei o PDF por curl (HTTP 200, 34 páginas, mesmo MD5 da amostra). Ou seja, esse arquivo não dá 403. O texto diz '106 milhões de endereços e 111 milhões de espécies', 'Sem número – 24,3 milhões', 'endereços divulgadas em 2/2/2024' e '...o mapeamento, o roteamento e muitos outros usos'. A mesma tabela traz 'Quilometragem na via – 438 mil'."
+  },
+  {
+   "fact": "Somando TOT_END do Agregados_por_CEP dá 106.814.877 endereços em 931.499 CEPs, sem coordenadas.",
+   "verdict": "confirmed",
+   "source_url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Agregados_por_CEP/",
+   "note": "Recontado a partir do zip (8.989.018 bytes, igual ao FTP). Não há coluna de lat/lon."
+  },
+  {
+   "fact": "Capital SP: 5.689.391 registros, 2.528.403 endereços únicos, 97,9 % nv1, 46.907 CEPs, 570.229 espécie 6, 2,3 % sem número, zip de 177 MB.",
+   "verdict": "confirmed",
+   "source_url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/",
+   "note": "Recalculei tudo com DuckDB e bate. O 97,9 % usa o nv do primeiro registro de cada endereço; por outros critérios fica entre 97,3 % e 98,4 %. Pelo conceito do IBGE (COD_UNICO_ENDERECO) a capital tem 5.649.276 endereços. Os 2,53 milhões são uma definição própria (logradouro+número+modificador)."
+  },
+  {
+   "fact": "RMSP: 10.043.684 registros, 84,0 % nv1, 99,2 % nv1–3, 996.620 espécie 6.",
+   "verdict": "confirmed",
+   "source_url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Coordenadas_enderecos/Municipio/35_SP/",
+   "note": "Recontei e bateu exatamente. A lista de 39 municípios confere com a API do IBGE (RM 04901)."
+  },
+  {
+   "fact": "O IBGE declara seu conteúdo de domínio público, com citação obrigatória; as bases cartográficas têm termo próprio que proíbe comercializá-las.",
+   "verdict": "corrected",
+   "source_url": "https://geoftp.ibge.gov.br/cartas_e_mapas/bases_cartograficas_continuas/bc250/versao2019/informacoes_tecnicas/BC250_termo_uso_2019.pdf",
+   "note": "A fonte citada (lista imports@OSM, 2013) é só o repasse de um e-mail do atendimento do IBGE de 08/01/2009. Ela fala de 'conteúdos do Portal' e não menciona bases cartográficas. A segunda parte procede, mas pela fonte correta: o termo da BC250 diz 'É vedada a locação ou comercialização parcial ou integral do produto'. Não há termo específico do CNEFE, e ibge.gov.br/termo-de-uso responde 403. Uma base legal melhor é o Decreto 8.777/2016, art. 2º, III."
+  },
+  {
+   "fact": "O CNEFE grava nome de estabelecimento; rodovia vem como num=km com modificador KM (ex.: Anhanguera 30 KM); terminais de porto aparecem como 'SN'.",
+   "verdict": "corrected",
+   "source_url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/",
+   "note": "Confirmados: CEAGESP (Av Dr Gastão Vidigal 0 SN), SANTOS BRASIL TECON (Av Santos Dumont 0 SN, Guarujá), GLP CAJAMAR 2 (nº 3333) e 'RODOVIA ANHANGUERA 30 KM | SKF' (Cajamar). Na capital há 458 registros KM. A generalização sobre portos é exagerada: TERMINAL FASSINA REDEX (Rod. Cônego Domênico Rangoni 3151), TERMINAL SANTOS BRASIL (3105) e TRANSBRASA (R. Joaquim Távora 500) têm número. Só parte dos terminais é SN."
+  },
+  {
+   "fact": "geocodebr no CRAN 0.7.0, MIT, usa 13 parquets (release v0.5.0, 2,09 GB) e níveis de precisão número/número aproximado/logradouro/CEP/localidade/município.",
+   "verdict": "confirmed",
+   "source_url": "https://cran.r-project.org/web/packages/geocodebr/index.html",
+   "note": "Conferido: versão 0.7.0, publicada em 2026-09-23, 'MIT + file LICENSE'. data_release 'v0.5.0' fixo em R/cache.R. 13 assets, 2.094.672.093 bytes. A tabela de precisão está em R/utils.R."
+  },
+  {
+   "fact": "municipio_cep.parquet: 928.905 CEPs com centroide e desvio; faixa 01–09 mediana de 98,5 m (p90 394 m); 05316-900 e 11015-900 ausentes.",
+   "verdict": "confirmed",
+   "source_url": "https://github.com/ipea/padronizacao_cnefe/releases/download/v0.5.0/municipio_cep.parquet",
+   "note": "Rebaixado e recalculado: bate. Detalhes: 928.905 é número de linhas (928.481 CEPs distintos). Existem 2.567 CEPs com sufixo 900–969 no arquivo, então a ausência de CEP de grande usuário não é absoluta. Convém checar caso a caso."
+  },
+  {
+   "fact": "GeoSampa: segmento_logradouro 218.768 (hits informa 10.200), lote_cidadao 1.687.982 lotes com número de porta, edificacao 2.817.745, CC-BY-SA 4.0.",
+   "verdict": "corrected",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+   "note": "Contagens totais e bug do hits confirmados. Licença confirmada na página oficial da Prefeitura. Correção: as 1.687.982 feições incluem 10.282 lotes CANCELADO e outros ~65 mil não ATIVO. ATIVO = 1.612.618, e 25.490 lotes não têm cd_numero_porta."
+  },
+  {
+   "fact": "OSM na RMSP (PBF 08/10/2026): 158.786 objetos com addr:housenumber, 4.153 interpolações, 15.311 barrier=gate, 0 loading_dock.",
+   "verdict": "confirmed",
+   "source_url": "https://download.geofabrik.de/south-america/brazil/sudeste-latest.osm.pbf",
+   "note": "Refeito com osmium sobre o mesmo PBF e um polígono IBGE montado por mim. Números idênticos."
+  },
+  {
+   "fact": "O Photon público não interpola número; em 10 logísticos mediana de 647 m; viés lat/lon jogou Santos para a Vila Mariana (50 km); em 30 aleatórios 3 erros >10 km (um de 503 km, Mallet-PR).",
+   "verdict": "corrected",
+   "source_url": "https://github.com/komoot/photon/blob/master/src/main/java/de/komoot/photon/PhotonDocInterpolationSet.java",
+   "note": "Números e casos reproduzidos hoje (Mallet-PR; 50.406 m com viés; CEAGESP a 388 m). Mas 'não interpola número' está errado: o Photon expande as ways addr:interpolation do OSM em números individuais. Ele só não interpola onde o OSM não tem faixa."
+  },
+  {
+   "fact": "Política do Nominatim público: no máximo 1 req/s, cache obrigatório, autocomplete proibido, bulk desencorajado, revenda proibida.",
+   "verdict": "confirmed",
+   "source_url": "https://operations.osmfoundation.org/policies/nominatim/",
+   "note": "Texto atual confirma tudo. Ponto adicional: serviços cuja função principal é geocodificar, incluindo 'package/vehicle tracking applications', devem ter servidor próprio."
+  },
+  {
+   "fact": "A BrasilAPI CEP v2 obtém a coordenada do Photon, com fallback para o Open-Meteo (centro da cidade); erros de 5,5–10,2 km.",
+   "verdict": "confirmed",
+   "source_url": "https://raw.githubusercontent.com/BrasilAPI/BrasilAPI/main/lib/fetchGeocoordinateFromBrazilLocation.js",
+   "note": "Código lido (PHOTON_API_URL e OPEN_METEO_API_URL). Ao vivo, dois CEPs distintos devolveram o mesmo ponto central de SP (-23.5475, -46.63611)."
+  },
+  {
+   "fact": "ViaCEP não devolve coordenadas, avisa sobre bloqueio por uso massivo e devolve grande usuário e faixa de numeração.",
+   "verdict": "confirmed",
+   "source_url": "https://viacep.com.br/",
+   "note": "Testado ao vivo com 04204-002 e 05316-900."
+  },
+  {
+   "fact": "Correios e-DNE: Básico R$ 2.950, Master R$ 6.950, atualização quinzenal, sem coordenadas, protegido por lei.",
+   "verdict": "confirmed",
+   "source_url": "https://www.correios.com.br/comprar/loja-online/dne",
+   "note": "Preços, renovações, periodicidade e leis conferem na página atual. 'Sem coordenadas' é inferido da descrição do conteúdo; a página não diz isso explicitamente."
+  },
+  {
+   "fact": "Termos Google Maps 6.2 proíbem usar o Geocoding com mapa não-Google; cache de lat/lng de no máximo 30 dias.",
+   "verdict": "confirmed",
+   "source_url": "https://cloud.google.com/maps-platform/terms/maps-service-terms",
+   "note": "Seções 6.2 e 6.3.1 lidas literalmente na versão atual."
+  },
+  {
+   "fact": "Overture addresses: BR = 89.887.635, atribuídos a IBGE/CC0 via AddressForAll; registros de SP com license 'LicenseRef-Proprietary'; 7.848.066 no bbox da RMSP.",
+   "verdict": "confirmed",
+   "source_url": "https://docs.overturemaps.org/guides/addresses/",
+   "note": "Doc, página de atribuição e consulta remota com DuckDB confirmam os três pontos."
+  },
+  {
+   "fact": "A diretriz de geocodificação da OSMF diz que resultados individuais podem ser guardados com dados próprios sem share-alike, desde que não recriem parte substancial do OSM; o geocoder precisa atribuir o OSM.",
+   "verdict": "confirmed",
+   "source_url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Geocoding_-_Guideline",
+   "note": "O texto fala em 'insubstantial amount' para Direct Hit, em 'Derivative Database' quando há parte substancial e em atribuição pela seção 4.3 da ODbL."
+  },
+  {
+   "fact": "Lote da CEAGESP (503.425 m²) tem centroide a 363 m da portaria do CNEFE; Photon/Nominatim põem o ponto a 388 m; terminais s/n do Guarujá a 0,7–4 km.",
+   "verdict": "corrected",
+   "source_url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+   "note": "A área de 503.425 m² está confirmada. O centroide de área real (UTM 23S) fica a 393 m; os 363 m são a média dos vértices. Os 388 m valem só para o Photon (reproduzido); o Nominatim pôs o ponto a 527 m, segundo res_nominatim.json. Guarujá: Photon 1,4–4,0 km e Nominatim 0,7–2,9 km, faixa confirmada."
+  }
+ ],
+ "extra_findings": [
+  "Marcos quilométricos de rodovias estaduais de SP: o portal de dados abertos da ARTESP publica 'Camadas Geoespaciais Auxiliares' (malha rodoviária, marcos quilométricos, rede DER), em GeoPackage e GeoJSON, licença CC-BY. O download fica numa pasta do Google Drive. Resolve parte da lacuna 'Rodovia X, km N'. https://dadosabertos.artesp.sp.gov.br/dataset/programacao-de-obras/resource/a76c582f-a09a-4579-8505-e5899450a0fc",
+  "Marcos quilométricos de rodovias federais concedidas: dataset ANTT 'quilometro-principal' (SHP de pontos, KMZ, CSV, JSON), CC-BY, atualizado em 2026-08-28. https://dados.antt.gov.br/dataset/quilometro-principal",
+  "CEP Aberto: lat/lon por CEP, dumps das 27 UFs, licença ODbL (desde 02/2017). Exige cadastro gratuito e token. É uma alternativa a AwesomeAPI e OpenCEP com licença explícita, mas a proveniência e a qualidade das coordenadas não foram testadas. https://www.cepaberto.com/",
+  "geocodebr tem versão Python no PyPI (0.2.0, MIT, 'Geolocalização de endereços brasileiros com DuckDB', repositório ipea/geocodebr). O padronizador enderecobr existe em R (CRAN 0.6.1, MIT) e em bindings Rust para Python (PyPI 0.3.0). Os dois servem direto aos importadores Python do repo. https://pypi.org/project/geocodebr/ e https://github.com/ipea/enderecobr",
+  "Base legal mais sólida para o CNEFE do que o e-mail de 2009: Decreto 8.777/2016, art. 2º, III. Dados abertos são publicados 'sob licença aberta que permita sua livre utilização, consumo ou cruzamento, limitando-se a creditar a autoria ou a fonte'. Ainda falta confirmar que o IBGE classifica o CNEFE formalmente como dado aberto no seu PDA. https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8777.htm",
+  "Termo de uso da BC250 do IBGE (fonte primária da restrição a bases cartográficas): 'É vedada a locação ou comercialização parcial ou integral do produto'. Vale checar se as faces de logradouros (geoftp) têm termo equivalente; não achei nenhum na pasta. https://geoftp.ibge.gov.br/cartas_e_mapas/bases_cartograficas_continuas/bc250/versao2019/informacoes_tecnicas/BC250_termo_uso_2019.pdf",
+  "Diferença de unidade no CNEFE: COD_UNICO_ENDERECO é por unidade (5.649.276 na capital), contra 2.528.403 pontos log+num+mod. Os '106,8 milhões de endereços' do Brasil estão na unidade do IBGE. Comparações de cobertura com OSM/Overture e o dimensionamento do addr_point devem usar a contagem por ponto. https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/",
+  "O release do IBGE informa 438 mil endereços com 'quilometragem na via' (modificador KM) no Brasil. Isso dimensiona o problema dos endereços em rodovia. https://agenciadenoticias.ibge.gov.br/media/com_mediaibge/arquivos/1902352705220d57ced6e2992f1452f9.pdf",
+  "Ao importar lote_cidadao do GeoSampa, filtrar tx_situ_lote='ATIVO' (1.612.618) e descartar cd_numero_porta nulo (25.490). Senão entram lotes cancelados como destino. https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+  "CC-BY-SA 4.0 do GeoSampa: pontos interpolados a partir de segmento_logradouro tendem a ser material adaptado. Se forem redistribuídos ou expostos em massa (API pública, export), precisam sair sob CC-BY-SA. Manter em tabela separada ajuda, mas não elimina a obrigação. https://prefeitura.sp.gov.br/web/licenciamento/w/licen%C3%A7a-para-uso-de-dados-do-geosampa",
+  "O GeoSampa WFS tem 485 camadas. Entre elas, 'licenca_industrial' pode semear a tabela site_access com indústrias e depósitos licenciados na capital. Não testei. https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetCapabilities",
+  "Mogi das Cruzes (RMSP) publica no CKAN listas de logradouros sob licença ODbL, mas só em CSV, sem geometria. Uma delas é declaradamente derivada do DNE dos Correios, o que torna a licença duvidosa. Baixo valor. https://dados.mogidascruzes.sp.gov.br/dataset/logradouros-mogi-das-cruzes-sp-correios",
+  "A seção 'Situação atual do app' do NOTES.md está desatualizada. O repo já tem cascata própria (commit f24b350: CNEFE → interpolação CNEFE/GeoSampa → logradouro → CEP → bairro → município; Photon com bbox e validação de município) em api/src/services/geocoder.ts e api/src/services/geocoder/. Parte das recomendações já foi implementada. /Users/arthurleuzzi/Projetos/truck-router/api/src/services/geocoder.ts",
+  "Ao contrário do que diz o NOTES, o PDF do release do CNEFE em agenciadenoticias.ibge.gov.br baixa com curl simples (HTTP 200). Só as páginas HTML do ibge.gov.br e agenciadenoticias respondem 403. https://agenciadenoticias.ibge.gov.br/media/com_mediaibge/arquivos/1902352705220d57ced6e2992f1452f9.pdf",
+  "Arquivos de verificação (scripts e saídas) em /private/tmp/claude-501/-Users-arthurleuzzi-Projetos-truck-router/391889ae-a946-45ef-a0f8-d122c8f49438/scratchpad/verify/enderecos_geocoding/ (cap.py, mc2.py, ov.py, rmsp_poly.geojson, ceagesp_lote.json, rel.txt, entre outros)."
+ ]
+}

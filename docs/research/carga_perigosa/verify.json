@@ -1,0 +1,231 @@
+{
+ "category": "carga_perigosa",
+ "sources": [
+  {
+   "name": "Portaria SMT.GAB 051/2024 (restrição horária de PP na capital)",
+   "url": "https://cetsp.com.br/media/1592296/portaria-051-24.pdf",
+   "verdict": "corrected",
+   "note": "Re-testado: HTTP 200, 232.599 bytes, PDF de 5 p. (SEI 116715516, republicada em 20/12/2024 por incorreção no DOC de 13/12/2024). Arts. 2, 3 e 7 e Anexos I a IV conferidos. O PDF está correto; o problema está na amostra sp_portaria_smt_051_2024_grupos_onu.csv, que numera os grupos errado. Ela usa I_alta_frequencia, II_consumo_local e III_outros, a numeração da antiga Portaria 100/2016 (3 grupos). Na 051/2024 são 4 grupos: I = alta periculosidade intrínseca (sem anexo), II = Anexo I (19 ONU), III = Anexo II (20 ONU), IV = Anexo III (9 ONU). Como o NOTES manda tirar o grupo SP desse CSV, um produto do Anexo II sairia como grupo II e seria bloqueado no centro expandido. Corrigir os rótulos. Atenção também: 9 ONU aparecem tanto no Anexo I quanto no II (1072, 1073, 1075, 1170, 1202, 1203, 1977, 3082, 3475), então o flag de consumo local é obrigatório."
+  },
+  {
+   "name": "Portaria 137/2018-SMT.GAB art. 35 (PP na ZMRC/ZERC)",
+   "url": "https://www.cetsp.com.br/consultas/transporte-de-produtos-perigosos.aspx",
+   "verdict": "corrected",
+   "corrected_url": "https://www.cetsp.com.br/media/722444/p-137_18.pdf",
+   "note": "A URL citada redireciona (200, 37 KB) para /consultas/caminhoes/circulacao-de-produtos-perigosos.aspx. Essa página NÃO menciona ZMRC, art. 35, AETC nem eixos. A fonte primária é o PDF p-137_18.pdf (HTTP 200, 828 KB), que confirma o art. 35. O texto consolidado em legislacao.prefeitura.sp.gov.br/leis/portaria-secretaria-municipal-de-mobilidade-e-transportes-smt-137-de-3-de-agosto-de-2018 (HTTP 200) mostra o art. 35 sem alteração; só o art. 36 foi mudado, pela Portaria 57/2021. Detalhe que ficou de fora: o §2º não autoriza caminhão-trator nessa modalidade."
+  },
+  {
+   "name": "Decreto municipal 50.446/2009 consolidado (CTPP/LETPP) e Decreto 60.169/2021",
+   "url": "https://legislacao.prefeitura.sp.gov.br/leis/decreto-50446-de-20-de-fevereiro-de-2009",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 55.407 bytes, com redirect para legislacao.prefeitura.sp.gov.br/decreto-50446-de-20-de-fevereiro-de-2009. Conferidos: art. 5 (CTPP e LETPP), art. 9 VI e art. 19 IV (Brasil-ID/TAG, incluídos pelo Decreto 60.169/2021) e art. 21 (multa e retenção). Ato oficial; a licença está correta."
+  },
+  {
+   "name": "Portaria PR/DER-164/2025 (SP-008 km 25,28–31,5)",
+   "url": "https://doe.sp.gov.br/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-164-2025-202510071132192141389342",
+   "verdict": "confirmed",
+   "note": "A página HTML (200, 56 KB) é só a casca da SPA: o texto da portaria não aparece nela. O conteúdo vem da API https://do-api-web-search.doe.sp.gov.br/v2/publications/<slug> (200, 45.113 bytes), com data de 08/10/2025. Conferidos: art. 1 (veículos de carga com comprimento acima de 14 m) e art. 2 (PP). O texto não fixa horário, logo a regra é 24h. O considerando cita fauna, flora e recursos hídricos. A geometria sp008_km25_31_trecho.geojson tem 6.123 m e cai 100% dentro do polígono APRMAJ (recalculei com shapely). Os trechos da malha CETESB são 25,28–30,5 e 30,5–32,7; o trecho de 30,5 a 31,5 foi interpolado."
+  },
+  {
+   "name": "Portaria SUP/DER-062/2024 (SP-324 km 86,6–90,7)",
+   "url": "https://setcesp.org.br/wp-content/uploads/2024/08/Portaria-SUP_DER-062.2024.pdf",
+   "verdict": "corrected",
+   "note": "HTTP 200, 166.452 bytes. É a cópia do DOE de 01/08/2024 com código de autenticidade. O art. 1 confirma o km 86+620 ao 90+700 nos dois sentidos. Duas correções: (1) o geo_coverage diz 'Campinas/Vinhedo', mas a malha CETESB põe o km 82,8–90,7 da SP-324 inteiro em Campinas (Rod. Miguel Melhado Campos); (2) o registro omite a exceção do art. 2, que libera os veículos destinados a estabelecimentos lindeiros com autorização da DR.1. A fonte usada é cópia do SETCESP; o original está no DOE-SP."
+  },
+  {
+   "name": "API de busca do DOE-SP",
+   "url": "https://do-api-web-search.doe.sp.gov.br/v2/advanced-search/publications",
+   "verdict": "confirmed",
+   "note": "HTTP 200, JSON. Rodei de novo 'produtos perigosos' de 2020 a 2026: totalItems=2364 em 48 páginas, e o item mais antigo é de 30/05/2023. Filtrando DER e ARTESP saem 7 atos do DER (066/2023 drenagem, 062/2024, 015/2025 em duas publicações, 030/2025, 164/2025, 253/2026), além do relatório e de um edital da ARTESP. Só 2 são proibições de trecho. Ressalva para o job de monitoramento: a busca casa a frase exata ('produto perigoso' dá 10 resultados; 'carga perigosa' 16; 'cargas perigosas' 50), então o job precisa consultar todas as variantes. Não achei os termos de uso."
+  },
+  {
+   "name": "Malha Rodoviária Estadual SP com km (ArcGIS CETESB)",
+   "url": "https://arcgis.cetesb.sp.gov.br/server/rest/services/Hosted/Malha_Rodovi%C3%A1ria_Estadual_SP/FeatureServer/0/query",
+   "verdict": "confirmed",
+   "note": "HTTP 200. A consulta da SP-008 em geojson trouxe 41 feições (152.459 bytes), e returnCountOnly deu 4.777. Os campos kminicial, kmfinal, administra, jurisdicao, municipio, denominaca e legislacao existem. O metadado da camada tem copyrightText vazio, ou seja, a licença não está declarada (confere)."
+  },
+  {
+   "name": "Res. ANTT 5.998/2022 compilada e Partes 1, 3 e 7",
+   "url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00005998&seqAto=000&valorAno=2022&orgao=DG/ANTT/MI&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 132.507 bytes (ISO-8859-1). O art. 48 fixa a vigência em 01/06/2023. Arts. 38, 42 e 43 conferidos. O texto não tem nenhuma ocorrência de 'itinerário' nem de 'túnel'. As Partes 1774868, 1774878 e 1774884 deram 200. A Parte 3 traz os itens 3.4.2.6 'e' e 3.4.3.4 'c' (dispensa de limitações de itinerário). A página compilada ainda aponta para os anexos originais de 2022."
+  },
+  {
+   "name": "Relação de Produtos Perigosos (parse completo)",
+   "url": "https://anexosportal.datalegis.net/arquivos/1774888.pdf",
+   "verdict": "corrected",
+   "note": "HTTP 200, 1.144.174 bytes, 125 p., PDF criado em 09/09/2022. Conferi no PDF: 1203 = 333 kg, 1202 = 1000, 1075 = 333, 1017 = 20. O CSV tem 2.336 ONU únicos e a distribuição bate (333: 1006; 20: 762; 1000: 343; ZERO: 137; ILIMITADA: 62). Bugs na amostra: (a) 1950 AEROSSÓIS e 2037 cartuchos de gás ficaram com qtd_limitada_veiculo_min='277', lido de 'Ver PE 277'. É um valor falso em kg para produtos muito comuns e precisa ser tratado como 'ver provisão especial'. (b) 10 linhas têm o mínimo vazio (3166, 3171, 3316, 3359, 3363, 3379, 3380, 3509, 3534 sem nome, 3536). Segundo a NT ANTT 4006/2026, a base da Res. 5.998 é a 21ª edição do Orange Book."
+  },
+  {
+   "name": "Audiência Pública ANTT 7/2026 via API do ParticipANTT",
+   "url": "https://participantt.antt.gov.br/api/ManterEvento/Documentacao/AnexoProposta?CodProposta=1504",
+   "verdict": "confirmed",
+   "note": "HTTP 200, JSON de 3.404 bytes com 7 anexos. O evento 662 aparece em /api/ManterEvento com período de 15/05 a 28/06/2026 e situação 'Encerrado'. A file-api devolveu: minuta (7555) com 78 p. e nenhuma ocorrência de 'itinerário', 'túnel' ou 'estacionamento'; NT 4006 (7556), que confirma o alinhamento à 23ª edição do Orange Book; relatório (7649), com Tabela 1 dando 38 participantes e 117 contribuições. O aviso no anttlegis (200) traz DOU de 08/05/2026, Seção 3."
+  },
+  {
+   "name": "Decreto 96.044/1988",
+   "url": "https://legis.senado.leg.br/norma/518684",
+   "verdict": "confirmed",
+   "note": "Senado: HTTP 200, 50.725 bytes. A única alteração registrada é a do art. 7, pelo Decreto 4.097/2002, e não há revogação. A URL do Planalto em /1980-1989/d96044.htm dá 404, mas https://www.planalto.gov.br/ccivil_03/decreto/antigos/d96044.htm dá 200 e não traz anotação de revogação. Arts. 9, 11, 13 e 14 conferidos. A Portaria PR/DER-015/2025 (DOE) e a IN DNIT 5/2023 ainda o citam."
+  },
+  {
+   "name": "DNIT IN 5/2023 (STRPP)",
+   "url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/atos-normativos/tipo/instrucao-normativa/2023/instrucao-normativa-05-2023-colegiada-estabelece-aos-expedidores-os-procediemntos-e-as-orientacoes-para-o-cadastro-de-informacoes-das-rotas-de-fluxos-de-transporte-de-produtos-perigosos.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 356.160 bytes. Art. 5: declaração do 1º dia útil a 30/09 do ano posterior ao de referência, por CNPJ. Art. 6: dispensas I a VI (mesmo município, conurbados, item 3.4.3, classe 7, OLUC, logística reversa). Vigência a partir de 02/05/2023. Detalhe: a dispensa III cita o item 3.4.3 da Res. 5.947/2021, o RTPP anterior, e não a 5.998."
+  },
+  {
+   "name": "CETESB Emergências Químicas 2014–2026 (WFS DataGEO)",
+   "url": "https://datageo.ambiente.sp.gov.br/geoserver/datageo/wfs",
+   "verdict": "confirmed",
+   "note": "Baixei de novo as 13 camadas anuais (todas 200, de 239 a 349 KB). Resultado: 4.103 registros, sendo 2.349 de 'Transporte Rodoviário'. Pela lista de 39 municípios, 502 ficam na RMSP; pelo campo Regiao='Metropolitana', são 498. A data máxima de 2026 é 06/10/2026. No cruzamento com as 4 bacias, 110 ficam dentro, 55 deles no Rodoanel. As contagens por produto batem. O GetCapabilities tem Fees e AccessConstraints = NONE."
+  },
+  {
+   "name": "Limites de bacias/APRM (DataGEO) e mananciais GeoSampa",
+   "url": "https://datageo.ambiente.sp.gov.br/geoserver/datageo/wfs",
+   "verdict": "confirmed",
+   "note": "WFS APRMAJ_LIMITE_BACIA_2015_POL: HTTP 200, 244 KB. As áreas recalculadas por aproximação dão AJ 366, ATC 1.257, Billings 580 e Guarapiranga 636 km², em linha com os valores da pesquisa. Não há licença explícita."
+  },
+  {
+   "name": "ARTESP malha-rodoviaria KMZ: Paradas de PP",
+   "url": "https://dadosabertos.artesp.sp.gov.br",
+   "verdict": "corrected",
+   "note": "CKAN package_show malha-rodoviaria: HTTP 200, license_id cc-by, modificado em 22/09/2026, 23 KMZ. Reprocessei todos os KMZ, tratando prefixos de namespace como 'ns0:'. Achei 48 placemarks em pastas de PP, não 47. O CSV da pesquisa perdeu o ponto da Renovias na SP-340 (-22.7957, -47.0319), que fica fora da Grande SP. Com o bbox da pesquisa, os 16 da Grande SP (12 SPMar, 3 Rodoanel, 1 Ecovias) conferem. Os pontos da SPMar estão em pares, um por sentido, então são cerca de 6 locais físicos."
+  },
+  {
+   "name": "FAQ Ecovias Imigrantes (Portaria ARTESP 11/2002)",
+   "url": "https://www.ecoviasimigrantes.com.br/atendimento/duvidas",
+   "verdict": "untestable",
+   "note": "curl e WebFetch deram 403 (WAF), então não consegui ver a página. O conteúdo foi corroborado por fonte oficial: o requerimento ALESP de 2023 (https://www.al.sp.gov.br/spl/2023/09/Propositura/1000503624_1000640264_Propositura.pdf, 200) cita a 'Portaria ARTESP DGR/DPL - 11, de 6-12-2002', que proíbe veículos de carga, mistos e de transporte coletivo na pista descendente da Imigrantes. O Diário do Transporte (2019) traz o mesmo texto. Sugiro citar o documento da ALESP em vez do FAQ."
+  },
+  {
+   "name": "Plano Municipal de Riscos Tecnológicos de Guarulhos 2024",
+   "url": "https://www.guarulhos.sp.gov.br/sites/default/files/file/arquivos/PLANO%20MUNICIPAL%20DE%20RISCOS%20TECNOL%C3%93GICOS%20DE%20GUARULHOS%20-%202024.pdf",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 816.796 bytes, 80 p. A tabela do modal rodoviário (Dutra, Fernão Dias, Ayrton Senna) diz 'Legislação Municipal Pertinente: Não há', com a nota (*) de que o município segue as normas federais e estaduais. Ressalva de escopo: a tabela trata das rodovias, que não são de circunscrição municipal. Marcar Guarulhos como 'sem regra municipal de PP' no hazmat_rules é uma inferência, não declaração expressa sobre as vias urbanas. A busca nas Leis 6.272/2007 e 1.623/1971 não achou nada sobre PP."
+  },
+  {
+   "name": "DNIT STRPP (rotas declaradas)",
+   "url": "https://servicos.dnit.gov.br/cargasperigosas",
+   "verdict": "confirmed",
+   "note": "Hoje a URL devolve HTTP 200 com a página 'Cargas Perigosas | Login' (21 KB), e não 307. Houve 2 timeouts de 30 s antes. Exige login, o que confirma que os dados não são públicos."
+  },
+  {
+   "name": "Índice de portarias DER (webportarias)",
+   "url": "http://200.144.30.104/der/portarias/webportarias/",
+   "verdict": "corrected",
+   "note": "A listagem segue dando 403. A pesquisa dizia que portarias individuais abrem (ex.: PRT058-11.ASP), mas hoje PRT058-11.ASP e .asp dão 404. Não dá para contar nem com o acesso individual."
+  },
+  {
+   "name": "OSM (Overpass Brasil): tags hazmat",
+   "url": "https://overpass-api.de/api/interpreter",
+   "verdict": "corrected",
+   "note": "Rodei de novo q_br_list2.ql (200, 46 KB, base OSM de 10/10/2026). O total de 73 ways confere. O detalhamento da pesquisa não fecha: diz 37 Imigrantes + 30 pedestres + 7 + 3, o que soma 77. O correto: 35 na serra da SP-160 (29 de pista/túnel/alça com hazmat=no e hgv=no + 6 paradas 'designated'); 2 em São José dos Campos (Túnel Luiz Constantino e Av. Pres. Tancredo Neves, hazmat=no, sem tag hgv); 26 vias de pedestre no DF; 7 hazmat=yes na BA-148; 3 acessos a hospital na BA. Não há chaves hazmat:* além de 'hazmat' (confere). As duas pistas da Imigrantes, subida e descida, têm hgv=no e hazmat=no (confere)."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "A Portaria SMT.GAB 051/2024 proíbe PP de seg a sex, exceto feriados, das 07h às 10h e das 17h às 20h, nas vias do minianel (Anexo IV) e no centro expandido. Os grupos III e IV podem circular o dia todo no interior, mas não nas vias do minianel. Ela revogou a Portaria 100/2016 (05–10h e 16–21h).",
+   "verdict": "confirmed",
+   "note": "Conferido no PDF primário: art. 3 I e II, parágrafo único e art. 7. As janelas antigas da Portaria 100/2016 (5–10h e 16–21h, 3 grupos) aparecem em fonte secundária (SETCESP e Diário do Transporte, 13/12/2024) e são consistentes. A página da CET repete a regra.",
+   "source_url": "https://cetsp.com.br/media/1592296/portaria-051-24.pdf"
+  },
+  {
+   "fact": "Na ZMRC/ZERC, caminhão com PP só circula das 10h às 16h, com AETC, até 2 eixos traseiros, e só nos grupos 'consumo local' e 'outros'. A AETC exige cópia da LETPP (Portaria 137/2018, art. 35).",
+   "verdict": "corrected",
+   "note": "O conteúdo está certo, mas a source_url citada (página da CET) não contém essa regra. A fonte primária é o PDF da Portaria 137/2018. A versão consolidada mostra o art. 35 sem alteração. Falta um detalhe: o §2º não autoriza caminhão-trator.",
+   "source_url": "https://www.cetsp.com.br/media/722444/p-137_18.pdf"
+  },
+  {
+   "fact": "A LETPP é obrigatória para cada veículo com PP em todo o município de SP, 24h. Exige CTPP, PAE e TAG Brasil-ID. A quantidade limitada não dispensa a LETPP. Multa de 50 UFM e retenção do veículo.",
+   "verdict": "confirmed",
+   "note": "Conferido: Decreto 50.446, arts. 5, 9 VI, 19 IV (TAG, pelo Decreto 60.169/2021) e 21. A Lei 11.368/1993, art. 10 I, fixa 50 UFM; o decreto converte para R$ 4.617,50 (valor de 2009, atualizável). O FAQ PMSP, item 32, confirma que não há isenção da LETPP por quantidade limitada. As '24h' são inferência: o texto não traz janela horária.",
+   "source_url": "https://legislacao.prefeitura.sp.gov.br/leis/decreto-50446-de-20-de-fevereiro-de-2009"
+  },
+  {
+   "fact": "A SP-008 (Rod. Arão Sahm) é proibida para PP e para carga com comprimento acima de 14 m, 24h, entre o km 25+280 e o km 31+500 (Mairiporã). A portaria cita recursos hídricos. São 6,1 km, todos dentro da APRM Alto Juquery.",
+   "verdict": "corrected",
+   "note": "Correção de redação: o art. 1 proíbe 'veículos de carga com comprimento superior a 14m', ou seja, o limite é o comprimento do veículo e não o da carga. O resto confere: art. 2 proíbe PP; não há janela horária, então vale 24h; o considerando cita 'fauna, flora e recursos hídricos'; o DOE é de 08/10/2025. Recalculei a geometria: 6.123 m, 100% dentro do polígono APRMAJ. O trecho entre os km 30,5 e 31,5 foi interpolado.",
+   "source_url": "https://do-api-web-search.doe.sp.gov.br/v2/publications/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-pr-der-164-2025-202510071132192141389342"
+  },
+  {
+   "fact": "A SP-324 é proibida para PP entre o km 86+620 e o km 90+700, nos dois sentidos (SUP/DER-062/2024). Desde 2023, as únicas portarias do DER no DOE-SP que proíbem PP em trecho são esta e a da SP-008.",
+   "verdict": "confirmed",
+   "note": "Art. 1 conferido. Refiz a busca na API do DOE e só esses dois atos aparecem como proibição de trecho. Ressalvas: a busca casa a frase exata e o acervo começa em 05/2023. O art. 2 traz uma exceção para destinos lindeiros autorizados pela DR.1, e o trecho fica todo em Campinas.",
+   "source_url": "https://setcesp.org.br/wp-content/uploads/2024/08/Portaria-SUP_DER-062.2024.pdf"
+  },
+  {
+   "fact": "A descida da serra pela Imigrantes é proibida para vans, ônibus e caminhões pela Portaria ARTESP 11/2002, o que já cobre PP. Os pesados trocam para a Anchieta na Interligação (km 40).",
+   "verdict": "confirmed",
+   "note": "A URL da Ecovias dá 403, mas o requerimento da ALESP de 2023 (documento oficial) cita a 'Portaria ARTESP DGR/DPL - 11, de 6-12-2002', que proíbe veículos de carga, mistos e coletivos na pista descendente da SP-160. O Diário do Transporte (2019) traz o mesmo texto. Não verifiquei o detalhe 'Interligação (km 40)'.",
+   "source_url": "https://www.al.sp.gov.br/spl/2023/09/Propositura/1000503624_1000640264_Propositura.pdf"
+  },
+  {
+   "fact": "O RTPP (Res. ANTT 5.998) não tem infração por itinerário. Multas de R$ 600 a R$ 5.000 (art. 42; infrações no art. 43, com redação da Res. 6.056/2024, vigente desde 27/02/2025). Violar restrição de local ou horário cai no CTB art. 187, I.",
+   "verdict": "confirmed",
+   "note": "A tabela da Portaria PR/DER-030/2025 tem 109 códigos, com valores de 600, 1.000, 1.400 e 5.000. Nenhum deles trata de via, local, horário ou rota. O art. 2 da portaria fixa efeitos a partir de 27/02/2025. O art. 42 da 5.998 confirma os valores. O FAQ PMSP usa o código 574-63 (CTB 187, I). Nota: o RTPP anterior (Res. 3.665/2011, art. 53 II 'k') tinha 'circular sem permissão'; a 5.998 não tem.",
+   "source_url": "https://do-api-web-search.doe.sp.gov.br/v2/publications/executivo/secretaria-de-meio-ambiente-infraestrutura-e-logistica/portaria-n-030-25-de-28-de-marco-de-2025-20250331113219214982698"
+  },
+  {
+   "fact": "Carga abaixo da coluna 8 (quantidade limitada por veículo) fica dispensada de limitações de itinerário, estacionamento e carga e descarga. Gasolina 333 kg, diesel 1.000, GLP 333, cloro 20; 137 ONU são ZERO.",
+   "verdict": "confirmed",
+   "note": "Itens 3.4.2.6 'e' e 3.4.3.4 'c' da Parte 3 conferidos, assim como os valores no PDF da Relação e as 137 entradas ZERO no CSV. Nuance importante para implementar (item 3.4.3.2): o que se compara com o MENOR valor da coluna 8 entre todos os produtos é o PESO BRUTO TOTAL do carregamento, não a quantidade de cada produto separada.",
+   "source_url": "https://anexosportal.datalegis.net/arquivos/1774878.pdf"
+  },
+  {
+   "fact": "A AP ANTT 7/2026 recebeu contribuições de 15/05 a 28/06/2026 (38 participantes, 117 contribuições). A revisão alinha ao Orange Book 23ª ed.: ONU 3551, 3552, 3556–3558, baterias de sódio, veículos elétricos. A minuta não trata de itinerário, túnel nem estacionamento.",
+   "verdict": "confirmed",
+   "note": "Aviso no anttlegis (DOU 08/05/2026) com o prazo conferido. Relatório 7649, Tabela 1: 38 participantes e 117 contribuições. Minuta 7555: 78 p., contém 3551, 3552, 3556, 3557, 3558 e P912, e não tem nenhuma ocorrência de itinerário, túnel ou estacionamento. A NT 7556 cita a 23ª edição.",
+   "source_url": "https://participantt.antt.gov.br/api/ManterEvento/Documentacao/AnexoProposta?CodProposta=1504"
+  },
+  {
+   "fact": "O Decreto 96.044/1988 manda evitar áreas densamente povoadas e de mananciais e dá às autoridades da via o poder de restringir trechos. O Senado só registra alteração do art. 7, e DER-SP (2025) e DNIT (2023) ainda o citam.",
+   "verdict": "confirmed",
+   "note": "Arts. 9 e 11 conferidos no texto do Planalto (/antigos/d96044.htm, 200). O Senado lista só o Decreto 4.097/2002, alterando o art. 7. A Portaria PR/DER-015/2025 e a IN DNIT 5/2023 o citam. A vigência continua 'provável'; não há ato expresso de revogação.",
+   "source_url": "https://legis.senado.leg.br/norma/518684"
+  },
+  {
+   "fact": "O expedidor declara as rotas de PP no STRPP do DNIT todo ano, até 30/09 do ano seguinte, por CNPJ. São dispensados o mesmo município, municípios conurbados, quantidade limitada (3.4.3) e classe 7. Os dados não são públicos.",
+   "verdict": "confirmed",
+   "note": "Arts. 5 e 6 da IN conferidos. Também são dispensados OLUC e logística reversa. A dispensa III cita o item 3.4.3 da Res. 5.947/2021. O STRPP abre na página de login.",
+   "source_url": "https://www.gov.br/dnit/pt-br/central-de-conteudos/atos-normativos/tipo/instrucao-normativa/2023/instrucao-normativa-05-2023-colegiada-estabelece-aos-expedidores-os-procediemntos-e-as-orientacoes-para-o-cadastro-de-informacoes-das-rotas-de-fluxos-de-transporte-de-produtos-perigosos.pdf"
+  },
+  {
+   "fact": "Em rodovia federal concedida, a restrição contínua por cargas perigosas é decidida pela ANTT (Res. 6.000/2022, art. 188). A Res. 1.713/2006 (Ponte Rio–Niterói) foi revogada por essa mesma resolução.",
+   "verdict": "confirmed",
+   "note": "Art. 188: o §1º, inciso IV, cobre 'cargas especiais e perigosas', e o §2º, inciso II, manda o requerimento à ANTT. O art. 234, II, 'a', revoga a 1.713 um ano depois da vigência, e o art. 235 fixa a vigência em 01/07/2023; a revogação valeu portanto a partir de 01/07/2024. A página da 1.713 mostra 'Revogada pela Resolução 6000/2022'.",
+   "source_url": "https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00006000&seqAto=000&valorAno=2022&orgao=DG/ANTT/MI&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true"
+  },
+  {
+   "fact": "Guarulhos declara oficialmente que não tem legislação municipal de PP para Dutra, Fernão Dias e Ayrton Senna e segue as normas federais e estaduais.",
+   "verdict": "confirmed",
+   "note": "Conferido na tabela 'Riscos de Desastres Relacionados a Transporte de Produtos Perigosos – Modal Rodoviário', com a nota (*). O escopo é o das rodovias citadas; isso não prova que não exista regra para as vias urbanas.",
+   "source_url": "https://www.guarulhos.sp.gov.br/sites/default/files/file/arquivos/PLANO%20MUNICIPAL%20DE%20RISCOS%20TECNOL%C3%93GICOS%20DE%20GUARULHOS%20-%202024.pdf"
+  },
+  {
+   "fact": "O curso especializado do condutor de PP tem 50 h (Portaria SENATRAN 923/2025, com base na Res. CONTRAN 1.020/2025).",
+   "verdict": "confirmed",
+   "note": "DOU de 11/12/2025, Seção 1, p. 135, com referência à Res. Contran 1.020 de 01/12/2025. Curso especializado de PP com 50 horas. A portaria não prevê curso de atualização para PP, o que é coerente com o fim da renovação relatado pelo SETCESP (fonte secundária).",
+   "source_url": "https://www.gov.br/transportes/pt-br/assuntos/transito/arquivos-senatran/portarias/2025/Portaria9232025.pdf"
+  },
+  {
+   "fact": "O Rodoanel Norte terá 44 km, 7 túneis (cerca de 11 km) e 4 baias para cargas de PP.",
+   "verdict": "confirmed",
+   "note": "Texto literal no relatório da ARTESP de 2024, obtido pela API do DOE (5,5 MB): '44 quilômetros... 7 túneis (... aproximadamente 11 km)... 4 Baias para cargas de produtos perigosos'.",
+   "source_url": "https://doe.sp.gov.br/executivo/secretaria-de-parcerias-em-investimentos/relatorio-da-administracao-e-das-demonstracoes-contabeis-do-exercicio-de-2024-da-agencia-reguladora-de-servicos-publicos-delegados-de-transporte-do-estado-de-sao-paulo-artesp-202504281134171991043376"
+  }
+ ],
+ "extra_findings": [
+  "CSV de grupos da 051/2024 com rótulos errados (risco de bug no roteamento): sp_portaria_smt_051_2024_grupos_onu.csv usa I/II/III, a numeração da Portaria 100/2016. Na 051/2024, Anexo I = grupo II, Anexo II = grupo III e Anexo III = grupo IV; o grupo I (alta periculosidade intrínseca) não tem lista. O regras_trechos_carga_perigosa.json usa a numeração certa, então os dois arquivos se contradizem. Fonte: https://cetsp.com.br/media/1592296/portaria-051-24.pdf",
+  "Bug no parse da Relação: ONU 1950 (aerossóis) e 2037 (cartuchos de gás) ficaram com qtd_limitada_veiculo_min=277, lido de 'Ver PE 277', e 10 ONU ficaram com o campo vazio. Tratar essas linhas como 'consultar provisão especial'; não podem virar limite em kg.",
+  "Regra de isenção (Parte 3, item 3.4.3.2): compara-se o peso bruto total do carregamento com o menor valor da coluna 8 entre todos os PP a bordo, não cada produto separado. https://anexosportal.datalegis.net/arquivos/1774878.pdf",
+  "O resumo 'o checkbox não muda nenhuma rota' saiu de um único teste (Jabaquara→Santos), onde a Imigrantes já está fora da rota por hgv=no. No OSM há 2 ways hazmat=no em São José dos Campos (Túnel Luiz Constantino, way 816223796, e Av. Pres. Tancredo Neves, way 132534356) sem tag hgv. Com hazmat=true, rotas por ali mudariam. O certo é 'quase nenhuma rota'.",
+  "Subida da Imigrantes: o OSM marca hgv=no também na subida, mas fontes secundárias dizem que a proibição normal é só na descida. O SETCESP (2011) relata que a Ecovias proíbe caminhões de SUBIR pela Imigrantes apenas em dia de neblina, e o Autoentusiastas (out/2025) cita só a descida. Isso reforça que o OSM está errado para hgv na subida. https://setcesp.org.br/noticias/ecovias-proibe-uso-da-imigrantes-por-caminhoes-e-onibus-em-dias-de-neblina/",
+  "Fonte oficial citável para a Portaria ARTESP DGR/DPL-11 de 06/12/2002, no lugar do FAQ da Ecovias (que dá 403): https://www.al.sp.gov.br/spl/2023/09/Propositura/1000503624_1000640264_Propositura.pdf",
+  "Lacuna Ponte Rio–Niterói / Av. Portuária: há pistas do ato que substituiu a Res. 1.713/2006. A Res. ANTT 5.936/2021 proíbe PP na Av. Portuária (https://setcesp.org.br/uncategorized/antt-trafego-produtos-perigosos-av-portuaria-rj/), e uma notícia de 05/12/2024 relata nova proibição de PP na Ponte, respaldada pela ANTT (https://folhadoleste.com.br/ponte-rio-niteroi-tem-novas-restricoes-para-caminhoes/). Falta achar o número do ato.",
+  "Res. ANTT 6.056/2024 (vigente desde cerca de 27/02/2025) mudou as isenções do item 1.1.1: produtos de varejo para uso pessoal limitados à metade da quantidade, e transporte acessório por empresas de serviços. Isso muda quem está sujeito ao RTPP e portanto às regras de rota, e o perfil do veículo deveria considerar. https://anttlegis.antt.gov.br/action/ActionDatalegis.php?acao=detalharAto&tipo=RES&numeroAto=00006056&seqAto=000&valorAno=2024&orgao=DG/ANTT/MT&codTipo=&desItem=&desItemFim=&cod_menu=5408&cod_modulo=161&pesquisa=true",
+  "Fiscalização ativa no DER-SP: o Balanço Patrimonial DER 2025 (DOE de 31/03/2026) mostra cerca de R$ 19,7 milhões em 'Multas - Produto Perigoso'. Vale como argumento para o módulo de compliance. Aparece na busca 'produto perigoso' da API do DOE-SP.",
+  "O monitoramento pela API do DOE-SP casa a frase exata: 'produtos perigosos' dá 2.364 resultados, 'produto perigoso' 10, 'carga perigosa' 16 e 'cargas perigosas' 50. O job semanal precisa consultar todas as variantes. Isso não aparece no plano.",
+  "A Res. 5.998 vigente se baseia na 21ª edição do Orange Book (NT ANTT 4006/2026). A tabela un_dangerous_goods precisa registrar a versão da edição, para a troca quando sair a resolução da AP 7/2026. https://participanttfile.srvs.antt.gov.br/file-api/ManageFile/Download/PropostaNorma/FileContent/7556"
+ ]
+}
