@@ -36,11 +36,15 @@ const SCOPE_LABEL: Record<string, string> = {
 };
 const PERIOD_LABEL: Record<string, string> = { manha: ' (manhã)', tarde: ' (tarde)' };
 
-/** A rota (ou a origem/destino, ou a rota livre — a zona pode ter sido evitada justamente por causa da regra) toca a zona? */
+/**
+ * A rota toca a zona? Conta a rota calculada, a rota livre (a zona pode ter sido evitada justamente por causa da regra),
+ * a origem/destino e, se a rota livre não veio (o routing.ts a descarta quando o Valhalla falha), a reta origem-destino.
+ */
 function touches(z: ZoneRow, ctx: RouteCtx, route: RouteGeom): boolean {
   if (pointInZone(z, ctx.origin) || pointInZone(z, ctx.destination)) return true;
   const poly = turf.multiPolygon((z.geometry_endpoint ?? z.geometry_full).coordinates);
-  return [route.line, route.free?.line].some((l) => !!l && turf.booleanIntersects(l, poly));
+  const od = turf.lineString([[ctx.origin.lon, ctx.origin.lat], [ctx.destination.lon, ctx.destination.lat]]);
+  return [route.line, route.free?.line ?? od].some((l) => turf.booleanIntersects(l, poly));
 }
 
 /** Zonas a que a suspensão se refere ('local' e 'all' valem para qualquer zona; 'zmrf' é de fretamento, sem zona no app). */
