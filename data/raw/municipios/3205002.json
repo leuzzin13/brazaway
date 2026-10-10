@@ -1,0 +1,162 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3205002",
+  "municipio": "Serra",
+  "uf": "ES",
+  "fonte_id": "serra",
+  "fonte": {
+    "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html (Dec. 5.881/2020, texto compilado) ; https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D28722022.html (Dec. 2.872/2022) ; https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D60562024.html (Dec. 6.056/2024)",
+    "licenca": "Atos oficiais da Prefeitura da Serra: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap) — vias pelo nome (Overpass/PBF do Sudeste) e recortadas em região/bairro do OSM (data/raw/municipios/curadoria/grande_vitoria.py).",
+    "notas": "Dec. 5.881/2020 (revogou o Dec. 3.312/2018, de igual conteúdo, que a imprensa ainda cita), alterado pelo Dec. 2.872/2022 (art. 4º-A, art. 5º, VI e art. 6º) e pelo Dec. 6.056/2024 (revoga o art. 5º, VI). O host antigo prefeiturasempapel.serra.es.gov.br redireciona (301) para legislacao.serra.es.gov.br. Anexos (plantas I a V) não obtidos. O município não define VUC."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "O Dec. 5.881/2020 não define VUC: o critério é só o PBT (art. 6º).",
+  "regras": [
+    {
+      "id": "serra_pico_23t",
+      "tipo": "via",
+      "regime": "Pico (PBT > 23 t)",
+      "nome": "Av. Norte-Sul e R. Carioca: PBT acima de 23 t nos horários de pico",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "19:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 23}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social, pedida com 3 dias úteis de antecedência (Dec. 5.881/2020, art. 7º)",
+      "excecoes": [
+        "Art. 5º, I a V: redes de serviço, coleta de lixo, cobertura jornalística, transporte de valores, transporte coletivo, manutenção viária, socorro, polícia e fiscalização, socorro mecânico (o inciso VI, empresas situadas nas vias, foi revogado pelo Dec. 6.056/2024)",
+        "Art. 7º: autorização especial"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 5.881/2020 da Serra (texto compilado)", "artigo": "art. 1º, I, a e c (caminhões, mesmo vazios, e operação de carga e descarga, nos dias úteis das 7h às 9h e das 17h às 19h) e art. 6º, red. Dec. 2.872/2022 (só PBT acima de 23 t)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"}
+      ],
+      "nota": "Dias úteis de segunda a sexta (feriado livre). Av. Norte-Sul da Av. João Palácio (divisa com Vitória) à Av. Região Sudeste (Barcelona), só nas vias que o OSM chama de Av. Norte-Sul: entre a Av. Carapebus e a ES-010 a pista aparece como Av. Desembargador Mário da Silva Nunes / Av. Lourival Nunes e ficou de fora. A R. M (alínea d) não foi achada no OSM entre a BR-101 e a Av. Norte-Sul (a 'Rua M' do OSM fica a oeste da BR-101). O ato também exclui os 'segmentos internos aos cruzamentos' com as vias do decreto (não representado).",
+      "fonte_geometria": "OSM (ODbL): vias pelo nome, recortadas na faixa do ato",
+      "vigencia_inicio": null,
+      "geometria": [{"arquivo": "municipios/geo/3205002_vias_curadas.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria (na imagem do importador; ver o cabeçalho do script)"}]
+    },
+    {
+      "id": "serra_av_central_pico_16t",
+      "tipo": "via",
+      "regime": "Pico (PBT > 16 t)",
+      "nome": "Av. Central, do início (Valparaíso) até a Av. Norte-Sul: PBT acima de 16 t nos horários de pico",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "19:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social (Dec. 5.881/2020, art. 7º)",
+      "excecoes": ["Art. 5º, I a V", "Art. 7º: autorização especial"],
+      "base_legal": [
+        {"ato": "Decreto municipal 5.881/2020 da Serra (texto compilado)", "artigo": "art. 1º, I, b (dias úteis das 7h às 9h e das 17h às 19h) e art. 6º, red. Dec. 2.872/2022 (na Av. Central, PBT acima de 16 t)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"}
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "vigencia_inicio": null,
+      "trechos": [
+        {"inciso": "art. 1º, I, b", "via": ["Avenida Central"], "de": {"lonlat": [-40.25816, -20.19417]}, "ate": ["Avenida Norte-Sul"], "descricao": "Av. Central, do início (confluência com a Av. Eudes Scherrer de Souza, perto de Valparaíso) até a Av. Norte-Sul", "nota": "O início é a ponta oeste da Av. Central no OSM, na avenida que o OSM não nomeia como Eudes Scherrer de Souza."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3205002_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "serra_av_central_dia_16t",
+      "tipo": "via",
+      "regime": "Av. Central (PBT > 16 t, dias úteis)",
+      "nome": "Av. Central, da Av. Norte-Sul ao final (rotatória do Hospital Dório Silva): PBT acima de 16 t nos dias úteis das 8h às 19h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "08:00", "to": "19:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social (Dec. 5.881/2020, art. 7º)",
+      "excecoes": ["Art. 5º, I a V", "Art. 7º: autorização especial"],
+      "base_legal": [
+        {"ato": "Decreto municipal 5.881/2020 da Serra (texto compilado)", "artigo": "art. 1º, II, b (dias úteis das 8h às 19h) e art. 6º, red. Dec. 2.872/2022 (PBT acima de 16 t)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"}
+      ],
+      "nota": "O sábado (§1º) está na regra serra_av_central_sabado_16t, que vale também em feriado (o §1º não o excetua).",
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "vigencia_inicio": null,
+      "trechos": [
+        {"inciso": "art. 1º, II, b", "via": ["Avenida Central"], "de": ["Avenida Norte-Sul"], "ate": {"lonlat": [-40.247, -20.1954]}, "descricao": "Av. Central, da Av. Norte-Sul ao final, na Av. Eudes Scherrer de Souza (rotatória do Hospital Dório Silva)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3205002_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "serra_av_central_sabado_16t",
+      "tipo": "via",
+      "regime": "Av. Central (PBT > 16 t, sábado)",
+      "nome": "Av. Central, da Av. Norte-Sul ao final: PBT acima de 16 t aos sábados das 8h às 14h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [6], "from": "08:00", "to": "14:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social (Dec. 5.881/2020, art. 7º)",
+      "excecoes": ["Art. 5º, I a V", "Art. 7º: autorização especial"],
+      "base_legal": [
+        {"ato": "Decreto municipal 5.881/2020 da Serra (texto compilado)", "artigo": "art. 1º, §1º (aos sábados, das 8h às 14h) e art. 6º, red. Dec. 2.872/2022 (PBT acima de 16 t)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"}
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "vigencia_inicio": null,
+      "trechos": [
+        {"inciso": "art. 1º, §1º", "via": ["Avenida Central"], "de": ["Avenida Norte-Sul"], "ate": {"lonlat": [-40.247, -20.1954]}, "descricao": "Av. Central, da Av. Norte-Sul ao final, na Av. Eudes Scherrer de Souza (rotatória do Hospital Dório Silva)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3205002_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "serra_vias_24h",
+      "tipo": "via",
+      "regime": "PBT > 23 t (24 h)",
+      "nome": "Serra Sede, estrada de Calogi/Muribeca e Av. Guarapari: PBT acima de 23 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 23}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social (Dec. 5.881/2020, art. 7º)",
+      "excecoes": ["Art. 5º, I a V", "Art. 7º: autorização especial"],
+      "base_legal": [
+        {"ato": "Decreto municipal 5.881/2020 da Serra (texto compilado)", "artigo": "arts. 2º (11 vias, alínea l revogada pelo Dec. 2.872/2022), 3º (estrada rural de Calogi/Muribeca, coordenadas UTM SIRGAS 2000) e 4º (Av. Guarapari entre a Av. Anchieta e a R. Santos Dumont): caminhões, mesmo vazios, e operação de carga e descarga em qualquer horário ou dia; art. 6º, red. Dec. 2.872/2022 (só PBT acima de 23 t)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D58812020.html"}
+      ],
+      "nota": "Art. 2º: as 10 vias achadas no OSM foram recortadas na Região de Serra Sede do OSM (há homônimas em outros bairros); a 'Rua Um' (alínea a) não existe com esse nome na Serra Sede e ficou sem geometria (Anexo II não obtido). Art. 3º: trecho de ~150 m da Estrada para Calogi entre as coordenadas do ato (UTM 24S x 356072,659 y 7780151,775 → x 356005,984 y 7780025,833).",
+      "fonte_geometria": "OSM (ODbL): vias pelo nome; art. 2º recortado na Região de Serra Sede; art. 3º pela malha do Valhalla entre as coordenadas do ato",
+      "vigencia_inicio": null,
+      "trechos": [
+        {"inciso": "art. 3º", "via": ["Estrada para Calogi"], "de": {"lonlat": [-40.376419, -20.070247]}, "ate": {"lonlat": [-40.377067, -20.07138]}, "caminho": "valhalla", "corredor_m": 60, "descricao": "Estrada rural de ligação a Calogi/Muribeca (acesso no km 247 sul da BR-101), entre as coordenadas do art. 3º"},
+        {"inciso": "art. 4º", "via": ["Avenida Guarapari"], "de": ["Avenida Anchieta"], "ate": ["Rua Santos Dumont", "Avenida Santos Dumont"], "descricao": "Av. Guarapari, entre a Av. Anchieta e a R. Santos Dumont"}
+      ],
+      "geometria": [
+        {"arquivo": "municipios/geo/3205002_vias.geojson", "construir": "trechos"},
+        {"arquivo": "municipios/geo/3205002_vias_curadas.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}
+      ]
+    },
+    {
+      "id": "serra_novo_horizonte_24h",
+      "tipo": "via",
+      "regime": "PBT > 23 t (24 h)",
+      "nome": "Novo Horizonte: Av. Brasil, R. Papagaio e R. Gaivota, PBT acima de 23 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 23}]},
+      "autorizacao": "Autorização especial da Secretaria Municipal de Defesa Social (Dec. 5.881/2020, art. 7º)",
+      "excecoes": ["Art. 5º, I a V (o inciso VI, empresas situadas nas vias, incluído pelo Dec. 2.872/2022, foi revogado pelo Dec. 6.056/2024)", "Art. 7º: autorização especial"],
+      "base_legal": [
+        {"ato": "Decreto municipal 2.872/2022 da Serra (DOM Serra de 26/05/2022)", "artigo": "art. 1º (inclui o art. 4º-A no Dec. 5.881/2020: Av. Brasil, Ruas Papagaio e Gaivota, no bairro Novo Horizonte, em qualquer horário ou dia; nova redação do art. 6º: PBT acima de 23 t); art. 3º (vigência 30 dias após a publicação)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D28722022.html"},
+        {"ato": "Decreto municipal 6.056/2024 da Serra (DOM Serra de 23/04/2024)", "artigo": "art. 1º (revoga o art. 5º, VI, do Dec. 5.881/2020)", "url": "https://legislacao.serra.es.gov.br/Arquivo/Documents/legislacao/html/D60562024.html"}
+      ],
+      "nota": "Vias recortadas no bairro Novo Horizonte do OSM (há Av. Brasil e R. Gaivota homônimas em outros bairros).",
+      "fonte_geometria": "OSM (ODbL): vias pelo nome recortadas no bairro",
+      "vigencia_inicio": "2022-06-25",
+      "geometria": [{"arquivo": "municipios/geo/3205002_vias_curadas.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    }
+  ]
+}

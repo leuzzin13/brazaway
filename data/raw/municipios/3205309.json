@@ -1,0 +1,337 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3205309",
+  "municipio": "Vitória",
+  "uf": "ES",
+  "fonte_id": "vitoria",
+  "fonte": {
+    "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF (Dec. 16.243/2015) ; https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16301.PDF (Dec. 16.301/2015) ; https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16575.PDF (Dec. 16.575/2015) ; https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF (Dec. 18.103/2020) ; https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2005/L6490.PDF (Lei 6.490/2005) ; https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html (Lei estadual 9.602/2010, Terceira Ponte)",
+    "licenca": "Atos oficiais (Prefeitura de Vitória e Assembleia Legislativa do ES): domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap) — bairros (admin_level 10), vias e pontes do OSM, cortados à mão (data/raw/municipios/curadoria/grande_vitoria.py); limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Dec. 16.243/2015 (revogou o Dec. 10.364/1999) com as alterações dos Decs. 16.301/2015, 16.575/2015 e 18.103/2020 (o sistema de atos da Prefeitura não lista o 16.575 entre os alteradores). O critério é sempre o PBT; o município não define VUC. A Terceira Ponte (Lei estadual 9.602/2010) está aqui como registro regional (Vitória e Vila Velha): a frente estadual (ders_estaduais) não a implementou."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "O Dec. 16.243/2015 não define VUC: o critério é só o PBT (um VUC acima do limite de PBT é tratado como caminhão).",
+  "regras": [
+    {
+      "id": "vitoria_municipio_23t",
+      "tipo": "zona",
+      "regime": "PBT > 23 t (pico)",
+      "nome": "Vitória: todas as vias do município, PBT acima de 23 t nos horários de pico",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "10:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 23}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) da Secretaria de Transportes, Trânsito e Infraestrutura Urbana (Dec. 16.243/2015, art. 3º)",
+      "excecoes": [
+        "Art. 1º, §2º: manutenção de redes (energia, água e esgoto, gás, telecomunicações), coleta de lixo, manutenção e sinalização viária a serviço do órgão de trânsito, socorro mecânico de emergência e veículos do art. 29, VII, do CTB",
+        "Art. 1º, §4º (red. Dec. 16.301/2015): veículos com destino ao Berço 909 (Jesus de Nazareth) ficam fora do inciso IV e circulam pela rota fixa das 22h às 6h",
+        "Art. 3º: AET"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, a (PBT > 23 t, dias úteis 6h–10h e 16h–20h, sábado 6h–14h, exceto domingos e feriados); art. 8º (vigência 60 dias após a publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "nota": "O ato vale nas 'demais vias do município da Capital' e não exclui as rodovias estaduais ou federais (verify da pesquisa): a zona é o município inteiro (limite do IBGE). Origem ou destino em Vitória: a zona não é excluída e a rota avisa (política da ZMRC).",
+      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+    },
+    {
+      "id": "vitoria_municipio_45t",
+      "tipo": "zona",
+      "regime": "PBT > 45 t (24 h)",
+      "nome": "Vitória: todas as vias do município, PBT acima de 45 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 45}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) da Secretaria de Transportes, Trânsito e Infraestrutura Urbana (Dec. 16.243/2015, art. 3º)",
+      "excecoes": [
+        "Art. 1º, §2º: serviços de utilidade pública",
+        "Art. 1º, §4º (red. Dec. 16.301/2015): Berço 909, rota fixa das 22h às 6h",
+        "Art. 3º: AET"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, b (PBT > 45 t, sem horário)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+    },
+    {
+      "id": "vitoria_cegonheira_16t",
+      "tipo": "zona",
+      "regime": "Cegonheira > 16 t",
+      "nome": "Vitória: cegonheira com PBT acima de 16 t",
+      "status": "desativada",
+      "status_motivo": "O perfil do veículo não informa se é cegonheira (tipo de carroceria): a regra não pode ser enquadrada e fica só como aviso para caminhões acima de 16 t.",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": ["Art. 3º: AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, c (cegonheira com PBT > 16 t, dias úteis 6h–20h, sábado 6h–14h, exceto domingos e feriados)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+    },
+    {
+      "id": "vitoria_centro_16t",
+      "tipo": "zona",
+      "regime": "Centro (PBT > 16 t)",
+      "nome": "Centro de Vitória: PBT acima de 16 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": [
+        "Art. 1º, §1º: veículos com destino às instalações portuárias e industriais adjacentes ao Porto de Vitória seguem o trajeto do art. 2º",
+        "Art. 1º, §2º: serviços de utilidade pública",
+        "Art. 3º: AET"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, III, a (PBT > 16 t, dias úteis 6h–20h, sábado 6h–14h, exceto domingos e feriados) e §3º (Centro: das Ruas Sebastião Tourinho e Raimundo Nonato, no Forte São João, até a Ponte Seca, na Vila Rubim)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "nota": "Polígono aproximado pelos bairros da Região Administrativa I do OSM (Centro, Parque Moscoso, Piedade, Fonte Grande, Santa Clara, Bairro do Moscoso), a Vila Rubim só a leste da Ponte Seca e o Forte São João só a oeste da R. Raimundo Nonato/R. Sebastião Tourinho; a Ilha do Príncipe fica fora. Inclui o setor do inciso I (Cidade Alta), que tem regra própria mais restrita.",
+      "fonte_geometria": "OSM (ODbL): bairros admin_level 10 cortados à mão",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"arquivo": "municipios/geo/3205309_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria (na imagem do importador; ver o cabeçalho do script)"}]
+    },
+    {
+      "id": "vitoria_cidade_alta_10t",
+      "tipo": "zona",
+      "regime": "Cidade Alta (PBT > 10 t)",
+      "nome": "Centro de Vitória, setor à direita da R. Henrique Novaes, Av. Jerônimo Monteiro, R. General Osório, R. Thiers Velloso e R. Padre José de Anchieta: PBT acima de 10 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:00"},
+        {"days": [6], "from": "08:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 10}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": ["Art. 1º, §2º: serviços de utilidade pública", "Art. 3º: AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, I, a (PBT > 10 t, mesmo vazio, dias úteis 7h–19h, sábado 8h–14h, exceto domingos e feriados)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "nota": "Confiança média pela geometria: o ato define o setor como o 'sistema viário localizado à direita do sentido de circulação' das 5 vias. No OSM elas formam uma cadeia de mão única (Henrique Novaes e Jerônimo Monteiro para oeste, General Osório e Thiers Velloso para norte, José de Anchieta para oeste), cuja direita é a Cidade Alta, ao norte da Av. Jerônimo Monteiro (e não o lado da baía, como dizia o rascunho da pesquisa). Polígono = bairro Centro do OSM desse lado da cadeia; as 5 vias ficam fora (recuo de 20 m).",
+      "fonte_geometria": "OSM (ODbL): bairro Centro cortado pela cadeia das 5 vias",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"arquivo": "municipios/geo/3205309_setor_i.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vitoria_cidade_alta_16t",
+      "tipo": "zona",
+      "regime": "Cidade Alta (PBT > 16 t, 24 h)",
+      "nome": "Centro de Vitória, setor do art. 1º, I (Cidade Alta): PBT acima de 16 t em qualquer horário",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": ["Art. 1º, §2º: serviços de utilidade pública", "Art. 3º: AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, I, b (PBT > 16 t, mesmo vazio, em qualquer dia e horário)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "nota": "Mesma geometria e mesma ressalva da regra vitoria_cidade_alta_10t.",
+      "fonte_geometria": "OSM (ODbL): bairro Centro cortado pela cadeia das 5 vias",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"arquivo": "municipios/geo/3205309_setor_i.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vitoria_beira_mar_16t",
+      "tipo": "via",
+      "regime": "PBT > 16 t (24 h)",
+      "nome": "Av. Mal. Mascarenhas de Moraes (Beira-Mar), da R. Josué Prado à Av. Paulino Muller",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": [
+        "Art. 1º, §2º: serviços de utilidade pública",
+        "Art. 1º, §4º (red. Dec. 16.301/2015): o trecho entre a Av. N. Sra. dos Navegantes e a R. Amenóphis de Assis é rota do Berço 909 das 22h às 6h",
+        "Art. 3º: AET"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, II, a (PBT > 16 t, em qualquer dia ou horário, nos dois sentidos)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "vigencia_inicio": "2015-05-05",
+      "trechos": [
+        {"inciso": "II", "via": ["Avenida Marechal Mascarenhas de Moraes"], "de": {"lonlat": [-40.3329, -20.32125]}, "ate": {"lonlat": [-40.3195, -20.3179]}, "sentido": true, "caminho": "valhalla", "corredor_m": 250, "descricao": "Av. Mal. Mascarenhas de Moraes, da R. Josué Prado à Av. Paulino Muller (pista sentido leste)", "nota": "Pista sentido leste pela malha do Valhalla entre as pontas (as duas pistas têm o mesmo nome e o casamento por nome só achava a do sentido oeste)."},
+        {"inciso": "II", "via": ["Avenida Marechal Mascarenhas de Moraes"], "de": ["Avenida Paulino Muller"], "ate": ["Rua Josué Prado"], "sentido": true, "descricao": "Av. Mal. Mascarenhas de Moraes, da Av. Paulino Muller à R. Josué Prado (pista sentido oeste)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3205309_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "vitoria_maruipe_paulino_muller_16t",
+      "tipo": "via",
+      "regime": "PBT > 16 t (sentido Centro)",
+      "nome": "Sentido Centro: Av. Maruípe, R. José Cassiano dos Santos e Av. Paulino Muller",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": ["Art. 1º, §2º do Dec. 16.243/2015: serviços de utilidade pública", "Art. 3º do Dec. 16.243/2015: AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.575/2015 (acresce a alínea d ao art. 1º, IV, do Dec. 16.243/2015; DOMV 05/01/2016)", "artigo": "art. 1º (art. 1º, IV, d, do Dec. 16.243/2015: PBT > 16 t no sentido Centro, sem horário) e art. 2º (vigência na publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16575.PDF", "nota": "PDF escaneado, lido pela imagem; o sistema de atos não lista este decreto entre os alteradores do 16.243"}
+      ],
+      "nota": "O ato não fixa horário: vale 24 h. Só no sentido Centro (o outro sentido fica livre).",
+      "fonte_geometria": "OSM (ODbL) casado por nome, trecho e sentido",
+      "vigencia_inicio": "2016-01-05",
+      "trechos": [
+        {"inciso": "IV, d", "via": ["Avenida Maruípe"], "de": {"lonlat": [-40.30968, -20.29315]}, "ate": {"lonlat": [-40.32253, -20.30189]}, "sentido": true, "caminho": "valhalla", "corredor_m": 200, "descricao": "Av. Maruípe, da Rod. Serafim Derenzi à R. José Cassiano dos Santos, sentido Centro", "nota": "Pontas no cruzamento com a Rod. Serafim Derenzi e no início da R. José Cassiano dos Santos; o eixo da Av. Maruípe no OSM tem uma lacuna de ~65 m (perto de -40.3169, -20.2970), então o trecho segue a malha do Valhalla entre as pontas (98% sobre a Av. Maruípe)."},
+        {"inciso": "IV, d", "via": ["Rua José Cassiano dos Santos"], "de": {"lonlat": [-40.32253, -20.30189]}, "ate": {"lonlat": [-40.32391, -20.30557]}, "sentido": true, "descricao": "R. José Cassiano dos Santos, da Av. Maruípe à Av. Paulino Muller, sentido Centro", "nota": "Pontas nas extremidades da rua no OSM (a Av. Maruípe tem um ramo paralelo que a toca em vários pontos)."},
+        {"inciso": "IV, d", "via": ["Avenida Paulino Muller"], "de": ["Rua José Cassiano dos Santos"], "ate": ["Avenida Vitória"], "sentido": true, "descricao": "Av. Paulino Muller, da R. José Cassiano dos Santos à Av. Vitória, sentido Centro"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3205309_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "vitoria_mercado_vila_rubim_16t",
+      "tipo": "zona",
+      "regime": "Mercado da Vila Rubim (PBT > 16 t)",
+      "nome": "Mercado da Vila Rubim: PBT acima de 16 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": ["Art. 3º: AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 2º, III (PBT > 16 t, dias úteis 6h–20h, sábado 6h–14h, exceto domingos e feriados) e §2º (perímetro do Mercado)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
+      ],
+      "nota": "Fica dentro do Centro (vitoria_centro_16t), com o mesmo horário e o mesmo limite: registrada porque é dispositivo próprio do ato.",
+      "fonte_geometria": "OSM (ODbL): quadras entre a Av. Elias Miguel e a R. Pedro Nolasco + Av. Marcos de Azevedo",
+      "vigencia_inicio": "2015-05-05",
+      "geometria": [{"arquivo": "municipios/geo/3205309_mercado_vila_rubim.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vitoria_porto_centro",
+      "tipo": "zona",
+      "regime": "Acesso ao porto (7h–9h)",
+      "nome": "Instalações portuárias do Centro de Vitória: entrada e saída de caminhões proibidas nos dias úteis das 7h às 9h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
+      "excecoes": [
+        "Rota obrigatória (art. 2º, I, red. Dec. 18.103/2020). Entrada: Ponte Florentino Avidos (Cinco Pontes) ou Ponte Mal. Costa e Silva (Ponte do Príncipe), Av. Alexandre Buaiz, Av. Elias Miguel e Av. Getúlio Vargas. Saída: Av. Jurema Barroso, Av. Elias Miguel, R. Beresford Martins Moreira, nova via na praça, Av. Nair Azevedo Silva, Ponte do Príncipe ou Cinco Pontes e Av. Presidente Florentino Avidos",
+        "Art. 2º, II: indústrias adjacentes pelas vias entre as Cinco Pontes e a Ponte do Príncipe até a Av. República, exceto a R. Pedro Nolasco"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 18.103/2020 (DOMV 09/09/2020)", "artigo": "art. 2º (nova redação do art. 2º, §1º, do Dec. 16.243/2015: acesso de entrada e saída exceto dias úteis das 7h às 9h) e art. 3º (vigência na publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"},
+        {"ato": "Decreto municipal 18.103/2020 (DOMV 09/09/2020)", "artigo": "art. 1º (rotas de entrada e saída do art. 2º, I, a e b, do Dec. 16.243/2015)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"}
+      ],
+      "nota": "Regra de acesso (entrada e saída das instalações): a zona cobre só a área do cais, sem vias públicas de passagem; com origem ou destino dentro dela a rota não a exclui e avisa a janela. As 'indústrias adjacentes' não foram delimitadas. A rota obrigatória não é imposta (só citada no aviso).",
+      "fonte_geometria": "OSM (ODbL): faixa entre a orla do Centro e o canal, da Ponte Seca ao fim dos armazéns",
+      "vigencia_inicio": "2020-09-09",
+      "geometria": [{"arquivo": "municipios/geo/3205309_porto_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vitoria_porto_centro_17h_19h",
+      "tipo": "zona",
+      "regime": "Acesso ao porto (17h–19h, revogado)",
+      "nome": "Instalações portuárias do Centro de Vitória: janela das 17h às 19h (REVOGADA, não aplicada)",
+      "status": "revogada",
+      "status_motivo": "A janela das 17h às 19h do art. 2º, §1º, do Dec. 16.243/2015 (mantida pelo Dec. 16.301/2015) caiu com a nova redação dada pelo Dec. 18.103/2020, art. 2º (DOMV 09/09/2020), que deixou só a das 7h às 9h. Registro histórico: nunca aplicada.",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "19:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Decreto municipal 16.301/2015 (DOMV 08/05/2015)", "artigo": "art. 1º (redação do art. 2º, §1º, do Dec. 16.243/2015: 7h–9h e 17h–19h nos dias úteis)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16301.PDF"},
+        {"ato": "Decreto municipal 18.103/2020 (DOMV 09/09/2020)", "artigo": "art. 2º (nova redação do art. 2º, §1º: só 7h–9h)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"}
+      ],
+      "vigencia_inicio": "2015-05-05",
+      "vigencia_fim": "2020-09-09",
+      "source_id": "vitoria-porto-centro-17h-19h-revogada",
+      "geometria": [{"arquivo": "municipios/geo/3205309_porto_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "vitoria_carga_descarga_centro",
+      "tipo": "zona",
+      "regime": "Carga e descarga no Centro (Lei 6.490/2005)",
+      "nome": "Carga e descarga no Centro de Vitória (Forte São João à Ilha do Príncipe)",
+      "status": "desativada",
+      "status_motivo": "É regra de operação de carga e descarga no destino, não de circulação: como zona, barraria o trânsito de passagem pelo Centro. O formato não tem regra só de destino; fica registrada para aviso.",
+      "confianca": "media",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "19:00"},
+        {"days": [6], "from": "00:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "origem_destino_dentro": "avisa",
+      "excecoes": ["Art. 2º: carga e descarga de valores, de mercadorias destinadas ao consumidor final e a hospitais, clínicas e similares"],
+      "base_legal": [
+        {"ato": "Lei municipal 6.490/2005 (A Tribuna, 10/12/2005)", "artigo": "art. 1º (carga e descarga só das 19h às 6h de segunda a sexta, das 14h às 24h aos sábados e livre aos domingos e feriados: as janelas aqui são o complemento, quando é proibida); art. 2º (exceções); arts. 3º e 4º (apreensão e multa); art. 5º (vigência 30 dias após a publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2005/L6490.PDF"}
+      ],
+      "nota": "Vale para qualquer veículo em operação de carga e descarga (aqui só caminhões). Confiança média: a Lei 3.499/1987 (estacionamento de caminhões para carga e descarga na zona central das 7h às 10h) não tem nota de revogação e pode conflitar (verify da pesquisa).",
+      "fonte_geometria": "OSM (ODbL): Região Administrativa I + bairro Ilha do Príncipe",
+      "vigencia_inicio": "2006-01-09",
+      "geometria": [{"arquivo": "municipios/geo/3205309_centro_lei_6490.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    },
+    {
+      "id": "es_terceira_ponte_lei_9602",
+      "tipo": "ponte",
+      "regime": "Terceira Ponte (até 2 eixos e 15 t)",
+      "nome": "Terceira Ponte (Ponte Deputado Darcy Castello de Mendonça, ES-060): carga com mais de 2 eixos ou PBT acima de 15 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "municipio": "Vitória e Vila Velha (lei estadual)",
+      "ibge": null,
+      "abrangencia_ibge": ["3205309", "3205200"],
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 2}, {"campo": "pbt_t", "acima": 15}]},
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Lei estadual 9.602/2010 (DOE 27/12/2010)", "artigo": "art. 2º (proibido o tráfego de veículo de carga com mais de 2 eixos ou PBT acima de 15 t em toda a extensão da ponte); art. 5º (vigência na publicação)", "url": "https://www3.al.es.gov.br/Arquivo/Documents/legislacao/html/LEI96022010.html", "nota": "'Em Vigor' na consulta da ALES; o PL 475/2020 (isenções) não virou lei"},
+        {"ato": "CETURB/ES, Norma Complementar 001/2024 (DIO-ES 23/08/2024; alterada pela NC 006/2025)", "artigo": "item da guarita de controle de acesso no km 3,3, sentido norte, lado de Vila Velha, que barra caminhões", "url": "https://ioes.dio.es.gov.br/busca/busca/buscar/query/0/di:2024-08-23/df:2024-08-23/?1=1&q=%22guarita%20de%20controle%20de%20acesso%22"}
+      ],
+      "nota": "Registro regional (lei estadual), não municipal: a frente estadual (ders_estaduais) implementa só as IS do DER-ES e deixou esta lei de fora. No OSM só há maxweight=15 em 4 ways da ponte e o hgv:conditional tem dois '@' (o Valhalla descarta): falta o limite de eixos, que esta regra cobre. Sem pedágio desde 22/12/2023; gestão SEMOBI/CETURB.",
+      "fonte_geometria": "OSM (ODbL): ways 'Ponte Deputado Darcy Castello de Mendonça' (ES-060)",
+      "vigencia_inicio": "2010-12-27",
+      "geometria": [{"arquivo": "municipios/geo/3205309_terceira_ponte.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
+    }
+  ]
+}
