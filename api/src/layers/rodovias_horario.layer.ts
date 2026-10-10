@@ -79,7 +79,11 @@ interface State {
   weekly: { r: WeeklyRule; open: { start: DateTime; end: DateTime } | null; next: { start: DateTime; end: DateTime } | null; reasons: string[] }[];
 }
 
-interface Hit { key: string; label: string; item: LayerItem; runs: Run[]; kind: 'prf' | 'weekly'; seg?: Seg; segs?: Seg[]; rule?: WeeklyRule; windows?: PrfWindow[] }
+interface Hit {
+  key: string; label: string; item: LayerItem; runs: Run[]; kind: 'prf' | 'weekly'; seg?: Seg; segs?: Seg[]; rule?: WeeklyRule; windows?: PrfWindow[];
+  /** trechos penalizados, com o sentido ('prf:<snv>:+' / ':-'); o fator do Valhalla só vale no sentido da linha */
+  dirKeys?: string[];
+}
 
 // ------------------------------------------------------------------------------------------- dados
 let rulesCache: { at: number; p: Promise<Rules> } | null = null;
@@ -134,6 +138,16 @@ async function segmentsNear(line: GeoJSON.LineString, radiusM: number): Promise<
 const fmt = (n: number) => String(Math.round(n * 100) / 100).replace('.', ',');
 const fmtDT = (d: DateTime) => `${DIAS[d.weekday]} ${d.toFormat('dd/LL HH:mm')}`;
 
+/**
+ * Combinação de veículos de carga (CVC no sentido da Res. CONTRAN 882/2021, art. 18, que exige AET da combinação acima
+ * de 57 t ou de 19,80 m): cavalo com semirreboque, caminhão com reboque ou CVC. Veículo simples (truck, VUC) não é CVC,
+ * mesmo com AET (ex.: carga larga). Sem classe informada, estima por comprimento > 14 m (maior veículo simples, art. 4º).
+ */
+export function isCombination(v: Pick<Vehicle, 'vehicle_class' | 'length_m'>): boolean {
+  if (v.vehicle_class) return v.vehicle_class === 'semitrailer' || v.vehicle_class === 'truck_trailer' || v.vehicle_class === 'cvc';
+  return v.length_m > 14;
+}
+
 /** Motivos pelos quais a janela PRF atinge o veículo (vazio = não atinge). Limites lidos da portaria (props.limites). */
 export function prfReasons(w: PrfProps, v: Vehicle): string[] {
   if (w.criterio === 'largura') {
@@ -145,14 +159,18 @@ export function prfReasons(w: PrfProps, v: Vehicle): string[] {
   if (v.height_m > L.altura_m) r.push(`altura ${fmt(v.height_m)} m > ${fmt(L.altura_m)} m`);
   if (v.length_m > L.comprimento_m) r.push(`comprimento ${fmt(v.length_m)} m > ${fmt(L.comprimento_m)} m`);
   if (v.weight_t > L.pbtc_t) r.push(`PBTC ${fmt(v.weight_t)} t > ${fmt(L.pbtc_t)} t`);
-  if (v.requires_aet) r.push('CVC com AET (art. 1º, § 1º)');
+  // § 1º: "abrange o trânsito de CVC, CTV e CTVP, ainda que autorizadas ... por meio de AET ou AE". Veículo simples com
+  // AET e dentro dos limites do art. 1º não entra (o requires_aet hoje também sai das dimensões, em vehicle.ts).
+  if (v.requires_aet && isCombination(v)) r.push('CVC com AET (art. 1º, § 1º)');
   // § 5º (tabela de SP): só quem tem AET/AE — excedente precisa de AET para rodar, então conta como portador
   return r;
 }
 
-/** CVC com AET para a Portaria SUP/DER-084/2023: informada pelo usuário ou exigida pela Res. CONTRAN 882/2021, art. 18. */
+/** CVC com AET para a Portaria SUP/DER-084/2023, art. 3º ("A CVC ... portadores de AET"): informada pelo usuário,
+ *  ou exigida pela Res. CONTRAN 882/2021, art. 18. Veículo simples não entra. */
 export function weeklyReasons(p: WeeklyProps, v: Vehicle): string[] {
   const r: string[] = [];
+  if (!isCombination(v)) return r;
   if (v.requires_aet) r.push('CVC com AET');
   else if (v.length_m > 19.8) r.push(`comprimento ${fmt(v.length_m)} m > 19,8 m (exige AET, Res. CONTRAN 882/2021, art. 18)`);
   else if (v.weight_t > 57) r.push(`PBTC ${fmt(v.weight_t)} t > 57 t (exige AET, Res. CONTRAN 882/2021, art. 18)`);
@@ -582,6 +600,29 @@ function weeklyHits(coords: Coord[], st: State): Hit[] {
   return hits;
 }
 
+/**
+ * Sentido em que o pedaço `run` da rota percorre o trecho do SNV: '+' no sentido da digitalização (no SNV, o do km),
+ * '-' no contrário. Compara a posição, ao longo do trecho, do primeiro e do último ponto do pedaço que estão no trecho.
+ */
+function dirOn(s: Seg, coords: Coord[], run: Run): '+' | '-' {
+  const ix = indexOf(s.geometry);
+  let i0 = -1, i1 = -1;
+  for (let i = run[0]; i <= run[1]; i++) {
+    if (ix.dist(coords[i], TOL_M) <= TOL_M) { if (i0 < 0) i0 = i; i1 = i; }
+  }
+  if (i0 < 0 || i1 <= i0) return '+';
+  const f = turf.feature(s.geometry) as GeoJSON.Feature<GeoJSON.LineString | GeoJSON.MultiLineString>;
+  const a = turf.nearestPointOnLine(f, coords[i0]).properties.location ?? 0;
+  const b = turf.nearestPointOnLine(f, coords[i1]).properties.location ?? 0;
+  return b >= a ? '+' : '-';
+}
+
+/** Chaves trecho+sentido de um pedaço restrito da rota (um pedaço pode juntar trechos vizinhos do SNV). */
+function dirKeysOf(h: Hit, coords: Coord[]): string[] {
+  if (h.kind !== 'prf') return [h.key];
+  return (h.segs ?? [h.seg!]).flatMap((s) => h.runs.map((run) => `prf:${s.source_id}:${dirOn(s, coords, run)}`));
+}
+
 // ------------------------------------------------------------------------------------------- estado por rota
 interface Stash { lines: LayerCostLine[]; hits: Hit[]; state: State & { rules: Rules } }
 const stash = new WeakMap<RouteCtx, Stash>();
@@ -597,14 +638,25 @@ async function prepare(ctx: RouteCtx): Promise<Stash> {
   let r: valhalla.ValhallaRouteResult;
   try { r = await valhalla.route(base); } catch { return out; }
   const seen = new Set<string>();
+  const ids = new Set<string>();
   // cada rodada procura trechos restritos na rota atual, penaliza os novos e refaz a rota; para quando a rota não cai em
   // trecho novo. A última rodada (MAX_ITER) penaliza sem refazer: quem sobrar na rota final sai como "desvio não testado".
+  // "Novo" é trecho + SENTIDO: o fator do linear_cost_factors só vale no sentido da linha, e um desvio que entra no mesmo
+  // trecho pela outra ponta (ou pela outra pista) não paga nada (ex.: destino na BR-488, rota chegando pelo outro lado).
   for (let iter = 0; iter < MAX_ITER; iter++) {
-    const idsOf = (h: Hit) => h.segs?.map((x) => `prf:${x.source_id}`) ?? [h.key];
-    const fresh = (await restrictedHits(r.coordinates, state)).filter((h) => idsOf(h).some((k) => !seen.has(k)));
+    const found = (await restrictedHits(r.coordinates, state)).map((h) => ({ ...h, dirKeys: dirKeysOf(h, r.coordinates) }));
+    const fresh = found.filter((h) => h.dirKeys.some((k) => !seen.has(k)));
     if (!fresh.length) break;
     for (const h of fresh) {
-      idsOf(h).forEach((k) => seen.add(k));
+      h.dirKeys.forEach((k) => seen.add(k));
+      if (ids.has(h.item.id)) {
+        // mesmo trecho em outro sentido ou noutro pedaço da rota: id próprio, para o routing.ts e o annotate não
+        // confundirem as linhas
+        let n = 2;
+        while (ids.has(`${h.item.id}~${n}`)) n++;
+        h.key += `~${n}`; h.item = { ...h.item, id: `${h.item.id}~${n}` };
+      }
+      ids.add(h.item.id);
       out.hits.push(h);
       h.runs.forEach((run, k) => out.lines.push({
         item: { ...h.item, id: k ? `${h.item.id}#${k + 1}` : h.item.id, ...midOf(r.coordinates, run) },
@@ -621,20 +673,39 @@ async function prepare(ctx: RouteCtx): Promise<Stash> {
 }
 
 /**
- * O routing.ts já emite 'uses_restricted_way' (danger) para cada costLine que a rota final usa: mesmo critério dele
- * (usesCostLine: ≥ 50% dos pontos da linha a até 15 m da rota; só quando a rota livre foi calculada). Serve para não
- * repetir o mesmo danger: a camada então só complementa com o horário e a norma.
+ * O routing.ts já emite 'uses_restricted_way' (danger) para cada costLine que a rota final usa. Serve para não repetir
+ * o mesmo danger: a camada então só complementa com o horário e a norma. O critério é cópia do usesCostLine do
+ * routing.ts (que não é exportado), sensível ao sentido: ≥ 50% das amostras da linha a até 15 m da rota e, delas,
+ * ≥ 50% com rumo a menos de 90° do rumo da rota; só quando a rota livre foi calculada. Se o routing.ts mudar o
+ * critério, mude aqui também.
  */
+function usesCostLineLikeRouting(route: GeoJSON.Feature<GeoJSON.LineString>, coords: Coord[]): boolean {
+  if (coords.length < 2) {
+    if (!coords.length) return false;
+    return turf.pointToLineDistance(turf.point(coords[0]), route, { units: 'meters' }) <= 15;
+  }
+  const rc = route.geometry.coordinates;
+  const step = Math.max(1, Math.ceil((coords.length - 1) / 30));
+  let near = 0, same = 0, total = 0;
+  for (let i = 0; i < coords.length - 1; i += step) {
+    total++;
+    const a = coords[i], b = coords[i + 1];
+    const np = turf.nearestPointOnLine(route, turf.point([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]), { units: 'meters' });
+    if ((np.properties.dist ?? Infinity) > 15) continue;
+    near++;
+    const idx = Math.min(np.properties.index ?? 0, rc.length - 2);
+    const bl = turf.bearing(turf.point(a), turf.point(b));
+    const br = turf.bearing(turf.point(rc[idx] as Coord), turf.point(rc[idx + 1] as Coord));
+    if (Math.abs(((bl - br + 540) % 360) - 180) < 90) same++;
+  }
+  if (!total || near / total < 0.5) return false;
+  return same / near >= 0.5;
+}
+
 function routingWarns(route: RouteGeom, lines: LayerCostLine[], h: Hit): boolean {
   if (!route.free) return false;
-  return lines.some((cl) => {
-    if (cl.item.id !== h.item.id && !cl.item.id.startsWith(`${h.item.id}#`)) return false;
-    const c = cl.coordinates;
-    if (!c.length) return false;
-    const pts = c.length > 40 ? c.filter((_, i) => i % Math.ceil(c.length / 40) === 0) : c;
-    const near = pts.filter((p) => turf.pointToLineDistance(turf.point(p), route.line, { units: 'meters' }) <= 15).length;
-    return near / pts.length >= 0.5;
-  });
+  return lines.some((cl) => (cl.item.id === h.item.id || cl.item.id.startsWith(`${h.item.id}#`))
+    && usesCostLineLikeRouting(route.line, cl.coordinates as Coord[]));
 }
 
 // ------------------------------------------------------------------------------------------- ETA ao longo da rota
@@ -690,13 +761,19 @@ const layer: RouteLayer = {
         .map((x) => { const g = subjectOfAny(activeP, x.s); return { s: x.s, runs: g ? runsNear(coords, g) : [] }; })
         .filter((x) => x.runs.length);
       const prfHits = hits.filter((h) => h.kind === 'prf');
-      // um trecho pode estar em mais de um pedaço penalizado (rodadas diferentes juntam vizinhos diferentes)
-      const hitsOf = (s: Seg) => prfHits.filter((h) => (h.segs ?? [h.seg!]).some((z) => z.source_id === s.source_id));
+      // um trecho pode estar em mais de um pedaço penalizado (rodadas diferentes juntam vizinhos diferentes); conta só o
+      // pedaço penalizado NO SENTIDO em que a rota final passa (o fator do Valhalla não vale no sentido contrário)
+      const hitsOf = (x: { s: Seg; runs: Run[] }) => {
+        const keys = new Set(x.runs.map((run) => `prf:${x.s.source_id}:${dirOn(x.s, coords, run)}`));
+        return prfHits.filter((h) => h.dirKeys?.some((k) => keys.has(k)));
+      };
       // na rota final: (a) penalizado e já avisado pelo routing.ts; (b) penalizado sem aviso do routing.ts; (c) nunca
-      // penalizado (a rota final mudou por outras camadas/zonas, ou passou do limite de rodadas): desvio não testado
-      const viaRouting = stillOn.filter((x) => hitsOf(x.s).some((h) => routingWarns(route, lines, h)));
-      const semAlternativa = stillOn.filter((x) => !viaRouting.includes(x) && hitsOf(x.s).length);
-      const naoTestado = stillOn.filter((x) => !hitsOf(x.s).length);
+      // penalizado nesse sentido (a rota final mudou por outras camadas/zonas, ou passou do limite de rodadas): desvio
+      // não testado
+      const pen = new Map(stillOn.map((x) => [x, hitsOf(x)] as const));
+      const viaRouting = stillOn.filter((x) => pen.get(x)!.some((h) => routingWarns(route, lines, h)));
+      const semAlternativa = stillOn.filter((x) => !viaRouting.includes(x) && pen.get(x)!.length);
+      const naoTestado = stillOn.filter((x) => !pen.get(x)!.length);
       const touchedSegs = [...stillOn.map((x) => x.s), ...prfHits.flatMap((h) => h.segs ?? [h.seg!])];
       // janelas que importam para esta rota (as que pegam os trechos tocados); sem trecho tocado, todas as ativas
       const rel = touchedSegs.length ? state.prfActive.filter((a) => touchedSegs.some((sg) => segSubject(a.w.p, sg))) : state.prfActive;
@@ -820,8 +897,7 @@ const layer: RouteLayer = {
     }
 
     // art. 4º da SUP/DER-084/2023: faixa da esquerda proibida a QUALQUER CVC das 18h às 20h (informativo).
-    // CVC estimada por comprimento > 14 m (maior veículo simples, Res. CONTRAN 882/2021, art. 4º) ou AET.
-    if (ctx.vehicle.length_m > 14 || ctx.vehicle.requires_aet) {
+    if (isCombination(ctx.vehicle)) {
       for (const r of state.rules.weekly) {
         const fx = r.p.faixa_esquerda_cvc;
         if (!fx) continue;

@@ -16,7 +16,7 @@ A geometria é só a área de abrangência (envelope do Brasil); os trechos afet
 """
 from __future__ import annotations
 import json, os, re, unicodedata, urllib.parse
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from bs4 import BeautifulSoup
 from common import http_get, stable_id
 
@@ -269,25 +269,93 @@ def features_for(parsed: dict) -> list[dict]:
     return out
 
 
+def _agora() -> datetime:
+    return datetime.now(timezone(timedelta(hours=-3)))
+
+
+def _ano_do_ato(body: BeautifulSoup) -> int | None:
+    """Ano dos feriados, lido da ementa ("feriados do ano de AAAA") antes do parse completo."""
+    m = re.search(r'feriados do ano de (\d{4})', body.get_text(' ', strip=True))
+    return int(m.group(1)) if m else None
+
+
+def _ultima_data(body: BeautifulSoup) -> date | None:
+    """Maior data dd/mm/aaaa do texto (as janelas do Anexo I), antes do parse completo."""
+    ds = []
+    for d, m, y in re.findall(r'\b(\d{2})/(\d{2})/(\d{4})\b', body.get_text(' ', strip=True)):
+        try:
+            ds.append(date(int(y), int(m), int(d)))
+        except ValueError:
+            pass
+    return max(ds) if ds else None
+
+
 def fetch():
+    """Portaria mais recente de cada ano que importa: ano corrente, seguinte (se já saiu) e anterior (só as janelas que
+    ainda não acabaram, ex.: Fim de Ano que entra em janeiro). A busca vem da mais nova para a mais antiga; a mais
+    recente de cada ano revoga as anteriores daquele ano, que nem chegam a ser lidas. Falha de leitura só é tolerada
+    numa portaria do ano anterior (perde-se a cauda) ou, já lido o ano corrente, numa de ano desconhecido. A do ano
+    corrente ou do seguinte tem de ser lida; se não for, a carga falha e o banco fica como está."""
     global NOTES
     cands = candidates()
     if not cands:
         raise RuntimeError('nenhuma portaria DIOP/PRF de restrição encontrada no DOU')
-    this_year = date.today().year
+    now = _agora()
+    this_year = now.year
     chosen: dict[int, dict] = {}
-    for c in cands[:6]:
-        body, meta = fetch_act(c['url'])
-        p = parse_act(body, c['url'], meta)
-        y = p['act']['ano']
-        if y < this_year - 1 or y in chosen:
-            continue           # a mais recente de cada ano revoga as anteriores daquele ano
-        chosen[y] = p
-        if this_year in chosen and (this_year + 1 in chosen or c['pub'] is None or c['pub'] < date(this_year, 11, 1)):
+    seen: set[int] = set()          # anos resolvidos: a portaria mais recente do ano foi lida (ou falhou e foi tolerada)
+    ignored: list[str] = []
+    for c in cands[:12]:
+        if this_year in seen and this_year - 1 in seen:
             break
-    feats = [f for p in chosen.values() for f in features_for(p)]
-    NOTES = '; '.join(f"{p['act']['ato']} ({p['act']['dou']}; feriados de {y}; revoga {p['act']['revoga']}): "
-                      f"{sum(1 for w in p['windows'] if w['escopo'] == 'pista_simples_federal')} janelas nacionais, "
-                      f"{sum(1 for w in p['windows'] if w['escopo'] == 'trechos')} por trecho" for y, p in sorted(chosen.items()))
+        if c['pub'] is not None and c['pub'] < date(this_year - 2, 11, 1):
+            break                   # publicada antes disso, não cobre nem o ano anterior
+        label = f"{c['title']} (DOU {c['pub']:%d/%m/%Y})" if c['pub'] else c['title']
+        try:
+            body, meta = fetch_act(c['url'])
+        except Exception as e:
+            if this_year in chosen:
+                ignored.append(f'{label}: {e}')
+                continue
+            raise
+        y = _ano_do_ato(body)
+        if y is not None and (y < this_year - 1 or y in seen):
+            continue                # ano que não importa mais, ou revogada pela mais recente do mesmo ano
+        if y is not None and y < this_year:
+            ultima = _ultima_data(body)
+            if ultima is not None and ultima < now.date():
+                seen.add(y)         # do ano anterior só interessa a cauda; esta já acabou toda (nem precisa ler)
+                continue
+        try:
+            p = parse_act(body, c['url'], meta)
+        except Exception as e:
+            if y == this_year - 1 or (y is None and this_year in chosen):
+                ignored.append(f'{label}: {e}')
+                if y is not None:
+                    seen.add(y)     # não cai para uma portaria mais antiga (revogada) do mesmo ano
+                continue
+            raise
+        y = p['act']['ano']
+        if y < this_year - 1 or y in seen:
+            continue
+        seen.add(y)
+        chosen[y] = p
+    if not chosen:
+        raise RuntimeError('nenhuma portaria DIOP/PRF de restrição de feriados lida')
+    feats, notes = [], []
+    for y, p in sorted(chosen.items()):
+        fs = features_for(p)
+        if y < this_year:
+            fs = [f for f in fs if datetime.fromisoformat(f['valid_to']) > now]
+        feats += fs
+        notes.append(f"{p['act']['ato']} ({p['act']['dou']}; feriados de {y}; revoga {p['act']['revoga']}): "
+                     f"{sum(1 for f in fs if f['props']['escopo'] == 'pista_simples_federal')} janelas nacionais, "
+                     f"{sum(1 for f in fs if f['props']['escopo'] == 'trechos')} por trecho"
+                     + (' (só as que ainda não acabaram)' if y < this_year else ''))
+    if this_year not in chosen:
+        notes.append(f'ATENÇÃO: nenhuma portaria com os feriados de {this_year} no DOU ainda')
+    if ignored:
+        notes.append('ignoradas por falha de leitura (mais antigas que as usadas): ' + ' | '.join(ignored))
+    NOTES = '; '.join(notes)
     print('   ', NOTES)
     return feats
