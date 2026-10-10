@@ -73,6 +73,64 @@
       ]
     },
     {
+      "id": "bh_area_central_vias_limite",
+      "tipo": "via",
+      "regime": "Área Central (via do perímetro)",
+      "nome": "Área Central de BH — Av. Afonso Pena entre a R. dos Inconfidentes e a Av. do Contorno (via do perímetro citada no art. 2º)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "20:00"}, {"days": [6], "from": "07:00", "to": "15:00"}],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [{"campo": "payload_t", "acima": 5.5}, {"campo": "comprimento_m", "acima": 6.5}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]
+      },
+      "zona_vinculada": "bh_area_central",
+      "autorizacao": "Autorização da BHTRANS para casos excepcionais (Portaria BHTRANS DPR 138/2009, art. 9º)",
+      "excecoes": ["Autorização da BHTRANS para casos excepcionais, com endereço e horários (Portaria BHTRANS DPR 138/2009, art. 9º)"],
+      "base_legal": [
+        {
+          "ato": "Portaria BHTRANS DPR 138/2009",
+          "artigo": "art. 2º (inclui expressamente a Av. Afonso Pena entre a R. dos Timbiras e a Av. do Contorno); art. 8º (área do art. 2º na regra do art. 1º); art. 1º, II (seg–sex 7h–20h e sáb 7h–15h acima do limite ou de 6,50 m) e III (carretas e caminhões-trator em qualquer horário); art. 9º (autorização)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado",
+          "nota": "DOM 18/12/2009"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 077/2014",
+          "artigo": "art. 2º (‘lotação’ passa a ‘capacidade de carga’)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado",
+          "nota": "DOM 27/06/2014"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 004/2019",
+          "artigo": "art. 1º (capacidade de carga de 5 t para 5,50 t)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado",
+          "nota": "DOM 29/01/2019; vigência na publicação (art. 2º)"
+        }
+      ],
+      "nota": "Mesma regra da Área Central. O trecho fica na borda externa do polígono (recorte junto ao tobogã), que a rota recua 20 m: sem esta via, ele ficaria livre. Com origem ou destino na Área Central, segue a política da zona (não restringe e avisa). Domingo livre; vale no feriado.",
+      "fonte_geometria": "OSM (ODbL) pelo nome e pelas transversais do ato",
+      "vigencia_inicio": "2019-01-29",
+      "trechos": [
+        {
+          "inciso": "2º",
+          "via": ["Avenida Afonso Pena"],
+          "de": ["Rua dos Inconfidentes"],
+          "ate": ["Avenida do Contorno"],
+          "descricao": "Av. Afonso Pena, entre a R. dos Inconfidentes e a Av. do Contorno (parte final do trecho do art. 2º, fora do polígono)",
+          "nota": "O art. 2º cita a Afonso Pena da R. dos Timbiras à Contorno; da Timbiras à Inconfidentes ela é interna à Área Central (entre as áreas dos arts. 2º e 5º) e já está na zona."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3106200_vias.geojson", "construir": "trechos"}]
+    },
+    {
       "id": "bh_corredores",
       "tipo": "via",
       "regime": "Corredor de tráfego",
@@ -188,9 +246,20 @@
         {
           "inciso": "6º-7",
           "via": ["Avenida Dom Pedro II"],
-          "de": ["Avenida Nossa Senhora de Fátima"],
+          "de": {"lonlat": [-43.94416, -19.91289]},
           "ate": ["Avenida Presidente Carlos Luz"],
-          "descricao": "Av. Pedro II, entre a Av. Nossa Senhora de Fátima e a Av. Carlos Luz"
+          "sentido": true,
+          "descricao": "Av. Pedro II, entre a Av. Nossa Senhora de Fátima e a Av. Carlos Luz (pista sentido Carlos Luz)",
+          "nota": "A Av. N. Sra. de Fátima não cruza a Pedro II: começa na Lagoinha, a cerca de 70 m do início da Pedro II, e segue paralela a ela. A ponta é o início da Pedro II na Lagoinha (way 314275940 do OSM), como no 6º-8; o mapa BHTrans de 14/02/2019 desenha a Pedro II restrita da Carlos Luz até a Lagoinha."
+        },
+        {
+          "inciso": "6º-7",
+          "via": ["Avenida Dom Pedro II"],
+          "de": ["Avenida Presidente Carlos Luz"],
+          "ate": {"lonlat": [-43.94446, -19.91296]},
+          "sentido": true,
+          "descricao": "Av. Pedro II, entre a Av. Nossa Senhora de Fátima e a Av. Carlos Luz (pista sentido Lagoinha)",
+          "nota": "Ponta no fim da Pedro II na Lagoinha (way 497948131 do OSM); ver a pista sentido Carlos Luz."
         },
         {
           "inciso": "6º-8",
