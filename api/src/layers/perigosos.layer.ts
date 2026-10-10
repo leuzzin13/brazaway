@@ -4,7 +4,10 @@ import { env } from '../config.js';
 import { query } from '../db.js';
 import { legalDayInfo, type LegalDayInfo } from '../services/calendar.js';
 import { decodePolyline6 } from '../services/polyline.js';
-import { LEGAL, SP_HAZMAT_WINDOWS, describeProduct, getProduct, hazmatInfo, type HazmatVehicleInfo } from '../services/hazmat.js';
+import {
+  LEGAL, SP_HAZMAT_WINDOWS, classesOutside, describeProduct, getProduct, hazmatInfo, inTimeWindows, trechoRuleDecision,
+  type HazmatVehicleInfo, type TimeWindow, type TrechoDecision,
+} from '../services/hazmat.js';
 import type { LayerAnnotation, LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
@@ -15,6 +18,12 @@ import type { LayerAnnotation, LayerCostLine, LayerExclusion, LayerItem, LayerWa
  *  costLines (linear_cost_factors, fator 1000 = "proibido salvo sem alternativa"; penaliza só a via, não quem a cruza):
  *   - trechos de rodovia proibidos por portaria do DER-SP, 24h (kind 'trecho_proibido': SP-008 km 25,28–31,5, Portaria
  *     PR/DER-164/2025 art. 2º; SP-324 km 86,62–90,7, Portaria SUP/DER-062/2024 art. 1º);
+ *   - trechos fora de SP (kind 'trecho_proibido' com props.regra_id, importador hazmat_trechos_sudeste), decididos por
+ *     veículo em `trechoRuleDecision` (hazmat.ts): Ponte Rio–Niterói e acessos e Av. Portuária (Portaria SPRF-RJ/PRF
+ *     407/2024, arts. 1º e 4º-A: só as classes 1, 2.1, 2.3, 3, 4, 5, 6 e 8; isenção da Parte 3 da Res. ANTT 5.998/2022;
+ *     exceção de Mocanguê do art. 2º, com janela), Linha Vermelha (Res. SMTR 2.204/2012, art. 1º IV: todas as classes,
+ *     sem isenção). Regra com props.ativa = false (Terceira Ponte, IS DERTES 021-N/2004: vigência não confirmada) nunca
+ *     vira costLine: só gera aviso quando a rota passa por ela;
  *   - vias do minianel (Anexo IV da Portaria SMT.GAB 051/2024), para TODOS os grupos, de 2ª a 6ª, exceto feriados,
  *     07h–10h e 17h–20h (art. 3º I) — kind 'via_minianel'. A ÁREA interna (centro expandido, grupos I e II) é a zona
  *     hazmat_only da frente core_legal (restriction_zones); esta camada não duplica o polígono.
@@ -39,17 +48,21 @@ const LINDEIRO_M = 300;
 const meta: RouteLayer['meta'] = {
   id: LAYER,
   label: 'Produtos perigosos',
-  description: 'Trechos proibidos para carga perigosa (DER-SP), vias do Minianel nos horários da Portaria SMT.GAB 051/2024, mananciais, emergências químicas (CETESB) e paradas de PP (ARTESP).',
+  description: 'Trechos proibidos para carga perigosa (DER-SP, Ponte Rio–Niterói, Av. Portuária e Linha Vermelha), vias do Minianel nos horários da Portaria SMT.GAB 051/2024, mananciais, emergências químicas (CETESB) e paradas de PP (ARTESP).',
   group: 'restricoes',
   sources: [
     { name: 'Portaria SMT.GAB 051/2024 (PMSP/CET)', url: 'https://cetsp.com.br/media/1592296/portaria-051-24.pdf', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
     { name: 'Portarias PR/DER-164/2025 e SUP/DER-062/2024 (DOE-SP)', url: 'https://doe.sp.gov.br', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
+    { name: 'Portaria SPRF-RJ/PRF 407/2024 (DOU 22/11/2024) — Ponte Rio–Niterói e Av. Portuária', url: 'https://www.in.gov.br/web/dou/-/portaria-sprf-rj/prf-n-407-de-14-de-novembro-de-2024-597101479', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
+    { name: 'Res. SMTR 2.204/2012 (DO Rio 19/03/2012) — Linha Vermelha', url: 'https://doweb.rio.rj.gov.br/portal/edicoes/download/1681', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
+    { name: 'IS DERTES 021-N/2004 — Terceira Ponte (registrada, desativada)', url: 'https://der.es.gov.br/legislacao-2', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
     { name: 'Relação de Produtos Perigosos (Res. ANTT 5.998/2022)', url: 'https://anexosportal.datalegis.net/arquivos/1774888.pdf', license: 'Ato oficial (Lei 9.610/98 art. 8º IV)' },
     { name: 'CETESB Malha Rodoviária Estadual (km)', url: 'https://arcgis.cetesb.sp.gov.br/server/rest/services/Hosted/Malha_Rodovi%C3%A1ria_Estadual_SP/FeatureServer/0', license: 'Não declarada (atribuição)' },
     { name: 'CETESB Emergências Químicas (DataGEO)', url: 'https://datageo.ambiente.sp.gov.br/geoserver/datageo/wfs', license: 'Não declarada (atribuição)' },
     { name: 'APRM — limites de bacia (DataGEO/SIMA)', url: 'https://datageo.ambiente.sp.gov.br/geoserver/datageo/wfs', license: 'Não declarada (atribuição)' },
     { name: 'ARTESP — paradas de produtos perigosos', url: 'https://dadosabertos.artesp.sp.gov.br/dataset/malha-rodoviaria', license: 'CC-BY' },
     { name: 'IBGE — malha municipal (LETPP)', url: 'https://servicodados.ibge.gov.br/api/v3/malhas/municipios/3550308', license: 'Dados públicos (citar a fonte)' },
+    { name: 'IBGE — malhas municipais (Niterói, Rio de Janeiro, Duque de Caxias)', url: 'https://servicodados.ibge.gov.br/api/v3/malhas/municipios/3303302', license: 'Dados públicos (citar a fonte)' },
     { name: 'OpenStreetMap (traçado das vias, via Valhalla)', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL' },
   ],
   style: { kind: 'circle', color: '#c2410c', icon: '☣️', radius: 4, width: 4, minzoom: 8, opacity: 0.85 },
@@ -203,7 +216,8 @@ async function rematchRows(rows: RouteRow[], tileset: number): Promise<Map<strin
         while (i < todo.length) {
           const r = todo[i++];
           const g = r.geometry.coordinates as Coords;
-          const dirs: Coords[] = r.kind === 'trecho_proibido' ? [g, [...g].reverse()] : [g];
+          // trecho do DER: geometria da fonte sem sentido (casa os dois); traçado exato (osm.geom): só o sentido do tráfego
+          const dirs: Coords[] = r.kind === 'trecho_proibido' && !r.props.osm?.geom ? [g, [...g].reverse()] : [g];
           const m = { legs: [] as Coords[], transient: false };
           for (const d of dirs) {
             const t = await traceMatch(d);
@@ -286,8 +300,71 @@ interface Plan {
   tilesetUnconfirmed: boolean;
   /** vias do Minianel consideradas no plano */
   minianelRows: number;
+  /** regras de trecho no corredor (chave: regra_id, ou o id da feição nos trechos do DER) e a decisão para este veículo */
+  trechos: Map<string, TrechoEval>;
+  /** feições de trecho que viraram restrição (a regra alcança o veículo) */
+  appliedIds: Set<string>;
+  /** origem ou destino na Ilha de Mocanguê (Portaria SPRF-RJ/PRF 407/2024, art. 2º) */
+  mocangue: MocangueInfo | null;
+}
+interface TrechoEval { key: string; props: Record<string, any>; decision: TrechoDecision }
+interface MocangueInfo {
+  endpoint: 'origem' | 'destino';
+  /** a outra ponta está em Niterói (art. 2º I: "entre Niterói - Ilha de Mocanguê e Ilha de Mocanguê - Niterói") */
+  niteroi: boolean;
+  /** saída dentro das janelas do art. 2º II */
+  inWindow: boolean;
+  ok: boolean;
+  hhmm: string;
+  janelas: TimeWindow[];
+  aviso_previo_h: number;
+  artigo: string;
+  norma: string;
 }
 const plans = new WeakMap<RouteCtx, Promise<Plan>>();
+
+const VALID_SQL = `(f.valid_to is null or f.valid_to > now()) and (f.valid_from is null or f.valid_from <= now())`;
+
+const lcFirst = (t: string) => (t ? t[0].toLowerCase() + t.slice(1) : t);
+
+/** "1, 2.1, 2.3, 3, 4, 5, 6 e 8" */
+function fmtList(xs: readonly string[]): string {
+  return xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} e ${xs[xs.length - 1]}`;
+}
+/** "das 23h às 4h e das 11h às 16h" */
+function fmtWindows(ws: readonly TimeWindow[]): string {
+  const h = (t: string) => { const [hh, mm] = t.split(':'); return `${Number(hh)}h${mm === '00' ? '' : mm}`; };
+  return fmtList(ws.map((w) => `das ${h(w.from)} às ${h(w.to)}`));
+}
+
+/**
+ * Exceção do art. 2º da Portaria SPRF-RJ/PRF 407/2024: produtos destinados às instalações militares da Ilha de Mocanguê,
+ * "entre Niterói - Ilha de Mocanguê e Ilha de Mocanguê - Niterói", das 23h às 4h e das 11h às 16h, com aviso de 24 h à
+ * concessionária. Vale quando UMA das pontas está na ilha (área com folga de 150 m) e a outra em Niterói, com saída
+ * dentro da janela. O destino militar da carga e o aviso prévio não dá para conferir: entram no aviso.
+ */
+async function mocangueInfo(ctx: RouteCtx, row: RouteRow): Promise<MocangueInfo | null> {
+  const mc = row.props.excecao_mocangue as Record<string, any> | undefined;
+  if (!mc) return null;
+  const r = await query<{ papel: string; o_in: boolean; d_in: boolean }>(
+    `select f.props->>'papel' as papel,
+            ST_Intersects(f.geom, ST_SetSRID(ST_MakePoint($3, $4), 4326)) as o_in,
+            ST_Intersects(f.geom, ST_SetSRID(ST_MakePoint($5, $6), 4326)) as d_in
+       from data_features f
+      where f.layer_id = $1 and f.kind = 'area_excecao' and f.props->>'regra_id' = $2 and ${VALID_SQL}`,
+    [LAYER, row.props.regra_id, ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat],
+  );
+  const ilha = r.rows.find((x) => x.papel === 'destino_militar');
+  const mun = r.rows.find((x) => x.papel === 'municipio_origem');
+  if (!ilha || ilha.o_in === ilha.d_in) return null;   // nenhuma ponta (ou as duas) na ilha
+  const endpoint = ilha.o_in ? 'origem' : 'destino';
+  const niteroi = !!mun && (endpoint === 'origem' ? mun.d_in : mun.o_in);
+  const { dow, hhmm } = localParts(ctx.at);
+  const janelas = (mc.janelas ?? []) as TimeWindow[];
+  const inWindow = inTimeWindows(hhmm, dow, janelas);
+  return { endpoint, niteroi, inWindow, ok: niteroi && inWindow, hhmm, janelas, aviso_previo_h: Number(mc.aviso_previo_h ?? 24),
+    artigo: String(mc.artigo ?? 'art. 2º'), norma: String(row.props.norma) };
+}
 
 /**
  * Corredor plausível da rota para os trechos de rodovia: elipse com focos na origem e no destino
@@ -304,6 +381,13 @@ function itemOf(r: RouteRow): LayerItem {
   const p = r.props;
   const c = r.geometry.coordinates;
   const mid = (p.ponto_medio as [number, number] | undefined) ?? c[Math.floor(c.length / 2)];
+  if (r.kind === 'trecho_proibido' && p.regra_id) {
+    // trechos fora de SP: todos os pedaços (sentidos, alças) da mesma regra têm o mesmo id e o mesmo ponto de referência
+    const ref = (p.ponto_ref as [number, number] | undefined) ?? mid;
+    const cls = Array.isArray(p.classes_proibidas) && p.classes_proibidas.length ? ` das classes ${fmtList(p.classes_proibidas)}` : '';
+    return { kind: 'layer', layer: LAYER, id: `trecho-${p.regra_id}`, name: p.via ?? r.name ?? 'Trecho proibido para PP', type: 'hazmat_ban',
+      rule: `PP${cls} proibido 24h — ${p.norma}, ${p.artigo}`, lon: ref[0], lat: ref[1], note: `${p.via} — ${p.norma}` };
+  }
   if (r.kind === 'trecho_proibido') {
     return { kind: 'layer', layer: LAYER, id: r.id, name: r.name ?? 'Trecho proibido para PP', type: 'hazmat_ban',
       rule: `PP proibido 24h — ${p.norma}, ${String(p.artigo).split(' (')[0]}`, lon: mid[0], lat: mid[1],
@@ -387,13 +471,14 @@ function plan(ctx: RouteCtx): Promise<Plan> {
       const hz = hazmatInfo(ctx.vehicle);
       const day = await legalDayInfo(ctx.at);
       const minianelActive = spRuleActive(ctx.at, day);
-      const empty: Plan = { costLines: [], exclusions: [], minianelActive, day, hz, fallbackIds: [], transientIds: [], tilesetUnconfirmed: false, minianelRows: 0 };
+      const empty: Plan = { costLines: [], exclusions: [], minianelActive, day, hz, fallbackIds: [], transientIds: [], tilesetUnconfirmed: false,
+        minianelRows: 0, trechos: new Map(), appliedIds: new Set(), mocangue: null };
       // Quantidade limitada NÃO zera o plano: as portarias do município e do DER não têm exceção por quantidade.
       if (!hz.active) return empty;
       const { L, slack } = corridor(ctx);
       const od = [ctx.origin.lon, ctx.origin.lat, ctx.destination.lon, ctx.destination.lat];
       const sel = `select f.id::text, f.name, f.kind, f.props, ST_AsGeoJSON(f.geom, 6)::json as geometry from data_features f`;
-      const valid = `(f.valid_to is null or f.valid_to > now()) and (f.valid_from is null or f.valid_from <= now())`;
+      const valid = VALID_SQL;
       const bbox = `ST_MakeEnvelope(least($2::float8, $4::float8), least($3::float8, $5::float8), greatest($2::float8, $4::float8), greatest($3::float8, $5::float8), 4326)`;
       const [trechos, minianel] = await Promise.all([
         query<RouteRow>(
@@ -412,8 +497,24 @@ function plan(ctx: RouteCtx): Promise<Plan> {
           )
           : Promise.resolve({ rows: [] as RouteRow[] }),
       ]);
-      const rows = [...trechos.rows, ...minianel.rows];
-      if (!rows.length) return empty;
+      // decisão por regra (classe ONU, isenção da Parte 3, exceção de Mocanguê, regra inativa): só vira restrição o trecho
+      // cuja regra alcança este veículo. As portarias do DER-SP não têm classe nem isenção: valem para todo PP.
+      const mocRow = trechos.rows.find((r) => r.props.excecao_mocangue);
+      const mocangue = mocRow ? await mocangueInfo(ctx, mocRow).catch(() => null) : null;
+      const evals = new Map<string, TrechoEval>();
+      const appliedIds = new Set<string>();
+      const trechoRows: RouteRow[] = [];
+      for (const r of trechos.rows) {
+        const key = String(r.props.regra_id ?? r.id);
+        let ev = evals.get(key);
+        if (!ev) {
+          ev = { key, props: r.props, decision: trechoRuleDecision(r.props, hz, !!r.props.excecao_mocangue && !!mocangue?.ok) };
+          evals.set(key, ev);
+        }
+        if (ev.decision.applies) { appliedIds.add(r.id); trechoRows.push(r); }
+      }
+      const rows = [...trechoRows, ...minianel.rows];
+      if (!rows.length) return { ...empty, trechos: evals, mocangue };
       const rt = await routableLines(rows);
       const costLines: LayerCostLine[] = [];
       const exclusions: LayerExclusion[] = [];
@@ -439,7 +540,8 @@ function plan(ctx: RouteCtx): Promise<Plan> {
       for (const ch of chainMinianel(minianelParts)) {
         costLines.push({ item: { ...itemOf(ch.row), id: `minianel-anexo-iv-${ch.row.props.anexo_iv_item}` }, coordinates: ch.coords, factor: FACTOR });
       }
-      return { costLines, exclusions, minianelActive, day, hz, fallbackIds, transientIds, tilesetUnconfirmed: rt.tilesetUnconfirmed, minianelRows: minianel.rows.length };
+      return { costLines, exclusions, minianelActive, day, hz, fallbackIds, transientIds, tilesetUnconfirmed: rt.tilesetUnconfirmed,
+        minianelRows: minianel.rows.length, trechos: evals, appliedIds, mocangue };
     })();
     plans.set(ctx, p);
   }
@@ -538,6 +640,42 @@ async function trechosNearOD(ctx: RouteCtx) {
   return r.rows;
 }
 
+interface TrechoUse { regra: string; len_m: number; props: Record<string, any> }
+/**
+ * Metros da rota sobre as vias de cada regra de trecho fora de SP (props.regra_id), ativa ou não: buffer de 8 m das
+ * pistas da regra (unidas, para a pista dupla não contar duas vezes), em SIRGAS 2000 / UTM 23S. Serve para avisar regra
+ * desativada, classe liberada, isenção e regra fora do corredor do plano que a rota acabou usando.
+ */
+async function trechoUse(line: GeoJSON.LineString): Promise<TrechoUse[]> {
+  const r = await query<TrechoUse>(
+    `with r as (select ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) as g4),
+          pc as (select ST_Subdivide(r.g4, 24) as g from r),
+          m as (select distinct on (f.id) f.id, f.props->>'regra_id' as regra, f.geom
+                  from data_features f join pc on f.geom && ST_Expand(pc.g, 0.0002)
+                 where f.layer_id = $2 and f.kind = 'trecho_proibido' and f.props ? 'regra_id' and ${VALID_SQL}
+                   and ST_DWithin(f.geom, pc.g, 0.0002)),
+          u as (select m.regra, ST_Union(ST_Buffer(ST_Transform(m.geom, 31983), 8, 'quad_segs=2')) as g from m group by m.regra)
+     select u.regra, ST_Length(ST_Intersection(ST_Transform(r.g4, 31983), u.g))::float as len_m,
+            (select f.props - 'osm' from data_features f
+              where f.layer_id = $2 and f.kind = 'trecho_proibido' and f.props->>'regra_id' = u.regra limit 1) as props
+       from u, r`,
+    [JSON.stringify(line), LAYER],
+  );
+  return r.rows;
+}
+
+/** Áreas de regras registradas e não aplicadas (ex.: Lei Rio 1.632/1990) que a rota atravessa: só aviso. */
+async function zonasRegistradas(line: GeoJSON.LineString): Promise<Record<string, any>[]> {
+  const r = await query<{ props: Record<string, any> }>(
+    `with r as (select ST_SetSRID(ST_GeomFromGeoJSON($1), 4326) as g)
+     select f.props from data_features f, r
+      where f.layer_id = $2 and f.kind = 'zona_registrada' and f.geom && r.g and ST_Intersects(f.geom, r.g)
+        and (f.valid_to is null or f.valid_to > now())`,
+    [JSON.stringify(line), LAYER],
+  );
+  return r.rows.map((x) => x.props);
+}
+
 /**
  * Portaria 137/2018 art. 35: "caminhões de até dois eixos traseiros"; §2º: "O trânsito de 'caminhão-trator' não será
  * autorizado". Cavalo mecânico (semirreboque, CVC) nunca se enquadra. Nos demais, usa rear_axle_count quando o veículo
@@ -552,6 +690,84 @@ function rearAxlesLe2(ctx: RouteCtx): AxleCheck {
   if (typeof v.rear_axle_count === 'number' && Number.isFinite(v.rear_axle_count)) return { ok: v.rear_axle_count <= 2, tractor: false };
   if (v.vehicle_class !== 'truck_trailer' && typeof v.axle_count === 'number' && v.axle_count <= 3) return { ok: true, tractor: false };
   return { ok: null, tractor: false };
+}
+
+type WarnFn = (code: string, severity: LayerWarning['severity'], message: string, extra?: Partial<LayerWarning>) => void;
+
+interface TrechoOut {
+  regra_id: string; via: string; uf: string | null; norma: string; artigo: string; situacao: string;
+  classes_proibidas: string[] | null;
+  /** a proibição alcança este veículo (virou restrição se a regra estava no corredor) */
+  aplicada: boolean;
+  /** aplicada | inativa | classe_liberada | qtd_limitada | nao_sujeito | excecao */
+  decisao: string;
+  /** a regra estava no corredor do plano (elipse origem–destino) */
+  no_plano: boolean;
+  usado_m: number;
+}
+
+/**
+ * Avisos e resumo das regras de trecho fora de SP (props.regra_id). As que viraram costLine e a rota evitou aparecem em
+ * "evitado" (routing.ts); se a rota passou mesmo assim, o routing.ts avisa (uses_restricted_way). Aqui ficam: regra
+ * desativada no caminho, classe liberada, isenção da Parte 3, exceção de Mocanguê, carga sem nº ONU numa regra por
+ * classe e regra fora do corredor do plano que a rota acabou usando.
+ */
+function sudesteTrechos(pl: Plan, tUse: TrechoUse[], W: WarnFn, summary: string[]): TrechoOut[] {
+  const { hz } = pl;
+  const usedBy = new Map(tUse.filter((u) => u.len_m >= 100 && u.props).map((u) => [u.regra, u]));
+  const keys = new Set<string>([...[...pl.trechos.values()].filter((e) => e.props.regra_id).map((e) => e.key), ...usedBy.keys()]);
+  const out: TrechoOut[] = [];
+  for (const key of keys) {
+    const ev = pl.trechos.get(key);
+    const u = usedBy.get(key);
+    const p = ev?.props ?? u!.props;
+    // regra fora do corredor do plano: decide aqui (sem a exceção de Mocanguê, que exige uma ponta na ilha, no corredor)
+    const d = ev?.decision ?? trechoRuleDecision(p, hz, false);
+    const usedM = Math.round(u?.len_m ?? 0);
+    const via = String(p.via);
+    const cite = `${p.norma}, ${p.artigo}`;
+    const id = `trecho-${key}`;
+    const lista = Array.isArray(p.classes_proibidas) ? (p.classes_proibidas as string[]) : null;
+    if (d.code === 'aplicada') {
+      if (!ev && usedM) {
+        W('hazmat_trecho_usado', 'danger', `A rota passa ${fmtKm(usedM)} pela ${via}, proibida para este produto (${cite}). O trecho ficou fora do corredor considerado no cálculo: confira a rota antes de seguir.`, { id });
+      }
+      if (ev && lista && (d.classCheck.basis === 'sem_onu' || d.classCheck.basis === 'desconhecido')) {
+        W('hazmat_trecho_classe', 'info', `${via}: ${d.classCheck.basis === 'sem_onu' ? 'sem nº ONU' : 'nº ONU fora da Relação da ANTT'}, a proibição por classe (${cite}) foi aplicada. As classes ${fmtList(classesOutside(lista))} não são proibidas ali: informe o nº ONU.`, { id });
+      }
+    } else if (d.code === 'inativa' && usedM) {
+      W('hazmat_regra_nao_confirmada', 'warn', `A rota passa ${fmtKm(usedM)} pela ${via}: ${lcFirst(p.regra)} (${cite}; ${p.janela}). Regra registrada e NÃO aplicada — ${p.aviso_inativa ?? p.motivo_inativa ?? p.situacao}`, { id });
+    } else if (d.code === 'classe_liberada' && usedM && lista) {
+      const lc = d.classCheck.loadClasses;
+      let txt = `${via}: carga da${lc.length > 1 ? 's classes' : ' classe'} ${fmtList(lc)}, fora das proibidas (${cite}: classes ${fmtList(lista)}); passagem permitida.`;
+      if (d.classCheck.subsidiaryHits.length) {
+        txt += ` O risco subsidiário ${fmtList(d.classCheck.subsidiaryHits)} está na lista, mas a portaria fala da classe do produto: na dúvida, confirme com a PRF.`;
+      }
+      summary.push(txt);
+    } else if ((d.code === 'qtd_limitada' || d.code === 'nao_sujeito') && usedM) {
+      const motivo = d.code === 'qtd_limitada' ? 'carga dentro da quantidade limitada' : 'produto "não sujeito" na Relação da ANTT';
+      W('hazmat_trecho_isento', 'info', `${via}: ${motivo}, a proibição não se aplica (${p.isencao_texto ?? cite}). Leve a documentação que comprova a isenção.`, { id });
+    }
+    out.push({
+      regra_id: key, via, uf: p.uf ?? null, norma: p.norma, artigo: p.artigo, situacao: p.situacao ?? 'vigente', classes_proibidas: lista,
+      aplicada: d.applies, decisao: d.code, no_plano: !!ev, usado_m: usedM,
+    });
+  }
+
+  // --- exceção de Mocanguê (Portaria SPRF-RJ/PRF 407/2024, art. 2º): só quando a proibição da ponte alcança a carga
+  const m = pl.mocangue;
+  const ponte = [...pl.trechos.values()].find((e) => e.props.excecao_mocangue);
+  if (m && ponte && (ponte.decision.code === 'aplicada' || ponte.decision.code === 'excecao')) {
+    const ponta = m.endpoint === 'origem' ? 'Origem' : 'Destino';
+    const regra = `só para produtos destinados às instalações militares, no trajeto Niterói–Mocanguê, ${fmtWindows(m.janelas)}, com aviso à concessionária da ponte ${m.aviso_previo_h} h antes`;
+    if (m.ok) {
+      W('hazmat_mocangue', 'warn', `${ponta} na Ilha de Mocanguê: a rota usa a ponte pela exceção do ${m.artigo} da ${m.norma} (${regra}). Confirme o destino militar e o aviso prévio.`, { id: 'mocangue' });
+    } else {
+      const why = [!m.niteroi && 'a outra ponta não está em Niterói', !m.inWindow && `saída às ${m.hhmm.replace(':', 'h')}, fora da janela`].filter(Boolean).join(' e ');
+      W('hazmat_mocangue', 'warn', `${ponta} na Ilha de Mocanguê: a exceção do ${m.artigo} da ${m.norma} vale ${regra}; aqui não se aplica (${why}). A proibição da ponte foi mantida, e a ilha só tem acesso por ela.`, { id: 'mocangue' });
+    }
+  }
+  return out;
 }
 
 async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotation> {
@@ -576,7 +792,7 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   // --- produto, grupo e quantidade limitada
   const group = hz.group;
   if (!hz.uns.length) {
-    W('hazmat_un_missing', 'info', 'Informe o nº ONU do produto: o grupo da Portaria SMT.GAB 051/2024 e a isenção por quantidade limitada dependem dele. Restrições aplicadas como grupo I.');
+    W('hazmat_un_missing', 'info', 'Informe o nº ONU do produto: o grupo da Portaria SMT.GAB 051/2024, a classe de risco (regras por classe, como a da Ponte Rio–Niterói) e a isenção por quantidade limitada dependem dele. Restrições aplicadas como grupo I e a todas as classes.');
   } else {
     summary.push(`${hz.uns.map(describeProduct).join('; ')} — ${group?.label ?? ''} em São Paulo (${group?.basis ?? LEGAL.gruposSP}).`);
     if (group?.ambiguous && !hz.localDelivery) {
@@ -595,7 +811,7 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   }
 
   const free = pl.minianelActive ? route.free?.line.geometry : undefined;
-  const [use, freeUse, aprm, touch, nearOD, emerg, paradas] = await Promise.all([
+  const [use, freeUse, aprm, touch, nearOD, emerg, paradas, tUse, zonasReg] = await Promise.all([
     minianelUse(line).catch(() => [] as UseSeg[]),
     free ? minianelUse(free).catch(() => [] as UseSeg[]) : Promise.resolve([] as UseSeg[]),
     aprmKm(line).catch(() => []),
@@ -603,6 +819,8 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
     trechosNearOD(ctx).catch(() => []),
     pointsNearRoute(line, 'emergencia', 250, 3000).catch(() => [] as NearRow[]),
     pointsNearRoute(line, 'parada_pp', 300, 50).catch(() => [] as NearRow[]),
+    trechoUse(line).catch(() => [] as TrechoUse[]),
+    zonasRegistradas(line).catch(() => [] as Record<string, any>[]),
   ]);
 
   // --- minianel: uso e horário estimado de passagem
@@ -625,7 +843,7 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
     summary.push(`Feriado (${pl.day.holiday.name}): a restrição de PP no Minianel não se aplica.`);
   }
   if (pl.fallbackIds.length) {
-    W('hazmat_layer_stale', 'info', 'Parte dos traçados de PP não casou com a malha viária atual (tiles do Valhalla mudaram): rode de novo os importadores hazmat_trechos_der e hazmat_minianel_vias.');
+    W('hazmat_layer_stale', 'info', 'Parte dos traçados de PP não casou com a malha viária atual (tiles do Valhalla mudaram): rode de novo os importadores hazmat_trechos_der, hazmat_trechos_sudeste e hazmat_minianel_vias.');
   }
   if (pl.transientIds.length) {
     W('hazmat_layer_unverified', 'warn', `O Valhalla não respondeu a tempo ao validar ${pl.transientIds.length} traçado(s) de PP: parte das vias restritas pode ter ficado fora desta rota. Calcule de novo em instantes.`);
@@ -666,13 +884,31 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
     }
   }
 
-  // --- trechos proibidos com origem/destino lindeiro
+  // --- trechos proibidos com origem/destino lindeiro (só as regras que alcançam este veículo; uma vez por regra e ponta)
+  const seenOD = new Set<string>();
   for (const t of nearOD) {
-    const exc = String(t.props.excecoes ?? '');
+    if (!pl.appliedIds.has(t.id)) continue;
+    const key = `${t.props.regra_id ?? t.id}:${t.which}`;
+    if (seenOD.has(key)) continue;
+    seenOD.add(key);
+    const exc = String(t.props.excecoes ?? '').replace(/\.$/, '');
+    const nome = t.props.via ?? t.name;
     const msg = /^nenhuma/i.test(exc)
-      ? `${t.which === 'origem' ? 'Origem' : 'Destino'} junto ao trecho proibido para PP ${t.name} (${t.props.norma}). A portaria não prevê exceção: comprove a necessidade à autoridade da via (${LEGAL.viaRestrita}).`
-      : `${t.which === 'origem' ? 'Origem' : 'Destino'} junto ao trecho proibido para PP ${t.name} (${t.props.norma}). Exceção: ${exc}.`;
-    W('hazmat_trecho_lindeiro', 'warn', msg, { id: t.id });
+      ? `${t.which === 'origem' ? 'Origem' : 'Destino'} junto ao trecho proibido para PP ${nome} (${t.props.norma}). A portaria não prevê exceção: comprove a necessidade à autoridade da via (${LEGAL.viaRestrita}).`
+      : `${t.which === 'origem' ? 'Origem' : 'Destino'} junto ao trecho proibido para PP ${nome} (${t.props.norma}). Exceção: ${exc}.`;
+    W('hazmat_trecho_lindeiro', 'warn', msg, { id: `${t.props.regra_id ? `trecho-${t.props.regra_id}` : t.id}:${t.which}` });
+  }
+
+  // --- trechos fora de SP: decisão por classe, isenção, exceção de Mocanguê e regras desativadas
+  const trechosOut = sudesteTrechos(pl, tUse, W, summary);
+  // --- regras registradas e não aplicadas, com aviso (Lei Rio 1.632/1990)
+  const { dow: dowSaida, hhmm: hhmmSaida } = localParts(ctx.at);
+  for (const z of zonasReg) {
+    if (!z.aviso) continue;
+    const perm = (z.janelas_permitidas ?? []) as TimeWindow[];
+    if (perm.length && inTimeWindows(hhmmSaida, dowSaida, perm)) continue;
+    W('hazmat_lei_municipal', 'info', `A rota passa pelo ${lcFirst(String(z.via))}, saindo às ${fmtH(ctx.at)}: ${lcFirst(String(z.regra))} (${z.norma}, ${z.artigo}). Regra registrada e NÃO aplicada — ${z.aviso_inativa ?? z.motivo_inativa}`,
+      { id: `registrada-${z.regra_id}` });
   }
 
   // --- mananciais (aviso)
@@ -717,6 +953,8 @@ async function annotate(ctx: RouteCtx, route: RouteGeom): Promise<LayerAnnotatio
   return {
     warnings, summary,
     data: {
+      trechos: trechosOut,
+      mocangue: pl.mocangue,
       produtos: hz.uns.map((u) => {
         const p = getProduct(u);
         return p ? { onu: u, nome: p.name, classe: p.cls, numero_risco: p.riskNumber, qtd_limitada_veiculo: p.lqVehicle } : { onu: u, desconhecido: true };
@@ -754,7 +992,15 @@ const KIND_LABEL: Record<string, string> = {
 function popupProps(kind: string, name: string | null, p: Record<string, any>): Record<string, unknown> {
   switch (kind) {
     case 'trecho_proibido':
-      return { name, tipo: KIND_LABEL[kind], regra: `${p.regra}, ${p.janela}, ${p.sentidos} os sentidos`, norma: `${p.norma}, ${p.artigo}`, publicacao: p.publicacao, excecoes: p.excecoes, geometria: p.geometria_fonte };
+      return {
+        name, tipo: p.ativa === false ? 'Trecho com regra de PP registrada (não aplicada)' : KIND_LABEL[kind],
+        regra: `${p.regra}, ${p.janela}, ${p.sentidos} os sentidos`, norma: `${p.norma}, ${p.artigo}`, publicacao: p.publicacao,
+        ...(p.regra_id ? {
+          classes: Array.isArray(p.classes_proibidas) ? fmtList(p.classes_proibidas) : 'todas',
+          isencao: p.isencao_texto, situacao: p.ativa === false ? `desativada: ${p.motivo_inativa}` : (p.situacao ?? 'vigente'),
+        } : {}),
+        excecoes: p.excecoes, ...(p.nota ? { nota: p.nota } : {}), geometria: p.geometria_fonte,
+      };
     case 'via_minianel':
       return { name, tipo: KIND_LABEL[kind], regra: `PP proibido ${WINDOW_TXT} (todos os grupos)`, norma: `${p.norma}, ${p.artigo}`, trecho: p.trecho_norma };
     case 'parada_pp':

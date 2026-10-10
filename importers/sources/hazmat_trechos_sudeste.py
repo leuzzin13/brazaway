@@ -50,7 +50,7 @@ LOCATE_RADIUS_M = 40
 # props da regra copiadas para cada pedaço de via
 RULE_KEYS = ('uf', 'municipios', 'jurisdicao', 'orgao', 'via', 'trecho_norma', 'sentidos', 'regra', 'classes_proibidas', 'janela',
              'isencao_qtd_limitada', 'isencao_texto', 'excecoes', 'penalidade', 'norma', 'artigo', 'publicacao', 'vigencia', 'url',
-             'confianca', 'situacao', 'ativa', 'motivo_inativa', 'excecao_mocangue')
+             'confianca', 'situacao', 'ativa', 'motivo_inativa', 'aviso_inativa', 'nota', 'excecao_mocangue')
 
 
 def strip_accents(s: str) -> str:
