@@ -1,0 +1,339 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3106200",
+  "municipio": "Belo Horizonte",
+  "uf": "MG",
+  "fonte_id": "belo-horizonte",
+  "fonte": {
+    "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado (Portaria BHTRANS DPR 138/2009) ; https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado (Portaria BHTRANS DPR 077/2014) ; https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado (Portaria BHTRANS DPR 004/2019) ; https://prefeitura.pbh.gov.br/sites/default/files/estrutura-de-governo/bhtrans/2021/mapa-restricao-cd-55ton-portal.pdf (mapa BHTrans de 14/02/2019)",
+    "licenca": "Atos oficiais de Belo Horizonte (DOM): domínio público (Lei 9.610/1998, art. 8º, IV). Mapa da BHTrans: material oficial, só como referência da área. Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap), inclusive o polígono da Área Central, que é o mapa da BHTrans georreferenciado e ajustado às quadras do OSM (derivado do OSM).",
+    "notas": "Vias montadas pelo nome no PBF local do OSM (o mesmo dos tiles do Valhalla). Área Central: mapa BHTrans georreferenciado e ajustado às quadras do OSM. Lei 7.794/1999 registrada desativada (confiança baixa) e Lei 7.648/1999 registrada revogada (Lei 12.016/2026). Doc: docs/layers/municipios/mun_bh.md."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "Belo Horizonte não define VUC. A circulação é livre para veículo com capacidade de carga até 5,5 t E comprimento até 6,50 m (Portaria BHTRANS DPR 138/2009, art. 1º, I, com a redação das Portarias 077/2014, art. 2º, e 004/2019, art. 1º). Informe a capacidade de carga do CRLV: sem ela o app considera a restrição (lado seguro).",
+  "regras": [
+    {
+      "id": "bh_area_central",
+      "tipo": "zona",
+      "regime": "Área Central",
+      "nome": "Área Central de BH (Hipercentro, Savassi, Lourdes, Assembleia/Barro Preto e Área Hospitalar)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "20:00"},
+        {"days": [6], "from": "07:00", "to": "15:00"}
+      ],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {"campo": "payload_t", "acima": 5.5},
+          {"campo": "comprimento_m", "acima": 6.5},
+          {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização da BHTRANS para casos excepcionais (Portaria BHTRANS DPR 138/2009, art. 9º), com endereço e horários",
+      "excecoes": [
+        "Autorização da BHTRANS para casos excepcionais que ultrapassem a capacidade e os horários, com endereço e horários (Portaria BHTRANS DPR 138/2009, art. 9º). A BHTrans emite a AETV para carga indivisível, betoneira, guindaste, mudança e utilidade pública (página 'Autorizações especiais', não o art. 9º)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria BHTRANS DPR 138/2009",
+          "artigo": "arts. 1º a 5º (perímetros); art. 1º, I (livre com capacidade até o limite e comprimento até 6,50 m), II (proibidos circulação e carga e descarga acima do limite ou de 6,50 m, seg–sex 7h–20h e sáb 7h–15h) e III (carretas e caminhões-trator em qualquer horário); art. 8º (um ano depois da implantação, as áreas dos arts. 2º a 5º passam à regra do art. 1º); art. 9º (autorização)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado",
+          "nota": "DOM de 18/12/2009, edição 3487; em vigor na publicação (art. 10)"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 077/2014",
+          "artigo": "art. 2º ('lotação' passa a 'capacidade de carga' na Portaria 138/2009)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado",
+          "nota": "DOM de 27/06/2014, edição 4585"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 004/2019",
+          "artigo": "art. 1º (limite de capacidade de carga de 5 t para 5,50 t nas Portarias 138/2009 e 077/2014) e art. 2º (vigência na publicação)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado",
+          "nota": "DOM de 29/01/2019, edição 5702"
+        },
+        {
+          "ato": "Mapa BHTrans 'Restrição CD' de 14/02/2019",
+          "artigo": "mapa oficial, sem artigo: polígono da Área Central usado para a geometria",
+          "url": "https://prefeitura.pbh.gov.br/sites/default/files/estrutura-de-governo/bhtrans/2021/mapa-restricao-cd-55ton-portal.pdf"
+        },
+        {
+          "ato": "BHTrans — página 'Áreas de carga, descarga e com restrições' (atualizada em 07/10/2021)",
+          "artigo": "tabela de horários, sem artigo: domingo livre; carretas e cavalos mecânicos proibidos 24 h",
+          "url": "https://prefeitura.pbh.gov.br/bhtrans/carga-urbana/areas-de-carga-descarga-e-com-restricoes"
+        }
+      ],
+      "nota": "O alvo é a CAPACIDADE DE CARGA (lotação do CRLV), não o PBT: acima de 5,5 t OU comprimento acima de 6,50 m. Carretas e caminhões-trator (cavalos mecânicos) são proibidos em qualquer horário (art. 1º, III); no app, 'carreta' = cavalo + semirreboque, caminhão + reboque e CVC (lado seguro para o caminhão + reboque). O ato só fixa horário de segunda a sábado: domingo é livre (como na tabela da BHTrans). O ato não fala em feriado: a regra vale também no feriado (interpretação do silêncio do ato). O ato proíbe também a carga e descarga; o app trata a circulação. Origem ou destino dentro da zona: o app não exclui a zona e avisa (política de produto, como na ZMRC de SP; o ato não traz essa exceção). Histórico: hipercentro desde 13/10/2009 (Portaria 111/2009, consolidada no art. 1º); Savassi (art. 2º) desde 25/01/2010, Lourdes (art. 3º) desde 26/04/2010, Barro Preto (art. 4º) desde 26/07/2010 e Hospitalar (art. 5º) desde 25/10/2010, com horário de pico no primeiro ano e a regra do art. 1º depois (art. 8º); 5 t até 28/01/2019. A vigência registrada (29/01/2019) é a da redação atual (5,5 t).",
+      "fonte_geometria": "Mapa BHTrans 'Restrição CD' (14/02/2019) georreferenciado pela pesquisa (similaridade + ICP contra o OSM, mediana 13 m) e ajustado às quadras do OSM (ODbL); conferido com os perímetros dos arts. 1º a 5º. A rota recua o polígono 20 m (vias-limite livres).",
+      "vigencia_inicio": "2019-01-29",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3106200_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono da Área Central do mapa BHTrans (mapa-restricao-cd-55ton-portal.pdf) georreferenciado e ajustado às quadras do OSM; ver docs/layers/municipios/mun_bh.md (Geometria)."
+        }
+      ]
+    },
+    {
+      "id": "bh_corredores",
+      "tipo": "via",
+      "regime": "Corredor de tráfego",
+      "nome": "Corredores de acesso à Área Central de BH (16 trechos)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "20:00"},
+        {"days": [6], "from": "07:00", "to": "09:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {"campo": "payload_t", "acima": 5.5},
+          {"campo": "comprimento_m", "acima": 6.5},
+          {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}
+        ]
+      },
+      "autorizacao": "Autorização da BHTRANS para casos excepcionais (Portaria BHTRANS DPR 138/2009, art. 9º)",
+      "excecoes": [
+        "Autorização da BHTRANS para casos excepcionais que ultrapassem a capacidade e os horários (Portaria BHTRANS DPR 138/2009, art. 9º)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria BHTRANS DPR 138/2009",
+          "artigo": "art. 6º (trechos de corredores de tráfego, desde 21/02/2011), I (livre até o limite) e II (proibidos acima do limite ou de 6,50 m, inclusive carretas e caminhões-trator, seg–sex 7h–9h e 17h–20h e sáb 7h–9h)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado",
+          "nota": "DOM de 18/12/2009, edição 3487"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 077/2014",
+          "artigo": "art. 1º, parágrafo único (o trecho da Av. do Contorno do art. 6º passa a ser R. Ceará–Av. Amazonas no sentido horário e Av. Amazonas–R. Andaluzita no sentido anti-horário) e art. 2º (capacidade de carga)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado",
+          "nota": "DOM de 27/06/2014, edição 4585"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 004/2019",
+          "artigo": "art. 1º (capacidade de carga de 5 t para 5,50 t)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado",
+          "nota": "DOM de 29/01/2019, edição 5702"
+        }
+      ],
+      "nota": "Capacidade de carga (não PBT) acima de 5,5 t OU comprimento acima de 6,50 m; carretas e cavalos mecânicos nas MESMAS janelas (art. 6º, II). Domingo livre; o ato não excetua feriados (vale no feriado). O art. 6º lista 15 itens; o parágrafo único do art. 1º da Portaria 077/2014 troca o 15º (Contorno) por dois, de sentido único: 16 trechos. Os incisos '6º-n' são a posição do trecho na lista do art. 6º. O ato proíbe também a carga e descarga nos trechos. Vigência registrada: a da redação atual (5,5 t, 29/01/2019); os corredores valem desde 21/02/2011.",
+      "fonte_geometria": "OSM (ODbL) pelo nome e pelas transversais do ato, no PBF local do Valhalla; o Elevado Castelo Branco está no OSM como Via Elevada Dona Helena Greco (old_name Elevado Castelo Branco)",
+      "vigencia_inicio": "2019-01-29",
+      "trechos": [
+        {"inciso": "6º-1", "via": ["Avenida Afonso Pena"], "de": ["Avenida dos Bandeirantes"], "ate": ["Avenida do Contorno"], "sentido": true, "descricao": "Av. Afonso Pena, entre a Av. do Contorno e a Av. Bandeirantes (pista sentido Contorno)"},
+        {"inciso": "6º-1", "via": ["Avenida Afonso Pena"], "de": ["Avenida do Contorno"], "ate": {"lonlat": [-43.9221047, -19.9457347]}, "sentido": true, "descricao": "Av. Afonso Pena, entre a Av. do Contorno e a Av. Bandeirantes (pista sentido Bandeirantes, parte 1)", "nota": "Pista sentido Bandeirantes montada em duas partes: o way 963780960 do OSM (5 m) é descartado pelo construtor e cortaria o caminho."},
+        {"inciso": "6º-1", "via": ["Avenida Afonso Pena"], "de": {"lonlat": [-43.9220812, -19.9457736]}, "ate": ["Avenida dos Bandeirantes"], "sentido": true, "descricao": "Av. Afonso Pena, entre a Av. do Contorno e a Av. Bandeirantes (pista sentido Bandeirantes, parte 2)", "nota": "Ver a parte 1."},
+        {"inciso": "6º-2", "via": ["Avenida Prudente de Morais"], "descricao": "Av. Prudente de Morais (toda a extensão)"},
+        {"inciso": "6º-3", "via": ["Avenida Raja Gabaglia", "Avenida Raja Gabáglia"], "de": ["Avenida Barão Homem de Melo"], "ate": ["Avenida do Contorno"], "sentido": true, "descricao": "Av. Raja Gabáglia, entre a Av. do Contorno e a Av. Barão Homem de Melo (pista sentido Contorno)"},
+        {"inciso": "6º-3", "via": ["Avenida Raja Gabaglia", "Avenida Raja Gabáglia"], "de": ["Avenida do Contorno"], "ate": {"lonlat": [-43.9585903, -19.9552597]}, "sentido": true, "descricao": "Av. Raja Gabáglia, entre a Av. do Contorno e a Av. Barão Homem de Melo (pista sentido bairro, parte 1)", "nota": "Pista sentido bairro montada em duas partes: o way 700804619 do OSM (5 m) é descartado pelo construtor e cortaria o caminho."},
+        {"inciso": "6º-3", "via": ["Avenida Raja Gabaglia", "Avenida Raja Gabáglia"], "de": {"lonlat": [-43.958566, -19.9552972]}, "ate": ["Avenida Barão Homem de Melo"], "sentido": true, "descricao": "Av. Raja Gabáglia, entre a Av. do Contorno e a Av. Barão Homem de Melo (pista sentido bairro, parte 2)", "nota": "Ver a parte 1."},
+        {"inciso": "6º-4", "via": ["Avenida Amazonas"], "de": ["Avenida do Contorno"], "ate": ["Avenida Silva Lobo"], "descricao": "Av. Amazonas, entre a Av. do Contorno e a Av. Silva Lobo"},
+        {"inciso": "6º-5", "via": ["Avenida Tereza Cristina", "Avenida Teresa Cristina"], "de": ["Avenida do Contorno"], "ate": ["Avenida Silva Lobo", "Viaduto Deputado Ulysses Guimarães"], "descricao": "Av. Tereza Cristina, entre a Av. do Contorno e a Av. Silva Lobo", "nota": "No OSM a Av. Silva Lobo cruza a Av. Tereza Cristina pelo Viaduto Deputado Ulysses Guimarães (a Silva Lobo termina a 64 m da avenida): a ponta é o viaduto."},
+        {"inciso": "6º-6", "via": ["Via Elevada Dona Helena Greco"], "descricao": "Elevado Castelo Branco (toda a extensão; no OSM, Via Elevada Dona Helena Greco)", "nota": "Renomeado: no OSM o nome atual é Via Elevada Dona Helena Greco, com old_name Elevado Castelo Branco."},
+        {"inciso": "6º-7", "via": ["Avenida Dom Pedro II"], "de": ["Avenida Nossa Senhora de Fátima"], "ate": ["Avenida Presidente Carlos Luz"], "descricao": "Av. Pedro II, entre a Av. Nossa Senhora de Fátima e a Av. Carlos Luz"},
+        {"inciso": "6º-8", "via": ["Avenida Presidente Antônio Carlos"], "de": ["Avenida Bernardo Vasconcelos"], "ate": ["Avenida Nossa Senhora de Fátima"], "ate_extremo": "sul", "sentido": true, "aproximado": true, "descricao": "Av. Antônio Carlos, entre a Av. Nossa Senhora de Fátima e a Av. Bernardo Vasconcelos (pista sentido Centro)", "nota": "No OSM a Av. Antônio Carlos começa no Complexo da Lagoinha, a 380 m da Av. Nossa Senhora de Fátima: aplicado do início da avenida (ponta sul) até a Av. Bernardo Vasconcelos; as alças do complexo não entram."},
+        {"inciso": "6º-8", "via": ["Avenida Presidente Antônio Carlos"], "de": {"lonlat": [-43.94156, -19.90989]}, "ate": ["Avenida Bernardo Vasconcelos"], "sentido": true, "aproximado": true, "descricao": "Av. Antônio Carlos, entre a Av. Nossa Senhora de Fátima e a Av. Bernardo Vasconcelos (pista sentido bairro)", "nota": "Pista sentido bairro a partir do início dela no Complexo da Lagoinha (as alças do complexo não entram)."},
+        {"inciso": "6º-9", "via": ["Túnel Presidente Tancredo Neves", "Túnel Prefeito Souza Lima"], "descricao": "Túneis Presidente Tancredo Neves e Prefeito Souza Lima (Lagoinha)"},
+        {"inciso": "6º-10", "via": ["Avenida Cristiano Machado"], "de": ["Túnel Presidente Tancredo Neves", "Túnel Prefeito Souza Lima"], "ate": ["Avenida Silviano Brandão"], "descricao": "Av. Cristiano Machado, entre os Túneis Presidente Tancredo Neves e Prefeito Souza Lima e a Av. Silviano Brandão"},
+        {"inciso": "6º-11", "via": ["Avenida dos Andradas"], "de": ["Avenida do Contorno"], "ate": ["Avenida Silviano Brandão"], "descricao": "Av. dos Andradas, entre a Av. do Contorno e a Av. Silviano Brandão"},
+        {"inciso": "6º-12", "via": ["Rua Itajubá", "Rua Itajuba"], "de": ["Avenida do Contorno"], "ate": ["Rua Pouso Alegre"], "descricao": "R. Itajubá, entre a Av. do Contorno e a R. Pouso Alegre"},
+        {"inciso": "6º-13", "via": ["Rua Pouso Alegre"], "de": ["Avenida Flávio dos Santos"], "ate": ["Rua Itajubá", "Rua Itajuba"], "descricao": "R. Pouso Alegre, entre a Av. Flávio dos Santos e a R. Jacuí (parte leste, até a R. Itajubá)", "nota": "No OSM a R. Pouso Alegre tem mão única para oeste entre a Av. Flávio dos Santos e a R. Itajubá e para leste entre a R. Jacuí e a R. Itajubá: o trecho do ato foi montado em duas partes."},
+        {"inciso": "6º-13", "via": ["Rua Pouso Alegre"], "de": ["Rua Jacuí", "Rua Jacui"], "ate": ["Rua Itajubá", "Rua Itajuba"], "descricao": "R. Pouso Alegre, entre a Av. Flávio dos Santos e a R. Jacuí (parte oeste, da R. Jacuí à R. Itajubá)", "nota": "Ver a parte leste."},
+        {"inciso": "6º-14", "via": ["Rua Jacuí", "Rua Jacui"], "de": ["Rua Pouso Alegre"], "ate": ["Avenida Cristiano Machado"], "descricao": "R. Jacuí, entre a R. Pouso Alegre e a Av. Cristiano Machado"},
+        {"inciso": "6º-15a", "via": ["Avenida do Contorno"], "de": ["Rua Ceará"], "ate": ["Avenida Amazonas"], "sentido": true, "descricao": "Av. do Contorno, entre a R. Ceará e a Av. Amazonas, no sentido horário (Portaria 077/2014, art. 1º, parágrafo único)"},
+        {"inciso": "6º-15b", "via": ["Avenida do Contorno"], "de": ["Avenida Amazonas"], "ate": ["Rua Andaluzita"], "sentido": true, "descricao": "Av. do Contorno, entre a Av. Amazonas e a R. Andaluzita, no sentido anti-horário (Portaria 077/2014, art. 1º, parágrafo único)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3106200_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "bh_contorno_toboga",
+      "tipo": "via",
+      "regime": "Tobogã da Av. do Contorno",
+      "nome": "Tobogã da Av. do Contorno (dois trechos de sentido único, 24 h)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {"campo": "payload_t", "acima": 5.5},
+          {"campo": "comprimento_m", "acima": 6.5},
+          {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}
+        ]
+      },
+      "autorizacao": "Autorização da BHTRANS para casos excepcionais (Portaria BHTRANS DPR 077/2014, art. 3º)",
+      "excecoes": [
+        "Autorização da BHTRANS para casos excepcionais que ultrapassem a capacidade de carga e os horários (Portaria BHTRANS DPR 077/2014, art. 3º)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria BHTRANS DPR 077/2014",
+          "artigo": "art. 1º (Av. do Contorno entre R. dos Inconfidentes e R. Ceará e entre R. Andaluzita e Av. Afonso Pena, 'neste sentido', desde 01/07/2014), I (livre até o limite) e II (proibidos acima do limite ou de 6,50 m, inclusive carretas e caminhões-trator, em qualquer horário); art. 3º (autorização); art. 4º (revoga a Portaria 139/2013)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado",
+          "nota": "DOM de 27/06/2014, edição 4585"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 004/2019",
+          "artigo": "art. 1º (capacidade de carga de 5 t para 5,50 t)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado",
+          "nota": "DOM de 29/01/2019, edição 5702"
+        }
+      ],
+      "nota": "Proibido em qualquer horário, todos os dias, para capacidade de carga acima de 5,5 t OU comprimento acima de 6,50 m, inclusive carretas e cavalos mecânicos; também a carga e descarga. Só no sentido do ato: R. dos Inconfidentes → R. Ceará (sentido horário, rumo oeste) e R. Andaluzita → Av. Afonso Pena (sentido anti-horário, rumo leste). Em vigor desde 01/07/2014 (5 t até 28/01/2019); vigência registrada: a da redação atual (29/01/2019).",
+      "fonte_geometria": "OSM (ODbL), Av. do Contorno no sentido do ato",
+      "vigencia_inicio": "2019-01-29",
+      "trechos": [
+        {"inciso": "1º-a", "via": ["Avenida do Contorno"], "de": ["Rua dos Inconfidentes"], "ate": ["Rua Ceará"], "sentido": true, "descricao": "Av. do Contorno, entre a R. dos Inconfidentes e a R. Ceará, neste sentido (horário)"},
+        {"inciso": "1º-b", "via": ["Avenida do Contorno"], "de": ["Rua Andaluzita"], "ate": ["Avenida Afonso Pena"], "sentido": true, "descricao": "Av. do Contorno, entre a R. Andaluzita e a Av. Afonso Pena, neste sentido (anti-horário)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3106200_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "bh_nsra_carmo",
+      "tipo": "via",
+      "regime": "Av. Nossa Senhora do Carmo",
+      "nome": "Av. Nossa Senhora do Carmo, entre a Av. do Contorno e a R. Professor Rodrigues Seabra",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "20:00"},
+        {"days": [6], "from": "07:00", "to": "15:00"}
+      ],
+      "variantes": [
+        {
+          "classe": "carreta",
+          "quando": {"qualquer": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {"campo": "payload_t", "acima": 5.5},
+          {"campo": "comprimento_m", "acima": 6.5},
+          {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}
+        ]
+      },
+      "autorizacao": "Autorização da BHTRANS para casos excepcionais (Portaria BHTRANS DPR 138/2009, art. 9º)",
+      "excecoes": [
+        "Autorização da BHTRANS para casos excepcionais que ultrapassem a capacidade e os horários (Portaria BHTRANS DPR 138/2009, art. 9º)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria BHTRANS DPR 138/2009",
+          "artigo": "art. 7º (Av. Senhora do Carmo, BR-356, entre a Av. do Contorno e a R. Professor Rodrigues Seabra, desde 25/01/2010), I (livre até o limite), II (proibidos acima do limite ou de 6,50 m, seg–sex 7h–20h e sáb 7h–15h) e III (carretas e caminhões-trator em qualquer horário)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/199503/publicado",
+          "nota": "DOM de 18/12/2009, edição 3487"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 077/2014",
+          "artigo": "art. 2º (capacidade de carga)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/293524/publicado"
+        },
+        {
+          "ato": "Portaria BHTRANS DPR 004/2019",
+          "artigo": "art. 1º (capacidade de carga de 5 t para 5,50 t)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/375340/publicado"
+        },
+        {
+          "ato": "DOM — notícia 'Fiscalização de caminhões é reforçada na Avenida Nossa Senhora do Carmo' (2012)",
+          "artigo": "notícia oficial, sem artigo: detector eletrônico no nº 2.135, sentido bairro/Centro, nas 3 faixas, 24 h",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/262496/publicado"
+        }
+      ],
+      "nota": "Capacidade de carga (não PBT) acima de 5,5 t OU comprimento acima de 6,50 m: seg–sex 7h–20h e sáb 7h–15h; carretas e cavalos mecânicos em qualquer horário. Domingo livre; o ato não excetua feriados (vale no feriado). Os dois sentidos (o ato não fixa sentido). Fiscalização eletrônica (DTLP) no nº 2.135 e posto 24 h da BR-356 (Ponteio). A Lei 7.794/1999 (acima de 2 t, 7h–20h, avenida inteira) está registrada à parte, desativada. Vigência registrada: a da redação atual (29/01/2019); o trecho é restrito desde 25/01/2010.",
+      "fonte_geometria": "OSM (ODbL) pelo nome e pelas transversais do ato",
+      "vigencia_inicio": "2019-01-29",
+      "trechos": [
+        {"inciso": "7º", "via": ["Avenida Nossa Senhora do Carmo"], "de": ["Avenida do Contorno"], "ate": ["Rua Professor Rodrigues Seabra"], "descricao": "Av. Nossa Senhora do Carmo (BR-356), entre a Av. do Contorno e a R. Professor Rodrigues Seabra"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3106200_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "bh_lei_7794_1999",
+      "tipo": "via",
+      "regime": "Lei 7.794/1999 (capacidade acima de 2 t)",
+      "nome": "Av. Nossa Senhora do Carmo — Lei 7.794/1999 (vigência incerta)",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa: a Lei 7.794/1999 não aparece revogada no DOM (nem nos Anexos das Leis 11.520/2023 e 12.016/2026), mas a BHTrans aplica na avenida a Portaria BHTRANS DPR 138/2009, art. 7º (5,5 t ou 6,50 m). Situação jurídica incerta: registrada e não aplicada.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "20:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 2}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 7.794/1999",
+          "artigo": "art. 1º (caminhões com capacidade de carga acima de 2.000 kg e ônibus interestaduais, das 7h às 20h, sem limitar dias)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/58857/publicado",
+          "nota": "DOM de 04/09/1999"
+        }
+      ],
+      "nota": "O texto não limita os dias nem excetua feriados: registrada com todos os dias, 7h–20h. Só gera aviso informativo quando a rota passa na avenida com veículo que seria alvo.",
+      "fonte_geometria": "OSM (ODbL), avenida inteira",
+      "vigencia_inicio": null,
+      "trechos": [
+        {"inciso": "1º", "via": ["Avenida Nossa Senhora do Carmo"], "descricao": "Av. Nossa Senhora do Carmo (toda a extensão no município)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3106200_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "bh_lei_7648_1999",
+      "tipo": "zona",
+      "regime": "Lei 7.648/1999 (revogada)",
+      "nome": "Lei 7.648/1999 — área da Av. do Contorno e 11 corredores, mais de 1 eixo e capacidade acima de 8 t (REVOGADA, não aplicada)",
+      "status": "revogada",
+      "status_motivo": "Revogada pela Lei 12.016/2026, art. 1º, que inclui a Lei 7.648/1999 no Anexo I (item LXV, leis com declaração de inconstitucionalidade) da Lei 11.520/2023, cujo art. 1º revoga as leis dos anexos; vigência 90 dias após a publicação de 22/05/2026 (art. 4º), em 20/08/2026.",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "19:30"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "todas": [{"campo": "eixos", "acima": 1}, {"campo": "payload_t", "acima": 8}]},
+      "vuc": null,
+      "excecoes": [
+        "Valores bancários, combustível/GLP, coleta de lixo, manutenção de emergência, socorro, mudança residencial e caminhão-betoneira (art. 1º, § 1º) — registro histórico"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 7.648/1999",
+          "artigo": "art. 1º, I a XII (área delimitada pela Av. do Contorno, inclusive, e 11 corredores; mais de 1 eixo e capacidade acima de 8 t, seg–sex 7h–19h30) e art. 2º (carga e descarga no hipercentro)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/53738/publicado"
+        },
+        {
+          "ato": "Lei municipal 12.016/2026",
+          "artigo": "art. 1º (Anexo I da Lei 11.520/2023, item LXV) e art. 4º (vigência em 90 dias)",
+          "url": "https://api-dom.pbh.gov.br/api/v1/edicoes/atos/483485/publicado",
+          "nota": "DOM de 22/05/2026, edição 7504"
+        }
+      ],
+      "nota": "Registro histórico, nunca aplicado. Geometria só do art. 1º, I (área da Av. do Contorno, inclusive); os corredores dos incisos II a XII não foram desenhados. Vigência até 19/08/2026: 90 dias contados com a data da publicação (LC 95/1998, art. 8º, § 1º).",
+      "fonte_geometria": "OSM (ODbL): contorno externo das pistas da Av. do Contorno",
+      "vigencia_fim": "2026-08-20",
+      "source_id": "bh-lei-7648-1999-revogada",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3106200_lei_7648_contorno.geojson",
+          "construir": "manual",
+          "como_gerar": "Contorno externo das pistas da Av. do Contorno no OSM (faixa de 12 m, simplificado a 5 m); ver docs/layers/municipios/mun_bh.md."
+        }
+      ]
+    }
+  ]
+}
