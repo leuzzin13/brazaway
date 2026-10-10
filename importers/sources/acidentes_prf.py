@@ -104,9 +104,11 @@ def _cached_events() -> list[dict]:
     return _events
 
 
-def covered_cells() -> set[tuple[int, int]]:
-    """Células de 250 m (com 1 célula de folga) das BRs em SP: usadas pelo Infosiga para não duplicar acidentes."""
-    return dilate({cell_of(e['lon'], e['lat']) for e in _cached_events() if e['lon'] is not None and in_bbox(e['lon'], e['lat'])})
+def covered_cells(bbox: tuple[float, float, float, float] | None = None) -> set[tuple[int, int]]:
+    """Células de 250 m (com 1 célula de folga) com acidentes da PRF dentro do bbox (padrão: estado de SP). Usadas pelas
+    fontes estaduais (Infosiga em SP, SEJUSP/REDS em MG) para não duplicar acidentes das BRs."""
+    kw = {'bbox': bbox} if bbox else {}
+    return dilate({cell_of(e['lon'], e['lat']) for e in _cached_events() if e['lon'] is not None and in_bbox(e['lon'], e['lat'], **kw)})
 
 
 def fetch():
