@@ -111,6 +111,47 @@ describe('balanças: par norte/sul no mesmo km (SP-332 km 44,5, DER-SP)', () => 
   });
 });
 
+describe('balanças: mesma balança em duas fontes (Castello Branco, SP-280)', () => {
+  // ARTESP (posição exata) e DER-SP (rodovia + km, posição aproximada) publicam os mesmos PGF: km 74 e km 95 (leste).
+  const CAPITAL = { lat: -23.52, lon: -46.78 }, INTERIOR = { lat: -23.30, lon: -47.60 };
+  let der74: string, der95: string, art95: string;
+  beforeAll(async () => {
+    await waitForStack();
+    const q = async (src: string, km: number) => (await pool.query(`select id::text from data_features where layer_id = 'balancas'
+      and source = $1 and props->>'rodovia' = 'SP-280' and abs((props->>'km')::float - $2) < 0.01`, [src, km])).rows.map((r: any) => r.id);
+    [der74] = await q('der-sp', 74); [der95] = await q('der-sp', 95.2); [art95] = await q('artesp', 95);
+    expect(der74 && der95 && art95).toBeTruthy();
+  });
+
+  it('sentido interior: a cópia DER-SP do posto do outro sentido sai junto com ele (não vira "não confirmado")', async () => {
+    const r = await route({ origin: CAPITAL, destination: INTERIOR, vehicle: { preset: 'carreta' }, departure_at: WEEKDAY });
+    expect(r.status).toBe(200);
+    const d = r.body.layers.balancas.data;
+    const ids = d.balancas.map((b: any) => b.id);
+    expect(ids).not.toContain(der74);
+    expect(ids).not.toContain(der95);
+    const omit = d.omitidas_outro_sentido.find((o: any) => /km 74/.test(o.nome));
+    expect(omit, JSON.stringify(d.omitidas_outro_sentido)).toBeTruthy();
+    expect(omit.fontes).toEqual(expect.arrayContaining(['artesp', 'der-sp']));
+    expect(d.sentido_oposto_omitidas).toBe(d.omitidas_outro_sentido.length);
+  });
+
+  it('sentido capital: ARTESP km 95 e DER-SP km 95,2 viram uma balança só, com a posição exata', async () => {
+    const r = await route({ origin: INTERIOR, destination: CAPITAL, vehicle: { preset: 'carreta' }, departure_at: WEEKDAY });
+    expect(r.status).toBe(200);
+    const list = r.body.layers.balancas.data.balancas;
+    const km95 = list.filter((b: any) => b.id === art95 || b.id === der95);
+    expect(km95.length, JSON.stringify(list)).toBe(1);
+    expect(km95[0].id).toBe(art95);
+    expect(km95[0].fontes).toEqual(expect.arrayContaining(['artesp', 'der-sp']));
+    expect(km95[0].no_sentido).toBe('provavel');
+    // o resumo separa as confirmadas das não confirmadas
+    const s0 = r.body.layers.balancas.summary[0];
+    const unsure = list.filter((b: any) => b.no_sentido === 'incerto').length;
+    expect(s0).toMatch(new RegExp(`^${list.length - unsure} balança\\(s\\) no sentido da rota`));
+  });
+});
+
 describe('regra de sentido (unitário)', () => {
   it('lado da via decide com posição exata; rótulo sozinho nunca omite', () => {
     expect(directionVerdict('norte', 330, -1, true, 40).v).toBe('provavel');    // à direita, rótulo concorda

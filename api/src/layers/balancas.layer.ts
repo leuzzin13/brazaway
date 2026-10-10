@@ -17,6 +17,11 @@ import type { LayerWarning, RouteLayer } from './types.js';
  *     sentido norte), então ela é listada como "sentido não confirmado";
  *  3. "crescente/decrescente" (ANTT) só pelo lado. Sem lado nem rótulo, "não confirmado".
  * Só a regra 1 omite balança ("outro sentido").
+ *
+ * Mesma balança em mais de uma fonte (ARTESP exata + DER-SP por rodovia/km, por exemplo): as entradas são juntadas
+ * ANTES de filtrar o sentido, e o veredito do grupo é o da fonte de melhor posição. Assim a cópia aproximada de um posto
+ * que o lado da via mostrou ser do outro sentido também sai da lista (antes ela sobrava como "não confirmado").
+ * Nunca junta rótulos de sentido diferentes nem duas posições exatas que o lado da via põe em pistas opostas.
  */
 const ID = 'balancas';
 const NEAR_M = 300;
@@ -82,9 +87,9 @@ const SIDE_TXT = 'lado da via (posto à direita de quem ele fiscaliza)';
  * Sentido da balança em relação à rota. `bearing` = rumo geral da rota no trecho (corda longa), `side` = +1 esquerda /
  * −1 direita, `exact` = posição exata na fonte, `distM` = distância do ponto à rota.
  */
-export function directionVerdict(sentido: string | null, bearing: number | null, side: number, exact: boolean, distM: number): { v: Verdict; como: string } {
+export function directionVerdict(sentido: string | null, bearing: number | null, side: number, exact: boolean, distM: number): { v: Verdict; como: string; porLado: boolean } {
   const s = (sentido ?? '').toLowerCase();
-  if (s.includes('+') || s.includes('ambos')) return { v: 'sim', como: 'atende os dois sentidos' };
+  if (s.includes('+') || s.includes('ambos')) return { v: 'sim', como: 'atende os dois sentidos', porLado: false };
   let label: 'a_favor' | 'contra' | null = null;
   if (s in CARD && bearing != null) {
     const c = Math.cos(((bearing - CARD[s]) * Math.PI) / 180);
@@ -94,11 +99,11 @@ export function directionVerdict(sentido: string | null, bearing: number | null,
   if (exact && distM >= SIDE_MIN_M) {
     const v: Verdict = side < 0 ? 'provavel' : 'nao';
     const disagree = (label === 'a_favor' && v === 'nao') || (label === 'contra' && v === 'provavel');
-    return { v, como: SIDE_TXT + (disagree ? `; rótulo "${s}" ignorado (sentido nominal da rodovia)` : '') };
+    return { v, como: SIDE_TXT + (disagree ? `; rótulo "${s}" ignorado (sentido nominal da rodovia)` : ''), porLado: true };
   }
-  if (label === 'a_favor') return { v: 'provavel', como: `sentido "${s}" x rumo geral da rota` };
-  if (label === 'contra') return { v: 'incerto', como: `rótulo "${s}" indica o outro sentido, mas é o sentido nominal da rodovia; posição sem lado definido` };
-  return { v: 'incerto', como: sentido ? `sentido "${s}" sem referência de lado ou rumo` : 'sentido não informado pela fonte' };
+  if (label === 'a_favor') return { v: 'provavel', como: `sentido "${s}" x rumo geral da rota`, porLado: false };
+  if (label === 'contra') return { v: 'incerto', como: `rótulo "${s}" indica o outro sentido, mas é o sentido nominal da rodovia; posição sem lado definido`, porLado: false };
+  return { v: 'incerto', como: sentido ? `sentido "${s}" sem referência de lado ou rumo` : 'sentido não informado pela fonte', porLado: false };
 }
 
 function sameDirectionLabel(a: string | null, b: string | null): boolean {
@@ -106,6 +111,24 @@ function sameDirectionLabel(a: string | null, b: string | null): boolean {
   const x = a.toLowerCase(), y = b.toLowerCase();
   if (x.includes('+') || y.includes('+') || x.includes('ambos') || y.includes('ambos')) return true;
   return x === y;
+}
+
+type Cand = WeighOnRoute & { _rank: number; _porLado: boolean };
+const rodNorm = (r: string | null) => (r ?? '').replace(/\W/g, '').toUpperCase();
+
+/**
+ * Duas entradas são o MESMO posto? Rótulos de sentido compatíveis; nunca duas decisões pelo lado da via que discordam
+ * (um posto em cada pista); e perto: mesma rodovia com km da fonte a até 0,5 km (posição aproximada do DER-SP pode
+ * cair 1–2 km ao lado) ou até 1 km ao longo da rota; rodovias diferentes/sem rodovia, até 400 m.
+ */
+function sameStation(k: Cand, c: Cand): boolean {
+  if (!sameDirectionLabel(k.sentido, c.sentido)) return false;
+  if (k._porLado && c._porLado && (k.no_sentido === 'nao') !== (c.no_sentido === 'nao')) return false;
+  const dRota = Math.abs(k.km_rota - c.km_rota);
+  const sameRod = !!k.rodovia && rodNorm(k.rodovia) === rodNorm(c.rodovia);
+  if (!sameRod) return dRota <= 0.4;
+  if (k.km != null && c.km != null && Math.abs(Number(k.km) - Number(c.km)) <= 0.5 && dRota <= 3) return true;
+  return dRota <= 1.0;
 }
 
 function rank(r: NearRouteRow): number {
@@ -159,61 +182,66 @@ const layer: RouteLayer = {
     const line = route.line;
     const lenKm = turf.length(line, { units: 'kilometers' });
     const rows = await featuresNearRoute(ID, line.geometry, NEAR_M, { limit: 1000 });
-    const cands: (WeighOnRoute & { _rank: number })[] = [];
+    const cands: Cand[] = [];
     for (const r of rows) {
       const p = r.props as Props;
       const pt = (r.geometry as GeoJSON.Point).coordinates as [number, number];
       const g = geometryAt(line, lenKm, r.fraction, pt);
       const exact = p.precisao === 'exata';
-      const { v, como } = directionVerdict(p.sentido ?? null, g.bearing, g.side, exact, r.distance_m);
+      const { v, como, porLado } = directionVerdict(p.sentido ?? null, g.bearing, g.side, exact, r.distance_m);
       // posição aproximada (rodovia+km) longe da linha: provavelmente outra via paralela
       if (!exact && r.distance_m > 120) continue;
       cands.push({
         id: r.id, nome: r.name ?? 'Balança', tipo: KIND[r.kind ?? 'outro'] ?? 'outro',
         km_rota: Math.round(r.fraction * route.distance_km * 10) / 10,
-        lat: pt[1], lon: pt[0], rodovia: p.rodovia ?? null, km: p.km ?? null, sentido: p.sentido ?? null,
+        lat: pt[1], lon: pt[0], rodovia: p.rodovia ?? null, km: p.km != null && Number.isFinite(Number(p.km)) ? Number(p.km) : null, sentido: p.sentido ?? null,
         no_sentido: v, como, distancia_m: Math.round(r.distance_m * 10) / 10,
         lado: r.distance_m >= 1 ? (g.side < 0 ? 'direita' : 'esquerda') : null,
         administrador: p.administrador ?? null, precisao: p.precisao ?? null, fontes: [r.source],
         disponibilidade_pct: p.disponibilidade_pct ?? null, disponibilidade_ref: p.disponibilidade_ref ?? null,
-        _rank: rank(r),
+        _rank: rank(r), _porLado: porLado,
       });
     }
-    const opposite = cands.filter((c) => c.no_sentido === 'nao').length;
-    // mesma balança em mais de uma fonte: junta (mesma rodovia até 1 km, senão 400 m ao longo da rota). Nunca junta
-    // balanças com rótulos de sentido diferentes (par "norte"/"sul" no mesmo km = dois postos, um em cada pista).
-    const kept: (WeighOnRoute & { _rank: number })[] = [];
-    for (const c of cands.filter((x) => x.no_sentido !== 'nao').sort((a, b) => a.km_rota - b.km_rota)) {
-      const prev = kept.find((k) => {
-        if (!sameDirectionLabel(k.sentido, c.sentido)) return false;
-        const sameRod = k.rodovia && c.rodovia && k.rodovia.replace(/\W/g, '') === c.rodovia.replace(/\W/g, '');
-        return Math.abs(k.km_rota - c.km_rota) <= (sameRod ? 1.0 : 0.4);
-      });
-      if (!prev) { kept.push(c); continue; }
-      // posição/nome da fonte de melhor posição; o sentido, se ela não decide, vem da outra fonte DO MESMO posto
-      // (rótulos compatíveis, ver acima), com a fonte indicada
-      const [best, other] = c._rank < prev._rank ? [c, prev] : [prev, c];
-      const merged = { ...best, fontes: [...new Set([...best.fontes, ...other.fontes])], sentido: best.sentido ?? other.sentido };
-      if (best.tipo !== 'fixa' && other.tipo === 'fixa') merged.tipo = 'fixa';
-      if (best.no_sentido === 'incerto' && other.no_sentido !== 'incerto') {
-        merged.no_sentido = other.no_sentido;
-        merged.como = `${other.como} (pela posição na fonte ${other.fontes.join('/')})`;
+    // mesma balança em mais de uma fonte: junta ANTES de filtrar o sentido (ver sameStation). Posição/nome vêm da fonte de
+    // melhor posição; o sentido, se ela não decide, vem da outra fonte DO MESMO posto, com a fonte indicada.
+    const groups: { best: Cand; members: Cand[] }[] = [];
+    for (const c of [...cands].sort((a, b) => a.km_rota - b.km_rota)) {
+      const g = groups.find((x) => x.members.every((m) => sameStation(m, c)));
+      if (g) { g.members.push(c); if (c._rank < g.best._rank) g.best = c; } else groups.push({ best: c, members: [c] });
+    }
+    const merged: Cand[] = groups.map(({ best, members }) => {
+      const others = members.filter((m) => m !== best).sort((a, b) => a._rank - b._rank);
+      const out: Cand = { ...best, fontes: [...new Set(members.flatMap((m) => m.fontes))], sentido: best.sentido ?? others.find((o) => o.sentido)?.sentido ?? null };
+      if (out.tipo !== 'fixa' && others.some((o) => o.tipo === 'fixa')) out.tipo = 'fixa';
+      const decisive = others.find((o) => o.no_sentido !== 'incerto');
+      if (best.no_sentido === 'incerto' && decisive) {
+        out.no_sentido = decisive.no_sentido;
+        out.como = `${decisive.como} (pela posição na fonte ${decisive.fontes.join('/')})`;
       }
-      kept[kept.indexOf(prev)] = merged;
-    }
-    const list: WeighOnRoute[] = kept.map(({ _rank, ...k }) => k);
+      return out;
+    });
+    const opposite = merged.filter((c) => c.no_sentido === 'nao').length;
+    const kept = merged.filter((c) => c.no_sentido !== 'nao');
+    const list: WeighOnRoute[] = kept.map(({ _rank, _porLado, ...k }) => k);
 
     const summary: string[] = [];
     const warnings: LayerWarning[] = [];
+    const confirmed = list.filter((b) => b.no_sentido !== 'incerto');
+    const unsure = list.length - confirmed.length;
+    const unsureTxt = unsure ? `${unsure} com sentido não confirmado (posição aproximada ou sentido não informado pela fonte)` : '';
     if (!list.length) {
       summary.push('Nenhuma balança conhecida no sentido da rota.');
     } else {
-      const fixas = list.filter((b) => b.tipo === 'fixa').length;
-      const moveis = list.filter((b) => b.tipo === 'movel').length;
-      const wim = list.filter((b) => b.tipo === 'hs_wim').length;
-      const outros = list.length - fixas - moveis - wim;
-      const parts = [fixas && `${fixas} fixa(s)`, moveis && `${moveis} ponto(s) de pesagem móvel`, wim && `${wim} HS-WIM`, outros && `${outros} sem tipo`].filter(Boolean);
-      summary.push(`${list.length} balança(s) no sentido da rota: ${parts.join(', ')}.`);
+      if (confirmed.length) {
+        const fixas = confirmed.filter((b) => b.tipo === 'fixa').length;
+        const moveis = confirmed.filter((b) => b.tipo === 'movel').length;
+        const wim = confirmed.filter((b) => b.tipo === 'hs_wim').length;
+        const outros = confirmed.length - fixas - moveis - wim;
+        const parts = [fixas && `${fixas} fixa(s)`, moveis && `${moveis} ponto(s) de pesagem móvel`, wim && `${wim} HS-WIM`, outros && `${outros} sem tipo`].filter(Boolean);
+        summary.push(`${confirmed.length} balança(s) no sentido da rota: ${parts.join(', ')}${unsure ? `; e mais ${unsureTxt}` : ''}.`);
+      } else {
+        summary.push(`Nenhuma balança confirmada no sentido da rota; ${unsureTxt}:`);
+      }
       for (const b of list.slice(0, 10)) {
         const tipo = b.tipo === 'movel' && /m[oó]vel/i.test(b.nome) ? 'operação eventual' : KIND_TXT[b.tipo];
         summary.push(`• km ${Math.round(b.km_rota)}: ${b.nome} — ${tipo}${b.no_sentido === 'incerto' ? ' · sentido não confirmado' : ''}`);
@@ -227,7 +255,8 @@ const layer: RouteLayer = {
         message: `Balança ${b.tipo === 'hs_wim' ? 'com pesagem em movimento' : 'fixa'} no km ${Math.round(b.km_rota)} da rota: ${b.nome}. Entre se estiver sinalizada aberta (CTB art. 209).`,
       });
     }
-    return { summary, warnings, data: { balancas: list, sentido_oposto_omitidas: opposite } };
+    const omitted = merged.filter((c) => c.no_sentido === 'nao').map((c) => ({ id: c.id, nome: c.nome, km_rota: c.km_rota, fontes: c.fontes, como: c.como }));
+    return { summary, warnings, data: { balancas: list, sentido_oposto_omitidas: opposite, omitidas_outro_sentido: omitted } };
   },
 };
 
