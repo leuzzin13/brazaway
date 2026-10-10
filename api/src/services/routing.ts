@@ -67,8 +67,32 @@ function overlapRatio(route: GeoJSON.Feature<GeoJSON.LineString>, coords: [numbe
   const hits = pts.filter((c) => turf.pointToLineDistance(turf.point(c), route, { units: 'meters' }) <= tolM).length;
   return hits / pts.length;
 }
+/**
+ * A rota usa o trecho penalizado NO MESMO SENTIDO? (linhas de mão única ou penalizadas só num sentido:
+ * a rota que passa pela pista contrária não "usa" o trecho). Amostra pontos da linha que ficam perto da rota e
+ * compara o rumo local da linha com o rumo da rota no ponto mais próximo (diferença < 90°).
+ */
 function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostLine): boolean {
-  return overlapRatio(route, cl.coordinates) >= 0.5;
+  const coords = cl.coordinates;
+  if (coords.length < 2) return overlapRatio(route, coords) >= 0.5;
+  const step = Math.max(1, Math.ceil((coords.length - 1) / 30));
+  let near = 0, same = 0, total = 0;
+  for (let i = 0; i < coords.length - 1; i += step) {
+    total++;
+    const a = coords[i], b = coords[i + 1];
+    const mid: [number, number] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const np = turf.nearestPointOnLine(route, turf.point(mid), { units: 'meters' });
+    if ((np.properties.dist ?? Infinity) > 15) continue;
+    near++;
+    const idx = Math.min(np.properties.index ?? 0, route.geometry.coordinates.length - 2);
+    const r0 = route.geometry.coordinates[idx], r1 = route.geometry.coordinates[idx + 1];
+    const bl = turf.bearing(turf.point(a), turf.point(b));
+    const br = turf.bearing(turf.point(r0 as [number, number]), turf.point(r1 as [number, number]));
+    const diff = Math.abs(((bl - br + 540) % 360) - 180);
+    if (diff < 90) same++;
+  }
+  if (!total || near / total < 0.5) return false;
+  return same / near >= 0.5;
 }
 function itemLabel(b: AvoidedItem): string {
   if (b.kind === 'zone') return b.name ?? 'zona';
@@ -234,6 +258,22 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       warnings.push({ code: 'layer_error', layer: l.meta.id, severity: 'info', message: `Camada "${l.meta.label}" falhou: ${(err as Error).message}` });
     }
   }));
+
+  // Deduplicação: o mesmo item pode chegar por várias linhas (mão dupla, nó em várias vias, cadeias de trechos)
+  const seenAvoided = new Set<string>();
+  const avoidedUniq = avoided.filter((a) => {
+    const k = `${a.kind}:${a.layer ?? ''}:${a.id}`;
+    if (seenAvoided.has(k)) return false;
+    seenAvoided.add(k); return true;
+  });
+  const seenWarn = new Set<string>();
+  const warningsUniq = warnings.filter((w) => {
+    const k = w.id ? `${w.code}:${w.layer ?? ''}:${w.id}` : `${w.code}:${w.layer ?? ''}:${w.message}`;
+    if (seenWarn.has(k)) return false;
+    seenWarn.add(k); return true;
+  });
+  avoided.length = 0; avoided.push(...avoidedUniq);
+  warnings.length = 0; warnings.push(...warningsUniq);
 
   return {
     geometry: line.geometry,
