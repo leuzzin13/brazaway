@@ -147,7 +147,8 @@ def municipio_sem_rodovias(ibge: str, nome: str, folga_m: float = 30.0) -> tuple
         if a.distance(R) < 20 and b.distance(R) < 20:
             rod.append((p, L))
     R = unary_union([L for _, L in rod])
-    corte = R.buffer(folga_m, cap_style=2)
+    # pontas redondas: com ponta reta, a união das faixas de dois ways que se encontram em ângulo deixa uma cunha até o nó
+    corte = R.buffer(folga_m)
     Z = Mu.difference(corte)
     Z = Z.simplify(5, preserve_topology=True)
     partes = [g for g in getattr(Z, 'geoms', [Z]) if g.area > 20000]          # descarta lascas < 2 ha
@@ -254,6 +255,42 @@ def mogi() -> None:
     })
 
 
+# ----------------------------------------------------------------------------- limpeza das vias montadas pelo import
+def _dist_m(a, b) -> float:
+    import math
+    lat = math.radians((a[1] + b[1]) / 2)
+    return math.hypot((b[0] - a[0]) * 111320.0 * math.cos(lat), (b[1] - a[1]) * 110540.0)
+
+
+def limpar(*arquivos: str) -> None:
+    """Tira vértices consecutivos a menos de 0,3 m dos GeoJSON de vias montados pelo import (construir: trechos).
+
+    O recorte do trecho no OSM deixa, às vezes, um vértice repetido ou a 2 cm do anterior. O import valida a linha no
+    Valhalla com 7 casas decimais, mas a API manda a linha com 6 (ST_AsGeoJSON(geom, 6)): os dois vértices viram um
+    ponto repetido e o 'edge walk' do sentido contrário falha ('Failed to edge walk line feature'), o que derruba a
+    rota inteira (502). Rode depois de gerar o arquivo e importe de novo (o import lê o arquivo existente)."""
+    for nome in arquivos:
+        p = GEO / nome
+        fc = json.loads(p.read_text())
+        n0 = sum(len(f['geometry']['coordinates']) for f in fc['features'])
+        feats = []
+        for f in fc['features']:
+            c = f['geometry']['coordinates']
+            out = [c[0]]
+            for q in c[1:]:
+                if _dist_m(out[-1], q) >= 0.3:
+                    out.append(q)
+            if len(out) >= 2:
+                feats.append({**f, 'geometry': {'type': 'LineString', 'coordinates': out}})
+        fc['features'] = feats
+        p.write_text(json.dumps(fc, ensure_ascii=False, separators=(',', ':')))
+        print(f'{nome}: {n0 - sum(len(f["geometry"]["coordinates"]) for f in feats)} vértice(s) repetido(s) removido(s)')
+
+
 if __name__ == '__main__':
-    for alvo in sys.argv[1:] or ['suzano', 'caieiras', 'taboao', 'mogi']:
-        globals()[alvo]()
+    args = sys.argv[1:] or ['suzano', 'caieiras', 'taboao', 'mogi']
+    if args[0] == 'limpar':
+        limpar(*args[1:])
+    else:
+        for alvo in args:
+            globals()[alvo]()
