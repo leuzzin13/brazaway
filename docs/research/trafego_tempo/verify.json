@@ -1,0 +1,230 @@
+{
+ "category": "trafego_tempo",
+ "sources": [
+  {
+   "name": "Base de dados sobre lentidão por trechos - CET 2001 a 2023",
+   "url": "https://dados.prefeitura.sp.gov.br/dataset/base-de-dados-sobre-lentidao-por-trechos-cet",
+   "verdict": "confirmed",
+   "note": "Testei de novo em 09/10/2026. O package_show do CKAN deu HTTP 200 e a licença é cc-by ('Creative Commons Atribuição'). O aviso de descontinuidade diz 'A última versão disponível é de 31/12/2023' e menciona o Monitrans desativado no início de 2024 e o Termo de Licença Cruzada com o Waze. O CSV de 2023 veio com HTTP 200 e 17.933.419 bytes (ISO-8859-1, ';'), com 158.496 registros, 139 corredores, 48 instantes por dia (de 30 em 30 min) e as colunas data;corredor;sentido;expressa;descricao;tamanho;nome_regiao. Não há geometria. Recalculei o perfil de dia útil e bate: 3,6 km às 03:00, 37,7 às 09:00, 23,4 às 15:00 e 38,9 às 18:30. Uma ressalva: hoje o CKAN respondeu 200 também sem User-Agent de navegador, então o bloqueio F5 descrito não se reproduziu. Pela busca no CKAN, não existe outro dataset com lentidão de 2024 em diante nem com dados do Waze."
+  },
+  {
+   "name": "MSVP 2019 – Mobilidade no Sistema Viário Principal (CET)",
+   "url": "https://www.cetsp.com.br/media/1113490/relatorio-msvp-2019-revisao-2-junho-22.pdf",
+   "verdict": "confirmed",
+   "note": "O PDF veio com HTTP 200, 8.377.138 bytes e 226 páginas. Extraí o texto com pdftotext e confirmei a Tabela 11: total de 20,63 km/h na manhã e 17,05 km/h na tarde; sentido centro 17,93 e 19,60; sentido bairro 24,31 e 15,08. Também batem os 274 km de eixos e os 2.926 km percorridos com GPS gravando a cada segundo, os dois dias típicos e os períodos das 7h às 10h e das 17h às 20h. O relatório pesquisou 41 vias, mas a velocidade da Tabela 11 'foi calculada com base nas 49 vias'. A velocidade medida é do tráfego geral; caminhões aparecem só nas contagens de volume (1,37%). A página de relatórios agora redireciona para /sobre-a-cet/relatorios-corporativos.aspx. O MSVP mais recente listado lá é o de 2019, mas a página também traz os Relatórios Anuais de 2020 e 2021. A licença não é declarada."
+  },
+  {
+   "name": "GeoSampa WFS – classificacao_viaria_cet",
+   "url": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs",
+   "verdict": "confirmed",
+   "note": "Refiz as consultas com resultType=hits e CQL_FILTER e obtive números idênticos: 210.754 no total, sendo Local 133.098, Coletora 50.641, Arterial 21.707, Rodovia 648, VTR 428 e Vias de pedestre 4.232. Os campos dc_tipo_classificacao_viaria, nm_logradouro e cd_logradouro existem e a fonte original é sg_fonte_original='CET'. A licença específica da camada continua sem confirmação: ela não aparece no CKAN da Prefeitura, onde as outras camadas do GeoSampa são CC0. Vale lembrar que o art. 61 do CTB dá o limite padrão sem placa, e não a velocidade praticada. Por isso, usar esse valor como velocidade-base só faz sentido como teto."
+  },
+  {
+   "name": "Valhalla – tráfego histórico (valhalla_add_predicted_traffic) e ao vivo (traffic.tar)",
+   "url": "https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/concepts/historical-traffic.md",
+   "verdict": "confirmed",
+   "note": "Os documentos historical-traffic.md e speeds.md (HTTP 200) confirmam o formato do CSV, os 2016 baldes começando no domingo 00:00, o DCT-II, o GraphTile::FileSuffix e a prioridade live > predicted > constrained (7h–19h) > free-flow > base. O /status local responde a versão 3.9.1-c803bdc2f, e os binários valhalla_add_predicted_traffic, valhalla_ways_to_edges e valhalla_build_extract estão na imagem. O valhalla.json aponta traffic_extract=/custom_files/traffic.tar, mas esse arquivo não existe. O /route com truck dá o mesmo ETA sem date_time e com 03:00, 08:30 e 18:30; com as minhas coordenadas foram 16,9 km em 37,8 min. Reexecutei o POC num container descartável e o CSV saiu idêntico: 2016 baldes, 200 coeficientes, 536 caracteres, erro médio de 0,402 e máximo de 4,081 km/h. O módulo valhalla.utils emite um DeprecationWarning (PR #6133). Também reexecutei o valhalla_ways_to_edges com o tar montado só para leitura, e as contagens bateram exatamente: 182.832.219 bytes, 2.657.049 ways e 10.463.243 pares. O tempo, porém, foi de 30 a 89 s, e não ~5 s. No código-fonte, add_predicted_speeds.cc remove o tile_extract da config (linha 277) e grava em mjolnir.tile_dir, como foi dito. A licença MIT não foi conferida de novo."
+  },
+  {
+   "name": "TomTom Routing API + Traffic API",
+   "url": "https://docs.tomtom.com/pricing",
+   "verdict": "confirmed",
+   "note": "Abri a página renderizada no navegador e expandi os detalhes. Routing: grátis até 20K; €1,00 entre 20K e 1M, €0,80 entre 1M e 5M e €0,65 entre 5M e 10M. O FAQ confirma que o preço é 'per 1,000'. Traffic Flow Segment Data tem os mesmos valores. Incidents: grátis até 2,5K, depois €2,00, €1,60 e €1,30. Matrix e Snap to Roads: grátis até 2,5K, depois €3,00. Tiles de tráfego: grátis até 200K, depois €0,10. Traffic Stats e O/D Analysis estão como 'Contact Sales', e o Intermediate Traffic aparece só com 'Get started', sem preço. Na página de cobertura da Traffic API, o Brasil (BR/BRA) tem ✔ em Incidents e ✔ em Flow. Na cobertura da Routing API, o Brasil tem ✔ em Calculate Route e em Real-time Traffic. O HTML da Calculate Route contém travelMode, vehicleWeight, vehicleAxleWeight, vehicleLoadType, vehicleAdrTunnelRestrictionCode, vehicleMaxSpeed, departAt e historicTrafficTravelTimeInSeconds. Isso não mostra a cobertura dos atributos de caminhão (restrições de altura e peso) no Brasil. Os termos de armazenamento também não foram verificados."
+  },
+  {
+   "name": "HERE Routing v8 (Truck, Time-Aware) + Traffic API",
+   "url": "https://www.here.com/get-started/pricing",
+   "verdict": "confirmed",
+   "note": "Abri a página renderizada com as abas expandidas. Os preços são 'Cost per 1,000'. Time-Aware, Truck, Taxi, Bus e Scooter: grátis até 5.000, depois €2,33 até 200.000 e €1,87 até 1.000.000. Routing Car/Bicycle/Pedestrian sem tráfego: grátis até 30.000, depois €0,70 (exige departureTime=any ou traffic[mode]=disabled; sem isso, a cobrança é de Time-Aware). Traffic: grátis até 5.000, depois €2,33 e €1,87. Advanced Traffic: grátis até 2.500, depois €4,66 e €3,73. Traffic Vector Tile: grátis até 30.000, depois €0,095. A página avisa que os preços são 'indicative estimates'. Duas lacunas da pesquisa ficam preenchidas. Primeiro, a cobertura de tráfego v7 no Brasil: todas as regiões (Sudeste A2B55/A2B56, Sul, Norte/Nordeste/Centro-Oeste) têm Flow ✅* (Deep Coverage 2.0) e Incidents ✅. Segundo, o roteamento de caminhão no Brasil tem 'full motorway coverage', ou seja, restrições de caminhão só em rodovias e vias principais."
+  },
+  {
+   "name": "ANTT – volume-sat e volume-radar",
+   "url": "https://dados.antt.gov.br/dataset/volume-sat",
+   "verdict": "confirmed",
+   "note": "O package_show deu 200 com licença cc-by e metadata de 28/09/2026: 102 recursos no volume-sat e 89 no volume-radar. Baixei de novo os arquivos e o tamanho é idêntico: volume-sat-arb.csv com 15.817.853 bytes e 93.404 linhas (de 01/2022 a 06/2026) e volume-sat-afd.csv com 18.187.086 bytes e 113.595 linhas (de 01/2022 a 04/2026). Há data sem hora, faixa de velocidade em 8 classes e o tipo 'Veículo pesado'. Recalculei a velocidade dos pesados pelo ponto médio ponderado: Régis SAT01 (km 288,8, Itapecerica) deu 75,0 km/h contra os 74,7 da pesquisa, e Fernão Dias SAT02 (km 84,15, São Paulo) deu 77,9 contra 77,5. A diferença vem só da convenção do ponto médio e os volumes batem exatamente. Uma correção menor: os CSVs da Régis e da Fernão Dias foram atualizados em 28/07 e 28/05/2026; quem é de 28/09 são os consolidados mensais. Ressalva de método: é velocidade pontual no sensor e não velocidade de percurso, e 4,4% dos pesados no SAT01 da Régis ficam abaixo de 20 km/h."
+  },
+  {
+   "name": "ARTESP – Volume de Tráfego (Contagem SATs por dia/hora)",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/volume-de-trafego",
+   "verdict": "corrected",
+   "note": "O package_show deu 200 com licença cc-by; o espelho no dadosabertos.sp.gov.br (contagem-dos-sats) é CC-BY 4.0. O contagem_sat_dia_2026.csv tem 26.690.808 bytes e 341.403 linhas, vai de 2026-01-01 a 2026-09-16, cobre 22 concessionárias e tem 15,0% de veículos comerciais. Tudo isso confere. A correção é na contagem de pontos: os 1.647 são combinações de rodovia, km, complemento, sentido e marginal. Na prática há 806 equipamentos distintos (coluna RA), e o arquivo diário traz essa coluna RA, que a pesquisa não listou. O RAR horário de 2026 tem 79.382.984 bytes; num download parcial, o bsdtar listou contagem_sat_hora_2026.csv com 505.052.383 bytes e exatamente as colunas citadas. Não há velocidade nem coordenadas."
+  },
+  {
+   "name": "CTB art. 61 – velocidades máximas padrão",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+   "verdict": "confirmed",
+   "note": "HTTP 200. O texto do art. 61 §1º confirma: vias urbanas 80/60/40/30; rodovia de pista dupla 110 para automóveis e 90 para 'demais veículos' (redação das Leis 14.440/2022 e 13.281/2016); pista simples 100 e 90; estradas 60. O §2º permite que a sinalização fixe valores maiores ou menores."
+  },
+  {
+   "name": "TomTom Traffic Index – São Paulo",
+   "url": "https://www.tomtom.com/traffic-index/city/sao-paulo/",
+   "verdict": "confirmed",
+   "note": "HTTP 200. O HTML confere com a pesquisa na área 'City' de 2025: congestionamento de 58,5% (+0,9 pp), 27 min 39 s por 10 km, 16,8 km/h no pico, 48 km/h em highways. Pico da manhã: 34 min 5 s, 88,2% e 17,6 km/h. Pico da tarde: 37 min 30 s, 102,6% e 16 km/h. No JSON embutido, esses picos correspondem a horas únicas (9h e 18h). A área 'Metro', mais próxima da RMSP, dá números bem diferentes: 47,3% de congestionamento, 25,3 km/h na base, 21,1 km/h às 8h e 19,3 km/h às 18h. O conteúdo é proprietário."
+  },
+  {
+   "name": "Fiscalização Eletrônica do Trânsito (CET)",
+   "url": "https://dados.prefeitura.sp.gov.br/dataset/fiscalizacao-eletronica-do-transito",
+   "verdict": "confirmed",
+   "note": "Licença cc-by, atualizado em 22/06/2026. O CSV de 06/2026 tem 877 locais. A contagem de enquadramentos é idêntica: V 837, R 384, Z 183, A 180, VR 180, F 173, P 166, EXE 83, EXD 72, PR 50. Não há coordenadas; cada local tem um link webdoc.cetsp.com.br/<código>."
+  },
+  {
+   "name": "Uber Movement",
+   "url": "https://movement.uber.com/",
+   "verdict": "confirmed",
+   "note": "Há um 301 para uber.com/business/movement-decommissioning, depois outro 301 para www, e então HTTP 406 no curl. Isso confirma a descontinuação."
+  },
+  {
+   "name": "Waze for Cities",
+   "url": "https://support.google.com/waze/partners/answer/10453062?hl=en",
+   "verdict": "confirmed",
+   "note": "A página diz que pode se inscrever quem 'represent[s] a government agency or a private road operator'. A página não fala de restrição de publicação; isso vem da Route Fifty."
+  },
+  {
+   "name": "Google Maps Platform Routes API / LVR",
+   "url": "https://developers.google.com/maps/documentation/routes/lvr",
+   "verdict": "confirmed",
+   "note": "O LVR é para 'a limited set of customers', com GA nos 48 estados contíguos dos EUA e modo experimental no Japão; o Brasil não aparece. Os termos (última modificação em 26/08/2026), seção 3.2.3, trazem (b) No Caching, (c) No Creating Content, (e) No Use With Non-Google Maps e (f) No Use in Embedded Vehicle Systems. A cláusula (f) visa apps embarcados no veículo, como central multimídia, e não necessariamente apps de celular. Preços conferidos: Essentials US$ 5 por mil (10K grátis), Pro US$ 10 (5K grátis) e Enterprise US$ 15 (1K grátis). A página de cobrança diz que TRAFFIC_AWARE e TRAFFIC_AWARE_OPTIMAL contam como Pro e que o roteamento de veículo grande conta como Enterprise."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "A base de lentidão por trechos da CET (2001–2023, CC-BY) foi descontinuada: última versão 31/12/2023. O Monitrans foi desativado no início de 2024 e a CET passou a usar só dados do Waze, que não estão publicados no portal.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.prefeitura.sp.gov.br/dataset/base-de-dados-sobre-lentidao-por-trechos-cet",
+   "note": "O texto literal do dataset confirma isso. A busca no CKAN por lentidao e waze só retorna esse dataset."
+  },
+  {
+   "fact": "A CET trocou o indicador de 868 km (Monitrans) pelo CET-Waze, que cobre 20.000 km, por um Termo de Cooperação Técnica de Licença Cruzada de Conteúdo com o Waze assinado em julho/2016. Os números de lentidão passaram de ~100–120 km para ~2.000 km.",
+   "verdict": "corrected",
+   "source_url": "https://prefeitura.sp.gov.br/w/noticia/companhia-de-engenharia-de-trafego-amplia-medicao-do-transito-para-todas-as-vias-da-cidade",
+   "note": "A notícia de 03/03/2023 confirma o Termo de julho/2016 (Waze for Cities) e a ampliação de 868 km para 20 mil km. Mas o indicador 'Lentidão CET-Waze' foi adotado em meados de 2020, primeiro filtrado nos mesmos 868 km. Só em 03/03/2023 passou a cobrir os 20 mil km, e a CET disse que seguiria divulgando também a base de 868 km, então não houve uma simples troca. A frase 'de ~100–120 km para ~2.000 km' NÃO aparece na fonte; não há nenhuma ocorrência de 2.000, 2 mil, 120 km ou 100 km. A notícia diz apenas que o CET-Waze é 'três vezes mais sensível'."
+  },
+  {
+   "fact": "Waze for Cities só aceita órgão de governo ou operador privado de rodovia. Um app privado de navegação não é elegível.",
+   "verdict": "confirmed",
+   "source_url": "https://support.google.com/waze/partners/answer/10453062?hl=en",
+   "note": "Texto literal: 'government agency or a private road operator'."
+  },
+  {
+   "fact": "O feed do Waze for Cities (jams, alertas, irregularidades) é JSON/XML, atualizado a cada 2 min, e os parceiros se comprometem a não tornar os dados públicos.",
+   "verdict": "confirmed",
+   "source_url": "https://route-fifty.com/digital-government/2018/12/how-waze-partners-with-cities-on-data-sharing/303402",
+   "note": "A Route Fifty (2018) traz 'XML or JSON feed', 'updated every two minutes' e 'never make the data publicly available'. É uma fonte secundária; no texto extraível do PDF oficial (7,95 MB, HTTP 200) não achei essas frases."
+  },
+  {
+   "fact": "Velocidade média do tráfego geral nas vias principais de SP em 2019 (CET MSVP, GPS): 20,63 km/h no pico da manhã (7–10h) e 17,05 km/h no pico da tarde (17–20h).",
+   "verdict": "confirmed",
+   "source_url": "https://www.cetsp.com.br/media/1113490/relatorio-msvp-2019-revisao-2-junho-22.pdf",
+   "note": "Os valores da Tabela 11 estão no texto do PDF. A média foi calculada sobre 49 vias."
+  },
+  {
+   "fact": "TomTom Traffic Index 2025, São Paulo: 10 km levam em média 27 min 39 s. No pico da manhã são 34 min 5 s (17,6 km/h), no da tarde 37 min 30 s (16 km/h). Congestionamento médio de 58,5%.",
+   "verdict": "confirmed",
+   "source_url": "https://www.tomtom.com/traffic-index/city/sao-paulo/",
+   "note": "Vale para a área 'City'. Na área 'Metro' os números são 47,3%, 21,1 km/h às 8h e 19,3 km/h às 18h. Os picos referem-se a uma hora específica (9h e 18h)."
+  },
+  {
+   "fact": "O Valhalla aceita tráfego histórico como CSV por tile (edge_id, freeflow, constrained, historical_speeds com 2016 baldes de 5 min por semana comprimidos em DCT-II). O CSV é aplicado com valhalla_add_predicted_traffic, e o mapeamento way→edge sai de valhalla_ways_to_edges.",
+   "verdict": "confirmed",
+   "source_url": "https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/concepts/historical-traffic.md",
+   "note": "Confere com a documentação, e o POC foi reproduzido com saída idêntica."
+  },
+  {
+   "fact": "Ordem de prioridade das velocidades no Valhalla: ao vivo (traffic.tar), depois prevista, depois constrained (média das 7–19h), depois free-flow (noite), depois base. O request controla isso com costing_options.<costing>.speed_types e date_time.",
+   "verdict": "confirmed",
+   "source_url": "https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/concepts/speeds.md",
+   "note": "Texto literal do speeds.md (flow_mask derivado de speed_types, mais DateTimeType)."
+  },
+  {
+   "fact": "Termos do Google Maps Platform: proíbem usar os Core Services com ou perto de mapa não-Google (3.2.3 e), em sistemas embarcados no veículo (f), cache (b) e criar conteúdo a partir do conteúdo Google (c).",
+   "verdict": "confirmed",
+   "source_url": "https://cloud.google.com/maps-platform/terms",
+   "note": "Cláusulas conferidas na versão de 26/08/2026. A (f) é sobre apps embarcados no veículo; não está claro que alcance um app de celular. A conclusão de não usar o Google se mantém por causa das cláusulas (e) e (b)."
+  },
+  {
+   "fact": "O Large Vehicle Routing do Google (travelMode TRUCK) é para 'a limited set of customers': GA nos 48 estados contíguos dos EUA e experimental no Japão. O Brasil não está listado.",
+   "verdict": "confirmed",
+   "source_url": "https://developers.google.com/maps/documentation/routes/lvr",
+   "note": "Conferido. Detalhe adicional: ele é cobrado como Compute Routes Enterprise (US$ 15 por mil)."
+  },
+  {
+   "fact": "Google Routes: Compute Routes Pro (cobrado ao usar TRAFFIC_AWARE) custa USD 10,00 por mil, com 5.000 grátis/mês. Essentials custa USD 5,00 por mil, com 10.000 grátis.",
+   "verdict": "confirmed",
+   "source_url": "https://developers.google.com/maps/billing-and-pricing/pricing",
+   "note": "Tabela de preços e página de usage-and-billing conferidas."
+  },
+  {
+   "fact": "TomTom: Routing API (aceita travelMode=truck, vehicleWeight/Height/Length/Width/AxleWeight, vehicleLoadType, traffic, departAt) é grátis até 20 mil/mês e depois custa EUR 1,00 por mil (1M–5M: 0,80). Traffic Flow Segment Data tem o mesmo preço. Traffic Stats é só sob consulta.",
+   "verdict": "confirmed",
+   "source_url": "https://docs.tomtom.com/pricing",
+   "note": "Conferido na página renderizada, inclusive o FAQ 'per 1,000'. A faixa de 5M–10M custa €0,65."
+  },
+  {
+   "fact": "TomTom Traffic API: Brasil (BR/BRA) coberto tanto em Traffic Incidents quanto em Traffic Flow.",
+   "verdict": "confirmed",
+   "source_url": "https://docs.tomtom.com/traffic-api/documentation/tomtom-maps/v1/product-information/market-coverage",
+   "note": "A linha 'Brazil | BR/BRA | ✔ | ✔' foi conferida. A cobertura de atributos de caminhão no Brasil não foi verificada."
+  },
+  {
+   "fact": "HERE: Routing Truck é grátis até 5.000/mês, custa EUR 2,33 por mil até 200 mil e EUR 1,87 até 1 milhão. Traffic tem o mesmo preço. Routing Car sem tráfego custa EUR 0,70 por mil acima de 30 mil.",
+   "verdict": "confirmed",
+   "source_url": "https://www.here.com/get-started/pricing",
+   "note": "Conferido na página renderizada. Os preços são 'indicative estimates'."
+  },
+  {
+   "fact": "Uber Movement foi descontinuado: movement.uber.com redireciona para uber.com/business/movement-decommissioning.",
+   "verdict": "confirmed",
+   "source_url": "https://movement.uber.com/",
+   "note": "Cadeia de 301 conferida com curl."
+  },
+  {
+   "fact": "SATs da ANTT trazem faixa de velocidade por tipo de veículo, inclusive 'Veículo pesado', em base diária. Pesados na Fernão Dias km 84 (São Paulo) rodam a ~77,5 km/h e na Régis km 288,8 (Itapecerica) a ~74,7 km/h, por média ponderada dos pontos médios das faixas.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.antt.gov.br/dataset/volume-sat",
+   "note": "Recalculei e obtive 77,9 e 75,0 km/h. A diferença de cerca de 0,4 km/h vem só da convenção do ponto médio. É velocidade pontual no sensor."
+  },
+  {
+   "fact": "CTB art. 61: sem placa, o limite é 80 km/h em VTR, 60 em arterial, 40 em coletora e 30 em local. Em rodovia, 'demais veículos' (caminhões) têm limite de 90 km/h tanto em pista dupla quanto em pista simples.",
+   "verdict": "confirmed",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+   "note": "Texto literal conferido."
+  },
+  {
+   "fact": "ARTESP publica contagem horária por classe (moto, passeio, comercial) nos SATs das rodovias estaduais concedidas: 1.647 pontos em 22 concessionárias em 2026, CC-BY, sem velocidade e sem coordenadas.",
+   "verdict": "corrected",
+   "source_url": "https://dadosabertos.artesp.sp.gov.br/dataset/volume-de-trafego",
+   "note": "Os 1.647 são combinações de rodovia, km, complemento, sentido e marginal. Há 806 equipamentos distintos (coluna RA). O restante confere: 22 concessionárias, CC-BY (4.0 no espelho estadual), sem velocidade e sem lat/lon."
+  },
+  {
+   "fact": "A fiscalização eletrônica da CET tem 877 locais. 183 fiscalizam ZMRC-Caminhão (código Z) e 50 fiscalizam faixa proibida a caminhão à esquerda (PR). Dados CC-BY, só com endereço, sem coordenadas.",
+   "verdict": "confirmed",
+   "source_url": "https://dados.prefeitura.sp.gov.br/dataset/fiscalizacao-eletronica-do-transito",
+   "note": "Contagem idêntica no CSV de 06/2026."
+  },
+  {
+   "fact": "(Resumo) O ETA atual do Valhalla local não varia com a hora: Santana→Jabaquara truck ~17 km dá ~37,6 min (~27 km/h) às 03:00, 08:30 e 18:30.",
+   "verdict": "confirmed",
+   "source_url": "http://localhost:8002/route",
+   "note": "Com as minhas coordenadas (estações de metrô Santana e Jabaquara), o resultado foi 16,9 km em 37,8 min (26,9 km/h), igual sem date_time e com 03:00, 08:30 e 18:30. Não há traffic.tar. Ressalva: 27 km/h é otimista nos picos (16–21 km/h), mas pessimista de madrugada. O TomTom City dá free-flow de cerca de 34 km/h."
+  },
+  {
+   "fact": "(Resumo) valhalla_ways_to_edges gerou 182,8 MB, 2.657.049 ways e 10.463.243 pares way→edge em ~5 s.",
+   "verdict": "corrected",
+   "source_url": "https://github.com/valhalla/valhalla/blob/master/src/mjolnir/valhalla_ways_to_edges.cc",
+   "note": "As contagens foram reproduzidas exatamente (182.832.219 bytes, 2.657.049 ways, 10.463.243 pares). O tempo foi de 30 a 89 s em duas execuções e não ~5 s; o valor depende da máquina, mas o número de 5 s não se reproduziu."
+  }
+ ],
+ "extra_findings": [
+  "A cobertura de tráfego da HERE no Brasil, que era uma lacuna da pesquisa, está confirmada. Todas as regiões (Sudeste A2B55 e A2B56, Sul A2B54 e Norte/Nordeste/Centro-Oeste A2B15) têm Flow ✅* (Deep Coverage 2.0) e Incidents ✅: https://docs.here.com/traffic-api/docs/here-traffic-api-v7-coverage-information",
+  "A cobertura de roteamento de caminhão da HERE no Brasil é 'full motorway coverage': as restrições de caminhão (dimensões, peso, hazmat) existem só em rodovias e vias principais, não nas vias urbanas locais. Isso pesa para o trecho final até a ZMRC: https://docs.here.com/routing/docs/routing-v8-truck-routing-coverage",
+  "Faltou o ANTT volume-radar da Fernão Dias: são 6 radares no estado de SP, 4 no município de São Paulo (km 73,06 a 78,2) e 2 em Mairiporã, de 2022 a 2025. O CSV tem 62,9 MB, licença CC-BY e traz faixa de velocidade e tipo de veículo. São mais pontos de calibração dentro da RMSP do que os SATs: https://dados.antt.gov.br/dataset/269aebaa-05e7-4d76-a105-408f12bf4094/resource/58265a61-94a0-458e-8c42-c56a08a17fe7/download/volume-radar-afd.csv . O volume-radar-arb.csv (Régis) foi atualizado em 28/09/2026 e também não foi analisado.",
+  "A página do TomTom Traffic Index de SP traz uma tabela de hora × dia da semana com o tempo por 10 km, nas áreas City e Metro. Essa é a curva horária mais direta disponível para calibrar o fator horário, só como referência, porque o conteúdo é proprietário. Para a RMSP, a área Metro (21,1 km/h às 8h e 19,3 km/h às 18h) é mais representativa que a City: https://www.tomtom.com/traffic-index/city/sao-paulo/",
+  "A cobertura de atributos de caminhão do TomTom no Brasil não está documentada. A página de cobertura da Routing API só mostra Calculate Route e Real-time Traffic, sem coluna para caminhão, e isso precisa ser validado antes do piloto: https://docs.tomtom.com/routing-api/documentation/tomtom-maps/v1/product-information/market-coverage",
+  "O Large Vehicle Routing do Google é cobrado como Compute Routes Enterprise (US$ 15 por mil, 1K grátis), e não como Pro: https://developers.google.com/maps/documentation/routes/usage-and-billing",
+  "O POC usa valhalla.utils, que emite um DeprecationWarning e será removido. É preciso migrar antes de pôr em produção: https://github.com/valhalla/valhalla/pull/6133",
+  "A página de relatórios da CET lista os Relatórios Anuais de 2020 e 2021, que podem ter indicadores de velocidade e lentidão posteriores a 2019. Não conferi o conteúdo: http://www.cetsp.com.br/media/1143350/RelatorioAnual2020.pdf e http://www.cetsp.com.br/media/1347066/Relatorioanual2021.pdf",
+  "O dataset 'Cadastro de Lombadas' da CET (CC-BY, atualizado em 26/06/2026, CSV/ODS/XLS) poderia virar penalidade de velocidade ou de nó na capital: https://dados.prefeitura.sp.gov.br/dataset/cadastro-de-lombadas",
+  "O CKAN de dados.prefeitura.sp.gov.br respondeu HTTP 200 também com o User-Agent padrão do curl em 09/10/2026, então o bloqueio F5 citado não é sistemático.",
+  "O ANTT Monitriip (CC-BY) só traz início e fim de viagem e paradas de ônibus interestaduais, não trajetória por segmento. Serve pouco para ETA: https://dados.antt.gov.br/dataset/monitriip-servico-regular-viagens"
+ ]
+}

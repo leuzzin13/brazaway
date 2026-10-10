@@ -4,10 +4,11 @@ Pesquisa feita em 09/10/2026 com 16 temas, cada um com teste real de acesso às 
 (fontes, URLs testadas, licenças, contagens, fatos com link) está em `docs/research/<tema>/` (`research.json`,
 `NOTES.md` e, quando houve, `verify.json` com a checagem independente).
 
-**Grau de confiança:** os temas `restricoes_sp_capital`, `pontes_sp_estado_municipio`, `rodovias_restricoes` e
-`pesagem_pedagio` passaram por verificador independente (a maioria dos fatos confirmada, correções anotadas no
-`verify.json`). Os demais ainda não tiveram a 2ª checagem; os valores legais usados no código são reconferidos na
-fonte primária por quem implementa a camada.
+**Grau de confiança:** os 16 temas passaram por verificador independente (`verify.json` em cada pasta). A grande
+maioria dos fatos foi confirmada; houve correções pontuais em todos os temas e dois fatos refutados (Mapbox e a
+data da tabela ARTESP de pedágio, ambos já corrigidos abaixo e no código). Quatro temas extras, levantados pelo
+crítico de lacunas, ainda não foram implementados: `porto_santos_terminais`, `interdicoes_temporarias_alagamentos`,
+`balsas_travessias` e `superficie_pavimento`.
 
 ## 1. Mercado
 
@@ -18,7 +19,8 @@ fonte primária por quem implementa a camada.
 | Transportadores RNTRC ativos | 906.022 | 120.525 | ANTT (CC-BY) |
 | Autônomos (TAC) ativos | 632.817 | 91.850 | ANTT |
 | Idade média da frota de tração do TAC | 24 anos | — | ANTT |
-| Veículos leves (caminhonete, furgão, caminhão leve) entre os de tração | — | 40% em SP | ANTT |
+| Caminhão leve (3,5 a 7,99 t) entre os veículos de tração do RNTRC | — | 11% em SP (52.356) | ANTT |
+| Caminhonete/furgão (até 3,49 t; não é caminhão pelo CTB, fora da ZMRC) | — | 29% em SP (130.394) | ANTT |
 
 - **Perfil:** idade média de 45 anos, e 41% dos autônomos estudaram até a 9ª série (CNT 2025).
 - **Celular:** 98% acessam a internet principalmente pelo celular (CNT 2019), e o Android tem 79% do mercado.
@@ -33,8 +35,9 @@ fonte primária por quem implementa a camada.
 | HERE WeGo Pro | Só rodovias e vias principais no Brasil | pago |
 | Sygic Truck Brasil | Altura/peso, sem regras municipais | R$ 499,90 |
 | TomTom GO / CoPilot | Altura/peso, sem regras municipais | R$ 380–400/ano |
-| WikiRota | Custo e pedágio; review diz que não respeita a Grande SP | R$ 80–100/ano |
-| Maplink (B2B) | API com zona ZMRC | contrato |
+| WikiRota | Custo e pedágio; a única review sobre a Grande SP é de 2021 (sem evidência atual) | R$ 80–100/ano |
+| Mapbox Directions (API) | Altura, largura e peso, e respeita restrições condicionais do OSM pelo horário de saída; depende do que está no OSM, que quase não tem regras de SP | por uso |
+| Maplink (B2B) | API de zonas, mas só polígonos desenhados pelo cliente, sem horário nem tipo de veículo | contrato |
 
 **Leitura:** o diferencial defensável é a malha urbana da RMSP: ZMRC, VER, rodízio, perigosos, municípios
 vizinhos, feriados e suspensões da CET. Nenhum concorrente de consumo cobre isso.
@@ -57,7 +60,7 @@ vizinhos, feriados e suspensões da CET. Nenhum concorrente de consumo cobre iss
 
 ## 3. Decisões que precisam do Arthur
 
-1. **Posicionamento:** começar pelo motorista urbano leve da RMSP (VUC, 3/4, toco), onde moram ZMRC, rodízio e VER, ou pelo rodoviário? Os dados apontam para o urbano.
+1. **Posicionamento:** começar pelo motorista urbano da RMSP (VUC, 3/4, toco), onde moram ZMRC, rodízio e VER, ou pelo rodoviário? Os dados apontam para o urbano. Atenção: caminhonete e furgão de até 3,5 t (29% dos veículos de tração do RNTRC em SP) não são caminhão pelo CTB e só entram no rodízio, não na ZMRC nem nas VER.
 2. **Preço:** os GPS de caminhão cobram R$ 380 a 500 por ano e o WikiRota R$ 80 a 100. Um plano de R$ 10 a 15 por mês, com rota básica grátis, cabe no bolso do TAC.
 3. **Distribuição:** 46,6% dos autônomos pegam frete por aplicativo. Vale buscar integração por deep link com Fretebras ou TruckPad?
 4. **Pedidos via LAI**, a protocolar em nome da empresa:

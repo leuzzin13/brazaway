@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl, { Map as MLMap, Marker, Popup } from 'maplibre-gl';
-import { api, REPORT_TYPES, REST_KINDS, type LatLon, type LayerMeta, type Report, type RouteResult } from '../lib/api';
+import { api, REPORT_TYPES, REST_KINDS, REST_SOURCES, type LatLon, type LayerMeta, type Report, type RouteResult } from '../lib/api';
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 const SP_CENTER: [number, number] = [-46.6333, -23.5505];
@@ -128,10 +128,11 @@ export function MapView(p: MapViewProps) {
     const suggested = new Set(p.route.driving_plan?.suggested_stops.map((s) => s.stop?.id).filter(Boolean));
     for (const s of p.route.rest_stops ?? []) {
       const d = document.createElement('div');
-      d.className = 'rest-marker' + (suggested.has(s.id) ? ' suggested' : '');
-      d.textContent = '🅿️';
+      const sau = s.daily_rest_ok === false;   // SAU: só apoio (pausa curta), marcador diferente
+      d.className = 'rest-marker' + (sau ? ' sau' : '') + (suggested.has(s.id) ? ' suggested' : '');
+      d.textContent = sau ? 'ℹ️' : '🅿️';
       const h = Math.floor(s.eta_s / 3600), mi = Math.round((s.eta_s % 3600) / 60);
-      const pop = new Popup({ offset: 14, maxWidth: '260px' }).setHTML(`<div class="pp"><div class="pp-title">${escapeHtml(s.name ?? REST_KINDS[s.kind] ?? s.kind)}</div><div class="pp-row">${REST_KINDS[s.kind] ?? s.kind}</div><div class="pp-row pp-meta">km ${s.distance_km} · ~${h ? `${h}h${String(mi).padStart(2, '0')}` : `${mi} min`} de direção · ${Math.round(s.off_route_m)} m da rota${suggested.has(s.id) ? ' · <strong>parada sugerida</strong>' : ''}</div><div class="pp-row pp-meta">Fonte: OpenStreetMap</div></div>`);
+      const pop = new Popup({ offset: 14, maxWidth: '260px' }).setHTML(`<div class="pp"><div class="pp-title">${escapeHtml(s.name ?? REST_KINDS[s.kind] ?? s.kind)}</div><div class="pp-row">${escapeHtml(s.category ?? REST_KINDS[s.kind] ?? s.kind)}${s.vagas ? ` · ${s.vagas} vagas` : ''}</div><div class="pp-row pp-meta">km ${s.distance_km} · ~${h ? `${h}h${String(mi).padStart(2, '0')}` : `${mi} min`} de direção · ${Math.round(s.off_route_m)} m da rota${suggested.has(s.id) ? ' · <strong>parada sugerida</strong>' : ''}</div><div class="pp-row pp-meta">Fonte: ${escapeHtml(REST_SOURCES[s.source ?? 'osm'] ?? s.source ?? 'OpenStreetMap')}</div></div>`);
       restMarkers.current.push(new Marker({ element: d, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(pop).addTo(m));
     }
   }, [p.route]);
@@ -158,15 +159,15 @@ export function MapView(p: MapViewProps) {
         m.addLayer({ id: `${src}-outline`, type: 'line', source: src, minzoom: mz, paint: { 'line-color': st.color, 'line-width': 1 } }, before);
       } else if (st.kind === 'heatmap') m.addLayer({ id: src, type: 'heatmap', source: src, minzoom: mz, paint: { 'heatmap-weight': ['coalesce', ['get', 'weight'], 1], 'heatmap-radius': st.radius ?? 18, 'heatmap-opacity': st.opacity ?? 0.6, 'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(0,0,0,0)', 0.3, st.color, 1, '#7f1d1d'] } }, before);
       else {
-        m.addLayer({ id: src, type: 'circle', source: src, minzoom: mz, filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': st.color, 'circle-radius': st.radius ?? 5, 'circle-stroke-color': '#fff', 'circle-stroke-width': 1.5, 'circle-opacity': st.opacity ?? 0.9 } }, before);
+        m.addLayer({ id: src, type: 'circle', source: src, minzoom: mz, filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': ['coalesce', ['get', 'color'], st.color], 'circle-radius': st.radius ?? 5, 'circle-stroke-color': '#fff', 'circle-stroke-width': 1.5, 'circle-opacity': st.opacity ?? 0.9 } }, before);
         m.addLayer({ id: `${src}-line`, type: 'line', source: src, minzoom: mz, filter: ['!=', ['geometry-type'], 'Point'], paint: { 'line-color': st.color, 'line-width': st.width ?? 3, 'line-opacity': st.opacity ?? 0.85 } }, before);
       }
       const onClick = (e: maplibregl.MapLayerMouseEvent) => {
         const f = e.features?.[0]; if (!f || propsRef.current.reportMode) return;
         const props = f.properties ?? {};
-        const rows = Object.entries(props).filter(([k, v]) => v !== null && v !== '' && v !== 'null' && !['id', 'weight'].includes(k)).slice(0, 12)
+        const rows = Object.entries(props).filter(([k, v]) => v !== null && v !== '' && v !== 'null' && !['id', 'weight', 'icon', 'color'].includes(k)).slice(0, 12)
           .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(String(v)).slice(0, 160)}</td></tr>`).join('');
-        new Popup({ maxWidth: '320px' }).setLngLat(e.lngLat).setHTML(`<div class="pp"><div class="pp-title">${st.icon ?? ''} ${escapeHtml(String(props.name ?? meta.label))}</div><table class="pp-table">${rows}</table><div class="pp-meta">${escapeHtml(meta.sources.map((s) => s.name).join(' · '))}</div></div>`).addTo(m);
+        new Popup({ maxWidth: '320px' }).setLngLat(e.lngLat).setHTML(`<div class="pp"><div class="pp-title">${escapeHtml(String(props.icon ?? st.icon ?? ''))} ${escapeHtml(String(props.name ?? meta.label))}</div><table class="pp-table">${rows}</table><div class="pp-meta">${escapeHtml(meta.sources.map((s) => s.name).join(' · '))}</div></div>`).addTo(m);
       };
       for (const lid of [src, `${src}-line`]) if (m.getLayer(lid)) {
         m.on('click', lid, onClick);

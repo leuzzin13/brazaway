@@ -1,0 +1,190 @@
+{
+ "category": "descanso_postos_combustivel",
+ "sources": [
+  {
+   "name": "Painel Power BI de PPDs (TB_Dados_PPD, TB_Concessionarias)",
+   "url": "https://app.powerbi.com/view?r=eyJrIjoiZjVmYWUyNmQtYmY4OC00YTYyLWE4MjctZTYzOTY3ZmVmNjI0IiwidCI6IjdiZjAxYzZhLWU2ZmItNDIxYS1iYmIyLWI5MGMzZWE4NjhmNyJ9",
+   "verdict": "corrected",
+   "note": "Re-consultei com script próprio (modelsAndExploration, conceptualschema e querydata em wabi-brazil-south-api): modelo 'BI - PPDs - Versão 11 - Rev 07', LastRefresh 2026-09-30T20:47. Os números batem: 183 linhas, todas com lat/lon válidas; 90 com validade >= 09/10/2026, 90 anteriores e 3 sem data; 14.056 vagas aprovadas (6.206 nas válidas); DNIT 121 e ANTT 62; 173 postos; 137 '24 Horas'; TB_Concessionarias com 32 linhas (12 entregues, 7 em andamento, 13 a iniciar). O erro está na leitura: a Portaria SNTR nº 304/2026 (DOU 05/05/2026) prorrogou até 31/12/2026 os certificados dos 94 estabelecimentos do anexo A. Destes, 87 estão entre os 90 que o painel mostra como vencidos, incluindo Batistella/Guararema e Graal Califórnia/Ourinhos. O campo 'Validade' do painel não reflete a prorrogação, então o flag 'vencido' calculado a partir dele está errado para quase todos. O carimbo de data é 2025-06-01T00:00Z (01/06/2025), não 31/05. Alerta de LGPD: o modelo publica as colunas Proprietário, Telefone(s) e E-Mail, que não devem ser importadas. A própria Portaria 304/2026 (art. 4º, II) cita o 'Painel BI de PPDs do MT' como canal oficial, o que reforça a fonte apesar de não ter licença declarada."
+  },
+  {
+   "name": "Lista de PPDs certificados (XLSX) e mapa PDF",
+   "url": "https://www.gov.br/transportes/pt-br/assuntos/transporte-terrestre_/portal-trc/ppd/ListaPPDs15.05.2025.xlsx",
+   "verdict": "confirmed",
+   "note": "HTTP 200, 21.352 bytes, XLSX. 184 linhas: 176 'Certificado (Estabel. Comercial)' e 8 'PPD de Concessionária'. Não tem coordenadas. Em SP há 3 (Batistella/Guararema, Graal Califórnia/Ourinhos, CCR RioSP/Pindamonhangaba). A página foi atualizada em 19/05/2025 e está desatualizada, como a pesquisa disse."
+  },
+  {
+   "name": "Busca no Diário Oficial da União",
+   "url": "https://www.in.gov.br/consulta/-/buscar/dou?q=%22Ponto+de+Parada+e+Descanso%22&s=do1&exactDate=ano",
+   "verdict": "confirmed",
+   "note": "Funciona sem login, com o JSON embutido no script BuscaDouPortlet_params, e devolveu 20 resultados no último ano, como a pesquisa disse. Ressalva importante: o termo no singular deixa de fora atos essenciais. A Portaria SNTR 304/2026, a Portaria Interministerial 4/2026 e a Portaria MT 805/2026 só aparecem com 'Pontos de Parada e Descanso', 'Pontos de Parada e Apoio' ou 'repouso e de descanso'. O job de monitoramento precisa usar vários termos."
+  },
+  {
+   "name": "ARTESP Cadastro de Ativos - Recursos Operacionais",
+   "url": "https://dadosabertos.artesp.sp.gov.br/dataset/cadastro-de-ativos",
+   "verdict": "corrected",
+   "note": "Licença confirmada no CKAN (license_id cc-by). Baixei de novo o recursos.xlsx (3.372.346 bytes): 34.396 linhas; Área de Descanso 10, todas ativas, 1 na RMSP (Ecovias, SP150 km 40, S. B. do Campo); Posto SAU 166; Base SAU 83 (80 ativas); SAU na RMSP 25; Pesagem 106 (61 ativos). Duas correções: só 25.686 das 34.396 linhas têm lat/lon (não todas); e o arquivo foi modificado pela última vez em 30/05/2025, mais de 16 meses atrás, então uma carga 'mensal' não traz dados novos. Há também uma possível duplicata em SP280 km 57 São Roque (ViaOeste e Sorocabana)."
+  },
+  {
+   "name": "ANTT Edificação Operacional",
+   "url": "https://dados.antt.gov.br/dataset/edificacao-operacional",
+   "verdict": "confirmed",
+   "note": "CKAN license_id cc-by. CSV (45.608 bytes, latin-1, separador ;) atualizado em 09/09/2026. 400 linhas, todas com lat/lon e ativas: 375 bases operacionais, 20 postos de fiscalização e 5 sedes administrativas (a pesquisa omitiu as sedes). SP 36, RMSP 5 (Régis km 287 e 298,8; Fernão Dias km 71,8; Dutra km 230,2 e km 202 Arujá)."
+  },
+  {
+   "name": "ANTT Quilômetro Principal",
+   "url": "https://dados.antt.gov.br/dataset/quilometro-principal",
+   "verdict": "corrected",
+   "note": "O CSV de 74 bytes só tem cabeçalho (confirmado), e o SHP tem 299.759 pontos. Mas a afirmação de que a Dutra em SP (BR-116 km 177) não aparece é falsa: RIOSP 'BR-116/SP' tem 4.630 pontos entre o km 0 e o 231,4, sem nenhum km inteiro faltando, e 102 pontos só entre os km 175 e 180. O espaçamento nesse trecho é de 100 m, não ~20 m. Portanto o SHP serve para geocodificar BR+km do Batistella e do Graal Dutra."
+  },
+  {
+   "name": "ANP Dados Cadastrais dos Revendedores Varejistas",
+   "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/arquivos-dados-cadastrais-dos-revendedores-varejistas-de-combustiveis-automotivos/dados-cadastrais-revendedores-varejistas-combustiveis-automoveis.csv",
+   "verdict": "confirmed",
+   "note": "GET 200 com 7.890.947 bytes; HEAD dá 403, como a pesquisa disse. Contei 45.738 CNPJs no BR, 8.370 em SP e 2.700 na RMSP (39 municípios; capital 1.521); DATAPUBLICACAO máxima 07/10/2026. Não tem coordenadas nem produtos. Pelo navegador, o dados.gov.br mostra 'Licença: Creative Commons Attribution, Atualização: Diaria'."
+  },
+  {
+   "name": "ANP LPC - últimas 4 semanas diesel/GNV",
+   "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/qus/ultimas-4-semanas-diesel-gnv.csv",
+   "verdict": "confirmed",
+   "note": "Na amostra da pesquisa, reproduzi exatamente: 21.264 linhas, coletas de 07/09 a 02/10, 4.651 postos, RMSP 446 postos em 19 municípios, S10 com n=1.170, mín 6,19, mediana 6,99, máx 9,19. Também confirmei os 98,5% de CNPJs que batem com o cadastro. O arquivo já rolou: hoje vai de 14/09 a 09/10/2026, com 21.416 linhas, 4.656 postos e RMSP 435 postos/19 municípios, e a mediana do S10 na RMSP subiu para R$ 7,19 (mediana semanal 6,92, 6,99, 7,09, 7,19). 'Valor de Compra' continua vazio. Licença CC-BY (Série Histórica) confirmada no dados.gov.br."
+  },
+  {
+   "name": "ANP PMQC",
+   "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/pmqc-programa-de-monitoramento-da-qualidade-dos-combustiveis",
+   "verdict": "corrected",
+   "note": "Licença CC-BY confirmada no dados.gov.br (última alteração de arquivo 07/10/2026). O CSV 2026-09 (15,9 MB) tem Produto, Latitude e Longitude. Em 09/2026, 115 de 134 postos amostrados na RMSP (86%) e 247 de 290 em SP (85%) tiveram amostra de diesel, como a pesquisa disse. Correção principal: os 16.529 CNPJs (35,2% do cadastro; SP 2.952; RMSP 1.208) são a união de 15 arquivos mensais (07/2025 a 09/2026), não de '12 meses'. Os arquivos do 2º semestre de 2025 existem com outro padrão de nome (pmqc-2025-MM.csv). Nos 12 meses de fato (10/2025 a 09/2026) são 14.778 CNPJs (RMSP 1.090); em 18 meses (04/2025 a 09/2026), 18.972 (RMSP 1.363). A união LPC ∪ PMQC na RMSP deu 534 na minha conta, contra 528 da pesquisa; a diferença é pequena."
+  },
+  {
+   "name": "OpenStreetMap - taginfo Geofabrik Brasil",
+   "url": "https://taginfo.geofabrik.de/south-america:brazil/api/4/tag/stats?key=amenity&value=fuel",
+   "verdict": "confirmed",
+   "note": "Licença ODbL e formato JSON corretos. A URL do Brasil (e a do Sul) devolveu HTTP 500 em várias tentativas em 09-10/10/2026, então não consegui reconferir o total nacional. O Sudeste bateu exatamente: fuel 11.477, diesel 994, HGV_diesel 18, adblue 22, rest_area 225, services 1.761, truck_stop 0. Norte, Nordeste e Centro-Oeste responderam com valores consistentes. No Overpass, com o limite oficial do Brasil, deu HGV_diesel=yes 57 (taginfo diz 59, mas o extrato inclui buffer) e truck_stop 0. Usar o PBF local como caminho principal."
+  },
+  {
+   "name": "CNEFE 2022 IBGE",
+   "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/",
+   "verdict": "confirmed",
+   "note": "Índice com 200. O HEAD de 3550308_SAO_PAULO.zip dá Content-Length 185.731.999, igual ao da pesquisa (Last-Modified 20/05/2024). Não refiz o teste de geocodificação de Guararema."
+  },
+  {
+   "name": "Menor Preço - Nota Paraná",
+   "url": "https://menorpreco.notaparana.pr.gov.br/api/v1/produtos?local=6gkzqfbkb&termo=diesel&offset=0&raio=5&data=-1&ordem=0",
+   "verdict": "corrected",
+   "note": "Funciona sem login: 200, JSON de 22 KB, 33 itens de 29 estabelecimentos, R$ 6,39 a 7,19, com datahora da NFC-e, 'local' (geohash de 11 caracteres) e cdanp, sem CNPJ, como a pesquisa disse. Mas a resposta traz total=258: os 33 itens são só a primeira página. Com offset=50 vieram outros 33 itens de 32 estabelecimentos, e alguns offsets falharam (instabilidade ou limite). A cobertura no raio de 5 km é, portanto, muito maior que '33 preços em 29 postos'. Não há licença nem termos de uso, como a pesquisa disse."
+  },
+  {
+   "name": "Rede Graal - postos de abastecimento",
+   "url": "https://www.redegraal.com.br/prepare-sua-viagem/postos-de-abastecimento/",
+   "verdict": "confirmed",
+   "note": "200; 51 unidades com rodovia e km. Na RMSP são 5: Barueri (Castello km 29,9), Mairiporã (Fernão Dias km 61,5 e Rancho Português km 70) e Guararema (Carvalho Pinto km 67 e Dutra km 183). Não tem coordenadas, e o site privado não tem licença."
+  },
+  {
+   "name": "Legislação (CTB, CLT, Lei 13.103, Portaria MT 387/2024, Res. Contran 525/2015)",
+   "url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm",
+   "verdict": "corrected",
+   "note": "Os textos do CTB 67-C, 67-E e 230 XXIII, da CLT 235-C, da Portaria 387/2024 (DOU 19/04/2024) e da Res. 525/2015 (página de 19/12/2022 ainda publicada) estão corretos. Mas o conjunto está incompleto e parcialmente defasado. A pesquisa não registrou: (1) a Portaria Interministerial MT/MJSP nº 4/2026 (DOU 03/07/2026), que cria as categorias PPA/PPD/LRD, obriga MT, ANTT e DNIT a publicar lista com coordenadas e vagas (art. 15) e liga a verificação de 'indisponibilidade' à ficha 756-00 do MBFT (art. 16); (2) a Portaria MT nº 805/2026 (DOU 28/09/2026), que revoga a Portaria 45/2021 citada nas notas; (3) a Portaria SNTR nº 304/2026, que prorroga certificados; (4) a Res. CONTRAN 985/2022 (MBFT). A regra 'não pode descansar no veículo' também precisa de revisão (ver fatos)."
+  },
+  {
+   "name": "Petrobras - composição do preço do diesel",
+   "url": "https://precos.petrobras.com.br/precos-diesel",
+   "verdict": "confirmed",
+   "note": "200. S-10 com média BR de R$ 7,35 (coleta de 27/09 a 03/10/2026): Petrobras R$ 2,83 (38,5%), distribuição e revenda R$ 2,22 (30,2%), biodiesel R$ 0,81 (11,0%), estadual R$ 1,17 (15,9%), federais R$ 0,32 (4,4%), mistura de 15%. Os valores batem."
+  }
+ ],
+ "facts": [
+  {
+   "fact": "CTB art. 67-C: 5h30 de direção ininterrupta, 30 min a cada 6h (fracionável), 11h a cada 24h; §8 exceção por falta de PPD/vagas regulada pelo Contran; §9 lista de PPD com vagas; infração art. 230 XXIII média + retenção.",
+   "verdict": "confirmed",
+   "note": "Conferi no texto compilado do Planalto, baixado em 09/10/2026. Detalhe: o §8 foi incluído pela Lei 14.440/2022 e tem a redação dada pela Lei 14.599/2023; o §9 e o 67-E §1º-A vêm da Lei 14.440/2022. O art. 230 XXIII é infração média, com multa e retenção do veículo.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/leis/l9503compilado.htm"
+  },
+  {
+   "fact": "As 11h não podem ser fracionadas nem gozadas no veículo (ADI 5322); CLT 235-C 8h + até 2h extras.",
+   "verdict": "corrected",
+   "note": "Está confirmado que a ADI 5322 derrubou o fracionamento: item (k) sobre a expressão do CTB 67-C §3 e item (a) sobre a CLT 235-C §3, com efeito ex nunc a partir de 12/07/2023. A jornada de 8h + 2h (ou até 4h por acordo ou convenção) também está confirmada. A parte 'nem gozadas no veículo' é generalização indevida. O STF retirou 'usufruídas no veículo' do CTB §3, mas o art. 235-C §4 da CLT (repouso diário no veículo em viagens de longa distância) não traz 'Vide ADI 5322' no Planalto. Pelo que as fontes secundárias relatam, o que o STF vetou foi o descanso com o veículo em movimento. Não programar 'proibido descansar na cabine estacionada' sem parecer jurídico. A fonte primária usada continua sendo do TRT3, não do STF.",
+   "source_url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm"
+  },
+  {
+   "fact": "Portaria MT nº 387/2024 (DOU 19/04/2024): mín. 1 PPD por concessão federal; novos estudos com PPD até o 3º ano; distância preferencial máx. 400 km; ANTT/DNIT informam coordenadas SIRGAS 2000, vagas etc. em 30 dias.",
+   "verdict": "confirmed",
+   "note": "Baixei o ato do DOU (publicado em 19/04/2024, vigência em 02/05/2024). Os arts. 3º, 6º, 8º, 13 e 14 conferem com o resumo. Observação: o art. 14 dispensa a certificação da Portaria 45/2021, que foi revogada pela Portaria MT 805/2026.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-n-387-de-17-de-abril-de-2024-555166052"
+  },
+  {
+   "fact": "Painel Power BI: 183 PPDs com lat/lon e vagas; 90 válidos e 90 vencidos em 09/10/2026; em SP só 2 (Guararema e Ourinhos), ambos vencidos em 31/05/2025.",
+   "verdict": "corrected",
+   "note": "As contagens do painel batem (183; 90/90/3). Mas 'vencidos' está errado na prática: a Portaria SNTR nº 304/2026 (DOU 05/05/2026) prorrogou até 31/12/2026 os 94 certificados do anexo A, incluindo Batistella/Guararema e Graal Califórnia/Ourinhos, e 87 dos 90 'vencidos' do painel estão nesse anexo. Hoje, cerca de 177 dos 183 estão vigentes, não 90. A data no painel é 01/06/2025 (UTC). Além disso, SP tem o PPD de concessão entregue em Pindamonhangaba (Dutra km 95, 120 vagas, TB_Concessionarias) e um PPD em obra na Dutra km 182 (Guararema/Jacareí). Por isso a afirmação 'na Grande SP só há 1 PPD, vencido' deve ser revista: o Batistella está vigente até 31/12/2026.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-n-304-de-4-de-maio-de-2026-703182837"
+  },
+  {
+   "fact": "XLSX oficial de PPDs de 15/05/2025, 184 linhas, sem coordenadas, desatualizado (ex.: Portaria 857 de 06/10/2026).",
+   "verdict": "confirmed",
+   "note": "XLSX com 200, 184 linhas (176 + 8) e sem coordenadas; a página foi atualizada em 19/05/2025. A Portaria 857/2026 existe no DOU (07/10/2026) e certifica 1 PPD 'com ressalvas' por 4 anos, ainda com base na Portaria 45/2021.",
+   "source_url": "https://www.gov.br/transportes/pt-br/assuntos/transporte-terrestre_/portal-trc/ppd/lista-de-ppds-certificados"
+  },
+  {
+   "fact": "Não há resolução Contran que regulamente o §8 do 67-C; a Res. 525/2015 continua publicada e ainda permite fracionar as 11h.",
+   "verdict": "corrected",
+   "note": "Confirmado: a Res. 525/2015 segue publicada no gov.br e ainda diz '11 horas... que podem ser fracionadas, usufruídas no veículo'. Também não achei uma resolução específica do §8: as buscas no DOU por 'exaurimento das vagas', 'indisponibilidade de pontos de parada' e '67-C CONTRAN' só devolvem as leis. Mas a afirmação omite que a Portaria Interministerial nº 4/2026, art. 16, diz que a verificação da 'indisponibilidade de locais de espera, repouso e descanso' está prevista na ficha 756-00 do MBFT, aprovado pela Res. CONTRAN 985/2022. Ou seja, o Contran trata da exceção no MBFT, e a PRF deve usar a lista oficial de LRD/PPA/PPD. Não li o anexo do MBFT na fonte primária.",
+   "source_url": "https://www.in.gov.br/web/dou/-/portaria-interministerial-n-4-de-3-de-julho-de-2026-716755116"
+  },
+  {
+   "fact": "Cadastro de revendedores, Série Histórica de Preços e PMQC da ANP estão sob CC-BY no dados.gov.br.",
+   "verdict": "confirmed",
+   "note": "Abri as três páginas no navegador e as três mostram 'Licença: Creative Commons Attribution'. O cadastro tem atualização 'Diaria', a Série Histórica 'Mensal' e o PMQC 'Mensal'. A API por curl dá 401, como a pesquisa disse.",
+   "source_url": "https://dados.gov.br/dados/conjuntos-dados/dados-cadastrais-dos-revendedores-varejistas-de-combustiveis-automotivos"
+  },
+  {
+   "fact": "Cadastro ANP: 45.738 postos BR, 8.370 SP, 2.700 Grande SP; sem coordenadas nem produtos; DATAPUBLICACAO até 07/10/2026.",
+   "verdict": "confirmed",
+   "note": "Reproduzi com o CSV baixado em 09/10/2026: 45.738, 8.370, 2.700 (capital 1.521), máximo de 07/10/2026; as colunas não têm lat/lon nem produtos.",
+   "source_url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/arquivos-dados-cadastrais-dos-revendedores-varejistas-de-combustiveis-automotivos/dados-cadastrais-revendedores-varejistas-combustiveis-automoveis.csv"
+  },
+  {
+   "fact": "LPC 4 semanas: 446 postos em 19 dos 39 municípios da Grande SP; S10 mediana R$ 6,99 (6,19-9,19).",
+   "verdict": "confirmed",
+   "note": "Bate exatamente na amostra baixada pela pesquisa (coletas de 07/09 a 02/10/2026). O arquivo atual (14/09 a 09/10) já mostra 435 postos em 19 municípios e mediana de R$ 7,19, pela tendência de alta semanal. O número é um retrato de um momento e deve ser exibido com a data.",
+   "source_url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/qus/ultimas-4-semanas-diesel-gnv.csv"
+  },
+  {
+   "fact": "PMQC: em 12 meses, 16.529 CNPJs com coordenada (1.208 na Grande SP).",
+   "verdict": "corrected",
+   "note": "16.529 e 1.208 batem, mas para 15 arquivos mensais (07/2025 a 09/2026), não para 12 meses. Nos últimos 12 meses (10/2025 a 09/2026) são 14.778 CNPJs, 1.090 na RMSP. Usando 18 meses (04/2025 a 09/2026), sobe para 18.972 CNPJs (40,1% do cadastro), 1.363 na RMSP. Os arquivos de 2025-07 a 2025-12 se chamam pmqc-2025-MM.csv.",
+   "source_url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/pmqc-programa-de-monitoramento-da-qualidade-dos-combustiveis"
+  },
+  {
+   "fact": "OSM Brasil (Geofabrik 08/10/2026): fuel 28.315, fuel:diesel 2.371, HGV_diesel 59, adblue 34, rest_area 470, truck_stop 0.",
+   "verdict": "unverifiable",
+   "note": "O endpoint do taginfo Brasil devolveu HTTP 500 em todas as tentativas, e o Overpass deu 429/500/504 para a contagem de amenity=fuel. Só tenho confirmação parcial: Sudeste idêntico (11.477, 994, 18, 22, 225); Norte, Nordeste e Centro-Oeste consistentes; no Overpass, com a fronteira do BR, HGV_diesel=57 e truck_stop=0. O total de 28.315 não foi reconferido.",
+   "source_url": "https://taginfo.geofabrik.de/south-america:brazil:sudeste/api/4/tag/stats?key=amenity&value=fuel"
+  },
+  {
+   "fact": "API Menor Preço (PR): sem login, 33 preços de diesel em 29 postos num raio de 5 km em Curitiba, com horário e geohash; sem licença; só PR.",
+   "verdict": "corrected",
+   "note": "A API funciona sem login e os campos estão certos (datahora, geohash de 11 caracteres, cdanp, sem CNPJ). Mas a mesma resposta traz total=258: os 33 itens e 29 postos são só a primeira página, e a paginação por offset devolve mais (offset=50 trouxe 33 itens de 32 estabelecimentos). Não há licença nem termos de uso, como a pesquisa disse.",
+   "source_url": "https://menorpreco.notaparana.pr.gov.br/api/v1/produtos?local=6gkzqfbkb&termo=diesel&offset=0&raio=5&data=-1&ordem=0"
+  },
+  {
+   "fact": "Composição do diesel S-10 (27/09-03/10/2026, R$ 7,35): Petrobras 38,5%, distribuição/revenda 30,2%, ICMS 15,9%, biodiesel 11,0%, federais 4,4%.",
+   "verdict": "confirmed",
+   "note": "Valores idênticos na página da Petrobras, consultada em 09/10/2026.",
+   "source_url": "https://precos.petrobras.com.br/precos-diesel"
+  }
+ ],
+ "extra_findings": [
+  "Portaria SNTR/MT nº 304, de 04/05/2026 (DOU 05/05/2026): prorroga até 31/12/2026 os certificados de PPD do anexo A, que tem 94 estabelecimentos com CNPJ, cidade, UF, BR e km. Entre eles estão o Batistella (Guararema) e o Graal Califórnia (Ourinhos). Deve ser usada para corrigir o flag 'vencido' do Power BI. https://www.in.gov.br/web/dou/-/portaria-n-304-de-4-de-maio-de-2026-703182837",
+  "Portaria Interministerial MT/MJSP nº 4, de 03/07/2026: cria as categorias PPA (estabelecimentos comerciais certificados), PPD (implantados por concessionária ou DNIT) e LRD (identificados pela PRF), e o comitê CTRD. O art. 15 obriga MT, ANTT e DNIT a publicar uma lista consolidada com coordenadas (SIRGAS 2000), vagas para veículos grandes e serviços, o que deve virar a fonte oficial futura. O art. 16 liga a verificação de 'indisponibilidade' (exceção do §8) à ficha 756-00 do MBFT. https://www.in.gov.br/web/dou/-/portaria-interministerial-n-4-de-3-de-julho-de-2026-716755116",
+  "Portaria MT nº 805, de 21/09/2026 (DOU 28/09/2026, vigência 7 dias depois): revoga a Portaria 45/2021 e regula a certificação de PPA e PPD. O texto não tem prazo fixo de validade, só vistorias a cada 5 anos no máximo. O formulário traz atributos úteis para caminhão, como vagas para carga refrigerada e restrições para AET e produtos perigosos. A divulgação é pelo app InfraBR e em sítio na internet. O app deve mostrar 'PPA' e 'PPD' como categorias distintas. https://www.in.gov.br/web/dou/-/portaria-n-805-de-21-de-setembro-de-2026-735097709",
+  "Resolução CONTRAN nº 985/2022 (MBFT), ficha 756-00: é o instrumento do Contran citado pela PI 4/2026 para verificar a indisponibilidade de locais de descanso, ou seja, a base operacional da exceção do §8 do art. 67-C. O anexo fica no site da Senatran e não foi lido nesta verificação. https://www.in.gov.br/web/dou/-/resolucao-contran-n-985-de-15-de-dezembro-de-2022-453475301",
+  "Power BI TB_Concessionarias tem 2 linhas em SP relevantes para a RMSP: o PPD de concessão já entregue em Pindamonhangaba (Dutra km 95, 120 vagas, com lat/lon) e outro em andamento na Dutra km 182 (coordenada de edital em DMS, região de Guararema/Jacareí). As coordenadas de edital vêm em DMS, em formato texto.",
+  "Power BI TB_Dados_PPD expõe as colunas Proprietário, Telefone(s) e E-Mail (dados pessoais). O importador deve selecionar colunas explicitamente para não trazê-las, por causa da LGPD.",
+  "PMQC: os arquivos de 2025-07 a 2025-12 existem com outro padrão de nome (https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/pmqc/2025/pmqc-2025-07.csv etc.). Somando 18 meses (04/2025 a 09/2026) são 18.972 CNPJs com coordenada (40,1% do cadastro; RMSP 1.363). O importador precisa tratar os dois padrões de nome.",
+  "ANTT Quilômetro Principal SHP: a BR-116/SP da RIOSP está completa (km 0 a 231,4, pontos a cada 100 m). Serve para geocodificar BR+km do XLSX de PPD e da lista da Graal na Dutra. https://dados.antt.gov.br/dataset/9c0951da-0ca9-43b8-b158-f8bd591209c1/resource/49bcce5a-b183-4c25-8908-c8debb6fabc3/download/shp-km-principal.zip",
+  "ARTESP recursos.xlsx: last_modified 30/05/2025 no CKAN (mais de 16 meses sem atualização) e só 25.686 das 34.396 linhas têm lat/lon. Vale pedir atualização à ARTESP ou procurar outro recurso. https://dadosabertos.artesp.sp.gov.br/api/3/action/package_show?id=cadastro-de-ativos",
+  "Menor Preço PR: a resposta traz 'total' (258 diesel em 5 km de Curitiba) e um objeto 'precos' com min e max. É preciso paginar por offset; alguns offsets falharam (instabilidade ou limite), então qualquer uso precisa de throttling.",
+  "Monitoramento no DOU: incluir os termos '\"Pontos de Parada e Descanso\"', '\"Pontos de Parada e Apoio\"' e '\"repouso e de descanso\"'. A busca no singular usada pela pesquisa não acha as Portarias 304/2026 e 805/2026 nem a PI 4/2026. https://www.in.gov.br/consulta/-/buscar/dou?q=%22Pontos+de+Parada+e+Descanso%22&s=todos&exactDate=ano",
+  "A Portaria 857/2026 (DOU 07/10/2026) ainda certifica PPD pela Portaria 45/2021, com validade de 4 anos, mesmo depois de a Portaria 805/2026 revogar a 45/2021. O regime está em transição, e o app deve guardar a base legal e a validade de cada certificado em vez de deduzi-las. https://www.in.gov.br/web/dou/-/portaria-n-857-de-6-de-outubro-de-2026-736947452",
+  "Notícia (setembro/2026): o governo nomeou o Comitê Técnico (CTRD) da PI 4/2026, e a lista de LRD identificados pela PRF ainda não está publicada. É uma fonte futura a monitorar. https://diariodotransporte.com.br/2026/09/25/governo-federal-nomeia-comite-para-ampliar-e-acompanhar-areas-de-descanso-de-motoristas-de-onibus-e-caminhoes-nas-rodovias/"
+ ]
+}
