@@ -25,8 +25,9 @@ SHARE = 'oTpPRmYs5AAdiNr'
 WEBDAV = 'https://servicos.dnit.gov.br/dnitcloud/public.php/webdav/'
 FOLDER = 'SNV Bases Geométricas (2013-Atual) (SHP)/'
 SOURCE_URL = f'https://servicos.dnit.gov.br/dnitcloud/index.php/s/{SHARE} ({FOLDER})'
-LICENSE = ('Dado público federal — DNIT/SNV (sem licença explícita no repositório; o portal gov.br do DNIT usa CC BY-ND 3.0). '
-           'Uso interno como referência geométrica; ver docs/layers/rodovias_horario.md')
+LICENSE = ('Dados abertos do Poder Executivo federal — DNIT/SNV, livre utilização (Decreto 8.777/2016, art. 4º, red. Decreto 9.903/2019); '
+           'sem licença nomeada no repositório; o rodapé do portal gov.br do DNIT cita CC BY-ND 3.0, lido como licença do conteúdo do site. '
+           'Redistribuído simplificado (seed e mapa da camada); ver docs/layers/rodovias_horario.md')
 NOTES = 'Trechos de jurisdição federal (pista simples = PAV/IMP/LEN; pista dupla = DUP). SIRGAS 2000 tratado como WGS 84.'
 
 UFS_DEFAULT = 'ES,MG,RJ,SP'
