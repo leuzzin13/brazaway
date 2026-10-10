@@ -3,7 +3,7 @@ ignora módulos com `_`).
 
 - `rodovia_mg` / `rodovia_de_sre_mg`: código da rodovia de MG no formato do OSM ('MG-010', 'LMG-828', 'MGC-262').
 - `snap_bloqueio`: leva um ponto da fonte para a pista da rodovia no grafo do Valhalla (/locate) e escolhe o raio do
-  círculo de bloqueio sem encostar em outra via.
+  círculo de bloqueio sem encostar em outra via (folga medida a partir do próprio ponto de bloqueio, num 2º /locate).
 - `sre_es`: segmentos do SRE do DER-ES (WFS do GEOBASES) e recorte por km.
 """
 from __future__ import annotations
@@ -78,13 +78,35 @@ def _tem_ref(e: dict, refs: list[str]) -> bool:
     return any(nome_tem_ref(n, r) for n in e['names'] for r in refs)
 
 
+def _raio_livre(qs: list[tuple[float, float]], raio_padrao: float, eh_mesma_via, reserva: list[dict] | None = None) -> float:
+    """Raio do círculo de bloqueio centrado nos pontos `qs` que não encosta em outra via: /locate em cada q com raio
+    raio_padrao + FOLGA_OUTRA_VIA_M e, para cada aresta que não é a mesma via (`eh_mesma_via(e)` falso) nem alça, raio =
+    distância - FOLGA_OUTRA_VIA_M (mínimo RAIO_MIN_M). A distância é a do PRÓPRIO q (a do ponto da fonte enganaria: uma
+    transversal pode cruzar a rodovia junto de q e ter o ponto mais próximo da fonte longe dali).
+    Sem /locate (Valhalla caiu no meio da carga), usa `reserva` (arestas do 1º /locate) medindo de q ao ponto correlato."""
+    raio = raio_padrao
+    viz = locate(qs, raio_padrao + FOLGA_OUTRA_VIA_M) if qs else None
+    for k, q in enumerate(qs):
+        if viz is not None:
+            cand = [(e, e['dist']) for e in viz[k]]
+        else:
+            cand = [(e, dist_m(q, (e['lon'], e['lat']))) for e in (reserva or [])]
+        for e, d in cand:
+            if e['link'] or eh_mesma_via(e):
+                continue
+            if d < raio + FOLGA_OUTRA_VIA_M:
+                raio = max(RAIO_MIN_M, round(d - FOLGA_OUTRA_VIA_M, 1))
+    return raio
+
+
 def snap_bloqueio(pontos: list[tuple[float, float]], rodovias: list[str | None], raio_padrao: float = RAIO_PADRAO_M) -> list[dict | None]:
     """Para cada ponto (lon, lat), o bloqueio {pontos, raio_m, ajuste, distancia_m, way_ids} na pista da rodovia.
 
     ajuste: 'rodovia' (aresta com o código da rodovia no nome a até BUSCA_RODOVIA_M), 'via_mais_proxima' (sem o nome,
     via mais próxima a até BUSCA_QUALQUER_M), 'ponto_original' (nada perto: fica o ponto da fonte) ou 'sem_valhalla'.
     Os pontos de bloqueio são um por pista (arestas distintas a mais de 15 m uma da outra). O raio encolhe se outra via
-    (sem o nome da rodovia, que não é alça) passar a menos de raio + FOLGA_OUTRA_VIA_M; nunca fica abaixo de RAIO_MIN_M.
+    (sem o nome da rodovia, de outro way do OSM, que não é alça) passar a menos de raio + FOLGA_OUTRA_VIA_M do ponto de
+    bloqueio; nunca fica abaixo de RAIO_MIN_M.
     """
     res = locate(pontos, BUSCA_RODOVIA_M)
     out: list[dict | None] = []
@@ -120,14 +142,10 @@ def snap_bloqueio(pontos: list[tuple[float, float]], rodovias: list[str | None],
             if e.get('way_id'):
                 ways.append(e['way_id'])
             nomes.update(e['names'])
-        # raio: não encostar em outra via (que não tem o nome da rodovia nem é alça dela)
-        raio = raio_padrao
-        outras = [e for e in edges if not e['link'] and not (set(e['names']) & nomes) and not (refs and _tem_ref(e, refs))]
-        for q in pts:
-            for e in outras:
-                d = dist_m(q, (e['lon'], e['lat']))
-                if d < raio + FOLGA_OUTRA_VIA_M:
-                    raio = max(RAIO_MIN_M, round(d - FOLGA_OUTRA_VIA_M, 1))
+        # raio: não encostar em outra via (que não tem o nome da rodovia, não é o mesmo way nem alça dela)
+        def mesma(e, nomes=nomes, ways=set(ways), refs=refs):
+            return bool((e.get('way_id') and e['way_id'] in ways) or (set(e['names']) & nomes) or (refs and _tem_ref(e, refs)))
+        raio = _raio_livre(pts, raio_padrao, mesma, reserva=edges)
         out.append({'pontos': [[round(x, 6), round(y, 6)] for x, y in pts], 'raio_m': raio, 'ajuste': ajuste,
                     'distancia_m': dists, 'way_ids': ways[:6]})
     return out
@@ -297,20 +315,20 @@ def snap_ponte(ponto: tuple[float, float], rodovia: str | None) -> dict:
     e = alvo[0]
     q = (e['lon'], e['lat'])
     nomes = set(e['names'])
-    raio = RAIO_PONTE_M
-    for o in edges:
-        if o['link'] or o['bridge'] or (set(o['names']) & nomes) or (refs and _tem_ref(o, refs)):
-            continue
-        d = dist_m(q, (o['lon'], o['lat']))
-        if d < raio + FOLGA_OUTRA_VIA_M:
-            raio = max(RAIO_MIN_M, round(d - FOLGA_OUTRA_VIA_M, 1))
+
+    def mesma(o):
+        return bool(o['bridge'] or (e.get('way_id') and o.get('way_id') == e['way_id']) or (set(o['names']) & nomes)
+                    or (refs and _tem_ref(o, refs)))
+    raio = _raio_livre([q], RAIO_PONTE_M, mesma, reserva=edges)
     return {'pontos': [[round(q[0], 6), round(q[1], 6)]], 'raio_m': raio, 'ajuste': 'ponte_osm' if com_ref else 'ponte_osm_sem_ref',
             'distancia_m': [round(e['dist'], 1)], 'way_ids': [e['way_id']] if e.get('way_id') else []}
 
 
 def ponte_por_km_sre(code: str, km: float, rodovia: str | None, janela_km: float = 0.6) -> tuple[tuple[float, float] | None, dict | None]:
     """Ato sem coordenada: amostra o SRE do km - janela ao km + janela a cada ~40 m, procura arestas de ponte do OSM com o
-    código da rodovia e fica com a mais próxima do km do ato. Devolve (ponto do km no SRE, bloqueio | None)."""
+    código da rodovia e fica com a mais próxima do km do ato. Sem ponte no OSM, bloqueia a pista da rodovia no próprio km
+    do SRE (snap_bloqueio; ajuste 'km_sre+rodovia_sem_ponte_osm'), como snap_ponte faz com a coordenada do ato. Devolve
+    (ponto do km no SRE, bloqueio | None); None só sem Valhalla ou sem via perto do km."""
     feats = sre_es(f"sre = '{code}'", cache=f'sre_es_{code}.json')
     alvo = ponto_km_sre_es(code, km)
     if not feats or alvo is None:
@@ -337,7 +355,11 @@ def ponte_por_km_sre(code: str, km: float, rodovia: str | None, janela_km: float
             if e['bridge'] and not e['link'] and (not refs or _tem_ref(e, refs)):
                 melhores.append(e)
     if not melhores:
-        return alvo, None
+        b = snap_bloqueio([alvo], [rodovia], RAIO_PONTE_M)[0]
+        if not b or b['ajuste'] not in ('rodovia', 'via_mais_proxima'):
+            return alvo, None
+        b['ajuste'] = f'km_sre+{b["ajuste"]}_sem_ponte_osm'
+        return alvo, b
     e = min(melhores, key=lambda x: dist_m(alvo, (x['lon'], x['lat'])))
     b = snap_ponte((e['lon'], e['lat']), rodovia)
     b['ajuste'] = 'km_sre+' + b['ajuste']
@@ -397,7 +419,8 @@ def carrega_regras() -> dict:
     import os
     from common import DATA_DIR
     path = os.environ.get('DERS_REGRAS_JSON') or str(DATA_DIR / 'raw' / 'ders_estaduais' / 'regras.json')
-    d = json.loads(open(path, encoding='utf-8').read())
+    with open(path, encoding='utf-8') as f:
+        d = json.load(f)
     for grupo in ('trechos', 'pontes'):
         ids = set()
         for r in d.get(grupo, []):

@@ -17,6 +17,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 if not (pathlib.Path(os.environ.get('DATA_DIR', '/data')) / 'raw' / 'ders_estaduais').exists():
     os.environ['DATA_DIR'] = str(pathlib.Path(__file__).resolve().parents[2] / 'data')  # fora do container: data/ do repo
 
+import common  # noqa: E402
+from sources import _arcgis  # noqa: E402
 from sources import _ders  # noqa: E402
 from sources import oae_der_mg  # noqa: E402
 from sources import rodovias_estaduais_der_mg as pc  # noqa: E402
@@ -57,6 +59,115 @@ class Rodovias(unittest.TestCase):
         self.assertEqual(oae_der_mg._kind('Viaduto Ferroviário', 'Concreto', None), ('viaduto', False))
         self.assertEqual(oae_der_mg._kind(None, None, 'Rio Pomba'), ('ponte', True))
         self.assertEqual(oae_der_mg._kind('Esteira Transportadora', None, None), ('outra', False))
+
+
+class CacheDaFonteViva(unittest.TestCase):
+    """Pontos críticos: fonte fora do ar não pode carimbar cache velho como fresco (o http_get comum devolve o cache
+    antigo de qualquer idade depois de 3 falhas)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self._cache_dir, self._http_get = common.CACHE_DIR, _arcgis.http_get
+        common.CACHE_DIR = pathlib.Path(self._tmp.name)
+        (common.CACHE_DIR / 'pc_teste_0.json').write_text(json.dumps({'type': 'FeatureCollection', 'features': [
+            {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [-44.0, -19.0]}, 'properties': {'objectid': 1}}]}))
+        # simula o http_get comum: a consulta falhou e ele devolveu o arquivo do cache, qualquer que seja a idade
+        _arcgis.http_get = lambda url, cache=None, max_age_h=24: (common.CACHE_DIR / cache).read_bytes()
+
+    def tearDown(self):
+        common.CACHE_DIR, _arcgis.http_get = self._cache_dir, self._http_get
+        self._tmp.cleanup()
+
+    def _idade(self, horas: float):
+        import time
+        t = time.time() - horas * 3600
+        os.utime(common.CACHE_DIR / 'pc_teste_0.json', (t, t))
+        return t
+
+    def test_cache_vencido_faz_a_carga_falhar(self):
+        self._idade(5)
+        with self.assertRaises(RuntimeError):
+            _arcgis.query_geojson('https://x/FeatureServer/0', cache='pc_teste', max_age_h=0.5, page=10, sem_cache_vencido=True)
+        # outras fontes (sem a opção) seguem aceitando o cache antigo
+        self.assertEqual(len(_arcgis.query_geojson('https://x/FeatureServer/0', cache='pc_teste', max_age_h=0.5, page=10)), 1)
+
+    def test_cache_valido_data_a_consulta_pelo_download(self):
+        t = self._idade(0.2)
+        info: dict = {}
+        feats = _arcgis.query_geojson('https://x/FeatureServer/0', cache='pc_teste', max_age_h=0.5, page=10,
+                                      sem_cache_vencido=True, info=info)
+        self.assertEqual(len(feats), 1)
+        # lido_em = hora do download (mtime do cache), não a desta execução: valid_to = lido_em + 72 h
+        self.assertAlmostEqual(info['lido_em'].timestamp(), t, delta=1)
+
+
+class RaioDoBloqueio(unittest.TestCase):
+    """O raio encolhe pela distância de OUTRA via ao ponto de bloqueio q (2º /locate em q), não ao ponto da fonte."""
+
+    def setUp(self):
+        self._locate = _ders.locate
+
+    def tearDown(self):
+        _ders.locate = self._locate
+
+    def test_transversal_junto_de_q_encolhe_o_raio(self):
+        rodovia = {'dist': 0.0, 'lon': 0, 'lat': 0, 'names': ['MG-430'], 'way_id': 1, 'link': False, 'bridge': False}
+        transversal = {'dist': 9.0, 'lon': 0, 'lat': 0, 'names': ['Rua A'], 'way_id': 2, 'link': False, 'bridge': False}
+        alca = {'dist': 3.0, 'lon': 0, 'lat': 0, 'names': [], 'way_id': 3, 'link': True, 'bridge': False}
+        chamadas = []
+
+        def fake_locate(pts, raio):
+            chamadas.append((pts, raio))
+            return [[rodovia, alca, transversal] for _ in pts]
+        _ders.locate = fake_locate
+        mesma = lambda e: e['way_id'] == 1
+        # a 9 m de q: raio = 9 - 5 = 4 -> mínimo de 8 m; a alça (link) não conta
+        self.assertEqual(_ders._raio_livre([(-44.0, -19.0)], 20, mesma), _ders.RAIO_MIN_M)
+        self.assertEqual(chamadas[0][1], 20 + _ders.FOLGA_OUTRA_VIA_M)
+        transversal['dist'] = 18.0
+        self.assertEqual(_ders._raio_livre([(-44.0, -19.0)], 20, mesma), 13.0)
+        transversal['dist'] = 40.0
+        self.assertEqual(_ders._raio_livre([(-44.0, -19.0)], 20, mesma), 20)
+
+    def test_sem_valhalla_usa_as_arestas_do_primeiro_locate(self):
+        _ders.locate = lambda pts, raio: None
+        q = (-44.0, -19.0)
+        # o ponto correlato da outra via fica a 18 m de q (a distância ao ponto da fonte, 50 m, não importa)
+        perto = {'dist': 50.0, 'lon': -44.0, 'lat': -19.0 + 18 / 110540, 'names': ['Rua B'], 'way_id': 9, 'link': False}
+        self.assertEqual(_ders._raio_livre([q], 20, lambda e: False, reserva=[perto]), 13.0)
+
+
+class PontePorKmSemPonteNoOsm(unittest.TestCase):
+    """Ato sem coordenada e sem ponte no OSM (ex.: Córrego Santo Amaro, ES-165 km 192,22): bloqueia a pista da rodovia
+    no km do SRE em vez de ficar sem bloqueio."""
+
+    def setUp(self):
+        self._orig = {k: getattr(_ders, k) for k in ('sre_es', 'ponto_km_sre_es', 'locate', 'snap_bloqueio')}
+
+    def tearDown(self):
+        for k, v in self._orig.items():
+            setattr(_ders, k, v)
+
+    def test_cai_no_snap_da_rodovia(self):
+        seg = {'properties': {'km_inicial': 185.638, 'km_final': 193.819},
+               'geometry': {'type': 'LineString', 'coordinates': [[-41.30, -20.45], [-41.31, -20.52]]}}
+        _ders.sre_es = lambda cql, cache: [seg]
+        _ders.ponto_km_sre_es = lambda code, km: (-41.305, -20.4975)
+        _ders.locate = lambda pts, raio: [[{'dist': 1.0, 'lon': -41.305, 'lat': -20.4975, 'names': ['ES-165/ES-379'],
+                                            'way_id': 5, 'link': False, 'bridge': False}] for _ in pts]
+        vistos = []
+
+        def fake_snap(pontos, rodovias, raio):
+            vistos.append((pontos, rodovias, raio))
+            return [{'pontos': [[-41.305, -20.4975]], 'raio_m': raio, 'ajuste': 'rodovia', 'distancia_m': [9.0], 'way_ids': [5]}]
+        _ders.snap_bloqueio = fake_snap
+        alvo, b = _ders.ponte_por_km_sre('165EES0150', 192.22, 'ES-165')
+        self.assertEqual(alvo, (-41.305, -20.4975))
+        self.assertEqual(b['ajuste'], 'km_sre+rodovia_sem_ponte_osm')
+        self.assertEqual(vistos[0], ([(-41.305, -20.4975)], ['ES-165'], _ders.RAIO_PONTE_M))
+        # nada perto do km: fica sem bloqueio (só aviso), como antes
+        _ders.snap_bloqueio = lambda pontos, rodovias, raio: [{'pontos': [list(pontos[0])], 'raio_m': raio, 'ajuste': 'ponto_original'}]
+        self.assertIsNone(_ders.ponte_por_km_sre('165EES0150', 192.22, 'ES-165')[1])
 
 
 class RecorteKm(unittest.TestCase):

@@ -9,7 +9,9 @@ média.
 Cada ponte vira feição com `peso_max_t` (e `eixo_max_t` quando o ato tem limite por eixo), `restricao` (tipo 'peso',
 vigente desde a publicação) e `bloqueio` sobre o tabuleiro: a aresta marcada como ponte no OSM mais perto da coordenada
 do ato (SIRGAS 2000), conferida no /locate do Valhalla. Ato sem coordenada: ponto pelo km no SRE do DER-ES e ponte do
-OSM mais próxima. A camada oae bloqueia (exclusão pequena) quem pesa mais que o limite.
+OSM mais próxima. Sem ponte no OSM perto (estrada de terra), o bloqueio fica na pista da rodovia (ajuste
+'rodovia_sem_ponte_osm', ou 'km_sre+rodovia_sem_ponte_osm' no ato sem coordenada). A camada oae bloqueia (exclusão
+pequena) quem pesa mais que o limite.
 """
 from __future__ import annotations
 

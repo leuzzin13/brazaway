@@ -9,7 +9,7 @@ Situação de tráfego (props.situacao): vem de `trafeg_variante`, o campo que o
 "Trafegabilidade" (a pesquisa de 10/10/2026 mostrou que ele é o mais completo e que `trafegabilidade` diverge dele em
 alguns pontos). Sem `trafeg_variante`, usa `trafegabilidade` + `solucao_trafego`:
   - 'interrompida'               Pista Interrompida (sem variante)        -> bloqueia todo veículo
-  - 'interrompida_pesados'       Pista interrompida para veículos pesados -> bloqueia caminhão que não é VUC
+  - 'interrompida_pesados'       Pista interrompida para veículos pesados -> bloqueia caminhão (PBT > 3,5 t, VUC inclusive)
   - 'interrompida_com_variante'  Pista Interrompida - Com Variante        -> só aviso (há desvio no local)
   - 'meia_pista'                 Meia-Pista                               -> só aviso (pare-e-siga)
   - 'livre' / 'a_definir'                                                 -> só contagem
@@ -17,9 +17,11 @@ alguns pontos). Sem `trafeg_variante`, usa `trafegabilidade` + `solucao_trafego`
 só aviso. O bloqueio é feito pela API (camada rodovias_estaduais.layer.ts) só no ponto, com um círculo pequeno sobre a
 pista (props.bloqueio), calculado aqui com o /locate do Valhalla.
 
-Atualização frequente: o importador é idempotente (apaga e regrava a source), grava `valid_to` = agora + VALIDADE_H
-(padrão 72 h) e a API ignora feições vencidas. Se o importador parar de rodar, os pontos somem sozinhos em vez de
-bloquear uma via já liberada. Rodar de hora em hora ou ao menos 1×/dia (ver docs/layers/rodovias_estaduais.md).
+Atualização frequente: o importador é idempotente (apaga e regrava a source), grava `valid_to` = hora da consulta +
+VALIDADE_H (padrão 72 h) e a API ignora feições vencidas. A hora da consulta é a do download de fato (mtime do cache,
+que vale CACHE_H): se o Observatório estiver fora do ar, a carga FALHA em vez de reaproveitar cache vencido (o
+`http_get` comum faria isso), e os pontos já gravados vencem sozinhos em vez de bloquear uma via já liberada. Rodar de
+hora em hora ou ao menos 1×/dia (ver docs/layers/rodovias_estaduais.md).
 """
 from __future__ import annotations
 
@@ -99,10 +101,12 @@ def _int(v) -> int | None:
 
 def fetch():
     global NOTES
-    agora = datetime.now(timezone.utc)
-    valid_to = (agora + timedelta(hours=VALIDADE_H)).isoformat(timespec='seconds')
+    info: dict = {}
     feats = query_geojson(SOURCE_URL, where="status IN ('1','2','3') AND data_conclusao IS NULL", order_by='objectid',
-                          cache='dermg_pc', max_age_h=CACHE_H)
+                          cache='dermg_pc', max_age_h=CACHE_H, sem_cache_vencido=True, info=info)
+    # validade contada do download de fato (o cache pode ter até CACHE_H), nunca da hora desta execução
+    agora = info.get('lido_em') or datetime.now(timezone.utc)
+    valid_to = (agora + timedelta(hours=VALIDADE_H)).isoformat(timespec='seconds')
     linhas = []
     for f in feats:
         g = f.get('geometry') or {}
@@ -162,9 +166,10 @@ def fetch():
     cont: dict[str, int] = {}
     for o in out:
         cont[o['props']['situacao']] = cont.get(o['props']['situacao'], 0) + 1
-    NOTES = (f'{len(out)} pontos críticos ativos (status 1/2/3, sem data de conclusão) em {agora.date().isoformat()}; '
+    NOTES = (f'{len(out)} pontos críticos ativos (status 1/2/3, sem data de conclusão) consultados em {agora.isoformat(timespec="minutes")}; '
              f'situação: {", ".join(f"{k} {v}" for k, v in sorted(cont.items()))}. Última edição na fonte: {ultima_edicao}. '
-             f'valid_to = consulta + {VALIDADE_H:g} h (reimportar antes disso). Cadastro operacional, não ato normativo.')
+             f'valid_to = consulta + {VALIDADE_H:g} h (reimportar antes disso; fonte fora do ar = carga falha, sem cache vencido). '
+             'Cadastro operacional, não ato normativo.')
     global SEED_SQL
     SEED_SQL = seed_sql()
     return out

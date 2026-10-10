@@ -23,7 +23,7 @@ Curadoria das regras do ES e do RJ: `data/raw/ders_estaduais/regras.json` (versi
 | Situação na fonte (`trafeg_variante`) | `props.situacao` | Veículo afetado | Efeito | Aviso |
 |---|---|---|---|---|
 | Pista Interrompida | `interrompida` | todos | exclusão pequena no ponto | `pc_desvio` (`warn`, rota desviada) ou `pc_bloqueio_na_rota` (`danger`) |
-| Pista interrompida para veículos pesados | `interrompida_pesados` | caminhão (PBT > 3,5 t, CTB Anexo I) que **não** é VUC | exclusão no ponto | idem; VUC e veículo até 3,5 t passam com `pc_pesados_liberado` (`warn`) |
+| Pista interrompida para veículos pesados | `interrompida_pesados` | todo caminhão (PBT > 3,5 t, CTB Anexo I), **VUC inclusive** | exclusão no ponto | idem; só o veículo até 3,5 t passa, com `pc_pesados_liberado` (`warn`) |
 | `limite_carga` = Sim **com** `qnt_carga_limite` (t) | (qualquer) | PBT acima do valor | exclusão no ponto | idem; abaixo do valor, `pc_limite_carga_ok` (`info`) |
 | Pista Interrompida - Com Variante | `interrompida_com_variante` | — | nenhum (há desvio no local) | `pc_variante` (`warn`) |
 | Meia-Pista | `meia_pista` | — | nenhum | `pc_meia_pista` (`warn`, pare e siga) |
@@ -31,26 +31,42 @@ Curadoria das regras do ES e do RJ: `data/raw/ders_estaduais/regras.json` (versi
 | Pista Normal (livre) / A definir | `livre` / `a_definir` | — | nenhum | só a contagem no resumo |
 
 - **Só ponto ativo bloqueia.** O importador grava só `status` 1 (A iniciar), 2 (Em andamento) ou 3 (Paralisada) sem
-  `data_conclusao`. Cada carga vale 72 h (`valid_to`); a API ignora feições vencidas (compara com o **agora**, não com a
-  saída: uma viagem marcada para daqui a 5 dias usa a situação conhecida hoje). Se o importador parar, os pontos somem
-  sozinhos em vez de bloquear uma via já liberada.
+  `data_conclusao`. Cada carga vale 72 h a partir do **download de fato** (`valid_to` = hora da consulta + 72 h, com
+  `consultado_em` = hora da consulta; o cache da consulta vale 30 min e, quando é usado, a hora é a do arquivo); a API
+  ignora feições vencidas (compara com o **agora**, não com a saída: uma viagem marcada para daqui a 5 dias usa a situação
+  conhecida hoje). **Fonte fora do ar = carga falha:** o `http_get` comum, depois de 3 falhas, devolve o cache antigo de
+  qualquer idade; esta fonte recusa cache com mais de 30 min (`query_geojson(..., sem_cache_vencido=True)`), a carga
+  aborta sem tocar no banco e os pontos já gravados vencem sozinhos em 72 h, em vez de bloquear uma via já liberada.
 - **Por que `trafeg_variante`:** é o campo que o painel público mostra como "Trafegabilidade" (widget de lista e gráfico
   do painel "Pontos críticos – Público"). A verificação de 10/10/2026 alertou que 4 dos 5 pontos com `trafegabilidade` =
   3 (interrompida) têm variante no local e que bloqueá-los desviaria de vias passáveis: por isso "com variante" só avisa.
   O campo também pega o único ponto ativo "para veículos pesados" (MG-220, Santo Hipólito), que tem `trafegabilidade` = 1
   (livre) — divergência da fonte; vale o que o painel mostra. Sem `trafeg_variante`, usa `trafegabilidade` +
   `solucao_trafego`. `veiculos_leves` = Sim numa interrupção total vira "só pesados".
-- **"Veículo pesado"**: o DER-MG não define. Decisão de produto: pesado = caminhão (PBT > 3,5 t, CTB Anexo I, red. Lei
-  14.440/2022) que não atende a definição de VUC usada no app (`isVucSP`: até 2,50 m × 7,20 m). O VUC passa com aviso
-  `warn` para conferir a sinalização.
-- **Origem ou destino a até 1 km de um ponto que bloquearia:** não bloqueia e avisa (`pc_origem_destino`, `danger`) — a
-  mesma política da ZMRC (o círculo tiraria do grafo a aresta onde o endereço está).
+- **"Veículo pesado"**: o DER-MG não define. Decisão de produto: pesado = **todo caminhão** (PBT > 3,5 t, CTB Anexo I,
+  red. Lei 14.440/2022), **VUC inclusive**. A definição de VUC do app (`isVucSP`, Portaria SMT 137/2018 de São Paulo) só
+  limita largura, comprimento e idade, não o PBT, e é municipal; o único ponto ativo "para pesados" (MG-220, Santo
+  Hipólito) é dano em OAE, e o importador transforma "interrompida" + `veiculos_leves` = Sim em "para pesados" — só os
+  leves foram liberados. Só o veículo de até 3,5 t passa, com aviso `warn` para conferir a sinalização.
+- **Origem ou destino no próprio ponto:** dentro do círculo de bloqueio (a até `raio_m` do ponto) **ou** numa aresta do
+  grafo que o círculo corta — o `exclude_polygons` do Valhalla tira a aresta inteira, e o `/locate` do endereço (perfil
+  truck, raio 0) mostra que **todas** as arestas onde ele se encaixa sairiam junto, isolando-o. Aí o app não bloqueia e
+  avisa (`pc_origem_destino`, `danger`) — a mesma política da ZMRC. **Nos outros casos, bloqueia**, mesmo com o endereço a
+  poucos metros: na MG-430 em Igaratinga, um destino na outra cabeceira da ponte de 40 m (a 37 m do ponto, num nó com a
+  aresta seguinte livre) é alcançado pelo desvio de 10,3 km, e destinos a 310 m e 700 m depois da ponte também (o
+  limite antigo de 1 km mandava a carreta pela OAE quebrada). O `/locate` só é chamado para origem/destino a até 5 km do
+  ponto; sem resposta do Valhalla, o bloqueio fica. Mesmo resultado em `exclusions()` e `annotate()` (cache por rota).
+- **"Na rota"** (avisos): ponto com bloqueio = a rota passa dentro do círculo (`raio_m`), como o `passaPor` da camada
+  `oae` (candidatos buscados a até 100 m do ponto da fonte: o importador leva o bloqueio até 80 m dele); ponto sem
+  bloqueio (variante, meia-pista, livre) = a até 30 m do ponto da fonte.
 - **Bloqueio (exclusão e não `costLines`):** pista interrompida é interrupção física num ponto; `costLines` com fator
   1000 ainda deixaria passar quando não há alternativa, e o ponto do DER-MG não traz extensão. O círculo (`raio_m`, padrão
   20 m — decisão de produto) fica sobre a pista da rodovia: o importador consulta o `/locate` do Valhalla e leva o ponto
   para a aresta com o código da rodovia no nome a até 80 m (MGC-xxx também casa BR-xxx; `ajuste = rodovia`), senão para a
-  via mais próxima a até 30 m (`via_mais_proxima`); um ponto por pista. O raio encolhe (mínimo 8 m) se outra via passar a
-  menos de raio + 5 m. Em 10/10/2026: MG-430 em Igaratinga (2 pontos em arestas da MG-430, a 11,5 e 20,9 m do ponto da fonte) e MG-220 em Santo
+  via mais próxima a até 30 m (`via_mais_proxima`); um ponto por pista. O raio encolhe (mínimo 8 m) se outra via (outro
+  way do OSM, sem o nome da rodovia, que não é alça) passar a menos de raio + 5 m **do ponto de bloqueio** — medido num 2º
+  `/locate` centrado nele (a distância ao ponto da fonte enganaria: uma transversal pode cruzar a rodovia junto do
+  bloqueio e ter o ponto mais próximo da fonte longe dali). Em 10/10/2026: MG-430 em Igaratinga (2 pontos em arestas da MG-430, a 11,5 e 20,9 m do ponto da fonte) e MG-220 em Santo
   Hipólito (11,3 m). Exclusões só no corredor origem–destino (bbox com folga de max(0,3°, 25%)); fora dele o `annotate`
   ainda avisa pela rota real.
 - O aviso traz causa, previsão (`data_prevista`; "vencida" se passou), a rota alternativa em texto (`obs_alternativa`) e a
@@ -82,7 +98,8 @@ só nas pistas duplas), trecho mínimo de 200 m.
   `qnt_carga_limite` vazio em 100% (24 com `limite_carga` = Sim).
 - Atualização: idempotente (apaga e regrava a source). **Rodar de hora em hora ou ao menos 1×/dia**:
   `docker compose --profile import run --rm importer rodovias_estaduais_der_mg` (cron no host). `DERMG_PC_VALIDADE_H`
-  (padrão 72) muda a validade; `DERMG_PC_CACHE_H` (padrão 0,5) o cache da consulta.
+  (padrão 72) muda a validade; `DERMG_PC_CACHE_H` (padrão 0,5) o cache da consulta, que é também a idade máxima aceita
+  quando o Observatório não responde (cache mais velho = carga falha; o cron deve alertar a falha).
 - **Seed sem feições** (`db/seed/layers/rodovias_estaduais__der-mg.sql`): o `migrate` reaplica os seeds a cada subida; um
   seed com os pontos do dia sobrescreveria dados frescos pelos antigos (e numa máquina limpa eles já estariam vencidos).
   O seed só apaga os vencidos e registra a fonte uma vez.
@@ -118,9 +135,9 @@ Jacarandá, Calçado e Fundão também estão na verify vitoria_es (confiança a
 | Rio Mutum Preto — ES-164 km 122,54 (Baixo Guandu) | 12 t | IS 006-N, de 16/04/2025 (DIO-ES 17/04/2025) | ponte do OSM |
 | Rio Sobreiro — ES-164 km 161 (Itaguaçu) | 10 t | IS 009-N, de 28/08/2026 (DIO-ES 31/08/2026, p. 31–32) | ponte do OSM |
 | Córrego (Baixo Guandu) — ES-165 km 3,75 | 12 t | IS 020-N, de 25/10/2024 (DIO-ES 29/10/2024, p. 34) | km no SRE + ponte do OSM (o ato não dá coordenada) |
-| Córrego Santo Amaro — ES-165 km 192,22 (Castelo) | 5 t | IS 021-N, de 25/10/2024 (DIO-ES 29/10/2024, p. 34–35) | **sem bloqueio** (estrada de terra, sem ponte no OSM; só aviso) |
+| Córrego Santo Amaro — ES-165 km 192,22 (Castelo) | 5 t | IS 021-N, de 25/10/2024 (DIO-ES 29/10/2024, p. 34–35) | km no SRE (165EES0150) + pista da rodovia (estrada de terra sem ponte no OSM; `ES-165/ES-379` a 9 m do km; `km_sre+rodovia_sem_ponte_osm`) |
 | Córrego São Pedro — ES-177 km 55,78 | 5 t | IS 022-N, de 25/10/2024 (DIO-ES 29/10/2024, p. 35) | ponte do OSM |
-| Rio Fundão — ES-261 km 104 (Fundão) | 16 t | IS (provável 007-N), de 28/08/2026 (DIO-ES 31/08/2026, p. 31) | ponte do OSM |
+| Rio Fundão — ES-261 km 104 (Fundão) | 16 t | IS 007-N, de 28/08/2026 (DIO-ES 31/08/2026, p. 31; processo E-Docs 2026-XJVWX) | ponte do OSM |
 | Córrego Paraju — ES-357 km 8,11 (Itaguaçu) | 10 t | IS 028-N, de 03/12/2024 (DIO-ES 04/12/2024, p. 64) | pista da rodovia |
 | Córrego Vargem Grande — ES-379 km 51,7 (Muniz Freire) | 5 t | IS 027-N, de 03/12/2024 (DIO-ES 04/12/2024, p. 64) | ponte do OSM |
 | Córrego do Vinagre — ES-387 km 43,5 | 5 t | IS 024-N, de 25/10/2024 (DIO-ES 30/10/2024, p. 28–29) | ponte do OSM |
@@ -133,9 +150,14 @@ Jacarandá, Calçado e Fundão também estão na verify vitoria_es (confiança a
 | Córrego Bom Sucesso — ES-484 km 87 (Afonso Cláudio) | 10 t | IS 008-N, de 02/09/2025 (DIO-ES 03/09/2025, p. 35) | ponte do OSM |
 
 Na camada `oae` cada ponte tem `peso_max_t` (e `eixo_max_t` na ES-483), `restricao` (tipo `peso`, vigente desde a
-publicação) e `bloqueio` (círculo de 15 m, ou menos se outra via passar perto, sobre a aresta marcada como ponte no OSM
-mais perto da coordenada do ato; `oae_peso_desvio`/`oae_peso_excedido` como as demais fontes). O limite por eixo
-(`eixo_max_t`) entrou na regra geral da camada `oae` (`motivosBloqueio`).
+publicação) e `bloqueio` (círculo de 15 m, ou menos se outra via passar perto do ponto de bloqueio, sobre a aresta
+marcada como ponte no OSM mais perto da coordenada do ato — ou do km do SRE, quando o ato não dá coordenada; sem ponte no
+OSM, sobre a pista da rodovia: Boa Vista, Paraju e Santo Amaro; `oae_peso_desvio`/`oae_peso_excedido` como as demais
+fontes). Todas as 17 têm ponto de bloqueio no grafo (Santo Amaro só avisava antes da revisão de 10/10/2026: o km
+192,22 no SRE fica a 9 m da `ES-165/ES-379` do OSM). O limite por eixo (`eixo_max_t`) entrou na regra geral da camada
+`oae` (`motivosBloqueio`). O link do ato (`restricao.fonte_url`, também na nota dos avisos) é a busca full-text do DIO-ES
+no dia da publicação pelo código da OAE **como está no texto**: no Rio Calçado ele vem colado (`OAE388EES0010-004`; a
+busca por `388EES0010-004` não acha nada).
 
 ### DER-RJ (`rodovias_estaduais_der_rj`)
 **O DER-RJ não publica cadastro de OAE, lista de balanças, portaria de restrição em feriados, malha com km nem painel de
@@ -207,18 +229,26 @@ docker compose --profile import run --rm importer oae_der_mg oae_der_es rodovias
   remover em `regras.json` e rodar `oae_der_es`. `oae__der-es.sql` depende do grafo do Valhalla (ponto de bloqueio).
 
 ## Testes
-- `api/test/layers/rodovias_estaduais.test.ts` (API em `API_URL`): regras sem rota (pesados × VUC/utilitário, interrompida,
-  variante, meia-pista, limite com e sem valor, ponto inativo, critério de trecho estrito e com OU); **ponto crítico de
-  teste "pista interrompida para pesados" no meio de uma rota Lagoa Santa → Pedro Leopoldo: carreta desvia e VUC passa com
-  aviso**; ponto vencido e origem junto ao ponto não geram exclusão; ES-060 km 33–39 (carreta desviada, toco passa);
-  ponte do Rio Jacarandá (toco desvia, VUC passa); RJ-127 só informa.
+- `api/test/layers/rodovias_estaduais.test.ts` (API em `API_URL`): regras sem rota (pesados × VUC — inclusive "VUC" de
+  14 t — e utilitário, interrompida, variante, meia-pista, limite com e sem valor, ponto inativo, critério de trecho
+  estrito e com OU); **ponto crítico de teste "pista interrompida para pesados" no meio de uma rota Lagoa Santa → Pedro
+  Leopoldo (LMG-800): carreta e VUC desviam; utilitário (3,5 t) passa com `pc_pesados_liberado`; destino no próprio ponto
+  passa com `pc_origem_destino`; destino ~300 m adiante, na aresta seguinte, continua desviando**; nas exclusões, destino
+  ~100 m adiante na mesma aresta de 535 m (fora do círculo) é isento pelo `/locate` e o de ~300 m não; ponto vencido não
+  gera exclusão; ES-060 km 33–39 (carreta desviada, toco passa); ponte do Rio Jacarandá (toco desvia, VUC passa); RJ-127
+  só informa.
 - `importers/tests/test_ders_estaduais.py`: situação (`trafeg_variante` × `trafegabilidade`), códigos de rodovia, tipo de
-  OAE, recorte por km e validação da curadoria (confiança baixa/revogada nunca ativa; ato sem artigo é recusado).
+  OAE, recorte por km, validação da curadoria (confiança baixa/revogada nunca ativa; ato sem artigo é recusado), cache
+  vencido da fonte viva faz a carga falhar (e o válido data `valid_to` pelo download), raio medido a partir do ponto de
+  bloqueio e ponte por km do SRE sem ponte no OSM caindo no snap da rodovia.
 
 ## Limitações
 - Ponto crítico sem extensão: o bloqueio é um círculo de até 20 m no ponto; se a interrupção real for mais longa, o
   círculo ainda corta a via (a aresta inteira sai do grafo). Ponto que não casou com via (ajuste `ponto_original`) bloqueia
   no ponto da fonte.
+- Endereço numa aresta cortada pelo círculo, mas fora dele, fica isento (só aviso) mesmo que a outra ponta da aresta seja
+  alcançável pelo desvio: o `exclude_polygons` tira a aresta inteira e o Valhalla não chegaria ao endereço. Na MG-430 em
+  Igaratinga, isso vale para os 141 m da aresta da rodovia que encosta na cabeceira leste da ponte.
 - Variante: o traçado (camada `pontos_criticos_variantes`) não é usado; "com variante" só avisa.
 - Regras de trecho por sentido não existem no ES (os atos valem nos dois sentidos).
 - O km do SRE é interpolado na geometria (erro típico < 1%); o Portal de Aracruz (ES-010) é aproximado.
