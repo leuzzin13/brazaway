@@ -29,6 +29,10 @@ const VIX_PRAIA_SUA = { lat: -20.3125, lon: -40.2930 };   // Vitória, cabeceira
 const VV_PRAIA_COSTA = { lat: -20.3420, lon: -40.2870 };  // Vila Velha, Praia da Costa
 const SERRA_LARANJEIRAS = { lat: -20.2010, lon: -40.2580 }; // Serra, perto da Av. Norte-Sul
 const SERRA_BARCELONA = { lat: -20.1745, lon: -40.2525 };
+// portões na via pública em frente às áreas portuárias (fora do polígono recuado; dentro do od_raio_m = 50 m)
+const VIX_JUREMA_BARROSO = { lat: -20.322465, lon: -40.34743 };  // R. Jurema Barroso (saída do art. 2º, I, b), a 3 m do Cais Comercial
+const VV_JOUBERT_BARROS = { lat: -20.330268, lon: -40.327397 };  // Estrada Joubert de Barros, a 8 m da área portuária de Vila Velha
+const REVOGADA = 'Acesso ao porto (17h–19h, revogado)';           // vitoria_porto_centro_17h_19h (Dec. 18.103/2020, art. 2º)
 const CARRETA = { preset: 'carreta_5e' };                 // 41,5 t, 5 eixos
 const tipos = (xs: { item: { type?: string } }[]) => new Set(xs.map((x) => x.item.type));
 
@@ -37,6 +41,7 @@ let regras: Map<string, Linha>;
 let vitoriaRecuada: GeoJSON.Geometry;          // limite de Vitória (zona de pico) recuado 30 m
 let meioPonte: GeoJSON.Feature<GeoJSON.Point>;  // ponto sobre a Terceira Ponte, no meio do vão
 let portoVV: { lat: number; lon: number };      // ponto dentro da zona do porto de Vila Velha
+let revogadaIds: Set<string>;                   // feições da janela 17h–19h revogada (nunca aplicada)
 const regra = (id: string) => {
   const r = regras.get(id);
   if (!r) throw new Error(`regra ${id} ausente no banco`);
@@ -62,6 +67,9 @@ beforeAll(async () => {
     `select ST_X(c) as lon, ST_Y(c) as lat from (select ST_PointOnSurface(ST_Buffer(geom::geography, -40)::geometry) as c from data_features
       where layer_id = $1 and source = 'vila-velha' and props->>'regra_id' = 'vila_velha_porto') s`, [LAYER]);
   portoVV = { lat: q.rows[0].lat, lon: q.rows[0].lon };
+  revogadaIds = new Set((await pool.query<{ id: string }>(
+    `select id::text from data_features where layer_id = $1 and props->>'regra_id' = 'vitoria_porto_centro_17h_19h'`, [LAYER])).rows.map((x) => x.id));
+  expect(revogadaIds.size).toBe(1);
 }, 600_000);
 
 afterAll(async () => { await pool.end(); });
@@ -99,6 +107,9 @@ describe('regras carregadas (banco)', () => {
     expect([tp.tipo, tp.ibge, tp.municipio]).toEqual(['ponte', null, 'Vitória e Vila Velha (lei estadual)']);
     expect(tp.abrangencia_ibge).toEqual(['3205309', '3205200']);
     expect(tp.base_legal[0].ato).toMatch(/Lei estadual 9\.602\/2010/);
+    // zona do município: limite do IBGE recortado na Grande Vitória (sem Trindade e Martim Vaz, lon -29,3/-28,8)
+    const [w, s, e, n] = turf.bbox(vitoriaRecuada as any);
+    expect([w > -40.4, s > -20.35, e < -40.2, n < -20.2]).toEqual([true, true, true, true]);
   });
 
   it('janelas, feriados e alvos batem com os atos', () => {
@@ -177,16 +188,35 @@ describe('aplicação na rota (módulo da camada)', () => {
     } finally { await pool.query(`delete from holidays where id = $1`, [id]); }
   });
 
-  it('portos: janela de acesso (Vitória 7h–9h; Vila Velha 7h–9h e 17h–19h); destino no porto não exclui', async () => {
+  it('portos: janela de acesso (Vitória 7h–9h; Vila Velha 7h–9h e 17h–19h); destino no porto ou no portão não exclui', async () => {
     const ex = async (d: P, when: string) => tipos(await layer.exclusions!(ctxOf(SERRA_CARAPINA, d, when, { preset: 'truck' })));
     const oito = await ex(VV_COBILANDIA, '2026-10-13T08:00');
     expect(oito.has('Acesso ao porto (7h–9h)')).toBe(true);
     expect(oito.has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(true);
     const tarde = await ex(VV_COBILANDIA, '2026-10-13T18:00');
-    expect(tarde.has('Acesso ao porto (7h–9h)')).toBe(false);             // 17h–19h revogada em Vitória (Dec. 18.103/2020)
+    expect(tarde.has('Acesso ao porto (7h–9h)')).toBe(false);             // a janela ativa de Vitória é só 7h–9h
     expect(tarde.has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(true);
     expect((await ex(VV_COBILANDIA, '2026-10-17T08:00')).has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(false);   // sábado
     expect((await ex(portoVV, '2026-10-13T08:00')).has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(false);         // destino no porto
+    // portão na via pública (od_raio_m = 50 do polígono sem recuo): conta como destino na zona, que não é excluída
+    const jurema = await ex(VIX_JUREMA_BARROSO, '2026-10-13T08:00');
+    expect(jurema.has('Acesso ao porto (7h–9h)')).toBe(false);
+    expect(jurema.has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(true);   // o de Vila Velha fica a 820 m
+    expect((await ex(VV_JOUBERT_BARROS, '2026-10-13T17:30')).has('Acesso ao porto (7h–9h e 17h–19h)')).toBe(false);
+    expect((await ex(VIX_CENTRO, '2026-10-13T08:00')).has('Acesso ao porto (7h–9h)')).toBe(true);   // a 127 m: fora do raio
+  });
+
+  it('porto de Vitória, 17h–19h revogada (Dec. 18.103/2020, art. 2º): nunca vai para a rota, nem na vigência antiga', async () => {
+    // 2026: fora da vigência; 2019-10-15 (terça): dentro da vigência antiga (05/05/2015 a 09/09/2020), mas revogada = registro
+    for (const when of ['2026-10-13T18:00', '2019-10-15T18:00']) {
+      for (const d of [VV_COBILANDIA, VIX_JUREMA_BARROSO]) {
+        const c = ctxOf(SERRA_CARAPINA, d, when, { preset: 'truck' });
+        const exs = await layer.exclusions!(c);
+        const cls = await layer.costLines!(c);
+        expect(exs.some((x) => x.item.type === REVOGADA || revogadaIds.has(x.item.id)), `${when} exclusions`).toBe(false);
+        expect(cls.some((x) => x.item.type === REVOGADA || x.item.id.startsWith('vitoria_porto_centro_17h_19h')), `${when} costLines`).toBe(false);
+      }
+    }
   });
 
   it('Terceira Ponte: custo (fator 1000) para > 2 eixos ou > 15 t; 2 eixos até 15 t livre', async () => {
@@ -227,6 +257,8 @@ describe('aplicação na rota (módulo da camada)', () => {
     expect(fs.some((f) => /cegonheira|Carga e descarga|17h–19h, revogado/i.test(`${f.properties.name} ${f.properties.regime}`))).toBe(false);
     const tp = fs.find((f) => f.properties.regime === 'Terceira Ponte (até 2 eixos e 15 t)');
     expect(tp.properties.description).toBe('todos os dias o dia todo. Caminhões com mais de 2 eixos ou PBT acima de 15 t.');
+    const ilhas = await get('/api/layers/restricoes_rmsp/features?bbox=-29.5,-20.6,-28.7,-20.4&zoom=12');   // Trindade e Martim Vaz
+    expect(ilhas.body.features.filter((f: any) => f.properties.municipio === 'Vitória')).toEqual([]);
     const l = (await get('/api/layers')).body.find((x: any) => x.id === LAYER);
     expect(l.runs.map((x: any) => x.source)).toEqual(expect.arrayContaining(FONTES));
     expect(l.runs.filter((x: any) => FONTES.includes(x.source)).every((x: any) => /ODbL/.test(x.license) && /9\.610/.test(x.license))).toBe(true);
@@ -260,6 +292,15 @@ describe('rotas reais (API)', () => {
     expect(nossos(r.body)).not.toContain('Centro (PBT > 16 t)');
     const w = r.body.warnings.find((x: any) => x.code === 'rmsp_destino_na_zona' && /Centro de Vitória/.test(x.message));
     expect(w?.message).toMatch(/seg–sex 6h–20h; sáb 6h–14h, exceto feriados.*Autorização Especial de Trânsito/);
+  });
+
+  it('destino no portão do porto de Vitória (R. Jurema Barroso) às 8h de terça: avisa a janela de acesso (Dec. 18.103/2020, art. 2º)', async () => {
+    const r = await route({ origin: SERRA_CARAPINA, destination: VIX_JUREMA_BARROSO, vehicle: { preset: 'toco' }, departure_at: '2026-10-13T08:00' });
+    expect(r.status).toBe(200);
+    expect(nossos(r.body)).not.toContain('Acesso ao porto (7h–9h)');
+    const w = r.body.warnings.find((x: any) => x.code === 'rmsp_destino_na_zona' && /Instalações portuárias/.test(x.message));
+    expect(w?.message).toMatch(/^Destino está no acesso \(a até 50 m\) da Instalações portuárias do Centro de Vitória.*seg–sex 7h–9h/);
+    expect(r.body.warnings.some((x: any) => /17h–19h, revogad|17h às 19h \(REVOGADA/.test(x.message ?? ''))).toBe(false);
   });
 
   it('Terceira Ponte: caminhão de 3 eixos e 14 t dá a volta; toco de 14 t (2 eixos) cruza', async () => {

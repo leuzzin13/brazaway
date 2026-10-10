@@ -13,6 +13,7 @@ Uso (na imagem do importador, que tem pyosmium, shapely e pyproj; WORK = pasta d
   (mesmo comando) ... grande_vitoria.py extrair          # vias e áreas do extrato em JSON
   (mesmo comando) ... grande_vitoria.py geometria        # grava os GeoJSON curados e imprime as pontas dos trechos
   (mesmo comando) ... grande_vitoria.py cache-overpass   # data/cache/municipios/osm_named_<ibge>.json (import sem Overpass)
+  (mesmo comando) ... grande_vitoria.py municipio        # limite de Vitória (IBGE) sem Trindade e Martim Vaz
 
 Ids do OSM usados (relações de bairro) ficam nas propriedades de cada feição (osm_ids) para conferência.
 """
@@ -423,6 +424,51 @@ def cache_overpass():
         print(f'  osm_named_{ibge}.json: {len(els)} vias')
 
 
+# ----------------------------------------------------------------------------- 5. limite de Vitória (zonas do município)
+VIX_RECORTE = (-40.6, -20.6, -40.1, -20.1)        # W, S, E, N: ilha de Vitória, parte continental e ilhas da baía
+IBGE_MALHA = ('https://servicodados.ibge.gov.br/api/v3/malhas/municipios/{ibge}'
+              '?formato=application/vnd.geo%2Bjson&qualidade=maxima')   # a mesma do importador (_municipios_lib)
+
+
+def municipio():
+    """geo/3205309_municipio.geojson: limite de Vitória da Malha Municipal do IBGE recortado no bbox da Grande Vitória.
+    A malha do IBGE inclui as ilhas oceânicas de Trindade e Martim Vaz (lon -29,3 a -28,8; 4 das 5 partes): sem o
+    recorte, toda rota da Grande Vitória com a zona ativa mandava esses anéis ao Valhalla e o mapa desenhava a zona
+    sobre Trindade. Usa o cache do importador (data/cache/municipios/ibge_malha_3205309.geojson) ou baixa da API v3;
+    simplificação e casas iguais às da união de municípios usada antes (0,0002 grau, 5 casas)."""
+    import urllib.request
+    from shapely.geometry import box, mapping, shape
+    cache = DATA / 'cache' / 'municipios' / 'ibge_malha_3205309.geojson'
+    if cache.exists():
+        d = json.loads(cache.read_text())
+    else:
+        with urllib.request.urlopen(IBGE_MALHA.format(ibge='3205309'), timeout=60) as r:
+            d = json.loads(r.read())
+    g = shape(d['features'][0]['geometry'])
+    partes = list(getattr(g, 'geoms', [g]))
+    dentro = [p for p in partes if p.intersects(box(*VIX_RECORTE))]
+    fora = [p for p in partes if not p.intersects(box(*VIX_RECORTE))]
+    if not dentro or any(not box(*VIX_RECORTE).contains(p) for p in dentro):
+        raise ValueError('o bbox de recorte cortaria a parte continental de Vitória: revise VIX_RECORTE')
+    u = g.intersection(box(*VIX_RECORTE)).simplify(0.0002)
+
+    def r(c):
+        return [r(x) for x in c] if isinstance(c[0], (list, tuple)) else [round(c[0], 5), round(c[1], 5)]
+    m = mapping(u)
+    fc = {'type': 'FeatureCollection',
+          'fonte_geometria': 'IBGE, Malha Municipal (API v3, qualidade máxima): dados públicos, citar a fonte',
+          'como_gerar': f'limite do IBGE (3205309) recortado no bbox {VIX_RECORTE}: ficam a ilha de Vitória, a parte '
+                        f'continental e as ilhas da baía; saem Trindade e Martim Vaz ({len(fora)} partes). '
+                        'Simplificado 0,0002 grau, 5 casas.',
+          'gerado_por': 'data/raw/municipios/curadoria/grande_vitoria.py municipio',
+          'features': [{'type': 'Feature', 'geometry': {'type': m['type'], 'coordinates': r(m['coordinates'])}, 'properties': {
+              'area': 'Município de Vitória (limite do IBGE, sem as ilhas oceânicas)', 'ibge': '3205309',
+              'partes_removidas': [[round(v, 4) for v in p.bounds] for p in fora]}}]}
+    GEO.mkdir(parents=True, exist_ok=True)
+    (GEO / '3205309_municipio.geojson').write_text(json.dumps(fc, ensure_ascii=False, separators=(',', ':')))
+    print(f'  3205309_municipio.geojson: {len(dentro)} parte(s); {len(fora)} parte(s) fora do recorte')
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else ''
     if cmd == 'recorte':
@@ -433,6 +479,8 @@ if __name__ == '__main__':
         geometria()
     elif cmd == 'cache-overpass':
         cache_overpass()
+    elif cmd == 'municipio':
+        municipio()
     else:
         print(__doc__)
         sys.exit(2)

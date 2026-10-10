@@ -38,10 +38,10 @@
       "base_legal": [
         {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, a (PBT > 23 t, dias úteis 6h–10h e 16h–20h, sábado 6h–14h, exceto domingos e feriados); art. 8º (vigência 60 dias após a publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
       ],
-      "nota": "O ato vale nas 'demais vias do município da Capital' e não exclui as rodovias estaduais ou federais (verify da pesquisa): a zona é o município inteiro (limite do IBGE). Origem ou destino em Vitória: a zona não é excluída e a rota avisa (política da ZMRC).",
-      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "nota": "O ato vale nas 'demais vias do município da Capital' e não exclui as rodovias estaduais ou federais (verify da pesquisa): a zona é o município inteiro (limite do IBGE, sem Trindade e Martim Vaz, a mais de 1.000 km da costa, sem vias do decreto). Origem ou destino em Vitória: a zona não é excluída e a rota avisa (política da ZMRC).",
+      "fonte_geometria": "IBGE Malha Municipal (3205309), recortada no bbox da Grande Vitória: sem as ilhas oceânicas de Trindade e Martim Vaz",
       "vigencia_inicio": "2015-05-05",
-      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+      "geometria": [{"arquivo": "municipios/geo/3205309_municipio.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py municipio"}]
     },
     {
       "id": "vitoria_municipio_45t",
@@ -63,9 +63,9 @@
       "base_legal": [
         {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, b (PBT > 45 t, sem horário)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
       ],
-      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "fonte_geometria": "IBGE Malha Municipal (3205309), recortada no bbox da Grande Vitória: sem as ilhas oceânicas de Trindade e Martim Vaz",
       "vigencia_inicio": "2015-05-05",
-      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+      "geometria": [{"arquivo": "municipios/geo/3205309_municipio.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py municipio"}]
     },
     {
       "id": "vitoria_cegonheira_16t",
@@ -87,9 +87,9 @@
       "base_legal": [
         {"ato": "Decreto municipal 16.243/2015 (DOMV 06/03/2015)", "artigo": "art. 1º, IV, c (cegonheira com PBT > 16 t, dias úteis 6h–20h, sábado 6h–14h, exceto domingos e feriados)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2015/D16243.PDF"}
       ],
-      "fonte_geometria": "IBGE Malha Municipal (3205309)",
+      "fonte_geometria": "IBGE Malha Municipal (3205309), recortada no bbox da Grande Vitória: sem as ilhas oceânicas de Trindade e Martim Vaz",
       "vigencia_inicio": "2015-05-05",
-      "geometria": [{"municipios": ["3205309"], "simplificar": 0.0002, "casas": 5}]
+      "geometria": [{"arquivo": "municipios/geo/3205309_municipio.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py municipio"}]
     },
     {
       "id": "vitoria_centro_16t",
@@ -251,6 +251,7 @@
       "feriados": "suspende",
       "alvo": {"caminhao": true},
       "origem_destino_dentro": "avisa",
+      "od_raio_m": 50,
       "autorizacao": "Autorização Especial de Trânsito (AET) (Dec. 16.243/2015, art. 3º)",
       "excecoes": [
         "Rota obrigatória (art. 2º, I, red. Dec. 18.103/2020). Entrada: Ponte Florentino Avidos (Cinco Pontes) ou Ponte Mal. Costa e Silva (Ponte do Príncipe), Av. Alexandre Buaiz, Av. Elias Miguel e Av. Getúlio Vargas. Saída: Av. Jurema Barroso, Av. Elias Miguel, R. Beresford Martins Moreira, nova via na praça, Av. Nair Azevedo Silva, Ponte do Príncipe ou Cinco Pontes e Av. Presidente Florentino Avidos",
@@ -260,7 +261,7 @@
         {"ato": "Decreto municipal 18.103/2020 (DOMV 09/09/2020)", "artigo": "art. 2º (nova redação do art. 2º, §1º, do Dec. 16.243/2015: acesso de entrada e saída exceto dias úteis das 7h às 9h) e art. 3º (vigência na publicação)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"},
         {"ato": "Decreto municipal 18.103/2020 (DOMV 09/09/2020)", "artigo": "art. 1º (rotas de entrada e saída do art. 2º, I, a e b, do Dec. 16.243/2015)", "url": "https://sistemas.vitoria.es.gov.br/atosnormativos/arquivos/2020/D18103.PDF"}
       ],
-      "nota": "Regra de acesso (entrada e saída das instalações): a zona cobre só a área do cais, sem vias públicas de passagem; com origem ou destino dentro dela a rota não a exclui e avisa a janela. As 'indústrias adjacentes' não foram delimitadas. A rota obrigatória não é imposta (só citada no aviso).",
+      "nota": "Regra de acesso (entrada e saída das instalações): a zona cobre só a área do cais, sem vias públicas de passagem; com origem ou destino dentro dela a rota não a exclui e avisa a janela. A rota do ato (art. 2º, I) chega pela Av. Getúlio Vargas e sai pela Av. Jurema Barroso: o portão fica na via pública em frente à área (R. Jurema Barroso, a 0–6 m do polígono; Av. Elias Miguel e Av. Getúlio Vargas, a 9–13 m), fora do polígono recuado. Com od_raio_m = 50, origem ou destino a até 50 m da área também recebem o aviso (as vias não entram na zona: isso barraria a passagem por elas na janela). As 'indústrias adjacentes' não foram delimitadas. A rota obrigatória não é imposta (só citada no aviso).",
       "fonte_geometria": "OSM (ODbL): faixa entre a orla do Centro e o canal, da Ponte Seca ao fim dos armazéns",
       "vigencia_inicio": "2020-09-09",
       "geometria": [{"arquivo": "municipios/geo/3205309_porto_centro.geojson", "construir": "manual", "como_gerar": "python data/raw/municipios/curadoria/grande_vitoria.py geometria"}]
