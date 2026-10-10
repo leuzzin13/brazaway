@@ -2,7 +2,9 @@
 seg–sex 6h–9h e 17h–20h e sáb 10h–14h; VUC (≤ 2,20 x 7,20 m) livre. A zona do Anexo Único cobre só as alças e ramos do
 trevo da Dutra, então é modelada como VIAS (custo linear) e não como polígono: a pista principal e as marginais da
 Dutra continuam livres. Geometria: ramos (*_link) e vias transversais do OSM a até 450 m do cruzamento
-→ data/raw/rmsp/guarulhos_vias.geojson (curado)."""
+→ data/raw/rmsp/guarulhos_vias.geojson (curado) e os dois braços que o contorno do anexo desenha além desse raio
+(Estr. Pres. Juscelino Kubitschek ~1 km ao sul; Av. Dr. Arthur Marcondes de Siqueira ~0,6 km ao norte), pela malha do
+Valhalla entre as pontas em regras.json → data/raw/rmsp/guarulhos_bracos.geojson (curado)."""
 from sources import rmsp_municipios as base
 
 LAYER_ID = base.LAYER_ID
@@ -10,8 +12,10 @@ SOURCE = 'guarulhos'
 SOURCE_URL = ('https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/37887decr.pdf ; '
               'https://www.guarulhos.sp.gov.br/06_prefeitura/leis/decretos_2021/38400decr.pdf')
 LICENSE = 'Atos oficiais de Guarulhos: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).'
-NOTES = 'Recorte aproximado do Anexo Único (imagem sem coordenadas): ramos do trevo e vias transversais a até 450 m do cruzamento.'
+NOTES = ('Recorte aproximado do Anexo Único (imagem sem coordenadas): ramos do trevo e vias transversais a até 450 m do cruzamento, '
+         'mais os braços do contorno na via transversal (~1 km ao sul, ~0,6 km ao norte; pontas estimadas pela escala do anexo).')
 RULE = 'guarulhos_zrcc_tb'
+IBGE = '3518800'
 
 
 def _build():
@@ -44,4 +48,9 @@ def _build():
 
 
 def fetch():
-    return base.features_from_fc(base.build_or_load('guarulhos_vias.geojson', _build))
+    ramos = base.build_or_load('guarulhos_vias.geojson', _build)
+    # braços do contorno além do raio: trechos 'caminho: valhalla' de regras.json (precisa de VALHALLA_URL para refazer)
+    bracos = base.build_or_load('guarulhos_bracos.geojson', lambda: base.street_rules_fc([RULE], IBGE, lambda: []))
+    for f in bracos['features']:
+        f['properties'].update({'aproximado': True, 'highway': None})
+    return base.features_from_fc({'features': ramos['features'] + bracos['features']})
