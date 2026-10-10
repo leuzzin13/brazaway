@@ -139,14 +139,15 @@ const PLANAS = [
 
 describe.runIf(elevUp)('Relevo: avenida plana com prédios (resíduo do MDT) não vira "evitar"', () => {
   const res: Record<string, any> = {};
+  // 4 rotas em paralelo, com folga de tempo (a API integrada leva de 3 s a dezenas de segundos por rota sob carga)
   beforeAll(async () => {
     await waitForStack();
-    for (const c of PLANAS) {
+    await Promise.all(PLANAS.map(async (c) => {
       const r = await route({ origin: c.origin, destination: c.destination, departure_at: LADEIRA.departure_at, vehicle: { preset: 'carreta' } });
       expect(r.status, JSON.stringify(r.body)).toBe(200);
       res[c.nome] = r.body;
-    }
-  });
+    }));
+  }, 300_000);
 
   for (const c of PLANAS) {
     it(`carreta: ${c.nome}: nenhum trecho "evitar", nenhum steep_grade_avoid, nenhuma costLine sugerida`, () => {
