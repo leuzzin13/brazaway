@@ -1,12 +1,13 @@
-# Override: 2º Valhalla, COM elevação (ANADEM v1), na porta 8003, sem tocar no Valhalla principal (8002).
+# Override OPCIONAL: 2º Valhalla, COM elevação (ANADEM v1), na porta 8003, sem tocar no Valhalla principal (8002).
+# Desde 09/10/2026 o principal já roda com os tiles com elevação e o 8003 fica desligado; este serviço só serve para
+# montar e testar um conjunto novo (PBF/ANADEM novos) antes de trocar, ou para uma instalação nova antes da troca.
 # Os tiles são gerados antes por scripts/build-elevation.sh (dem + tiles) em data/valhalla_elev/.
 #
 #   ./scripts/build-elevation.sh            # DEM -> HGT, build dos tiles e sobe este serviço
 #   docker compose -f docker-compose.yml -f docker-compose.elevation.yml up -d --no-deps valhalla-elev
 #
-# A API lê VALHALLA_ELEV_URL; sem ela tenta http://localhost:8003 e depois o VALHALLA_URL (o primeiro com elevação).
-# Subindo a stack inteira com este override, o contêiner da API recebe VALHALLA_ELEV_URL=http://valhalla-elev:8002.
-# Para trocar o Valhalla principal por estes tiles, ver docs/layers/relevo.md.
+# A API lê VALHALLA_ELEV_URL; sem ela usa o VALHALLA_URL (o principal). Subindo a stack inteira com este override, o
+# contêiner da API recebe VALHALLA_ELEV_URL=http://valhalla-elev:8002. Troca do principal: docs/layers/relevo.md.
 services:
   valhalla-elev:
     image: truck-router-valhalla
