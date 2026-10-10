@@ -1,0 +1,123 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3509007",
+  "municipio": "Caieiras",
+  "uf": "SP",
+  "fonte_id": "caieiras",
+  "fonte": {
+    "url": "https://camaraonline.org/cm_caieiras/doc_legis/2021/HTM/LEI5486_2021.htm (Lei 5.486/2021) ; https://camaraonline.org/cm_caieiras/doc_legis/2004/HTM/LEI3560_2004.htm (Lei 3.560/2004) ; https://camaraonline.org/cm_caieiras/doc_legis/2019/HTM/LEI5233_2019.htm (Lei 5.233/2019)",
+    "licenca": "Leis municipais de Caieiras: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM); área da Lei 3.560/2004 = limite municipal do IBGE (dados públicos) menos as rodovias estaduais do OSM (derivado do OSM, ODbL 1.0).",
+    "notas": "Textos consolidados da Câmara Municipal. Lei 5.233/2019 (rodízio par/ímpar) não registrada: lei autorizativa, o decreto com as vias não foi localizado e o perfil do veículo não tem final de placa. Proibição de produtos perigosos em todas as ruas (Lei 3.560/2004, art. 2º) não representada: o predicado da camada não tem carga perigosa."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "caieiras_vila_rosina",
+      "tipo": "via",
+      "regime": "Vila Rosina (Lei 5.486/2021)",
+      "nome": "Caieiras — vias da Vila Rosina proibidas a caminhão e carreta (Lei 5.486/2021)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A Lei 5.486/2021 (art. 1º) excetua os 'veículos urbanos de carga (VUC)', mas não define VUC e o regulamento (art. 4º) não foi localizado: a rota trata o VUC como caminhão. Com VUC, confira a sinalização no local.",
+      "excecoes": [
+        "Veículos oficiais e de concessionárias de serviços essenciais ou de utilidade pública (Elektro, Sabesp, Corpo de Bombeiros, Polícia Militar, gás, Correios, guinchos), identificados (art. 2º)",
+        "Carga e descarga comprovada por nota fiscal em obras, residências ou comércio nas próprias vias (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.486/2021 (Caieiras), arts. 1º a 3º",
+          "artigo": "art. 1º (proibição sem horário nas 4 vias, exceto VUC), art. 2º (exceções), art. 3º (infração média do art. 187 do CTB)",
+          "url": "https://camaraonline.org/cm_caieiras/doc_legis/2021/HTM/LEI5486_2021.htm",
+          "nota": "Lei de 22/06/2021, em vigor na publicação (art. 6º). A lei não fixa horário: proibição permanente."
+        }
+      ],
+      "nota": "A R. Esmeraldo Felipe Santiago não existe com esse nome no OSM (fica como pendência na geometria); a ligação secundária entre a Av. David Kasitzki e a R. Narciso Degrandi aparece no OSM como R. Luiz Vaz de Camões e não foi incluída.",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local",
+      "vigencia_inicio": "2021-06-22",
+      "trechos": [
+        {"inciso": "art. 1º (R. Narciso Degrandi)", "via": ["Rua Narciso Degrandi"], "descricao": "R. Narciso Degrandi, em toda a extensão"},
+        {"inciso": "art. 1º (R. Esmeraldo Felipe Santiago)", "via": ["Rua Esmeraldo Felipe Santiago"], "descricao": "R. Esmeraldo Felipe Santiago, em toda a extensão", "nota": "Sem esse nome no OSM."},
+        {"inciso": "art. 1º (Av. David Kasitzky)", "via": ["Avenida David Kasitzki", "Avenida David Kasitzky"], "descricao": "Av. David Kasitzky, em toda a extensão (no OSM: Kasitzki)"},
+        {"inciso": "art. 1º (Av. Rodolfo Polidoro)", "via": ["Avenida Rodolfo Polidoro"], "descricao": "Av. Rodolfo Polidoro, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3509007_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "caieiras_comprimento_12m",
+      "tipo": "zona",
+      "regime": "Comprimento máximo de 12 m (Lei 3.560/2004)",
+      "nome": "Caieiras — ruas e avenidas municipais, comprimento máximo de 12 m (Lei 3.560/2004)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 12}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "autorização especial do Departamento de Trânsito de Caieiras, para quem comprovar a necessidade de trafegar pelas ruas do município (Lei 3.560/2004, art. 3º)",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.560/2004 (Caieiras), arts. 1º e 3º (art. 4º com redação da Lei 3.780/2006)",
+          "artigo": "art. 1º (comprimento máximo de 12 m para veículos que transitam pelas avenidas e ruas do município), art. 3º (autorização especial), art. 4º (multa gravíssima e retenção)",
+          "url": "https://camaraonline.org/cm_caieiras/doc_legis/2004/HTM/LEI3560_2004.htm",
+          "nota": "Lei de 17/06/2004, em vigor na publicação (art. 6º). O decreto regulamentador do art. 5º não foi localizado."
+        },
+        {
+          "ato": "Lei municipal 5.233/2019 (Caieiras), art. 5º",
+          "artigo": "art. 5º ('ficando mantidas as disposições da Lei Municipal nº 3.560 de 17 de junho de 2004')",
+          "url": "https://camaraonline.org/cm_caieiras/doc_legis/2019/HTM/LEI5233_2019.htm"
+        }
+      ],
+      "nota": "Confiança média: lei de 2004 sem decreto regulamentador localizado, e o diagnóstico oficial de mobilidade de 2017 diz que a fiscalização é feita 'mediante disponibilidade'. A lei vale nas 'avenidas e ruas do município': a zona é o município inteiro menos uma faixa de 30 m em torno das rodovias estaduais (SP-332, SP-348 Bandeirantes, SP-023, SP-354 e alças), que seguem livres. Origem ou destino em Caieiras: a zona não é excluída e a rota avisa (exige a autorização do art. 3º). O limite de 13 t de 'transporte de cargas' do mesmo art. 1º está na regra caieiras_carga_13t (desativada).",
+      "fonte_geometria": "Limite municipal do IBGE menos as rodovias estaduais do OSM (data/raw/municipios/curadoria/rmsp_restante_geo.py caieiras)",
+      "vigencia_inicio": "2004-06-17",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509007_vias_municipais.geojson",
+          "construir": "manual",
+          "como_gerar": "docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/raw/municipios/curadoria:/c --entrypoint python truck-router-importer /c/rmsp_restante_geo.py caieiras (antes, osm_pbf_cache.py passo 1)"
+        }
+      ]
+    },
+    {
+      "id": "caieiras_carga_13t",
+      "tipo": "zona",
+      "regime": "Carga máxima de 13 t (Lei 3.560/2004)",
+      "nome": "Caieiras — ruas e avenidas municipais, limite de 13 t para o transporte de cargas (Lei 3.560/2004)",
+      "status": "desativada",
+      "status_motivo": "O art. 1º fixa '13 toneladas o limite máximo permitido para o transporte de cargas', o que pode ser carga útil ou PBT (a diferença decide se um toco de 16 t pode circular em Caieiras); não há decreto regulamentador localizado (art. 5º) e a fiscalização é eventual (diagnóstico oficial de 2017).",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 13}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "autorização especial do Departamento de Trânsito de Caieiras (Lei 3.560/2004, art. 3º)",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.560/2004 (Caieiras), art. 1º",
+          "artigo": "art. 1º (13 t de limite máximo para o transporte de cargas nas avenidas e ruas do município), art. 3º (autorização especial)",
+          "url": "https://camaraonline.org/cm_caieiras/doc_legis/2004/HTM/LEI3560_2004.htm"
+        }
+      ],
+      "nota": "Registrada com a leitura 'carga útil acima de 13 t' (capacidade de carga): sem a capacidade informada, a camada considera que ela pode passar de 13 t até o PBT e avisa. A Lei 2.386/1994 (15 t nas 'ruas centrais', a listar por decreto não localizado) também segue citada na pesquisa.",
+      "fonte_geometria": "Limite municipal do IBGE menos as rodovias estaduais do OSM (data/raw/municipios/curadoria/rmsp_restante_geo.py caieiras)",
+      "vigencia_inicio": "2004-06-17",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509007_vias_municipais.geojson",
+          "construir": "manual",
+          "como_gerar": "docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/raw/municipios/curadoria:/c --entrypoint python truck-router-importer /c/rmsp_restante_geo.py caieiras (antes, osm_pbf_cache.py passo 1)"
+        }
+      ]
+    }
+  ]
+}

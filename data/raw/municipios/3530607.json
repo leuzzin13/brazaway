@@ -1,0 +1,60 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3530607",
+  "municipio": "Mogi das Cruzes",
+  "uf": "SP",
+  "fonte_id": "mogi-das-cruzes",
+  "fonte": {
+    "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga (serviço oficial com a Lei 2.903/1985 e os Decs. 1.782/2000 e 8.375/2008)",
+    "licenca": "Atos oficiais de Mogi das Cruzes: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono aproximado montado sobre os eixos do OpenStreetMap (derivado do OSM, ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Área central do Dec. 899/1985, art. 2º (red. Dec. 1.782/2000): 16 logradouros; o polígono fecha em linha reta os trechos sem nome no OSM (Pça Galdino Pinheiro Franco, R. Rafael Fernandes, R. das Primaveras) e as pontas que não se cruzam no OSM. Regra registrada e NÃO aplicada (fontes divergentes)."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "mogi_area_central",
+      "tipo": "zona",
+      "regime": "Área central (Lei 2.903/1985)",
+      "nome": "Mogi das Cruzes — área central, tráfego de veículos de transporte pesado (Lei 2.903/1985)",
+      "status": "desativada",
+      "status_motivo": "Fontes divergentes: a Lei 2.903/1985 (art. 1º) proíbe 'veículos de transporte pesado' nas ruas centrais das 6h às 22h; o Dec. 899/1985 (red. Dec. 1.782/2000) só limita carga e descarga de veículos acima de 1 t de PBT às 20h–9h e nasceu experimental; o Dec. 8.375/2008 deixa a sinalização fixar outros horários; a prefeitura declarou à imprensa em 2023 'acima de 3,5 t, 10h–20h' com outro perímetro e, em 2025, que horários e regras variam por sinalização. O perímetro também é aproximado.",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "06:00", "to": "22:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "autorização de carga ou descarga da Prefeitura de Mogi das Cruzes, pedida com 5 dias de antecedência (serviço oficial)",
+      "excecoes": ["Carga e descarga autorizadas pela prefeitura; calçadão da R. Dr. Deodato Wertheimer só até as 9h (serviço oficial)"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.903/1985 (Mogi das Cruzes), art. 1º",
+          "artigo": "art. 1º (tráfego de veículos de transporte pesado proibido nas ruas centrais das 6h às 22h) e parágrafo único (itinerário por decreto)",
+          "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga"
+        },
+        {
+          "ato": "Decreto municipal 899/1985 (Mogi das Cruzes), arts. 1º e 2º, com redação do Decreto 1.782/2000",
+          "artigo": "art. 1º (carga e descarga de veículos com PBT acima de 1.000 kg só das 20h às 9h) e art. 2º (área central: perímetro de 16 logradouros); Dec. 1.782/2000, art. 3º (prazo experimental)",
+          "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga"
+        },
+        {
+          "ato": "Decreto municipal 8.375/2008 (Mogi das Cruzes), art. 1º (acresce o art. 1º-A ao Dec. 899/1985)",
+          "artigo": "art. 1º-A do Dec. 899/1985 (horários diversos de carga e descarga por sinalização específica)",
+          "url": "https://www.mogidascruzes.sp.gov.br/servico/todos-os-assuntos/transito-autorizacao-de-carga-ou-descarga"
+        }
+      ],
+      "nota": "Janela registrada = a da lei (6h–22h, todos os dias; a lei não fixa dias). A matéria do Diário de Suzano de 09/07/2023 dá outro perímetro (9 vias, entre elas R. Ten. Luiz Marcondes dos Santos, R. D. Antônio Cândido de Alvarenga, Av. Fernando Costa, R. Ipiranga, R. Maj. Arouche de Toledo e R. Primeiro de Setembro) e carga e descarga das 20h às 10h. Para aplicar, falta o ato vigente com perímetro e horário da circulação.",
+      "fonte_geometria": "Perímetro aproximado pelos eixos do OSM (data/raw/municipios/curadoria/rmsp_restante_geo.py mogi)",
+      "vigencia_inicio": "1985-04-17",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3530607_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "docker run --rm -v $(pwd)/data:/data -v $(pwd)/data/raw/municipios/curadoria:/c --entrypoint python truck-router-importer /c/rmsp_restante_geo.py mogi (antes, osm_pbf_cache.py passo 1)"
+        }
+      ]
+    }
+  ]
+}

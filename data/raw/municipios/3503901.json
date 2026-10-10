@@ -1,0 +1,138 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3503901",
+  "municipio": "Arujá",
+  "uf": "SP",
+  "fonte_id": "aruja",
+  "fonte": {
+    "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf (Dec. 8.183/2023, regulamenta a Lei municipal 2.295/2010)",
+    "licenca": "Ato oficial de Arujá: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla.",
+    "notas": "Anexo I com 10 vias: 24 h para PBT acima de 31,5 t ou PBTC acima de 33,075 t em todas (art. 8º, I), 24 h para todo caminhão nos incisos I, IV, V, VI e VII (art. 8º, II) e 5h–23h59 nos incisos II, III, VIII, IX e X (art. 8º, III). Sentido bairro/centro (incisos III e IV) tomado de nordeste para sudoeste, rumo ao Centro."
+  },
+  "verificado_em": "2026-10-10",
+  "vuc": null,
+  "vuc_nota": "O Dec. 8.183/2023 não isenta VUC: 'não haverá condição de excepcionalidade em função do porte e característica do caminhão' (art. 7º, §2º). Todo caminhão (PBT acima de 3,5 t, inclusive reboque e semirreboque, art. 1º, parágrafo único) entra na regra; as exceções dependem de cadastro no DMT.",
+  "regras": [
+    {
+      "id": "aruja_24h",
+      "tipo": "via",
+      "regime": "Restrição 24 h (art. 8º, II)",
+      "nome": "Arujá — vias proibidas a caminhão 24 h (Dec. 8.183/2023, art. 8º, II)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Cadastro e Autorização Especial do Departamento Municipal de Trânsito (DMT), com validade de até 1 ano (Dec. 8.183/2023, arts. 4º a 11; art. 9º).",
+      "excecoes": [
+        "Só com cadastro ou Autorização Especial do DMT (art. 5º e art. 7º, §3º): socorro mecânico, cobertura jornalística, obras e serviços de emergência, acesso a estacionamento próprio, obras de infraestrutura urbana, concretagem, feirantes, mudanças, perecíveis, produtos perigosos de consumo local, transporte de valores, serviços públicos essenciais e entrega ou retirada de material com nota fiscal nos trechos restritos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.183/2023 (Arujá), art. 8º, II e Anexo I, incisos I, IV, V, VI e VII",
+          "artigo": "art. 8º, II (24 horas, todos os dias); Anexo I, incisos I, IV, V, VI e VII",
+          "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+          "nota": "Decreto de 08/03/2023; vigência na publicação (art. 20), cujo carimbo está ilegível. Revoga o Dec. 5.557/2010 (art. 20) e regulamenta a Lei 2.295/2010. Fiscalização por agentes e radar (art. 17)."
+        }
+      ],
+      "nota": "Nas mesmas vias vale também o art. 8º, I (24 h para PBT acima de 31,5 t ou PBTC acima de 33,075 t), já coberto pelo horário integral do inciso II. Av. Amazonas só no sentido bairro/centro (Anexo I, IV): de nordeste (Jd. Arujá) para sudoeste (Centro); no trecho de pista dupla só a pista desse sentido.",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local",
+      "vigencia_inicio": "2023-03-08",
+      "trechos": [
+        {"inciso": "I", "via": ["Rua Oscar Schiavon"], "descricao": "R. Oscar Schiavon, em toda a extensão"},
+        {
+          "inciso": "IV",
+          "via": ["Avenida Amazonas"],
+          "de": {"lonlat": [-46.31177, -23.39003]},
+          "ate": {"lonlat": [-46.31467, -23.39418]},
+          "sentido": true,
+          "descricao": "Av. Amazonas, no sentido bairro/centro (trecho de pista simples, a nordeste)",
+          "nota": "Sentido bairro/centro tomado de nordeste para sudoeste (o Centro de Arujá fica na ponta sudoeste). No OSM a pista simples não se liga por nome à pista dupla: a avenida foi montada em dois trechos."
+        },
+        {
+          "inciso": "IV",
+          "via": ["Avenida Amazonas"],
+          "de": {"lonlat": [-46.31476, -23.39422]},
+          "ate": {"lonlat": [-46.31988, -23.39609]},
+          "sentido": true,
+          "descricao": "Av. Amazonas, no sentido bairro/centro (pista do sentido bairro/centro no trecho de pista dupla)",
+          "nota": "A outra pista (sentido centro/bairro) fica livre."
+        },
+        {"inciso": "V", "via": ["Avenida Hans Osamu Suzuki", "Avenida Hans Ossamu Suzuki"], "descricao": "Av. Hans Ossamu Suzuki, em toda a extensão (no OSM: Hans Osamu Suzuki)"},
+        {"inciso": "VI", "via": ["Avenida Getúlio Vargas"], "descricao": "Av. Getúlio Vargas, em toda a extensão"},
+        {"inciso": "VII", "via": ["Avenida Antônio Afonso de Lima"], "descricao": "Av. Antônio Afonso de Lima, em toda a extensão"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3503901_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "aruja_5h_24h",
+      "tipo": "via",
+      "regime": "Restrição 5h–23h59 (art. 8º, III)",
+      "nome": "Arujá — vias proibidas a caminhão das 5h às 23h59 (Dec. 8.183/2023, art. 8º, III)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "05:00", "to": "24:00"}],
+      "variantes": [
+        {
+          "classe": "PBT acima de 31,5 t (art. 8º, I)",
+          "quando": {"todas": [{"campo": "tipo", "em": ["light", "rigid"]}, {"campo": "pbt_t", "acima": 31.5}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        },
+        {
+          "classe": "PBTC acima de 33,075 t (art. 8º, I)",
+          "quando": {"todas": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}, {"campo": "pbt_t", "acima": 33.075}]},
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Cadastro e Autorização Especial do Departamento Municipal de Trânsito (DMT), com validade de até 1 ano (Dec. 8.183/2023, arts. 4º a 11; art. 9º).",
+      "excecoes": [
+        "Só com cadastro ou Autorização Especial do DMT (art. 5º e art. 7º, §3º): socorro mecânico, cobertura jornalística, obras e serviços de emergência, acesso a estacionamento próprio, obras de infraestrutura urbana, concretagem, feirantes, mudanças, perecíveis, produtos perigosos de consumo local, transporte de valores, serviços públicos essenciais e entrega ou retirada de material com nota fiscal nos trechos restritos",
+        "Limite de PBT/PBTC do art. 8º, I: não vale para quem está instalado no trecho (acesso a estacionamento próprio ou execução de serviço) nem para quem comprova que o trecho é passagem obrigatória para o serviço ou a entrega (art. 8º, parágrafo único)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.183/2023 (Arujá), art. 8º, III e Anexo I, incisos II, III, VIII, IX e X",
+          "artigo": "art. 8º, III (das 05h00 às 23h59, todos os dias); Anexo I, incisos II, III, VIII, IX e X",
+          "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf",
+          "nota": "Liberado das 00h00 às 04h59 para caminhão até 31,5 t de PBT (ou 33,075 t de PBTC)."
+        },
+        {
+          "ato": "Decreto municipal 8.183/2023 (Arujá), art. 8º, I e parágrafo único",
+          "artigo": "art. 8º, I (24 horas em todas as vias do Anexo I para PBT acima de 31.500 kg ou PBTC acima de 33.075 kg) e parágrafo único",
+          "url": "https://www.prefeituradearuja.sp.gov.br/Atos/Decretos/Livro110_OCR/DECRETO%208.183_2023_OCR.pdf"
+        }
+      ],
+      "nota": "Variantes: veículo simples (caminhão) com PBT acima de 31,5 t ou combinação (cavalo + semirreboque, caminhão + reboque, CVC) com PBTC acima de 33,075 t fica proibido 24 h (art. 8º, I). Av. dos Expedicionários só no sentido bairro/centro (Anexo I, III), da Pça Narciso José Lopes à rotatória Dalila Ferreira Barbosa; Av. Mário Covas (no OSM, Av. Governador Mário Covas) nos dois sentidos entre a Av. Fatec e a Estr. dos Vados (Anexo I, II).",
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho no PBF local",
+      "vigencia_inicio": "2023-03-08",
+      "trechos": [
+        {
+          "inciso": "II",
+          "via": ["Avenida Governador Mário Covas", "Avenida Mário Covas"],
+          "de": ["Avenida Fatec"],
+          "ate": ["Estrada dos Vados"],
+          "descricao": "Av. Mário Covas, entre a Av. Fatec e a Estr. dos Vados, nos dois sentidos"
+        },
+        {
+          "inciso": "III",
+          "via": ["Avenida dos Expedicionários"],
+          "de": ["Praça Narciso José Lopes"],
+          "ate": ["Praça Dalila Ferreira Barbosa"],
+          "sentido": true,
+          "descricao": "Av. dos Expedicionários, no sentido bairro/centro, entre a Pça Narciso José Lopes e a rotatória Dalila Ferreira Barbosa"
+        },
+        {"inciso": "VIII", "via": ["Alameda Capelinha"], "descricao": "Al. Capelinha, em toda a extensão"},
+        {"inciso": "IX", "via": ["Rua Duque de Caxias"], "descricao": "R. Duque de Caxias, em toda a extensão"},
+        {
+          "inciso": "X",
+          "via": ["Rua Licínio Rodrigues de Paiva", "Rua Lícinio Rodreigues de Paiva"],
+          "descricao": "R. Licínio Rodrigues de Paiva, em toda a extensão (no OSM: Lícinio Rodreigues de Paiva)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3503901_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}
