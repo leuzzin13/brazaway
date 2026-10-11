@@ -1,0 +1,125 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3104601",
+  "municipio": "Astolfo Dutra",
+  "uf": "MG",
+  "fonte_id": "astolfo-dutra",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/8B6EF764 (Dec. 772/2026) ; https://www.diariomunicipal.com.br/amm-mg/materia/02ACC6D0 (Dec. 774/2026)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap), casada pelo nome/eixos do OSM; limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Dec. 772/2026: ponte com PBT > 3 t interditada (prazo indeterminado; ponte não mapeada no OSM, aplicada à rua inteira). Dec. 774/2026: desvio temporário da MG-285, registrado desativado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "astolfo_dutra_ponte_joao_henrique_oliveira_3t",
+      "tipo": "ponte",
+      "regime": "Ponte PBT > 3 t",
+      "nome": "Astolfo Dutra: ponte da Rua João Henrique de Oliveira (travessia com a R. Laurindo José Fernandes), veículos acima de 3 t interditados",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 3
+          }
+        ]
+      },
+      "vuc": null,
+      "vuc_nota": "A interdição é por PBT acima de 3 t: VUC também é alvo.",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 772, de 14/03/2026 (Astolfo Dutra; DOMM/AMM ed. 4234, 17/03/2026)",
+          "artigo": "art. 1º e parágrafo único (PBT > 3 t; caminhões, carretas, combinações e máquinas); art. 5º (prazo indeterminado, até novo laudo); art. 6º (vigência)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/8B6EF764",
+          "nota": "Laudo da Defesa Civil de 14/03/2026 anexo ao decreto."
+        }
+      ],
+      "nota": "Ponte na travessia da Rua João Henrique de Oliveira com a Rua Laurindo José Fernandes, bairro Manoel Figueiredo, perto do nº 59. A ponte não está no OSM (a R. Laurindo José Fernandes não tem nome no OSM e a R. João Henriques de Oliveira não tem trecho com bridge=yes): aplicada à rua inteira (1,5 km, lado seguro), aproximado. O roteador só tem caminhão acima de 3,5 t como alvo (alvo.caminhao): veículos entre 3 t e 3,5 t não são cobertos.",
+      "fonte_geometria": "OSM (ODbL): Rua João Henriques de Oliveira inteira (a ponte não está mapeada)",
+      "vigencia_inicio": "2026-03-17",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua João Henriques de Oliveira",
+            "Rua João Henrique de Oliveira"
+          ],
+          "descricao": "Ponte da R. João Henrique de Oliveira na travessia com a R. Laurindo José Fernandes (perto do nº 59)",
+          "aproximado": true,
+          "nota": "Ponte não localizada no OSM: a rua inteira."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104601_vias.geojson",
+          "construir": "trechos",
+          "props": {
+            "tipo": "ponte"
+          }
+        }
+      ]
+    },
+    {
+      "id": "astolfo_dutra_desvio_mg285_passagem",
+      "tipo": "zona",
+      "regime": "Desvio temporário (MG-285)",
+      "nome": "Astolfo Dutra: caminhões e carretas em trânsito de passagem nas vias urbanas durante a interdição da MG-285",
+      "status": "desativada",
+      "status_motivo": "Restrição temporária condicionada à interdição da MG-285 (km 74), situação externa sem data de fim que o roteador não conhece; não aplicável sem confirmar a interdição.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Dec. 774/2026, art. 2º, IV (origem ou destino no município, com nota fiscal)",
+      "excecoes": [
+        "Art. 2º: emergência, obras e serviços públicos essenciais, cargas indivisíveis com AET, origem/destino no município com nota fiscal, ônibus"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 774, de 17/03/2026 (Astolfo Dutra; DOMM 18/03/2026; revoga o Decreto 773/2026)",
+          "artigo": "art. 1º, §§ 1º e 2º (só trânsito de passagem, enquanto durar a interdição da MG-285); art. 2º (exceções)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/02ACC6D0"
+        }
+      ],
+      "nota": "O laudo anexo recomenda restrição de PBT > 23 t para as pontes; o decreto não fixa esse limite. Geometria só de registro: o município inteiro (limite do IBGE); o decreto vale nas vias urbanas.",
+      "fonte_geometria": "IBGE Malha Municipal (3104601), só de registro",
+      "vigencia_inicio": "2026-03-18",
+      "geometria": [
+        {
+          "municipios": [
+            "3104601"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ]
+    }
+  ]
+}

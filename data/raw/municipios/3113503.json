@@ -1,0 +1,136 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3113503",
+  "municipio": "Carbonita",
+  "uf": "MG",
+  "fonte_id": "carbonita",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/6EC84569 (Lei 901/2021) ; https://www.diariomunicipal.com.br/amm-mg/materia/AA6EAFAB (Decreto 793/2021)",
+    "licenca": "Atos oficiais de Carbonita: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM); recorte pelo limite municipal do IBGE (dados públicos).",
+    "notas": "Uma regra vigente: Lei 901/2021 (veículos pesados acima de 2 eixos proibidos na Estrada Vicinal da Estiva, 24 h). O Decreto 793/2021 (CMG-367, obras) é facultativo e fica desativado. Portal da Prefeitura em 403: vigência conferida no DOM-AMM."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Nenhum ato localizado define VUC em Carbonita.",
+  "regras": [
+    {
+      "id": "carbonita_estrada_estiva_acima_2_eixos",
+      "tipo": "via",
+      "regime": "Estrada Vicinal da Estiva",
+      "nome": "Carbonita: Estrada Vicinal da Estiva, proibido veículos pesados acima de 2 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, p. único: veículos pesados de até 3 eixos circulando sem carga",
+        "Art. 2º: ônibus de transporte coletivo (públicos ou particulares); caminhões de cargas vivas, ração, grãos e produtos alimentícios de todo gênero; caminhões e máquinas pesadas da patrulha mecanizada ou a serviço do Poder Público; coleta de lixo; serviços emergenciais de saúde, manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água) e guincho",
+        "Art. 6º: autorização excepcional por decreto em catástrofe natural"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 901/2021, de 05/10/2021 (DOM-AMM ed. 3110, 07/10/2021)",
+          "artigo": "art. 1º, p. único e art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/6EC84569",
+          "nota": "Texto lido no Diário Oficial dos Municípios Mineiros; em vigor na data da publicação (art. 9º). Nenhuma alteração/revogação achada na AMM."
+        }
+      ],
+      "nota": "Exceção de 'sem carga até 3 eixos' não é modelável (sem dado de carga); lado seguro: bloqueia > 2 eixos. Exceção para alimentos/grãos/ração/cargas vivas depende do tipo de carga e não é modelável; a rota pode ser bloqueada para quem tem a exceção. Geometria aproximada: estrada de terra sem nome no OSM, identificada pelo percurso descrito no art. 1º.",
+      "vigencia_inicio": "2021-10-07",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3113503_estrada_estiva.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02 (docs/layers/municipios/mun_sudeste/IMP02.md): ways 840489249, 840489248 e 221882917 do OSM (PBF local), do fim da Av. Diamantina até a BR-367."
+        }
+      ],
+      "vuc": null,
+      "vuc_nota": "A regra é por eixos (acima de 2); a lei não define VUC.",
+      "fonte_geometria": "OSM (ODbL): ways 840489249, 840489248 (ponte) e 221882917, sem nome no OSM, da saída oeste da cidade (fim da Av. Diamantina) até o entroncamento com a BR-367 (~14,7 km). Identificação pela descrição do ato (saída da cidade, ponte, BR-367); o OSM não tem os nomes Estiva, trevo do Cristo nem ponte da Soledade."
+    },
+    {
+      "id": "carbonita_cmg367_cvc_15t",
+      "tipo": "via",
+      "regime": "CMG-367 (obras)",
+      "nome": "Carbonita: CMG-367, medida facultativa contra CVC com mais de 2 unidades e PBT ≥ 15 t durante obras",
+      "status": "desativada",
+      "status_motivo": "Decreto 793/2021 apenas autoriza ('poderão ser adotadas') medidas de impedimento enquanto durarem obras de manutenção em rodovia estadual; sem horário, sem sinalização, sem prova de vigência atual; competência estadual (DER-MG).",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 14.999
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 793, de 07/05/2021 (DOM-AMM ed. 3004, 10/05/2021)",
+          "artigo": "art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/AA6EAFAB"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3113503_cmg367.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02: way 334844773 do OSM (PBF local) recortado ao limite municipal do IBGE."
+        }
+      ],
+      "vuc": null,
+      "nota": "O decreto fala em CVC com mais de 2 unidades E PBT de 15 t ou mais; registrado como desativado (medida facultativa).",
+      "fonte_geometria": "OSM (ODbL): way 334844773 (ref BR-367/MGC-367) recortado ao limite de Carbonita (IBGE). Registro de regra desativada."
+    }
+  ]
+}

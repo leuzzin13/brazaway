@@ -1,0 +1,406 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3104007",
+  "municipio": "Araxá",
+  "uf": "MG",
+  "fonte_id": "araxa",
+  "fonte": {
+    "url": "https://sapl.araxa.mg.leg.br/media/sapl/public/normajuridica/2019/8184/lei_7.334.doc (Lei 7.334/2019) ; https://sapl.araxa.mg.leg.br/norma/8184 ; https://sapl.araxa.mg.leg.br/media/sapl/public/normajuridica/2011/6758/6758_texto_integral.pdf (Lei 6.078/2011, revogada)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono e vias derivados do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap); limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Lei 7.334/2019: polígono central (art. 2º, I, vias-limite incluídas) e três vias inteiras (art. 2º, II), capacidade de carga > 8 t, dias úteis 8h–18h e sábado 8h–14h, exceto feriados. Polígono aproximado pelos eixos do OSM."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 7.334/2019 não define VUC: o critério é a capacidade de carga acima de 8 t.",
+  "regras": [
+    {
+      "id": "araxa_zona_restricao_centro",
+      "tipo": "zona",
+      "regime": "Zona de Restrição à Circulação de Veículos",
+      "nome": "Araxá: Zona de Restrição à Circulação de Veículos (polígono central) — capacidade de carga acima de 8 t, 2ª–6ª 8h–18h e sábado 8h–14h, exceto feriados",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "08:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 8
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial da ASTRAN/SETTRANS para mudança ou cargas especiais até 14 t de capacidade e 20 m (art. 3º, parágrafo único)",
+      "excecoes": [
+        "Art. 4º, I: caminhão de utilidade pública",
+        "Art. 4º, II e § 1º: veículo em serviço de urgência (art. 29, VII, CTB: incêndio, salvamento, polícia, fiscalização e operação de trânsito, com alarme e luz vermelha)",
+        "Art. 4º, III e IV: obras e serviços de infraestrutura urbana; obras e serviços de urgência",
+        "Art. 4º, V e § 2º: socorro mecânico de emergência (remoção de veículos sinistrados/danificados imobilizados na via)",
+        "Art. 4º, VI: caminhões de combustível para postos contíguos à Zona de Restrição",
+        "Art. 4º, VII: transporte coletivo urbano de passageiros",
+        "Art. 3º, parágrafo único: caminhões de mudança ou cargas especiais com capacidade de carga até 14 t e comprimento até 20 m, com autorização especial da ASTRAN (hoje SETTRANS)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 7.334, de 24/04/2019 (Araxá) — promulgada pelo Presidente da Câmara; publicada em 09/05/2019 (jornal O Planalto, p. 7)",
+          "artigo": "art. 2º, I e II (zona e vias); art. 3º, caput, I e II (veículos pesados e caminhões com capacidade de carga > 8 t, 2ª–6ª 8h–18h, sáb 8h–14h, exceto feriados) e parágrafo único; art. 4º (exceções); art. 7º (revoga a Lei 6.078/2011)",
+          "url": "https://sapl.araxa.mg.leg.br/media/sapl/public/normajuridica/2019/8184/lei_7.334.doc",
+          "nota": "Ficha no SAPL da Câmara (sem data de fim de vigência): https://sapl.araxa.mg.leg.br/norma/8184"
+        }
+      ],
+      "nota": "Confiança média: (1) lei de iniciativa parlamentar promulgada pela Câmara, sem decreto de regulamentação achado (o art. 6º mandava o Executivo definir rotas e sinalizar em 90 dias) e sem notícia de sinalização; (2) não se achou ADI nem revogação, mas o TJMG não foi consultado; (3) 'veículos pesados e caminhões com capacidade de carga superior a 08 toneladas' foi lido como capacidade de carga > 8 t para os dois (payload_t > 8). Art. 1º: vale 'até a superveniência do Plano Municipal de Mobilidade Urbana' (nenhum PlanMob aprovado até 10/10/2026). Polígono aproximado (eixos do OSM; a lei não tem mapa).",
+      "fonte_geometria": "Polígono do art. 2º, I, pelos eixos do OSM (ODbL); as vias-limite (incluídas pela lei) estão na regra araxa_zona_restricao_vias, porque a zona é recuada 20 m na rota",
+      "vigencia_inicio": "2019-05-09",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104007_zona_restricao.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono do art. 2º, I, pelos eixos do OSM (cache data/cache/municipios/osm_named_3104007.json): as vias-limite em sequência, ligadas nos cruzamentos e simplificadas a 2 m (ver docs/layers/municipios/mun_sudeste/IMP01.md)"
+        }
+      ]
+    },
+    {
+      "id": "araxa_zona_restricao_vias",
+      "tipo": "via",
+      "regime": "Zona de Restrição à Circulação de Veículos",
+      "nome": "Araxá: Av. Senador Montandon, Av. Imbiara e R. Belo Horizonte (toda a extensão) e vias-limite do polígono central — capacidade de carga acima de 8 t, 2ª–6ª 8h–18h e sábado 8h–14h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "08:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 8
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "Autorização especial da ASTRAN/SETTRANS para mudança ou cargas especiais até 14 t de capacidade e 20 m (art. 3º, parágrafo único)",
+      "excecoes": [
+        "Art. 4º, I: caminhão de utilidade pública",
+        "Art. 4º, II e § 1º: veículo em serviço de urgência (art. 29, VII, CTB: incêndio, salvamento, polícia, fiscalização e operação de trânsito, com alarme e luz vermelha)",
+        "Art. 4º, III e IV: obras e serviços de infraestrutura urbana; obras e serviços de urgência",
+        "Art. 4º, V e § 2º: socorro mecânico de emergência (remoção de veículos sinistrados/danificados imobilizados na via)",
+        "Art. 4º, VI: caminhões de combustível para postos contíguos à Zona de Restrição",
+        "Art. 4º, VII: transporte coletivo urbano de passageiros",
+        "Art. 3º, parágrafo único: caminhões de mudança ou cargas especiais com capacidade de carga até 14 t e comprimento até 20 m, com autorização especial da ASTRAN (hoje SETTRANS)"
+      ],
+      "zona_vinculada": "araxa_zona_restricao_centro",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 7.334, de 24/04/2019 (Araxá) — promulgada pelo Presidente da Câmara; publicada em 09/05/2019 (jornal O Planalto, p. 7)",
+          "artigo": "art. 2º, I e II (zona e vias); art. 3º, caput, I e II (veículos pesados e caminhões com capacidade de carga > 8 t, 2ª–6ª 8h–18h, sáb 8h–14h, exceto feriados) e parágrafo único; art. 4º (exceções); art. 7º (revoga a Lei 6.078/2011)",
+          "url": "https://sapl.araxa.mg.leg.br/media/sapl/public/normajuridica/2019/8184/lei_7.334.doc",
+          "nota": "Ficha no SAPL da Câmara (sem data de fim de vigência): https://sapl.araxa.mg.leg.br/norma/8184"
+        }
+      ],
+      "nota": "Confiança média: (1) lei de iniciativa parlamentar promulgada pela Câmara, sem decreto de regulamentação achado (o art. 6º mandava o Executivo definir rotas e sinalizar em 90 dias) e sem notícia de sinalização; (2) não se achou ADI nem revogação, mas o TJMG não foi consultado; (3) 'veículos pesados e caminhões com capacidade de carga superior a 08 toneladas' foi lido como capacidade de carga > 8 t para os dois (payload_t > 8). Art. 1º: vale 'até a superveniência do Plano Municipal de Mobilidade Urbana' (nenhum PlanMob aprovado até 10/10/2026). As vias-limite entram porque a lei inclui 'as próprias vias' no polígono e a zona é recuada 20 m na rota.",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome; vias-limite recortadas pelas transversais do art. 2º, I",
+      "vigencia_inicio": "2019-05-09",
+      "trechos": [
+        {
+          "inciso": "art. 2º, II",
+          "via": [
+            "Avenida Senador Montandon"
+          ],
+          "descricao": "Av. Senador Montandon — toda a extensão"
+        },
+        {
+          "inciso": "art. 2º, II",
+          "via": [
+            "Avenida Imbiara"
+          ],
+          "descricao": "Av. Imbiara — toda a extensão"
+        },
+        {
+          "inciso": "art. 2º, II",
+          "via": [
+            "Rua Belo Horizonte"
+          ],
+          "descricao": "R. Belo Horizonte — toda a extensão"
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Avenida Getúlio Vargas"
+          ],
+          "descricao": "Av. Getúlio Vargas — da Igreja Matriz de São Domingos até a Av. Cap. Belarmino de Paula Machado",
+          "aproximado": true,
+          "nota": "Via inteira no OSM (já começa na Praça São Domingos)."
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Avenida Capitão Belarmino de Paula Machado"
+          ],
+          "descricao": "Av. Cap. Belarmino de Paula Machado — da Av. Getúlio Vargas até a Av. Wilson Borges",
+          "de": [
+            "Avenida Getúlio Vargas"
+          ],
+          "ate": [
+            "Avenida Wilson Borges"
+          ],
+          "tolerancia_m": 40,
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Avenida Wilson Borges"
+          ],
+          "descricao": "Av. Wilson Borges — da Av. Cap. Belarmino até a R. Calimério Guimarães",
+          "de": [
+            "Avenida Capitão Belarmino de Paula Machado"
+          ],
+          "ate": {
+            "lonlat": [
+              -46.93195,
+              -19.60445
+            ]
+          },
+          "aproximado": true,
+          "nota": "No OSM a Wilson Borges só encontra o prolongamento da R. Calimério Guimarães na rotatória ao sul (ponta por coordenada)."
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Calimério Guimarães"
+          ],
+          "descricao": "R. Calimério Guimarães — da Av. Wilson Borges até a Av. Cap. Belarmino",
+          "de": {
+            "lonlat": [
+              -46.93185,
+              -19.60301
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -46.93188,
+              -19.60104
+            ]
+          },
+          "aproximado": true,
+          "nota": "Começa a ~150 m da rotatória da Wilson Borges (o trecho entre os dois não tem nome no OSM)."
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Calimério Guimarães"
+          ],
+          "descricao": "R. Calimério Guimarães — da Av. Cap. Belarmino até a Av. Senador Montandon",
+          "de": {
+            "lonlat": [
+              -46.93191,
+              -19.60073
+            ]
+          },
+          "ate": [
+            "Avenida Senador Montandon"
+          ],
+          "aproximado": true,
+          "nota": "Mão única para o norte no OSM; o cruzamento com a Belarmino é um binário (dois ways em sentidos opostos), por isso o trecho é montado em duas partes."
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Cônego Cassiano"
+          ],
+          "descricao": "R. Cônego Cassiano — da Av. Senador Montandon até a R. Alexandre Gondim",
+          "de": [
+            "Avenida Senador Montandon"
+          ],
+          "ate": [
+            "Rua Alexandre Gondim"
+          ],
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Alexandre Gondim"
+          ],
+          "descricao": "R. Alexandre Gondim — da R. Cônego Cassiano até a Tv. Zeca Montandon",
+          "de": [
+            "Rua Cônego Cassiano"
+          ],
+          "ate": [
+            "Rua Zeca Montandon"
+          ],
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Zeca Montandon"
+          ],
+          "descricao": "Tv. Zeca Montandon (R. Zeca Montandon no OSM) — até a R. Padre Anchieta",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Padre Anchieta"
+          ],
+          "descricao": "R. Padre Anchieta — da Tv. Zeca Montandon até a Av. Vereador João Sena",
+          "de": [
+            "Rua Zeca Montandon"
+          ],
+          "ate": [
+            "Avenida Vereador João Sena"
+          ],
+          "tolerancia_m": 100,
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Avenida Vereador João Sena"
+          ],
+          "descricao": "Av. Vereador João Sena — da R. Padre Anchieta até a Av. Amazonas (e o trecho 'Av. Amazonas até a R. Carvalho Lopes', que no OSM é a própria João Sena)",
+          "de": [
+            "Rua Padre Anchieta"
+          ],
+          "ate": {
+            "lonlat": [
+              -46.94485,
+              -19.58535
+            ]
+          },
+          "tolerancia_m": 100,
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Carvalho Lopes"
+          ],
+          "descricao": "R. Carvalho Lopes — da Av. Amazonas/João Sena até a R. Costa Sena",
+          "de": [
+            "Avenida Vereador João Sena"
+          ],
+          "ate": [
+            "Rua Costa Sena"
+          ],
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, I (via-limite do polígono, incluída)",
+          "via": [
+            "Rua Costa Sena"
+          ],
+          "descricao": "R. Costa Sena — até a Igreja Matriz de São Domingos",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104007_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "araxa_lei_6078_2011_revogada",
+      "tipo": "zona",
+      "regime": "Veículos pesados (área central)",
+      "nome": "Araxá: área central da Lei 6.078/2011 — veículos pesados e caminhões proibidos 2ª–6ª 8h–18h e sábado 8h–14h (revogada)",
+      "status": "revogada",
+      "status_motivo": "Revogada expressamente pelo art. 7º da Lei 7.334/2019 (publicada em 09/05/2019).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "08:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 3º: ônibus, Forças Armadas, polícias e bombeiros em serviço",
+        "Art. 1º, § 2º: carga e descarga em caminhões até 4.000 kg só após 18h"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 6.078, de 18/11/2011 (Araxá)",
+          "artigo": "arts. 1º a 3º",
+          "url": "https://sapl.araxa.mg.leg.br/media/sapl/public/normajuridica/2011/6758/6758_texto_integral.pdf",
+          "nota": "Anexos I (vias) e II (mapa) não constam do PDF do SAPL"
+        }
+      ],
+      "nota": "Registro histórico. Geometria só de referência: o Anexo I não está disponível, então o polígono é o da Lei 7.334/2019.",
+      "vigencia_inicio": "2011-12-16",
+      "vigencia_fim": "2019-05-09",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104007_zona_restricao.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono do art. 2º, I, pelos eixos do OSM (cache data/cache/municipios/osm_named_3104007.json): as vias-limite em sequência, ligadas nos cruzamentos e simplificadas a 2 m (ver docs/layers/municipios/mun_sudeste/IMP01.md)"
+        }
+      ]
+    }
+  ]
+}

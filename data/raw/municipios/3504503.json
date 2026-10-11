@@ -1,0 +1,199 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3504503",
+  "municipio": "Avaré",
+  "uf": "SP",
+  "fonte_id": "avare",
+  "fonte": {
+    "url": "https://avare.siscam.com.br/arquivo?Id=200261 (Lei 2.165/2017) ; https://avare.siscam.com.br/arquivo?Id=228181 (Lei 2.294/2019)",
+    "licenca": "Atos oficiais de Avaré: domínio público (Lei 9.610/1998 art. 8º IV). Polígono do centro nobre pelos cruzamentos do OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Limite municipal dos registros revogados: IBGE (dados públicos).",
+    "notas": "Uma regra vigente: Lei 2.165/2017, art. 4º (centro nobre, caminhão com capacidade de carga acima de 4.500 kg, a qualquer hora; carga e descarga só 00h–10h). Os arts. 1º e 2º (PBT > 25 t nas vias urbanas e > 45 t nas AVRs) foram revogados pela Lei 2.294/2019. Pendente: Dec. 360/1996 ('Disciplina o tráfego de veículos'), não lido."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 2.165/2017 não define VUC; o critério do art. 4º é a capacidade de carga (> 4.500 kg).",
+  "regras": [
+    {
+      "id": "avare_centro_nobre_4500kg",
+      "tipo": "zona",
+      "regime": "Centro nobre (capacidade > 4,5 t)",
+      "nome": "Avaré: centro nobre (quadrilátero Domiciano Santana, Rio de Janeiro, Maranhão e Pernambuco), caminhão com capacidade de carga acima de 4,5 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4.5
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 4º, parágrafo único: somente para carga e descarga, o trânsito desses caminhões é permitido das 00h00 às 10h00"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.165, de 05/12/2017 (Avaré), publicada no Semanário Oficial nº 847 de 08/12/2017, p. 17",
+          "artigo": "art. 4º, caput (proíbe caminhões com capacidade acima de 4.500 kg no centro nobre, quadrilátero das Ruas Domiciano Santana, Rio de Janeiro, Maranhão e Pernambuco) e parágrafo único (carga e descarga só das 00h00 às 10h00); art. 8º (vigência na publicação)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=200261"
+        },
+        {
+          "ato": "Lei municipal 2.294, de 06/06/2019 (Avaré), publicada no Semanário Oficial nº 913 de 07/06/2019, p. 04",
+          "artigo": "art. 1º (revoga os arts. 1º, 2º, 3º, 5º, 6º e 7º da Lei 2.165/2017; o art. 4º permanece)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=228181"
+        }
+      ],
+      "nota": "Critério do ato: 'capacidade acima de 4.500 quilos' = capacidade de carga (payload), não PBT. Passagem proibida a qualquer hora; a janela 00h–10h só autoriza carga e descarga com destino no quadrilátero (origem/destino dentro: a rota não exclui a zona e avisa). O ato não excetua domingos nem feriados. Polígono pelos eixos das quatro vias-limite ('no quadrilátero compreendido entre as ruas'); com o recuo de 20 m da camada, as quatro vias-limite ficam livres (leitura do ato: são o limite).",
+      "fonte_geometria": "OSM (ODbL): polígono pelos cruzamentos das Ruas Domiciano Santana, Rio de Janeiro, Maranhão e Pernambuco",
+      "vigencia_inicio": "2017-12-08",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3504503_centro_nobre.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono pelos 4 cruzamentos das vias-limite no OSM (Domiciano Santana x Rio de Janeiro, Rio de Janeiro x Maranhão, Maranhão x Pernambuco, Pernambuco x Domiciano Santana): interseção das ways de mesmo nome."
+        }
+      ]
+    },
+    {
+      "id": "avare_vias_urbanas_pbt25_lei2165",
+      "tipo": "zona",
+      "regime": "Vias urbanas (PBT > 25 t)",
+      "nome": "Avaré: vias e logradouros urbanos, caminhões e pesados com PBT acima de 25 t (Lei 2.165/2017, art. 1º, revogado)",
+      "status": "revogada",
+      "status_motivo": "Art. 1º da Lei 2.165/2017 revogado pelo art. 1º da Lei 2.294/2019 (publicada em 07/06/2019, vigência na publicação). Registro histórico. Geometria do registro: limite do município (nunca aplicada).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 3º (também revogado): serviços essenciais, concessionárias (CPFL, SABESP), Bombeiros, caminhões de gás, caminhões a serviço do município cadastrados e empresas com sede no município que transportem água e concreto por betoneira"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.165, de 05/12/2017 (Avaré)",
+          "artigo": "art. 1º (PBT > 25 t, em especial bitrens e treminhões, nas vias públicas e logradouros urbanos)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=200261"
+        },
+        {
+          "ato": "Lei municipal 2.294, de 06/06/2019 (Avaré)",
+          "artigo": "art. 1º (revogação)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=228181"
+        }
+      ],
+      "vigencia_inicio": "2017-12-08",
+      "vigencia_fim": "2019-06-07",
+      "geometria": [
+        {
+          "municipios": [
+            "3504503"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ],
+      "source_id": "avare-lei-2165-art1"
+    },
+    {
+      "id": "avare_avrs_pbt45_lei2165",
+      "tipo": "zona",
+      "regime": "Estradas municipais AVR (PBT > 45 t)",
+      "nome": "Avaré: estradas municipais (AVRs), caminhões e pesados com PBT acima de 45 t (Lei 2.165/2017, art. 2º, revogado)",
+      "status": "revogada",
+      "status_motivo": "Art. 2º da Lei 2.165/2017 revogado pelo art. 1º da Lei 2.294/2019 (publicada em 07/06/2019). Registro histórico. Geometria do registro: limite do município (nunca aplicada).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 45
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 3º (também revogado)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.165, de 05/12/2017 (Avaré)",
+          "artigo": "art. 2º (PBT > 45 t, em especial bitrens e treminhões, nas AVRs)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=200261"
+        },
+        {
+          "ato": "Lei municipal 2.294, de 06/06/2019 (Avaré)",
+          "artigo": "art. 1º (revogação)",
+          "url": "https://avare.siscam.com.br/arquivo?Id=228181"
+        }
+      ],
+      "vigencia_inicio": "2017-12-08",
+      "vigencia_fim": "2019-06-07",
+      "geometria": [
+        {
+          "municipios": [
+            "3504503"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ],
+      "source_id": "avare-lei-2165-art2"
+    }
+  ]
+}

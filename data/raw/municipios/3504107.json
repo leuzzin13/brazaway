@@ -1,0 +1,256 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3504107",
+  "municipio": "Atibaia",
+  "uf": "SP",
+  "fonte_id": "atibaia",
+  "fonte": {
+    "url": "https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2012/1354.pdf (Dec. 6.667/2012, IOE nº 1354, p. 13) ; https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2022/2491_38cc50d246e3956dd051990e35b2bf10.pdf (Dec. 10.197/2022, art. 52)",
+    "licenca": "Atos oficiais de Atibaia: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: derivada do OpenStreetMap (ODbL 1.0, © colaboradores do OSM): vias recortadas pelo perímetro do quadrilátero montado com as próprias vias do OSM.",
+    "notas": "Regra principal: Dec. 6.667/2012 (Quadrilátero de Restrição de Trânsito de Veículos Pesados, centro), caminhão maior que o VUC local proibido seg–sex 9h–18h e sáb 9h–14h, livre domingos e feriados. Desativadas: LC 470/2005, art. 5º (APE do Centro Histórico, > 6 t; vigência incerta e sem geometria) e duas pistas sem ato (Estrada dos Pires, Al. Prof. Lucas Nogueira Garcez)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "payload_max_t": 3,
+    "exige_cadastro": false,
+    "orgao": "Secretaria de Transportes e Trânsito (hoje Secretaria de Mobilidade e Planejamento Urbano)",
+    "artigo": "Decreto municipal 6.667/2012, art. 5º (VUC: largura até 2,20 m, comprimento até 6,30 m e capacidade de carga, sem a tara, até 3 t, conjuntamente); art. 4º (VUC fora da restrição, sem autorização especial)"
+  },
+  "vuc_nota": "VUC do Dec. 6.667/2012, art. 5º: largura até 2,20 m, comprimento até 6,30 m e capacidade de carga (sem a tara) até 3 t, conjuntamente; isento sem autorização (art. 4º).",
+  "regras": [
+    {
+      "id": "atibaia_quadrilatero_central",
+      "tipo": "via",
+      "regime": "Quadrilátero de restrição",
+      "nome": "Atibaia: Quadrilátero de Restrição de Trânsito de Veículos Pesados (centro) — caminhão maior que o VUC, dias úteis 9h–18h e sábado 9h–14h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "largura_m",
+            "acima": 2.2
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 6.3
+          },
+          {
+            "campo": "payload_t",
+            "acima": 3
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial (AE) da Secretaria de Transportes e Trânsito, pedida com no mínimo 5 dias de antecedência, com documentos do veículo, itinerário, data/horário e dimensões/PBT (Dec. 6.667/2012, art. 6º)",
+      "excecoes": [
+        "Art. 4º: Veículo Urbano de Carga (VUC) — largura até 2,20 m, comprimento até 6,30 m e capacidade de carga até 3 t (art. 5º), sem autorização",
+        "Art. 4º: veículos de serviço público essencial (energia elétrica, iluminação, água e esgotos, telecomunicação, guinchos) identificados, durante o serviço",
+        "Art. 6º: Autorização Especial (AE) da STT",
+        "Art. 3º: domingos e feriados livres"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.667, de 17/01/2012 (Imprensa Oficial da Estância de Atibaia nº 1354, 18/01/2012)",
+          "artigo": "art. 2º, I e II (vias do Quadrilátero); art. 3º (seg–sex 9h–18h, sáb 9h–14h, exceto domingos e feriados); arts. 4º, 5º e 7º (VUC isento; demais proibidos); art. 6º (AE); art. 10 (vigência na publicação; revoga o Dec. 3.481/1997)",
+          "url": "https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2012/1354.pdf"
+        },
+        {
+          "ato": "Decreto municipal 10.197, de 06/12/2022 (IOE nº 2491, 07/12/2022)",
+          "artigo": "art. 52, caput e §1º (remete ao Dec. 6.667/2012 e repete as vias do Quadrilátero)",
+          "url": "https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2022/2491_38cc50d246e3956dd051990e35b2bf10.pdf",
+          "nota": "Confirma a vigência do Dec. 6.667 em dez/2022."
+        }
+      ],
+      "vigencia_inicio": "2012-01-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3504107_quadrilatero.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3504107_quadrilatero_curadoria.py <extrato OSM do município com todas as vias, formato Overpass out geom> (polígono do perímetro do art. 2º, I, e recorte das vias dos incisos I e II por ele)",
+          "props": {
+            "fonte_trecho": "Dec. 6.667/2012, art. 2º (vias recortadas pelo perímetro do inciso I)"
+          }
+        }
+      ],
+      "nota": "Modelado como vias, não zona: as vias do perímetro (inciso I) são restritas e o recuo de 20 m da zona as liberaria. O inciso II ('Ruas intermediárias abrangidas na limitação de que trata o inciso anterior ... todas iniciando no cruzamento com a Rua João Pires') vale só dentro do perímetro: as vias foram recortadas pelo polígono do inciso I (folga de 12 m). A Rua João Pires é o limite norte e fica livre. No OSM a 'Monsenhor Kolly' se chama 'Rua Monsenhor Kohly'. Calçadões (highway=pedestrian: trechos da Pça. Claudino Alves e da R. Dr. Olímpio da Paixão) ficam fora. O art. 2º, parágrafo único, delega à STT alterar as vias sem novo decreto: alterações por portaria ou sinalização podem existir (nenhuma achada). O Dec. 10.197/2022, art. 52, confirma a vigência em 12/2022.",
+      "fonte_geometria": "OSM (ODbL): ways das vias do art. 2º, I e II, recortadas pelo perímetro do inciso I montado com as próprias vias (script geo/3504107_quadrilatero_curadoria.py)"
+    },
+    {
+      "id": "atibaia_ape_centro_historico_6t",
+      "tipo": "zona",
+      "regime": "APE Centro Histórico (> 6 t)",
+      "nome": "Atibaia: Área de Proteção Estrita (APE) do Centro Histórico — circulação de caminhões acima de 6 t vedada",
+      "status": "desativada",
+      "status_motivo": "Vigência não confirmada: a APE foi redelimitada pela LC 580/2008 (Plano Diretor) e virou ZCI - Zona Central I na LC 714/2015; não foi lido se essas leis mantiveram ou revogaram o art. 5º da LC 470/2005. A delimitação está só no Anexo I/mapa (não legível no texto) e o ato não diz se 6 t é PBT ou carga. Além disso, a LC 714/2015 foi revogada pelo art. 303, III, da LC 952, de 22/05/2025 (Código de Obras e Urbanismo, IOE nº 2809C, 24/05/2025). A situação da APE/ZCI ficou ainda mais incerta. Sem geometria: a APE/ZCI só está no Anexo I (mapa não legível) da LC 470/2005.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 6
+          }
+        ]
+      },
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar municipal 470, de 13/06/2005 (Imprensa Oficial nº 601, 15/06/2005)",
+          "artigo": "art. 5º ('Na APE é vedado o uso industrial, a atividade de comércio atacadista e circulação de caminhões acima de 06 t'); art. 2º (APE); Anexo I (delimitação)",
+          "url": "https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2005/601.pdf"
+        }
+      ],
+      "vigencia_inicio": "2005-06-15",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "nota": "Referência de geometria: APE = cota mais alta da Acrópole (Centro Histórico, entorno da Matriz), hoje ZCI (anexo 05 da LC 714/2015). PBT assumido por falta de definição no ato."
+    },
+    {
+      "id": "atibaia_estrada_dos_pires",
+      "tipo": "via",
+      "regime": "Só com AET (pista)",
+      "nome": "Atibaia: Estrada dos Pires — caminhões só com AET (pista de terceiros)",
+      "status": "desativada",
+      "status_motivo": "Só a compilação penaestrada.com.br cita a restrição; nenhum ato encontrado na Imprensa Oficial (busca 'Estrada dos Pires' + termos de caminhão).",
+      "confianca": "unverifiable",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "AET (segundo a compilação)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Compilação penaestrada.com.br (Trucão), página de Atibaia",
+          "artigo": "texto da página (sem ato citado)",
+          "url": "https://penaestrada.com.br/restricoes/atibaia/"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "pista",
+          "via": [
+            "Estrada dos Pires"
+          ],
+          "descricao": "Estrada dos Pires (extensão não informada)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3504107_pistas.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "nota": "Registro de pista (não aplicado): a Estrada dos Pires inteira no OSM; a rota só avisa (municipal_regra_nao_aplicada)."
+    },
+    {
+      "id": "atibaia_serrinha_lucas_garcez",
+      "tipo": "via",
+      "regime": "Placa (pista)",
+      "nome": "Atibaia: Alameda Professor Lucas Nogueira Garcez (trecho 'serrinha') — placa proíbe caminhões (pista)",
+      "status": "desativada",
+      "status_motivo": "Placa citada em indicação de vereador (IOE nº 3016, 08/08/2026); nenhum ato que a regulamente foi encontrado; extensão e horário desconhecidos. Sem geometria: o trecho 'serrinha' não está delimitado (a alameda tem vários km).",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Indicação de vereador publicada na Imprensa Oficial Eletrônica nº 3016 (08/08/2026)",
+          "artigo": "texto da indicação ('sinalização vertical existente que proíbe o tráfego de caminhões')",
+          "url": "https://prefeitura.atibaia.sp.gov.br/imprensa/pdf/2026/3016_d0f4d4798abe39290f9558c941014a57.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

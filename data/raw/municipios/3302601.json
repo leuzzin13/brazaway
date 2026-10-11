@@ -1,0 +1,228 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3302601",
+  "municipio": "Mangaratiba",
+  "uf": "RJ",
+  "fonte_id": "mangaratiba",
+  "fonte": {
+    "url": "http://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2016/362/362_texto_integral.pdf (Lei 999/2016) ; https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2013/446/446_texto_integral.pdf (Lei 877/2013) ; https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2007/1026/lei_609.07.pdf (Lei 609/2007)",
+    "licenca": "Atos oficiais de Mangaratiba: domínio público (Lei 9.610/1998, art. 8º, IV). Área urbana: IBGE, setores censitários do Censo 2022 (dados públicos, citar a fonte: IBGE). Corredores das rodovias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), PBF local.",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3302601.json; verificação: verif/3302601.json (11/10/2026). Ids das regras sem o prefixo numérico do rascunho (3302601_...). Área urbana aproximada pelos setores urbanos do IBGE, sem a BR-101 e as RJ. Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 999/2016 (art. 5º, I) isenta o VUC de até 6,30 m x 2,20 m só na regra das janelas.",
+  "regras": [
+    {
+      "id": "mangaratiba_lei999_janelas_6_30m",
+      "tipo": "zona",
+      "regime": "Comprimento > 6,30 m fora de 7h–9h e 18h–20h",
+      "nome": "Mangaratiba: veículos de carga acima de 6,30 m só circulam na área urbana das 7h às 9h e das 18h às 20h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "07:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "09:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "20:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 6.3
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial de Circulação e Estacionamento (arts. 6º e 7º), pedida com 3 dias de antecedência; vale só dentro do horário do art. 3º",
+      "excecoes": [
+        "Art. 4º: socorro, polícia, fiscalização de trânsito, ambulâncias e utilidade pública (CTB art. 29, VII e VIII)",
+        "Art. 5º, I: veículos urbanos de carga com comprimento máximo de 6,30 m e largura máxima de 2,20 m",
+        "Art. 5º, II: veículos de autoescola",
+        "Art. 6º: concretagem, mudanças, perecíveis e imprensa com Autorização Especial (dentro do horário do art. 3º)"
+      ],
+      "vuc": {
+        "comprimento_max_m": 6.3,
+        "largura_max_m": 2.2,
+        "exige_cadastro": false,
+        "artigo": "Lei 999/2016, art. 5º, I (veículo urbano de carga com até 6,30 m de comprimento e 2,20 m de largura, isento)"
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 999, de 07/04/2016",
+          "artigo": "art. 3º (janelas), art. 5º (VUC), arts. 4º, 6º e 7º (exceções)",
+          "url": "http://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2016/362/362_texto_integral.pdf"
+        }
+      ],
+      "nota": "Art. 3º: 'Estará permitida a circulação de qualquer veículo de carga com comprimento entre 6,30 metros a 12,00 metros, na área urbana do município nos seguintes horários: das 7:00 às 9:00 horas e das 18:00 às 20:00 horas'. O ato não fixa dias, então vale todos os dias. Para veículos acima de 12 m vale a restrição do art. 2º (regra separada, desativada), e por isso o alvo usa comprimento acima de 6,30 m como limite inferior. 'Área urbana' não é delimitada no ato: a geometria é o perímetro urbano, aproximado. Art. 15: prazo de adaptação de 180 dias a partir da publicação. A data de publicação não consta no SAPL. Nenhuma alteração ou revogação foi achada no SAPL (ementas '999', 'carga', 'circulação'). GEOMETRIA: 'área urbana' aproximada pelos setores censitários de situação urbana do IBGE (Censo 2022, CD_SIT 1 a 3), que seguem o perímetro urbano legal, MENOS faixas de 30 m das rodovias BR-101 (Rio-Santos) e RJ (vias federais/estaduais, fora da competência municipal); aproximado. Com o art. 2º (acima de 12 m) desativado, um veículo acima de 12 m também só é barrado fora das janelas.",
+      "vigencia_inicio": "2016-04-07",
+      "fonte_geometria": "IBGE, setores censitários urbanos do Censo 2022 (RJ_setores_CD2022.gpkg) de Mangaratiba, menos os corredores das rodovias BR-101/RJ do OSM (ODbL); aproximado.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302601_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "União dos setores censitários urbanos (CD_SIT 1, 2 e 3) de Mangaratiba em RJ_setores_CD2022.gpkg (IBGE), menos buffer de 30 m dos ways highway do PBF local com ref BR-/RJ- e classes motorway/trunk e alças; procedimento em docs/layers/municipios/mun_sudeste/IMP05.md",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ],
+      "verificado_em": "2026-10-11"
+    },
+    {
+      "id": "mangaratiba_lei999_acima_12m",
+      "tipo": "zona",
+      "regime": "Comprimento > 12 m (24 h)",
+      "nome": "Mangaratiba: veículos de carga acima de 12 m restritos na área urbana",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Art. 2º da Lei 999/2016 restringe veículos de carga acima de 12 m na área urbana, 'exceto naquelas vias que levam a locais onde exerçam atividades comerciais e/ou industriais devidamente identificadas por Decreto' (prazo de 90 dias). O decreto não foi localizado: o portal da prefeitura dá 403 e o Querido Diário dá erro de TLS. Sem ele, as exceções e o alcance ficam indefinidos.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 12
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 999, de 07/04/2016",
+          "artigo": "art. 2º",
+          "url": "http://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2016/362/362_texto_integral.pdf"
+        }
+      ],
+      "vigencia_inicio": "2016-04-07",
+      "excecoes": [
+        "Art. 2º: vias que levam a locais com atividades comerciais e/ou industriais identificadas por decreto (não localizado)"
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302601_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Mesma geometria da regra mangaratiba_lei999_janelas_6_30m",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ],
+      "verificado_em": "2026-10-11"
+    },
+    {
+      "id": "mangaratiba_lei877_mais_3_eixos",
+      "tipo": "zona",
+      "regime": "Mais de 3 eixos (24 h)",
+      "nome": "Mangaratiba: veículos com mais de 3 eixos proibidos em loteamentos, condomínios e vias urbanas",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "autorizacao": "Autorização expressa do Chefe do Poder Executivo (parágrafo único do art. 1º, Lei 609/2007 na redação da Lei 877/2013)",
+      "excecoes": [
+        "Parágrafo único: veículos expressamente autorizados pelo Chefe do Poder Executivo (delegável por decreto)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 609, de 11/12/2007, art. 1º com redação da Lei 877, de 20/08/2013",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2013/446/446_texto_integral.pdf"
+        },
+        {
+          "ato": "Lei municipal 609, de 11/12/2007 (Mangaratiba; multa no art. 3º, apreensão no art. 4º)",
+          "artigo": "arts. 3º e 4º",
+          "url": "https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2007/1026/lei_609.07.pdf"
+        }
+      ],
+      "nota": "Texto fala em 'vias urbanas do Município'; não define o perímetro urbano nem exclui rodovias. Geometria a definir (perímetro urbano/IBGE); alvo por número de eixos.",
+      "vigencia_inicio": "2013-08-20",
+      "status_motivo": "Verificado em 2026-10-11: texto da Lei 877/2013 confere (art. 1º do art. 1º da Lei 609/2007, >3 eixos, loteamentos, condomínios e vias urbanas, 24 h, parágrafo único autorização do Chefe do Executivo). Porém a Lei 999, de 07/04/2016 (SAPL norma 362), posterior e sobre o mesmo assunto, passou a disciplinar toda a circulação de veículos de carga na área urbana por comprimento e horário (art. 1º, 2º e 3º) e revoga as disposições em contrário (art. 19). Ela permite, nas janelas 7h-9h e 18h-20h, caminhões de 6,30 a 12 m, o que conflita com a proibição de 24 h a veículos com mais de 3 eixos nas vias urbanas. A vigência da parte 'vias urbanas' da Lei 877/2013 ficou duvidosa (possível derrogação tácita); a parte 'loteamentos/condomínios' não tem perímetro definido. Rebaixada por dúvida. Registro sem feição (perímetro urbano e loteamentos não delimitados no ato).",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "verificado_em": "2026-10-11"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3127800",
+  "municipio": "Grão Mogol",
+  "uf": "MG",
+  "fonte_id": "grao-mogol",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/FB1A33A1 (Decreto 012/2014) ; https://www.diariomunicipal.com.br/amm-mg/materia/DD2F36C0 (Lei 841/2014)",
+    "licenca": "Atos oficiais de Grão Mogol: domínio público (Lei 9.610/1998 art. 8º IV). Círculo de registro derivado do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 012/2014: caminhões e carretas com carga acima de 12 t proibidos no centro histórico (Anexos I e II da Lei 841/2014). Regra confirmada, mas DESATIVADA por falta de geometria confiável (anexos não publicados)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "grao_mogol_centro_historico_12t",
+      "tipo": "zona",
+      "regime": "Proibição de caminhões e carretas > 12 t no centro histórico",
+      "nome": "Grão Mogol: centro histórico, caminhões e carretas com carga acima de 12 t",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: o Dec. 012/2014 vale nas vias do centro histórico delimitado nos Anexos I e II da Lei 841/2014, e esses anexos não foram publicados (nem na matéria nem na edição do DOM-AMM); não há como georreferenciar o perímetro com honestidade. Ativar quando o perímetro for obtido (pendência).",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 12
+          }
+        ]
+      },
+      "vuc": null,
+      "vuc_nota": "O decreto não define VUC; o limiar é a carga (capacidade) acima de 12 t.",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 012/2014 (Grão Mogol, 27/02/2014; AMM ed. 1192, 28/02/2014)",
+          "artigo": "art. 1º (proibição); art. 3º (vigor na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/FB1A33A1"
+        },
+        {
+          "ato": "Lei municipal 841/2014 (Grão Mogol), DOM-AMM matéria DD2F36C0, 06/01/2014",
+          "artigo": "art. 1º (centro histórico definido pelos Anexos I e II, não publicados)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DD2F36C0"
+        }
+      ],
+      "nota": "Sem revogação localizada em AMM-MG (busca 'veículos pesados'); SAPL da Câmara e portais da prefeitura sem acervo útil. Polígono do centro histórico depende da Lei 841/2014. Verificado em 2026-10-11: confirmado (decreto relido; Lei 841/2014 lida sem anexos; sem revogação). O decreto diz 'veículos tipo caminhão e carretas com cargas superiores a 12 toneladas': trata-se de carga/capacidade (payload_t), não de PBT. Id da pesquisa: 3127800_centro_historico_12t (renomeado com o prefixo da cidade).",
+      "fonte_geometria": "SEM GEOMETRIA CONFIÁVEL: círculo de 250 m em torno da praça central (place=square do OSM), só para registro (a regra nunca é aplicada). OSM ODbL.",
+      "vigencia_inicio": "2014-02-28",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3127800_centro_aproximado.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02: círculo de 250 m em torno do place=square do centro no OSM (-42.8900, -16.5601). Substituir pela poligonal dos Anexos I e II da Lei 841/2014.",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -92,7 +92,8 @@ describe('rotas reais: a rota desvia mesmo?', () => {
       }
     } else {
       expect(km).toBeGreaterThan(0);
-      expect((r.body.warnings ?? []).some((w: any) => w.code === 'rmsp_via_restrita_na_rota')).toBe(true);
+      // a camada avisa rmsp_via_restrita_na_rota; se o OSM já restringe a via, quem avisa é o roteador (uses_restricted_way)
+      expect((r.body.warnings ?? []).some((w: any) => ['rmsp_via_restrita_na_rota', 'uses_restricted_way'].includes(w.code))).toBe(true);
     }
   }, 300_000);
 });

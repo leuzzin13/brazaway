@@ -1,0 +1,142 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3118007",
+  "municipio": "Congonhas",
+  "uf": "MG",
+  "fonte_id": "congonhas",
+  "fonte": {
+    "url": "https://dom.congonhas.mg.gov.br/baixar_diario_publicado/6452 (Decreto 5.795/2013, DOE 792) ; https://dom.congonhas.mg.gov.br/baixar_diario_publicado/5807 (Decreto 5.354/2011, DOM 376)",
+    "licenca": "Atos oficiais de Congonhas: domínio público (Lei 9.610/1998 art. 8º IV). Polígono aproximado dos bairros derivado do OpenStreetMap (ruas e nós de bairro; ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 5.795/2013: carretas e caminhões com três eixos ou mais proibidos nos 40 bairros do Anexo I (24 h), aplicado pela Prefeitura em 2025. Sem polígono oficial: zona aproximada pelo OSM. Decreto 5.354/2011 (veículos sujos de minério) desativado (depende do estado do veículo)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC; a regra é por número de eixos (3 ou mais) ou carreta.",
+  "regras": [
+    {
+      "id": "congonhas_bairros_3_eixos",
+      "tipo": "zona",
+      "regime": "Proibição 3+ eixos (bairros)",
+      "nome": "Congonhas: bairros do Anexo I do Decreto 5.795/2013 — proibido o trânsito de carretas e caminhões com três eixos ou mais",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Carga e descarga do comércio em geral: permitida das 8h às 15h e das 20h às 5h (art. 4º)",
+        "Autorização excepcional e temporária (até 48 h) da Diretoria de Segurança e Trânsito, mediante requerimento (art. 3º)",
+        "Rua Santo Antônio, bairro Praia, liberada para acesso à estrada de Casa de Pedra até a construção de novo acesso (art. 3º, parágrafo único)",
+        "Jardim Profeta: caminhões de 3 eixos podem transitar nas 5 ruas da Tabela II (sem estacionar) e circular/estacionar nas 16 vias da Tabela III (arts. 5º e 6º)"
+      ],
+      "autorizacao": "Diretoria de Segurança e Trânsito (hoje Secretaria Municipal de Segurança Pública e Trânsito), até 48 h, mediante requerimento (art. 3º)",
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 5.795, de 29/05/2013 (Congonhas), publicado no Diário Oficial Eletrônico nº 792 de 05/06/2013",
+          "artigo": "art. 1º e Anexo I, Tabela I (bairros); art. 4º (janela de carga e descarga)",
+          "url": "https://dom.congonhas.mg.gov.br/baixar_diario_publicado/6452",
+          "nota": "Citado como vigente e aplicado pela Prefeitura em 11/06/2025 e 11/07/2025 (notícias oficiais). Revoga os Decretos 5.375/2011 e 5.619/2012."
+        }
+      ],
+      "nota": "Bairros do Anexo I, Tabela I: Alvorada, Barro Preto, Bom Jesus, Casa de Pedra, Boa Vista, Complemento Boa Vista, Cristo Rei, Cruz das Almas, Centro, Cinquentenário, Dom Silvério, Eldorado, Cruzeiro, Dom Oscar, Grand Park, Ideal, Fonte das Águas, Fonte dos Moinhos, Lamartine de Freitas, Lucas Monteiro, Jardim Vila Andreza, Novo Belvedere, Novo Rosário, Praia, Matriz, Residencial Rosa Eulália, Residencial Tancredo Neves, Romaria, Residencial Guálter Monteiro, Santa Mônica, Tijucal, Vila Andreza, Rosário, Vila Nereu, Vila Rica, Vila São Vicente, Vila Glicéria, Basílica, Belvedere, Zé Arigó. Sem horário no art. 1º: 24 h todos os dias. Sem limite de peso: o critério é número de eixos (3 ou mais) ou ser carreta. Recortar a BR-040 (rodovia federal). Confiança alta: ato primário lido, vigente e fiscalizado em 2025; geometria a montar (sem polígono oficial). Geometria aproximada (ver fonte_geometria); a Rua Santo Antônio (bairro Praia, art. 3º, p. único) e o Jardim Profeta (fora da Tabela I) são exceções só nos avisos/fora do polígono. Com origem ou destino dentro da zona (ex.: entrega no Centro), a rota não exclui e avisa.",
+      "fonte_geometria": "APROXIMAÇÃO (sem polígono oficial): área urbana contínua da sede pelas ruas do OSM, recortada pelas células de Voronoi dos nós place=suburb do OSM dos bairros da Tabela I (29 dos 40 têm nó no OSM; os demais caem nas células vizinhas); excluídas as células dos bairros fora da Tabela I (Jardim Profeta, Campinho, Nova Cidade, Primavera, Consolação, Pascoal Vartulli, Recanto das Andorinhas, Vila Ventura e outros) e uma faixa de 40 m das rodovias (BR-040). OSM ODbL.",
+      "vigencia_inicio": "2013-06-05",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3118007_bairros_anexo_i.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02 (método em docs/layers/municipios/mun_sudeste/IMP02.md): ruas do OSM (PBF local) a até 4,5 km do Centro com buffer 45 m, fechamento 90 m e recuo 45 m; células de Voronoi dos nós place=suburb; só as dos bairros da Tabela I; menos 40 m das rodovias.",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "congonhas_mineradoras_sujeira_minerio",
+      "tipo": "zona",
+      "regime": "Veículos sujos de minério",
+      "nome": "Congonhas: área urbana — proibida a entrada de veículos oriundos das mineradoras que causem sujeira por deposição de minério",
+      "status": "desativada",
+      "status_motivo": "A proibição depende do estado do veículo (sujeira de minério aderida) e não da classe, peso ou horário: não é representável no perfil do veículo; o veículo limpo e enlonado pode circular.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Veículo limpo, sem minério aderido, e carga enlonada e amarrada (arts. 1º e 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 5.354, de 01/08/2011 (Congonhas), DOM nº 376 de 08/08/2011; alterado pelos Decretos 6.094/2014 e 8.012/2025 (só a fiscalização do art. 3º)",
+          "artigo": "art. 1º",
+          "url": "https://dom.congonhas.mg.gov.br/baixar_diario_publicado/5807"
+        }
+      ],
+      "nota": "Aplicado em blitz de 11/07/2025 (notícia oficial). Infração pelo art. 187 do CTB.",
+      "vigencia_inicio": "2011-08-08",
+      "vuc": null,
+      "fonte_geometria": "Mesma aproximação da área urbana (bairros da Tabela I do Dec. 5.795/2013); o Dec. 5.354/2011 fala em \"área urbana\" sem delimitar. Registro de regra desativada.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3118007_bairros_anexo_i.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

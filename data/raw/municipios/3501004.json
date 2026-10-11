@@ -1,0 +1,185 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3501004",
+  "municipio": "Altinópolis",
+  "uf": "SP",
+  "fonte_id": "altinopolis",
+  "fonte": {
+    "url": "https://altinopolis.siscam.com.br/Documentos/Documento/2110 (LC 97/2017; PDF https://altinopolis.siscam.com.br/arquivo?Id=2117) ; https://altinopolis.siscam.com.br/Documentos/Documento/1636 (Lei 1.633/2009)",
+    "licenca": "Atos oficiais de Altinópolis: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0); vias do registro desativado: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "LC 97/2017: articulados, veículos de carga e de grande porte proibidos em todo o perímetro urbano, 24 h; exceções para entrega/carregamento no perímetro com nota fiscal, emplacados em Altinópolis e motoristas residentes, e AET mediante cadastro. A Lei 1.633/2009, art. 3º (5 ruas centrais, fim de semana à noite), fica desativada (vigência incerta)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A LC 97/2017 não define VUC: todo veículo de carga é alcançado.",
+  "regras": [
+    {
+      "id": "altinopolis_perimetro_urbano_carga",
+      "tipo": "zona",
+      "regime": "Perímetro urbano (24 h)",
+      "nome": "Altinópolis: perímetro urbano, proibido articulados, veículos de carga e de grande porte, 24h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, §2º",
+      "autorizacao": "Cadastro prévio no Órgão Executivo Municipal de Trânsito para Autorização Especial de Trânsito (art. 2º)",
+      "excecoes": [
+        "Art. 1º §2º: veículos com carga destinada a entrega no perímetro urbano ou que venham carregar (nota fiscal)",
+        "Art. 1º §3º: veículos emplacados em Altinópolis e veículos com motoristas residentes comprovados no Município",
+        "Art. 2º: Autorização Especial de Trânsito mediante cadastro"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 97, de 20/09/2017 (Altinópolis)",
+          "artigo": "art. 1º, caput e §§1º-3º; arts. 2º, 3º, 5º; art. 7º (vigor na publicação; revoga Lei 1.671/2009)",
+          "url": "https://altinopolis.siscam.com.br/Documentos/Documento/2110",
+          "nota": "PDF https://altinopolis.siscam.com.br/arquivo?Id=2117"
+        }
+      ],
+      "nota": "'Veículo de grande porte' = carga com PBT acima de 10.000 kg (art. 1º, §1º, III); 'veículo de carga' = destinado ao transporte de carga, sem limite de PBT: o alvo é todo caminhão (correção do verificador: não filtrar por PBT). Perímetro urbano aproximado pelos setores censitários urbanos do IBGE 2022 do distrito-sede (a situação urbana do setor segue o perímetro legal); a lei de perímetro (Lei 1.770/2010) descreve o limite em texto, não georreferenciado. As rodovias estaduais (SP-351/BR-265 e SPV-48) ficam livres. Rotas alternativas do art. 3º: antiga estrada Altinópolis–Batatais, vicinal Serrana–Brodowski, Rod. Abrão Assed, Rod. Joaquim Ferreira, SP-351, estrada Horto Florestal/Fradinhos, estrada Faz. Santa Luzia. Origem ou destino no perímetro: a rota não exclui a zona e avisa; com destino em Altinópolis vale a exceção de entrega (art. 1º, §2º).",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem as rodovias estaduais (OSM, ODbL): aproximação do perímetro urbano legal (Lei 1.770/2010 e anteriores, não georreferenciadas)",
+      "vigencia_inicio": "2017-09-20",
+      "origem_destino_dentro": "avisa",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3501004_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3501004_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a SP-351/BR-265 e a SPV-48 (folga de 40 m)."
+        }
+      ]
+    },
+    {
+      "id": "altinopolis_ruas_centrais_fim_de_semana",
+      "tipo": "via",
+      "regime": "Proibição noturna fins de semana nas ruas centrais",
+      "nome": "Altinópolis: 5 ruas centrais, sáb/dom/feriados 18h-24h, caminhões, equipamentos pesados e ônibus",
+      "status": "desativada",
+      "status_motivo": "Lei 1.633/2009, art. 3º: vigência atual incerta (lei de 2009 revogada tacitamente em parte pelas leis 1.671/2009 e LC 97/2017; art. 3º não foi revogado expressamente); sem confirmação de sinalização.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "18:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Veículos municipais ou de serviço público, circulares, Viação São Bento e transporte de trabalhadores rurais"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 1.633, de 18/02/2009 (Altinópolis)",
+          "artigo": "art. 3º",
+          "url": "https://altinopolis.siscam.com.br/Documentos/Documento/1636"
+        }
+      ],
+      "nota": "Também vale em feriados (janela de feriados não modelada nas janelas dias 6 e 7).",
+      "trechos": [
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "Rua Coronel Honório Palma"
+          ],
+          "de": [
+            "Rua Barão do Rio Branco"
+          ],
+          "ate": [
+            "Rua Maria Tereza"
+          ],
+          "aproximado": true,
+          "descricao": "R. Cel. Honório Palma, entre a R. Barão do Rio Branco e a R. Maria Tereza"
+        },
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "Rua Major Garcia"
+          ],
+          "de": [
+            "Rua Barão do Rio Branco"
+          ],
+          "ate": [
+            "Rua Maria Tereza"
+          ],
+          "aproximado": true,
+          "descricao": "R. Major Garcia, entre a R. Barão do Rio Branco e a R. Maria Tereza"
+        },
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "Rua Coronel Joaquim Alberto"
+          ],
+          "de": [
+            "Rua Major Garcia"
+          ],
+          "ate": [
+            "Rua Renato Jardim"
+          ],
+          "aproximado": true,
+          "descricao": "R. Cel. Joaquim Alberto, entre a R. Major Garcia e a R. Renato Jardim"
+        },
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "Rua da Saudade"
+          ],
+          "de": [
+            "Rua Coronel Honório Palma"
+          ],
+          "ate": [
+            "Rua Renato Jardim"
+          ],
+          "aproximado": true,
+          "descricao": "R. da Saudade, entre a R. Cel. Honório Palma e a R. Renato Jardim"
+        },
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "Rua Maria Tereza"
+          ],
+          "de": [
+            "Rua Major Garcia"
+          ],
+          "ate": [
+            "Rua Coronel Honório Palma"
+          ],
+          "aproximado": true,
+          "descricao": "R. Maria Tereza, entre a R. Major Garcia e a R. Cel. Honório Palma"
+        }
+      ],
+      "vigencia_inicio": "2009-02-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3501004_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

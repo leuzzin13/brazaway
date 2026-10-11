@@ -1,0 +1,79 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3171303",
+  "municipio": "Viçosa",
+  "uf": "MG",
+  "fonte_id": "vicosa",
+  "fonte": {
+    "url": "https://www.vicosa.mg.gov.br/arquivo/legislacao/legislacao_3063_2023 (Lei 3.063/2023)",
+    "licenca": "Ato oficial de Viçosa: domínio público (Lei 9.610/1998, art. 8º, IV). Sem geometria (regra registrada sem feição).",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3171303.json; verificação: verif/3171303.json (corrigido em 11/10/2026: limiar 'igual ou superior a 3 t' = payload acima de 2,99 t). Regra registrada desativada por falta de perímetro georreferenciado do campus (pendência). Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 3.063/2023 não define VUC; o critério é a capacidade de carga (igual ou superior a 3 t).",
+  "regras": [
+    {
+      "id": "vicosa_campus_ufv_3t",
+      "tipo": "zona",
+      "regime": "Campus UFV (capacidade ≥ 3 t)",
+      "nome": "Viçosa: perímetro do campus da UFV, caminhões com capacidade de carga igual ou superior a 3 t",
+      "status": "desativada",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 2.99
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "§1º: caminhões de qualquer capacidade a serviço da UFV (serviços, entrega/coleta) ou expressamente autorizados por ela",
+        "§2º: veículos da UFV e da administração pública municipal, estadual ou federal e autarquias, ou a serviço destes, identificados por adesivo ou cartão no para-brisa",
+        "§3º: ônibus de alunos em atividade institucional (não caminhão)",
+        "§4º: ônibus do transporte coletivo municipal"
+      ],
+      "autorizacao": "Autorização expressa da UFV (art. 1º, §1º)",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.063, de 22/12/2023 (Viçosa/MG; aprovada pela Câmara em 19/12/2023)",
+          "artigo": "art. 1º (proíbe tráfego, circulação, permanência, parada e estacionamento de caminhões com capacidade de carga igual ou superior a 3 t no perímetro do campus da UFV) e §§1º-4º (exceções); art. 2º (sanções do CTB); art. 3º (regulamentação por decreto, não achado); art. 4º (vigência na publicação)",
+          "url": "https://www.vicosa.mg.gov.br/arquivo/legislacao/legislacao_3063_2023"
+        }
+      ],
+      "nota": "Capacidade de carga (payload_t), não PBT: 'igual ou superior a 3 toneladas' = acima de 2,99 t (correção da verificação). Sem o dado do CRLV, a camada fica com o lado seguro e avisa. Todos os dias, o dia todo. Confiança média: perímetro do campus não descrito no ato e decreto regulamentador (art. 3º) não achado. As entregas à UFV são exceção (§1º): com destino dentro do campus a zona não é excluída e a rota avisa.",
+      "fonte_geometria": "Pendente: perímetro do campus sede da UFV não georreferenciado (registro sem feição).",
+      "vigencia_inicio": "2023-12-22",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Sem geometria confiável: a Lei 3.063/2023 não descreve o perímetro do campus e não há contorno do campus da UFV no OSM (só áreas internas, como o Horto Botânico e o Parque da Lagoa) nem na malha de bairros do IBGE. Ato confirmado pelo verificador; reativar quando houver perímetro georreferenciado (ex.: planta do campus da UFV ou decreto regulamentador do art. 3º)."
+    }
+  ]
+}
