@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3204054",
+  "municipio": "Pedro Canário",
+  "uf": "ES",
+  "fonte_id": "pedro-canario",
+  "fonte": {
+    "url": "https://sapl.pedrocanario.es.leg.br/norma/277 ; https://sapl.pedrocanario.es.leg.br/media/sapl/public/normajuridica/2006/277/lei-municipal-n-767.2006-.pdf (Lei 767/2006)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria de registro: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Lei 767/2006: ruas dos bairros São João Batista e Saturnino Mauro, capacidade > 25 t ou tração > 40 t, permanente. Os bairros não estão delimitados no ato (mapa ilegível) nem no OSM: regra desativada (sem geometria confiável)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "pedro_canario_sjb_saturnino_cargas_25t",
+      "tipo": "zona",
+      "regime": "Veículos de carga > 25 t de capacidade ou > 40 t de tração, permanente",
+      "nome": "Pedro Canário: bairros São João Batista e Saturnino Mauro, veículos de carga pesados",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: a lei não nomeia as vias, o mapa anexo é ilegível e os bairros São João Batista e Saturnino Mauro não existem no OSM (nem como nó de bairro; PBF local, 11/10/2026). Pendência: obter o mapa/limites dos bairros na Prefeitura.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 25
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 40
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 767/2006, de 25/09/2006 (Pedro Canário)",
+          "artigo": "art. 1º (vias dos bairros), art. 2º e parágrafo único (capacidade > 25 t ou tração > 40 t), art. 3º (qualquer horário ou dia), art. 5º (vigência)",
+          "url": "https://sapl.pedrocanario.es.leg.br/norma/277",
+          "nota": "PDF: https://sapl.pedrocanario.es.leg.br/media/sapl/public/normajuridica/2006/277/lei-municipal-n-767.2006-.pdf"
+        }
+      ],
+      "nota": "Id da pesquisa: 3204054_sjb_saturnino_cargas_25t (renomeado com o prefixo da cidade). 'Capacidade de tração' é a CMT: pbt_t > 40 é aproximação aceitável (verificador). Registro no município inteiro só para aviso.",
+      "fonte_geometria": "IBGE Malha Municipal (3204054), só de registro",
+      "vigencia_inicio": "2006-09-25",
+      "geometria": [
+        {
+          "municipios": [
+            "3204054"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ]
+    }
+  ]
+}

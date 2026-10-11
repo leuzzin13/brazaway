@@ -1,0 +1,90 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3512209",
+  "municipio": "Conchal",
+  "uf": "SP",
+  "fonte_id": "conchal",
+  "fonte": {
+    "url": "https://conchal.siscam.com.br/Documentos/Documento/14512 (Lei 2.397/2023; PDF https://conchal.siscam.com.br/arquivo?Id=20582) ; https://conchal.siscam.com.br/Documentos/Documento/18233 (Lei 2.463/2025)",
+    "licenca": "Atos oficiais de Conchal: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.397/2023, art. 1º: tráfego, parada e estacionamento de Romeu e Julieta, rodotrem e bitrem proibidos na Rua Araras (Bairro Santa Rita); parágrafo único: também caminhões com semirreboque (acoplado ou não) com mais de 5 eixos. Lei 2.463/2025 só muda a fiscalização (videomonitoramento)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "conchal_rua_araras_cvc",
+      "tipo": "via",
+      "regime": "Lei 2.397/2023",
+      "nome": "Conchal: Rua Araras (Bairro Santa Rita), proibidos Romeu e Julieta, rodotrem, bitrem e conjuntos com mais de 5 eixos",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 5
+          }
+        ]
+      },
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.397, de 08/11/2023 (publicada por afixação; vigor 30 dias depois, art. 4º)",
+          "artigo": "art. 1º e parágrafo único; art. 4º (vigência)",
+          "url": "https://conchal.siscam.com.br/Documentos/Documento/14512",
+          "nota": "PDF: https://conchal.siscam.com.br/arquivo?Id=20582; Siscam: 'Não Consta Revogação Expressa'"
+        },
+        {
+          "ato": "Lei municipal 2.463, de 04/06/2025 (altera o art. 2º da Lei 2.397/2023)",
+          "artigo": "art. 1º (fiscalização por videomonitoramento; infrações CTB arts. 181, 182 e 187)",
+          "url": "https://conchal.siscam.com.br/Documentos/Documento/18233"
+        }
+      ],
+      "nota": "A lei proíbe também parada e estacionamento (não modelados). Alvo: Romeu e Julieta = caminhão + reboque ('truck_trailer' no perfil), bitrem e rodotrem ('cvc') e, pelo parágrafo único, qualquer conjunto com mais de 5 eixos (cavalo + semirreboque de 6 eixos). O verificador apontou que o Romeu e Julieta depende de o perfil cobrir caminhão com reboque: por isso 'truck_trailer' entra no alvo junto com 'cvc'. A rua não tem trecho no ato: aplicada inteira (as duas ways do OSM).",
+      "fonte_geometria": "OSM (ODbL) por nome, via inteira",
+      "vigencia_inicio": "2023-12-08",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Araras"
+          ],
+          "descricao": "Rua Araras, Bairro Santa Rita, toda a via"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3512209_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}
