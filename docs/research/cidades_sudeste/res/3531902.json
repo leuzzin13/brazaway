@@ -1,0 +1,78 @@
+{
+  "ibge": "3531902",
+  "nome": "Morro Agudo",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.morroagudo.sp.leg.br/api/norma/normajuridica/ (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|zona de restri|carreta|tonelad)",
+      "resultado": "SAPL: Lei 1.652/1992 achada ('proibição do tráfego de caminhões carregados nas vias públicas')."
+    },
+    {
+      "url": "https://sapl.morroagudo.sp.leg.br/norma/2269",
+      "resultado": "Lei 1.652, de 22/06/1992 lida (PDF com texto, OCR de baixa qualidade, art. 1º legível). Cópia em atos/3531902/lei_1652_1992.pdf. Sem norma relacionada/revogadora no SAPL; busca por 'tráfego' e '1652' não achou lei posterior."
+    },
+    {
+      "url": "https://www.morroagudo.sp.gov.br (Instar)",
+      "resultado": "0 resultados"
+    },
+    {
+      "url": "diarios_consolidados.py buscar: 'circulação de caminhões' e 'veículos pesados' (fontes: doesp, dosp)",
+      "resultado": "0 resultado(s) para 'circulação de caminhões'"
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 1.652/1992 (promulgada pela Câmara): art. 1º proíbe o tráfego de caminhões quando carregados, exceto carga, descarga, conserto e abastecimento, nas vias públicas da cidade; desobediência é infração de trânsito. Sem PBT, sem horário, sem vias, sem regulamento. Lei de 1992 provavelmente sem sinalização/fiscalização atual e sem mecanismo operacional: DESATIVADA (confianca baixa), pendente de confirmar aplicação. Revogação não encontrada.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "morro_agudo_caminhoes_carregados",
+      "tipo": "zona",
+      "regime": "Caminhões carregados (todas as vias, exceto carga/descarga/conserto/abastecimento)",
+      "nome": "Morro Agudo: proibição de tráfego de caminhões carregados nas vias públicas da cidade",
+      "status": "desativada",
+      "status_motivo": "Texto genérico de 1992 (sem peso mínimo, sem vias, sem horário), com exceção ampla para operações; aplicação atual e sinalização não confirmadas; inviável como restrição roteável sem delimitação da área urbana.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Carga, descarga, conserto e abastecimento (art. 1º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.652, de 22/06/1992 (Morro Agudo)",
+          "artigo": "art. 1º",
+          "url": "https://sapl.morroagudo.sp.leg.br/norma/2269"
+        }
+      ],
+      "trechos": [
+        {
+          "via": [
+            "vias públicas da cidade (área urbana)"
+          ],
+          "descricao": "Todas as vias públicas da cidade",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
+}

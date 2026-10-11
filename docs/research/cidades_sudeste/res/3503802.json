@@ -1,0 +1,87 @@
+{
+  "ibge": "3503802",
+  "nome": "Artur Nogueira",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.arturnogueira.sp.leg.br/api/norma/normajuridica/ (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|zona de restri|carreta|tonelad)",
+      "resultado": "SAPL: Lei 2.563/2000 achada (cargas perigosas e pesadas). Demais: crédito/convênio de trânsito 1990, estradas rurais."
+    },
+    {
+      "url": "https://sapl.arturnogueira.sp.leg.br/norma/2071",
+      "resultado": "Lei 2.563/2000 lida (PDF escaneado, imagem lida visualmente; sem camada de texto/tesseract indisponível). Cópia: docs/research/cidades_sudeste/atos/3503802/lei_2563_2000.pdf. SAPL sem norma relacionada/revogadora; data_vigencia vazia."
+    },
+    {
+      "url": "https://sapl.arturnogueira.sp.leg.br/api/norma/normajuridica/?ementa__icontains=pesad|cargas+perigosas|rodovia+dos+agricultores",
+      "resultado": "só a própria Lei 2.563; decreto regulamentador não localizado"
+    },
+    {
+      "url": "diarios_consolidados.py buscar: 'circulação de caminhões' e 'veículos pesados' (fontes: doesp)",
+      "resultado": "0 resultado(s) para 'circulação de caminhões'"
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 2.563, de 17/02/2000: art. 1º restringe o tráfego de veículos de cargas perigosas (classes 1 a 9) e de cargas pesadas acima de 15 t nas vias públicas municipais e na Rodovia dos Agricultores (liga Artur Nogueira a Mogi Mirim, zona rural). Art. 2º autoriza o trânsito de quem tem destino no município/zona rural (comprovado por documento fiscal) e manda o Departamento de Trânsito estabelecer 'ruas de livre trânsito' para travessia. Art. 3º: vigor na publicação, a ser regulamentada por decreto (não localizado). Lei sem horários e sem lista de vias (todas as vias municipais). Efeito roteável incerto (restrição ao tráfego de passagem, depende de decreto e sinalização): regra registrada DESATIVADA até confirmar vigência prática, decreto e vias de livre trânsito.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "artur_nogueira_cargas_pesadas_15t",
+      "tipo": "zona",
+      "regime": "Cargas pesadas > 15 t e cargas perigosas (tráfego de passagem)",
+      "nome": "Artur Nogueira: restrição a cargas pesadas (> 15 t) e perigosas nas vias municipais e na Rodovia dos Agricultores",
+      "status": "desativada",
+      "status_motivo": "Lei sem horários e sem lista de vias; autoriza destino local (art. 2º) e exige decreto regulamentador e ruas de livre trânsito, não localizados; vigência prática/sinalização não confirmadas. Revogação não encontrada no SAPL.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: veículos cujo destino seja o Município e sua Zona Rural (comprovado por documento fiscal)",
+        "Art. 2º, §1º: ruas de livre trânsito a definir para travessia"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.563, de 17/02/2000 (Artur Nogueira)",
+          "artigo": "art. 1º, art. 2º e §§",
+          "url": "https://sapl.arturnogueira.sp.leg.br/norma/2071"
+        }
+      ],
+      "nota": "'cargas pesadas, acima de 15t' é ambíguo (carga x PBT); campo payload_t usado por cautela. Não converter para PBT.",
+      "trechos": [
+        {
+          "via": [
+            "todas as vias públicas municipais",
+            "Rodovia dos Agricultores"
+          ],
+          "descricao": "Vias municipais e Rodovia dos Agricultores (zona rural, liga a Mogi Mirim)",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
+}
