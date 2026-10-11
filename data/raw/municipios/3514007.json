@@ -1,0 +1,136 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3514007",
+  "municipio": "Dobrada",
+  "uf": "SP",
+  "fonte_id": "dobrada",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MjExODgz (DO Dobrada ed. 901, 15/12/2021: Lei 1.815/2021)",
+    "licenca": "Ato oficial de Dobrada: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.815/2021: veículos de carga acima de 2 eixos (ou com 3º eixo retrátil) proibidos no perímetro urbano, em todas as ruas e avenidas e nas vicinais de acesso (sentido Dobrada), 24 h. Perímetro aproximado (setores urbanos do IBGE 2022); vicinais desativadas por falta de geometria."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Dobrada não define VUC; a regra só alcança veículos com mais de 2 eixos.",
+  "regras": [
+    {
+      "id": "dobrada_lei1815_2021_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Veículos de carga acima de 2 eixos (ou 3º eixo retrátil): proibidos no perímetro urbano",
+      "nome": "Dobrada: todas as ruas e avenidas, veículos de carga acima de 2 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º, I (carga e descarga no município)",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º, I: veículos que necessitam fazer carga e descarga no município",
+        "Art. 2º, II: limpeza pública",
+        "Art. 2º, III: Polícia Militar e Corpo de Bombeiros",
+        "Art. 2º, IV: atendimento emergencial a residências, vias, iluminação, telefonia, água, esgoto, TV a cabo, internet e outros serviços públicos",
+        "Art. 2º, V: sistema de saúde do município",
+        "Art. 2º, VI: veículos de carga licenciados em Dobrada",
+        "Art. 2º, VII: transportadoras cujo motorista resida em Dobrada",
+        "Art. 4º: prova de origem/destino da carga por nota fiscal"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.815, de 14/12/2021 (DO Dobrada ed. 901, 15/12/2021)",
+          "artigo": "art. 1º, III (todas as ruas e avenidas); art. 2º; art. 8º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjExODgz"
+        }
+      ],
+      "nota": "O ato diz 'acima de 02 eixos' e 'terceiro eixo retrátil' (este conta mesmo erguido): adotado eixos > 2. Vale em todo o perímetro urbano e em todas as ruas e avenidas (art. 1º, caput e III). Com destino em Dobrada vale a exceção de carga e descarga (art. 2º, I); com origem ou destino dentro da zona a rota não exclui a zona e avisa. Licenciados em Dobrada e motoristas residentes (art. 2º, VI e VII) só no aviso. Perímetro urbano sem mapa no ato: aproximado pelos setores censitários urbanos do distrito-sede (IBGE 2022), sem os ways com nome de rodovia da SP-326 e da SPA-312/326 (Rodovia Eugênio Comar); as ruas urbanas por onde passa a SPA-312/326 (R. José Comar, R. Antônio Comar, R. Noemia Benedetti Comar) continuam na zona. Os bairros novos a leste que os setores de 2022 ainda não cobrem ficam fora (lado conservador). Decreto regulamentador (art. 7º) e placas não confirmados.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem os ways de rodovia (OSM, ODbL): aproximação do perímetro urbano",
+      "vigencia_inicio": "2021-12-15",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3514007_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3514007_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> data/cache/municipios/osm_named_3514007.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem os ways de rodovia da SP-326 e da SPA-312/326 (folga de 40 m)."
+        }
+      ]
+    },
+    {
+      "id": "dobrada_lei1815_2021_vicinais",
+      "tipo": "via",
+      "regime": "Veículos de carga acima de 2 eixos: proibidos nas vicinais de acesso (sentido Dobrada)",
+      "nome": "Dobrada: vicinais Dobrada-Santa Ernestina e Dobrada-Matão, sentido Dobrada, veículos de carga acima de 2 eixos",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: as rotatórias de referência (César Franco Júnior e acesso ao Bairro Juninho Bernardo) não têm nome no OSM e não dá para saber de onde parte o trecho \"sentido Dobrada\" de cada vicinal; também falta confirmar que as estradas são municipais. Ato vigente (confirmado pelo verificador): pendência.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º, I a VII (mesmas exceções da regra do perímetro urbano)",
+        "Art. 4º: prova de origem/destino por nota fiscal"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.815, de 14/12/2021 (DO Dobrada ed. 901, 15/12/2021)",
+          "artigo": "art. 1º, I e II; art. 2º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjExODgz"
+        }
+      ],
+      "nota": "No OSM a vicinal Dobrada–Santa Ernestina é a 'Rodovia Vicinal Saverio Fávaro' (rotatórias sem nome em -21,5104/-48,3961, na entrada de Dobrada, e em -21,4596/-48,3905, na de Santa Ernestina) e a Dobrada–Matão é a 'Estrada Municipal Dobrada - Matão' (rotatória sem nome em -21,5357/-48,3909, junto ao Jardim Alcides Bernardo). Se as rotatórias do ato forem as da entrada de Dobrada, o trecho já fica dentro da zona do perímetro urbano.",
+      "vigencia_inicio": "2021-12-15",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

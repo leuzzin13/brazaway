@@ -1,0 +1,241 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3520509",
+  "municipio": "Indaiatuba",
+  "uf": "SP",
+  "fonte_id": "indaiatuba",
+  "fonte": {
+    "url": "https://sapl.indaiatuba.sp.leg.br/pysc/download_norma_pysc?cod_norma=4098&texto_original=1 (Lei 5.478/2008) ; https://www.indaiatuba.sp.gov.br/download/34286/ (Dec. 11.969/2014)",
+    "licenca": "Atos oficiais de Indaiatuba: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 5.478/2008: área central, caminhões seg–sáb 9h–16h (exceto domingos e feriados). Dec. 11.969/2014: eixo Estanislau do Amaral – José Boldrini nos picos (seg–sex 6h30–8h30 e 17h30–19h30; sáb 6h30–8h30), exceto veículos até 7,20 m × 2,30 m. O trecho do Condomínio Rio Negro fica desativado (sem geometria)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Indaiatuba não define VUC. O Dec. 11.969/2014 isenta veículos de carga até 7,20 m × 2,30 m (modelado no alvo da regra).",
+  "regras": [
+    {
+      "id": "indaiatuba_area_central",
+      "tipo": "zona",
+      "regime": "Área central (9h-16h)",
+      "nome": "Indaiatuba: área central (cinturão Humaitá, Ademar de Barros, Siqueira Campos, Nove de Julho, Sete de Setembro, Pedro Gonçalves), caminhões das 9h às 16h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "09:00",
+          "to": "16:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º, I: guinchos",
+        "Art. 2º, II: outros empregados em serviços essenciais e de emergência, conforme regulamento (não achado)",
+        "Art. 6º: em ocorrências extraordinárias o Executivo pode alterar ou suspender as restrições por até 90 dias"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.478, de 16/12/2008 (publicada na Secretaria Geral do Município em 16/12/2008)",
+          "artigo": "art. 1º (proíbe veículos automotores pesados, do tipo caminhão, na área central, das 9h às 16h, de segunda a sábado, exceto domingos e feriados) e parágrafo único (perímetro da área central); art. 8º (vigência na publicação)",
+          "url": "https://sapl.indaiatuba.sp.leg.br/pysc/download_norma_pysc?cod_norma=4098&texto_original=1"
+        }
+      ],
+      "nota": "A lei não define 'pesado' por PBT: alvo = todo caminhão (PBT > 3,5 t). Regulamento do art. 7º não achado; SAGL indica 'Em vigor' sem alteração/revogação. Perímetro do parágrafo único com erro de redação ('até encontrar a rua até encontrar a rua Siqueira Campos') e sem dizer por qual via se vai da confluência Humaitá x Pedro Gonçalves à Ademar de Barros: adotada a própria R. Humaitá (presumido). Polígono pelos eixos do OSM; na rota ele é recuado 20 m (as ruas do contorno ficam livres). Com origem ou destino dentro da área a rota não exclui a zona e avisa. Confiança média pela geometria e pela falta de regulamento/sinalização confirmada.",
+      "fonte_geometria": "OSM (ODbL): polígono pelos eixos das ruas do perímetro do parágrafo único do art. 1º",
+      "vigencia_inicio": "2008-12-16",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3520509_area_central.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "Polígono pelos eixos do OSM: R. Humaitá (da R. Pedro Gonçalves à R. Ademar de Barros), R. Ademar de Barros (até a R. Siqueira Campos), R. Siqueira Campos (até a R. Nove de Julho), R. Nove de Julho (até a R. Sete de Setembro), R. Sete de Setembro (até a R. Pedro Gonçalves) e R. Pedro Gonçalves (até o ponto inicial)."
+        }
+      ]
+    },
+    {
+      "id": "indaiatuba_estanislau_boldrini_picos",
+      "tipo": "via",
+      "regime": "Eixo Estanislau do Amaral/Boldrini (picos)",
+      "nome": "Indaiatuba: Al. Cel. Antônio Estanislau do Amaral (SP-75 à ponte do Rio Jundiaí), Al. José Boldrini (ponte ao acesso do Vale das Laranjeiras) e Estrada Municipal José Boldrini (IDT 020) até o acesso à Estrada da Grama",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "06:30",
+          "to": "08:30"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:30",
+          "to": "19:30"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "06:30",
+          "to": "08:30"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 7.2
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.3
+          }
+        ]
+      },
+      "autorizacao": "Autorização específica do órgão de trânsito do Município para casos não previstos (Dec. 11.969/2014, art. 4º)",
+      "excecoes": [
+        "Art. 2º, I: veículos de carga de pequeno porte com até 7,20 m de comprimento e 2,30 m de largura (modelado no alvo)",
+        "Art. 2º, II e parágrafo único: caminhões de serviços essenciais e de utilidade pública identificados (água, energia, gás e combustíveis em urgência, saúde, medicamentos e alimentos perecíveis, funerários, transporte coletivo, esgoto e lixo, telecomunicações etc.)",
+        "Art. 2º, III a VII: emergência, socorro mecânico (guincho), cobertura jornalística, obras e serviços de emergência inclusive sinalização, correios",
+        "Art. 2º, VIII: veículos de escoamento da produção agrícola local",
+        "Art. 4º: autorização específica"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 11.969, de 24/01/2014 (publicado na Secretaria Geral do Município em 24/01/2014)",
+          "artigo": "art. 1º, I e II (veda trânsito e carga e descarga de caminhões nas vias citadas: seg-sex 6h30-8h30 e 17h30-19h30, exceto domingos; sábados 6h30-8h30); art. 2º (exceções); art. 8º (vigência na publicação)",
+          "url": "https://www.indaiatuba.sp.gov.br/download/34286/",
+          "nota": "PDF escaneado, lido pela imagem. Alterado só nos arts. 5º e 5º-A pelo Dec. 14.148/2020 (https://www.indaiatuba.sp.gov.br/download/53221/), sem efeito sobre a restrição."
+        }
+      ],
+      "nota": "O ato excetua só domingos: vale em feriado de segunda a sábado. Também veda carga e descarga nessas vias nos mesmos horários. Motivo declarado: fuga do pedágio da SP-75 pelos caminhões.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: Avenida Coronel Antônio Estanislau do Amaral (da SP-75 à ponte do Rio Jundiaí) e Alameda José Boldrini (da ponte ao entroncamento com a Estrada da Grama; o trecho seguinte, Rodovia José Boldrini, fica fora)",
+      "vigencia_inicio": "2014-01-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Coronel Antônio Estanislau do Amaral"
+          ],
+          "descricao": "Al. Cel. Antônio Estanislau do Amaral, da SP-75 (Rod. Santos Dumont) até a ponte sobre o Rio Jundiaí",
+          "nota": "No OSM a via se chama Avenida e vai da SP-75 à ponte: usada inteira."
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Alameda José Boldrini"
+          ],
+          "descricao": "Al. José Boldrini, da ponte sobre o Rio Jundiaí ao acesso do Vale das Laranjeiras, e IDT 020 (Estrada Municipal José Boldrini) até o acesso à Estrada da Grama",
+          "nota": "No OSM a Alameda José Boldrini (o último way com ref IVA-030) vai da ponte ao entroncamento com a Estrada da Grama; depois dele a via vira Rodovia José Boldrini, fora da regra. Usada inteira."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3520509_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "indaiatuba_condominio_rio_negro_picos",
+      "tipo": "zona",
+      "regime": "Condomínio Rio Negro (picos)",
+      "nome": "Indaiatuba: loteamento Condomínio Rio Negro, caminhões nos picos (Dec. 11.969/2014)",
+      "status": "desativada",
+      "status_motivo": "O decreto inclui o 'loteamento denominado Condomínio Rio Negro' sem descrever o perímetro, e o loteamento não foi localizado no OSM (só uma 'Rua Rio Negro' longe do eixo Boldrini): sem geometria confiável.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "06:30",
+          "to": "08:30"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:30",
+          "to": "19:30"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "06:30",
+          "to": "08:30"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 7.2
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.3
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Mesmas do art. 2º do Dec. 11.969/2014"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 11.969, de 24/01/2014",
+          "artigo": "art. 1º (parte final: 'e no loteamento denominado Condomínio Rio Negro')",
+          "url": "https://www.indaiatuba.sp.gov.br/download/34286/"
+        }
+      ],
+      "fonte_geometria": "Loteamento Condomínio Rio Negro (localização a confirmar na Prefeitura; provavelmente no eixo da Al. José Boldrini)",
+      "vigencia_inicio": "2014-01-24",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

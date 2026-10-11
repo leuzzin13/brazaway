@@ -1,0 +1,344 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3522406",
+  "municipio": "Itapeva",
+  "uf": "SP",
+  "fonte_id": "itapeva",
+  "fonte": {
+    "url": "https://www.itapeva.sp.leg.br/legislacao/3118-lei-3052-2010 ; https://www.itapeva.sp.leg.br/legislacao/1563-lei-1590-2000 ; https://www.itapeva.sp.leg.br/legislacao/2530-lei-2498-2006 ; https://www.itapeva.sp.leg.br/legislacao/3117-lei-3051-2010 ; https://www.itapeva.sp.leg.br/legislacao/3005-lei-2940-2009",
+    "licenca": "Atos oficiais de Itapeva: domínio público (Lei 9.610/1998 art. 8º IV). Área central: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Vias urbanas: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Lei 1.590/2000 (red. Lei 3.052/2010): área central, veículos com capacidade de carga acima de 4 t só para carga e descarga das 19h às 10h e aos sábados após as 15h (duas regras: horário proibido e passagem). Lei 2.498/2006 (red. Lei 3.051/2010): caminhões proibidos nas vias urbanas, salvo carga e descarga e exceções. Lei 1.027/1997 revogada; Lei 2.940/2009 (escolas) desativada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Itapeva não define VUC.",
+  "regras": [
+    {
+      "id": "itapeva_area_central_cap4t_horario",
+      "tipo": "zona",
+      "regime": "Área central (cap. > 4 t)",
+      "nome": "Itapeva: área central, veículos com capacidade de carga acima de 4 t proibidos fora da janela de carga e descarga",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "10:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "10:00",
+          "to": "15:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial do Conselho Municipal de Trânsito para casos especiais e esporádicos (Lei 1.590/2000, art. 2º, parágrafo único)",
+      "excecoes": [
+        "Lei 1.590/2000, art. 2º (red. Lei 3.052/2010): acesso à área central permitido exclusivamente para carga e descarga, das 19h às 10h e aos sábados após as 15h; domingo livre",
+        "Lei 1.590/2000, art. 3º: carro-forte, entrega de carnes do matadouro municipal e atendimentos emergenciais (energia elétrica, água e esgoto, telefonia, obras públicas) excluídos da proibição, mas proibidos de usar o sistema viário da área central para acesso a outros pontos da cidade",
+        "Lei 1.590/2000, art. 3º, parágrafo único: caminhões da Polícia Militar, Polícia Civil, Forças Armadas e Corpo de Bombeiros têm livre trânsito",
+        "Lei 1.590/2000, art. 2º, parágrafo único: casos especiais e esporádicos — autorização especial do Conselho Municipal de Trânsito"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.590/2000 (26/09/2000), com a redação da Lei 3.052/2010 (Imprensa Oficial do Município de Itapeva, 01/05/2010, p. 18)",
+          "artigo": "art. 1º, caput (capacidade de carga acima de 4.000 kg) e parágrafo único (perímetro da área central); art. 2º (acesso só para carga e descarga das 19h às 10h e aos sábados após as 15h; domingo livre) — ambos na redação do art. 1º da Lei 3.052/2010",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/3118-lei-3052-2010",
+          "nota": "Texto lido no portal de legislação da Câmara Municipal de Itapeva (texto consolidado; não substitui o Diário Oficial). A Lei 3.052/2010 revogou a Lei 1.609/2000."
+        },
+        {
+          "ato": "Lei municipal 1.590/2000 (texto original; publicada no Diário da Terra, 04/10/2000)",
+          "artigo": "art. 2º, parágrafo único (autorização especial); art. 3º e parágrafo único (exceções); art. 4º (penalidade do art. 187, II, do CTB); art. 5º (revoga as Leis 499/91 e 510/91 e o § 2º do art. 7º da Lei 1.027/97)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/1563-lei-1590-2000"
+        }
+      ],
+      "nota": "O critério é a CAPACIDADE DE CARGA (lotação), não o PBT. Nesta janela nem a carga e descarga é permitida. Sábado: lido como permitido até as 10h (janela diária das 19h às 10h) e após as 15h; proibido das 10h às 15h. O ato não excetua feriados. Na janela complementar o acesso é só para carga e descarga (regra itapeva_area_central_cap4t_passagem). Polígono pelos eixos do OSM, com os nomes do OSM 'Rua Doutor Eurico Pimentel Dias', 'Rua José Bazílio de Araújo Ferraz' e 'Rua Doutor Ricardo Whaterly'; a R. João Augusto Lico não está no OSM (o vértice ficou na junção R. São Paulo × Av. José Ermírio de Moraes). A R. Sinhô de Camargo, que o ato inclui, é o limite norte e, com o recuo de 20 m da rota, fica livre. Com origem ou destino dentro da área a rota não exclui a zona e avisa.",
+      "fonte_geometria": "OSM (ODbL): polígono pelos eixos das ruas do perímetro",
+      "vigencia_inicio": "2010-05-01",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522406_area_central.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "Polígono pelos eixos do OSM (extrato do PBF local): Av. Cel. Acácio Piedade × R. Dr. Eurico (Érico) Pimentel Dias → Av. Dona Paulina de Moraes / Av. José Ermírio de Moraes até a R. São Paulo → R. Sinhô de Camargo → R. José Bazílio de Araújo Ferraz → R. Cel. Queiroz → R. Dr. Ricardo Whaterly (Wathely) → Av. Cel. Acácio Piedade."
+        }
+      ]
+    },
+    {
+      "id": "itapeva_area_central_cap4t_passagem",
+      "tipo": "zona",
+      "regime": "Área central (cap. > 4 t, só carga e descarga)",
+      "nome": "Itapeva: área central, veículos com capacidade de carga acima de 4 t só para carga e descarga (passagem proibida)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "00:00",
+          "to": "10:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "19:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "00:00",
+          "to": "10:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "15:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 1.590/2000, art. 2º (red. Lei 3.052/2010): acesso permitido exclusivamente para carga e descarga",
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial do Conselho Municipal de Trânsito (Lei 1.590/2000, art. 2º, parágrafo único)",
+      "excecoes": [
+        "Lei 1.590/2000, art. 2º (red. Lei 3.052/2010): acesso à área central permitido exclusivamente para carga e descarga, das 19h às 10h e aos sábados após as 15h; domingo livre",
+        "Lei 1.590/2000, art. 3º: carro-forte, entrega de carnes do matadouro municipal e atendimentos emergenciais (energia elétrica, água e esgoto, telefonia, obras públicas) excluídos da proibição, mas proibidos de usar o sistema viário da área central para acesso a outros pontos da cidade",
+        "Lei 1.590/2000, art. 3º, parágrafo único: caminhões da Polícia Militar, Polícia Civil, Forças Armadas e Corpo de Bombeiros têm livre trânsito",
+        "Lei 1.590/2000, art. 2º, parágrafo único: casos especiais e esporádicos — autorização especial do Conselho Municipal de Trânsito"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.590/2000 (26/09/2000), com a redação da Lei 3.052/2010 (Imprensa Oficial do Município de Itapeva, 01/05/2010, p. 18)",
+          "artigo": "art. 1º, caput (capacidade de carga acima de 4.000 kg) e parágrafo único (perímetro da área central); art. 2º (acesso só para carga e descarga das 19h às 10h e aos sábados após as 15h; domingo livre) — ambos na redação do art. 1º da Lei 3.052/2010",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/3118-lei-3052-2010",
+          "nota": "Texto lido no portal de legislação da Câmara Municipal de Itapeva (texto consolidado; não substitui o Diário Oficial). A Lei 3.052/2010 revogou a Lei 1.609/2000."
+        },
+        {
+          "ato": "Lei municipal 1.590/2000 (texto original; publicada no Diário da Terra, 04/10/2000)",
+          "artigo": "art. 2º, parágrafo único (autorização especial); art. 3º e parágrafo único (exceções); art. 4º (penalidade do art. 187, II, do CTB); art. 5º (revoga as Leis 499/91 e 510/91 e o § 2º do art. 7º da Lei 1.027/97)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/1563-lei-1590-2000"
+        }
+      ],
+      "nota": "Nas horas permitidas o acesso é só para carga e descarga: o veículo de passagem continua proibido (art. 1º proíbe o acesso; o art. 2º só o libera 'exclusivamente para carga e descarga'; o art. 3º proíbe até os veículos isentos de usar a área central como passagem). Domingo: 'sendo o domingo livre' (art. 2º) foi lido como domingo livre para carga e descarga o dia todo, e não como liberação da passagem; por isso a janela de domingo 00h–24h foi acrescentada na verificação de 2026-10-10 (leitura literal; a leitura alternativa, domingo livre para qualquer acesso, deixaria só seg–sáb). Polígono pelos eixos do OSM, com os nomes do OSM 'Rua Doutor Eurico Pimentel Dias', 'Rua José Bazílio de Araújo Ferraz' e 'Rua Doutor Ricardo Whaterly'; a R. João Augusto Lico não está no OSM (o vértice ficou na junção R. São Paulo × Av. José Ermírio de Moraes). A R. Sinhô de Camargo, que o ato inclui, é o limite norte e, com o recuo de 20 m da rota, fica livre. Com origem ou destino dentro da área a rota não exclui a zona e avisa.",
+      "fonte_geometria": "OSM (ODbL): polígono pelos eixos das ruas do perímetro",
+      "vigencia_inicio": "2010-05-01",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522406_area_central.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "Polígono pelos eixos do OSM (extrato do PBF local): Av. Cel. Acácio Piedade × R. Dr. Eurico (Érico) Pimentel Dias → Av. Dona Paulina de Moraes / Av. José Ermírio de Moraes até a R. São Paulo → R. Sinhô de Camargo → R. José Bazílio de Araújo Ferraz → R. Cel. Queiroz → R. Dr. Ricardo Whaterly (Wathely) → Av. Cel. Acácio Piedade."
+        }
+      ]
+    },
+    {
+      "id": "itapeva_vias_urbanas_caminhoes",
+      "tipo": "zona",
+      "regime": "Vias urbanas (caminhões e carretas)",
+      "nome": "Itapeva: vias urbanas do município, acesso e estacionamento de caminhões e carretas proibidos salvo carga e descarga e exceções",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 2.498/2006, art. 4º, caput (caminhões para carga e descarga, obedecida a Lei 1.590/2000) e § 1º, e (entrega e retirada de mercadorias), na redação da Lei 3.051/2010",
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização do Departamento Municipal de Trânsito (DEMUTRAN): pátios existentes, com trajeto obrigatório (art. 2º, § 2º, I), necessidades especiais (art. 5º), uso de pátio junto à via urbana (art. 6º) e acesso a garagem própria (art. 7º)",
+      "excecoes": [
+        "Art. 4º, caput (red. Lei 3.051/2010): ônibus de rodoviária, circulares, escolares e de trabalhadores; caminhões para carga e descarga (obedecida a Lei 1.590/2000)",
+        "Art. 4º, § 1º: socorro mecânico de emergência (nota fiscal ao Demutran em 15 dias); obras e serviços na via pública; coleta de lixo; Corpo de Bombeiros, PM, Polícia Civil e órgãos de segurança; entrega e retirada de mercadorias; remoção de terra/entulho e caçambas; transporte de valores; mudanças; feiras livres; concretagem; serviços de utilidade pública sinalizados; transporte de materiais, máquinas e equipamentos de construção; reportagem",
+        "Art. 2º, § 1º (red. Lei 3.051/2010): novos pátios só em avenidas com acesso direto às rodovias (vicinal Mário Covas, SP-258 Francisco Alves Negrão, SP-249 Eduardo Saigh, Expedicionários de Itapeva, R. Alexandrino de Moraes, Rod. Luiz José Sguário)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.498/2006 (Diário Oficial do Município de Itapeva, 18/11/2006, p. 02), com as redações das Leis 3.051/2010 (27/04/2010) e 3.353/2012 (06/03/2012)",
+          "artigo": "art. 1º (red. Lei 3.051/2010: proibido o acesso e/ou estacionamento de caminhões, carretas e ônibus nas vias urbanas do município); art. 4º, caput e § 1º (exceções); art. 10 (penalidade do CTB)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/2530-lei-2498-2006",
+          "nota": "Texto consolidado no portal de legislação da Câmara Municipal de Itapeva."
+        },
+        {
+          "ato": "Lei municipal 3.051/2010 (27/04/2010)",
+          "artigo": "art. 1º (nova redação do art. 1º e revogação do parágrafo único que listava ruas); art. 4º (nova redação do art. 4º)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/3117-lei-3051-2010"
+        },
+        {
+          "ato": "Lei municipal 3.353/2012 (06/03/2012)",
+          "artigo": "art. 1º (prazo de 48 meses do art. 2º, § 3º, para pátio de caminhão acima de 6 t)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/3434-lei-3353-2012"
+        }
+      ],
+      "nota": "Proibição geral nas 'vias urbanas do município' (o parágrafo único original, que restringia a uma lista de ruas do centro, foi revogado pela Lei 3.051/2010). O ato não define 'caminhão' por peso (o CTB também não; a camada aplica a todo perfil caminhão, sem limiar). Confiança média pela geometria (perímetro urbano não delimitado no ato) e pela abrangência; o veículo com destino no município fica fora da regra (carga e descarga, entrega e retirada de mercadorias). Ônibus também são alvo do ato, mas a camada só trata caminhão. Geometria: setores censitários urbanos do distrito-sede (IBGE 2022), aproximação do perímetro urbano legal (sem confirmar qual lei de perímetro vale após a ADI contra a Lei 5.109/2024), sem a SP-258, a SP-249, o Anel Rodoviário Mário Covas, a Estrada Vicinal Mario Covas e a Rod. Luiz José Sguário (folga de 40 m). A Av. Expedicionários de Itapeva e a R. Alexandrino de Moraes ficaram dentro (o ato não as exclui). Os núcleos urbanos dos outros distritos (Alto da Brancal, Areia Branca, Guarizinho) ficaram fora (lado conservador).",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem as rodovias (OSM, ODbL)",
+      "vigencia_inicio": "2010-04-27",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522406_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3522406_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> data/cache/municipios/osm_named_3522406.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a SP-258, a SP-249, o Anel Rodoviário Mário Covas e a Rod. Luiz José Sguário (folga de 40 m)."
+        }
+      ]
+    },
+    {
+      "id": "itapeva_area_central_1997_revogada",
+      "tipo": "zona",
+      "regime": "Área central 1997 (revogada)",
+      "nome": "Itapeva: área central, acesso de caminhões proibido das 11h às 16h (Lei 1.027/1997, revogado)",
+      "status": "revogada",
+      "status_motivo": "Lei 1.027/1997, art. 7º, § 2º, revogado pelo art. 5º da Lei 1.590/2000 (registro histórico).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "11:00",
+          "to": "16:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.027/1997",
+          "artigo": "art. 7º, §§ 2º e 3º (revogado pela Lei 1.590/2000, art. 5º)",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/1788-lei-1027-1997"
+        }
+      ],
+      "vigencia_fim": "2000-10-04",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522406_area_central.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "Mesmo polígono da área central atual (registro histórico; o perímetro de 1997 era ligeiramente diferente)."
+        }
+      ]
+    },
+    {
+      "id": "itapeva_escolas_veiculos_pesados",
+      "tipo": "zona",
+      "regime": "Frente de escolas (veículos pesados)",
+      "nome": "Itapeva: circulação de veículos pesados proibida em frente às unidades escolares (áreas a definir pelo DEMUTRAN)",
+      "status": "desativada",
+      "status_motivo": "Achada na verificação de 2026-10-10. A Lei 2.940/2009 só diz que fica proibida a circulação de veículos pesados 'em frente as unidades escolares' e delega ao DEMUTRAN 'definir áreas' (art. 1º, parágrafo único). Nenhum ato do DEMUTRAN com as áreas, horários ou definição de 'veículo pesado' foi localizado.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.940/2009 (08/08/2009; Imprensa Oficial do Município de Itapeva, 08/08/2009, p. 11)",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://www.itapeva.sp.leg.br/legislacao/3005-lei-2940-2009",
+          "nota": "Texto lido no portal de legislação da Câmara (texto consolidado; não substitui o Diário Oficial)."
+        }
+      ],
+      "vigencia_inicio": "2009-08-08",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

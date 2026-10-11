@@ -1,0 +1,626 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3519709",
+  "municipio": "Ibiúna",
+  "uf": "SP",
+  "fonte_id": "ibiuna",
+  "fonte": {
+    "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851 (Diário Oficial Eletrônico de Ibiúna, 04/09/2020: Dec. 2.736/2020) ; https://ibiuna.sp.gov.br/download/no-639/?wpdmdl=1706 (Dec. 2.388/2017, revogado) ; https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf (Lei 1.255/2007)",
+    "licenca": "Atos oficiais de Ibiúna: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 2.736/2020: lotação máxima (carga) por configuração do veículo em toda a Estrada do Verava (IBN-125), 24 h; acima disso só com AET. Modelado em 6 regras por classe de eixos com capacidade de carga (payload_t), lado seguro. O Dec. 2.388/2017 (PBT 16 t) está revogado e o PL 113/2025 (Centro Expandido) não é lei (desativado, sem geometria)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Ibiúna não define VUC.",
+  "regras": [
+    {
+      "id": "ibiuna_verava_lotacao_2eixos",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — caminhão de 2 eixos com lotação acima de 12 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "rigid"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "ate": 2
+          },
+          {
+            "campo": "payload_t",
+            "acima": 12
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Caminhão — eixo simples com 2 rodas' 6.000 kg; 'Caminhão (toco) — eixo simples com 4 rodas' 12.000 kg. Modelado 12 t (toco, rodagem dupla); o limite de 6 t do caminhão de rodagem simples não é modelável (o perfil não tem rodagem) — avisar. 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_lotacao_3eixos",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — caminhão trucado (3 eixos) com lotação acima de 16 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "rigid"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "eixos",
+            "ate": 3
+          },
+          {
+            "campo": "payload_t",
+            "acima": 16
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Caminhão Trucado — eixo duplo com 8 rodas' 16.000 kg. 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_lotacao_4eixos_rigido",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — caminhão trucado 4º eixo com lotação acima de 19 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "rigid"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 3
+          },
+          {
+            "campo": "payload_t",
+            "acima": 19
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Caminhão Trucado 4º eixo — eixo triplo com 10 rodas' 19.000 kg (aplicado a caminhão rígido de 4 ou mais eixos). 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_lotacao_cavalo_4eixos",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — cavalo simples + carreta de eixo duplo (4 eixos) com lotação acima de 23 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "ate": 4
+          },
+          {
+            "campo": "payload_t",
+            "acima": 23
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Cavalo Mecânico Simples + Carreta eixo duplo — Simples(4) + Duplo(8)' 23.000 kg. 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_lotacao_cavalo_5eixos",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — cavalo + carreta de 5 eixos com lotação acima de 25 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "eixos",
+            "ate": 5
+          },
+          {
+            "campo": "payload_t",
+            "acima": 25
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Cavalo Mecânico trucado + Carreta eixo duplo — Duplo(8) + Duplo(8)' 25.000 kg e 'Cavalo Mecânico simples + Carreta eixo triplo ou + — Simples(4) + triplo(12)' 27.000 kg: as duas têm 5 eixos; modelado o menor (25 t). 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_lotacao_cavalo_6eixos",
+      "tipo": "via",
+      "regime": "Lotação máxima por configuração (Estrada do Verava)",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — cavalo + carreta de 6 ou mais eixos com lotação acima de 27 t proibido (Dec. 2.736/2020)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 5
+          },
+          {
+            "campo": "payload_t",
+            "acima": 27
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "AET (Autorização Especial de Trânsito) obrigatória para quem exceder os limites (Decreto 2.736/2020, art. 2º); fiscalização da Guarda Civil Municipal (art. 4º)",
+      "excecoes": [
+        "Art. 2º: veículo acima dos limites de dimensões ou peso só trafega portando AET (Autorização Especial de Trânsito)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna) — 'Fixa a tonelagem máxima permitida para veículos de carga que trafegam na Estrada Vicinal Vereador Ernesto Pires de Oliveira (Estrada do Verava)'",
+          "artigo": "art. 1º (tabela: lotação máxima (carga) por configuração do veículo); art. 2º (AET); art. 3º (apreensão e penalidades); art. 6º (revoga o Decreto 2.388/2017); art. 7º (vigência às 0h de 04/09/2020)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851",
+          "nota": "Publicado no Diário Oficial Eletrônico de Ibiúna (Imprensa Oficial), edição de 04/09/2020 (arquivo 'ed-774'), págs. 4–5. Lido na íntegra em 11/10/2026. Nenhum ato posterior que o altere ou revogue achado nos diários de 09/2020 a 10/2026 (ver fontes)."
+        },
+        {
+          "ato": "Lei municipal 1.255, de 24/04/2007 (Ibiúna) — denominação da Estrada do Bairro Verava",
+          "artigo": "art. 1º (Estrada Vicinal IBN-125, do km 57 da Rodovia Bunjiro Nakao até a divisa com Juquitiba, ~40 km)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/normajuridica/2007/380/380_texto_integral.pdf"
+        }
+      ],
+      "nota": "Tabela do art. 1º: 'Cavalo Mecânico simples + Carreta eixo triplo ou +' 27.000 kg (2+4 eixos = 6) e 'Cavalo Mecânico trucado + Carreta eixo triplo ou + — Duplo(8) + triplo' 31.000 kg (3+3 = 6): modelado o menor (27 t). 'Lotação máxima (carga)' do decreto = carga útil (CTB, Anexo I: lotação), modelada em payload_t. O decreto tabela 8 configurações; o perfil do veículo não tem rodagem (simples/dupla) nem separa cavalo simples de trucado, então cada regra cobre uma classe de eixos com o menor limite das configurações que caem nela (lado seguro). Romeu e Julieta (caminhão + reboque), bitrem e rodotrem não constam da tabela (sem limite modelado). Os valores são próximos da carga útil legal de cada configuração: na prática barra o excesso de carga, mas sem a capacidade informada a camada aplica a regra (lado seguro) e pede a capacidade do CRLV.",
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_verava_pbt16_2017",
+      "tipo": "via",
+      "regime": "PBT máximo 16 t (Estrada do Verava) — revogado",
+      "nome": "Ibiúna: Estrada do Verava (IBN-125) — PBT máximo de 16 t para veículos de carga (Dec. 2.388/2017, revogado)",
+      "status": "revogada",
+      "status_motivo": "Revogado pelo Decreto 2.736, de 04/09/2020 (art. 6º), que trocou o PBT único de 16 t pela tabela de lotação por configuração.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 16
+          }
+        ]
+      },
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.388, de 28/12/2017 (Ibiúna)",
+          "artigo": "art. 1º (16 t de peso bruto máximo); art. 2º (apreensão); art. 3º (fiscalização GCM e PM); art. 5º (vigência às 0h de 15/01/2018)",
+          "url": "https://ibiuna.sp.gov.br/download/no-639/?wpdmdl=1706",
+          "nota": "Imprensa Oficial de Ibiúna ed. 639 (05/01/2018), pág. 10–11. Fiscalização noticiada na ed. 664 (20/07/2018)."
+        },
+        {
+          "ato": "Decreto municipal 2.736, de 04/09/2020 (Ibiúna)",
+          "artigo": "art. 6º (revoga o Decreto 2.388/2017)",
+          "url": "https://ibiuna.sp.gov.br/download/ed-774-28-08-20/?wpdmdl=4851"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome: a estrada inteira (o decreto não tem trecho)",
+      "vigencia_inicio": "2018-01-15",
+      "vigencia_fim": "2020-09-04",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Vereador Ernesto Pires de Oliveira"
+          ],
+          "descricao": "Estrada Vicinal IBN-125 (Estrada do Verava): do km 57 da Rodovia Bunjiro Nakao (SP-250) pelo asfalto até o Bairro dos Paulo e depois pela estrada de terra até a divisa com Juquitiba, ~40 km (Lei 1.255/2007, art. 1º, que deu o nome). O decreto vale em toda a estrada (sem trecho).",
+          "nota": "No OSM: 8 ways \"Estrada Vicinal Vereador Ernesto Pires de Oliveira\" (ref IBN-125), da SP-250 (~-23,657/-47,104) à divisa com Juquitiba (~-23,851/-47,120). O way \"Estrada Carmo Messias\" (também ref IBN-125, ~-23,744/-47,052) é um ramal e ficou fora."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3519709_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "ibiuna_centro_expandido_pl113_2025",
+      "tipo": "zona",
+      "regime": "Centro Expandido (projeto de lei)",
+      "nome": "Ibiúna: Centro Expandido — caminhões com capacidade de carga acima de 10 t proibidos em qualquer dia e horário (PL 113/2025, NÃO aprovado)",
+      "status": "desativada",
+      "status_motivo": "Não é norma: Projeto de Lei Ordinária 113/2025 (vereador Lucas Pires de Moraes), protocolado em 17/06/2025, parecer conjunto favorável das comissões em 02/12/2025 e ainda 'em tramitação' no SAPL da Câmara, sem votação em plenário nem lei promulgada até 10/10/2026. Reavaliar se for aprovado e sancionado.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 10
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 1º, parágrafo único: veículos de transporte de passageiros e veículos em operação de carga e descarga (nas condições da lei)",
+        "Art. 2º: carga e descarga no Centro Expandido de segunda a sábado até 9h e após 18h; domingo em qualquer horário; fora disso, autorização com 48 h de antecedência no órgão competente (parágrafo único)",
+        "Art. 5º: a autoridade de trânsito pode exigir documento que comprove a operação de carga e descarga"
+      ],
+      "base_legal": [
+        {
+          "ato": "Projeto de Lei Ordinária 113/2025 da Câmara Municipal de Ibiúna (em tramitação; NÃO é lei)",
+          "artigo": "art. 1º (proibição > 10 t de capacidade de carga), art. 2º (carga e descarga), art. 3º (perímetro: Av. Perimetral Antônio Falci, Av. Vereador Benedito de Campos, R. Francisco de Barros, R. Júlio Gabriel Vieira, R. Dr. Henrique Foltz Hanser, R. 24 de Março, R. Mário Arizono)",
+          "url": "https://sapl.ibiuna.sp.leg.br/media/sapl/public/materialegislativa/2025/19001/plo_113_-_2025.pdf",
+          "nota": "Ficha: https://sapl.ibiuna.sp.leg.br/materia/19001 ; parecer conjunto: http://sapl.ibiuna.sp.leg.br/media/sapl/public/documentoacessorio/2025/1065/parecer_conjunto_ao_plo_113_-_2025.pdf"
+        }
+      ],
+      "nota": "Perímetro do art. 3º lido do PDF escaneado (OCR: 'Rua Mano Arizono' = provavelmente Rua Mário Arizono). Se virar lei, a zona é o polígono dessas vias (construir manual).",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
