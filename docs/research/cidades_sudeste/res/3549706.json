@@ -1,0 +1,107 @@
+{
+  "ibge": "3549706",
+  "nome": "São José do Rio Pardo",
+  "uf": "SP",
+  "status": "regra_sem_ato",
+  "nivel_busca": "profundo",
+  "data": "2026-10-10",
+  "fontes_consultadas": [
+    {
+      "url": "https://leismunicipais.com.br/camara/sp/sao-jose-do-rio-pardo (link 'Pesquisa de Leis municipais' da Câmara)",
+      "resultado": "Não aberto: leismunicipais.com.br responde 403 (Cloudflare) a curl/WebFetch; não contornado."
+    },
+    {
+      "url": "https://saojosedoriopardo.atende.net/autoatendimento/servicos/legislacao-municipal/detalhar/1 ('Atos Oficiais' da Prefeitura)",
+      "resultado": "Portal IPM Atende.net em JavaScript; a página não traz os atos no HTML e o módulo não é automatizável (toolkit). Não consultado por dentro."
+    },
+    {
+      "url": "https://camarasjriopardo.sp.gov.br/tramitacao/ (busca por ementa)",
+      "resultado": "O filtro de ementa não restringe (927 resultados para 'caminh', lista sem ementa); inútil para achar atos."
+    },
+    {
+      "url": "https://www.imprensaoficialmunicipal.com.br/sjriopardo (DOSP, via toolkit/diarios_consolidados.py; 2018–2026; PDFs das edições baixados e lidos com pdftotext)",
+      "resultado": "'Ponte Euclydes da Cunha' (7) e 'Ponte Euclides da Cunha' (25): só súmulas da Câmara e atas — indicações de 2019 a 2024 pedindo fiscalização, providências e sinalização contra caminhões na ponte (ed. 111 de 03/05/2019; ed. 136 de 07/06/2019; ed. 292 de 23/01/2020; ed. 319 de 05/03/2020 'melhoria da sinalização indicativa de restrição do tráfego de veículos pesados na Ponte Euclydes da Cunha'; ed. 880 de 30/06/2022; ed. 1060 de 24/03/2023 'informações sobre medidas para restrição de veículos pesados'; ed. 1201 de 25/10/2023; ed. 1343 de 05/06/2024 'reforço e expansão na sinalização para veículos acima do peso na Ponte Euclydes da Cunha'), além de licitação de iluminação e concessão da orla. 'veículos pesados' (25), 'tráfego de caminhões' (3), 'trânsito de caminhões' (3), 'carga e descarga' (10), 'veículos de carga' (2), 'peso bruto' (10), 'toneladas' (23): contratos de lixo e de máquinas; 'proibido o tráfego': 0; demais: cargos, licitações, indicações (placa contra caminhões no Jardim Luciana II, 2020; proibir estacionamento de caminhões e ônibus na Rua João Otaviano Ribeiro da Silva, 2026). 'circulação de caminhões': 0. Nenhum decreto, lei ou portaria fixando a restrição ou o limite de peso."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py (DOE-SP caderno Municípios, APM, Querido Diário)",
+      "resultado": "0 resultado em todas as consultas (município sem spider no QD; DOE-SP só licitações)."
+    },
+    {
+      "url": "https://saojosedoriopardo.sp.gov.br/wp-json/wp/v2/search (site da Prefeitura) e notícias abertas",
+      "resultado": "'caminhões', 'veículos pesados', 'Ponte Euclides', 'carga e descarga', 'tráfego': nenhuma notícia de ato de restrição. Avisos 'Atenção, motoristas!' (2025–2026, obras do esgoto) dizem que, com a Ponte Nova (Adhemar de Barros) fechada para carros, 'ônibus e caminhões seguem liberados' nela e os carros usam a Ponte Euclides da Cunha como alternativa — coerente com a ponte metálica fechada a pesados, mas sem citar ato nem limite. A matéria dos 125 anos da Ponte Metálica não fala de restrição."
+    },
+    {
+      "url": "https://overpass-api.de (área IBGE 3549706 e bbox do centro)",
+      "resultado": "Ponte Euclides da Cunha = way 295041380 (highway=secondary, bridge=yes, layer=1, perto de -21.5938,-46.8948) sem maxweight/hgv; maxweight só no heliponto Comando Piloto (way 563180177)."
+    },
+    {
+      "url": "WebSearch (1 consulta: Ponte Euclides da Cunha, caminhões, peso, decreto)",
+      "resultado": "Só histórico da ponte (reconstruída por Euclides da Cunha em 1898–1901; tombada pelo CONDEPHAAT) e restrições de outras pontes; nenhum ato municipal."
+    },
+    {
+      "url": "penaestrada.com.br/restricoes/ (lead leads/penaestrada.json)",
+      "resultado": "São José do Rio Pardo não tem página na compilação."
+    }
+  ],
+  "observacoes": "Há indício forte de restrição real, mas sem ato achado: a Ponte Euclydes da Cunha (ponte metálica histórica sobre o Rio Pardo, way OSM 295041380) tem sinalização de restrição a veículos pesados/'acima do peso', segundo indicações da Câmara publicadas no Diário Oficial (2020: 'melhoria da sinalização indicativa de restrição do tráfego de veículos pesados'; 2024: 'reforço e expansão na sinalização para veículos acima do peso'). O limite (t) e o ato que o fixa não aparecem no diário (2018–2026); a legislação consolidada do município só está no leismunicipais.com.br (Cloudflare) e no Atende.net (JavaScript). Avisos de trânsito da Prefeitura (2025–2026) mandam carros para a Ponte Euclides da Cunha quando a Ponte Nova fecha para carros e mantêm ônibus e caminhões na Ponte Nova, coerente com a restrição. Regra registrada como desativada até achar o ato e o limite (ou levantar a placa). Nenhuma outra restrição de circulação de caminhões achada; sem definição de VUC.",
+  "osm_divergencias": [
+    "Ponte Euclides da Cunha (way 295041380, secondary, bridge=yes, -21.5938,-46.8948): há placa de restrição a veículos pesados/acima do peso segundo a Câmara (DO de 05/03/2020 e 05/06/2024), e o OSM não tem maxweight nem hgv; valor do limite desconhecido — registrar como pendente, sem ativação."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "sjriopardo_ponte_euclydes_da_cunha",
+      "tipo": "ponte",
+      "regime": "Ponte (veículos pesados)",
+      "nome": "São José do Rio Pardo: Ponte Euclydes da Cunha (sobre o Rio Pardo), restrição sinalizada a veículos pesados",
+      "status": "desativada",
+      "status_motivo": "Restrição conhecida só por indicações da Câmara publicadas no Diário Oficial (sinalização existente); ato, limite de peso e alcance (caminhões/ônibus) não achados.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Diário Oficial do Município de São José do Rio Pardo, ed. nº 319 de 05/03/2020 (súmula da sessão da Câmara)",
+          "artigo": "indicação (pista): 'a melhoria da sinalização indicativa de restrição do tráfego de veículos pesados na Ponte Euclydes da Cunha'",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=OTc5ODA="
+        },
+        {
+          "ato": "Diário Oficial do Município de São José do Rio Pardo, ed. nº 1343 de 05/06/2024 (súmula da sessão da Câmara)",
+          "artigo": "indicação (pista): 'reforço e expansão na sinalização para veículos acima do peso na Ponte Euclydes da Cunha'",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NTA0MzM0"
+        }
+      ],
+      "nota": "Alvo provisório = todo caminhão (lado seguro) porque o limite da placa é desconhecido; trocar por pbt_t quando o valor for confirmado. Ponte metálica histórica (Euclides da Cunha, 1898–1901), tombada pelo CONDEPHAAT. Indicações de 2019, 2022 e 2023 pedem fiscalização e 'impedir o tráfego de caminhões e ônibus' na ponte.",
+      "fonte_geometria": "OSM (ODbL): way 295041380 'Ponte Euclides da Cunha'",
+      "trechos": [
+        {
+          "inciso": "sinalização",
+          "via": [
+            "Ponte Euclides da Cunha",
+            "Ponte Euclydes da Cunha"
+          ],
+          "descricao": "Ponte Euclydes da Cunha sobre o Rio Pardo, centro de São José do Rio Pardo (OSM way 295041380)"
+        }
+      ]
+    }
+  ],
+  "vuc": null,
+  "vuc_nota": "Nenhum ato municipal achado define VUC."
+}

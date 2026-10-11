@@ -1,0 +1,47 @@
+{
+ "ibge": "3300456",
+ "nome": "Belford Roxo",
+ "uf": "RJ",
+ "status": "pontual",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {"url": "https://sapl.belfordroxo.rj.leg.br/norma/pesquisar (API: ementa__icontains caminh/CAMINH, carga e descarga, veículos pesados, tráfego, veículos de carga, tonelada, carreta, grande porte, perigos, trânsito, eixos, postura, plano diretor, mobilidade, carga, estacionamento)", "resultado": "SAPL incompleto: 181 leis ordinárias, 54 complementares, 251 'decretos de lei' e 2.168 indicações. Achados: Lei 1.483/2013 (veículos de coleta de resíduos proibidos após 20h; publicada) e Lei 1.489/2013 (caminhões de transporte de resíduos sólidos proibidos das 20h às 6h; só o autógrafo da Câmara; revoga a 1.483). Nada de restrição geral a caminhões."},
+  {"url": "https://sapl.belfordroxo.rj.leg.br/media/sapl/public/normajuridica/2013/2699/autografo_lo_1489-2013.pdf ; https://sapl.belfordroxo.rj.leg.br/media/sapl/public/normajuridica/2013/2698/pub_lo_1483-2013.pdf", "resultado": "Lidos pela imagem. Lei 1.489/2013, art. 1º: proibido o tráfego de caminhões e similares para transporte de resíduos sólidos nas vias do município das 20h às 6h, salvo os que prestam serviço ao município; art. 2º: sem licença ambiental, proibido sempre; art. 4º: autorização excepcional do Secretário de Segurança Pública; art. 6º revoga a Lei 1.483/2013."},
+  {"url": "https://sapl.belfordroxo.rj.leg.br/media/sapl/public/normajuridica/2022/104/lc_280_30-03-2022-plano_diretor_prefeito_municipal.pdf", "resultado": "Plano Diretor (LC 280/2022) lido nos trechos de mobilidade: hierarquia viária (BR-116 como eixo metropolitano; eixos arteriais 'permitindo tráfego significativo de veículos de carga') e diretriz de criar condições para o transporte de cargas. Nenhuma restrição."},
+  {"url": "Querido Diário (api.queridodiario.org.br, território 3300456; diários 2019-2026) via diarios_consolidados.py: caminhões, caminhão, veículos pesados, carga e descarga, veículos de carga, tráfego de veículos, peso bruto, carretas, transporte de carga, proibido o trânsito, proibida a circulação, restrição de circulação, Código de Posturas, rota de carga, veículos de grande porte", "resultado": "59 acertos para 'caminhões': locação de caminhões, CNAE, e os decretos da COVID (2020-2021, art. 7º §4º) que 'suspendem todas as restrições de circulação de caminhões e veículos destinados ao abastecimento de alimentos' — cláusula genérica copiada do decreto estadual, sem citar restrição municipal. Nenhum decreto, portaria ou resolução de trânsito restringindo caminhões."},
+  {"url": "https://www.belfordr.instartecnologia.com.br/portal/diario-oficial (Instar; 2.320 edições; busca /portal/diario-oficial/1/0/0/<termo>/0/): caminhões, caminhão, carga e descarga, veículos pesados, tráfego, peso bruto, carretas", "resultado": "Edições recentes baixadas e lidas (1.904, 1.954, 2.082, 2.108, 2.129, 2.145, 2.163, 2.275, 2.284, 2.293, 2.319): só locação de caminhões, orçamento e nomeações. A base 'Legislação' do Instar (/portal/leis_decretos) não devolveu ato."},
+  {"url": "https://transparencia.prefeituradebelfordroxo.rj.gov.br/ ; https://prefeituradebelfordroxo.rj.gov.br/", "resultado": "Portal de transparência sem base de legislação própria; site da prefeitura aponta o Diário Oficial no Instar."},
+  {"url": "https://penaestrada.com.br/restricoes/belford-roxo/", "resultado": "Sem página (fora do sitemap, conforme leads/penaestrada.json)."}
+ ],
+ "observacoes": "Belford Roxo não tem ato de restrição geral de circulação de caminhões nos diários de 2019-2026 (Querido Diário e Instar) nem no SAPL da Câmara. As únicas regras são para caminhões de RESÍDUOS: Lei 1.489/2013 (proibidos das 20h às 6h, salvo os a serviço do município; sem licença ambiental, sempre), que revogou a Lei 1.483/2013 (coleta de resíduos proibida após as 20h). O tipo de carga não é informado no perfil do veículo: não entra na rota. Lacuna: o SAPL tem só 181 leis ordinárias (o município tem bem mais), e não há diário pesquisável antes de 2019; leis antigas de trânsito podem existir sem cópia online. A Rodovia Presidente Dutra (BR-116) e o Arco Metropolitano são federais, fora desta camada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "belfordroxo_residuos_noturno_lei1489",
+   "tipo": "zona",
+   "regime": "Resíduos sólidos (20h-6h)",
+   "nome": "Belford Roxo: caminhões de transporte de resíduos sólidos proibidos nas vias do município das 20h às 6h",
+   "status": "desativada",
+   "status_motivo": "O perfil do veículo não informa o tipo de carga (resíduos sólidos): a regra não pode ser enquadrada na rota. Além disso, só o autógrafo da Câmara foi lido; a publicação oficial da Lei 1.489/2013 não foi achada online.",
+   "confianca": "media",
+   "janelas": [
+    {"days": [1, 2, 3, 4, 5, 6, 7], "from": "20:00", "to": "24:00"},
+    {"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "06:00"}
+   ],
+   "feriados": "aplica",
+   "alvo": {"caminhao": true},
+   "excecoes": [
+    "Art. 1º, parágrafo único: veículos que prestam serviço ao município",
+    "Art. 4º: autorização excepcional do Secretário Municipal de Segurança Pública"
+   ],
+   "autorizacao": "Autorização excepcional do Secretário Municipal de Segurança Pública (Lei 1.489/2013, art. 4º)",
+   "base_legal": [
+    {"ato": "Lei municipal 1.489, de 11/09/2013 (autógrafo da Câmara, sessão de 12/09/2013)", "artigo": "art. 1º e parágrafo único (20h às 6h); art. 2º (sem licença ambiental); art. 3º (multa de R$ 5.000); art. 4º (autorização); art. 6º (revoga a Lei 1.483/2013)", "url": "https://sapl.belfordroxo.rj.leg.br/media/sapl/public/normajuridica/2013/2699/autografo_lo_1489-2013.pdf"}
+   ],
+   "nota": "Janela 20h-6h dividida em duas (vira a noite). Lei 1.483/2013 (coleta de resíduos proibida após as 20h, salvo autorização do Prefeito) foi revogada pela 1.489.",
+   "vigencia_inicio": null,
+   "geometria": [{"municipios": ["3300456"], "simplificar": 0.002, "casas": 5}]
+  }
+ ]
+}

@@ -1,0 +1,751 @@
+{
+ "ibge": "3301009",
+ "nome": "Campos dos Goytacazes",
+ "uf": "RJ",
+ "status": "regra_com_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/",
+   "resultado": "API de arquivos do Diário Oficial do Município (DOM) 2010–2025: 3.893 PDFs (edições diárias, suplementos e, em 2013–2016, compilações mensais de 50–190 MB). Varredura de texto integral (pdftotext) de TODOS os arquivos por palavras-chave (eixos, caminhões, veículos pesados/de carga, carga e descarga, PBT, peso bruto, carretas, bitrem, Porto do Açu e números das portarias) com contexto de proibição/restrição/horário/circulação/tráfego/revogação/suspensão; arquivos que falharam por carga do servidor foram baixados de novo até extrair texto. Sem texto extraível ao fim: 1 compilação de out/2012 ('todas as edições'), a edição de 26/07/2017 e ~10 suplementos de 1 página ou imagem (2015–2017). Achados: Portaria EMUT de 2010 (safra), EMUT 175/2011, IMTT 019/2017, 38/2022, 47/2022, 93/2022, 64/2023 (AET), 55/2024, Conjunta 01/2024 (Ponte da Lapa), 87/2024, 21/2025, além do PLANMOBS (Lei 9.137/2022) e do Plano Diretor/LUOS (LCs 15 e 16/2020)."
+  },
+  {
+   "url": "https://campos.rj.gov.br/wp-content/uploads/2026/",
+   "resultado": "Edições de 2026 do DOM (285 PDFs, de janeiro até a nº 2151 de 09/10/2026) varridas com as mesmas palavras-chave: nenhuma alteração, suspensão ou revogação da Portaria IMTT 21/2025 nem da Portaria Conjunta 01/2024; só a interdição da Ponte Barcelos Martins (pedestres, ciclistas e motos; Decreto 76/2026, situação de emergência) e itinerário de ônibus (Portaria IMTT 12/2026), irrelevantes para caminhão."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2025/2%20FEVEREIRO/DO%20ONLINE%201767%2027%20de%20FEVEREIRO%20DE%202025%20ass.pdf",
+   "resultado": "DOM nº 1767 (27/02/2025), p. 14: Portaria IMTT 21/2025 lida na íntegra — proíbe veículos de carga rígidos ou articulados com mais de 4 eixos nas vias sob circunscrição do Município, exceção para quem atende estabelecimento comercial no município, AET, itinerário do Porto do Açu; vigência 10/03/2025. REGRA VIGENTE."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2017/4%20ABRIL%202017/DO%20ONLINE%20EDI%C3%87%C3%83O%2025%20DE%20ABRIL%20DE%202017.pdf",
+   "resultado": "DOM de 25/04/2017 (Ano IX), p. 3: Portaria IMTT 019/2017 lida — proíbe veículos pesados de carga com mais de 2 eixos na Rua Sebastião Silvano e na Av. Dário Canela Tavares (Linha do Limão), Goitacazes; desvio pela RJ-216. Sem revogação localizada até 09/10/2026."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2011/5%20MAIO/DO%20ONLINE%20EDI%C3%87%C3%83O%2011%20DE%20%20MAIO%20DE%202011.pdf",
+   "resultado": "DOM de 11/05/2011: Portaria EMUT 175/2011 lida — proíbe caminhões transportando cana-de-açúcar na Ponte da Lapa, Rua dos Goytacazes e Av. Ten. Cel. Cardoso (restrição por tipo de carga; vigência incerta) — desativada."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2010/06%20Junho/DO%20ONLINE%20EDI%C3%87%C3%83O%2028%20DE%20JUNHO%20DE%202010_PARTE%20I.pdf",
+   "resultado": "DOM de 28/06/2010 (parte I): portaria da EMUT fixando trajetos dos caminhões de cana e altura máxima de carga de 4 m só durante a moagem de maio a outubro de 2010 — expirada, sem regra."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/10%20OUTUBRO%202024/DO%20ONLINE%201685%2024%20de%20OUTUBRO%20DE%202024%20ass.pdf",
+   "resultado": "DOM nº 1685 (24/10/2024): Portaria Conjunta IMTT/SMPUMMA nº 01/2024 lida — proíbe veículos acima de 2 eixos na Ponte Saturnino de Brito (ponte da Lapa). REGRA VIGENTE (não achada alteração até 09/10/2026)."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/8%20AGOSTO%202024/DO%20ONLINE%201646%2030%20de%20AGOSTO%20DE%202024%20ass%20suplemento.pdf",
+   "resultado": "DOM nº 1646, suplemento (30/08/2024): Portaria IMTT 55/2024 lida (mais de 4 eixos; vigência 01/09/2024) — substituída pela 21/2025."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/12%20DEZEMBRO%202024/DO%20ONLINE%201709%2002%20de%20DEZEMBRO%20DE%202024%20ass.pdf",
+   "resultado": "DOM nº 1709 (02/12/2024), pp. 10–11: Portaria IMTT 87/2024 lida — corredor para mais de 4 eixos pela Av. Dr. Arthur Bernardes e Av. Alberto Lamego, condicionado a medidas do DER/RJ em 30 dias; Anexo I (mapa) sem texto."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2023/11%20NOVEMBRO%202023/DO%20ONLINE%201459%2023%20DE%20NOVEMBRO%20DE%202023%20ass.pdf",
+   "resultado": "DOM nº 1459 (23/11/2023), pp. 31–32: Portaria IMTT 64/2023 (AET para veículo/combinação fora dos limites de peso e dimensões do Contran nas vias municipais; tabela de taxas em UFICA). Reproduz o CTB/Contran: não vira regra de rota, só autorização."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/4%20ABRIL%202022/DO%20ON%20LINE%201075%2026%20DE%20ABRIL%20DE%202022%20ass.pdf",
+   "resultado": "DOM nº 1075 (26/04/2022), p. 9: Portaria IMTT 38/2022 lida (primeira proibição de mais de 4 eixos; exceção para destino na área central; itinerário do Porto do Açu) — histórico."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/5%20MAIO%202022/DO%20ON%20LINE%201094%2023%20DE%20MAIO%20DE%202022%20ass.pdf",
+   "resultado": "DOM nº 1094 (23/05/2022), pp. 12–13: Portaria IMTT 47/2022 lida (suspende a 38/2022 durante as obras da RJ-238; itinerário Av. Alberto Lamego–Av. Arthur Bernardes–trevo do Índio) — histórico."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/10%20OUTUBRO%202022/DO%20ON%20LINE%201186%2003%20DE%20OUTUBRO%20DE%202022%20ass.pdf",
+   "resultado": "DOM nº 1186 (03/10/2022), pp. 9–10: Portaria IMTT 93/2022 lida (fim das obras da RJ-238: mais de 4 eixos proibidos nas vias municipais salvo o itinerário BR-356 → Estrada dos Ceramistas → BR-101; sem exceção de destino local) — histórico, substituída pela 55/2024."
+  },
+  {
+   "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/4%20ABRIL%202022/DO%20ON%20LINE%201069%2012%20DE%20ABRIL%20DE%202022%20ass%20suplemento.pdf",
+   "resultado": "DOM nº 1069, suplemento (12/04/2022): Lei 9.137/2022 (PLANMOBS) conferida no DOM — art. 87, §2º (área Central só até 3 eixos, sem delimitação), art. 87, §1º (carga e descarga a regulamentar por portaria do IMTT), art. 64, VII (diretriz para pesados/perigosos)."
+  },
+  {
+   "url": "https://atosoficiais.camaracampos.rj.gov.br/api/1.1/obj/atos",
+   "resultado": "Sistema de Atos Oficiais da Câmara (app Bubble; API de dados pública): baixados os 9.400 registros (9.148 ativos: 3.989 leis ordinárias, 4.837 decretos, 63 leis complementares, 198 resoluções, 37 portarias). Busca no texto integral: só o PLANMOBS (Lei 9.137/2022, 'Vigente', status 'Aguardando Regulamentação'), o Plano Diretor (LC 15/2020; Anel Central no art. 198), a LUOS (LC 16/2020, art. 45: vagas de carga e descarga por uso, horários podem ser fixados) e o Dec. 143/2021 (estacionamento rotativo 'Vaga Certa': carga e descarga conforme sinalização). Nenhuma lei ou decreto específico de circulação de caminhões."
+  },
+  {
+   "url": "https://www.camaracampos.rj.gov.br/site/reliant/",
+   "resultado": "Portal da Câmara: aponta para atosoficiais (legislação), arquivo.camaracampos.rj.gov.br/busca (arquivo de RH/arquivista, não legislação) e cid.camaracampos.rj.gov.br (exige login). Não há SAPL."
+  },
+  {
+   "url": "https://leismunicipais.com.br/a1/rj/c/campos-dos-goytacazes/lei-ordinaria/2022/913/9137/lei-ordinaria-n-9137-2022-institui-o-plano-de-mobilidade-urbana-sustentavel-de-campos-dos-goytacazes-rj",
+   "resultado": "Leis Municipais: bloqueado por Cloudflare (403) via curl e WebFetch; não foi possível conferir anotações de alteração por ali (a Câmara registra a Lei 9.137 como vigente)."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/campos-dos-goytacazes/",
+   "resultado": "404 (também campos-dos-goytacazes-rj, campos, campos-rj); leads/penaestrada.json confirma que o município não está no índice do site."
+  },
+  {
+   "url": "https://campos.rj.gov.br/?s=caminhoes",
+   "resultado": "Site da Prefeitura (WordPress; API REST exige login): a busca só alcança notícias de 2026 e nenhuma trata da regra de eixos. Links antigos do DOM (campos.rj.gov.br/app/assets/diario-oficial/link/<n>) devolvem página genérica (mortos)."
+  },
+  {
+   "url": "https://www.correiodamanha.com.br/estado-do-rio/2026/09/321651-paes-fara-obras-em-campos-para-melhorar-acesso-ao-porto-do-acu.html",
+   "resultado": "Notícia (pista): ~14 mil carretas/mês na Estrada dos Ceramistas rumo ao Porto do Açu; Estrada do Contorno prometida para tirar a BR-101 da cidade. Não trata das portarias."
+  },
+  {
+   "url": "WebSearch (2 consultas)",
+   "resultado": "'Campos dos Goytacazes IMTT caminhões mais de quatro eixos proibição portaria' e '... Porto do Açu rota Estrada dos Ceramistas IMTT 2025': nenhum resultado com o ato; só links mortos do DOM antigo e notícias gerais."
+  },
+  {
+   "url": "https://api.openstreetmap.org/api/0.6/way/104035380.json ; https://nominatim.openstreetmap.org/search",
+   "resultado": "OSM: Ponte Saturnino Brito (way 104035380) sem etiqueta de restrição; Av. Alberto Lamego e Av. Presidente Kennedy com IBGE:CD_ADMINIS=estadual; way 850384805 (trunk_link da BR-101/RJ-180) com hgv=no. Overpass indisponível na hora (respostas HTML); usado o osm.json já baixado (atos/3301009/osm.json)."
+  },
+  {
+   "url": "Querido Diário",
+   "resultado": "Campos dos Goytacazes não está coberto (lotes.json: querido_diario=false)."
+  }
+ ],
+ "observacoes": "Regras vigentes (atos primários lidos no DOM): (1) Portaria IMTT 21/2025 (DOM 1767, 27/02/2025, p. 14; vigência 10/03/2025): proibido o tráfego de veículos de carga rígidos ou articulados com MAIS DE 4 EIXOS nas vias sob circunscrição do Município, 24 h, todos os dias; exceção para veículos que atendam a estabelecimentos comerciais no município (§1º), casos excepcionais com análise do IMTT (§2º), AET (art. 2º; Portaria IMTT 64/2023) e itinerário obrigatório para o Porto do Açu (art. 3º: BR-356 → Av. Presidente Kennedy → RJ-216 → trevo de Donana → RJ-238/Estrada dos Ceramistas → BR-101). As rodovias federais e estaduais ficam fora (não são de circunscrição municipal): a geometria tem de ser só as vias municipais, não o limite do município. (2) Portaria IMTT 019/2017 (DOM 25/04/2017): Rua Sebastião Silvano e Av. Dário Canela Tavares (Linha do Limão), no distrito de Goitacazes, proibidas para veículos pesados de carga com mais de 2 eixos, 24 h (caminhões da Baixada Campista para a RJ-238/BR-101 devem usar a RJ-216); confiança média (ato de 2017 sem revogação localizada; extensão da avenida não fixada). (3) Portaria Conjunta IMTT/SMPUMMA 01/2024 (DOM 1685, 24/10/2024): Ponte Saturnino de Brito (ponte da Lapa, Guarus–Lapa) proibida para veículos com mais de 2 eixos, 24 h (exceções: bombeiros, emergência, polícia/fiscalização, transporte coletivo). Histórico: Portaria IMTT 38/2022 (26/04/2022) → suspensa pela 47/2022 (23/05/2022, obras da RJ-238, com itinerário Av. Alberto Lamego–Av. Arthur Bernardes) → 93/2022 (03/10/2022, fim das obras, itinerário pela RJ-238, sem exceção de destino) → 55/2024 (01/09/2024) → 21/2025 (10/03/2025); a Portaria 87/2024 (02/12/2024) designou o corredor Av. Dr. Arthur Bernardes + Av. Alberto Lamego (BR-101 ↔ BR-356) para mais de 4 eixos, condicionado a medidas do DER/RJ (desfecho não localizado; a Av. Alberto Lamego é estadual no OSM). PLANMOBS (Lei 9.137/2022): art. 87, §2º limita a 'área Central' a veículos de até 3 eixos que atendam à cidade, mas não delimita a área (lei 'Aguardando Regulamentação' na Câmara) → desativada; art. 87, §1º delega carga e descarga a portaria do IMTT, não localizada; art. 64, VII é diretriz para pesados/perigosos em bairros residenciais → desativada. Não há definição local de VUC nem regra de horário/carga e descarga em ato localizado; não há regra de produtos perigosos além da diretriz. Atos antigos: a EMUT (antecessora do IMTT) fixou trajetos para caminhões de cana na safra de 2010 (expirado) e, pela Portaria 175/2011, proibiu caminhões de cana na Ponte da Lapa, R. dos Goytacazes e Av. Ten. Cel. Cardoso (restrição por tipo de carga, vigência incerta → desativada). Pontual (sem ato no DOM, só notícia oficial de 09/09/2026): desde 08/09/2026, em caráter experimental, um dos tabuleiros da Ponte Leonel Brizola fica exclusivo para pedestres e ciclistas das 5h às 9h e das 16h às 19h, por causa da interdição da Ponte Barcelos Martins (pedestres/ciclistas/motos) desde fevereiro de 2026; não é restrição a caminhão.",
+ "osm_divergencias": [
+  "A proibição municipal de veículos com mais de 4 eixos (Portaria IMTT 21/2025) não aparece no OSM: nenhuma via municipal tem hgv/maxaxles condicionados (ausência, não contradição).",
+  "Ponte Saturnino Brito (way 104035380, highway=secondary, bridge=yes; lat -21.7525 lon -41.3135) sem nenhuma etiqueta de restrição: o ato (Portaria Conjunta IMTT/SMPUMMA 01/2024) proíbe veículos com mais de 2 eixos desde 24/10/2024.",
+  "Rua Sebastião Silvano (ways 110979893, 863708106) e Av. Dário Canela Tavares (ways 105463051, 696549667, 105463044, ...) em Goitacazes sem etiqueta de restrição: a Portaria IMTT 019/2017 proíbe veículos pesados de carga com mais de 2 eixos nessas vias (ausência).",
+  "way 850384805 (trunk_link ligado à Rodovia Governador Mário Covas, RJ-180;BR-101, lat -22.0135 lon -41.675) com hgv=no (editado em 15/07/2026): via federal/estadual, sem ato municipal correspondente — fora do escopo municipal.",
+  "Os 'maxweight' contados no lote (4) são helipontos (aeroway=helipad, ex.: 'Mima 3', 'Farol de São Tomé'), não vias: sem relação com caminhão.",
+  "Av. Alberto Lamego (ways 313668346, 103686550, 31609320) e trechos da Av. Presidente Kennedy (ways 526183078, 103573246) levam IBGE:CD_ADMINIS=estadual no OSM: coerente com ficarem fora da circunscrição municipal da Portaria 21/2025 (útil para recortar a geometria)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "campos_goytacazes_vias_municipais_4_eixos",
+   "tipo": "zona",
+   "regime": "> 4 eixos (24 h)",
+   "nome": "Campos dos Goytacazes: vias sob circunscrição do Município, veículos de carga com mais de 4 eixos em qualquer horário",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "Portaria IMTT 21/2025, art. 1º, §1º: a proibição não se aplica aos veículos que atendam a estabelecimentos comerciais localizados no Município de Campos dos Goytacazes",
+   "origem_destino_dentro": "avisa",
+   "autorizacao": "Casos excepcionais: análise técnica individualizada do IMTT (Portaria IMTT 21/2025, art. 1º, §2º). Veículo ou combinação fora dos limites de peso e dimensões do Contran: Autorização Especial de Trânsito (AET) do IMTT (art. 2º; Portaria IMTT 64/2023)",
+   "excecoes": [
+    "Art. 1º, §1º: veículos que atendam a estabelecimentos comerciais localizados no Município",
+    "Art. 1º, §2º: casos excepcionais, com análise técnica individualizada do IMTT",
+    "Art. 3º e parágrafo único: veículos com mais de 4 eixos com destino ao Porto do Açu (São João da Barra) devem seguir BR-356 (sentido BR-101) → Av. Presidente Kennedy (Jockey Clube) → RJ-216 até o trevo de Donana → RJ-238 (Estrada dos Ceramistas) → BR-101; na chegada pela BR-101 (sentido BR-356), o trajeto inverso"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 21/2025, de 25/02/2025 (Instituto Municipal de Trânsito e Transporte; DOM Campos dos Goytacazes nº 1767, 27/02/2025, p. 14)",
+     "artigo": "art. 1º, caput (proibição do tráfego de veículos de carga rígidos ou articulados com mais de 4 eixos nas vias sob circunscrição do Município), §§1º e 2º; art. 2º (AET); art. 3º (itinerário do Porto do Açu); art. 4º (vigência em 10/03/2025, revogadas as disposições em contrário)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2025/2%20FEVEREIRO/DO%20ONLINE%201767%2027%20de%20FEVEREIRO%20DE%202025%20ass.pdf",
+     "nota": "Ato do órgão executivo de trânsito com base na Lei municipal 8.360/2013 e nos arts. 7º, III, 21, XIV, e 101 do CTB. Sucede as Portarias IMTT 38/2022, 47/2022, 93/2022 e 55/2024 (mesma matéria)."
+    }
+   ],
+   "nota": "O critério é o número de eixos do veículo ou da combinação (rígido ou articulado), sem horário nem PBT; vale todos os dias, inclusive feriados. A proibição alcança só as 'vias sob circunscrição do Município': as rodovias federais (BR-101, BR-356) e estaduais (RJ-158, RJ-216, RJ-238/Estrada dos Ceramistas e trechos urbanos estaduais como a Av. Alberto Lamego e trechos da Av. Presidente Kennedy, que no OSM levam IBGE:CD_ADMINIS=estadual) ficam fora. A geometria NÃO pode ser o limite municipal inteiro como em Vitória (bloquearia a BR-101 e a BR-356 no trânsito de passagem): é o conjunto das vias municipais (limite IBGE menos os corredores federais e estaduais, ou regra de via sobre as vias municipais). O próprio ato justifica a medida pela 'existência de vias federais e estaduais mais adequadas'. Origem ou destino em estabelecimento comercial no município: fora da regra (art. 1º, §1º).",
+   "fonte_geometria": "A definir: vias do município de Campos dos Goytacazes (IBGE 3301009) que não sejam rodovias federais ou estaduais (usar ref BR-/RJ- e IBGE:CD_ADMINIS do OSM)",
+   "vigencia_inicio": "2025-03-10",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
+     "construir": "manual",
+     "como_gerar": "Limite IBGE 3301009 menos os corredores das rodovias federais (BR-101, BR-356) e estaduais (RJ-158, RJ-216, RJ-238 e trechos com IBGE:CD_ADMINIS=estadual no OSM); alternativa: regra de via sobre as vias municipais"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_ponte_saturnino_brito_2_eixos",
+   "tipo": "ponte",
+   "regime": "Ponte > 2 eixos",
+   "nome": "Campos dos Goytacazes: Ponte Saturnino de Brito (ponte da Lapa, Guarus–Lapa), veículos com mais de 2 eixos",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º, II: veículos de socorro de incêndio e salvamento",
+    "Art. 2º, III: veículos de socorro e emergência",
+    "Art. 2º, IV: veículos de polícia, de fiscalização e operação de trânsito",
+    "Art. 2º, V: veículos do transporte público coletivo (o DOM pula o inciso I)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria Conjunta IMTT/SMPUMMA nº 01/2024, de 16/10/2024 (Instituto Municipal de Trânsito e Transporte e Secretaria Municipal de Planejamento Urbano, Mobilidade e Meio Ambiente; DOM Campos dos Goytacazes nº 1685, 24/10/2024)",
+     "artigo": "art. 1º (proíbe o tráfego de veículos acima de 2 eixos na Ponte Saturnino de Brito, 'ponte Lapa', que liga o distrito de Guarus ao bairro da Lapa, por segurança viária e fluidez); art. 2º (exceções); art. 3º (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/10%20OUTUBRO%202024/DO%20ONLINE%201685%2024%20de%20OUTUBRO%20DE%202024%20ass.pdf",
+     "nota": "Processo SUAP nº 00051.000230.2024-59. Sem horário: vale 24 h, todos os dias."
+    }
+   ],
+   "nota": "Critério: número de eixos (mais de 2), qualquer PBT: caminhão de 2 eixos passa; truck (3 eixos) e combinações não. Sem exceção de destino local.",
+   "fonte_geometria": "OSM way 104035380 'Ponte Saturnino Brito' (highway=secondary, bridge=yes, lat -21.7525 lon -41.3135), entre Guarus e a Lapa",
+   "vigencia_inicio": "2024-10-24",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Ponte Saturnino Brito",
+      "Ponte Saturnino de Brito"
+     ],
+     "descricao": "Ponte Saturnino de Brito (ponte da Lapa) sobre o Rio Paraíba do Sul, Guarus–Lapa"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_ponte_saturnino_brito.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_goitacazes_sebastiao_silvano_dario_canela",
+   "tipo": "via",
+   "regime": "> 2 eixos (24 h)",
+   "nome": "Campos dos Goytacazes (distrito de Goitacazes): Rua Sebastião Silvano e Av. Dário Canela Tavares (Linha do Limão), veículos pesados de carga com mais de 2 eixos",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: caminhões vindos da Baixada Campista com destino à RJ-238 (Estrada dos Ceramistas) e à BR-101, e vice-versa, devem seguir pela RJ-216 (Rodovia Raul Souto Maior)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 019/2017, de 18/04/2017 (Instituto Municipal de Trânsito e Transporte; DOM Campos dos Goytacazes, Ano IX, edição de 25/04/2017, p. 3)",
+     "artigo": "art. 1º (proibido o tráfego de veículos pesados de cargas, acima de dois eixos incluindo o dianteiro, na Rua Sebastião Silvano e na Avenida Dario Canela Tavares (Linha do Limão), em Goytacazes); art. 2º (desvio pela RJ-216); art. 3º (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2017/4%20ABRIL%202017/DO%20ONLINE%20EDI%C3%87%C3%83O%2025%20DE%20ABRIL%20DE%202017.pdf",
+     "nota": "Sem horário (24 h) e sem exceção de destino. Não se achou alteração nem revogação nos DOM de 2017 a 09/10/2026 (varredura por palavras-chave); as portarias posteriores de mais de 4 eixos não tratam destas vias."
+    }
+   ],
+   "nota": "Confiança média: ato antigo (2017), sem revogação localizada mas também sem reedição; a extensão da Av. Dário Canela Tavares atingida não é dada (o ato diz 'Linha do Limão, em Goytacazes'; a avenida segue até Veiga/Campo Limpo no OSM). 'Acima de dois eixos, incluindo o dianteiro' = 3 eixos ou mais.",
+   "fonte_geometria": "OSM por nome: 'Rua Sebastião Silvano' (ways 110979893, 863708106) e 'Avenida Dário Canela Tavares' (trecho de Goitacazes/Linha do Limão; ways 105463051, 696549667, 105463044...)",
+   "vigencia_inicio": "2017-04-25",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua Sebastião Silvano"
+     ],
+     "descricao": "Rua Sebastião Silvano, Goitacazes"
+    },
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Dário Canela Tavares",
+      "Avenida Dario Canela Tavares"
+     ],
+     "descricao": "Av. Dário Canela Tavares (Linha do Limão), Goitacazes — extensão não fixada no ato",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_goitacazes_linha_do_limao.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_area_central_3_eixos",
+   "tipo": "zona",
+   "regime": "Área Central > 3 eixos",
+   "nome": "Campos dos Goytacazes: área Central, veículos de carga com mais de 3 eixos (PLANMOBS)",
+   "status": "desativada",
+   "status_motivo": "A Lei 9.137/2022 (PLANMOBS), art. 87, §2º, restringe o tráfego de carga na 'área Central' a veículos com no máximo 3 eixos que atendam à cidade, mas não delimita a área Central (sem mapa nem perímetro) e o sistema de atos da Câmara registra a lei como 'Aguardando Regulamentação'; não se achou portaria do IMTT que a regulamente. Polígono candidato (decisão de produto, não do ato): interior do Anel Central do Plano Diretor (LC 15/2020, art. 198) ou Macrozona Central (ZCH/ZCP) da LC 16/2020.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "Lei 9.137/2022, art. 87, §2º: ficam permitidos os veículos de até 3 eixos 'que demandem ao atendimento das necessidades da cidade'",
+   "autorizacao": "Licença Especial de Trânsito no IMTT, em caso de inviabilidade comprovada de usar a rede rodoviária federal ou estadual (Lei 9.137/2022, art. 87, §2º)",
+   "excecoes": [
+    "Veículos de até 3 eixos que atendam às necessidades da cidade; os demais devem usar a rede rodoviária federal ou estadual"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 9.137, de 11/04/2022 (Plano de Mobilidade Urbana Sustentável — PLANMOBS; DOM Campos dos Goytacazes nº 1069, suplemento de 12/04/2022)",
+     "artigo": "art. 87, §2º (tráfego de veículos de cargas na área Central restrito a veículos com no máximo 3 eixos); art. 87, §1º (carga e descarga a regulamentar por portaria do IMTT); art. 103 (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/4%20ABRIL%202022/DO%20ON%20LINE%201069%2012%20DE%20ABRIL%20DE%202022%20ass%20suplemento.pdf",
+     "nota": "Texto também no sistema de atos da Câmara: https://atosoficiais.camaracampos.rj.gov.br/api/1.1/obj/atos/1738776945501x880622119455817700 (situação 'Vigente', status 'Aguardando Regulamentação')."
+    },
+    {
+     "ato": "Lei Complementar municipal 15/2020 (Plano Diretor)",
+     "artigo": "art. 198 (Anel Central: R. Espírito Santo, R. Rocha Leão, Ponte General Dutra, Ponte Alair Ferreira, R. Gen. Estilac Leal, Av. José Carlos Alberto Chebabe, Av. José Carlos Pereira Pinto, trecho da Av. Francisco Lamego, Ponte Saturnino de Brito, R. Adão Pereira Nunes, R. Dr. Felipe Uébe, Av. 28 de Março) — só referência para um polígono candidato",
+     "url": "https://atosoficiais.camaracampos.rj.gov.br/api/1.1/obj/atos/1740507321296x932193596305834000"
+    }
+   ],
+   "nota": "Com a Portaria IMTT 21/2025, veículos de 5 ou mais eixos já estão proibidos em todas as vias municipais (salvo destino comercial no município); esta regra acrescentaria o veículo de 4 eixos na área Central.",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_area_central.geojson",
+     "construir": "manual",
+     "como_gerar": "Sem delimitação no ato: só desenhar se houver decisão de produto (ex.: interior do Anel Central da LC 15/2020, art. 198)"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_corredor_arthur_bernardes_lamego",
+   "tipo": "via",
+   "regime": "Corredor > 4 eixos (Portaria 87/2024)",
+   "nome": "Campos dos Goytacazes: corredor para mais de 4 eixos pela Av. Dr. Arthur Bernardes e Av. Alberto Lamego (BR-101 ↔ BR-356)",
+   "status": "desativada",
+   "status_motivo": "Não é restrição: a Portaria IMTT 87/2024 designa o corredor por onde os veículos com mais de 4 eixos devem circular, com liberação condicionada às medidas do DER/RJ em 30 dias (art. 2º) e suspensão se não cumpridas (art. 3º). Não se achou ato que confirme a liberação ou a suspensão, e a Portaria 21/2025 (posterior) não menciona o corredor. A Av. Alberto Lamego aparece no OSM como via estadual (IBGE:CD_ADMINIS=estadual), fora da proibição municipal; a Av. Dr. Arthur Bernardes não tem essa etiqueta. Registro informativo.",
+   "confianca": "media",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 87/2024, de 28/11/2024 (DOM Campos dos Goytacazes nº 1709, 02/12/2024, pp. 10–11)",
+     "artigo": "art. 1º (circulação de veículos de carga com mais de 4 eixos pela Av. Dr. Arthur Bernardes, da BR-101 à rotatória da UENF, e pela Av. Alberto Lamego, da rotatória da UENF à BR-356, Anexo I); art. 2º (condicionada às medidas do DER/RJ, Of. DER/CHEGAB nº 1215/2024, em 30 dias); art. 3º (suspensão se não cumpridas); art. 4º (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/12%20DEZEMBRO%202024/DO%20ONLINE%201709%2002%20de%20DEZEMBRO%20DE%202024%20ass.pdf",
+     "nota": "O Anexo I (mapa) não saiu na extração de texto do DOM. O mesmo eixo já fora o itinerário obrigatório da Portaria IMTT 47/2022 (BR-356 → Av. Alberto Lamego → Av. Arthur Bernardes → trevo do Índio → BR-101)."
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Doutor Artur Bernardes",
+      "Avenida Doutor Arthur Bernardes"
+     ],
+     "descricao": "Av. Dr. Arthur Bernardes, da BR-101 à rotatória da UENF",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Alberto Lamego"
+     ],
+     "descricao": "Av. Alberto Lamego, da rotatória da UENF à BR-356",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2024-12-02",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_corredor_87_2024.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_bairros_residenciais_pesados",
+   "tipo": "zona",
+   "regime": "Bairros residenciais (diretriz)",
+   "nome": "Campos dos Goytacazes: veículos pesados e de carga perigosa nas vias locais, coletoras e arteriais dos bairros residenciais (diretriz do PLANMOBS)",
+   "status": "desativada",
+   "status_motivo": "Diretriz geral do PLANMOBS (art. 64, VII, na seção dos polos geradores de viagens), sem definição de 'veículo pesado', sem delimitação dos 'bairros residenciais' e dependente de rotas a criar pelo IMTT (não localizadas). A definição de via local (art. 3º, CI: 'não permitido o tráfego de veículo de carga') é conceito do plano, não regulamentação de trânsito. Não representável como regra.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 9.137/2022 (PLANMOBS; DOM nº 1069, suplemento de 12/04/2022)",
+     "artigo": "art. 64, VII (o IMTT regulamentará a circulação de cargas perigosas e de veículos pesados por rotas específicas induzidas à rede rodoviária; não é permitida a circulação de carga perigosa e veículos pesados nas vias locais, coletoras e arteriais dos bairros residenciais); art. 3º, XCVIII e CI (definições de via coletora e via local)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/4%20ABRIL%202022/DO%20ON%20LINE%201069%2012%20DE%20ABRIL%20DE%202022%20ass%20suplemento.pdf"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_bairros_residenciais.geojson",
+     "construir": "manual",
+     "como_gerar": "Sem delimitação no ato"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_cana_ponte_lapa_emut_2011",
+   "tipo": "via",
+   "regime": "Caminhões de cana (EMUT 2011)",
+   "nome": "Campos dos Goytacazes: caminhões transportando cana-de-açúcar na Ponte da Lapa, Rua dos Goytacazes e Av. Tenente Coronel Cardoso (Portaria EMUT 175/2011)",
+   "status": "desativada",
+   "status_motivo": "Restrição por tipo de carga (cana-de-açúcar), que o perfil do veículo não informa; ato de 2011 da extinta Empresa Municipal de Transportes (EMUT, sucedida pelo IMTT em 2013), motivado pela safra, sem revogação expressa localizada nem reedição posterior — vigência incerta. A Ponte da Lapa já tem a proibição geral de mais de 2 eixos (Portaria Conjunta 01/2024).",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 2º: caminhões vindos da Av. Francisco Lamego para a outra margem do Paraíba devem seguir pela própria avenida, BR-101, Av. Souza Mota, Ponte General Dutra, R. Espírito Santo, Estrada do Contorno, Av. Gov. Togo de Barros, Beira Valão e Estrada dos Ceramistas",
+    "Art. 3º: facultado o trânsito desses caminhões pela Ponte Rosinha Garotinho a partir das 22h (o fim da janela está ilegível no DOM)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria EMUT 175/2011, de 09/05/2011 (Empresa Municipal de Transportes; DOM Campos dos Goytacazes de 11/05/2011)",
+     "artigo": "art. 1º (proibido o tráfego de caminhões transportando cana-de-açúcar na Ponte da Lapa, Rua dos Goytacazes e Av. Tenente Coronel Cardoso); arts. 2º e 3º (desvio e Ponte Rosinha Garotinho à noite)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2011/5%20MAIO/DO%20ONLINE%20EDI%C3%87%C3%83O%2011%20DE%20%20MAIO%20DE%202011.pdf",
+     "nota": "Considerandos citam a safra da cana e o ICP 202/2004 do MP estadual. Em 2010 a EMUT também fixou trajetos para caminhões de cana só na safra de maio a outubro de 2010 (DOM 28/06/2010, parte I), já expirado."
+    }
+   ],
+   "vigencia_inicio": "2011-05-11",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Ponte Saturnino Brito",
+      "Ponte Saturnino de Brito"
+     ],
+     "descricao": "Ponte da Lapa (Ponte Saturnino de Brito)"
+    },
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua dos Goytacazes"
+     ],
+     "descricao": "Rua dos Goytacazes (Centro)",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Tenente Coronel Cardoso"
+     ],
+     "descricao": "Av. Tenente Coronel Cardoso",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_cana_2011.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_portaria_55_2024",
+   "tipo": "zona",
+   "regime": "> 4 eixos (24 h) — Portaria 55/2024",
+   "nome": "Campos dos Goytacazes: vias sob administração do Município, mais de 4 eixos (Portaria IMTT 55/2024) — SUBSTITUÍDA",
+   "status": "revogada",
+   "status_motivo": "Substituída pela Portaria IMTT 21/2025 (vigência em 10/03/2025), que regula inteiramente a mesma matéria (proibição de mais de 4 eixos, exceção de destino local, AET e itinerário do Porto do Açu) e revoga as disposições em contrário (art. 4º). Não há revogação expressa da 55/2024: revogação tácita (LINDB, art. 2º, §1º). Registro histórico.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "Portaria IMTT 55/2024, art. 2º: excetuados os veículos que demandam a estabelecimentos instalados no Município",
+   "excecoes": [
+    "Art. 2º: veículos que demandam a estabelecimentos instalados no Município",
+    "Arts. 3º e 4º: casos excepcionais analisados pelo IMTT, pedido com 96 h de antecedência; AET pela Portaria IMTT 64/2023",
+    "Art. 5º: itinerário obrigatório para o Porto do Açu: BR-356 (sentido BR-101) → Av. Presidente Kennedy (Jockey Clube) → RJ-216 até o trevo de Donana → RJ-238 (Estrada dos Ceramistas) → BR-101; na chegada pela BR-101 (sentido BR-356), o trajeto inverso"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 55/2024, de 29/08/2024 (DOM Campos dos Goytacazes nº 1646, suplemento de 30/08/2024)",
+     "artigo": "art. 1º (proibição de mais de 4 eixos nas vias sob administração do Município), arts. 2º a 5º, art. 6º (vigência em 01/09/2024)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2024/8%20AGOSTO%202024/DO%20ONLINE%201646%2030%20de%20AGOSTO%20DE%202024%20ass%20suplemento.pdf"
+    },
+    {
+     "ato": "Portaria IMTT 21/2025 (DOM nº 1767, 27/02/2025, p. 14)",
+     "artigo": "art. 4º (vigência em 10/03/2025, revogadas as disposições em contrário)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2025/2%20FEVEREIRO/DO%20ONLINE%201767%2027%20de%20FEVEREIRO%20DE%202025%20ass.pdf"
+    }
+   ],
+   "vigencia_inicio": "2024-09-01",
+   "vigencia_fim": "2025-03-10",
+   "source_id": "campos-goytacazes-portaria-55-2024",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
+     "construir": "manual",
+     "como_gerar": "Mesma geometria da regra vigente (registro histórico)"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_portaria_93_2022",
+   "tipo": "zona",
+   "regime": "> 4 eixos (24 h) — Portaria 93/2022",
+   "nome": "Campos dos Goytacazes: mais de 4 eixos proibidos nas vias municipais salvo o itinerário pela Estrada dos Ceramistas (Portaria IMTT 93/2022) — HISTÓRICO",
+   "status": "revogada",
+   "status_motivo": "Substituída pela Portaria IMTT 55/2024 (vigência em 01/09/2024), que regula inteiramente a matéria e revoga as disposições em contrário (revogação tácita; não há revogação expressa). Registro histórico. Diferença relevante: a 93/2022 não tinha exceção de destino local (só AET e o itinerário pela RJ-238).",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "Arts. 1º e 3º: permitido o itinerário BR-356 → Estrada dos Ceramistas (RJ-238) → BR-101 (e o inverso) para veículos com mais de 4 eixos que movimentam carga no município",
+    "Art. 2º: casos excepcionais com AET do IMTT, pedido com 96 h de antecedência (Anexos I e II)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 93/2022, de 29/09/2022 (DOM Campos dos Goytacazes nº 1186, 03/10/2022, pp. 9–10)",
+     "artigo": "art. 1º (proibição de mais de 4 eixos nas vias sob administração do Município, exceto pelo itinerário do art. 3º); art. 2º (AET); art. 3º (itinerário pela RJ-238); art. 4º (vigência na publicação, revogadas as disposições em contrário)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/10%20OUTUBRO%202022/DO%20ON%20LINE%201186%2003%20DE%20OUTUBRO%20DE%202022%20ass.pdf",
+     "nota": "Editada pelo fim das obras de interdição da RJ-238 (considerando)."
+    }
+   ],
+   "vigencia_inicio": "2022-10-03",
+   "vigencia_fim": "2024-09-01",
+   "source_id": "campos-goytacazes-portaria-93-2022",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
+     "construir": "manual",
+     "como_gerar": "Mesma geometria da regra vigente (registro histórico)"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_portaria_47_2022",
+   "tipo": "zona",
+   "regime": "> 4 eixos (24 h) — Portaria 47/2022 (obras RJ-238)",
+   "nome": "Campos dos Goytacazes: mais de 4 eixos proibidos nas vias municipais salvo o itinerário Av. Alberto Lamego–Av. Arthur Bernardes (Portaria IMTT 47/2022, durante as obras da RJ-238) — HISTÓRICO",
+   "status": "revogada",
+   "status_motivo": "Regime temporário 'enquanto durarem as obras de interdição da Estrada dos Ceramistas (RJ-238)'. Substituído pela Portaria IMTT 93/2022 (DOM 1186, 03/10/2022), editada pelo fim das obras da RJ-238 e que revoga as disposições em contrário (revogação tácita). Registro histórico.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "Arts. 2º e 4º: permitido só o itinerário BR-356 → Av. Alberto Lamego → Av. Arthur Bernardes → trevo do Índio → BR-101 (e o inverso) para veículos com mais de 4 eixos que movimentam carga no município",
+    "Art. 3º: casos excepcionais com AET do IMTT, pedido com 96 h de antecedência"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 47/2022, de 20/05/2022 (DOM Campos dos Goytacazes nº 1094, 23/05/2022, pp. 12–13)",
+     "artigo": "art. 1º (suspende a Portaria 38/2022 enquanto durarem as obras de interdição da RJ-238); art. 2º (proibição de mais de 4 eixos nas vias sob administração do Município, exceto pelo itinerário do art. 4º); art. 3º (AET); art. 4º (itinerário); art. 5º (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/5%20MAIO%202022/DO%20ON%20LINE%201094%2023%20DE%20MAIO%20DE%202022%20ass.pdf"
+    }
+   ],
+   "vigencia_inicio": "2022-05-23",
+   "vigencia_fim": "2022-10-03",
+   "source_id": "campos-goytacazes-portaria-47-2022",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
+     "construir": "manual",
+     "como_gerar": "Mesma geometria da regra vigente (registro histórico)"
+    }
+   ]
+  },
+  {
+   "id": "campos_goytacazes_portaria_38_2022",
+   "tipo": "zona",
+   "regime": "> 4 eixos (24 h) — Portaria 38/2022",
+   "nome": "Campos dos Goytacazes: vias sob administração do Município, mais de 4 eixos (Portaria IMTT 38/2022) — HISTÓRICO",
+   "status": "revogada",
+   "status_motivo": "Primeira versão da proibição. Teve os efeitos suspensos pela Portaria IMTT 47/2022 (DOM 1094, 23/05/2022) enquanto durassem as obras da Estrada dos Ceramistas (RJ-238); com o fim das obras, a Portaria IMTT 93/2022 (DOM 1186, 03/10/2022) regulou de novo toda a matéria, revogando as disposições em contrário (revogação tácita; não há revogação expressa da 38/2022). Registro histórico.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "Portaria IMTT 38/2022, art. 2º: excetuados os veículos que demandam a estabelecimentos dentro do perímetro da área central da cidade",
+   "excecoes": [
+    "Art. 2º: veículos que demandam a estabelecimentos dentro do perímetro da área central da cidade",
+    "Arts. 3º e 4º: casos excepcionais com AET do IMTT, pedido com 96 h de antecedência (Anexos I e II)",
+    "Art. 5º: itinerário obrigatório para o Porto do Açu: BR-356 (sentido BR-101) → Av. Presidente Kennedy (Jockey Clube) → RJ-216 até o trevo de Donana → RJ-238 (Estrada dos Ceramistas) → BR-101; na chegada pela BR-101 (sentido BR-356), o trajeto inverso"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria IMTT 38/2022, de 18/04/2022 (DOM Campos dos Goytacazes nº 1075, 26/04/2022, p. 9)",
+     "artigo": "art. 1º (proibição de mais de 4 eixos nas vias sob administração do Município), arts. 2º a 5º, art. 6º (vigência na publicação)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/4%20ABRIL%202022/DO%20ON%20LINE%201075%2026%20DE%20ABRIL%20DE%202022%20ass.pdf"
+    },
+    {
+     "ato": "Portaria IMTT 47/2022, de 20/05/2022 (DOM nº 1094, 23/05/2022, pp. 12–13)",
+     "artigo": "art. 1º (suspende a Portaria 38/2022 enquanto durarem as obras de interdição da RJ-238)",
+     "url": "https://campos.rj.gov.br/diario-oficial-publicacoes-anteriores/api/2022/5%20MAIO%202022/DO%20ON%20LINE%201094%2023%20DE%20MAIO%20DE%202022%20ass.pdf"
+    }
+   ],
+   "vigencia_inicio": "2022-04-26",
+   "vigencia_fim": "2022-10-03",
+   "source_id": "campos-goytacazes-portaria-38-2022",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
+     "construir": "manual",
+     "como_gerar": "Mesma geometria da regra vigente (registro histórico)"
+    }
+   ]
+  }
+ ]
+}

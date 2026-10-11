@@ -1,0 +1,82 @@
+{
+ "ibge": "3545209",
+ "nome": "Salto",
+ "uf": "SP",
+ "status": "regra_sem_ato",
+ "nivel_busca": "profundo",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/salto (DOSP; busca de frase exata na íntegra das edições, 2017–2026) via toolkit diarios_consolidados.py",
+   "resultado": "Termos: estacionamento/circulação/tráfego/trânsito de caminhões, veículos pesados, veículos de carga, carga e descarga, produtos perigosos, 2.415, proibido o trânsito, proibida a circulação, restrição de circulação, tráfego pesado, Zona Azul, Plano de Mobilidade, circulação de veículos pesados, veículos de grande porte, carretas. Nenhum decreto/lei de restrição a caminhões; só indicações de vereadores pedindo restrição (Rua Japão 2022; Rua Ernesto Perazzo 2025; Req. 201/2026 pedindo informações sobre 'legislação, fiscalização e restrições à circulação de veículos de grande porte na área central')."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MjMzMTY4",
+   "resultado": "DOM ed. 1034 (12/03/2022), Plano Municipal de Gestão Integrada de Resíduos Sólidos, lista de legislação municipal: 'Lei 2.415 de 30 de outubro de 2002. Fica proibido no âmbito urbano da Estância Turística de Salto, o transporte de produtos perigosos de qualquer natureza, por veículos de carga, durante os dias úteis entre as 06h00min e 23h00min horas'. Texto integral da lei não obtido."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=3545209",
+   "resultado": "QD (desde 10/2023, mesma fonte DOSP): mesmos achados; API instável (500/503)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/a/sp/s/salto/lei-ordinaria/2002/241/2415/",
+   "resultado": "403 (Cloudflare) via curl e WebFetch; Wayback sem cópia. Câmara (camarasalto.sp.gov.br e GIAP cmsalto.giap.com.br) remete só ao Leis Municipais."
+  },
+  {
+   "url": "https://salto.sp.gov.br/wp-json/wp/v2/search e /media (site da Prefeitura)",
+   "resultado": "Notícias de desvios temporários (ponte do Rio Jundiaí/Av. Marechal Deodoro, 2020, veículos pesados pelo desvio da Av. dos Trabalhadores, temporário); página do DMTT sem regras de caminhão; índice de leis só de alguns anos."
+  },
+  {
+   "url": "WebSearch: \"Salto\" lei \"2.415\" 2002 \"produtos perigosos\" veículos de carga âmbito urbano",
+   "resultado": "Sem resultado útil."
+  },
+  {
+   "url": "leads: penaestrada.json",
+   "resultado": "Salto sem página no penaestrada."
+  },
+  {
+   "url": "data/osm/sudeste-latest.osm.pbf (leitura local com pyosmium)",
+   "resultado": "Nenhuma tag hgv/maxweight dentro de Salto no recorte (hgv=no do recorte é do centro histórico de Itu)."
+  }
+ ],
+ "data": "2026-10-10",
+ "observacoes": "Única regra achada: Lei 2.415/2002 (produtos perigosos proibidos no âmbito urbano em dias úteis, 6h–23h), conhecida só pelo resumo oficial no PMGIRS publicado no DOM de 12/03/2022; texto, artigos e vigência não conferidos — entra desativada e cabe à camada de perigosos. Nenhuma restrição geral a caminhões no DOM (2017–2026); um requerimento de 2026 pede à Prefeitura informações sobre restrições a veículos de grande porte na área central (pode haver placas sem ato publicado).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "salto_perigosos_area_urbana_lei2415",
+   "tipo": "zona",
+   "regime": "Produtos perigosos (dias úteis)",
+   "nome": "Salto: transporte de produtos perigosos por veículos de carga proibido no âmbito urbano em dias úteis, 6h–23h",
+   "status": "desativada",
+   "status_motivo": "Texto integral da Lei 2.415/2002 não lido (só o resumo no PMGIRS publicado no DOM de 12/03/2022); artigo, perímetro 'âmbito urbano', exceções e vigência não conferidos. Regra de produtos perigosos: destino é a camada perigosos.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "23:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true
+   },
+   "origem_destino_dentro": "avisa",
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.415, de 30/10/2002 (resumo oficial na lista de legislação do PMGIRS, Diário Oficial de Salto ed. 1034, 12/03/2022, p. 143–144)",
+     "artigo": "resumo do PMGIRS: 'Fica proibido no âmbito urbano da Estância Turística de Salto, o transporte de produtos perigosos de qualquer natureza, por veículos de carga, durante os dias úteis entre as 06h00min e 23h00min horas' (artigo não identificado)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=MjMzMTY4"
+    }
+   ],
+   "nota": "Alvo real: veículo de carga transportando produtos perigosos (o schema não tem campo de carga perigosa). 'Dias úteis' lido como seg–sex sem feriados. Obter o texto na Câmara de Salto (Leis Municipais) antes de qualquer uso."
+  }
+ ]
+}

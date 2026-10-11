@@ -1,0 +1,488 @@
+{
+ "ibge": "3507506",
+ "nome": "Botucatu",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "vuc": null,
+ "vuc_nota": "Botucatu não define VUC. Os atos usam 'tonelagem acima de 1,5 t' (carga e descarga no centro) e o rotativo (Lei 5.261/2011, art. 6º, §1º) só admite estacionar para carga e descarga em horário comercial veículo de até 1.500 kg.",
+ "fontes_consultadas": [
+  {
+   "url": "https://botucatu.siscam.com.br (Siscam da Câmara; toolkit legislacao.py, assunto)",
+   "resultado": "Termos: caminh, carga e descarga, carga, descarga, mercadoria, horário especial, cana, veículos pesados, tráfego, trânsito, tonelada, carreta, treminh, eixos, circulação, estacionamento, Zona Azul, rotativo. Achados: LC 140/1996 (horário especial de carga e descarga; REVOGADA), Lei 5.006/2008 (cana na área urbana; EM VIGOR), Lei 2.953/1989 (Amando de Barros aos sábados; REVOGADA), Lei 5.261/2011 (rotativo; EM VIGOR) e alterações, Lei 4.902/2008 (Zona Azul; REVOGADA)."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao (portal de legislação da Prefeitura; busca por ementa, script próprio busca_pref.py)",
+   "resultado": "Termos: caminh, carga, descarga, pesado, carreta, treminh, bitrem, tráfego, trânsito, eixo, tonelada, circulação, DET, Engenharia de Tráfego, cana, proíbe, proibição, veículos, Alcides, Delmanto, estacionamento, zona azul, rotativo, restrição, horário, mercadoria e os números dos atos. Achados: Decretos 6.090/2000, 7.929/2009, 8.966/2012, 9.879/2014, 10.777/2016, 10.866/2017 e 10.881/2017; nenhum ato revoga 6.090, 7.929, 10.866 ou 10.881. Decretos anteriores a ~2005 só têm o nome do arquivo como ementa (não pesquisáveis por assunto)."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/6228/",
+   "resultado": "Decreto 6.090/2000 lido: horário especial 19h–8h para circulação de transporte de carga em operação de carga e descarga com veículo de tonelagem acima de 1,5 t nas 'vias centrais' (sem delimitar as vias); DET sinaliza."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/8085/",
+   "resultado": "Decreto 7.929/2009 lido: dá nova redação ao art. 1º do Dec. 6.090/2000 (horário especial passa a 19h–9h)."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/11176/",
+   "resultado": "Decreto 10.866/2017 lido: proíbe treminhão em toda a Estrada Vicinal Alcides Soares (BTC-010) e bitrem (art. 2º) desde 27/01/2017."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/11162/",
+   "resultado": "Decreto 10.881/2017 lido: nova redação do art. 2º — bitrem proibido entre o km 2 (Arlindo Durante) e o km 14 (Vitoriana) da BTC-010, desde 17/02/2017."
+  },
+  {
+   "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/9265/ ; https://www.botucatu.sp.gov.br/legislacao/download-lei/9912/ ; https://www.botucatu.sp.gov.br/legislacao/download-lei/10490/",
+   "resultado": "Decreto 8.966/2012 (rotativo) lido: art. 4º, parágrafo único, proíbe na Rua Amando de Barros a circulação 'desse tipo de veículo' (carga e descarga até 1,5 t) das 9h às 19h; Decretos 9.879/2014 e 10.777/2016 só mudam tarifas e vias do rotativo (art. 4º intacto)."
+  },
+  {
+   "url": "https://botucatu.siscam.com.br/arquivo?Id=94563 ; https://botucatu.siscam.com.br/arquivo?Id=79771",
+   "resultado": "Lei 5.006/2008 lida (proíbe caminhão carregado de cana-de-açúcar nas ruas da área urbana; art. 2º pede regulamentação em 60 dias, não localizada) e Lei 5.261/2011 lida (art. 6º: carga e descarga no rotativo livre 19h–9h; fora disso só até 1.500 kg com tarifa; acima, licença especial)."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NTIyOTc3",
+   "resultado": "Semanário Oficial nº 1035 (07/01/2010), Resoluções do DET 001/10 e 02/10 lidas: caminhões pesados com mais de dois eixos proibidos (1) no acesso pela SP-300 km 229 (Estação de César Neto) pela Rua Firmino Pontes Ribeiro, sob a ponte da Fepasa, e (2) na Av. Dom Lúcio entre as Ruas Manoel Fernandes Cardoso e Carlino de Oliveira; vigência 06/01/2010."
+  },
+  {
+   "url": "https://www.dosp.com.br (Imprensa Oficial Municipal/Semanário Oficial de Botucatu; toolkit diarios_consolidados.py --fonte dosp, frase exata na íntegra das edições)",
+   "resultado": "Frases: veículos pesados (36 edições), caminhões pesados (5), tráfego de caminhões (8), tonelagem (7), treminhão (2), bitrem (3), dois eixos (1), Proibir o tráfego (1), proibido o tráfego (3), veículos de carga (15), proibida a circulação (3), 1,5 toneladas (4), veículos de grande porte (8), carretas (15), circulação/trânsito de caminhões (2+2), restrição de circulação (1), Engenharia de Tráfego (100, teto). 74 edições baixadas e lidas por regex: só as resoluções DET 001/10 e 02/10, os Decretos 6.090/7.929/8.966/10.866/10.881 e a Lei 4.902/2008 (Zona Azul, revogada); o resto são requerimentos/indicações de vereadores (pistas: Alcides Soares, Dante Delmanto, Rubião Júnior, Henry Ford, Conde de Serra Negra)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br (leads/querido_diario.json)",
+   "resultado": "7 diários recuperados; todos requerimentos/indicações da Câmara ou notícia (2017) sobre a proibição de treminhão na Alcides Soares. API do QD instável (520/500) nas buscas extras."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/sp/botucatu",
+   "resultado": "403 Cloudflare (não contornado)."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/botucatu/",
+   "resultado": "Sem página (leads/penaestrada.json)."
+  },
+  {
+   "url": "Overpass (area IBGE:GEOCODIGO=3507506)",
+   "resultado": "hgv=no só na Rua Benjamin Constant (way 620420657); hgv=designated em acessos/balança da SP-280; maxweight=6.0 em way sem highway 'Eucatex-Botucatú' (388908847). Nenhuma tag nas vias dos atos (Rodovia Alcides Soares, Av. Dom Lucio, Rua Firmino Pontes Ribeiro)."
+  }
+ ],
+ "observacoes": "Regras com ato: (1) Decreto 10.866/2017 alterado pelo 10.881/2017 — Estrada Vicinal/Rodovia Alcides Soares (BTC-010, ligação a Vitoriana): bitrem proibido do km 2 (Arlindo Durante) ao km 14 (Vitoriana) e treminhão em toda a extensão; (2) Resoluções DET 001/10 e 02/10 (Semanário Oficial 07/01/2010): caminhão com mais de 2 eixos proibido na Av. Dom Lúcio (entre R. Manoel Fernandes Cardoso e R. Carlino de Oliveira) e no acesso pela SP-300 km 229 (César Neto) pela R. Firmino Pontes Ribeiro, sob a ponte da Fepasa; (3) Decreto 6.090/2000 (red. Dec. 7.929/2009) — carga e descarga com veículo acima de 1,5 t nas 'vias centrais' só das 19h às 9h (vias não delimitadas; regra de operação de entrega, registrada desativada); (4) Decreto 8.966/2012, art. 4º, par. único — Rua Amando de Barros (trecho do rotativo) sem circulação de veículo de carga e descarga 9h–19h (texto ambíguo, desativada); (5) Lei 5.006/2008 — caminhão carregado de cana na área urbana (critério de carga, desativada). Vigência das resoluções DET: não há consolidação dessas resoluções; nenhuma revogação achada no Semanário (busca por frase), por isso confiança média.",
+ "osm_divergencias": [
+  "Rodovia Alcides Soares (BTC-010, ways 128382923, 266344931, 266344969 e outros) sem hgv:conditional/restrição para bitrem/treminhão, apesar dos Decretos 10.866/2017 e 10.881/2017.",
+  "Avenida Dom Lucio (ways 133338887, 200935191, 201310859...) sem restrição por eixos no trecho entre R. Manoel Fernandes Cardoso e R. Carlino de Oliveira (Resolução DET 02/10).",
+  "Rua Firmino Pontes Ribeiro (ways 229461899, 641301204, César Neto) sem restrição por eixos (Resolução DET 001/10).",
+  "Rua Benjamin Constant (way 620420657) com hgv=no sem ato localizado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "botucatu_alcides_soares_bitrem",
+   "tipo": "via",
+   "regime": "Vicinal (CVC)",
+   "nome": "Botucatu: Estrada Vicinal Alcides Soares (BTC-010), km 2 (Arlindo Durante) ao km 14 (Vitoriana), bitrem e treminhão proibidos",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 10.866, de 27/01/2017 (Semanário Oficial 1403-Suplemento, 27/01/2017)",
+     "artigo": "art. 1º (treminhão proibido em toda a extensão da BTC-010)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/11176/"
+    },
+    {
+     "ato": "Decreto municipal 10.881, de 17/02/2017 (Semanário Oficial 1406-Suplemento, 17/02/2017)",
+     "artigo": "art. 1º (nova redação do art. 2º do Dec. 10.866/2017: bitrem proibido entre o km 2, Arlindo Durante, e o km 14, Vitoriana)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/11162/"
+    }
+   ],
+   "nota": "No OSM a via é 'Rodovia Alcides Soares' (tertiary/secondary). Treminhão e bitrem são CVC no perfil; neste trecho os dois são proibidos.",
+   "vigencia_inicio": "2017-02-17",
+   "trechos": [
+    {
+     "inciso": "Dec. 10.866/2017, art. 2º (red. Dec. 10.881/2017)",
+     "via": [
+      "Rodovia Alcides Soares",
+      "Estrada Vicinal Alcides Soares",
+      "BTC-010"
+     ],
+     "descricao": "Do km 2 (Arlindo Durante) ao km 14 (Vitoriana)",
+     "aproximado": true,
+     "nota": "Pontas por quilometragem; localizar os marcos km 2 e km 14 (Vitoriana) ao montar."
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_alcides_soares.geojson",
+     "construir": "manual",
+     "como_gerar": "Rodovia Alcides Soares (BTC-010) do km 2 (Arlindo Durante) ao km 14 (Vitoriana), pelo OSM"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_alcides_soares_treminhao",
+   "tipo": "via",
+   "regime": "Vicinal (treminhão)",
+   "nome": "Botucatu: Estrada Vicinal Alcides Soares (BTC-010), toda a extensão, treminhão proibido",
+   "status": "desativada",
+   "status_motivo": "O perfil do veículo não distingue treminhão de bitrem (ambos 'cvc'): aplicar a toda CVC proibiria o bitrem fora do km 2–14, onde ele é permitido. Nos km 2–14 a regra botucatu_alcides_soares_bitrem já cobre os dois.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 10.866, de 27/01/2017",
+     "artigo": "art. 1º (treminhão proibido em toda a extensão da Estrada Vicinal Alcides Soares BTC-010, desde 27/01/2017)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/11176/"
+    }
+   ],
+   "vigencia_inicio": "2017-01-27",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_alcides_soares_total.geojson",
+     "construir": "manual",
+     "como_gerar": "Rodovia Alcides Soares (BTC-010) inteira, pelo OSM"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_dom_lucio_2eixos",
+   "tipo": "via",
+   "regime": "Via (mais de 2 eixos)",
+   "nome": "Botucatu: Av. Dom Lúcio, entre a R. Manoel Fernandes Cardoso e a R. Carlino de Oliveira, caminhão com mais de 2 eixos proibido",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Resolução DET (Departamento de Engenharia de Tráfego) nº 02/10, de 06/01/2010 (Semanário Oficial de Botucatu nº 1035, 07/01/2010)",
+     "artigo": "item único (proibir o tráfego de caminhões pesados, com mais de dois eixos, na Av. Dom Lúcio, entre as Ruas Manoel Fernandes Cardoso e Carlino de Oliveira; vigência 06/01/2010)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NTIyOTc3",
+     "nota": "Página do DET no Semanário; três resoluções lado a lado (022/09, 001/10 e 02/10)."
+    }
+   ],
+   "nota": "Confiança média: resolução de órgão de trânsito publicada e não revogada em nada achado (busca por frase no Semanário 2000–2026), mas o DET não mantém consolidação das resoluções. No OSM: 'Avenida Dom Lucio' (secondary, mão única em pistas separadas).",
+   "vigencia_inicio": "2010-01-06",
+   "trechos": [
+    {
+     "inciso": "Res. DET 02/10",
+     "via": [
+      "Avenida Dom Lucio",
+      "Avenida Dom Lúcio"
+     ],
+     "de": [
+      "Rua Manoel Fernandes Cardoso"
+     ],
+     "ate": [
+      "Rua Carlino de Oliveira"
+     ],
+     "descricao": "Av. Dom Lúcio entre a R. Manoel Fernandes Cardoso e a R. Carlino de Oliveira (os dois sentidos)"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_vias.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_cesar_neto_2eixos",
+   "tipo": "via",
+   "regime": "Via (mais de 2 eixos)",
+   "nome": "Botucatu: acesso pela SP-300 km 229 (Estação de César Neto) pela R. Firmino Pontes Ribeiro, sob a ponte da Fepasa, caminhão com mais de 2 eixos proibido",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Resolução DET nº 001/10, de 06/01/2010 (Semanário Oficial de Botucatu nº 1035, 07/01/2010)",
+     "artigo": "item único (proibir o tráfego de caminhões pesados, com mais de dois eixos, da Rodovia Marechal Rondon SP-300, km 229, Estação de César Neto, no acesso ao Distrito 'Anhumas' [grafia do jornal], pela Rua Firmino Pontes Ribeiro, sob a Ponte da Fepasa; vigência 06/01/2010)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NTIyOTc3"
+    }
+   ],
+   "nota": "Confiança média: mesma ressalva de vigência das resoluções DET; a extensão proibida não é dada (o ato fala do acesso sob a ponte ferroviária). No OSM a Rua Firmino Pontes Ribeiro fica em César Neto (-22.938,-48.298).",
+   "vigencia_inicio": "2010-01-06",
+   "trechos": [
+    {
+     "inciso": "Res. DET 001/10",
+     "via": [
+      "Rua Firmino Pontes Ribeiro"
+     ],
+     "descricao": "Rua Firmino Pontes Ribeiro no acesso a partir da SP-300 km 229 (Estação de César Neto), sob a ponte da Fepasa",
+     "aproximado": true,
+     "nota": "Trecho sob a ponte ferroviária; usar a rua inteira se não der para isolar o trecho."
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_vias.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_centro_carga_descarga",
+   "tipo": "zona",
+   "regime": "Carga e descarga (centro)",
+   "nome": "Botucatu: vias centrais, carga e descarga com veículo acima de 1,5 t só das 19h às 9h",
+   "status": "desativada",
+   "status_motivo": "O decreto não delimita as 'vias centrais' (só manda o DET sinalizar) e regula a circulação para entrega/recebimento com carga e descarga, não a passagem; sem polígono oficial a zona não pode ser montada. Registro para aviso a quem entrega no centro.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "09:00",
+     "to": "19:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 1.5
+     }
+    ]
+   },
+   "excecoes": [
+    "Fora do horário especial (19h–9h) a operação é permitida",
+    "Lei 5.261/2011, art. 6º, §2º: carga e descarga de material de construção, mudança e acima de 1.500 kg na área do rotativo só com licença especial da Secretaria de Transporte"
+   ],
+   "autorizacao": "Licença especial da Secretaria Municipal de Transporte para carga e descarga acima de 1.500 kg na área do rotativo (Lei 5.261/2011, art. 6º, §2º)",
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.090, de 01/02/2000 (Semanário Oficial nº 517, 03/02/2000)",
+     "artigo": "art. 1º (horário especial para circulação de transporte de carga em operação de carga e descarga com veículos de tonelagem acima de 1,5 t nas vias centrais) e parágrafo único (DET sinaliza)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/6228/"
+    },
+    {
+     "ato": "Decreto municipal 7.929, de 26/05/2009",
+     "artigo": "art. 1º (nova redação do art. 1º do Dec. 6.090/2000: horário especial das 19h às 9h)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/8085/"
+    }
+   ],
+   "nota": "'Tonelagem' não é definida (PBT ou capacidade); como todo caminhão passa de 1,5 t de PBT, o alvo é qualquer caminhão. Melhor aproximação do perímetro: a área do estacionamento rotativo (Dec. 8.966/2012, art. 3º: R. João Passos, Amando de Barros, Curuzu, Prudente de Moraes, Campos Salles e transversais até a Av. Floriano Peixoto).",
+   "vigencia_inicio": "2009-05-26",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_centro.geojson",
+     "construir": "manual",
+     "como_gerar": "Vias centrais não delimitadas no ato; aproximar pela área do rotativo do Dec. 8.966/2012 se a regra for ativada"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_amando_de_barros",
+   "tipo": "via",
+   "regime": "Via comercial",
+   "nome": "Botucatu: Rua Amando de Barros (entre a R. Prudente de Moraes e a R. Coronel Fonseca), circulação de veículo de carga e descarga proibida das 9h às 19h",
+   "status": "desativada",
+   "status_motivo": "Texto ambíguo: o parágrafo único do art. 4º do Dec. 8.966/2012 proíbe na Rua Amando de Barros a circulação 'desse tipo de veículo' (o de carga e descarga até 1,5 t que pode estacionar no rotativo), sem dizer se alcança a passagem de caminhão maior; os dias também não são fixados.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "09:00",
+     "to": "19:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 8.966, de 22/02/2012 (Semanário Oficial 24/02/2012), alterado nos arts. 2º, 3º, 5º e 6º pelos Decs. 9.879/2014 e 10.777/2016",
+     "artigo": "art. 4º, parágrafo único (exceção da Rua Amando de Barros: proibida a circulação desse tipo de veículo entre 9h e 19h); art. 3º, b (trecho do rotativo: entre a R. Prudente de Moraes e a R. Coronel Fonseca)",
+     "url": "https://www.botucatu.sp.gov.br/legislacao/download-lei/9265/"
+    }
+   ],
+   "vigencia_inicio": "2012-03-01",
+   "trechos": [
+    {
+     "inciso": "Dec. 8.966/2012, art. 3º, b, e art. 4º, par. único",
+     "via": [
+      "Rua Amando de Barros"
+     ],
+     "de": [
+      "Rua Prudente de Moraes"
+     ],
+     "ate": [
+      "Rua Coronel Fonseca"
+     ],
+     "descricao": "Rua Amando de Barros na área do rotativo",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_vias.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "botucatu_cana_area_urbana",
+   "tipo": "zona",
+   "regime": "Carga de cana",
+   "nome": "Botucatu: área urbana, caminhão carregado de cana-de-açúcar proibido",
+   "status": "desativada",
+   "status_motivo": "O critério é a carga transportada (cana-de-açúcar), que o perfil do veículo não informa; a lei pede regulamentação (art. 2º) que não foi localizada e não delimita a área urbana.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 5.006, de 24/11/2008 (promulgada pelo Presidente da Câmara; Siscam: EM VIGOR)",
+     "artigo": "art. 1º (proibido o tráfego de caminhão carregado de cana-de-açúcar nas ruas da área urbana); art. 2º (regulamentação em 60 dias)",
+     "url": "https://botucatu.siscam.com.br/arquivo?Id=94563"
+    }
+   ],
+   "vigencia_inicio": "2008-11-24",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3507506_area_urbana.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano de Botucatu (não delimitado na lei)"
+    }
+   ]
+  }
+ ]
+}

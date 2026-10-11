@@ -1,0 +1,60 @@
+{
+ "ibge": "3136207",
+ "nome": "João Monlevade",
+ "uf": "MG",
+ "status": "pontual",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {"url": "https://camarajoaomonlevade.nopapercloud.com.br/legislacao/ (SPL da Câmara, busca textual): caminh, carga e descarga, veículos pesados, grande porte, tráfego, veículos de carga, transporte de carga, tonelagem, carga pesada, mobilidade urbana, produtos perigosos, estacionamento", "resultado": "Nenhuma lei de restrição de circulação de caminhões. Achados: Código de Posturas (LC 08/2016), Lei 2.781/2026 (diretrizes para o impacto do pedágio da BR-381 no tráfego urbano, sem regra), Lei 2.795/2026 (câmeras em caminhões de lixo), Estatuto do Pedestre (Lei 2.489/2022), estacionamento rotativo (Lei 2.127/2015)."},
+  {"url": "https://camarajoaomonlevade.nopapercloud.com.br/Arquivo/Documents/legislacao/html/C82016.html", "resultado": "Código de Posturas (LC 08/2016, em vigor; LC 11/2018 só inclui o art. 21-A) lido nos trechos de trânsito: art. 50 e 65 (o Setor de Trânsito pode impedir veículo que danifique a via), art. 55 (proibido trafegar com carga ou peso acima do fixado em sinalização, salvo licença), art. 56-57 (inflamáveis/explosivos: regras de transporte, sem rota), art. 59 (SETTRAN fixa local e horário das áreas de carga e descarga), art. 68 (proibido ESTACIONAR nas vias públicas veículos com lotação acima de 5 t ou comprimento acima de 6,50 m, carretas, cavalos mecânicos, tratores). Nenhuma zona ou horário de circulação."},
+  {"url": "https://camarajoaomonlevade.nopapercloud.com.br/Arquivo/Documents/legislacao/html/L27812026.html", "resultado": "Lei 2.781/2026 lida: só diretrizes (levantamento de rotas alternativas ao pedágio, plano emergencial, relatório). Sem restrição a caminhão."},
+  {"url": "https://sapl.joaomonlevade.mg.leg.br/norma/pesquisar", "resultado": "SAPL com só 6 normas; nada."},
+  {"url": "https://www.pmjm.mg.gov.br/legislacao_view/3 (POST filtrarLegislacaoSearch, campo Descrição; categorias Decreto 1.190, Portarias 3.639, Lei Ordinária, Lei Complementar): caminh, carga, trânsito, tráfego, pesado, circulação, tonelada, perigos, proibição, estacionamento, Armando, SETTRAN", "resultado": "Só o Decreto 193/2025 (estacionamento de caminhões na Av. Armando Fajardo) e o Decreto 146/2026 (estacionamento de veículos em geral na R. Pedro Bicalho). Nenhum decreto ou portaria de circulação de caminhões."},
+  {"url": "https://www.diariomunicipal.com.br/amm-mg/materia/E7C03F2D", "resultado": "Decreto 193/2025 (DOM-AMM 29/09/2025, ed. 4117) lido na íntegra: art. 1º proíbe o ESTACIONAMENTO de caminhões, ônibus, reboque e semirreboque em toda a extensão da Av. Armando Fajardo a partir de 15/10/2025. Não restringe a circulação."},
+  {"url": "diarios_consolidados.py (AMM-MG/SIGPub + Querido Diário): lead pronto (192 acertos brutos) + 'circulação de veículos de carga', 'veículos de grande porte', 'trânsito de veículos pesados', 'proibida a circulação', 'carga e descarga horário', 'carretas', 'proibido o trânsito', 'semi-reboque'", "resultado": "Só o Decreto 193/2025, o Código de Posturas e editais de multa da SETTRAN (que listam infrações de estacionamento em vaga de carga e descarga, sem infração de circulação de caminhão em horário proibido). Querido Diário não cobre o município."},
+  {"url": "https://www.pmjm.mg.gov.br/filtrarTudo?busca=caminhões|carretas|veículos pesados", "resultado": "Só notícias de coleta de lixo/entulho e a legislação já vista. Nenhuma notícia de restrição de circulação."},
+  {"url": "https://penaestrada.com.br/restricoes/joao-monlevade/", "resultado": "Sem página (ausente do sitemap do site, conforme leads/penaestrada.json)."}
+ ],
+ "observacoes": "João Monlevade não tem ato de restrição de circulação de caminhões. As regras achadas são de ESTACIONAMENTO, não afetam a rota: (1) Código de Posturas (LC 08/2016, art. 68) proíbe estacionar nas vias públicas do município veículos com lotação acima de 5 t ou comprimento acima de 6,50 m, carretas, cavalos mecânicos e tratores (exceções no parágrafo único); (2) Decreto 193/2025 proíbe o estacionamento de caminhões, ônibus, reboques e semirreboques em toda a Av. Armando Fajardo desde 15/10/2025. O art. 55 do Código de Posturas remete o limite de peso à sinalização local (placas R-14), sem via fixada no ato. O art. 59 dá à SETTRAN a fixação de local e horário das áreas de carga e descarga (sem portaria achada). A BR-381 (travessia urbana) é federal, fora desta camada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "joaomonlevade_estacionamento_pesados_posturas",
+   "tipo": "zona",
+   "regime": "Estacionamento (lotação > 5 t ou > 6,50 m)",
+   "nome": "João Monlevade: proibido estacionar nas vias públicas veículo com lotação acima de 5 t ou comprimento acima de 6,50 m, carretas, cavalos mecânicos e tratores",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento, não de circulação: o caminhão pode passar em qualquer via e horário; não afeta a rota (só aviso para parada/pernoite).",
+   "confianca": "alta",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 5}, {"campo": "comprimento_m", "acima": 6.5}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+   "excecoes": ["Art. 68, parágrafo único: socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito, ambulâncias, veículos prestadores de serviços de utilidade pública e ônibus do transporte municipal e intermunicipal de passageiros cuja rota pré-determinada percorra o trecho"],
+   "base_legal": [{"ato": "Lei Complementar municipal 08, de 04/04/2016 (Código de Posturas; DOM-AMM 13 e 15/04/2016)", "artigo": "art. 68, caput e parágrafo único", "url": "https://camarajoaomonlevade.nopapercloud.com.br/Arquivo/Documents/legislacao/html/C82016.html"}],
+   "nota": "Situação 'Em vigor' no SPL da Câmara; a única alteração registrada (LC 11/2018) inclui o art. 21-A, fora deste trecho.",
+   "vigencia_inicio": "2016-04-04",
+   "geometria": [{"municipios": ["3136207"], "simplificar": 0.002, "casas": 5}]
+  },
+  {
+   "id": "joaomonlevade_av_armando_fajardo_estacionamento",
+   "tipo": "via",
+   "regime": "Estacionamento (Av. Armando Fajardo)",
+   "nome": "Av. Armando Fajardo: proibido o estacionamento de caminhões, ônibus, reboques e semirreboques em toda a extensão",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento, não de circulação: a passagem de caminhões pela avenida continua permitida; não afeta a rota.",
+   "confianca": "alta",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {"caminhao": true},
+   "excecoes": [],
+   "base_legal": [
+    {"ato": "Decreto municipal 193, de 25/09/2025 (DOM-AMM ed. 4117, 29/09/2025)", "artigo": "art. 1º (proibição a partir de 15/10/2025); art. 3º (multa e remoção)", "url": "https://www.diariomunicipal.com.br/amm-mg/materia/E7C03F2D"},
+    {"ato": "Decreto municipal 193/2025 (PDF na base de legislação da Prefeitura)", "artigo": "texto integral", "url": "https://www.pmjm.mg.gov.br/legislacao/bebceabc54fe867e3b65c3035d044e99.pdf"}
+   ],
+   "trechos": [{"inciso": "art. 1º", "via": ["Avenida Armando Fajardo"], "descricao": "toda a extensão da Av. Armando Fajardo"}],
+   "vigencia_inicio": "2025-10-15",
+   "geometria": [{"arquivo": "municipios/geo/3136207_vias.geojson", "construir": "trechos"}]
+  }
+ ]
+}

@@ -1,0 +1,308 @@
+{
+ "ibge": "3525300",
+ "nome": "Jaú",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "http://leis.jau.sp.gov.br/ (POST default.asp; buscas por número 5064 e por assunto: caminh, carga, descarga, pesados, tráfego, trafego, trânsito, ruas centrais, centrais, veículos de carga, estacionamento, Zona Azul, mobilidade, carreta, peso, tonelada, posturas, perigosos, rodoanel, anel viário)",
+   "resultado": "Portal oficial de leis e decretos da Prefeitura. Achado o Dec. 5.064/2003 (regulamenta, em ruas centrais, horário de trânsito e de carga) e a Lei 3.836/2003 (revoga a Lei 3.727/2002 sobre o mesmo tema). Cadeia de leis anteriores de carga e descarga em ruas centrais: Lei 2.787/1992, 3.001/1995, 3.340/1998, 3.581/2001, 3.727/2002 (todas superadas). Lei 2.586/1989: estacionamento prolongado de ônibus e caminhões (não é circulação). Nenhum ato posterior altera o Dec. 5.064/2003."
+  },
+  {
+   "url": "http://leis.jau.sp.gov.br/decretos/2003/5064.pdf",
+   "resultado": "Dec. 5.064/2003 lido na íntegra (PDF-imagem renderizado): art. 1º proíbe tráfego de caminhões e estacionamento/parada de veículos de carga (caminhonete, caminhão, caminhão-trator) com capacidade > 4.350 kg, 10h–18h seg–sex e 9h–12h sáb, em 13 vias/trechos centrais; art. 2º exceções; art. 3º sinalização pelo Departamento Municipal de Trânsito; carimbo de publicação no Jornal Oficial ed. 75-A."
+  },
+  {
+   "url": "http://leis.jau.sp.gov.br/leis/2003/3836.pdf",
+   "resultado": "Lei 3.836/2003 lida: só revoga a Lei 3.727/2002 (que disciplinava horários de trânsito e carga em ruas centrais)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3525300/2023-04-12/6b6fe3c49484dd8d6d75b8caff4825b32a2e5867.txt",
+   "resultado": "Jornal Oficial 12/04/2023 ed. 1099-A: Dec. 8.495/2023 institui o Plano de Mobilidade Urbana; o diagnóstico (p. 307–308) cita o Dec. 5.064/2003 como regra vigente; propostas citam 'definição das rotas de transporte de carga' sem ato."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py (dosp/doesp; termos '5.064', 'tráfego de caminhões', 'circulação de caminhões', 'veículos de carga', 'carga e descarga')",
+   "resultado": "Imprensa Oficial Municipal (dosp) de Jaú 2023–2026: só a citação no PMU de 2023; nenhum ato novo de restrição a caminhões nem revogação."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=3525300",
+   "resultado": "API instável (503) durante a sessão; coberto pelo dosp e pelo portal de leis."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/jau/",
+   "resultado": "Sem página (lead penaestrada: ausente do sitemap)."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (área IBGE 3525300; hgv, maxweight, maxlength, goods, *:conditional)",
+   "resultado": "6 ways com hgv=no sem nome (secondary/secondary_link/service) perto de -22.2825,-48.5714 (acesso viário a noroeste do centro), marcados em 11/08/2020 (changeset 89266457, 'Rua não transitável por veículos de carga'). Nenhum way das ruas do Dec. 5.064/2003 tem hgv:conditional. Nenhum maxweight retornado."
+  }
+ ],
+ "observacoes": "Jaú tem regra vigente com ato: Dec. 5.064/2003 (13 trechos de ruas centrais; caminhões/veículos de carga com capacidade > 4.350 kg; 10h–18h seg–sex e 9h–12h sáb; exceções: veículos oficiais e serviços essenciais/utilidade pública). Ato antigo, sem alteração no portal oficial e citado como vigente no Plano de Mobilidade de 2023 (Dec. 8.495/2023). Não há definição de VUC. Lei 2.586/1989 proíbe estacionamento prolongado de ônibus e caminhões em via pública (não roteável). Pendência de geometria: pontas 'Rio Jahu' das ruas Major Prado e Prof. João Jacinto de Almeida.",
+ "osm_divergencias": [
+  "Jaú: OSM ways 414502065, 414502114, 548013468, 548013486, 548013493, 876011292 (acessos sem nome perto de -22.2825,-48.5714) com hgv=no desde 11/08/2020 (changeset 89266457, 'Rua não transitável por veículos de carga') sem ato municipal achado; possivelmente restrição física/geométrica. Sugestão: pendente em overrides.json, não ativar.",
+  "Jaú: as 13 ruas centrais do Dec. 5.064/2003 não têm hgv:conditional no OSM (a regra só existe na camada municipal)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "jau_ruas_centrais_dec5064_2003",
+   "tipo": "via",
+   "regime": "Ruas centrais (capacidade > 4,35 t)",
+   "nome": "Jaú: ruas centrais do Dec. 5.064/2003 — tráfego de caminhões e parada/estacionamento de veículos de carga com capacidade acima de 4.350 kg proibidos das 10h às 18h (seg–sex) e das 9h às 12h (sáb)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-10",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "10:00",
+     "to": "18:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "12:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 4.35
+     }
+    ]
+   },
+   "vuc": null,
+   "excecoes": [
+    "Art. 2º: veículos oficiais e veículos utilizados para serviços e atividades essenciais e de utilidade pública"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 5.064, de 16/12/2003 (Jornal Oficial de Jahu, ed. 75-A, semana de 19 a 25/12/2003)",
+     "artigo": "art. 1º, caput (proibição, espécies de veículo, capacidade > 4.350 kg, horários) e parágrafo único (13 vias e trechos); art. 2º (exceções); art. 5º (vigência na publicação)",
+     "url": "http://leis.jau.sp.gov.br/decretos/2003/5064.pdf",
+     "nota": "PDF digitalizado (imagem) no portal oficial de legislação da Prefeitura (leis.jau.sp.gov.br), lido página a página. Sem alteração ou revogação no portal (busca por número e assunto). O Plano de Mobilidade Urbana (Dec. 8.495/2023, Jornal Oficial 12/04/2023, ed. 1099-A, Anexo, p. 307–308) descreve o decreto como vigente."
+    }
+   ],
+   "nota": "Confiança média: (1) o ato é de 2003 e a sinalização em campo não foi conferida; (2) o limite 'capacidade superior a 4.350 kg' foi lido como capacidade de carga (payload_t) e aplicado também ao 'tráfego de caminhões' (a frase do art. 1º qualifica 'veículos de carga, da espécie caminhonete, caminhão ou caminhão-trator'); (3) o decreto não excetua feriados. O mesmo art. 1º proíbe estacionamento e parada desses veículos nos mesmos trechos e horários. Lei 3.836/2003 (mesma data) revogou a Lei 3.727/2002, que tratava do mesmo tema por lei.",
+   "fonte_geometria": "Vias pelo nome no OSM, trechos do parágrafo único do art. 1º (centro de Jaú). Pontas 'Rio Jahu' precisam de {lonlat} na ponte/margem.",
+   "vigencia_inicio": "2003-12-16",
+   "trechos": [
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Paissandu",
+      "Rua Paysandu"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Paissandu, entre a Rua Marechal Bittencourt e a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Riachuelo"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Riachuelo, entre a Rua Marechal Bittencourt e a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Visconde do Rio Branco"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Visconde do Rio Branco, da Rua Marechal Bittencourt até a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Lourenço Prado"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Lourenço Prado, da Rua Marechal Bittencourt até a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Amaral Gurgel"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Amaral Gurgel, da Rua Marechal Bittencourt até a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Campos Salles",
+      "Rua Campos Sales"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Campos Salles, da Rua Marechal Bittencourt até a Rua 7 de Setembro"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua General Galvão"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Quintino Bocaiúva",
+      "Rua Quintino Bocaiuva"
+     ],
+     "descricao": "Rua General Galvão, entre a Rua Marechal Bittencourt e a Rua Quintino Bocaiúva"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Conde do Pinhal"
+     ],
+     "de": [
+      "Rua Marechal Bittencourt",
+      "Rua Marechal Bitencourt"
+     ],
+     "ate": [
+      "Rua Quintino Bocaiúva",
+      "Rua Quintino Bocaiuva"
+     ],
+     "descricao": "Rua Conde do Pinhal, da Rua Marechal Bittencourt à Rua Quintino Bocaiúva"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Professor João Jacinto de Almeida",
+      "Rua Prof. João Jacinto de Almeida"
+     ],
+     "de": [
+      "Rio Jaú"
+     ],
+     "ate": [
+      "Rua Sete de Setembro",
+      "Rua 7 de Setembro"
+     ],
+     "descricao": "Rua Prof. João Jacinto de Almeida, entre o Rio Jahu e a Rua 7 de Setembro",
+     "nota": "Ponta 'Rio Jahu' = margem/ponte do Rio Jaú; montar com {lonlat} da ponte no OSM (conferir no import)."
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Edgard Ferraz",
+      "Rua Edgar Ferraz"
+     ],
+     "de": [
+      "Rua Conde do Pinhal"
+     ],
+     "ate": [
+      "Rua Paissandu",
+      "Rua Paysandu"
+     ],
+     "descricao": "Rua Edgard Ferraz, entre a Rua Conde do Pinhal e a Rua Paissandu"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Major Prado"
+     ],
+     "de": [
+      "Rio Jaú"
+     ],
+     "ate": [
+      "Rua Paissandu",
+      "Rua Paysandu"
+     ],
+     "descricao": "Rua Major Prado, do Rio Jahu até a Rua Paissandu",
+     "nota": "Ponta 'Rio Jahu' = margem/ponte do Rio Jaú; montar com {lonlat} da ponte no OSM (conferir no import)."
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Tenente Lopes"
+     ],
+     "de": [
+      "Rua Conde do Pinhal"
+     ],
+     "ate": [
+      "Rua Paissandu",
+      "Rua Paysandu"
+     ],
+     "descricao": "Rua Tenente Lopes, da Rua Conde do Pinhal até a Rua Paissandu"
+    },
+    {
+     "inciso": "art. 1º, par. único",
+     "via": [
+      "Rua Quintino Bocaiúva",
+      "Rua Quintino Bocaiuva"
+     ],
+     "de": [
+      "Rua Conde do Pinhal"
+     ],
+     "ate": [
+      "Rua Paissandu",
+      "Rua Paysandu"
+     ],
+     "descricao": "Rua Quintino Bocaiúva, entre a Rua Conde do Pinhal e a Rua Paissandu"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3525300_ruas_centrais.geojson",
+     "construir": "trechos"
+    }
+   ]
+  }
+ ]
+}

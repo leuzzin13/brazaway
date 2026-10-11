@@ -1,0 +1,140 @@
+{
+ "ibge": "3170701",
+ "nome": "Varginha",
+ "uf": "MG",
+ "status": "sem_restricao_declarada",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.varginha.mg.leg.br (API SAPL; termos caminh, carga e descarga, veículos pesados, veículos de carga, tráfego, carreta, toneladas, trânsito de veículos, circulação de veículos)",
+   "resultado": "Só atos sem relação (ACRENOC, gratificação de operador de veículos pesados) e a Lei 3.565/2001 (transporte coletivo clandestino)."
+  },
+  {
+   "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/ (Instar; termos caminh, carga, pesado, 8.380, circulação, proíbe o trânsito, restrição, perigosos, anel viário, Plano de Mobilidade, mobilidade urbana)",
+   "resultado": "Achados: Dec. 8.380/2017 (carga e descarga na região central) e alterações Dec. 9.672/2020 e 11.325/2022; Decs. 3.977/2006, 4.102/2006 e 4.237/2007 (revogados); Lei 2.869/1997 (política de tráfego); Portaria 22.454/2025 (comissão do Plano de Mobilidade, ainda sem plano). Nenhum ato de proibição de circulação de caminhões."
+  },
+  {
+   "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/22830/",
+   "resultado": "Dec. 8.380/2017 lido na íntegra."
+  },
+  {
+   "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/33864/ ; https://www.varginha.mg.gov.br/portal/leis_decretos/29057/",
+   "resultado": "Decs. 11.325/2022 e 9.672/2020 lidos (Instar: 'Em vigor')."
+  },
+  {
+   "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/2255/",
+   "resultado": "Lei 2.869/1997 lida: art. 60, VI só diretriz ('impedir a circulação de veículos de carga, de grande porte, no tecido urbano, após se criar condições alternativas'); art. 55, § 3º: em vias exclusivas de pedestres, carga e descarga só antes das 8h e depois das 20h, até 1 t. Sem vias nem horários de circulação de caminhões."
+  },
+  {
+   "url": "https://www.varginha.mg.gov.br/portal/diario-oficial/1/0/0/<termo>/0/ (busca do DOM; termos caminhões, caminhão, carga e descarga, tonelada, PBT, veículos pesados, circulação de veículos, trânsito de veículos)",
+   "resultado": "86 edições baixadas e lidas por texto: só licitações, concursos e aquisição de caminhões; nenhum ato de restrição de circulação."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py (amm-mg, qd)",
+   "resultado": "Sem resultado para Varginha."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/varginha/",
+   "resultado": "Sem página (lead penaestrada)."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (área IBGE 3170701)",
+   "resultado": "Consulta falhou (timeout/erro) em 3 tentativas; o lote não registra tags de caminhão no OSM para Varginha."
+  }
+ ],
+ "observacoes": "Varginha não tem restrição de circulação de caminhões em ato vigente. Há só a regra de carga e descarga na região central (Dec. 8.380/2017, red. Dec. 11.325/2022 e § 3º do Dec. 9.672/2020) para veículos com capacidade de carga acima de 1,5 t, registrada desativada. A Lei 2.869/1997 (política de tráfego) tem só diretriz de afastar veículos de carga de grande porte do tecido urbano. O Plano de Mobilidade está em elaboração (Portaria 22.454/2025).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "varginha_carga_descarga_central_dec8380_2017",
+   "tipo": "zona",
+   "regime": "Carga e descarga (região central, capacidade > 1,5 t)",
+   "nome": "Varginha: carga e descarga na região central por veículos com capacidade acima de 1,5 t só das 7h às 20h (seg–sex) e das 7h às 15h (sáb) (Dec. 8.380/2017, red. Dec. 11.325/2022)",
+   "status": "desativada",
+   "status_motivo": "Regra de carga e descarga em estabelecimentos (operação/parada), não de circulação: caminhão em trânsito pela região central não é atingido. Registro para aviso.",
+   "confianca": "alta",
+   "verificado_em": "2026-10-10",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "07:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "20:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "00:00",
+     "to": "07:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "15:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 1.5
+     }
+    ]
+   },
+   "vuc": null,
+   "excecoes": [
+    "Art. 1º, par. único: transporte de valores bancários; combustível e GLP; coleta de lixo; manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água); socorro; entregas em hospitais, clínicas e similares",
+    "Art. 1º, III: domingos e feriados em qualquer horário",
+    "§ 3º (Dec. 9.672/2020): no Calçadão da R. Wenceslau Brás (entre R. Presidente Antônio Carlos e R. Delfim Moreira) carga e descarga só das 19h às 9h (seg–sex), 14h–24h (sáb) e livre dom/feriados"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 8.380, de 11/09/2017",
+     "artigo": "art. 1º, caput (capacidade de carga acima de 1,5 t), § 1º (44 logradouros da 'região central'), par. único (exceções); art. 6º (revoga Decs. 3.977/2006, 4.102/2006 e 4.237/2007)",
+     "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/22830/"
+    },
+    {
+     "ato": "Decreto municipal 11.325, de 01/12/2022 (vigência 22/12/2022)",
+     "artigo": "art. 1º (nova redação dos incisos I e II do art. 1º do Dec. 8.380/2017: 7h–20h seg–sex; 7h–15h sáb)",
+     "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/33864/"
+    },
+    {
+     "ato": "Decreto municipal 9.672, de 05/02/2020",
+     "artigo": "art. 1º (acrescenta § 3º ao art. 1º do Dec. 8.380/2017: Calçadão da R. Wenceslau Brás)",
+     "url": "https://www.varginha.mg.gov.br/portal/leis_decretos/29057/"
+    }
+   ],
+   "nota": "Logradouros da região central (Dec. 8.380/2017, art. 1º, § 1º): Av. Ana Jacinta; Av. Benjamim Constant; Av. Francisco Navarra; Av. Major Venâncio; Av. Ministro Bias Fortes; Av. Princesa do Sul até a Praça dos Leões; Av. Rio Branco; Av. Rui Barbosa; Av. São José; Praça Champagnat; Praça Getúlio Vargas; Praça Governador Benedito Valadares; Praça João Pessoa; Praça José de Rezende Paiva; Praça Marechal Deodoro; Praça Marechal Floriano; Praça Mateus Tavares; Praça Melo Viana; Praça Pinto de Oliveira; Praça Quintino Bocaiúva; Praça Roque Rotundo; Praça Santa Cruz; Praça Sol Nascente; Rua Alves e Silva; Rua Coronel João Urbano dos Reis; Rua Delfim Moreira; Rua Deputado Ribeiro de Rezende; Rua Dona Jovelina Reis; Rua José Nogueira Acaiaba; Rua Luiz Maseli; Rua Marília; Rua Orestes Diniz; Rua Paraná; Rua Presidente Antônio Carlos; Rua Presidente José Paiva; Rua Rio de Janeiro; Rua Santa Cruz; Rua São Paulo; Rua Silva Bittencourt; Rua Tenente Aviador Nogueira Neto; Rua Tiradentes; Rua Valentim Couto; Rua Wenceslau Bráz; Travessa Targino Nogueira. A redação de 2022 inverteu a janela de 2017 (que permitia 19h–12h); janelas acima = horários em que a operação é proibida.",
+   "vigencia_inicio": "2022-12-22",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3170701_regiao_central.geojson",
+     "construir": "manual",
+     "como_gerar": "Vias do § 1º do art. 1º do Dec. 8.380/2017 (região central de Varginha) pelo nome no OSM."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,111 @@
+{
+ "ibge": "3541406",
+ "nome": "Presidente Prudente",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "vuc": null,
+ "vuc_nota": "O Decreto 8.418/1993 não define VUC; só libera carga e descarga para veículo com capacidade até 1,0 t.",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.presidenteprudente.sp.gov.br/site/decretos.xhtml (busca por palavra-chave: caminhões, caminhão, carga, carga e descarga, veículos pesados, veículos de carga, trânsito, proíbe, proibição, estacionamento, Calçadão, área central, quadrilátero, Manoel Goulart, capacidade, tonelada, 8418)",
+   "resultado": "Decretos até 02/2025: só o Decreto 8.418/1993 restringe veículo de carga; achados também decretos antigos de pontos de caminhão de aluguel (estacionamento) e o Decreto 2.874/1977 (trânsito de veículos na Av. Ademar de Barros, não lido). Nenhum decreto revoga ou altera o 8.418."
+  },
+  {
+   "url": "https://www.presidenteprudente.sp.gov.br/site/documento/16081",
+   "resultado": "Decreto 8.418/1993 lido (PDF escaneado): capacidade > 1,0 t proibida nas vias internas ao quadrilátero Cel. José Soares Marcondes / Washington Luiz / Brasil / Manoel Goulart das 9h30 às 17h."
+  },
+  {
+   "url": "https://www.presidenteprudente.sp.gov.br/site/documento/71148",
+   "resultado": "Decreto 32.264/2021 (Zona Azul): sem restrição de circulação de caminhão."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/presidenteprudente",
+   "resultado": "403 (curl e WebFetch): leis ordinárias/complementares e decretos desde 03/2025 não puderam ser consultados."
+  },
+  {
+   "url": "https://diario.presidenteprudente.sp.gov.br/busca",
+   "resultado": "Busca do diário oficial retorna erro 500 para qualquer termo."
+  },
+  {
+   "url": "https://www.camarapprudente.sp.gov.br/",
+   "resultado": "Página exige JavaScript/cookie de verificação; não acessada."
+  },
+  {
+   "url": "https://atende.presidenteprudente.sp.gov.br/b.php?pg=o%2Fbusca_servicos",
+   "resultado": "Serviços da SEMOB: só 'Vagas específicas (carga e descarga...)'; nenhum de autorização de caminhão."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/presidente-prudente/",
+   "resultado": "Página inexistente."
+  },
+  {
+   "url": "Overpass (area IBGE:GEOCODIGO=3541406)",
+   "resultado": "10 ways hgv=no (estradas rurais e uma praça), hgv=discouraged/delivery/designated pontuais; nada no quadrilátero central."
+  }
+ ],
+ "observacoes": "Única regra encontrada: Decreto 8.418/1993 (quadrilátero central, capacidade > 1 t, 9h30–17h, todos os dias). Ativa com confiança média porque as leis e os decretos pós-02/2025 (leismunicipais.com.br) e o diário oficial (busca com erro) não puderam ser varridos para confirmar que não houve revogação.",
+ "osm_divergencias": [
+  "Quadrilátero central do Decreto 8.418/1993 (Av. Cel. José Soares Marcondes, Washington Luiz, Brasil e Manoel Goulart) sem nenhuma tag hgv no OSM.",
+  "hgv=no sem ato localizado: Estrada do Jabaquara (185356899), Estrada Primeiro de Maio (228960120, 739675561), way sem nome (427324599, -22.055,-51.302), way primary sem nome (817679310, -21.786,-51.291), Praça Nossa Senhora Aparecida (189883997) e a ferrovia (149387415).",
+  "hgv=discouraged na Estrada do Porto de Areia (153795482) e em way sem nome (153804644), sem ato localizado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "presidente_prudente_centro_1t",
+   "tipo": "zona",
+   "regime": "Centro (capacidade > 1 t)",
+   "nome": "Presidente Prudente: quadrilátero central (Av. Cel. José Soares Marcondes, Av. Washington Luiz, Av. Brasil e Av. Manoel Goulart), veículo de carga com capacidade acima de 1 t das 9h30 às 17h",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "09:30",
+     "to": "17:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 1.0
+     }
+    ]
+   },
+   "origem_destino_dentro": "avisa",
+   "excecoes": [
+    "Art. 2º: carga e descarga liberada só para veículos com capacidade até 1,0 t, nos locais demarcados e por no máximo 10 minutos, no mesmo período e quadrilátero (não alcança caminhão com capacidade maior)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 8.418, de 03/05/1993 (publicado no jornal Folha da Região de 08/05/1993)",
+     "artigo": "art. 1º (proíbe trânsito e estacionamento de veículos de carga com capacidade superior a 1,0 t nas vias internas ao quadrilátero, das 09:30 às 17:00); art. 2º (carga e descarga até 1,0 t); art. 3º (vigência na publicação)",
+     "url": "https://www.presidenteprudente.sp.gov.br/site/documento/16081",
+     "nota": "PDF escaneado no portal 'Consulta de Leis e Decretos' da Prefeitura (detalhe: https://www.presidenteprudente.sp.gov.br/site/legislacao/8431); lido na imagem ('09:30' parcialmente sob o brasão)."
+    }
+   ],
+   "nota": "Critério é a capacidade de carga (lotação), não o PBT: payload_t > 1 t (todo caminhão do CTB atende). O decreto não cita dias nem feriados: vale todos os dias. Confiança média: ato de 1993 sem revogação no portal de decretos (busca até 02/2025), mas as leis e os decretos desde 03/2025 ficam no leismunicipais.com.br, que bloqueou o acesso (403), e não há sinal do OSM nem página de serviço atual. 'Vias internas ao quadrilátero': as quatro avenidas-limite ficam fora (o recuo de 20 m da zona as libera).",
+   "vigencia_inicio": "1993-05-08",
+   "fonte_geometria": "Polígono a desenhar pelos eixos do OSM das Avenidas Cel. José Soares Marcondes, Washington Luiz, Brasil e Manoel Goulart (vias-limite fora da zona)",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3541406_centro.geojson",
+     "construir": "manual",
+     "como_gerar": "Polígono do quadrilátero formado pelos eixos OSM das Av. Cel. José Soares Marcondes, Av. Washington Luiz, Av. Brasil e Av. Manoel Goulart (Dec. 8.418/1993, art. 1º)"
+    }
+   ]
+  }
+ ]
+}

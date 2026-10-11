@@ -1,0 +1,142 @@
+{
+ "ibge": "3202405",
+ "nome": "Guarapari",
+ "uf": "ES",
+ "status": "pista",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "https://guarapari.camarasempapel.com.br/legislacao/",
+   "resultado": "SPL da Câmara (Leis, LCs, Resoluções, Decretos Legislativos; sem decretos do Executivo). Busca textual atrás de Cloudflare (não contornada); tema TRANSPORTE E TRÂNSITO (10 atos: táxi, carona, transporte escolar, multas, ônibus) e MOBILIDADE URBANA (0): nada sobre caminhões. Listagem por ano (2009: 242 atos) só leis e resoluções."
+  },
+  {
+   "url": "https://www.guarapari.es.gov.br/",
+   "resultado": "Portal da Prefeitura (onde estariam os decretos) atrás de Cloudflare (403 'Just a moment'); não contornado."
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/6419/135",
+   "resultado": "DOM-ES ed. 1.908 (06/12/2021), p. 135: Ofício SEPTRAN 348/2021 (Proc. 23.897/2020) responde pedido de placa de carga e descarga e afirma que, 'conforme Decreto n.º 168/2009 que dispõe sobre horário de carga e descarga de mercadorias, só será permitida a realização no horário das 08 às 11horas'. Texto do Decreto 168/2009 não localizado (anterior ao DOM-ES de 2021; portal da Prefeitura bloqueado)."
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/10600/75 e /10733/124-131",
+   "resultado": "Lei 5.111, de 17/10/2025 ('Ruas Livres') e Decreto 645/2025 (DOM-ES 04/12/2025): regulam só veículos de tração animal e ônibus/vans de turismo (zonas vermelhas/amarelas/verdes, rotas, proibição de ônibus de turismo na Ponte de Guarapari e em Setiba). Não se aplicam a caminhões."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3202405 --fonte domes (termos: veículos pesados, caminhões, carga e descarga, Decreto 168/2009, horário de carga e descarga, veículos de carga, trânsito/circulação de caminhões, veículos de grande porte, peso bruto total, tonelada, carretas, Ruas Livres, proibida a circulação, Ponte de Guarapari, Avenida Jones dos Santos Neves)",
+   "resultado": "DOM-ES (2021–2026): nenhum decreto/portaria de restrição de caminhões; só ofícios da SEPTRAN sobre vagas de carga e descarga (2021–2022), a regulamentação 'Ruas Livres' (ônibus de turismo) e licitações. Acervo DOM-ES 2014–2021 fora do ar."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE 3202405)",
+   "resultado": "hgv=no + maxweight=15 em 25 ways da 'Rodovia José Ribeiro Tristão' (ref ES-060, rodovia estadual, a oeste/sudoeste da sede); maxweight=15 nas 2 ways de ponte da 'Rodovia Jones dos Santos Neves' (ref ES-480;ES-060, -20,6683 -40,4991, Ponte de Guarapari). Sem ato municipal correspondente."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/guarapari/",
+   "resultado": "Sem página (preparação, 10/10/2026)."
+  },
+  {
+   "url": "Querido Diário",
+   "resultado": "Guarapari sem spider."
+  }
+ ],
+ "observacoes": "Nenhuma restrição de circulação de caminhões em ato achado. Pistas: (1) Decreto municipal 168/2009, citado pela SEPTRAN em ofício publicado no DOM-ES (06/12/2021), limitaria a carga e descarga de mercadorias às 8h–11h (área e alcance desconhecidos; decreto não lido porque o portal da Prefeitura está atrás de Cloudflare e o DOM-ES só cobre 2021+); (2) OSM marca hgv=no e maxweight=15 na Rodovia José Ribeiro Tristão (ES-060) e maxweight=15 na Ponte de Guarapari (ES-060/ES-480) — vias estaduais (DER-ES), sem ato municipal. A Lei 5.111/2025 + Decreto 645/2025 ('Ruas Livres') restringe só ônibus de turismo (inclusive na Ponte de Guarapari).",
+ "osm_divergencias": [
+  "Rodovia José Ribeiro Tristão (ES-060; ways 28580161, 42434124, 99273751, 354180007, 362395209… 25 ways, entre ~-20,634 e -20,738): hgv=no + maxweight=15 sem ato municipal achado; rodovia estadual — conferir com DER-ES antes de qualquer override.",
+  "Ponte da Rodovia Jones dos Santos Neves (ES-480;ES-060; ways 24602354 e 879157318, Ponte de Guarapari): maxweight=15 sem ato achado (o Decreto municipal 645/2025 só proíbe ônibus de turismo na ponte)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "guarapari_carga_descarga_dec_168_2009",
+   "tipo": "zona",
+   "regime": "Carga e descarga (Dec. 168/2009)",
+   "nome": "Guarapari: carga e descarga de mercadorias só das 8h às 11h (Decreto 168/2009, citado)",
+   "status": "desativada",
+   "status_motivo": "Pista: decreto citado em ofício da SEPTRAN (DOM-ES 06/12/2021), texto não lido (área, dias e veículos desconhecidos); além disso é regra de carga e descarga no destino, não de circulação.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Ofício SEPTRAN nº 348/2021 (Proc. 23.897/2020), publicado no DOM-ES ed. 1.908 de 06/12/2021, p. 135",
+     "artigo": "ofício (sem artigo): 'conforme Decreto n.º 168/2009 que dispõe sobre horário de carga e descarga de mercadorias, só será permitida a realização no horário das 08 às 11horas'",
+     "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/6419/135"
+    }
+   ],
+   "nota": "Janela permitida citada: 8h–11h (proibida fora dela); dias e área não informados."
+  },
+  {
+   "id": "guarapari_es060_jose_ribeiro_tristao_osm",
+   "tipo": "via",
+   "regime": "OSM hgv=no / 15 t",
+   "nome": "Guarapari: Rodovia José Ribeiro Tristão (ES-060) — OSM marca caminhão proibido e peso máximo 15 t",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM (hgv=no, maxweight=15) em rodovia estadual; nenhum ato municipal ou estadual achado nesta pesquisa.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "OpenStreetMap (tags hgv=no e maxweight=15)",
+     "artigo": "tags OSM dos ways 28580161, 42434124, 99273751 e outros 22 (ref ES-060)",
+     "url": "https://www.openstreetmap.org/way/28580161"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "OSM",
+     "via": [
+      "Rodovia José Ribeiro Tristão"
+     ],
+     "descricao": "Rodovia José Ribeiro Tristão (ES-060), trecho com hgv=no/maxweight=15 entre ~-20,634 e -20,738",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "guarapari_ponte_es060_osm_15t",
+   "tipo": "ponte",
+   "regime": "OSM 15 t",
+   "nome": "Guarapari: Ponte de Guarapari (Rodovia Jones dos Santos Neves, ES-060/ES-480) — OSM peso máximo 15 t",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM (maxweight=15); nenhum ato achado (o Decreto 645/2025 proíbe na ponte apenas ônibus de turismo).",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 15
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "OpenStreetMap (tag maxweight=15)",
+     "artigo": "tags OSM dos ways 24602354 e 879157318 (bridge=yes)",
+     "url": "https://www.openstreetmap.org/way/24602354"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "OSM",
+     "via": [
+      "Rodovia Jones dos Santos Neves"
+     ],
+     "descricao": "Ponte da Rodovia Jones dos Santos Neves (ES-060/ES-480), ~-20,6683 -40,4991",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

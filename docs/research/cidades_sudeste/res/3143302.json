@@ -1,0 +1,67 @@
+{
+  "ibge": "3143302",
+  "nome": "Montes Claros",
+  "uf": "MG",
+  "status": "regra_sem_ato",
+  "nivel_busca": "profundo",
+  "data": "2026-10-10",
+  "fontes_consultadas": [
+    {"url": "https://portal.montesclaros.mg.gov.br/buscar", "resultado": "Busca no portal de legislação oficial (leis, decretos, portarias e notícias; Decreto 3.887/2019 o institui) por caminhões, caminhão, carga e descarga, veículos pesados, veículos de carga, VUC, tonelada, restrição de circulação, hipercentro, 4 toneladas, grande porte. Todos os atos retornados foram abertos: nenhum regula a circulação de caminhões na área urbana."},
+    {"url": "https://portal.montesclaros.mg.gov.br/decreto/decreto-n-5316-02-de-julho-de-2026", "resultado": "Decreto 5.316/2026 (atualiza o PlanMob MOC): só diretrizes — 'restringir circulação de veículos pesados na região central por categorias e horários, conforme diretrizes a serem definidas' e estudos para normatizar por lei específica a carga e descarga na área central. Confirma que não há regulamentação vigente."},
+    {"url": "https://portal.montesclaros.mg.gov.br/lei/lei-complementar-n-53-de-01-de-dezembro-de-2016", "resultado": "Plano Diretor (LC 53/2016): diretrizes (restringir o acesso de veículos de carga na área central, proibir carga e descarga no período diurno, disciplinar a circulação de pesados) sem regra aplicável."},
+    {"url": "https://portal.montesclaros.mg.gov.br/decreto/decreto-n-4497-17-de-janeiro-de-2023", "resultado": "Decreto 4.497/2023: restringia a Rodovia MC-30 (Aparecida do Mundo Novo–São Pedro da Garça) e vicinais a veículos com carga superior a 4 t. REVOGADO pelo Decreto 4.522/2023 (https://portal.montesclaros.mg.gov.br/decreto/decreto-n-4522-13-de-marco-de-2023)."},
+    {"url": "https://portal.montesclaros.mg.gov.br/noticia/mctrans-instala-sinalizacao-restringindo-circulacao-de-veiculos-pesados-na-avenida-armenio-veloso-praca-de-esportes", "resultado": "Notícia oficial (15/03/2021): MCTrans instalou placa na Av. Armênio Veloso orientando veículos acima de 4 t a seguir pela Av. Oswaldo Cruz, 'pois os veículos de grande porte são proibidos de transitar pela região do hipercentro'. PISTA: nenhum ato (decreto/portaria) achado que defina o hipercentro, o limite ou o horário."},
+    {"url": "https://sapl.montesclaros.mg.leg.br/api/norma/normajuridica/", "resultado": "SAPL da Câmara tem só 23 normas recentes (resoluções); nada sobre trânsito."},
+    {"url": "https://diariooficial.montesclaros.mg.gov.br/buscar", "resultado": "Mesmo índice do portal; mesmos resultados."},
+    {"url": "https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO=3143302)", "resultado": "Nenhuma via com hgv, maxweight ou maxlength no OSM."}
+  ],
+  "observacoes": "Montes Claros não tem ato publicado que regule a circulação de caminhões na área urbana: o PlanMob (Dec. 5.316/2026) e o Plano Diretor (LC 53/2016) tratam a restrição no centro como diretriz futura. Há, porém, sinalização da MCTrans (notícia oficial de 15/03/2021) proibindo veículos acima de 4 t no 'hipercentro', com placa na Av. Armênio Veloso (Praça de Esportes) desviando para a Av. Oswaldo Cruz — perímetro, horário e base legal não localizados (provável regulamentação só por placa, CTB art. 21/24). Registrada como regra desativada. A restrição de 4 t na Rodovia MC-30 (Dec. 4.497/2023) foi revogada em 13/03/2023 (Dec. 4.522/2023). Fica pendente pedir à MCTrans o ato/perímetro do hipercentro.",
+  "osm_divergencias": [
+    "Hipercentro (restrição a veículos acima de 4 t por placa da MCTrans, segundo notícia oficial de 2021) sem nenhuma etiqueta no OSM — ausência; não há ato para sustentar tag."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "montes_claros_hipercentro_4t",
+      "tipo": "zona",
+      "regime": "Hipercentro (> 4 t, só placa)",
+      "nome": "Montes Claros: hipercentro proibido a veículos acima de 4 t (sinalização da MCTrans, sem ato localizado)",
+      "status": "desativada",
+      "status_motivo": "Indício só de notícia oficial da Prefeitura (15/03/2021) sobre placa da MCTrans; sem ato com número/artigo, sem perímetro do 'hipercentro' nem horário. Não aplicar até obter o ato ou o projeto de sinalização.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 4}]},
+      "origem_destino_dentro": "avisa",
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Notícia da Prefeitura de Montes Claros (ASCOM/MCTrans), 15/03/2021", "artigo": "notícia: placa na Av. Armênio Veloso orienta veículos com mais de 4 t a seguir pela Av. Oswaldo Cruz; veículos de grande porte proibidos no hipercentro", "url": "https://portal.montesclaros.mg.gov.br/noticia/mctrans-instala-sinalizacao-restringindo-circulacao-de-veiculos-pesados-na-avenida-armenio-veloso-praca-de-esportes"}
+      ],
+      "nota": "A notícia diz 'veículos que pesem mais de 4 toneladas' (lido como PBT) e não informa horário (registrado 24 h). PlanMob 2026 (Dec. 5.316/2026, diretrizes de transporte de carga) ainda prevê definir categorias e horários.",
+      "fonte_geometria": "Desconhecida: hipercentro de Montes Claros (perímetro não publicado); única referência é a Av. Armênio Veloso na Praça de Esportes, com desvio pela Av. Oswaldo Cruz",
+      "vigencia_inicio": null,
+      "geometria": [{"arquivo": "municipios/geo/3143302_hipercentro.geojson", "construir": "manual", "como_gerar": "Sem perímetro oficial: obter da MCTrans"}]
+    },
+    {
+      "id": "montes_claros_mc30_4t_revogado",
+      "tipo": "via",
+      "regime": "MC-30 (carga > 4 t, revogado)",
+      "nome": "Montes Claros: Rodovia MC-30 (Aparecida do Mundo Novo–São Pedro da Garça) e vicinais, carga acima de 4 t — REVOGADO",
+      "status": "revogada",
+      "status_motivo": "Decreto 4.497/2023 revogado pelo Decreto 4.522, de 13/03/2023 (restabelecidas as condições da rodovia). Registro histórico.",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 4}]},
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Decreto municipal 4.497, de 17/01/2023", "artigo": "art. 1º (restrita a circulação de veículos com carga superior a 4 t em toda a extensão da Rodovia MC-30 e estradas vicinais de acesso); art. 2º (vigência na publicação)", "url": "https://portal.montesclaros.mg.gov.br/decreto/decreto-n-4497-17-de-janeiro-de-2023"},
+        {"ato": "Decreto municipal 4.522, de 13/03/2023", "artigo": "art. 1º (revoga o Dec. 4.497/2023)", "url": "https://portal.montesclaros.mg.gov.br/decreto/decreto-n-4522-13-de-marco-de-2023"}
+      ],
+      "nota": "Datas de publicação no DOEM não conferidas (vigência_inicio = data do decreto; vigência_fim = data do decreto revogador).",
+      "vigencia_inicio": "2023-01-17",
+      "vigencia_fim": "2023-03-13",
+      "source_id": "montes-claros-mc30-4t-revogado",
+      "geometria": [{"arquivo": "municipios/geo/3143302_mc30.geojson", "construir": "manual", "como_gerar": "Rodovia municipal MC-30 entre Aparecida do Mundo Novo e São Pedro da Garça (registro histórico)"}]
+    }
+  ]
+}

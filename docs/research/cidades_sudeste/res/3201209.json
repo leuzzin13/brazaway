@@ -1,0 +1,133 @@
+{
+  "ibge": "3201209",
+  "nome": "Cachoeiro de Itapemirim",
+  "uf": "ES",
+  "status": "regra_com_ato",
+  "nivel_busca": "profundo",
+  "data": "2026-10-10",
+  "fontes_consultadas": [
+    {"url": "https://cachoeiro.legislacaocompilada.com.br/consulta-tema.aspx", "resultado": "Legislação compilada oficial (Prefeitura). Temas 'Mobilidade urbana' (9 normas) e 'Transporte e trânsito' (43 normas, varridos por ano 2015–2026): a única norma de circulação de carga é o Decreto 34.592/2024 (situação: Em Vigor). A busca por palavra (POST) cai no desafio Cloudflare; as listas por tema/ano (GET) funcionam."},
+    {"url": "https://cachoeiro.legislacaocompilada.com.br/norma.aspx?id=80324&temas=64", "resultado": "Decreto 34.592, de 04/10/2024 — texto compilado lido (https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/html/D345922024.html), sem alteração registrada; Anexo Único (mapa das 10 vias e modelos de placa) em https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/D345922024%20-%20Anexo%20minuta.pdf"},
+    {"url": "https://diario.cachoeiro.es.gov.br/uploads/dio/publicacoes/2024/diariooficialpmci7153-1728250505.pdf", "resultado": "DOM nº 7153, 07/10/2024: publicação oficial do Decreto 34.592/2024 conferida (horários do art. 1º batem com o texto compilado)."},
+    {"url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3201209)", "resultado": "Só 1 way com hgv=no (ponte rural interditada pela Defesa Civil, nota de 2019). As 10 vias do decreto não têm etiqueta de caminhão. Nomes das vias conferidos no OSM."},
+    {"url": "https://penaestrada.com.br/restricoes/", "resultado": "Sem página de Cachoeiro."}
+  ],
+  "observacoes": "Decreto 34.592, de 04/10/2024 (DOM 7153, 07/10/2024), 'ordenamento do tráfego de veículos de carga na área urbana': vigência 180 dias após a publicação (art. 15) → 05/04/2025; revoga as disposições em contrário. Restrição nas 10 vias do mapa do Anexo Único (Av. Jones dos Santos Neves, Av. José Félix Cheim, Av. Aristides Campos, Av. (Francisco) Lacerda de Aguiar, Av. Beira Rio, Av. Mauro Miranda Madureira, R. Jerônimo Ribeiro, R. Coronel Borges, R. Moreira, R. José Rosa Machado), em três faixas sobrepostas (art. 1º, I): (a) articulados ou PBT > 16 t: dias úteis 6h–8h30, 11h–13h30, 16h30–19h, sábado 8h–14h; (b) articulados ou PBT > 25 t: dias úteis 6h30–19h, sábado 8h–14h; (c) PBT > 23 t ou com semirreboque: dias úteis 6h30–20h, sábado 6h–14h; todas exceto domingos e feriados. Divergência interna: a placa-modelo do Anexo traz 16h–19h na faixa (a), o texto do art. 1º, I, a, diz 16h30–19h (o DOM confirma 16h30): vale o texto. Art. 2º: carga e descarga nas vagas do Anexo — utilitários de 2 eixos até 5.000 kg a qualquer hora (rotativo pago); PBT > 25 t só sábado após 14h, domingos, feriados e dias úteis das 20h às 6h. Art. 11, §5º: proibido pernoitar na Área Central veículo com mais de 2 eixos ou capacidade acima de 1.200 kg. Exceções no art. 3º e Autorização Especial de Trânsito para Caminhões (AET) na SEMSEG (arts. 5º a 11). Não define VUC. Várias das vias são trechos urbanos da ES-164 (municipalização autorizada pela Lei 7.789/2019, alterada pela Lei 7.850/2020) — no OSM levam ref=ES-164/BR-482.",
+  "osm_divergencias": [
+    "Nenhuma das 10 vias do Dec. 34.592/2024 tem etiqueta de caminhão no OSM (ausência, não contradição).",
+    "way 152298501 (ponte, tertiary, lat -20.6989 lon -41.1728) com hgv=no, lhv=no e condition=not_working: interdição da Defesa Civil noticiada em 2019 (tribunaonline), sem ato municipal de restrição; informação possivelmente desatualizada (a nota diz que a ponte seria demolida e reconstruída)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "cachoeiro_vias_16t_articulados_picos",
+      "tipo": "via",
+      "regime": "Articulados ou PBT > 16 t (picos)",
+      "nome": "Cachoeiro de Itapemirim: vias do Anexo Único, articulados ou PBT acima de 16 t nos picos",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "08:30"},
+        {"days": [1, 2, 3, 4, 5], "from": "11:00", "to": "13:30"},
+        {"days": [1, 2, 3, 4, 5], "from": "16:30", "to": "19:00"},
+        {"days": [6], "from": "08:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+      "autorizacao": "Autorização Especial de Trânsito para Caminhões, cadastro presencial na Secretaria Municipal de Segurança e Trânsito – SEMSEG (Dec. 34.592/2024, arts. 5º a 11)",
+      "excecoes": [
+        "Art. 3º, I: utilidade pública (energia, água e esgoto, gás canalizado e medicinal, telecomunicações, transporte de valores, coleta de lixo)",
+        "Art. 3º, II: manutenção, conservação e sinalização viária a serviço do órgão de trânsito",
+        "Art. 3º, III: socorro mecânico de emergência",
+        "Art. 3º, IV: veículos do art. 29, VII, do CTB",
+        "Art. 3º, V: veículos de carga que atendem instalações industriais localizadas na Área Urbana",
+        "Art. 11: com AET — entrada/saída de vaga própria, obras/concretagem com itinerário, mudança, remoção de terra e entulho"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 34.592/2024 (DOM Cachoeiro de Itapemirim nº 7153, 07/10/2024)", "artigo": "art. 1º, I, a (articulados ou PBT > 16 t, mesmo vazios, dias úteis 6h–8h30, 11h–13h30 e 16h30–19h, sábados 8h–14h, exceto domingos e feriados); Anexo Único (vias); art. 15 (vigência 180 dias após a publicação)", "url": "https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/html/D345922024.html", "nota": "Publicação: https://diario.cachoeiro.es.gov.br/uploads/dio/publicacoes/2024/diariooficialpmci7153-1728250505.pdf"}
+      ],
+      "nota": "A placa-modelo do Anexo Único traz 16h–19h; o texto do decreto (e o DOM) diz 16h30–19h: adotado o texto. 'Articulados' = combinações (semirreboque, reboque, CVC).",
+      "fonte_geometria": "OSM por nome; extensão de cada via conforme o mapa do Anexo Único (trecho urbano do distrito Sede; conferir pontas no mapa)",
+      "vigencia_inicio": "2025-04-05",
+      "trechos": [
+        {"inciso": "I", "via": ["Avenida Jones dos Santos Neves"], "descricao": "Av. Jones dos Santos Neves (trecho do mapa do Anexo Único)", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida José Felix Cheim", "Avenida José Félix Cheim"], "descricao": "Av. José Félix Cheim", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida Aristides Campos"], "descricao": "Av. Aristides Campos", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida Francisco Lacerda de Aguiar", "Avenida Lacerda de Aguiar"], "descricao": "Av. (Francisco) Lacerda de Aguiar", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida Beira Rio"], "descricao": "Av. Beira Rio", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida Mauro Miranda Madureira"], "descricao": "Av. Mauro Miranda Madureira", "aproximado": true},
+        {"inciso": "I", "via": ["Rua Jerônimo Ribeiro", "Avenida Jerônimo Ribeiro"], "descricao": "R. Jerônimo Ribeiro", "aproximado": true},
+        {"inciso": "I", "via": ["Rua Coronel Borges"], "descricao": "R. Coronel Borges", "aproximado": true},
+        {"inciso": "I", "via": ["Rua Moreira"], "descricao": "R. Moreira", "aproximado": true},
+        {"inciso": "I", "via": ["Avenida José Rosa Machado"], "descricao": "R. (Av. no OSM) José Rosa Machado", "aproximado": true}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3201209_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "cachoeiro_vias_25t_articulados_diurno",
+      "tipo": "via",
+      "regime": "Articulados ou PBT > 25 t (diurno)",
+      "nome": "Cachoeiro de Itapemirim: vias do Anexo Único, articulados ou PBT acima de 25 t das 6h30 às 19h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:30", "to": "19:00"},
+        {"days": [6], "from": "08:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 25}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+      "autorizacao": "Autorização Especial de Trânsito para Caminhões (SEMSEG) (Dec. 34.592/2024, arts. 5º a 11)",
+      "excecoes": ["Art. 3º, I a V (utilidade pública, manutenção viária, socorro, CTB art. 29, VII, instalações industriais da Área Urbana)", "Art. 11: casos com AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 34.592/2024 (DOM Cachoeiro de Itapemirim nº 7153, 07/10/2024)", "artigo": "art. 1º, I, b (articulados ou PBT > 25 t, mesmo vazios, dias úteis 6h30–19h, sábados 8h–14h, exceto domingos e feriados)", "url": "https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/html/D345922024.html"}
+      ],
+      "nota": "Sobrepõe-se à faixa (a): para articulados vale a união (dias úteis 6h–19h na prática).",
+      "fonte_geometria": "Mesmas vias de cachoeiro_vias_16t_articulados_picos",
+      "vigencia_inicio": "2025-04-05",
+      "geometria": [{"arquivo": "municipios/geo/3201209_vias.geojson", "construir": "manual", "como_gerar": "Reusar as linhas das 10 vias de cachoeiro_vias_16t_articulados_picos"}]
+    },
+    {
+      "id": "cachoeiro_vias_23t_semirreboque_diurno",
+      "tipo": "via",
+      "regime": "PBT > 23 t ou semirreboque (diurno)",
+      "nome": "Cachoeiro de Itapemirim: vias do Anexo Único, PBT acima de 23 t ou com semirreboque das 6h30 às 20h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:30", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 23}, {"campo": "tipo", "em": ["semitrailer"]}]},
+      "autorizacao": "Autorização Especial de Trânsito para Caminhões (SEMSEG) (Dec. 34.592/2024, arts. 5º a 11)",
+      "excecoes": ["Art. 3º, I a V", "Art. 11: casos com AET"],
+      "base_legal": [
+        {"ato": "Decreto municipal 34.592/2024 (DOM Cachoeiro de Itapemirim nº 7153, 07/10/2024)", "artigo": "art. 1º, I, c (PBT > 23 t ou com semirreboque, dias úteis 6h30–20h, sábados 6h–14h, exceto domingos e feriados)", "url": "https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/html/D345922024.html"}
+      ],
+      "fonte_geometria": "Mesmas vias de cachoeiro_vias_16t_articulados_picos",
+      "vigencia_inicio": "2025-04-05",
+      "geometria": [{"arquivo": "municipios/geo/3201209_vias.geojson", "construir": "manual", "como_gerar": "Reusar as linhas das 10 vias de cachoeiro_vias_16t_articulados_picos"}]
+    },
+    {
+      "id": "cachoeiro_carga_descarga_25t",
+      "tipo": "via",
+      "regime": "Carga e descarga PBT > 25 t",
+      "nome": "Cachoeiro de Itapemirim: carga e descarga nas vagas do Anexo Único por veículos com PBT acima de 25 t só fora do horário comercial",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga nas vagas demarcadas (art. 2º, I, b), não de circulação; registrada para aviso.",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "20:00"},
+        {"days": [6], "from": "00:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 25}]},
+      "excecoes": ["Art. 2º, I, a: utilitários (vans, furgões, comerciais leves de 2 eixos até 5.000 kg) operam a qualquer hora nas vagas, com rotativo pago"],
+      "base_legal": [
+        {"ato": "Decreto municipal 34.592/2024 (DOM Cachoeiro de Itapemirim nº 7153, 07/10/2024)", "artigo": "art. 2º, I, a e b (carga e descarga: PBT > 25 t só sábados após 14h, domingos, feriados e dias úteis das 20h às 6h); art. 11, §5º (proibido o pernoite na Área Central para mais de 2 eixos ou capacidade acima de 1.200 kg)", "url": "https://cachoeiro.legislacaocompilada.com.br/Arquivo/Documents/legislacao/html/D345922024.html"}
+      ],
+      "nota": "Janelas = períodos em que a operação NÃO é permitida.",
+      "vigencia_inicio": "2025-04-05",
+      "geometria": [{"arquivo": "municipios/geo/3201209_vias.geojson", "construir": "manual", "como_gerar": "Vagas de carga e descarga dos projetos do Anexo Único (não georreferenciadas)"}]
+    }
+  ]
+}

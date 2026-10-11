@@ -1,0 +1,99 @@
+{
+ "ibge": "3507001",
+ "nome": "Boituva",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "https://boituva.sp.gov.br/legislacao e /legislacao/leis-municipais",
+   "resultado": "Página da Prefeitura: só alguns códigos em PDF (Código de Obras LC 1.350/2000, Código Tributário, Estatuto, LUOS — alteração LC 2.293/2013) e Lei 2.475; o acervo de legislação é a Legislação Digital (bit.ly/2Xr8ic6 → legislacaodigital.com.br CidadeId=134). Código de Obras e LUOS lidos: nada sobre circulação de caminhões."
+  },
+  {
+   "url": "https://legislacaodigital.com.br/?Pesquisa=Avancada&CidadeId=134",
+   "resultado": "HTTP 403 (Cloudflare) por curl e por WebFetch."
+  },
+  {
+   "url": "https://www.camaraboituva.sp.gov.br/",
+   "resultado": "HTTP 403 (Cloudflare)."
+  },
+  {
+   "url": "https://boituva.sp.gov.br/diario-oficial",
+   "resultado": "Edições em PDF (ecrie.com.br; edição 2237 em 09/10/2026) com filtro só por número/data; a busca do portal exige reCAPTCHA — sem busca de texto. Não varrido edição por edição."
+  },
+  {
+   "url": "https://boituva.sp.gov.br/imprensa/noticias (1.499 notícias, títulos varridos)",
+   "resultado": "Só interdições pontuais (obras, CPFL, recapeamento), ponte de madeira da Estrada Alfredo Gilio (Bairro Santa Cruz) totalmente interditada a veículos e pedestres por tempo indeterminado, Ponte da Lourdes (Bairro Retiro) liberada, e audiência pública do Plano Viário Municipal (proposta em discussão). Nenhuma restrição de caminhões."
+  },
+  {
+   "url": "leads/diarios_consolidados.json (DOESP)",
+   "resultado": "0 acertos (Boituva não está no DOSP/DiOE)."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/boituva/",
+   "resultado": "Sem página."
+  },
+  {
+   "url": "Overpass + API do OSM (área IBGE 3507001)",
+   "resultado": "maxweight=10 t na Rua José Roberto Vercellino (way 1508271089, residencial) e maxweight=5.0 numa área privada (Cervejaria Petrópolis, way 563180857). Sem hgv/hgv:conditional."
+  }
+ ],
+ "observacoes": "Nenhum ato de restrição de caminhões encontrado, mas a busca ficou incompleta: o acervo de leis/decretos (Legislação Digital) e o site da Câmara estão atrás de Cloudflare, e o Diário Oficial (ecrie) não tem busca de texto sem reCAPTCHA. Notícias da Prefeitura não citam restrição de caminhões; há um Plano Viário Municipal em discussão (audiência pública) que pode trazer regras. Pista: maxweight 10 t no OSM na Rua José Roberto Vercellino (sem ato). Pontual: ponte de madeira da Estrada Alfredo Gilio (zona rural) interditada a todos os veículos por tempo indeterminado (não é regra de caminhão).",
+ "osm_divergencias": [
+  "Rua José Roberto Vercellino (way 1508271089): maxweight=10 t sem ato municipal encontrado (tag de 03/05/2026; o source:name cita só a lei de denominação 3.026/2023)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "boituva_rua_jose_roberto_vercellino_10t_osm",
+   "tipo": "via",
+   "regime": "PBT > 10 t (OSM)",
+   "nome": "Boituva: Rua José Roberto Vercellino — maxweight 10 t no OSM (sem ato encontrado)",
+   "status": "desativada",
+   "status_motivo": "Pista só do OSM (way 1508271089, maxweight=10 t, criado em 03/05/2026); nenhum ato municipal encontrado. A tag source:name cita a Lei Ordinária 3.026/2023, que é de denominação da rua.",
+   "confianca": "unverifiable",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "OpenStreetMap, way 1508271089 (Rua José Roberto Vercellino, antiga Rua 02)",
+     "artigo": "tag maxweight=10 t (não é ato oficial)",
+     "url": "https://www.openstreetmap.org/way/1508271089"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "OSM",
+     "via": [
+      "Rua José Roberto Vercellino"
+     ],
+     "descricao": "Rua José Roberto Vercellino (antiga Rua 02), CEP 18556-268, trecho do way 1508271089"
+    }
+   ]
+  }
+ ]
+}

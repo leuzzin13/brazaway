@@ -1,0 +1,101 @@
+{
+  "ibge": "3506003",
+  "nome": "Bauru",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "profundo",
+  "data": "2026-10-10",
+  "fontes_consultadas": [
+    {"url": "https://www.emdurb.bauru.sp.gov.br/NET/emdurb/institucional/decretosNET.php?id=&filtro=", "resultado": "Lista de decretos da EMDURB (órgão de trânsito): traz o Decreto 11.096/2009 (carga e descarga) sem anotação de revogação (a lista anota os revogados, ex.: 11.453/2011). Listas de leis, atos normativos e resoluções da EMDURB: nada sobre circulação de caminhões (só o Ato Normativo 010/2024, limite de carga do caminhão coletor de lixo, interno)."},
+    {"url": "https://www.emdurb.bauru.sp.gov.br/NET/emdurb/institucional/decretos/Dec%2011096-09.pdf", "resultado": "Decreto 11.096, de 01/12/2009: texto integral lido (extrato do DO de Bauru de 05/12/2009, p. 05)."},
+    {"url": "https://www2.bauru.sp.gov.br/arquivos/sist_diariooficial/2009/12/do_20091205_1747.pdf", "resultado": "Diário Oficial de Bauru nº 1.747, 05/12/2009: confirma a publicação do Decreto 11.096/2009 (págs. 4–5)."},
+    {"url": "https://legislacaodigital.com.br/bauru-sp", "resultado": "403 (desafio Cloudflare), também pelo WebFetch: não foi possível checar alterações/revogação no sistema de legislação oficial."},
+    {"url": "https://www2.bauru.sp.gov.br/juridico/diariooficial.aspx", "resultado": "Busca no texto dos diários exige reCAPTCHA: não usada. Arquivos PDF por mês acessíveis."},
+    {"url": "https://www2.bauru.sp.gov.br/busca.aspx", "resultado": "Busca do portal (notícias e arquivos) por caminhões, carga e descarga, veículos pesados, 11.096, Zona Central, VUC: nada sobre regra de circulação nem alteração do decreto."},
+    {"url": "https://sapl.bauru.sp.leg.br/", "resultado": "Inacessível (sem resposta), também pelo WebFetch."},
+    {"url": "https://penaestrada.com.br/restricoes/", "resultado": "Sem página de Bauru (busca na API do site vazia)."},
+    {"url": "WebSearch: Bauru decreto restrição circulação caminhões centro", "resultado": "Nada específico de Bauru."},
+    {"url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3506003)", "resultado": "Nenhuma via com hgv/maxweight; só maxweight=4.95 numa área de POI (way 563180777 'Monte Sinai IV'). overpass-api.de não respondeu para Bauru."}
+  ],
+  "observacoes": "Regra: Decreto 11.096, de 01/12/2009 (DO de Bauru 05/12/2009; vigência 90 dias após a publicação, art. 8º), regulamento de carga e descarga com três zonas. A única proibição de CIRCULAÇÃO é o art. 3º, I, c: acesso à Zona A (Central) proibido para veículos com comprimento acima de 13,20 m ou PBT acima de 15 t (e veículos de tração animal) das 7h às 19h, sem exceção de dias (vale todos os dias, inclusive feriados). Leitura: o horário fecha a frase e foi aplicado aos dois grupos de veículos; uma leitura alternativa (horário só para a tração animal e proibição 24 h para os pesados) é possível — confiança média. Zona A = área interna ao perímetro R. Antônio Alves, R. Primeiro de Agosto, R. Azarias Leite, R. Cussy Júnior, INCLUÍDOS os dois lados das vias do perímetro (art. 2º, §1º). Zona B (Intermediária) = perímetro R. Saint Martin, Av. Nações Unidas, R. Presidente Kennedy, R. Nóbile de Piero (Nóbile di Piero no OSM), R. Primeiro de Agosto, Pç. Machado de Mello, R. Monsenhor Claro, R. Joaquim da Silva Martha (Vereador Joaquim da Silva Martha no OSM), sem a Zona A: só regras de carga e descarga. VUC/VLC: largura até 2,20 m e comprimento até 6,30 m (art. 3º, I, b), só para carga e descarga em área de estacionamento rotativo — não isenta da proibição de acesso (que nem atinge esse porte). Vigência: a EMDURB lista o decreto sem anotação de revogação; o sistema oficial de legislação (legislacaodigital) e a busca do DO (reCAPTCHA) não puderam ser usados para confirmar que não houve alteração posterior.",
+  "osm_divergencias": [
+    "Zona A (Central) de Bauru sem nenhuma etiqueta de caminhão no OSM (ausência, não contradição).",
+    "way 563180777 ('Monte Sinai IV', área de POI) com maxweight=4.95: erro de etiqueta, sem ato."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "bauru_zona_a_central",
+      "tipo": "zona",
+      "regime": "Zona A Central (> 13,2 m ou PBT > 15 t)",
+      "nome": "Bauru: Zona A (Central), acesso proibido a veículos com comprimento acima de 13,20 m ou PBT acima de 15 t das 7h às 19h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 13.2}, {"campo": "pbt_t", "acima": 15}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Casos não regulamentados e excepcionais: autorização especial da Diretoria de Sistema Viário e Transporte da EMDURB, por solicitação escrita (Dec. 11.096/2009, art. 7º)",
+      "excecoes": [
+        "Art. 4º: veículos de emergência das entidades públicas federais, estaduais e municipais, autarquias e concessionárias de serviços públicos",
+        "Art. 7º: autorização especial da EMDURB"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 11.096/2009 (DO de Bauru nº 1.747, 05/12/2009)", "artigo": "art. 3º, I, c (proibido o acesso à Zona A – Zona Central de veículos com comprimento superior a 13,20 m ou PBT superior a 15 t e de tração animal no horário entre 7h e 19h); art. 2º, §1º (perímetro, incluídos os lados pares e ímpares); art. 8º (vigência 90 dias após a publicação)", "url": "https://www.emdurb.bauru.sp.gov.br/NET/emdurb/institucional/decretos/Dec%2011096-09.pdf", "nota": "Publicação conferida no DO: https://www2.bauru.sp.gov.br/arquivos/sist_diariooficial/2009/12/do_20091205_1747.pdf"}
+      ],
+      "nota": "Confiança média: (1) o horário 7h–19h pode ser lido como só da tração animal (os pesados ficariam proibidos 24 h); adotada a leitura de que o horário vale para a frase inteira; (2) não foi possível confirmar no sistema oficial de legislação que o decreto não foi alterado (a EMDURB o lista sem anotação de revogação). Sem exceção de domingo ou feriado no ato.",
+      "fonte_geometria": "A desenhar: área interna ao perímetro R. Antônio Alves, R. Primeiro de Agosto, R. Azarias Leite e R. Cussy Júnior (centro de Bauru). As vias do perímetro estão INCLUÍDAS na zona (os dois lados): ver bauru_zona_a_perimetro.",
+      "vigencia_inicio": "2010-03-05",
+      "geometria": [{"arquivo": "municipios/geo/3506003_zona_a.geojson", "construir": "manual", "como_gerar": "Quadrilátero R. Antônio Alves / R. Primeiro de Agosto / R. Azarias Leite / R. Cussy Júnior (Dec. 11.096/2009, art. 2º, §1º)"}]
+    },
+    {
+      "id": "bauru_zona_a_perimetro",
+      "tipo": "via",
+      "regime": "Zona A Central (> 13,2 m ou PBT > 15 t)",
+      "nome": "Bauru: vias do perímetro da Zona A (R. Antônio Alves, R. Primeiro de Agosto, R. Azarias Leite, R. Cussy Júnior), comprimento acima de 13,20 m ou PBT acima de 15 t das 7h às 19h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "19:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 13.2}, {"campo": "pbt_t", "acima": 15}]},
+      "zona_vinculada": "bauru_zona_a_central",
+      "autorizacao": "Autorização especial da EMDURB (Dec. 11.096/2009, art. 7º)",
+      "excecoes": ["Art. 4º: veículos de emergência e de concessionárias de serviços públicos", "Art. 7º: autorização especial da EMDURB"],
+      "base_legal": [
+        {"ato": "Decreto municipal 11.096/2009 (DO de Bauru nº 1.747, 05/12/2009)", "artigo": "art. 2º, §1º ('em todos incluídos os lados pares e ímpares') e art. 3º, I, c", "url": "https://www.emdurb.bauru.sp.gov.br/NET/emdurb/institucional/decretos/Dec%2011096-09.pdf"}
+      ],
+      "nota": "O ato inclui as vias do perímetro na Zona A; como a zona é recuada 20 m na rota, as quatro vias-limite entram como regra de via. Mesmas ressalvas de confiança da zona.",
+      "fonte_geometria": "OSM por nome e trecho",
+      "vigencia_inicio": "2010-03-05",
+      "trechos": [
+        {"inciso": "art. 2º, §1º", "via": ["Rua Antônio Alves"], "de": ["Rua Cussy Júnior"], "ate": ["Rua Primeiro de Agosto"], "descricao": "R. Antônio Alves, da R. Cussy Júnior à R. Primeiro de Agosto"},
+        {"inciso": "art. 2º, §1º", "via": ["Rua Primeiro de Agosto"], "de": ["Rua Antônio Alves"], "ate": ["Rua Azarias Leite"], "descricao": "R. Primeiro de Agosto, da R. Antônio Alves à R. Azarias Leite"},
+        {"inciso": "art. 2º, §1º", "via": ["Rua Azarias Leite"], "de": ["Rua Primeiro de Agosto"], "ate": ["Rua Cussy Júnior"], "descricao": "R. Azarias Leite, da R. Primeiro de Agosto à R. Cussy Júnior"},
+        {"inciso": "art. 2º, §1º", "via": ["Rua Cussy Júnior"], "de": ["Rua Azarias Leite"], "ate": ["Rua Antônio Alves"], "descricao": "R. Cussy Júnior, da R. Azarias Leite à R. Antônio Alves", "nota": "No OSM só 1 way com este nome foi achado (lat -22.3256, lon -49.0745): conferir variantes do nome."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3506003_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "bauru_carga_descarga_zonas_a_b",
+      "tipo": "zona",
+      "regime": "Carga e descarga Zonas A e B",
+      "nome": "Bauru: carga e descarga nas Zonas A (Central) e B (Intermediária), veículos de 1,35 t a 6 t de capacidade só das 20h às 12h (dias úteis e sábados)",
+      "status": "desativada",
+      "status_motivo": "Regra de OPERAÇÃO de carga e descarga no destino (art. 3º, I, a, e II, a), não de circulação: como zona, barraria a passagem. O formato não tem regra só de destino; fica registrada para aviso.",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6], "from": "12:00", "to": "20:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "todas": [{"campo": "payload_t", "acima": 1.35}, {"campo": "payload_t", "ate": 6}]},
+      "autorizacao": "Autorização especial da EMDURB (art. 7º)",
+      "excecoes": [
+        "Art. 3º, I, b, e II, b/c: utilitários até 1,35 t e VUC/VLC (largura até 2,20 m, comprimento até 6,30 m) podem operar nas vagas de estacionamento rotativo com cartão e, na Zona B fora do rotativo, também das 12h às 20h nas áreas reservadas",
+        "Art. 4º: veículos de emergência e de concessionárias de serviços públicos"
+      ],
+      "base_legal": [
+        {"ato": "Decreto municipal 11.096/2009 (DO de Bauru nº 1.747, 05/12/2009)", "artigo": "art. 3º, I, a, e II, a (operações permitidas das 20h às 12h do dia seguinte, proibido iniciar após as 11h, dias úteis e sábados; domingos e feriados liberadas); art. 2º, §§1º e 2º (Zonas A e B); art. 5º (caçambas de entulho proibidas nas Zonas A e B das 9h às 20h, dias úteis e sábados)", "url": "https://www.emdurb.bauru.sp.gov.br/NET/emdurb/institucional/decretos/Dec%2011096-09.pdf"}
+      ],
+      "nota": "Janela = período em que a operação NÃO é permitida (12h–20h). O ato não diz o que vale para capacidade acima de 6 t nas Zonas A e B (casos não regulamentados: art. 7º, autorização da EMDURB). Na Zona C, veículos acima de 13,20 m ou 15 t de PBT ficam fora da operação liberada (art. 3º, III, a).",
+      "vigencia_inicio": "2010-03-05",
+      "geometria": [{"arquivo": "municipios/geo/3506003_zonas_a_b.geojson", "construir": "manual", "como_gerar": "Perímetro da Zona B (R. Saint Martin, Av. Nações Unidas, R. Presidente Kennedy, R. Nóbile de Piero, R. Primeiro de Agosto, Pç. Machado de Mello, R. Monsenhor Claro, R. Joaquim da Silva Martha) somado à Zona A"}]
+    }
+  ]
+}

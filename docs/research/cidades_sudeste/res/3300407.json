@@ -1,0 +1,223 @@
+{
+ "ibge": "3300407",
+ "nome": "Barra Mansa",
+ "uf": "RJ",
+ "status": "regra_com_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "vuc": null,
+ "vuc_nota": "Nenhum ato localizado define VUC em Barra Mansa.",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.barramansa.rj.leg.br/norma/pesquisar (API /api/norma/normajuridica/, toolkit legislacao.py)",
+   "resultado": "SAPL da Câmara (só leis/LC/resoluções; sem decretos do Executivo). Ementa: caminh (4), carga e descarga (2), veículos pesados (2), tráfego (1), trânsito (10+3), tonelada (2), pesad, carreta, eixo, descarga, veículos de carga, circulação, Amparo (38), perigos (0), combustíve, 'horário de', caçamba. Restrições achadas: Lei 4.580/2016 (alterada pela Lei 4.836/2019) e Lei 4.704/2018 (lixo de outros municípios). Lei 5.020/2022 e Lei 4.948/2021 só tratam de estacionar em vagas de carga e descarga."
+  },
+  {
+   "url": "https://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2016/1984/lei-4580-16.pdf",
+   "resultado": "Lei nº 4.580, de 23/08/2016 (promulgada pelo Presidente da Câmara; publicada no jornal 'Notícia Oficial' ed. 925 de 06/09/2016), lida (imagem): art. 1º proíbe o tráfego de veículos pesados com carga igual ou superior a 14,5 toneladas no Distrito de Nossa Senhora do Amparo; art. 2º COORTRAN sinaliza e multa; ementa: 'veículos pesados acima de 14,5 toneladas'."
+  },
+  {
+   "url": "https://sapl.barramansa.rj.leg.br/ta/655/text",
+   "resultado": "Texto compilado da Lei 4.580/2016 no SAPL: 'Alterado(a) pelo(a) Lei Ordinária nº 4.836, de 10 de dezembro de 2019'; vigência do texto atual a partir de 10/12/2019; sem revogação. API: observação 'Modificada pela Lei nº 4836/2019'; nenhuma outra norma cita a 4.580."
+  },
+  {
+   "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2019/3088/lei_4836-19_2.pdf",
+   "resultado": "Lei nº 4.836, de 10/12/2019 (lida): acrescenta parágrafo único ao art. 1º da Lei 4.580 — a proibição não se aplica a veículos pesados que vão abastecer ou fazem entregas de mercadorias/produtos para o comércio local ou para particular."
+  },
+  {
+   "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2018/2020/lei-4704-18.pdf",
+   "resultado": "Lei nº 4.704, de 14/05/2018 (lida): proíbe o trânsito de caminhões de lixo provenientes de outros municípios pelos bairros e áreas do centro; só acesso ao Centro de Tratamento de Resíduos (Rod. Eng. Alexandre Drable, Cotiara) pelo acesso 273 da Rodovia Presidente Dutra; penalidade CTB art. 187, I."
+  },
+  {
+   "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2022/4050/lei-5020-2022.pdf",
+   "resultado": "Lei nº 5.020/2022 (lida): veículos de cargas fracionadas de pequeno e médio porte podem estacionar 20 min nas vagas de carga e descarga, com cadastro na SMOP — estacionamento, não circulação."
+  },
+  {
+   "url": "https://portaltransparencia.barramansa.rj.gov.br/boletim-oficial/",
+   "resultado": "Boletim Oficial (onde saem os decretos do Executivo): 403 com desafio Cloudflare em curl e WebFetch; não contornado. Arquivos em wp-content/uploads abrem direto, mas sem índice: Wayback (1.054 URLs de uploads) sem nenhum arquivo sobre caminhão/carga/trânsito."
+  },
+  {
+   "url": "https://portal.barramansa.rj.gov.br/inicio",
+   "resultado": "Portal da Prefeitura em Next.js (conteúdo via API); sem página de legislação acessível."
+  },
+  {
+   "url": "WebSearch: Barra Mansa decreto restrição circulação caminhões veículos pesados centro horário",
+   "resultado": "Nada sobre restrição de caminhões em Barra Mansa (só decretos de COVID no portal da transparência)."
+  },
+  {
+   "url": "leads/diarios_consolidados.json ; leads/querido_diario.json",
+   "resultado": "Barra Mansa fora do AEMERJ/SIGPub; Querido Diário sem diários indexados (nível 1, coleta pendente)."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/barra-mansa/",
+   "resultado": "Sem página (fora do índice do site)."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO=3300407)",
+   "resultado": "Sem hgv/hgv:conditional. maxweight='20 t' no Viaduto Elias Rodrigues Costa (way 598454011, bairro Barbará) e maxweight=3.0 num heliponto (way 563180575)."
+  }
+ ],
+ "observacoes": "Regra vigente com ato: Lei 4.580/2016, art. 1º, com parágrafo único dado pela Lei 4.836/2019 — no Distrito de Nossa Senhora do Amparo é proibido o tráfego de veículos pesados com carga igual ou superior a 14,5 t, salvo os que vão abastecer ou entregar mercadorias/produtos ao comércio local ou a particular. Sem horário (24 h). Modelada como zona do distrito com alvo PBT acima de 14,5 t (a ementa fala em 'veículos pesados acima de 14,5 toneladas'; o artigo, em 'carga igual ou superior a 14,5 t' — ambíguo entre PBT e carga transportada) e origem/destino dentro = avisa (cobre a exceção de entrega local, restrita ao distrito). Confiança média: ambiguidade do limite, lei promulgada pela Câmara e geometria = limite do distrito (malha de distritos do IBGE), que pode conter estrada estadual sem exceção no texto. Lei 4.704/2018 (lixo de outros municípios) registrada desativada (critério de carga). Os decretos do Executivo (Boletim Oficial) não puderam ser pesquisados (Cloudflare): pode haver regra de centro/carga e descarga por decreto não vista.",
+ "osm_divergencias": [
+  "Viaduto Elias Rodrigues Costa (way 598454011, Barbará) com maxweight='20 t' sem ato municipal achado (pista; manter fora da camada).",
+  "Distrito de Nossa Senhora do Amparo sem nenhuma etiqueta de caminhão no OSM apesar da Lei 4.580/2016 (ausência, não contradição).",
+  "maxweight=3.0 em heliponto (way 563180575, 'Pedreira Pombal Fazenda Recanto'): não é via."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "barramansa_distrito_amparo_14_5t",
+   "tipo": "zona",
+   "regime": "Distrito de Amparo (≥ 14,5 t)",
+   "nome": "Barra Mansa: Distrito de Nossa Senhora do Amparo proibido a veículos pesados com 14,5 t ou mais (salvo entrega/abastecimento local)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-10",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 14.5
+     }
+    ]
+   },
+   "origem_destino_dentro": "avisa",
+   "excecoes": [
+    "Veículos pesados que vão abastecer ou estão fazendo entregas de mercadorias ou produtos de qualquer natureza para o comércio local ou para particular (art. 1º, parágrafo único, incluído pela Lei 4.836/2019)."
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 4.580, de 23 de agosto de 2016",
+     "artigo": "art. 1º",
+     "url": "https://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2016/1984/lei-4580-16.pdf",
+     "nota": "Texto compilado: https://sapl.barramansa.rj.leg.br/ta/655/text. Publicada no 'Notícia Oficial' ed. 925, 06/09/2016; vigência na publicação (art. 3º)."
+    },
+    {
+     "ato": "Lei nº 4.836, de 10 de dezembro de 2019",
+     "artigo": "art. 1º (acrescenta parágrafo único ao art. 1º da Lei 4.580/2016)",
+     "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2019/3088/lei_4836-19_2.pdf"
+    }
+   ],
+   "nota": "Confiança média: (1) 'carga igual ou superior a 14,5 toneladas' (art. 1º) x 'acima de 14,5 toneladas' (ementa) — adotado PBT acima de 14,5 t; se o órgão de trânsito ler como carga transportada, o alvo seria payload_t; (2) a exceção de entrega local é restrita ao distrito e fica coberta por origem/destino dentro = avisa (não usar excecao_destino_local, que liberaria entregas em qualquer ponto do município); (3) a lei não exceta estradas/rodovias que cruzem o distrito — conferir antes de ativar; (4) lei promulgada pela Câmara.",
+   "vigencia_inicio": "2016-09-06",
+   "vigencia_fim": null,
+   "fonte_geometria": "Limite do Distrito de Nossa Senhora do Amparo (malha de distritos do IBGE).",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3300407_distrito_amparo.geojson",
+     "construir": "manual",
+     "como_gerar": "Polígono do Distrito de Nossa Senhora do Amparo, Barra Mansa (malha de distritos do IBGE)"
+    }
+   ]
+  },
+  {
+   "id": "barramansa_lixo_outros_municipios",
+   "tipo": "zona",
+   "regime": "Lixo de outros municípios",
+   "nome": "Barra Mansa: caminhões de lixo de outros municípios proibidos nos bairros e no centro (só acesso ao CTR Cotiara pelo acesso 273 da Dutra)",
+   "status": "desativada",
+   "status_motivo": "O critério é a carga e a origem (caminhão de lixo proveniente de outro município), que o perfil do veículo não informa; a área ('bairros e áreas do centro') não é delimitada. Só registro/aviso.",
+   "confianca": "alta",
+   "verificado_em": "2026-10-10",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Acesso ao Centro de Tratamento de Resíduos (Rod. Eng. Alexandre Drable, Cotiara) pelo acesso 273 da Rodovia Presidente Dutra (art. 1º, parágrafo único)."
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 4.704, de 14 de maio de 2018",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2018/2020/lei-4704-18.pdf"
+    }
+   ],
+   "vigencia_inicio": "2018-05-14",
+   "vigencia_fim": null,
+   "fonte_geometria": "Área urbana de Barra Mansa (bairros e centro), não delimitada no ato."
+  },
+  {
+   "id": "barramansa_viaduto_elias_rodrigues_costa_osm",
+   "tipo": "ponte",
+   "regime": "Viaduto (maxweight OSM)",
+   "nome": "Barra Mansa: Viaduto Elias Rodrigues Costa com maxweight 20 t no OSM (sem ato)",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM (maxweight='20 t' no way 598454011); nenhum ato municipal localizado (SAPL sem norma; Boletim Oficial inacessível).",
+   "confianca": "baixa",
+   "verificado_em": "2026-10-10",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "OpenStreetMap (sem ato municipal)",
+     "artigo": "tag maxweight='20 t' no way 598454011",
+     "url": "https://www.openstreetmap.org/way/598454011"
+    }
+   ],
+   "fonte_geometria": "OSM: way 598454011 (Viaduto Elias Rodrigues Costa, Barbará), ODbL.",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3300407_viaduto_elias_rodrigues_costa.geojson",
+     "construir": "manual",
+     "como_gerar": "Linha do way OSM 598454011"
+    }
+   ]
+  }
+ ]
+}

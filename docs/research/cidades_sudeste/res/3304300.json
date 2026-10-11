@@ -1,0 +1,364 @@
+{
+ "ibge": "3304300",
+ "nome": "Rio Bonito",
+ "uf": "RJ",
+ "status": "regra_sem_ato",
+ "nivel_busca": "profundo",
+ "data": "2026-10-10",
+ "fontes_consultadas": [
+  {
+   "url": "https://riobonito.rj.gov.br/wp-json/wp/v2/search (busca no site da Prefeitura: veículos de carga, portaria proíbe, 15 metros, Rodrigues Coelho, caminhões, carga e descarga, Degetran, peso bruto)",
+   "resultado": "Duas notícias oficiais sobre portarias de restrição: 06/12/2017 (26 ruas do Centro, comprimento > 15 m, PBT > 20 t, altura > 4,50 m) e 25/07/2019 (Rua dos Bancos, caminhões). Nenhuma traz o número da portaria nem o texto."
+  },
+  {
+   "url": "https://riobonito.rj.gov.br/veiculos-de-cargas-sao-proibidos-de-circular-nas-ruas-do-centro/",
+   "resultado": "Lida: portaria da Secretaria de Segurança e Ordem Pública, 'já entrou em vigor', placas colocadas pela Guarda Municipal; exceções para socorro, emergência, transporte de valores e serviços essenciais autorizados pelo DEGETRAN."
+  },
+  {
+   "url": "https://riobonito.rj.gov.br/prefeitura-proibe-a-circulacao-de-caminhoes-na-rua-dos-bancos/",
+   "resultado": "Lida: portaria do DEGETRAN em vigor em 25/07/2019, Rua Presidente Castelo Branco; exceções (socorro mecânico, valores, mudança, concreto, cargas especiais, serviços essenciais autorizados)."
+  },
+  {
+   "url": "https://riobonito.rj.gov.br/wp-json/wp/v2/legislacao (tipo 'Legislações' do site)",
+   "resultado": "Só 3 leis orçamentárias cadastradas; nada de trânsito."
+  },
+  {
+   "url": "https://riobonito.rj.gov.br/wp-json/wp/v2/posts?categories=17 e 62 (atos oficiais 2017–2019)",
+   "resultado": "Atos oficiais publicados no site de 05/2017 a 04/2019 são editais e processos seletivos; nenhuma portaria de trânsito."
+  },
+  {
+   "url": "https://diario-oficial.riobonito.rj.gov.br/ (Diário Oficial Eletrônico, 211 PDFs de dez/2025 a out/2026, texto extraído e varrido)",
+   "resultado": "Nenhum ato sobre circulação de caminhões; só estacionamento rotativo (vagas de carga e descarga com horário a definir) e licitações."
+  },
+  {
+   "url": "https://camarariobonito.rj.gov.br/ (WordPress da Câmara e seu diário oficial, 9 edições de 2026)",
+   "resultado": "Nada sobre caminhões ou carga e descarga."
+  },
+  {
+   "url": "https://riobonito.eloweb.net/portaltransparencia/2/leisregemportal",
+   "resultado": "Aplicação JavaScript; não consultável por curl (leis que regem o portal da transparência, não normas de trânsito)."
+  },
+  {
+   "url": "Querido Diário / AEMERJ / penaestrada",
+   "resultado": "Rio Bonito não coberto pelo Querido Diário nem pela AEMERJ; não consta do penaestrada."
+  },
+  {
+   "url": "Overpass (maps.mail.ru), relação IBGE 3304300",
+   "resultado": "Só maxweight:signed=no na Rua Julia Cortines (way 552014640) e maxheight nos viadutos da BR-101 (Rodovia Governador Mário Covas). Nenhuma das 26 ruas com tag de caminhão."
+  }
+ ],
+ "observacoes": "Rio Bonito tem duas restrições divulgadas pela própria Prefeitura por notícia oficial, sem o texto do ato localizado: (1) portaria de dez/2017 que proíbe, em 26 ruas do Centro, veículos com mais de 15 m de comprimento, mais de 20 t de PBT ou mais de 4,50 m de altura; (2) portaria do DEGETRAN de jul/2019 que proíbe caminhões na Rua Presidente Castelo Branco ('Rua dos Bancos'). Ambas registradas como desativadas até achar as portarias (número, artigos) e confirmar a vigência: o Município não tinha diário oficial on-line antes de dez/2025. Em 2026 a Prefeitura restringiu a área interna do Terminal Rodoviário a ônibus e vans (veículos de carga e descarga proibidos lá dentro; área interna, não via pública).",
+ "osm_divergencias": [
+  "Rua Julia Cortines (way 552014640): OSM tem maxweight:signed=no, mas a notícia oficial de 06/12/2017 inclui a 'Rua Júlio Cortines' entre as 26 ruas com PBT > 20 t proibido e placas instaladas; conferir em campo (sem ato localizado, não alterar).",
+  "As outras 25 ruas da portaria de 2017 e a Rua Presidente Castelo Branco (2019) sem nenhuma tag de caminhão no OSM (falta de tag, sem ato localizado)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "riobonito_centro_dimensoes_2017",
+   "tipo": "via",
+   "regime": "Centro (dimensões/PBT)",
+   "nome": "Rio Bonito: 26 ruas do Centro proibidas a veículo com mais de 15 m de comprimento, mais de 20 t de PBT ou mais de 4,50 m de altura",
+   "status": "desativada",
+   "status_motivo": "Só a notícia oficial da Prefeitura (06/12/2017) descreve a portaria da Secretaria de Segurança e Ordem Pública; o número e o texto da portaria não foram achados (não há diário oficial on-line de 2017; o Diário Oficial Eletrônico só existe desde dez/2025 e não a republica). Vigência atual não confirmada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 15
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.5
+     }
+    ]
+   },
+   "vuc": null,
+   "autorizacao": "Autorização excepcional do Departamento Geral de Trânsito (DEGETRAN) para serviços essenciais de utilidade pública",
+   "excecoes": [
+    "Veículos de socorro e emergência",
+    "Transporte de valores",
+    "Serviços essenciais de utilidade pública, em caráter excepcional, com autorização do DEGETRAN"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria da Secretaria Municipal de Segurança e Ordem Pública de Rio Bonito, divulgada em 06/12/2017 (número não informado)",
+     "artigo": "notícia oficial da Prefeitura (sem artigo): proibidos de circular e permanecer veículos com comprimento acima de 15 m, PBT acima de 20 t e altura acima de 4,50 m nas 26 ruas listadas",
+     "url": "https://riobonito.rj.gov.br/veiculos-de-cargas-sao-proibidos-de-circular-nas-ruas-do-centro/"
+    }
+   ],
+   "nota": "A notícia lista as três condições ligadas por 'e'; lido como 'qualquer uma' (o mais comum nesse tipo de portaria) — conferir no texto da portaria. Sem horário: 24 h. Em 2025 a Prefeitura iniciou a reformulação do trânsito do Centro (inversão de sentidos), sem ato novo sobre caminhões achado.",
+   "fonte_geometria": "OSM (ODbL) pelo nome das ruas (construir: trechos), quando a regra for ativada",
+   "vigencia_inicio": "2017-12-06",
+   "trechos": [
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Rodrigues Coelho"
+     ],
+     "descricao": "Rua Rodrigues Coelho (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Avenida Manoel Duarte"
+     ],
+     "descricao": "Avenida Manoel Duarte (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Avenida João Caetano"
+     ],
+     "descricao": "Avenida João Caetano (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Martinho de Almeida"
+     ],
+     "descricao": "Rua Martinho de Almeida (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Doutor Mattos",
+      "Rua Dr. Mattos",
+      "Rua Doutor Matos"
+     ],
+     "descricao": "Rua Doutor Mattos (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Avenida Sete de Maio",
+      "Avenida 7 de Maio"
+     ],
+     "descricao": "Avenida Sete de Maio (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Getúlio Vargas"
+     ],
+     "descricao": "Rua Getúlio Vargas (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Quinze de Novembro",
+      "Rua XV de Novembro"
+     ],
+     "descricao": "Rua Quinze de Novembro (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Avenida Inguita"
+     ],
+     "descricao": "Avenida Inguita (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua da Conceição"
+     ],
+     "descricao": "Rua da Conceição (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Lauro da Silva Araújo"
+     ],
+     "descricao": "Rua Lauro da Silva Araújo (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Vereador Joaquim de Castro"
+     ],
+     "descricao": "Rua Vereador Joaquim de Castro (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Doutor João Batista"
+     ],
+     "descricao": "Rua Doutor João Batista (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Doutor Francisco de Souza"
+     ],
+     "descricao": "Rua Doutor Francisco de Souza (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Presidente Arthur Bernardes"
+     ],
+     "descricao": "Rua Presidente Arthur Bernardes (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Major Bezerra Cavalcante"
+     ],
+     "descricao": "Rua Major Bezerra Cavalcante (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Gregório Pinto"
+     ],
+     "descricao": "Rua Gregório Pinto (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Nilo Peçanha"
+     ],
+     "descricao": "Rua Nilo Peçanha (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Júlio Cortines",
+      "Rua Julia Cortines",
+      "Rua Julio Cortines"
+     ],
+     "descricao": "Rua Júlio Cortines (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Durval Mesquita"
+     ],
+     "descricao": "Rua Durval Mesquita (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Doutor José Pereira Alves"
+     ],
+     "descricao": "Rua Doutor José Pereira Alves (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Antônio de Abreu"
+     ],
+     "descricao": "Rua Antônio de Abreu (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Avenida Theonas Martins Gomes",
+      "Avenida Theonas Martins"
+     ],
+     "descricao": "Avenida Theonas Martins Gomes (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Francisco Xavier da Mota"
+     ],
+     "descricao": "Rua Francisco Xavier da Mota (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Pinto Coelho Junior"
+     ],
+     "descricao": "Rua Pinto Coelho Junior (toda a extensão)"
+    },
+    {
+     "inciso": "notícia de 06/12/2017",
+     "via": [
+      "Rua Pedro Colares"
+     ],
+     "descricao": "Rua Pedro Colares (toda a extensão)"
+    }
+   ]
+  },
+  {
+   "id": "riobonito_rua_dos_bancos_2019",
+   "tipo": "via",
+   "regime": "Via proibida a caminhão",
+   "nome": "Rio Bonito: Rua Presidente Castelo Branco ('Rua dos Bancos'), caminhões proibidos",
+   "status": "desativada",
+   "status_motivo": "Só a notícia oficial da Prefeitura (25/07/2019) descreve a portaria do DEGETRAN; número e texto não achados. Vigência atual não confirmada (a via teve o sentido invertido em agosto de 2025).",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "autorizacao": "Autorização excepcional do DEGETRAN",
+   "excecoes": [
+    "Socorro mecânico",
+    "Transporte de valores",
+    "Caminhão de mudança, de concreto ou de cargas especiais e serviços essenciais de utilidade pública, em caráter excepcional, com autorização do DEGETRAN"
+   ],
+   "base_legal": [
+    {
+     "ato": "Portaria do Departamento Geral de Trânsito (DEGETRAN) de Rio Bonito, divulgada em 25/07/2019 (número não informado)",
+     "artigo": "notícia oficial da Prefeitura (sem artigo): proibida a entrada e a circulação de caminhões (veículos de carga) na Rua Presidente Castelo Branco, a 'Rua dos Bancos', no Centro",
+     "url": "https://riobonito.rj.gov.br/prefeitura-proibe-a-circulacao-de-caminhoes-na-rua-dos-bancos/"
+    }
+   ],
+   "nota": "A notícia de 26/08/2025 sobre a inversão de sentido chama a via de 'Avenida Castelo Branco, conhecida como Rua dos Bancos'.",
+   "fonte_geometria": "OSM (ODbL) pelo nome (construir: trechos), quando a regra for ativada",
+   "vigencia_inicio": "2019-07-25",
+   "trechos": [
+    {
+     "inciso": "notícia de 25/07/2019",
+     "via": [
+      "Rua Presidente Castelo Branco",
+      "Avenida Presidente Castelo Branco",
+      "Avenida Castelo Branco",
+      "Rua dos Bancos"
+     ],
+     "descricao": "Rua Presidente Castelo Branco ('Rua dos Bancos'), Centro"
+    }
+   ]
+  }
+ ]
+}
