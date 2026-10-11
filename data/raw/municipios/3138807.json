@@ -1,0 +1,88 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3138807",
+  "municipio": "Luz",
+  "uf": "MG",
+  "fonte_id": "luz",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA (Dec. 2.018/2015, DOM-AMM ed. 1605, 20/10/2015)",
+    "licenca": "Ato oficial de Luz: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono da área urbana aproximado a partir do OpenStreetMap: derivado do OSM (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Dec. 2.018/2015: na área urbana, proibida a passagem de caminhão, carreta, romeu e julieta, bitrem, rodotrem, tritrem e treminhão carregado acima de 25 t (art. 1º; lido como PBT pela ementa) e acima de 6 m de altura (art. 2º). A área urbana não tem limite oficial georreferenciado: polígono aproximado (tecido urbano contínuo da sede no OSM, BR-262 fora)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Dec. 2.018/2015 não define VUC: a regra é por peso e altura.",
+  "regras": [
+    {
+      "id": "luz_area_urbana_25t",
+      "tipo": "zona",
+      "regime": "Carregado acima de 25 t na área urbana",
+      "nome": "Luz: área urbana, caminhões e combinações carregados acima de 25 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 25}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, I (carga e descarga em estabelecimentos na sede, com nota fiscal)",
+      "excecoes": [
+        "Art. 1º, I: carga e descarga em estabelecimentos na sede mediante nota fiscal",
+        "Art. 1º, II: pernoite com motorista domiciliado em Luz",
+        "Art. 1º, III: veículos emplacados em Luz"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.018/2015 (Luz, 16/10/2015; DOM-AMM ed. 1605, 20/10/2015)",
+          "artigo": "art. 1º, I a III, e parágrafo único (passagem na área urbana carregado acima de 25 t; exceções; comprovação por nota fiscal ou pesagem); art. 3º (efeitos desde 16/10/2015)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA"
+        }
+      ],
+      "nota": "'Carregado acima de 25 toneladas' é ambíguo (carga x PBT); adotado PBT, apoiado pela ementa ('fixa o peso bruto total máximo permitido'). Isenção por placa do município e pernoite não são testáveis na rota (só aviso). Confiança média: decreto de 2015, sem consolidação no SAPL, e o anel rodoviário (Lei 2.650/2019) pode ter mudado a prática; sinalização local não confirmada. Área urbana aproximada (ver fonte_geometria).",
+      "fonte_geometria": "Aproximação conservadora do tecido urbano contínuo da sede no OSM (ODbL); BR-262 fora; a MG-176 atravessa a cidade e fica dentro.",
+      "vigencia_inicio": "2015-10-16",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138807_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Vias com nome do OSM da sede (data/cache/municipios/osm_named_3138807.json, raio de ~3 km do centro) com buffer de 50 m, união, borda recuada a ~30 m do eixo da última rua, abertura de 60 m (tira braços ao longo de estradas) e corredor de 30 m das rodovias BR excluído; ver docs/layers/municipios/mun_sudeste/IMP03.md",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "luz_area_urbana_altura_6m",
+      "tipo": "zona",
+      "regime": "Altura acima de 6 m na área urbana",
+      "nome": "Luz: área urbana, veículos de carga acima de 6 m de altura",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "altura_m", "acima": 6}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.018/2015 (Luz, 16/10/2015; DOM-AMM ed. 1605, 20/10/2015)",
+          "artigo": "art. 2º e parágrafo único (acima de 6 m de altura, comprovada por documento ou medição)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA"
+        }
+      ],
+      "nota": "Sem exceções no art. 2º. Na prática quase sem efeito: 6 m passa do limite de 4,40 m do CTB/CONTRAN (só veículo com AET acima de 6 m). Área urbana aproximada (mesmo polígono da regra luz_area_urbana_25t).",
+      "fonte_geometria": "Mesmo polígono aproximado da área urbana (OSM, ODbL).",
+      "vigencia_inicio": "2015-10-16",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138807_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Mesmo polígono da regra luz_area_urbana_25t",
+          "props": {"aproximado": true}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,566 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3302700",
+  "municipio": "Maricá",
+  "uf": "RJ",
+  "fonte_id": "marica",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.pdf (JOM nº 1541, 03/01/2024, Dec. 1.314/2024) ; https://data.queridodiario.ok.org.br/3302700/2013-11-25/b46e27d18ebaf57cd8d0f2b93da67cbcd4f3a44f.pdf (JOM 421, Dec. 173/2013)",
+    "licenca": "Atos oficiais de Maricá: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla.",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3302700.json; verificação: verif/3302700.json (11/10/2026). Vias do art. 5º do Dec. 1.314/2024 casadas por nome no OSM; 'Rua M' e Rua Eugênia Modesto da Silva sem geometria. Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Dec. 1.314/2024 não define VUC: 'veículo de carga' (art. 1º, I) sem corte de peso.",
+  "regras": [
+    {
+      "id": "marica_veiculos_carga_pico",
+      "tipo": "via",
+      "regime": "Carga no pico (dias úteis)",
+      "nome": "Maricá: entrada e circulação de veículos de carga proibidas nos eixos do Dec. 1.314/2024, dias úteis 7h-9h e 16h-18h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "16:00",
+          "to": "18:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 6º, I: veículos de socorro e emergência (art. 29, VII, CTB)",
+        "Art. 6º, II: transporte de valores",
+        "Art. 6º, III: serviços essenciais de utilidade pública, em caráter excepcional, com autorização prévia da Secretaria de Trânsito e Engenharia Viária",
+        "Art. 6º, IV: transporte de combustíveis e lubrificantes que abastecem o aeroporto",
+        "Art. 6º, V: caminhões-betoneira",
+        "Art. 5º, parágrafo único: operação de carga e descarga permitida a veículo que acessou a área no horário permitido e está em local de estacionamento permitido"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.314, de 03/01/2024 (Maricá; JOM nº 1541, 03/01/2024)",
+          "artigo": "art. 1º, I (veículo de carga), art. 2º, I (proibição da entrada e circulação nos dias úteis, 7h-9h e 16h-18h), art. 5º (vias), art. 6º (exceções), art. 8º (vigência na publicação)",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.pdf"
+        }
+      ],
+      "nota": "Art. 2º, I: 'dias úteis, de segunda-feira a sexta-feira'; feriado não é dia útil (feriados='suspende', correção da verificação). 'Veículo de carga' sem corte de peso (art. 1º, I): alvo = qualquer caminhão (PBT acima de 3,5 t; o utilitário de até 3,5 t fica fora da camada). Vias pelo art. 5º (o Anexo I é um mapa sem texto). A 'Rua M' do art. 5º não foi localizada: no OSM há 19 vias 'Rua M' espalhadas pelo município e nenhuma no Centro, então ficou de fora (pendência); a Rua Eugênia Modesto da Silva não tem nome no OSM (pendência).",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local (art. 5º do Dec. 1.314/2024).",
+      "vigencia_inicio": "2024-01-03",
+      "trechos": [
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Avenida Vereador Francisco Sabino da Silva Costa",
+            "Avenida Vereador Francisco Sabino da Costa"
+          ],
+          "descricao": "Avenida Vereador Francisco Sabino da Costa",
+          "nota": "No OSM: 'Avenida Vereador Francisco Sabino da Silva Costa' (a 'Rua Vereador Francisco Sabino da Costa', residencial curta, é outra via)."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Abreu Rangel"
+          ],
+          "descricao": "Rua Abreu Rangel"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Domício da Gama"
+          ],
+          "descricao": "Rua Domício da Gama"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Abreu Sodré"
+          ],
+          "descricao": "Rua Abreu Sodré, da Rua Antônio Eduardo até a Rua Ribeiro de Almeida",
+          "de": [
+            "Rua Antônio Eduardo"
+          ],
+          "ate": [
+            "Rua Ribeiro de Almeida"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Joaquim Eugênio dos Santos"
+          ],
+          "descricao": "Rua Joaquim Eugênio dos Santos"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Barão de Inoã"
+          ],
+          "descricao": "Rua Barão de Inoã"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Doutor Milton de Souza Pacheco",
+            "Rua Milton de Souza Pacheco",
+            "Rua Dr. Milton de Souza Pacheco"
+          ],
+          "descricao": "Rua Dr. Milton de Souza Pacheco"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Eugênia Modesto da Silva"
+          ],
+          "descricao": "Rua Eugênia Modesto da Silva",
+          "nota": "Sem nome no OSM (pendência)."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Silvino Alves de Siqueira"
+          ],
+          "descricao": "Rua Silvino Alves de Siqueira"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Nossa Senhora do Amparo"
+          ],
+          "descricao": "Rua Nossa Senhora do Amparo"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Lúcio Alves da Silva"
+          ],
+          "descricao": "Rua Lúcio Alves da Silva"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Avenida Roberto Silveira"
+          ],
+          "descricao": "Avenida Roberto Silveira, entre a Rua Ary Spindola e a Rua Ribeiro de Almeida",
+          "de": [
+            "Rua Ari Spindola",
+            "Rua Ary Spindola"
+          ],
+          "ate": [
+            "Rua Ribeiro de Almeida"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Álvares de Castro"
+          ],
+          "descricao": "Rua Álvares de Castro, entre a Av. Prefeito Odenir Francisco da Costa e a Rua Domício da Gama",
+          "de": [
+            "Avenida Prefeito Odenir Francisco da Costa"
+          ],
+          "ate": [
+            "Rua Domício da Gama"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Pereira Neves"
+          ],
+          "descricao": "Rua Pereira Neves"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Alferes Gomes"
+          ],
+          "descricao": "Rua Alferes Gomes"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Almeida Fagundes"
+          ],
+          "descricao": "Rua Almeida Fagundes"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Ribeiro de Almeida"
+          ],
+          "descricao": "Rua Ribeiro de Almeida"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Senador Macedo Soares"
+          ],
+          "descricao": "Rua Senador Macedo Soares"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Athaíde Parreiras"
+          ],
+          "descricao": "Rua Athaíde Parreiras"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Prefeito Hilário Costa e Silva",
+            "Rua Prefeito Hilário da Costa e Silva"
+          ],
+          "descricao": "Rua Pref. Hilário da Costa e Silva"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Antônio Vieira Sobrinho",
+            "Avenida Antônio Vieira Sobrinho"
+          ],
+          "descricao": "Avenida Antônio Vieira Sobrinho",
+          "nota": "No OSM: 'Rua Antônio Vieira Sobrinho'."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Hilário Luiz da Silva Queiroz",
+            "Rua Hilário Luiz Queiroz da Silva"
+          ],
+          "descricao": "Rua Hilário Luiz Queiroz da Silva",
+          "nota": "No OSM: 'Rua Hilário Luiz da Silva Queiroz'."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "marica_comprimento_14m",
+      "tipo": "via",
+      "regime": "Comprimento máximo 14 m",
+      "nome": "Maricá: veículos com mais de 14 m de comprimento não podem transitar nos eixos do Dec. 1.314/2024",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 6º do Dec. 1.314/2024: 'as restrições previstas neste Decreto' não se aplicam a socorro/emergência (art. 29, VII, CTB), transporte de valores, serviços essenciais de utilidade pública autorizados pela Secretaria de Trânsito, combustíveis/lubrificantes do aeroporto e caminhões-betoneira"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.314, de 03/01/2024 (Maricá; JOM nº 1541, 03/01/2024)",
+          "artigo": "art. 3º ('fica limitado o trânsito de veículos até o comprimento máximo de 14 metros nas principais vias e eixos viários tratadas neste decreto'); art. 5º (vias); art. 6º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.pdf"
+        }
+      ],
+      "nota": "Confiança média: o art. 3º não traz janela (lido como limite permanente, todos os dias) e remete às vias 'tratadas neste decreto', lidas como as do art. 5º. As exceções do art. 6º valem para ele. Vias pelo art. 5º (o Anexo I é um mapa sem texto). A 'Rua M' do art. 5º não foi localizada: no OSM há 19 vias 'Rua M' espalhadas pelo município e nenhuma no Centro, então ficou de fora (pendência); a Rua Eugênia Modesto da Silva não tem nome no OSM (pendência).",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local (mesmas vias do art. 5º).",
+      "vigencia_inicio": "2024-01-03",
+      "trechos": [
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Avenida Vereador Francisco Sabino da Silva Costa",
+            "Avenida Vereador Francisco Sabino da Costa"
+          ],
+          "descricao": "Avenida Vereador Francisco Sabino da Costa",
+          "nota": "No OSM: 'Avenida Vereador Francisco Sabino da Silva Costa' (a 'Rua Vereador Francisco Sabino da Costa', residencial curta, é outra via)."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Abreu Rangel"
+          ],
+          "descricao": "Rua Abreu Rangel"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Domício da Gama"
+          ],
+          "descricao": "Rua Domício da Gama"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Abreu Sodré"
+          ],
+          "descricao": "Rua Abreu Sodré, da Rua Antônio Eduardo até a Rua Ribeiro de Almeida",
+          "de": [
+            "Rua Antônio Eduardo"
+          ],
+          "ate": [
+            "Rua Ribeiro de Almeida"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Joaquim Eugênio dos Santos"
+          ],
+          "descricao": "Rua Joaquim Eugênio dos Santos"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Barão de Inoã"
+          ],
+          "descricao": "Rua Barão de Inoã"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Doutor Milton de Souza Pacheco",
+            "Rua Milton de Souza Pacheco",
+            "Rua Dr. Milton de Souza Pacheco"
+          ],
+          "descricao": "Rua Dr. Milton de Souza Pacheco"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Eugênia Modesto da Silva"
+          ],
+          "descricao": "Rua Eugênia Modesto da Silva",
+          "nota": "Sem nome no OSM (pendência)."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Silvino Alves de Siqueira"
+          ],
+          "descricao": "Rua Silvino Alves de Siqueira"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Nossa Senhora do Amparo"
+          ],
+          "descricao": "Rua Nossa Senhora do Amparo"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Lúcio Alves da Silva"
+          ],
+          "descricao": "Rua Lúcio Alves da Silva"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Avenida Roberto Silveira"
+          ],
+          "descricao": "Avenida Roberto Silveira, entre a Rua Ary Spindola e a Rua Ribeiro de Almeida",
+          "de": [
+            "Rua Ari Spindola",
+            "Rua Ary Spindola"
+          ],
+          "ate": [
+            "Rua Ribeiro de Almeida"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Álvares de Castro"
+          ],
+          "descricao": "Rua Álvares de Castro, entre a Av. Prefeito Odenir Francisco da Costa e a Rua Domício da Gama",
+          "de": [
+            "Avenida Prefeito Odenir Francisco da Costa"
+          ],
+          "ate": [
+            "Rua Domício da Gama"
+          ]
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Pereira Neves"
+          ],
+          "descricao": "Rua Pereira Neves"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Alferes Gomes"
+          ],
+          "descricao": "Rua Alferes Gomes"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Almeida Fagundes"
+          ],
+          "descricao": "Rua Almeida Fagundes"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Ribeiro de Almeida"
+          ],
+          "descricao": "Rua Ribeiro de Almeida"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Senador Macedo Soares"
+          ],
+          "descricao": "Rua Senador Macedo Soares"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Athaíde Parreiras"
+          ],
+          "descricao": "Rua Athaíde Parreiras"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Prefeito Hilário Costa e Silva",
+            "Rua Prefeito Hilário da Costa e Silva"
+          ],
+          "descricao": "Rua Pref. Hilário da Costa e Silva"
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Antônio Vieira Sobrinho",
+            "Avenida Antônio Vieira Sobrinho"
+          ],
+          "descricao": "Avenida Antônio Vieira Sobrinho",
+          "nota": "No OSM: 'Rua Antônio Vieira Sobrinho'."
+        },
+        {
+          "inciso": "art. 5º",
+          "via": [
+            "Rua Hilário Luiz da Silva Queiroz",
+            "Rua Hilário Luiz Queiroz da Silva"
+          ],
+          "descricao": "Rua Hilário Luiz Queiroz da Silva",
+          "nota": "No OSM: 'Rua Hilário Luiz da Silva Queiroz'."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "marica_ponte_ponta_negra",
+      "tipo": "ponte",
+      "regime": "Ponte velha de Ponta Negra (RJ-102)",
+      "nome": "Maricá: ponte velha de Ponta Negra, veículos pesados proibidos (Defesa Civil/DER), limitador 3,5 t e 3 m",
+      "status": "desativada",
+      "status_motivo": "Só notícia da Prefeitura e trecho de diário; sem ato primário lido. Via estadual (RJ-102, obra do DER); a restrição é interdição de obra/Defesa Civil, vigência atual desconhecida. Sem feição: a ponte velha não está identificada por nome no OSM.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 3.5
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Sem ato localizado (notícia da Prefeitura de Maricá: 'Ponte velha de Ponta Negra ganha limitador de altura e peso para veículos')",
+          "artigo": "sem artigo (notícia)",
+          "url": "https://www.marica.rj.gov.br/noticia/ponte-velha-de-ponta-negra-ganha-limitador-de-altura-e-peso-para-veiculos/"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "marica_carga_descarga_pesados_2013",
+      "tipo": "via",
+      "regime": "Carga e descarga de pesados (2013)",
+      "nome": "Maricá: carga e descarga de veículos pesados proibidas nas principais vias, dias úteis 9h-16h e sábados 7h-9h (Dec. 173/2013)",
+      "status": "desativada",
+      "status_motivo": "Regula só a operação de carga e descarga (não a circulação) e foi tacitamente superado pelo Dec. 1.314/2024 no mesmo assunto, sem revogação expressa. Sem feição: a lista das 22 vias do art. 3º não foi transcrita na pesquisa.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 173, de 20/09/2013 (Maricá; JOM 421, 25/11/2013)",
+          "artigo": "art. 1º e art. 3º (22 vias)",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2013-11-25/b46e27d18ebaf57cd8d0f2b93da67cbcd4f3a44f.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

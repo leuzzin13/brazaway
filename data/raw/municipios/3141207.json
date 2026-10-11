@@ -1,0 +1,84 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3141207",
+  "municipio": "Matutina",
+  "uf": "MG",
+  "fonte_id": "matutina",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DCD67BD3 (Dec. 080/2021) ; https://www.diariomunicipal.com.br/amm-mg/materia/F70CE0A1 (Dec. 057/2021)",
+    "licenca": "Atos oficiais de Matutina: domínio público (Lei 9.610/1998, art. 8º, IV). Perímetro urbano aproximado e R. Omar Carneiro: derivados do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Dec. 080/2021: no perímetro urbano, proibida a circulação de veículos com carga superior a 15 t (lido como capacidade de carga), salvo entrega/carga e descarga no perímetro. Dec. 057/2021: o mesmo na R. Omar Carneiro (entre a R. João Mulato e a R. Moacir Franco). Perímetro urbano sem delimitação no ato: polígono aproximado do tecido urbano da sede."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Os decretos não definem VUC: a regra é pela carga (acima de 15 t).",
+  "regras": [
+    {
+      "id": "matutina_perimetro_urbano_carga_15t",
+      "tipo": "zona",
+      "regime": "Perímetro urbano (carga > 15 t)",
+      "nome": "Matutina: proibida a circulação de veículos com carga superior a 15 t no perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 15}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "par. único do art. 1º (entrega ou carga e descarga com endereço no perímetro urbano)",
+      "excecoes": ["Par. único do art. 1º: veículos comprovadamente em serviços de entrega ou carga e descarga para endereços dentro do perímetro urbano"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 080, de 24/08/2021 (DOMM ed. 3080, 25/08/2021)",
+          "artigo": "art. 1º e parágrafo único (proibição e exceção); art. 2º (multa de 700 UFMs); art. 5º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DCD67BD3",
+          "nota": "O Decreto 081/2021 suspendeu os efeitos só em 25/08/2021 e 30/08/2021."
+        }
+      ],
+      "nota": "'Carga superior a 15 toneladas' interpretado como capacidade de carga (payload_t), não PBT; o texto é ambíguo. Confiança média: portal da Câmara indisponível e prefeitura sem busca por texto; nenhuma revogação no AMM. Perímetro urbano aproximado (ver fonte_geometria).",
+      "fonte_geometria": "Aproximação conservadora do tecido urbano contínuo da sede no OSM (ODbL).",
+      "vigencia_inicio": "2021-08-25",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3141207_matutina_perimetro.geojson",
+          "construir": "manual",
+          "como_gerar": "Vias com nome do OSM da sede (data/cache/municipios/osm_named_3141207.json, raio de ~1,5 km do centro) com buffer de 50 m, união, borda recuada a ~30 m do eixo da última rua e abertura de 60 m (tira braços ao longo de estradas); ver docs/layers/municipios/mun_sudeste/IMP03.md",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "matutina_rua_omar_carneiro_carga_15t",
+      "tipo": "via",
+      "regime": "Rua Omar Carneiro (carga > 15 t)",
+      "nome": "Matutina: Rua Omar Carneiro (entre a R. João Mulato e a R. Moacir Franco), veículos com carga acima de 15 t proibidos",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 15}]},
+      "vuc": null,
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "par. único do art. 2º (entregas para endereços do trecho)",
+      "excecoes": ["Par. único do art. 2º: serviços de entrega ou carga e descarga para endereços do trecho"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 057, de 18/06/2021 (DOMM ed. 3033, 21/06/2021)",
+          "artigo": "art. 2º e parágrafo único (trecho definido no art. 1º)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/F70CE0A1"
+        }
+      ],
+      "nota": "Sobrepõe-se à zona do Dec. 080/2021 (o trecho fica dentro do perímetro); mantida pela data mais antiga e porque o polígono do perímetro é aproximado. 'Carga acima de 15 t' = capacidade de carga (payload_t). No OSM a R. Moacir Franco se chama 'Rua Doutor Moacir Franco'.",
+      "fonte_geometria": "OSM (ODbL) por nome e trecho",
+      "vigencia_inicio": "2021-06-21",
+      "trechos": [
+        {"inciso": "art. 2º", "via": ["Rua Omar Carneiro"], "de": ["Rua João Mulato"], "ate": ["Rua Doutor Moacir Franco", "Rua Moacir Franco"], "descricao": "Rua Omar Carneiro entre a Rua João Mulato e a Rua Moacir Franco"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3141207_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

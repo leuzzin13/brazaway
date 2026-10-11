@@ -1,0 +1,71 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3505500",
+  "municipio": "Barretos",
+  "uf": "SP",
+  "fonte_id": "barretos",
+  "fonte": {
+    "url": "https://barretos.sispref.com.br/arquivo?Id=44357 (Lei 4.581/2011) ; https://barretos.sispref.com.br/arquivo?Id=44050 (Lei 4.298/2010, inconstitucional)",
+    "licenca": "Atos oficiais de Barretos: domínio público (Lei 9.610/1998 art. 8º IV). Geometria da via: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Limite municipal do registro histórico: IBGE (dados públicos).",
+    "notas": "Uma regra vigente (Lei 4.581/2011, Av. Agostinho Pereira). Barretos não tem zona central nem horário de carga e descarga em ato achado; o Plano Diretor (LC 73/2006) só traz diretrizes."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Nenhum ato localizado define VUC em Barretos.",
+  "regras": [
+    {
+      "id": "barretos_av_agostinho_pereira",
+      "tipo": "via",
+      "regime": "Via proibida (>3 eixos / carretas)",
+      "nome": "Barretos: Avenida Agostinho Pereira proibida a caminhões acima de três eixos e carretas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}, {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 4.581, de 20/09/2011 (Barretos)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões acima de três eixos ou carretas transportando cargas vivas e/ou secas em toda a extensão da Av. Agostinho Pereira, Bairro Zequinha Amêndola); art. 2º (penalidade, CTB art. 195); art. 3º (vigência na publicação)",
+          "url": "https://barretos.sispref.com.br/arquivo?Id=44357",
+          "nota": "Situação 'EM VIGOR' no Siscam da Câmara (consulta do pesquisador em 10/10/2026; o verificador não conseguiu reabrir o Siscam em 11/10/2026, DNS)."
+        }
+      ],
+      "nota": "Confiança média: (1) lei de iniciativa parlamentar — a Lei 4.298/2010, do mesmo autor, foi declarada inconstitucional pelo TJSP; a 4.581 segue registrada EM VIGOR; (2) 'transportando cargas vivas e/ou secas' — adotado que vale também vazio (lado seguro); (3) 'carretas' mapeado para semirreboque, caminhão + reboque e CVC. Sem horário nem exceção de entrega no ato.",
+      "fonte_geometria": "OSM (ODbL): ways 157016290, 157016391, 157016376 e 157016388 pelo nome",
+      "vigencia_inicio": "2011-09-20",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Avenida Agostinho Pereira"], "descricao": "Avenida Agostinho Pereira, em toda a extensão, Bairro Zequinha Amêndola"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3505500_agostinho_pereira.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "barretos_cana_perimetro_urbano_lei_4298",
+      "tipo": "zona",
+      "regime": "Cana-de-açúcar (perímetro urbano)",
+      "nome": "Barretos: veículos de carga transportando cana-de-açúcar proibidos no perímetro urbano (Lei 4.298/2010, declarada inconstitucional)",
+      "status": "revogada",
+      "status_motivo": "Lei declarada inconstitucional pelo TJSP (ADIN 2218753-02.2014.8.26.0000, acórdão de 16/05/2015, transitada em julgado), conforme registro da Câmara. Além disso, o critério é a carga (cana), que o perfil não informa. Registro histórico; a geometria é o limite do município (o perímetro urbano não foi obtido), nunca aplicada.",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": ["Rodovias estaduais que cortam o município (art. 1º)."],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 4.298, de 04/03/2010 (Barretos)",
+          "artigo": "art. 1º (proibição no perímetro urbano); art. 4º (vigência a partir de 01/01/2011)",
+          "url": "https://barretos.sispref.com.br/arquivo?Id=44050",
+          "nota": "Inconstitucionalidade: Siscam da Câmara, consulta por assunto 'CANA DE AÇUCAR'."
+        }
+      ],
+      "vigencia_inicio": "2011-01-01",
+      "vigencia_fim": "2015-05-16",
+      "source_id": "barretos-cana-lei-4298-2010",
+      "geometria": [{"municipios": ["3505500"], "simplificar": 0.002, "casas": 5}]
+    }
+  ]
+}

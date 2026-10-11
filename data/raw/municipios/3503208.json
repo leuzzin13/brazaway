@@ -1,0 +1,119 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3503208",
+  "municipio": "Araraquara",
+  "uf": "SP",
+  "fonte_id": "araraquara",
+  "fonte": {
+    "url": "https://araraquara.siscam.com.br/arquivo?Id=296909 (Lei 10.956/2023, nova redação do art. 1º da Lei 4.420/1994) ; https://araraquara.siscam.com.br/arquivo?Id=106537 (Lei 4.420/1994) ; https://araraquara.siscam.com.br/arquivo?Id=114864 (Dec. 7.208/1997, ARA-080)",
+    "licenca": "Atos oficiais de Araraquara: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome e trecho.",
+    "notas": "Regra principal: Lei 4.420/1994 com a redação da Lei 10.956/2023 (12 trechos centrais, dias úteis 10h–19h e sábado 10h–14h; Rua Voluntários da Pátria entre a Av. XV de Novembro e a Av. José Bonifácio sem horário). Exceção: mudanças/transportes residenciais ou comerciais com autorização escrita (Lei 5.322/1999 red. 10.956/2023). A ARA-080 (Dec. 7.208/1997) fica desativada: a Prefeitura anuncia hoje limite de 7 t PBT, sem ato localizado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 4.420/1994 (red. Lei 10.956/2023) fala só em \"caminhões\" e não define VUC: vale o CTB (PBT acima de 3,5 t).",
+  "regras": [
+    {
+      "id": "araraquara_centro_vias_horario",
+      "tipo": "via",
+      "regime": "Centro (horário)",
+      "nome": "Araraquara: caminhões proibidos em 12 trechos de vias do Centro nos dias úteis 10h–19h e sábados 10h–14h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "10:00", "to": "19:00"},
+        {"days": [6], "from": "10:00", "to": "14:00"}
+      ],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Autorização escrita da Autoridade Municipal de Trânsito para circulação e estacionamento de caminhões, peruas e similares em transporte de natureza residencial ou comercial (Lei 5.322/1999, art. 1º, red. Lei 10.956/2023, art. 2º); serviço 'Autorização para Circulação Especial (Carga/Descarga) e de Caminhão pela Área Central' no 1Doc da Prefeitura",
+      "excecoes": [
+        "Lei 5.322/1999, art. 1º (red. Lei 10.956/2023, art. 2º): com autorização escrita da Autoridade Municipal de Trânsito, ficam liberados a circulação e o estacionamento de caminhões, peruas e similares para transporte de natureza residencial ou comercial (mudanças)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 10.956, de 11/10/2023 (Autógrafo 305/2023, PL 327/2023; publicada no jornal Folha da Cidade de 18/10/2023), que dá nova redação ao art. 1º da Lei 4.420/1994",
+          "artigo": "art. 1º (nova redação do art. 1º, I a XII, da Lei 4.420/1994: dias úteis 10h–19h e sábados 10h–14h); art. 3º (vigência na publicação)",
+          "url": "https://araraquara.siscam.com.br/arquivo?Id=296909",
+          "nota": "PDF assinado da lei no SISCAM da Câmara (documento do PL 327/2023); incisos I a XII conferidos na imagem pelo verificador (11/10/2026)."
+        },
+        {
+          "ato": "Lei municipal 4.420, de 23/11/1994 (alterada pelas Leis 4.962/1997 e 10.956/2023)",
+          "artigo": "art. 1º (redação original: quadrilátero Av. Brasil, Av. Prudente de Moraes, Ruas 9 de Julho e Padre Duarte; substituída)",
+          "url": "https://araraquara.siscam.com.br/arquivo?Id=106537"
+        }
+      ],
+      "nota": "A lei fala em 'caminhões' sem limite de peso ou dimensão: vale o CTB. 'Dias úteis' exclui feriados: feriados = suspende. Os trechos substituem o antigo quadrilátero de 1994/1997. A lei grafa 'Rua Dom Pedro II' no inciso III; no OSM é 'Avenida Dom Pedro II'. O OSM tem hgv=no sem condição nessas vias (24 h): divergência registrada na pesquisa, não corrigida aqui.",
+      "fonte_geometria": "OSM (ODbL) pelo nome dos trechos do art. 1º da Lei 4.420/1994 (red. Lei 10.956/2023)",
+      "vigencia_inicio": "2023-10-11",
+      "trechos": [
+        {"inciso": "I", "via": ["Rua Nove de Julho"], "de": ["Avenida Brasil"], "ate": ["Avenida Barroso"], "descricao": "Rua Nove de Julho, entre a Avenida Brasil e a Avenida Barroso"},
+        {"inciso": "II", "via": ["Rua São Bento"], "de": ["Avenida Barroso"], "ate": ["Avenida Brasil"], "descricao": "Rua São Bento, entre a Avenida Barroso e a Avenida Brasil"},
+        {"inciso": "III", "via": ["Rua Maria Janasi Biagioni"], "de": ["Avenida Brasil"], "ate": ["Avenida Dom Pedro II", "Rua Dom Pedro II"], "descricao": "Rua Maria Janasi Biagioni, entre a Avenida Brasil e a Rua Dom Pedro II"},
+        {"inciso": "IV", "via": ["Rua Padre Duarte"], "de": ["Avenida Dom Pedro II", "Rua Dom Pedro II"], "ate": ["Avenida Barroso"], "descricao": "Rua Padre Duarte, entre a Avenida Dom Pedro II e a Avenida Barroso"},
+        {"inciso": "V", "via": ["Avenida Brasil"], "de": ["Rua Carlos Gomes"], "ate": ["Rua Nove de Julho"], "descricao": "Avenida Brasil, entre a Rua Carlos Gomes e a Rua Nove de Julho"},
+        {"inciso": "VI", "via": ["Avenida São Paulo"], "de": ["Rua Gonçalves Dias"], "ate": ["Rua Carlos Gomes"], "descricao": "Avenida São Paulo, entre a Rua Gonçalves Dias e a Rua Carlos Gomes"},
+        {"inciso": "VII", "via": ["Avenida Portugal"], "de": ["Rua Carlos Gomes"], "ate": ["Rua Nove de Julho"], "descricao": "Avenida Portugal, entre a Rua Carlos Gomes e a Rua Nove de Julho"},
+        {"inciso": "VIII", "via": ["Avenida Duque de Caxias"], "de": ["Rua Gonçalves Dias"], "ate": ["Rua Carlos Gomes"], "descricao": "Avenida Duque de Caxias, entre a Rua Gonçalves Dias e a Rua Carlos Gomes"},
+        {"inciso": "IX", "via": ["Avenida Espanha"], "de": ["Rua Carlos Gomes"], "ate": ["Rua Gonçalves Dias"], "descricao": "Avenida Espanha, entre a Rua Carlos Gomes e a Rua Gonçalves Dias"},
+        {"inciso": "X", "via": ["Avenida Feijó"], "de": ["Rua Gonçalves Dias"], "ate": ["Rua Carlos Gomes"], "descricao": "Avenida Feijó, entre a Rua Gonçalves Dias e a Rua Carlos Gomes"},
+        {"inciso": "XI", "via": ["Avenida José Bonifácio"], "de": ["Rua Voluntários da Pátria"], "ate": ["Rua Gonçalves Dias"], "descricao": "Avenida José Bonifácio, entre a Rua Voluntários da Pátria e a Rua Gonçalves Dias"},
+        {"inciso": "XII", "via": ["Avenida Osório"], "descricao": "Avenida Osório, entre a Rua São Bento e a Rua Padre Duarte", "nota": "No OSM a Av. Osório é uma única way (219564125, 202 m) exatamente entre a R. São Bento e a R. Padre Duarte: usada inteira (sem de/ate, que o importador não aceita com uma só linha)."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3503208_centro.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "araraquara_voluntarios_patria",
+      "tipo": "via",
+      "regime": "Centro (proibição)",
+      "nome": "Araraquara: caminhões proibidos na Rua Voluntários da Pátria entre a Av. XV de Novembro e a Av. José Bonifácio",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Autorização escrita da Autoridade Municipal de Trânsito para transporte de natureza residencial ou comercial (Lei 5.322/1999, art. 1º, red. Lei 10.956/2023, art. 2º)",
+      "excecoes": ["Lei 5.322/1999, art. 1º (red. Lei 10.956/2023): mudanças residenciais/comerciais com autorização escrita"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 10.956, de 11/10/2023 (nova redação do art. 1º da Lei 4.420/1994)",
+          "artigo": "parágrafo único do art. 1º da Lei 4.420/1994 (red. Lei 10.956/2023, art. 1º)",
+          "url": "https://araraquara.siscam.com.br/arquivo?Id=296909"
+        }
+      ],
+      "nota": "O parágrafo único proíbe a circulação de caminhões nesse trecho sem citar horário; lido literalmente como proibição em tempo integral (confiança média: pode ter sido pensado com o mesmo horário do caput).",
+      "fonte_geometria": "OSM (ODbL) pelo nome do trecho",
+      "vigencia_inicio": "2023-10-11",
+      "trechos": [
+        {"inciso": "art. 1º, parágrafo único", "via": ["Rua Voluntários da Pátria"], "de": ["Avenida Quinze de Novembro", "Avenida XV de Novembro"], "ate": ["Avenida José Bonifácio"], "descricao": "Rua Voluntários da Pátria, entre a Avenida XV de Novembro e a Avenida José Bonifácio"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3503208_centro.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "araraquara_ara080_bueno_andrada",
+      "tipo": "via",
+      "regime": "Vicinal ARA-080",
+      "nome": "Araraquara: Estrada ARA-080 (sede–Bueno de Andrada) proibida a veículo de carga acima de 6 t, 10 m de comprimento ou 2,10 m de largura",
+      "status": "desativada",
+      "status_motivo": "Decreto 7.208/1997 lido (6 t, 10 m e 2,10 m), mas a Prefeitura hoje oferece 'Autorização de circulação – Vicinal de Bueno de Andrada – caminhão acima de 7 toneladas – PBT' e o OSM tem maxweight=7 na via: há indício de alteração posterior (7 t) que não foi localizada; não ativar até achar o ato vigente.",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 6}, {"campo": "comprimento_m", "acima": 10}, {"campo": "largura_m", "acima": 2.1}]},
+      "autorizacao": "Autorização de circulação da Secretaria Municipal dos Assuntos de Segurança e Mobilidade Urbana (serviço no 1Doc: 'Vicinal de Bueno de Andrada – caminhão acima de 7 toneladas – PBT')",
+      "excecoes": ["Decreto 7.208/1997, art. 2º: veículos de moradores da via e veículos com destino ao Distrito de Bueno de Andrada"],
+      "base_legal": [
+        {"ato": "Decreto municipal 7.208, de 14/08/1997 (Araraquara)", "artigo": "art. 1º, I a III (comprimento > 10 m, largura > 2,10 m, PBT > 6.000 kg); art. 2º (exceções)", "url": "https://araraquara.siscam.com.br/arquivo?Id=114864"},
+        {"ato": "Página de serviços da Prefeitura (Operação e Fiscalização de Trânsito)", "artigo": "lista de serviços: 'Autorização de circulação – Vicinal de Bueno de Andrada – caminhão acima de 7 toneladas – PBT' (sem ato citado)", "url": "https://www.araraquara.sp.gov.br/secretarias/assuntos-de-seguranca-e-mobilidade-urbana/sobre-a-secretaria-assuntos-de-seguranca-e-mobilidade-urbana/operacao-e-fiscalizacao-de-transito"}
+      ],
+      "nota": "A ARA-080 (Estrada Vicinal Graciano da Ressurreição Affonso; no OSM também Rua José Barbieri Neto) tem pedágio municipal (Lei 6.512/2007; Dec. 13.943/2025). Registro: geometria pelo nome das duas denominações do OSM (aproximada; pode incluir trechos fora da ligação sede–Bueno de Andrada).",
+      "vigencia_inicio": "1997-08-14",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Estrada Graciano da Ressureição Affonso", "Estrada Vicinal Graciano da Ressurreição Affonso"], "descricao": "ARA-080 (Estrada Graciano da Ressurreição Affonso), da sede ao Distrito de Bueno de Andrada", "aproximado": true},
+        {"inciso": "art. 1º", "via": ["Rua José Barbieri Neto"], "descricao": "ARA-080, trecho urbano com o nome Rua José Barbieri Neto no OSM", "aproximado": true}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3503208_ara080.geojson", "construir": "trechos"}]
+    }
+  ]
+}

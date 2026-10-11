@@ -1,0 +1,481 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3133808",
+  "municipio": "Itaúna",
+  "uf": "MG",
+  "fonte_id": "itauna",
+  "fonte": {
+    "url": "https://www.itauna.mg.gov.br/publicos/6779-18_zrcvc_12044055.pdf (Dec. 6.779/2018) ; https://data.queridodiario.ok.org.br/3133808/2018-09-14/88b15d04a71e64dead75a1908a5c6ba7024056d1.pdf (Jornal Oficial ed. 1423, 14/09/2018)",
+    "licenca": "Ato oficial de Itaúna: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "ZRCVC (Dec. 6.779/2018, em vigor): 57 logradouros do centro proibidos a veículos com carga acima de 5 t de segunda a sexta das 6h às 20h e aos sábados das 6h às 13h. 'Carga acima de 5 t' modelada como capacidade de carga (payload_t)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Nenhum ato localizado define VUC em Itaúna.",
+  "regras": [
+    {
+      "id": "itauna_zrcvc_centro",
+      "tipo": "via",
+      "regime": "ZRCVC",
+      "nome": "Itaúna: ZRCVC — Zona de Restrição de Circulação de Veículo de Carga (57 logradouros do centro), veículos com carga acima de 5 t proibidos 2ª–6ª 6h–20h e sábado 6h–13h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "06:00",
+          "to": "20:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "06:00",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5
+          }
+        ]
+      },
+      "vuc": null,
+      "vuc_nota": "O Decreto 6.779/2018 não define VUC; caminhões de até 5 t de carga podem transitar (art. 4º), o que já é o próprio critério da regra.",
+      "autorizacao": "Concretagem: comunicação prévia à Diretoria Municipal de Trânsito e Transportes (art. 8º); medidas operacionais/eventos junto à Diretoria de Trânsito (art. 11)",
+      "excecoes": [
+        "Art. 4º: caminhões de até 5 t podem transitar nos locais com restrição, obedecendo às placas de estacionamento para carga e descarga",
+        "Art. 6º: caminhão exclusivamente no trajeto de entrada ou saída de vaga própria ou locada (período integral)",
+        "Art. 7º, I e § 1º: socorro mecânico de emergência/remoção de veículos, com identificação CONTRAN (período integral)",
+        "Art. 7º, II e § 2º: veículos de utilidade pública e serviços essenciais (energia, iluminação, água e esgoto, telecom, gás canalizado, sinalização, transporte público, vias e obras de arte, limpeza urbana, coleta de lixo, poda etc.), art. 29, VIII, do CTB (período integral)",
+        "Art. 7º, III: controle de zoonoses autorizado pelo órgão competente (período integral)",
+        "Art. 8º: caminhões de concretagem em obras civis, condicionados a comunicação prévia à Diretoria Municipal de Trânsito e Transportes (protocolo da Prefeitura)",
+        "Art. 9º: caminhões de produtos alimentícios perecíveis, em qualquer horário (ovos, pescados, congelados, carnes, leite, leveduras, gelo, hortifrútis, alimentos com temperatura controlada)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.779, de 10/08/2018 (Itaúna) — ZRCVC",
+          "artigo": "art. 1º, caput, I e II e § 2º (proibição, horários e placas R-9); art. 2º, I a LVII (vias); arts. 4º, 6º a 9º (exceções)",
+          "url": "https://www.itauna.mg.gov.br/publicos/6779-18_zrcvc_12044055.pdf",
+          "nota": "Ficha no Instar com situação 'Em vigor': https://www.itauna.mg.gov.br/portal/leis_decretos/11190/ ; publicado no Jornal Oficial do Município ed. 1423 de 14/09/2018: https://data.queridodiario.ok.org.br/3133808/2018-09-14/88b15d04a71e64dead75a1908a5c6ba7024056d1.pdf"
+        }
+      ],
+      "nota": "Confiança média só pela interpretação do limite: o ato diz 'veículos com carga acima de 5 (cinco) toneladas' (art. 1º) e 'caminhões que atendam às condições de até 5 t' (art. 4º), sem dizer se é PBT ou capacidade; modelado como capacidade de carga (payload_t > 5), lado seguro quando o usuário não informa a capacidade. O ato lista logradouros inteiros sem pontas; alguns nomes podem existir também fora do centro (usar só o trecho central, ~-20,065 a -20,085 / -44,57 a -44,585). Art. 1º, § 1º: vias internas com características especiais seguem regulamentação específica. Art. 3º: vias com R-9 sem complemento (proibição permanente) ou 'exceto veículos autorizados' não se enquadram no decreto e seguem a sinalização local (não listadas). Logradouros do art. 2º: I Praça Luiz Ribeiro, II Praça Helvécio F. de Carvalho, III Avenida Jove Soares, IV Avenida Dona Cota, V Rua Zezé Lima, VI Avenida Getúlio Vargas, VII Rua Artur Bernardes, VIII Rua Capitão Vicente, IX Rua Silva Jardim, X Rua Professor Francisco Santiago, XI Praça Dois de Junho, XII Rua Coronel João de Cerqueira Lima, XIII Rua Francisco Manoel Franco, XIV Rua Gonçalves da Guia, XV Rua Diógenes Nogueira, XVI Rua Marcelino Corradi, XVII Rua Agripino Lima, XVIII Rua João da Silva, XIX Rua São Vicente, XX Rua São Benedito, XXI Rua Doze de Outubro, XXII Rua José Banana, XXIII Rua Dr. José Bustamante, XXIV Rua Santa Cruz, XXV Rua Manoel Correia, XXVI Rua Reduzina Marques, XXVII Rua Abelardo Lima, XXVIII Rua Vinte e Seis de Junho, XXIX Rua Tiradentes, XXX Rua Caetano Burrini, XXXI Rua Elisa Inácia Soares, XXXII Rua Eugênio Prado, XXXIII Rua Jairo Gomes \"Nô\", XXXIV Rua 05, XXXV Rua Volney Soares, XXXVI Rua Geraldo Cilico, XXXVII Rua João Justino, XXXVIII Rua Florentino P. Vasconcelos, XXXIX Rua Padre Antônio, XL Rua Marechal Deodoro, XLI Praça Imaculada Conceição, XLII Rua Péricles Gomide, XLIII Rua Coronel Laurindo, XLIV Rua Tácito Nogueira, XLV Rua Osório Camargos, XLVI Rua Geniplo Dornas, XLVII Travessa Gonçalves da Guia, XLVIII Rua Coronel Artur Vilaça, XLIX Praça Dr. Augusto Gonçalves, L Rua Melo Viana, LI Rua Dr. José Gonçalves, LII Rua Antônio de Matos, LIII Rua Godofredo Gonçalves, LIV Praça Francisco Marques, LV Rua Josias Machado, LVI Rua Manoel Gonçalves, LVII Rua Genuína Moreira. IMPLEMENTAÇÃO: 45 dos 57 logradouros casados pelo nome no OSM (PBF local de 10/2026); 12 não têm correspondente seguro no OSM e ficam fora da geometria (pendência): I Praça Luiz Ribeiro, II Praça Helvécio F. de Carvalho, XI Praça Dois de Junho, XXIV Rua Santa Cruz, XXVIII Rua Vinte e Seis de Junho, XXXIII Rua Jairo Gomes 'Nô', XXXIV Rua 05 (a do OSM fica fora do centro), XXXVI Rua Geraldo Cilico, XLVI Rua Geniplo Dornas, XLVII Travessa Gonçalves da Guia, LIV Praça Francisco Marques e LVII Rua Genuína Moreira. Domingo livre (não consta no ato).",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome: logradouros do art. 2º inteiros dentro de Itaúna (Av. Jove Soares só no trecho central)",
+      "vigencia_inicio": "2018-08-10",
+      "trechos": [
+        {
+          "inciso": "art. 2º, III",
+          "via": [
+            "Avenida Jove Soares"
+          ],
+          "descricao": "Avenida Jove Soares (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "de": {
+            "lonlat": [
+              -44.57987,
+              -20.06684
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -44.5781,
+              -20.0855
+            ]
+          },
+          "nota": "A avenida segue para sudeste até ~-20,095 fora do centro; usado só o trecho central (do início, junto à Av. Dona Cota/Praça da Matriz, até ~-20,0855), como orientado na pesquisa."
+        },
+        {
+          "inciso": "art. 2º, IV",
+          "via": [
+            "Avenida Dona Cota"
+          ],
+          "descricao": "Avenida Dona Cota (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, V",
+          "via": [
+            "Rua Zezé Lima"
+          ],
+          "descricao": "Rua Zezé Lima (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, VI",
+          "via": [
+            "Avenida Getúlio Vargas"
+          ],
+          "descricao": "Avenida Getúlio Vargas (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, VII",
+          "via": [
+            "Rua Artur Bernardes"
+          ],
+          "descricao": "Rua Artur Bernardes (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, VIII",
+          "via": [
+            "Rua Capitão Vicente"
+          ],
+          "descricao": "Rua Capitão Vicente (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, IX",
+          "via": [
+            "Rua Silva Jardim",
+            "Avenida Silva Jardim"
+          ],
+          "descricao": "Rua Silva Jardim (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, X",
+          "via": [
+            "Rua Professor Francisco Santiago"
+          ],
+          "descricao": "Rua Professor Francisco Santiago (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XII",
+          "via": [
+            "Rua Coronel João Cerqueira Lima"
+          ],
+          "descricao": "Rua Coronel João de Cerqueira Lima (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Coronel João Cerqueira Lima)"
+        },
+        {
+          "inciso": "art. 2º, XIII",
+          "via": [
+            "Rua Coronel Francisco Manoel Franco"
+          ],
+          "descricao": "Rua Francisco Manoel Franco (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Coronel Francisco Manoel Franco)"
+        },
+        {
+          "inciso": "art. 2º, XIV",
+          "via": [
+            "Rua Gonçalves da Guia"
+          ],
+          "descricao": "Rua Gonçalves da Guia (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XV",
+          "via": [
+            "Rua Diógenes Nogueira"
+          ],
+          "descricao": "Rua Diógenes Nogueira (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XVI",
+          "via": [
+            "Rua Marcelino Corradi"
+          ],
+          "descricao": "Rua Marcelino Corradi (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XVII",
+          "via": [
+            "Rua Agripino Lima"
+          ],
+          "descricao": "Rua Agripino Lima (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XVIII",
+          "via": [
+            "Rua João da Silva Reis"
+          ],
+          "descricao": "Rua João da Silva (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua João da Silva Reis)"
+        },
+        {
+          "inciso": "art. 2º, XIX",
+          "via": [
+            "Rua São Vicente"
+          ],
+          "descricao": "Rua São Vicente (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XX",
+          "via": [
+            "Rua São Benedito"
+          ],
+          "descricao": "Rua São Benedito (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXI",
+          "via": [
+            "Rua Doze de Outubro"
+          ],
+          "descricao": "Rua Doze de Outubro (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXII",
+          "via": [
+            "Rua José Banana"
+          ],
+          "descricao": "Rua José Banana (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXIII",
+          "via": [
+            "Rua Doutor Bustamante"
+          ],
+          "descricao": "Rua Dr. José Bustamante (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Doutor Bustamante)"
+        },
+        {
+          "inciso": "art. 2º, XXV",
+          "via": [
+            "Rua Manoel Correa"
+          ],
+          "descricao": "Rua Manoel Correia (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Manoel Correa)"
+        },
+        {
+          "inciso": "art. 2º, XXVI",
+          "via": [
+            "Rua Reduzina Marques"
+          ],
+          "descricao": "Rua Reduzina Marques (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXVII",
+          "via": [
+            "Rua Abelardo Lima"
+          ],
+          "descricao": "Rua Abelardo Lima (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXIX",
+          "via": [
+            "Rua Tiradentes"
+          ],
+          "descricao": "Rua Tiradentes (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXX",
+          "via": [
+            "Rua Caetano Burrini"
+          ],
+          "descricao": "Rua Caetano Burrini (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXXI",
+          "via": [
+            "Rua Eliza Inácia Soares"
+          ],
+          "descricao": "Rua Elisa Inácia Soares (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Eliza Inácia Soares)"
+        },
+        {
+          "inciso": "art. 2º, XXXII",
+          "via": [
+            "Rua Doutor Eugênio Prado"
+          ],
+          "descricao": "Rua Eugênio Prado (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Doutor Eugênio Prado)"
+        },
+        {
+          "inciso": "art. 2º, XXXV",
+          "via": [
+            "Rua Wolnei Soares"
+          ],
+          "descricao": "Rua Volney Soares (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Wolnei Soares)"
+        },
+        {
+          "inciso": "art. 2º, XXXVII",
+          "via": [
+            "Rua João Justino"
+          ],
+          "descricao": "Rua João Justino (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XXXVIII",
+          "via": [
+            "Rua Florentino Pereira",
+            "Rua Florentino P. Vasconcelos",
+            "Rua Florentino Pereira Vasconcelos"
+          ],
+          "descricao": "Rua Florentino P. Vasconcelos (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "No OSM o logradouro do centro aparece como Rua Florentino Pereira (o ato: Rua Florentino P. Vasconcelos); casado pelo nome e pela localização no centro."
+        },
+        {
+          "inciso": "art. 2º, XXXIX",
+          "via": [
+            "Rua Padre Antônio"
+          ],
+          "descricao": "Rua Padre Antônio (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XL",
+          "via": [
+            "Rua Marechal Deodoro"
+          ],
+          "descricao": "Rua Marechal Deodoro (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XLI",
+          "via": [
+            "Rua Imaculada Conceição"
+          ],
+          "descricao": "Praça Imaculada Conceição (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Imaculada Conceição)"
+        },
+        {
+          "inciso": "art. 2º, XLII",
+          "via": [
+            "Rua Péricles Gomide"
+          ],
+          "descricao": "Rua Péricles Gomide (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XLIII",
+          "via": [
+            "Rua Coronel Laurindo Nogueira"
+          ],
+          "descricao": "Rua Coronel Laurindo (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Coronel Laurindo Nogueira)"
+        },
+        {
+          "inciso": "art. 2º, XLIV",
+          "via": [
+            "Rua Tácito Nogueira"
+          ],
+          "descricao": "Rua Tácito Nogueira (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XLV",
+          "via": [
+            "Rua Coronel Osório Camargos"
+          ],
+          "descricao": "Rua Osório Camargos (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Coronel Osório Camargos)"
+        },
+        {
+          "inciso": "art. 2º, XLVIII",
+          "via": [
+            "Rua Coronel Artur Vilaça"
+          ],
+          "descricao": "Rua Coronel Artur Vilaça (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, XLIX",
+          "via": [
+            "Praça Doutor Augusto Gonçalves"
+          ],
+          "descricao": "Praça Dr. Augusto Gonçalves (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Praça Doutor Augusto Gonçalves)"
+        },
+        {
+          "inciso": "art. 2º, L",
+          "via": [
+            "Rua Melo Viana"
+          ],
+          "descricao": "Rua Melo Viana (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, LI",
+          "via": [
+            "Rua Doutor José Gonçalves"
+          ],
+          "descricao": "Rua Dr. José Gonçalves (o ato não fixa pontas: via inteira)",
+          "aproximado": true,
+          "nota": "nome no OSM difere do ato (Rua Doutor José Gonçalves)"
+        },
+        {
+          "inciso": "art. 2º, LII",
+          "via": [
+            "Rua Antônio de Matos"
+          ],
+          "descricao": "Rua Antônio de Matos (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, LIII",
+          "via": [
+            "Rua Godofredo Gonçalves"
+          ],
+          "descricao": "Rua Godofredo Gonçalves (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, LV",
+          "via": [
+            "Rua Josias Machado"
+          ],
+          "descricao": "Rua Josias Machado (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, LVI",
+          "via": [
+            "Rua Manoel Gonçalves"
+          ],
+          "descricao": "Rua Manoel Gonçalves (o ato não fixa pontas: via inteira)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3133808_vias.geojson",
+          "construir": "trechos",
+          "props": {
+            "fonte_trecho": "Dec. 6.779/2018, art. 2º (logradouro inteiro)"
+          }
+        }
+      ]
+    }
+  ]
+}

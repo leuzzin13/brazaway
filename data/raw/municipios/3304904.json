@@ -1,0 +1,152 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3304904",
+  "municipio": "São Gonçalo",
+  "uf": "RJ",
+  "fonte_id": "sao-goncalo",
+  "fonte": {
+    "url": "https://do.saogoncalo.rj.gov.br/diario/2010_07_13.pdf (Res. 084/SEMTRAN/2010) ; https://do.saogoncalo.rj.gov.br/diario/2014_11_28.pdf (Res. 093/SEMTRAN/2014) ; https://do.saogoncalo.rj.gov.br/diario/2025_04_17.pdf (Res. 44/SEMMATRAN/2025) ; https://do.saogoncalo.rj.gov.br/diario/2024_01_31.pdf (Res. 19/SEMTRAN/2024)",
+    "licenca": "Atos oficiais de São Gonçalo: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome e trecho.",
+    "notas": "Três resoluções de trânsito vigentes, sem revogação achada no DO até 10/2026 (pesquisa de 10/10/2026, verificação de 11/10/2026). Não há zona central nem horário geral de caminhões. Carga e descarga (pontos com horário; rotativo > 3,5 t só nos horários sinalizados, Dec. 374/2022, art. 12, §2º) é operação e fica fora da camada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "As resoluções não definem VUC; vale o CTB (caminhão = PBT acima de 3,5 t).",
+  "regras": [
+    {
+      "id": "sao_goncalo_flavio_monteiro_barros_carga",
+      "tipo": "via",
+      "regime": "Via proibida a veículos de carga",
+      "nome": "São Gonçalo: Av. Flávio Monteiro de Barros (Porto do Rosa), toda a extensão, proibida a veículos de carga",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "Parágrafo único do art. 1º: veículos de carga com destino ao Aterro Sanitário de Itaoca devem seguir pela Estrada de Itaúna a partir da Estrada da Conceição (desvio, não exceção)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução 084/SEMTRAN/2010, de 08/07/2010 (DOM São Gonçalo 13/07/2010)",
+          "artigo": "art. 1º (proibição em toda a extensão) e art. 2º (vigência na publicação)",
+          "url": "https://do.saogoncalo.rj.gov.br/diario/2010_07_13.pdf"
+        }
+      ],
+      "nota": "Confiança média: ato de 2010 sem revogação achada no DO até 10/2026 e sem confirmação de sinalização. 'Veículos de carga' sem limite de peso: vale para todo caminhão, 24 h. Só as ways da Avenida (249980050 e 298631067); as ways 'Rua Flávio Monteiro de Barros' são rua homônima desconectada, ~0,9 km a leste, e não entram (correção do verificador).",
+      "fonte_geometria": "OSM (ODbL): ways 249980050 e 298631067 pelo nome da avenida",
+      "vigencia_inicio": "2010-07-13",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Avenida Flávio Monteiro de Barros", "Avenida Flávio Monteiro Barros"],
+          "descricao": "Av. Flávio Monteiro de Barros, em toda a extensão, bairro Porto do Rosa (OSM ways 249980050 + 298631067)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3304904_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_goncalo_porto_velho_16t",
+      "tipo": "via",
+      "regime": "PBT > 16 t e carretas",
+      "nome": "São Gonçalo: Travessa Lafaiete Silva e Rua Antônio Carlos (Porto Velho), carretas e caminhões com PBT acima de 16 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}, {"campo": "tipo", "em": ["semitrailer", "cvc"]}]},
+      "excecoes": ["Sem exceções no ato; desvio obrigatório pela Rua João Damasceno"],
+      "base_legal": [
+        {
+          "ato": "Resolução 093/SEMTRAN/2014, de 26/11/2014 (DOM São Gonçalo 28/11/2014)",
+          "artigo": "art. 1º (carretas em geral e caminhões com PBT > 16 t; desvio pela R. João Damasceno), art. 2º (vigência na publicação)",
+          "url": "https://do.saogoncalo.rj.gov.br/diario/2014_11_28.pdf"
+        }
+      ],
+      "nota": "'Carretas em geral' mapeado como semirreboque/CVC; sem horário (24 h). No OSM as ways 182872943 e 249687001 se ligam à R. João Damasceno (248875235).",
+      "fonte_geometria": "OSM (ODbL): ways 182872943 e 249687001",
+      "vigencia_inicio": "2014-11-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Rua Lafaiete Silva", "Travessa Lafaiete Silva"],
+          "descricao": "Travessa (no OSM 'Rua') Lafaiete Silva, inteira, Porto Velho (way 182872943)"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": ["Rua Antônio Carlos"],
+          "de": {"lonlat": [-43.092141, -22.835356]},
+          "ate": {"lonlat": [-43.090404, -22.834781]},
+          "descricao": "Rua Antônio Carlos, Porto Velho (way 249687001; a homônima way 204186779, ~9 km a nordeste, não entra)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3304904_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_goncalo_orla_pedrinhas_pesados",
+      "tipo": "via",
+      "regime": "Via proibida a veículos pesados",
+      "nome": "São Gonçalo: orla da Praia das Pedrinhas (Boa Vista) proibida a caminhões, carretas e similares",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": ["Art. 3º: veículos de emergência e de coleta de resíduos urbanos, devidamente autorizados"],
+      "base_legal": [
+        {
+          "ato": "Resolução 44/SEMMATRAN/2025, de 16/04/2025 (DOM São Gonçalo 17/04/2025, ed. 1.395)",
+          "artigo": "art. 3º (proibição de veículos pesados na orla), art. 4º (orla fechada a todos os veículos aos sábados, domingos e feriados), art. 7º (conversão obrigatória na R. Magalhães Bastos), art. 10 (vigência na publicação)",
+          "url": "https://do.saogoncalo.rj.gov.br/diario/2025_04_17.pdf"
+        }
+      ],
+      "nota": "O ato não nomeia a via da orla. A CMA 003/2024 (DO 10/12/2024) situa a obra na 'Rua Professora Maria Joaquina, s/n, Orla da Praia das Pedrinhas' (no OSM 'Avenida Professora Maria Joaquina'); a Res. 14/SEMMATRAN/2026 chama a orla de 'Rua Sérgio Martins de Carvalho', nome ausente do OSM. Confiança média pela geometria. Não modelado: art. 4º (via fechada a todos os veículos sáb., dom. e feriados; seg–sex só leves) e art. 7º (carretas, ônibus e grande porte convertem obrigatoriamente na R. Magalhães Bastos).",
+      "fonte_geometria": "OSM (ODbL): só a way 201015940, colada à praia (a homônima 202314734, ao sul do trevo da Rod. Mário Covas, não entra)",
+      "vigencia_inicio": "2025-04-17",
+      "trechos": [
+        {
+          "inciso": "art. 3º",
+          "via": ["Avenida Professora Maria Joaquina", "Rua Professora Maria Joaquina"],
+          "de": {"lonlat": [-43.07366, -22.81257]},
+          "ate": {"lonlat": [-43.070288, -22.807912]},
+          "aproximado": true,
+          "descricao": "Via da orla da Praia das Pedrinhas, bairro Boa Vista (OSM way 201015940)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3304904_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "sao_goncalo_lucio_tome_feteira_muvi",
+      "tipo": "via",
+      "regime": "Temporária (obras do MUVI)",
+      "nome": "São Gonçalo: Av. Lúcio Tomé Feteira, acesso à Av. Paiva sentido BR-101, proibido a carretas e veículos pesados durante as obras do MUVI",
+      "status": "desativada",
+      "status_motivo": "Regra temporária: a Res. 19/SEMTRAN/2024 vale 'até o encerramento das obras' do Consórcio MUVI (art. 5º) e não foi achado ato de encerramento nem de prorrogação; aplicar como permanente seria errado.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "Parágrafo único do art. 3º: rota obrigatória R. Dr. Getúlio Vargas, R. Dr. Pio Borges, R. Dr. Porciúncula, R. Dr. March e R. João de Deus Freitas até a BR-101"
+      ],
+      "base_legal": [
+        {
+          "ato": "Resolução 19/SEMTRAN/2024, de 30/01/2024 (DOM São Gonçalo 31/01/2024)",
+          "artigo": "art. 3º (proibição) e art. 5º (vigência até o encerramento das obras)",
+          "url": "https://do.saogoncalo.rj.gov.br/diario/2024_01_31.pdf"
+        }
+      ],
+      "vigencia_inicio": "2024-01-31",
+      "trechos": [
+        {
+          "inciso": "art. 3º",
+          "via": ["Rua Lúcio Tomé Feteira", "Avenida Lúcio Tomé Feteira"],
+          "descricao": "Av. Lúcio Tomé Feteira (no OSM 'Rua'), movimento de acesso à Av. Paiva sentido BR-101 (registro: a via inteira)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3304904_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}
