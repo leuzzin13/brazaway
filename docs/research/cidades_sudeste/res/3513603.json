@@ -1,0 +1,205 @@
+{
+ "ibge": "3513603",
+ "nome": "Cunha",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.cunha.sp.leg.br/norma/216 (PDF escaneado, lido como imagem; atos/3513603)",
+   "resultado": "LIDO. Lei nº 728, de 06/03/1995 'Dispõe sobre regulamento de horário de trânsito para caminhões e tratores': art. 1º proíbe o tráfego de caminhões e tratores, sáb, dom e feriados, das 18h à 01h, nos trechos: R. Dom Lino (nº 07 ao 118), R. João Manoel Rodrigues (07-51), R. Dr. Casemiro da Rocha (04-51), R. Dr. José Maria Amato (10-32); art. 2º vetado; art. 3º vigor na publicação. Sem registro de revogação/alteração no SAPL."
+  },
+  {
+   "url": "https://sapl.cunha.sp.leg.br/norma/2388 (DOSP/Diário Cunha 25/06/2025, atos/3513603)",
+   "resultado": "LIDO. Lei nº 1.979, de 25/06/2025: art. 1º proíbe o trânsito de veículos tipo Bitrem em todas as rodovias vicinais (pavimentadas ou não); art. 2º define Bitrem (caminhão-trator + dois semirreboques com dolly); art. 4º exceção por Autorização Especial de Trânsito Vicinal (emergência; carga indivisível/superdimensionada essencial); art. 5º fiscalização. Vigência: publicada em 25/06/2025."
+  },
+  {
+   "url": "https://sapl.cunha.sp.leg.br/norma/77 e /norma/99 (Leis 589/1991 e 611/1991, imagens)",
+   "resultado": "LIDOS. Lei 589/1991 regulamenta o tráfego de veículos de carga nas estradas vicinais: art. 2º proíbe veículos longos/'carretas'; art. 1º reratificado pela Lei 611/1991: tonelagem máxima até 6 t líquidas (2 eixos) e até 13 t (3 eixos), pavimentadas ou não; Executivo pode reduzir (§ único). Regra rural."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NjYxMTk1 (DOSP ed. 804, 03/06/2025, pista)",
+   "resultado": "LIDO por pdftotext: sem a frase 'tráfego de caminhões' no texto extraído (provável imagem/ruído); a pista corresponde ao processo da Lei 1.979/2025."
+  },
+  {
+   "url": "https://sapl.cunha.sp.leg.br/norma/2487 (Decreto Executivo 1/2026, Diário 07/01/2026)",
+   "resultado": "LIDO (imagem, p. 2): concessão/credenciamento de pátio de veículos apreendidos; irrelevante para circulação."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3513603 (SAPL Câmara; caminh/pesad/tráfego/trânsito)",
+   "resultado": "Também Lei 1459/2016 (fechamento controlado de vilas/ruas sem saída a veículos estranhos aos moradores; não lida, não é regra de caminhão). Portal próprio da Câmara sem retorno."
+  },
+  {
+   "url": "Overpass (kumi.systems / overpass-api.de) para IBGE 3513603",
+   "resultado": "Fora do ar (500/timeout): OSM hgv_no=6, maxweight=4, maxlength=1 da preparação NÃO conferido; pendência."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Três atos concretos: (1) Lei 728/1995, restrição de fim de semana/feriado 18h-01h a caminhões e tratores em 4 ruas curtas (numerações); (2) Lei 1.979/2025, proibição de Bitrem em todas as vicinais; (3) Leis 589 e 611/1991, limite de tonelagem e proibição de carretas nas vicinais. Vigência da 728/1995 e das de 1991 não foi contestada por ato posterior achado, mas são leis antigas; sinalização não conferida. Cunha é turística (Paraty-Cunha): pode haver regra para a SP-171/Estrada Cunha-Paraty (estadual, não municipal).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM tem 6 ways com hgv=no, 4 maxweight, 1 maxlength (preparação): Overpass indisponível, não cruzado com as ruas da Lei 728/1995 nem com as vicinais; pendência."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "cunha_ruas_centrais_fds_caminhoes_tratores",
+   "tipo": "via",
+   "regime": "Horário de trânsito para caminhões e tratores (fim de semana)",
+   "nome": "Cunha: 4 ruas centrais, caminhões e tratores proibidos sáb/dom/feriados 18h-01h",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "18:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      7,
+      1
+     ],
+     "from": "00:00",
+     "to": "01:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 728, de 06/03/1995 (Cunha)",
+     "artigo": "art. 1º; art. 3º (vigor na publicação)",
+     "url": "https://sapl.cunha.sp.leg.br/norma/216",
+     "nota": "PDF: http://sapl.cunha.sp.leg.br/media/sapl/public/normajuridica/1995/216/lei_728_1995_regulamentacao_horario_transito_caminhoes_tratores.pdf"
+    }
+   ],
+   "nota": "Janelas cobrem sáb e dom 18h-01h; a restrição também vale em feriados (não modelado em janelas: feriados 'aplica' não cria janela em dia útil). Trechos por numeração predial.",
+   "trechos": [
+    {
+     "via": [
+      "Rua Dom Lino"
+     ],
+     "descricao": "R. Dom Lino, nº 07 ao 118",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua João Manoel Rodrigues"
+     ],
+     "descricao": "R. João Manoel Rodrigues, nº 07 ao 51",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua Doutor Casemiro da Rocha"
+     ],
+     "descricao": "R. Dr. Casemiro da Rocha, nº 04 ao 51",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua Doutor José Maria Amato"
+     ],
+     "descricao": "R. Dr. José Maria Amato, nº 10 ao 32",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "1995-03-06"
+  },
+  {
+   "id": "cunha_vicinais_bitrem",
+   "tipo": "via",
+   "regime": "Proibição de bitrem em estradas vicinais",
+   "nome": "Cunha: bitrem proibido em todas as rodovias vicinais",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "autorizacao": "Autorização Especial de Trânsito Vicinal (AETV), art. 4º",
+   "excecoes": [
+    "Art. 4º: AETV para emergência/calamidade e cargas indivisíveis ou superdimensionadas essenciais, sem rota alternativa"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.979, de 25/06/2025 (Cunha), Diário Oficial Municipal 25/06/2025",
+     "artigo": "arts. 1º, 2º, 4º",
+     "url": "https://sapl.cunha.sp.leg.br/norma/2388"
+    }
+   ],
+   "nota": "Vicinais não listadas; geometria = estradas vicinais do município (OSM/Prefeitura) a definir. 'Bitrem' = caminhão-trator com dois semirreboques e dolly (mapeado em tipo cvc, a confirmar).",
+   "fonte_geometria": "A construir: estradas vicinais (cadastro municipal).",
+   "vigencia_inicio": "2025-06-25"
+  },
+  {
+   "id": "cunha_vicinais_tonelagem",
+   "tipo": "via",
+   "regime": "Limite de tonelagem em estradas vicinais",
+   "nome": "Cunha: estradas vicinais, carga líquida até 6 t (2 eixos) e 13 t (3 eixos); carretas proibidas",
+   "status": "desativada",
+   "status_motivo": "Lei antiga (1991) sobre estradas vicinais, sem lista de vias; modelagem mista de carga líquida por número de eixos pendente e sinalização não conferida.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 589/1991, alterada pela Lei 611/1991 (Cunha)",
+     "artigo": "Lei 589 art. 2º (carretas); Lei 611 art. 1º (tonelagem 6 t/13 t)",
+     "url": "https://sapl.cunha.sp.leg.br/norma/77",
+     "nota": "Lei 611: https://sapl.cunha.sp.leg.br/norma/99"
+    }
+   ],
+   "vigencia_inicio": "1991-11-25"
+  }
+ ]
+}

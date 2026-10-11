@@ -1,0 +1,85 @@
+{
+ "ibge": "3516705",
+ "nome": "Garça",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=Mzc2MDU0",
+   "resultado": "LIDO (PDF). DOSP ed. 2146, 27/06/2023: substitutivo ao projeto do Plano de Mobilidade (pista); art. 39 cria a Zona de Restrição à Circulação de Caminhões. Texto de projeto, não é o ato."
+  },
+  {
+   "url": "https://sapl.garca.sp.leg.br/norma/101682 (texto_integral .doc via API)",
+   "resultado": "LIDO. Lei nº 5.558, de 11/07/2023 (Plano Diretor de Mobilidade Urbana de Garça; publicada 12/07/2023; art. 48 vigor na publicação), art. 39 e §§ 1º-4º: Zona de Restrição à Circulação de Caminhões = todas as vias do perímetro urbano, 5h–23h, veículos pesados sem origem/destino em Garça; aplica-se a reboques, semirreboques, caminhões e caminhões-tratores com mais de 3 eixos; exceções: licenciados em Garça, destino de carga/descarga em empresas locais com documento fiscal, utilidade pública autorizada, socorro/emergência (CTB art. 29, VII), mudança residencial. Busca por alterações da Lei 5.558: nenhuma achada."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3516705 (SAPL Câmara)",
+   "resultado": "Termos caminh/carga e descarga/veículos pesados/mobilidade/trânsito: demais atos irrelevantes (látex em caminhões abertos, ossos de animais, estradas rurais, JARI, conselho de trânsito). leismunicipais 403 Cloudflare."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MzM2OTAw",
+   "resultado": "Lido: DOSP ed. 2071, 07/03/2023, versão anterior do mesmo projeto (art. 39 igual)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 5.558/2023, art. 39: restrição real e específica (perímetro urbano inteiro, 5h-23h, >3 eixos, só quem não tem Garça como origem/destino). Sem vias específicas: é zona = perímetro urbano (sem polígono; precisa geometria do perímetro urbano, a definir). Exceção: licenciados em Garça e destino local. Placas de sinalização previstas (§4º), implantação não confirmada. Verificador deve decidir a confiança. Sem decreto regulamentador achado.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "garca_zrc_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Zona de Restrição à Circulação de Caminhões",
+   "nome": "Garça: perímetro urbano, veículos pesados com mais de 3 eixos sem origem/destino em Garça, 5h-23h",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "05:00",
+     "to": "23:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 39, §2º, II",
+   "excecoes": [
+    "§2º, I: veículos licenciados em Garça",
+    "§2º, II: carga/descarga em empresas ou entidades de Garça, comprovada por documento fiscal",
+    "§2º, III: utilidade pública autorizada previamente",
+    "§2º, IV: socorro e emergência (CTB art. 29, VII)",
+    "§2º, V: mudança residencial em Garça"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 5.558/2023 de Garça (Plano Diretor de Mobilidade Urbana), publicada 12/07/2023",
+     "artigo": "art. 39 e §§ 1º a 4º; art. 48 (vigor na publicação)",
+     "url": "https://sapl.garca.sp.leg.br/norma/101682",
+     "nota": "Texto lido em http://sapl.garca.sp.leg.br/media/sapl/public/normajuridica/2023/101682/5558.doc"
+    }
+   ],
+   "nota": "Ambiguidade: 'veículos pesados' no caput x 'mais de 3 eixos' no §1º (adotado o §1º). 'Perímetro urbano' sem mapa no ato.",
+   "fonte_geometria": "A construir: polígono do perímetro urbano de Garça (o ato não traz mapa).",
+   "vigencia_inicio": "2023-07-12"
+  }
+ ]
+}
