@@ -1,0 +1,133 @@
+{
+ "ibge": "3546009",
+ "nome": "Santa Branca",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://santabranca.sp.gov.br/ (home)",
+   "resultado": "Link para o portal de legislação Siap e-Gov (geosiap)."
+  },
+  {
+   "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/consulta_leis.php (POST resulta_leis.php, categorias Decreto, Lei Ordinária, Lei Complementar, Portaria; termos caminh, carga, veículo, pesad, tráfego, circula, trânsito, restrição, perímetro urbano, 1115, 970, pesados)",
+   "resultado": "Achadas: Lei 1.115/2005 (restrição ao trânsito de caminhões de carga), Lei 970/2002 e 1.008/2003 (veículos pesados no perímetro urbano), Decreto 13/1989 (proíbe tráfego de caminhões para recuperação de pontes e vias; ato antigo e provisório), Decretos de Carnaval/Oktoberfest (fechamento de ruas, pontual). Sem alteração ou revogação da 1.115 na busca por '1115'."
+  },
+  {
+   "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/lei_documento_anexo.php?id=593&tipo=16&cliente=pmsantabranca",
+   "resultado": "LIDO. Lei 1.115, de 13/04/2005, arts. 1º a 6º (arquivo Word convertido em texto). Proíbe veículos de carga e de obras no perímetro urbano das 22h às 6h, exceto perecíveis; autorização excepcional."
+  },
+  {
+   "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/formata_lei.php?Fnumero=970&Fpromulgacao=20/12/2002&categoria=01&cliente=pmsantabranca",
+   "resultado": "Só ementa; sem anexo de texto."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3546009 'circulação de caminhões' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nas 4 fontes."
+  },
+  {
+   "url": "Overpass IBGE:GEOCODIGO=3546009",
+   "resultado": "Ver osm_divergencias."
+  }
+ ],
+ "observacoes": "Lei 1.115/2005 vigente pelo que o portal mostra: proibição noturna (22h-6h) a veículos de carga e de obras no perímetro urbano; sem limite de peso e sem lista de vias. Ativada com confiança média pela falta de confirmação de vigência além do portal. Pendências: obter texto da Lei 970/2002 e 1.008/2003 (Câmara ou diário), conferir se a 970 foi revogada; definir o limite do perímetro urbano para a geometria; hgv=no do OSM (2 ways na preparação) não localizado, ver osm_divergencias.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM: 2 ways com hgv=no na preparação, não identificados (Overpass instável). Se for rua urbana, a lei 1.115 só restringe à noite; hgv=no 24h contradiria o ato. Pendência, não corrigir."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "santabranca_noturno_carga_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Municipal (lei)",
+   "nome": "Santa Branca: proibido trânsito de veículos de carga e de obras no perímetro urbano, 22h às 6h (exceto perecíveis)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "22:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "06:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Veículos que transportem produtos perecíveis (art. 1º)",
+    "Casos excepcionais com autorização da Secretaria de Transportes, requerimento com 5 dias de antecedência (48 h se urgente); só para veículos licenciados em Santa Branca, validade até 90 dias renovável (arts. 2º e 3º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 1.115, de 13/04/2005 (Santa Branca)",
+     "artigo": "art. 1º (proibição 22h-6h), arts. 2º-3º (exceções), art. 5º (infração gravíssima CTB)",
+     "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/lei_documento_anexo.php?id=593&tipo=16&cliente=pmsantabranca"
+    }
+   ],
+   "nota": "Texto lido (arquivo .doc do portal Siap e-Gov, salvo em atos/3546009/lei1115_2005_anexo593.doc/.txt). Não há limite de peso: vale para 'veículos de carga e de obras'. Vigência: nenhuma alteração/revogação achada no portal (busca por '1115' em Lei, Decreto, LC e Portaria), mas o portal só busca por ementa. Lei 970/2002 (trânsito de veículos pesados no perímetro urbano) e Lei 1.008/2003 (altera o Anexo I da 970) existem, texto não disponível no portal; a 970 pode ter sido substituída pela 1.115.",
+   "vigencia_inicio": "2005-04-13",
+   "trechos": [
+    {
+     "via": [
+      "perímetro urbano de Santa Branca"
+     ],
+     "descricao": "Todo o perímetro urbano (a lei não lista vias)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3546009_santa_branca_perimetro_urbano.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano da sede de Santa Branca (limite não definido na lei; usar área urbanizada do OSM)"
+    }
+   ]
+  },
+  {
+   "id": "santabranca_lei970_pesados_perimetro",
+   "tipo": "zona",
+   "regime": "Municipal (lei)",
+   "nome": "Santa Branca: Lei 970/2002, trânsito de veículos pesados no perímetro urbano (texto não lido)",
+   "status": "desativada",
+   "status_motivo": "Texto da Lei 970/2002 (e do Anexo I, alterado pela Lei 1.008/2003) não está disponível no portal; só a ementa foi vista. Pode estar superada pela Lei 1.115/2005. Não dá para extrair artigo, horário ou alvo.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 970, de 20/12/2002 (Santa Branca), ementa 'Dispõe sobre a regulamentação do trânsito de veículos pesados dentro do perímetro urbano'",
+     "artigo": "não lido",
+     "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/formata_lei.php?Fnumero=970&Fpromulgacao=20/12/2002&categoria=01&cliente=pmsantabranca"
+    }
+   ],
+   "trechos": []
+  }
+ ]
+}

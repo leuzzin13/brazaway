@@ -1,0 +1,124 @@
+{
+  "ibge": "3500709",
+  "nome": "Agudos",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.dosp.com.br/exibe_do.php?i=ODE4OTE3",
+      "resultado": "DOSP/DiOE Agudos, ed. 1925 de 15/05/2026, pp. 12-13: Lei 6.068, de 02/03/2026, lida (PDF baixado em atos/3500709/d2.pdf). Proíbe o trânsito de caminhões de grande porte e veículos articulados nas vias asfaltadas do Distrito de Domélia; revoga expressamente a Lei 5.079/2017."
+    },
+    {
+      "url": "https://www.dosp.com.br/exibe_do.php?i=MTg0ODQ=",
+      "resultado": "DOSP ed. 103-A extra, 04/10/2017: Lei 5.079/2017 lida (art. 1º: proíbe caminhões de grande porte e treminhões nas ruas asfaltadas de Domélia). Revogada pela Lei 6.068/2026, art. 3º."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3500709 (doesp,dosp: 'trânsito de caminhões', 'Distrito de Domélia', 'veículos articulados')",
+      "resultado": "sem outras edições com o tema; DOE-SP só traz licitações com 'Domélia'. A fonte dosp do toolkit devolve 0 sem o cache dosp_slugs.json (ver aprendizados)."
+    },
+    {
+      "url": "https://sapl.agudos.sp.leg.br (legislacao.py direto sapl: 'caminh', 'Domélia', 'pesad')",
+      "resultado": "0 resultados"
+    },
+    {
+      "url": "https://www.agudos.sp.gov.br/legislacao (portal próprio, via legislacao.py)",
+      "resultado": "busca heurística sem a Lei 6.068/2026 nem decreto regulamentador (§3º do art. 1º manda o Executivo regulamentar); página de busca por GET devolve 403 em curl direto"
+    },
+    {
+      "url": "http://camaraagudos.sp.gov.br (webline)",
+      "resultado": "módulo de legislação não respondeu"
+    }
+  ],
+  "observacoes": "Lei 6.068, de 02/03/2026 (DOSP ed. 1925, 15/05/2026): art. 1º proíbe o trânsito de 'caminhões de grande porte e veículos articulados' nas vias com pavimentação asfáltica do Distrito de Domélia, com base no art. 24 do CTB; §1º permite, em sentido único, só o acesso a propriedades rurais sem rota alternativa, com autorização do órgão municipal e estudo técnico; §3º manda o Executivo regulamentar (regulamento não encontrado). Art. 3º: vigência na data da publicação e revogação expressa da Lei 5.079/2017. A lei não define 'grande porte' (sem PBT/comprimento): a regra usa alvo = qualquer caminhão, o que é o lado seguro, e fica com confiança média. A data efetiva de publicação não foi confirmada (a edição encontrada é de 15/05/2026; a lei é de 02/03/2026). Restrição só no distrito de Domélia (zona rural/distrital), sem horário (24 h). O pedido do lead (acerto de diário) era real, não ruído. Pendência: Confirmar data de publicação da Lei 6.068/2026 e se há decreto regulamentador (art. 1º, §3º).",
+  "regras_rascunho": [
+    {
+      "id": "agudos_domelia_grande_porte",
+      "tipo": "zona",
+      "regime": "Caminhões de grande porte e articulados proibidos (Domélia)",
+      "nome": "Agudos: Distrito de Domélia, proibido caminhões de grande porte e articulados nas vias asfaltadas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "autorizacao": "Autorização do órgão municipal competente após estudo técnico, só para acesso em sentido único a propriedade rural sem rota alternativa (art. 1º, §1º)",
+      "excecoes": [
+        "Art. 1º, §1º: acesso em sentido único a propriedades rurais sem rota alternativa viável, com autorização prévia, trajeto definido em estudo técnico e termo de responsabilidade por danos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 6.068, de 02/03/2026 (DOSP Agudos ed. 1925, 15/05/2026)",
+          "artigo": "art. 1º, caput e §§1º a 3º; art. 3º (vigência e revogação da Lei 5.079/2017)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=ODE4OTE3"
+        }
+      ],
+      "nota": "'Caminhões de grande porte' não é definido na lei; usado alvo caminhão genérico (pode superestimar a restrição para caminhões leves). Sem decreto regulamentador localizado. Geometria: todas as vias asfaltadas do distrito de Domélia (polígono do distrito a construir; não feito aqui).",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "vias com pavimentação asfáltica do Distrito de Domélia"
+          ],
+          "descricao": "Todas as vias asfaltadas do Distrito de Domélia (Agudos)",
+          "aproximado": true
+        }
+      ]
+    },
+    {
+      "id": "agudos_domelia_lei5079_2017",
+      "tipo": "zona",
+      "regime": "Caminhões de grande porte e treminhões (Domélia) - revogada",
+      "nome": "Agudos: Lei 5.079/2017, ruas asfaltadas de Domélia",
+      "status": "revogada",
+      "status_motivo": "Revogada expressamente pelo art. 3º da Lei 6.068/2026.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.079, de 04/10/2017 (DOSP Agudos ed. 103-A extra)",
+          "artigo": "art. 1º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MTg0ODQ="
+        }
+      ],
+      "trechos": []
+    }
+  ],
+  "data": "2026-10-11",
+  "nivel_busca": "dirigida",
+  "osm_divergencias": [],
+  "falha_de_fonte": false
+}

@@ -1,0 +1,114 @@
+{
+ "ibge": "3519055",
+ "nome": "Holambra",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NzMxNDYw",
+   "resultado": "DOSP ed. 1546, 30/10/2025, lida: Decreto 2.006/2025 (30/09/2025): proíbe o trânsito de veículos pesados, 'cuja capacidade de carga ultrapasse 30 toneladas', carregados ou não, 'nas vicinais municipais'. Art. 3º: infração do art. 187, I, CTB; vigência na publicação."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NjUxNDg=",
+   "resultado": "DOSP ed. 282, 04/06/2019, lida: Decreto 1.427/2019 permitia caminhões só em Av. Campos das Palmas, Av. Mário Bonano, R. Ciclamens, Rota dos Imigrantes (Av. Mário Bonano até R. Zinnias) e R. Zinnias, temporariamente (26 a 28/06 e 14 e 16/07/2019: evento). Expirado."
+  },
+  {
+   "url": "https://holambra9.siscam.com.br e https://holambra.siscam.com.br (legislacao.py buscar 3519055)",
+   "resultado": "Siscam da Câmara: sem lei/decreto de restrição (só decretos de sentido de vias de 2015-2018, convênios, lei do órgão de trânsito); decretos do Executivo recentes não estão no Siscam."
+  }
+ ],
+ "observacoes": "Restrição vigente: Decreto 2.006/2025 (veículos de capacidade de carga > 30 t nas vicinais municipais), sem lista de vias; desativada por falta de trechos e porque 'capacidade de carga' (payload) acima de 30 t praticamente não afeta caminhões rodoviários. O decreto de 2019 era temporário (evento) e expirou. OSM tem hgv=no (5) sem ato achado: pista.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM: hgv=no em 5 ways (contagem do lead) sem ato municipal que o sustente achado; detalhe não obtido (Overpass indisponível)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "holambra_vicinais_30t",
+   "tipo": "via",
+   "regime": "Capacidade de carga acima de 30 t nas vicinais",
+   "nome": "Holambra: estradas vicinais municipais, veículos com capacidade de carga acima de 30 t (Decreto 2.006/2025)",
+   "status": "desativada",
+   "status_motivo": "Decreto não lista as vicinais (todas as 'vicinais municipais'), sem geometria nem trechos; alvo por capacidade de carga (payload_t) e não por PBT.",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 30
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 2.006, de 30/09/2025 (DOSP Holambra ed. 1546, 30/10/2025)",
+     "artigo": "art. 1º (proibição); art. 3º (infração CTB 187, I)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NzMxNDYw"
+    }
+   ],
+   "vigencia_inicio": "2025-09-30",
+   "geometria": [
+    {
+     "id": "holambra_vicinais",
+     "arquivo": "municipios/geo/3519055_holambra_vicinais.geojson",
+     "construir": "manual",
+     "como_gerar": "Estradas vicinais municipais de Holambra (ato não lista; obter relação)"
+    }
+   ]
+  },
+  {
+   "id": "holambra_vias_centrais_evento_2019",
+   "tipo": "via",
+   "regime": "Caminhões permitidos só em vias (evento)",
+   "nome": "Holambra: caminhões só nas vias indicadas durante o evento de 2019 (Decreto 1.427/2019)",
+   "status": "revogada",
+   "status_motivo": "Alteração temporária (26 a 28/06/2019 e 14 e 16/07/2019); expirada, registro histórico.",
+   "confianca": "alta",
+   "verificado_em": "2026-10-11",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 1.427, de 27/05/2019 (DOSP Holambra ed. 282)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NjUxNDg="
+    }
+   ],
+   "vigencia_inicio": "2019-06-26",
+   "vigencia_fim": "2019-07-16",
+   "geometria": [
+    {
+     "id": "holambra_evento_2019",
+     "arquivo": "municipios/geo/3519055_holambra_evento_2019.geojson",
+     "construir": "manual",
+     "como_gerar": "Registro histórico, sem geometria"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,154 @@
+{
+ "ibge": "3520103",
+ "nome": "Igarapava",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MjQxNjY2",
+   "resultado": "DOSP ed. 570, 12/04/2022, lida: Decreto 2.578, de 01/04/2022, proíbe o tráfego de veículos pesados nas estradas municipais IGP-060 e IGP-205, nos trechos asfaltados 'abaixo relacionados' (a relação de trechos NÃO aparece na publicação); art. 2º/3º: prestadores de serviços essenciais cadastrados previamente no Departamento de Trânsito; art. 4º vigência na publicação."
+  },
+  {
+   "url": "https://sapl.igarapava.sp.leg.br/norma/947",
+   "resultado": "Lei 202, de 20/05/2005: 'Proíbe o trânsito de treminhões (ou caminhões com carretas de transporte de cana) pelas ruas da cidade'. PDF escaneado lido por imagem: art. 1º proíbe treminhões ou carretas, inclusive de cana, mesmo vazios, pelas ruas da cidade, exceto para ir à residência do condutor para descanso ou a oficina; sem horário. Sem data de vigência/revogação cadastrada no SAPL."
+  },
+  {
+   "url": "https://sapl.igarapava.sp.leg.br (legislacao.py buscar 3520103)",
+   "resultado": "6 atos por 'caminh'; nenhuma lei posterior de restrição achada."
+  }
+ ],
+ "observacoes": "Duas regras reais: (1) Lei 202/2005 proíbe treminhões/carretas nas ruas da cidade (área não definida, 24 h; vigência posterior não conferida); (2) Decreto 2.578/2022 proíbe veículos pesados em estradas municipais IGP-060 e IGP-205 (trechos asfaltados; relação de trechos não publicada, 'veículos pesados' sem limite de peso). Ambas ficam desativadas por não serem geometrizáveis e por lacunas. Pendência: pedir à prefeitura a relação de trechos do anexo do decreto.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "igarapava_ruas_cidade_treminhoes",
+   "tipo": "zona",
+   "regime": "Treminhões e carretas nas ruas da cidade",
+   "nome": "Igarapava: trânsito de treminhões/carretas (inclusive cana) nas ruas da cidade (Lei 202/2005)",
+   "status": "desativada",
+   "status_motivo": "Área ('ruas da cidade') não definida no ato e vigência atual não conferida (lei de 2005); sem polígono urbano para modelar.",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "truck_trailer",
+       "cvc",
+       "semitrailer"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 1º: condutor que se dirige à residência para descanso ou a oficina mecânica para conserto"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 202, de 20/05/2005",
+     "artigo": "art. 1º",
+     "url": "https://sapl.igarapava.sp.leg.br/norma/947",
+     "nota": "PDF escaneado lido por imagem."
+    }
+   ],
+   "vigencia_inicio": "2005-05-20",
+   "geometria": [
+    {
+     "id": "igarapava_urbano",
+     "arquivo": "municipios/geo/3520103_igarapava_urbano.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano de Igarapava; ato não define"
+    }
+   ]
+  },
+  {
+   "id": "igarapava_igp060_igp205_pesados",
+   "tipo": "via",
+   "regime": "Veículos pesados em estradas municipais",
+   "nome": "Igarapava: veículos pesados nas estradas IGP-060 e IGP-205, trechos asfaltados (Decreto 2.578/2022)",
+   "status": "desativada",
+   "status_motivo": "Decreto remete a trechos 'abaixo relacionados' que não constam da publicação do DOSP; limite de peso de 'veículos pesados' indefinido; sem trechos para a geometria.",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 2º: serviços públicos essenciais (coleta de lixo, água, esgoto, luz, telefonia, obras e infraestrutura urbana) cadastrados previamente e autorizados; placas cadastradas no Departamento de Trânsito (art. 3º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 2.578, de 01/04/2022 (DOSP Igarapava ed. 570)",
+     "artigo": "art. 1º; arts. 2º e 3º (exceções)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=MjQxNjY2"
+    }
+   ],
+   "vigencia_inicio": "2022-04-12",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "IGP-060",
+      "IGP 060"
+     ],
+     "descricao": "Estrada Municipal IGP-060 (trechos asfaltados; relação não publicada)",
+     "aproximado": true
+    },
+    {
+     "inciso": "-",
+     "via": [
+      "IGP-205",
+      "IGP 205"
+     ],
+     "descricao": "Estrada Municipal IGP-205 (trechos asfaltados; relação não publicada)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "id": "igarapava_igp060_igp205",
+     "arquivo": "municipios/geo/3520103_igarapava_igp060_igp205.geojson",
+     "construir": "manual",
+     "como_gerar": "Trechos asfaltados das estradas IGP-060 e IGP-205 (obter relação na prefeitura)"
+    }
+   ]
+  }
+ ]
+}

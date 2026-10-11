@@ -1,0 +1,90 @@
+{
+ "ibge": "3511201",
+ "nome": "Catiguá",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NDMzOTAy",
+   "resultado": "DOSP ed. 489, 08/12/2023, lida: Decreto 084/2023 (07/12/2023) 'disciplina o tráfego e o trânsito de caminhões nas vias públicas do Município': proíbe veículos articulados e veículos de carga acima de 3 eixos traseiros, pesando acima de 8.000 kg, em qualquer horário, nas vias do Município; exceção para carga/descarga no perímetro com nota fiscal e transporte de passageiros; considerando: obra de viaduto da RUMO."
+  },
+  {
+   "url": "https://www.catigua.sp.gov.br/transparencia/legislacao e https://www.camaracatigua.sp.gov.br/home/legislativo/projetos-em-tramitacao (legislacao.py buscar 3511201)",
+   "resultado": "Cliente heurístico: sem decreto/lei de restrição; só lei de recapeamento (ruído). Não foi possível conferir alteração ou revogação posterior."
+  }
+ ],
+ "observacoes": "Decreto 084/2023 (art. 1º): articulados e veículos de carga com mais de 3 eixos traseiros e mais de 8 t em todas as vias do município, 24 h, com exceção de carga/descarga no perímetro (nota fiscal), ônibus/passageiros, veículos do art. 29, VII e VIII do CTB (art. 3º) e casos excepcionais por requerimento (art. 4º). Redação ambígua (eixos traseiros x PBT) e alcance de município inteiro (inclui acessos): regra desativada até confirmar vigência (motivada pela obra do viaduto da RUMO) e decisão de produto.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "catigua_vias_articulados_8t",
+   "tipo": "zona",
+   "regime": "Articulados e carga com mais de 3 eixos traseiros e mais de 8 t",
+   "nome": "Catiguá: circulação de articulados e veículos de carga pesados em todas as vias (Decreto 084/2023)",
+   "status": "desativada",
+   "status_motivo": "Abrange todas as vias do município (inclusive acessos), redação ambígua do alvo (eixos traseiros e 8 t) e vigência atual não conferida (decreto ligado à obra de viaduto da RUMO).",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     },
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 1º, § 2º (carga/descarga no perímetro proibido, comprovada por nota fiscal)",
+   "excecoes": [
+    "Art. 1º, § 2º: carga/descarga com destino no perímetro proibido (nota fiscal); transporte de passageiros regularizado",
+    "Art. 3º: veículos do art. 29, VII e VIII do CTB",
+    "Art. 4º: casos excepcionais por requerimento"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 084, de 07/12/2023 (DOSP Catiguá ed. 489)",
+     "artigo": "art. 1º, caput e §§ 1º e 2º; arts. 3º e 4º",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NDMzOTAy"
+    }
+   ],
+   "vigencia_inicio": "2023-12-08",
+   "geometria": [
+    {
+     "id": "catigua_municipio",
+     "municipios": [
+      "3511201"
+     ],
+     "simplificar": 0.0005
+    }
+   ]
+  }
+ ]
+}

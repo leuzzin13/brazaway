@@ -1,0 +1,69 @@
+{
+ "ibge": "3550704",
+ "nome": "São Sebastião",
+ "uf": "SP",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://saosebastiao.1doc.com.br",
+   "resultado": "1Doc é protocolo, não base de normas; sem busca."
+  },
+  {
+   "url": "https://saosebastiao.sp.leg.br/",
+   "resultado": "Câmara respondeu 301; páginas de portarias/atos da presidência, sem base de leis do município localizada."
+  },
+  {
+   "url": "WebSearch 'Cachoeira Paulista decreto proibição circulação de caminhões área urbana' (resultado lateral)",
+   "resultado": "Citou https://saosebastiao.sp.gov.br/sistemas/oficialdocs/arquivos/04259635.pdf como 'decreto que disciplina o trânsito de caminhões em vias de uma zona de restrição específica' (não lido)."
+  },
+  {
+   "url": "https://saosebastiao.sp.gov.br/sistemas/oficialdocs/arquivos/04259635.pdf",
+   "resultado": "NÃO LIDO: conexão reiniciada pelo proxy em 3 tentativas (host saosebastiao.sp.gov.br inteiro bloqueado: 'Recv failure: Connection reset'); Wayback também falhou."
+  },
+  {
+   "url": "Overpass IBGE:GEOCODIGO=3550704",
+   "resultado": "Retornou: 1 via municipal com maxweight=40t (Av. Antônio Januário do Nascimento, Balsa/Costa Norte-Sul, ways 230995683, 594768837, 607133658, 966029241; operador DERSA em um), pontes com maxweight 30-45 t (Av. Magno Passos Bittencourt, Av. Debie Luiza Derani, Estrada do Cascalho, R. Gerônimo Bento Pereira) e helipontos. O hgv=no da preparação não apareceu nesta consulta."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3550704 'circulação de caminhões' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nas 4 fontes."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/",
+   "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
+  }
+ ],
+ "observacoes": "PISTA: existe um decreto municipal sobre trânsito de caminhões em zona de restrição em São Sebastião, achado só como título em resultado de busca; o host da prefeitura está bloqueado nesta máquina, então número, data, vias e horários não foram lidos. Reler de outra rede (https://saosebastiao.sp.gov.br/sistemas/oficialdocs/arquivos/04259635.pdf) antes de qualquer regra ativa. Pontes com maxweight no OSM são limite estrutural de ponte (não restrição de circulação municipal); a Av. Antônio Januário do Nascimento é via de acesso a balsa/Costa Norte-Sul.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight=40t na Av. Antônio Januário do Nascimento (4 ways) e pontes 30-45 t sem ato municipal lido (limite estrutural provável).",
+  "hgv=no da preparação não reencontrado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "saosebastiao_zona_restricao_pista",
+   "tipo": "zona",
+   "regime": "Municipal (decreto)",
+   "nome": "São Sebastião: decreto sobre trânsito de caminhões em zona de restrição (ato não lido)",
+   "status": "desativada",
+   "status_motivo": "Só o título do resultado de busca foi visto; PDF do decreto inacessível pelo proxy (host bloqueado). Sem número, artigo, vias nem horário.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "decreto não identificado (arquivo oficialdocs 04259635)",
+     "artigo": "não lido",
+     "url": "https://saosebastiao.sp.gov.br/sistemas/oficialdocs/arquivos/04259635.pdf"
+    }
+   ],
+   "trechos": []
+  }
+ ]
+}

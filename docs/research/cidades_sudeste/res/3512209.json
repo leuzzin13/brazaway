@@ -1,0 +1,89 @@
+{
+ "ibge": "3512209",
+ "nome": "Conchal",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://conchal.siscam.com.br (toolkit legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|zona de restrição|zona de restricao)",
+   "resultado": "siscam: 8 atos retornados; filtrados por ementa à mão. Achado: Lei 2.397/2023. legislacaodigital.com.br (texto das normas de Siscam antigo) responde 403 Cloudflare; leismunicipais.com.br idem. Não contornado."
+  },
+  {
+   "url": "https://conchal.siscam.com.br/Documentos/Documento/14512",
+   "resultado": "Lei 2.397, de 08/11/2023, PDF (/arquivo?Id=20582) baixado e lido por imagem (texto do PDF embaralhado): atos/3512209/lei2397_2023.pdf."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar",
+   "resultado": "diarios_consolidados.py buscar (doesp, apm, dosp, qd): 'circulação de caminhões' e 'trânsito de caminhões' = 0 resultado(s) em cada fonte."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 2.397/2023 (autoria Vereador Marcos Roberto de Oliveira): art. 1 proíbe tráfego, parada ou estacionamento de caminhões Romeu e Julieta, rodotrem e bitrem na Rua Araras, Bairro Santa Rita; parágrafo único: aplica-se a caminhões com semirreboque (acoplado ou não) com mais de 5 eixos. Art. 4: vigor 30 dias após publicação (publicada por afixação em 08/11/2023 => ~08/12/2023). Sem alteração/revogação localizada. Lei 2.141/2017 (carga e descarga de numerários em agências) é irrelevante.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "conchal_rua_araras_cvc",
+   "tipo": "via",
+   "regime": "Lei 2.397/2023",
+   "nome": "Conchal: Rua Araras (Bairro Santa Rita), proibidos Romeu e Julieta, rodotrem, bitrem e conjuntos com mais de 5 eixos",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     },
+     {
+      "campo": "eixos",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.397, de 08/11/2023",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://conchal.siscam.com.br/Documentos/Documento/14512"
+    }
+   ],
+   "nota": "Romeu e Julieta tem 2 reboques e pode ter menos de 6 eixos; o campo tipo cvc pode não cobrir. Revisar mapeamento.",
+   "vigencia_inicio": "2023-12-08",
+   "trechos": [
+    {
+     "via": "Rua Araras",
+     "descricao": "Bairro Santa Rita, toda a via",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3512209_rua_araras.geojson",
+     "construir": "trechos"
+    }
+   ]
+  }
+ ]
+}

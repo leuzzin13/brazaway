@@ -1,0 +1,239 @@
+{
+ "ibge": "3529609",
+ "nome": "Meridiano",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.meridiano.sp.leg.br/norma/738",
+   "resultado": "Lei 1.567, de 22/03/2024 (SAPL; PDF com texto lido): proíbe veículos pesados a partir de 5 eixos nas vias do perímetro urbano; sem cláusula de revogação; vigência 30 dias após a publicação. Era o PL 22/2024 do trecho do diário (DOSP ed. 1582B)."
+  },
+  {
+   "url": "https://sapl.meridiano.sp.leg.br/norma/1540",
+   "resultado": "Lei 1.055, de 03/09/2014 (PDF lido): proíbe carretas/bitrens de transporte para usinas, mesmo vazios, 24 h, nas ruas São José, José Salvioni, Av. Tadao Tobita e Ernesto Cavalin (sede) e Ruas A, D e G do Povoado de Santo Antônio do Viradouro; exceção para emplacados e residentes em Meridiano (rota alternativa)."
+  },
+  {
+   "url": "https://sapl.meridiano.sp.leg.br/norma/1565",
+   "resultado": "Lei 1.082, de 04/03/2015 (PDF lido): proíbe tráfego/estacionamento de carretas/bitrens, vazios, Ruas A e D do Povoado de Santo Antônio do Viradouro."
+  },
+  {
+   "url": "https://sapl.meridiano.sp.leg.br (legislacao.py buscar 3529609)",
+   "resultado": "5 atos por ementa; Lei 1.567/2024 não revoga expressamente as de 2014/2015 (coexistência não confirmada)."
+  }
+ ],
+ "observacoes": "Três leis vigentes por ementa (sem revogação expressa vista): Lei 1.567/2024 (perímetro urbano inteiro, veículos com 5 ou mais eixos e combinações longas; carga e descarga só com autorização; isentos moradores emplacados no município com autorização), Lei 1.055/2014 (4 ruas na sede e 3 no povoado, carretas de usina) e Lei 1.082/2015 (Ruas A e D do povoado). Vigência da Lei 1.567: 30 dias após 22/03/2024 (21/04/2024). Perímetro urbano sem mapa: geometria manual. Dados do campo 'data_vigencia: 2014-12-03' da Lei 1.055 no SAPL parecem metadado de cadastro, não prazo; conferir.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "meridiano_perimetro_urbano_5_eixos",
+   "tipo": "zona",
+   "regime": "Veículos pesados a partir de 5 eixos no perímetro urbano",
+   "nome": "Meridiano: veículos pesados com 5 ou mais eixos no perímetro urbano (Lei 1.567/2024)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: carga e descarga com autorização da Unidade Municipal de Trânsito",
+    "Art. 2º, §§ 2º e 3º: veículos de carga que prestam serviço no município ou de moradores da área urbana, com cadastro/autorização"
+   ],
+   "autorizacao": "Autorização da Unidade Municipal de Trânsito/prefeitura (art. 2º, §§ 1º a 4º)",
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 2º (carga e descarga com autorização)",
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.567, de 22/03/2024",
+     "artigo": "art. 1º (proibição a partir de 5 eixos), art. 2º (exceções), art. 3º (vigência em 30 dias)",
+     "url": "https://sapl.meridiano.sp.leg.br/norma/738"
+    }
+   ],
+   "nota": "'A partir de 05 eixos' modelado como eixos > 4 (combinação de eixos do veículo/conjunto, não esclarecido pelo ato). Lista de tipos: caminhão, rodotrem, bitrem, treminhão, caminhão canavieiro, de grãos etc.",
+   "vigencia_inicio": "2024-04-21",
+   "geometria": [
+    {
+     "id": "meridiano_perimetro_urbano",
+     "arquivo": "municipios/geo/3529609_meridiano_perimetro_urbano.geojson",
+     "construir": "manual",
+     "como_gerar": "Polígono do perímetro urbano da sede (o ato não traz mapa; excluir rodovias SP-320 e estradas MDN)"
+    }
+   ]
+  },
+  {
+   "id": "meridiano_vias_usinas_lei1055",
+   "tipo": "via",
+   "regime": "Carretas e bitrens de usina (24 h)",
+   "nome": "Meridiano: carretas/bitrens em Rua São José, Rua José Salvioni, Av. Tadao Tobita, Rua Ernesto Cavalin e Ruas A, D e G do povoado (Lei 1.055/2014)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Parágrafo único do art. 1º: veículos emplacados em Meridiano com comprovante de residência (rota alternativa MDN-010/MDN-385/MDN-020/MDN-377)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.055, de 03/09/2014",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://sapl.meridiano.sp.leg.br/norma/1540",
+     "nota": "PDF lido; vigência atual não confirmada contra a Lei 1.567/2024 (sem revogação expressa)."
+    }
+   ],
+   "vigencia_inicio": "2014-09-03",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Rua São José"
+     ],
+     "descricao": "Rua São José (sede)",
+     "aproximado": true
+    },
+    {
+     "inciso": "-",
+     "via": [
+      "Rua José Salvioni"
+     ],
+     "descricao": "Rua José Salvioni (sede)",
+     "aproximado": true
+    },
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Tadao Tobita"
+     ],
+     "descricao": "Av. Tadao Tobita (sede)",
+     "aproximado": true
+    },
+    {
+     "inciso": "-",
+     "via": [
+      "Rua Ernesto Cavalin"
+     ],
+     "descricao": "Rua Ernesto Cavalin (sede)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "id": "meridiano_vias_lei1055",
+     "arquivo": "municipios/geo/3529609_meridiano_vias_lei1055.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "meridiano_povoado_ruas_a_d_lei1082",
+   "tipo": "via",
+   "regime": "Carretas e bitrens, Povoado de Santo Antônio do Viradouro",
+   "nome": "Meridiano: Ruas A e D do Povoado de Santo Antônio do Viradouro (Leis 1.082/2015 e 1.055/2014)",
+   "status": "desativada",
+   "status_motivo": "Nomes 'Rua A', 'Rua D' (e 'Rua G') são genéricos: sem como ancorá-los no OSM pelo nome; geometria manual necessária.",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Lei 1.082/2015, parágrafo único: tráfego normal pela via alternativa do povoado",
+    "Lei 1.055/2014: emplacados e residentes em Meridiano"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.082, de 04/03/2015",
+     "artigo": "art. 1º",
+     "url": "https://sapl.meridiano.sp.leg.br/norma/1565"
+    }
+   ],
+   "vigencia_inicio": "2015-03-04",
+   "geometria": [
+    {
+     "id": "meridiano_povoado",
+     "arquivo": "municipios/geo/3529609_meridiano_povoado.geojson",
+     "construir": "manual",
+     "como_gerar": "Ruas A, D e G do Povoado de Santo Antônio do Viradouro"
+    }
+   ]
+  }
+ ]
+}

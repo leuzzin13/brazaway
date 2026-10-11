@@ -1,0 +1,79 @@
+{
+ "ibge": "3532801",
+ "nome": "Nova Aliança",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MTYxOTI3",
+   "resultado": "DOSP ed. 32, 07/04/2021, lida: Lei 21/2021 (24/03/2021) altera o caput do art. 1º da Lei 35/2020: 'Fica vedado o tráfego de caminhões canavieiros no perímetro urbano referente ao Distrito de Nova Itapirema'. Texto original da Lei 35/2020 e seus demais artigos NÃO lidos."
+  },
+  {
+   "url": "https://novaalianca.sp.gov.br/legislacao e https://camaranovaalianca.sp.gov.br/publicacoes/leis-1506135275 (legislacao.py buscar 3532801)",
+   "resultado": "Cliente heurístico devolveu 0 atos (portal próprio); Lei 35/2020 não localizada nas fontes."
+  }
+ ],
+ "observacoes": "Regra com ato (Lei 35/2020 alterada pela Lei 21/2021, art. 1º): caminhões canavieiros vedados no perímetro urbano do Distrito de Nova Itapirema; sem horários citados (modelado 24 h); demais artigos da Lei 35/2020 (exceções, rota) não lidos. Geometria manual do perímetro urbano de Nova Itapirema.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "nova_alianca_nova_itapirema_canavieiros",
+   "tipo": "zona",
+   "regime": "Caminhões canavieiros, Distrito de Nova Itapirema",
+   "nome": "Nova Aliança: caminhões canavieiros no perímetro urbano do Distrito de Nova Itapirema (Lei 35/2020, alterada pela Lei 21/2021)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 21, de 24/03/2021 (altera o art. 1º da Lei 35/2020)",
+     "artigo": "art. 1º (nova redação do caput do art. 1º da Lei 35/2020)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=MTYxOTI3",
+     "nota": "Lei 35/2020 original não lida; exceções eventuais desconhecidas."
+    }
+   ],
+   "nota": "'Caminhões canavieiros' = treminhões/carretas de cana (tipo truck_trailer/cvc), aproximação.",
+   "vigencia_inicio": "2021-03-24",
+   "geometria": [
+    {
+     "id": "nova_alianca_nova_itapirema",
+     "arquivo": "municipios/geo/3532801_nova_alianca_nova_itapirema.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano do Distrito de Nova Itapirema (Nova Aliança); o ato não traz mapa"
+    }
+   ]
+  }
+ ]
+}
