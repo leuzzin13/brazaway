@@ -1,0 +1,106 @@
+{
+  "ibge": "3548302",
+  "nome": "Santo Expedito",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.dosp.com.br/exibe_do.php?i=MzM2MDY4",
+      "resultado": "Diário Oficial de Santo Expedito, ed. 107 (03/11/2020), p. 8-9, via DOSP: Lei 1.718, de 28/10/2020, lida (atos/3548302/s1.pdf)."
+    },
+    {
+      "url": "DOSP pesquisar.php?c=santoexpedito",
+      "resultado": "erro: slug não existe no DOSP (o diário é do próprio site, que dá 403 em https://www.santoexpedito.sp.gov.br/diario-oficial-eletronico)"
+    },
+    {
+      "url": "http://camarasantoexpedito.sp.gov.br (webline)",
+      "resultado": "módulo de legislação não respondeu: vigência/alterações posteriores da Lei 1.718/2020 não verificadas"
+    },
+    {
+      "url": "/home/user/brazaway/docs/research/cidades_sudeste/osm_hints_por_municipio.json",
+      "resultado": "contagem da preparação: hgv=no = 6 (sem lista de ways)"
+    }
+  ],
+  "observacoes": "Lei 1.718, de 28/10/2020: art. 1º proíbe o tráfego de veículos pesados (caminhões, carretas e outros de maior peso) na Avenida Barão do Rio Branco, Rua Rui Barbosa e Rua Carlos Gomes; art. 2º permite em emergências de segurança/saúde, eventos do Poder Público e transporte escolar; art. 3º permite entrada/saída de moradores de ruas cujo único acesso seja essas vias e carga e descarga, e autoriza a Av. Barão do Rio Branco durante interdição das vias alternativas (parágrafo único); art. 4º: 'caminhão pesado' = mais de 15 t. Sem horário (24 h). Vigência na publicação (art. 5º). Alteração/revogação posterior não verificada (câmara e diário próprio fora do ar para o robô). OSM tem 6 ways com hgv=no no município, não conferidos contra as 3 vias (Overpass fora do ar).",
+  "osm_divergencias": [
+    "6 ways com hgv=no no município (contagem da preparação); não identificadas por falha do Overpass: conferir se coincidem com Av. Barão do Rio Branco, R. Rui Barbosa e R. Carlos Gomes (pendência, não corrigir)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "santoexpedito_vias_15t",
+      "tipo": "via",
+      "regime": "PBT > 15 t proibido (24 h)",
+      "nome": "Santo Expedito: Av. Barão do Rio Branco, R. Rui Barbosa e R. Carlos Gomes, veículos pesados acima de 15 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: emergências de segurança e saúde pública, eventos do Poder Público e transporte escolar",
+        "Art. 3º: moradores de ruas com único acesso por essas vias; carga e descarga",
+        "Art. 3º, parágrafo único: Av. Barão do Rio Branco liberada durante interdição das vias onde o tráfego é permitido"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.718, de 28/10/2020 (Diário Oficial de Santo Expedito ed. 107, 03/11/2020)",
+          "artigo": "art. 1º (vias), art. 4º (mais de 15 t), arts. 2º e 3º (exceções)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MzM2MDY4"
+        }
+      ],
+      "nota": "O art. 4º usa 'mais de 15 toneladas' sem dizer se é PBT ou capacidade: interpretado como PBT. Vigência atual não confirmada por segunda fonte.",
+      "vigencia_inicio": "2020-10-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Barão do Rio Branco"
+          ],
+          "descricao": "Avenida Barão do Rio Branco",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Rui Barbosa"
+          ],
+          "descricao": "Rua Rui Barbosa",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Carlos Gomes"
+          ],
+          "descricao": "Rua Carlos Gomes",
+          "aproximado": true
+        }
+      ]
+    }
+  ],
+  "data": "2026-10-11",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false
+}

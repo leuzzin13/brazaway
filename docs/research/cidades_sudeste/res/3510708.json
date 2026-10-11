@@ -1,0 +1,87 @@
+{
+  "ibge": "3510708",
+  "nome": "Cardoso",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.dosp.com.br/exibe_do.php?i=MTE0NTIx",
+      "resultado": "DOSP Cardoso ed. 242 (20/06/2020): Decreto 3.491, de 19/06/2020, lido (atos/3510708/c1.pdf)."
+    },
+    {
+      "url": "DOSP pesquisar.php?c=cardoso ('trânsito de caminhões','3.491','veículos de carga articulados')",
+      "resultado": "só a ed. 242 (e a ed. de 23/01/2020 para '3.491' = outro ato): sem alteração/revogação localizada"
+    },
+    {
+      "url": "http://camaracardoso.sp.gov.br (webline)",
+      "resultado": "não consultado por falha geral do módulo webline nas outras cidades do lote; DOSP cobre o município"
+    }
+  ],
+  "observacoes": "Decreto 3.491, de 19/06/2020 'disciplina o trânsito de caminhões nas vias públicas do município'. Art. 1º: a circulação de veículos de carga em todo o território do município obedece ao decreto. Art. 2º: proibido o trânsito de veículos de carga articulados ou suas unidades tratoras com altura superior a 4,71 m, 'conforme previsto na Resolução nº 735, de 05/06/2018' (resolução citada no decreto, não conferida aqui). Art. 3º: placas nos trevos de acesso à cidade. É um limite de altura (não horário), em todo o território. Impacto prático baixo (a maioria dos veículos tem menos de 4,71 m).",
+  "regras_rascunho": [
+    {
+      "id": "cardoso_altura_4_71",
+      "tipo": "zona",
+      "regime": "Articulados com altura > 4,71 m proibidos",
+      "nome": "Cardoso: todo o município, veículos de carga articulados (e unidades tratoras) com altura acima de 4,71 m",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "altura_m",
+            "acima": 4.71
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.491, de 19/06/2020 (DOSP Cardoso ed. 242, 20/06/2020)",
+          "artigo": "arts. 1º a 4º (art. 2º: altura superior a 4,71 m)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MTE0NTIx"
+        }
+      ],
+      "nota": "Limite de altura; a 'Resolução nº 735/2018' citada não foi conferida. Escopo: todo o território do município.",
+      "vigencia_inicio": "2020-06-19",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "todo o território do município"
+          ],
+          "descricao": "Todo o território do Município de Cardoso",
+          "aproximado": true
+        }
+      ]
+    }
+  ],
+  "data": "2026-10-11",
+  "nivel_busca": "dirigida",
+  "osm_divergencias": [],
+  "falha_de_fonte": false
+}

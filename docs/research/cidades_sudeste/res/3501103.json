@@ -1,0 +1,67 @@
+{
+  "ibge": "3501103",
+  "nome": "Alto Alegre",
+  "uf": "SP",
+  "status": "pontual",
+  "fontes_consultadas": [
+    {
+      "url": "https://data.queridodiario.ok.org.br/3501103/2021-06-16/a2385c0ee350b55ff9adcf8e8162f44143701584.txt",
+      "resultado": "Querido Diário, Diário Oficial de Alto Alegre ed. 0624 (16/06/2021): Lei 2.503, de 16/06/2021, lida integralmente (atos/3501103/qd.txt)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3501103 ('circulação de caminhões','tráfego de caminhões','veículos pesados'; fontes qd,doesp)",
+      "resultado": "só a Lei 2.503/2021 e uma menção de 2023 (ed. 1049) sem restrição; DOE-SP 0"
+    },
+    {
+      "url": "https://www.altoalegre.sp.gov.br/portal/leis_decretos/ (instar, via legislacao.py 'caminh|pesad|tráfego|trânsito|carga|circula')",
+      "resultado": "0 atos (nem para 'trânsito': o filtro do cliente pode estar falhando neste portal)"
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sp/alto-alegre",
+      "resultado": "403 Cloudflare, não contornado"
+    }
+  ],
+  "observacoes": "Lei 2.503/2021 'estabelece normas para circulação de caminhões canavieiros em vias urbanas': art. 1º proíbe a circulação nas vias urbanas de caminhões de cana-de-açúcar sem a carga acondicionada de modo a não perder produto; art. 2º obriga as usinas à limpeza das vias; arts. 3º/4º multas em UFMAA; art. 6º manda regulamentar por decreto. É norma de acondicionamento de carga, não restrição de via/horário/porte: não roteável. Nenhum outro ato de circulação encontrado. A pista do lead era esta lei (acerto real, mas sem efeito de roteamento).",
+  "regras_rascunho": [
+    {
+      "id": "altoalegre_canavieiros_acondicionamento",
+      "tipo": "zona",
+      "regime": "Cana sem acondicionamento adequado proibida nas vias urbanas",
+      "nome": "Alto Alegre: caminhões canavieiros com carga mal acondicionada nas vias urbanas",
+      "status": "desativada",
+      "status_motivo": "Norma de acondicionamento de carga (não restringe via, horário nem porte); não roteável.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.503, de 16/06/2021 (Diário Oficial de Alto Alegre ed. 0624, 16/06/2021)",
+          "artigo": "art. 1º",
+          "url": "https://data.queridodiario.ok.org.br/3501103/2021-06-16/a2385c0ee350b55ff9adcf8e8162f44143701584.pdf"
+        }
+      ],
+      "trechos": []
+    }
+  ],
+  "data": "2026-10-11",
+  "nivel_busca": "dirigida",
+  "osm_divergencias": [],
+  "falha_de_fonte": false
+}
