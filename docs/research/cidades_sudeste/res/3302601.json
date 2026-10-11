@@ -1,0 +1,93 @@
+{
+ "ibge": "3302601",
+ "nome": "Mangaratiba",
+ "uf": "RJ",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.mangaratiba.rj.leg.br/api/norma/normajuridica/ (via toolkit legislacao.py buscar)",
+   "resultado": "Busca por ementa (caminh, carga e descarga, veículos pesados, tráfego, tonelad, eixos, carreta). 12 ementas; relevantes: Leis 609/2007, 1.227/2019"
+  },
+  {
+   "url": "http://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2007/1026/lei_609.07.pdf",
+   "resultado": "Lei 609/2007 lida via pdftotext (atos/3302601/lei_609_2007.pdf)"
+  },
+  {
+   "url": "https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2013/446/446_texto_integral.pdf",
+   "resultado": "Lei 877/2013 lida (PDF escaneado, visualizado como imagem; atos/3302601/lei_877_2013.pdf)"
+  },
+  {
+   "url": "https://sapl.mangaratiba.rj.leg.br/api/norma/normajuridica/ (ementa: 609, 683, 877, eixo, revog, loteamento, condom)",
+   "resultado": "Só Lei 877/2013 altera a 609; Lei 683/2009 não aparece; nenhuma revogação"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3302601)",
+   "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 609, de 11/12/2007 (SAPL norma 1026; o SAPL grafa 'abril' na ementa, o PDF diz 11 de dezembro): art. 1º vedava acesso e circulação de veículos de carga acima de 10 t no sistema viário dos loteamentos/condomínios (exceto autorizados), art. 3º multa de 120 UFIR, art. 4º apreensão. O art. 1º foi reescrito pela Lei 683/2009 (não localizada no SAPL) e de novo pela Lei 877, de 20/08/2013 (SAPL norma 446, PDF escaneado lido na imagem): 'Ficam proibidos o acesso e o tráfego de veículos com mais de 03 (três) eixos, no interior dos loteamentos, condomínios e nas vias urbanas do Município de Mangaratiba'; parágrafo único: não se aplica a veículos expressamente autorizados pelo Chefe do Executivo (delegável por decreto). Sem horário (24 h). Busca de revogação/alteração posterior (ementas com 609, 877, 683, eixo, revoga, loteamento): nada achado. Pontos de atenção: o texto não distingue rodovias (RJ-14/BR-101 em trecho urbano) e o critério é por número de eixos (campo eixos). A Lei 1.227/2019 só trata de fechamento de vilas/ruas sem saída a veículos estranhos aos moradores. A regra foi marcada ativa por ter ato primário, artigo e URL lidos; recomenda-se conferir a vigência (Lei 683/2009, DO) antes de implementar. Ordem de grandeza: regra de zona inteira, impacta rotas de caminhão com mais de 3 eixos.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "3302601_mangaratiba_mais_3_eixos",
+   "tipo": "zona",
+   "regime": "eixos > 3 (24 h)",
+   "nome": "Mangaratiba: veículos com mais de 3 eixos proibidos em loteamentos, condomínios e vias urbanas",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "autorizacao": "Autorização expressa do Chefe do Poder Executivo (parágrafo único do art. 1º, Lei 609/2007 na redação da Lei 877/2013)",
+   "excecoes": [
+    "Parágrafo único: veículos expressamente autorizados pelo Chefe do Poder Executivo (delegável por decreto)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 609, de 11/12/2007, art. 1º com redação da Lei 877, de 20/08/2013",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2013/446/446_texto_integral.pdf"
+    },
+    {
+     "ato": "Lei municipal 609, de 11/12/2007 (multa art. 3º; apreensão art. 4º)",
+     "artigo": "arts. 3º e 4º",
+     "url": "https://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2007/1026/lei_609.07.pdf"
+    }
+   ],
+   "nota": "Texto fala em 'vias urbanas do Município'; não define o perímetro urbano nem exclui rodovias. Geometria a definir (perímetro urbano/IBGE); alvo por número de eixos.",
+   "vigencia_inicio": "2013-08-20",
+   "trechos": [
+    {
+     "via": "vias urbanas, loteamentos e condomínios do município",
+     "descricao": "Perímetro urbano de Mangaratiba (não delimitado no ato)",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

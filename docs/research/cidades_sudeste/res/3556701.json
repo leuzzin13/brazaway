@@ -1,0 +1,169 @@
+{
+ "ibge": "3556701",
+ "nome": "Vinhedo",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/3556701/2021-09-03/e8b37d80e016424851a3f8313d52e7f74573067b.pdf e .../2021-09-30/9433e6cf6b1c048e3fc4644373376e4851b8a922.pdf (pistas da preparação)",
+   "resultado": "Indicações de vereadores pedindo placa de proibição (R. Felisbina Corazzari Matheus; caminhões que 'cortam' o pedágio): não são ato (pedem sinalização, sugerindo que não há regra nessas vias). Não baixadas nesta passada."
+  },
+  {
+   "url": "https://vinhedo.sispref.com.br/Home/Consulta (Legislação da Câmara/Prefeitura, Sino; buscas: tráfego, caminhão, caminhões, pesados, carga e descarga, veículos de carga, trânsito de veículos)",
+   "resultado": "Achou Decreto 83/2008, Decreto 54/1996 e Portaria 37/1994 (abaixo). 'carga e descarga' e 'caminhões' sem resultado relevante. O portal antigo vinhedo.sp.gov.br/portal/leis_decretos redireciona para este."
+  },
+  {
+   "url": "https://vinhedo.sispref.com.br/Documentos/Documento/165711",
+   "resultado": "Decreto 083, de 28/04/2008 (PDF digitalizado: https://vinhedo.sispref.com.br/arquivo?Id=93255, salvo em atos/3556701/dec83_2008.pdf; lido na imagem, sem OCR): 'restrição ao tráfego de veículos de carga em determinados logradouros'. Situação no portal: 'Não especificado'."
+  },
+  {
+   "url": "https://vinhedo.sispref.com.br/Documentos/Documento/160239 (aprox.; Decreto 54/1996) e Portaria 37/1994",
+   "resultado": "Ementas: Decreto 54/1996 'proibição de tráfego de caminhões pesados pelas Av. dos Imigrantes e Estrada da Boiada'; Portaria 37/1994 'proibição de tráfego de veículos pesados em via pública'. Textos NÃO lidos; Av. dos Imigrantes e Estrada da Boiada reaparecem no Decreto 83/2008 (provável sucessor)."
+  },
+  {
+   "url": "https://vinhedo.sispref.com.br/Home/Consulta?Search=Decreto 83/2008 e 'veículos de carga'",
+   "resultado": "Nenhum ato posterior que revogue ou altere o Decreto 83/2008 apareceu na busca por ementa."
+  }
+ ],
+ "observacoes": "Decreto 83/2008 (Prefeito João Carlos Donato): art. 1º veda o tráfego de veículos de carga acima de 2 eixos em 10 logradouros (parágrafo único: terceiro eixo retrátil conta); art. 2º exceções: carga e descarga no município, limpeza pública, PM e Bombeiros, atendimento emergencial a redes e serviços públicos, abastecimento de hospitais e veículos de carga licenciados em Vinhedo; art. 4º prova de origem/destino por nota fiscal; art. 5º fiscalização eletrônica; art. 7º vigor na data, efeitos 30 dias após a publicação (data de publicação não conferida). Sem horário: 24 h, todos os dias. Confiança média: o texto é primário e lido, mas a vigência não foi confirmada por consolidação oficial ('Situação: Não especificado'), e a exceção do inciso VI (veículos licenciados em Vinhedo) enfraquece a restrição para frota local. Extensão de cada via não definida no texto.",
+ "osm_divergencias": [
+  "OSM da preparação: hgv=no em 12 ways e maxweight em 2 em Vinhedo; não conferido se coincidem com as vias do Decreto 83/2008. Pendência para a sessão do OSM (não corrigir)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "vinhedo_dec83_2008_acima_2_eixos",
+   "tipo": "via",
+   "regime": "Veículos de carga acima de 2 eixos",
+   "nome": "Vinhedo: 10 logradouros, veículos de carga acima de 2 eixos (Decreto 83/2008)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º, I: veículos de carga que necessitem efetuar carga e descarga no Município",
+    "Art. 2º, II: limpeza pública",
+    "Art. 2º, III: Polícia Militar e Corpo de Bombeiros",
+    "Art. 2º, IV: atendimento emergencial a residências, vias públicas e redes (iluminação, telefonia, água, esgoto, TV a cabo, internet) e outros serviços públicos",
+    "Art. 2º, V: abastecimento e atendimento de hospitais",
+    "Art. 2º, VI: veículos de carga licenciados no Município de Vinhedo"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 083, de 28/04/2008 (Vinhedo)",
+     "artigo": "art. 1º (vedação acima de 2 eixos, incisos I a X e parágrafo único); art. 2º (exceções)",
+     "url": "https://vinhedo.sispref.com.br/Documentos/Documento/165711",
+     "nota": "PDF: https://vinhedo.sispref.com.br/arquivo?Id=93255"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": 1,
+     "via": [
+      "Rua João Edueta"
+     ],
+     "descricao": "Rua João Edueta (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 2,
+     "via": [
+      "Rua João Degello"
+     ],
+     "descricao": "Rua João Degello (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 3,
+     "via": [
+      "Estrada da Boiada"
+     ],
+     "descricao": "Estrada da Boiada (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 4,
+     "via": [
+      "Rua Antonio Bucci"
+     ],
+     "descricao": "Rua Antonio Bucci (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 5,
+     "via": [
+      "Rua Roma"
+     ],
+     "descricao": "Rua Roma (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 6,
+     "via": [
+      "Rua Carolina Von Zubben"
+     ],
+     "descricao": "Rua Carolina Von Zubben (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 7,
+     "via": [
+      "Rua Afonso Garbuio"
+     ],
+     "descricao": "Rua Afonso Garbuio (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 8,
+     "via": [
+      "Avenida Independência"
+     ],
+     "descricao": "Avenida Independência (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 9,
+     "via": [
+      "Avenida dos Imigrantes"
+     ],
+     "descricao": "Avenida dos Imigrantes (extensão não definida no decreto)",
+     "aproximado": true
+    },
+    {
+     "inciso": 10,
+     "via": [
+      "Avenida Aparecida Telau Serafim (Variante Vinhedo/Anhanguera – 075/330)"
+     ],
+     "descricao": "Avenida Aparecida Telau Serafim (Variante Vinhedo/Anhanguera – 075/330) (extensão não definida no decreto)",
+     "aproximado": true
+    }
+   ],
+   "nota": "Parágrafo único do art. 1º: veículo com terceiro eixo retrátil está incluído. Vigência: efeitos 30 dias após a publicação (art. 7º); data da publicação não conferida."
+  }
+ ],
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "falha_de_fonte": false
+}

@@ -1,0 +1,158 @@
+{
+ "ibge": "3523206",
+ "nome": "Itararé",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MzQ2ODI4",
+   "resultado": "DOSP/Diário Oficial de Itararé ed. 1242, 03/04/2023, pdftotext: Lei Municipal 4.363, de 29/03/2023, texto integral lido (arts. 1º a 8º)."
+  },
+  {
+   "url": "https://itarare.sp.gov.br/prefeitura-de-itarare-sp-inicia-cadastramento-de-empresas-e-proprietarios-de-caminhao-que-possuam-patio-dentro-do-perimetro-urbano/",
+   "resultado": "Nota da Prefeitura/Demutran: a Lei 4.363/2023 'entrará em vigor na próxima quarta-feira (12)' (12/04/2023) e abre cadastro de pátios para autorização especial (art. 3º). Confirma que a lei foi aplicada."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=Mjc4MjM=",
+   "resultado": "Jornal Oficial de Itararé 11/04/2018, pdftotext: Portaria nº 001/2018-DEMUTRAN lida (bitrem/rodotrem > 19 m ou > 30 t nas estradas municipais entre bairros rurais, vigência 25/04/2018)."
+  },
+  {
+   "url": "https://itarare.sp.gov.br/acesso-ao-distrito-de-pedra-branca-e-interditado-temporariamente-para-caminhoes-e-veiculos-pesados/",
+   "resultado": "Nota da Prefeitura (sem data na página): restrição temporária a caminhões/veículos pesados na Vicinal Juracir Bonotto (obras em Pedra Branca). Temporária, sem ato citado."
+  },
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=MjI3NTIw",
+   "resultado": "DOSP ed. 992, 17/02/2022 (indicação de vereador pedindo ao DEMUTRAN medidas contra veículos pesados em rua): não é ato; anterior à Lei 4.363/2023."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/sp/itarare",
+   "resultado": "403 Cloudflare (não contornado). Câmara (camaraitarare.sp.gov.br/documentos, portal_proprio heurístico): 0 resultados; Prefeitura (WordPress): só notícias."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3523206 ('4.363','4363','caminhões e carretas','caminhões') fontes doesp/apm/qd",
+   "resultado": "Sem edição posterior revogando/alterando a Lei 4.363; os 4 resultados do DOE-SP para 'caminhões' são licitações de compra de caminhões. A busca 'dosp' do toolkit devolve 0 nesta máquina (sem cache de slugs); busquei DOSP direto por pesquisar.php (slug itarare): termo '4.363' em 10 edições (2023-06 a 2025-10), não abertas uma a uma."
+  }
+ ],
+ "observacoes": "Lei Municipal 4.363, de 29/03/2023 (DOSP ed. 1242, 03/04/2023), 'normas para circulação e estacionamento de caminhões e carretas na área urbana': art. 1º proíbe, excetuada carga e descarga, o ACESSO e/ou ESTACIONAMENTO de caminhões e veículos de carga articulados/biarticulados ou unidades tratoras ACIMA DE 6 t nas vias urbanas do município (exceto veículos de utilidade pública e de aprendizagem); art. 2º autoriza novos pátios em vias com acesso direto às SP-281 e SP-258; art. 3º garante direitos de pátios existentes mediante autorização especial do Demutran com trajeto fixado; art. 5º manda sinalizar os acessos ao perímetro urbano com R-9; art. 6º multa do art. 187 do CTB; art. 8º vigência na publicação (a Prefeitura divulgou aplicação a partir de 12/04/2023). Ambiguidade: o ato diz 'acima de 6 toneladas' sem dizer PBT ou capacidade; adotei pbt_t > 6 por ser o critério do CTB citado. Não há perímetro/mapa: a regra vale para 'as vias urbanas' (geometria exige o limite do perímetro urbano, a definir). Nenhum ato posterior de alteração/revogação foi localizado, mas o portal de legislação (leismunicipais) estava bloqueado: conferir vigência no portal quando possível. Portaria 001/2018-DEMUTRAN (estradas vicinais rurais) fica desativada: trechos não identificados. Restrição da Vicinal Juracir Bonotto (obras Pedra Branca) é temporária, sem ato.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "tipo": "zona",
+   "feriados": "aplica",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "excecoes": [
+    "Art. 1º: situações de carga e descarga",
+    "Art. 1º: veículos de utilidade pública e de aprendizagem",
+    "Art. 3º e parágrafo único: pátios/estacionamentos existentes com autorização especial do Demutran por veículo, com trajeto fixado",
+    "Art. 2º: acesso aos pátios novos permitido nas vias com acesso direto à SP-281 e SP-258"
+   ],
+   "vigencia_inicio": "2023-04-12",
+   "id": "itarare_lei4363_2023_caminhoes_6t",
+   "regime": "Caminhões e articulados acima de 6 t: acesso/estacionamento proibido nas vias urbanas",
+   "nome": "Itararé: vias urbanas, caminhões e veículos de carga articulados acima de 6 t",
+   "status": "ativa",
+   "confianca": "media",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 6
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 4.363, de 29/03/2023 (Diário Oficial de Itararé ed. 1242, 03/04/2023)",
+     "artigo": "art. 1º (proibição acima de 6 t), arts. 2º a 5º",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=MzQ2ODI4"
+    }
+   ],
+   "nota": "'Acima de 6 toneladas' sem especificar PBT x capacidade: adotado pbt_t. Art. 8º: vigência na publicação (03/04/2023); a Prefeitura anunciou aplicação em 12/04/2023. Limite do 'perímetro urbano' não definido no ato.",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "todas as vias urbanas do município"
+     ],
+     "descricao": "Todas as vias urbanas de Itararé (perímetro urbano a delimitar)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "tipo": "via",
+   "feriados": "aplica",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "excecoes": [],
+   "vigencia_inicio": "2018-04-25",
+   "id": "itarare_portaria001_2018_vicinais_rurais",
+   "regime": "Bitrem/rodotrem > 19 m ou > 30 t nas estradas municipais entre bairros rurais",
+   "nome": "Itararé: estradas vicinais entre bairros rurais, bitrens/rodotrens (Portaria 001/2018-DEMUTRAN)",
+   "status": "desativada",
+   "status_motivo": "Trechos não identificáveis (o ato cita 'as estradas municipais que ligam' os bairros Pedra Branca, Rodeio, Morro Vermelho, Serrinha, Santa Bárbara, Matão, Itopava e Caiçara, sem nomear estradas) e vigência atual não confirmada.",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 19
+     },
+     {
+      "campo": "payload_t",
+      "acima": 30
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Portaria nº 001/2018-DEMUTRAN (Jornal Oficial de Itararé, 11/04/2018)",
+     "artigo": "arts. 1º e 2º (vigência 25/04/2018: art. 4º)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=Mjc4MjM="
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "estradas municipais entre os bairros rurais Pedra Branca, Rodeio, Morro Vermelho, Serrinha, Santa Bárbara, Matão, Itopava e Caiçara"
+     ],
+     "descricao": "Estradas vicinais rurais (sem nome no ato)",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

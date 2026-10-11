@@ -1,0 +1,92 @@
+{
+ "ibge": "3550605",
+ "nome": "São Roque",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/3550605/2020-10-02/0945311e1172d32e4c20496b30a3206215147dd6.txt (Diário Oficial de São Roque, ed. 27, 02/10/2020, p. 7)",
+   "resultado": "LIDO. Decreto 9.363, de 25/09/2020: 'Proíbe o tráfego de veículos de grande porte e articulados na via pública que especifica, localizada no Bairro do Carmo'."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3550605 (tráfego de caminhões; grande porte e articulados; Estrada Municipal do Carmo; veículos de grande porte) fontes qd,doesp",
+   "resultado": "Só a edição de 02/10/2020 (QD). DOE-SP sem resultado. API do QD instável (500/520) em uma das consultas."
+  },
+  {
+   "url": "https://www.camarasaoroque.sp.gov.br/transparencia/licitacoes/legislacao (legislacao.py, 6 termos)",
+   "resultado": "Sem resultado de restrição; portal da Câmara (heurístico) não lista decretos do Executivo. Legislação Digital 403; saoroque.1doc.com.br sem cliente."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3550605/2026-04-13/c35ff5bdfdc67bd3f51959444257c02278937498.pdf (pista da preparação)",
+   "resultado": "Licitação de placas de sinalização (R-6C proibido parar e estacionar): ruído, não lida a fundo."
+  }
+ ],
+ "observacoes": "Decreto 9.363, de 25/09/2020 (Prefeito Claudio José de Góes): art. 1º proíbe o tráfego de caminhões de grande porte e articulados na Estrada Municipal do Carmo, Bairro do Carmo (parágrafo único: exceto carga e descarga no território com acesso pela estrada); art. 2º sinalização; art. 3º vigor 30 dias após a publicação (25/09/2020, logo 25/10/2020). Motivo declarado: caminhões que fogem do pedágio. 'Grande porte' não é definido (sem PBT/eixos): modelado só como veículos articulados (confiança média). Não foi achada alteração/revogação; a conferência de vigência depende de portal de legislação que não respondeu. Pendência: confirmar vigência no portal da Prefeitura e extensão do trecho.",
+ "osm_divergencias": [
+  "OSM da preparação: hgv=no em 1 way e maxweight em 4 em São Roque; não conferidos contra a Estrada Municipal do Carmo. Pendência."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "saoroque_est_carmo_articulados",
+   "tipo": "via",
+   "regime": "Articulados / grande porte",
+   "nome": "São Roque: Estrada Municipal do Carmo, proibido caminhões de grande porte e articulados",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Parágrafo único: veículos que realizem carga e descarga no território com acesso pela Estrada Municipal do Carmo"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 9.363, de 25/09/2020 (São Roque)",
+     "artigo": "art. 1º, caput e parágrafo único; art. 3º (vigor 30 dias após a publicação)",
+     "url": "https://data.queridodiario.ok.org.br/3550605/2020-10-02/0945311e1172d32e4c20496b30a3206215147dd6.txt",
+     "nota": "Diário Oficial de São Roque nº 27, 02/10/2020, p. 7 (PDF no mesmo caminho .pdf)"
+    }
+   ],
+   "vigencia_inicio": "2020-10-25",
+   "trechos": [
+    {
+     "via": [
+      "Estrada Municipal do Carmo"
+     ],
+     "descricao": "Estrada Municipal do Carmo, Bairro do Carmo (extensão não definida)",
+     "aproximado": true
+    }
+   ],
+   "nota": "'Caminhões de grande porte' não tem definição numérica no decreto; só o recorte 'articulados' é modelável."
+  }
+ ],
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "falha_de_fonte": false
+}
