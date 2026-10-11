@@ -29,5 +29,5 @@ Rascunhos de regras municipais de circulação de caminhões, um arquivo por mun
 
 1. Implementar: para cada cidade com regra ativa verificada (ver `RESUMO.md`), gerar `data/raw/municipios/<ibge>.json` (+ geometria em `data/raw/municipios/geo/`), seguindo `docs/layers/restricoes_municipais.md`; validar no Valhalla local em lotes pequenos; gerar `data/raw/municipios/_varredura.json` a partir de `varredura_final.json`.
 2. Rodar a suíte inteira (`./scripts/run-tests.sh`) — requer o ambiente Docker local (Postgres + Valhalla com os tiles do Sudeste).
-3. 2ª rodada (opcional) só nas 280 de `falhas_de_fonte.json`, de preferência de outra rede (Mac), e nas 3 inverificáveis.
+3. 2ª rodada (opcional) só nas 280 de `falhas_de_fonte.json`, de outra rede (Mac): lotes prontos em `fila_r2.json` (25 lotes de até 12 cidades, agrupados por UF e sistema de legislação) e workflow em `workflow/sudeste-cidades-r2.js` (Sonnet). No Claude Code do Mac: "use um workflow: rode docs/research/cidades_sudeste/workflow/sudeste-cidades-r2.js com args {repo: '<caminho absoluto do repo>'}; depois rode workflow/consolidar.py, commite e dê push". Também conferir as 3 inverificáveis.
 4. Pendências de OSM: o Overpass falhou durante a onda; as divergências ficaram registradas em `osm_divergencias` de cada `res/` sem conferência.
