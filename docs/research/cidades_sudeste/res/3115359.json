@@ -1,0 +1,76 @@
+{
+  "ibge": "3115359",
+  "nome": "Catas Altas",
+  "uf": "MG",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DB6DCD54",
+      "resultado": "Lido na íntegra: Lei 916/2025 (24/11/2025, DOMM 25/11/2025): art. 1º-2º proíbe ESTACIONAMENTO de carretas, caminhões, semirreboques e veículos de grande porte nas vias do Centro Histórico (áreas tombadas pelo IEPHA), a qualquer hora; art. 3º exceção a serviços públicos essenciais autorizados; multa a regulamentar. Estacionamento, não circulação."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/91B676E6",
+      "resultado": "Lido: Lei 861/2024: estacionamento proibido na R. Monsenhor Barros (07h-18h30 seg-sex), sem referência a caminhões."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/A4149539",
+      "resultado": "LC 871/2024 (polos geradores de tráfego): critérios de carga e descarga e trajeto de veículos pesados dos empreendimentos; sem restrição de circulação."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3115359 (amm-mg) 'circulação de caminhões', 'trânsito de veículos pesados', 'tráfego de veículos pesados centro histórico'",
+      "resultado": "Decretos 2349/2014 (aberto: vigilância sanitária) e 1680/2012 (aberto: lista de atividades) sem restrição; Leis 804/2023 e 773/2022 não abertas (a 773/2022 limita ruído de carga e descarga a 7h-17h/19h, segundo o trecho da preparação)."
+    },
+    {
+      "url": "https://sapl.catasaltas.mg.leg.br (legislacao.py direto sapl 'caminh' e 'pesad')",
+      "resultado": "0 atos."
+    },
+    {
+      "url": "https://camaracatasaltas.mg.gov.br/legislacao (Portal Fácil)",
+      "resultado": "Cliente travou (timeout); não consultado."
+    }
+  ],
+  "observacoes": "Só estacionamento: Lei 916/2025 proíbe estacionar carretas e caminhões no Centro Histórico; Lei 773/2022 (não aberta) limitaria horário de ruído de carga e descarga (7h-17h/19h, trecho da preparação). Nenhuma proibição de circulação achada. Portal da Câmara (Portal Fácil) não respondeu e o portal da prefeitura não foi testado; SAPL e AMM sem resultado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 3º: veículos de grande porte em serviços públicos essenciais, com autorização prévia"
+      ],
+      "id": "catas_altas_centro_historico_estacionamento_pesados",
+      "tipo": "zona",
+      "regime": "Estacionamento (Centro Histórico)",
+      "nome": "Catas Altas: proibido estacionar carretas, caminhões e semirreboques nas vias do Centro Histórico",
+      "status": "desativada",
+      "status_motivo": "Regra de estacionamento, não de circulação; área = bens tombados pelo IEPHA sem polígono.",
+      "confianca": "alta",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 916/2025, de 24/11/2025 (DOMM 25/11/2025)",
+          "artigo": "arts. 1º a 3º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DB6DCD54"
+        }
+      ],
+      "vigencia_inicio": "2025-11-25",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3115359_catas_altas_centro.geojson",
+          "construir": "manual",
+          "como_gerar": "Sem geometria (estacionamento)."
+        }
+      ]
+    }
+  ]
+}

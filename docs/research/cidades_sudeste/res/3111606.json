@@ -1,0 +1,107 @@
+{
+  "ibge": "3111606",
+  "nome": "Campos Gerais",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/ (Instar; toolkit legislacao.py buscar 3111606 'caminh|veículos pesados|tráfego|...')",
+      "resultado": "3 atos: Lei 3.541/2019, Decreto 3.541/2019 (mesma ementa) e Lei 3.553/2019, todos 'Em vigor' no portal."
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/25a4a3d622c5285b44b736ed6d14dab0.pdf",
+      "resultado": "LIDO (PDF escaneado, lido como imagem). Lei 3.541, 26/11/2019, art. 1º: proibido o tráfego de veículos pesados em toda a extensão da Rua Júlio Braz Pereira, da esquina com a Rua Pio XII até a Av. Getúlio Vargas; art. 2º: sinalização pelo Executivo; art. 3º vigência na publicação. Cópia em atos/3111606/lei_70009.pdf"
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/1b18cf41f0abf6150ce8a30796b55797.pdf",
+      "resultado": "LIDO (imagem). Lei 3.553, 17/12/2019, art. 1º dá nova redação ao art. 1º da Lei 3.541: 'Fica proibido o tráfego de veículos pesados desde a entrada na Rua Pio XII, exceto daqueles que se dirigirem, exclusivamente, à COOXUPÉ, devendo manobrar os veículos na própria empresa, retornando para a rodovia'. Cópia em atos/3111606/lei_70031.pdf"
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/9f1feb0c736a89f0d6785c43b4029b7e.pdf",
+      "resultado": "PDF do 'Decreto 3541/2019' baixado (atos/3111606/lei_71414.pdf), escaneado; não relido (mesma ementa da Lei 3.541; provável duplicata de cadastro)."
+    },
+    {
+      "url": "legislacao.py buscar 3111606 '3.541|3541|pio xii|revog'",
+      "resultado": "Nenhum ato posterior revoga ou altera a Lei 3.541/3.553 nas ementas varridas."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3111606",
+      "resultado": "0 resultado(s) em amm-mg e qd para 'circulação de caminhões' e 'veículos pesados'"
+    },
+    {
+      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3111606)",
+      "resultado": "Falhou (504/500 repetidos); way com hgv=no apontado na preparação NÃO conferido."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 3.541/2019 (26/11/2019), alterada pela Lei 3.553/2019 (17/12/2019): proibição de tráfego de 'veículos pesados' na Rua Pio XII (desde a entrada) e na Rua Júlio Braz Pereira até a Av. Getúlio Vargas, exceto veículos que se dirigem exclusivamente à COOXUPÉ. A lei não define 'veículos pesados' (sem PBT/eixos) nem horários: regra permanente. Trecho muito curto (acesso à cooperativa) e a redação da Lei 3.553 só cita a Rua Pio XII (o trecho da Júlio Braz Pereira da redação original pode ter sido absorvido ou não; ambíguo). Situação 'em vigor' segundo o portal; vigência não contraditada. Geometria: nomes de via para OSM; confirmar pontas.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM hgv_no=1 na preparação: way não localizado (Overpass indisponível); provavelmente a Rua Pio XII/Júlio Braz Pereira. Conferir e, se coincidir, é consistente com o ato (sem correção)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "camposgerais_pio_xii_veiculos_pesados",
+      "tipo": "via",
+      "regime": "Veículos pesados proibidos (24 h)",
+      "nome": "Campos Gerais: Rua Pio XII e Rua Júlio Braz Pereira, tráfego de veículos pesados proibido (exceto acesso exclusivo à COOXUPÉ)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Lei 3.553/2019: veículos que se dirigem exclusivamente à COOXUPÉ, devendo manobrar na própria empresa e retornar para a rodovia"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.541, de 26/11/2019, alterada pela Lei 3.553, de 17/12/2019",
+          "artigo": "art. 1º (redação dada pela Lei 3.553/2019, art. 1º); art. 2º (sinalização)",
+          "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/70031/",
+          "nota": "Lei 3.541 original: https://www.camposgerais.mg.gov.br/portal/leis_decretos/70009/"
+        }
+      ],
+      "nota": "'Veículos pesados' não é definido na lei (sem limite de PBT/eixos); alvo genérico caminhão. Sem horário: proibição permanente.",
+      "vigencia_inicio": "2019-12-17",
+      "trechos": [
+        {
+          "via": [
+            "Rua Pio XII"
+          ],
+          "descricao": "Rua Pio XII, desde a entrada (Lei 3.553/2019)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Júlio Braz Pereira"
+          ],
+          "descricao": "Rua Júlio Braz Pereira, da esquina com a Rua Pio XII até a Av. Getúlio Vargas (Lei 3.541/2019, art. 1º original)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3111606_campos-gerais.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

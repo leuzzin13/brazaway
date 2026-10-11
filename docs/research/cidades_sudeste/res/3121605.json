@@ -1,0 +1,158 @@
+{
+  "ibge": "3121605",
+  "nome": "Diamantina",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/1BBCC962",
+      "resultado": "Lido: Decreto 91, de 09/02/2026 (Carnaval): art. 7º proíbe veículo de carga PBT > 7 t ou comprimento > 6,5 m na APS; art. 8º, trânsito e estacionamento na APS 13-18/02/2026, carga e descarga 10h-14h com cadastro. Evento (decretos anuais: 069/2024, 119/2025, 141/2025 etc.)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/7B683D97",
+      "resultado": "Decreto 484, de 30/09/2026: regimento do Mercado Novo (carga e descarga interna); sem restrição de circulação."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/85731498",
+      "resultado": "Decreto 259, de 10/04/2025 (PMUS): plano de mobilidade com diretrizes de carga e descarga; sem regra."
+    },
+    {
+      "url": "https://www.diamantina.mg.gov.br/portal/leis_decretos/7556/ (Instar; legislacao.py buscar 3121605)",
+      "resultado": "Lei Ordinária 3.693, de 29/11/2011, 'Em vigor', atualizada no portal em 26/06/2023; texto lido no PDF original https://www.diamantina.mg.gov.br/publicos/015e88b890da2a69fcd660bbb6a51bdb.pdf (cópia em atos/3121605/lei_3693_2011.pdf)."
+    },
+    {
+      "url": "https://www.diamantina.mg.gov.br/portal/leis_decretos/6529/",
+      "resultado": "Lei 2.613/1999 (altera Lei 1.911/1992, veículos pesados no perímetro urbano central): ementa vista no portal; a Lei 3.693/2011 (art. 19) revoga expressamente as Leis 1911/1992, 349/1996, 2489/1997 e 2613/1999."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3121605 (amm-mg) 'circulação de veículos pesados centro histórico', 'tráfego de caminhões', 'trânsito de veículos pesados', 'restrição de tráfego peso bruto total toneladas'",
+      "resultado": "Só decretos anuais de Carnaval, mobilidade e licitações; nenhuma alteração da Lei 3.693/2011 achada."
+    },
+    {
+      "url": "Overpass (overpass.kumi.systems, overpass-api.de, overpass.private.coffee, maps.mail.ru)",
+      "resultado": "500/504/sem resposta pelo proxy desta máquina: ways com hgv/maxweight NÃO listados nesta rodada; vale só a contagem da preparação."
+    }
+  ],
+  "observacoes": "Ato primário principal: Lei 3.693/2011 (Centro Histórico = áreas tombadas federais, estaduais ou municipais no perímetro central da sede, art. 16). Art. 9º proíbe a circulação de toco/caminhão semipesado (capacidade acima de 7 t e comprimento acima de 6,5 m), truck, cavalo mecânico, carreta 2/3 eixos, bitrem e ônibus; art. 7º veda carga e descarga para PBT > 7 t e/ou comprimento > 6,5 m; art. 3º fixa horários de carga e descarga (20h-11h seg-sex, a partir de 13h sáb, domingo livre); art. 17 lista 15 pontos de placas. Contradição interna na vigência (art. 18: 180 dias; art. 20: na publicação): portal consolida 'Em vigor'. O perímetro do Centro Histórico não está em vias no ato (tombamento IPHAN/IEPHA): geometria manual pendente. Existe também regime de eventos (Carnaval, APS) por decreto anual. OSM com maxweight=1 não listado (Overpass fora).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM: 1 way com maxweight na preparação, não listado (Overpass fora do ar); comparar com os pontos do art. 17 da Lei 3.693/2011 (limite 7 t / 6,5 m)."
+  ],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Parágrafo único do art. 9º: casos extremos de urgência, acionando o órgão de Trânsito e Transportes",
+        "Art. 5º: exceções de horário de carga e descarga (utilitários até 1.000 kg, saúde, coleta, valores); não abrangem a proibição de circulação do art. 9º"
+      ],
+      "id": "diamantina_centro_historico_pesados_circulacao",
+      "tipo": "zona",
+      "regime": "Centro Histórico (veículos pesados)",
+      "nome": "Diamantina: proibida a circulação de caminhões pesados, cavalo mecânico, carretas e bitrem no Centro Histórico",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 6.5
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária municipal 3.693, de 29/11/2011",
+          "artigo": "art. 9º, I-VIII e parágrafo único (circulação); art. 16 (Centro Histórico = áreas tombadas no perímetro central da sede); art. 17 (pontos de sinalização)",
+          "url": "https://www.diamantina.mg.gov.br/portal/leis_decretos/7556/",
+          "nota": "PDF: https://www.diamantina.mg.gov.br/publicos/015e88b890da2a69fcd660bbb6a51bdb.pdf"
+        }
+      ],
+      "nota": "Critérios simplificados em OU (PBT > 7 t, comprimento > 6,5 m ou combinação). O inciso I fala 'capacidade acima de 7 toneladas' e comprimento > 6,5 m; os demais tipos (truck, cavalo, carreta, bitrem) entram sem limite. Ônibus (inciso VIII) fora do alvo caminhão. Sem horário: 24 h, todos os dias.",
+      "vigencia_inicio": "2011-11-29",
+      "fonte_geometria": "perímetro tombado do Centro Histórico (IPHAN/IEPHA); pontos de placa no art. 17",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3121605_diamantina_centro_historico.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar a poligonal de tombamento do Centro Histórico de Diamantina (sede) e conferir com os 15 pontos do art. 17."
+        }
+      ]
+    },
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [],
+      "id": "diamantina_centro_historico_carga_descarga_7t",
+      "tipo": "zona",
+      "regime": "Carga e descarga (Centro Histórico)",
+      "nome": "Diamantina: proibida carga e descarga de veículos com PBT acima de 7 t ou comprimento acima de 6,5 m no Centro Histórico",
+      "status": "desativada",
+      "status_motivo": "Restrição da operação de carga e descarga (art. 7º), não da circulação; registrada para aviso.",
+      "confianca": "media",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 6.5
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária municipal 3.693, de 29/11/2011",
+          "artigo": "art. 7º; art. 3º (horários 20h-11h seg-sex, a partir de 13h sáb, domingo livre); art. 8º (AET)",
+          "url": "https://www.diamantina.mg.gov.br/portal/leis_decretos/7556/"
+        }
+      ],
+      "vigencia_inicio": "2011-11-29",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3121605_diamantina_centro_historico.geojson",
+          "construir": "manual",
+          "como_gerar": "Mesma poligonal do Centro Histórico."
+        }
+      ]
+    }
+  ]
+}

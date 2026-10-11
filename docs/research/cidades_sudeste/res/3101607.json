@@ -1,0 +1,82 @@
+{
+ "ibge": "3101607",
+ "nome": "Alfenas",
+ "uf": "MG",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.alfenas.mg.leg.br/norma/pesquisar (API /api/norma/normajuridica/)",
+   "resultado": "termos 'caminh|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|tonelad|carga e descarga|carreta' (substring na ementa): 12 atos; achado: Lei Ordinária 5.236, de 04/10/2023, 'Institui a política de restrição ao trânsito de veículos automotores pesados no âmbito do Município de Alfenas' (https://sapl.alfenas.mg.leg.br/norma/251). PDF escaneado baixado (atos/3101607/lei_5236_2023.pdf) e lido visualmente: arts. 1º a 6º."
+  },
+  {
+   "url": "https://sapl.alfenas.mg.leg.br/api/norma/normajuridica/?ementa__icontains=ZMRC e =pesados",
+   "resultado": "só a Lei 5.236/2023; nenhum decreto regulamentador na base da Câmara."
+  },
+  {
+   "url": "https://www.alfenas.mg.gov.br/busca?q=veiculos+pesados (e ZMRC, restricao+caminhoes)",
+   "resultado": "200, sem resultado de decreto; só link para legislacaodigital.com.br (decretos)."
+  },
+  {
+   "url": "https://legislacaodigital.com.br/Alfenas-MG",
+   "resultado": "403 (Cloudflare); não contornado."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3101607 'veículos pesados'",
+   "resultado": "Alfenas não coberto por AMM/QD: 0."
+  },
+  {
+   "url": "WebSearch: Alfenas decreto ZMRC Vias Estruturais Restritas Lei 5.236/2023",
+   "resultado": "nada de Alfenas (só outras cidades)."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO)",
+   "resultado": "HTTP 500 / 504 / conexão resetada em todas as tentativas (kumi, overpass-api.de, z., mail.ru; openstreetmap.fr 403 lista branca): ways etiquetados NÃO puderam ser listados nesta sessão; só as contagens da preparação (osm_hints_por_municipio.json)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 5.236/2023 (vigor na publicação, 04/10/2023, art. 6º) instituiu a política: veículo pesado = carga com mais de 2 eixos ou altura > 4,40 m; ZMRC = restrição total em todas as vias da zona; VER = vias estruturais/arteriais/pontes com restrição e exceções por porte, natureza da carga e serviço. Art. 3º: o Prefeito define ZMRC, VER e exceções POR DECRETO (não localizado). Art. 5º: penalidades do CTB. Sem decreto não há vias, horários nem janelas: regra desativada. PRIORIDADE ALTA: achar o decreto regulamentador (Diário/Prefeitura de Alfenas, Legislação Digital, ou pedir à Gerência de Transporte e Trânsito) e ver se há sinalização em campo. A pista OSM hgv_no=1 pode vir daí.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Preparação: hgv_no=1 (ways não identificados nesta sessão por falha do Overpass); sem ato municipal localizado: pendência para conferir no OSM (helipad? ponte de rodovia? rua municipal?) antes de qualquer uso. Não corrigir a camada.",
+  "Se o decreto vier, comparar a via do hgv_no=1 com as VER/ZMRC."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "alfenas_lei5236_politica_restricao_pesados",
+   "tipo": "zona",
+   "regime": "Política de restrição ao trânsito de veículos automotores pesados (ZMRC e VER a definir por decreto)",
+   "nome": "Alfenas: política de restrição a veículos automotores pesados (lei-quadro; zonas e vias por decreto não localizado)",
+   "status": "desativada",
+   "status_motivo": "Lei 5.236/2023 é lei-quadro: art. 3º manda o Executivo definir por Decreto as ZMRC (Zona de Máxima Restrição de Circulação) e as VER (Vias Estruturais Restritas), horários e exceções. O decreto não foi localizado (SAPL só tem a lei; Legislação Digital e site da prefeitura sem acesso/sem resultado); sem vias nem janelas não há regra roteável.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º, III e art. 3º: exceções por porte, natureza da carga e serviço, a definir por decreto"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 5.236, de 04/10/2023 (Alfenas/MG)",
+     "artigo": "art. 2º, I (veículo automotor pesado: de carga com mais de dois eixos ou altura superior a 4,40 m); art. 2º, II e III (ZMRC e VER); art. 3º (definição por decreto)",
+     "url": "https://sapl.alfenas.mg.leg.br/norma/251"
+    }
+   ],
+   "vigencia_inicio": "2023-10-04",
+   "trechos": []
+  }
+ ]
+}

@@ -1,0 +1,131 @@
+{
+  "ibge": "3152105",
+  "nome": "Ponte Nova",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/08EDA7D1",
+      "resultado": "Lido. Decreto 13.003/2023 (17/04/2023; AMM ed. 3509, 08/05/2023): restringe circulação acima de 7 t, 8 m de comprimento ou 3,5 m de altura em 13 vias do Núcleo Histórico (ZPP)."
+    },
+    {
+      "url": "https://sapl.pontenova.mg.leg.br/norma/7509",
+      "resultado": "Decreto 13003/2023 listado no SAPL; sem alteração listada. Lei 1683/1991 (veículos 'fora de estrada') consta como revogada pela LC 3.027/2007."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/5591D47A",
+      "resultado": "Lido. Decreto 11.469/2020 (carga e descarga, horários nos locais sinalizados); alterado pelo Dec. 12.948/2023."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/7F53468D",
+      "resultado": "Lido. Dec. 12.948/2023: carga e descarga seg-sex 08h-18h, sáb 08h-13h."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/247C6665",
+      "resultado": "Lido em parte. Dec. 14.888/2026 (rotativo digital), menciona caminhões só quanto a vagas e horários de carga e descarga; não é restrição de circulação."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3152105 (13.003; Núcleo Histórico veículos grande porte)",
+      "resultado": "Nenhuma alteração do Dec. 13.003/2023 na AMM."
+    },
+    {
+      "url": "OSM (osm_hints_por_municipio.json): hgv_no=1",
+      "resultado": "Overpass (kumi.systems, private.coffee) devolveu 500: via/ponte do hgv=no NÃO identificada. Pendência."
+    }
+  ],
+  "observacoes": "Dec. 13.003/2023 (Núcleo Histórico, ZPP; decorre de TAC do inquérito civil 0521.12.000039-8 e LC 4.347/2019): art. 2º lista 13 vias; art. 4º restringe a circulação de veículos acima de 7 t, 8 m de comprimento e 3,5 m de altura (sem horário, vale 24h); parágrafo único permite carga e descarga desde que atendam as especificações e respeitem o horário da sinalização; art. 5º caçambas só 09-10h e 15-16h seg-sex com autorização; art. 6º libera limpeza urbana, coleta, pipa, serviços de emergência e água/esgoto com OS. Ambiguidade: '7 toneladas' sem dizer PBT (adotado pbt_t). O parágrafo único é pouco claro (carga e descarga 'desde que atendam as especificações' do artigo). Carga e descarga geral: Dec. 11.469/2020 alterado pelo Dec. 12.948/2023 (seg-sex 8h-18h, sáb 8h-13h), em locais sinalizados: pontual, não registrada como regra.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM tem 1 way com hgv=no no município (osm_hints), não identificado por falha do Overpass. Não confirmar nem corrigir; registrar como pendência para cruzar com as 13 vias do Dec. 13.003/2023."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "ponte_nova_nucleo_historico_7t",
+      "tipo": "via",
+      "regime": "Núcleo Histórico (ZPP): >7 t, >8 m comprimento ou >3,5 m altura",
+      "nome": "Ponte Nova: 13 vias do Núcleo Histórico, veículos acima de 7 t, 8 m de comprimento ou 3,5 m de altura",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 8
+          },
+          {
+            "campo": "altura_m",
+            "acima": 3.5
+          }
+        ]
+      },
+      "autorizacao": "Caçambas: autorização expressa do Departamento Municipal de Trânsito (art. 5º); serviços de água/esgoto: OS autorizada (art. 6º p.ú.)",
+      "excecoes": [
+        "Art. 3º: bombeiros e ambulâncias, sem restrição",
+        "Art. 4º p.ú.: carga e descarga dentro das especificações e do horário da sinalização",
+        "Art. 5º: caçambas de entulho só 09-10h e 15-16h, seg-sex, com autorização",
+        "Art. 6º: limpeza urbana, coleta de lixo, retirada de entulhos, caminhão pipa, serviços de emergência e manutenção de água e esgoto com OS"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 13.003/2023 (Ponte Nova, 17/04/2023; AMM ed. 3509, 08/05/2023)",
+          "artigo": "art. 2º (vias); art. 4º e parágrafo único (limites); arts. 3º, 5º, 6º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/08EDA7D1",
+          "nota": "Também em https://sapl.pontenova.mg.leg.br/norma/7509"
+        }
+      ],
+      "nota": "'7 toneladas' sem especificar PBT: adotado pbt_t.",
+      "vigencia_inicio": "2023-04-17",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Praça Dom Parreira Lara",
+            "Rua Senador Antônio Martins",
+            "Rua Benedito Valadares",
+            "Rua Major Soares",
+            "Rua Vigário Miguel Chaves",
+            "Praça Getúlio Vargas",
+            "Rua Cantídio Drumond",
+            "Rua Senador Miguel Lanna",
+            "Avenida Caetano Marinho",
+            "Rua Presidente Antônio Carlos",
+            "Rua Doutor Leonardo",
+            "Travessa Mário Bonffati",
+            "Travessa Albano Bráulio"
+          ],
+          "descricao": "Vias no perímetro de tombamento (ZPP – Zona de Proteção ao Patrimônio)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3152105_nucleo_historico.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

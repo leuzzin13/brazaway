@@ -1,0 +1,76 @@
+{
+ "ibge": "3103702",
+ "nome": "Araponga",
+ "uf": "MG",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/6D60DD4F",
+   "resultado": "Decreto do pré-carnaval 2024 (dias 03 e 04/02/2024) lido: art. 2º, I proíbe estacionamento de caminhões, ônibus e máquinas pesadas na Praça Manoel Romualdo de Lima e ruas do entorno; evento único, encerrado."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar <ibge> \"circulação de caminhões / veículos pesados\" (amm-mg + Querido Diário)",
+   "resultado": "Só o decreto do pré-carnaval."
+  },
+  {
+   "url": "https://araponga.mg.gov.br/wp-content/uploads/2023/10/LEI-1077-21.pdf e Decreto.pdf (3502/2023)",
+   "resultado": "Itens do menu 'Leis' do site (heurístico do toolkit): Lei 1077/2021 = PIGIRS (resíduos); Decreto 3502/2023 = programa de fossas; ambos lidos (scan), sem relação. Lei 1138/2023 (Patrimônio Cultural, PDF de 27 MB) não lida."
+  },
+  {
+   "url": "toolkit legislacao.py buscar <ibge> \"caminh|carga e descarga|veículos pesados|...|tonelad\"",
+   "resultado": "https://araponga.mg.gov.br e https://araponga.mg.leg.br: sem ato de trânsito/caminhões (resultados do heurístico eram itens de menu)."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO, hgv/maxweight/hgv:conditional)",
+   "resultado": "HTTP 500 em 3 tentativas (kumi e private.coffee); sem consulta OSM concluída. Preparação (osm_hints_por_municipio.json) não tinha nenhuma contagem OSM para o município."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/ (lead leads/penaestrada.json)",
+   "resultado": "Sem página/restrição para o município na preparação."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Apenas restrição de estacionamento de caminhões em evento de 2024 (encerrado): pontual, sem regra roteável. Lei 1138/2023 (Patrimônio Cultural) não lida: pendência fraca (pode haver diretriz de veículos pesados no centro histórico).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "araponga_precarnaval_2024_estacionamento",
+   "tipo": "zona",
+   "regime": "Evento (estacionamento)",
+   "nome": "Araponga: estacionamento de caminhões, ônibus e máquinas pesadas no pré-carnaval 2024",
+   "status": "desativada",
+   "status_motivo": "Restrição de evento (03-04/02/2024), já encerrada; só estacionamento, não circulação.",
+   "confianca": "alta",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto municipal (Prefeitura de Araponga, pré-carnaval 2024), publicado no AMM em 23/04/2024",
+     "artigo": "art. 2º, I",
+     "url": "https://www.diariomunicipal.com.br/amm-mg/materia/6D60DD4F"
+    }
+   ],
+   "vigencia_inicio": "2024-02-03",
+   "vigencia_fim": "2024-02-04",
+   "trechos": [
+    {
+     "via": [
+      "Praça Manoel Romualdo de Lima",
+      "Rua Benvindo dos Anjos Macedo",
+      "Rua Francisco Anacleto Pereira",
+      "Rua São José",
+      "Rua Sebastião Lucílio de Assis",
+      "Praça do Rosário"
+     ],
+     "descricao": "Entorno da praça, durante o evento",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

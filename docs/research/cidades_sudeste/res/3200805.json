@@ -1,0 +1,84 @@
+{
+ "ibge": "3200805",
+ "nome": "Baixo Guandu",
+ "uf": "ES",
+ "status": "pista",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.baixoguandu.es.leg.br/norma/pesquisar (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|tonelad|eixos|carreta)",
+   "resultado": "13 atos; relevante: Lei 981/1983 (norma/1998). Resto ruído (compra de caminhão, fundos de trânsito, cães)."
+  },
+  {
+   "url": "https://sapl.baixoguandu.es.leg.br/media/sapl/public/normajuridica/1983/1998/lei_n_981_83..pdf",
+   "resultado": "Lido (pdftotext). Art. 1º: autoriza o Executivo a proibir o trânsito permanente de carros pesados com cargas acima de 5.000 kg pela Av. Carlos de Medeiros; art. 2º: permitido só p/ carga e descarga em firmas comerciais. Lei apenas AUTORIZA a proibição. Cópia em atos/3200805/lei_981_1983.pdf"
+  },
+  {
+   "url": "https://sapl.baixoguandu.es.leg.br (busca 'Carlos de Medeiros', 'carros pesados') e DOM-ES",
+   "resultado": "Sem decreto regulamentador. Lei 3237/2024 denomina 'Calçadão na Avenida Carlos de Medeiros'; Lei 2702/2012 camelódromo na mesma avenida (via possivelmente transformada em calçadão)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 3200805 (DOM-ES/AMUNES + Querido Diário)",
+   "resultado": "0 acertos para 'circulação de caminhões' e 'veículos pesados'; 'Carlos de Medeiros' só ruído."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 981/1983 só autoriza; sem decreto executivo achado e a avenida hoje tem calçadão. Não roteável como regra ativa.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "3200805_av_carlos_medeiros_5t",
+   "tipo": "via",
+   "regime": "Carros pesados com carga > 5 t (autorização legal, sem ato executivo)",
+   "nome": "Baixo Guandu: Av. Carlos de Medeiros",
+   "status": "desativada",
+   "status_motivo": "Lei 981/1983 apenas autoriza o Executivo a proibir; decreto/sinalização não encontrados e trecho com calçadão (Lei 3237/2024).",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "Carga e descarga em firmas comerciais/armazéns (art. 2º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 981/1983, de 09/06/1983",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://sapl.baixoguandu.es.leg.br/norma/1998"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Avenida Carlos de Medeiros"
+     ],
+     "descricao": "Av. Carlos de Medeiros, centro",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

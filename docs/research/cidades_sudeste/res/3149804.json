@@ -1,0 +1,75 @@
+{
+  "ibge": "3149804",
+  "nome": "Perdizes",
+  "uf": "MG",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DEE9DA45",
+      "resultado": "Lido. Decreto 3.936/2025 (07/03/2025): interdição total e por tempo indeterminado da ponte do Córrego Fazendinha (estrada vicinal) por risco estrutural; proíbe tráfego de qualquer veículo."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/7F41473C",
+      "resultado": "Decreto 3591/2024: estrutura do órgão de trânsito (competências, escolta); não é restrição."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3149804 (circulação de caminhões; tráfego de veículos pesados; trânsito de caminhões)",
+      "resultado": "Só o decreto da ponte e atos de estrutura; sem restrição geral de caminhões."
+    },
+    {
+      "url": "https://sapl.perdizes.mg.leg.br (toolkit info; portais.json)",
+      "resultado": "Cliente testado ok; busca específica não repetida por já cobrir a AMM; sem outro ato indicado."
+    }
+  ],
+  "observacoes": "Só achado real: interdição de ponte rural por risco (Decreto 3.936/2025), válida para todos os veículos, sem geometria e sem prazo, em estrada vicinal. Registrada como regra desativada (aviso), pois é temporária e sem trecho definido além de coordenadas UTM.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "perdizes_ponte_corrego_fazendinha",
+      "tipo": "ponte",
+      "regime": "Interdição total de ponte",
+      "nome": "Perdizes: ponte do Córrego Fazendinha interditada (todos os veículos)",
+      "status": "desativada",
+      "status_motivo": "Interdição temporária por risco estrutural em ponte de estrada vicinal rural (UTM 265253 x 7874858); pode ter sido reaberta ou reconstruída e o ato não traz prazo.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.936/2025 (Perdizes, 07/03/2025; AMM ed. 3981, 18/03/2025)",
+          "artigo": "arts. 1º e 2º (interdição total; proibido o tráfego de veículos sobre a ponte)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DEE9DA45"
+        }
+      ],
+      "vigencia_inicio": "2025-03-07",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3149804_ponte_fazendinha.geojson",
+          "construir": "manual",
+          "como_gerar": "Ponte nas coordenadas UTM 265253 x 7874858 (SIRGAS/zona 23S, a confirmar), converter e localizar no OSM."
+        }
+      ]
+    }
+  ]
+}

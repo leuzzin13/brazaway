@@ -1,0 +1,131 @@
+{
+ "ibge": "3134400",
+ "nome": "Iturama",
+ "uf": "MG",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.iturama.mg.leg.br",
+   "resultado": "SAPL Câmara, API normajuridica (ementa), via toolkit legislacao.py. Consulta 1 (caminh|carga e descarga|veículos pesados|veículo de carga|tráfego|tonelad|carreta|zona de restri) e consulta 2 (trânsito|veículos|perímetro urbano|estacionamento): sem ato municipal de restrição a caminhões na ementa (ocorrências: aquisição/venda de caminhões, Dia do Caminhoneiro, caminhadas, circuitos turísticos, comendas, requerimentos)."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar (amm-mg, qd)",
+   "resultado": "AMM-MG e QD: sem resultado."
+  },
+  {
+   "url": "https://sapl.iturama.mg.leg.br/media/sapl/public/normajuridica/2017/5771/5771_texto_integral.pdf",
+   "resultado": "Decreto 6.841/2017 lido integralmente (cópia em atos/3134400/decreto_6841_2017.pdf)"
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Decreto 6.841, de 25/05/2017 (Prefeitura, SAPL norma 5771, PDF lido, 2 págs.): proíbe no perímetro urbano veículos automotores, com ou sem carga, acima de largura 2,60 m, altura 4,00 m, comprimento 14,00 m (não articulados; ônibus urbano de 3 eixos 15,00 m; articulado de passageiros 18,60 m) e 19,80 m (articulados caminhão-trator+semirreboque). Art. 2º: PBT/eixo respeitam a CMT do fabricante (sem limite numérico). Art. 3º revoga o Dec. 3.280/2001. Sem ato posterior revogador achado no SAPL da Câmara (vigência não confirmada na Prefeitura). Altura de 4,00 m é mais restritiva que o padrão CTB/CONTRAN (4,40 m).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "iturama_dim_altura_largura",
+   "tipo": "zona",
+   "regime": "Limite de altura e largura",
+   "nome": "Iturama: perímetro urbano, altura > 4,00 m ou largura > 2,60 m",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "altura_m",
+      "acima": 4.0
+     },
+     {
+      "campo": "largura_m",
+      "acima": 2.6
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.841/2017",
+     "artigo": "art. 1º, I a III",
+     "url": "https://sapl.iturama.mg.leg.br/norma/5771"
+    }
+   ],
+   "nota": "Vigência pós-2017 não confirmada na Prefeitura.",
+   "vigencia_inicio": "2017-05-25",
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "Todo o perímetro urbano de Iturama (limite não definido no decreto)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "iturama_dim_comprimento",
+   "tipo": "zona",
+   "regime": "Limite de comprimento",
+   "nome": "Iturama: perímetro urbano, comprimento > 14,00 m (rígidos) ou > 19,80 m (articulados)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 19.8
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.841/2017",
+     "artigo": "art. 1º, I a III",
+     "url": "https://sapl.iturama.mg.leg.br/norma/5771"
+    }
+   ],
+   "nota": "Aqui só o teto de 19,80 m; limite de 14,00 m para não articulados (art. 1º, III, a) exige distinguir o tipo e fica na observação.",
+   "vigencia_inicio": "2017-05-25",
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "Todo o perímetro urbano de Iturama (limite não definido no decreto)",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

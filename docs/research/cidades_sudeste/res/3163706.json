@@ -1,0 +1,171 @@
+{
+  "ibge": "3163706",
+  "nome": "São Lourenço",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/27C98AA5",
+      "resultado": "Decreto 8.537, de 14/10/2021, lido na íntegra: proíbe no perímetro urbano caminhões e similares com PBT > 23 t ou > 14 m oriundos da BR-460 (Carmo de Minas) e, no parágrafo único, a R. Quinze de Novembro entre R. Alda Garrido e Av. Getúlio Vargas; revoga o Decreto 7.448/2019."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/031A409F",
+      "resultado": "Decreto 8.533, de 08/10/2021 (mesma edição 3116): versão anterior, sem o parágrafo único e com 'e' (PBT > 23 t E > 14 m); superada pelo 8.537 publicado na mesma data."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/2BD485AE",
+      "resultado": "Decreto 7.448, de 28/03/2019: proibição provisória de 20 dias na R. Quinze de Novembro; revogado pelos Decretos 8.533/8.537 de 2021."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/CAB76B8C",
+      "resultado": "Decreto 7.626, de 14/10/2019 (DOM 09/12/2019): proíbe veículos > 18 m ou > 30 t na R. Quinze de Novembro entre R. Batista Luzardo e Av. Getúlio Vargas, por prazo indeterminado, e a entrada de veículos de grande porte pela BR-460. NÃO foi citado como revogado pelo 8.537 (que só revoga o 7.448): conflito de vigência registrado em observações."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/9F9C09AC",
+      "resultado": "Decreto 10.519, de 12/02/2026 (carga e descarga em supermercados, NCC, veículos de grande porte > 6,30 m ou PBT > 10 t): lido; vigência 12 meses após a publicação (16/02/2026); relação das vias de 'tráfego intenso' ainda a publicar. Revoga o Decreto 10.501/2026."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3163706 (amm-mg): '8.537', 'Quinze de Novembro caminhões', 'BR 460 caminhões', 'veículos pesados'",
+      "resultado": "Nenhum decreto posterior altera ou revoga o 8.537; achados adicionais: 7.626/2019 e 10.501/10.519 de 2026."
+    },
+    {
+      "url": "https://saolourenco.mg.gov.br/",
+      "resultado": "200 (home); portal de legislação (leismunicipais.com.br) é Cloudflare/403 e o link em portais.json está malformado; não aberta lista de decretos da prefeitura."
+    }
+  ],
+  "observacoes": "Decreto 8.537, de 14/10/2021 (DOM-AMM 18/10/2021), em vigor desde a publicação: (1) art. 1º, caput: proibida no perímetro urbano a circulação de caminhões e similares com PBT acima de 23 t OU acima de 14 m de comprimento, oriundos da BR-460 (estrada de acesso de Carmo de Minas) — restrição por origem/entrada, sem lista de vias; (2) art. 1º, p. único: mesma limitação na Rua Quinze de Novembro, trecho entre a interseção com a R. Alda Garrido e a Av. Getúlio Vargas (motivo: Inquérito Civil 0637.19.000118-9, estruturas dos imóveis do quarteirão). Sem horários (24 h), sem exceções no texto. CONFLITO A RESOLVER: o Decreto 7.626/2019 (18 m / 30 t, R. Quinze de Novembro entre R. Batista Luzardo e Av. Getúlio Vargas, prazo indeterminado) não foi expressamente revogado; o 8.537 é posterior e regula a mesma matéria com limites mais rígidos (revogação tácita), e o trecho da via difere (Alda Garrido x Batista Luzardo). Adotado o 8.537. Regra da via ativa (confiança média por esse conflito e por a leitura ser só no DOM); a regra de entrada pela BR-460 fica desativada por depender da origem. Decreto 10.519/2026 (pontual): carga e descarga com veículo de grande porte (> 6,30 m ou PBT > 10 t) proibida em vias de tráfego intenso a listar; só vale a partir de ~16/02/2027 e a lista não existe, logo sem regra roteável; define VUC (≤ 6,30 m, 2,20 m de largura, PBT ≤ 10 t) apenas para esse decreto.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "saolourenco_rua_xv_novembro_23t_14m",
+      "tipo": "via",
+      "regime": "Rua Quinze de Novembro (23 t / 14 m)",
+      "nome": "São Lourenço: Rua Quinze de Novembro (R. Alda Garrido a Av. Getúlio Vargas), proibidos caminhões e similares com PBT > 23 t ou > 14 m",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 23
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.537, de 14/10/2021 (DOM-AMM ed. 3116, 18/10/2021)",
+          "artigo": "art. 1º, parágrafo único",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/27C98AA5",
+          "nota": "Texto lido no Diário Oficial dos Municípios Mineiros. Em vigor na data da publicação (art. 4º). Revoga o Decreto 7.448/2019 (art. 3º)."
+        }
+      ],
+      "nota": "O Decreto 7.626/2019 (18 m / 30 t; R. Batista Luzardo a Av. Getúlio Vargas) não foi revogado expressamente; adotado o 8.537 (posterior, mais restritivo). Ponta inicial diverge entre os decretos (Alda Garrido x Batista Luzardo).",
+      "vigencia_inicio": "2021-10-18",
+      "trechos": [
+        {
+          "inciso": "p. único",
+          "via": [
+            "Rua Quinze de Novembro",
+            "Rua XV de Novembro"
+          ],
+          "de": [
+            "Rua Alda Garrido"
+          ],
+          "ate": [
+            "Avenida Getúlio Vargas",
+            "Avenida Doutor Getúlio Vargas"
+          ],
+          "descricao": "R. Quinze de Novembro entre a R. Alda Garrido e a Av. Getúlio Vargas"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3163706_sao_lourenco_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "saolourenco_entrada_br460_23t_14m",
+      "tipo": "zona",
+      "regime": "Entrada pela BR-460 (23 t / 14 m)",
+      "nome": "São Lourenço: perímetro urbano, proibidos caminhões e similares com PBT > 23 t ou > 14 m oriundos da BR-460 (Carmo de Minas)",
+      "status": "desativada",
+      "status_motivo": "Ato lido (Decreto 8.537/2021, art. 1º, caput), mas a proibição vale só para veículos oriundos da BR-460/Carmo de Minas e não lista vias; sem polígono do perímetro urbano nem modelo de origem, bloquearia todo o município para quem vem de outras entradas.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 23
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.537, de 14/10/2021 (DOM-AMM ed. 3116, 18/10/2021)",
+          "artigo": "art. 1º, caput",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/27C98AA5",
+          "nota": "Texto lido no Diário Oficial dos Municípios Mineiros. Em vigor na data da publicação (art. 4º). Revoga o Decreto 7.448/2019 (art. 3º)."
+        }
+      ],
+      "vigencia_inicio": "2021-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3163706_sao_lourenco_perimetro_br460.geojson",
+          "construir": "manual",
+          "como_gerar": "Modelar como ramo de entrada da BR-460 (Carmo de Minas) até o perímetro urbano ou desenhar o perímetro; decisão de produto."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "ibge": "3147303",
+  "nome": "Paraisópolis",
+  "uf": "MG",
+  "status": "sem_restricao_declarada",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/9882C3D1",
+      "resultado": "Lei 2.962, de 12/12/2025 (Plano Municipal de Mobilidade Urbana) lida: diagnóstico diz 'Tráfego de carga: veículos pesados circulando pelo centro sem restrição'; diretriz g) apenas propõe rotas alternativas e horários restritos (futuros). Não é regra."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/A15AA3DF",
+      "resultado": "Portaria 79, de 09/02/2026 (Carnaval 2026) lida: trânsito restrito na área do evento e, art. 2º §5º, proibido estacionar ônibus, vans e caminhões nas vias da região central; evento temporário, não roteável."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3147303 (amm-mg, qd): 'circulação de caminhões', 'trânsito de caminhões', 'tráfego de veículos pesados', 'proíbe trânsito caminhões'",
+      "resultado": "Só a Lei 2.962/2025 e a Portaria 79/2026; Querido Diário 0 resultados."
+    },
+    {
+      "url": "https://www.paraisopolis.mg.leg.br/legislacao (toolkit legislacao.py buscar 3147303, termos caminh|pesados|carga e descarga|tráfego|trânsito)",
+      "resultado": "0 atos pelo cliente heurístico (sem valor negativo); busca geral WordPress da prefeitura só trouxe notícias (Caminhando com Saúde etc.) e o Decreto 3553/2020 (horário do comércio)."
+    },
+    {
+      "url": "https://overpass.private.coffee/api/interpreter (hgv/maxweight/maxlength na area IBGE 3147303)",
+      "resultado": "1 way: id 611650016, highway=residential, sem nome, hgv=no (lat -22.5607, lon -45.7830); sem ato."
+    }
+  ],
+  "observacoes": "Nenhum ato municipal de restrição de caminhões achado. O próprio Plano Municipal de Mobilidade (Lei 2.962/2025) afirma que veículos pesados circulam pelo centro sem restrição, o que indica ausência de regra vigente (fonte oficial, mas é diagnóstico do plano, não prova negativa absoluta). Diretriz g) prevê 'rotas alternativas para trânsito pesado, com horários restritos' como ação futura: acompanhar regulamentação posterior. Pontual: Portaria 79/2026 (carnaval).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "way 611650016 (rua residencial sem nome, lat -22.5607 lon -45.7830) com hgv=no e sem ato municipal; mapeador/sinalização local possível; nenhuma regra criada."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "paraisopolis_osm_hgv_no_611650016",
+      "tipo": "via",
+      "regime": "OSM hgv=no (sem ato)",
+      "nome": "Paraisópolis: rua sem nome com hgv=no no OSM (way 611650016), sem ato municipal",
+      "status": "desativada",
+      "status_motivo": "Indício apenas do OSM (hgv=no em rua residencial sem nome); nenhum ato municipal achado e o Plano de Mobilidade 2025 diz que não há restrição ao tráfego de carga.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 2.962/2025 (Plano de Mobilidade) - diagnóstico: veículos pesados circulam pelo centro sem restrição; OSM way 611650016 como pista",
+          "artigo": "Anexo, item 2 (Diagnóstico da Mobilidade)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/9882C3D1"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3147303_paraisopolis_osm.geojson",
+          "construir": "manual",
+          "como_gerar": "Extrair o way 611650016 do OSM (rua sem nome em -22.5607,-45.7830); só se um ato for achado."
+        }
+      ]
+    }
+  ]
+}

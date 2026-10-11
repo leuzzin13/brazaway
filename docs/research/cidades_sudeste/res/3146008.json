@@ -1,0 +1,99 @@
+{
+  "ibge": "3146008",
+  "nome": "Ouro Fino",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/B58EB356",
+      "resultado": "Lida. Lei 3.313/2025 (07/10/2025, AMM ed. 4123): proíbe veículos com PBT > 30 t nas vias municipais de acesso ao perímetro urbano; exceção agropecuária condicionada a credenciamento. Vigência na publicação (art. 6º)."
+    },
+    {
+      "url": "https://sapl.ourofino.mg.leg.br/api/norma/normajuridica/ (legislacao.py buscar 3146008)",
+      "resultado": "Lei 3313/2025 listada (07/10/2025); sem alteração/revogação listada. Restante (caminh) = leis de compra de caminhão e Caminho da Fé, ruído."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3146008 (Lei 3.313; regulamenta Lei 3.313 credenciamento; peso bruto total 30 toneladas)",
+      "resultado": "Só a própria lei e a pauta da 13ª sessão (04/08/2025). Decreto regulamentador (art. 5º, 90 dias) NÃO localizado."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/260CFCE0",
+      "resultado": "Ata 06ª sessão 18/04/2022 (Câmara): vereador informa que na Travessa José Balestra será proibido o trânsito de caminhões. Só ata, sem ato; pista de via pontual."
+    },
+    {
+      "url": "https://www.ourofino.mg.gov.br (wordpress, busca geral)",
+      "resultado": "Posts sem ato normativo de restrição; ruído."
+    }
+  ],
+  "observacoes": "Lei 3.313/2025, art. 1º: proibida a circulação de veículos com PBT > 30 t nas vias municipais que constituem os acessos ao perímetro urbano. Parágrafo único: exceção para insumos agrícolas e escoamento da produção agropecuária se (I) não houver rota alternativa viável por rodovia estadual/federal e (II) houver nota fiscal; art. 2º condiciona a exceção a credenciamento prévio (itinerários e rotas definidos pelo órgão municipal). Art. 3º sinalização; art. 4º fiscalização (pesagem). Art. 5º manda regulamentar em 90 dias (decreto não achado). Vias exatas não listadas no ato: geometria depende de definir quais estradas municipais são 'acessos ao perímetro urbano'; rodovias estaduais/federais não são afetadas. Pendência: confirmar sinalização/decreto regulamentador e lista de vias.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "ouro_fino_acessos_pbt_30t",
+      "tipo": "via",
+      "regime": "PBT > 30 t nos acessos ao perímetro urbano",
+      "nome": "Ouro Fino: vias municipais de acesso ao perímetro urbano, PBT acima de 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, parágrafo único: transporte de insumos agrícolas e escoamento da produção agropecuária, só se não houver rota alternativa viável por rodovia estadual/federal e com nota fiscal",
+        "Art. 2º: a exceção exige credenciamento prévio no órgão municipal"
+      ],
+      "autorizacao": "Credenciamento no órgão municipal competente (Lei 3.313/2025, art. 2º), só para a exceção agropecuária",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.313/2025 (Ouro Fino, 07/10/2025; AMM ed. 4123)",
+          "artigo": "art. 1º e parágrafo único (proibição PBT > 30 t); arts. 2º a 4º; art. 6º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/B58EB356"
+        }
+      ],
+      "nota": "O ato não lista as vias; 'estradas municipais de acesso' precisa ser identificada (sinalização/decreto). Rodovias estaduais e federais ficam de fora.",
+      "vigencia_inicio": "2025-10-07",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "estradas municipais de acesso ao perímetro urbano de Ouro Fino"
+          ],
+          "descricao": "Vias municipais que constituem os acessos ao perímetro urbano (não nomeadas no ato)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3146008_ouro_fino.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro/vias descritos no ato não têm limite oficial georreferenciado; desenhar a partir do ato e do OSM antes de ativar."
+        }
+      ]
+    }
+  ]
+}

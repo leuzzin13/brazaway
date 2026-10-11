@@ -1,0 +1,86 @@
+{
+ "ibge": "3127800",
+ "nome": "Grão Mogol",
+ "uf": "MG",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/FB1A33A1",
+   "resultado": "Decreto 012/2014 lido na íntegra (publicado em duplicidade: também C88D355D). Art. 1º: proibido trânsito de caminhão e carretas com cargas superiores a 12 t nas vias do centro histórico (anexos I e II da Lei 841/2014). Art. 3º: vigor na publicação."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/C88D355D",
+   "resultado": "mesma matéria, 2ª publicação (28/02/2014, ed. 1192)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3127800 'veículos pesados' / 'centro histórico caminhões'",
+   "resultado": "22 resultados AMM; só o Dec. 012/2014 é restrição; nenhum ato posterior revogando."
+  },
+  {
+   "url": "https://sapl.graomogol.mg.leg.br",
+   "resultado": "legislacao.py buscar (termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|tonelad|eixos|carreta|zona de restri): 0 acertos (SAPL provavelmente vazio)."
+  },
+  {
+   "url": "https://www.graomogol.mg.leg.br/leis; https://graomogol.mg.gov.br/leis",
+   "resultado": "decretos legislativos e posts sem relação; Lei 841/2014 não localizada."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Decreto 012/2014 é ato primário com número, artigo e URL lida. Pendências: ler a Lei 841/2014 (delimitação e anexos I e II do centro histórico), confirmar que não foi revogado, e checar se há sinalização. A regra vale para toda a área do centro histórico, sem geometria nesta etapa.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "3127800_centro_historico_12t",
+   "tipo": "zona",
+   "regime": "Proibição de caminhões e carretas > 12 t no centro histórico",
+   "nome": "Grão Mogol: centro histórico, caminhões e carretas com carga acima de 12 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminho": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 12
+     }
+    ]
+   },
+   "alvo_nota": "O decreto diz 'veículos tipo caminhão e carretas com cargas superiores a 12 toneladas': trata-se de carga/capacidade (payload_t), não de PBT.",
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 012/2014 (Grão Mogol, 27/02/2014; AMM ed. 1192, 28/02/2014)",
+     "artigo": "art. 1º (proibição); art. 3º (vigor na publicação)",
+     "url": "https://www.diariomunicipal.com.br/amm-mg/materia/FB1A33A1"
+    }
+   ],
+   "vigencia_inicio": "2014-02-28",
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "vias públicas do centro histórico de Grão Mogol, delimitado nos anexos I e II da Lei Municipal 841/2014 (anexos não lidos)",
+     "aproximado": true
+    }
+   ],
+   "nota": "Sem revogação localizada em AMM-MG (busca 'veículos pesados'); SAPL da Câmara e portais da prefeitura sem acervo útil. Polígono do centro histórico depende da Lei 841/2014."
+  }
+ ]
+}
