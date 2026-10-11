@@ -1,0 +1,55 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3550407",
+  "municipio": "São Pedro",
+  "uf": "SP",
+  "fonte_id": "sao-pedro",
+  "fonte": {
+    "url": "https://saopedro.siscam.com.br/Documentos/Documento/16560 (Lei 3.195/2014, SISCAM da Câmara)",
+    "licenca": "Ato oficial de São Pedro: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 3.195/2014: veículos de carga acima de 3 eixos proibidos 24 h na Rodovia (vicinal) Elísio de Paula Teixeira, trecho da Serra de São Pedro, nos dois sentidos. O trecho da Serra não é delimitado no ato: aplicado à via inteira com esse nome no OSM ('Rodovia Municipal Elisio de Paula Teixeira', ~4,1 km, da Rua Pedro Bertochi até o entroncamento com a Rodovia Ulisses Guimarães e a vicinal João Dorigon)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o critério é o número de eixos.",
+  "regras": [
+    {
+      "id": "saopedro_serra_elisio_teixeira_3eixos",
+      "tipo": "via",
+      "regime": "Acima de 3 eixos (Serra)",
+      "nome": "São Pedro: Estrada Vicinal Elísio de Paula Teixeira (Serra de São Pedro), proibidos veículos de carga com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}]},
+      "autorizacao": "Autorização especial temporária da Coordenadoria Municipal de Trânsito e Transportes para destino na zona urbana ou no alto da Serra (art. 1º, parágrafo único)",
+      "excecoes": [
+        "Art. 2º: veículos de urgência, socorro mecânico de emergência e obras e serviços de emergência (conforme portaria)",
+        "Art. 1º, parágrafo único: autorização especial temporária (destino urbano ou alto da Serra)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.195, de 19/05/2014",
+          "artigo": "art. 1º e parágrafo único (proibição 24 h, ambos os sentidos; autorizações), art. 2º (exceções), art. 5º (suspensão até 180 dias), art. 8º (vigência)",
+          "url": "https://saopedro.siscam.com.br/Documentos/Documento/16560",
+          "nota": "PDF: https://saopedro.siscam.com.br/arquivo?Id=13336; SISCAM marca 'EM VIGOR'."
+        }
+      ],
+      "nota": "Portaria de regulamentação (arts. 2º e 7º) e eventual suspensão (art. 5º) não localizadas (Querido Diário inacessível pelo proxy). A Lei 4.476/2023 só dá nome à balança instalada na mesma vicinal.",
+      "fonte_geometria": "OSM (ODbL): os 10 ways 'Rodovia Municipal Elisio de Paula Teixeira' (via inteira; trecho da Serra aproximado)",
+      "vigencia_inicio": "2014-05-19",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Rodovia Municipal Elisio de Paula Teixeira", "Rodovia Elísio de Paula Teixeira", "Estrada Vicinal Elísio de Paula Teixeira"],
+          "descricao": "Rodovia Elísio de Paula Teixeira, trecho da Serra de São Pedro, ambos os sentidos",
+          "aproximado": true,
+          "nota": "O ato não delimita o trecho da Serra: a via inteira com esse nome no OSM (~4,1 km, da Rua Pedro Bertochi ao entroncamento com a Rod. Ulisses Guimarães)."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3550407_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

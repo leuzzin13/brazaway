@@ -1,0 +1,76 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3508108",
+  "municipio": "Buritama",
+  "uf": "SP",
+  "fonte_id": "buritama",
+  "fonte": {
+    "url": "https://sapl.buritama.sp.leg.br/norma/5379 (Lei 4.704/2021) ; https://sapl.buritama.sp.leg.br/norma/5924 (Decreto 4.537/2021, rota pelo anel viário)",
+    "licenca": "Atos oficiais de Buritama: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com o acesso estadual recortado sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Lei 4.704/2021, art. 1º: tráfego de caminhões a partir de 5 eixos proibido nas vias públicas da cidade (longos pesados), com rota obrigatória pelo anel viário; carga e descarga e moradores com autorização (art. 2º). Correção do verificador: alvo só eixos > 4 (a lista de combinações é exemplificativa). Eficácia condicionada à sinalização (Dec. 4.537/2021, art. 4º), não conferida."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei é por número de eixos (5 ou mais): não define VUC.",
+  "regras": [
+    {
+      "id": "buritama_zona_urbana_longos_pesados",
+      "tipo": "zona",
+      "regime": "Proibição de caminhões a partir de 5 eixos e combinações nas vias urbanas",
+      "nome": "Buritama: vias da cidade, proibidos caminhões de 5+ eixos e combinações (rota obrigatória pelo anel viário)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "autorizacao": "Autorização da Unidade Municipal de Trânsito para carga e descarga (Lei 4.704/2021, art. 2º)",
+      "excecoes": [
+        "Art. 2º: carga e descarga com autorização da Unidade Municipal de Trânsito",
+        "Parágrafo único do art. 2º: proprietários/motoristas residentes na área urbana com autorização",
+        "Decreto 4.537/2021, art. 3º: caminhões e ônibus só para carga, descarga e embarque/desembarque"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 4.704, de 06/10/2021 (Buritama)",
+          "artigo": "art. 1º, caput e §§ 1º-3º; art. 2º; art. 4º",
+          "url": "https://sapl.buritama.sp.leg.br/norma/5379",
+          "nota": "Rota: Decreto 4.537/2021 https://sapl.buritama.sp.leg.br/norma/5924 (art. 2º e 4º)"
+        }
+      ],
+      "nota": "Sinalização condicionante (Decreto 4.537/2021, art. 4º). Canavieiros 22h-06h (Lei 3.187/2008 art. 1º §3º) superado pela Lei 4.704/2021, que inclui canavieiros entre os proibidos. Verificado em 2026-10-11: o alvo ficou só em eixos > 4 (a partir de 5 eixos, art. 1º da Lei 4.704/2021). A lista de combinações do caput é exemplificativa ('para os veículos longos pesados como...') e não proíbe combinações com 4 eixos ou menos. O ato fala em 'vias públicas da cidade' sem delimitar: zona aproximada pelos setores censitários urbanos do IBGE 2022 (CD_SIT 1 e 2) do distrito-sede, sem o acesso estadual SPA-052/461 (folga de 40 m). O anel viário obrigatório (§1º) fica fora da área urbana. A exceção de carga e descarga exige autorização (art. 2º): não é modelada como exceção de destino local; com origem ou destino na zona a rota não a exclui e avisa.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem o acesso SPA-052/461 (OSM, ODbL): aproximação das vias públicas da cidade",
+      "vigencia_inicio": "2021-10-06",
+      "origem_destino_dentro": "avisa",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3508108_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3508108_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a SPA-052/461 e a SP-461 (folga de 40 m)."
+        }
+      ]
+    }
+  ]
+}

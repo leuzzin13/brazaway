@@ -1,0 +1,51 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3548302",
+  "municipio": "Santo Expedito",
+  "uf": "SP",
+  "fonte_id": "santo-expedito",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MzM2MDY4 (Diário Oficial de Santo Expedito ed. 107, 03/11/2020: Lei 1.718/2020)",
+    "licenca": "Ato oficial de Santo Expedito: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.718/2020: veículos pesados (mais de 15 t, art. 4º) proibidos, sem horário, na Av. Barão do Rio Branco, na Rua Rui Barbosa e na Rua Carlos Gomes (vias inteiras). As 7 ways com hgv=no no município (estradas rurais) não coincidem com essas vias."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o critério é o peso (mais de 15 t).",
+  "regras": [
+    {
+      "id": "santoexpedito_vias_15t",
+      "tipo": "via",
+      "regime": "PBT > 15 t proibido (24 h)",
+      "nome": "Santo Expedito: Av. Barão do Rio Branco, R. Rui Barbosa e R. Carlos Gomes, veículos pesados acima de 15 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 15}]},
+      "excecoes": [
+        "Art. 2º: emergências de segurança e saúde pública, eventos do Poder Público e transporte escolar",
+        "Art. 3º: moradores de ruas com único acesso por essas vias; carga e descarga",
+        "Art. 3º, parágrafo único: Av. Barão do Rio Branco liberada durante interdição das vias onde o tráfego é permitido"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.718, de 28/10/2020 (Diário Oficial de Santo Expedito ed. 107, 03/11/2020)",
+          "artigo": "art. 1º (vias), art. 4º (mais de 15 t), arts. 2º e 3º (exceções), art. 5º (vigência na publicação)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MzM2MDY4"
+        }
+      ],
+      "nota": "O art. 4º usa 'mais de 15 toneladas' sem dizer se é PBT ou capacidade: interpretado como PBT. Vigência conferida no diário oficial indexado no DOSP (slug santo_expedito) de 2020 a 09/2026, sem alteração; a compilação da Câmara não foi vista (site fora do ar). A carga e descarga (art. 3º) não está modelada: com destino nessas ruas a rota usa a via e avisa.",
+      "fonte_geometria": "OSM (ODbL): as três vias inteiras pelo nome",
+      "vigencia_inicio": "2020-10-28",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Avenida Barão do Rio Branco"], "descricao": "Avenida Barão do Rio Branco (via inteira)"},
+        {"inciso": "art. 1º", "via": ["Rua Rui Barbosa"], "descricao": "Rua Rui Barbosa (via inteira)"},
+        {"inciso": "art. 1º", "via": ["Rua Carlos Gomes"], "descricao": "Rua Carlos Gomes (via inteira)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3548302_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

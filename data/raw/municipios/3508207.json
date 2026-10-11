@@ -1,0 +1,76 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3508207",
+  "municipio": "Buritizal",
+  "uf": "SP",
+  "fonte_id": "buritizal",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=NzgxMjM3 (Diário Oficial de Buritizal nº 1407, 25/02/2026, p. 2-3: Lei 1.932/2026)",
+    "licenca": "Ato oficial de Buritizal: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE).",
+    "notas": "Lei 1.932/2026, art. 11: tráfego de caminhões acima de 2 eixos (longos pesados) proibido nas vias públicas da cidade, 24 h; desvio obrigatório pelo anel viário (§1º); carga e descarga e moradores com autorização (§§4º e 5º). Art. 12: vigor na publicação e revogação da Lei 904/2005."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei é por número de eixos (acima de 2): não define VUC.",
+  "regras": [
+    {
+      "id": "buritizal_lei1932_acima_2_eixos",
+      "tipo": "zona",
+      "regime": "Acima de 2 eixos (vias da cidade)",
+      "nome": "Buritizal: vias públicas da cidade, caminhões acima de 2 eixos / veículos longos pesados",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "§4º: carga e descarga, com autorização do Município",
+        "§5º: proprietários/motoristas residentes na área urbana com a autorização",
+        "Anel viário (BTZ 020, vicinal, BTZ 050) é a alternativa obrigatória"
+      ],
+      "autorizacao": "Autorização do Município de Buritizal (§§4º e 5º)",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.932, de 24/02/2026 (Buritizal)",
+          "artigo": "art. 11, caput e §§1º a 5º; art. 12",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NzgxMjM3",
+          "nota": "Diário Oficial de Buritizal nº 1407, 25/02/2026, p. 2-3"
+        }
+      ],
+      "vigencia_inicio": "2026-02-25",
+      "origem_destino_dentro": "avisa",
+      "nota": "Confiança média: o caput liga 'acima de 2 eixos' a veículos longos pesados (rodotrem, cavalo com semirreboque/reboque, Romeu e Julieta, bitrem, treminhão, canavieiro, de grãos); o verificador confirmou que o texto diz 'compreendendo os de 03 (três) eixos' (alvo eixos > 2). O ato fala em 'vias públicas da cidade' sem delimitar: zona aproximada pelos setores censitários urbanos do IBGE 2022 (CD_SIT 1 e 2) do distrito-sede. A BTZ-030, que margeia a cidade a leste, fica no contorno (livre pelo recuo de 20 m). O desvio obrigatório pelo anel viário (BTZ 020 'Antônia Rios Quércia', vicinal Eng. João Marcelo de Souza Ribeiro Sandoval, BTZ 050) fica fora da zona. Carga e descarga e moradores dependem de autorização (§§4º e 5º): não modelados como exceção de destino local; com origem ou destino na zona a rota não a exclui e avisa.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022): aproximação das vias públicas da cidade",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3508207_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3508207_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede (nenhuma rodovia estadual toca a área)."
+        }
+      ]
+    }
+  ]
+}

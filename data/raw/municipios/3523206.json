@@ -1,0 +1,92 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3523206",
+  "municipio": "Itararé",
+  "uf": "SP",
+  "fonte_id": "itarare",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MzQ2ODI4 (Lei 4.363/2023, DO ed. 1242) ; https://www.dosp.com.br/exibe_do.php?i=NjkxNTI0 (Lei 4.590/2025, DO ed. 1780) ; https://www.dosp.com.br/exibe_do.php?i=Mjc4MjM= (Portaria 001/2018-DEMUTRAN)",
+    "licenca": "Atos oficiais de Itararé: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 4.363/2023, art. 1º: caminhões e articulados acima de 6 t proibidos de acessar e estacionar nas vias urbanas, salvo carga e descarga; vigência adiada quatro vezes (Leis 4.387/2023, 4.496/2024, 4.543/2024 e 4.590/2025): vigora desde 01/01/2026. As 'vias urbanas' não são delimitadas: zona aproximada pelos setores censitários urbanos do IBGE 2022 do distrito-sede, sem as rodovias. A Portaria 001/2018-DEMUTRAN (estradas rurais) fica desativada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 4.363/2023 não define VUC: o critério é o peso (acima de 6 t).",
+  "regras": [
+    {
+      "id": "itarare_lei4363_2023_caminhoes_6t",
+      "tipo": "zona",
+      "regime": "Vias urbanas (acima de 6 t)",
+      "nome": "Itararé: vias urbanas, caminhões e veículos de carga articulados acima de 6 t (acesso e estacionamento proibidos, salvo carga e descarga)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 6}]},
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 4.363/2023, art. 1º (excetuadas as situações de carga e descarga)",
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial do Demutran por veículo, com trajeto fixado, para pátios e estacionamentos existentes (art. 3º e parágrafo único)",
+      "excecoes": [
+        "Art. 1º: situações de carga e descarga",
+        "Art. 1º: veículos de utilidade pública e de aprendizagem",
+        "Art. 3º e parágrafo único: pátios/estacionamentos existentes com autorização especial do Demutran por veículo, com trajeto fixado",
+        "Art. 2º: acesso aos pátios novos permitido nas vias com acesso direto à SP-281 e SP-258"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 4.363, de 29/03/2023 (Diário Oficial de Itararé ed. 1242, 03/04/2023)",
+          "artigo": "art. 1º (proibição acima de 6 t), arts. 2º a 5º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MzQ2ODI4"
+        },
+        {
+          "ato": "Lei Municipal 4.590, de 04/07/2025 (Diário Oficial de Itararé ed. 1780, 04/08/2025)",
+          "artigo": "art. 1º (nova redação do art. 8º da Lei 4.363: vigência em 1º/01/2026); art. 3º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NjkxNTI0"
+        },
+        {
+          "ato": "Leis Municipais 4.387/2023 (ed. 1285, 14/06/2023), 4.496/2024 (ed. 1525, 18/06/2024) e 4.543/2024 (ed. 1649, 17/12/2024): redações anteriores do art. 8º (vacatio 365 dias; 01/01/2025; 01/07/2025); a 4.387, art. 4º, cancelou multas aplicadas em 2023",
+          "artigo": "art. 1º de cada uma",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MzcxNzE1"
+        }
+      ],
+      "nota": "'Acima de 6 toneladas' sem especificar PBT x capacidade: adotado pbt_t (critério do CTB citado no art. 6º). Vigência: o art. 8º original (vigência na publicação, 03/04/2023) foi alterado quatro vezes; pela redação atual (Lei 4.590/2025) a Lei 4.363 vigora desde 1º/01/2026. A exceção de carga e descarga vira exceção de destino local (entrega no município). 'Vias urbanas' sem perímetro no ato: zona aproximada pelos setores censitários urbanos do IBGE 2022 do distrito-sede, sem a SP-258, a SP-281, a SP-259 e as pistas de rodovia (folga de 40 m); os distritos de Pedra Branca e Santa Cruz dos Lopes ficaram fora (lado conservador). Indicação de vereador de 06/2026 pede placas na Av. Gabriel Jorge Merege: a sinalização do art. 5º pode estar incompleta.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem as rodovias (OSM, ODbL): aproximação das vias urbanas",
+      "vigencia_inicio": "2026-01-01",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3523206_vias_urbanas.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3523206_vias_urbanas_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede Itararé, sem a SP-258, a SP-281, a SP-259 e as pistas motorway/trunk (folga de 40 m).",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "itarare_portaria001_2018_vicinais_rurais",
+      "tipo": "via",
+      "regime": "Bitrem/rodotrem > 19 m ou > 30 t nas estradas municipais entre bairros rurais",
+      "nome": "Itararé: estradas vicinais entre bairros rurais, bitrens/rodotrens (Portaria 001/2018-DEMUTRAN)",
+      "status": "desativada",
+      "status_motivo": "Trechos não identificáveis (o ato cita 'as estradas municipais que ligam' os bairros Pedra Branca, Rodeio, Morro Vermelho, Serrinha, Santa Bárbara, Matão, Itopava e Caiçara, sem nomear estradas) e vigência atual não confirmada. Registro sem feição.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 19}, {"campo": "payload_t", "acima": 30}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Portaria nº 001/2018-DEMUTRAN (Jornal Oficial de Itararé, 11/04/2018)",
+          "artigo": "arts. 1º e 2º (vigência 25/04/2018: art. 4º)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=Mjc4MjM="
+        }
+      ],
+      "nota": "Estradas vicinais rurais sem nome no ato: sem geometria.",
+      "vigencia_inicio": "2018-04-25",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

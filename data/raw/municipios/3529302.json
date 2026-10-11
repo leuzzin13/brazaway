@@ -1,0 +1,100 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3529302",
+  "municipio": "Matão",
+  "uf": "SP",
+  "fonte_id": "matao",
+  "fonte": {
+    "url": "https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fdadosabertos%2Fe81b1bdd-1e43-4af8-95cc-372b8a9bae6f_Decreto5.386-AreaAzul.pdf ; https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fmodulo_fixo%2Fb9395881-e5d2-4474-9ab8-5b84db5c8866_Decreto_5.785.pdf ; https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fdadosabertos%2Fbacb6519-87f0-4594-8e6d-5c9ac6baaec2_Decreto5.375-AreaAzul-SERPMAT.pdf ; https://web.archive.org/web/20151027222458/http://www.matao.sp.gov.br/transparencia/286/Area-azul.html",
+    "licenca": "Atos oficiais de Matão: domínio público (Lei 9.610/1998, art. 8º, IV). Área do SERPMAT: polígono ajustado aos eixos do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 5.386/2022 (SERPMAT/Área Azul), art. 6º: veículos de carga com PBT acima de 4 t proibidos na área do SERPMAT das 9h às 18h (seg–sex) e das 9h às 13h (sáb). Perímetro-base (Lei 1.089/1980 e Dec. 4.872/2015) não lido: tirado da página oficial Área Azul de 2015, com os acréscimos do próprio decreto."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Decreto 5.386/2022 não define VUC (limite único de PBT 4 t).",
+  "regras": [
+    {
+      "id": "matao_area_azul_carga_4t",
+      "tipo": "zona",
+      "regime": "Área Azul (SERPMAT)",
+      "nome": "Matão: área do SERPMAT (Área Azul, centro) — tráfego de veículos de carga com PBT acima de 4.000 kg proibido das 9h às 18h (seg–sex) e das 9h às 13h (sáb)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 4.0
+          }
+        ]
+      },
+      "vuc_nota": "O decreto não define VUC: todo veículo de carga com PBT acima de 4 t é atingido.",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 7º: carga e descarga de materiais de construção, concreto, mudanças e outros, com veículo acima do limite do art. 6º, mediante licença especial da Operadora do SERPMAT (APAE), fixada no interior do veículo, com pagamento da tarifa das vagas ocupadas",
+        "Art. 5º: estacionamento para carga e descarga de veículos acima de 4.000 kg (dois eixos) só de segunda a sexta das 6h às 9h e das 18h às 0h, e aos sábados das 6h às 9h e a partir das 13h30"
+      ],
+      "autorizacao": "Licença especial da Operadora do SERPMAT (APAE de Matão) para carga e descarga de materiais de construção, concreto e mudanças (Dec. 5.386/2022, art. 7º)",
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 5.386, de 03/02/2022 (Regulamentação do Sistema de Estacionamento Rotativo Pago — SERPMAT 'Área Azul'; regulamenta a Lei 1.089/1980)",
+          "artigo": "art. 6º (proibição do tráfego de veículos de carga com PBT acima de 4.000 kg na área do SERPMAT, 9h–18h seg–sex e 9h–13h sáb); art. 5º (horários de carga e descarga); art. 7º (licença especial); art. 2º, caput e § 1º, e art. 3º, § 2º (área: Lei 1.089/1980, Decreto 4.872/2015 e acréscimos); art. 14 (vigor na publicação)",
+          "url": "https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fdadosabertos%2Fe81b1bdd-1e43-4af8-95cc-372b8a9bae6f_Decreto5.386-AreaAzul.pdf",
+          "nota": "PDF digitalizado no Portal de Transparência da Prefeitura (SMARapd), lido por OCR. Vigente: alterado só no art. 9º (tarifas) pelo Decreto 5.785/2025."
+        },
+        {
+          "ato": "Decreto municipal 5.785, de 11/06/2025",
+          "artigo": "art. 2º (nova redação só do art. 9º do Decreto 5.386/2022, tarifas)",
+          "url": "https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fmodulo_fixo%2Fb9395881-e5d2-4474-9ab8-5b84db5c8866_Decreto_5.785.pdf",
+          "nota": "Confirma a vigência do Decreto 5.386/2022."
+        },
+        {
+          "ato": "Decreto municipal 5.375, de 21/12/2021 (antecessor, mesmo texto)",
+          "artigo": "art. 6º (mesma proibição); art. 14 (vigor em 10/01/2022)",
+          "url": "https://transparencia-matao.smarapd.com.br/paifileserver/filemanager/pai/download?nomeArquivo=PMMatao%2Fdadosabertos%2Fbacb6519-87f0-4594-8e6d-5c9ac6baaec2_Decreto5.375-AreaAzul-SERPMAT.pdf",
+          "nota": "Reeditado pelo Decreto 5.386/2022 (revogadas as disposições em contrário)."
+        },
+        {
+          "ato": "Página 'Área Azul' do portal da Prefeitura de Matão (arquivada em 27/10/2015)",
+          "artigo": "texto da página (não é ato): área-base 'entre as ruas Prudente de Moraes até a Rua Cesário Mota e da Av. 7 de Setembro até à Av. 28 de agosto'",
+          "url": "https://web.archive.org/web/20151027222458/http://www.matao.sp.gov.br/transparencia/286/Area-azul.html",
+          "nota": "Só para a geometria da área-base da Lei 1.089/1980; a lei e o Decreto 4.872/2015 não foram lidos."
+        }
+      ],
+      "nota": "Confiança média: ato primário vigente, com número, artigo e horários claros, lido no PDF oficial; mas (1) a área-base vem da Lei 1.089/1980 e do Decreto 4.872/2015, não lidos (só no Legislação Digital, bloqueado, e fora do SMARapd, que começa em 2018) — o perímetro-base foi tirado da página oficial 'Área Azul' de 2015; (2) a sinalização em campo não foi conferida; (3) o decreto não excetua feriados (o funcionamento da Área Azul também não cita feriados). O limite é PBT (art. 6º), não capacidade de carga; os arts. 3º, 5º e 9º usam 'capacidade' para estacionamento e tarifa. O art. 5º (horário de estacionamento para carga e descarga) não é modelado pela camada (estacionamento). Geometria: a Av. São Lourenço (via arterial) e a R. Cesário Mota são tratadas como limites (livres); a Av. Campos Salles e a Av. Tiradentes, citadas no § 1º do art. 2º, ficam dentro.",
+      "fonte_geometria": "Área do SERPMAT montada a partir do texto: área-base (página oficial de 2015) entre a R. Prudente de Moraes e a R. Cesário Mota e entre a Av. 7 de Setembro e a Av. 28 de Agosto; acréscimos do Dec. 5.386/2022, art. 2º e § 1º: Av. 15 de Novembro entre R. Castro Alves e R. São Lourenço; Av. Siqueira Campos entre R. Prudente de Moraes e R. José Bonifácio; Av. Campos Salles e Av. Tiradentes entre R. São Lourenço e R. Cesário Mota; R. José Bonifácio, R. Rui Barbosa, R. João Pessoa e R. Prudente de Moraes entre Av. 28 de Agosto e Av. Tiradentes; R. Prudente de Moraes entre Av. Siqueira Campos e Av. Campos Salles.",
+      "vigencia_inicio": "2022-02-03",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3529302_area_azul.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono que contenha os eixos de todos os trechos de 'trechos' (área-base + acréscimos do Dec. 5.386/2022), com folga de ~25 m além das vias-limite (Av. Campos Salles, Av. Tiradentes, R. São Lourenço, R. Cesário Mota e o prolongamento da Av. 15 de Novembro até a R. Castro Alves) para que, após o recuo de 20 m, elas continuem dentro. Envoltória aproximada (OSM): cantos Campos Salles×São Lourenço (-21.59899,-48.36649), Tiradentes×São Lourenço (-21.60105,-48.36204), Tiradentes×Cesário Mota (-21.60545,-48.36439), Campos Salles×Cesário Mota (-21.60339,-48.36882), com apêndice na Av. 15 de Novembro até a R. Castro Alves (-21.59855,-48.36295). Alternativa conservadora: tipo via com construir: trechos. Feito assim: quadrilátero Av. Campos Salles × Av. São Lourenço × Av. Tiradentes × R. Cesário Mota (cruzamentos dos eixos do OSM) com 25 m de folga, menos faixas de 4 m sobre a Av. São Lourenço e a R. Cesário Mota (limites \"entre\", ficam livres), mais faixa de 25 m da Av. 15 de Novembro entre a Av. São Lourenço e a R. Castro Alves."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3536406",
+  "municipio": "Paulicéia",
+  "uf": "SP",
+  "fonte_id": "pauliceia",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MjExNzUx",
+    "licenca": "Atos oficiais de Paulicéia: domínio público (Lei 9.610/1998, art. 8º, IV). Av. Paulista: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 270/2021, art. 2º: veículos de grande porte (PBT > 10 t) e conjugados proibidos em toda a extensão da Avenida Paulista, 24 h. Decreto de sinalização (art. 1º, § 1º) não localizado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Paulicéia não define VUC.",
+  "regras": [
+    {
+      "id": "pauliceia_av_paulista_grande_porte",
+      "tipo": "via",
+      "regime": "PBT > 10 t ou conjugados (24 h)",
+      "nome": "Paulicéia: Avenida Paulista, proibido veículos de grande porte (PBT > 10 t) e conjugados",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial da Diretoria Municipal de Trânsito (48 h de antecedência) para construção civil e mudança (art. 2º, §1º, VI e VII, e §2º)",
+      "excecoes": [
+        "Art. 2º, §1º, I a V: urgência (PM, bombeiros, ambulâncias), oficiais, Forças Armadas, socorro mecânico de emergência, concessionárias/permissionárias de serviço público urbano",
+        "VI e VII: construção civil/caçamba e mudança, com Autorização Especial",
+        "X: carga e descarga, seg. a sex 7h-19h, com pisca-alerta e cones",
+        "XI: abastecimento, lavagem e manutenção, seg. a sex 7h-19h"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 270/2021, de 13/12/2021 (DOSP Paulicéia ed. 617, 14/12/2021)",
+          "artigo": "art. 1º, §2º, II e III (definições); art. 2º e §1º (Av. Paulista); art. 6º (vigência)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjExNzUx"
+        }
+      ],
+      "nota": "'Conjugado' modelado como tipo semitrailer/truck_trailer/cvc (a lei inclui automotor com reboque de trabalho agrícola/obra, definição mais ampla). Sinalização por decreto (art. 1º, §1º) não localizada: se a vigência exigir a placa, verificar em campo.",
+      "vigencia_inicio": "2021-12-14",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Paulista"
+          ],
+          "descricao": "Toda a extensão da Avenida Paulista (Paulicéia/SP)",
+          "aproximado": false
+        }
+      ],
+      "verificado_em": "2026-10-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3536406_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

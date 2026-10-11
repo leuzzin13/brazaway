@@ -1,0 +1,127 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3532801",
+  "municipio": "Nova Aliança",
+  "uf": "SP",
+  "fonte_id": "nova-alianca",
+  "fonte": {
+    "url": "https://camaranovaalianca.sp.gov.br/publicacoes/ver/1001 ; https://www.dosp.com.br/exibe_do.php?i=MTYxOTI3 ; https://camaranovaalianca.sp.gov.br/publicacoes/ver/1117 ; https://camaranovaalianca.sp.gov.br/publicacoes/ver/1025",
+    "licenca": "Atos oficiais de Nova Aliança: domínio público (Lei 9.610/1998, art. 8º, IV). Perímetro urbano de Nova Itapirema: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com a SP-355 recortada sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Lei 35/2020 (red. Lei 21/2021): caminhões canavieiros vedados no perímetro urbano do Distrito de Nova Itapirema. Lei 41/2020 (vinhaça) registrada desativada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Nova Aliança não define VUC.",
+  "regras": [
+    {
+      "id": "nova_alianca_nova_itapirema_canavieiros",
+      "tipo": "zona",
+      "regime": "Caminhões canavieiros, Distrito de Nova Itapirema",
+      "nome": "Nova Aliança: caminhões canavieiros no perímetro urbano do Distrito de Nova Itapirema (Lei 35/2020, alterada pela Lei 21/2021)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 35, de 01/06/2020",
+          "artigo": "art. 1º, caput (vedação) e §§ 1º-2º (placas; penalidades do CTB)",
+          "url": "https://camaranovaalianca.sp.gov.br/publicacoes/ver/1001",
+          "nota": "PDF da Câmara lido por imagem (atos/3532801/lei35_2020_camara.pdf). Redação original: perímetro urbano do município e do distrito de Nova Itapirema; promulgada pela Presidente da Câmara após sanção tácita."
+        },
+        {
+          "ato": "Lei Municipal 21, de 24/03/2021 (altera o caput do art. 1º da Lei 35/2020)",
+          "artigo": "art. 1º (nova redação: só o perímetro urbano do Distrito de Nova Itapirema); art. 2º (vigência na publicação)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MTYxOTI3",
+          "nota": "Publicada no DOSP Nova Aliança ed. 32, 07/04/2021; PDF também na Câmara (https://camaranovaalianca.sp.gov.br/publicacoes/ver/1117). A ementa no site da Câmara fala em 'revogação', mas o texto é alteração do caput."
+        }
+      ],
+      "nota": "'Caminhões canavieiros' = treminhões/carretas de cana (tipo truck_trailer/cvc), aproximação. Lei 35/2020 não traz exceções nem horários; vedação permanente. Perímetro urbano de Nova Itapirema aproximado pelos setores censitários urbanos do IBGE 2022; a travessia da SP-355 (Rodovia Maurício Goulart / Rua Rui Barbosa), rodovia estadual, fica livre.",
+      "vigencia_inicio": "2021-03-24",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3532801_nova_alianca_nova_itapirema.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3532801_nova_itapirema_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_named_3532801.json: setores censitários urbanos do distrito de Nova Itapirema, sem a travessia da SP-355 (40 m); o ato não traz mapa."
+        }
+      ]
+    },
+    {
+      "id": "nova_alianca_vinhaca",
+      "tipo": "zona",
+      "regime": "Caminhões com vinhaça ou produtos do gênero",
+      "nome": "Nova Aliança: caminhões com vinhaça no perímetro urbano da sede e dos Distritos de Nova Itapirema e Monte Belo (Lei 41/2020)",
+      "status": "desativada",
+      "status_motivo": "Restrição por tipo de carga (vinhaça e produtos do gênero), não por veículo; não modelável no perfil de rota. Achada pelo verificador em 2026-10-11.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 41, de 10/09/2020",
+          "artigo": "art. 1º, caput e §§ 1º-2º",
+          "url": "https://camaranovaalianca.sp.gov.br/publicacoes/ver/1025",
+          "nota": "PDF da Câmara lido por imagem (atos/3532801/lei41_2020_camara.pdf); publicada por afixação; vigência na publicação. Nenhuma alteração achada na busca da Câmara."
+        }
+      ],
+      "vigencia_inicio": "2020-09-10",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "nota": "Sem geometria: a regra é por tipo de carga e nunca seria aplicada; a geometria dos três perímetros urbanos só espalharia avisos para todo caminhão."
+    }
+  ]
+}

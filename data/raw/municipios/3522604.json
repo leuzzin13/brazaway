@@ -1,0 +1,132 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3522604",
+  "municipio": "Itapira",
+  "uf": "SP",
+  "fonte_id": "itapira",
+  "fonte": {
+    "url": "https://itapira.sp.gov.br/legislacao/5066-13.pdf (Lei 5.066/2013) ; https://itapira.sp.gov.br/legislacao/089-13.pdf (Decreto 089/2013)",
+    "licenca": "Atos oficiais de Itapira: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 5.066/2013: veículos de carga acima de 12 m proibidos na área urbana (art. 2º; rotas do Decreto 089/2013 para os locais comerciais e industriais); de 6,30 m a 12 m só circulam das 7h às 9h e das 18h às 20h (art. 3º); VUC até 6,30 m x 2,20 m isento (art. 5º, I). A 'área urbana' não é delimitada no ato: aproximada pelos setores censitários urbanos do IBGE 2022 do distrito-sede, sem a SP-147 e a SP-352."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "exige_cadastro": false,
+    "orgao": "Departamento de Trânsito, Transportes e Posturas",
+    "artigo": "Lei 5.066/2013, art. 5º, I (VUC: comprimento máximo 6,30 m e largura máxima 2,20 m, excluído das restrições de circulação)"
+  },
+  "regras": [
+    {
+      "id": "itapira_area_urbana_acima_12m",
+      "tipo": "zona",
+      "regime": "Área urbana (> 12 m)",
+      "nome": "Itapira: área urbana — veículos de carga com comprimento acima de 12 m proibidos, salvo nas rotas do Decreto 089/2013",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "comprimento_m", "acima": 12}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Circulação e Estacionamento do Departamento de Trânsito, Transportes e Posturas, por requerimento com 3 dias de antecedência (arts. 6º e 7º), só para concretagem, mudanças, perecíveis e imprensa e no horário do art. 3º",
+      "excecoes": [
+        "Art. 2º e Decreto 089/2013, §2º: rotas permitidas aos locais comerciais/industriais — I: trevo do Distrito Industrial Juvenal Leite (SP-147), só para o Distrito; II: trevo SP-352 com a Vicinal Virgolino de Oliveira Filho; III (trevo da Av. Brasil, SP-352): Av. Brasil até a R. Antonio Fávero, R. Francisco de Oliveira (da Av. Brasil à R. Santa Terezinha), R. Santa Terezinha (da SP-352 à SP-147), Av. Brasil até a rotatória da Av. dos Juritis, Av. dos Juritis, Av. dos Italianos, R. Ari Wilson Cremasco, R. Silvio Galizoni até a R. Milico, R. do Cubatão até a R. Milico, R. Milico (entre R. do Cubatão e R. Silvio Galizoni), Av. Com. Virgolino de Oliveira (da rotatória da Rodoviária à Vicinal Virgolino de Oliveira Filho), R. Jacob Audi, R. Dr. Décio Queluz, Av. Prof. Fenízio Marquini até a R. Santo Malandrim, R. Funabashi Tokuji, R. Santa Catarina, Distrito Industrial Carlos Yonezawa; IV (trevo Itapira/Mogi Guaçu, vicinal): Estrada Vicinal do trevo à Rotatória da Caixa d'Água (Av. Getúlio Vargas), Av. João Ferrari, R. Octávio Boretti, R. Cyrino Boretti, R. Eugênio Consorti, R. Pedro Mandato até o acesso à R. Wilson Cremasco e ao Distrito Industrial Carlos Yonezawa",
+        "Art. 4º: veículos do art. 29, VII e VIII, do CTB (socorro, polícia, fiscalização, ambulância; utilidade pública em atendimento na via)",
+        "Art. 6º: veículos com Autorização Especial de Circulação e Estacionamento (concretagem, mudanças, perecíveis, imprensa), no horário do art. 3º"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.066, de 25/04/2013 (Itapira) — publicada em 26/04/2013",
+          "artigo": "art. 2º (veículo de carga com comprimento acima de 12 m: circulação restrita na área urbana, exceto vias a locais comerciais/industriais definidas por decreto), arts. 4º a 7º (exceções e autorização), art. 15 (60 dias de adaptação), art. 19 (vigência)",
+          "url": "https://itapira.sp.gov.br/legislacao/5066-13.pdf"
+        },
+        {
+          "ato": "Decreto municipal 089, de 29/05/2013 (Itapira) — publicado em 05/06/2013 (Imprensa Oficial, ed. 103)",
+          "artigo": "art. 1º, §1º (acessos proibidos à zona urbana) e §2º (acessos e rotas permitidos)",
+          "url": "https://itapira.sp.gov.br/legislacao/089-13.pdf"
+        }
+      ],
+      "nota": "Confiança média: a 'área urbana' não é delimitada na lei (o perímetro legal da MZU, LC 4.363/2008, tem memorial e mapa não publicados online); sem notícia de fiscalização. Zona aproximada pelos setores censitários urbanos do IBGE 2022 do distrito-sede (a situação urbana do setor segue o perímetro legal), sem a SP-147 e a SP-352 (folga de 40 m). As rotas do Decreto 089/2013, §2º, não foram recortadas da zona: elas levam a destinos dentro da área urbana (distritos industriais e locais comerciais) e, com origem ou destino na zona, a camada não aplica a exclusão e avisa. Acessos proibidos (§1º): trevos da R. Armando Sales de Oliveira (Portal), R. Quinze de Novembro, R. da Penha, entrada do Bairro dos Limas e vicinal pela R. Lindóia (SP-147); trevo do Posto NR, trevos da R. Santa Terezinha, do Machadinho e do Tanquinho, sentido centro (SP-352); entrada pela Av. Jacareí.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem a SP-147 e a SP-352 (OSM, ODbL): aproximação da área urbana",
+      "vigencia_inicio": "2013-04-26",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522604_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3522604_area_urbana_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede Itapira, sem a SP-147, a SP-352 e as pistas motorway/trunk (folga de 40 m).",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "itapira_area_urbana_6_30_a_12m",
+      "tipo": "zona",
+      "regime": "Área urbana (6,30–12 m)",
+      "nome": "Itapira: área urbana — veículos de carga de 6,30 m a 12 m só circulam das 7h às 9h e das 18h às 20h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "07:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "09:00", "to": "18:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "20:00", "to": "24:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "todas": [{"campo": "comprimento_m", "acima": 6.3}, {"campo": "comprimento_m", "ate": 12}]},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização Especial de Circulação e Estacionamento (arts. 6º e 7º), válida só no horário do art. 3º",
+      "excecoes": [
+        "Art. 4º: veículos do art. 29, VII e VIII, do CTB",
+        "Art. 5º, I: VUC até 6,30 m x 2,20 m; art. 5º, II: veículos de autoescola em aula",
+        "Art. 6º: concretagem, mudanças, perecíveis e imprensa com Autorização Especial, no horário do art. 3º"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.066, de 25/04/2013 (Itapira) — publicada em 26/04/2013",
+          "artigo": "art. 3º (circulação de veículo de carga com comprimento entre 6,30 m e 12 m na área urbana permitida das 7h às 9h e das 18h às 20h), arts. 4º a 6º (exceções)",
+          "url": "https://itapira.sp.gov.br/legislacao/5066-13.pdf"
+        }
+      ],
+      "nota": "Confiança média: a redação do art. 3º ('Estará permitida a circulação ... nos seguintes horários') limita os caminhões de 6,30 a 12 m a 4 h/dia na área urbana, todos os dias (a lei não fala em dias úteis nem excetua feriados); o art. 6º confirma a leitura. Sem notícia de fiscalização e sem perímetro no ato (mesma zona aproximada da regra de 12 m). As janelas são o complemento de 7h–9h e 18h–20h. A LC 5.392/2015 (PlanMob) fala em zonas de restrição 'a instituir', sem revogar a lei.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem a SP-147 e a SP-352 (OSM, ODbL): aproximação da área urbana",
+      "vigencia_inicio": "2013-04-26",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3522604_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3522604_area_urbana_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias> (mesmo polígono da regra itapira_area_urbana_acima_12m).",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "itapira_carga_descarga_vagas",
+      "tipo": "zona",
+      "regime": "Carga e descarga (vagas)",
+      "nome": "Itapira: carga e descarga só nas vagas específicas, nos horários do art. 3º (7h–9h e 18h–20h)",
+      "status": "desativada",
+      "status_motivo": "Regra de operação/estacionamento para carga e descarga (Lei 5.066/2013, arts. 9 a 14), não de circulação; as vagas dependiam de decreto (art. 12) não localizado. Registro sem feição.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "Art. 13: vagas do estacionamento rotativo podem ser usadas para carga e descarga, respeitadas as regras de horário do rotativo",
+        "Art. 14: proibida carga e descarga em áreas de circulação exclusiva de pedestres"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.066, de 25/04/2013 (Itapira)",
+          "artigo": "arts. 9 a 14 (vagas específicas de carga e descarga nos horários do art. 3º; regulamentação das vagas por decreto, art. 12)",
+          "url": "https://itapira.sp.gov.br/legislacao/5066-13.pdf"
+        }
+      ],
+      "vigencia_inicio": "2013-04-26",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

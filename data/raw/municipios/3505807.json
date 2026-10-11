@@ -1,0 +1,176 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3505807",
+  "municipio": "Bastos",
+  "uf": "SP",
+  "fonte_id": "bastos",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1 (Diário Oficial de Bastos nº 523, 19/06/2024, p. 4-5: Decreto 1.758/2024)",
+    "licenca": "Ato oficial de Bastos: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0); vicinais: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), cortadas no limite municipal do IBGE.",
+    "notas": "Dec. 1.758/2024, art. 1º: caminhões com 7 eixos ou mais (carreta + cavalo, bitrem, treminhão, tritrem, rodotrem), carregados ou não, proibidos no perímetro urbano e nas vicinais BAS 010, BAS 020 e BAS 050/168/152, 24 h, ressalvada carga/descarga com nota fiscal. O perímetro urbano não é delimitado no decreto (zona aproximada pelos setores urbanos do IBGE). Canavieiros, esterco e aves mortas (art. 1º, §2º, e art. 3º) dependem do tipo de carga: desativada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto é por número de eixos (7 ou mais): não define VUC.",
+  "regras": [
+    {
+      "id": "bastos_dec1758_7eixos",
+      "tipo": "zona",
+      "regime": "7 eixos ou mais",
+      "nome": "Bastos: caminhões com 7 eixos ou mais no perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Ressalva: deslocamento para carga ou descarga de mercadorias comprovado com nota fiscal ou documento similar (art. 1º)",
+        "§1º: caminhões que transportam produtos agroavícolas produzidos no/para o abastecimento das culturas do município",
+        "§1º: caminhões e máquinas da patrulha mecanizada municipal, estadual ou federal; emergências, manutenção de vias, redes de energia, telefonia e água, guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.758, de 12/06/2024 (Bastos)",
+          "artigo": "art. 1º, caput e §1º; art. 9º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1",
+          "nota": "Diário Oficial de Bastos nº 523, 19/06/2024, p. 4-5"
+        }
+      ],
+      "vigencia_inicio": "2024-06-19",
+      "nota": "Os 7 eixos referem-se à combinação (carreta + cavalo, bitrem, treminhão, tritrem, rodotrem); o campo 'eixos' do alvo deve ser o da combinação. O decreto não delimita o perímetro urbano: zona aproximada pelos setores censitários urbanos do IBGE 2022 (CD_SIT 1 e 2) do distrito-sede, sem as rodovias estaduais SP-457 e SP-294 (folga de 40 m), marcada como aproximada (confiança média). As estradas vicinais do mesmo artigo estão na regra bastos_dec1758_7eixos_vicinais. A ressalva de carga/descarga com nota fiscal não é modelada como exceção de destino local (o ato exige comprovação): com origem ou destino na zona a rota não a exclui e avisa.",
+      "origem_destino_dentro": "avisa",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem a SP-457 e a SP-294 (OSM, ODbL): aproximação do perímetro urbano, não delimitado no decreto",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3505807_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3505807_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> <extrato OSM com as rodovias>: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a SP-457 e a SP-294 (folga de 40 m)."
+        }
+      ]
+    },
+    {
+      "id": "bastos_dec1758_7eixos_vicinais",
+      "tipo": "via",
+      "regime": "7 eixos ou mais (vicinais)",
+      "nome": "Bastos: caminhões com 7 eixos ou mais nas estradas vicinais BAS 010, BAS 020 e BAS 050/168/152",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Ressalva: deslocamento para carga ou descarga de mercadorias comprovado com nota fiscal ou documento similar (art. 1º)",
+        "§1º: caminhões que transportam produtos agroavícolas produzidos no/para o abastecimento das culturas do município",
+        "§1º: caminhões e máquinas da patrulha mecanizada municipal, estadual ou federal; emergências, manutenção de vias, redes de energia, telefonia e água, guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.758, de 12/06/2024 (Bastos)",
+          "artigo": "art. 1º, caput e §1º; art. 9º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1",
+          "nota": "Diário Oficial de Bastos nº 523, 19/06/2024, p. 4-5"
+        }
+      ],
+      "vigencia_inicio": "2024-06-19",
+      "nota": "Os 7 eixos referem-se à combinação (carreta + cavalo, bitrem, treminhão, tritrem, rodotrem); o campo 'eixos' do alvo deve ser o da combinação. Mesmo art. 1º da regra bastos_dec1758_7eixos (separada porque a camada só aceita um tipo de geometria por regra). No OSM as vicinais não têm nome, só ref: BAS-010 (para Iacri), BAS-020, BAS-050 e BAS-168 (para Parapuã), em toda a extensão no município. A 'BAS 152' não existe no OSM (há uma BAS-252 a oeste, não incluída). A BAS-020 do OSM segue para o sul; a ligação asfaltada para Tupã (via sem ref e 'Estrada Vicinal Tupã-Bastos') não tem o código e não foi incluída.",
+      "fonte_geometria": "OSM (ODbL): ways com ref BAS-010, BAS-020, BAS-050 e BAS-168, cortadas no limite municipal do IBGE",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3505807_vicinais.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3505807_vicinais_curadoria.py <extrato OSM das ways de Bastos (PBF do Sudeste)> data/cache/municipios/ibge_malha_3505807.geojson"
+        }
+      ]
+    },
+    {
+      "id": "bastos_dec1758_cana_esterco",
+      "tipo": "zona",
+      "regime": "Por tipo de carga",
+      "nome": "Bastos: caminhões canavieiros e com esterco/aves mortas no perímetro urbano",
+      "status": "desativada",
+      "status_motivo": "Ato vigente, mas o alvo é o tipo de carga (cana, esterco, aves mortas), não modelável por atributos do veículo.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.758, de 12/06/2024 (Bastos)",
+          "artigo": "art. 1º, §2º (canavieiros); art. 3º (esterco e aves mortas)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1"
+        }
+      ],
+      "excecoes": [],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "fonte_geometria": "sem geometria: critério de carga (registro sem feição)"
+    }
+  ]
+}
