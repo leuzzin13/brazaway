@@ -13,9 +13,13 @@
   {
    "url": "https://novaalianca.sp.gov.br/legislacao e https://camaranovaalianca.sp.gov.br/publicacoes/leis-1506135275 (legislacao.py buscar 3532801)",
    "resultado": "Cliente heurístico devolveu 0 atos (portal próprio); Lei 35/2020 não localizada nas fontes."
+  },
+  {
+   "url": "https://camaranovaalianca.sp.gov.br/publicacoes/busca?busca=caminh",
+   "resultado": "Verificador 2026-10-11: busca da Câmara achou Lei 35/2020 (ver/1001), Lei 21/2021 (ver/1117) e Lei 41/2020 (vinhaça, ver/1025); PDFs lidos por imagem e salvos em atos/3532801/. Buscas 'canavieiro', '35/2020', 'vinha', 'trânsito', 'carga', 'pesados' sem outro ato do tema."
   }
  ],
- "observacoes": "Regra com ato (Lei 35/2020 alterada pela Lei 21/2021, art. 1º): caminhões canavieiros vedados no perímetro urbano do Distrito de Nova Itapirema; sem horários citados (modelado 24 h); demais artigos da Lei 35/2020 (exceções, rota) não lidos. Geometria manual do perímetro urbano de Nova Itapirema.",
+ "observacoes": "Regra com ato (Lei 35/2020 alterada pela Lei 21/2021, art. 1º): caminhões canavieiros vedados no perímetro urbano do Distrito de Nova Itapirema; sem horários citados (modelado 24 h); demais artigos da Lei 35/2020 (exceções, rota) não lidos. Geometria manual do perímetro urbano de Nova Itapirema. | verificado em 2026-10-11: texto original da Lei 35/2020 lido (Câmara): art. 1º vedava canavieiros no perímetro urbano da sede e de Nova Itapirema, sem exceções nem horários; a Lei 21/2021 restringiu ao Distrito de Nova Itapirema. Regra confirmada. Achada também a Lei 41/2020 (caminhões com vinhaça, sede + Nova Itapirema + Monte Belo), registrada como desativada (restrição por carga).",
  "falha_de_fonte": false,
  "osm_divergencias": [],
  "regras_rascunho": [
@@ -58,13 +62,19 @@
    "excecoes": [],
    "base_legal": [
     {
-     "ato": "Lei Municipal 21, de 24/03/2021 (altera o art. 1º da Lei 35/2020)",
-     "artigo": "art. 1º (nova redação do caput do art. 1º da Lei 35/2020)",
+     "ato": "Lei Municipal 35, de 01/06/2020",
+     "artigo": "art. 1º, caput (vedação) e §§ 1º-2º (placas; penalidades do CTB)",
+     "url": "https://camaranovaalianca.sp.gov.br/publicacoes/ver/1001",
+     "nota": "PDF da Câmara lido por imagem (atos/3532801/lei35_2020_camara.pdf). Redação original: perímetro urbano do município e do distrito de Nova Itapirema; promulgada pela Presidente da Câmara após sanção tácita."
+    },
+    {
+     "ato": "Lei Municipal 21, de 24/03/2021 (altera o caput do art. 1º da Lei 35/2020)",
+     "artigo": "art. 1º (nova redação: só o perímetro urbano do Distrito de Nova Itapirema); art. 2º (vigência na publicação)",
      "url": "https://www.dosp.com.br/exibe_do.php?i=MTYxOTI3",
-     "nota": "Lei 35/2020 original não lida; exceções eventuais desconhecidas."
+     "nota": "Publicada no DOSP Nova Aliança ed. 32, 07/04/2021; PDF também na Câmara (https://camaranovaalianca.sp.gov.br/publicacoes/ver/1117). A ementa no site da Câmara fala em 'revogação', mas o texto é alteração do caput."
     }
    ],
-   "nota": "'Caminhões canavieiros' = treminhões/carretas de cana (tipo truck_trailer/cvc), aproximação.",
+   "nota": "'Caminhões canavieiros' = treminhões/carretas de cana (tipo truck_trailer/cvc), aproximação. Lei 35/2020 não traz exceções nem horários; vedação permanente.",
    "vigencia_inicio": "2021-03-24",
    "geometria": [
     {
@@ -72,6 +82,53 @@
      "arquivo": "municipios/geo/3532801_nova_alianca_nova_itapirema.geojson",
      "construir": "manual",
      "como_gerar": "Perímetro urbano do Distrito de Nova Itapirema (Nova Aliança); o ato não traz mapa"
+    }
+   ]
+  },
+  {
+   "id": "nova_alianca_vinhaca",
+   "tipo": "zona",
+   "regime": "Caminhões com vinhaça ou produtos do gênero",
+   "nome": "Nova Aliança: caminhões com vinhaça no perímetro urbano da sede e dos Distritos de Nova Itapirema e Monte Belo (Lei 41/2020)",
+   "status": "desativada",
+   "status_motivo": "Restrição por tipo de carga (vinhaça e produtos do gênero), não por veículo; não modelável no perfil de rota. Achada pelo verificador em 2026-10-11.",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 41, de 10/09/2020",
+     "artigo": "art. 1º, caput e §§ 1º-2º",
+     "url": "https://camaranovaalianca.sp.gov.br/publicacoes/ver/1025",
+     "nota": "PDF da Câmara lido por imagem (atos/3532801/lei41_2020_camara.pdf); publicada por afixação; vigência na publicação. Nenhuma alteração achada na busca da Câmara."
+    }
+   ],
+   "vigencia_inicio": "2020-09-10",
+   "geometria": [
+    {
+     "id": "nova_alianca_perimetros_urbanos",
+     "arquivo": "municipios/geo/3532801_nova_alianca_perimetros_urbanos.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetros urbanos da sede, de Nova Itapirema e de Monte Belo; o ato não traz mapa"
     }
    ]
   }

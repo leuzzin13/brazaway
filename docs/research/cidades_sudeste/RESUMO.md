@@ -29,7 +29,7 @@ Com `falha_de_fonte` (resultado não conclusivo, refazer quando a fonte voltar):
 
 ## Verificação
 
-Arquivos em `verif/`: 107. Vereditos: confirmado: 77, corrigido: 26, inverificavel: 3, rebaixado: 1. Cidades com regra ativa ainda sem verificação: 33.
+Arquivos em `verif/`: 140. Vereditos: confirmado: 99, corrigido: 38, inverificavel: 3. Cidades com regra ativa ainda sem verificação: 0.
 
 ## Cidades com regra (rascunho)
 
@@ -106,12 +106,12 @@ Arquivos em `verif/`: 107. Vereditos: confirmado: 77, corrigido: 26, inverificav
 | RJ | São Gonçalo | 3304904 | regra_com_ato | 3 | corrigido |
 | RJ | São João de Meriti | 3305109 | regra_com_ato | 0 | corrigido |
 | RJ | Volta Redonda | 3306305 | regra_com_ato | 0 | não |
-| SP | Agudos | 3500709 | regra_com_ato | 1 | não |
-| SP | Altinópolis | 3501004 | regra_com_ato | 1 | não |
+| SP | Agudos | 3500709 | regra_com_ato | 1 | confirmado |
+| SP | Altinópolis | 3501004 | regra_com_ato | 1 | confirmado |
 | SP | Americana | 3501608 | regra_com_ato | 2 | corrigido |
-| SP | Aparecida | 3502507 | regra_com_ato | 1 | não |
+| SP | Aparecida | 3502507 | regra_com_ato | 1 | corrigido |
 | SP | Araraquara | 3503208 | regra_com_ato | 2 | confirmado |
-| SP | Araçariguama | 3502754 | regra_com_ato | 1 | não |
+| SP | Araçariguama | 3502754 | regra_com_ato | 1 | confirmado |
 | SP | Artur Nogueira | 3503802 | regra_com_ato | 0 | não |
 | SP | Atibaia | 3504107 | regra_com_ato | 1 | corrigido |
 | SP | Avaré | 3504503 | regra_com_ato | 1 | confirmado |
@@ -119,81 +119,81 @@ Arquivos em `verif/`: 107. Vereditos: confirmado: 77, corrigido: 26, inverificav
 | SP | Bastos | 3505807 | regra_com_ato | 1 | confirmado |
 | SP | Bauru | 3506003 | regra_com_ato | 2 | confirmado |
 | SP | Bebedouro | 3506102 | regra_com_ato | 1 | confirmado |
-| SP | Bertioga | 3506359 | regra_com_ato | 1 | não |
+| SP | Bertioga | 3506359 | regra_com_ato | 1 | confirmado |
 | SP | Botucatu | 3507506 | regra_com_ato | 3 | confirmado |
 | SP | Bragança Paulista | 3507605 | regra_com_ato | 3 | confirmado |
-| SP | Buritama | 3508108 | regra_com_ato | 1 | não |
+| SP | Buritama | 3508108 | regra_com_ato | 1 | corrigido |
 | SP | Buritizal | 3508207 | regra_com_ato | 1 | confirmado |
-| SP | Cardoso | 3510708 | regra_com_ato | 1 | não |
+| SP | Cardoso | 3510708 | regra_com_ato | 1 | confirmado |
 | SP | Catiguá | 3511201 | regra_com_ato | 0 | não |
-| SP | Conchal | 3512209 | regra_com_ato | 1 | não |
-| SP | Cordeirópolis | 3512407 | regra_com_ato | 2 | não |
+| SP | Conchal | 3512209 | regra_com_ato | 1 | confirmado |
+| SP | Cordeirópolis | 3512407 | regra_com_ato | 1 | corrigido |
 | SP | Cosmorama | 3512902 | regra_com_ato | 0 | não |
-| SP | Cunha | 3513603 | regra_com_ato | 2 | não |
-| SP | Dobrada | 3514007 | regra_com_ato | 2 | não |
-| SP | Dumont | 3514601 | regra_com_ato | 0 | rebaixado |
+| SP | Cunha | 3513603 | regra_com_ato | 2 | corrigido |
+| SP | Dobrada | 3514007 | regra_com_ato | 2 | confirmado |
+| SP | Dumont | 3514601 | regra_com_ato | 0 | confirmado |
 | SP | Estrela d'Oeste | 3515202 | regra_com_ato | 0 | não |
-| SP | Garça | 3516705 | regra_com_ato | 1 | não |
-| SP | Getulina | 3517000 | regra_com_ato | 1 | não |
-| SP | Guareí | 3518503 | regra_com_ato | 4 | não |
-| SP | Guariba | 3518602 | regra_com_ato | 1 | não |
+| SP | Garça | 3516705 | regra_com_ato | 1 | confirmado |
+| SP | Getulina | 3517000 | regra_com_ato | 1 | confirmado |
+| SP | Guareí | 3518503 | regra_com_ato | 4 | confirmado |
+| SP | Guariba | 3518602 | regra_com_ato | 1 | confirmado |
 | SP | Holambra | 3519055 | regra_com_ato | 0 | não |
 | SP | Iaras | 3519253 | regra_com_ato | 0 | não |
-| SP | Ibitinga | 3519600 | regra_com_ato | 1 | não |
+| SP | Ibitinga | 3519600 | regra_com_ato | 1 | confirmado |
 | SP | Ibiúna | 3519709 | regra_com_ato | 6 | confirmado |
 | SP | Igarapava | 3520103 | regra_com_ato | 0 | não |
 | SP | Indaiatuba | 3520509 | regra_com_ato | 2 | confirmado |
 | SP | Itapeva | 3522406 | regra_com_ato | 3 | corrigido |
 | SP | Itapevi | 3522505 | regra_com_ato | 1 | confirmado |
 | SP | Itapira | 3522604 | regra_com_ato | 2 | confirmado |
-| SP | Itararé | 3523206 | regra_com_ato | 1 | não |
+| SP | Itararé | 3523206 | regra_com_ato | 1 | corrigido |
 | SP | Itatiba | 3523404 | regra_com_ato | 3 | confirmado |
-| SP | Itápolis | 3522703 | regra_com_ato | 2 | não |
+| SP | Itápolis | 3522703 | regra_com_ato | 2 | confirmado |
 | SP | Jaú | 3525300 | regra_com_ato | 1 | inverificavel |
 | SP | Junqueirópolis | 3526001 | regra_com_ato | 0 | não |
 | SP | Leme | 3526704 | regra_com_ato | 1 | confirmado |
 | SP | Limeira | 3526902 | regra_com_ato | 1 | corrigido |
 | SP | Lins | 3527108 | regra_com_ato | 1 | confirmado |
-| SP | Lourdes | 3527256 | regra_com_ato | 1 | não |
+| SP | Lourdes | 3527256 | regra_com_ato | 1 | corrigido |
 | SP | Maracaí | 3528809 | regra_com_ato | 1 | confirmado |
 | SP | Marília | 3529005 | regra_com_ato | 2 | confirmado |
 | SP | Matão | 3529302 | regra_com_ato | 1 | confirmado |
-| SP | Meridiano | 3529609 | regra_com_ato | 2 | não |
+| SP | Meridiano | 3529609 | regra_com_ato | 1 | corrigido |
 | SP | Morro Agudo | 3531902 | regra_com_ato | 0 | não |
-| SP | Nova Aliança | 3532801 | regra_com_ato | 1 | não |
+| SP | Nova Aliança | 3532801 | regra_com_ato | 1 | confirmado |
 | SP | Olímpia | 3533908 | regra_com_ato | 3 | corrigido |
 | SP | Ourinhos | 3534708 | regra_com_ato | 1 | confirmado |
 | SP | Parapuã | 3536000 | regra_com_ato | 1 | confirmado |
 | SP | Pardinho | 3536109 | pontual | 1 | confirmado |
-| SP | Paulicéia | 3536406 | regra_com_ato | 1 | não |
+| SP | Paulicéia | 3536406 | regra_com_ato | 1 | confirmado |
 | SP | Paulínia | 3536505 | regra_com_ato | 0 | não |
 | SP | Penápolis | 3537305 | regra_com_ato | 1 | confirmado |
 | SP | Piedade | 3537800 | regra_com_ato | 1 | confirmado |
 | SP | Pindamonhangaba | 3538006 | regra_com_ato | 2 | confirmado |
-| SP | Pirangi | 3539004 | regra_com_ato | 1 | não |
+| SP | Pirangi | 3539004 | regra_com_ato | 1 | confirmado |
 | SP | Praia Grande | 3541000 | regra_com_ato | 2 | confirmado |
 | SP | Presidente Prudente | 3541406 | regra_com_ato | 1 | confirmado |
 | SP | Rio Claro | 3543907 | regra_com_ato | 1 | confirmado |
 | SP | Rio Grande da Serra | 3544103 | regra_com_ato | 0 | não |
-| SP | Rosana | 3544251 | regra_com_ato | 1 | não |
-| SP | Santa Branca | 3546009 | regra_com_ato | 1 | não |
+| SP | Rosana | 3544251 | regra_com_ato | 1 | confirmado |
+| SP | Santa Branca | 3546009 | regra_com_ato | 1 | confirmado |
 | SP | Santa Bárbara d'Oeste | 3545803 | regra_com_ato | 0 | não |
-| SP | Santo Expedito | 3548302 | regra_com_ato | 1 | não |
+| SP | Santo Expedito | 3548302 | regra_com_ato | 1 | confirmado |
 | SP | Serrana | 3551504 | regra_com_ato | 0 | não |
-| SP | São Bento do Sapucaí | 3548609 | regra_com_ato | 1 | não |
+| SP | São Bento do Sapucaí | 3548609 | regra_com_ato | 1 | corrigido |
 | SP | São Caetano do Sul | 3548807 | regra_com_ato | 0 | não |
 | SP | São José dos Campos | 3549904 | regra_com_ato | 0 | não |
-| SP | São Luiz do Paraitinga | 3550001 | regra_com_ato | 2 | não |
-| SP | São Manuel | 3550100 | regra_com_ato | 1 | não |
-| SP | São Pedro | 3550407 | regra_com_ato | 1 | não |
+| SP | São Luiz do Paraitinga | 3550001 | regra_com_ato | 1 | corrigido |
+| SP | São Manuel | 3550100 | regra_com_ato | 1 | confirmado |
+| SP | São Pedro | 3550407 | regra_com_ato | 1 | confirmado |
 | SP | São Roque | 3550605 | regra_com_ato | 1 | confirmado |
-| SP | Tanabi | 3553401 | regra_com_ato | 1 | não |
+| SP | Tanabi | 3553401 | regra_com_ato | 1 | corrigido |
 | SP | Tatuí | 3554003 | regra_com_ato | 1 | confirmado |
 | SP | Taubaté | 3554102 | regra_com_ato | 1 | corrigido |
 | SP | Valinhos | 3556206 | regra_com_ato | 2 | corrigido |
 | SP | Vinhedo | 3556701 | regra_com_ato | 1 | confirmado |
-| SP | Vista Alegre do Alto | 3556909 | regra_com_ato | 1 | confirmado |
+| SP | Vista Alegre do Alto | 3556909 | regra_com_ato | 1 | corrigido |
 | SP | Votorantim | 3557006 | regra_com_ato | 1 | confirmado |
 | SP | Votuporanga | 3557105 | regra_com_ato | 2 | confirmado |
-| SP | Águas da Prata | 3500402 | regra_com_ato | 1 | não |
-| SP | Águas de São Pedro | 3500600 | regra_com_ato | 1 | não |
+| SP | Águas da Prata | 3500402 | regra_com_ato | 1 | corrigido |
+| SP | Águas de São Pedro | 3500600 | regra_com_ato | 1 | confirmado |

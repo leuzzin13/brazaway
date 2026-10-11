@@ -16,10 +16,14 @@
   {
    "url": "toolkit legislacao.py buscar 3553401 (Siscam Câmara)",
    "resultado": "Termos caminh/veículos pesados/tráfego/trânsito: só a Lei 3.542/2024 é relevante (demais: frota, COVID, convênios DETRAN, JARI). leismunicipais 403; portal próprio da prefeitura sem resultado (heurístico)."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3553401 'caminh|pesados|tráfego|trafego|trânsito' --json (verificador)",
+   "resultado": "Só a Lei 3.542/2024 (EM VIGOR) a partir de 2024. Achado para geometria: LC 7/2009 (perímetro urbano do Bairro de Ibiporanga) e Lei 2.512/2013 (denomina o Anel Viário Antonio Quile Rubio)."
   }
  ],
  "data": "2026-10-11",
- "observacoes": "Lei 3.542/2024: restrição 24h (sem horário) a caminhões pesados e combinações no Bairro de Ibiporanga (zona de bairro, sem lista de vias nem mapa no ato), com desvio pelo Anel Viário Antonio Quile Rubio. Exceções amplas (agrícola, carga e descarga, moradores). Tipo 'zona' precisa polígono do bairro a construir. Não há PBT definido: 'caminhão' em geral. Nenhuma alteração posterior achada. Sinalização não conferida.",
+ "observacoes": "Lei 3.542/2024: restrição 24h (sem horário) a caminhões pesados e combinações no Bairro de Ibiporanga (zona de bairro, sem lista de vias nem mapa no ato), com desvio pelo Anel Viário Antonio Quile Rubio. Exceções amplas (agrícola, carga e descarga, moradores). Tipo 'zona' precisa polígono do bairro a construir. Não há PBT definido: 'caminhão' em geral. Nenhuma alteração posterior achada. Sinalização não conferida. | Verificado em 2026-10-11: Lei 3.542/2024 relida no PDF do Siscam (arquivo?Id=42541): art. 1º, caput e §§1º-3º, e arts. 5º, 6º e 7º conferem. A busca no Siscam, que inclui decretos, por 'caminh', 'pesados', 'tráfego' e 'trânsito' não acha ato de 2024 em diante além da própria lei (situação 'EM VIGOR'). Correção: excecao_destino_local=true, porque o art. 1º, §2º, exclui 'serviços de carga e descarga'. Para a geometria, a LC 7/2009 altera o Perímetro Urbano do Bairro de Ibiporanga.",
  "falha_de_fonte": false,
  "osm_divergencias": [],
  "regras_rascunho": [
@@ -50,7 +54,7 @@
    "alvo": {
     "caminhao": true
    },
-   "excecao_destino_local": false,
+   "excecao_destino_local": true,
    "excecoes": [
     "Art. 1º §2º: ônibus de transporte coletivo (públicos ou particulares)",
     "Art. 1º §2º: caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero",
@@ -67,9 +71,10 @@
      "nota": "PDF: https://tanabi.siscam.com.br/arquivo?Id=42541; DOSP ed. 1112 13/09/2024"
     }
    ],
-   "nota": "Ato não lista vias nem traz mapa; limite do bairro precisa ser definido (polígono) antes de roteirizar. Exceção de 'carga e descarga' e 'produtos agrícolas' muito ampla.",
-   "fonte_geometria": "A construir: polígono do Bairro de Ibiporanga (OSM/prefeitura).",
-   "vigencia_inicio": "2024-09-13"
+   "nota": "Ato não lista vias nem traz mapa; limite do bairro precisa ser definido (polígono) antes de roteirizar. Exceção de 'carga e descarga' e 'produtos agrícolas' muito ampla. Verificado em 2026-10-11: excecao_destino_local passou a true, porque o §2º exclui os 'serviços de carga e descarga'.",
+   "fonte_geometria": "A construir: polígono do Bairro de Ibiporanga. O perímetro urbano do bairro é definido pela LC 7/2009 de Tanabi (https://tanabi.siscam.com.br/Documentos/Documento/19886), ainda não lida.",
+   "vigencia_inicio": "2024-09-13",
+   "excecao_destino_local_artigo": "art. 1º, §2º (serviços de carga e descarga)"
   }
  ]
 }

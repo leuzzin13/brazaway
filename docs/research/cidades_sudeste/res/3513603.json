@@ -32,10 +32,14 @@
   {
    "url": "Overpass (kumi.systems / overpass-api.de) para IBGE 3513603",
    "resultado": "Fora do ar (500/timeout): OSM hgv_no=6, maxweight=4, maxlength=1 da preparação NÃO conferido; pendência."
+  },
+  {
+   "url": "https://sapl.cunha.sp.leg.br/api/norma/normarelacionada/?norma_relacionada=216 e https://sapl.cunha.sp.leg.br/norma/218 (verificador)",
+   "resultado": "Lei 730/1995 ('Acrescenta artigos à Lei nº 728/1995', vínculo 'Altera o(a)'), lida como imagem: art. 1º em branco, art. 2º vetado, art. 3º exceções pelo Executivo (carga e descarga, shows etc.), art. 4º sinalização em 30 dias, art. 5º 30 dias sem efeito punitivo após a sinalização, art. 6º vigor na publicação. Salva em atos/3513603/lei_730_1995.pdf."
   }
  ],
  "data": "2026-10-11",
- "observacoes": "Três atos concretos: (1) Lei 728/1995, restrição de fim de semana/feriado 18h-01h a caminhões e tratores em 4 ruas curtas (numerações); (2) Lei 1.979/2025, proibição de Bitrem em todas as vicinais; (3) Leis 589 e 611/1991, limite de tonelagem e proibição de carretas nas vicinais. Vigência da 728/1995 e das de 1991 não foi contestada por ato posterior achado, mas são leis antigas; sinalização não conferida. Cunha é turística (Paraty-Cunha): pode haver regra para a SP-171/Estrada Cunha-Paraty (estadual, não municipal).",
+ "observacoes": "Três atos concretos: (1) Lei 728/1995, restrição de fim de semana/feriado 18h-01h a caminhões e tratores em 4 ruas curtas (numerações); (2) Lei 1.979/2025, proibição de Bitrem em todas as vicinais; (3) Leis 589 e 611/1991, limite de tonelagem e proibição de carretas nas vicinais. Vigência da 728/1995 e das de 1991 não foi contestada por ato posterior achado, mas são leis antigas; sinalização não conferida. Cunha é turística (Paraty-Cunha): pode haver regra para a SP-171/Estrada Cunha-Paraty (estadual, não municipal). | Verificado em 2026-10-11: Leis 728/1995 e 1.979/2025 relidas nos PDFs do SAPL (a 728 como imagem). Achado: a API do SAPL (normarelacionada) registra a Lei 730, de 19/04/1995, como 'Altera' a Lei 728. Ela acrescenta o art. 3º (exceções caso a caso pelo Executivo, como carga e descarga e shows), o art. 4º (sinalização em 30 dias) e o art. 5º (30 dias educativos), e foi incluída na base legal e nas exceções. Trechos e horário não mudam. A Lei 1.979/2025 confere (arts. 1º, 2º, 4º, 7º e 8º); no SAPL ela tem só vínculo de 'norma correlata' com a Lei 589/1991, sem revogação. A busca no SAPL (caminh, tratores, pesados, bitrem, trânsito, tráfego, vicinal) não acha outro ato que altere essas leis. Ressalva: 'rodovias vicinais' sob jurisdição estadual (DER) não estão sujeitas à lei municipal; a geometria deve usar só as vicinais municipais.",
  "falha_de_fonte": false,
  "osm_divergencias": [
   "OSM tem 6 ways com hgv=no, 4 maxweight, 1 maxlength (preparação): Overpass indisponível, não cruzado com as ruas da Lei 728/1995 nem com as vicinais; pendência."
@@ -71,16 +75,24 @@
    "alvo": {
     "caminhao": true
    },
-   "excecoes": [],
+   "excecoes": [
+    "Lei 730/1995, art. 3º: casos especiais e exceções decididos pelo Executivo (ex.: carga e descarga, apresentação de shows)"
+   ],
    "base_legal": [
     {
      "ato": "Lei Municipal 728, de 06/03/1995 (Cunha)",
      "artigo": "art. 1º; art. 3º (vigor na publicação)",
      "url": "https://sapl.cunha.sp.leg.br/norma/216",
      "nota": "PDF: http://sapl.cunha.sp.leg.br/media/sapl/public/normajuridica/1995/216/lei_728_1995_regulamentacao_horario_transito_caminhoes_tratores.pdf"
+    },
+    {
+     "ato": "Lei Municipal 730, de 19/04/1995 (Cunha), que acrescenta artigos à Lei 728/1995",
+     "artigo": "art. 3º (o Executivo decide casos especiais e exceções, como carga e descarga e shows); art. 4º (sinalização em até 30 dias); art. 5º (30 dias de período educativo após a sinalização)",
+     "url": "https://sapl.cunha.sp.leg.br/norma/218",
+     "nota": "PDF: http://sapl.cunha.sp.leg.br/media/sapl/public/normajuridica/1995/218/lei_730_1995_altera_lei_728_transito_caminhoes_tratores.pdf (cópia em atos/3513603/lei_730_1995.pdf)"
     }
    ],
-   "nota": "Janelas cobrem sáb e dom 18h-01h; a restrição também vale em feriados (não modelado em janelas: feriados 'aplica' não cria janela em dia útil). Trechos por numeração predial.",
+   "nota": "Janelas cobrem sáb e dom 18h-01h; a restrição também vale em feriados (não modelado em janelas: feriados 'aplica' não cria janela em dia útil). Trechos por numeração predial. Verificado em 2026-10-11: o SAPL registra a Lei 730/1995 como alteradora da Lei 728/1995. Ela acrescenta os arts. 3º a 5º (exceções caso a caso pelo Executivo e sinalização) e não muda trechos nem horário.",
    "trechos": [
     {
      "via": [

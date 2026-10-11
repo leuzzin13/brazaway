@@ -21,9 +21,13 @@
   {
    "url": "https://sapl.meridiano.sp.leg.br (legislacao.py buscar 3529609)",
    "resultado": "5 atos por ementa; Lei 1.567/2024 não revoga expressamente as de 2014/2015 (coexistência não confirmada)."
+  },
+  {
+   "url": "https://sapl.meridiano.sp.leg.br/norma/1550",
+   "resultado": "Verificador 2026-10-11: Lei 1.066, de 03/12/2014 (PDF lido, salvo em atos/3529609/lei_1066.pdf), art. 1º revoga na íntegra a Lei 1.055/2014. API do SAPL (ementa: pesados, tráfego, trânsito, porte, caminh, eixos, carga) sem outra norma sobre o tema; nada altera a Lei 1.567/2024 nem a Lei 1.082/2015."
   }
  ],
- "observacoes": "Três leis vigentes por ementa (sem revogação expressa vista): Lei 1.567/2024 (perímetro urbano inteiro, veículos com 5 ou mais eixos e combinações longas; carga e descarga só com autorização; isentos moradores emplacados no município com autorização), Lei 1.055/2014 (4 ruas na sede e 3 no povoado, carretas de usina) e Lei 1.082/2015 (Ruas A e D do povoado). Vigência da Lei 1.567: 30 dias após 22/03/2024 (21/04/2024). Perímetro urbano sem mapa: geometria manual. Dados do campo 'data_vigencia: 2014-12-03' da Lei 1.055 no SAPL parecem metadado de cadastro, não prazo; conferir.",
+ "observacoes": "Três leis vigentes por ementa (sem revogação expressa vista): Lei 1.567/2024 (perímetro urbano inteiro, veículos com 5 ou mais eixos e combinações longas; carga e descarga só com autorização; isentos moradores emplacados no município com autorização), Lei 1.055/2014 (4 ruas na sede e 3 no povoado, carretas de usina) e Lei 1.082/2015 (Ruas A e D do povoado). Vigência da Lei 1.567: 30 dias após 22/03/2024 (21/04/2024). Perímetro urbano sem mapa: geometria manual. Dados do campo 'data_vigencia: 2014-12-03' da Lei 1.055 no SAPL parecem metadado de cadastro, não prazo; conferir. | verificado em 2026-10-11: a Lei 1.055/2014 foi REVOGADA na íntegra pela Lei 1.066, de 03/12/2014 (SAPL norma/1550; explica o campo 'data_vigencia 2014-12-03'); regra meridiano_vias_usinas_lei1055 passa a 'revogada'. Lei 1.567/2024 conferida no PDF (art. 1º >=5 eixos, art. 2º exceções com autorização, art. 3º vigência 30 dias após 22/03/2024): mantida ativa. Lei 1.082/2015 continua desativada (Ruas 'A' e 'D' genéricas), sem a exceção de residentes que vinha da lei revogada.",
  "falha_de_fonte": false,
  "osm_divergencias": [],
  "regras_rascunho": [
@@ -90,8 +94,8 @@
    "tipo": "via",
    "regime": "Carretas e bitrens de usina (24 h)",
    "nome": "Meridiano: carretas/bitrens em Rua São José, Rua José Salvioni, Av. Tadao Tobita, Rua Ernesto Cavalin e Ruas A, D e G do povoado (Lei 1.055/2014)",
-   "status": "ativa",
-   "confianca": "media",
+   "status": "revogada",
+   "confianca": "alta",
    "verificado_em": "2026-10-11",
    "janelas": [
     {
@@ -130,7 +134,13 @@
      "ato": "Lei Municipal 1.055, de 03/09/2014",
      "artigo": "art. 1º e parágrafo único",
      "url": "https://sapl.meridiano.sp.leg.br/norma/1540",
-     "nota": "PDF lido; vigência atual não confirmada contra a Lei 1.567/2024 (sem revogação expressa)."
+     "nota": "PDF lido; REVOGADA pela Lei 1.066/2014."
+    },
+    {
+     "ato": "Lei Municipal 1.066, de 03/12/2014",
+     "artigo": "art. 1º (revoga na íntegra a Lei 1.055/2014); art. 2º (vigência na publicação)",
+     "url": "https://sapl.meridiano.sp.leg.br/norma/1550",
+     "nota": "PDF lido; salvo em atos/3529609/lei_1066.pdf"
     }
    ],
    "vigencia_inicio": "2014-09-03",
@@ -174,15 +184,17 @@
      "arquivo": "municipios/geo/3529609_meridiano_vias_lei1055.geojson",
      "construir": "trechos"
     }
-   ]
+   ],
+   "status_motivo": "Lei 1.055/2014 revogada na íntegra pela Lei 1.066, de 03/12/2014 (art. 1º), em vigor na publicação (SAPL norma/1550).",
+   "vigencia_fim": "2014-12-03"
   },
   {
    "id": "meridiano_povoado_ruas_a_d_lei1082",
    "tipo": "via",
    "regime": "Carretas e bitrens, Povoado de Santo Antônio do Viradouro",
-   "nome": "Meridiano: Ruas A e D do Povoado de Santo Antônio do Viradouro (Leis 1.082/2015 e 1.055/2014)",
+   "nome": "Meridiano: Ruas A e D do Povoado de Santo Antônio do Viradouro (Lei 1.082/2015)",
    "status": "desativada",
-   "status_motivo": "Nomes 'Rua A', 'Rua D' (e 'Rua G') são genéricos: sem como ancorá-los no OSM pelo nome; geometria manual necessária.",
+   "status_motivo": "Nomes 'Rua A', 'Rua D' (e 'Rua G') são genéricos: sem como ancorá-los no OSM pelo nome; geometria manual necessária. A exceção de emplacados/residentes vinha da Lei 1.055/2014, revogada pela Lei 1.066/2014; não se aplica.",
    "confianca": "media",
    "verificado_em": "2026-10-11",
    "janelas": [
@@ -215,8 +227,7 @@
     ]
    },
    "excecoes": [
-    "Lei 1.082/2015, parágrafo único: tráfego normal pela via alternativa do povoado",
-    "Lei 1.055/2014: emplacados e residentes em Meridiano"
+    "Lei 1.082/2015, art. 1º, parágrafo único: os veículos fazem o tráfego pela via alternativa do povoado"
    ],
    "base_legal": [
     {
@@ -231,7 +242,7 @@
      "id": "meridiano_povoado",
      "arquivo": "municipios/geo/3529609_meridiano_povoado.geojson",
      "construir": "manual",
-     "como_gerar": "Ruas A, D e G do Povoado de Santo Antônio do Viradouro"
+     "como_gerar": "Ruas A e D do Povoado de Santo Antônio do Viradouro (a Rua G constava só da Lei 1.055/2014, revogada)"
     }
    ]
   }

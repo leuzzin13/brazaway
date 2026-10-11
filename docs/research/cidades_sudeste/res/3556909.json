@@ -16,10 +16,14 @@
     {
       "url": "https://legis.vistaalegredoalto.sp.gov.br/norma/3696",
       "resultado": "Lei 1.577, de 11/09/2009: PDF (imagem) lido; sem normas relacionadas no SAPL; sem decreto regulamentador (art. 8º, 30 dias) localizado."
+    },
+    {
+      "url": "https://legis.vistaalegredoalto.sp.gov.br/api/norma/normajuridica/?ementa__icontains=...",
+      "resultado": "verificação 2026-10-11: sem ato posterior relacionado à Lei 1.577/2009"
     }
   ],
   "data": "2026-10-11",
-  "observacoes": "Lei 1.577, de 11/09/2009: art. 1º proíbe tráfego e estacionamento de veículos pesados em ruas e avenidas centrais, exceto coletivos de passageiros e veículos de transporte de mercadorias com até 3 eixos; art. 2º lista 6 logradouros (tráfego e estacionamento proibidos, exceto carga e descarga); art. 3º autoriza apenas tráfego na Av. Dr. Luiz Zacharias de Lima (SP-323 a R. Teutly Correa da Rocha) e na R. Inocêncio de Paula Eduardo (com estacionamento no lado oposto: sobrepõe-se ao art. 2º); art. 4º define veículo pesado (cavalo mecânico com 3 ou mais eixos acoplado; 2 ou mais eixos desacoplado; caminhões); art. 5º multas do CTB; art. 8º vigor na publicação, regulamentação por decreto em 30 dias (não localizado). Sem horário (24 h).",
+  "observacoes": "Lei 1.577, de 11/09/2009: art. 1º proíbe tráfego e estacionamento de veículos pesados em ruas e avenidas centrais, exceto coletivos de passageiros e veículos de transporte de mercadorias com até 3 eixos; art. 2º lista 6 logradouros (tráfego e estacionamento proibidos, exceto carga e descarga); art. 3º autoriza apenas tráfego na Av. Dr. Luiz Zacharias de Lima (SP-323 a R. Teutly Correa da Rocha) e na R. Inocêncio de Paula Eduardo (com estacionamento no lado oposto: sobrepõe-se ao art. 2º); art. 4º define veículo pesado (cavalo mecânico com 3 ou mais eixos acoplado; 2 ou mais eixos desacoplado; caminhões); art. 5º multas do CTB; art. 8º vigor na publicação, regulamentação por decreto em 30 dias (não localizado). Sem horário (24 h). | verificado em 2026-10-11: PDF da Lei 1.577/2009 relido (imagem, 2 págs.), texto confere com o resumo, com uma correção de leitura: o art. 4º diz 'caminhões do tipo cavalo mecânico que possuam 3 ou mais eixos de rodagem, quando acoplados em suas carretas, e 2 ou mais eixos, quando desacoplados' (não há categoria separada 'caminhões'). Alvo corrigido para todas[tipo em semitrailer/cvc, eixos > 3] (truck_trailer e eixos>3 de caminhão rígido removidos). Trecho da R. Inocêncio de Paula Eduardo removido da geometria de circulação (art. 3º, II autoriza tráfego). API do SAPL (ementa: pesados, tráfego, veículos, trânsito, estacionamento, carga e descarga, caminh): nenhum ato posterior altera/revoga/regulamenta a lei; data_publicacao e data_vigencia vazias; texto registra afixação em 11/09/2009.",
   "falha_de_fonte": false,
   "osm_divergencias": [],
   "regras_rascunho": [
@@ -48,18 +52,17 @@
       "feriados": "aplica",
       "alvo": {
         "caminhao": true,
-        "qualquer": [
-          {
-            "campo": "eixos",
-            "acima": 3
-          },
+        "todas": [
           {
             "campo": "tipo",
             "em": [
               "semitrailer",
-              "truck_trailer",
               "cvc"
             ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 3
           }
         ]
       },
@@ -76,24 +79,10 @@
           "nota": "Página: https://legis.vistaalegredoalto.sp.gov.br/norma/3696"
         }
       ],
-      "nota": "Confiança média: texto ambíguo sobre eixos (art. 1º até 3 eixos isento; art. 4º considera pesado cavalo mecânico com 3+ eixos acoplado) e conflito entre art. 2º e art. 3º, II na R. Inocêncio de Paula Eduardo; decreto regulamentador não localizado; lei de 2009 sem registro de aplicação.",
+      "nota": "Confiança média: texto ambíguo sobre eixos (art. 1º até 3 eixos isento; art. 4º considera pesado cavalo mecânico com 3+ eixos acoplado) e conflito entre art. 2º e art. 3º, II na R. Inocêncio de Paula Eduardo; decreto regulamentador não localizado; lei de 2009 sem registro de aplicação. Verificado em 2026-10-11: alvo restrito a cavalo mecânico acoplado (semirreboque/CVC) com mais de 3 eixos (art. 4º c/c art. 1º); caminhão rígido não é 'veículo pesado' pelo art. 4º; cavalo desacoplado com 2+ eixos (art. 4º) não é representável no alvo. Trecho da R. Inocêncio de Paula Eduardo (art. 2º, 1º) retirado: o art. 3º, II autoriza o tráfego nela (proibição ali fica só de estacionamento).",
       "fonte_geometria": "OSM por nome; trechos do art. 2º",
       "vigencia_inicio": "2009-09-11",
       "trechos": [
-        {
-          "inciso": "art. 2º, 1º",
-          "via": [
-            "Rua Inocêncio de Paula Eduardo"
-          ],
-          "de": [
-            "Avenida Milton Hitosi Yekashi"
-          ],
-          "ate": [
-            "Avenida 18 de Fevereiro"
-          ],
-          "descricao": "R. Inocêncio de Paula Eduardo entre Av. Milton Hitosi Yekashi e Av. 18 de Fevereiro (art. 3º, II autoriza tráfego: conflito)",
-          "aproximado": true
-        },
         {
           "inciso": "art. 2º, 1º (bis)",
           "via": [
