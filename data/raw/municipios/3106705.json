@@ -1,0 +1,333 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3106705",
+  "municipio": "Betim",
+  "uf": "MG",
+  "fonte_id": "betim",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3106705/2014-12-02/66990b2c984ef6e33617482c370154edfa0ecbd5.pdf (Lei 5.797/2014, Órgão Oficial ed. 1030, p. 6) ; https://data.queridodiario.ok.org.br/3106705/2012-03-29/83a1b17239fd809567cee3c9fb18037d7bfee775.pdf (notícia de 29/03/2012)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap), casada pelo nome/eixos do OSM; limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Lei 5.797/2014: Av. Amazonas (do início até o Centro Administrativo) e R. Dr. Gravatá, capacidade de carga > 8 t, dias úteis 7h–19h30 (feriados não excetuados). Carga e descarga no centro (art. 2º) e Av. do Brasil (notícia de 2012) registradas desativadas."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 5.797/2014 não define VUC: o critério é a capacidade de carga.",
+  "regras": [
+    {
+      "id": "betim_av_amazonas_8t",
+      "tipo": "via",
+      "regime": "Corredor (capacidade > 8 t)",
+      "nome": "Betim: Av. Amazonas, do início até o quarteirão do Centro Administrativo Papa João Paulo II",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "19:30"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 1
+          },
+          {
+            "campo": "payload_t",
+            "acima": 8
+          }
+        ]
+      },
+      "vuc": null,
+      "excecoes": [
+        "Art. 1º, §1º: I – transporte de combustível e carga e descarga de bens e valores bancários; II – transporte de combustível, inclusive GLP; III – coleta de lixo; IV – manutenção de emergência em residência e via pública (redes elétrica, telefônica, pluvial, sanitária e de água); V – socorro; VI – mudança residencial; VII – caminhão-betoneira"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.797, de 19/11/2014 (promulgada pelo Presidente da Câmara; Órgão Oficial de Betim ed. 1030, 02/12/2014, p. 6)",
+          "artigo": "art. 1º, caput e inciso I (veículos de carga com mais de um eixo e capacidade de carga acima de 8 t, das 7h às 19h30, de segunda a sexta-feira) e §1º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3106705/2014-12-02/66990b2c984ef6e33617482c370154edfa0ecbd5.pdf",
+          "nota": "Cópia do Órgão Oficial no Querido Diário, lida pela imagem da p. 6. Origem: PL 248/13 (Proposição de Lei 6.053/2014), vetada integralmente pelo Prefeito 'por razão de inconstitucionalidade' (Órgão Oficial ed. 984, 14/08/2014); veto derrubado e lei promulgada pela Câmara. Vigência na publicação (art. 6º)."
+        }
+      ],
+      "nota": "Confiança média: lei de iniciativa parlamentar que o Executivo vetou por inconstitucionalidade (em 2012 já vetara a Proposição 5.576/2012, sobre carretas no centro, dizendo que proibir circulação é competência da TRANSBETIM); o veto foi derrubado. Nenhuma alteração, revogação, regulamentação ou ADI encontrada no Órgão Oficial (Querido Diário 2010–2026), mas o TJMG não foi consultado e não há prova de sinalização. 'Mais de um eixo' é literal (todo caminhão tem 2 eixos ou mais): o critério efetivo é a capacidade de carga acima de 8 t (payload_t), não o PBT. O ato não excetua feriados (feriados = aplica). Trecho aproximado: o 'início' foi lido como a ponta leste da avenida no Centro (junto à Av. Governador Valadares) e o fim no quarteirão da Prefeitura (Centro Administrativo, R. Pará de Minas, 640, Brasiléia; no OSM a ~100 m ao sul da avenida).",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome: Av. Amazonas da ponta leste (Centro) até a altura da Prefeitura (Centro Administrativo)",
+      "vigencia_inicio": "2014-12-02",
+      "trechos": [
+        {
+          "inciso": "I",
+          "via": [
+            "Avenida Amazonas"
+          ],
+          "de": {
+            "lonlat": [
+              -44.193,
+              -19.9645
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -44.209,
+              -19.97055
+            ]
+          },
+          "descricao": "Av. Amazonas, do início (Centro) até o quarteirão do Centro Administrativo Papa João Paulo II",
+          "aproximado": true,
+          "nota": "O ato não dá transversais: do início no Centro (ponta leste) até a altura da Prefeitura de Betim (R. Pará de Minas, 640)."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3106705_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "betim_rua_dr_gravata_8t",
+      "tipo": "via",
+      "regime": "Corredor (capacidade > 8 t)",
+      "nome": "Betim: Rua Doutor Gravatá, em toda a extensão",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "19:30"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 1
+          },
+          {
+            "campo": "payload_t",
+            "acima": 8
+          }
+        ]
+      },
+      "vuc": null,
+      "excecoes": [
+        "Art. 1º, §1º: I – transporte de combustível e carga e descarga de bens e valores bancários; II – transporte de combustível, inclusive GLP; III – coleta de lixo; IV – manutenção de emergência em residência e via pública (redes elétrica, telefônica, pluvial, sanitária e de água); V – socorro; VI – mudança residencial; VII – caminhão-betoneira"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.797, de 19/11/2014 (promulgada pelo Presidente da Câmara; Órgão Oficial de Betim ed. 1030, 02/12/2014, p. 6)",
+          "artigo": "art. 1º, caput e inciso II (veículos de carga com mais de um eixo e capacidade de carga acima de 8 t, das 7h às 19h30, de segunda a sexta-feira) e §1º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3106705/2014-12-02/66990b2c984ef6e33617482c370154edfa0ecbd5.pdf",
+          "nota": "Cópia do Órgão Oficial no Querido Diário, lida pela imagem da p. 6. Origem: PL 248/13 (Proposição de Lei 6.053/2014), vetada integralmente pelo Prefeito 'por razão de inconstitucionalidade' (Órgão Oficial ed. 984, 14/08/2014); veto derrubado e lei promulgada pela Câmara. Vigência na publicação (art. 6º)."
+        }
+      ],
+      "nota": "Confiança média: lei de iniciativa parlamentar que o Executivo vetou por inconstitucionalidade (em 2012 já vetara a Proposição 5.576/2012, sobre carretas no centro, dizendo que proibir circulação é competência da TRANSBETIM); o veto foi derrubado. Nenhuma alteração, revogação, regulamentação ou ADI encontrada no Órgão Oficial (Querido Diário 2010–2026), mas o TJMG não foi consultado e não há prova de sinalização. 'Mais de um eixo' é literal (todo caminhão tem 2 eixos ou mais): o critério efetivo é a capacidade de carga acima de 8 t (payload_t), não o PBT. O ato não excetua feriados (feriados = aplica).",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome: Rua Doutor Gravatá inteira (Centro)",
+      "vigencia_inicio": "2014-12-02",
+      "trechos": [
+        {
+          "inciso": "II",
+          "via": [
+            "Rua Doutor Gravatá",
+            "Rua Dr. Gravatá"
+          ],
+          "descricao": "Rua Doutor Gravatá, em toda a sua extensão (Centro)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3106705_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "betim_centro_carga_descarga",
+      "tipo": "zona",
+      "regime": "Centro: carga e descarga",
+      "nome": "Betim: carga e descarga no centro (capacidade > 8 t dias úteis 7h–20h; > 4 t 13h–20h; carretas e cavalos mecânicos dias úteis 7h–20h)",
+      "status": "desativada",
+      "status_motivo": "Regime de carga e descarga (o art. 2º proíbe a operação de carga e descarga, não a passagem) e o ato não delimita o 'centro de Betim'/'hipercentro': sem polígono e sem efeito de circulação; registrado como aviso.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "20:00"
+        },
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "13:00",
+          "to": "20:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "variantes": [
+        {
+          "classe": "capacidade acima de 4 t até 8 t (inciso II)",
+          "quando": {
+            "todas": [
+              {
+                "campo": "payload_t",
+                "ate": 8
+              }
+            ],
+            "qualquer": [
+              {
+                "campo": "tipo",
+                "em": [
+                  "rigid",
+                  "light"
+                ]
+              }
+            ]
+          },
+          "janelas": [
+            {
+              "days": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "from": "13:00",
+              "to": "20:00"
+            }
+          ]
+        }
+      ],
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º, parágrafo único: as exceções do art. 1º, §1º (combustível, GLP, coleta de lixo, manutenção de emergência, socorro, mudança residencial, caminhão-betoneira)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.797, de 19/11/2014 (promulgada pelo Presidente da Câmara; Órgão Oficial de Betim ed. 1030, 02/12/2014, p. 6)",
+          "artigo": "art. 2º, I (capacidade acima de 8 t, 7h–20h, segunda a sexta), II (capacidade acima de 4 t, 13h–20h, sem dias especificados) e III (carretas e cavalos mecânicos, 7h–20h, segunda a sexta), e parágrafo único",
+          "url": "https://data.queridodiario.ok.org.br/3106705/2014-12-02/66990b2c984ef6e33617482c370154edfa0ecbd5.pdf",
+          "nota": "Cópia do Órgão Oficial no Querido Diário, lida pela imagem da p. 6. Origem: PL 248/13 (Proposição de Lei 6.053/2014), vetada integralmente pelo Prefeito 'por razão de inconstitucionalidade' (Órgão Oficial ed. 984, 14/08/2014); veto derrubado e lei promulgada pela Câmara. Vigência na publicação (art. 6º)."
+        }
+      ],
+      "nota": "O inciso II não especifica dias (lido como todos os dias, 13h–20h). Confiança média: lei de iniciativa parlamentar que o Executivo vetou por inconstitucionalidade (em 2012 já vetara a Proposição 5.576/2012, sobre carretas no centro, dizendo que proibir circulação é competência da TRANSBETIM); o veto foi derrubado. Nenhuma alteração, revogação, regulamentação ou ADI encontrada no Órgão Oficial (Querido Diário 2010–2026), mas o TJMG não foi consultado e não há prova de sinalização. 'Mais de um eixo' é literal (todo caminhão tem 2 eixos ou mais): o critério efetivo é a capacidade de carga acima de 8 t (payload_t), não o PBT. O ato não excetua feriados (feriados = aplica). Geometria só de registro: o município inteiro (o ato não delimita o centro).",
+      "fonte_geometria": "IBGE Malha Municipal (3106705), só de registro: o ato não delimita o 'centro'",
+      "vigencia_inicio": "2014-12-02",
+      "geometria": [
+        {
+          "municipios": [
+            "3106705"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ]
+    },
+    {
+      "id": "betim_av_do_brasil_bandeirinhas",
+      "tipo": "via",
+      "regime": "Proibido caminhão (sentido BR-381)",
+      "nome": "Betim: Av. do Brasil, após a rotatória das Ruas Mira, Capri e Aldebaran (Bandeirinhas), sentido BR-381",
+      "status": "desativada",
+      "status_motivo": "Só notícia institucional no Órgão Oficial (29/03/2012) sobre intervenção da TRANSBETIM por sinalização; sem ato com número e artigo e sem confirmação de que ainda vale.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-10",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Sentido oposto (descendo a avenida) continua permitido aos veículos de carga, segundo a notícia"
+      ],
+      "base_legal": [
+        {
+          "ato": "Notícia 'Alteração de trânsito na avenida do Brasil' (Órgão Oficial de Betim ed. 622, 29/03/2012)",
+          "artigo": "matéria jornalística (sem artigo): 'Fica proibida a circulação de caminhões na avenida do Brasil, após a rotatória que liga a via às ruas Mira, Capri e Aldebaram, na altura do bairro Bandeirinhas', só no sentido BR-381; desvio pela Av. Fausto Ribeiro da Silva e alça da BR-262",
+          "url": "https://data.queridodiario.ok.org.br/3106705/2012-03-29/83a1b17239fd809567cee3c9fb18037d7bfee775.pdf"
+        }
+      ],
+      "nota": "Motivo citado: subida muito íngreme, insegura para veículos de carga pesada. Medida por sinalização (placas). Não reexaminada pelo verificador.",
+      "fonte_geometria": "OSM (ODbL): Av. do Brasil a partir da rotatória com a R. Capri/R. de Aldebaram, sentido norte (BR-381), aproximado",
+      "vigencia_inicio": "2012-03-30",
+      "trechos": [
+        {
+          "inciso": "notícia",
+          "via": [
+            "Avenida do Brasil"
+          ],
+          "de": {
+            "lonlat": [
+              -44.18738,
+              -19.985
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -44.19022,
+              -19.97525
+            ]
+          },
+          "sentido": true,
+          "aproximado": true,
+          "descricao": "Av. do Brasil, após a rotatória com as Ruas Mira, Capri e Aldebaran (Bandeirinhas), sentido BR-381",
+          "nota": "No OSM a R. Mira desse ponto não tem nome; pista norte (sentido BR-381) da ponta sul, junto à rotatória, até a ponta norte da avenida no OSM."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3106705_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}
