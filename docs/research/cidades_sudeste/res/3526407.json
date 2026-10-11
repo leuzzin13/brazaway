@@ -1,0 +1,104 @@
+{
+  "ibge": "3526407",
+  "nome": "Laranjal Paulista",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.laranjalpaulista.sp.leg.br/api/norma/normajuridica/ (ementa__icontains: Adamo Gardenal, Stein, Pillon, Bonifácio de Arruda, balsa, tonelada, veículos de carga, trânsito, carga e descarga, perímetro urbano, Ponte do Americano)",
+      "resultado": "Nada de circulação de caminhões. 'trânsito': Lei 2.159/1998 (sistema municipal de trânsito), agentes de trânsito, remoção de veículos. 'balsa': só cargo de operador. Vias do OSM sem ato."
+    },
+    {
+      "url": "python3 toolkit/legislacao.py buscar 3526407",
+      "resultado": "12 atos do SAPL, todos compra/venda de caminhão da prefeitura e ruído."
+    },
+    {
+      "url": "https://leismunicipais.com.br/camara/sp/laranjalpaulista",
+      "resultado": "403 Cloudflare ('Just a moment'); não contornado."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3526407",
+      "resultado": "Diários consolidados (doesp/dosp): 0 resultado nos 3 termos em 11/10/2026."
+    },
+    {
+      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3526407; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+      "resultado": "10 elementos: hgv=no em Alameda Adamo Gardenal, R. Francisco Bonifácio de Arruda, R. Luiz Stein de Lara (2 ways), R. Américo Pillon (service/residential); balsa São Sebastião da Pedra Grande (hgv=no, maxweight=3, operador Prefeitura); Ponte do Americano maxweight=12; Estrada Municipal do Moinho (ponte) maxweight=10; 2 nós maxweight=3 (acesso à balsa)."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Sem ato. O OSM tem hgv=no em quatro ruas de serviço/residenciais e limites de ponte/balsa (a balsa é operada pela Prefeitura, limite 3 t: restrição operacional, não circulação urbana). Sem ato localizado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "hgv=no em Alameda Adamo Gardenal, R. Francisco Bonifácio de Arruda, R. Luiz Stein de Lara e R. Américo Pillon sem ato no SAPL.",
+    "maxweight=12 na Ponte do Americano e 10 na ponte da Estrada do Moinho: limite estrutural de ponte, sem ato achado.",
+    "Balsa São Sebastião da Pedra Grande: hgv=no, maxweight=3 (operador Prefeitura)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "laranjal_osm_hgv_no_ruas",
+      "tipo": "via",
+      "regime": "hgv=no (OSM, sem ato)",
+      "nome": "Laranjal Paulista: ruas de serviço/residenciais com hgv=no no OSM",
+      "status": "desativada",
+      "status_motivo": "Pista só do OSM, sem ato municipal no SAPL.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "não localizado (pista OSM)",
+          "artigo": "n/d",
+          "url": "https://www.openstreetmap.org/way/190258692"
+        }
+      ],
+      "trechos": [
+        {
+          "via": [
+            "Alameda Adamo Gardenal"
+          ],
+          "descricao": "way 190258692",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Francisco Bonifácio de Arruda"
+          ],
+          "descricao": "way 534338049",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Luiz Stein de Lara"
+          ],
+          "descricao": "ways 538463129 e 1425096880",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Américo Pillon"
+          ],
+          "descricao": "way 554600498",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
+}

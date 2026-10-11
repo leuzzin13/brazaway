@@ -1,0 +1,116 @@
+{
+  "ibge": "3506359",
+  "nome": "Bertioga",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.bertioga.sp.leg.br/api/norma/normajuridica/?ementa__icontains=tráfego de caminh",
+      "resultado": "SAPL da Câmara: achou o Decreto Executivo 2.071/2013 (norma/3493). Buscas por '2.071', 'trafego de caminh' (sem acento), 'Manoel Gajo', 'veículos de carga', 'trânsito de veículos': sem outro ato de restrição nem alteração."
+    },
+    {
+      "url": "https://sapl.bertioga.sp.leg.br/media/sapl/public/normajuridica/2013/3493/3493_texto_integral.pdf",
+      "resultado": "Texto integral lido (pdftotext), salvo em atos/3506359/dec2071_2013.pdf. Art. 1º: PBT > 10 t na Av. 19 de Maio e Rua Manoel Gajo."
+    },
+    {
+      "url": "python3 toolkit/legislacao.py buscar 3506359 (termos amplos, todas as fontes)",
+      "resultado": "SAPL ok; camarasempapel sem formulário; sem outros atos de circulação de caminhões."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3506359",
+      "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026. Sem acerto na varredura prévia."
+    },
+    {
+      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3506359; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+      "resultado": "5 elementos: way 642968111/642968112/1015430792 (SP-061, hgv=no, rodovia estadual no acesso da balsa), way 466892175 (balsa Bertioga-Guarujá, hgv=no), helipad com maxweight. Nenhuma tag nas vias do decreto."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Decreto 2.071/2013 vigente pelo que o SAPL mostra (sem revogação achada). Proíbe veículos de carga com PBT > 10 t, carregados ou não, na Av. 19 de Maio e na Rua Manoel Gajo (da Rodovia Manoel Hipólito do Rego até a Av. Tomé de Souza), para evitar a fuga da balança do km 223. Texto sem horário (24 h, todos os dias). Verificar em campo/prefeitura se ainda vale e se há sinalização (também na Rua do decreto 'vias identificadas pela sinalização'). VUC definido (VUC até 5,50 m e 1.500 kg de carga útil; VLC até 6,30 m) mas sem largura, então vuc=null; é tratado como caminhão pela camada, só aliviado pelo limite de PBT.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM não tem hgv/maxweight na Av. 19 de Maio nem na Rua Manoel Gajo (ausência, não contradição).",
+    "hgv=no na SP-061 (acesso à balsa Bertioga-Guarujá) é de rodovia estadual/travessia, sem relação com o decreto."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "bertioga_pbt10_av19maio_manoel_gajo",
+      "tipo": "via",
+      "regime": "PBT acima de 10 t (Av. 19 de Maio e Rua Manoel Gajo)",
+      "nome": "Bertioga: proibido trânsito de veículos de carga com PBT acima de 10 t na Av. 19 de Maio e Rua Manoel Gajo",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "autorizacao": "Autorização caso a caso na Diretoria de Trânsito e Transporte, requerimento com 5 dias de antecedência (48 h em urgência) (Dec. 2.071/2013, art. 3º)",
+      "excecoes": [
+        "Art. 2º: veículos do art. 29, VII e VIII, do CTB",
+        "Art. 2º, I: VUC (até 5,50 m de comprimento e carga útil até 1.500 kg) e VLC (5,50 a 6,30 m e carga útil até 1.500 kg)",
+        "Art. 2º, II: acesso a estacionamento próprio (só deslocamento até a guarda), urgência, socorro mecânico, reportagem, saneamento ambiental, produtos alimentares perecíveis, feiras livres, transporte de valores, coleta de lixo, obras e serviços de emergência",
+        "Art. 3º (com autorização): obras e serviços na via, materiais e máquinas de construção, remoção de terra/entulho/caçamba, concretagem, mudanças, produtos perigosos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.071, de 22/11/2013 (BOM 588, 23/11/2013)",
+          "artigo": "art. 1º (proibição, PBT > 10 t, carregados ou não), art. 2º e 3º (exceções/autorização), art. 6º (vigência na publicação)",
+          "url": "https://sapl.bertioga.sp.leg.br/media/sapl/public/normajuridica/2013/3493/3493_texto_integral.pdf",
+          "nota": "Ficha: https://sapl.bertioga.sp.leg.br/norma/3493"
+        }
+      ],
+      "nota": "O decreto não fixa horário: proibição permanente. O art. 3º menciona 'horários referidos no artigo 2º', mas o art. 2º não traz horários (inconsistência do texto). 'Demais vias urbanas identificadas pela sinalização regulamentadora' não são enumeradas: só as duas vias nomeadas entram na regra. Vigência: nenhuma alteração/revogação achada no SAPL da Câmara (busca por ementa 2.071, 'tráfego de caminh', 'Manoel Gajo'), mas decretos do Executivo podem não estar todos no SAPL. Alvo: caminhão, articulado, conjugado, caminhão-trator, trator, reboque e semirreboque (vale qualquer veículo de carga com PBT > 10 t).",
+      "vigencia_inicio": "2013-11-23",
+      "trechos": [
+        {
+          "via": [
+            "Avenida 19 de Maio"
+          ],
+          "de": "Rodovia Dr. Manoel Hipólito do Rego (km 223)",
+          "ate": "Avenida Tomé de Souza",
+          "descricao": "Av. 19 de Maio, da rodovia até a Av. Tomé de Souza (art. 1º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Manoel Gajo"
+          ],
+          "de": "Rodovia Dr. Manoel Hipólito do Rego",
+          "ate": "Avenida Tomé de Souza",
+          "descricao": "Rua Manoel Gajo, da rodovia até a Av. Tomé de Souza (art. 1º)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3506359_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ],
+  "vuc": null,
+  "vuc_nota": "O Dec. 2.071/2013 isenta VUC (até 5,50 m e carga útil até 1.500 kg) e VLC (até 6,30 m e 1.500 kg), mas não fixa largura nem PBT: sem os dados exigidos pelo schema, o VUC é tratado como caminhão."
+}

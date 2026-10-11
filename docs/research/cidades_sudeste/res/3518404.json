@@ -1,0 +1,95 @@
+{
+  "ibge": "3518404",
+  "nome": "Guaratinguetá",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://guaratingueta.sp.gov.br/legislacao/",
+      "resultado": "404; formulário SPL não encontrado."
+    },
+    {
+      "url": "https://guaratingueta.sp.gov.br/leis/",
+      "resultado": "Página lista só leis orçamentárias/recentes e link para guaratingueta.camarasempapel.com.br; sem busca por tema."
+    },
+    {
+      "url": "https://guaratingueta.camarasempapel.com.br/legislacao/",
+      "resultado": "Bloqueado pelo proxy da máquina (connect_rejected); não acessado."
+    },
+    {
+      "url": "https://guaratingueta.sp.gov.br/?s=caminhões circulação",
+      "resultado": "Só notícias (greve dos caminhoneiros 2018); sem ato."
+    },
+    {
+      "url": "https://www.camaraguaratingueta.sp.gov.br/?s=caminh",
+      "resultado": "Sem resultado."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3518404",
+      "resultado": "Diários consolidados (doesp; 2 acertos brutos descartados como ruído na preparação): 0 resultado nos 3 termos em 11/10/2026."
+    },
+    {
+      "url": "WebSearch: Guaratinguetá decreto restrição circulação caminhões centro horário proibido",
+      "resultado": "Nenhum resultado sobre a cidade (só Cajamar, Tatuí, Cachoeiro)."
+    },
+    {
+      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3518404; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+      "resultado": "12 elementos: SP-153 (Rodovia João Martins Corrêa) maxweight=25/maxlength=14 em 7 ways (rodovia estadual, fora da competência municipal); Rua Caetano de Campos e uma via residencial sem nome com hgv=no; 2 helipads com maxweight."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Não achei ato. A fonte principal (SPL na Câmara, camarasempapel) está bloqueada nesta máquina; o resultado NÃO é conclusivo. OSM: hgv=no em duas vias residenciais (way 206915356 Rua Caetano de Campos; way 737418211 sem nome) e SP-153 com maxweight 25 t/maxlength 14 m (estadual). A preparação contou hgv_no=58, maxweight=11 e maxlength=9, mas a consulta por área IBGE só devolveu 2 hgv=no, 5 maxweight de rodovia e 2 helipads: contagem prévia provavelmente inclui vizinhos/bbox.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "hgv=no em Rua Caetano de Campos (way 206915356) e way 737418211: sem ato municipal achado.",
+    "SP-153 maxweight=25/maxlength=14: trecho de rodovia estadual, provável sinalização do DER, não regra municipal.",
+    "Contagem da preparação (hgv_no=58) não reproduzida na consulta por área (2)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "guaratingueta_osm_hgv_no_vias_residenciais",
+      "tipo": "via",
+      "regime": "hgv=no (OSM, sem ato)",
+      "nome": "Guaratinguetá: vias residenciais com hgv=no no OSM",
+      "status": "desativada",
+      "status_motivo": "Pista só do OSM (hgv=no em Rua Caetano de Campos e way 737418211), sem ato municipal.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "não localizado (pista OSM)",
+          "artigo": "n/d",
+          "url": "https://www.openstreetmap.org/way/206915356"
+        }
+      ],
+      "trechos": [
+        {
+          "via": [
+            "Rua Caetano de Campos"
+          ],
+          "descricao": "way 206915356",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
+}
