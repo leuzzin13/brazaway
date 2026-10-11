@@ -1,0 +1,79 @@
+{
+  "ibge": "3551504",
+  "nome": "Serrana",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.serrana.sp.leg.br",
+      "resultado": "sapl: 4 atos em busca por caminh/carga e descarga/veículos pesados/tráfego/trânsito/VUC"
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sp/serrana",
+      "resultado": "leismunicipais: falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/sp/serrana. Não contornar; usa"
+    },
+    {
+      "url": "http://www.serrana.sp.gov.br/leis",
+      "resultado": "portal_proprio: falha: genérico: página não respondeu: http://www.serrana.sp.gov.br/leis"
+    },
+    {
+      "url": "https://www.serrana.sp.leg.br/leis",
+      "resultado": "portal_proprio: 0 atos em busca por caminh/carga e descarga/veículos pesados/tráfego/trânsito/VUC (cliente heurístico, só pista)"
+    },
+    {
+      "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
+      "resultado": "sem resultado"
+    },
+    {
+      "url": "https://sapl.serrana.sp.leg.br/norma/9",
+      "resultado": "Lei Ordinária 1.919, de 29/05/2019: PDF (imagem) lido. Busca textual por 1919|pesad|tonelada|área central achou só essa lei; nenhum decreto regulamentador (art. 3º) nem norma que a altere/revogue."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei Ordinária 1.919/2019, art. 1º: proíbe tráfego e estacionamento de veículos com PBT acima de 10 t em 'toda área central do perímetro urbano' (a lei não delimita a área central); art. 2º exceções (transporte coletivo, ônibus de viagem, veículos oficiais, PM/bombeiros/ambulâncias, Forças Armadas, serviços públicos/emergenciais, caminhão-trator desacoplado, construção civil/concretagem etc.); art. 3º: acima de 10 t só entra nas vias do perímetro urbano para carga e descarga em locais específicos, com documento fiscal, em horários fixados por decreto municipal (não localizado); art. 4º multa 100 UFM; art. 5º vigor na publicação. Regra gravada como DESATIVADA: sem polígono da área central e sem decreto de horários não há geometria nem janela aplicáveis.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "serrana_area_central_10t",
+      "tipo": "zona",
+      "regime": "Veículos acima de 10 t na área central",
+      "nome": "Serrana: área central do perímetro urbano, proibido tráfego e estacionamento de veículos com PBT acima de 10 t",
+      "status": "desativada",
+      "status_motivo": "O ato não delimita a área central e remete os horários de carga e descarga a decreto municipal não localizado; sem geometria ou janela não dá para aplicar na rota.",
+      "confianca": "media",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º, I a VIII (transporte coletivo, ônibus de viagem, oficiais, PM/bombeiros/ambulâncias, Forças Armadas, serviços públicos ou emergenciais, caminhão-trator desacoplado, construção civil e concretagem)",
+        "Art. 3º: carga e descarga em locais específicos com documento fiscal, em horários por decreto"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 1.919, de 29/05/2019 (Serrana)",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://sapl.serrana.sp.leg.br/media/sapl/public/normajuridica/2019/9/lei_1919_-_normas_trafego_veiculos_pesados.pdf",
+          "nota": "Página: https://sapl.serrana.sp.leg.br/norma/9"
+        }
+      ],
+      "vigencia_inicio": "2019-05-29",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3551504_zona.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar a área central quando houver decreto ou mapa oficial"
+        }
+      ]
+    }
+  ]
+}

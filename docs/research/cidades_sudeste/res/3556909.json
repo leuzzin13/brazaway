@@ -1,0 +1,176 @@
+{
+  "ibge": "3556909",
+  "nome": "Vista Alegre do Alto",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://legis.vistaalegredoalto.sp.gov.br",
+      "resultado": "sapl: 10 atos em busca por caminh/carga e descarga/veículos pesados/tráfego/trânsito/VUC"
+    },
+    {
+      "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
+      "resultado": "sem resultado"
+    },
+    {
+      "url": "https://legis.vistaalegredoalto.sp.gov.br/norma/3696",
+      "resultado": "Lei 1.577, de 11/09/2009: PDF (imagem) lido; sem normas relacionadas no SAPL; sem decreto regulamentador (art. 8º, 30 dias) localizado."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 1.577, de 11/09/2009: art. 1º proíbe tráfego e estacionamento de veículos pesados em ruas e avenidas centrais, exceto coletivos de passageiros e veículos de transporte de mercadorias com até 3 eixos; art. 2º lista 6 logradouros (tráfego e estacionamento proibidos, exceto carga e descarga); art. 3º autoriza apenas tráfego na Av. Dr. Luiz Zacharias de Lima (SP-323 a R. Teutly Correa da Rocha) e na R. Inocêncio de Paula Eduardo (com estacionamento no lado oposto: sobrepõe-se ao art. 2º); art. 4º define veículo pesado (cavalo mecânico com 3 ou mais eixos acoplado; 2 ou mais eixos desacoplado; caminhões); art. 5º multas do CTB; art. 8º vigor na publicação, regulamentação por decreto em 30 dias (não localizado). Sem horário (24 h).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "vista_alegre_do_alto_vias_centrais_pesados",
+      "tipo": "via",
+      "regime": "Veículos pesados nas vias centrais",
+      "nome": "Vista Alegre do Alto: vias centrais, proibido tráfego e estacionamento de veículos pesados (carga e descarga permitida)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º: veículos coletivos de passageiros e transporte de mercadorias com até 3 eixos",
+        "Art. 2º: carga e descarga",
+        "Art. 3º: tráfego autorizado na Av. Dr. Luiz Zacharias de Lima (SP-323 a R. Teutly Correa da Rocha) e na R. Inocêncio de Paula Eduardo"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 1.577, de 11/09/2009 (Vista Alegre do Alto)",
+          "artigo": "arts. 1º, 2º, 3º e 4º",
+          "url": "https://legis.vistaalegredoalto.sp.gov.br/media/sapl/public/normajuridica/2009/3696/3696_texto_integral.pdf",
+          "nota": "Página: https://legis.vistaalegredoalto.sp.gov.br/norma/3696"
+        }
+      ],
+      "nota": "Confiança média: texto ambíguo sobre eixos (art. 1º até 3 eixos isento; art. 4º considera pesado cavalo mecânico com 3+ eixos acoplado) e conflito entre art. 2º e art. 3º, II na R. Inocêncio de Paula Eduardo; decreto regulamentador não localizado; lei de 2009 sem registro de aplicação.",
+      "fonte_geometria": "OSM por nome; trechos do art. 2º",
+      "vigencia_inicio": "2009-09-11",
+      "trechos": [
+        {
+          "inciso": "art. 2º, 1º",
+          "via": [
+            "Rua Inocêncio de Paula Eduardo"
+          ],
+          "de": [
+            "Avenida Milton Hitosi Yekashi"
+          ],
+          "ate": [
+            "Avenida 18 de Fevereiro"
+          ],
+          "descricao": "R. Inocêncio de Paula Eduardo entre Av. Milton Hitosi Yekashi e Av. 18 de Fevereiro (art. 3º, II autoriza tráfego: conflito)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, 1º (bis)",
+          "via": [
+            "Rua João Ricardo de Mello"
+          ],
+          "de": [
+            "Avenida Milton Hitosi Yekashi"
+          ],
+          "ate": [
+            "Rua Inocêncio de Paula Eduardo"
+          ],
+          "descricao": "R. João Ricardo de Mello entre Av. Milton Hitosi Yekashi e R. Inocêncio de Paula Eduardo e cruzamentos",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, 2º",
+          "via": [
+            "Avenida 18 de Fevereiro"
+          ],
+          "de": [
+            "Avenida Milton Hitosi Yekashi"
+          ],
+          "ate": [
+            "Avenida Doutor Luiz Zacharias de Lima"
+          ],
+          "descricao": "Av. 18 de Fevereiro entre Av. Milton Hitosi Yekashi e Av. Dr. Luiz Zacharias de Lima e cruzamentos",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, 3º",
+          "via": [
+            "Rua Manoel Marques"
+          ],
+          "de": [
+            "Avenida Milton Hitosi Yekashi"
+          ],
+          "ate": [
+            "Avenida Doutor Luiz Zacharias de Lima"
+          ],
+          "descricao": "R. Manoel Marques entre Av. Milton Hitosi Yekashi e Av. Dr. Luiz Zacharias de Lima e cruzamentos",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, 4º",
+          "via": [
+            "Rua Herculano do Livramento"
+          ],
+          "de": [
+            "Avenida Milton Hitosi Yekashi"
+          ],
+          "ate": [
+            "Avenida Doutor Luiz Zacharias de Lima"
+          ],
+          "descricao": "R. Herculano do Livramento entre Av. Milton Hitosi Yekashi e Av. Dr. Luiz Zacharias de Lima e cruzamentos",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º, 5º",
+          "via": [
+            "Rua Jeremias de Paulo Eduardo"
+          ],
+          "de": [
+            "Avenida Santos Dumont"
+          ],
+          "ate": [
+            "Avenida Doutor Luiz Zacharias de Lima"
+          ],
+          "descricao": "R. Jeremias de Paulo Eduardo entre Av. Santos Dumont e Av. Dr. Luiz Zacharias de Lima e cruzamentos",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3556909_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}
