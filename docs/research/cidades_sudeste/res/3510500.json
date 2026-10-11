@@ -1,0 +1,48 @@
+{
+  "ibge": "3510500",
+  "nome": "Caraguatatuba",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "profundo",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://caraguatatuba.legislacaocompilada.com.br/",
+      "resultado": "HTTP 403 (Cloudflare); o toolkit também falha ('formulário /legislacao/ não encontrado'). Legislação compilada oficial não consultada."
+    },
+    {
+      "url": "https://diariooficial.caraguatatuba.sp.gov.br/public/consulta/pesquisa",
+      "resultado": "Diário Oficial Eletrônico (acervo pesquisável desde 18/07/2025, ed. 1640). 'caminhões' (5 edições), 'caminhão' (3), 'carga e descarga' (3), 'circulação de veículos' (1), 'veículos pesados' (0), 'veículos de carga' (0), 'trânsito' (47). PDFs com acerto em caminhão/carga lidos (ids 10, 11, 14, 15, 85, 122, 230, 231, 242, 248, 326, 373): licitação de locação de caminhões, plano de contingência da Defesa Civil, regulamento de teatro, edital de evento, Praça do Autista. Ruído."
+    },
+    {
+      "url": "https://www.caraguatatuba.sp.gov.br/pmc/?s=... (notícias)",
+      "resultado": "Buscas: circulação de caminhões, restrição caminhões, proibida circulação caminhões, carga e descarga, veículos pesados, trânsito de caminhões, caminhões horário centro, decreto caminhões. Nenhuma notícia de restrição municipal. Só: portaria do DER (2019) proibindo caminhões de carga na Rodovia dos Tamoios (SP-099/SP-055) em operação verão e feriados (competência estadual) e a Zona Azul com tipo 'D-Carga e descarga' no app (2023/10)."
+    },
+    {
+      "url": "https://www.caraguatatuba.sp.gov.br/pmc/wp-json/wp/v2/search",
+      "resultado": "HTTP 403."
+    },
+    {
+      "url": "https://sapl.caraguatatuba.sp.leg.br/ ; https://www.caraguatatuba.sp.leg.br/ ; https://www.camaracaragua.sp.gov.br/",
+      "resultado": "Proxy 502 / erro TLS (unrecognized name) / connection reset. Câmara não consultada."
+    },
+    {
+      "url": "python3 toolkit/diarios_consolidados.py buscar 3510500 (doesp, apm, dosp, qd)",
+      "resultado": "7 termos padrão: 0 resultado."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/ (leads/penaestrada.json)",
+      "resultado": "Sem página de Caraguatatuba."
+    },
+    {
+      "url": "https://overpass-api.de/api/interpreter ; https://overpass.kumi.systems ; https://overpass.private.coffee ; https://maps.mail.ru/osm/tools/overpass",
+      "resultado": "falha: connection reset pelo proxy / HTTP 500 / 504 em todas as instâncias (3 tentativas em 11/10/2026); WebFetch: ENOTFOUND. Etiquetas OSM não conferidas."
+    }
+  ],
+  "observacoes": "Nenhum ato municipal de restrição a caminhões encontrado. As restrições conhecidas na região são estaduais (DER: proibição de caminhões de carga na Rodovia dos Tamoios em operação verão e feriados prolongados), fora desta camada. A Zona Azul tem vagas/tarifa de carga e descarga (pontual; o ato não foi lido porque a legislação compilada está atrás de Cloudflare). Lacunas: legislação compilada (403), Câmara inacessível, diário pesquisável só desde 07/2025 (edições anteriores no site da Prefeitura, sem busca por texto). osm_hints indica 1 hgv=no e 2 maxweight, não conferidos (Overpass fora).",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "osm_hints_por_municipio: hgv=no 1, maxweight 2 — não conferidos (Overpass indisponível em 11/10/2026). Pendente: verificar se são pontes de rodovia estadual (SP-055/SP-099, competência do DER) ou vias municipais sem ato."
+  ],
+  "regras_rascunho": []
+}
