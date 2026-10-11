@@ -2,7 +2,7 @@
  "ibge": "3535804",
  "nome": "Paranapanema",
  "uf": "SP",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "media",
  "fontes_consultadas": [
   {
@@ -24,11 +24,66 @@
   {
    "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
    "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
+  },
+  {
+   "url": "https://www.paranapanema.sp.gov.br/portal/leis_decretos/1179/",
+   "resultado": "Decreto 1.356, de 14/08/2014 — texto integral lido no PDF original (https://www.paranapanema.sp.gov.br/publicos/4c9eaa6ac8f8627ab268e5341a1bbdbf.pdf; cópia em atos/3535804/decreto_1356_2014.pdf). Art. 1º: 'Fica permitido o trânsito de caminhões na Rua Dr. Fortunato Martins de Camargo, entre as Ruas Manoel Domingues Leite e Avaré, durante todo o dia 16 de agosto de 2014' (desfile da Festa da Padroeira); art. 2º: vigor na publicação. Portal marca 'Em vigor', mas o efeito se esgotou em 16/08/2014."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3535804 \"Fortunato|1356|1.356|estacionamento|proib|sinaliza|via|rua\"",
+   "resultado": "Nenhum outro ato cita a Rua Dr. Fortunato Martins de Camargo; nenhum ato altera/revoga o Dec. 1.356 (os '1356' restantes são Portarias de férias de 2025/2026). Atos de trânsito posteriores (Dec. 2910/2024, 3459/2025, 3961/2026 — sentido e fechamento de vias na FEAP; Dec. 4032/2026 — ciclomotores e autopropelidos) não tratam de caminhões pela ementa."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter ; https://overpass-api.de/api/interpreter",
+   "resultado": "Consulta de hgv/maxweight e do nome da via falhou (HTTP 500 / conexão reiniciada); OSM não conferido."
   }
  ],
  "data": "2026-10-11",
- "observacoes": "Só o Decreto 1.356/2014 (liberação de trânsito de caminhões na Rua Dr. Fortunato Martins de Camargo em 16/08/2014, festa da padroeira): evento pontual, não lido, sem regra de restrição.",
+ "observacoes": "revisto em 2026-10-11: Decreto 1.356/2014 lido na íntegra. Não restringe caminhões: é uma liberação pontual (art. 1º permite o trânsito de caminhões na Rua Dr. Fortunato Martins de Camargo, entre as Ruas Manoel Domingues Leite e Avaré, só em 16/08/2014, para o desfile de veículos da Festa da Padroeira), com efeito esgotado. Mas a necessidade de 'permitir' indica que o trânsito de caminhões nesse trecho é normalmente proibido — por ato não localizado ou só por sinalização. Status alterado para 'pista' com regra desativada. Nenhum outro ato cita a via nem altera/revoga o decreto. Próximo passo: achar o ato-base (Câmara/Webline fora do ar; Leis Municipais atrás de Cloudflare) ou confirmar a placa no local/Street View. Obs.: o decreto traz data '14 de agosto' no cabeçalho e '14 de Abril de 2014' no fecho (erro material).",
  "falha_de_fonte": false,
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "paranapanema_r_fortunato_martins_camargo_caminhoes",
+   "tipo": "via",
+   "regime": "Proibição presumida (sem ato-base)",
+   "nome": "Paranapanema: R. Dr. Fortunato Martins de Camargo, entre R. Manoel Domingues Leite e R. Avaré — trânsito de caminhões presumidamente proibido (pista)",
+   "status": "desativada",
+   "status_motivo": "Pista indireta: o único ato encontrado (Dec. 1.356/2014) apenas PERMITE caminhões no trecho em 16/08/2014, o que pressupõe proibição habitual; o ato-base da proibição (ou a sinalização) não foi localizado, e não se sabe horário, veículos atingidos nem se ainda vale.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 1.356, de 14/08/2014 (Paranapanema/SP)",
+     "artigo": "art. 1º (permite o trânsito de caminhões no trecho durante todo o dia 16/08/2014); não institui restrição",
+     "url": "https://www.paranapanema.sp.gov.br/publicos/4c9eaa6ac8f8627ab268e5341a1bbdbf.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "pista",
+     "via": [
+      "Rua Doutor Fortunato Martins de Camargo",
+      "Rua Dr. Fortunato Martins de Camargo"
+     ],
+     "de": "Rua Manoel Domingues Leite",
+     "ate": "Rua Avaré",
+     "descricao": "R. Dr. Fortunato Martins de Camargo, entre R. Manoel Domingues Leite e R. Avaré (trecho do Dec. 1.356/2014)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3535804_pistas.geojson",
+     "construir": "trechos"
+    }
+   ],
+   "nota": "Não ativar sem o ato-base da proibição."
+  }
+ ]
 }
