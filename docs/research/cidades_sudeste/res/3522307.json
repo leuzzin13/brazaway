@@ -1,0 +1,103 @@
+{
+ "ibge": "3522307",
+ "nome": "Itapetininga",
+ "uf": "SP",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://itapetininga.siscam.com.br (Câmara; cliente do toolkit falhou: 'página de pesquisa não reconhecida') e consulta direta a /Documentos/Pesquisa menus 78 (Proposituras) e 79 (Legislação)",
+   "resultado": "Menu 79 (leis): Lei Ordinária 6003/2015 'zonas de restrições do trânsito de veículos acima de três eixos'. Requerimentos 2011-2019 pedindo proibir pesados em ruas específicas (Benedito Lopes Vieira, centro, Rubens Brasi). Siscam só lista leis, não decretos."
+  },
+  {
+   "url": "https://itapetininga.siscam.com.br/Documentos/Documento/50810 e /arquivo?Id=45442",
+   "resultado": "LIDO (imagem; cópia em atos/3522307/Lei_6003_2015.pdf): Lei 6.003, de 27/02/2015 (PL 206/2014)."
+  },
+  {
+   "url": "https://itapetininga.siscam.com.br/Documentos/Documento/55641 e /55845 (Req. 148/2016 e resposta)",
+   "resultado": "Resposta só trata de tapa-buraco no Jardim Colombo; nada sobre decreto."
+  },
+  {
+   "url": "https://www.legislacaodigital.com.br/itapetininga-SP/LeisOrdinarias/6003",
+   "resultado": "403 Cloudflare (usei a cópia do Siscam)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar ('zona de restrição de circulação', 'circulação de caminhões')",
+   "resultado": "0 resultado (cobertura só doesp)."
+  },
+  {
+   "url": "https://www.itapetininga.sp.gov.br/legislacao (portal_proprio, heurístico)",
+   "resultado": "sem resultado; decretos não localizados."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO)",
+   "resultado": "500 / connection reset / 504 (mirror kumi, de, private.coffee e mail.ru fora do ar). Não consultado."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 6.003/2015 (27/02/2015): art. 1º autoriza o Executivo a delimitar, por DECRETO, Zona de Restrição de Circulação de veículos automotores do tipo caminhão ACIMA DE TRÊS EIXOS no perímetro urbano e nos distritos; art. 2º exceções (carga e descarga com origem/destino no município comprovada por documento fiscal; utilidade pública; socorro/polícia/ambulância; veículos de operadores residentes na área urbana cadastrados no órgão municipal); art. 3º fiscalização; art. 5º vigor na publicação. O decreto de delimitação NÃO foi encontrado (Siscam só tem leis; diários consolidados sem resultado; portal da Prefeitura sem busca útil). Sem decreto, sem vias nem horários. O OSM tem 1 hgv=no. Requerimento 148/2016 (bitrem/três eixos na Rua Rubens Brasi) sugere que a fiscalização era demandada em rua específica. Pendência: procurar o decreto na Prefeitura (Itapetininga tem imprensa oficial própria) ou no DOE-SP.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Overpass (kumi.systems, overpass-api.de, private.coffee) fora do ar nesta máquina (500/reset/504): as vias etiquetadas não puderam ser identificadas (helipad, ponte de rodovia, rua municipal). Só há a contagem do preparo (osm_hints_por_municipio.json): 1 way(s)/nó(s) com hgv=no."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "itapetininga_lei6003_zrc",
+   "tipo": "zona",
+   "regime": "Zona de Restrição de Circulação de caminhões acima de 3 eixos (por decreto)",
+   "nome": "Itapetininga: Lei 6.003/2015, caminhões com mais de 3 eixos (zonas definidas por decreto)",
+   "status": "desativada",
+   "status_motivo": "A lei só autoriza o Executivo a delimitar as zonas por decreto; decreto não localizado, sem vias, horários nem geometria.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º, I: carga e descarga de bens com origem e/ou destino no município, comprovada por documento fiscal",
+    "Art. 2º, II: utilidade pública (coleta de lixo, manutenção de redes, água e esgoto; CTB art. 29, VIII)",
+    "Art. 2º, III: socorro de incêndio/salvamento, polícia, fiscalização de trânsito, ambulâncias",
+    "Art. 2º, IV: veículos de operadores residentes na área urbana, cadastrados no órgão de trânsito (decreto regulamentador)"
+   ],
+   "excecao_destino_local": true,
+   "excecao_destino_local_incisos": [
+    "I"
+   ],
+   "excecao_destino_local_artigo": "Lei 6.003/2015, art. 2º, I",
+   "base_legal": [
+    {
+     "ato": "Lei municipal 6.003/2015 (Itapetininga), de 27/02/2015",
+     "artigo": "art. 1º (ZRC caminhão acima de 3 eixos, perímetro urbano e distritos, por decreto), art. 2º (exceções), art. 5º (vigor na publicação)",
+     "url": "https://itapetininga.siscam.com.br/Documentos/Documento/50810",
+     "nota": "PDF da lei: https://itapetininga.siscam.com.br/arquivo?Id=45442"
+    }
+   ],
+   "nota": "Janelas 24 h são placeholder.",
+   "fonte_geometria": "dependente do decreto (não localizado)",
+   "vigencia_inicio": "2015-02-27",
+   "trechos": [],
+   "geometria": []
+  }
+ ]
+}

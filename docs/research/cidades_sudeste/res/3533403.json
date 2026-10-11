@@ -1,0 +1,95 @@
+{
+ "ibge": "3533403",
+ "nome": "Nova Odessa",
+ "uf": "SP",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://novaodessa.siscam.com.br (Câmara, menu 80 Legislação; só leis) via toolkit legislacao.py buscar (termos: caminh|carga e descarga|veículos pesados|tráfego|tonelad|zona de restrição|carreta; e trânsito|circulação|pesad|proib|restri|veículos de carga|perímetro urbano)",
+   "resultado": "Leis: 2989/2015 (Programa de Restrição ao Trânsito de caminhões > 6,30 m, Em vigor), 2184/2006, 2107/2005, 2014/2004."
+  },
+  {
+   "url": "https://novaodessa.siscam.com.br/Documentos/Documento/83888 e /arquivo?Id=75291",
+   "resultado": "LIDO (cópia em atos/3533403/Lei_2989_2015.doc, convertido com LibreOffice): Lei 2.989, de 30/09/2015."
+  },
+  {
+   "url": "https://novaodessa.siscam.com.br/arquivo?Id=71245, 71168, 71076",
+   "resultado": "LIDOS: Leis 2.184/2006, 2.107/2005, 2.014/2004 (todas revogadas em cadeia: 2989 revoga 2184 e o Decreto 2.321/2007; 2184 revoga 2107; 2107 revoga 2014)."
+  },
+  {
+   "url": "https://novaodessa.siscam.com.br/Documentos/Pesquisa (termos Restrição, Zona, caminh, ZMRC)",
+   "resultado": "Nenhum decreto (o Siscam só indexa leis); LC 61/2015 (Plano de Mobilidade) apareceu mas não foi aberta."
+  },
+  {
+   "url": "https://www.novaodessa.sp.gov.br e https://novaodessa.sp.gov.br",
+   "resultado": "403 (prefeitura não acessível)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar ('restrição de circulação de caminhões', 'ZMRC', 'veículos pesados')",
+   "resultado": "0 relevantes (só concurso com 'Motorista de Veículos Pesados' no DOE-SP)."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO)",
+   "resultado": "500 / connection reset / 504 (mirror kumi, de, private.coffee e mail.ru fora do ar). Não consultado."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 2.989/2015 (30/09/2015, publicada no Jornal Nova Odessa 01/10/2015; Siscam 'Em vigor'): art. 1º implanta o Programa de Restrição ao Trânsito de veículos automotores pesados do tipo caminhão com comprimento superior a 6,30 m no município; art. 2º autoriza o Executivo a definir, por DECRETO, as Zonas de Máxima Restrição de Circulação (ZMRC) e Vias de Máxima Restrição (VMRC); art. 3º exceções (socorro, polícia, fiscalização, ambulâncias); art. 6º revoga a Lei 2.184/2006 e o Decreto 2.321/2007. O decreto das ZMRC/VMRC não foi encontrado (Siscam só tem leis, prefeitura 403, diários sem resultado). Sem o decreto não há vias nem horários: regra desativada. Pendência: obter o decreto regulamentador (Prefeitura, 'Jornal Nova Odessa') e a LC 61/2015 (mobilidade). Histórico: Lei 2.014/2004 (> 4 t, 9-19h, perímetro central) e 2.107/2005 (> 4 t, sem horário) foram revogadas.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Overpass (kumi.systems, overpass-api.de, private.coffee) fora do ar nesta máquina (500/reset/504): as vias etiquetadas não puderam ser identificadas (helipad, ponte de rodovia, rua municipal). Só há a contagem do preparo (osm_hints_por_municipio.json): 4 com maxweight."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "novaodessa_lei2989_zmrc_vmrc",
+   "tipo": "zona",
+   "regime": "Programa de Restrição ao Trânsito de caminhões > 6,30 m (zonas por decreto)",
+   "nome": "Nova Odessa: Lei 2.989/2015, caminhões com comprimento > 6,30 m (ZMRC/VMRC definidas por decreto)",
+   "status": "desativada",
+   "status_motivo": "A lei só cria o programa e delega ao decreto a definição das zonas/vias (art. 2º); decreto não localizado, logo não há geometria, horário ou vias. Ativar quando o decreto for lido.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 6.3
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 3º: socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito e ambulâncias em serviço de urgência (CTB art. 29, VII)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.989/2015 (Nova Odessa), de 30/09/2015",
+     "artigo": "arts. 1º (programa; comprimento > 6,30 m), 2º (ZMRC/VMRC por decreto), 3º (exceções), 6º (revoga Lei 2.184/2006 e Dec. 2.321/2007)",
+     "url": "https://novaodessa.siscam.com.br/Documentos/Documento/83888",
+     "nota": "DOC: https://novaodessa.siscam.com.br/arquivo?Id=75291"
+    }
+   ],
+   "nota": "Janelas 24 h são placeholder (a lei não traz horário).",
+   "fonte_geometria": "Dependente do decreto das ZMRC/VMRC (não localizado).",
+   "vigencia_inicio": "2015-10-01",
+   "trechos": [],
+   "geometria": []
+  }
+ ]
+}

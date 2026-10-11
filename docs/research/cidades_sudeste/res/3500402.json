@@ -1,0 +1,90 @@
+{
+ "ibge": "3500402",
+ "nome": "Águas da Prata",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/533/ (PDF https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/533/; atos/3500402)",
+   "resultado": "LIDO. Decreto nº 2.799, de 15/07/2019, regulamenta a Lei Municipal 2.321/2019 (restrição de tráfego de caminhões e cargas): art. 1º restringe o tráfego de caminhões com TARA acima de 5 t em todas as vias do Município, 6h-20h, aos sábados, domingos e feriados; art. 2º exclui trechos de rodovias SP-342 (km 224+030 a 251+150) e SP-215 (km 29+755 a 49+940); art. 3º exclui entregas no perímetro urbano ou carregamento (nota fiscal), VUC (largura ≤2,2 m, comprimento ≤6,3 m, limite de emissão), transporte de passageiros, tratores e guinchos, serviços essenciais/utilidade pública (Elektro, Sabesp, Bombeiros, caminhões da Municipalidade); art. 4º multa CTB; art. 5º vigor 30 dias após a publicação, revoga o Decreto 2.788/2019."
+  },
+  {
+   "url": "https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/532/ (Decreto 2.800, de 18/07/2019; atos/3500402)",
+   "resultado": "LIDO (imagem). Só reformula o caput do art. 3º do Decreto 2.799 ('Ficam excluídos da proibição do caput do artigo 1º, os veículos:'); sem mudança de conteúdo restritivo."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3500402 (SAPL e portal da Câmara; portal da prefeitura heurístico)",
+   "resultado": "SAPL da Câmara: 0 resultados para todos os termos. Portal da prefeitura achou a entrada da Lei 2.321/2019 (texto da lei em si não localizado; a entrada 533 é o decreto) e os Decretos 2.799/2.800. Nenhum ato posterior encontrado."
+  },
+  {
+   "url": "Pé na Estrada (preparação, 2018-19, sem ato)",
+   "resultado": "Pista: seg-sex Não; sáb, dom e feriado 6h-20h; acima de 5 t; Av. Washington Luiz. Consistente com o decreto."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Regra concreta e vigente (sem revogação achada): fim de semana e feriados 6h-20h, caminhões com tara acima de 5 t, em todas as vias municipais (exceto os trechos das rodovias SP-342 e SP-215 e as exceções do art. 3º). Alvo é TARA e não PBT (o schema não tem tara): modelado como pbt_t acima de 5 como aproximação segura, a decidir pelo verificador. Lei 2.321/2019 em si não lida (decreto lido). Zona = todas as vias do município (sem polígono; geometria = rede viária municipal exceto trechos rodoviários SP-342/SP-215). OSM outros_cond=1 não conferido (Overpass fora do ar).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM 1 way com condição não padrão (preparação); Overpass indisponível, não conferido."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "aguasdaprata_fds_feriados_tara_5t",
+   "tipo": "zona",
+   "regime": "Restrição de fim de semana e feriados a caminhões com tara acima de 5 t",
+   "nome": "Águas da Prata: todas as vias do município, sáb/dom/feriados 6h-20h, caminhões com tara acima de 5 t",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "Decreto 2.799/2019, art. 3º, I",
+   "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "exige_cadastro": false,
+    "orgao": "Prefeitura",
+    "artigo": "Decreto 2.799/2019, art. 3º, II",
+    "nota": "Também exige limite de emissão de poluentes (não modelável)."
+   },
+   "excecoes": [
+    "Art. 2º: não abrange SP-342 (km 224+030 a 251+150) e SP-215 (km 29+755 a 49+940)",
+    "Art. 3º, I: carga destinada a entrega no perímetro urbano ou que venha carregar (nota fiscal)",
+    "Art. 3º, II: VUC (2,2 m x 6,3 m, limite de emissões)",
+    "Art. 3º, III: transporte de passageiros, tratores e guinchos",
+    "Art. 3º, IV: serviços essenciais ou de utilidade pública (Elektro, Sabesp, Bombeiros, caminhões da Municipalidade)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 2.799, de 15/07/2019 (Águas da Prata), que regulamenta a Lei Municipal 2.321/2019; art. 3º, caput, com redação do Decreto 2.800/2019",
+     "artigo": "arts. 1º a 5º",
+     "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/533/",
+     "nota": "PDF https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/533/ ; Decreto 2.800: https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/532/"
+    }
+   ],
+   "nota": "O ato usa TARA > 5 t (não PBT); pbt_t > 5 é aproximação do lado seguro. Janela cobre sáb e dom; a restrição vale também em feriados (feriados 'aplica' não cria janela em dia útil). Pé na Estrada cita Av. Washington Luiz.",
+   "fonte_geometria": "A construir: perímetro municipal/rede viária urbana, exceto trechos das rodovias SP-342 e SP-215.",
+   "vigencia_inicio": "2019-08-14"
+  }
+ ]
+}

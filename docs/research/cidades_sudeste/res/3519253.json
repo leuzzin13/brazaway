@@ -1,0 +1,104 @@
+{
+ "ibge": "3519253",
+ "nome": "Iaras",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://iaras.siscam.com.br (Siscam da Câmara, grupo Legislação) via toolkit legislacao.py buscar (termos: caminh|carga e descarga|veículos pesados|tráfego|tonelad|zona de restrição|carreta; e trânsito|circulação|pesad|proib|restri|veículos de carga|perímetro urbano)",
+   "resultado": "termo caminh: Lei Complementar nº 88/2014 'proibição da circulação de veículos extra-pesados de carga nas vias públicas urbanas do perímetro urbano'; demais resultados sem relação (Melhor Caminho, estágio)."
+  },
+  {
+   "url": "https://iaras.siscam.com.br/Documentos/Documento/1438",
+   "resultado": "LIDO: ficha da LC 88/2014 (11/11/2014), situação 'Não Consta Revogação Expressa'; PDF anexo."
+  },
+  {
+   "url": "https://iaras.siscam.com.br/arquivo?Id=2093",
+   "resultado": "LIDO (pdftotext; cópia em atos/3519253/LC_088_2014.pdf): texto integral, 2 páginas, com carimbo de publicação."
+  },
+  {
+   "url": "https://iaras.siscam.com.br (busca 'extra|revog|veículos|circula', fonte câmara, 43 atos)",
+   "resultado": "Nenhum ato posterior alterando ou revogando a LC 88/2014 (revogações listadas são de outros assuntos)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (circulação de caminhões, veículos pesados, restrição)",
+   "resultado": "0 resultado(s) relevantes. "
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO)",
+   "resultado": "500 / connection reset / 504 (mirror kumi, de, private.coffee e mail.ru fora do ar). Não consultado."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei Complementar 088/2014 (Iaras, 11/11/2014): art. 1º proíbe a circulação de veículos extra-pesados de carga nas vias públicas urbanas do perímetro urbano (conforme art. 187 do CTB); art. 2º proíbe o estacionamento desses veículos e prevê remoção; art. 3º define extra-pesados: bitrens, tritrens, treminhões, rodotrens, ou capacidade de carga igual ou superior a 18 t de PBT ou PBTC; art. 4º vigência 15 dias corridos após a publicação. Sem horários (24 h), sem exceções no texto. O perímetro urbano não é definido no ato (precisa do mapa/lei de perímetro). Siscam marca 'Não Consta Revogação Expressa'; não achei ato posterior. O PDF é cópia digitalizada da Câmara com carimbo de publicação, não o diário oficial. Possível conflito com o fato de a LC ser antiga (2014) e rodovia de acesso: nada indica ADI.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Overpass (kumi.systems, overpass-api.de, private.coffee) fora do ar nesta máquina (500/reset/504): as vias etiquetadas não puderam ser identificadas (helipad, ponte de rodovia, rua municipal). Só há a contagem do preparo (osm_hints_por_municipio.json): 2 com maxweight."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "iaras_perimetro_urbano_extrapesados",
+   "tipo": "zona",
+   "regime": "Veículos extra-pesados de carga proibidos no perímetro urbano",
+   "nome": "Iaras: perímetro urbano, bitrem/tritrem/treminhão/rodotrem ou carga >= 18 t",
+   "status": "desativada",
+   "status_motivo": "Ato primário lido e aparentemente vigente (LC 88/2014), mas o perímetro urbano não está delimitado no ato e não há geometria nem confirmação de vigência no diário oficial. Ativar quando houver o polígono do perímetro urbano (lei de perímetro/mapa) e conferência da publicação.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 17.99
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal nº 088/2014 (Iaras), de 11/11/2014",
+     "artigo": "arts. 1º (proibição), 2º (estacionamento), 3º (definição de extra-pesado: bitrens, tritrens, treminhões, rodotrens ou capacidade de carga >= 18 t de PBT/PBTC), 4º (vigência 15 dias)",
+     "url": "https://iaras.siscam.com.br/Documentos/Documento/1438",
+     "nota": "PDF: https://iaras.siscam.com.br/arquivo?Id=2093"
+    }
+   ],
+   "nota": "O ato diz 'igual ou superior a 18 t'; o schema só tem 'acima', por isso o limiar 17,99. 'Capacidade de carga ... de peso bruto total' é ambíguo (capacidade x PBT): tratado como PBT/PBTC.",
+   "fonte_geometria": "Perímetro urbano de Iaras (não definido no ato; obter lei do perímetro urbano).",
+   "vigencia_inicio": null,
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "perímetro urbano de Iaras"
+     ],
+     "descricao": "todas as vias públicas urbanas do perímetro urbano",
+     "aproximado": true
+    }
+   ],
+   "geometria": []
+  }
+ ]
+}
