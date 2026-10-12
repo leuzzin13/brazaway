@@ -1,0 +1,57 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3550605",
+  "municipio": "São Roque",
+  "uf": "SP",
+  "fonte_id": "sao-roque",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3550605/2020-10-02/0945311e1172d32e4c20496b30a3206215147dd6.txt (Diário Oficial de São Roque nº 27, 02/10/2020, p. 7)",
+    "licenca": "Ato oficial de São Roque: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 9.363/2020: a Estrada Municipal do Carmo é aplicada em toda a extensão com esse nome no OSM (o ato não delimita trecho). 'Caminhões de grande porte' não é definido no ato: só o recorte 'articulados' foi modelado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "sao_roque_est_carmo_articulados",
+      "tipo": "via",
+      "regime": "Articulados / grande porte",
+      "nome": "São Roque: Estrada Municipal do Carmo, proibido caminhões de grande porte e articulados",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}]},
+      "vuc": null,
+      "vuc_nota": "O decreto não define VUC; o alvo é só o veículo articulado.",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Decreto 9.363/2020, art. 1º, parágrafo único (veículos que realizem carga e descarga no território com acesso pela Estrada Municipal do Carmo)",
+      "excecoes": [
+        "Art. 1º, parágrafo único: veículos que realizem carga e descarga no território com acesso pela Estrada Municipal do Carmo"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 9.363, de 25/09/2020 (São Roque)",
+          "artigo": "art. 1º, caput e parágrafo único; art. 3º (vigor 30 dias após a publicação)",
+          "url": "https://data.queridodiario.ok.org.br/3550605/2020-10-02/0945311e1172d32e4c20496b30a3206215147dd6.txt",
+          "nota": "Diário Oficial de São Roque nº 27, 02/10/2020, p. 7 (PDF no mesmo caminho .pdf). Publicado no átrio em 25/09/2020."
+        }
+      ],
+      "nota": "'Caminhões de grande porte' não tem definição numérica no decreto; só o recorte 'articulados' (semirreboque, caminhão com reboque e CVC) é modelável. Motivo declarado no ato: caminhões que fogem do pedágio. Sem horário (24 h). Verificado em 2026-10-11: nenhuma alteração ou revogação no Querido Diário até 2026.",
+      "fonte_geometria": "OSM (ODbL): todas as ways chamadas 'Estrada Municipal do Carmo' (SQE-485/SQE-490), ~9 km entre o Bairro do Carmo e a Estrada Velha do Carmo",
+      "vigencia_inicio": "2020-10-25",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Estrada Municipal do Carmo"],
+          "descricao": "Estrada Municipal do Carmo, Bairro do Carmo (o ato não delimita o trecho: estrada inteira)",
+          "aproximado": true,
+          "nota": "Extensão = todas as ways com esse nome no OSM; a Estrada Velha do Carmo e a Estrada Serrinha do Carmo não entram."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3550605_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}
