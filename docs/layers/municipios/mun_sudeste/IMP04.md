@@ -50,27 +50,36 @@ regras de 24 h, a nota do caso compara com um veículo que a regra não atinge. 
 
 | id | Status | Ato e artigo | Janela | Alvo | Geometria | Casos |
 |---|---|---|---|---|---|---|
-| `piranga_urbana_5eixos_11_17` | ativa (média) | Dec. 3.002/2020, art. 2º, p. único, I | todos os dias 11h–17h, feriados inclusive | eixos > 4 | zona: mancha urbana aproximada da sede (1,79 km²) | carreta pela BR-482, oeste→leste. Às 12h: 0 km na zona, mas 101,6 km de volta. Às 9h: 2,28 km na zona (6,9 km) |
-| `piranga_urbana_3eixos_22_05` | ativa (média) | idem, II | todos os dias 22h–5h (00–05 e 22–24) | eixos > 2 | mesma zona | truck: às 23h, 0 km (101,6 km); às 20h, 2,28 km |
+| `piranga_urbana_5eixos_11_17` | ativa (média) | Dec. 3.002/2020, art. 2º, p. único, I | todos os dias 11h–17h, feriados inclusive | eixos > 4 | zona: mancha urbana aproximada da sede (1,58 km², sem a travessia da BR-482; 770 vértices em 2 partes) | carreta de leste a oeste da sede por ruas urbanas (não pela BR-482). Às 12h: 0 km na zona (18,4 km de contorno). Às 9h: 1,93 km na zona (6,2 km). Pela BR-482, a carreta faz 6,9 km com 0 km na zona, em qualquer horário |
+| `piranga_urbana_3eixos_22_05` | ativa (média) | idem, II | todos os dias 22h–5h (00–05 e 22–24) | eixos > 2 | mesma zona | truck, mesmo trajeto: às 23h, 0 km (18,4 km); às 20h, 1,93 km (6,2 km). Pela BR-482: 6,9 km, 0 km |
 
 Pendências e ressalvas:
 
-- A travessia urbana da BR-482 (Rua Nova, Rua Hélio Guimarães, Rua do Mercado) fica dentro da zona. Como o decreto vale
-  "até que se alcance o almejado desvio" e o desvio não existe, a rota de passagem dá uma volta de cerca de 100 km. Quem
-  vai decidir se a regra fica ativa deve saber disso.
+- **Corrigido em 12/10/2026.** A travessia urbana da BR-482 (Rua Nova, Rua Hélio Guimarães, Rua do Mercado, Rua Benedito Valadares;
+  `MGC-482;BR-482`, trunk no OSM) ficava dentro da zona e a rota de passagem dava uma volta de cerca de 100 km (101,6 km). Agora a
+  travessia está livre (folga de 40 m de cada lado, mais o recuo de 20 m da camada), com o mesmo critério de Arcos e Santa Branca: a
+  rodovia e as ruas por onde ela passa (trunk/primary sem ref incluídas) ficam fora da zona, porque o decreto municipal não alcança a
+  rodovia e não há contorno da sede. O decreto vale "até que se alcance o almejado desvio" (art. 2º): como o desvio não existe, a
+  travessia fica livre; reavaliar a geometria quando o desvio existir. Está registrado na `nota` das duas regras. O recorte sai de
+  `data/raw/municipios/curadoria/zona_liberar_travessia.py`, sobre a mancha original guardada em `curadoria/base/`. O caso de rota
+  anterior (BR-482, 101,6 km) deixou de valer e foi trocado por uma travessia da sede por ruas urbanas.
 - Não há perímetro urbano legal; o polígono é aproximado.
 
 ## 3151107 Pirapetinga
 
 | id | Status | Ato e artigo | Janela | Alvo | Geometria | Casos |
 |---|---|---|---|---|---|---|
-| `pirapetinga_perimetro_urbano_carretas_combinacoes` | ativa (média) | Dec. 130/2019, art. 1º, I–V; art. 2º (exceções, VIII = destino local); art. 5º | 24 h | tipo semitrailer, truck_trailer, cvc | zona: mancha urbana aproximada da sede (1,49 km²; distritos fora) | carreta da BR-393 (oeste) a Santo Antônio de Pádua (RJ): 0 km no perímetro, volta de 164,8 km. O truck, que a regra não atinge, passa 1,59 km (38,3 km) |
+| `pirapetinga_perimetro_urbano_carretas_combinacoes` | ativa (média) | Dec. 130/2019, art. 1º, I–V; art. 2º (exceções, VIII = destino local); art. 5º | 24 h | tipo semitrailer, truck_trailer, cvc | zona: mancha urbana aproximada da sede (1,36 km², sem a travessia da BR-393 e da RJ-186; 265 vértices em 2 partes; distritos fora) | carreta atravessando a sede por ruas urbanas: 0 km no perímetro, contorno de 12,1 km. O truck, que a regra não atinge, passa 1,08 km (6,4 km). Pela BR-393 até Santo Antônio de Pádua (RJ) a carreta faz 38,3 km, 0 km no perímetro |
 
 Pendências e ressalvas:
 
 - A lei do perímetro urbano não foi localizada.
-- A travessia urbana da BR-393 fica dentro da zona, e a carreta de passagem dá uma volta muito grande. A via alternativa
-  discutida na audiência pública de 2023 ainda não existe.
+- **Corrigido em 12/10/2026.** A travessia urbana da BR-393 (Rua José de Freitas, Rua Martins Peixoto, Rua Sebastião Pereira de Andrade
+  Sobrinho, Rodovia Lúcio Meira) e a RJ-186 ficavam dentro da zona, e a carreta de passagem dava uma volta de 164,8 km (38,3 km
+  pela rodovia). Agora estão livres (folga de 40 m de cada lado, mais o recuo de 20 m da camada), com o mesmo critério de Arcos e Santa
+  Branca: não há contorno da sede (a via alternativa discutida na audiência pública de 2023 ainda não existe) e o decreto municipal não
+  alcança a rodovia. Registrado na `nota` da regra. O recorte sai de `data/raw/municipios/curadoria/zona_liberar_travessia.py`, sobre a mancha
+  original guardada em `curadoria/base/`. O caso de rota anterior (BR-393 até Santo Antônio de Pádua) deixou de valer e foi trocado.
 - A exceção de placa local (art. 2º, IX) não é modelável.
 
 ## 3152105 Ponte Nova

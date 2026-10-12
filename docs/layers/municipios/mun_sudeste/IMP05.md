@@ -51,11 +51,42 @@ Pendência: **sem geometria confiável**. O ato não descreve o perímetro do ca
 UFV (só áreas internas: Horto Botânico, Parque da Lagoa, Espaço de Eventos) e o IBGE não tem malha de bairros de Viçosa.
 Reativar com uma planta do campus ou o decreto do art. 3º. Sem fixture (a fonte tem 0 feições).
 
+## Zonas leves: limite de vértices do Valhalla (12/10/2026)
+
+O `exclude_polygons` do Valhalla aceita 20.000 vértices por rota, somando todas as zonas. Numa rota longa (Barueri → Barra da Tijuca) as
+zonas municipais somavam ~21.700 vértices (só Campos dos Goytacazes tinha 9,6 mil depois do recuo de 20 m e Mangaratiba 3,1 mil) e o
+teste `descanso.test.ts` falhava com "Exceeded maximum number of vertices for exclude_polygons: 20000". Cada zona com mais de ~800
+vértices foi simplificada (vértices do arquivo, antes → depois):
+
+| município | arquivo | antes | depois |
+|---|---|---|---|
+| 3301009 Campos dos Goytacazes | `3301009_vias_municipais.geojson` | 10.902 | 809 |
+| 3302601 Mangaratiba | `3302601_area_urbana.geojson` | 3.137 | 774 |
+| 3554003 Tatuí | `3554003_municipio.geojson` | 1.321 | 675 |
+| 3538006 Pindamonhangaba | `3538006_zrtc.geojson` | 986 | 613 |
+| 3300407 Barra Mansa | `3300407_distrito_amparo.geojson` | 827 | 615 |
+| 3500402 Águas da Prata | `3500402_municipio.geojson` | 600 | 332 |
+
+Sobraram acima de ~800 só o Jacareí (`3524402_fora_rcp` 2.042 e `3524402_vcpb_vcpt` 1.409, mas em 22 e 14 feições de até 446 vértices
+cada) e Lafaiete (`3118304_area_urbana_aproximada`, 870, regra desativada que não vai ao Valhalla). Somados, os vértices das zonas
+(`kind = zona`, 119 feições) passaram de 32.968 para 19.467 no banco e, na rota Barueri → Rio, de ~21.700 para ~11.500.
+
+Como se simplifica: sempre PARA DENTRO (`curadoria/zona_rodovia_lib.simplificar_para_dentro`: encolhe `tol` e simplifica com a mesma
+tolerância, o que garante que a zona nunca cresça e invada as vias do lado de fora do perímetro), ANTES do recorte das rodovias livres e
+de novo depois dele, e a folga às rodovias livres fica garantida (as vias entram simplificadas no buffer; `verificar` confere a menor
+distância do anel externo a cada via livre). A camada usa só o anel externo de cada polígono: um corredor cercado pela zona vira uma fenda
+ligada ao exterior (`abrir_fendas`). Extrato de todas as vias do PBF: `curadoria/osm_pbf_vias.py` → `data/cache/municipios/osm_hw_<ibge>.json`.
+Zonas sem rodovia recortada (distrito de Barra Mansa): `curadoria/simplificar_zona.py`.
+
+Efeito colateral aceito: o contorno recua entre 0 e 2 × a tolerância (Campos perde ~19% da área, Mangaratiba ~15%), então a zona fica um pouco
+menor que o perímetro aproximado de antes. O toco de Pindamonhangaba, p. ex., agora faz 29,5 km (antes 26,4 km): com menos exclusão a rota
+mais rápida é um pouco mais longa.
+
 ## 3300407 — Barra Mansa
 
 | id | status | ato e artigo | janela | alvo | geometria | casos |
 |---|---|---|---|---|---|---|
-| `barramansa_distrito_amparo_14_5t` | ativa (média) | Lei 4.580/2016, art. 1º; Lei 4.836/2019 (parágrafo único) | 24 h | PBT acima de 14,5 t | distrito 330040720 (IBGE 2022), `geo/3300407_distrito_amparo.geojson` | evita: Centro de Barra Mansa → leste do distrito, carreta 106,1 km fora do distrito (o VUC de 9 t cruza 13,6 km) |
+| `barramansa_distrito_amparo_14_5t` | ativa (média) | Lei 4.580/2016, art. 1º; Lei 4.836/2019 (parágrafo único) | 24 h | PBT acima de 14,5 t | distrito 330040720 (IBGE 2022), simplificado para dentro a 15 m (827 → 615 vértices), `geo/3300407_distrito_amparo.geojson` | evita: Centro de Barra Mansa → leste do distrito, carreta 106,1 km fora do distrito (o VUC de 9 t cruza 13,6 km) |
 | `barramansa_lixo_outros_municipios` | desativada | Lei 4.704/2018, art. 1º | — | caminhão de lixo de outro município | sem feição | — |
 | `barramansa_viaduto_elias_rodrigues_costa_osm` | desativada (baixa) | só OSM (maxweight 20 t) | — | PBT > 20 t | OSM por nome, `geo/3300407_vias.geojson` | — |
 
@@ -75,12 +106,15 @@ distrito (a lei não as excetua). Pendência: decretos do Executivo (Boletim Ofi
 | `campos_goytacazes_cana_ponte_lapa_emut_2011` | desativada (baixa) | Portaria EMUT 175/2011 | — | carga de cana | OSM por nome | — |
 | `campos_goytacazes_portaria_55_2024`, `_93_2022`, `_47_2022`, `_38_2022` | revogadas | Portarias IMTT 55/2024, 93/2022, 47/2022, 38/2022 | — | > 4 eixos | mesma zona (`source_id` fixo) | — |
 
-Geometria da zona: limite municipal (IBGE, simplificado a ~50 m) menos buffer de 30 m dos ways do PBF com `ref`
+Geometria da zona: limite municipal (IBGE) menos as rodovias do PBF com `ref`
 BR-/RJ- (BR-101, BR-356, RJ-158, RJ-180, RJ-190, RJ-194, RJ-196, RJ-204, RJ-208, RJ-216, RJ-224, RJ-228, RJ-238 etc.),
-`IBGE:CD_ADMINIS` federal/estadual (ex.: Av. Alberto Lamego), motorway/trunk e alças ligadas a eles; fragmentos menores
-que ~1 ha descartados. Uma feição MultiPolygon (47 partes, ~10.900 vértices). Com o recuo de 20 m da camada, cada
-rodovia fica com ~50 m livres de cada lado. Pendências: o polígono tem muitos vértices (pesa no `exclude_polygons` de
-rotas de mais de 4 eixos a até 50 km de Campos); rodovia estadual sem `ref` nem `IBGE:CD_ADMINIS` no OSM fica dentro da
+`IBGE:CD_ADMINIS` federal/estadual (ex.: Av. Alberto Lamego), motorway/trunk e alças ligadas a eles. Uma feição MultiPolygon.
+**Simplificada em 12/10/2026** de 10.902 vértices em 47 partes para 809 em 45 (`geo/3301009_vias_municipais_curadoria.py`): em rotas
+longas (Rio → SP) a soma dos vértices das zonas passava do limite de 20.000 do `exclude_polygons` do Valhalla ("Exceeded maximum number of
+vertices"). O recorte tem duas resoluções e sempre simplifica para dentro (a zona não cresce): na cidade (raio de 4,5 km do centro) a
+simplificação é de 15 m antes do recorte e 25 m depois; no resto do município, de 150 m e 400 m, sem as partes com menos de 5 km²
+(a zona perde ~19% da área, quase toda rural, junto às rodovias). Nenhuma via livre fica a menos de 35 m da zona; com o recuo de 20 m da
+camada, cada rodovia fica com 55 m livres, no mínimo, de cada lado. Pendências: rodovia estadual sem `ref` nem `IBGE:CD_ADMINIS` no OSM fica dentro da
 zona; a extensão da Av. Dário Canela Tavares atingida não é fixada no ato (tomada inteira).
 
 ## 3302007 — Itaguaí
@@ -163,13 +197,22 @@ Governador Roberto Silveira em Guia de Pacobaíba ficaram de fora pelo recorte d
 
 | id | status | ato e artigo | janela | alvo | geometria | casos |
 |---|---|---|---|---|---|---|
-| `mangaratiba_lei999_janelas_6_30m` | ativa (média) | Lei 999/2016, arts. 3º–7º | proibido 0h–7h, 9h–18h e 20h–24h | comprimento acima de 6,30 m | setores urbanos do IBGE 2022 menos faixas de 30 m da BR-101 e das RJ, `geo/3302601_area_urbana.geojson` | evita: toco às 10h fora da área urbana (22,4 km pela BR-101); às 8h passa 3,6 km nela |
+| `mangaratiba_lei999_janelas_6_30m` | ativa (média) | Lei 999/2016, arts. 3º–7º | proibido 0h–7h, 9h–18h e 20h–24h | comprimento acima de 6,30 m | setores urbanos do IBGE 2022 menos a travessia da BR-101 e das RJ (folga de 55 m; 774 vértices em 28 partes, eram 3.137), `geo/3302601_area_urbana.geojson` | evita: toco entre Muriqui e Itacuruçá, ao lado da BR-101: às 10h fica fora da área urbana (12,6 km); às 8h passa 0,2 km nela pela Rua Dalila Dias Borges (11,6 km). A BR-101 inteira passa livre |
 | `mangaratiba_lei999_acima_12m` | desativada (baixa) | Lei 999/2016, art. 2º | 24 h | > 12 m | mesma zona | — |
 | `mangaratiba_lei877_mais_3_eixos` | desativada (baixa) | Lei 609/2007 red. Lei 877/2013, art. 1º | 24 h | > 3 eixos | sem feição | — |
 
 Ids sem o prefixo numérico do rascunho (`3302601_mangaratiba_...` → `mangaratiba_...`). Área urbana: setores de situação
-urbana (CD_SIT 1, 2 e 3) do Censo 2022, que seguem o perímetro urbano legal, menos as rodovias BR-101 (Rio-Santos, também
-`RJ-014`) e RJ-149 e alças; aproximada. Efeito: fora das janelas, um destino que só se alcança pela área urbana fica sem
+urbana (CD_SIT 1, 2 e 3) do Censo 2022, que seguem o perímetro urbano legal, menos a travessia da BR-101 (Rio-Santos, também
+`RJ-014`) e das RJ; aproximada.
+
+**Corrigido em 12/10/2026.** A primeira versão cortava só faixas de 30 m dos ways com `ref` BR-/RJ-. Os trechos da travessia sem `ref` no OSM
+(alças `primary` sem nome que ligam a BR-101 à Estrada São João Marcos, a própria Estrada São João Marcos e a Rua Arthur Pires, que
+levam ao centro) ficavam dentro da zona e a carreta de Itaguaí a Mangaratiba tinha NO_ROUTE (`pedagio.test.ts`, pórtico free flow de
+Itaguaí). Agora saem da zona, com folga de 55 m de cada lado (a camada ainda recua 20 m): toda a BR-101 (todas as pistas, alças e ligações,
+com ou sem `ref`), as RJ e toda via trunk/primary sem `ref`, o mesmo critério de Arcos e Santa Branca. Conferido com as vias do PBF: a
+menor distância da zona recuada a qualquer via livre é de 73 m e a rota Itaguaí–Mangaratiba pela Rio-Santos fica a 77 m, sem tocar a zona.
+O script é `geo/3302601_area_urbana_curadoria.py` (setores do RJ + `data/cache/municipios/osm_hw_3302601.json`, de `curadoria/osm_pbf_vias.py`).
+O caso de rota anterior (BR-101 a oeste do centro) deixou de valer, porque a rota passa livre nos dois horários, e foi trocado. Efeito: fora das janelas, um destino que só se alcança pela área urbana fica sem
 rota para caminhão acima de 6,30 m (NO_ROUTE com a regra em `blocked_by`), como diz a lei. Pendências: decreto do art. 2º
 (vias de acesso a atividades comerciais e industriais) não localizado; data de publicação da Lei 999 desconhecida.
 

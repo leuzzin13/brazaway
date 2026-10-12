@@ -51,7 +51,7 @@ def main(shp, osm):
             setores.append(shape(sr.shape.__geo_interface__).buffer(0))
     to_utm, to_ll = L.projecoes(31982)
     Z = to_utm(unary_union(setores)).buffer(1).buffer(-1)
-    Z = L.simplificar_para_dentro(L.sem_furos(Z), SIMPLIFICAR_M)      # simplifica ANTES de recortar a travessia
+    Z = L.simplificar_para_dentro(Z, SIMPLIFICAR_M)      # simplifica ANTES de recortar a travessia
     livres = [x for x in L.vias_livres(osm, to_utm, refs=RODOVIAS_REF, nomes=NOMES_LIVRES) if x[2].distance(Z) < 400]
     Z, _ = L.recortar(Z, livres, FOLGA_M)
     dmin = L.verificar(Z, livres, FOLGA_M)

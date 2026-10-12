@@ -14,8 +14,8 @@ Gera 3302601_area_urbana.geojson (zona aproximada) a partir de:
 
   python3 data/raw/municipios/geo/3302601_area_urbana_curadoria.py <dir_ou_.shp dos setores RJ> data/cache/municipios/osm_hw_3302601.json
 
-Vértices: a zona é simplificada PARA DENTRO (L.simplificar_para_dentro: encolhe e simplifica, nunca cresce) a 40 m ANTES do recorte,
-recortada e simplificada para dentro de novo a 25 m; o contorno recua 0 a 50 m e a folga às vias livres não diminui (era 3.137 vértices; fica ~670).
+Vértices: a zona é simplificada PARA DENTRO (L.simplificar_para_dentro: encolhe e simplifica, nunca cresce) a 35 m ANTES do recorte,
+recortada e simplificada para dentro de novo a 20 m; o contorno recua 0 a 40 m e a folga às vias livres não diminui (era 3.137 vértices; fica ~775).
 O anel externo resultante é conferido (nenhuma via livre a menos de 50 m). Requer shapely, pyproj e pyshp.
 """
 import json
@@ -34,8 +34,8 @@ SITUACOES = ['1', '2', '3']
 REFS = None                       # qualquer ref de rodovia (BR-101, RJ-014, RJ-149...)
 IDS = []                          # ways sem ref da travessia, por id do OSM (preenchido abaixo)
 FOLGA_M = 55
-SIMPLIFICAR_M = 40
-DEPOIS_M = 25
+SIMPLIFICAR_M = 35
+DEPOIS_M = 20
 MIN_M2 = 100000                   # partes com menos de 0,1 km² (fragmentos entre rodovias) são descartadas
 OUT = pathlib.Path(__file__).with_name('3302601_area_urbana.geojson')
 
@@ -53,8 +53,6 @@ def main(shp, osm):
             setores.append(shape(sr.shape.__geo_interface__).buffer(0))
     to_utm, to_ll = L.projecoes(31983)
     Z = to_utm(unary_union(setores)).buffer(1).buffer(-1)
-    Z = L.sem_furos(Z)
-    Z = unary_union([g for g in getattr(Z, 'geoms', [Z]) if g.area > 20000])
     Z = L.simplificar_para_dentro(Z, SIMPLIFICAR_M)
     livres = L.vias_livres(osm, to_utm, refs=REFS, ids=IDS)
     livres = [x for x in livres if x[2].distance(Z) < 400]

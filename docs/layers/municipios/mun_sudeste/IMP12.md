@@ -19,7 +19,9 @@ polígono recuado 20 m, como mede o teste.
   rascunho usava `saoroque_`, `aguasdaprata_` e `aguasdesaopedro_`.
 - **"Todas as vias do município"** (Tatuí e Águas da Prata). Usei o limite municipal do IBGE sem as rodovias estaduais e
   federais, recortadas com folga de 40 m: SP/BR por ref, mais toda motorway/trunk e alças. O polígono fica partido em
-  pedaços, sem furos. Os scripts estão em `geo/<ibge>_municipio_curadoria.py`. A passagem pelas rodovias foi conferida
+  pedaços, sem furos. Os scripts estão em `geo/<ibge>_municipio_curadoria.py`. **Simplificados em 12/10/2026** (limite de 20.000
+  vértices do `exclude_polygons` do Valhalla, ver a seção de cada município): o limite é simplificado para dentro antes do recorte e
+  de novo depois, e a folga mínima de 40 m às rodovias continua garantida. A passagem pelas rodovias foi conferida
   com 0 km na zona e o mesmo trajeto de um veículo fora do alvo.
 - **Bairro sem perímetro no ato** (Tanabi, Ibiporanga). Usei o setor censitário urbano do IBGE 2022 do distrito
   (`CD_SIT` 1/2). A zona fica marcada como aproximada e a confiança continua média.
@@ -63,10 +65,14 @@ Pendências:
 
 | id | status | ato e artigo | janela | alvo | geometria | casos de rota |
 |---|---|---|---|---|---|---|
-| tatui_municipio_16t_cadastro | ativa (média) | Dec. 21.381/2021, arts. 1º, 2º, 3º–6º e 9º | 24 h | PBT > 16 t (sem ACC) | zona: município (IBGE) sem SP-127/BR-373, SP-129, SP-141 e SP-280/BR-374 (folga de 40 m), 9 partes (`geo/3554003_municipio.geojson`) | evita: norte → sul, ambos fora de Tatuí, truck de 23 t: 60,2 km e 0 km na zona; o toco de 16 t corta 2,2 km (51,6 km). Passagem por rodovia (4 rotas) com 0 km |
+| tatui_municipio_16t_cadastro | ativa (média) | Dec. 21.381/2021, arts. 1º, 2º, 3º–6º e 9º | 24 h | PBT > 16 t (sem ACC) | zona: município (IBGE) sem SP-127/BR-373, SP-129, SP-141 e SP-280/BR-374 (folga mínima de 40 m), 10 partes e 675 vértices (eram 9 partes e 1.321; `geo/3554003_municipio.geojson`) | evita: norte → sul, ambos fora de Tatuí, truck de 23 t: 60,2 km e 0 km na zona; o toco de 16 t corta 2,2 km (51,6 km). Passagem por rodovia (4 rotas) com 0 km |
 | tatui_zrc_area_central | desativada (baixa) | Dec. 9.449/2009, arts. 1º–3º, 5º e 7º | — | — | sem geometria (portaria da CEMTRAN/DMU não localizada) | — |
 | tatui_vias_placas_proibido_caminhoes | desativada (baixa) | Ofícios 171/DMU/2024, 518/DMU/2025 e 041/DMU/2024 | 24 h | todo caminhão | sem geometria (trecho sinalizado não informado) | — |
 | tatui_estacionamento_onibus_caminhoes_1978 | desativada (média) | Lei 1.441/1978, arts. 1º–3º | — | — | sem geometria (regra de estacionamento) | — |
+
+Vértices (12/10/2026): `python3 data/raw/municipios/geo/3554003_municipio_curadoria.py data/cache/municipios/ibge_malha_3554003.geojson
+data/cache/municipios/osm_hw_3554003.json` (o extrato com todas as vias vem de `data/raw/municipios/curadoria/osm_pbf_vias.py`). Os casos de
+rota continuam valendo (60,2 km e 0 km na zona).
 
 Pendências:
 - A ACC (cadastro) não está no perfil do veículo. O caminhão acima de 16 t com origem ou destino em Tatuí recebe o aviso
@@ -161,8 +167,11 @@ extensão (Tibagi–Alagoas) e outro horário (8h–18h).
 
 | id | status | ato e artigo | janela | alvo | geometria | casos de rota |
 |---|---|---|---|---|---|---|
-| aguas_da_prata_fds_feriados_tara_5t | ativa (média) | Dec. 2.799/2019, arts. 1º–5º (red. Dec. 2.800/2019); Lei 2.321/2019, art. 1º | sáb e dom 6h–20h; feriados aplica | PBT > 5 t (o ato fala em tara: lado seguro); VUC 2,20 × 6,30 m isento; entrega no perímetro urbano isenta | zona: município (IBGE) sem a SP-342 e a SP-215/BR-267 (folga de 40 m), 3 partes (`geo/3500402_municipio.geojson`) | evita: SP-342 no centro → norte, fora do município, toco: sábado às 10h com 38,8 km e 0 km; terça usa 1,1 km de estrada municipal. Passagem pela SP-342/SP-215 com 0 km |
+| aguas_da_prata_fds_feriados_tara_5t | ativa (média) | Dec. 2.799/2019, arts. 1º–5º (red. Dec. 2.800/2019); Lei 2.321/2019, art. 1º | sáb e dom 6h–20h; feriados aplica | PBT > 5 t (o ato fala em tara: lado seguro); VUC 2,20 × 6,30 m isento; entrega no perímetro urbano isenta | zona: município (IBGE) sem a SP-342 e a SP-215/BR-267 (folga mínima de 40 m), 3 partes e 332 vértices (eram 600; `geo/3500402_municipio.geojson`) | evita: SP-342 no centro → norte, fora do município, toco: sábado às 10h com 38,8 km e 0 km; terça usa 1,1 km de estrada municipal. Passagem pela SP-342/SP-215 com 0 km |
 | aguas_da_prata_cascata_rurais_cvc_30t | desativada (baixa) | Dec. 2.310/2012, arts. 1º, 2º, 5º e 6º | 24 h | CVC ou PBT ≥ 30 t | sem geometria (vias não conferidas no OSM) | — |
+
+Vértices (12/10/2026): `python3 data/raw/municipios/geo/3500402_municipio_curadoria.py data/cache/municipios/ibge_malha_3500402.geojson
+data/cache/municipios/osm_hw_3500402.json`. Os casos de rota continuam valendo (38,8 km e 0 km no sábado; 35,9 km na terça).
 
 Pendências:
 - A travessia urbana da SP-342 (Av. Washington Luís, Av. Cel. Ernesto de Oliveira) ficou livre pelo art. 2º. O guia Pé

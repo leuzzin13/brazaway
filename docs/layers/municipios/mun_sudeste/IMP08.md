@@ -20,10 +20,12 @@ conferidos na API real (`localhost:3000`) e gravados em `api/test/fixtures/mun_s
 - **Perímetro urbano sem polígono no ato** (Dobrada, Garça, Guariba, Itapeva e o Distrito de Macucos em Getulina): é a união
   dos setores censitários urbanos do IBGE 2022 (`CD_SIT` 1 e 2) do distrito, sem furos, sem partes com menos de 2 ha e
   simplificada a ~5 m. As rodovias livres foram recortadas com folga de 40 m: entram os ways com `ref` estadual/federal **e**
-  nome de rodovia ou via de acesso, mais as rodovias sem ref escolhidas pelo nome. As ruas e avenidas urbanas por onde passa uma
-  rodovia estadual (SP-349 em Garça, SPA-312/326 em Dobrada) continuam na zona, porque o ato abrange "todas as vias do perímetro
+  nome de rodovia ou via de acesso, mais as rodovias sem ref escolhidas pelo nome. **Garça mudou em 12/10/2026** (ver a seção
+  do município): a SP-349 e a SP-294 saem inteiras da zona, inclusive as ruas urbanas por onde passam. Nos demais municípios, as ruas e
+  avenidas urbanas por onde passa uma rodovia estadual (SPA-312/326 em Dobrada) continuam na zona, porque o ato abrange "todas as vias do perímetro
   urbano". A zona é marcada como aproximada e a confiança fica média. O script de cada município está em
-  `data/raw/municipios/geo/<ibge>_*_curadoria.py`. Para rodar: `python3 <script> <shapefile SP_setores_CD2022> data/cache/municipios/osm_named_<ibge>.json`.
+  `data/raw/municipios/geo/<ibge>_*_curadoria.py`. Para rodar: `python3 <script> <shapefile SP_setores_CD2022> data/cache/municipios/osm_named_<ibge>.json`
+  (Garça usa `osm_hw_3516705.json`, com todas as vias do PBF: `data/raw/municipios/curadoria/osm_pbf_vias.py`).
 - **Áreas centrais descritas por ruas** (Indaiatuba, Itapeva): polígono que segue os eixos do OSM entre os cruzamentos do
   perímetro do ato. Na rota ele é recuado 20 m, o que deixa livres as ruas do contorno.
 - **Desativada sem área definida**: `{"geojson": FeatureCollection vazia}`. Fica no arquivo, mas não vai para o banco nem para
@@ -68,12 +70,17 @@ Pendências:
 
 | id | status | ato e artigo | janela | alvo | geometria | casos de rota |
 |---|---|---|---|---|---|---|
-| `garca_zrc_perimetro_urbano` | ativa (média) | Lei 5.558/2023, art. 39 e §§ 1º–4º | todos os dias 5h–23h | mais de 3 eixos; exceção de destino em Garça (§2º, II) | `geo/3516705_perimetro_urbano.geojson`: setores urbanos do IBGE 2022, sem os ways de rodovia da SP-294 e da SP-349 | evita: SP-349 norte → Gália; às 10h a carreta dá 113 km com 0 km na zona; às 23h30 atravessa (3,0 km na zona) |
+| `garca_zrc_perimetro_urbano` | ativa (média) | Lei 5.558/2023, art. 39 e §§ 1º–4º | todos os dias 5h–23h | mais de 3 eixos; exceção de destino em Garça (§2º, II) | `geo/3516705_perimetro_urbano.geojson`: setores urbanos do IBGE 2022, sem a travessia da SP-294 e da SP-349 (rodovias, ruas urbanas por onde passam, trunk/primary sem ref e ligações; folga de 40 m), 353 vértices | evita: dois pontos fora de Garça cujo caminho curto atravessa a cidade por ruas urbanas: às 10h a carreta dá 52,8 km (desvio de 2 km) com 0 km na zona; às 23h30 atravessa (50,4 km, 1,71 km na zona). SP-349 norte → Gália passa livre: 28,1 km, 0 km na zona |
 
 Pendências:
-- A SP-349 atravessa a cidade por ruas urbanas (Av. Labieno da Costa Machado, R. Cel. Joaquim Piza, Av. Presidente Vargas), que
-  ficaram na zona. Com isso o desvio da carreta de passagem fica longo, de 113 km contra 28. Se a travessia urbana for
-  estadual, recortar.
+- **Corrigido em 12/10/2026.** A SP-349 atravessa a cidade por ruas urbanas (Av. Labieno da Costa Machado, R. Cel. Joaquim Piza,
+  Av. Presidente Vargas, R. Rio Grande do Sul), que estavam na zona, e a carreta de passagem dava 113 km em vez de 28. Agora a
+  travessia da SP-349 (e da SP-294) está livre, como em Arcos e Santa Branca: não há contorno da cidade e a lei municipal não alcança
+  a rodovia estadual. O script (`geo/3516705_perimetro_urbano_curadoria.py`) libera todos os ways com ref SP-349/SP-294 (qualquer
+  nome), as vias trunk/primary sem ref e as ligações/rotatórias que tocam essas vias; a menor distância da zona a elas é de 37 m
+  (+20 m do recuo da camada). O caso de rota anterior (SP-349 → Gália) deixou de valer (a rota passa livre, 28,1 km em qualquer horário) e foi
+  trocado por um par de pontos fora de Garça cujo caminho curto cruza a cidade por outra rua (Rua Barão do Rio Branco, secundária
+  sem ref, que continua na zona).
 - As placas do §4º não foram conferidas. O perímetro é aproximado.
 
 ## 3517000 Getulina (`getulina`)

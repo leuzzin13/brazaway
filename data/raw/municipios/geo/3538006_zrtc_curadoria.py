@@ -13,7 +13,7 @@ Gera 3538006_zrtc.geojson (zona aproximada) a partir de:
 
 Requer shapely, pyproj e pyshp. Furos são preenchidos (a camada só usa o anel externo; os que nascem do recorte viram fendas), partes com menos de 2 ha são
 descartadas. Vértices: a zona é simplificada PARA DENTRO (encolhe e simplifica, nunca cresce) a 15 m ANTES do recorte, recortada e simplificada para dentro de novo (15 m);
-a folga às vias livres não diminui (nenhuma a menos de 40 m da zona). Eram 986 vértices e agora são ~606: o limite de vértices do
+a folga às vias livres não diminui (nenhuma a menos de 40 m da zona). Eram 986 vértices e agora são ~613: o limite de vértices do
 exclude_polygons do Valhalla (20.000, somando todas as zonas da rota) pede zonas leves."""
 import json
 import pathlib
@@ -57,7 +57,7 @@ def main(shp, osm):
             setores.append((rec['CD_SETOR'], shape(sr.shape.__geo_interface__).buffer(0)))
     to_utm, to_ll = L.projecoes(31983)
     Z = to_utm(unary_union([g for _, g in setores])).buffer(1).buffer(-1)
-    Z = L.simplificar_para_dentro(L.sem_furos(Z), ANTES_M)
+    Z = L.simplificar_para_dentro(Z, ANTES_M)      # com os furos dos setores: o recorte preenche os que não encostam nas rodovias, como antes
     rod = L.vias_por_funcao(osm, to_utm, livre)
     rod = [x for x in rod if x[2].distance(Z) < 400]
     Z, _ = L.recortar(Z, rod, FOLGA_M + LINHA_M, simplificar_depois_m=DEPOIS_M, linha_simpl_m=LINHA_M)
