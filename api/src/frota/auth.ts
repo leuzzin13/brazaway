@@ -32,12 +32,15 @@ export function verifyJwt(token: string, secret = JWT_SECRET): Claims {
   const parts = token.split('.');
   if (parts.length !== 3) throw httpError(401, 'token inválido');
   const [h, p, s] = parts;
-  const header = JSON.parse(Buffer.from(h, 'base64url').toString());
-  if (header.alg !== 'HS256') throw httpError(401, 'algoritmo de token não suportado');
+  let header: { alg?: string };
+  try { header = JSON.parse(Buffer.from(h, 'base64url').toString()); } catch { throw httpError(401, 'token inválido'); }
+  if (header?.alg !== 'HS256') throw httpError(401, 'algoritmo de token não suportado');
   const expected = createHmac('sha256', secret).update(`${h}.${p}`).digest();
   const got = Buffer.from(s, 'base64url');
   if (got.length !== expected.length || !timingSafeEqual(got, expected)) throw httpError(401, 'assinatura do token inválida');
-  const claims = JSON.parse(Buffer.from(p, 'base64url').toString()) as Claims;
+  let claims: Claims;
+  try { claims = JSON.parse(Buffer.from(p, 'base64url').toString()) as Claims; } catch { throw httpError(401, 'token inválido'); }
+  if (!claims || typeof claims !== 'object') throw httpError(401, 'token inválido');
   if (claims.exp && claims.exp < Date.now() / 1000) throw httpError(401, 'token expirado');
   if (!['authenticated', 'service_role'].includes(claims.role)) throw httpError(401, 'papel do token não permitido');
   if (claims.role === 'authenticated' && !claims.sub) throw httpError(401, 'token sem usuário');

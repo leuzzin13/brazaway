@@ -58,6 +58,24 @@ language sql stable security definer set search_path = public, pg_temp as $$
                     and (app.is_staff() or m.role in ('owner', 'admin', 'gestor')))
 $$;
 
+-- Referências da linha têm de ser da MESMA empresa (as FKs sozinhas não cruzam empresa): usadas no WITH CHECK.
+create or replace function app.vehicle_in(cid uuid, vid uuid) returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select vid is null or exists (select 1 from vehicles v where v.id = vid and v.company_id = cid)
+$$;
+create or replace function app.trip_in(cid uuid, tid uuid) returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select tid is null or exists (select 1 from trips t where t.id = tid and t.company_id = cid)
+$$;
+create or replace function app.member_in(cid uuid, uid uuid) returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select uid is null or exists (select 1 from company_members m where m.user_id = uid and m.company_id = cid)
+$$;
+create or replace function app.stop_in(cid uuid, sid uuid, tid uuid) returns boolean
+language sql stable security definer set search_path = public, pg_temp as $$
+  select sid is null or exists (select 1 from stops s where s.id = sid and s.company_id = cid and (tid is null or s.trip_id = tid))
+$$;
+
 grant usage on schema app to authenticated, service_role;
 grant execute on all functions in schema app to authenticated, service_role;
 
@@ -127,9 +145,11 @@ create policy frota_invites_select on invites for select to authenticated using 
 -- ------------------------------------------------------------------ trips
 create policy frota_trips_select on trips for select to authenticated
   using (app.staff_of(company_id) or app.self_in(company_id, driver_id));
-create policy frota_trips_insert on trips for insert to authenticated with check (app.staff_of(company_id));
+create policy frota_trips_insert on trips for insert to authenticated
+  with check (app.staff_of(company_id) and app.vehicle_in(company_id, vehicle_id) and app.member_in(company_id, driver_id));
 create policy frota_trips_update on trips for update to authenticated
-  using (app.staff_of(company_id)) with check (app.staff_of(company_id));
+  using (app.staff_of(company_id))
+  with check (app.staff_of(company_id) and app.vehicle_in(company_id, vehicle_id) and app.member_in(company_id, driver_id));
 create policy frota_trips_delete on trips for delete to authenticated
   using (app.is_admin() and company_id = app.company_id() and status in ('planejada', 'cancelada'));
 -- motorista abre/fecha a viagem por app.start_trip / app.end_trip
@@ -139,7 +159,7 @@ create policy frota_pings_select on location_pings for select to authenticated
   using (app.staff_of(company_id) or app.self_in(company_id, driver_id));
 -- o motorista grava os próprios pings (também há app.send_pings, que é o caminho do app)
 create policy frota_pings_insert on location_pings for insert to authenticated
-  with check (app.self_in(company_id, driver_id)
+  with check (app.self_in(company_id, driver_id) and app.vehicle_in(company_id, vehicle_id)
               and (trip_id is null or exists (select 1 from trips t where t.id = trip_id and t.driver_id = auth.uid()
                                                                         and t.status = 'em_andamento')));
 
@@ -153,21 +173,24 @@ create policy frota_tracks_select on driver_daily_tracks for select to authentic
 create policy frota_stops_select on stops for select to authenticated
   using (app.staff_of(company_id) or app.self_in(company_id, driver_id));
 create policy frota_stops_insert on stops for insert to authenticated
-  with check (app.staff_of(company_id)
-              or (app.self_in(company_id, driver_id) and source = 'manual'
-                  and (trip_id is null or exists (select 1 from trips t where t.id = trip_id and t.driver_id = auth.uid()))));
+  with check (app.trip_in(company_id, trip_id) and app.member_in(company_id, driver_id)
+              and (app.staff_of(company_id)
+                   or (app.self_in(company_id, driver_id) and source = 'manual'
+                       and (trip_id is null or exists (select 1 from trips t where t.id = trip_id and t.driver_id = auth.uid())))));
 create policy frota_stops_update on stops for update to authenticated
   using (app.staff_of(company_id) or app.self_in(company_id, driver_id))
-  with check (app.staff_of(company_id) or app.self_in(company_id, driver_id));
+  with check (app.trip_in(company_id, trip_id) and (app.staff_of(company_id) or app.self_in(company_id, driver_id)));
 
 -- ------------------------------------------------------------------ deliveries
 create policy frota_deliveries_select on deliveries for select to authenticated
   using (app.staff_of(company_id)
          or (company_id = app.company_id()
              and exists (select 1 from trips t where t.id = deliveries.trip_id and t.driver_id = auth.uid())));
-create policy frota_deliveries_insert on deliveries for insert to authenticated with check (app.staff_of(company_id));
+create policy frota_deliveries_insert on deliveries for insert to authenticated
+  with check (app.staff_of(company_id) and app.trip_in(company_id, trip_id) and app.stop_in(company_id, stop_id, trip_id));
 create policy frota_deliveries_update on deliveries for update to authenticated
-  using (app.staff_of(company_id)) with check (app.staff_of(company_id));
+  using (app.staff_of(company_id))
+  with check (app.staff_of(company_id) and app.trip_in(company_id, trip_id) and app.stop_in(company_id, stop_id, trip_id));
 create policy frota_deliveries_delete on deliveries for delete to authenticated using (app.staff_of(company_id));
 -- motorista registra entrega por app.register_delivery
 
@@ -178,11 +201,14 @@ create policy frota_messages_select on messages for select to authenticated
 -- equipe escreve para membros da empresa; motorista responde à equipe da própria empresa
 create policy frota_messages_insert on messages for insert to authenticated
   with check (company_id = app.company_id() and sender_id = auth.uid() and agent_action_id is null
-              and app.can_message(recipient_id));
+              and app.can_message(recipient_id) and app.trip_in(company_id, trip_id));
 -- leitura (read_at) por app.mark_messages_read
 
 -- ------------------------------------------------------------------ Second Brain e agente (só equipe)
-create policy frota_knowledge_select on knowledge_docs for select to authenticated using (app.staff_of(company_id));
+-- resumo de conversa do Mentor só para quem conversou (ou owner/admin)
+create policy frota_knowledge_select on knowledge_docs for select to authenticated
+  using (app.staff_of(company_id)
+         and (source_type <> 'conversation' or app.is_admin() or (metadata ->> 'user_id') = auth.uid()::text));
 
 create policy frota_agent_conv_select on agent_conversations for select to authenticated
   using (app.staff_of(company_id) and (user_id = auth.uid() or app.is_admin()));

@@ -231,9 +231,13 @@ declare
   t trips;
 begin
   perform app.require(me.user_id is not null, 'sem acesso');
-  perform app.require(not exists (select 1 from trips where driver_id = me.user_id and status = 'em_andamento'),
-                      'já existe viagem em andamento');
+  perform app.require(p_vehicle_id is null or exists (select 1 from vehicles v where v.id = p_vehicle_id and v.company_id = me.company_id),
+                      'veículo não é da empresa');
   if p_trip_id is null then
+    -- viagem avulsa: quem inicia é o motorista dela
+    perform app.require(me.role = 'motorista', 'viagem avulsa só pelo motorista; a equipe cria e atribui a viagem');
+    perform app.require(not exists (select 1 from trips where driver_id = me.user_id and status = 'em_andamento'),
+                        'já existe viagem em andamento');
     insert into trips (company_id, driver_id, vehicle_id, status, title, started_at, created_by)
     values (me.company_id, me.user_id, coalesce(p_vehicle_id, me.default_vehicle_id), 'em_andamento',
             coalesce(p_title, 'Viagem avulsa'), now(), me.user_id)
@@ -243,9 +247,15 @@ begin
     perform app.require(found and t.company_id = me.company_id and (t.driver_id = me.user_id or app.is_staff()),
                         'viagem não encontrada');
     perform app.require(t.status in ('planejada', 'atribuida'), 'viagem ' || t.status::text);
+    -- o motorista da viagem é o atribuído; sem atribuição, só um motorista pode assumi-la (a equipe atribui antes)
+    perform app.require(t.driver_id is not null or me.role = 'motorista', 'atribua um motorista antes de iniciar a viagem');
+    perform app.require(not exists (select 1 from trips x where x.driver_id = coalesce(t.driver_id, me.user_id)
+                                                          and x.status = 'em_andamento'),
+                        'o motorista já tem viagem em andamento');
     update trips set status = 'em_andamento', started_at = now(),
                      driver_id = coalesce(driver_id, me.user_id),
-                     vehicle_id = coalesce(vehicle_id, p_vehicle_id, me.default_vehicle_id)
+                     vehicle_id = coalesce(vehicle_id, p_vehicle_id,
+                                           (select m.default_vehicle_id from company_members m where m.user_id = coalesce(t.driver_id, me.user_id)))
      where id = t.id returning * into t;
   end if;
   return t;
