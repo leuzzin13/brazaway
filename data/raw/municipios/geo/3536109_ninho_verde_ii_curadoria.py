@@ -3,10 +3,10 @@
 Gera 3536109_ninho_verde_ii.geojson (zona aproximada) a partir de:
   * IBGE, Malha de Setores Censitários do Censo 2022 (SP), shapefile de
     https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2022/setores/shp/UF/SP_setores_CD2022.zip
-    (a situação "urbana" do setor segue o perímetro urbano legal do município): setores do município 3532801 com
-    NM_DIST "Nova Itapirema" e CD_SIT 1 ou 2 (área urbana de vila);
+    setores do município 3536109 com NM_NU (núcleo urbano) "Ninho Verde" e CD_SIT 3 (núcleo urbano fora do perímetro
+    da sede): 4 setores, tomados como o loteamento Ninho Verde II (Gleba II) — o ato não traz mapa e o IBGE não separa glebas;
   * o cache de vias com nome do OSM (data/cache/municipios/osm_named_3536109.json, formato Overpass "out geom tags") com
-    as rodovias a deixar livres (SP-355, Rodovia Maurício Goulart, que atravessa o distrito como Rua Rui Barbosa), recortadas da zona com folga de 40 m de cada lado (rodovia de outra
+    a rodovia a deixar livre (SP-280, Rodovia Presidente Castelo Branco, que encosta na borda dos setores), recortada da zona com folga de 40 m de cada lado (rodovia de outra
     jurisdição não é alcançada pelo ato municipal).
 
   python3 data/raw/municipios/geo/3536109_ninho_verde_ii_curadoria.py <dir_ou_.shp dos setores> data/cache/municipios/osm_named_3536109.json
