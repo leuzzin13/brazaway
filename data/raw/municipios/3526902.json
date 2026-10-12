@@ -1,0 +1,410 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3526902",
+  "municipio": "Limeira",
+  "uf": "SP",
+  "fonte_id": "limeira",
+  "fonte": {
+    "url": "https://legislacao.limeira.sp.leg.br/Limeira-SP/DecretosMunicipais/294-2007/Arquivos/1 (Decreto 294/2007) ; https://web1.limeira.sp.gov.br/regulamentacoes/cns_leiDecreto_publico/ (Decretos 294/2007 e 56/2004)",
+    "licenca": "Atos oficiais de Limeira: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 294/2007: Anel Viário (Via Antônio Cruanes Filho, Via Francisco D'Andréa, Via Luiz Varga e Av. Gumercindo Araújo) proibido a caminhões acima de 2 eixos e carretas das 6h às 22h, todos os dias, salvo endereço/destino/entrega/coleta em Limeira, Cordeirópolis ou Iracemápolis. Dec. 56/2004 (carga e descarga acima de 10 t no perímetro central) registrado desativado: não proíbe o trânsito de passagem."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC: os decretos usam eixos/carreta (Anel Viário) e PBT (centro).",
+  "regras": [
+    {
+      "id": "limeira_anel_viario_caminhoes",
+      "tipo": "via",
+      "regime": "Anel Viário (6h–22h)",
+      "nome": "Limeira: Anel Viário (Via Antônio Cruanes Filho, Via Francisco D'Andréa, Via Luiz Varga e Av. Gumercindo Araújo), proibido a caminhões acima de 2 eixos e carretas das 6h às 22h, todos os dias",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "06:00",
+          "to": "22:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Decreto 294/2007, art. 2º",
+      "excecoes": [
+        "Art. 2º: veículos que tenham endereço, destino final ou ponto de entrega ou coleta em Limeira, Cordeirópolis ou Iracemápolis, verificado pela Autoridade de Trânsito (a exceção de Cordeirópolis e Iracemápolis não é representável: a camada só dispensa entrega no próprio município)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 294, de 24/09/2007 (Limeira)",
+          "artigo": "art. 1º, I, a a d (proibição a caminhões acima de 2 eixos e carretas em toda a extensão do Anel Viário); art. 2º (proibição das 6h às 22h e exceção de endereço/destino/entrega/coleta em Limeira, Cordeirópolis e Iracemápolis); art. 3º (vigência em 16/10/2007)",
+          "url": "https://legislacao.limeira.sp.leg.br/Limeira-SP/DecretosMunicipais/294-2007/Arquivos/1",
+          "nota": "PDF (imagem, 2 folhas) lido; idêntico ao do sistema de Leis/Decretos da Prefeitura (https://web1.limeira.sp.gov.br/regulamentacoes/cns_leiDecreto_publico/, 'Em Vigor: SIM'); 'Em vigor', classificação Sistema Viário, na Legislação Digital da Câmara. Cópia em atos/3526902/D294_2007.pdf."
+        }
+      ],
+      "nota": "O art. 1º diz 'todos os dias ininterruptamente' e o art. 2º limita a proibição às 6h–22h: vale 6h–22h todos os dias, inclusive feriados. 'Caminhões (acima de 02 eixos) e carretas': alvo por eixos > 2 ou combinação (carreta, reboque, bitrem). Nenhum ato posterior alterando ou revogando foi achado (buscas por ementa na Prefeitura e em texto integral na Câmara).",
+      "fonte_geometria": "OSM (ODbL) pelo nome: as quatro vias inteiras dentro do município (Via Antônio Cruanes Filho, Via Francisco D'Andrea, Via Luís Varga e Avenida Gumercindo Araújo, grafias do OSM).",
+      "vigencia_inicio": "2007-10-16",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I, a",
+          "via": [
+            "Via Antônio Cruanes Filho"
+          ],
+          "descricao": "Via Antônio Cruanes Filho, toda a extensão (Anel Viário)"
+        },
+        {
+          "inciso": "art. 1º, I, b",
+          "via": [
+            "Via Francisco D'Andrea",
+            "Via Francisco D'Andréa"
+          ],
+          "descricao": "Via Francisco D'Andréa, toda a extensão (Anel Viário)"
+        },
+        {
+          "inciso": "art. 1º, I, c",
+          "via": [
+            "Via Luís Varga",
+            "Via Luiz Varga"
+          ],
+          "descricao": "Via Luiz Varga, toda a extensão (Anel Viário)"
+        },
+        {
+          "inciso": "art. 1º, I, d",
+          "via": [
+            "Avenida Gumercindo Araújo",
+            "Av. Gumercindo Araújo"
+          ],
+          "descricao": "Avenida Gumercindo Araújo, toda a extensão (Anel Viário)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3526902_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "limeira_perimetro_central_10t",
+      "tipo": "via",
+      "regime": "Perímetro central (PBT > 10 t)",
+      "nome": "Limeira: vias do perímetro central, veículos com PBT acima de 10 t (carga e descarga) só das 19h às 9h em dias úteis e após as 13h aos sábados",
+      "status": "desativada",
+      "status_motivo": "Rebaixada na verificação de 2026-10-10: o Dec. 56/2004 confere, mas é regra de horário de carga e descarga, não de circulação. O art. 1º fixa o horário 'para a circulação de veículos com peso bruto total (PBT) acima de 10 toneladas para carga e descarga de mercadorias' nas vias do perímetro central, e o considerando fala em regulamentar o horário dos 'veículos de carga e descarga de mercadorias'. Aplicada como via, barraria o trânsito de passagem, que o ato não proíbe. O formato não tem regra só de destino, então fica registrada para aviso (mesmo tratamento de Vitória, Lei 6.490/2005, e de Poços de Caldas, Lei 5.664/1994).",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "autorizacao": "Licença especial da Secretaria Municipal de Obras e Transportes, Departamento de Trânsito, afixada no veículo (Decreto 56/2004, art. 3º), para carga e descarga de materiais de construção, concreto, mudanças e outros com veículo acima do limite do art. 1º",
+      "excecoes": [
+        "Art. 3º: carga e descarga de materiais de construção, concreto, mudanças e outros com licença especial do Departamento de Trânsito"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 56, de 26/02/2004 (Limeira)",
+          "artigo": "art. 1º (horário das 19h às 9h de segunda a sexta e, aos sábados, após as 13h, para a circulação de veículos com PBT acima de 10 t para carga e descarga nas vias do perímetro central); art. 2º (sinalização); art. 3º (licença especial); art. 4º (vigência na publicação)",
+          "url": "https://web1.limeira.sp.gov.br/regulamentacoes/cns_leiDecreto_publico/",
+          "nota": "PDF (imagem, 2 folhas) lido no sistema de Leis/Decretos da Prefeitura (busca 'toneladas', tipo Decreto; 'Em Vigor: SIM'); ficha 'Em vigor' também na Legislação Digital da Câmara: https://legislacao.limeira.sp.leg.br/Limeira-SP/DecretosMunicipais/56-2004 (sem arquivo anexado). Cópia em atos/3526902/D56_2004.pdf."
+        }
+      ],
+      "nota": "Janela restrita inferida do horário permitido: dias úteis 9h–19h e sábado 9h–13h (a janela permitida de sexta, 19h–9h, cobre a madrugada de sábado; domingo não é citado = livre). O ato fala em 'circulação de veículos com PBT acima de 10 t para carga e descarga' nas vias listadas; não excetua feriados. Confiança média: interpretação do sábado e ato de 2004 sem alteração localizada (consta 'Em vigor' nos dois sistemas oficiais). Verificação de 2026-10-10: o ato só lista as janelas permitidas (19h às 9h de segunda a sexta e, aos sábados, após as 13h). Não diz se a janela de sexta (19h–9h) alcança a manhã de sábado e não menciona o domingo. As janelas registradas (seg–sex 9h–19h e sáb 9h–13h, domingo livre) são uma leitura possível, não a única.",
+      "fonte_geometria": "Trechos 'rua X entre Y e Z' do art. 1º (14 segmentos no centro de Limeira).",
+      "vigencia_inicio": "2004-02-26",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Visconde do Rio Branco",
+            "Visconde do Rio Branco"
+          ],
+          "de": [
+            "Rua Santa Terezinha",
+            "Santa Terezinha"
+          ],
+          "ate": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "descricao": "Rua Visconde do Rio Branco, entre Santa Terezinha e Sete de Setembro (Decreto 56/2004, art. 1º; no ato: 'Santa Terezinha' e '7 de Setembro')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Deputado Octávio Lopes",
+            "Rua Deputado Otávio Lopes"
+          ],
+          "de": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "ate": [
+            "Rua Santa Terezinha",
+            "Santa Terezinha"
+          ],
+          "descricao": "Rua Deputado Otávio Lopes, entre Sete de Setembro e Santa Terezinha (Decreto 56/2004, art. 1º; no ato: '7 de Setembro' e 'Santa Terezinha')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Treze de Maio",
+            "Treze de Maio"
+          ],
+          "de": [
+            "Rua Santa Terezinha",
+            "Santa Terezinha"
+          ],
+          "ate": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "descricao": "Rua Treze de Maio, entre Santa Terezinha e Sete de Setembro (Decreto 56/2004, art. 1º; no ato: 'Santa Terezinha' e '7 de Setembro')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Boa Morte",
+            "Boa Morte"
+          ],
+          "de": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "ate": [
+            "Rua Santa Terezinha",
+            "Santa Terezinha"
+          ],
+          "descricao": "Rua Boa Morte, entre Sete de Setembro e Santa Terezinha (Decreto 56/2004, art. 1º; no ato: '7 de Setembro' e 'Santa Terezinha')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Conselheiro Saraiva",
+            "Conselheiro Saraiva"
+          ],
+          "de": [
+            "Rua Capitão Kehl",
+            "Capitão Kehl"
+          ],
+          "ate": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "descricao": "Rua Conselheiro Saraiva, entre Capitão Kehl e Sete de Setembro (Decreto 56/2004, art. 1º; no ato: 'Capitão Kehl' e '7 de Setembro')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Doutor Trajano de Barros Camargo",
+            "Doutor Trajano de Barros Camargo"
+          ],
+          "de": [
+            "Rua Capitão Kehl",
+            "Capitão Kehl"
+          ],
+          "ate": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "descricao": "Rua Doutor Trajano de Barros Camargo, entre Capitão Kehl e Sete de Setembro (Decreto 56/2004, art. 1º; no ato: 'Capitão Kehl' e '7 de Setembro')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Barão de Campinas",
+            "Barão de Campinas"
+          ],
+          "de": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "ate": [
+            "Rua Siqueira Campos",
+            "Siqueira Campos"
+          ],
+          "descricao": "Rua Barão de Campinas, entre Sete de Setembro e Siqueira Campos (Decreto 56/2004, art. 1º; no ato: '7 de Setembro' e 'Siqueira Campos')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Barão de Cascalho",
+            "Barão de Cascalho"
+          ],
+          "de": {
+            "lonlat": [
+              -47.3982,
+              -22.56409
+            ]
+          },
+          "ate": [
+            "Rua Sete de Setembro",
+            "Sete de Setembro"
+          ],
+          "descricao": "Rua Barão de Cascalho, entre Praça João Pessoa e Sete de Setembro (Decreto 56/2004, art. 1º; no ato: 'Praça João Pessoa' e '7 de Setembro')",
+          "aproximado": true,
+          "nota": "Ponta 'Praça João Pessoa' = cruzamento da Rua Barão de Cascalho com a Rua Cunha Bastos, junto à praça (park, way 182022721 no OSM)."
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Tiradentes",
+            "Tiradentes"
+          ],
+          "de": {
+            "lonlat": [
+              -47.39894,
+              -22.56328
+            ]
+          },
+          "ate": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "descricao": "Rua Tiradentes, entre Largo São Sebastião e Humaitá (Decreto 56/2004, art. 1º; no ato: 'Largo São Sebastião' e 'Humaitá')",
+          "aproximado": true,
+          "nota": "O Largo São Sebastião não está no OSM: ponta no início da Rua Tiradentes (cruzamento com a Rua Barão de Cascalho e o Viaduto Jânio Quadros)."
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Carlos Gomes",
+            "Carlos Gomes"
+          ],
+          "de": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "ate": [
+            "Rua Cunha Bastos",
+            "Cunha Bastos"
+          ],
+          "descricao": "Rua Carlos Gomes, entre Humaitá e Cunha Bastos (Decreto 56/2004, art. 1º; no ato: 'Humaitá' e 'Cunha Bastos')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Senador Vergueiro",
+            "Senador Vergueiro"
+          ],
+          "de": [
+            "Rua Cunha Bastos",
+            "Cunha Bastos"
+          ],
+          "ate": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "descricao": "Rua Senador Vergueiro, entre Cunha Bastos e Humaitá (Decreto 56/2004, art. 1º; no ato: 'Cunha Bastos' e 'Humaitá')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Santa Cruz",
+            "Santa Cruz"
+          ],
+          "de": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "ate": [
+            "Rua Cunha Bastos",
+            "Cunha Bastos"
+          ],
+          "descricao": "Rua Santa Cruz, entre Humaitá e Cunha Bastos (Decreto 56/2004, art. 1º; no ato: 'Humaitá' e 'Cunha Bastos')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Alferes Franco",
+            "Alferes Franco"
+          ],
+          "de": [
+            "Rua Cunha Bastos",
+            "Cunha Bastos"
+          ],
+          "ate": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "descricao": "Rua Alferes Franco, entre Cunha Bastos e Humaitá (Decreto 56/2004, art. 1º; no ato: 'Cunha Bastos' e 'Humaitá')"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Presidente Roosevelt",
+            "Presidente Roosevelt"
+          ],
+          "de": [
+            "Rua Humaitá",
+            "Humaitá"
+          ],
+          "ate": [
+            "Rua Cunha Bastos",
+            "Cunha Bastos"
+          ],
+          "descricao": "Rua Presidente Roosevelt, entre Humaitá e Cunha Bastos (Decreto 56/2004, art. 1º; no ato: 'Humaitá' e 'Cunha Bastos')"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3526902_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

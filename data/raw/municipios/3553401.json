@@ -1,0 +1,62 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3553401",
+  "municipio": "Tanabi",
+  "uf": "SP",
+  "fonte_id": "tanabi",
+  "fonte": {
+    "url": "https://tanabi.siscam.com.br/Documentos/Documento/41818 (Lei 3.542/2024; PDF https://tanabi.siscam.com.br/arquivo?Id=42541)",
+    "licenca": "Ato oficial de Tanabi: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE).",
+    "notas": "Lei 3.542/2024: caminhões proibidos 24 h no Bairro de Ibiporanga, com desvio pelo Anel Viário Antonio Quile Rubio. Zona aproximada pelo setor censitário urbano do distrito de Ibiporanga."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "tanabi_bairro_ibiporanga_pesados",
+      "tipo": "zona",
+      "regime": "Restrição de tráfego de veículos pesados no Bairro de Ibiporanga",
+      "nome": "Tanabi: Bairro de Ibiporanga, proibido tráfego de caminhões e combinações (desvio pelo Anel Viário Antonio Quile Rubio)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "A lei não define VUC nem peso: vale para todo caminhão ('caminhões, com ou sem carretas' e combinações).",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, §2º (serviços de carga e descarga)",
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização por decreto do Executivo em caso fortuito ou força maior (art. 5º)",
+      "excecoes": [
+        "Art. 1º §2º: ônibus de transporte coletivo (públicos ou particulares)",
+        "Art. 1º §2º: caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero",
+        "Art. 1º §2º: caminhões e máquinas pesadas da patrulha mecanizada (frota municipal, estadual ou federal)",
+        "Art. 1º §2º: coleta de lixo, emergências de saúde, manutenção emergencial (rede elétrica, telefônica, pluvial, sanitária, água), guincho, serviços de carga e descarga",
+        "Art. 1º §3º: proprietários/motoristas residentes no Bairro de Ibiporanga",
+        "Art. 5º: autorização por decreto em caso fortuito ou força maior"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.542, de 12/09/2024 (Tanabi)",
+          "artigo": "art. 1º, caput e §§ 1º a 3º; art. 5º; art. 7º (vigor na publicação)",
+          "url": "https://tanabi.siscam.com.br/Documentos/Documento/41818",
+          "nota": "PDF: https://tanabi.siscam.com.br/arquivo?Id=42541; DOSP ed. 1112 13/09/2024"
+        }
+      ],
+      "nota": "Ato não lista vias nem traz mapa; limite do bairro precisa ser definido (polígono) antes de roteirizar. Exceção de 'carga e descarga' e 'produtos agrícolas' muito ampla. Verificado em 2026-10-11: excecao_destino_local passou a true, porque o §2º exclui os 'serviços de carga e descarga'. Geometria (implementação): o bairro foi aproximado pelo setor censitário urbano do distrito de Ibiporanga (IBGE 2022, setor 355340110000005), o núcleo urbano do bairro; o perímetro legal da LC 7/2009 não foi lido. O Anel Viário Antonio Quile Rubio (§1º), sem nome no OSM, passa por fora do polígono. Confiança média mantida (geometria aproximada).",
+      "fonte_geometria": "IBGE 2022, setor censitário urbano do distrito de Ibiporanga (aproximação do bairro; o perímetro urbano da LC 7/2009, https://tanabi.siscam.com.br/Documentos/Documento/19886, não foi lido)",
+      "vigencia_inicio": "2024-09-13",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3553401_ibiporanga.geojson",
+          "construir": "manual",
+          "props": {"aproximado": true},
+          "como_gerar": "python3 data/raw/municipios/geo/3553401_ibiporanga_curadoria.py <setores IBGE 2022 de SP (shapefile)>: setores urbanos (CD_SIT 1 e 2) do distrito de Ibiporanga."
+        }
+      ]
+    }
+  ]
+}

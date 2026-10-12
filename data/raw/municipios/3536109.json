@@ -1,0 +1,79 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3536109",
+  "municipio": "Pardinho",
+  "uf": "SP",
+  "fonte_id": "pardinho",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MjcwMjkx (Diário Oficial de Pardinho nº 634, 21/07/2022, p. 2)",
+    "licenca": "Ato oficial de Pardinho: domínio público (Lei 9.610/1998, art. 8º, IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com a SP-280 recortada sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.488/2022, art. 1º: caminhões, tratores, máquinas agrícolas e veículos pesados com mais de 3 eixos proibidos no loteamento Ninho Verde II (Gleba II), 24 h; parágrafo único: exceção para carga/descarga ou serviço no loteamento; art. 3º: CTB art. 29, VII e VIII."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Pardinho não define VUC; a regra é por número de eixos.",
+  "regras": [
+    {
+      "id": "pardinho_ninho_verde_ii",
+      "tipo": "zona",
+      "regime": "Mais de 3 eixos (loteamento)",
+      "nome": "Pardinho: loteamento Ninho Verde II (Gleba II), veículos pesados com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "Parágrafo único: veículos com carga/descarga destinada ao loteamento ou que realizem serviços no bairro",
+        "Art. 3º: veículos do art. 29, VII e VIII, do CTB"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.488, de 19/07/2022 (Pardinho)",
+          "artigo": "art. 1º, parágrafo único; art. 3º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjcwMjkx",
+          "nota": "Diário Oficial de Pardinho nº 634, 21/07/2022"
+        }
+      ],
+      "vigencia_inicio": "2022-07-21",
+      "nota": "Abrangência local (um loteamento com portaria; vias internas possivelmente privadas). Confiança média: a ementa e o art. 1º falam em 'caminhões, tratores, maquinários agrícolas e veículos pesados com mais de 3 eixos'; leitura ambígua (pode alcançar qualquer caminhão), mantido o recorte seguro eixos > 3 (verificador, 2026-10-11). A exceção de carga/descarga ou serviço no loteamento (parágrafo único) coincide com a política da zona: origem ou destino dentro dela não é excluído e gera aviso. Geometria aproximada: setores do núcleo urbano 'Ninho Verde' do IBGE 2022 em Pardinho, tomados como a Gleba II.",
+      "verificado_em": "2026-10-11",
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "fonte_geometria": "IBGE, Malha de Setores Censitários do Censo 2022: 4 setores de Pardinho com núcleo urbano (NM_NU) 'Ninho Verde', sem a Rodovia Castelo Branco (SP-280, recortada com 40 m sobre o OSM)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3536109_ninho_verde_ii.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/3536109_ninho_verde_ii_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_named_3536109.json: setores com NM_NU \"Ninho Verde\" (CD_SIT 3), sem a SP-280 (40 m); o ato não traz mapa."
+        }
+      ]
+    }
+  ]
+}

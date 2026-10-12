@@ -1,0 +1,470 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3526704",
+  "municipio": "Leme",
+  "uf": "SP",
+  "fonte_id": "leme",
+  "fonte": {
+    "url": "https://www.leme.sp.gov.br/leis/decretos_do_executivo/2019/7163.pdf (Decreto 7.163/2019) ; https://www.leme.sp.gov.br/leis/decretos_do_executivo/2014/6424.pdf (Decreto 6.424/2014) ; https://www.leme.sp.gov.br/leis/decretos_do_executivo/2019/7327.pdf (Decreto 7.327/2019) ; https://sapl.leme.sp.leg.br/media/sapl/public/normajuridica/2006/5957/codigolei_02-000464.pdf (LC 464/2006)",
+    "licenca": "Atos oficiais de Leme: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 7.163/2019 (e Dec. 6.424/2014, art. 6º, red. Dec. 7.327/2019): caminhão com PBT acima de 5 t proibido de transitar e de fazer carga e descarga nas vias centrais (Área Azul), seg–sex 9h–18h e sáb 9h–13h. A LC 464/2006 (área e horários alterados por decreto) e a Estrada Municipal Ricardo Landgraf (hgv=no só no OSM) ficam registradas como desativadas. Decretos de 2021–2025 não estão publicados on-line."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC: o critério é o PBT (até 5 t fica fora — Dec. 7.163/2019, art. 2º, I).",
+  "regras": [
+    {
+      "id": "leme_centro_pbt5t",
+      "tipo": "via",
+      "regime": "Centro (PBT > 5 t)",
+      "nome": "Leme: vias centrais (Área Azul) — caminhão com PBT acima de 5 t proibido de transitar e de fazer carga e descarga, dias úteis 9h–18h e sábado 9h–13h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "vuc": null,
+      "vuc_nota": "O município não define VUC: o critério é o PBT (até 5 t fica fora — Dec. 7.163/2019, art. 2º, I).",
+      "autorizacao": "Autorização específica do órgão de trânsito para casos não previstos (Dec. 7.163/2019, art. 4º); carga e descarga especial (construção, concreto, mudanças) com autorização da Secretaria de Segurança, Trânsito, Cidadania e Defesa Civil com 2 dias úteis (Dec. 6.424/2014, art. 10, red. Dec. 7.327/2019)",
+      "excecoes": [
+        "Art. 2º, I: veículos de carga de pequeno porte com PBT até 5.000 kg",
+        "Art. 2º, II e parágrafo único: caminhões de serviços essenciais e de utilidade pública identificados (água, energia, gás e combustíveis em urgência; assistência médica e hospitalar; distribuição de medicamentos e alimentos perecíveis; funerários; transporte coletivo; esgoto e lixo; telecomunicações; material radioativo/nuclear; processamento de dados; transporte de valores)",
+        "Art. 2º, III a VII: emergência; socorro mecânico (guincho); cobertura jornalística; obras e serviços de emergência, inclusive sinalização; correios",
+        "Art. 4º: autorização específica do órgão de trânsito"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.163, de 20/02/2019",
+          "artigo": "art. 1º (proibidos o trânsito e a carga e descarga de caminhão com PBT acima de 5.000 kg nas vias listadas, seg–sex 9h–18h e sáb 9h–13h); art. 2º (exceções); art. 4º (autorização); art. 6º (vigência na publicação)",
+          "url": "https://www.leme.sp.gov.br/leis/decretos_do_executivo/2019/7163.pdf"
+        },
+        {
+          "ato": "Decreto municipal 6.424, de 26/03/2014, com redação do Decreto 7.327, de 27/12/2019",
+          "artigo": "art. 6º (proibido na área do estacionamento rotativo o tráfego de veículos de carga com PBT acima de 5.000 kg, seg–sex 9h–18h e sáb 9h–13h); art. 5º (carga e descarga acima de 5 t só fora desse horário); art. 11 (vias da Área Azul)",
+          "url": "https://www.leme.sp.gov.br/leis/decretos_do_executivo/2014/6424.pdf",
+          "nota": "Redação do Dec. 7.327/2019: https://www.leme.sp.gov.br/leis/decretos_do_executivo/2019/7327.pdf"
+        }
+      ],
+      "nota": "Os dois decretos fixam o mesmo alvo (PBT > 5 t) e o mesmo horário; as vias do Dec. 7.163/2019 coincidem com a implantação inicial da Área Azul (Dec. 6.424/2014, art. 11), que inclui também a Rua Carlos Kock. Os atos não excetuam feriados (feriados = aplica). Confiança média: os decretos de 2021 a 2025 não estão publicados no site da Prefeitura (lista para em 2020) e o DiOE eletrônico só cobre 2026; nenhum ato posterior alterando o Dec. 7.163 foi achado (SAPL, DiOE 2026, busca no site), mas a vigência entre 2021 e 2025 não pôde ser conferida edição por edição.",
+      "fonte_geometria": "OSM (ODbL) pelo nome e pelas transversais dos 14 trechos do Dec. 7.163/2019, art. 1º, mais a Rua Carlos Kock (Dec. 6.424/2014, art. 11).",
+      "vigencia_inicio": "2019-02-20",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida 29 de Agosto",
+            "Avenida Vinte e Nove de Agosto"
+          ],
+          "de": [
+            "Rua Carlos Kock",
+            "Rua Carlos Koch"
+          ],
+          "ate": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "descricao": "Av. 29 de Agosto, entre a Rua Carlos Kock e a Praça Manoel Leme"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Doutor Armando Salles Oliveira",
+            "Rua Doutor Armando Salles de Oliveira",
+            "Rua Dr. Armando Sales de Oliveira"
+          ],
+          "de": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "ate": [
+            "Rua Carlos Kock",
+            "Rua Carlos Koch"
+          ],
+          "descricao": "Rua Dr. Armando Sales de Oliveira, entre a Praça Manoel Leme e a Rua Carlos Kock"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Padre Julião"
+          ],
+          "de": [
+            "Rua Carlos Kock",
+            "Rua Carlos Koch"
+          ],
+          "ate": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "descricao": "Rua Padre Julião, entre a Rua Carlos Kock e a Praça Manoel Leme"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Rafael de Barros"
+          ],
+          "de": [
+            "Rua Major Rafael Leme"
+          ],
+          "ate": [
+            "Rua Carlos Kock",
+            "Rua Carlos Koch"
+          ],
+          "descricao": "Rua Rafael de Barros, entre a Rua Major Rafael Leme e a Rua Carlos Kock"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua General Osório"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua General Osório, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Bernardino de Campos"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Bernardino de Campos, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Joaquim Mourão"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Joaquim Mourão, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Doutor Querubino Soeiro",
+            "Rua Dr. Querubino Soeiro"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Dr. Querubino Soeiro, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Antônio Mourão",
+            "Rua Antonio Mourão"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Antônio Mourão, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Joaquim de Góes",
+            "Rua Joaquim de Goes"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Joaquim de Goes, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua João Pessoa"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua João Pessoa, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Newton Prado"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Newton Prado, entre a Rua Padre Julião e a Rua Cel. Augusto César"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Major Rafael Leme"
+          ],
+          "de": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "ate": [
+            "Rua Rafael de Barros"
+          ],
+          "descricao": "Rua Major Rafael Leme, entre a Rua Cel. Augusto César e a Rua Rafael de Barros"
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "de": [
+            "Rua Rafael de Barros"
+          ],
+          "ate": [
+            "Rua Padre Julião"
+          ],
+          "descricao": "Praça Manoel Leme, entre a Rua Rafael de Barros e a Rua Padre Julião",
+          "nota": "No OSM a Praça Manoel Leme é a 'Rua Manoel Leme' (4 ways, da rotatória Luiz Baccarin, onde começa a Rua Rafael de Barros, à Rua Padre Julião)."
+        },
+        {
+          "inciso": "Dec. 6.424/2014, art. 11",
+          "via": [
+            "Rua Carlos Kock",
+            "Rua Carlos Koch"
+          ],
+          "de": [
+            "Rua Padre Julião"
+          ],
+          "ate": [
+            "Rua Coronel Augusto César",
+            "Rua Coronel Augusto Cesar",
+            "Rua Cel. Augusto Cesar"
+          ],
+          "descricao": "Rua Carlos Kock, entre a Rua Padre Julião e a Rua Cel. Augusto César (só na área do estacionamento rotativo: Dec. 6.424/2014, art. 11, c/c art. 6º)",
+          "nota": "Não consta da lista do Dec. 7.163/2019; entra pela proibição na área do rotativo (art. 6º do Dec. 6.424, red. Dec. 7.327/2019). A área do rotativo pode ter sido alterada por decreto posterior (art. 11, §1º)."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3526704_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "leme_centro_lc464_2006",
+      "tipo": "via",
+      "regime": "Centro (LC 464/2006)",
+      "nome": "Leme: Rua Armando de Salles Oliveira, Av. 29 de Agosto e Rua Rafael de Barros (Gen. Osório – Praça Manoel Leme) — caminhões proibidos dias úteis 10h–16h e sábado 9h–14h (LC 464/2006)",
+      "status": "desativada",
+      "status_motivo": "Horários e área alterados por decreto, como autoriza o próprio art. 6º, parágrafo único, da LC 464/2006 (Decs. 6.424/2014, 7.163/2019 e 7.327/2019 fixaram PBT > 5 t, 9h–18h e sáb 9h–13h). Sem revogação expressa encontrada; mantida como registro, não aplicar.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "10:00",
+          "to": "16:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "vuc": null,
+      "excecoes": [
+        "Art. 8º, §5º: serviços públicos e limpeza; emergência e urgência; ECT; transporte de cargas perecíveis ou combustíveis",
+        "Art. 8º, §3º: rotas alternativas pelas Ruas João Pessoa e Bernardino de Campos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar municipal 464, de 23/10/2006",
+          "artigo": "art. 8º, caput (proibido o trânsito de caminhões no horário do art. 2º: seg–sex 10h–16h, sáb 9h–14h; art. 2º, §1º: domingos e feriados livres); §1º (carga e descarga seg–sex 6h–10h e 16h–22h, sáb 6h–9h e 14h–18h); art. 6º, parágrafo único (Executivo pode alterar área e horários por decreto); art. 9º (vigência 45 dias após a publicação; revoga o Dec. 4.050/1997)",
+          "url": "https://sapl.leme.sp.leg.br/media/sapl/public/normajuridica/2006/5957/codigolei_02-000464.pdf"
+        }
+      ],
+      "nota": "O art. 2º, §1º, libera o estacionamento em domingos e feriados; a proibição do art. 8º segue o 'horário definido pelo art. 2º', por isso feriados = suspende.",
+      "fonte_geometria": "OSM (ODbL) pelo nome e pelas transversais do art. 8º da LC 464/2006 (registro, não aplicado).",
+      "trechos": [
+        {
+          "inciso": "art. 8º",
+          "via": [
+            "Rua Doutor Armando Salles Oliveira",
+            "Rua Doutor Armando Salles de Oliveira",
+            "Rua Dr. Armando Sales de Oliveira"
+          ],
+          "de": [
+            "Rua General Osório"
+          ],
+          "ate": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "descricao": "Rua Armando de Salles Oliveira, entre a Rua General Osório e a Praça Manoel Leme"
+        },
+        {
+          "inciso": "art. 8º",
+          "via": [
+            "Avenida 29 de Agosto",
+            "Avenida Vinte e Nove de Agosto"
+          ],
+          "de": [
+            "Rua General Osório"
+          ],
+          "ate": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "descricao": "Av. 29 de Agosto, entre a Rua General Osório e a Praça Manoel Leme"
+        },
+        {
+          "inciso": "art. 8º",
+          "via": [
+            "Rua Rafael de Barros"
+          ],
+          "de": [
+            "Rua General Osório"
+          ],
+          "ate": [
+            "Praça Manoel Leme",
+            "Rua Manoel Leme"
+          ],
+          "descricao": "Rua Rafael de Barros, entre a Rua General Osório e a Praça Manoel Leme"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3526704_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "leme_estrada_ricardo_landgraf_osm",
+      "tipo": "via",
+      "regime": "hgv=no (OSM)",
+      "nome": "Leme: Estrada Municipal Ricardo Landgraf (LME-260) — hgv=no + access=destination no OSM (sem ato encontrado)",
+      "status": "desativada",
+      "status_motivo": "Pista só do OSM (ways 629571597, 1237044317, 1237044319, 1317321702); nenhum ato municipal encontrado, e a Prefeitura (notícia de 24/08/2026) cita a estrada como ligação do novo anel viário para veículos pesados.",
+      "confianca": "unverifiable",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "vuc": null,
+      "excecoes": [
+        "access=destination no OSM (acesso local)"
+      ],
+      "base_legal": [
+        {
+          "ato": "OpenStreetMap, ways 629571597, 1237044317, 1237044319 e 1317321702 (LME-260)",
+          "artigo": "tags hgv=no e access=destination (não é ato oficial)",
+          "url": "https://www.openstreetmap.org/way/629571597"
+        }
+      ],
+      "nota": "Registro sem feição: a restrição só existe no OSM (hgv=no + access=destination nos ways 629571597, 1237044317, 1237044319 e 1317321702), e o roteador já a respeita pelo próprio OSM. Divergência a mandar para data/osm-overrides/overrides.json como pendente (a Prefeitura cita a estrada como ligação do anel viário de pesados).",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
