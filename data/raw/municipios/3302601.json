@@ -92,14 +92,14 @@
           "url": "http://sapl.mangaratiba.rj.leg.br/media/sapl/public/normajuridica/2016/362/362_texto_integral.pdf"
         }
       ],
-      "nota": "Art. 3º: 'Estará permitida a circulação de qualquer veículo de carga com comprimento entre 6,30 metros a 12,00 metros, na área urbana do município nos seguintes horários: das 7:00 às 9:00 horas e das 18:00 às 20:00 horas'. O ato não fixa dias, então vale todos os dias. Para veículos acima de 12 m vale a restrição do art. 2º (regra separada, desativada), e por isso o alvo usa comprimento acima de 6,30 m como limite inferior. 'Área urbana' não é delimitada no ato: a geometria é o perímetro urbano, aproximado. Art. 15: prazo de adaptação de 180 dias a partir da publicação. A data de publicação não consta no SAPL. Nenhuma alteração ou revogação foi achada no SAPL (ementas '999', 'carga', 'circulação'). GEOMETRIA: 'área urbana' aproximada pelos setores censitários de situação urbana do IBGE (Censo 2022, CD_SIT 1 a 3), que seguem o perímetro urbano legal, MENOS faixas de 30 m das rodovias BR-101 (Rio-Santos) e RJ (vias federais/estaduais, fora da competência municipal); aproximado. Com o art. 2º (acima de 12 m) desativado, um veículo acima de 12 m também só é barrado fora das janelas.",
+      "nota": "Art. 3º: 'Estará permitida a circulação de qualquer veículo de carga com comprimento entre 6,30 metros a 12,00 metros, na área urbana do município nos seguintes horários: das 7:00 às 9:00 horas e das 18:00 às 20:00 horas'. O ato não fixa dias, então vale todos os dias. Para veículos acima de 12 m vale a restrição do art. 2º (regra separada, desativada), e por isso o alvo usa comprimento acima de 6,30 m como limite inferior. 'Área urbana' não é delimitada no ato: a geometria é o perímetro urbano, aproximado. Art. 15: prazo de adaptação de 180 dias a partir da publicação. A data de publicação não consta no SAPL. Nenhuma alteração ou revogação foi achada no SAPL (ementas '999', 'carga', 'circulação'). GEOMETRIA: 'área urbana' aproximada pelos setores censitários de situação urbana do IBGE (Censo 2022, CD_SIT 1 a 3), que seguem o perímetro urbano legal, MENOS a travessia da BR-101 (Rio-Santos) e das RJ (vias federais/estaduais, fora da competência municipal), com folga de 65 m de cada lado (a API ainda recua a zona 15 m): todas as pistas, alças e ligações da BR-101, com ou sem ref no OSM, e as vias trunk/primary sem ref da travessia (Estrada São João Marcos, Rua Arthur Pires e acessos). A primeira versão (faixa de 30 m só nos ways com ref) deixava trechos da travessia sem ref dentro da zona e bloqueava a Rio-Santos (NO_ROUTE para a carreta, ex.: Itaguaí–Mangaratiba pelo pórtico free flow); decisão de 12/10/2026, mesmo critério de Arcos e Santa Branca: a travessia fica livre. Geometria simplificada a 690 vértices (era 3.137) para caber no limite de 20.000 vértices do exclude_polygons do Valhalla; aproximado. Com o art. 2º (acima de 12 m) desativado, um veículo acima de 12 m também só é barrado fora das janelas.",
       "vigencia_inicio": "2016-04-07",
       "fonte_geometria": "IBGE, setores censitários urbanos do Censo 2022 (RJ_setores_CD2022.gpkg) de Mangaratiba, menos os corredores das rodovias BR-101/RJ do OSM (ODbL); aproximado.",
       "geometria": [
         {
           "arquivo": "municipios/geo/3302601_area_urbana.geojson",
           "construir": "manual",
-          "como_gerar": "União dos setores censitários urbanos (CD_SIT 1, 2 e 3) de Mangaratiba em RJ_setores_CD2022.gpkg (IBGE), menos buffer de 30 m dos ways highway do PBF local com ref BR-/RJ- e classes motorway/trunk e alças; procedimento em docs/layers/municipios/mun_sudeste/IMP05.md",
+          "como_gerar": "python3 data/raw/municipios/geo/3302601_area_urbana_curadoria.py <setores RJ do IBGE 2022> data/cache/municipios/osm_hw_3302601.json: união dos setores censitários urbanos (CD_SIT 1, 2 e 3) de Mangaratiba, simplificada (80 m) e recortada, com folga de 65 m (38 m depois da simplificação final), sem a BR-101 inteira (todas as pistas, alças e ligações, com ou sem ref no OSM), as RJ e as vias trunk/primary sem ref da travessia (todas as vias do PBF local, extraídas por data/raw/municipios/curadoria/osm_pbf_vias.py); procedimento em docs/layers/municipios/mun_sudeste/IMP05.md",
           "props": {
             "aproximado": true
           }
@@ -155,7 +155,7 @@
         {
           "arquivo": "municipios/geo/3302601_area_urbana.geojson",
           "construir": "manual",
-          "como_gerar": "Mesma geometria da regra mangaratiba_lei999_janelas_6_30m",
+          "como_gerar": "Mesma geometria da regra mangaratiba_lei999_janelas_6_30m (gerada por geo/3302601_area_urbana_curadoria.py)",
           "props": {
             "aproximado": true
           }
