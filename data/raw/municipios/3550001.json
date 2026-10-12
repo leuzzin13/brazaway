@@ -1,0 +1,75 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3550001",
+  "municipio": "São Luiz do Paraitinga",
+  "uf": "SP",
+  "fonte_id": "sao-luiz-do-paraitinga",
+  "fonte": {
+    "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2004/1135.pdf (Lei 1.135/2004) ; https://saoluizdoparaitinga.sp.gov.br/site/Leis/2015/1733.pdf (Lei 1.733/2015)",
+    "licenca": "Atos oficiais de São Luiz do Paraitinga: domínio público (Lei 9.610/1998 art. 8º IV). Perímetro urbano de Catuçaba: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com o acesso estadual SPA-046/125 recortado sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.135/2004, art. 1º: caminhões e carretas acima de 3 eixos proibidos, sem horário, nas ruas do Distrito de São Pedro de Catuçaba (ementa: perímetro urbano do distrito). Perímetro aproximado pelos setores censitários urbanos do distrito Catuçaba (IBGE 2022), sem a Estrada Municipal Vitorino Teixeira Leite / Rod. Ver. Abílio M. de Campos (ref SPA-046/125 no OSM, acesso estadual). A Lei 1.733/2015 (toras de eucalipto) fica desativada: depende do tipo de carga."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "As leis não definem VUC: o critério é o número de eixos.",
+  "regras": [
+    {
+      "id": "slparaitinga_catucaba_acima_3_eixos",
+      "tipo": "zona",
+      "regime": "Catuçaba (acima de 3 eixos)",
+      "nome": "São Luiz do Paraitinga: proibido tráfego de caminhões e carretas acima de 3 eixos nas ruas do Distrito de São Pedro de Catuçaba",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}]},
+      "origem_destino_dentro": "avisa",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei 1.135, de 18/08/2004 (São Luiz do Paraitinga)",
+          "artigo": "art. 1º (proibição a caminhões e carretas acima de 3 eixos nas ruas do Distrito de São Pedro de Catuçaba); art. 2º (placas em 60 dias); art. 3º e parágrafo único do art. 4º vetados; art. 5º (vigência na publicação)",
+          "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2004/1135.pdf",
+          "nota": "PDF escaneado, lido por imagem. Página do ato: https://saoluizdoparaitinga.sp.gov.br/atos-normativos/leis-municipais/lei-1135-de-2004-18460"
+        }
+      ],
+      "nota": "A ementa no portal diz 'de 03 eixos', mas o art. 1º diz 'acima de 03 (três) eixos'; vale o artigo. Sem horário nem exceções: 24 h. Verificador (11/10/2026): sem revogação nem alteração no portal. Geometria aproximada: perímetro urbano do distrito pelos setores censitários urbanos do distrito Catuçaba (IBGE 2022; podem incluir chácaras em volta do povoado), sem o acesso estadual SPA-046/125 (40 m de folga).",
+      "fonte_geometria": "IBGE, setores censitários urbanos do distrito Catuçaba (Censo 2022), menos a SPA-046/125 do OSM (ODbL) — geo/3550001_catucaba_curadoria.py",
+      "vigencia_inicio": "2004-08-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3550001_catucaba.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3550001_catucaba_curadoria.py <setores IBGE 2022 SP> <vias OSM do município (formato Overpass)>: setores censitários urbanos do distrito Catuçaba, sem a SPA-046/125 (40 m); a lei não delimita o perímetro urbano do distrito.",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "slparaitinga_catucaba_toras_eucalipto",
+      "tipo": "zona",
+      "regime": "Toras de eucalipto (acima de 2 eixos e 6 t)",
+      "nome": "São Luiz do Paraitinga: proibidos caminhões acima de 2 eixos e capacidade acima de 6 t transportando toras de eucalipto no Prolar e nas ruas de São Pedro de Catuçaba",
+      "status": "desativada",
+      "status_motivo": "Restrição condicionada ao tipo de carga (toras de eucalipto), que o perfil do veículo não informa (mesmo critério de Macaé, cargas especiais). Ativa, bloquearia qualquer caminhão acima de 2 eixos e 6 t em Catuçaba, contrariando a Lei 1.135/2004 (só acima de 3 eixos). O trecho do Prolar não está delimitado no ato. Ato vigente, sem revogação achada.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "todas": [{"campo": "eixos", "acima": 2}, {"campo": "payload_t", "acima": 6}]},
+      "excecoes": ["Aplica-se só ao transporte de toras de eucalipto (carga não representável no perfil do veículo)"],
+      "base_legal": [
+        {
+          "ato": "Lei 1.733, de 19/05/2015 (São Luiz do Paraitinga), promulgada pelo Presidente da Câmara",
+          "artigo": "art. 1º (proibição); art. 3º (multa diária de 100 Ufesps)",
+          "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2015/1733.pdf"
+        }
+      ],
+      "nota": "PDF escaneado, lido por imagem. 'Capacidade de peso superior a 6 toneladas' tratada como capacidade de carga (payload_t), não PBT (pode ser lida como PBT).",
+      "vigencia_inicio": "2015-05-19",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

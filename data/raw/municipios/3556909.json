@@ -1,0 +1,56 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3556909",
+  "municipio": "Vista Alegre do Alto",
+  "uf": "SP",
+  "fonte_id": "vista-alegre-do-alto",
+  "fonte": {
+    "url": "https://legis.vistaalegredoalto.sp.gov.br/media/sapl/public/normajuridica/2009/3696/3696_texto_integral.pdf (Lei 1.577/2009) ; https://legis.vistaalegredoalto.sp.gov.br/norma/3696",
+    "licenca": "Ato oficial de Vista Alegre do Alto: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.577/2009: cinco trechos do art. 2º (a R. Inocêncio de Paula Eduardo saiu por correção do verificador: o art. 3º, II, autoriza o tráfego nela). Alvo: cavalo mecânico acoplado (semirreboque/CVC) com mais de 3 eixos."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "vista_alegre_do_alto_vias_centrais_pesados",
+      "tipo": "via",
+      "regime": "Veículos pesados nas vias centrais",
+      "nome": "Vista Alegre do Alto: vias centrais, proibido tráfego e estacionamento de veículos pesados (carga e descarga permitida)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "todas": [{"campo": "tipo", "em": ["semitrailer", "cvc"]}, {"campo": "eixos", "acima": 3}]},
+      "vuc": null,
+      "vuc_nota": "A lei não define VUC; o alvo é o cavalo mecânico acoplado com mais de 3 eixos (art. 4º c/c art. 1º).",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 1.577/2009, art. 2º (exceto carga e descarga)",
+      "excecoes": [
+        "Art. 1º: veículos coletivos de passageiros e transporte de mercadorias com até 3 eixos",
+        "Art. 2º: carga e descarga",
+        "Art. 3º: tráfego autorizado na Av. Dr. Luiz Zacharias de Lima (SP-323 a R. Teutly Correa da Rocha) e na R. Inocêncio de Paula Eduardo"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 1.577, de 11/09/2009 (Vista Alegre do Alto)",
+          "artigo": "arts. 1º, 2º, 3º e 4º",
+          "url": "https://legis.vistaalegredoalto.sp.gov.br/media/sapl/public/normajuridica/2009/3696/3696_texto_integral.pdf",
+          "nota": "Página: https://legis.vistaalegredoalto.sp.gov.br/norma/3696"
+        }
+      ],
+      "nota": "Confiança média: texto ambíguo sobre eixos (art. 1º até 3 eixos isento; art. 4º considera pesado cavalo mecânico com 3+ eixos acoplado) e conflito entre art. 2º e art. 3º, II na R. Inocêncio de Paula Eduardo; decreto regulamentador não localizado; lei de 2009 sem registro de aplicação. Verificado em 2026-10-11: alvo restrito a cavalo mecânico acoplado (semirreboque/CVC) com mais de 3 eixos (art. 4º c/c art. 1º); caminhão rígido não é 'veículo pesado' pelo art. 4º; cavalo desacoplado com 2+ eixos (art. 4º) não é representável no alvo. Trecho da R. Inocêncio de Paula Eduardo (art. 2º, 1º) retirado: o art. 3º, II autoriza o tráfego nela (proibição ali fica só de estacionamento). Geometria (implementação): cada rua do art. 2º é uma way só no OSM; os trechos foram recortados entre os cruzamentos pelo script geo/3556909_vias_curadoria.py. Nomes no OSM: 'Avenida Dezoito de Fevereiro', 'Rua Herculino do Livramento', 'Rua Jeremias de Paula Eduardo', 'Avenida Milton H Yekashi', 'Rua Doutor Luiz Zacharias de Lima' e 'Rua Inocência de Paula Eduardo'. A R. João Ricardo de Mello não cruza a R. Inocêncio de Paula Eduardo no OSM (são paralelas): aplicada da Av. Milton até a ponta norte (aproximado). Exceção de carga e descarga do art. 2º modelada como entrega no município.",
+      "fonte_geometria": "OSM (ODbL): ways recortadas entre as transversais do art. 2º (script geo/3556909_vias_curadoria.py)",
+      "vigencia_inicio": "2009-09-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3556909_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3556909_vias_curadoria.py data/cache/municipios/osm_named_3556909.json"
+        }
+      ]
+    }
+  ]
+}

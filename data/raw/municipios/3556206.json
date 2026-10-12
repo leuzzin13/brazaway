@@ -1,0 +1,329 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3556206",
+  "municipio": "Valinhos",
+  "uf": "SP",
+  "fonte_id": "valinhos",
+  "fonte": {
+    "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/ (Dec. 12.123/2024) ; https://www.valinhos.sp.gov.br/portal/leis_decretos/14382/ (Dec. 12.264/2024) ; https://data.queridodiario.ok.org.br/3556206/2024-06-05/2499813bf2c79dc8bca34c284dc2a6de0303017e.pdf (DO ed. 2.658)",
+    "licenca": "Atos oficiais de Valinhos: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM); limite municipal: IBGE (dados públicos, citar a fonte).",
+    "notas": "Dec. 12.123/2024 (redação do Dec. 12.264/2024). ARTC (Anexo I) e Anexo IV como vias pelo nome do OSM; cinco logradouros do Anexo I não existem com esse nome no OSM (pendência). Regras de toda a malha municipal (VCPB fora das VTCP, VCPT) ficam desativadas, com o limite do município só como registro. Pendência para a SMU: o art. 9º, II, só libera o VCP sem AETC nas rotas de carga pesada, o que contradiz o Anexo IV (restrição só nos picos)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Dec. 12.123/2024 não define VUC isento; o VCL (até 7,99 t, 7,20 m e 2 eixos) também é restrito na ARTC fora do horário de carga e descarga.",
+  "regras": [
+    {
+      "id": "valinhos_artc",
+      "tipo": "via",
+      "regime": "ARTC (Centro)",
+      "nome": "Valinhos: Área de Restrição de Trânsito de Carga (ARTC), 19 vias e praças do Centro",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "10:00", "to": "18:00"}, {"days": [6, 7], "from": "09:00", "to": "24:00"}],
+      "variantes": [
+        {
+          "classe": "VCP/VCPB (acima do VCL: PBT > 7,99 t, comprimento > 7,20 m ou mais de 2 eixos)",
+          "quando": {
+            "qualquer": [
+              {"campo": "pbt_t", "acima": 7.99},
+              {"campo": "comprimento_m", "acima": 7.2},
+              {"campo": "eixos", "acima": 2}
+            ]
+          },
+          "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "vuc_nota": "O decreto não define VUC isento. Define o VCL (art. 5º, I: até 7,99 t, comprimento máximo 7,20 m e até 2 eixos), que também é restrito na ARTC fora do horário de carga e descarga (art. 7º, I, e art. 9º, I).",
+      "autorizacao": "Autorização Especial de Trânsito de Carga (AETC), com cadastro prévio gratuito na Secretaria de Mobilidade Urbana por aplicativo, site ou presencialmente (arts. 2º, 8º e 11). Mesmo com AETC, o VCP só entra na ARTC fora das 07h–09h e 16h–19h (art. 10, I, c/c art. 7º, II).",
+      "excecoes": [
+        "Art. 5º, V (VUE, excetuados de todas as restrições): a) urgência (art. 29, VII, do CTB); b) utilidade pública com identificação visual; c) obras e serviços de infraestrutura urbana a serviço do Poder Público; d) obras e serviços emergenciais; e) socorro mecânico de emergência (guincho); f) caminhão de combustível para abastecimento de postos no Município",
+        "Art. 7º, III: o horário de restrição não se aplica ao caminhão exclusivamente no trajeto de entrada ou saída do local de guarda"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos), com a redação do Decreto 12.264, de 03/09/2024",
+          "artigo": "art. 5º, I (VCL); art. 6º, I (ARTC); art. 7º, I (VCL: carga e descarga na ARTC das 18h às 10h de segunda a sexta e, aos sábados e domingos, até as 9h) e II (VCP/VCPB: 07h–09h e 16h–19h); art. 9º, I (VCL livre exceto na ARTC nos horários definidos); art. 10, I (VCP na ARTC só com AETC e fora do horário de restrição); Anexo I (vias da ARTC)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        },
+        {
+          "ato": "Diário Oficial de Valinhos, ed. 2.658, de 05/06/2024, p. 7–9 (publicação original do Dec. 12.123/2024)",
+          "artigo": "texto integral e Anexos I a IV",
+          "url": "https://data.queridodiario.ok.org.br/3556206/2024-06-05/2499813bf2c79dc8bca34c284dc2a6de0303017e.pdf"
+        },
+        {
+          "ato": "Decreto municipal 12.264, de 03/09/2024 (Valinhos)",
+          "artigo": "art. 3º (prorroga por mais 60 dias o prazo de vigência do art. 18 do Dec. 12.123/2024)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/14382/"
+        }
+      ],
+      "nota": "A ARTC é uma lista de vias (Anexo I), não um polígono: tipo via, uma linha por logradouro. Janela-base = VCL: restrito fora do horário de carga e descarga do art. 7º, I (seg–sex 10h–18h; sáb e dom a partir das 9h, leitura literal de 'aos sábados e domingos até as 09h', sem horário de reabertura no ato: por isso confiança média). Variante: o caminhão acima do VCL (VCP, VCPB) só circula na ARTC com AETC (art. 10, I; o VCPB só tem AETC nas VTCP, art. 10, II), logo 24 h sem a autorização. VCL = PBT até 7,99 t (categoria 'caminhão leve' da ANTT citada no art. 5º, I), até 7,20 m e até 2 eixos. O ato não excetua feriados. Vigência: art. 18 (90 dias após 05/06/2024; o portal registra início em 02/09/2024) prorrogado por mais 60 dias pelo art. 3º do Dec. 12.264/2024, daí ~novembro de 2024 (data aproximada). Texto consolidado no portal Instar da Prefeitura (lido em 10/10/2026): só o Dec. 12.264/2024 altera o 12.123. Verificação (2026-10-10): texto conferido no PDF do portal e no DO ed. 2.658. A vedação do VCPT (art. 10, §1º) estava em 'excecoes' e foi para 'restricoes_adicionais_nao_modeladas'. Vigência: o Dec. 12.264 saiu no DO ed. 2.709 de 03/09/2024, quando o prazo original do art. 18 já vencia (o portal registra início em 02/09/2024); a prorrogação de 60 dias foi aplicada como pretendida, daí 2024-11-02 (aproximado). Geometria (implementação): vias pelo nome do OSM. Não estão no OSM com o nome do Anexo I (pendência): Largo São Sebastião, Praça Angelina Aparecida Pazinato Matiazzo, Praça José Ferraro, Praça São Sebastião e Rua Dona Rosina Zagatti Celani. A 'Avenida Doutor Heitor Penteado' do Anexo é 'Rua Doutor Heitor Penteado' no OSM (a 'Rua Heitor Penteado' homônima é a SP-332, fora do Centro, e não entra). A Rua Treze de Maio vai só da Rua Quinze de Novembro à Av. dos Esportes: dali à Av. Paulista ela é VTCP (Anexo II, 1.1, c). Rua Campos Salles e Rua Antônio Carlos: aplicadas em toda a extensão com o nome no OSM, como no Anexo I (a Campos Salles segue ~2,5 km a noroeste do Centro). Restrição adicional não modelada: Art. 10, §1º: VCPT (treminhão/tritrem) vedado em qualquer via municipal, mesmo com AETC (é restrição, não exceção; ver a regra desativada valinhos_vcpt; na ARTC já fica coberto pela variante de 24 h).",
+      "fonte_geometria": "OSM (ODbL) pelo nome das vias do Anexo I (construir: trechos)",
+      "vigencia_inicio": "2024-11-02",
+      "trechos": [
+        {
+          "inciso": "Anexo I, item 1, a)",
+          "via": ["Avenida dos Imigrantes"],
+          "descricao": "Avenida dos Imigrantes (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, b)",
+          "via": ["Rua Doutor Heitor Penteado"],
+          "descricao": "Avenida Doutor Heitor Penteado (toda a extensão listada no Anexo I)",
+          "nota": "No OSM: 'Rua Doutor Heitor Penteado' (a 'Rua Heitor Penteado' é a SP-332, fora do Centro)."
+        },
+        {
+          "inciso": "Anexo I, item 1, g)",
+          "via": ["Rua Antônio Carlos"],
+          "descricao": "Rua Antônio Carlos (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, h)",
+          "via": ["Rua Campos Salles", "Rua Campos Sales"],
+          "descricao": "Rua Campos Salles (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, i)",
+          "via": ["Rua Carlos Manarini"],
+          "descricao": "Rua Carlos Manarini (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, k)",
+          "via": ["Rua Doutor Cândido Ferreira", "Rua Dr. Cândido Ferreira"],
+          "descricao": "Rua Doutor Cândido Ferreira (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, l)",
+          "via": ["Rua Eugênio Franceschini"],
+          "descricao": "Rua Eugênio Franceschini (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, m)",
+          "via": ["Rua Padre Manoel Guinaut Bernart", "Rua Padre Manoel Guinaut"],
+          "descricao": "Rua Padre Manoel Guinaut (toda a extensão listada no Anexo I)",
+          "nota": "No OSM: 'Rua Padre Manoel Guinaut Bernart'."
+        },
+        {
+          "inciso": "Anexo I, item 1, n)",
+          "via": ["Rua Quinze de Novembro", "Rua 15 de Novembro"],
+          "descricao": "Rua Quinze de Novembro (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, o)",
+          "via": ["Rua Senador Feijó"],
+          "descricao": "Rua Senador Feijó (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, p)",
+          "via": ["Rua Sete de Setembro", "Rua 7 de Setembro"],
+          "descricao": "Rua Sete de Setembro (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, q)",
+          "via": ["Rua Treze de Maio", "Rua 13 de Maio"],
+          "descricao": "Rua Treze de Maio, da Rua Quinze de Novembro à Av. dos Esportes (dali à Av. Paulista é VTCP, Anexo II, 1.1, c)",
+          "nota": "O trecho da Av. dos Esportes à Av. Paulista é rota de carga pesada (VTCP) e fica fora da ARTC.",
+          "de": ["Rua Quinze de Novembro"],
+          "ate": ["Avenida dos Esportes"]
+        },
+        {
+          "inciso": "Anexo I, item 1, r)",
+          "via": ["Rua Vinte e Oito de Maio", "Rua 28 de Maio"],
+          "descricao": "Rua Vinte e Oito de Maio (toda a extensão listada no Anexo I)"
+        },
+        {
+          "inciso": "Anexo I, item 1, s)",
+          "via": ["Rua Vinte e Um de Dezembro", "Rua 21 de Dezembro"],
+          "descricao": "Rua Vinte e Um de Dezembro (toda a extensão listada no Anexo I)"
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3556206_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "valinhos_anexo4_vcp_vcpb",
+      "tipo": "via",
+      "regime": "Via restrita a VCP/VCPB (pico)",
+      "nome": "Valinhos: Av. Joaquim Alves Corrêa, Rua Dr. Antônio Bento Ferraz e Estrada do Jequitibá (trecho), caminhão acima do VCL nos picos",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "16:00", "to": "19:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [{"campo": "pbt_t", "acima": 7.99}, {"campo": "comprimento_m", "acima": 7.2}, {"campo": "eixos", "acima": 2}]
+      },
+      "vuc": null,
+      "autorizacao": "AETC da Secretaria de Mobilidade Urbana (arts. 2º, 10 e 11)",
+      "excecoes": [
+        "Art. 5º, V (VUE, excetuados de todas as restrições): a) urgência (art. 29, VII, do CTB); b) utilidade pública com identificação visual; c) obras e serviços de infraestrutura urbana a serviço do Poder Público; d) obras e serviços emergenciais; e) socorro mecânico de emergência (guincho); f) caminhão de combustível para abastecimento de postos no Município",
+        "Art. 7º, III: o horário de restrição não se aplica ao caminhão exclusivamente no trajeto de entrada ou saída do local de guarda"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos)",
+          "artigo": "art. 6º, III (vias de restrição de trânsito de carga de VCP e VCPB); art. 7º, II (horário de restrição de VCP e VCPB: 07h–09h e 16h–19h); Anexo IV, item 1, a) a c)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        },
+        {
+          "ato": "Diário Oficial de Valinhos, ed. 2.658, de 05/06/2024, p. 9",
+          "artigo": "Anexo IV",
+          "url": "https://data.queridodiario.ok.org.br/3556206/2024-06-05/2499813bf2c79dc8bca34c284dc2a6de0303017e.pdf"
+        }
+      ],
+      "nota": "O Anexo IV diz só 'está restrita a circulação de veículos pesados VCP e VCPB'; o único horário de restrição para VCP/VCPB no decreto é o do art. 7º, II (07h–09h e 16h–19h, sem dia da semana): aplicado todos os dias. Se a SMU sinalizar proibição em tempo integral, trocar para 24 h. Alvo = acima do VCL (VCP e VCPB, art. 5º, II e III). Estrada do Jequitibá só entre a Rua Ezequiel Benedito da Silva e a Estrada Municipal do Clube de Campo de Valinhos; as duas primeiras vias em toda a extensão. Verificação (2026-10-10): Anexo IV, a) a c), e art. 7º, II, conferidos no PDF e no DO. A leitura de só nos picos se apoia no caput do art. 7º ('horário de restrição de tráfego ... nas áreas designadas', que são as do art. 6º, inclusive o inciso III/Anexo IV).",
+      "fonte_geometria": "OSM (ODbL) pelo nome (construir: trechos)",
+      "vigencia_inicio": "2024-11-02",
+      "trechos": [
+        {
+          "inciso": "Anexo IV, item 1, a)",
+          "via": ["Avenida Joaquim Alves Corrêa", "Avenida Joaquim Alves Correa"],
+          "descricao": "Avenida Joaquim Alves Corrêa (toda a extensão)"
+        },
+        {
+          "inciso": "Anexo IV, item 1, b)",
+          "via": ["Avenida Doutor Antônio Bento Ferraz", "Rua Doutor Antônio Bento Ferraz", "Rua Dr. Antônio Bento Ferraz"],
+          "descricao": "Rua Dr. Antônio Bento Ferraz (toda a extensão)",
+          "nota": "No OSM: 'Avenida Doutor Antônio Bento Ferraz'."
+        },
+        {
+          "inciso": "Anexo IV, item 1, c)",
+          "via": ["Estrada do Jequitibá", "Estrada Jequitibá"],
+          "de": ["Rua Ezequiel Benedito da Silva"],
+          "ate": ["Estrada Municipal do Clube de Campo Valinhos", "Estrada Municipal do Clube de Campo de Valinhos"],
+          "descricao": "Estrada do Jequitibá, entre a Rua Ezequiel Benedito da Silva e a Estrada Municipal do Clube de Campo de Valinhos",
+          "nota": "No OSM a Estrada do Jequitibá termina na 'Estrada Municipal do Clube de Campo Valinhos' (ponta leste). O trecho da Av. Orozimbo Maia à Rua Ezequiel é VTCP (Anexo II, 1.3, g) e não entra."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3556206_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "valinhos_anexo4_pontos_dec12264",
+      "tipo": "via",
+      "regime": "Via restrita a VCP/VCPB (pico)",
+      "nome": "Valinhos: Rodovia Municipal dos Andradas (perto do nº 1662) e Av. Independência (perto do nº 2381), caminhão acima do VCL nos picos",
+      "status": "desativada",
+      "status_motivo": "O Dec. 12.264/2024 incluiu os dois pontos no Anexo IV só como 'próximo ao nº 1662' e 'próximo ao nº 2381', sem extensão nem transversais; as duas vias também são rota de carga pesada (VTCP, Anexo II, 1.1, a e e). Sem geometria determinável, fica desativada até levantamento (sinalização em campo ou mapa da SMU). Sem geometria confiável: registrada sem feição.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "09:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "16:00", "to": "19:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [{"campo": "pbt_t", "acima": 7.99}, {"campo": "comprimento_m", "acima": 7.2}, {"campo": "eixos", "acima": 2}]
+      },
+      "vuc": null,
+      "autorizacao": "AETC da Secretaria de Mobilidade Urbana",
+      "excecoes": [
+        "Art. 5º, V (VUE, excetuados de todas as restrições): a) urgência (art. 29, VII, do CTB); b) utilidade pública com identificação visual; c) obras e serviços de infraestrutura urbana a serviço do Poder Público; d) obras e serviços emergenciais; e) socorro mecânico de emergência (guincho); f) caminhão de combustível para abastecimento de postos no Município",
+        "Art. 7º, III: o horário de restrição não se aplica ao caminhão exclusivamente no trajeto de entrada ou saída do local de guarda"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.264, de 03/09/2024 (Valinhos)",
+          "artigo": "art. 2º (acrescenta ao Anexo IV do Dec. 12.123/2024: d) Rodovia Municipal dos Andradas, próximo ao nº 1662; e) Avenida Independência, próximo ao nº 2381)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/14382/"
+        },
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos)",
+          "artigo": "art. 7º, II (horário de restrição de VCP e VCPB)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        }
+      ],
+      "nota": "Horário pela mesma leitura da regra valinhos_anexo4_vcp_vcpb (art. 7º, II). Verificação (2026-10-10): o Dec. 12.264 vigora desde a publicação (03/09/2024), mas os pontos d) e e) só valem quando o Dec. 12.123 vale (art. 18 prorrogado pelo art. 3º do próprio 12.264): vigencia_inicio corrigida de 2024-09-03 para 2024-11-02.",
+      "vigencia_inicio": "2024-11-02",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "valinhos_vcpb_fora_vtcp",
+      "tipo": "zona",
+      "regime": "Bitrem/Romeu e Julieta só na VTCP",
+      "nome": "Valinhos: VCPB (caminhão + reboque, bitrem, rodotrem) só nas Vias de Trânsito de Cargas Pesadas e com AETC",
+      "status": "desativada",
+      "status_motivo": "Regra das vias municipais exceto as VTCP do Anexo II: uma zona do limite municipal fecharia também as rodovias estaduais que cortam Valinhos (SP-330 Anhanguera, SP-065 Dom Pedro I, SP-083), que não são vias municipais. Precisa de decisão de produto e de geometria própria (malha municipal menos VTCP e rodovias).",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "tipo", "em": ["truck_trailer", "cvc"]}]},
+      "vuc": null,
+      "autorizacao": "AETC da SMU, só para as VTCP, 'consideradas a viabilidade de horários e vias' (art. 10, II)",
+      "excecoes": [
+        "Art. 5º, V (VUE, excetuados de todas as restrições): a) urgência (art. 29, VII, do CTB); b) utilidade pública com identificação visual; c) obras e serviços de infraestrutura urbana a serviço do Poder Público; d) obras e serviços emergenciais; e) socorro mecânico de emergência (guincho); f) caminhão de combustível para abastecimento de postos no Município",
+        "Anexo II, item 2: vias dos bairros Macuco, Reforma Agrária, Morro das Pedras, Vale Formoso e Capivari são de livre circulação para VCL, VCP e VCPB em qualquer horário"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos)",
+          "artigo": "art. 5º, III (VCPB); art. 9º (só VCL, VCP e VUE circulam sem AETC); art. 10, II (VCPB só nas VTCP e com AETC); Anexo II (VTCP: acessos pela SP-330/Rod. Comendador Guilherme Mamprim, pela SP-083/Rod. Francisco Von Zuben e pela SP-065/Rod. dos Agricultores)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        }
+      ],
+      "nota": "O tipo 'cvc' do perfil junta bitrem e rodotrem (VCPB) com tritrem (VCPT, vedado pela regra valinhos_vcpt). Leitura: o VCPB não aparece no art. 9º (tráfego sem AETC) e o art. 10, II só o admite nas VTCP com AETC; logo, fora das VTCP ele não circula. Geometria: limite do município só como registro (a regra nunca é aplicada; o aviso municipal_regra_nao_aplicada aparece para CVC e caminhão com reboque que passam por Valinhos).",
+      "vigencia_inicio": "2024-11-02",
+      "geometria": [{"municipios": ["3556206"], "simplificar": 0.002, "casas": 5}]
+    },
+    {
+      "id": "valinhos_vcpt",
+      "tipo": "zona",
+      "regime": "Treminhão/tritrem vedado",
+      "nome": "Valinhos: VCPT (treminhão, tritrem) vedado em qualquer via municipal",
+      "status": "desativada",
+      "status_motivo": "O perfil do veículo não distingue VCPT (caminhão + 2 reboques ou cavalo + 3 semirreboques) de bitrem/rodotrem: o tipo 'cvc' junta os dois. Além disso a zona do município fecharia as rodovias estaduais, que não são vias municipais.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "tipo", "em": ["cvc"]}]},
+      "vuc": null,
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos)",
+          "artigo": "art. 5º, IV (VCPT); art. 10, §1º (vedado o tráfego de VCPT em qualquer via municipal)",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        }
+      ],
+      "nota": "Geometria: limite do município só como registro (a regra nunca é aplicada).",
+      "vigencia_inicio": "2024-11-02",
+      "geometria": [{"municipios": ["3556206"], "simplificar": 0.002, "casas": 5}]
+    },
+    {
+      "id": "valinhos_perigosos_aetc",
+      "tipo": "zona",
+      "regime": "Produto perigoso com AETC",
+      "nome": "Valinhos: veículo com produto perigoso só com AETC em qualquer via municipal",
+      "status": "desativada",
+      "status_motivo": "O perfil do veículo não informa produto perigoso; a exigência (AETC, sem rota fixa) é da camada perigosos. Fica como registro.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "autorizacao": "AETC da SMU, 'consideradas a viabilidade de horários e vias' (art. 10, III); produto perigoso de consumo local exige ordem de serviço (Anexo III, 1, j)",
+      "excecoes": ["Art. 5º, V, f: caminhão de combustível para abastecimento de postos no Município é VUE (excetuado)"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.123, de 05/06/2024 (Valinhos)",
+          "artigo": "art. 10, III (VTPP, classificação da ONU, em qualquer via municipal só com AETC); Anexo III, 1, j",
+          "url": "https://www.valinhos.sp.gov.br/portal/leis_decretos/13739/"
+        }
+      ],
+      "nota": "Sem geometria: o perfil do veículo não informa produto perigoso, e o limite do município espalharia o aviso a todo caminhão que passa por Valinhos.",
+      "vigencia_inicio": "2024-11-02",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

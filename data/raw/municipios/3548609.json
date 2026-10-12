@@ -1,0 +1,56 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3548609",
+  "municipio": "São Bento do Sapucaí",
+  "uf": "SP",
+  "fonte_id": "sao-bento-do-sapucai",
+  "fonte": {
+    "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013453 (Lei 2.108/2019) ; https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013792 (LC 2.128/2020)",
+    "licenca": "Atos oficiais de São Bento do Sapucaí: domínio público (Lei 9.610/1998 art. 8º IV). Macrozona urbana aproximada: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.108/2019, art. 1º (red. LC 2.128/2020): entrada, parada, estacionamento e circulação de veículos com PBT acima de 29 t ou comprimento acima de 17 m proibidos em todas as ruas da macrozona urbana do Plano Diretor, em qualquer dia ou hora. O ato não traz mapa: macrozona aproximada pela área urbana do Censo 2022 do distrito-sede, sem a SP-042 (Rod. Vereador Júlio da Silva) e a SP-050 (Rod. Monteiro Lobato)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o critério é PBT acima de 29 t ou comprimento acima de 17 m.",
+  "regras": [
+    {
+      "id": "saobento_sapucai_macrozona_29t",
+      "tipo": "zona",
+      "regime": "Macrozona urbana (PBT > 29 t ou comprimento > 17 m)",
+      "nome": "São Bento do Sapucaí: macrozona urbana, proibidos veículos com PBT acima de 29 t ou comprimento acima de 17 m",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 29}, {"campo": "comprimento_m", "acima": 17}]},
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º, I: manutenção e reparo das redes de energia, água e esgoto, telecomunicações e comunicações telefônicas",
+        "Art. 2º, II: transporte de passageiros",
+        "Art. 2º, III: manutenção, conservação e sinalização viária a serviço do órgão de trânsito",
+        "Art. 2º, IV: socorro mecânico de emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 2.108, de 17/12/2019 (São Bento do Sapucaí), com redação do art. 1º dada pela Lei Complementar 2.128, de 28/02/2020",
+          "artigo": "Lei 2.108: arts. 1º (proibição; red. LC 2.128), 2º (exceções), 3º e 4º (fiscalização) e 5º (vigência 30 dias após a publicação); LC 2.128: arts. 1º e 2º",
+          "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013453",
+          "nota": "LC 2.128/2020: https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013792 (o Siscam pede User-Agent de navegador). As páginas antigas da prefeitura redirecionam para a home (11/10/2026)."
+        }
+      ],
+      "nota": "Confiança alta no ato (verificador, 11/10/2026: PDFs relidos, sem alteração ou revogação no Siscam até 2026), rebaixada para média na camada porque a macrozona urbana do Plano Diretor não tem polígono: aproximada pelos setores censitários urbanos do distrito-sede (IBGE 2022), sem a SP-042 e a SP-050 (40 m de folga; a lei municipal não alcança a rodovia estadual). 'Comprimento máximo de 17 metros' lido como 'acima de 17 m'. A lei proíbe também parada e estacionamento; não há exceção de entrega.",
+      "fonte_geometria": "IBGE, setores censitários urbanos do distrito-sede (Censo 2022), menos as rodovias SP-042/SP-050 do OSM (ODbL) — geo/3548609_macrozona_urbana_curadoria.py",
+      "vigencia_inicio": "2020-04-01",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3548609_macrozona_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3548609_macrozona_urbana_curadoria.py <setores IBGE 2022 SP> <vias OSM do município (formato Overpass)>: setores censitários urbanos do distrito-sede, sem SP-042/SP-050 (40 m); o ato não traz mapa da macrozona urbana.",
+          "props": {"aproximado": true}
+        }
+      ]
+    }
+  ]
+}
