@@ -7,14 +7,16 @@ Gera 3302601_area_urbana.geojson (zona aproximada) a partir de:
     1, 2 ou 3;
   * TODAS as vias do OpenStreetMap do retângulo do município (data/cache/municipios/osm_hw_3302601.json, gerado do PBF
     do Valhalla por data/raw/municipios/curadoria/osm_pbf_vias.py: com e sem nome, com e sem ref). Ficam livres e
-    saem da zona, com folga de 65 m de cada lado (pelo menos 38 m depois da simplificação) (a API ainda recua a zona 15 m): a BR-101 inteira (todas as pistas,
-    alças e ligações, com ou sem ref no OSM), as RJ (ref RJ-) e os trechos sem ref da travessia (alças primary que
-    ligam a BR-101 à Estrada São João Marcos). O ato municipal não alcança a rodovia federal.
+    saem da zona, com folga de 55 m de cada lado (a API ainda recua a zona 20 m): a BR-101 inteira (todas as pistas,
+    alças e ligações, com ou sem ref no OSM), as RJ (ref RJ-) e toda via trunk/primary sem ref (os trechos da travessia: as
+    alças que ligam a BR-101 à Estrada São João Marcos, ela própria, a Rua Arthur Pires e acessos), como em Arcos e Santa
+    Branca. O ato municipal não alcança a rodovia federal.
 
   python3 data/raw/municipios/geo/3302601_area_urbana_curadoria.py <dir_ou_.shp dos setores RJ> data/cache/municipios/osm_hw_3302601.json
 
-Ordem: a zona é simplificada ANTES do recorte (tolerância de 80 m, preservando topologia), recortada e simplificada de novo a 25 m (o contorno anda no máximo isso); o anel
-externo resultante é conferido (nenhuma via livre a menos de 35 m). Requer shapely, pyproj e pyshp.
+Vértices: a zona é simplificada PARA DENTRO (L.simplificar_para_dentro: encolhe e simplifica, nunca cresce) a 40 m ANTES do recorte,
+recortada e simplificada para dentro de novo a 25 m; o contorno recua 0 a 50 m e a folga às vias livres não diminui (era 3.137 vértices; fica ~670).
+O anel externo resultante é conferido (nenhuma via livre a menos de 50 m). Requer shapely, pyproj e pyshp.
 """
 import json
 import pathlib
@@ -31,8 +33,8 @@ IBGE = '3302601'
 SITUACOES = ['1', '2', '3']
 REFS = None                       # qualquer ref de rodovia (BR-101, RJ-014, RJ-149...)
 IDS = []                          # ways sem ref da travessia, por id do OSM (preenchido abaixo)
-FOLGA_M = 65
-SIMPLIFICAR_M = 80
+FOLGA_M = 55
+SIMPLIFICAR_M = 40
 DEPOIS_M = 25
 MIN_M2 = 100000                   # partes com menos de 0,1 km² (fragmentos entre rodovias) são descartadas
 OUT = pathlib.Path(__file__).with_name('3302601_area_urbana.geojson')
@@ -52,11 +54,12 @@ def main(shp, osm):
     to_utm, to_ll = L.projecoes(31983)
     Z = to_utm(unary_union(setores)).buffer(1).buffer(-1)
     Z = L.sem_furos(Z)
-    Z = unary_union([g for g in getattr(Z, 'geoms', [Z]) if g.area > 20000]).simplify(SIMPLIFICAR_M, preserve_topology=True)
+    Z = unary_union([g for g in getattr(Z, 'geoms', [Z]) if g.area > 20000])
+    Z = L.simplificar_para_dentro(Z, SIMPLIFICAR_M)
     livres = L.vias_livres(osm, to_utm, refs=REFS, ids=IDS)
     livres = [x for x in livres if x[2].distance(Z) < 400]
     Z, _ = L.recortar(Z, livres, FOLGA_M, min_area_m2=MIN_M2, simplificar_depois_m=DEPOIS_M)
-    dmin = L.verificar(Z, livres, FOLGA_M, DEPOIS_M + L.LINHA_SIMPL_M + 1)
+    dmin = L.verificar(Z, livres, FOLGA_M, L.LINHA_SIMPL_M + 1)
     Zll = to_ll(Z)
     geom = L.para_geojson_coords(Zll)
     fc = {'type': 'FeatureCollection', 'features': [{'type': 'Feature', 'properties': {

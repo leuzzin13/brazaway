@@ -63,14 +63,14 @@
           "nota": "Ato do órgão executivo de trânsito com base na Lei municipal 8.360/2013 e nos arts. 7º, III, 21, XIV, e 101 do CTB. Sucede as Portarias IMTT 38/2022, 47/2022, 93/2022 e 55/2024 (mesma matéria)."
         }
       ],
-      "nota": "O critério é o número de eixos do veículo ou da combinação (rígido ou articulado), sem horário nem PBT; vale todos os dias, inclusive feriados. A proibição alcança só as 'vias sob circunscrição do Município': as rodovias federais (BR-101, BR-356) e estaduais (RJ-158, RJ-216, RJ-238/Estrada dos Ceramistas e trechos urbanos estaduais como a Av. Alberto Lamego e trechos da Av. Presidente Kennedy, que no OSM levam IBGE:CD_ADMINIS=estadual) ficam fora. A geometria NÃO pode ser o limite municipal inteiro como em Vitória (bloquearia a BR-101 e a BR-356 no trânsito de passagem): é o conjunto das vias municipais (limite IBGE menos os corredores federais e estaduais, ou regra de via sobre as vias municipais). O próprio ato justifica a medida pela 'existência de vias federais e estaduais mais adequadas'. Origem ou destino em estabelecimento comercial no município: fora da regra (art. 1º, §1º). Geometria: limite municipal (IBGE) MENOS faixas de 30 m em torno das rodovias federais e estaduais do OSM (ref BR-/RJ-, IBGE:CD_ADMINIS federal/estadual, motorway/trunk e alças), aproximada; com o recuo de 20 m da camada, a rodovia fica com uma faixa livre de ~50 m de cada lado. Origem no município: a zona não é excluída e a rota avisa; destino no município: fora da regra (art. 1º, §1º).",
+      "nota": "O critério é o número de eixos do veículo ou da combinação (rígido ou articulado), sem horário nem PBT; vale todos os dias, inclusive feriados. A proibição alcança só as 'vias sob circunscrição do Município': as rodovias federais (BR-101, BR-356) e estaduais (RJ-158, RJ-216, RJ-238/Estrada dos Ceramistas e trechos urbanos estaduais como a Av. Alberto Lamego e trechos da Av. Presidente Kennedy, que no OSM levam IBGE:CD_ADMINIS=estadual) ficam fora. A geometria NÃO pode ser o limite municipal inteiro como em Vitória (bloquearia a BR-101 e a BR-356 no trânsito de passagem): é o conjunto das vias municipais (limite IBGE menos os corredores federais e estaduais, ou regra de via sobre as vias municipais). O próprio ato justifica a medida pela 'existência de vias federais e estaduais mais adequadas'. Origem ou destino em estabelecimento comercial no município: fora da regra (art. 1º, §1º). Geometria: limite municipal (IBGE) MENOS as rodovias federais e estaduais do OSM (ref BR-/RJ-, IBGE:CD_ADMINIS federal/estadual, motorway/trunk e alças), aproximada e simplificada: ~810 vértices em 45 partes (eram 10.902 em 47), para caber no limite de 20.000 vértices do exclude_polygons do Valhalla em rotas longas. Na cidade (raio de 4,5 km do centro) a folga mínima é de 35 m de cada lado da rodovia; fora dela o recorte é grosso (simplificação para dentro de até 400 m, partes com menos de 5 km² descartadas; ~19% menos área que a versão de 10.902 vértices). Com o recuo de 20 m da camada, a rodovia fica com no mínimo 55 m livres de cada lado. Origem no município: a zona não é excluída e a rota avisa; destino no município: fora da regra (art. 1º, §1º).",
       "fonte_geometria": "Limite IBGE 3301009 menos os corredores das rodovias federais e estaduais (OSM, ODbL): BR-101, BR-356, RJ-158, RJ-180, RJ-194, RJ-196, RJ-204, RJ-208, RJ-216, RJ-224, RJ-238 e demais com ref ou IBGE:CD_ADMINIS estadual/federal no PBF local; aproximado.",
       "vigencia_inicio": "2025-03-10",
       "geometria": [
         {
           "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
           "construir": "manual",
-          "como_gerar": "Limite municipal 3301009 (IBGE) menos buffer de 30 m dos ways highway do PBF local com ref BR-/RJ-, IBGE:CD_ADMINIS federal/estadual ou classe motorway/trunk (e alças), simplificado; uma única feição MultiPolygon. Procedimento em docs/layers/municipios/mun_sudeste/IMP05.md",
+          "como_gerar": "python3 data/raw/municipios/geo/3301009_vias_municipais_curadoria.py data/cache/municipios/ibge_malha_3301009.geojson data/cache/municipios/osm_hw_3301009.json: limite municipal (IBGE) menos as rodovias BR-/RJ-, as vias com IBGE:CD_ADMINIS federal/estadual, motorway/trunk e alças do PBF local (osm_pbf_vias.py), em duas resoluções (cidade fina, resto grosso) e sempre simplificando para dentro, ~810 vértices; nenhuma via livre a menos de 35 m. Procedimento em docs/layers/municipios/mun_sudeste/IMP05.md",
           "props": {
             "aproximado": true
           }
@@ -484,7 +484,7 @@
         {
           "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
           "construir": "manual",
-          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico)",
+          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico; gerada por geo/3301009_vias_municipais_curadoria.py)",
           "props": {
             "aproximado": true
           }
@@ -543,7 +543,7 @@
         {
           "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
           "construir": "manual",
-          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico)",
+          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico; gerada por geo/3301009_vias_municipais_curadoria.py)",
           "props": {
             "aproximado": true
           }
@@ -601,7 +601,7 @@
         {
           "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
           "construir": "manual",
-          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico)",
+          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico; gerada por geo/3301009_vias_municipais_curadoria.py)",
           "props": {
             "aproximado": true
           }
@@ -667,7 +667,7 @@
         {
           "arquivo": "municipios/geo/3301009_vias_municipais.geojson",
           "construir": "manual",
-          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico)",
+          "como_gerar": "Mesma geometria da regra vigente campos_goytacazes_vias_municipais_4_eixos (registro histórico; gerada por geo/3301009_vias_municipais_curadoria.py)",
           "props": {
             "aproximado": true
           }

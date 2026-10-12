@@ -11,7 +11,10 @@ Gera 3554003_municipio.geojson a partir de:
 
   python3 data/raw/municipios/geo/3554003_municipio_curadoria.py data/cache/municipios/ibge_malha_3554003.geojson <extrato_osm.json>
 
-O recorte parte o município em pedaços (a camada usa só o anel externo de cada polígono, por isso não há furos).
+O recorte parte o município em pedaços (a camada usa só o anel externo de cada polígono, por isso não há furos; os que nascem do recorte viram fendas).
+Vértices: o limite é simplificado PARA DENTRO (L.simplificar_para_dentro: encolhe e simplifica, nunca cresce) a 30 m ANTES do recorte,
+recortado com folga e simplificado para dentro de novo (40 m); a folga às vias livres não diminui: nenhuma rodovia livre fica a menos de 40 m da zona.
+Era ~1.300 vértices com o recorte a 5 m; agora 675. O limite de vértices do exclude_polygons do Valhalla (20.000, somando todas as zonas da rota) pede zonas leves.
 Requer shapely e pyproj.
 """
 import json
@@ -19,15 +22,17 @@ import pathlib
 import re
 import sys
 
-from pyproj import Transformer
-from shapely.geometry import LineString, Polygon, shape
-from shapely.ops import transform, unary_union
+from shapely.geometry import shape
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'curadoria'))
+import zona_rodovia_lib as L  # noqa: E402
 
 REFS = ('SP-127', 'BR-373', 'SP-129', 'SP-141', 'SP-280', 'BR-374')
-FOLGA_M = 40
+FOLGA_MIN_M = 40      # distância mínima garantida entre a zona e cada via livre
+ANTES_M = 30
+DEPOIS_M = 40
+LINHA_M = 8
 OUT = pathlib.Path(__file__).with_name('3554003_municipio.geojson')
-T = Transformer.from_crs(4326, 31983, always_xy=True).transform
-Ti = Transformer.from_crs(31983, 4326, always_xy=True).transform
 
 
 def livre(t):
@@ -41,20 +46,17 @@ def livre(t):
 
 
 def main(malha, osm):
-    Z = transform(T, shape(json.load(open(malha))['features'][0]['geometry']))
-    rod = [transform(T, LineString([(q['lon'], q['lat']) for q in e['geometry']])) for e in json.load(open(osm))['elements']
-           if 'highway' in e.get('tags', {}) and len(e.get('geometry') or []) >= 2 and livre(e['tags'])]
-    Z = Z.difference(unary_union(rod).buffer(FOLGA_M))
-    partes = [Polygon(g.exterior) for g in getattr(Z, 'geoms', [Z]) if g.geom_type == 'Polygon' and g.area > 20000]
-    Z = transform(Ti, unary_union(partes).simplify(5))
-    polys = [Z] if Z.geom_type == 'Polygon' else list(Z.geoms)
-    rnd = lambda c: [[round(x, 6), round(y, 6)] for x, y in c]
+    to_utm, to_ll = L.projecoes(31983)
+    Z = L.simplificar_para_dentro(L.sem_furos(to_utm(shape(json.load(open(malha))['features'][0]['geometry'])).buffer(0)), ANTES_M)
+    rod = L.vias_por_funcao(osm, to_utm, livre)
+    Z, _ = L.recortar(Z, rod, FOLGA_MIN_M + LINHA_M, simplificar_depois_m=DEPOIS_M, linha_simpl_m=LINHA_M)
+    dmin = L.verificar(Z, rod, FOLGA_MIN_M, 3)
     fc = {'type': 'FeatureCollection',
-          'fonte_geometria': f'IBGE, malha municipal (API v3, qualidade máxima); rodovias {", ".join(REFS)} (e motorway/trunk e alças) recortadas com folga de {FOLGA_M} m sobre o OpenStreetMap (ODbL 1.0)',
+          'fonte_geometria': f'IBGE, malha municipal (API v3, qualidade máxima); rodovias {", ".join(REFS)} (e motorway/trunk e alças) recortadas com folga mínima de {FOLGA_MIN_M} m sobre o OpenStreetMap (ODbL 1.0)',
           'features': [{'type': 'Feature', 'properties': {'descricao': 'Território do Município de Tatuí (Dec. 21.381/2021, art. 1º), sem as rodovias estaduais e federais', 'aproximado': False, 'rodovias_livres': list(REFS)},
-                        'geometry': {'type': 'MultiPolygon', 'coordinates': [[rnd(p.exterior.coords)] for p in polys]}}]}
+                        'geometry': L.para_geojson_coords(to_ll(Z))}]}
     OUT.write_text(json.dumps(fc, ensure_ascii=False, separators=(',', ':')))
-    print(f'{OUT}: {len(polys)} parte(s), {len(rod)} ways de rodovia')
+    print(f'{OUT.name}: {len(getattr(Z, "geoms", [Z]))} parte(s), {L.contar_vertices(Z)} vértices, {len(rod)} ways de rodovia, menor distância a elas {dmin:.0f} m')
 
 
 if __name__ == '__main__':
