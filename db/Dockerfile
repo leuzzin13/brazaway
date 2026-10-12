@@ -3,5 +3,5 @@
 # backend chegou a cair com "malloc(): invalid size". O pacote vem do repositório apt.postgresql.org já configurado na base.
 FROM postgres:16-bookworm
 RUN apt-get update -qq \
- && apt-get install -y -qq --no-install-recommends postgresql-16-postgis-3 postgresql-16-postgis-3-scripts \
+ && apt-get install -y -qq --no-install-recommends postgresql-16-postgis-3 postgresql-16-postgis-3-scripts postgresql-16-pgvector \
  && rm -rf /var/lib/apt/lists/*
