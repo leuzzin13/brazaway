@@ -3,13 +3,16 @@ import { query } from '../db.js';
 import { BboxQuery, CreateReport, VoteInput } from '../schemas.js';
 
 const COLS = `id, type, ST_AsGeoJSON(geom)::json as geometry, value_num::float as value_num, time_window, note,
-  score, status, (score > 0) as confirmed, created_at, updated_at`;
+  score, status, (score > 0) as confirmed, created_at, updated_at,
+  case when type::text in ('radar_movel','blitz') then
+    greatest(created_at, coalesce((select max(v.created_at) from report_votes v where v.report_id = reports.id and v.vote = 1), created_at))
+    + make_interval(secs => report_ttl_hours(type::text) * 3600) end as expires_at`;
 
 export async function reportRoutes(app: FastifyInstance) {
   app.get('/api/reports', async (req, reply) => {
     const q = BboxQuery.safeParse(req.query);
     if (!q.success) return reply.code(422).send({ error: 'VALIDATION', message: 'bbox=minLon,minLat,maxLon,maxLat obrigatório' });
-    await query('select expire_stale_road_closed()');
+    await query('select expire_stale_reports()');
     const r = await query(
       `select ${COLS} from reports where status = 'active' and geom && ST_MakeEnvelope($1,$2,$3,$4,4326)
        order by created_at desc limit 2000`,
@@ -20,6 +23,7 @@ export async function reportRoutes(app: FastifyInstance) {
 
   app.get('/api/reports/:id', async (req, reply) => {
     const { id } = req.params as { id: string };
+    await query('select expire_stale_reports()');
     const r = await query(`select ${COLS} from reports where id = $1`, [id]);
     if (!r.rowCount) return reply.code(404).send({ error: 'NOT_FOUND' });
     return r.rows[0];

@@ -23,7 +23,7 @@ const SELECT = `select id, type, ST_AsGeoJSON(geom)::json as geometry, value_num
 
 /** Reportes ativos que bloqueiam ESTE veículo no horário informado (regras na função SQL). */
 export async function blockingReports(v: Vehicle, at: Date): Promise<ReportRow[]> {
-  await query('select expire_stale_road_closed()');
+  await query('select expire_stale_reports()');
   // "proibido caminhão" não vale para VUC, mas só para o VUC que se enquadra (medidas e idade no ano da viagem) e tem AETC:
   // sem isso ele é caminhão comum (Portaria SMT.GAB 137/2018 art. 18), como na ZMRC e no rodízio (zones.ts).
   const vuc = isVucSP(v, DateTime.fromJSDate(at).setZone(env.tz).year) && !!v.has_aetc;
@@ -34,11 +34,30 @@ export async function blockingReports(v: Vehicle, at: Date): Promise<ReportRow[]
   return r.rows;
 }
 
-/** Reportes ativos (qualquer tipo) dentro de um bbox, para avisos de proximidade. */
+/** Tipos informativos de vida curta: nunca bloqueiam a rota, só geram aviso próprio (ver crowdAlertsInBbox). */
+export const ALERT_REPORT_TYPES = ['radar_movel', 'blitz'] as const;
+
+/** Reportes ativos (exceto radar_movel/blitz, que têm aviso próprio) dentro de um bbox, para avisos de proximidade. */
 export async function activeReportsInBbox(bbox: [number, number, number, number]): Promise<ReportRow[]> {
   const r = await query<ReportRow>(
-    `${SELECT} from reports r where status = 'active' and geom && ST_MakeEnvelope($1,$2,$3,$4,4326)`,
-    bbox,
+    `${SELECT} from reports r where status = 'active' and r.type::text <> all($5) and geom && ST_MakeEnvelope($1,$2,$3,$4,4326)`,
+    [...bbox, [...ALERT_REPORT_TYPES]],
+  );
+  return r.rows;
+}
+
+export interface CrowdAlertRow extends ReportRow { votes_up: number; votes_down: number; last_confirmed_at: string | null }
+
+/** Reportes ativos de radar_movel/blitz num bbox, com os votos (a expiração de 2 h roda antes, em expire_stale_reports). */
+export async function crowdAlertsInBbox(bbox: [number, number, number, number]): Promise<CrowdAlertRow[]> {
+  await query('select expire_stale_reports()');
+  const r = await query<CrowdAlertRow>(
+    `${SELECT},
+       (select count(*)::int from report_votes v where v.report_id = r.id and v.vote = 1) as votes_up,
+       (select count(*)::int from report_votes v where v.report_id = r.id and v.vote = -1) as votes_down,
+       (select max(v.created_at) from report_votes v where v.report_id = r.id and v.vote = 1) as last_confirmed_at
+     from reports r where r.status = 'active' and r.type::text = any($5) and geom && ST_MakeEnvelope($1,$2,$3,$4,4326)`,
+    [...bbox, [...ALERT_REPORT_TYPES]],
   );
   return r.rows;
 }

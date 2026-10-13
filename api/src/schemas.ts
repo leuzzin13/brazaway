@@ -43,7 +43,7 @@ export const RouteRequest = z.object({
 });
 export type RouteRequest = z.infer<typeof RouteRequest>;
 
-export const ReportTypes = ['low_clearance', 'weight_limit', 'length_limit', 'truck_ban', 'hazmat_ban', 'road_closed', 'steep_grade'] as const;
+export const ReportTypes = ['low_clearance', 'weight_limit', 'length_limit', 'truck_ban', 'hazmat_ban', 'road_closed', 'steep_grade', 'radar_movel', 'blitz'] as const;
 export type ReportType = (typeof ReportTypes)[number];
 
 const Position = z.tuple([z.number(), z.number()]);

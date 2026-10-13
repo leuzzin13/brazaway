@@ -5,7 +5,7 @@ import type { RouteRequest } from '../schemas.js';
 import { resolveVehicle } from './vehicle.js';
 import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
-import { activeReportsInBbox, blockingReports, reportToRing, type ReportRow } from './restrictions.js';
+import { activeReportsInBbox, blockingReports, crowdAlertsInBbox, reportToRing, type ReportRow } from './restrictions.js';
 import { activeZones, describeWindows, pointInZone, zoneApplies, zoneRings, type ZoneRow } from './zones.js';
 import { endpointHolidays, legalDayInfo, municipiosAt, SAO_PAULO_IBGE, type EndpointHolidays, type Holiday, type Municipio } from './calendar.js';
 import { etaPorHorario, type EtaHorario } from './etaHorario.js';
@@ -306,6 +306,28 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     }
   }
 
+  // 5b) Radar móvel e blitz reportados pela comunidade: SÓ aviso (nunca exclude_polygon). Expiram em 2 h (expire_stale_reports).
+  try {
+    const crowd = await crowdAlertsInBbox([minX - pad, minY - pad, maxX + pad, maxY + pad]);
+    for (const r of crowd) {
+      const d = minDistanceM(line, r.geometry);
+      if (d > env.warnRadiusM) continue;
+      const c = r.geometry.type === 'Point' ? r.geometry.coordinates : r.geometry.coordinates[0];
+      const km = turf.nearestPointOnLine(line, turf.point(c), { units: 'kilometers' }).properties.location;
+      const ageMin = Math.max(0, Math.round((Date.now() - new Date(r.created_at).getTime()) / 60000));
+      const idade = ageMin < 60 ? `${ageMin} min` : `${Math.floor(ageMin / 60)} h ${String(ageMin % 60).padStart(2, '0')} min`;
+      const conf = r.votes_up === 1 ? '1 confirmação' : `${r.votes_up} confirmações`;
+      const neg = r.votes_down ? ` e ${r.votes_down === 1 ? '1 negação' : `${r.votes_down} negações`}` : '';
+      const isBlitz = r.type === 'blitz';
+      warnings.push({
+        code: isBlitz ? 'blitz_reportada' : 'radar_movel_reportado', report_id: r.id, id: r.id, severity: 'info', lat: c[1], lon: c[0],
+        message: `${isBlitz ? 'Blitz' : 'Radar móvel'} reportada por motoristas há ${idade} (${conf}${neg}), a ${Math.round(d)} m da rota, no km ${String(km?.toFixed(1) ?? '?').replace('.', ',')}. Informação da comunidade, pode já ter saído.`,
+      });
+    }
+  } catch (err) {
+    warnings.push({ code: 'layer_error', layer: 'reports', severity: 'info', message: `Reportes de radar móvel/blitz indisponíveis nesta rota: ${(err as Error).message}` });
+  }
+
   // 6) Pontos de descanso ao longo da rota + plano de direção (Lei 13.103)
   let restStops: RestStop[] = [];
   try { restStops = await withTimeout(restStopsAlongRoute(line.geometry, restricted.distance_km, restricted.duration_s, undefined, { at, employment: vehicle.employment }), LAYER_POST_TIMEOUT_MS, 'pontos de descanso'); } catch { /* tabela vazia/erro: segue sem */ }
@@ -435,7 +457,7 @@ export function describeReport(r: { type: string; value_num: number | null }): s
   const labels: Record<string, string> = {
     low_clearance: 'viaduto baixo', weight_limit: 'limite de peso', length_limit: 'limite de comprimento',
     truck_ban: 'proibido caminhão', hazmat_ban: 'proibido carga perigosa', road_closed: 'via interditada',
-    steep_grade: 'subida íngreme',
+    steep_grade: 'subida íngreme', radar_movel: 'radar móvel', blitz: 'blitz',
   };
   const unit = r.type === 'weight_limit' || r.type === 'steep_grade' ? 't' : 'm';
   return `${labels[r.type] ?? r.type}${r.value_num != null ? ` ${String(r.value_num).replace('.', ',')} ${unit}` : ''}`;
