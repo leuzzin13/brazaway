@@ -1,0 +1,117 @@
+{
+  "ibge": "3137601",
+  "nome": "Lagoa Santa",
+  "uf": "MG",
+  "status": "pista",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/979CF285",
+      "resultado": "Lido por trechos: Decreto 3.538, de 01/02/2018, aprova o Plano de Mobilidade Urbana: lista como ação/diretriz 'a restrição de tráfego de veículos pesados nas seguintes vias: Av. Getúlio Vargas; R. Barão do Rio Branco; Av. Acadêmico Nilo Figueiredo; Praça Dr. Lund e Rua Conde Dolabela', e diz que o Executivo deverá normatizar por ato infralegal, faltando definir 'veículos pesados' e a extensão: é diretriz, não regra."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/EC37C0EE",
+      "resultado": "Lei 5.687/2025: horários de carga e descarga 'serão definidos por decreto' (não achado)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3137601 (amm-mg) 'circulação de caminhões', 'trânsito de veículos pesados', 'tráfego de caminhões', 'Conde Dolabela caminhões', 'restrição veículos pesados Avenida Getúlio Vargas', 'Nilo Figueiredo caminhões'",
+      "resultado": "Nenhum decreto posterior que institua a restrição do PlanMob. Decreto 3.949/2020 e Lei 5.476/2024 são taxas; Lei 4.077/2017 é resíduos/caçambas."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/mg/lagoa-santa",
+      "resultado": "403 Cloudflare (não contornado)."
+    },
+    {
+      "url": "https://www.lagoasanta.mg.gov.br/legislacao (portal_proprio)",
+      "resultado": "Cliente heurístico: 0 atos para os termos; não conclusivo."
+    },
+    {
+      "url": "Overpass (overpass.kumi.systems, overpass-api.de, overpass.private.coffee, maps.mail.ru)",
+      "resultado": "500/504/sem resposta pelo proxy desta máquina: ways com hgv/maxweight NÃO listados nesta rodada; vale só a contagem da preparação."
+    }
+  ],
+  "observacoes": "Só pista: o PlanMob (Dec. 3.538/2018) prevê restringir veículos pesados em 5 vias do centro e remete a ato infralegal futuro; não achei esse ato no AMM (2009-2026). Registrada regra desativada para rastreio. OSM: 2 ways com hgv=no na preparação, não listados (Overpass fora do ar). Recomenda-se checar o portal da prefeitura (leismunicipais bloqueado) por decreto posterior.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "OSM: 2 ways hgv=no na preparação, não listados; comparar com as vias do PlanMob (Av. Getúlio Vargas, R. Barão do Rio Branco, Av. Acadêmico Nilo Figueiredo, Praça Dr. Lund, R. Conde Dolabela)."
+  ],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [],
+      "id": "lagoa_santa_planmob_pesados_centro",
+      "tipo": "via",
+      "regime": "PlanMob (diretriz)",
+      "nome": "Lagoa Santa: restrição de tráfego de veículos pesados em vias centrais prevista no PlanMob",
+      "status": "desativada",
+      "status_motivo": "Diretriz do Plano de Mobilidade (Dec. 3.538/2018) que depende de ato infralegal não encontrado; sem definição de veículo pesado, horário ou extensão.",
+      "confianca": "baixa",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.538, de 01/02/2018 (aprova o Plano de Mobilidade Urbana, Transporte e Trânsito)",
+          "artigo": "texto do PlanMob: trecho 'a restrição de tráfego de veículos pesados nas seguintes vias' (seção de transporte de carga, Ações 36-37)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/979CF285"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "PlanMob",
+          "via": [
+            "Avenida Getúlio Vargas"
+          ],
+          "descricao": "Avenida Getúlio Vargas",
+          "aproximado": true
+        },
+        {
+          "inciso": "PlanMob",
+          "via": [
+            "Rua Barão do Rio Branco"
+          ],
+          "descricao": "Rua Barão do Rio Branco",
+          "aproximado": true
+        },
+        {
+          "inciso": "PlanMob",
+          "via": [
+            "Avenida Acadêmico Nilo Figueiredo"
+          ],
+          "descricao": "Avenida Acadêmico Nilo Figueiredo",
+          "aproximado": true
+        },
+        {
+          "inciso": "PlanMob",
+          "via": [
+            "Praça Doutor Lund"
+          ],
+          "descricao": "Praça Doutor Lund",
+          "aproximado": true
+        },
+        {
+          "inciso": "PlanMob",
+          "via": [
+            "Rua Conde Dolabela"
+          ],
+          "descricao": "Rua Conde Dolabela",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3137601_lagoa_santa_planmob.geojson",
+          "construir": "manual",
+          "como_gerar": "Só se o ato regulamentador for encontrado; vias pelo nome no OSM."
+        }
+      ]
+    }
+  ]
+}

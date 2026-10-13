@@ -1,0 +1,239 @@
+{
+ "ibge": "3502754",
+ "nome": "Araçariguama",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/3502754/2022-01-17/a00b6fa9887d5827e203f50668a1b0eab8cf6da0.txt",
+   "resultado": "LIDO. Diário Oficial de Araçariguama ed. 227, 17/01/2022 (https://www.aracariguama.sp.gov.br/diario-oficial/265/1): Decreto nº 3.635, de 05/01/2022, 'Proíbe o trânsito de caminhões e tratores nas ruas centrais...'. Art. 1º: proibido o trânsito de caminhões e tratores em 18 vias da Região Central; art. 2º: acesso só para utilidade pública (CTB 29), carga e descarga seg-sex 19h-10h, casos excepcionais com autorização do Demuttrans, VUC (largura ≤2,20 m e comprimento ≤7,20 m, art. 2º par. único; art. 3º VUC sem restrição de horário); art. 5º multa CTB 187; art. 6º vigor na publicação, revoga Decreto 2.092/2019."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3502754/2024-06-18/d85128d4f3237989bbdcaebf7912883aa46f4c9b.txt",
+   "resultado": "LIDO (trecho). Diário 18/06/2024: Plano de Mobilidade/ação 28 recomenda regulamentar restrições a carga; cita Decreto 2.049/2013 revogado pelo 2.902/2019 (sic) e NÃO cita o Decreto 3.635/2022 (indício de desconhecimento, não de revogação). Não é ato."
+  },
+  {
+   "url": "QD API api.queridodiario.org.br querystring 'caminhões e tratores' (município 3502754)",
+   "resultado": "Só 2 edições: 17/01/2022 (decreto) e 18/06/2024 (plano). Nenhuma revogação/alteração do Decreto 3.635 localizada."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3502754 (Siscam Câmara, Instar prefeitura; --texto)",
+   "resultado": "Siscam só lista leis do Legislativo (decretos do Executivo ausentes); legislacaodigital.com.br 403 Cloudflare; Instar sem decreto relevante. Nenhum ato posterior sobre caminhões."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3502754 'Decreto 3635' / 'trânsito de caminhões'",
+   "resultado": "0 resultados em doesp/apm/dosp/qd (consulta ao QD pela ferramenta)."
+  },
+  {
+   "url": "QD API api.queridodiario.org.br territory 3502754, desde 2022-01-01 (verificador)",
+   "resultado": "Termos 'tratores' (7 edições: só o decreto de 17/01/2022 é pertinente), 'caminhões' (9, licitações e plano de mobilidade), 'Demuttrans' (24, sem restrição de circulação), 'VUC' (0), '3635' (0). Nenhum ato posterior sobre o Decreto 3.635."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Decreto 3.635/2022 vigente até prova em contrário (nenhuma revogação achada; busca em decretos do Executivo limitada: portal Instar e diários consolidados). 18 vias do centro; sem horário de proibição: ban permanente, exceto carga e descarga seg-sex 19h-10h (modelado como exceção). 'Caminhões e tratores', sem limite de PBT. OSM maxweight=4 não investigado (pendência). Sinalização in loco não conferida. | Verificado em 2026-10-11: Decreto 3.635/2022 relido no Diário Oficial ed. 227 (17/01/2022, texto QD): arts. 1º (18 vias) a 6º conferem; o art. 2º, I, cita o CTB art. 29, inciso VIII. A busca na API do Querido Diário (cobertura até 09/10/2026) por 'tratores', 'Demuttrans', 'carga e descarga', 'VUC' e '3635' de 2022 em diante só devolve o próprio decreto e atos sem relação. Nenhuma revogação ou alteração foi achada. Regra confirmada.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM com maxweight (4 ways) na preparação; não cruzado com as 18 vias do decreto (pendência)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "aracariguama_centro_caminhoes_tratores",
+   "tipo": "via",
+   "regime": "Proibição de trânsito de caminhões e tratores no centro",
+   "nome": "Araçariguama: 18 vias da Região Central, trânsito de caminhões e tratores proibido",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 7.2,
+    "exige_cadastro": false,
+    "orgao": "Demuttrans",
+    "artigo": "Decreto 3.635/2022, art. 2º, par. único e art. 3º"
+   },
+   "autorizacao": "Autorização excepcional do Departamento Municipal de Transporte e Trânsito (Demuttrans), art. 2º, III",
+   "excecoes": [
+    "Art. 2º, I: prestadores de serviço de utilidade pública (CTB art. 29)",
+    "Art. 2º, II: carga e descarga seg-sex 19h às 10h",
+    "Art. 2º, III: casos excepcionais com autorização do Demuttrans",
+    "Art. 2º, IV e art. 3º: VUC (largura ≤2,20 m e comprimento ≤7,20 m)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 3.635, de 05/01/2022 (Diário Oficial de Araçariguama ed. 227, 17/01/2022)",
+     "artigo": "arts. 1º a 6º",
+     "url": "https://data.queridodiario.ok.org.br/3502754/2022-01-17/a00b6fa9887d5827e203f50668a1b0eab8cf6da0.txt",
+     "nota": "Original: https://www.aracariguama.sp.gov.br/diario-oficial/265/1"
+    }
+   ],
+   "nota": "Janela 24h por simplificação: o decreto permite carga/descarga seg-sex 19h-10h (exceção para entrega local, não trânsito livre).",
+   "vigencia_inicio": "2022-01-17",
+   "trechos": [
+    {
+     "inciso": "1",
+     "via": [
+      "Rua da Penha"
+     ],
+     "descricao": "Rua da Penha",
+     "aproximado": true
+    },
+    {
+     "inciso": "2",
+     "via": [
+      "Rua Aparecida (trecho entre Av. Nicolau Ferreira de Souza e Alameda 19 de Maio)"
+     ],
+     "descricao": "Rua Aparecida (trecho entre Av. Nicolau Ferreira de Souza e Alameda 19 de Maio)",
+     "aproximado": true
+    },
+    {
+     "inciso": "3",
+     "via": [
+      "Rua Coronel Joaquim Augusto"
+     ],
+     "descricao": "Rua Coronel Joaquim Augusto",
+     "aproximado": true
+    },
+    {
+     "inciso": "4",
+     "via": [
+      "Rua Castor Eugênio de Andrade"
+     ],
+     "descricao": "Rua Castor Eugênio de Andrade",
+     "aproximado": true
+    },
+    {
+     "inciso": "5",
+     "via": [
+      "Rua Eloy Chaves"
+     ],
+     "descricao": "Rua Eloy Chaves",
+     "aproximado": true
+    },
+    {
+     "inciso": "6",
+     "via": [
+      "Travessa São Benedito"
+     ],
+     "descricao": "Travessa São Benedito",
+     "aproximado": true
+    },
+    {
+     "inciso": "7",
+     "via": [
+      "Avenida Nicolau Ferreira de Souza (trecho entre Rua Leopoldo da Silva e Rua Aparecida)"
+     ],
+     "descricao": "Avenida Nicolau Ferreira de Souza (trecho entre Rua Leopoldo da Silva e Rua Aparecida)",
+     "aproximado": true
+    },
+    {
+     "inciso": "8",
+     "via": [
+      "Rua Santa Cruz"
+     ],
+     "descricao": "Rua Santa Cruz",
+     "aproximado": true
+    },
+    {
+     "inciso": "9",
+     "via": [
+      "Rua Príncipe Regente"
+     ],
+     "descricao": "Rua Príncipe Regente",
+     "aproximado": true
+    },
+    {
+     "inciso": "10",
+     "via": [
+      "Rua Guilherme Pompeu de Almeida"
+     ],
+     "descricao": "Rua Guilherme Pompeu de Almeida",
+     "aproximado": true
+    },
+    {
+     "inciso": "11",
+     "via": [
+      "Rua São João"
+     ],
+     "descricao": "Rua São João",
+     "aproximado": true
+    },
+    {
+     "inciso": "12",
+     "via": [
+      "Rua Heitor Boccato"
+     ],
+     "descricao": "Rua Heitor Boccato",
+     "aproximado": true
+    },
+    {
+     "inciso": "13",
+     "via": [
+      "Rua Padre Belchior Pontes"
+     ],
+     "descricao": "Rua Padre Belchior Pontes",
+     "aproximado": true
+    },
+    {
+     "inciso": "14",
+     "via": [
+      "Travessa Hirant Sanazar"
+     ],
+     "descricao": "Travessa Hirant Sanazar",
+     "aproximado": true
+    },
+    {
+     "inciso": "15",
+     "via": [
+      "Rua Paraíba"
+     ],
+     "descricao": "Rua Paraíba",
+     "aproximado": true
+    },
+    {
+     "inciso": "16",
+     "via": [
+      "Avenida Barueri"
+     ],
+     "descricao": "Avenida Barueri",
+     "aproximado": true
+    },
+    {
+     "inciso": "17",
+     "via": [
+      "Rua do Imperador"
+     ],
+     "descricao": "Rua do Imperador",
+     "aproximado": true
+    },
+    {
+     "inciso": "18",
+     "via": [
+      "Estrada Prefeito Domingos Marucci"
+     ],
+     "descricao": "Estrada Prefeito Domingos Marucci",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

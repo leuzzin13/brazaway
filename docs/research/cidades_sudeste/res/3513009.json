@@ -1,0 +1,143 @@
+{
+ "ibge": "3513009",
+ "nome": "Cotia",
+ "uf": "SP",
+ "status": "regra_sem_ato",
+ "fontes_consultadas": [
+  {
+   "url": "https://penaestrada.com.br/restricoes/cotia/",
+   "resultado": "Pé na Estrada (2018): 'Não possui restrições' (contato Demutran). Fraco; contradito pelas placas noticiadas pela Prefeitura."
+  },
+  {
+   "url": "https://cotia.sp.gov.br/dia-21-08-comeca-a-fiscalizacao-de-velocidade-na-estr-velha-de-cotia/",
+   "resultado": "LIDO. Notícia oficial da Prefeitura de 16/08/2023: fiscalização eletrônica de caminhões na Estrada Velha de Cotia (altura do nº 740, próximo ao Assaí) a partir de 21/08/2023; a placa 'restrição de caminhões acima de 10 toneladas' foi substituída por 'proibido caminhões acima de 2 eixos'. Não cita ato."
+  },
+  {
+   "url": "https://cotia.sp.gov.br/prefeitura-implanta-sinalizacao-em-via-com-restricao-de-circulacao-de-caminhoes/",
+   "resultado": "LIDO. Notícia oficial de 26/04/2022: placas de proibição de caminhões na Rua Rio Maicure (Jd. da Glória); tráfego permitido só a VUC; o secretário diz que os tubos de concreto antigos 'não era medida regulamentada'. Não cita ato."
+  },
+  {
+   "url": "https://cotia.siscam.com.br (Câmara, legislacao.py buscar, termos caminh|pesad|carga e descarga|tráfego|veículos de carga|eixos)",
+   "resultado": "44 normas por ementa; nenhuma de restrição de circulação de caminhões. Achados pontuais não lidos (texto no legislacaodigital.com.br, 403 Cloudflare): Decreto 3.254/1998 (horário de carga e descarga no perímetro urbano) e Decreto 3.709/1999 (carga e descarga 8h-10h, seg-sex, em estabelecimentos comerciais)."
+  },
+  {
+   "url": "https://cotia.sp.gov.br/wp-json/wp/v2/search (Estrada Velha de Cotia eixos; proibido caminhões; Rio Maicure)",
+   "resultado": "Só as 2 notícias acima."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3513009 (Estrada Velha de Cotia; Rio Maicure; proibido caminhões; 2 eixos) fontes doesp,qd",
+   "resultado": "0 resultado em todos. Cotia não tem slug no DOSP."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/cotia",
+   "resultado": "403 Cloudflare (não contornado)"
+  }
+ ],
+ "observacoes": "Há restrição real sinalizada e fiscalizada eletronicamente (Estrada Velha de Cotia, caminhões acima de 2 eixos desde 21/08/2023; antes, acima de 10 t) e Rua Rio Maicure (só VUC), ambas noticiadas pela Prefeitura, mas o ato (decreto/portaria da Setram) não foi localizado: nem Siscam da Câmara, nem DOE-SP, nem Querido Diário. Regras entram como desativadas. Pendência: pedir o ato à Setram/Demutran (e-SIC) ou achar o decreto no Legislação Digital (403). Os decretos de carga e descarga 3.254/1998 e 3.709/1999 são pontuais (não lidos).",
+ "osm_divergencias": [
+  "OSM da preparação: maxweight=9 e maxlength=1 em Cotia; não conferido nesta passada se algum corresponde à Estrada Velha (acima de 2 eixos) ou à Rio Maicure. Pendência."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "cotia_estrada_velha_2eixos",
+   "tipo": "via",
+   "regime": "Acima de 2 eixos",
+   "nome": "Cotia: Estrada Velha de Cotia, caminhões acima de 2 eixos",
+   "status": "desativada",
+   "status_motivo": "Placa e fiscalização noticiadas pela Prefeitura, mas sem ato primário com número e artigo localizado; extensão do trecho e horários desconhecidos.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "sem ato localizado (placa 'proibido caminhões acima de 2 eixos' noticiada pela Prefeitura em 16/08/2023)",
+     "artigo": "n/d",
+     "url": "https://cotia.sp.gov.br/dia-21-08-comeca-a-fiscalizacao-de-velocidade-na-estr-velha-de-cotia/"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Estrada Velha de Cotia"
+     ],
+     "descricao": "Equipamento de fiscalização na altura do nº 740 (próximo ao Assaí); extensão do trecho restrito desconhecida",
+     "aproximado": true
+    }
+   ],
+   "nota": "Antes de 21/08/2023 a placa dizia 'restrição de caminhões acima de 10 toneladas'."
+  },
+  {
+   "id": "cotia_rio_maicure_so_vuc",
+   "tipo": "via",
+   "regime": "Só VUC",
+   "nome": "Cotia: Rua Rio Maicure (Jd. da Glória), proibido caminhões (só VUC)",
+   "status": "desativada",
+   "status_motivo": "Placas noticiadas, sem ato primário localizado; definição de VUC desconhecida.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "VUC (veículo urbano de carga) autorizado, segundo a notícia"
+   ],
+   "base_legal": [
+    {
+     "ato": "sem ato localizado (placas implantadas pela Setram em 26/04/2022)",
+     "artigo": "n/d",
+     "url": "https://cotia.sp.gov.br/prefeitura-implanta-sinalizacao-em-via-com-restricao-de-circulacao-de-caminhoes/"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Rua Rio Maicure"
+     ],
+     "descricao": "Rua Rio Maicure, Jardim da Glória",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "falha_de_fonte": false
+}

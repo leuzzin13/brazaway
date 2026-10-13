@@ -1,0 +1,94 @@
+{
+ "ibge": "3202900",
+ "nome": "Itarana",
+ "uf": "ES",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11159/238",
+   "resultado": "DOM/ES Ed. 3.010, 25/05/2026, p. 238: texto lido do Decreto 2.351/2026 (arts. 1º e 2º). Cópia em atos/3202900/DOMES_3010_p238_decreto_2351_2026.pdf"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11159/239",
+   "resultado": "DOM/ES Ed. 3.010 p. 239: arts. 3º a 6º (sinalização, rotas alternativas, fiscalização, penalidades CTB, vigência na publicação). Cópia em atos/3202900/DOMES_3010_p239.pdf"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': busca 'tráfego de veículos pesados' devolve só este decreto; nenhum ato posterior de alteração ou revogação encontrado"
+  },
+  {
+   "url": "http://spl.camaraitarana.es.gov.br/legislacao/",
+   "resultado": "legislacao.py: formulário SPL não encontrado (falha da ferramenta); portal da prefeitura https://itarana.es.gov.br/legislacao_view/1 sem resultado na busca heurística"
+  }
+ ],
+ "observacoes": "Decreto municipal 2.351, de 22/05/2026 (DOM/ES 25/05/2026, pág. 238-239): proíbe o tráfego de veículos pesados na via rural pavimentada da comunidade de Santa Rita, especialmente entre a ES-164 e o interior da comunidade (art. 1º); a restrição vale para PBT superior a 23 t, em especial cargas de grande porte como blocos de granito (art. 1º, §§ 1º e 2º); sem janela de horário (24 h, todos os dias, sem menção a feriados). Exceção: autorização prévia da Secretaria Municipal de Transportes, Obras e Serviços Urbanos para serviços essenciais, interesse público e emergências (art. 2º). Motivo: proteção do calçamento da obra Contrato 095/2023. Vigência na publicação (art. 6º). Via rural de pequena extensão; o decreto não nomeia a via nem dá extensão: geometria deve ser definida a partir do ato/sinalização (trecho aproximado). Pendência: confirmar nome/extensão da via no OSM antes de implementar; considerar excluir do roteamento só se a via for roteável por caminhão (o decreto proíbe exatamente o acesso à comunidade, que pode ser destino de cargas de granito).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "itarana_santa_rita_pbt23",
+   "tipo": "via",
+   "regime": "Veículos pesados PBT > 23 t (via rural)",
+   "nome": "Itarana: via rural pavimentada da comunidade de Santa Rita (ES-164 até o interior da comunidade), PBT acima de 23 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 23
+     }
+    ]
+   },
+   "autorizacao": "Autorização prévia da Secretaria Municipal de Transportes, Obras e Serviços Urbanos (Decreto 2.351/2026, art. 2º)",
+   "excecoes": [
+    "Art. 2º: com autorização prévia, serviços essenciais, atendimento de interesse público e situações emergenciais justificadas"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 2.351/2026, de 22/05/2026 (DOM/ES Ed. 3.010, 25/05/2026)",
+     "artigo": "art. 1º, caput e §§ 1º e 2º (proibição, PBT > 23 t); art. 2º (exceções); art. 6º (vigência)",
+     "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11159/238",
+     "nota": "Continuação nas págs. 239 (arts. 3º a 6º): https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11159/239"
+    }
+   ],
+   "vigencia_inicio": "2026-05-25",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Estrada de Santa Rita"
+     ],
+     "descricao": "Via rural pavimentada da comunidade de Santa Rita, do entroncamento com a ES-164 até o interior da comunidade (nome e extensão não informados no decreto)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3202900_itarana.geojson",
+     "construir": "manual"
+    }
+   ],
+   "nota": "Decreto não nomeia a via nem fixa extremos: nome 'Estrada de Santa Rita' é hipótese de busca no OSM; precisa de verificação de geometria."
+  }
+ ]
+}

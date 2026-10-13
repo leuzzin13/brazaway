@@ -1,0 +1,72 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3112604",
+  "municipio": "Capinópolis",
+  "uf": "MG",
+  "fonte_id": "capinopolis",
+  "fonte": {
+    "url": "https://capinopolis.mg.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=4539&idtipolei=7 (Decreto 3.471/2012)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria de registro: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Dec. 3.471/2012: caminhões de carga proibidos nas vias do Bairro Ideal I e da Parte Primitiva da cidade, exceto destino no perímetro urbano. Áreas não delimitadas no ato nem no OSM: regra desativada (sem geometria confiável)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "capinopolis_ideal1_parte_primitiva",
+      "tipo": "zona",
+      "regime": "Caminhão proibido (sem horário), exceto destino final",
+      "nome": "Capinópolis: Bairro Ideal I e Parte Primitiva, trânsito de caminhão/caminhão-trator/reboque/semirreboque de carga proibido",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: o decreto não descreve os limites do Bairro Ideal I nem da 'Parte Primitiva' (o Anexo I é o mapa do Plano Rodoviário Municipal de 2005) e o OSM não tem esses bairros. Pendência: obter a delimitação na Prefeitura.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Dec. 3.471/2012, art. 2º (destinação final dentro do perímetro urbano para carga e descarga, estacionamento, guarda e manutenção)",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º: veículo com destino final dentro do perímetro urbano para carga e descarga, estacionamento, guarda e manutenção do veículo",
+        "Art. 3º: desvio pelo entroncamento da estrada municipal 090 com a 240 até a MG-154"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.471, de 11/09/2012 (Capinópolis)",
+          "artigo": "art. 1º (proibição), art. 2º (exceção de destino), art. 3º (desvio), art. 4º (CTB art. 187, I), art. 5º (Anexo I), art. 6º (vigência)",
+          "url": "https://capinopolis.mg.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=4539&idtipolei=7"
+        }
+      ],
+      "nota": "A pesquisa trazia origem_destino_dentro = 'permite' (valor fora do formato): a exceção de destino vai em excecao_destino_local. Registro no município inteiro só para aviso.",
+      "fonte_geometria": "IBGE Malha Municipal (3112604), só de registro",
+      "vigencia_inicio": "2012-09-11",
+      "geometria": [
+        {
+          "municipios": [
+            "3112604"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ]
+    }
+  ]
+}

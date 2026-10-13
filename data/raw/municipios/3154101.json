@@ -1,0 +1,99 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3154101",
+  "municipio": "Recreio",
+  "uf": "MG",
+  "fonte_id": "recreio",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/37883BA7 (Dec. 016/2013, republicado no DOM-AMM ed. 1053, 14/08/2013)",
+    "licenca": "Ato oficial de Recreio: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), traçado pela malha do Valhalla.",
+    "notas": "Estrada municipal Recreio-Angaturama, PBT acima de 12 t proibido em qualquer dia e horário (Dec. 016/2013, art. 1º, I). Estrada sem nome no OSM: traçado aproximado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o critério é PBT acima de 12 t.",
+  "regras": [
+    {
+      "id": "recreio_estrada_recreio_angaturama_12t",
+      "tipo": "via",
+      "regime": "Estrada Recreio-Angaturama (PBT > 12 t)",
+      "nome": "Recreio: estrada municipal Recreio-Angaturama, proibido veículo de carga com PBT > 12 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "Autorização Especial expedida pela Secretaria Municipal de Administração (Decreto 016/2013, art. 2º)",
+      "excecoes": [
+        "Art. 2º: circulação em desacordo só com Autorização Especial da Secretaria Municipal de Administração"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 016, de 24/04/2013 (republicado no DOM-AMM ed. 1053, 14/08/2013)",
+          "artigo": "art. 1º, I; art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/37883BA7",
+          "nota": "Texto lido no Diário Oficial dos Municípios Mineiros; em vigor na data da publicação (art. 7º). Sem alteração/revogação achada. Não confirmado em portal oficial."
+        }
+      ],
+      "nota": "Os 4 ways com hgv=no citados na preparação não aparecem no PBF usado pelo Valhalla (só hgv=discouraged em estradas de terra do município). Data de publicação original não aparece; a republicação é de 14/08/2013.",
+      "fonte_geometria": "Traçado aproximado pela malha do Valhalla (OSM, ODbL) entre a sede e Angaturama: a estrada não tem nome no OSM.",
+      "vigencia_inicio": "2013-04-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "Estrada Recreio-Angaturama"
+          ],
+          "de": {
+            "lonlat": [
+              -42.470949,
+              -21.516635
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -42.415938,
+              -21.479048
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 2000,
+          "aproximado": true,
+          "descricao": "Estrada municipal Recreio-Angaturama (extensão rural, da saída da sede pela Rua Sapê à entrada do distrito de Angaturama)",
+          "nota": "A estrada não tem nome nem ref no OSM: traçado APROXIMADO = caminho mais curto do Valhalla (auto) entre o fim da Rua Sapê, na sede, e o começo da Rua Presidente Carlos Luz, na entrada de Angaturama (estradas de terra sem nome). Há outros caminhos de terra na região; conferir com a prefeitura."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3154101_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

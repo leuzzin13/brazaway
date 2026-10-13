@@ -1,0 +1,96 @@
+{
+ "ibge": "3550407",
+ "nome": "São Pedro",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://saopedro.siscam.com.br (toolkit legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|zona de restrição|zona de restricao)",
+   "resultado": "siscam: 5 atos retornados; filtrados por ementa à mão. Achado: Lei 3.195/2014."
+  },
+  {
+   "url": "https://saopedro.siscam.com.br/Documentos/Documento/16560",
+   "resultado": "Lei 3.195, de 19/05/2014, PDF (/arquivo?Id=13336) baixado e lido: atos/3550407/lei3195_2014.pdf."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3550407 'Elísio|Serra de São Pedro|veículo de carga|3195'",
+   "resultado": "Nenhuma lei posterior de alteração/revogação. Lei 4.476/2023 denomina a balança de pesagem instalada na mesma estrada vicinal (coerente com a restrição vigente)."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar",
+   "resultado": "diarios_consolidados.py buscar (doesp, apm, dosp, qd): 'circulação de caminhões' e 'trânsito de caminhões' = 0 resultado(s) em cada fonte."
+  },
+  {
+   "url": "https://saopedro.siscam.com.br/Documentos/Documento/16560",
+   "resultado": "Verificador 2026-10-11: situação 'EM VIGOR'; PDF re-lido. api.queridodiario.ok.org.br: falha de handshake TLS pelo proxy (não consultado)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 3.195/2014, art. 1: proibido tráfego de veículos de carga acima de 3 eixos na Rodovia (Estrada Vicinal) Elísio de Paula Teixeira, trecho da Serra de São Pedro, ambos sentidos, 24 h, todos os dias; parágrafo único: autorizações especiais temporárias da Coordenadoria de Trânsito para destino urbano/rural no alto da Serra; art. 2: exceção urgência, socorro mecânico, obras e serviços de emergência; art. 5: Executivo pode suspender até 180 dias. Regulamentação por portaria (art. 7) não localizada. Vigência: sem revogação localizada (não há campo de situação confirmado). OSM não consultado. Pendência: confirmar portaria e se há ato posterior suspendendo. | Verificado em 2026-10-11: PDF re-baixado (arquivo?Id=13336), idêntico; Siscam marca 'EM VIGOR'; busca por ementa (3195|Elísio|Serra|vicinal|veículo de carga) sem lei de alteração ou revogação. Querido Diário inacessível daqui (falha TLS no proxy). Portaria de regulamentação (arts. 2 e 7) e eventual suspensão do art. 5 continuam sem localização. Regra confirmada.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saopedro_serra_elisio_teixeira_3eixos",
+   "tipo": "via",
+   "regime": "Lei 3.195/2014",
+   "nome": "São Pedro: Estrada Vicinal Elísio de Paula Teixeira (Serra de São Pedro), proibidos veículos de carga com mais de 3 eixos",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "Veículos de urgência",
+    "Socorro mecânico de emergência",
+    "Obras e serviços de emergência",
+    "Autorização especial temporária (destino urbano ou alto da Serra)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.195, de 19/05/2014",
+     "artigo": "art. 1º, parágrafo único e art. 2º",
+     "url": "https://saopedro.siscam.com.br/Documentos/Documento/16560"
+    }
+   ],
+   "vigencia_inicio": "2014-05-19",
+   "trechos": [
+    {
+     "via": "Rodovia/Estrada Vicinal Elísio de Paula Teixeira",
+     "descricao": "trecho da Serra de São Pedro, ambos os sentidos",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3550407_elisio_paula_teixeira.geojson",
+     "construir": "manual",
+     "como_gerar": "Estrada Vicinal Elísio de Paula Teixeira na descida da Serra de São Pedro, pelo OSM"
+    }
+   ]
+  }
+ ]
+}

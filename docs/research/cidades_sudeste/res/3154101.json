@@ -1,0 +1,97 @@
+{
+  "ibge": "3154101",
+  "nome": "Recreio",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/37883BA7",
+      "resultado": "Decreto 016, de 24/04/2013 (republicado no DOM-AMM ed. 1053, 14/08/2013) lido na íntegra: proíbe na estrada municipal Recreio-Angaturama veículos de carga com PBT > 12 t, mesmo vazios, em qualquer dia e horário; circulação só com Autorização Especial da Secretaria Municipal de Administração (art. 2º)."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3154101 (amm-mg): 'Recreio-Angaturama', 'carga pesada', 'Decreto 016'",
+      "resultado": "Só o Decreto 016/2013 trata do tema; outros Decretos 016 (2014/2015/2016) são de matérias diversas. Nenhuma alteração ou revogação achada."
+    },
+    {
+      "url": "https://recreio.mg.leg.br/leis.html (toolkit legislacao.py buscar 3154101 'caminh|pesad|carga|tráfego|trafego|circula')",
+      "resultado": "0 atos de trânsito/carga; página lista leis ordinárias 2016-2017 em texto corrido (cliente heurístico, cobertura limitada). Decretos do Executivo não estão nessa página."
+    },
+    {
+      "url": "https://overpass.private.coffee/api/interpreter e overpass.kumi.systems (area IBGE 3154101)",
+      "resultado": "falhou (erro/timeout em 3 tentativas); contagem de preparação: hgv=no em 4 ways, sem detalhe."
+    }
+  ],
+  "observacoes": "Decreto 016/2013: proibição de veículos de carga com PBT > 12 t, carregados ou não, em qualquer dia e horário, na estrada municipal Recreio-Angaturama (estrada rural entre a sede e o distrito de Angaturama); Autorização Especial da Secretaria Municipal de Administração (modelo por Portaria, art. 4º); fiscalização pela PM (art. 5º). Título geral 'ordenamento da circulação de veículos de carga pesada no município', mas o art. 1º traz só essa estrada (o decreto parece ter sido pensado para ter mais incisos; só o inciso I consta no texto publicado). Não há horário de exceção nem VUC. O OSM tem 4 ways com hgv=no no município (preparação), não detalhados nesta rodada por falha do Overpass: verificar se são a estrada Recreio-Angaturama. Sem confirmação em portal oficial (portal da Câmara não lista decretos).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "4 ways com hgv=no no OSM (contagem da preparação), sem detalhe; conferir se coincidem com a estrada Recreio-Angaturama do Decreto 016/2013."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "recreio_estrada_recreio_angaturama_12t",
+      "tipo": "via",
+      "regime": "Estrada Recreio-Angaturama (PBT > 12 t)",
+      "nome": "Recreio: estrada municipal Recreio-Angaturama, proibido veículo de carga com PBT > 12 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial expedida pela Secretaria Municipal de Administração (Decreto 016/2013, art. 2º)",
+      "excecoes": [
+        "Art. 2º: circulação em desacordo só com Autorização Especial da Secretaria Municipal de Administração"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 016, de 24/04/2013 (republicado no DOM-AMM ed. 1053, 14/08/2013)",
+          "artigo": "art. 1º, I; art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/37883BA7",
+          "nota": "Texto lido no Diário Oficial dos Municípios Mineiros; em vigor na data da publicação (art. 7º). Sem alteração/revogação achada. Não confirmado em portal oficial."
+        }
+      ],
+      "vigencia_inicio": "2013-04-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "Estrada Recreio-Angaturama",
+            "Estrada Recreio - Angaturama"
+          ],
+          "descricao": "Estrada municipal Recreio-Angaturama (extensão inteira; nome no OSM a conferir)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3154101_recreio_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

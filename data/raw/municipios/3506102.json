@@ -1,0 +1,193 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3506102",
+  "municipio": "Bebedouro",
+  "uf": "SP",
+  "fonte_id": "bebedouro",
+  "fonte": {
+    "url": "https://bebedouro.siscam.com.br/arquivo?Id=33274 (Dec. 11.503/2015, DO eletrônico ed. 479, 05/05/2015) ; https://bebedouro.siscam.com.br/arquivo?Id=30935 (Lei 4.887/2014) ; https://bebedouro.siscam.com.br/arquivo?Id=28659 e https://bebedouro.siscam.com.br/arquivo?Id=29739 (Leis 2.675/1997 e 3.720/2007)",
+    "licenca": "Atos oficiais de Bebedouro: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: polígono pelos cruzamentos das vias-limite no OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 11.503/2015 (regulamenta a Lei 4.887/2014): no interior do quadrilátero R. Campos Sales / R. Vanor Junqueira Franco / R. Brandão Veras / R. N. Sra. de Fátima (vias-limite livres), caminhão com comprimento acima de 6,30 m ou largura acima de 2,20 m proibido seg–sex 9h–18h e sáb 9h–14h, exceto feriados e domingos sem comércio. Desativadas: Zona Azul 6,30–12 m (Lei 4.887, art. 3º: redação permissiva e área não conferida) e cana/vinhaça no perímetro urbano (critério de carga)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "exige_cadastro": false,
+    "orgao": "Departamento Municipal de Trânsito e Transportes",
+    "artigo": "Lei 4.887/2014, art. 5º, I; Dec. 11.503/2015, art. 1º, parágrafo único",
+    "nota": "O art. 5º, I, da Lei 4.887 fala em vagas de curta duração regulamentadas para o VUC; o decreto define a proibição só para veículos acima de 6,30 m e 2,20 m."
+  },
+  "regras": [
+    {
+      "id": "bebedouro_quadrilatero_central",
+      "tipo": "zona",
+      "regime": "Quadrilátero central (comércio)",
+      "nome": "Bebedouro: interior do quadrilátero Campos Sales / Vanor Junqueira Franco / Brandão Veras / N. Sra. de Fátima — caminhão > 6,30 m ou > 2,20 m em horário comercial",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 6.3
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.2
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial do Departamento Municipal de Trânsito e Transportes para concreto, material de construção, mudanças e outros casos excepcionais, com endereço e horário (Dec. 11.503/2015, art. 6º); áreas de pedestres só com autorização (art. 4º); eventos (art. 7º)",
+      "excecoes": [
+        "Art. 8º: caminhões de serviços essenciais e de emergência, socorro mecânico de emergência, obras e serviços de emergência, Correios e serviço emergencial de sinalização de trânsito",
+        "Art. 3º, parágrafo único: as quatro vias-limite (Ruas Campos Sales, Brandão Veras, Vanor Junqueira Franco e Nossa Senhora de Fátima) não têm proibição",
+        "Art. 1º: não vale nos feriados e domingos em que o comércio não estiver funcionando",
+        "Lei 4.887/2014, art. 4º: veículos do art. 29, VII e VIII, do CTB"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 11.503, de 29/04/2015 (DO eletrônico de Bebedouro, Edição 479, 05/05/2015)",
+          "artigo": "art. 1º, I e II (seg–sex 9h–18h; sáb 9h–14h; exceto feriados e domingos sem comércio) e parágrafo único (> 6,30 m e 2,20 m); art. 3º (quadrilátero) e parágrafo único (vias-limite livres); art. 8º (exceções); art. 11 (vigência na publicação)",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=33274"
+        },
+        {
+          "ato": "Lei municipal 4.887, de 12/08/2014 (DO Edição 309, 14/08/2014)",
+          "artigo": "art. 1º e 2º (restrição por área a individualizar em decreto); art. 5º, I (VUC 6,30 × 2,20 m); art. 6º revogado pela LC 117/2016, art. 58",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=30935"
+        }
+      ],
+      "nota": "Vigência do decreto na publicação; os primeiros 60 dias foram educativos (art. 9º, par. único). A notícia da Prefeitura de 14/05/2015 diz que a proibição vale nas quatro ruas; o decreto diz o interior do quadrilátero e libera as vias-limite — seguir o decreto. Predicado 'qualquer' (comprimento OU largura) = lado seguro coerente com a definição de VUC (até 6,30 E até 2,20).",
+      "fonte_geometria": "Polígono pelos cruzamentos dos eixos das quatro vias-limite no OSM (ODbL); as vias-limite ficam livres pelo recuo de 20 m da camada (art. 3º, parágrafo único)",
+      "vigencia_inicio": "2015-04-29",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3506102_quadrilatero_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Quadrilátero com vértices nos cruzamentos dos eixos (OSM) R. Campos Salles × R. Vanor Junqueira Franco, R. Campos Salles × R. Doutor Brandão Veras, R. Doutor Brandão Veras × R. Nossa Senhora de Fátima e R. Nossa Senhora de Fátima × R. Vanor Junqueira Franco (Dec. 11.503/2015, art. 3º); as quatro vias são retas"
+        }
+      ]
+    },
+    {
+      "id": "bebedouro_zona_azul_6_12m",
+      "tipo": "zona",
+      "regime": "Zona Azul (6,30–12 m)",
+      "nome": "Bebedouro: Zona Azul — caminhão de 6,30 a 12 m só das 18h às 9h (Lei 4.887/2014, art. 3º)",
+      "status": "desativada",
+      "status_motivo": "Redação permissiva ('estará permitida ... nos horários das 18h às 09h') sem dias da semana; a área (Zona Azul, Anexo I do Dec. 11.502/2015) não foi conferida e é diferente do quadrilátero que o Dec. 11.503/2015 regulamentou. O decreto regulamentador fixou outra janela (9h–18h seg–sex, 9h–14h sáb) só para o quadrilátero.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "comprimento_m",
+            "acima": 6.3
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 4.887/2014, art. 4º (art. 29, VII e VIII, do CTB)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 4.887, de 12/08/2014",
+          "artigo": "art. 3º",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=30935"
+        },
+        {
+          "ato": "Decreto municipal 11.502, de 29/04/2015 (Zona Azul; republicado no DO Edição 515, 30/06/2015)",
+          "artigo": "art. 3º e Anexo I (área da Zona Azul); art. 7º (carga e descarga 18h–9h, estacionamento)",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=33276"
+        }
+      ],
+      "vigencia_inicio": "2014-11-12",
+      "nota": "Sem janela: a Lei 4.887/2014, art. 3º, só diz que o trânsito de 6,30 a 12 m 'estará permitido' das 18h às 9h, sem dias da semana. Registro sem geometria: a área da Zona Azul (Anexo I do Dec. 11.502/2015) não foi conferida.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "fonte_geometria": "sem geometria: Zona Azul (Anexo I do Dec. 11.502/2015) não conferida"
+    },
+    {
+      "id": "bebedouro_cana_vinhaca_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Cana e vinhaça",
+      "nome": "Bebedouro: perímetro urbano (sede, Botafogo, Turvínea e Andes) — caminhão transportando cana-de-açúcar ou vinhaça proibido",
+      "status": "desativada",
+      "status_motivo": "O perfil do veículo não informa o tipo de carga (cana-de-açúcar/vinhaça): a regra não pode ser enquadrada e fica só como registro/aviso.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.675, de 16/07/1997 (Gazeta de Bebedouro, 26/07/1997)",
+          "artigo": "art. 1º (texto original: cana-de-açúcar); art. 2º (placas nas entradas das estradas vicinais)",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=28659"
+        },
+        {
+          "ato": "Lei municipal 3.720, de 14/11/2007",
+          "artigo": "art. 2º (nova redação do art. 1º da Lei 2.675: cana-de-açúcar e vinhaça; perímetro urbano da sede, distritos de Botafogo e Turvínea e povoado de Andes)",
+          "url": "https://bebedouro.siscam.com.br/arquivo?Id=29739"
+        }
+      ],
+      "fonte_geometria": "sem geometria: perímetro urbano (sede, Botafogo, Turvínea e Andes) não delimitado no ato e critério de carga",
+      "vigencia_inicio": "2007-11-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

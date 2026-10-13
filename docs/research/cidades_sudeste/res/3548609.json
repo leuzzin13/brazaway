@@ -1,0 +1,90 @@
+{
+ "ibge": "3548609",
+ "nome": "São Bento do Sapucaí",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://camarasbs.sp.gov.br/siscam/Documentos/Details?id=1251 (acesso com User-Agent de navegador; sem UA o site responde 403 'Acesso não autorizado')",
+   "resultado": "Projeto de Lei 173/2019 (Executivo) 'Disciplina o Tráfego de veículos de cargas': tramitação até 'Proposição transformada em lei' — Lei nº 2.108, de 17/12/2019. Pareceres jurídicos 19/2019 e 82/2019 lidos (indicam regularidade)."
+  },
+  {
+   "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013453 (PDF escaneado, lido; atos/3548609/lei_2108_2019.pdf) e https://saobentodosapucai.sp.gov.br/_leis/lei-n-2-108-de-17-de-dezembro-de-2019/",
+   "resultado": "LIDO. Lei nº 2.108, de 17/12/2019: art. 1º proíbe entrada, parada, estacionamento e circulação de veículos com PBT acima de 29 t ou comprimento máximo de 14 m em toda a extensão das ruas da macrozona urbana (Plano Diretor), em qualquer dia ou hora; art. 2º exceções (manutenção de redes de energia/água/esgoto/telecom, transporte de passageiros, manutenção e sinalização viária a serviço do órgão de trânsito, socorro mecânico de emergência); arts. 3º e 4º fiscalização (PM e agentes de Obras e Posturas; pesagem); art. 5º vigor 30 dias após a publicação."
+  },
+  {
+   "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013792 (PDF; atos/3548609/lc_2128_2020.pdf) e https://saobentodosapucai.sp.gov.br/_leis/lei-n-2-128-de-28-de-fevereiro-de-2020/",
+   "resultado": "LIDO. Lei Complementar nº 2.128, de 28/02/2020 (PLC 260/2020): altera o art. 1º da Lei 2.108/2019, que passa a proibir PBT acima de 29 t ou comprimento máximo de 17 m (em vez de 14 m) na macrozona urbana, em qualquer dia ou hora; art. 2º vigor 30 dias após a publicação."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3548609 (Siscam Câmara + WordPress prefeitura; veículos pesados, carga, tráfego, PBT, 2.108, 2.128)",
+   "resultado": "Sem alteração/revogação posterior das duas normas. Documentos de contexto (não atos): Requerimento 28/2023 e Indicação 97/2025 (obstáculo para impedir trânsito de veículos pesados na Rua do Machado), Indicação 35/2021 (veículos pesados que evadem a balança da SP-42 passando pela cidade), Requerimento 77/2021 (fiscalização de tráfego de pesados nas vias internas): indicam que a lei é fiscalizada na prática com problemas, sem regra adicional."
+  },
+  {
+   "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013453 e id=1013792 (verificador)",
+   "resultado": "PDFs baixados de novo em 2026-10-11 (HTTP 200, idênticos às cópias em atos/). As páginas _leis/ da prefeitura redirecionam (301) para a home."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Regra vigente (alta): Lei 2.108/2019 com redação do art. 1º dada pela LC 2.128/2020. Zona = macrozona urbana definida no Plano Diretor (sem mapa no ato: construir polígono a partir do Plano Diretor/prefeitura). Atenção ao critério: PBT acima de 29 t OU comprimento acima de 17 m (a lei original dizia 14 m; vale a LC 2.128/2020; o texto 'comprimento máximo de 17 metros' é lido como veículos com comprimento acima de 17 m). Vale para parada e estacionamento também. Sem janela horária (24h). Obs.: a SP-42 passa dentro da cidade? (competência estadual) - a lei municipal não vale para rodovia. | Verificado em 2026-10-11: Os PDFs da Lei 2.108/2019 e da LC 2.128/2020 foram baixados de novo do Siscam da Câmara (md5 igual às cópias em atos/) e relidos. Art. 1º na redação da LC 2.128: PBT acima de 29 t ou comprimento máximo de 17 m, macrozona urbana, entrada, parada, estacionamento e circulação, qualquer dia ou hora. O art. 2º, I a IV, traz as exceções. O art. 5º e o art. 2º da LC põem as leis em vigor 30 dias após a publicação. No Siscam não há alteração ou revogação posterior (só indicações e requerimentos sobre veículos pesados). Correção: a URL da base legal agora aponta para o PDF do Siscam, porque as páginas da prefeitura redirecionam para a home.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saobento_sapucai_macrozona_29t",
+   "tipo": "zona",
+   "regime": "Proibição de veículos de carga pesados na macrozona urbana",
+   "nome": "São Bento do Sapucaí: macrozona urbana, proibidos veículos com PBT acima de 29 t ou comprimento acima de 17 m",
+   "status": "ativa",
+   "confianca": "alta",
+   "verificado_em": "2026-10-11",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 29
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 17
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º, I: manutenção e reparo das redes de energia, água e esgoto, telecomunicações e comunicações telefônicas",
+    "Art. 2º, II: transporte de passageiros",
+    "Art. 2º, III: manutenção, conservação e sinalização viária a serviço do órgão de trânsito",
+    "Art. 2º, IV: socorro mecânico de emergência"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2.108, de 17/12/2019 (São Bento do Sapucaí), com redação do art. 1º dada pela Lei Complementar 2.128, de 28/02/2020",
+     "artigo": "Lei 2.108 arts. 1º, 2º, 5º; LC 2.128 arts. 1º e 2º",
+     "url": "https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013453",
+     "nota": "LC 2.128/2020: https://camarasbs.sp.gov.br/Siscam/Documentos?handler=Arquivo&id=1013792 (Siscam pede User-Agent de navegador). As páginas antigas da prefeitura (saobentodosapucai.sp.gov.br/_leis/lei-n-2-108-... e .../lei-n-2-128-...) redirecionavam para a página inicial em 2026-10-11. Cópias em atos/3548609."
+    }
+   ],
+   "nota": "Ato fala em 'comprimento máximo de 17 metros' como limite proibido (lido como acima de 17 m). Proíbe também parada e estacionamento. Macrozona urbana definida pelo Plano Diretor, sem mapa no ato.",
+   "fonte_geometria": "A construir: macrozona urbana do Plano Diretor de São Bento do Sapucaí.",
+   "vigencia_inicio": "2020-04-01"
+  }
+ ]
+}

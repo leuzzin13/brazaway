@@ -1,0 +1,84 @@
+{
+ "ibge": "3300803",
+ "nome": "Cachoeiras de Macacu",
+ "uf": "RJ",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.cachoeirasdemacacu.rj.leg.br/api/norma/normajuridica/ (via toolkit legislacao.py buscar)",
+   "resultado": "Busca por ementa (caminh, carga e descarga, veículos pesados, tráfego, tonelad, eixos, carreta). 12 ementas; relevante só a Lei 833/1993"
+  },
+  {
+   "url": "https://sapl.cachoeirasdemacacu.rj.leg.br/norma/865",
+   "resultado": "Lei 833/1993 lida (PDF baixado em atos/3300803/lei_833_1993.pdf)"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3300803)",
+   "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 833, de 03/06/1993 (SAPL norma 865; PDF escaneado lido na imagem): art. 1º proíbe o ESTACIONAMENTO de veículos de carga (caminhões e assemelhados) em todas as vias públicas do Centro da Cidade, das 22h às 6h. É estacionamento, não circulação: não roteável, registrada desativada. Vigência/alteração posterior não verificada. Nenhum ato de circulação achado no SAPL (12 ementas). OSM hgv_no=2: Overpass fora do ar, vias não identificadas.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM hgv_no=2 não conferido (Overpass fora do ar): pendência."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "3300803_estacionamento_carga_centro",
+   "tipo": "zona",
+   "regime": "proibição de estacionamento 22h-6h",
+   "nome": "Cachoeiras de Macacu: estacionamento de veículos de carga no Centro (22h-6h)",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento, não de circulação: não é roteável.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "22:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "06:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 833, de 03/06/1993",
+     "artigo": "art. 1º",
+     "url": "https://sapl.cachoeirasdemacacu.rj.leg.br/norma/865"
+    }
+   ],
+   "trechos": [
+    {
+     "via": "todas as vias públicas do Centro da Cidade",
+     "descricao": "Centro de Cachoeiras de Macacu; perímetro não definido na lei",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

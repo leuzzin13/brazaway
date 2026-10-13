@@ -1,0 +1,248 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3533908",
+  "municipio": "Olímpia",
+  "uf": "SP",
+  "fonte_id": "olimpia",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=NjM5OTEx ; https://www.dosp.com.br/exibe_do.php?i=NzA4NDg1 ; https://www.dosp.com.br/exibe_do.php?i=NzEzODI5",
+    "licenca": "Atos oficiais de Olímpia: domínio público (Lei 9.610/1998, art. 8º, IV). Vias e polígono da Lei 5.073/2025: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Perímetro urbano: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Lei 5.073/2025: articulados e veículos de carga com mais de 1 eixo traseiro acima de 8 t proibidos em três vias e num polígono central, 24 h. Lei 5.168/2025 e Decreto 9.709/2025: articulados e grande porte (PBT > 10 t) só das 0h às 5h no perímetro urbano."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Olímpia não define VUC.",
+  "regras": [
+    {
+      "id": "olimpia_lei5073_vias",
+      "tipo": "via",
+      "regime": "Articulados / acima de 8 t (vias)",
+      "nome": "Olímpia: Av. Mário Vieira Marcondes (trecho), Av. Aurora Forti Neves (trecho) e Av. Benatti",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: veículos com carga e/ou descarga destinada ao perímetro proibido, estritamente das 19h às 9h",
+        "Art. 4º: veículos do art. 29, VII e VIII, do CTB nas circunstâncias ali determinadas",
+        "Art. 6º: casos excepcionais por requerimento à Secretaria Municipal de Segurança, Trânsito e Mobilidade Urbana (5 dias de antecedência; 48 h em urgência)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.073, de 16/04/2025 (Estância Turística de Olímpia)",
+          "artigo": "art. 1º (alvo), art. 2º (exceção 19h-9h), art. 3º (vias), art. 9º (revoga Leis 3.259/2007, 4.402/2018, 4.703/2021, 4.948/2023)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NjM5OTEx",
+          "nota": "Diário Oficial de Olímpia nº 1917, 16/04/2025, p. 5-6; no Siscam (https://olimpia.siscam.com.br) consta 'Em vigor'"
+        }
+      ],
+      "vigencia_inicio": "2025-04-16",
+      "trechos": [
+        {
+          "inciso": "art. 3º, I",
+          "via": [
+            "Avenida Mário Vieira Marcondes"
+          ],
+          "de": [
+            "Avenida Deputado Waldemar Lopes Ferraz",
+            "Avenida Waldemar Lopes Ferraz"
+          ],
+          "ate": [
+            "Rua David de Oliveira"
+          ],
+          "sentido": true,
+          "descricao": "Av. Mário Vieira Marcondes, entre a Av. Waldemar Lopes Ferraz e a R. David Oliveira, no sentido da Av. Mário Vieira Marcondes para a R. David Oliveira (pista norte)"
+        },
+        {
+          "inciso": "art. 3º, II",
+          "via": [
+            "Avenida Aurora Forti Neves"
+          ],
+          "de": [
+            "Avenida Doutor Andrade e Silva"
+          ],
+          "ate": [
+            "Rua Francisco Vicente Blanco"
+          ],
+          "descricao": "Av. Aurora Forti Neves, entre a Av. Andrade Silva e a R. Francisco Vicente Blanco"
+        },
+        {
+          "inciso": "art. 3º, III",
+          "via": [
+            "Avenida Benatti"
+          ],
+          "descricao": "Av. Benatti, em toda a sua extensão"
+        }
+      ],
+      "nota": "Art. 1º, parágrafo único, II, da Lei 5.073/2025 define VEÍCULO DE CARGA como o que tem mais de 1 eixo traseiro; o alvo é articulados e veículos de carga com mais de 1 eixo traseiro acima de 8.000 kg. Modelado como eixos > 2 E PBT > 8 t (cobre caminhões trucados e as combinações articuladas usuais; o caminhão 'toco' de 2 eixos fica fora). Verificado em 2026-10-11: corrigido o alvo anterior (articulado OU PBT > 8 t), que alcançava indevidamente caminhões de 2 eixos.",
+      "verificado_em": "2026-10-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3533908_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "olimpia_lei5073_poligono",
+      "tipo": "zona",
+      "regime": "Articulados / acima de 8 t (polígono central)",
+      "nome": "Olímpia: polígono R. Síria / Av. Waldemar Lopes Ferraz / Av. Aurora Forti Neves / R. Diógenes Breda",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: veículos com carga e/ou descarga destinada ao perímetro proibido, estritamente das 19h às 9h",
+        "Art. 4º: veículos do art. 29, VII e VIII, do CTB nas circunstâncias ali determinadas",
+        "Art. 6º: casos excepcionais por requerimento à Secretaria Municipal de Segurança, Trânsito e Mobilidade Urbana (5 dias de antecedência; 48 h em urgência)",
+        "Art. 3º, parágrafo único: Rua Síria e Avenida Waldemar Lopes Ferraz (contorno) excetuadas"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.073, de 16/04/2025 (Estância Turística de Olímpia)",
+          "artigo": "art. 1º (alvo), art. 2º (exceção 19h-9h), art. 3º (vias), art. 9º (revoga Leis 3.259/2007, 4.402/2018, 4.703/2021, 4.948/2023)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NjM5OTEx",
+          "nota": "Diário Oficial de Olímpia nº 1917, 16/04/2025, p. 5-6; no Siscam (https://olimpia.siscam.com.br) consta 'Em vigor'"
+        }
+      ],
+      "vigencia_inicio": "2025-04-16",
+      "nota": "Art. 1º, parágrafo único, II, da Lei 5.073/2025 define VEÍCULO DE CARGA como o que tem mais de 1 eixo traseiro; o alvo é articulados e veículos de carga com mais de 1 eixo traseiro acima de 8.000 kg. Modelado como eixos > 2 E PBT > 8 t (cobre caminhões trucados e as combinações articuladas usuais; o caminhão 'toco' de 2 eixos fica fora). Verificado em 2026-10-11: corrigido o alvo anterior (articulado OU PBT > 8 t), que alcançava indevidamente caminhões de 2 eixos.",
+      "verificado_em": "2026-10-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3533908_poligono_lei5073.geojson",
+          "construir": "manual",
+          "como_gerar": "Face delimitada pelos eixos do OSM da R. Síria, Av. Waldemar Lopes Ferraz, Av. Aurora Forti Neves e R. Diógenes Brêda (fechamento por buffer de 3 m; conector de ~100 m da ponta leste da R. Diógenes Brêda à Av. Aurora Forti Neves); R. Síria e Av. Waldemar Lopes Ferraz livres (borda no eixo, art. 3º, parágrafo único); R. Diógenes Brêda dentro (25 m de folga)."
+        }
+      ]
+    },
+    {
+      "id": "olimpia_dec9709_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Articulados e grande porte (PBT > 10 t): só 0h-5h no perímetro urbano",
+      "nome": "Olímpia: perímetro urbano (Lei 5.168/2025 e Decreto 9.709/2025)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "05:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 5.168, art. 2º, I: abastecimento de estabelecimentos comerciais e entrega ou coleta de cargas no perímetro urbano, com nota fiscal ou documento fiscal idôneo",
+        "Lei 5.168, art. 2º, II: serviços essenciais (coleta de lixo, água e esgoto, emergência médica, segurança pública)",
+        "Lei 5.168, art. 2º, III: cargas perecíveis ou vivas, comprovada a urgência",
+        "Lei 5.168, art. 2º, IV: transporte de mais de 20 passageiros",
+        "Lei 5.168, art. 2º, V, e Decreto 9.709, art. 4º: AET da Secretaria Municipal de Segurança, Trânsito e Mobilidade Urbana (pedido com 2 dias úteis)",
+        "Decreto 9.709, art. 3º, §1º: caminhões leves e médios podem circular nas vias de acesso secundário, respeitada a Lei 5.073/2025"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.168, de 10/09/2025 (Estância Turística de Olímpia)",
+          "artigo": "art. 1º, §1º (definições: articulado, veículo de carga, grande porte = PBT > 10.000 kg); art. 2º (exceções); art. 3º (regulamentação por decreto); art. 4º (rotas alternativas); art. 7º (vigor 30 dias após a publicação)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NzA4NDg1",
+          "nota": "Diário Oficial de Olímpia nº 2014, 10/09/2025, p. 2-3; cópia em atos/3533908/e2014_lei5168.pdf"
+        },
+        {
+          "ato": "Decreto municipal 9.709, de 19/09/2025 (Estância Turística de Olímpia)",
+          "artigo": "art. 1º (circulação só das 0h às 5h no perímetro urbano); art. 2º (dispensas); art. 3º, I a III e §§1º e 2º (alvo; altura máx. 4,00 m); art. 4º (AET); art. 8º e Anexo I (rotas alternativas); art. 9º (vigor 30 dias após a publicação)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=NzEzODI5",
+          "nota": "Diário Oficial de Olímpia nº 2022, 22/09/2025, p. 4-9; cópia em atos/3533908/e2022_dec9709.pdf"
+        }
+      ],
+      "vigencia_inicio": "2025-10-22",
+      "nota": "Achado pelo verificador em 2026-10-11 (não constava na pesquisa). Decreto 9.709, art. 1º: a circulação dos veículos abrangidos pela Lei 5.168 'somente será permitida no perímetro urbano ... das 00h às 05h', ou seja, proibida das 5h às 24h todos os dias. Modelado só o núcleo certo: articulados e grande porte (PBT > 10 t). O art. 3º, II, alcança também qualquer 'veículo de carga', mas o §1º libera caminhões leves e médios nas 'vias de acesso secundário' sem definir quais são, por isso não foram modelados (pendência). Vigência: o decreto entra em vigor 30 dias após a publicação de 22/09/2025, logo 22/10/2025 (a Lei 5.168, 30 dias após 10/09/2025). Convive com a Lei 5.073/2025, que o próprio decreto manda respeitar (art. 3º, §1º). Altura máxima de 4,00 m em qualquer hipótese (art. 3º, §2º) não modelada aqui. Nenhuma alteração ou revogação encontrada no DOSP de Olímpia até 02/10/2026 (buscas '9.709', '5.168', 'veículos articulados', 'Autorização Especial de Trânsito'). Geometria: perímetro urbano aproximado pelos setores censitários urbanos do IBGE 2022, sem as rodovias e estradas de acesso (SP-425, SP-322, SPA-137/425, SPA-442/322, OLP-020, OLP-040, OLP-050, Rod. Vicinal Álvaro Marreta Cassiano Ayusso, Estrada Municipal Diógenes Breda Filho, Rod. César Galib Tannuri), várias delas rotas alternativas do Anexo I.",
+      "verificado_em": "2026-10-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3533908_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3533908_perimetro_urbano_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_named_3533908.json: setores censitários urbanos do distrito-sede, sem as rodovias e estradas de acesso (40 m); os atos não delimitam o perímetro urbano."
+        }
+      ]
+    }
+  ]
+}

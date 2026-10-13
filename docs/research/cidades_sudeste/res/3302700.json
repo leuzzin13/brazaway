@@ -1,0 +1,314 @@
+{
+  "nome": "Maricá",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "vuc": null,
+  "fontes_consultadas": [
+    {
+      "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.txt",
+      "resultado": "Jornal Oficial de Maricá nº 1541, 03/01/2024, lido: Decreto 1.314, de 03/01/2024 (horário de circulação de veículos de carga e de carga e descarga), arts. 1º a 8º e Anexo I (mapa em imagem, não legível no texto). Texto salvo em atos/3302700/."
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/3302700/2013-11-25/b46e27d18ebaf57cd8d0f2b93da67cbcd4f3a44f.txt",
+      "resultado": "Decreto 173, de 20/09/2013 (JOM 421): proíbe carga e descarga de veículos pesados em 22 vias, dias úteis 9h-16h e sábados 7h-9h. Só operação de carga/descarga; vigência não conferida (provavelmente superado pelo Dec. 1.314/2024, que trata do assunto, mas sem cláusula de revogação expressa)."
+    },
+    {
+      "url": "https://publica.marica.rj.gov.br/",
+      "resultado": "Portal de legislação (portal próprio) responde 200, mas o cliente heurístico do toolkit devolveu 0 atos para todos os termos; busca por palavra não automatizada. Não serviu para checar alteração do Dec. 1.314."
+    },
+    {
+      "url": "toolkit legislacao.py buscar 3302700 (prefeitura/Câmara sicam/WordPress)",
+      "resultado": "Câmara (marica.sicam.app): 0 atos. WordPress da prefeitura: só notícias (ponte de Ponta Negra com veículos pesados proibidos, Defesa Civil/DER)."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3302700 com 'veículos pesados', 'circulação de caminhões', 'trânsito de caminhões', 'carga e descarga', 'veículos de carga', 'circulação de veículos de carga' (QD)",
+      "resultado": "Único ato de circulação de carga: Dec. 1.314/2024. Nenhum decreto posterior que o altere/revogue apareceu (busca por 'Decreto nº 1.314' só retornou a edição original). Diário 2024-01-19 ed. 1548: licitação/projeto de sinalização com placa R-9 (proibido trânsito de caminhões) na Rua São Francisco, São José do Imbassaí: pista de sinalização, sem ato lido. Diário 2022-04-04 ed. 1294 e 2021-01-15 ed. 1121: notícias da ponte de Ponta Negra (RJ-102, obra do DER) e da ponte do Condado."
+    },
+    {
+      "url": "https://www.marica.rj.gov.br/noticia/ponte-velha-de-ponta-negra-ganha-limitador-de-altura-e-peso-para-veiculos/",
+      "resultado": "Notícia: limitador de altura 3 m e peso 3,5 t na ponte velha de Ponta Negra (21/02, ano não impresso no trecho); proibição de pesados por determinação da Defesa Civil desde jun/2019, via estadual RJ-102. Sem ato."
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter",
+      "resultado": "HTTP 500 / connection reset: OSM não consultado nesta sessão."
+    }
+  ],
+  "observacoes": "Decreto municipal 1.314, de 03/01/2024 (JOM 1541, 03/01/2024; vigor na publicação, art. 8º). Art. 2º: proibida a ENTRADA e CIRCULAÇÃO de veículos de carga (definição art. 1º, I: veículo destinado ao transporte de carga, que pode levar 2 passageiros além do condutor; sem corte de peso) nas principais vias e eixos do Anexo I/art. 5º, em dias úteis (seg-sex) 7h-9h e 16h-18h. Art. 3º: trânsito limitado a veículos de até 14 m de comprimento nessas vias. Art. 4º/parágrafo único do art. 5º: carga e descarga só em vagas sinalizadas por até 40 min entre 9h-15h e 19h-6h; operação permitida a quem entrou no horário permitido. Art. 6º: exceções (socorro/emergência art. 29 VII CTB, transporte de valores, serviços essenciais de utilidade pública com autorização prévia da Secretaria de Trânsito, combustíveis para o aeroporto, caminhões-betoneira). Art. 7º: infrações do CTB, remoção. Lacunas: (a) o Anexo I é um mapa (legenda verde = placas educativas, roxo = placas de regulamentação) sem texto: o art. 5º lista as vias e vale como texto; (b) o decreto não diz se feriados são excetuados (diz só 'dias úteis'): rascunho usa feriados='aplica'; (c) não há definição de VUC; (d) a pasta do portal de legislação não pôde ser consultada por busca, então a ausência de alteração posterior baseia-se só no QD. Pistas OSM (hgv=no 3, maxweight 3) não conferidas por falha do Overpass. | Verificado em 2026-10-11: Dec. 1.314/2024 relido no JOM 1541 (QD txt), arts. 1º-8º conferem (art. 8º: vigor na publicação). Correções: (1) regra de pico com feriados='suspende', porque o art. 2º, I fala em 'dias úteis'; (2) regra de 14 m: as exceções do art. 6º valem para todas 'as restrições previstas neste Decreto', inclusive o art. 3º. Nova busca no Querido Diário (acervo até 10/03/2026: 'Decreto nº 1.314', '1.314/2024', 'veículos de carga', 'circulação de veículos de carga', 'comprimento máximo de 14', 'horário de carga e descarga', 'veículos pesados', 'caminhões'): nenhum ato posterior altera ou revoga o decreto. De 03/2026 a 10/2026 sem cobertura no QD.",
+  "osm_divergencias": [
+    "OSM: 3 ways com hgv=no e 3 com maxweight na preparação, não listados (Overpass fora do ar). Ponte velha de Ponta Negra (RJ-102, limitador 3,5 t/3 m, Defesa Civil/DER) é a candidata provável: via estadual, sem ato municipal; registrada como regra desativada. Pendência: listar os ways e cruzar com as vias do art. 5º do Dec. 1.314/2024. Nenhuma correção feita."
+  ],
+  "falha_de_fonte": false,
+  "regras_rascunho": [
+    {
+      "id": "marica_veiculos_carga_pico",
+      "tipo": "via",
+      "regime": "Veículos de carga: proibição em pico (dias úteis)",
+      "nome": "Maricá: entrada e circulação de veículos de carga proibidas nos eixos do Dec. 1.314/2024, dias úteis 7h-9h e 16h-18h",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "16:00",
+          "to": "18:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 6º, I: veículos de socorro e emergência (art. 29, VII, CTB)",
+        "Art. 6º, II: transporte de valores",
+        "Art. 6º, III: serviços essenciais de utilidade pública, em caráter excepcional, com autorização prévia da Secretaria de Trânsito e Engenharia Viária",
+        "Art. 6º, IV: transporte de combustíveis e lubrificantes que abastecem o aeroporto",
+        "Art. 6º, V: caminhões-betoneira",
+        "Art. 5º, parágrafo único: operação de carga e descarga permitida a veículo que acessou a área no horário permitido e está em local de estacionamento permitido"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.314, de 03/01/2024 (JOM nº 1541, 03/01/2024)",
+          "artigo": "art. 2º, I (proibição 7h-9h e 16h-18h, seg-sex), art. 5º (vias), art. 6º (exceções)",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.pdf"
+        }
+      ],
+      "nota": "Art. 2º, I: 'dias úteis, de segunda-feira a sexta-feira'. Feriado não é dia útil, então a proibição não vale em feriado (feriados='suspende', corrigido na verificação de 2026-10-11). 'Veículo de carga' sem corte de peso (art. 1º, I): alvo = qualquer caminhão. VUC não definido. Anexo I (mapa) não lido; vias pelo art. 5º.",
+      "vigencia_inicio": "2024-01-03",
+      "trechos": [
+        {
+          "via": "Avenida Vereador Francisco Sabino da Costa"
+        },
+        {
+          "via": "Rua Abreu Rangel"
+        },
+        {
+          "via": "Rua Domício da Gama"
+        },
+        {
+          "via": "Rua Abreu Sodré",
+          "de": "Rua Antônio Eduardo",
+          "ate": "Rua Ribeiro de Almeida",
+          "descricao": "trecho a partir da Rua Antônio Eduardo até a Rua Ribeiro de Almeida"
+        },
+        {
+          "via": "Rua Joaquim Eugênio dos Santos"
+        },
+        {
+          "via": "Rua Barão de Inoã"
+        },
+        {
+          "via": "Rua Dr. Milton de Souza Pacheco"
+        },
+        {
+          "via": "Rua Eugênia Modesto da Silva"
+        },
+        {
+          "via": "Rua Silvino Alves de Siqueira"
+        },
+        {
+          "via": "Rua Nossa Senhora do Amparo"
+        },
+        {
+          "via": "Rua Lúcio Alves da Silva"
+        },
+        {
+          "via": "Avenida Roberto Silveira",
+          "de": "Rua Ary Spindola",
+          "ate": "Rua Ribeiro de Almeida",
+          "descricao": "trecho entre a Rua Ary Spindola e a Rua Ribeiro de Almeida"
+        },
+        {
+          "via": "Rua Álvares de Castro",
+          "de": "Avenida Prefeito Odenir Francisco da Costa",
+          "ate": "Rua Domício da Gama",
+          "descricao": "trecho entre a Av. Prefeito Odenir Francisco da Costa e a Rua Domício da Gama"
+        },
+        {
+          "via": "Rua Pereira Neves"
+        },
+        {
+          "via": "Rua Alferes Gomes"
+        },
+        {
+          "via": "Rua Almeida Fagundes"
+        },
+        {
+          "via": "Rua Ribeiro de Almeida"
+        },
+        {
+          "via": "Rua Senador Macedo Soares"
+        },
+        {
+          "via": "Rua Athaíde Parreiras"
+        },
+        {
+          "via": "Rua Pref. Hilário da Costa e Silva"
+        },
+        {
+          "via": "Avenida Antônio Vieira Sobrinho"
+        },
+        {
+          "via": "Rua M"
+        },
+        {
+          "via": "Rua Hilário Luiz Queiroz da Silva"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_marica.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "marica_comprimento_14m",
+      "tipo": "via",
+      "regime": "Comprimento máximo 14 m",
+      "nome": "Maricá: veículos com mais de 14 m de comprimento não podem transitar nos eixos do Dec. 1.314/2024",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 6º do Dec. 1.314/2024: 'As restrições previstas neste Decreto' não se aplicam a socorro/emergência (art. 29, VII, CTB), transporte de valores, serviços essenciais de utilidade pública autorizados pela Secretaria de Trânsito, combustíveis/lubrificantes do aeroporto e caminhões-betoneira"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 1.314, de 03/01/2024 (JOM nº 1541, 03/01/2024)",
+          "artigo": "art. 3º ('fica limitado o trânsito de veículos até o comprimento máximo de 14 metros nas principais vias e eixos viários tratadas neste decreto')",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2024-01-03/f9d5c57c2b0450b805e8adfd02080b20fef5663c.pdf"
+        }
+      ],
+      "nota": "Confiança 'media': o art. 3º não traz janela de horário (lido como limite permanente, todos os dias) e fala em 'veículos' em geral (alvo caminhão > 14 m). As exceções do art. 6º valem para ele, porque o art. 6º se refere a 'as restrições previstas neste Decreto'. Mesmos trechos do art. 5º.",
+      "vigencia_inicio": "2024-01-03",
+      "trechos": [
+        {
+          "via": "Mesmos trechos da regra marica_veiculos_carga_pico (art. 5º do Dec. 1.314/2024)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_marica.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "marica_ponte_ponta_negra",
+      "tipo": "ponte",
+      "regime": "Ponte velha de Ponta Negra (RJ-102)",
+      "nome": "Maricá: ponte velha de Ponta Negra, veículos pesados proibidos (Defesa Civil/DER), limitador 3,5 t e 3 m",
+      "status": "desativada",
+      "status_motivo": "Só notícia da Prefeitura (21/02 e anos anteriores) e trecho de diário; sem ato primário lido. Via estadual (RJ-102, obra do DER); a restrição é interdição de obra/Defesa Civil, vigência atual desconhecida.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 3.5
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Sem ato localizado (notícia: https://www.marica.rj.gov.br/noticia/ponte-velha-de-ponta-negra-ganha-limitador-de-altura-e-peso-para-veiculos/)",
+          "artigo": "n/d",
+          "url": "https://www.marica.rj.gov.br/noticia/ponte-velha-de-ponta-negra-ganha-limitador-de-altura-e-peso-para-veiculos/"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "Ponte velha de Ponta Negra (RJ-102)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_marica.geojson",
+          "construir": "manual"
+        }
+      ]
+    },
+    {
+      "id": "marica_carga_descarga_pesados_2013",
+      "tipo": "via",
+      "regime": "Carga e descarga de pesados (2013)",
+      "nome": "Maricá: carga e descarga de veículos pesados proibidas nas principais vias, dias úteis 9h-16h e sábados 7h-9h (Dec. 173/2013)",
+      "status": "desativada",
+      "status_motivo": "Regula só a operação de carga e descarga (não a circulação) e a vigência não foi conferida: o Dec. 1.314/2024 regula o mesmo assunto sem revogá-lo expressamente.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 173, de 20/09/2013 (JOM 421, 25/11/2013)",
+          "artigo": "art. 1º e art. 3º (22 vias)",
+          "url": "https://data.queridodiario.ok.org.br/3302700/2013-11-25/b46e27d18ebaf57cd8d0f2b93da67cbcd4f3a44f.pdf"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "22 vias do art. 3º do Dec. 173/2013 (Av. Roberto da Silveira, Av. Vereador Francisco Sabino da Costa, Rua Abreu Rangel, Rua Domício da Gama etc.)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302700_marica.geojson",
+          "construir": "manual"
+        }
+      ]
+    }
+  ],
+  "ibge": "3302700",
+  "uf": "RJ",
+  "data": "2026-10-11"
+}

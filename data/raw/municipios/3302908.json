@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3302908",
+  "municipio": "Miguel Pereira",
+  "uf": "RJ",
+  "fonte_id": "miguel-pereira",
+  "fonte": {
+    "url": "https://sapl.miguelpereira.rj.leg.br/norma/8567 (Dec. 6.773-A/2023; PDF: https://sapl.miguelpereira.rj.leg.br/media/sapl/public/normajuridica/2023/8567/dc_6773-a_2023.pdf) ; https://sapl.miguelpereira.rj.leg.br/norma/2422 (Lei 2.101/2005)",
+    "licenca": "Atos oficiais de Miguel Pereira: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla; distrito conferido na Malha de Distritos do IBGE (Censo 2022).",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3302908.json; verificação: verif/3302908.json (11/10/2026). A única Rua Doutor Osório de Almeida com nome no OSM fica toda no distrito de Governador Portela (2º Distrito, conferido na malha de distritos do IBGE); a homônima de Vila Selma (1º Distrito) não está nomeada no OSM. Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Dec. 6.773-A/2023 não define VUC: vale para 'veículos pesados (caminhões, tratores e afins)'.",
+  "regras": [
+    {
+      "id": "miguelpereira_rua_osorio_almeida_pesados",
+      "tipo": "via",
+      "regime": "Sex–dom e feriados",
+      "nome": "Miguel Pereira: Rua Dr. Osório de Almeida (2º Distrito, Governador Portela), caminhões e tratores vedados às sextas, sábados, domingos e feriados",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecao_destino_local": false,
+      "excecoes": ["Parágrafo único do art. 1º: veículos com destino a entregas, comércios e residências instaladas em todo o trecho da Rua Dr. Osório de Almeida"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.773-A, de 18/04/2023 (D.O. Miguel Pereira nº 1159, 24/04/2023, caderno especial, p. 3; 'omitido no D.O. 1156, de 18/04/2023')",
+          "artigo": "art. 1º, caput (sextas, sábados, domingos e feriados) e parágrafo único (vedados os veículos pesados, salvo destino no trecho); art. 2º (vigência na publicação)",
+          "url": "https://sapl.miguelpereira.rj.leg.br/norma/8567",
+          "nota": "PDF: https://sapl.miguelpereira.rj.leg.br/media/sapl/public/normajuridica/2023/8567/dc_6773-a_2023.pdf"
+        }
+      ],
+      "nota": "Dia inteiro (o ato não fixa hora). A vedação está no parágrafo único do art. 1º, cujo caput trata de sextas, sábados, domingos e feriados; a ligação dos dias ao parágrafo é interpretação (confiança média). Feriado em dia de semana: 'feriados: aplica' só vale nos dias da janela; o calendário municipal é da frente de feriados. A exceção é só para destino NO trecho (não em qualquer ponto do município), por isso excecao_destino_local=false: o custo da via ainda deixa chegar a um destino nela. 'Veículos pesados' sem limite de peso: todo caminhão (PBT acima de 3,5 t).",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local: Rua Doutor Osório de Almeida (ways 300828091, 502992077, 834911895, 903470834), toda no distrito de Governador Portela.",
+      "vigencia_inicio": "2023-04-24",
+      "trechos": [
+        {"inciso": "art. 1º, parágrafo único", "via": ["Rua Doutor Osório de Almeida", "Rua Dr. Osório de Almeida"], "descricao": "Rua Dr. Osório de Almeida, todo o trecho, 2º Distrito (Governador Portela)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3302908_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "miguelpereira_travessa_pedro_cardoso",
+      "tipo": "via",
+      "regime": "Entrada de caminhões",
+      "nome": "Miguel Pereira: Travessa Pedro Cardoso (Tombo, Governador Portela), entrada de máquinas e caminhões (Lei 2.101/2005, só autorização)",
+      "status": "desativada",
+      "status_motivo": "A Lei 2.101/2005 apenas autoriza o Executivo a proibir ('Fica o Executivo Municipal autorizado a proibir'); não foi localizado decreto ou sinalização que a execute, e o PDF é manuscrito escaneado.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {"ato": "Lei municipal 2.101, de 19/12/2005", "artigo": "art. 1º (autorização ao Executivo)", "url": "https://sapl.miguelpereira.rj.leg.br/norma/2422"}
+      ],
+      "nota": "A Travessa Pedro Cardoso não tem nome no OSM: registro sem feição (pendência de geometria, sem efeito na rota).",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Travessa Pedro Cardoso"], "descricao": "Travessa Pedro Cardoso, na confluência com a Rua Prof. Conceição Costa Pinto, Tombo"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3302908_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

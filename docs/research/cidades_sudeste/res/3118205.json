@@ -1,0 +1,77 @@
+{
+  "ibge": "3118205",
+  "nome": "Conquista",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/0E9914AD",
+      "resultado": "Lei Municipal 1.313, de 17/06/2021 (DOM-AMM ed. 3034, 22/06/2021) lida na íntegra: institui o 'Anel Viário' como via principal e obrigatória para caminhões pesados; vias do perímetro urbano vedadas (art. 3º, p. único); sanções só após atestado da Comissão de que o Anel tem condição de tráfego (art. 7º, §6º do texto publicado)."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3118205 (amm-mg): 'Anel Viário', 'caminhões pesados', '1.313'",
+      "resultado": "Sem alteração ou regulamentação posterior (portaria da Comissão, decreto de fiscalização) achada; outros acertos são licitação de pneus e máquinas."
+    },
+    {
+      "url": "https://sapl.conquista.mg.leg.br/norma/pesquisar (toolkit legislacao.py buscar 3118205 'caminh|pesad|carga|tráfego|trafego|estrada')",
+      "resultado": "SAPL funcionou, 0 normas com esses termos na ementa (a Lei 1.313/2021 institui 'via principal para o tráfego de caminhões pesados' e aparece só no diário); portal da Câmara (Plone) também 0."
+    }
+  ],
+  "observacoes": "Lei Municipal 1.313/2021 (revoga a LC 002/2009): institui o 'Anel Viário' (estrada vicinal, mapa no Anexo I, não lido) como via principal e obrigatória para o tráfego de caminhões pesados (art. 1º); caminhões carregados podem usar vias rurais alternativas, excetuadas as do perímetro urbano (art. 3º, p. único); exceção para reparos mecânicos, afazeres pessoais e casos fortuitos (art. 6º); placas 'Proibido trânsito de caminhões pesados e/ou carregados de cana-de-açúcar e grãos' no trevo da MGC-464 (art. 7º, §2º). Aplica-se a caminhões carregados com cana e grãos e a outros veículos pesados que possam causar danos no perímetro urbano (art. 8º). Sanções (notificação, multa de 100 UFMC) só depois que a Comissão Técnica atestar as condições do Anel (§6º): sem prova de que isso ocorreu. Não define PBT/tonelagem de 'caminhão pesado' nem lista de vias urbanas: regra real mas não roteável sem decisão; entra desativada. Falta ler o Anexo I (mapa) no PDF/portal para o traçado do Anel. Conquista tem SAPL ativo; sem outros atos.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "conquista_perimetro_urbano_caminhoes_pesados",
+      "tipo": "zona",
+      "regime": "Anel Viário obrigatório",
+      "nome": "Conquista: caminhões pesados (carga de cana/grãos e outros veículos pesados) fora do perímetro urbano, via obrigatória Anel Viário",
+      "status": "desativada",
+      "status_motivo": "Ato lido (Lei 1.313/2021), mas não define 'caminhão pesado' (sem PBT/eixos), não lista vias do perímetro urbano nem anexa mapa no texto do diário, e as sanções só valem depois que a Comissão atestar as condições do Anel Viário (art. 7º, §6º); sem prova disso.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 3º, p. único (vias rurais alternativas até o destino final, exceto vias do perímetro urbano) e art. 6º",
+      "excecoes": [
+        "Art. 6º: reparos mecânicos, afazeres pessoais e outros casos fortuitos não ligados ao destino final da carga"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.313, de 17/06/2021 (DOM-AMM ed. 3034, 22/06/2021)",
+          "artigo": "arts. 1º, 3º, 6º, 7º e 8º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/0E9914AD",
+          "nota": "Anexo I (mapa do Anel Viário) não lido."
+        }
+      ],
+      "vigencia_inicio": "2021-06-22",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3118205_conquista_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Desenhar o perímetro urbano de Conquista e o Anel Viário (Anexo I da Lei 1.313/2021); definir PBT de 'caminhão pesado' antes de ativar."
+        }
+      ]
+    }
+  ]
+}

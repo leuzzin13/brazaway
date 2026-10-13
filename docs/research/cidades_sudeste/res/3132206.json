@@ -1,0 +1,94 @@
+{
+  "ibge": "3132206",
+  "nome": "Itaguara",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.itaguara.mg.gov.br/portal/leis_decretos/ (Instar, termos caminh|carga e descarga|veículos pesados|tráfego pesado|tonelad)",
+      "resultado": "2 hits: Lei 741/1989 (compra de caminhão, ruído) e Lei 745/1989 (limite de peso para o tráfego de veículos de carga)"
+    },
+    {
+      "url": "https://www.itaguara.mg.gov.br/portal/leis_decretos/1409/",
+      "resultado": "página da Lei 745/1989 'Em vigor', atualizada em 27/01/2021; PDF digitalizado baixado e lido visualmente (https://www.itaguara.mg.gov.br/publicos/55_lei_nº_745_de_1989.pdf)"
+    },
+    {
+      "url": "https://sapl.itaguara.mg.leg.br",
+      "resultado": "0 atos"
+    },
+    {
+      "url": "diarios_consolidados.py (amm-mg)",
+      "resultado": "0 resultados"
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/mg/itaguara",
+      "resultado": "403 Cloudflare"
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 745, de 20/11/1989: art. 1º proíbe veículo de carga transportando peso superior a 15.000 kg em 'estradas da rede viária municipal' (toda a rede, sem lista de vias; texto fala em estradas, ponte, mata-burro: viés rural). Art. 2º multa de 100 BTN (moeda extinta). Portal marca 'Em vigor'; não achei ato posterior revogando/alterando (busca por ementa não retornou). Alvo é peso TRANSPORTADO (payload_t), não PBT. Sem geometria específica: rede viária municipal inteira; pendência decidir se vale para roteamento urbano. Decreto de tratores de esteira (art. 4º) irrelevante. Verificado em 2026-10-11: PDF da Lei 745/1989 baixado de novo do portal (mesmo hash) e relido; arts. 1º a 8º conferem; Instar 'Em vigor'; sem alteração nem revogação no Instar, no SAPL ou no portal da Câmara. Regra REBAIXADA para desativada porque o ato não delimita as 'estradas da rede viária municipal' (sem lista ou cadastro; viés rural, aplicação urbana incerta).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "itaguara_rede_viaria_15t",
+      "tipo": "via",
+      "regime": "Peso transportado > 15 t na rede viária municipal",
+      "nome": "Itaguara: estradas da rede viária municipal, veículos de carga transportando mais de 15.000 kg",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 745, de 20/11/1989 (Itaguara)",
+          "artigo": "art. 1º (peso transportado > 15.000 kg), art. 2º (multa)",
+          "url": "https://www.itaguara.mg.gov.br/portal/leis_decretos/1409/",
+          "nota": "PDF digitalizado: https://www.itaguara.mg.gov.br/publicos/55_lei_nº_745_de_1989.pdf; portal marca 'Em vigor'"
+        }
+      ],
+      "vigencia_inicio": "1989-11-20",
+      "nota": "Lei de 1989 voltada a estradas/pontes/mata-burros da rede municipal; sem lista de vias e sem horário. Peso transportado (carga), não PBT: payload_t. Aplicabilidade ao perímetro urbano incerta: decidir antes de ativar na camada.",
+      "trechos": [
+        {
+          "via": [],
+          "descricao": "Todas as estradas da rede viária municipal (sem lista)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3132206_itaguara.geojson",
+          "construir": "manual",
+          "como_gerar": "Rede viária municipal inteira (sem trechos nomeados); avaliar viabilidade"
+        }
+      ],
+      "status_motivo": "Universo das 'estradas da rede viária municipal' não delimitado no ato (sem lista nem cadastro de estradas); texto de 1989 voltado a estradas rurais (pontes, mata-burros), aplicação ao perímetro urbano incerta"
+    }
+  ]
+}

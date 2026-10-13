@@ -1,0 +1,137 @@
+{
+ "ibge": "3527256",
+ "nome": "Lourdes",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1393/",
+   "resultado": "Portal oficial (Instar): Lei 1.893, de 05/09/2023, 'Em vigor', texto integral lido (arts. 1º a 5º). No Diário Oficial ed. 772 (07/12/2023, https://www.dosp.com.br/exibe_do.php?i=NDMzMzU5, pdftotext) o ato é a Lei 1.893 (a 'Lei 1.894' é outra, do CIMSA)."
+  },
+  {
+   "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1446/",
+   "resultado": "Portal oficial: Decreto 6.009, de 08/09/2023 (corpo datado 05/09/2023), 'Em vigor', regulamenta a Lei 1.893 e revoga o Decreto 2010/09; texto integral lido."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3527256 'pesado|caminh|tráfego|anel vi' (Instar, SAPL da Câmara, portal da Câmara)",
+   "resultado": "Só os dois atos acima. SAPL (sapl.lourdes.sp.leg.br) e portal da Câmara: 0 resultados."
+  },
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/lourdes (pesquisar.php, termo 'veículos pesados')",
+   "resultado": "17 edições (2020 a 2026), não abertas; a de 07/12/2023 é a da publicação das leis."
+  }
+ ],
+ "observacoes": "Lei 1.893, de 05/09/2023 (art. 1º): proíbe o tráfego, nas vias públicas da cidade, de caminhões 'a partir de 5 eixos' e veículos longos pesados (rodotrem, caminhão trator com semirreboque e/ou reboque, caminhão com reboque, romeu e julieta, bitrem, treminhão, canavieiro, de grãos etc.); § 1º: alternativa obrigatória é o anel viário; art. 2º: carga e descarga permitidas com autorização da Unidade Municipal de Trânsito (moradores da área urbana também, com a autorização); art. 4º: vigência em até 60 dias após a publicação. Decreto 6.009/2023: art. 1º repete a proibição de veículos longos pesados; art. 2º proíbe 'o trânsito de caminhões e ônibus, exceto para carga, descarga, embarque e desembarque de passageiros em todas as ruas da cidade'; art. 3º: efeitos para fiscalização conforme a colocação das placas. O art. 2º do decreto vai além da lei e depende da sinalização: deixado como regra desativada até confirmar a sinalização. Pendências: data exata de publicação/vigência da lei, existência do anel viário e das placas. | verificado em 2026-10-11: os textos da Lei 1.893/2023 e do Decreto 6.009/2023 foram conferidos de novo no portal oficial (os dois 'Em vigor', sem atos relacionados que os alterem). Na busca no Diário Oficial (dosp, slug lourdes; termos '1.893', '1893', '6.009', 'anel viário', 'veículos pesados') não apareceu alteração nem revogação. O anel viário existe: 'Contorno de Lourdes', denominado por lei no DO de 27/02/2024. CORRIGIDO: vigencia_inicio preenchido com 2024-02-05, o limite de 60 dias contado da publicação no DO ed. 772 (07/12/2023). O decreto continua desativado.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "tipo": "zona",
+   "feriados": "aplica",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "excecoes": [
+    "Art. 2º: carga e descarga, com autorização da Unidade Municipal de Trânsito",
+    "Parágrafo único do art. 2º: proprietários/motoristas residentes na área urbana com a mesma autorização",
+    "Art. 1º, § 1º: obrigatório usar o anel viário como alternativa"
+   ],
+   "vigencia_inicio": "2024-02-05",
+   "id": "lourdes_lei1893_2023_5_eixos_vias_urbanas",
+   "regime": "Caminhões a partir de 5 eixos e veículos longos pesados: proibidos nas vias da cidade",
+   "nome": "Lourdes: vias públicas urbanas, caminhões de 5 eixos ou mais e veículos longos pesados",
+   "status": "ativa",
+   "confianca": "media",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.893, de 05/09/2023",
+     "artigo": "art. 1º, §§ 1º a 3º; art. 2º; art. 4º (vigência em até 60 dias da publicação)",
+     "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1393/"
+    }
+   ],
+   "nota": "Critério adotado: eixos > 4 (texto: 'a partir de 05 eixos'). Os tipos citados (rodotrem, bitrem, treminhão, romeu e julieta) têm em geral 5+ eixos. Vigência: art. 4º, 'até 60 dias' após a publicação; publicada por afixação em 05/09/2023 e no Diário Oficial ed. 772 em 07/12/2023. vigencia_inicio = 05/02/2024, o prazo máximo contado da publicação no DO, por cautela. Anel viário existe: estrada vicinal 'Contorno de Lourdes', denominada 'Cilos Rodrigues – Nego Taviano' por lei publicada no DO de 27/02/2024.",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "vias públicas da cidade de Lourdes"
+     ],
+     "descricao": "Todas as vias públicas urbanas; alternativa pelo anel viário",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "tipo": "zona",
+   "feriados": "aplica",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "excecoes": [
+    "Art. 2º: carga, descarga, embarque e desembarque de passageiros"
+   ],
+   "vigencia_inicio": "2023-09-08",
+   "id": "lourdes_dec6009_2023_caminhoes_onibus_todas_ruas",
+   "regime": "Caminhões e ônibus: trânsito proibido em todas as ruas, exceto carga/descarga e embarque",
+   "nome": "Lourdes: todas as ruas, caminhões e ônibus (Decreto 6.009/2023, art. 2º)",
+   "status": "desativada",
+   "status_motivo": "Art. 3º do decreto condiciona os efeitos à colocação das placas, não confirmada; alcance (todos os caminhões e ônibus) é mais amplo que o da Lei 1.893 que regulamenta, o que pode ser excesso regulamentar.",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 6.009, de 08/09/2023",
+     "artigo": "art. 2º (proibição), art. 3º (eficácia conforme placas)",
+     "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1446/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "todas as ruas da cidade de Lourdes"
+     ],
+     "descricao": "Todas as ruas",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

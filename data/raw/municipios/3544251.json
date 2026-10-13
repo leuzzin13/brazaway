@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3544251",
+  "municipio": "Rosana",
+  "uf": "SP",
+  "fonte_id": "rosana",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MjgyNDY1 (DOSP Rosana ed. 802, 06/09/2022: Decreto 3.503/2022) ; https://www.dosp.com.br/exibe_do.php?i=MjQxODMw (DOSP Rosana ed. 707, 13/04/2022: Decreto 3.462/2022, revogado)",
+    "licenca": "Atos oficiais de Rosana: domínio público (Lei 9.610/1998 art. 8º IV). Registro revogado: limite municipal do IBGE (dados públicos, citar a fonte: IBGE).",
+    "notas": "Dec. 3.503/2022, art. 1º: caminhões de carga pesada com mais de 2 eixos proibidos, sem horário, na Estrada da Jacutinga (Distrito de Primavera). A estrada não existe com esse nome no OpenStreetMap (nem em nome alternativo, varredura do PBF do Sudeste de 11/10/2026) e o ato não dá pontas nem referência: a regra entra desativada por falta de geometria confiável (pendência). O Dec. 3.462/2022 (primeira versão) fica como registro revogado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o critério é o número de eixos (mais de 2).",
+  "regras": [
+    {
+      "id": "rosana_jacutinga_mais2eixos",
+      "tipo": "via",
+      "regime": "Caminhões de carga pesada com mais de 2 eixos proibidos",
+      "nome": "Rosana: Estrada da Jacutinga (Distrito de Primavera), caminhões acima de 2 eixos",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: a Estrada da Jacutinga não está no OpenStreetMap (nenhum way com esse nome, alt_name ou old_name no PBF do Sudeste) e o Decreto 3.503/2022 não dá pontas, extensão nem ligação da estrada. Ato vigente e confirmado pelo verificador; ativar quando a estrada for localizada.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 2}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.503, de 05/09/2022 (DOSP Rosana ed. 802, 06/09/2022)",
+          "artigo": "art. 1º (proibição a caminhões de transporte de cargas pesadas acima de 2 eixos na Estrada da Jacutinga, Distrito de Primavera); art. 2º (penalidade do art. 187 do CTB); art. 3º (fiscalização pela PM e agente municipal); art. 4º (sinalização); art. 5º (vigência na publicação e revogação do Decreto 3.462/2022)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjgyNDY1"
+        }
+      ],
+      "nota": "Motivo do ato: caminhões de areia com excesso de peso fugindo da balança da SP-613 (Rodovia Arlindo Bettio) e inquérito civil do MP. Sem horário (24 h). Verificado em 11/10/2026: nenhum ato posterior no DOSP de Rosana (buscas 'Jacutinga', '3.503', 'eixos', edições de 2023–2025).",
+      "vigencia_inicio": "2022-09-05",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rosana_jacutinga_dec3462",
+      "tipo": "zona",
+      "regime": "Caminhões acima de 2 eixos (versão 2022-04) - revogada",
+      "nome": "Rosana: Decreto 3.462/2022, Estrada da Jacutinga (REVOGADO)",
+      "status": "revogada",
+      "status_motivo": "Revogado expressamente pelo art. 5º do Decreto 3.503/2022 (DOSP Rosana ed. 802, 06/09/2022).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.462, de 12/04/2022 (DOSP Rosana ed. 707, 13/04/2022)",
+          "artigo": "citado como revogado no art. 5º do Decreto 3.503/2022 (texto integral não detalhado na pesquisa)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MjQxODMw"
+        }
+      ],
+      "nota": "Registro histórico (nunca aplicado nem avisado). Geometria: limite do município, só como registro (no rascunho o tipo era via; ficou zona porque o limite municipal é polígono).",
+      "vigencia_inicio": "2022-04-13",
+      "vigencia_fim": "2022-09-06",
+      "geometria": [{"municipios": ["3544251"], "simplificar": 0.002, "casas": 5}]
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+{
+ "ibge": "3512407",
+ "nome": "Cordeirópolis",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.camaracordeiropolis.sp.gov.br/siscam (toolkit legislacao.py buscar 3512407)",
+   "resultado": "Siscam da Câmara: 45 atos; relevantes Decreto 6.642/2023 e Decreto 6.633/2023 (ambos 'Regulamenta o tráfego de caminhões, carretas, articulados e cargas em geral') e Lei 2.956/2014 (lona/transporte de entulho; não é restrição de circulação)."
+  },
+  {
+   "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429",
+   "resultado": "Decreto 6.642, 23/01/2023, situação 'Em vigor' no Siscam; PDF baixado e lido integralmente (6 p.): atos/3512407/dec6642_2023.pdf. Art. 4 (vias proibidas >6 t, 24h), art. 5 (autorização), art. 9 (PBT >24 t ou tri-articulado vedado no município), art. 10 (exceções), art. 18 (revoga o Dec. 6.633/2023)."
+  },
+  {
+   "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=81553",
+   "resultado": "Decreto 6.633, 02/01/2023: texto lido (atos/3512407/dec6633_2023.pdf), mesmo conteúdo; REVOGADO expressamente pelo art. 18 do Dec. 6.642/2023."
+  },
+  {
+   "url": "https://cordeiropolis.sp.gov.br/autorizacao-caminhoes/",
+   "resultado": "Página da Prefeitura repete as vias do Dec. 6.642/2023 e informa cadastro obrigatório a partir de 16/06/2023 (app, 24 h de antecedência)."
+  },
+  {
+   "url": "https://cordeiropolis.sp.gov.br/trafego-de-caminhoes-esta-proibido-na-av-presidente-vargas-proximo-ao-eldorado/",
+   "resultado": "Notícia de 25/09/2026: bloqueio temporário de caminhões entre o novo viaduto e a rotatória do Jd. Eldorado (reparo de asfalto). Temporário, sem ato; não vira regra."
+  },
+  {
+   "url": "https://cordeiropolis.sp.gov.br/novos-radares-farao-a-restricao-de-veiculos-pesados-na-regiao-central-da-cidade/",
+   "resultado": "Notícia de 25/10/2022: radares de fiscalização em vias centrais (contexto)."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar",
+   "resultado": "diarios_consolidados.py buscar (doesp, apm, dosp, qd): 'circulação de caminhões' e 'trânsito de caminhões' = 0 resultado(s) em cada fonte."
+  },
+  {
+   "url": "https://www.camaracordeiropolis.sp.gov.br/Siscam/Documentos/Details?handler=Arquivo&id=118587",
+   "resultado": "Verificador 2026-10-11: PDF do Dec. 6.642/2023 re-baixado, idêntico ao arquivado; página da Prefeitura autorizacao-caminhoes reconferida (cita só arts. 4, 5 e 6, cadastro desde 16/06/2023)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Decreto 6.642/2023 (assinado 23/01/2023; art. 18: vigor na data, efeitos 30 dias após a publicação; revoga o Dec. 6.633/2023). Data exata de publicação não conferida (lido PDF da Câmara, não o diário). Alvo: art. 2 define sem restrição VUC e toco (<=6 t de capacidade); art. 4 proíbe 'caminhões, carretas, articulados e superdimensionados acima de 6 toneladas' nas 6 vias listadas (24 h, todos os dias): ambíguo entre capacidade e PBT, modelado como payload_t (art. 2 usa 'capacidade'). Art. 9 veda PBT >24 t ou tri-articulado em todo o município (mod. como zona). Art. 6 lista rodovias (SP-310/SP-316/SP-330) liberadas, estaduais. Nenhum ato posterior de alteração localizado nas consultas de ementa (busca por 6.642 sem resultado), mas a Câmara não filtra por texto: vigência 'em vigor' vem do Siscam. Pendência: confirmar publicação oficial e eventuais decretos de alteração (art. 7 delega à Secretaria de Governo alterar vias). | Verificado em 2026-10-11: PDF baixado de novo do Siscam (handler=Arquivo&id=118587), idêntico a atos/3512407/dec6642_2023.pdf; Siscam 'Em vigor'; busca por ementa (caminh|tráfego|trânsito|carga|pesad|6.642, 129 atos) sem decreto posterior de alteração até 10/2026. Regra das vias confirmada com correção (retirada a 'exceção' de AET, que não libera as vias do art. 4). Regra do art. 9 (PBT >24 t / tri-articulado no município) rebaixada para desativada por contradição interna com o regime de autorização dos arts. 3, 5, 11 e 13.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "cordeiropolis_vias_acima_6t",
+   "tipo": "via",
+   "regime": "Decreto 6.642/2023 art. 4",
+   "nome": "Cordeirópolis: vias centrais e acessos com proibição de caminhões acima de 6 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 6
+     }
+    ]
+   },
+   "excecoes": [
+    "Caminhão de utilidade pública",
+    "Caminhão em serviço de urgência (art. 29, VII, CTB)",
+    "Caminhão socorro mecânico de emergência"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.642, de 23/01/2023",
+     "artigo": "art. 4º, incisos I a VI (e art. 3º, 5º, 10)",
+     "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429"
+    }
+   ],
+   "nota": "'Acima de 6 toneladas' sem dizer PBT ou capacidade; art. 2 usa capacidade (payload_t). Confiança média por isso. Verificado em 2026-10-11: AET (arts. 5, 11 e 13) não excepciona as vias do art. 4; só o art. 10 traz exceções. Efeitos 30 dias após a publicação (art. 18), data de publicação não conferida (assinaturas digitais de 10 e 13/02/2023).",
+   "vigencia_inicio": "2023-01-23",
+   "trechos": [
+    {
+     "via": "Rua do Barro Preto",
+     "de": "Av. Vereador Vilson Diório",
+     "ate": "rotatória de acesso à Estrada Municipal do Barro Preto (COR 020)",
+     "descricao": "art. 4º, I",
+     "aproximado": false
+    },
+    {
+     "via": "Estrada Municipal Carmelo Fior (COR 010)",
+     "descricao": "art. 4º, I (parágrafo seguinte)",
+     "aproximado": true
+    },
+    {
+     "via": "Rua Flaminio Levy",
+     "de": "Av. Vereador Vilson Diório",
+     "ate": "cruzamento com Rua do Barro Preto",
+     "descricao": "art. 4º, II",
+     "aproximado": false
+    },
+    {
+     "via": "Avenida Presidente Vargas",
+     "de": "Av. Vereador Vilson Diório",
+     "ate": "Rua Domingos Martins",
+     "descricao": "art. 4º, III",
+     "aproximado": false
+    },
+    {
+     "via": "Rua Francisco Minatel",
+     "de": "(início)",
+     "ate": "limite com a Rua Domingos Martins (Centro)",
+     "descricao": "art. 4º, IV",
+     "aproximado": true
+    },
+    {
+     "via": "Rua Guilherme Krauter",
+     "descricao": "toda a extensão, art. 4º, V",
+     "aproximado": false
+    },
+    {
+     "via": "Rua José Moreira",
+     "descricao": "toda a extensão, art. 4º, VI",
+     "aproximado": false
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3512407_cordeiropolis_vias.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "cordeiropolis_municipio_pbt24_triarticulado",
+   "tipo": "zona",
+   "regime": "Decreto 6.642/2023 art. 9",
+   "nome": "Cordeirópolis: município inteiro, vedado PBT acima de 24 t ou tri-articulado",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 24
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "tri-articulado"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Caminhão de utilidade pública",
+    "Caminhão em serviço de urgência (art. 29, VII, CTB)",
+    "Caminhão socorro mecânico de emergência"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.642, de 23/01/2023",
+     "artigo": "art. 9º",
+     "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429"
+    }
+   ],
+   "nota": "Texto literal: 'vedado o tráfego do Veículo de Carga Pesada Tri-articulado ou com PBT superior a 24.000 kg no Município'. O decreto lista como liberadas só rodovias estaduais (art. 6). Perfil 'tri-articulado' pode não existir no perfil do roteador: validar o campo antes de ativar; nesse caso usar só pbt_t.",
+   "vigencia_inicio": "2023-01-23",
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3512407_cordeiropolis_limite.geojson",
+     "construir": "manual",
+     "como_gerar": "limite municipal de Cordeirópolis, excluindo as rodovias estaduais do art. 6 (SP-310, SP-316, SP-330)"
+    }
+   ],
+   "motivo_desativacao": "Verificado em 2026-10-11: art. 9 lido literalmente vedaria todo veículo com PBT >24 t no município inteiro, o que contradiz os arts. 3, 5, 11 e 13 do mesmo decreto (cavalo mecânico simples/trucado/LS, cujo PBT passa de 24 t, circula com cadastro e autorização prévia) e a página oficial de Autorização Especial de Caminhões da Prefeitura, que não menciona a vedação. Alcance incerto (vedação geral ou só do tri-articulado); não ativar sem ato/regulamento que esclareça."
+  }
+ ]
+}

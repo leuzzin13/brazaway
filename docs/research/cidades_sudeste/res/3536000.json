@@ -1,0 +1,140 @@
+{
+  "ibge": "3536000",
+  "nome": "Parapuã",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.parapua.sp.leg.br",
+      "resultado": "sapl: 27 atos em busca por caminh/carga e descarga/veículos pesados/tráfego/trânsito/VUC"
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sp/parapua",
+      "resultado": "leismunicipais: falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/sp/parapua. Não contornar; usa"
+    },
+    {
+      "url": "https://www.parapua.sp.leg.br/leis/legislacao-municipal",
+      "resultado": "portal_proprio: 0 atos em busca por caminh/carga e descarga/veículos pesados/tráfego/trânsito/VUC (cliente heurístico, só pista)"
+    },
+    {
+      "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
+      "resultado": "sem resultado"
+    },
+    {
+      "url": "https://sapl.parapua.sp.leg.br/norma/7638",
+      "resultado": "Lei Municipal 3.247, de 28/03/2025: PDF lido (texto extraído). Sem normas relacionadas no SAPL; sem data de publicação nem de fim de vigência cadastradas."
+    },
+    {
+      "url": "https://sapl.parapua.sp.leg.br/norma/1070",
+      "resultado": "Decreto Executivo 3.202/2002 (estacionamento de caminhões, Av. São Paulo entre R. Fortaleza e Av. Pernambuco): PDF lido; regra de estacionamento, não de circulação."
+    },
+    {
+      "url": "https://sapl.parapua.sp.leg.br/norma/1212",
+      "resultado": "Decreto Executivo 3.079/2001 (veículos automotores no entorno da Praça da Matriz, sáb/dom/feriados 18h-4h): lido; não é específico de caminhões."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei Municipal 3.247, de 28/03/2025, art. 1º: proíbe o tráfego de carretas com 7 eixos ou mais (cavalo mecânico + carreta; bitrem, treminhão, tritrem, rodotrem), carregadas ou não, na estrada vicinal PRP-138 'Carlos Adalberto Massaroti' em toda a extensão (Bastos-Parapuã-Rinópolis), sem janela de horário. Parágrafo único: exceções (caminhões que transportam produtos agrícolas produzidos no município, insumos para propriedades atendidas pela vicinal, patrulha mecanizada, saúde de emergência, manutenção de emergência em redes, guincho). Art. 5º: Executivo pode suspender por decreto em catástrofe. Art. 9º: vigor na publicação (data de publicação não registrada no SAPL; adotada a data da lei). Decretos 3.202/2002 (estacionamento) e 3.079/2001 (praça) registrados como desativados/fora de escopo. Geometria: a via é rural; OSM não conferido (Overpass fora do ar). Os demais termos não trouxeram ato de circulação. | verificado em 2026-10-11: PDF da Lei 3.247/2025 relido; arts. 1º (7+ eixos, carreta mais cavalo mecânico; bitrem, treminhão, tritrem, rodotrem; carregados ou não; toda a extensão da PRP-138), parágrafo único (exceções), 5º e 9º conferem. Publicação por afixação 'na data supra' (28/03/2025) consta no próprio ato. API do SAPL (atualizada até 2026: tráfego, restrição, revoga, carretas, eixos, PRP, Massaroti): nenhum ato posterior altera ou revoga. Lei 3.145/2022 (norma 7367) é a denominação da PRP-138. Sem VUC.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "parapua_prp138_carretas_7_eixos",
+      "tipo": "via",
+      "regime": "Carretas com 7 eixos ou mais",
+      "nome": "Parapuã: Estrada Vicinal PRP-138 (Carlos Adalberto Massaroti), proibido tráfego de carretas de 7 eixos ou mais",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Parágrafo único: caminhões que transportam produtos agrícolas produzidos no município; insumos agrícolas endereçados às propriedades atendidas pela vicinal; caminhões e máquinas pesadas da patrulha mecanizada (municipal, estadual, federal); serviços emergenciais de saúde; manutenção de emergência em vias, redes elétrica, telefônica, pluvial, sanitária e água; guincho",
+        "Art. 5º: suspensão por decreto em catástrofe natural"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.247, de 28/03/2025 (Parapuã)",
+          "artigo": "art. 1º e parágrafo único (proibição e exceções); art. 9º (vigor na publicação)",
+          "url": "https://sapl.parapua.sp.leg.br/media/sapl/public/normajuridica/2025/7638/3247.pdf",
+          "nota": "Página: https://sapl.parapua.sp.leg.br/norma/7638"
+        }
+      ],
+      "nota": "Confiança média: eixos contados como combinação (cavalo + carreta); via rural, nome no OSM não conferido. Sem VUC definido. Verificado em 2026-10-11: o PDF registra 'Publicada e registrada ... e afixada em lugar de costume na data supra' (28/03/2025), então vigência desde 28/03/2025. Pendência de geometria: limitar ao trecho dentro do território de Parapuã (lei municipal não alcança Bastos/Rinópolis).",
+      "fonte_geometria": "OSM por nome/ref (PRP-138); conferir quando o Overpass voltar",
+      "vigencia_inicio": "2025-03-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Vicinal Carlos Adalberto Massaroti",
+            "Estrada Vicinal PRP-138",
+            "PRP-138"
+          ],
+          "descricao": "Estrada Vicinal PRP-138 em toda a extensão (Bastos, Parapuã, Rinópolis)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3536000_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "parapua_av_sao_paulo_estacionamento",
+      "tipo": "via",
+      "regime": "Estacionamento de caminhões",
+      "nome": "Parapuã: Av. São Paulo (R. Fortaleza a Av. Pernambuco), proibido estacionar caminhão exceto carga e descarga até 30 min",
+      "status": "desativada",
+      "status_motivo": "Regra de estacionamento (Decreto 3.202/2002, art. 1º), não de circulação; registrada só para aviso.",
+      "confianca": "media",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Carga e descarga por até 30 minutos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Executivo 3.202, de 27/11/2002 (Parapuã)",
+          "artigo": "art. 1º",
+          "url": "https://sapl.parapua.sp.leg.br/media/sapl/public/normajuridica/2002/1070/3202.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3536000_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "Av. São Paulo entre R. Fortaleza e Av. Pernambuco (não georreferenciada)"
+        }
+      ]
+    }
+  ]
+}

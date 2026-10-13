@@ -1,0 +1,153 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3500402",
+  "municipio": "Águas da Prata",
+  "uf": "SP",
+  "fonte_id": "aguas-da-prata",
+  "fonte": {
+    "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/533/ (Decreto 2.799/2019) ; https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/3651/ (Lei 2.321/2019) ; https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/1036/ (Decreto 2.310/2012)",
+    "licenca": "Atos oficiais de Águas da Prata: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, malha municipal (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Dec. 2.799/2019 (Lei 2.321/2019): caminhões com tara acima de 5 t restritos sábado, domingo e feriado das 6h às 20h em todas as vias do município, exceto SP-342 e SP-215; modelado como PBT acima de 5 t (lado seguro). Dec. 2.310/2012 (Bairro da Cascata e estradas AGP) registrado sem geometria."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O VUC (2,20 x 6,30 m) do Dec. 2.799/2019, art. 3º, II, vale só na regra de fim de semana (definido nela).",
+  "regras": [
+    {
+      "id": "aguas_da_prata_fds_feriados_tara_5t",
+      "tipo": "zona",
+      "regime": "Restrição de fim de semana e feriados a caminhões com tara acima de 5 t",
+      "nome": "Águas da Prata: todas as vias do município, sáb/dom/feriados 6h-20h, caminhões com tara acima de 5 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "06:00",
+          "to": "20:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 6.3,
+        "exige_cadastro": false,
+        "orgao": "Prefeitura",
+        "artigo": "Decreto 2.799/2019, art. 3º, II",
+        "nota": "Também exige limite de emissão de poluentes (não modelável). A Lei 2.321/2019 fala em VUC com PBT de 5.000 kg, mas o decreto (art. 3º, II) só fixa 2,20 m x 6,30 m."
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Decreto 2.799/2019, art. 3º, I (carga destinada a entrega no perímetro urbano ou que venha carregar, com nota fiscal)",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º: não abrange SP-342 (km 224+030 a 251+150) e SP-215 (km 29+755 a 49+940)",
+        "Art. 3º, I: carga destinada a entrega no perímetro urbano ou que venha carregar (nota fiscal)",
+        "Art. 3º, II: VUC (2,2 m x 6,3 m, limite de emissões)",
+        "Art. 3º, III: transporte de passageiros, tratores e guinchos",
+        "Art. 3º, IV: serviços essenciais ou de utilidade pública (Elektro, Sabesp, Bombeiros, caminhões da Municipalidade)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.799, de 15/07/2019 (Águas da Prata), que regulamenta a Lei Municipal 2.321/2019; art. 3º, caput, com redação do Decreto 2.800/2019",
+          "artigo": "arts. 1º a 5º",
+          "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/533/",
+          "nota": "PDF https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/533/ ; Decreto 2.800: https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/532/"
+        },
+        {
+          "ato": "Lei Municipal 2.321, de 18/04/2019 (Águas da Prata), 'Restringe o trânsito de veículos de carga no município'",
+          "artigo": "art. 1º e §§ (dias, horários e locais por decreto; exceções: VUC com PBT de 5.000 kg definido em decreto, passageiros, tratores e guinchos, serviços essenciais); art. 5º (multa do CTB art. 187); art. 7º (vigor na publicação)",
+          "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/3651/",
+          "nota": "PDF https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/3651/ (cópia em atos/3500402/lei_2321_2019.pdf)"
+        }
+      ],
+      "nota": "O ato usa TARA > 5 t (não PBT); pbt_t > 5 é aproximação do lado seguro. Janela cobre sáb e dom; a restrição vale também em feriados (feriados 'aplica' não cria janela em dia útil). Pé na Estrada cita Av. Washington Luiz. Geometria: limite municipal do IBGE sem a SP-342 e a SP-215 (com a BR-267 coincidente), recortadas com folga de 40 m (script geo/3500402_municipio_curadoria.py); 3 partes. A travessia urbana da SP-342 (Av. Washington Luís, Av. Cel. Ernesto de Oliveira) ficou livre porque o art. 2º exclui a SP-342 do km 224+030 ao 251+150 (o guia Pé na Estrada cita a Av. Washington Luís como restrita: pendência a conferir na sinalização). Feriados: a camada aplica a regra em feriado pelo calendário (feriados: aplica) mas a janela só cobre sábado e domingo; feriado em dia útil não fica coberto (limitação).",
+      "fonte_geometria": "IBGE (malha municipal, API v3) menos a SP-342 e a SP-215 do OpenStreetMap (ODbL), folga de 40 m",
+      "vigencia_inicio": "2019-08-14",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3500402_municipio.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3500402_municipio_curadoria.py data/cache/municipios/ibge_malha_3500402.geojson data/cache/municipios/osm_hw_3500402.json: limite municipal do IBGE sem a SP-342 e a SP-215 (folga mínima de 40 m), simplificado para dentro a 332 vértices (osm_pbf_vias.py extrai as vias do PBF)."
+        }
+      ]
+    },
+    {
+      "id": "aguas_da_prata_cascata_rurais_cvc_30t",
+      "tipo": "via",
+      "regime": "Proibição de CVC/AET e caminhões com PBT de 30 t ou mais (Decreto 2.310/2012)",
+      "nome": "Águas da Prata: Bairro da Cascata e estradas AGP 129, AGP 10 e AGP 20, CVC e caminhões com PBT de 30 t ou mais proibidos",
+      "status": "desativada",
+      "status_motivo": "Achado do verificador em 2026-10-11, ainda não pesquisado a fundo. O Decreto 2.310/2012 consta como 'Ativa (Não consta revogação expressa)' no portal, mas pode ter sido tacitamente superado pela Lei 2.321/2019 e pelo Decreto 2.799/2019 (regime geral de fim de semana). Os nomes das vias e das estradas AGP não foram conferidos no OSM e a sinalização não foi verificada. Sem geometria confiável: registrada sem feição.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 29.99
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, §1º: combinações de até 2 unidades (caminhão-trator + semirreboque) dentro das dimensões da Res. CONTRAN 210/06, art. 1º, I, II e III 'd'; ônibus; forças armadas, polícias, bombeiros; serviço essencial e de emergência",
+        "Art. 2º: autorização excepcional do DEMUTRAN",
+        "Art. 1º, §3º: os demais veículos de carga podem transitar nessas vias, exceto das 07h às 11h e das 13h às 16h (restrição horária adicional, não modelada)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.310, de 05/07/2012 (Águas da Prata), que revoga o Decreto 2.304/2012",
+          "artigo": "art. 1º e §§1º-3º; art. 2º; art. 5º (vigor em 09/07/2012); art. 6º",
+          "url": "https://www.aguasdaprata.sp.gov.br/legislacao/detalhe/1036/",
+          "nota": "PDF https://www.aguasdaprata.sp.gov.br/legislacao/download-lei/1036/ (imagem; cópia em atos/3500402/decreto_2310_2012.pdf)"
+        }
+      ],
+      "nota": "Vias do Decreto 2.310/2012: Rua José da Costa Oliveira (Bairro da Cascata); Rua Manoel Diogo (Bairro da Cascata); Rua Francisco Gonçalves (Bairro da Cascata); Rua Afonso Fernandes (Bairro da Cascata); Rua Estação da Cascata (Bairro da Cascata); Rua Tereza Cavini (Bairro da Cascata); Rua Capitão José Alexandre (Bairro da Cascata); Rua São José (Bairro da Cascata); Rua Valter Lelis Diogo (Bairro da Cascata); AGP 129 (estrada rural; só a parte dentro do município, §2º); AGP 10 (estrada rural; só a parte dentro do município, §2º); AGP 20 (estrada rural; só a parte dentro do município, §2º). No OSM a AGP-020 aparece como 'Caminho da Fé' e há uma 'Rua Capitão José Alexandre' com ref AGP-215; as demais não foram conferidas.",
+      "vigencia_inicio": "2012-07-09",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

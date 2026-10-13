@@ -1,0 +1,78 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3510708",
+  "municipio": "Cardoso",
+  "uf": "SP",
+  "fonte_id": "cardoso",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=MTE0NTIx (DOSP Cardoso ed. 242, 20/06/2020: Decreto 3.491/2020)",
+    "licenca": "Ato oficial de Cardoso: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, malha municipal (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0).",
+    "notas": "Dec. 3.491/2020: em todo o território do município, proibido o trânsito de veículos de carga articulados ou suas unidades tratoras com altura acima de 4,71 m (art. 2º); placas nos trevos de acesso (art. 3º); vigência na publicação (art. 4º). Rodovias estaduais/federais ficam livres."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto é por altura de articulados: não define VUC.",
+  "regras": [
+    {
+      "id": "cardoso_altura_4_71",
+      "tipo": "zona",
+      "regime": "Articulados com altura > 4,71 m proibidos",
+      "nome": "Cardoso: todo o município, veículos de carga articulados (e unidades tratoras) com altura acima de 4,71 m",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "altura_m",
+            "acima": 4.71
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.491, de 19/06/2020 (DOSP Cardoso ed. 242, 20/06/2020)",
+          "artigo": "arts. 1º a 4º (art. 2º: altura superior a 4,71 m)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MTE0NTIx"
+        }
+      ],
+      "nota": "Limite de altura (sem horário), em todo o território do município (art. 1º). A 'Resolução nº 735/2018' citada no decreto não foi conferida; isso não muda o limite fixado pelo decreto (verificador). Zona = limite municipal do IBGE sem as rodovias estaduais/federais (SP-461/BR-154 e SP-322/SP-154, folga de 40 m), que não são de jurisdição municipal (mesma convenção das zonas de perímetro urbano). Impacto prático baixo: a maioria dos conjuntos tem menos de 4,71 m. Com origem ou destino no município a zona não é excluída e a rota avisa.",
+      "vigencia_inicio": "2020-06-19",
+      "excecoes": [],
+      "origem_destino_dentro": "avisa",
+      "fonte_geometria": "IBGE (malha municipal), sem as rodovias SP-461/BR-154 e SP-322/SP-154 (OSM, ODbL)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3510708_municipio.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3510708_municipio_curadoria.py data/cache/municipios/ibge_malha_3510708.geojson <extrato OSM das ways de Cardoso (PBF do Sudeste)>: limite municipal do IBGE sem as rodovias estaduais/federais (folga de 40 m)."
+        }
+      ]
+    }
+  ]
+}

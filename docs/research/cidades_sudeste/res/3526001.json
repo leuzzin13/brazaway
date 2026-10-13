@@ -1,0 +1,135 @@
+{
+ "ibge": "3526001",
+ "nome": "Junqueirópolis",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.junqueiropolis.sp.gov.br/portal/leis_decretos/ (Instar, toolkit legislacao.py buscar, ementa; 11671 normas na base)",
+   "resultado": "Termos caminh|veículos pesados|veiculos pesados|veículo de carga|carga e descarga|tráfego|trafego|trânsito|transito|tonelad|eixos|carreta: nenhuma lei/decreto/portaria de restrição a caminhões. ACHADOS: Lei 3.044/2016, Lei 2.793/2013, Lei 3.188/2018 e Convênio 13/2018 (rota alternativa de caminhões canavieiros, texto não lido), Resoluções de Trânsito 4/2019 e 5/2020 (estacionamento de caminhões em ruas específicas: pontual)."
+  },
+  {
+   "url": "https://www.junqueiropolis.sp.gov.br/publicos/lei_ordinaria_3044_16_828456.pdf",
+   "resultado": "LIDO (texto): Lei 3.044/2016, art. 1º 'Fica vedado o tráfego de caminhões canavieiros carregados no perímetro urbano'. Instar: Em vigor. Cópia em atos/3526001/lei3044_2016.pdf"
+  },
+  {
+   "url": "https://www.junqueiropolis.sp.gov.br/publicos/lei_ordinaria_2793_2013_53662.pdf",
+   "resultado": "LIDO (texto): Lei 2.793/2013 (vicinal Dracena). Instar: situação 'Alterada'. Cópia em atos/3526001/lei2793_2013.pdf"
+  },
+  {
+   "url": "https://www.cmjunqueiropolis.sp.gov.br/portal/leis_decretos/ (Instar Câmara, 280 normas)",
+   "resultado": "Termos de caminhões/trânsito sem resultado."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "Sem acerto relevante. "
+  },
+  {
+   "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
+   "resultado": "500: não conferido"
+  }
+ ],
+ "observacoes": "Lei 3.044/2016 em vigor (Instar) veda caminhões canavieiros carregados no perímetro urbano; regra deixada desativada por o alvo não ser representável (pendência de decisão). Lei 2.793/2013 (vicinal para Dracena) marcada 'Alterada' sem ato alterador identificado. Convênio 13/2018 + Lei 3.188/2018 definem rota alternativa dos caminhões canavieiros (texto não lido: pendência). Resoluções de Trânsito 4/2019 (marginais da Av. Geraldo Fudo) e 5/2020 (R. Constantino Marcolino de Souza) regulam estacionamento de caminhões: pontual.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Preparação: hgv_no=3 (não conferidos: Overpass fora do ar). Pendência: conferir se correspondem à vicinal para Dracena e a ruas do perímetro urbano."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "junqueiropolis_perimetro_urbano_canavieiros",
+   "tipo": "zona",
+   "regime": "vedação de caminhões canavieiros carregados",
+   "nome": "Junqueirópolis: perímetro urbano, vedado tráfego de caminhões canavieiros carregados",
+   "status": "desativada",
+   "confianca": "media",
+   "status_motivo": "Ato primário vigente lido (Lei 3.044/2016, Em vigor no Instar), mas o alvo é 'caminhões canavieiros carregados' (carga/atividade), que o perfil de veículo do roteador não distingue; ativar a zona para todo caminhão bloquearia indevidamente. Perímetro urbano sem polígono no ato. Decisão de implementação pendente.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Aplica-se só a caminhões canavieiros carregados (cana-de-açúcar)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.044, de 09/08/2016 (Junqueirópolis)",
+     "artigo": "art. 1º, caput e §§ 1º-2º",
+     "url": "https://www.junqueiropolis.sp.gov.br/publicos/lei_ordinaria_3044_16_828456.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "via": "perímetro urbano de Junqueirópolis",
+     "de": "",
+     "ate": "",
+     "descricao": "sem polígono no ato; rota alternativa definida em convênio 13/2018 com a Glencane (não lido)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "junqueiropolis_vicinal_dracena_caminhoes",
+   "tipo": "via",
+   "regime": "vedação de caminhões (estrada vicinal)",
+   "nome": "Junqueirópolis: estrada vicinal Junqueirópolis-Dracena, vedado tráfego de caminhões",
+   "status": "desativada",
+   "confianca": "baixa",
+   "status_motivo": "Lei 2.793/2013 consta como 'Alterada' no Instar e o ato alterador não foi identificado; estrada rural vicinal sem traçado definido; exceção para carga/descarga em propriedades da estrada.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 1º: exceto carga e descarga em propriedades que fiquem na estrada"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.793, de 06/02/2013 (Junqueirópolis)",
+     "artigo": "art. 1º, caput e §§ 1º-2º",
+     "url": "https://www.junqueiropolis.sp.gov.br/publicos/lei_ordinaria_2793_2013_53662.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "via": "Estrada vicinal Junqueirópolis-Dracena",
+     "de": "Junqueirópolis",
+     "ate": "Dracena",
+     "descricao": "vicinal, traçado não definido no ato",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

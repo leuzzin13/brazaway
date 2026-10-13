@@ -1,0 +1,110 @@
+{
+ "ibge": "3146107",
+ "nome": "Ouro Preto",
+ "uf": "MG",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://cmop.mg.gov.br (legislacao.py buscar 3146107)",
+   "resultado": "WordPress da Câmara: 6 posts irrelevantes; /wp-json indisponível; 1doc sem cliente."
+  },
+  {
+   "url": "WebSearch: Ouro Preto decreto proíbe circulação de caminhões centro histórico",
+   "resultado": "Achou notícia da Itatiaia (03/09/2026) citando o Decreto 8.047/2023 sobre a Estrada da Purificação (veículos de mineradoras e carga > 7 t)."
+  },
+  {
+   "url": "https://www.itatiaia.com.br/ouropreto/ouro-preto-fiscaliza-veiculos-pesados-na-estrada-da-purificacao/",
+   "resultado": "Lida: confirma o decreto e a fiscalização em setembro/2026 (notícia = pista, não ato)."
+  },
+  {
+   "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.047",
+   "resultado": "Pesquisa de diário oficial da prefeitura (curl): texto integral do Decreto 8.047/2023 (DO 3294, 16/11/2023) e do Decreto 8.348/2024 (DO 3423, 24/05/2024) lidos. Sem revogação encontrada entre as ocorrências de 'Purificação'."
+  },
+  {
+   "url": "https://sgm.ouropreto.mg.gov.br/",
+   "resultado": "Sistema de normas da prefeitura exige login; não usado."
+  },
+  {
+   "url": "Overpass (overpass-api.de, overpass.kumi.systems, overpass.private.coffee, maps.mail.ru; area IBGE:GEOCODIGO)",
+   "resultado": "Fora do ar nesta máquina em 11/10/2026 (500/reset/504 em todos os espelhos; overpass.osm.ch responde mas só tem a Suíça). As vias etiquetadas no OSM NÃO foram identificadas."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Não há restrição geral no centro histórico achada. Regra real é a da Estrada da Purificação (Decretos 8.047/2023 e 8.348/2024), regra_com_ato. As 2 ways com maxweight no OSM não foram identificadas (Overpass fora): podem ser pontes ou a própria estrada. Não verifiquei 'centro histórico/Cachoeira do Campo' por nome de via.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM: 2 ways com maxweight não identificados (Overpass fora). PENDÊNCIA: ver se alguma é a Estrada da Purificação ou ponte; sem ato, nada ativa."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "ouropreto_estrada_purificacao_carga_7t",
+   "tipo": "via",
+   "regime": "Estrada da Purificação (carga > 7 t)",
+   "nome": "Ouro Preto: Estrada da Purificação (Antônio Pereira - sede, pelo Morro São João), veículos de carga com PBT acima de 7 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 7
+     }
+    ]
+   },
+   "autorizacao": "Excepcionalmente o órgão de trânsito municipal (OUROTRAN) pode autorizar o uso da via mediante solicitação e análise prévia (Dec. 8.047/2023, art. 3º)",
+   "excecoes": [
+    "Art. 3º: autorização excepcional da OUROTRAN"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 8.047, de 24/10/2023 (Diário Oficial de Ouro Preto, edição 3294, 16/11/2023)",
+     "artigo": "art. 1º, IV (proíbe veículos de carga na Estrada da Purificação; redação original: capacidade > 7 t e comprimento > 8 m); art. 3º (autorização OUROTRAN); art. 4º (vigência na publicação)",
+     "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.047",
+     "nota": "Texto lido na pesquisa de diário do portal da prefeitura (resultado 'Publicações > Decretos')."
+    },
+    {
+     "ato": "Decreto municipal 8.348, de 20/05/2024 (Diário Oficial de Ouro Preto, edição 3423, 24/05/2024)",
+     "artigo": "art. 1º (nova redação do art. 1º, IV do Dec. 8.047: 'veículos de carga com peso bruto total superior a 07 (sete) toneladas'); art. 2º (vigência na publicação)",
+     "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.047"
+    }
+   ],
+   "nota": "Os incisos I a III do art. 1º (veículos de empresas mineradoras caracterizados por adesivo, ônibus/micro-ônibus de trabalhadores de mineradoras, transporte turístico tipo jardineira/jipe) não são modeláveis por PBT e ficaram de fora. A redação original do inciso IV falava em 'capacidade superior a 7 t e comprimento superior a 8 m'; a alteração de 2024 trocou por PBT > 7 t, sem comprimento. Sem horário: proibição permanente. Notícia da Itatiaia (03/09/2026) confirma fiscalização em setembro/2026, o que indica decreto em vigor. Há um ato recente (2026, tema ônibus de fretamento na estrada) citado na mesma pesquisa; não alterou o art. 1º, IV até onde li. URL aponta uma busca dinâmica; recomenda-se substituir pela edição do DO.",
+   "fonte_geometria": "OSM por nome 'Estrada da Purificação' (ligação Antônio Pereira - Morro São João - sede); conferir pontas",
+   "vigencia_inicio": "2023-11-16",
+   "trechos": [
+    {
+     "inciso": "IV",
+     "via": [
+      "Estrada da Purificação"
+     ],
+     "descricao": "Estrada da Purificação, de Antônio Pereira à sede, via Morro São João",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3146107_estrada_purificacao.geojson",
+     "construir": "trechos"
+    }
+   ]
+  }
+ ]
+}

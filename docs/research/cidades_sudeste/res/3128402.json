@@ -1,0 +1,74 @@
+{
+  "ibge": "3128402",
+  "nome": "Guarani",
+  "uf": "MG",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/2FAA0B2A",
+      "resultado": "Decreto 23, de 28/01/2026 (DOM-AMM 11/02/2026) lido: art. 5º proíbe passagem de veículos pesados no Centro durante o Carnaval (12 a 17/02/2026); art. 6º interrompe trânsito e proíbe estacionamento em ruas da Praça Antônio Carlos, R. Abreu Sobrinho, R. Avelino de Morais Sarmento, R. 25 de Março e Av. Getúlio Vargas em dias/horários do evento. Mesma redação nos Decretos 39/2025 (DOM 26/02/2025) e 30/2024 (DOM 05/02/2024)."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3128402 (amm-mg): 'circulação de caminhões', 'trânsito de veículos pesados', 'veículos pesados', 'carga e descarga caminhões'",
+      "resultado": "Só os decretos anuais de Carnaval (2024, 2025, 2026) tratam de veículos pesados; demais acertos são licitações de manutenção de frota e Lei 1.221/2025 (caminhões do município para insumos)."
+    },
+    {
+      "url": "https://guarani.mg.gov.br/publicacoes/tipo/9 (toolkit legislacao.py buscar 3128402)",
+      "resultado": "página não respondeu ao cliente; sem consulta ao portal da prefeitura (decretos permanentes fora da AMM podem ter escapado, mas a AMM cobre o município)."
+    }
+  ],
+  "observacoes": "Só restrição temporária: decreto anual de Carnaval proíbe a passagem de veículos pesados no Centro durante os festejos (2026: 12 a 17/02) e interdita ruas específicas em horários do evento. Não é regra permanente; não roteável como restrição geral (precisaria de vigência por evento). Sem ato permanente achado na AMM.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "guarani_carnaval_veiculos_pesados_centro",
+      "tipo": "zona",
+      "regime": "Carnaval (temporário)",
+      "nome": "Guarani: Centro, proibida passagem de veículos pesados durante o Carnaval",
+      "status": "desativada",
+      "status_motivo": "Restrição de evento, repetida por decreto anual (2024, 2025, 2026) e válida só nos dias do Carnaval; centro não delimitado no ato; sem janela fixa por ano, não deve restringir a rota fora do evento.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 23, de 28/01/2026 (DOM-AMM, 11/02/2026)",
+          "artigo": "art. 5º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/2FAA0B2A",
+          "nota": "Também Decreto 39/2025 (https://www.diariomunicipal.com.br/amm-mg/materia/EF6BD48C) e 30/2024 (https://www.diariomunicipal.com.br/amm-mg/materia/6CB68988), mesma redação (lidos só em trecho de busca)."
+        }
+      ],
+      "vigencia_inicio": "2026-02-12",
+      "vigencia_fim": "2026-02-17",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3128402_guarani_centro.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar o Centro de Guarani só se for implementar restrições de evento por data."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3527256",
+  "municipio": "Lourdes",
+  "uf": "SP",
+  "fonte_id": "lourdes",
+  "fonte": {
+    "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1393/ (Lei 1.893/2023) ; https://www.lourdes.sp.gov.br/portal/leis_decretos/1446/ (Decreto 6.009/2023)",
+    "licenca": "Atos oficiais de Lourdes: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários 2022 (dados públicos, citar a fonte).",
+    "notas": "Lei 1.893/2023: caminhões a partir de 5 eixos e veículos longos pesados proibidos nas vias públicas da cidade; alternativa obrigatória pelo anel viário (Contorno de Lourdes). O art. 2º do Dec. 6.009/2023 (todos os caminhões e ônibus, salvo carga e descarga) fica desativado: depende das placas e vai além da lei."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Os atos não definem VUC.",
+  "regras": [
+    {
+      "id": "lourdes_lei1893_2023_5_eixos_vias_urbanas",
+      "tipo": "zona",
+      "regime": "Caminhões a partir de 5 eixos e veículos longos pesados: proibidos nas vias da cidade",
+      "nome": "Lourdes: vias públicas urbanas, caminhões de 5 eixos ou mais e veículos longos pesados",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização da Unidade Municipal de Trânsito para carga e descarga e para moradores da área urbana (Lei 1.893/2023, art. 2º e parágrafo único)",
+      "excecoes": [
+        "Art. 2º: carga e descarga, com autorização da Unidade Municipal de Trânsito",
+        "Parágrafo único do art. 2º: proprietários/motoristas residentes na área urbana com a mesma autorização",
+        "Art. 1º, § 1º: obrigatório usar o anel viário como alternativa"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.893, de 05/09/2023",
+          "artigo": "art. 1º, §§ 1º a 3º; art. 2º; art. 4º (vigência em até 60 dias da publicação)",
+          "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1393/"
+        }
+      ],
+      "nota": "Critério adotado: eixos > 4 (texto: 'a partir de 05 eixos'). Os tipos citados (rodotrem, bitrem, treminhão, romeu e julieta) têm em geral 5+ eixos. Vigência: art. 4º, 'até 60 dias' após a publicação; publicada por afixação em 05/09/2023 e no Diário Oficial ed. 772 em 07/12/2023. vigencia_inicio = 05/02/2024, o prazo máximo contado da publicação no DO, por cautela. Anel viário existe: estrada vicinal 'Contorno de Lourdes', denominada 'Cilos Rodrigues – Nego Taviano' por lei publicada no DO de 27/02/2024.",
+      "fonte_geometria": "Cidade de Lourdes aproximada pelos 6 setores censitários urbanos do distrito-sede (IBGE 2022, CD_SIT 1 e 2), sem furos; não há rodovia estadual cortando a área urbana no OSM. O anel viário (Contorno de Lourdes) fica fora.",
+      "vigencia_inicio": "2024-02-05",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3527256_vias_urbanas.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/3527256_vias_urbanas_curadoria.py <SP_setores_CD2022.shp> data/cache/municipios/osm_named_3527256.json (setores censitários urbanos do distrito-sede de Lourdes, IBGE 2022)"
+        }
+      ]
+    },
+    {
+      "id": "lourdes_dec6009_2023_caminhoes_onibus_todas_ruas",
+      "tipo": "zona",
+      "regime": "Caminhões e ônibus: trânsito proibido em todas as ruas, exceto carga/descarga e embarque",
+      "nome": "Lourdes: todas as ruas, caminhões e ônibus (Decreto 6.009/2023, art. 2º)",
+      "status": "desativada",
+      "status_motivo": "Art. 3º do decreto condiciona os efeitos à colocação das placas, não confirmada; alcance (todos os caminhões e ônibus) é mais amplo que o da Lei 1.893 que regulamenta, o que pode ser excesso regulamentar.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 2º: carga, descarga, embarque e desembarque de passageiros"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 6.009, de 08/09/2023",
+          "artigo": "art. 2º (proibição), art. 3º (eficácia conforme placas)",
+          "url": "https://www.lourdes.sp.gov.br/portal/leis_decretos/1446/"
+        }
+      ],
+      "fonte_geometria": "Cidade de Lourdes aproximada pelos 6 setores censitários urbanos do distrito-sede (IBGE 2022, CD_SIT 1 e 2), sem furos; não há rodovia estadual cortando a área urbana no OSM. O anel viário (Contorno de Lourdes) fica fora.",
+      "vigencia_inicio": "2023-09-08",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3527256_vias_urbanas.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/3527256_vias_urbanas_curadoria.py <SP_setores_CD2022.shp> data/cache/municipios/osm_named_3527256.json (setores censitários urbanos do distrito-sede de Lourdes, IBGE 2022)"
+        }
+      ]
+    }
+  ]
+}

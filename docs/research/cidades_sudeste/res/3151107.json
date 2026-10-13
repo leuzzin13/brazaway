@@ -1,0 +1,109 @@
+{
+  "ibge": "3151107",
+  "nome": "Pirapetinga",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/71FE5670",
+      "resultado": "Lido na íntegra: Decreto 127/2019 (22/08/2019, DOMM ed. 2574, 26/08/2019) proibia veículo de carga acima de 4 eixos, romeu e julieta, bitrem, rodotrem e tritrem no perímetro urbano; revogado expressamente pelo Dec. 130/2019 (art. 5º)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/1883ED17",
+      "resultado": "Lido na íntegra: Decreto 130/2019 (28/08/2019, DOMM ed. 2577, 29/08/2019): art. 1º proíbe no perímetro urbano carreta, romeu e julieta, bitrem, rodotrem, tritrem; art. 2º permite emergência, guincho, imprensa, obras, Correios, serviços essenciais, carga e descarga em estabelecimentos na sede com nota fiscal, placa do município e pernoite com domicílio comprovado; art. 5º vigência em 23/09/2019, revoga o Dec. 127/2019."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/2643F00A",
+      "resultado": "Ata de audiência pública (16/01/2023) sobre via alternativa para veículos pesados: pista de infraestrutura, não ato de restrição."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3151107 (amm-mg) 'decreto trânsito veículos pesados', 'revoga decreto 130/2019', 'carretas perímetro urbano', 'tráfego pesado', 'caminhões'",
+      "resultado": "Nenhum ato posterior revogando ou alterando o Dec. 130/2019 (AMM cobre 2009-2026)."
+    },
+    {
+      "url": "https://pirapetinga.mg.gov.br/?s= (WordPress, legislacao.py buscar 3151107)",
+      "resultado": "Busca geral do site: 0 resultados; sem base de normas."
+    },
+    {
+      "url": "Overpass (overpass.kumi.systems, overpass-api.de, overpass.private.coffee, maps.mail.ru)",
+      "resultado": "500/504/sem resposta pelo proxy desta máquina: ways com hgv/maxweight NÃO listados nesta rodada; vale só a contagem da preparação."
+    }
+  ],
+  "observacoes": "Decreto 130/2019 é restrição de zona (todo o perímetro urbano), 24 h, para carreta, romeu e julieta, bitrem, rodotrem e tritrem, com muitas exceções (inclusive entrega com nota fiscal e placa local). Mapeado como tipo (semitrailer, truck_trailer, cvc). O perímetro urbano não está definido no decreto: a geometria depende da lei do perímetro urbano (não buscada). Não achei revogação, mas o portal da prefeitura não tem base de normas pesquisável; vigência com confiança média. O decreto inicial 127/2019 (4 eixos) foi substituído pelo 130/2019 e não vale.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM: 6 ways com hgv=no na preparação, não listados (Overpass fora do ar). Comparar com o Dec. 130/2019 (restrição de zona, não de via)."
+  ],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 2º, I-VII: emergência, guincho de socorro, cobertura jornalística, obras e serviços de emergência, Correios, sinalização emergencial e serviços públicos essenciais",
+        "Art. 2º, VIII: carga e descarga em estabelecimentos comerciais, industriais, empresariais ou domésticos da sede, com nota fiscal",
+        "Art. 2º, IX: veículo com placa de Pirapetinga",
+        "Art. 2º, X: pernoite com motorista domiciliado no município",
+        "Art. 4º: casos não previstos, análise técnica da Secretaria de Obras"
+      ],
+      "id": "pirapetinga_perimetro_urbano_carretas_combinacoes",
+      "tipo": "zona",
+      "regime": "Perímetro urbano (carretas e combinações)",
+      "nome": "Pirapetinga: proibido tráfego de carreta, romeu e julieta, bitrem, rodotrem e tritrem em todo o perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º, VIII (carga e descarga em estabelecimentos na sede, mediante nota fiscal)",
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 130, de 28/08/2019 (DOMM ed. 2577, 29/08/2019)",
+          "artigo": "art. 1º, I-V (proibição); art. 2º (exceções); art. 5º (vigência 23/09/2019, revoga o Decreto 127/2019)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/1883ED17"
+        }
+      ],
+      "nota": "'Carreta' mapeado como semirreboque/cavalo mecânico (semitrailer); 'romeu e julieta' como truck_trailer; bitrem/rodotrem/tritrem como cvc. Perímetro urbano não delimitado no decreto.",
+      "vigencia_inicio": "2019-09-23",
+      "fonte_geometria": "perímetro urbano da sede (lei do perímetro urbano de Pirapetinga, não localizada)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3151107_pirapetinga_perimetro.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar o perímetro urbano da sede de Pirapetinga (lei municipal do perímetro) e gerar o polígono."
+        }
+      ]
+    }
+  ]
+}

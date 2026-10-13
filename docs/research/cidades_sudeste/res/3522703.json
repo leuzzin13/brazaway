@@ -1,0 +1,169 @@
+{
+  "ibge": "3522703",
+  "nome": "Itápolis",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.itapolis.sp.gov.br/portal/leis_decretos/ (instar, legislacao.py 'caminh|pesad|carga|tráfego|trafego|trânsito|transito|circula', 30 atos)",
+      "resultado": "achou os Decretos 3.069/2000 e 3.065/2000 (ementa 'proibição de trânsito de veículos de carga em vias terrestres do município'); demais resultados são portarias de pessoal/trânsito"
+    },
+    {
+      "url": "https://www.itapolis.sp.gov.br/portal/leis_decretos/6384/ (PDF https://www.itapolis.sp.gov.br/publicos/decreto_n3069_496695798012.pdf)",
+      "resultado": "Decreto 3.069, de 28/09/2000, lido (PDF escaneado, leitura visual; atos/3522703/d3069.pdf)"
+    },
+    {
+      "url": "https://www.itapolis.sp.gov.br/portal/leis_decretos/6388/ (PDF https://www.itapolis.sp.gov.br/publicos/decreto_n3065_337917253603.pdf)",
+      "resultado": "Decreto 3.065, de 18/09/2000, lido (PDF escaneado, leitura visual; atos/3522703/d3065.pdf)"
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/3522703/2025-08-08/f34eeed12243dc4172543f556a2e8ddf76198eb4.pdf e 2025-07-01, 2025-06-27, 2023-05-04 (trechos do lead)",
+      "resultado": "trechos do Plano Diretor/Plano de Mobilidade (diretrizes: 'regulamentar a circulação de veículos pesados e carroceiros no centro', anel viário): só diretriz, não regra; lead era ruído"
+    },
+    {
+      "url": "https://itapolis.1doc.com.br",
+      "resultado": "sem cliente automático, não consultado"
+    }
+  ],
+  "observacoes": "Dois decretos de 2000 sobre estradas rurais de acesso à sede, ambas ligando a sede à Rodovia SP-333. Decreto 3.069/2000 (28/09/2000), art. 1º: proibido na via IPS-020, Rodovia Theodolinda Benaglia, o trânsito de veículos de carga que excedam 10,00 m de comprimento, 2,10 m de largura ou 6.000 kg de peso bruto; art. 2º: não se aplica a veículos de moradores da via nem aos que se destinam ao Distrito de Nova América e à cidade de Itápolis. Decreto 3.065/2000 (18/09/2000), art. 1º: idem na via Tarquino Bellentani (liga a sede à SP-333); exceções para moradores e destinos Distrito de Tapinas e cidade de Itápolis. Sem horário (24 h). Na prática é proibição de tráfego de passagem; os limites (10 m, 2,10 m, 6 t) pegam a maioria dos caminhões. Não encontrado ato revogador (busca por ementas no Instar; não há texto integral posterior). Plano Diretor/PlanMob 2025 só tem diretrizes. 'Excedam' interpretado como acima de cada limite (qualquer deles). Verificado em 2026-10-11: os dois PDFs foram baixados de novo do portal Instar (idênticos byte a byte aos de atos/) e relidos: texto confirmado. Nova busca de ementas no Instar (caminh, carga, 3.069, 3.065, Bellentani, Benaglia, IPS, veícul, trânsito, tráfego, revoga, revogação de decreto) não achou ato que altere ou revogue os decretos; as páginas 6384/6388 não trazem nota de revogação. O ato escreve 'Tarqüino Bellentani' e o Decreto 2.643/1995 dá nome ao 'Prolongamento da Rodovia Tarquinio Bellentani': grafias acrescentadas como alias da via. Limite de largura de 2,10 m alcança na prática qualquer caminhão.",
+  "regras_rascunho": [
+    {
+      "id": "itapolis_ips020_theodolinda_benaglia",
+      "tipo": "via",
+      "regime": "Veículos de carga acima de 10 m, 2,10 m ou 6 t proibidos (passagem)",
+      "nome": "Itápolis: IPS-020 Rodovia Theodolinda Benaglia, veículos de carga acima de 10 m, 2,10 m ou 6 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 10
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.1
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: veículos de moradores da via e os que se destinam ao Distrito de Nova América e à cidade de Itápolis"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.069, de 28/09/2000 (Prefeitura de Itápolis)",
+          "artigo": "art. 1º, I a III; art. 2º; art. 3º (vigência na data)",
+          "url": "https://www.itapolis.sp.gov.br/portal/leis_decretos/6384/",
+          "nota": "PDF: https://www.itapolis.sp.gov.br/publicos/decreto_n3069_496695798012.pdf"
+        }
+      ],
+      "nota": "Exceção de destino (Itápolis/Nova América) esvazia a regra para quem vai à cidade; só vale para passagem. Decreto de 2000, não confirmado se ainda vigente (sem revogação localizada).",
+      "vigencia_inicio": "2000-09-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rodovia Theodolinda Benaglia",
+            "IPS-020",
+            "Rodovia Municipal IPS-020"
+          ],
+          "descricao": "IPS-020 (Rodovia Theodolinda Benaglia), da sede de Itápolis à SP-333",
+          "aproximado": true
+        }
+      ]
+    },
+    {
+      "id": "itapolis_tarquino_bellentani",
+      "tipo": "via",
+      "regime": "Veículos de carga acima de 10 m, 2,10 m ou 6 t proibidos (passagem)",
+      "nome": "Itápolis: via Tarquino Bellentani, veículos de carga acima de 10 m, 2,10 m ou 6 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 10
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.1
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: veículos de moradores da via e os que se destinam ao Distrito de Tapinas e à cidade de Itápolis"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.065, de 18/09/2000 (Prefeitura de Itápolis)",
+          "artigo": "art. 1º, I a III; art. 2º; art. 3º (vigência na data)",
+          "url": "https://www.itapolis.sp.gov.br/portal/leis_decretos/6388/",
+          "nota": "PDF: https://www.itapolis.sp.gov.br/publicos/decreto_n3065_337917253603.pdf"
+        }
+      ],
+      "nota": "Mesma estrutura do Decreto 3.069/2000. Sem revogação localizada.",
+      "vigencia_inicio": "2000-09-18",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Tarquino Bellentani",
+            "Rodovia Tarquino Bellentani",
+            "Tarquino Bellentani",
+            "Rodovia Tarquinio Bellentani",
+            "Rodovia Tarqüino Bellentani"
+          ],
+          "descricao": "Via Tarquino Bellentani, da sede de Itápolis à SP-333",
+          "aproximado": true
+        }
+      ]
+    }
+  ],
+  "data": "2026-10-11",
+  "nivel_busca": "dirigida",
+  "osm_divergencias": [],
+  "falha_de_fonte": false
+}

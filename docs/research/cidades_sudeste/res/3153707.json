@@ -1,0 +1,87 @@
+{
+ "ibge": "3153707",
+ "nome": "Quartel Geral",
+ "uf": "MG",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/3D379118",
+   "resultado": "LC 022/2019 (cargos; motorista); ruído."
+  },
+  {
+   "url": "https://quartelgeral.mg.gov.br/painel_dados/twd_leis_documentos/356062ac2527afa5e0e9e80b74443a96.pdf",
+   "resultado": "Lei Municipal 1012/2007 de 12/04/2007 lida (PDF com texto): art. 1º impede o trânsito de veículos automotores e de tração animal na Rua Adair de Oliveira Pinto, entre as ruas Chiquinho Caeiro e Av. Antônio Quirino (e o acesso à Av. Dona Eugênia); §2º: sábados, domingos e feriados, 08:00-20:00; cavaletes 'TRÂNSITO IMPEDIDO'. Fechamento de rua para todos os veículos, não específico de caminhões. Alterações/revogação não verificadas."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar <ibge> \"circulação de caminhões / veículos pesados\" (amm-mg + Querido Diário)",
+   "resultado": "LC 002/2012 (taxa de espaço para caminhões), editais; ruído."
+  },
+  {
+   "url": "toolkit legislacao.py buscar <ibge> \"caminh|carga e descarga|veículos pesados|...|tonelad\"",
+   "resultado": "https://quartelgeral.mg.gov.br/leis-documentos: único ato com 'trânsito' (Lei 1012/2007); 0 para caminh/pesados. Câmara: 0 atos."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO, hgv/maxweight/hgv:conditional)",
+   "resultado": "HTTP 500 em 3 tentativas (kumi e private.coffee); sem consulta OSM concluída. Preparação (osm_hints_por_municipio.json) não tinha nenhuma contagem OSM para o município."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/ (lead leads/penaestrada.json)",
+   "resultado": "Sem página/restrição para o município na preparação."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 1012/2007, art. 1º e §2º: via fechada a todo veículo nos fins de semana e feriados (08-20h) em um trecho curto (lazer). Pontual; regra registrada desativada porque a vigência e a sinalização atual não foram conferidas e o trecho é local.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "quartel_geral_rua_adair_fechamento_fds",
+   "tipo": "via",
+   "regime": "Fechamento de rua a todos os veículos (fim de semana)",
+   "nome": "Quartel Geral: Rua Adair de Oliveira Pinto fechada ao trânsito sáb/dom/feriados",
+   "status": "desativada",
+   "status_motivo": "Lei de 2007 sem verificação de vigência/alteração; trecho curto de lazer, vale para todos os veículos (não específica de caminhões).",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      7
+     ],
+     "from": "08:00",
+     "to": "20:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1012/2007 (12/04/2007)",
+     "artigo": "art. 1º e §2º",
+     "url": "https://quartelgeral.mg.gov.br/painel_dados/twd_leis_documentos/356062ac2527afa5e0e9e80b74443a96.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Rua Adair de Oliveira Pinto"
+     ],
+     "de": "Rua Chiquinho Caeiro",
+     "ate": "Avenida Antônio Quirino",
+     "descricao": "Trecho entre as esquinas; acesso à Av. Dona Eugênia também obstado",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

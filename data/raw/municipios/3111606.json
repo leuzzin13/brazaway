@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3111606",
+  "municipio": "Campos Gerais",
+  "uf": "MG",
+  "fonte_id": "campos-gerais",
+  "fonte": {
+    "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/70031/ (Lei 3.553/2019) ; https://www.camposgerais.mg.gov.br/portal/leis_decretos/70009/ (Lei 3.541/2019)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap), casada pelo nome/eixos do OSM; limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Lei 3.541/2019 com o art. 1º reescrito pela Lei 3.553/2019: só a Rua Pio XII (acesso à COOXUPÉ). O hgv=no do OSM no município é a balsa (way 427105140), não esta via."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC nem 'veículos pesados': todo caminhão é tratado como alvo.",
+  "regras": [
+    {
+      "id": "camposgerais_pio_xii_veiculos_pesados",
+      "tipo": "via",
+      "regime": "Veículos pesados proibidos (24 h)",
+      "nome": "Campos Gerais: Rua Pio XII, tráfego de veículos pesados proibido desde a entrada (exceto acesso exclusivo à COOXUPÉ)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Lei 3.553/2019, art. 1º: veículos que se dirigem exclusivamente à COOXUPÉ, devendo manobrar na própria empresa e retornar para a rodovia"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.541, de 26/11/2019, alterada pela Lei 3.553, de 17/12/2019 (Campos Gerais)",
+          "artigo": "art. 1º (redação dada pela Lei 3.553/2019, art. 1º); art. 2º (sinalização)",
+          "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/70031/",
+          "nota": "Lei 3.541 original: https://www.camposgerais.mg.gov.br/portal/leis_decretos/70009/"
+        }
+      ],
+      "nota": "Confiança média: 'veículos pesados' não é definido na lei (sem limite de PBT ou eixos): alvo = todo caminhão (PBT > 3,5 t, lado seguro). Sem horário: proibição permanente. O trecho da Rua Júlio Braz Pereira (redação original da Lei 3.541) foi retirado da regra ativa pelo verificador (11/10/2026): o art. 1º foi reescrito por inteiro pela Lei 3.553/2019 e o texto vigente só cita a Rua Pio XII ('desde a entrada'); a Júlio Braz Pereira aparece só nas ementas (pendência de interpretação). A exceção da COOXUPÉ (destino na própria rua) não é representável: a rota com destino na cooperativa usa a via e recebe o aviso.",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome: Rua Pio XII inteira (a lei não fixa a outra ponta; 'desde a entrada')",
+      "vigencia_inicio": "2019-12-17",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Pio XII"
+          ],
+          "descricao": "Rua Pio XII, desde a entrada (Lei 3.553/2019)",
+          "aproximado": true,
+          "nota": "Via inteira como está no OSM."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3111606_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

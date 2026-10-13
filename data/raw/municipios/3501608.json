@@ -1,0 +1,182 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3501608",
+  "municipio": "Americana",
+  "uf": "SP",
+  "fonte_id": "americana",
+  "fonte": {
+    "url": "https://www.americana.sp.gov.br/legislacao/decreto_5814_2003.html (Dec. 5.814/2003) ; https://www.americana.sp.gov.br/legislacao/decreto_4722_1998.html (Dec. 4.722/1998) ; https://www.americana.sp.gov.br/legislacao/lei_3621_2002.html (Lei 3.621/2002, inconstitucional)",
+    "licenca": "Atos oficiais de Americana: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome e trecho. Limite municipal (registro): IBGE (dados públicos).",
+    "notas": "Dois atos vigentes de circulação: Dec. 5.814/2003 (14 vias do Centro, capacidade de carga > 2 t, seg–sáb 9h–18h, exceto feriados; dezembro 9h–24h, não modelado) e Dec. 4.722/1998 (barragem de solo da Represa Salto Grande, caminhão proibido 24 h). A Lei 3.621/2002 (Centro) foi julgada inconstitucional. O PlanMob (Lei 6.806/2023) prevê decreto de áreas de restrição, ainda não editado. O município não define VUC."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Americana não define VUC: o VUC é tratado como caminhão (no Centro vale só a capacidade de carga acima de 2 t).",
+  "regras": [
+    {
+      "id": "americana_barragem_salto_grande",
+      "tipo": "via",
+      "regime": "Barragem (caminhão proibido)",
+      "nome": "Americana: barragem de solo da Represa Salto Grande (prolongamento da Rua Guilherme Shimidt), caminhão proibido",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.722, de 18/12/1998 (Americana)",
+          "artigo": "art. 1º (proíbe o trânsito de caminhões sobre a barragem de solo da Represa Salto Grande, Bairro Balneário Riviera, prolongamento da Rua Guilherme Shimidt); art. 3º (sinalização no local); art. 4º (vigência na publicação)",
+          "url": "https://www.americana.sp.gov.br/legislacao/decreto_4722_1998.html"
+        }
+      ],
+      "nota": "Ato de 1998 sem nota de revogação na base oficial (conferida em 10 e 11/10/2026). Confiança média só pela geometria: o ato não descreve a extensão. Pelo OSM, a margem da Represa do Salto Grande (relação 9305853) passa a 11 m do bueiro em que a Rua Guilherme Schimidt (way 189061399) cruza o Córrego da Fazenda Santo Ângelo (way 745527610, tunnel=culvert) e vira Rua Rio Camanducaia (way 339441946): o aterro desse ponto é o candidato coerente à barragem. Pontas estimadas ~80 m de cada lado.",
+      "fonte_geometria": "OSM (ODbL): Rua Guilherme Schimidt / Rua Rio Camanducaia, trecho sobre o aterro (aproximado)",
+      "vigencia_inicio": "1998-12-18",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Rua Guilherme Schimidt", "Rua Guilherme Schmidt", "Rua Rio Camanducaia"],
+          "de": {"lonlat": [-47.2318, -22.7447]},
+          "ate": {"lonlat": [-47.2303, -22.7452]},
+          "caminho": "valhalla",
+          "corredor_m": 40,
+          "aproximado": true,
+          "descricao": "Prolongamento da Rua Guilherme Shimidt sobre a barragem de solo da Represa Salto Grande (Balneário Riviera)",
+          "nota": "Pontas estimadas ~80 m de cada lado do cruzamento com o Córrego da Fazenda Santo Ângelo (os vértices do OSM ficam longe das pontas: trecho percorrido pela malha do Valhalla entre os dois pontos); conferir no local."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3501608_barragem_salto_grande.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "americana_centro_dec_5814_2003",
+      "tipo": "via",
+      "regime": "Centro (capacidade > 2 t)",
+      "nome": "Americana: 14 vias da região central, caminhão com capacidade de carga acima de 2 t, seg–sáb 9h–18h (Dec. 5.814/2003)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6], "from": "09:00", "to": "18:00"}],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 2}]},
+      "excecoes": [
+        "Art. 2º, parágrafo único: em dezembro a proibição vai das 9h às 24h, de segunda a sábado, exceto feriados (extensão mais restritiva; as janelas não modelam meses: fica fora das janelas e a rota não a aplica)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 5.814, de 12/06/2003 (Americana); revoga o Dec. 5.807, de 09/06/2003",
+          "artigo": "art. 1º, I a XIV (proíbe o tráfego de caminhões com capacidade de carga superior a 2.000 kg nas vias da região central); art. 2º (das 9h às 18h, de segunda a sábado, exceto feriados) e parágrafo único (dezembro: das 9h às 24h); art. 3º (vigência na publicação)",
+          "url": "https://www.americana.sp.gov.br/legislacao/decreto_5814_2003.html"
+        }
+      ],
+      "nota": "Incluída pelo verificador (lote A08, 11/10/2026): ato vigente na base oficial, sem nota de revogação (a base anota revogações). Confiança média: ato de 2003, sinalização não conferida e a busca no corpo do texto da base exige captcha. Sem exceção de entrega local, VUC ou serviço. Inc. XII (Rua Fernando de Camargo, inteira) e os trechos da Rua Doutor Vieira Bueno (12 de Novembro–30 de Julho) e da Rua 30 de Julho (Vieira Bueno–Av. Dr. Antônio Lobo) que hoje são calçadão (highway=pedestrian no OSM, sem tráfego de caminhão no roteador) ficam fora da geometria.",
+      "fonte_geometria": "OSM (ODbL): vias nomeadas no art. 1º, recortadas pelos cruzamentos citados",
+      "vigencia_inicio": "2003-06-12",
+      "trechos": [
+        {"inciso": "I", "via": ["Rua Capitão Correa Pacheco", "Rua Capitão Corrêa Pacheco"], "descricao": "Rua Capitão Corrêa Pacheco (inteira)"},
+        {"inciso": "II", "via": ["Rua Jorge Jones"], "descricao": "Rua Jorge Jones (inteira)"},
+        {"inciso": "III", "via": ["Rua 7 de Setembro", "Rua Sete de Setembro"], "de": ["Rua Rui Barbosa"], "ate": ["Rua Álvaro Ribeiro"], "descricao": "Rua 7 de Setembro, entre a Rua Rui Barbosa e a Rua Álvaro Ribeiro"},
+        {"inciso": "IV", "via": ["Rua Doutor Vieira Bueno", "Rua Vieira Bueno"], "de": {"lonlat": [-47.3307, -22.73964]}, "ate": {"lonlat": [-47.330785, -22.738712]}, "descricao": "Rua Vieira Bueno, entre a Rua 12 de Novembro e a Rua Washington Luiz", "nota": "No OSM, da Rua 12 de Novembro à Rua 30 de Julho a via é calçadão (way 153514461, highway=pedestrian): entra só o trecho de tráfego, da Rua Washington Luiz à Rua 30 de Julho (way 153514465)."},
+        {"inciso": "V", "via": ["Rua Álvaro Ribeiro"], "de": ["Rua Jorge Jones"], "ate": ["Rua Doutor Cândido Cruz", "Rua Cândido Cruz"], "descricao": "Rua Álvaro Ribeiro, da Rua Jorge Jones à Rua Cândido Cruz"},
+        {"inciso": "VI", "via": ["Rua Major Rehder"], "de": ["Rua 7 de Setembro"], "ate": ["Rua Doutor Cândido Cruz", "Rua Cândido Cruz"], "descricao": "Rua Major Rehder, entre a Rua 7 de Setembro e a Rua Cândido Cruz"},
+        {"inciso": "VII", "via": ["Rua Heitor Penteado"], "descricao": "Rua Heitor Penteado (inteira)"},
+        {"inciso": "VIII", "via": ["Rua Carioba"], "de": ["Rua Jorge Jones"], "ate": ["Avenida Doutor Antônio Lobo"], "tolerancia_m": 80, "descricao": "Rua Carioba, entre a Rua Jorge Jones e a Av. Dr. Antônio Lobo", "nota": "Não confundir com a Avenida Carioba nem com a Rua Herman Muller Carioba. No OSM a Rua Jorge Jones termina a 62 m da Rua Carioba (tolerância de 80 m)."},
+        {"inciso": "IX", "via": ["Rua 12 de Novembro", "Rua Doze de Novembro"], "de": ["Avenida Doutor Antônio Lobo"], "ate": ["Rua Doutor Cândido Cruz", "Rua Cândido Cruz"], "descricao": "Rua 12 de Novembro, da Av. Dr. Antônio Lobo à Rua Cândido Cruz"},
+        {"inciso": "X", "via": ["Rua Washington Luiz"], "de": ["Rua Doutor Cândido Cruz", "Rua Cândido Cruz"], "ate": ["Avenida Doutor Antônio Lobo"], "descricao": "Rua Washington Luiz, da Rua Cândido Cruz à Av. Dr. Antônio Lobo"},
+        {"inciso": "XI", "via": ["Rua 30 de Julho", "Rua Trinta de Julho"], "de": ["Rua Doutor Cândido Cruz", "Rua Cândido Cruz"], "ate": {"lonlat": [-47.330785, -22.738712]}, "descricao": "Rua 30 de Julho, da Rua Cândido Cruz à Av. Dr. Antônio Lobo", "nota": "No OSM, da Rua Doutor Vieira Bueno à Av. Dr. Antônio Lobo a via é calçadão (way 153514463, highway=pedestrian): entra só o trecho de tráfego, da Rua Cândido Cruz à Rua Doutor Vieira Bueno."},
+        {"inciso": "XIII", "via": ["Travessa Charles Hall"], "descricao": "Travessa Charles Hall (inteira)"},
+        {"inciso": "XIV", "via": ["Rua Doutor Vieira Bueno", "Rua Vieira Bueno"], "de": ["Rua Primo Picoli", "Rua Primo Pícolli"], "ate": ["Rua Rui Barbosa"], "descricao": "Rua Vieira Bueno, entre a Rua Primo Pícolli e a Rua Rui Barbosa"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3501608_centro_dec_5814_2003.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "americana_centro_lei_3621_2002",
+      "tipo": "via",
+      "regime": "Centro (capacidade > 2 t)",
+      "nome": "Americana: vias do Centro, caminhão com capacidade de carga acima de 2 t (Lei 3.621/2002, inconstitucional)",
+      "status": "revogada",
+      "status_motivo": "Lei julgada inconstitucional pelo Tribunal de Justiça de SP na ADI nº 93.547.0/1 (anotação da base de legislação da Prefeitura); sem efeito. Registro histórico (geometria: as vias citadas, inteiras).",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6], "from": "08:00", "to": "19:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 2}]},
+      "excecoes": ["Art. 1º, §2º: em dezembro, segunda a sábado das 9h às 24h"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.621, de 19/02/2002 (Americana), promulgada pela Câmara",
+          "artigo": "art. 1º e §§1º–2º (vias do Centro; seg–sáb 8h–19h; dezembro 9h–24h)",
+          "url": "https://www.americana.sp.gov.br/legislacao/lei_3621_2002.html"
+        }
+      ],
+      "nota": "A data do acórdão da ADI 93.547.0/1 não foi achada: vigencia_fim = 12/06/2003, data em que o Executivo refez a restrição (Dec. 5.807/2003, substituído pelo Dec. 5.814/2003). Ver a regra americana_centro_dec_5814_2003.",
+      "vigencia_inicio": "2002-02-19",
+      "vigencia_fim": "2003-06-12",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Rua Capitão Correa Pacheco", "Rua Capitão Corrêa Pacheco"], "aproximado": true, "descricao": "Rua Capitão Correa Pacheco (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua Jorge Jones"], "aproximado": true, "descricao": "Rua Jorge Jones (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua 7 de Setembro", "Rua Sete de Setembro"], "aproximado": true, "descricao": "Rua 7 de Setembro (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua Doutor Vieira Bueno"], "aproximado": true, "descricao": "Rua Doutor Vieira Bueno (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua Álvaro Ribeiro"], "aproximado": true, "descricao": "Rua Álvaro Ribeiro (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua Heitor Penteado"], "aproximado": true, "descricao": "Rua Heitor Penteado (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua 12 de Novembro"], "aproximado": true, "descricao": "Rua 12 de Novembro (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua Washington Luiz"], "aproximado": true, "descricao": "Rua Washington Luiz (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"},
+        {"inciso": "art. 1º", "via": ["Rua 30 de Julho"], "aproximado": true, "descricao": "Rua 30 de Julho (via citada no art. 1º da lei; registro histórico com a via inteira, sem os recortes da lei)"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3501608_lei_3621_2002.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "americana_carga_descarga_dec_4313_1997",
+      "tipo": "zona",
+      "regime": "Carga e descarga (horário)",
+      "nome": "Americana: carga e descarga nos locais regulamentados só seg–sex 17h–10h e sábado até 9h",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga nas vagas regulamentadas, não de circulação: não restringe a passagem do caminhão e o ato não delimita área (remete aos locais regulamentados pela Secretaria de Serviços Urbanos). Sem geometria.",
+      "confianca": "media",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "10:00", "to": "17:00"},
+        {"days": [6], "from": "09:00", "to": "24:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.313, de 21/03/1997 (Americana)",
+          "artigo": "art. 1º (carga e descarga permitida de segunda a sexta das 17h às 10h e aos sábados até 9h); art. 2º (revoga o Dec. 3.607/1993)",
+          "url": "https://www.americana.sp.gov.br/legislacao/decreto_4313_1997.html"
+        }
+      ],
+      "nota": "Janelas = horário em que a carga e descarga é PROIBIDA (complemento do permitido). O ato não fala de domingo.",
+      "vigencia_inicio": "1997-03-21",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "americana_perigosos_dec_6431_2005",
+      "tipo": "zona",
+      "regime": "Produtos perigosos (rota)",
+      "nome": "Americana: veículos com produtos perigosos só pela rota Av. Nicolau João Abdalla, Av. Europa e Av. São Jerônimo",
+      "status": "desativada",
+      "status_motivo": "O perfil do veículo não informa carga perigosa; regra de produtos perigosos é da camada perigosos (hazmat_trechos), não desta. Sem geometria nesta camada.",
+      "confianca": "alta",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "autorizacao": "Permissão especial da Secretaria de Transportes e Sistema Viário, pedida com 8 dias de antecedência (art. 2º)",
+      "excecoes": [
+        "Art. 3º: caminhões de abastecimento local (combustíveis ONU 1203, gás natural 1971, GLP 1075, gases industriais 1002, 1003, 1006, 1066, 1072, 1073, 1951, 1977) podem circular das 7h às 18h",
+        "Art. 4º: carga e descarga nas condições do art. 3º"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.431, de 24/01/2005 (Americana)",
+          "artigo": "art. 1º (rota: Av. Nicolau João Abdalla; Av. Europa; Av. São Jerônimo da Av. Europa até o final), art. 2º (demais vias só com permissão), art. 3º (abastecimento local 7h–18h)",
+          "url": "https://www.americana.sp.gov.br/legislacao/decreto_6431_2005.html"
+        }
+      ],
+      "nota": "Encaminhar para a frente de perigosos. Lei 3.598/2001 (produtos perigosos) só cria comissão e cadastro.",
+      "vigencia_inicio": "2005-01-24",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

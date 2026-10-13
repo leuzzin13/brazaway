@@ -1,0 +1,118 @@
+{
+ "ibge": "3304003",
+ "nome": "Piraí",
+ "uf": "RJ",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.pirai.rj.leg.br/norma/pesquisar (API /api/norma/normajuridica/?ementa__icontains=)",
+   "resultado": "Termos 'caminh', 'carreta', 'beira rio', 'barão do piraí', 'carga', 'trânsito', '704', 'revoga', 'estacionamento'. Achado: Lei 704/2003. Nenhuma norma posterior com '704' na ementa nem revogação/alteração identificada pela ementa (36 'revoga' conferidos)."
+  },
+  {
+   "url": "https://sapl.pirai.rj.leg.br/norma/1202",
+   "resultado": "Lei Ordinária 704, de 09/10/2003 (sancionada 24/10/2003)."
+  },
+  {
+   "url": "https://sapl.pirai.rj.leg.br/media/sapl/public/normajuridica/2003/1202/1202_texto_integral.pdf",
+   "resultado": "Texto lido (PDF salvo em atos/3304003/lei704_2003.pdf): art. 1º proíbe o trânsito de carretas e caminhões trucados nas ruas Barão do Piraí, Manoel Teixeira Campos Júnior e Av. Beira Rio, 1º Distrito; art. 2º manda o Executivo providenciar o cumprimento; art. 4º vigência na publicação."
+  },
+  {
+   "url": "https://sapl.pirai.rj.leg.br/norma/1245 (Lei 745/2004, trânsito e transporte urbano) e /norma/2514 (Lei 1.855/2025)",
+   "resultado": "PDFs lidos: Lei 745/2004 só atribui à Coordenadoria o transporte de carga/caminhões; Lei 1.855/2025 não toca na Lei 704. Nenhuma revoga a Lei 704."
+  },
+  {
+   "url": "https://legislacao.pirai.rj.gov.br e https://www.pirai.rj.leg.br/leis",
+   "resultado": "heurístico: 0 e 2 atos, sem relação."
+  },
+  {
+   "url": "diarios_consolidados.py buscar (\"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\")",
+   "resultado": "Município sem cobertura em diário consolidado."
+  }
+ ],
+ "observacoes": "Lei 704/2003 vigente pelo que o SAPL mostra (sem revogação por ementa). Lei sem janelas, vale 24h/7 dias; sem peso, sem exceções, sem data de vigência além da publicação (publicação oficial/data do DO não localizada, SAPL sem veículo de publicação). 'Caminhões trucados' (truck, 3 eixos) e 'carretas' não são definidos na lei: alvo adotado = caminhão com mais de 2 eixos ou combinação articulada, interpretação nossa e por isso confiança media; revisar antes de ativar na rota. Executivo pode ter regulamentado/sinalizado por decreto não indexado no SAPL (não achado). OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "pirai_trucados_carretas_3vias",
+   "tipo": "via",
+   "regime": "Proibição de carretas e caminhões trucados",
+   "nome": "Piraí: Rua Barão do Piraí, Rua Manoel Teixeira Campos Júnior e Av. Beira Rio (1º Distrito)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 704, de 09/10/2003 (Piraí/RJ)",
+     "artigo": "art. 1º (proibição do trânsito de carretas e caminhões trucados nas três vias); art. 2º (cumprimento pelo Executivo)",
+     "url": "https://sapl.pirai.rj.leg.br/norma/1202"
+    }
+   ],
+   "nota": "Termos 'trucado' e 'carreta' não definidos no ato; alvo é interpretação. Sem exceções, sem horário.",
+   "trechos": [
+    {
+     "via": [
+      "Rua Barão do Piraí"
+     ],
+     "descricao": "Rua Barão do Piraí, 1º Distrito (extensão integral, ato não delimita)",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua Manoel Teixeira Campos Júnior"
+     ],
+     "descricao": "Rua Manoel Teixeira Campos Júnior, 1º Distrito",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Avenida Beira Rio"
+     ],
+     "descricao": "Av. Beira Rio, 1º Distrito",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3304003_pirai.geojson",
+     "construir": "trechos"
+    }
+   ]
+  }
+ ]
+}

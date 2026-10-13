@@ -1,0 +1,77 @@
+{
+  "nome": "São João da Barra",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "vuc": null,
+  "fontes_consultadas": [
+    {
+      "url": "https://data.queridodiario.ok.org.br/3305000/2022-01-13/8f901975273a4bebe9c8b989ab44cb83f81ee752.txt",
+      "resultado": "Diário ed. 008 (extra), 13/01/2022, lido: Decreto 004/2022 proíbe circulação de ônibus, micro-ônibus, carretas, caminhões-betoneira e demais veículos pesados em todas as estradas vicinais do município (exceto serviços essenciais, combustíveis, alimentos, medicamentos, transporte público), vigência 'enquanto persistir a restrição do acesso pela BR-356' e durante obras nas vicinais."
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/3305000/2022-01-17/403d142cdcba817657f83edcf3ee597c65ca71a1.txt",
+      "resultado": "Diário ed. 011 (extra), 17/01/2022, lido: Decreto 005/2022 REVOGA o Decreto 004/2022 (BR-356 liberada pelo DNIT em 17/01/2022)."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3305000 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'estradas vicinais' (aemerj, qd)",
+      "resultado": "Só os dois decretos de jan/2022 são relevantes; os demais acertos são orçamento/enchente (2015, 2024)."
+    },
+    {
+      "url": "toolkit legislacao.py buscar 3305000",
+      "resultado": "Sem cliente: portal 'desconhecido'; o site https://www.sjb.rj.gov.br/ responde 200 (Angular, 26 kB) sem link de legislação extraível; sjb.rj.leg.br bloqueado pelo proxy (connect_rejected)."
+    }
+  ],
+  "observacoes": "Única regra de circulação de pesados achada foi temporária (emergência da interdição da BR-356) e foi revogada 4 dias depois: Decreto 004/2022 (13/01/2022) revogado pelo Decreto 005/2022 (17/01/2022). Nenhuma regra vigente localizada. Cobertura: só o Querido Diário (diário próprio); o portal de legislação da prefeitura e a Câmara não puderam ser pesquisados, então o resultado não prova ausência. Overpass fora do ar: as 4 ways com maxweight do OSM não foram listadas.",
+  "osm_divergencias": [
+    "OSM: 4 ways com maxweight na preparação, não listadas (Overpass fora do ar). Sem ato municipal para respaldar. Pendência: listar e classificar (ponte de rodovia estadual/federal, heliponto etc.)."
+  ],
+  "falha_de_fonte": true,
+  "regras_rascunho": [
+    {
+      "id": "saojoaodabarra_vicinais_veiculos_pesados_2022",
+      "tipo": "zona",
+      "regime": "Estradas vicinais: pesados proibidos (emergência BR-356)",
+      "nome": "São João da Barra: veículos pesados proibidos em todas as estradas vicinais (Dec. 004/2022), revogado em 17/01/2022",
+      "status": "revogada",
+      "status_motivo": "Decreto 004/2022 vigorou enquanto a BR-356 estivesse interditada; revogado pelo Decreto 005/2022, de 17/01/2022, após liberação pelo DNIT.",
+      "confianca": "alta",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Parágrafo único do art. 1º: serviços públicos essenciais, combustíveis, gêneros alimentícios, medicamentos e ônibus de transporte público de passageiros"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 004/2022, de 13/01/2022 (revogado pelo Decreto 005/2022, de 17/01/2022)",
+          "artigo": "art. 1º; revogação: art. 1º do Dec. 005/2022",
+          "url": "https://data.queridodiario.ok.org.br/3305000/2022-01-13/8f901975273a4bebe9c8b989ab44cb83f81ee752.pdf"
+        },
+        {
+          "ato": "Decreto municipal 005/2022, de 17/01/2022",
+          "artigo": "art. 1º (revoga o Dec. 004/2022)",
+          "url": "https://data.queridodiario.ok.org.br/3305000/2022-01-17/403d142cdcba817657f83edcf3ee597c65ca71a1.pdf"
+        }
+      ],
+      "vigencia_inicio": "2022-01-13",
+      "vigencia_fim": "2022-01-17",
+      "source_id": "saojoaodabarra_dec004_2022_revogado",
+      "trechos": [
+        {
+          "via": "Estradas vicinais do município (sem lista)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3305000_sao_joao_da_barra.geojson",
+          "construir": "manual"
+        }
+      ]
+    }
+  ],
+  "ibge": "3305000",
+  "uf": "RJ",
+  "data": "2026-10-11"
+}

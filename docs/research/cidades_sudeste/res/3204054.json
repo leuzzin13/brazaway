@@ -1,0 +1,90 @@
+{
+ "ibge": "3204054",
+ "nome": "Pedro Canário",
+ "uf": "ES",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.pedrocanario.es.leg.br/norma/pesquisar (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|tonelad|eixos|carreta)",
+   "resultado": "6 atos; relevante: Lei 767/2006 (norma/277). Demais ruído (PPA/LOA, Caminho da Escola, multas de veículo da Câmara)."
+  },
+  {
+   "url": "https://sapl.pedrocanario.es.leg.br/media/sapl/public/normajuridica/2006/277/lei-municipal-n-767.2006-.pdf",
+   "resultado": "PDF escaneado, lido por inspeção visual das imagens (sem tesseract). Art. 2º: não permitido trânsito de veículos de carga com capacidade superior a 25 t ou capacidade de tração superior a 40 t; art. 3º: em qualquer horário ou dia; art. 1º: ruas dos bairros São João Batista e Saturnino Mauro; p.2 mapa sem legenda legível. Cópia em atos/3204054/lei_767_2006.pdf"
+  },
+  {
+   "url": "https://sapl.pedrocanario.es.leg.br (busca '767' e 'São João Batista')",
+   "resultado": "Nenhuma lei posterior que altere ou revogue a 767/2006 (busca por ementa; não exaustiva)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 3204054 (DOM-ES/AMUNES + Querido Diário)",
+   "resultado": "0 acertos para 'circulação de caminhões' e 'veículos pesados'."
+  },
+  {
+   "url": "https://legislacao.pedrocanario.es.gov.br e https://www.pedrocanario.es.leg.br/leis",
+   "resultado": "portal_proprio heurístico, 0 atos"
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 767/2006 (sancionada e publicada em 25/09/2006): proíbe, sem horário (permanente), veículos de carga com capacidade > 25 t ou tração > 40 t nas ruas dos bairros São João Batista e Saturnino Mauro (sede). Vias não são nomeadas no texto (o mapa da p.2 é ilegível/sem legenda); geometria depende de delimitar os bairros. Alvo muito alto (25 t de capacidade, 40 t CMT), pouco restritivo para a maioria dos caminhões. Vigência presumida (não achada revogação), publicação em diário da época não conferida. 'Capacidade' tratada como payload_t e 'tração' como pbt_t (CMT).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "3204054_sjb_saturnino_cargas_25t",
+   "tipo": "zona",
+   "regime": "Veículos de carga > 25 t de capacidade ou > 40 t de tração, permanente",
+   "nome": "Pedro Canário: bairros São João Batista e Saturnino Mauro, veículos de carga pesados",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminho": true,
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 25
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 40
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 767/2006, de 25/09/2006",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://sapl.pedrocanario.es.leg.br/norma/277"
+    }
+   ],
+   "vigencia_inicio": "2006-09-25",
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "Todas as ruas dos bairros São João Batista e Saturnino Mauro (sede de Pedro Canário); vias não nomeadas no ato, mapa anexo ilegível",
+     "aproximado": true
+    }
+   ],
+   "nota": "Sem verificação de revogação além da busca por ementa no SAPL. Confirmar com a Prefeitura."
+  }
+ ]
+}

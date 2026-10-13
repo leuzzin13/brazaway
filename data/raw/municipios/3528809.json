@@ -1,0 +1,181 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3528809",
+  "municipio": "Maracaí",
+  "uf": "SP",
+  "fonte_id": "maracai",
+  "fonte": {
+    "url": "https://www.maracai.sp.gov.br/portal/leis_decretos/11723/ (Lei 1.409/2003) ; https://www.maracai.sp.gov.br/portal/leis_decretos/11739/ (Lei 1.425/2004) ; https://www.maracai.sp.gov.br/portal/leis_decretos/12770/ (Lei 1.842/2012, revogada) ; https://www.maracai.sp.gov.br/portal/leis_decretos/18069/ (Lei 2.930/2026)",
+    "licenca": "Atos oficiais de Maracaí: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.409/2003: proibida a entrada de caminhões e máquinas agrícolas na Av. São Paulo, salvo carga e descarga por até 1 h (24 h, toda a via). Lei 1.425/2004 (caminhões canavieiros na Rua José Gonçalves de Mendonça) desativada por alvo definido pela carga; Lei 1.842/2012 (cana no perímetro urbano) revogada pela Lei 2.930/2026."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC nem limite de peso: vale para todo caminhão.",
+  "regras": [
+    {
+      "id": "maracai_av_sao_paulo_caminhoes",
+      "tipo": "via",
+      "regime": "Proibição de caminhões e máquinas agrícolas",
+      "nome": "Maracaí: Avenida São Paulo, proibida a entrada de caminhões e máquinas agrícolas",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 2º: permitido apenas para carga e descarga, por período máximo de 1 hora"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária municipal 1.409, de 29/09/2003 (Maracaí)",
+          "artigo": "art. 1º (proibida a entrada de caminhões e máquinas agrícolas na Av. São Paulo); art. 2º (exceção: carga e descarga até 1 h); art. 4º (vigor na publicação)",
+          "url": "https://www.maracai.sp.gov.br/portal/leis_decretos/11723/",
+          "nota": "PDF lido: https://www.maracai.sp.gov.br/publicos/lei_ordinaria_1409_2003_493205.pdf. Portal marca 'Em vigor' (atualizado em 27/01/2021). Nenhum ato revogador achado."
+        }
+      ],
+      "nota": "Lei sem trecho delimitado (a via inteira); sem limite de peso. Obrigação de placas no art. 3º; não confirmada a existência de sinalização. A exceção de carga e descarga (art. 2º) é o acesso ao destino na própria avenida: o custo da camada (fator 1000) ainda deixa a rota chegar a um endereço nela; não foi usada a exceção de entrega local, que dispensaria qualquer destino no município.",
+      "fonte_geometria": "OSM (ODbL) pelo nome: Avenida São Paulo inteira (2 ways).",
+      "vigencia_inicio": "2003-09-29",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida São Paulo"
+          ],
+          "descricao": "Av. São Paulo (extensão total, conforme a lei: no OSM, da Rua José Gonçalves de Mendonça à Rua Pedro S. Garcia, ~1,3 km)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3528809_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "maracai_rua_jose_goncalves_mendonca_cana",
+      "tipo": "via",
+      "regime": "Proibição de caminhões canavieiros",
+      "nome": "Maracaí: Rua José Gonçalves de Mendonça, proibido o tráfego de caminhões canavieiros (cana e bagaço)",
+      "status": "desativada",
+      "status_motivo": "Alvo definido pela carga (caminhões canavieiros), não modelável por PBT/eixos/tipo; além disso a Lei 1.842/2012 (proibição geral de caminhões de cana no perímetro urbano) foi revogada pela Lei 2.930/2026 e não há como confirmar sinalização/aplicação da lei específica de 2004. Mantida como aviso.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 2º: permitido para serviços de manutenção, no local"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária municipal 1.425, de 16/02/2004 (Maracaí)",
+          "artigo": "art. 1º (proibido o tráfego de caminhões canavieiros, transporte de cana e bagaço, em toda a extensão da Rua José Gonçalves de Mendonça); art. 2º; art. 5º (revoga a Lei 1.404/2003)",
+          "url": "https://www.maracai.sp.gov.br/portal/leis_decretos/11739/",
+          "nota": "PDF lido: https://www.maracai.sp.gov.br/publicos/lei_ordinaria_1425_2004_539608.pdf. Portal marca 'Em vigor'."
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) pelo nome: a rua inteira (4 ways).",
+      "vigencia_inicio": "2004-02-16",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua José Gonçalves de Mendonça"
+          ],
+          "descricao": "Rua José Gonçalves de Mendonça (extensão total)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3528809_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "maracai_cana_perimetro_urbano_1842",
+      "tipo": "zona",
+      "regime": "Proibição de caminhões de cana no perímetro urbano",
+      "nome": "Maracaí: caminhões e veículos de carga transportando cana no perímetro urbano (Lei 1.842/2012)",
+      "status": "revogada",
+      "status_motivo": "Revogada integralmente pela Lei Ordinária 2.930, de 29/04/2026 (art. 1º).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária municipal 1.842, de 04/04/2012",
+          "artigo": "arts. 1º e 2º",
+          "url": "https://www.maracai.sp.gov.br/portal/leis_decretos/12770/",
+          "nota": "Revogada pela Lei 2.930/2026: https://www.maracai.sp.gov.br/portal/leis_decretos/18069/ (art. 1º)"
+        }
+      ],
+      "fonte_geometria": "Sem feição: o ato não delimita o perímetro urbano e a regra está revogada (registro histórico).",
+      "vigencia_inicio": "2012-04-04",
+      "vigencia_fim": "2026-04-29",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

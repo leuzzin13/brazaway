@@ -1,0 +1,380 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3157807",
+  "municipio": "Santa Luzia",
+  "uf": "MG",
+  "fonte_id": "santa-luzia",
+  "fonte": {
+    "url": "https://www.santaluzia.mg.gov.br/legislacao/decreto-no-4-056-de-30-de-agosto-de-2022/ ; https://www.santaluzia.mg.gov.br/legislacao/decreto-no-4-412-de-1o-de-outubro-de-2024/ ; https://www.santaluzia.mg.gov.br/legislacao/decreto-no-3-841-de-30-de-julho-de-2021/ (os PDFs só baixam com User-Agent de navegador)",
+    "licenca": "Atos oficiais de Santa Luzia: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Centro Histórico (Dec. 4.056/2022, red. Dec. 4.412/2024): 13 vias, comprimento acima de 6,5 m OU PBT acima de 5,5 t, 24 h. 'Rua João Santana' (inciso XII) não existe no OSM: aplicada a 'Rua Santana' do Centro (aproximado)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC: o critério é comprimento acima de 6,5 m ou PBT acima de 5,5 t; acesso com AEVP.",
+  "regras": [
+    {
+      "id": "santa_luzia_centro_historico",
+      "tipo": "via",
+      "regime": "Centro Histórico (24 h)",
+      "nome": "Santa Luzia: vias do Centro Histórico, proibidos veículos pesados com mais de 6,5 m ou PBT acima de 5,5 t",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 6.5
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 5.5
+          }
+        ]
+      },
+      "vuc": null,
+      "autorizacao": "Autorização Especial de Veículos Pesados (AEVP) da Secretaria Municipal de Segurança Pública, Trânsito e Transportes (Dec. 4.056/2022, arts. 4º e 5º; validade até 180 dias)",
+      "excecoes": [
+        "Art. 2º: socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito, ambulâncias",
+        "Art. 3º: utilidade pública autorizada (redes de energia, água e esgoto, gás, comunicações; sinalização viária; socorro mecânico; transporte de valores; escolta; coleta de lixo)",
+        "Arts. 4º e 5º: veículos cadastrados e autorizados com AEVP",
+        "Art. 7º: eventos e festividades autorizados pela autoridade de trânsito",
+        "Art. 8º: micro-ônibus do transporte coletivo"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.056, de 30/08/2022 (DOM Santa Luzia 30/08/2022)",
+          "artigo": "art. 1º, I a XIII, e Anexo I (vias); arts. 2º a 8º (exceções e AEVP)",
+          "url": "https://www.santaluzia.mg.gov.br/wp-content/uploads/2022/09/4.056-Dispoe-sobre-a-organizacao-promocao-controle.pdf"
+        },
+        {
+          "ato": "Decreto municipal 4.412, de 01/10/2024",
+          "artigo": "art. 1º (nova redação do inciso XI: Rua José Miranda de Almeida)",
+          "url": "https://www.santaluzia.mg.gov.br/wp-content/uploads/2024/10/4.412.pdf"
+        }
+      ],
+      "nota": "Critério do ato: comprimento acima de 6,5 m OU PBT acima de 5,5 t (qualquer). O ato chama de 'veículos pesados' (inclui ônibus, exceto micro-ônibus do coletivo), mas a camada só trata caminhão. Sem exceção de entrega: acesso a destino nessas vias exige AEVP (o custo 1000 ainda deixa a rota chegar quando o destino está na via). Fiscalização confirmada por radar no Morro do Vésper (notícia da Prefeitura).",
+      "fonte_geometria": "Vias do art. 1º (I a XIII) casadas por nome no OpenStreetMap (ODbL), restritas ao Centro Histórico da sede (perto de -19.768, -43.853).",
+      "vigencia_inicio": "2022-08-30",
+      "trechos": [
+        {
+          "inciso": "I",
+          "via": [
+            "Rua do Bonfim"
+          ],
+          "descricao": "Rua do Bonfim (Centro Histórico)"
+        },
+        {
+          "inciso": "II",
+          "via": [
+            "Rua Direita"
+          ],
+          "descricao": "Rua Direita (Centro Histórico)",
+          "nota": "Só a Rua Direita do Centro Histórico (da Rua do Bonfim à Rua do Serro); há outra 'Rua Direita' em São Benedito (-19.7607, -43.9307), fora da regra.",
+          "de": {
+            "lonlat": [
+              -43.8569297,
+              -19.7668096
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -43.8504008,
+              -19.7700985
+            ]
+          }
+        },
+        {
+          "inciso": "III",
+          "via": [
+            "Rua Professor Francisco Tibúrcio de Oliveira",
+            "Rua Professor Tibúrcio de Oliveira"
+          ],
+          "descricao": "Rua Professor Tibúrcio de Oliveira (Morro do Vésper)",
+          "nota": "No OSM: 'Rua Professor Francisco Tibúrcio de Oliveira'"
+        },
+        {
+          "inciso": "IV",
+          "via": [
+            "Rua do Serro"
+          ],
+          "de": [
+            "Rua Nossa Senhora Aparecida"
+          ],
+          "ate": [
+            "Rua Floriano Peixoto"
+          ],
+          "descricao": "Rua do Serro, entre a Rua Nossa Senhora Aparecida e a Rua Floriano Peixoto"
+        },
+        {
+          "inciso": "V",
+          "via": [
+            "Rua Floriano Peixoto"
+          ],
+          "descricao": "Rua Floriano Peixoto"
+        },
+        {
+          "inciso": "VI",
+          "via": [
+            "Rua Afonsino Altivo Diniz",
+            "Rua Afonsino Altino Diniz"
+          ],
+          "descricao": "Rua Afonsino Altino Diniz",
+          "nota": "No OSM: 'Rua Afonsino Altivo Diniz' (o Dec. 3.841/2021 também grafava 'Altivo')"
+        },
+        {
+          "inciso": "VII",
+          "via": [
+            "Rua Davis Dany Viana"
+          ],
+          "descricao": "Rua Davis Dany Viana"
+        },
+        {
+          "inciso": "VIII",
+          "via": [
+            "Rua João Evangelista Dolabela",
+            "Rua João Evangelista Dolabella"
+          ],
+          "descricao": "Rua João Evangelista Dolabella",
+          "nota": "No OSM com um 'l'"
+        },
+        {
+          "inciso": "IX",
+          "via": [
+            "Rua Conego Rocha Franco",
+            "Rua Cônego Rocha Franco"
+          ],
+          "descricao": "Rua Cônego Rocha Franco"
+        },
+        {
+          "inciso": "X",
+          "via": [
+            "Rua da Baronesa",
+            "Rua Baronesa"
+          ],
+          "descricao": "Rua Baronesa",
+          "nota": "No OSM: 'Rua da Baronesa'"
+        },
+        {
+          "inciso": "XI (red. Dec. 4.412/2024)",
+          "via": [
+            "Rua José Miranda de Almeida"
+          ],
+          "descricao": "Rua José Miranda de Almeida"
+        },
+        {
+          "inciso": "XII",
+          "via": [
+            "Rua Santana",
+            "Rua João Santana"
+          ],
+          "descricao": "Rua João Santana",
+          "nota": "No OSM não há 'Rua João Santana'; aplicada a 'Rua Santana' do Centro Histórico (way 29711194, -19.7671, -43.8554), a candidata pela posição.",
+          "aproximado": true
+        },
+        {
+          "inciso": "XIII",
+          "via": [
+            "Rua Álvaro Teixeira da Costa",
+            "Rua Álvaro Teixeira de Costa"
+          ],
+          "descricao": "Rua Álvaro Teixeira de Costa",
+          "nota": "No OSM: 'da Costa'"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3157807_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "santa_luzia_centro_historico_2021",
+      "tipo": "via",
+      "regime": "Centro Histórico (24 h)",
+      "nome": "Santa Luzia: vias do Centro Histórico, veículos de carga acima de 6,5 m ou 5,5 t (Decreto 3.841/2021)",
+      "status": "revogada",
+      "status_motivo": "Revogado pelo art. 10 do Decreto 4.056/2022 (substituído pela regra santa_luzia_centro_historico).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 6.5
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 5.5
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.841, de 30/07/2021",
+          "artigo": "art. 1º",
+          "url": "https://www.santaluzia.mg.gov.br/wp-content/uploads/2021/08/3.841-Dispoe-sobre-a-organizacao-promocao-controle-e-fiscalizacao-do-transito-de-veiculos-de-carga-no-centro-historico-municipal.pdf"
+        }
+      ],
+      "nota": "Registro histórico: as mesmas 13 vias, para 'veículos de carga'. O inciso XI dizia 'Rua João Miranda'; a geometria usa a Rua José Miranda de Almeida, a via do Centro Histórico que o Dec. 4.412/2024 nomeou nesse inciso.",
+      "vigencia_inicio": "2021-07-30",
+      "vigencia_fim": "2022-08-30",
+      "trechos": [
+        {
+          "inciso": "I",
+          "via": [
+            "Rua do Bonfim"
+          ],
+          "descricao": "Rua do Bonfim (Centro Histórico)"
+        },
+        {
+          "inciso": "II",
+          "via": [
+            "Rua Direita"
+          ],
+          "descricao": "Rua Direita (Centro Histórico)",
+          "nota": "Só a Rua Direita do Centro Histórico (da Rua do Bonfim à Rua do Serro); há outra 'Rua Direita' em São Benedito (-19.7607, -43.9307), fora da regra.",
+          "de": {
+            "lonlat": [
+              -43.8569297,
+              -19.7668096
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -43.8504008,
+              -19.7700985
+            ]
+          }
+        },
+        {
+          "inciso": "III",
+          "via": [
+            "Rua Professor Francisco Tibúrcio de Oliveira",
+            "Rua Professor Tibúrcio de Oliveira"
+          ],
+          "descricao": "Rua Professor Tibúrcio de Oliveira (Morro do Vésper)",
+          "nota": "No OSM: 'Rua Professor Francisco Tibúrcio de Oliveira'"
+        },
+        {
+          "inciso": "IV",
+          "via": [
+            "Rua do Serro"
+          ],
+          "de": [
+            "Rua Nossa Senhora Aparecida"
+          ],
+          "ate": [
+            "Rua Floriano Peixoto"
+          ],
+          "descricao": "Rua do Serro, entre a Rua Nossa Senhora Aparecida e a Rua Floriano Peixoto"
+        },
+        {
+          "inciso": "V",
+          "via": [
+            "Rua Floriano Peixoto"
+          ],
+          "descricao": "Rua Floriano Peixoto"
+        },
+        {
+          "inciso": "VI",
+          "via": [
+            "Rua Afonsino Altivo Diniz",
+            "Rua Afonsino Altino Diniz"
+          ],
+          "descricao": "Rua Afonsino Altino Diniz",
+          "nota": "No OSM: 'Rua Afonsino Altivo Diniz' (o Dec. 3.841/2021 também grafava 'Altivo')"
+        },
+        {
+          "inciso": "VII",
+          "via": [
+            "Rua Davis Dany Viana"
+          ],
+          "descricao": "Rua Davis Dany Viana"
+        },
+        {
+          "inciso": "VIII",
+          "via": [
+            "Rua João Evangelista Dolabela",
+            "Rua João Evangelista Dolabella"
+          ],
+          "descricao": "Rua João Evangelista Dolabella",
+          "nota": "No OSM com um 'l'"
+        },
+        {
+          "inciso": "IX",
+          "via": [
+            "Rua Conego Rocha Franco",
+            "Rua Cônego Rocha Franco"
+          ],
+          "descricao": "Rua Cônego Rocha Franco"
+        },
+        {
+          "inciso": "X",
+          "via": [
+            "Rua da Baronesa",
+            "Rua Baronesa"
+          ],
+          "descricao": "Rua Baronesa",
+          "nota": "No OSM: 'Rua da Baronesa'"
+        },
+        {
+          "inciso": "XI (red. Dec. 4.412/2024)",
+          "via": [
+            "Rua José Miranda de Almeida"
+          ],
+          "descricao": "Rua José Miranda de Almeida"
+        },
+        {
+          "inciso": "XII",
+          "via": [
+            "Rua Santana",
+            "Rua João Santana"
+          ],
+          "descricao": "Rua João Santana",
+          "nota": "No OSM não há 'Rua João Santana'; aplicada a 'Rua Santana' do Centro Histórico (way 29711194, -19.7671, -43.8554), a candidata pela posição.",
+          "aproximado": true
+        },
+        {
+          "inciso": "XIII",
+          "via": [
+            "Rua Álvaro Teixeira da Costa",
+            "Rua Álvaro Teixeira de Costa"
+          ],
+          "descricao": "Rua Álvaro Teixeira de Costa",
+          "nota": "No OSM: 'da Costa'"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3157807_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

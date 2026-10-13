@@ -1,0 +1,93 @@
+{
+  "ibge": "3168101",
+  "nome": "Tapira",
+  "uf": "MG",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/A6202623",
+      "resultado": "Lei Ordinária 1.632, de 19/12/2024 (mobilidade rural, estradas rurais) lida: art. 13 e §§: uso das estradas pode sofrer restrições por peso/horário; em chuvas intensas pode ser proibido por decreto (ou ato do Secretário de Segurança Pública, em emergência) o tráfego de bitrens e carretas carregados acima de 40 t nas estradas vicinais; excluídos cargas vivas, ração, leite e perecíveis até 20 t."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/135A58B8",
+      "resultado": "Lei 1.349/2019 (Plano Diretor) lida no trecho do sistema viário: inciso VIII 'regulamentar o estacionamento de veículos pesados nas vias de entrada da cidade' — diretriz, sem regra."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3168101 (amm-mg): 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+      "resultado": "Lei 1.632/2024 (condicional), Lei 1.726/2025 (poeira, umedecimento de vias de caminhões), Plano Diretor 1.349/2019; nenhum decreto de proibição de caminhões achado."
+    },
+    {
+      "url": "https://sapl.tapira.mg.leg.br e https://www.tapira.mg.gov.br/portal/leis_decretos/ (toolkit legislacao.py buscar 3168101 'caminh|pesad|carga|tráfego|trafego|veículos|trânsito')",
+      "resultado": "SAPL 0 atos; Instar: só Lei 1216/2017 (feira do produtor, limitação de trânsito e uso de bem público); leismunicipais.com.br 403 Cloudflare."
+    }
+  ],
+  "observacoes": "Sem proibição permanente de caminhões. A Lei 1.632/2024 (art. 13, §1º) permite, em períodos de chuvas intensas e por decreto do Executivo (§3º), proibir bitrens e carretas carregados acima de 40 t nas estradas vicinais e municipais de todo o território, até secar a via; exceção para cargas vivas, ração, leite e perecíveis até 20 t (§5º). É restrição condicional/eventual: nenhum decreto de ativação achado; sem vias específicas. Registrada como regra desativada. Lei 1.726/2025 exige umedecimento das vias de trânsito de caminhões (poeira) — não é restrição de circulação. Plano Diretor (Lei 1.349/2019) só tem diretriz de regulamentar estacionamento de veículos pesados nas entradas da cidade.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "tapira_estradas_rurais_chuva_40t",
+      "tipo": "zona",
+      "regime": "Estradas rurais em chuva intensa",
+      "nome": "Tapira: estradas vicinais/municipais, bitrens e carretas carregados acima de 40 t em períodos de chuvas intensas (por decreto)",
+      "status": "desativada",
+      "status_motivo": "Restrição condicional: só vale quando decretada pelo Executivo (ou ato emergencial do Secretário de Segurança Pública) durante chuvas intensas e até secar a via; não há decreto vigente nem trechos definidos.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 40
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "truck_trailer",
+              "cvc",
+              "semitrailer"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 13, §5º: caminhões de cargas vivas, ração, leite e cargas perecíveis, com limite de até 20 t",
+        "Art. 13, §4º: tráfego durante o período mediante acompanhamento da Secretaria de Segurança Pública e custeio de reboque/restauração pelo requerente"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 1.632, de 19/12/2024 (DOM-AMM, 20/12/2024)",
+          "artigo": "art. 13, caput e §§1º, 3º, 4º, 5º (numeração do texto publicado: 'Art. 13' aparece duas vezes)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/A6202623"
+        }
+      ],
+      "vigencia_inicio": "2024-12-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3168101_tapira_estradas_rurais.geojson",
+          "construir": "manual",
+          "como_gerar": "Só se houver decreto ativando a proibição com trechos definidos."
+        }
+      ]
+    }
+  ]
+}

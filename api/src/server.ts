@@ -9,6 +9,8 @@ import { routeRoutes } from './routes/route.js';
 import { reportRoutes } from './routes/reports.js';
 import { miscRoutes } from './routes/misc.js';
 import { layerRoutes } from './routes/layers.js';
+import { frotaRoutes, startFrotaJobs } from './frota/routes.js';
+import { frotaBrainMentorRoutes } from './frota/mentor.js';
 
 const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } });
 await app.register(cors, { origin: true });
@@ -16,6 +18,8 @@ await app.register(miscRoutes);
 await app.register(routeRoutes);
 await app.register(reportRoutes);
 await app.register(layerRoutes);
+await app.register(frotaRoutes);
+await app.register(frotaBrainMentorRoutes);
 
 app.setErrorHandler((err: any, _req, reply) => {
   const status = err.statusCode && err.statusCode >= 400 ? err.statusCode : 500;
@@ -24,3 +28,4 @@ app.setErrorHandler((err: any, _req, reply) => {
 });
 
 await app.listen({ port: env.port, host: '0.0.0.0' });
+startFrotaJobs(app.log);

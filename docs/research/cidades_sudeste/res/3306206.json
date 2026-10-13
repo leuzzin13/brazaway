@@ -1,0 +1,80 @@
+{
+  "nome": "Vassouras",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "vuc": null,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/aemerj/materia/FB482D54",
+      "resultado": "AEMERJ, ed. 2476, 18/09/2019, lido: Decreto 4.482, de 05/08/2019 (acesso ao Mirante Imperial), art. 1º proíbe acesso de veículos pesados (ônibus, micro-ônibus, caminhão, caminhão-trator, trator, reboque/semirreboque e combinações), salvo autorização expressa da Prefeitura. HTML salvo em atos/3306206/."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/aemerj/materia/00018DA1",
+      "resultado": "Lei 3.053/2018: arts. 5º-6º tratam de veículos de tração animal (identificação e limite de 20% do peso do animal); não é restrição a caminhão. Visto só pelo trecho do lead e pelo resultado da busca."
+    },
+    {
+      "url": "https://sapl.vassouras.rj.leg.br (toolkit legislacao.py buscar 3306206)",
+      "resultado": "10 atos com os termos; nenhum de restrição de caminhão. Lei 3.112/2019 (fechamento de ruas sem saída a veículos estranhos aos moradores; não permite fechos que impeçam acesso eventual de caminhões): pista, não restrição."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3306206 'circulação de caminhões', 'trânsito de caminhões', 'tráfego de caminhões', 'veículos pesados' (aemerj)",
+      "resultado": "Decreto 4.482/2019 (acima). Decreto da COVID (08/04/2020) vedou tráfego de veículos de fora do município até 23/04/2020: temporário, expirado. Licitações de 06 e 17/10/2023: placas R-9 'proibido trânsito de caminhões' (106 unidades de placas de regulamentação, meta 17): pista de sinalização, sem ato nem local."
+    },
+    {
+      "url": "https://www.vassouras.rj.gov.br/legislacao e https://www.vassouras.rj.leg.br/leis",
+      "resultado": "Clientes heurísticos: 0 atos para todos os termos."
+    },
+    {
+      "url": "overpass (kumi.systems, overpass-api.de)",
+      "resultado": "HTTP 500 / connection reset: OSM não consultado."
+    }
+  ],
+  "observacoes": "Só regra pontual: Decreto 4.482/2019 restringe o acesso de veículos pesados ao Mirante Imperial (destino turístico, sem trecho de via definido no texto); a vigência não foi conferida em consolidado (nenhuma revogação surgiu nas buscas). Não há ato de circulação de caminhões na malha urbana. Pistas não confirmadas: compra de placas R-9 em 2023 (sem local) e 2 ways OSM com maxweight (não listadas). Pendência: abrir o edital de 2023 (AEMERJ 06/10/2023) para ver onde as R-9 seriam instaladas.",
+  "osm_divergencias": [
+    "OSM: 2 ways com maxweight na preparação, não listadas (Overpass fora do ar); sem ato municipal. Possível relação com o acesso ao Mirante Imperial (Dec. 4.482/2019): não verificado."
+  ],
+  "falha_de_fonte": false,
+  "regras_rascunho": [
+    {
+      "id": "vassouras_mirante_imperial_pesados",
+      "tipo": "via",
+      "regime": "Acesso ao Mirante Imperial",
+      "nome": "Vassouras: acesso de veículos pesados ao Mirante Imperial proibido, salvo autorização (Dec. 4.482/2019)",
+      "status": "desativada",
+      "status_motivo": "Ato primário lido (Dec. 4.482/2019, art. 1º), mas o texto não nomeia a via de acesso nem o trecho, e a vigência não foi confirmada em consolidado; é restrição de destino turístico, não de circulação urbana.",
+      "confianca": "media",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Autorização expressa da Prefeitura Municipal de Vassouras"
+      ],
+      "autorizacao": "Autorização expressa da Prefeitura Municipal de Vassouras (art. 1º)",
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.482, de 05/08/2019 (AEMERJ ed. 2476, 18/09/2019)",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://www.diariomunicipal.com.br/aemerj/materia/FB482D54"
+        }
+      ],
+      "vigencia_inicio": "2019-08-05",
+      "trechos": [
+        {
+          "via": "Acesso ao Mirante Imperial (via não identificada no ato)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3306206_vassouras.geojson",
+          "construir": "manual"
+        }
+      ]
+    }
+  ],
+  "ibge": "3306206",
+  "uf": "RJ",
+  "data": "2026-10-11"
+}

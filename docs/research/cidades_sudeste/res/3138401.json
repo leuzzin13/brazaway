@@ -1,0 +1,139 @@
+{
+  "ibge": "3138401",
+  "nome": "Leopoldina",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/8EFCBF0A",
+      "resultado": "Lido na íntegra: Decreto 3.707, de 20/10/2014 (DOMM ed. 1357, 24/10/2014): art. 1º veda veículos pesados, em especial carretas e caminhões trucados com peso total acima de 12 t, na ponte de concreto armado da estrada velha de Cataguases (perto da propriedade do Sr. Alcir Queiros, antiga escola municipal); art. 2º manda sinalizar; art. 4º vigência na publicação."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/4FFBE65A",
+      "resultado": "Lido: Decreto 5.474/2025 (Carnaval 26/02 a 07/03/2025): art. 2º §1º proíbe caminhões e ônibus na Av. Jehu Pinto de Faria (desvio pelo Trevo Norte). Evento temporário; decretos 5.338/2024 (EF25007A) e 5.176/2023 (CEE37C62) repetem o mesmo texto (trechos da pista; não abertos na íntegra)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3138401 (amm-mg) 'circulação de caminhões', 'trânsito de veículos pesados', 'ponte estrada velha Cataguases', 'tráfego de carretas'",
+      "resultado": "Nenhum decreto posterior revogando/alterando o 3.707/2014; Dec. 4.636/2020 e Lei 4.705/2022 (cargo/atribuições) sem relação com restrição."
+    },
+    {
+      "url": "https://www.leopoldina.mg.gov.br/legislacao (Portal Fácil)",
+      "resultado": "Cliente do toolkit: endpoint AjaxPro leg_lis não encontrado; sem busca no portal da prefeitura."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/mg/leopoldina",
+      "resultado": "403 Cloudflare (não contornado)."
+    },
+    {
+      "url": "Overpass (overpass.kumi.systems, overpass-api.de, overpass.private.coffee, maps.mail.ru)",
+      "resultado": "500/504/sem resposta pelo proxy desta máquina: ways com hgv/maxweight NÃO listados nesta rodada; vale só a contagem da preparação."
+    }
+  ],
+  "observacoes": "Restrição pontual de ponte rural com ato primário lido: Decreto 3.707/2014 (art. 1º): PBT acima de 12 t na ponte da estrada velha de Cataguases. Local descrito só em texto (sem coordenada); localizar a ponte no OSM antes de ativar na geometria. Sem revogação achada no AMM (2009-2026), mas o portal da prefeitura não pôde ser consultado: vigência 'ativa, confiança média'. Não achei regra geral de circulação de caminhões na área urbana nem no AMM. Carnaval (Av. Jehu Pinto de Faria) é evento anual por decreto próprio: pontual, regra desativada.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM: 21 ways com hgv=no na preparação, não listados (Overpass fora do ar); nenhum ato municipal de circulação geral achado que os explique. Pendência: listar e comparar com o Dec. 3.707/2014 (ponte 12 t) e com eventual restrição em estradas rurais."
+  ],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [],
+      "id": "leopoldina_ponte_estrada_velha_cataguases_12t",
+      "tipo": "ponte",
+      "regime": "Ponte PBT > 12 t",
+      "nome": "Leopoldina: ponte de concreto da estrada velha de Cataguases, veículos pesados acima de 12 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.707, de 20/10/2014 (DOMM edição 1357, 24/10/2014)",
+          "artigo": "art. 1º (veda veículos pesados, em especial carretas e caminhões trucados com peso total superior a 12 t, na ponte); art. 2º (sinalização)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/8EFCBF0A"
+        }
+      ],
+      "nota": "Sem horário: vale sempre. Ponte descrita só em texto ('nas proximidades da propriedade do Sr. Alcir Queiros, próximo a uma antiga Escola Municipal', estrada velha de Cataguases).",
+      "vigencia_inicio": "2014-10-24",
+      "fonte_geometria": "a localizar no OSM (way da ponte na estrada velha de Cataguases)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138401_leopoldina_ponte.geojson",
+          "construir": "manual",
+          "como_gerar": "Localizar no OSM a ponte da estrada velha de Cataguases (Leopoldina) próxima à antiga escola municipal; conferir com a prefeitura."
+        }
+      ]
+    },
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [],
+      "id": "leopoldina_carnaval_jehu_pinto_caminhoes",
+      "tipo": "via",
+      "regime": "Evento (Carnaval)",
+      "nome": "Leopoldina: proibida a entrada de caminhões e ônibus na Av. Jehu Pinto de Faria durante o Carnaval",
+      "status": "desativada",
+      "status_motivo": "Restrição de evento (Carnaval 2025, 26/02 a 07/03/2025), reeditada a cada ano por decreto próprio; não é regra permanente.",
+      "confianca": "alta",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 5.474, de 03/02/2025 (DOMM ed. 3955, 07/02/2025)",
+          "artigo": "art. 2º, §1º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/4FFBE65A",
+          "nota": "Repetido nos Decretos 5.338/2024 e 5.176/2023."
+        }
+      ],
+      "vigencia_inicio": "2025-02-26",
+      "trechos": [
+        {
+          "inciso": "art. 2º §1º",
+          "via": [
+            "Avenida Jehu Pinto de Faria"
+          ],
+          "descricao": "Av. Jehu Pinto de Faria (veículos desviados ao Trevo Norte)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138401_leopoldina_carnaval.geojson",
+          "construir": "manual",
+          "como_gerar": "Av. Jehu Pinto de Faria no OSM (só se um dia for ativada por evento)."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3556701",
+  "municipio": "Vinhedo",
+  "uf": "SP",
+  "fonte_id": "vinhedo",
+  "fonte": {
+    "url": "https://vinhedo.sispref.com.br/Documentos/Documento/165711 (Decreto 083/2008; PDF https://vinhedo.sispref.com.br/arquivo?Id=93255)",
+    "licenca": "Ato oficial de Vinhedo: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 083/2008: veículos de carga acima de 2 eixos proibidos em 10 logradouros, 24 h. Nove aplicados pelo nome no OSM; a Rua Roma (inc. V) ficou de fora (ambígua)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "vinhedo_dec83_2008_acima_2_eixos",
+      "tipo": "via",
+      "regime": "Veículos de carga acima de 2 eixos",
+      "nome": "Vinhedo: 10 logradouros, veículos de carga acima de 2 eixos (Decreto 83/2008)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 2}]},
+      "vuc": null,
+      "vuc_nota": "O decreto restringe por eixos (acima de 2), sem definição de VUC.",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Decreto 083/2008, art. 2º, I (veículos de carga que necessitem efetuar carga e descarga no Município); prova por nota fiscal (art. 4º)",
+      "excecoes": [
+        "Art. 2º, I: veículos de carga que necessitem efetuar carga e descarga no Município",
+        "Art. 2º, II: limpeza pública",
+        "Art. 2º, III: Polícia Militar e Corpo de Bombeiros",
+        "Art. 2º, IV: atendimento emergencial a residências, vias públicas e redes (iluminação, telefonia, água, esgoto, TV a cabo, internet) e outros serviços públicos",
+        "Art. 2º, V: abastecimento e atendimento de hospitais",
+        "Art. 2º, VI: veículos de carga licenciados no Município de Vinhedo"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 083, de 28/04/2008 (Vinhedo)",
+          "artigo": "art. 1º (vedação acima de 2 eixos, incisos I a X e parágrafo único); art. 2º (exceções)",
+          "url": "https://vinhedo.sispref.com.br/Documentos/Documento/165711",
+          "nota": "PDF: https://vinhedo.sispref.com.br/arquivo?Id=93255"
+        }
+      ],
+      "nota": "Parágrafo único do art. 1º: veículo com terceiro eixo retrátil está incluído. Vigência: efeitos 30 dias após a publicação (art. 7º); data da publicação não conferida. Geometria (implementação): cada logradouro em toda a extensão com o nome no OSM dentro de Vinhedo (o decreto não define extensão). Inc. V (Rua Roma) fica de fora: não há 'Rua Roma' no OSM em Vinhedo; o nome aparece só como alt_name da Rua Carolina Von Zuben (já incluída pelo inc. VI) e há uma 'Avenida Roma' residencial em outro bairro, sem como decidir (pendência). Exceção do art. 2º, I (carga e descarga no município) modelada como entrega no município; a do inc. VI (veículos licenciados em Vinhedo) só aparece no aviso.",
+      "fonte_geometria": "OSM (ODbL) pelo nome dos logradouros do art. 1º (construir: trechos)",
+      "vigencia_inicio": "2008-05-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": ["Rua João Edueta"],
+          "descricao": "Rua João Edueta (extensão não definida no decreto)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, II",
+          "via": ["Rua João Degelo", "Rua João Degello"],
+          "descricao": "Rua João Degello (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "No OSM: 'Rua João Degelo'."
+        },
+        {
+          "inciso": "art. 1º, III",
+          "via": ["Estrada da Boiada"],
+          "descricao": "Estrada da Boiada (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "Toda a Estrada da Boiada no OSM, inclusive o trecho com ref SP-332 (travessia urbana), porque o decreto a nomeia."
+        },
+        {
+          "inciso": "art. 1º, IV",
+          "via": ["Rua Duílio Beltramini"],
+          "descricao": "Rua Antonio Bucci (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "Não há 'Rua Antonio Bucci' no OSM: a way 146935871 ('Rua Duílio Beltramini') tem alt_name 'Avenida Antônio Bucci'; aplicada só nela (pontas da way). Inferência pelo nome antigo.",
+          "de": {"lonlat": [-47.00679, -23.04052]},
+          "ate": {"lonlat": [-47.00989, -23.03442]},
+          "caminho": "valhalla",
+          "corredor_m": 30
+        },
+        {
+          "inciso": "art. 1º, VI",
+          "via": ["Rua Carolina Von Zuben", "Rua Carolina Von Zubben"],
+          "descricao": "Rua Carolina Von Zubben (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "No OSM: 'Rua Carolina Von Zuben' (a way tem alt_name 'Rua Roma;Rua Augusto Zanotti')."
+        },
+        {
+          "inciso": "art. 1º, VII",
+          "via": ["Rua Afonso Garbuio"],
+          "descricao": "Rua Afonso Garbuio (extensão não definida no decreto)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, VIII",
+          "via": ["Avenida Independência"],
+          "descricao": "Avenida Independência (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "Só a parte em Vinhedo (o importador recorta pelo limite municipal); a Av. Independência segue em Valinhos."
+        },
+        {
+          "inciso": "art. 1º, IX",
+          "via": ["Avenida dos Imigrantes"],
+          "descricao": "Avenida dos Imigrantes (extensão não definida no decreto)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, X",
+          "via": ["Avenida Aparecida Tellau Seraphin", "Avenida Aparecida Telau Seraphin"],
+          "descricao": "Avenida Aparecida Telau Serafim (Variante Vinhedo/Anhanguera – 075/330) (extensão não definida no decreto)",
+          "aproximado": true,
+          "nota": "No OSM: 'Avenida Aparecida Tellau Seraphin' (alt_name 'Avenida Variante Vinhedo Viracopos'), com ref SP-330/SP-332: entra porque o decreto a nomeia."
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3556701_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

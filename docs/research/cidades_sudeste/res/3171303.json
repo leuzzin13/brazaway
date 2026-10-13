@@ -1,0 +1,92 @@
+{
+ "ibge": "3171303",
+ "nome": "Viçosa",
+ "uf": "MG",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.vicosa.mg.gov.br/legislacao (Portal Fácil, AjaxPro leg_lis; consulta feita com script próprio porque o portal responde 302 para google.com (BotDetect) e o cliente do toolkit falhou)",
+   "resultado": "Termos caminh, veículos pesados, carga e descarga, tonelada, tráfego, trânsito de, circulação de, veículos de carga, pesad, perímetro urbano, restrição: único ato de restrição é a Lei 3.063/2023; resto ruído (créditos, regulamento do Distrito Industrial Dec. 4.951/2016, tarifas do aeródromo, desafetação de trechos de rodovia, nomeações)."
+  },
+  {
+   "url": "https://www.vicosa.mg.gov.br/arquivo/legislacao/legislacao_3063_2023",
+   "resultado": "LIDO (PDF escaneado de 1 pág., copia em atos/3171303/lei_3063_2023.pdf). Lei 3.063, de 22/12/2023."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/mg/vicosa",
+   "resultado": "Portal leismunicipais.com.br atrás de Cloudflare (403), não contornado"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3171303 'circulação de caminhões' (AMM-MG, QD)",
+   "resultado": "0 resultado(s) em amm-mg e qd"
+  },
+  {
+   "url": "https://cmvicosa.gwlegis.com.br/proposicoes?palavra_chave=...&id_tipo=1",
+   "resultado": "Verificador 2026-10-11: nenhum projeto de lei alterando/revogando a Lei 3.063/2023; PL 59/2026 (vagas de carga e descarga, aprovado) é tema diferente."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Lei 3.063, de 22/12/2023 (aprovada pela Câmara em 19/12/2023): art. 1º proíbe tráfego, circulação, permanência, parada e estacionamento de caminhões com capacidade de carga igual ou superior a 3 t e de ônibus interestaduais/intermunicipais no perímetro do campus da UFV. Exceções (§§1º-4º): caminhões de qualquer capacidade a serviço/autorizados pela UFV, veículos da administração pública identificados, ônibus de alunos da UFV, transporte coletivo municipal. Art. 3º: regulamentação por decreto (não procurada); vigência na publicação. Restrição localizada no campus (não é regra geral do município); não há restrição urbana geral achada no portal. Alvo por capacidade de carga (payload_t), não PBT; o texto diz 'igual ou superior a 3 t' e o rascunho usa 'acima' 3 (borda a decidir). Verificado em 2026-10-11: texto da Lei 3.063/2023 relido no PDF oficial (art. 1º, §§1º-4º, arts. 2º-4º conferem); alvo corrigido para payload_t acima de 2,99 t (borda 'igual ou superior a 3 t'). Alteração posterior: portal da Prefeitura (AjaxPro leg_lis) devolveu 302/null pelo BotDetect nesta data; Câmara GW Legis (cmvicosa.gwlegis.com.br/proposicoes, palavras 'caminhões', 'campus', '3.063', 'Universidade Federal de Viçosa') sem projeto que altere ou revogue a lei; AMM-MG/Querido Diário sem resultado. Decreto regulamentador (art. 3º) não achado. Pendência informativa: PL 59/2026 aprovado na Câmara trata de vagas de carga e descarga (não é restrição de circulação; não pesquisado como regra).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "vicosa_campus_ufv_3t",
+   "tipo": "zona",
+   "regime": "capacidade de carga >= 3 t proibida no campus UFV",
+   "nome": "Viçosa: perímetro do campus da UFV, caminhões com capacidade de carga igual ou superior a 3 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 2.99
+     }
+    ]
+   },
+   "excecoes": [
+    "§1º: caminhões a serviço da UFV (entrega/coleta) ou expressamente autorizados",
+    "§2º: veículos da UFV e da administração pública identificados por adesivo ou cartão",
+    "§3º: ônibus de alunos em atividade institucional (não caminhão)",
+    "§4º: ônibus do transporte público municipal"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 3.063/2023",
+     "artigo": "art. 1º e §§1º-4º",
+     "url": "https://www.vicosa.mg.gov.br/arquivo/legislacao/legislacao_3063_2023"
+    }
+   ],
+   "vigencia_inicio": "2023-12-22",
+   "trechos": [
+    {
+     "via": "vias internas do campus da Universidade Federal de Viçosa",
+     "de": null,
+     "ate": null,
+     "descricao": "perímetro do campus (limite não descrito no ato)",
+     "aproximado": true
+    }
+   ],
+   "observacao": "Texto: 'igual ou superior a 3 toneladas' de capacidade de carga (usar payload_t, não PBT). Vias internas do campus podem nem estar no grafo público; baixa utilidade para rota. Verificado em 2026-10-11: alvo corrigido de payload_t acima 3 para acima 2,99 (texto: 'igual ou superior a 3 toneladas'; mesma convenção dos demais 'igual ou superior')."
+  }
+ ]
+}

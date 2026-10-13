@@ -1,0 +1,155 @@
+{
+ "ibge": "3505807",
+ "nome": "Bastos",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1",
+   "resultado": "LIDO (pdftotext). Diário Oficial de Bastos nº 523, 19/06/2024, p. 4-5: Decreto 1.758, de 12/06/2024, 'Regulamenta a circulação de veículos pesados no Município de Bastos'. Arquivo em atos/3505807/d1.pdf."
+  },
+  {
+   "url": "https://bastos.siscam.com.br (Câmara; legislacao.py buscar 3505807 'caminh|pesad|trânsito|transito')",
+   "resultado": "35 atos por ementa; nenhum de restrição de circulação (leis antigas de trânsito 1954-1969, convênio PM 1998/2024). Decretos do Executivo não constam no Siscam da Câmara."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3505807 'veículos pesados' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultado (a ferramenta não tem o slug de Bastos no DOSP)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/bastos",
+   "resultado": "403 Cloudflare (não contornado)"
+  },
+  {
+   "url": "DOSP bastos (POST pesquisar.php?c=bastos): '1.758', 'veículos pesados', 'eixos', 'tráfego de caminhões', 'bitrem', 'circulação de veículos' (verificador 2026-10-11)",
+   "resultado": "O slug bastos existe no DOSP (a ferramenta não o tinha). Edições posteriores a 06/2024 com esses termos (ed. 704, 754, 769, 779, 821, 944, 1012, 1036, 1040, 1051) abertas: só valores orçamentários, 'eixos' temáticos de conferências e lei de escapamentos. Nenhuma alteração ou revogação do Decreto 1.758/2024."
+  }
+ ],
+ "observacoes": "Decreto 1.758/2024 (Prefeito Manoel Ironides Rosa): art. 1º proíbe, carregados ou não, caminhões com 7 eixos ou mais (carreta + cavalo; bitrem, treminhão, tritrem, rodotrem) nas estradas vicinais BAS 010 (Bastos-Iacri), BAS 020 (Bastos-Tupã), BAS 050/168/152 (Bastos-Parapuã) e no perímetro urbano, ressalvado deslocamento para carga/descarga comprovado por nota fiscal; §1º exclui caminhões que transportam produtos agroavícolas do município, frota pública, emergências, redes e guincho; §2º proíbe no perímetro urbano caminhões canavieiros, carregados ou não; art. 3º proíbe caminhões com esterco e aves mortas no perímetro urbano; art. 5º sinalização em 30 dias; art. 8º fiscalização pela PM; art. 9º vigor na publicação (19/06/2024). Os §2º do art. 1º e art. 3º dependem do tipo de carga e não são modeláveis por atributos do veículo (regra desativada). Alteração/revogação não encontrada (Siscam não cobre decretos). Vizinha Decreto 1.757/2024 (créditos) sem relação. Pendência: o perímetro urbano não está delimitado no decreto. | verificado em 2026-10-11: Decreto 1.758/2024 conferido de novo no DO nº 523 (19/06/2024, p. 4-5): art. 1º, caput, §§1º e 2º, art. 3º e art. 9º confirmados. Nenhuma alteração ou revogação no DOSP de Bastos até 25/09/2026.",
+ "regras_rascunho": [
+  {
+   "id": "bastos_dec1758_7eixos",
+   "tipo": "zona",
+   "regime": "7 eixos ou mais",
+   "nome": "Bastos: caminhões com 7 eixos ou mais, perímetro urbano e estradas vicinais BAS 010, 020 e 050/168/152",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 6
+     }
+    ]
+   },
+   "excecoes": [
+    "Ressalva: deslocamento para carga ou descarga de mercadorias comprovado com nota fiscal ou documento similar (art. 1º)",
+    "§1º: caminhões que transportam produtos agroavícolas produzidos no/para o abastecimento das culturas do município",
+    "§1º: caminhões e máquinas da patrulha mecanizada municipal, estadual ou federal; emergências, manutenção de vias, redes de energia, telefonia e água, guincho"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 1.758, de 12/06/2024 (Bastos)",
+     "artigo": "art. 1º, caput e §1º; art. 9º",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1",
+     "nota": "Diário Oficial de Bastos nº 523, 19/06/2024, p. 4-5"
+    }
+   ],
+   "vigencia_inicio": "2024-06-19",
+   "trechos": [
+    {
+     "via": [
+      "BAS 010"
+     ],
+     "descricao": "Estrada vicinal Bastos a Iacri, em toda a extensão",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "BAS 020"
+     ],
+     "descricao": "Estrada vicinal Bastos a Tupã, em toda a extensão",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "BAS 050",
+      "BAS 168",
+      "BAS 152"
+     ],
+     "descricao": "Estradas vicinais Bastos a Parapuã, em toda a extensão",
+     "aproximado": true
+    },
+    {
+     "via": [],
+     "descricao": "Perímetro urbano de Bastos (limite não definido no decreto)",
+     "aproximado": true
+    }
+   ],
+   "nota": "Os 7 eixos referem-se à combinação (carreta + cavalo, bitrem, treminhão, tritrem, rodotrem); o campo 'eixos' do alvo deve ser o da combinação."
+  },
+  {
+   "id": "bastos_dec1758_cana_esterco",
+   "tipo": "zona",
+   "regime": "Por tipo de carga",
+   "nome": "Bastos: caminhões canavieiros e com esterco/aves mortas no perímetro urbano",
+   "status": "desativada",
+   "status_motivo": "Ato vigente, mas o alvo é o tipo de carga (cana, esterco, aves mortas), não modelável por atributos do veículo.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 1.758, de 12/06/2024 (Bastos)",
+     "artigo": "art. 1º, §2º (canavieiros); art. 3º (esterco e aves mortas)",
+     "url": "https://www.dosp.com.br/exibe_do.php?i=NTEwMDA1"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "Perímetro urbano de Bastos",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "falha_de_fonte": false,
+ "osm_divergencias": []
+}

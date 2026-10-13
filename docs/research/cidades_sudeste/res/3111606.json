@@ -1,0 +1,108 @@
+{
+  "ibge": "3111606",
+  "nome": "Campos Gerais",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/ (Instar; toolkit legislacao.py buscar 3111606 'caminh|veículos pesados|tráfego|...')",
+      "resultado": "3 atos: Lei 3.541/2019, Decreto 3.541/2019 (mesma ementa) e Lei 3.553/2019, todos 'Em vigor' no portal."
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/25a4a3d622c5285b44b736ed6d14dab0.pdf",
+      "resultado": "LIDO (PDF escaneado, lido como imagem). Lei 3.541, 26/11/2019, art. 1º: proibido o tráfego de veículos pesados em toda a extensão da Rua Júlio Braz Pereira, da esquina com a Rua Pio XII até a Av. Getúlio Vargas; art. 2º: sinalização pelo Executivo; art. 3º vigência na publicação. Cópia em atos/3111606/lei_70009.pdf"
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/1b18cf41f0abf6150ce8a30796b55797.pdf",
+      "resultado": "LIDO (imagem). Lei 3.553, 17/12/2019, art. 1º dá nova redação ao art. 1º da Lei 3.541: 'Fica proibido o tráfego de veículos pesados desde a entrada na Rua Pio XII, exceto daqueles que se dirigirem, exclusivamente, à COOXUPÉ, devendo manobrar os veículos na própria empresa, retornando para a rodovia'. Cópia em atos/3111606/lei_70031.pdf"
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/9f1feb0c736a89f0d6785c43b4029b7e.pdf",
+      "resultado": "PDF do 'Decreto 3541/2019' baixado (atos/3111606/lei_71414.pdf), escaneado; não relido (mesma ementa da Lei 3.541; provável duplicata de cadastro)."
+    },
+    {
+      "url": "legislacao.py buscar 3111606 '3.541|3541|pio xii|revog'",
+      "resultado": "Nenhum ato posterior revoga ou altera a Lei 3.541/3.553 nas ementas varridas."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3111606",
+      "resultado": "0 resultado(s) em amm-mg e qd para 'circulação de caminhões' e 'veículos pesados'"
+    },
+    {
+      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3111606)",
+      "resultado": "Falhou (504/500 repetidos); way com hgv=no apontado na preparação NÃO conferido."
+    },
+    {
+      "url": "https://www.camposgerais.mg.gov.br/publicos/{25a4a3d6...,1b18cf41...,9f1feb0c...}.pdf (rebaixados de novo em 2026-10-11)",
+      "resultado": "Verificador: PDFs relidos. Lei 3.541 e Lei 3.553 conferem com o rascunho. O PDF do 'Decreto 3541/2019' (71414) é byte a byte o mesmo arquivo da Lei 3.541 (md5 368e274b...), ou seja, cadastro duplicado no portal e não ato autônomo."
+    },
+    {
+      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE 3111606; verificador 2026-10-11)",
+      "resultado": "Rua Pio XII = ways 231283638, 231283724, 896564184, 896564185; Rua Júlio Braz Pereira = way 231283723; nenhuma com hgv. O único hgv=no do município é o way 427105140 'Balsa Fama / Córrego do Ouro' (balsa), sem relação com esta lei."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Lei 3.541/2019 (26/11/2019), alterada pela Lei 3.553/2019 (17/12/2019): proibição de tráfego de 'veículos pesados' na Rua Pio XII (desde a entrada) e na Rua Júlio Braz Pereira até a Av. Getúlio Vargas, exceto veículos que se dirigem exclusivamente à COOXUPÉ. A lei não define 'veículos pesados' (sem PBT/eixos) nem horários: regra permanente. Trecho muito curto (acesso à cooperativa) e a redação da Lei 3.553 só cita a Rua Pio XII (o trecho da Júlio Braz Pereira da redação original pode ter sido absorvido ou não; ambíguo). Situação 'em vigor' segundo o portal; vigência não contraditada. Geometria: nomes de via para OSM; confirmar pontas. | Verificado em 2026-10-11: Leis 3.541/2019 e 3.553/2019 relidas no PDF oficial; regra confirmada para a Rua Pio XII. O trecho da Rua Júlio Braz Pereira foi retirado da regra ativa (o art. 1º vigente, na redação da Lei 3.553, não o cita; só a ementa). O 'Decreto 3541/2019' é o mesmo PDF da Lei 3.541 (duplicata de cadastro). Nenhuma revogação encontrada no portal Instar; leismunicipais está atrás de Cloudflare (403). OSM: hgv=no do município é a balsa, não a Rua Pio XII.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "Pendência: no OSM as ways da Rua Pio XII (231283638, 231283724, 896564184, 896564185) não têm hgv=no, embora a Lei 3.541/2019 (redação da Lei 3.553/2019) proíba veículos pesados. O hgv=no apontado na preparação é o way 427105140 (Balsa Fama / Córrego do Ouro), não esta via."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "camposgerais_pio_xii_veiculos_pesados",
+      "tipo": "via",
+      "regime": "Veículos pesados proibidos (24 h)",
+      "nome": "Campos Gerais: Rua Pio XII, tráfego de veículos pesados proibido desde a entrada (exceto acesso exclusivo à COOXUPÉ)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Lei 3.553/2019: veículos que se dirigem exclusivamente à COOXUPÉ, devendo manobrar na própria empresa e retornar para a rodovia"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.541, de 26/11/2019, alterada pela Lei 3.553, de 17/12/2019",
+          "artigo": "art. 1º (redação dada pela Lei 3.553/2019, art. 1º); art. 2º (sinalização)",
+          "url": "https://www.camposgerais.mg.gov.br/portal/leis_decretos/70031/",
+          "nota": "Lei 3.541 original: https://www.camposgerais.mg.gov.br/portal/leis_decretos/70009/"
+        }
+      ],
+      "nota": "'Veículos pesados' não é definido na lei (sem limite de PBT/eixos); alvo genérico caminhão. Sem horário: proibição permanente. Verificado em 2026-10-11: o trecho da Rua Júlio Braz Pereira (redação original da Lei 3.541) foi retirado da regra ativa, porque o art. 1º foi reescrito por inteiro pela Lei 3.553/2019 e o texto vigente só cita a Rua Pio XII ('desde a entrada'). A Júlio Braz Pereira aparece apenas nas ementas. Fica como pendência de interpretação.",
+      "vigencia_inicio": "2019-12-17",
+      "trechos": [
+        {
+          "via": [
+            "Rua Pio XII"
+          ],
+          "descricao": "Rua Pio XII, desde a entrada (Lei 3.553/2019)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3111606_campos-gerais.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

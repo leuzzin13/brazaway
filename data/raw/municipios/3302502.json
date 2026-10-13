@@ -1,0 +1,141 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3302502",
+  "municipio": "Magé",
+  "uf": "RJ",
+  "fonte_id": "mage",
+  "fonte": {
+    "url": "https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4a3f94ce756f2f7203258e5900649f6a?OpenDocument (Dec. 2.047/2004) ; https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4dae4486aaf1ed9603258e2d00663cc0?OpenDocument (Dec. 2.886/2013)",
+    "licenca": "Atos oficiais de Magé: domínio público (Lei 9.610/1998, art. 8º, IV). Vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), PBF local que gerou o grafo do Valhalla, recortadas no distrito de Inhomirim da Malha de Distritos do IBGE (Censo 2022).",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3302502.json; verificação: verif/3302502.json (11/10/2026, veredito 'inverificavel': o portal de decretos não abriu). Nenhuma regra de Magé é aplicada na rota; ficam registradas para aviso. Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Magé não define VUC geral; a definição do Dec. 2.886/2013 (art. 2º, II) vale só para as ARC, que nunca foram delimitadas.",
+  "regras": [
+    {
+      "id": "mage_piabeta_vias_pavimentacao",
+      "tipo": "via",
+      "regime": "Proibição (pavimento)",
+      "nome": "Magé (Piabetá): Av. Santos Dumont, Av. Roberto Silveira e ruas Benjamin Constant, Prefeito Olívio de Mattos, José Ullmann e Joaquim Lisboa, proibido caminhão e carreta",
+      "status": "desativada",
+      "status_motivo": "Inverificável na verificação de 11/10/2026: o Decreto 2.047/2004 não pôde ser reaberto (leis.mage.rj.gov.br responde 403 pelo proxy e não resolve por DNS; sem cópia no Boletim Oficial, Wayback ou Querido Diário). A regra vem só da leitura da pesquisa (10/10/2026), decreto de 2004 sem sinalização ou fiscalização confirmadas e sem conferir a relação com o Dec. 2.886/2013. Reativar quando o texto for reaberto.",
+      "confianca": "unverifiable",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecao_destino_local": false,
+      "excecoes": [
+        "Art. 2º: morador ou empresa proprietária de caminhão/carreta residente ou domiciliada nas localidades tem acesso à residência ou domicílio",
+        "Art. 3º: caminhão ou carreta com destino a empresa ou morador das localidades pode trafegar para entrega ou recolhimento de bens",
+        "Art. 4º: na tolerância, o condutor deve comprovar o vínculo e sair pela mesma rota da entrada"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.047, de 10/03/2004 (Magé; publicado em 15/03/2004)",
+          "artigo": "art. 1º (vias e Centro de Piabetá, para preservar a pavimentação); arts. 2º a 4º (tolerâncias)",
+          "url": "https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4a3f94ce756f2f7203258e5900649f6a?OpenDocument",
+          "nota": "Base oficial de decretos marcava 'Em Vigor' em 10/10/2026. O Dec. 2.886/2013 não o revoga expressamente."
+        }
+      ],
+      "nota": "Vale para 'caminhões e carretas' sem limite de PBT. Tolerância só para destino NAS localidades. No OSM: 'Avenida Santos Dumont', 'Avenida Governador Roberto Silveira' (há homônimas em Guia de Pacobaíba, fora), 'Rua Benjamin Constant', 'Rua Prefeito Olívio de Matos/Mattos', 'Rua Prefeito José Ullmann Júnior' e 'Rua/Avenida Doutor Joaquim Lisboa', só no distrito de Inhomirim (Piabetá).",
+      "fonte_geometria": "OSM (ODbL) por nome, recortado no distrito de Inhomirim (IBGE 2022, distrito 330250220).",
+      "vigencia_inicio": "2004-03-15",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302502_piabeta_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "Ways do cache data/cache/municipios/osm_named_3302502.json (PBF local) com os nomes da nota, recortados no distrito 330250220 (Inhomirim) de RJ_distritos_CD2022.gpkg (IBGE); procedimento em docs/layers/municipios/mun_sudeste/IMP05.md"
+        }
+      ]
+    },
+    {
+      "id": "mage_piabeta_centro",
+      "tipo": "zona",
+      "regime": "Proibição (pavimento)",
+      "nome": "Magé: Centro de Piabetá, proibido caminhão e carreta",
+      "status": "desativada",
+      "status_motivo": "O Decreto 2.047/2004 inclui 'o Centro de Piabetá' sem delimitar a área: sem perímetro oficial não há geometria confiável (registro sem feição). O decreto também não pôde ser reaberto na verificação.",
+      "confianca": "baixa",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": ["Arts. 2º a 4º do Decreto 2.047/2004 (morador/empresa local e entregas a eles)"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.047, de 10/03/2004 (Magé)",
+          "artigo": "art. 1º ('e no Centro de Piabetá')",
+          "url": "https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4a3f94ce756f2f7203258e5900649f6a?OpenDocument"
+        }
+      ],
+      "vigencia_inicio": "2004-03-15",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "mage_arc_dec2886",
+      "tipo": "zona",
+      "regime": "ARC (pico)",
+      "nome": "Magé: Áreas de Restrição à Circulação (ARC), caminhões e tratores nos horários de pico",
+      "status": "desativada",
+      "status_motivo": "O Decreto 2.886/2013 delega à Secretaria de Segurança Pública definir as ARC por portaria (arts. 6º e 11); nenhuma portaria foi achada (base de decretos; BIO 456-466, nov/2013-abr/2014), então não há área definida (registro sem feição).",
+      "confianca": "unverifiable",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "06:00", "to": "10:00"},
+        {"days": [1, 2, 3, 4, 5], "from": "17:00", "to": "20:00"},
+        {"days": [6], "from": "06:00", "to": "20:00"},
+        {"days": [7], "from": "09:00", "to": "20:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 6.5,
+        "exige_cadastro": false,
+        "artigo": "Decreto 2.886/2013, art. 2º, II (VUC) e art. 5º, § 1º (horários do VUC por portaria)",
+        "nota": "Horários próprios do VUC dependem de portaria não achada"
+      },
+      "excecoes": [
+        "Art. 5º, § 2º: serviços do art. 3º, § 1º, II (água, energia, gás e combustíveis, saúde, funerário, esgoto e lixo, telecomunicações, concretagem, oxigênio, guincho etc.)",
+        "Art. 10: autorização especial da Secretaria de Segurança Pública"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.886, de 29/11/2013 (Magé; publicado em 30/11/2013)",
+          "artigo": "art. 2º, IV e V; art. 5º, I a III (sábados: 6h-10h do inciso I mais 9h-20h do inciso III; domingos e feriados 9h-20h)",
+          "url": "https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4dae4486aaf1ed9603258e2d00663cc0?OpenDocument"
+        }
+      ],
+      "nota": "Feriados entram na janela de 9h-20h do inciso III (o ato equipara feriado a domingo); o formato não distingue: rever se a portaria aparecer.",
+      "vigencia_inicio": "2013-11-30",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "mage_zrcd_carga_descarga",
+      "tipo": "zona",
+      "regime": "ZRCD (carga e descarga)",
+      "nome": "Magé: Zonas de Restrição de Operação de Carga e Descarga (ZRCD)",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga (não de circulação) e as ZRCD nunca foram definidas por portaria (arts. 4º e 11 do Decreto 2.886/2013): registro sem feição.",
+      "confianca": "unverifiable",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "08:00", "to": "19:00"},
+        {"days": [6], "from": "00:00", "to": "14:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": ["Art. 3º, § 1º: automóveis, motocicletas, VUC e serviços essenciais listados"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.886, de 29/11/2013 (Magé)",
+          "artigo": "art. 3º, I e II",
+          "url": "https://leis.mage.rj.gov.br/APL/Legislativos/decmage.nsf/c8ea52144c8b5c950325654c00612d63/4dae4486aaf1ed9603258e2d00663cc0?OpenDocument"
+        }
+      ],
+      "nota": "O inciso II diz 'antes das 14h aos sábados' sem hora inicial: registrado 00:00-14:00.",
+      "vigencia_inicio": "2013-11-30",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

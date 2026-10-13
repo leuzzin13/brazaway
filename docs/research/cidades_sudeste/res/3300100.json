@@ -1,0 +1,58 @@
+{
+ "ibge": "3300100",
+ "nome": "Angra dos Reis",
+ "uf": "RJ",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.angradosreis.rj.leg.br/api/norma/normajuridica/ (via toolkit legislacao.py buscar)",
+   "resultado": "Busca por ementa (caminh, carga e descarga, veículos pesados, tráfego, tonelad, eixos, carreta). 3 ementas, nenhuma de restrição de caminhões."
+  },
+  {
+   "url": "https://www.angradosreis.rj.leg.br/institucional/leis-municipais-1",
+   "resultado": "Busca heurística do portal da Câmara: 0 atos"
+  },
+  {
+   "url": "leads/querido_diario.json[3300100] (preparação)",
+   "resultado": "5 diários recuperados; 0 acertos relevantes (trechos de ruído: Código de obras, coleta de lixo, asfaltamento)"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar <ibge> 'circulação de caminhões' e 'tráfego de veículos pesados' (fontes aemerj, qd)",
+   "resultado": "0 resultados relevantes"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3300100; hgv, maxweight, maxlength, *:conditional)",
+   "resultado": "28 ways: 27 com maxweight em heliponto (aeroway=helipad) e 1 hgv=no na Rua Aviador Santos Dumont (residential, id 304526906)."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Nenhuma norma de restrição a caminhões no SAPL da Câmara (só 3 acertos de ementa: feiras gastronômicas em caminhões, título de utilidade pública, Lei 3.659/2017 'Passeio da Cidade' que fecha a Rua do Comércio a veículos de qualquer natureza 19h-6h: fechamento geral, não restrição a caminhões). Diário oficial (QD, desde 2024) sem ato: os 5 trechos da preparação são ruído (corredor de circulação em norma de edificação, coleta de lixo, obra de asfaltamento). OSM: 1 via municipal com hgv=no (Rua Aviador Santos Dumont, residencial, ~-23.0175,-44.5309) sem ato achado; os 27 maxweight são helipontos.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Rua Aviador Santos Dumont (way 304526906, residential): hgv=no sem ato municipal localizado; pendência para verificar sinalização/ato.",
+  "27 maxweight=3-12 t são helipontos (aeroway=helipad): descartados."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "3300100_osm_aviador_santos_dumont",
+   "tipo": "via",
+   "regime": "hgv=no (OSM)",
+   "nome": "Angra dos Reis: Rua Aviador Santos Dumont (hgv=no no OSM)",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM, sem ato municipal com número e artigo.",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [],
+   "trechos": [
+    {
+     "via": "Rua Aviador Santos Dumont",
+     "aproximado": true,
+     "descricao": "Way OSM 304526906 (~-23.0175,-44.5309); extensão não verificada"
+    }
+   ]
+  }
+ ]
+}

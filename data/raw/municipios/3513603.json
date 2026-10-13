@@ -1,0 +1,250 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3513603",
+  "municipio": "Cunha",
+  "uf": "SP",
+  "fonte_id": "cunha",
+  "fonte": {
+    "url": "https://sapl.cunha.sp.leg.br/norma/216 (Lei 728/1995) ; https://sapl.cunha.sp.leg.br/norma/218 (Lei 730/1995) ; https://sapl.cunha.sp.leg.br/norma/2388 (Lei 1.979/2025) ; https://sapl.cunha.sp.leg.br/norma/77 e /norma/99 (Leis 589 e 611/1991)",
+    "licenca": "Atos oficiais de Cunha: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 728/1995 (com a Lei 730/1995): caminhões e tratores proibidos em 4 trechos centrais sáb, dom e feriados 18h–01h. Lei 1.979/2025 (bitrem nas vicinais) e Leis 589/611/1991 (tonelagem nas vicinais) ficam desativadas, sem geometria."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Cunha não define VUC.",
+  "regras": [
+    {
+      "id": "cunha_ruas_centrais_fds_caminhoes_tratores",
+      "tipo": "via",
+      "regime": "Horário de trânsito para caminhões e tratores (fim de semana)",
+      "nome": "Cunha: 4 ruas centrais, caminhões e tratores proibidos sáb/dom/feriados 18h-01h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "18:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            7,
+            1
+          ],
+          "from": "00:00",
+          "to": "01:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Lei 730/1995, art. 3º: casos especiais e exceções decididos pelo Executivo (ex.: carga e descarga, apresentação de shows)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 728, de 06/03/1995 (Cunha)",
+          "artigo": "art. 1º; art. 3º (vigor na publicação)",
+          "url": "https://sapl.cunha.sp.leg.br/norma/216",
+          "nota": "PDF: http://sapl.cunha.sp.leg.br/media/sapl/public/normajuridica/1995/216/lei_728_1995_regulamentacao_horario_transito_caminhoes_tratores.pdf"
+        },
+        {
+          "ato": "Lei Municipal 730, de 19/04/1995 (Cunha), que acrescenta artigos à Lei 728/1995",
+          "artigo": "art. 3º (o Executivo decide casos especiais e exceções, como carga e descarga e shows); art. 4º (sinalização em até 30 dias); art. 5º (30 dias de período educativo após a sinalização)",
+          "url": "https://sapl.cunha.sp.leg.br/norma/218",
+          "nota": "PDF: http://sapl.cunha.sp.leg.br/media/sapl/public/normajuridica/1995/218/lei_730_1995_altera_lei_728_transito_caminhoes_tratores.pdf (cópia em atos/3513603/lei_730_1995.pdf)"
+        }
+      ],
+      "nota": "Janelas cobrem sáb e dom 18h-01h; a restrição também vale em feriados (não modelado em janelas: feriados 'aplica' não cria janela em dia útil). Trechos por numeração predial. Verificado em 2026-10-11: o SAPL registra a Lei 730/1995 como alteradora da Lei 728/1995. Ela acrescenta os arts. 3º a 5º (exceções caso a caso pelo Executivo e sinalização) e não muda trechos nem horário. A R. Dr. Casemiro da Rocha (nº 04 ao 51) não está no OSM (nem no extrato do PBF): ficou fora da geometria (pendência). Trechos por numeração predial, aproximados. A janela de sábado/domingo 18h–24h e domingo/segunda 0h–1h não cobre feriado em dia útil (o formato só tem 'aplica' com as janelas do dia da semana).",
+      "fonte_geometria": "OSM (ODbL) casado por nome; pontas aproximadas",
+      "vigencia_inicio": "1995-03-06",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Dom Lino"
+          ],
+          "descricao": "R. Dom Lino, nº 07 ao 118",
+          "aproximado": true,
+          "nota": "A rua tem um só way (~210 m) no OSM: usada inteira."
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua João Manoel Rodrigues"
+          ],
+          "de": {
+            "lonlat": [
+              -44.95909,
+              -23.07434
+            ]
+          },
+          "ate": [
+            "Rua Doutor José Maria Amato"
+          ],
+          "descricao": "R. João Manoel Rodrigues, nº 07 ao 51 (parte 1: da R. Dom Lino à R. Dr. José Maria Amato)",
+          "aproximado": true,
+          "nota": "Numeração não está no OSM: da R. Dr. José Maria Amato até ~70 m depois da R. Dom Lino (~140 m), em duas partes por causa da mão única."
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua João Manoel Rodrigues"
+          ],
+          "de": {
+            "lonlat": [
+              -44.95909,
+              -23.07434
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -44.95844,
+              -23.0744
+            ]
+          },
+          "descricao": "R. João Manoel Rodrigues, nº 07 ao 51 (parte 2: ~70 m a leste da R. Dom Lino)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Doutor José Maria Amato"
+          ],
+          "de": {
+            "lonlat": [
+              -44.95976,
+              -23.07429
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -44.96041,
+              -23.0743
+            ]
+          },
+          "descricao": "R. Dr. José Maria Amato, nº 10 ao 32",
+          "aproximado": true,
+          "nota": "Numeração não está no OSM: o primeiro quarteirão a partir da R. João Manoel Rodrigues (~65 m)."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3513603_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "cunha_vicinais_bitrem",
+      "tipo": "via",
+      "regime": "Proibição de bitrem em estradas vicinais",
+      "nome": "Cunha: bitrem proibido em todas as rodovias vicinais",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: a Lei 1.979/2025 vale em \"todas as rodovias vicinais\" sem listá-las, e no OSM não dá para separar as vicinais municipais das estaduais (DER), fora da competência municipal. O ato é vigente (confirmado pelo verificador): pendência até haver o cadastro municipal de estradas.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial de Trânsito Vicinal (AETV), art. 4º",
+      "excecoes": [
+        "Art. 4º: AETV para emergência/calamidade e cargas indivisíveis ou superdimensionadas essenciais, sem rota alternativa"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.979, de 25/06/2025 (Cunha), Diário Oficial Municipal 25/06/2025",
+          "artigo": "arts. 1º, 2º, 4º",
+          "url": "https://sapl.cunha.sp.leg.br/norma/2388"
+        }
+      ],
+      "nota": "Vicinais não listadas; geometria = estradas vicinais do município (OSM/Prefeitura) a definir. 'Bitrem' = caminhão-trator com dois semirreboques e dolly (mapeado em tipo cvc, a confirmar). Desativada só por falta de geometria.",
+      "fonte_geometria": "A construir: estradas vicinais (cadastro municipal).",
+      "vigencia_inicio": "2025-06-25",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "cunha_vicinais_tonelagem",
+      "tipo": "via",
+      "regime": "Limite de tonelagem em estradas vicinais",
+      "nome": "Cunha: estradas vicinais, carga líquida até 6 t (2 eixos) e 13 t (3 eixos); carretas proibidas",
+      "status": "desativada",
+      "status_motivo": "Lei antiga (1991) sobre estradas vicinais, sem lista de vias; modelagem mista de carga líquida por número de eixos pendente e sinalização não conferida.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 589/1991, alterada pela Lei 611/1991 (Cunha)",
+          "artigo": "Lei 589 art. 2º (carretas); Lei 611 art. 1º (tonelagem 6 t/13 t)",
+          "url": "https://sapl.cunha.sp.leg.br/norma/77",
+          "nota": "Lei 611: https://sapl.cunha.sp.leg.br/norma/99"
+        }
+      ],
+      "vigencia_inicio": "1991-11-25",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

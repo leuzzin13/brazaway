@@ -103,4 +103,6 @@ export const REPORT_TYPES: Record<string, { label: string; icon: string; unit?: 
   hazmat_ban: { label: 'Proibido carga perigosa', icon: '☣️', color: '#be185d' },
   road_closed: { label: 'Via interditada', icon: '🚧', color: '#0369a1' },
   steep_grade: { label: 'Subida que não vence (peso)', icon: '⛰️', unit: 't', color: '#15803d' },
+  radar_movel: { label: 'Radar móvel (expira em 2 h)', icon: '📷', color: '#ea580c' },
+  blitz: { label: 'Blitz (expira em 2 h)', icon: '🚓', color: '#2563eb' },
 };

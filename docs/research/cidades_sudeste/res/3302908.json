@@ -1,0 +1,119 @@
+{
+  "nome": "Miguel Pereira",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "vuc": null,
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.miguelpereira.rj.leg.br/norma/8567",
+      "resultado": "Decreto 6.773-A, de 18/04/2023 (D.O. 1159, 24/04/2023, caderno especial, p. 3), PDF lido: art. 1º torna obrigatório o trânsito de veículos leves e transporte coletivo na Rua Dr. Osório de Almeida (2º Distrito) às sextas, sábados, domingos e feriados; parágrafo único veda trânsito e circulação de veículos pesados (caminhões, tratores e afins), exceto os com destino a entregas, comércios e residências do trecho. Sem campo de revogação no SAPL. PDF salvo em atos/3302908/."
+    },
+    {
+      "url": "https://sapl.miguelpereira.rj.leg.br/norma/2422",
+      "resultado": "Lei 2.101, de 19/12/2005, PDF lido (manuscrito/escaneado): AUTORIZA o Executivo a proibir a entrada de máquinas e caminhões na Travessa Pedro Cardoso (confluência com a Rua Prof. Conceição Costa Pinto, Tombo, Governador Portela). É autorização, não proibição direta; nenhum decreto de execução localizado."
+    },
+    {
+      "url": "toolkit legislacao.py buscar 3302908 e direto sapl (Osório|2º Distrito|veículos pesados|pesados)",
+      "resultado": "SAPL: 46 atos para os termos; nenhum decreto posterior sobre a Rua Dr. Osório de Almeida e nenhum outro ato de caminhão (Decreto 3.894/2011 só revoga padronização de frota)."
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/3302908/2023-04-24/fd7a76c1678c0b44465259c580cfc7cc7d045730.pdf",
+      "resultado": "Pista do lote (diário 1159 extra): é a publicação do mesmo Decreto 6.773-A/2023."
+    },
+    {
+      "url": "https://www.miguelpereira.rj.leg.br/leis",
+      "resultado": "Cliente heurístico: 0 atos."
+    }
+  ],
+  "observacoes": "Regra urbana minúscula: Decreto 6.773-A/2023, art. 1º, parágrafo único (Rua Dr. Osório de Almeida, 2º Distrito/Governador Portela): sextas, sábados, domingos e feriados, caminhões, tratores e afins vedados, exceto com destino de entrega/comércio/residência no trecho. O ato não traz hora (o dia inteiro), peso nem extensão do trecho; 'veículos pesados' sem corte em toneladas (alvo = qualquer caminhão). Confiança 'media': vigência por ausência de revogação no SAPL (sem consolidado). A Lei 2.101/2005 (Travessa Pedro Cardoso) é só autorização: pista, não regra. Nenhuma divergência OSM registrada na preparação. Observação para a camada: janelas cobrem sex-dom; 'feriados' em dia de semana depende do calendário municipal (frente de feriados). | Verificado em 2026-10-11: Decreto 6.773-A/2023 rebaixado do SAPL (PDF, D.O. 1159 de 24/04/2023, caderno especial, p. 3) e relido; art. 1º, parágrafo único e art. 2º conferem. Correção: vigencia_inicio 2023-04-18 -> 2023-04-24, porque o art. 2º diz 'em vigor na data de sua publicação' e o ato foi publicado no D.O. 1159 (24/04/2023), com a nota 'omitido no D.O. 1156, de 18/04/2023'. Nova busca no SAPL (Osório, 2º Distrito, veículos pesados, caminh, trânsito) e no QD/AEMERJ ('Osório de Almeida', '6.773-A', 'veículos pesados'): nenhuma alteração ou revogação. Dec. 4.891/2017 (Lago de Javary) e Dec. 5.367/2019 lidos: não são restrições de caminhão. Lei 2.101/2005 relida: art. 1º só autoriza o Executivo, apesar da ementa 'Torna proibido'. Homônimo: há Rua Dr. Osório de Almeida também em Vila Selma (1º Distrito).",
+  "osm_divergencias": [],
+  "falha_de_fonte": false,
+  "regras_rascunho": [
+    {
+      "id": "miguelpereira_rua_osorio_almeida_pesados",
+      "tipo": "via",
+      "regime": "Fins de semana e feriados",
+      "nome": "Miguel Pereira: Rua Dr. Osório de Almeida (2º Distrito), caminhões e tratores vedados sex-dom e feriados",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecoes": [
+        "Parágrafo único do art. 1º: veículos com destino a entregas, comércios e residências instaladas em todo o trecho da Rua Dr. Osório de Almeida"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.773-A, de 18/04/2023 (D.O. Miguel Pereira 1159, 24/04/2023, caderno especial; 'omitido no D.O. 1156, de 18/04/2023')",
+          "artigo": "art. 1º, parágrafo único",
+          "url": "https://sapl.miguelpereira.rj.leg.br/norma/8567",
+          "url_pdf": "https://sapl.miguelpereira.rj.leg.br/media/sapl/public/normajuridica/2023/8567/dc_6773-a_2023.pdf"
+        }
+      ],
+      "nota": "Dia inteiro (o ato não fixa hora). A vedação está no parágrafo único do art. 1º, cujo caput trata de sextas, sábados, domingos e feriados; o parágrafo não repete os dias, e por isso a leitura sex-dom/feriados é interpretação (confiança media). A exceção vale para quem tem destino no trecho, não para qualquer destino no município. 'Veículos pesados (caminhões, tratores e afins)' sem limite de peso. ATENÇÃO à geometria: existe outra Rua Dr. Osório de Almeida em Vila Selma (1º Distrito, citada no D.O. de 12/09/2022). A regra é só a do 2º Distrito (Governador Portela).",
+      "vigencia_inicio": "2023-04-24",
+      "trechos": [
+        {
+          "via": "Rua Dr. Osório de Almeida",
+          "descricao": "Todo o trecho, 2º Distrito (Governador Portela)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302908_miguel_pereira.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "miguelpereira_travessa_pedro_cardoso",
+      "tipo": "via",
+      "regime": "Entrada de caminhões",
+      "nome": "Miguel Pereira: Travessa Pedro Cardoso (Tombo, Governador Portela), entrada de máquinas e caminhões (Lei 2.101/2005, só autorização)",
+      "status": "desativada",
+      "status_motivo": "A Lei 2.101/2005 apenas autoriza o Executivo a proibir; não foi localizado decreto/sinalização que a execute, e o PDF é manuscrito escaneado.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.101, de 19/12/2005",
+          "artigo": "art. 1º",
+          "url": "https://sapl.miguelpereira.rj.leg.br/norma/2422"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "Travessa Pedro Cardoso",
+          "descricao": "Na confluência com a Rua Prof. Conceição Costa Pinto, Tombo"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3302908_miguel_pereira.geojson",
+          "construir": "manual"
+        }
+      ]
+    }
+  ],
+  "ibge": "3302908",
+  "uf": "RJ",
+  "data": "2026-10-11"
+}

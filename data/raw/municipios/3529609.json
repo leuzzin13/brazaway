@@ -1,0 +1,233 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3529609",
+  "municipio": "Meridiano",
+  "uf": "SP",
+  "fonte_id": "meridiano",
+  "fonte": {
+    "url": "https://sapl.meridiano.sp.leg.br/norma/738 ; https://sapl.meridiano.sp.leg.br/norma/1540 ; https://sapl.meridiano.sp.leg.br/norma/1550 ; https://sapl.meridiano.sp.leg.br/norma/1565",
+    "licenca": "Atos oficiais de Meridiano: domínio público (Lei 9.610/1998, art. 8º, IV). Perímetro urbano: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0); vias da lei revogada: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.567/2024: veículos com 5 ou mais eixos proibidos no perímetro urbano (24 h). Lei 1.055/2014 revogada pela Lei 1.066/2014. Lei 1.082/2015 (Ruas A e D do povoado) desativada por falta de geometria."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Meridiano não define VUC.",
+  "regras": [
+    {
+      "id": "meridiano_perimetro_urbano_5_eixos",
+      "tipo": "zona",
+      "regime": "Veículos pesados a partir de 5 eixos no perímetro urbano",
+      "nome": "Meridiano: veículos pesados com 5 ou mais eixos no perímetro urbano (Lei 1.567/2024)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: carga e descarga com autorização da Unidade Municipal de Trânsito",
+        "Art. 2º, §§ 2º e 3º: veículos de carga que prestam serviço no município ou de moradores da área urbana, com cadastro/autorização"
+      ],
+      "autorizacao": "Autorização da Unidade Municipal de Trânsito/prefeitura (art. 2º, §§ 1º a 4º)",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º (carga e descarga com autorização)",
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.567, de 22/03/2024",
+          "artigo": "art. 1º (proibição a partir de 5 eixos), art. 2º (exceções), art. 3º (vigência em 30 dias)",
+          "url": "https://sapl.meridiano.sp.leg.br/norma/738"
+        }
+      ],
+      "nota": "'A partir de 05 eixos' modelado como eixos > 4 (combinação de eixos do veículo/conjunto, não esclarecido pelo ato). Lista de tipos: caminhão, rodotrem, bitrem, treminhão, caminhão canavieiro, de grãos etc. Perímetro urbano aproximado pelos setores censitários urbanos do IBGE 2022 (o ato não traz mapa); a rodovia de acesso SPA-541/320 e a estrada municipal de saída ficam livres.",
+      "vigencia_inicio": "2024-04-21",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3529609_meridiano_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3529609_perimetro_urbano_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_named_3529609.json: setores censitários urbanos (CD_SIT 1 e 2) do distrito-sede, sem a Rodovia Tancredo Neves (SPA-541/320) e a Estrada Municipal Irmãos Fernando e Ângelo Moradini (40 m); o ato não traz mapa."
+        }
+      ]
+    },
+    {
+      "id": "meridiano_vias_usinas_lei1055",
+      "tipo": "via",
+      "regime": "Carretas e bitrens de usina (24 h)",
+      "nome": "Meridiano: carretas/bitrens em Rua São José, Rua José Salvioni, Av. Tadao Tobita, Rua Ernesto Cavalin e Ruas A, D e G do povoado (Lei 1.055/2014)",
+      "status": "revogada",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Parágrafo único do art. 1º: veículos emplacados em Meridiano com comprovante de residência (rota alternativa MDN-010/MDN-385/MDN-020/MDN-377)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.055, de 03/09/2014",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://sapl.meridiano.sp.leg.br/norma/1540",
+          "nota": "PDF lido; REVOGADA pela Lei 1.066/2014."
+        },
+        {
+          "ato": "Lei Municipal 1.066, de 03/12/2014",
+          "artigo": "art. 1º (revoga na íntegra a Lei 1.055/2014); art. 2º (vigência na publicação)",
+          "url": "https://sapl.meridiano.sp.leg.br/norma/1550",
+          "nota": "PDF lido; salvo em atos/3529609/lei_1066.pdf"
+        }
+      ],
+      "vigencia_inicio": "2014-09-03",
+      "trechos": [
+        {
+          "inciso": "-",
+          "via": [
+            "Rua São José"
+          ],
+          "descricao": "Rua São José (sede)",
+          "aproximado": true
+        },
+        {
+          "inciso": "-",
+          "via": [
+            "Rua José Salvioni"
+          ],
+          "descricao": "Rua José Salvioni (sede)",
+          "aproximado": true
+        },
+        {
+          "inciso": "-",
+          "via": [
+            "Avenida Tadao Tobita"
+          ],
+          "descricao": "Av. Tadao Tobita (sede)",
+          "aproximado": true
+        },
+        {
+          "inciso": "-",
+          "via": [
+            "Rua Ernesto Cavalin"
+          ],
+          "descricao": "Rua Ernesto Cavalin (sede)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3529609_meridiano_vias_lei1055.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "status_motivo": "Lei 1.055/2014 revogada na íntegra pela Lei 1.066, de 03/12/2014 (art. 1º), em vigor na publicação (SAPL norma/1550).",
+      "vigencia_fim": "2014-12-03",
+      "nota": "Registro histórico (revogada em 03/12/2014). As Ruas A, D e G do povoado, citadas na lei, não têm nome no OSM e ficaram fora da geometria."
+    },
+    {
+      "id": "meridiano_povoado_ruas_a_d_lei1082",
+      "tipo": "via",
+      "regime": "Carretas e bitrens, Povoado de Santo Antônio do Viradouro",
+      "nome": "Meridiano: Ruas A e D do Povoado de Santo Antônio do Viradouro (Lei 1.082/2015)",
+      "status": "desativada",
+      "status_motivo": "Nomes 'Rua A' e 'Rua D' são genéricos: sem como ancorá-los no OSM pelo nome; geometria manual necessária. A exceção de emplacados/residentes vinha da Lei 1.055/2014, revogada pela Lei 1.066/2014; não se aplica.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 1.082/2015, art. 1º, parágrafo único: os veículos fazem o tráfego pela via alternativa do povoado"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.082, de 04/03/2015",
+          "artigo": "art. 1º",
+          "url": "https://sapl.meridiano.sp.leg.br/norma/1565"
+        }
+      ],
+      "vigencia_inicio": "2015-03-04",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "nota": "Sem geometria: as Ruas \"A\" e \"D\" do Povoado de Santo Antônio do Viradouro não têm nome que as identifique no OSM."
+    }
+  ]
+}

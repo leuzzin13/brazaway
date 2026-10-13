@@ -1,0 +1,32 @@
+{
+ "ibge": "3300233",
+ "nome": "Armação dos Búzios",
+ "uf": "RJ",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.armacaodosbuzios.rj.leg.br/api/norma/normajuridica/",
+   "resultado": "Filtro ementa__icontains ignorado (retorna tudo): busca por assunto inviável por API"
+  },
+  {
+   "url": "https://www.armacaodosbuzios.rj.leg.br/atvlegislativa/legislacao-municipal",
+   "resultado": "Busca heurística: 0 atos"
+  },
+  {
+   "url": "https://buzios.rj.gov.br/wp-json/wp/v2/search",
+   "resultado": "Busca geral do site com 'circulação de caminhões', 'proibido caminhões', 'restrição veículos pesados', 'decreto trânsito caminhões': só notícias (toneladas de lixo, coleta); nenhum ato de restrição."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3300233; hgv, maxweight, maxlength, *:conditional)",
+   "resultado": "somente aeroway=helipad com maxweight (3 a 12 t): peso de heliponto, não é restrição viária; descartado."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "O SAPL da Câmara ignora o filtro de ementa (a API devolve as normas mais recentes sem filtrar), então a busca não foi efetiva; portal da Câmara sem resultado; busca geral do site da prefeitura só traz notícias de lixo. OSM: 5 ways, todos helipontos com maxweight (a pista 'maxweight=10' não é restrição viária).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight em heliponto: descartado."
+ ],
+ "regras_rascunho": []
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3541406",
+  "municipio": "Presidente Prudente",
+  "uf": "SP",
+  "fonte_id": "presidente-prudente",
+  "fonte": {
+    "url": "https://www.presidenteprudente.sp.gov.br/site/documento/16081 (Decreto 8.418/1993, PDF escaneado; ficha https://www.presidenteprudente.sp.gov.br/site/legislacao/8431)",
+    "licenca": "Ato oficial de Presidente Prudente: domínio público (Lei 9.610/1998 art. 8º IV). Polígono do quadrilátero montado sobre os eixos do OpenStreetMap: derivado do OSM, ODbL 1.0 (© colaboradores do OSM).",
+    "notas": "Uma regra: Dec. 8.418/1993, art. 1º, veículos de carga com capacidade acima de 1 t proibidos de transitar e estacionar nas vias internas ao quadrilátero das Avs. Cel. José Soares Marcondes, Washington Luiz, Brasil e Manoel Goulart, das 9h30 às 17h, todos os dias. As quatro avenidas-limite ficam livres (recuo de 20 m da zona)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O Decreto 8.418/1993 não define VUC; só libera carga e descarga para veículo com capacidade até 1,0 t (art. 2º).",
+  "regras": [
+    {
+      "id": "presidente_prudente_centro_1t",
+      "tipo": "zona",
+      "regime": "Centro (capacidade > 1 t)",
+      "nome": "Presidente Prudente: quadrilátero central (Av. Cel. José Soares Marcondes, Av. Washington Luiz, Av. Brasil e Av. Manoel Goulart), veículo de carga com capacidade acima de 1 t das 9h30 às 17h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "09:30", "to": "17:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "payload_t", "acima": 1.0}]},
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º: carga e descarga liberada só para veículos com capacidade até 1,0 t, nos locais demarcados e por no máximo 10 minutos, no mesmo período e quadrilátero (não alcança caminhão com capacidade maior)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.418, de 03/05/1993 (publicado no jornal Folha da Região de 08/05/1993)",
+          "artigo": "art. 1º (proíbe trânsito e estacionamento de veículos de carga com capacidade superior a 1,0 t nas vias internas ao quadrilátero, das 09:30 às 17:00); art. 2º (carga e descarga até 1,0 t); art. 3º (vigência na publicação)",
+          "url": "https://www.presidenteprudente.sp.gov.br/site/documento/16081",
+          "nota": "PDF escaneado no portal 'Consulta de Leis e Decretos' da Prefeitura (ficha: https://www.presidenteprudente.sp.gov.br/site/legislacao/8431), lido na imagem a 300 dpi."
+        }
+      ],
+      "nota": "Critério é a capacidade de carga (lotação), não o PBT: payload_t acima de 1 t (todo caminhão do CTB atende). O decreto não cita dias nem feriados: vale todos os dias. Confiança média: ato de 1993 sem revogação no portal de decretos nem no Diário Oficial Eletrônico (busca de 2024–2026), mas as leis desde 03/2025 (leismunicipais.com.br) seguem bloqueadas (403). 'Vias internas ao quadrilátero': as quatro avenidas-limite ficam fora (o recuo de 20 m da zona as libera).",
+      "vigencia_inicio": "1993-05-08",
+      "fonte_geometria": "Face da malha do OSM (ODbL) delimitada pelos eixos das Avs. Cel. José Soares Marcondes, Washington Luiz, Brasil e Manoel Goulart (geo/3541406_centro_curadoria.py)",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3541406_centro.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3541406_centro_curadoria.py (face do OSM delimitada pelos eixos das quatro avenidas do Dec. 8.418/1993, art. 1º)"
+        }
+      ]
+    }
+  ]
+}

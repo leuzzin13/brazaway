@@ -1,0 +1,36 @@
+{
+  "ibge": "3501301",
+  "nome": "Álvares Machado",
+  "uf": "SP",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.alvaresmachado.sp.leg.br/api/norma/normajuridica/ (ementa__icontains: trânsito, veículos pesados, tonelada, veículos de carga, carga e descarga, tráfego)",
+      "resultado": "Só Lei 2.629/2009 (pontos de carga e descarga na área central) e Lei 2.670/2010 (inspetor de tráfego)."
+    },
+    {
+      "url": "https://sapl.alvaresmachado.sp.leg.br/media/sapl/public/normajuridica/2009/383/383_texto_integral.pdf",
+      "resultado": "Lei 2.629/2009 lida (PDF imagem, vista como imagem; salvo em atos/3501301/lei2629_2009.pdf): cada quarteirão do centro comercial terá espaço sinalizado para carga e descarga; veículos só usam o espaço demarcado até 9h e após 18h, tolerância de 30 min. Há anotação manuscrita 'ver lei 2.722/11' (possível alteração, não consultada)."
+    },
+    {
+      "url": "python3 toolkit/legislacao.py buscar 3501301",
+      "resultado": "6 atos SAPL, ruído (compras de caminhão, consórcio, estradas rurais)."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3501301",
+      "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026."
+    },
+    {
+      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3501301; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+      "resultado": "15 elementos: 14 ways hgv=no (EF-468 ferrovia; estradas municipais AVM-178, AVM-040, AVM-331, PSP-080; 9 ways unclassified/track/tertiary sem nome) e nada mais; sem tags nas ruas urbanas."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Só regra de carga e descarga no centro (Lei 2.629/2009), não roteável: não gerei regra. hgv=no do OSM está em estradas rurais/municipais (AVM-xxx) e na ferrovia, sem ato.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "14 ways hgv=no em estradas rurais municipais (Estrada para Nova Pátria AVM-178, Benedito Francisco da Silva AVM-040, Zenji Hirata AVM-331, do Jabaquara PSP-080 e vicinais) e na linha férrea EF-468: sem ato; provável mapeamento de acesso."
+  ],
+  "regras_rascunho": []
+}

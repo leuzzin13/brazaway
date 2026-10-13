@@ -1,0 +1,268 @@
+{
+ "ibge": "3500600",
+ "nome": "Águas de São Pedro",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://aguasdesaopedro.siscam.com.br (Siscam antigo da Câmara, menu 81 Legislação) via toolkit legislacao.py buscar (termos: caminh|carga e descarga|veículos pesados|tráfego|tonelad|zona de restrição|carreta; e trânsito|circulação|pesad|proib|restri|veículos de carga|perímetro urbano)",
+   "resultado": "Leis em vigor por ementa: 1172/1999 (tráfego de caminhões na Av. Carlos Moura e Rua João Batista de Azevedo), 1606/2011 (circulação de veículos pesados na zona urbana), 1666/2013 (nova redação do art. 4º da 1606), 1922/2020 (veículos pesados na viela Adutora). Todos linkam para www.legislacaodigital.com.br."
+  },
+  {
+   "url": "https://www.legislacaodigital.com.br/AguasdeSaoPedro-SP/LeisOrdinarias/1606-2011",
+   "resultado": "403 Cloudflare (também 1172-1999, 1666-2013, 1922-2020 não abertos); WebFetch: ENOTFOUND; Wayback: 404. TEXTO DAS 4 LEIS NÃO LIDO."
+  },
+  {
+   "url": "https://camaraaguasdesaopedro.sp.gov.br/Consulta/index/81/8",
+   "resultado": "Só repete os links do Legislação Digital."
+  },
+  {
+   "url": "https://www.aguasdesaopedro.sp.gov.br/portal/leis_decretos/ (Instar)",
+   "resultado": "Só atos recentes (portarias, LC 180/2025...); nenhuma lei de trânsito antiga."
+  },
+  {
+   "url": "WebSearch 'Águas de São Pedro Lei 1606/2011 proibição circulação de veículos pesados'",
+   "resultado": "Nada sobre o município."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3500600/2025-07-28/25dd68dddd57afafbf1e76b02c830b991583eff8.txt",
+   "resultado": "LIDO (cópia em atos/3500600/): DOM ed. 1139, 28/07/2025, Decreto 6.452, de 24/07/2025 (Boulevard)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3500600/2023-11-21/a6cdd0fa3c2dcf108a98601e072b2a9ef70780ef.txt",
+   "resultado": "LIDO: DOM ed. 650, Decreto 6.012/2023 (revogado pelo 6.452/2025). Edições de 2021-05-28, 2021-10-18, 2021-10-27, 2022-12-21, 2023-05-12 trazem versões anteriores do mesmo regime (trechos do QD)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (circulação de caminhões, veículos pesados, restrição)",
+   "resultado": "0 resultado(s) relevantes. "
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (area IBGE:GEOCODIGO)",
+   "resultado": "500 / connection reset / 504 (mirror kumi, de, private.coffee e mail.ru fora do ar). Não consultado."
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Dois blocos. (1) Decreto 6.452/2025 (24/07/2025; DOM ed. 1139, 28/07/2025; vigor na publicação, art. 10) revoga o Dec. 6.012/2023 e regula o Boulevard (Rua João Batista de Azevedo, nome conferido no Dec. 6.012/2023, Lei 1.743/2014 instituiu o Boulevard): art. 2º mantém o Boulevard FECHADO a veículos (10 km/h), exceto moradores com acesso só por ele, viaturas/serviços públicos, carros-fortes, autorizados e comerciantes para carga e descarga; art. 4º carga e descarga 8-10h e 15-17h30 (seg-sex) e 8-10h (sáb, dom, feriados), 15 min; art. 4º §2º: caminhões só descarregam em vaga na entrada/saída, 'vedado o ingresso no perímetro'. Não há restrição por peso; 'veículos pesados (caminhões)'. Via curta e central, a regra tende a ser irrelevante para rota de carga, mas registrei ativa. (2) Leis municipais 1172/1999, 1606/2011, 1666/2013 e 1922/2020, EM VIGOR segundo o Siscam, com ementas de proibição de caminhões/veículos pesados (na Av. Carlos Moura e R. João Batista de Azevedo; na zona urbana; na viela Adutora). O TEXTO NÃO FOI LIDO (Legislação Digital bloqueado): regras desativadas até ler artigos, vias, pesos e horários. A 1606/2011 (zona urbana) é a mais relevante para rota: pode afetar a cidade inteira (município pequeno, ~2.700 hab., sem rodovia na área urbana). Pendência: obter o texto por Câmara/Prefeitura/Querido Diário (diários anteriores a 2021 não coletados).",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Overpass (kumi.systems, overpass-api.de, private.coffee) fora do ar nesta máquina (500/reset/504): as vias etiquetadas não puderam ser identificadas (helipad, ponte de rodovia, rua municipal). Só há a contagem do preparo (osm_hints_por_municipio.json): 2 com maxweight."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "aguasdesaopedro_boulevard_fechado",
+   "tipo": "via",
+   "regime": "Boulevard fechado a veículos (caminhão só em vaga na entrada)",
+   "nome": "Águas de São Pedro: Boulevard (Rua João Batista de Azevedo), proibido ingresso de caminhões",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 2º §1º: moradores cujo acesso aos veículos seja exclusivamente pelo Boulevard",
+    "Art. 2º §2º: veículos e viaturas oficiais em serviço público, carros-fortes, veículos de prestadores de serviço público e autorizados expressamente pela Administração",
+    "Art. 2º §3º: empresários e empregados de estabelecimentos do local, apenas para carga e descarga (art. 4º §2º: caminhão só em vaga na entrada/saída, sem ingresso)"
+   ],
+   "autorizacao": "Autorização expressa da Administração Pública (Dec. 6.452/2025, art. 2º §2º); cadastro na Guarda Civil Municipal (art. 5º)",
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 6.452/2025 (Águas de São Pedro), de 24/07/2025, DOM ed. 1139 de 28/07/2025",
+     "artigo": "art. 2º (Boulevard fechado a veículos), art. 4º §2º (caminhões: vedado o ingresso no perímetro), art. 10 (vigor na publicação)",
+     "url": "https://data.queridodiario.ok.org.br/3500600/2025-07-28/25dd68dddd57afafbf1e76b02c830b991583eff8.txt",
+     "nota": "PDF: https://data.queridodiario.ok.org.br/3500600/2025-07-28/25dd68dddd57afafbf1e76b02c830b991583eff8.pdf (inferido do padrão do QD); confiança media porque a via é identificada só pelo nome 'Rua João Batista de Azevedo (Boulevard)' (Dec. 6.012/2023 e Lei 1.172/1999) e não há ato posterior conferido após 28/07/2025."
+    }
+   ],
+   "nota": "Fecha a via a todos os veículos; para caminhão, vale só a proibição de ingresso. Verificar se o Boulevard roteia no OSM (pode ser pedonal).",
+   "fonte_geometria": "OSM por nome: Rua João Batista de Azevedo",
+   "vigencia_inicio": "2025-07-28",
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Rua João Batista de Azevedo",
+      "Boulevard"
+     ],
+     "descricao": "Boulevard (Rua João Batista de Azevedo), toda a extensão",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3500600_aguasdesaopedro.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "aguasdesaopedro_lei1606_veiculos_pesados_zona_urbana",
+   "tipo": "zona",
+   "regime": "Veículos pesados proibidos na zona urbana (ementa)",
+   "nome": "Águas de São Pedro: Lei 1.606/2011 (alterada pela 1.666/2013), circulação de veículos pesados na zona urbana",
+   "status": "desativada",
+   "status_motivo": "Texto da Lei 1.606/2011 e da 1.666/2013 NÃO LIDO (Legislação Digital em Cloudflare). Só a ementa e a situação 'EM VIGOR' do Siscam. Definição de veículo pesado, horários e exceções desconhecidos.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.606/2011 (06/09/2011) e Lei 1.666/2013 (25/06/2013, nova redação do art. 4º)",
+     "artigo": "não lido (apenas ementa: 'proibição da circulação de veículos pesados na zona urbana')",
+     "url": "https://www.legislacaodigital.com.br/AguasdeSaoPedro-SP/LeisOrdinarias/1606-2011"
+    }
+   ],
+   "nota": "Placeholder: janelas 24 h e alvo caminhão genérico NÃO vêm do ato.",
+   "fonte_geometria": "zona urbana (não definida)",
+   "vigencia_inicio": null,
+   "trechos": [],
+   "geometria": []
+  },
+  {
+   "id": "aguasdesaopedro_lei1172_carlos_moura_joao_batista",
+   "tipo": "via",
+   "regime": "Tráfego de caminhões proibido (ementa)",
+   "nome": "Águas de São Pedro: Lei 1.172/1999, Av. Carlos Moura e Rua João Batista de Azevedo",
+   "status": "desativada",
+   "status_motivo": "Texto não lido (Cloudflare). Só ementa 'proibição do tráfego de caminhões na Av. Carlos Moura e Rua João Batista de Azevedo' e situação EM VIGOR no Siscam.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.172/1999 (23/09/1999)",
+     "artigo": "não lido",
+     "url": "https://www.legislacaodigital.com.br/AguasdeSaoPedro-SP/LeisOrdinarias/1172-1999"
+    }
+   ],
+   "nota": "Placeholder: horários/exceções desconhecidos.",
+   "fonte_geometria": "OSM por nome",
+   "vigencia_inicio": null,
+   "trechos": [
+    {
+     "inciso": "ementa",
+     "via": [
+      "Avenida Carlos Moura"
+     ],
+     "descricao": "Av. Carlos Moura",
+     "aproximado": true
+    },
+    {
+     "inciso": "ementa",
+     "via": [
+      "Rua João Batista de Azevedo"
+     ],
+     "descricao": "Rua João Batista de Azevedo",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3500600_aguasdesaopedro.geojson",
+     "construir": "trechos"
+    }
+   ]
+  },
+  {
+   "id": "aguasdesaopedro_lei1922_viela_adutora",
+   "tipo": "via",
+   "regime": "Veículos pesados proibidos (ementa)",
+   "nome": "Águas de São Pedro: Lei 1.922/2020, viela Adutora (quadras 43, 54 e 55)",
+   "status": "desativada",
+   "status_motivo": "Texto não lido (Cloudflare); ementa 'proíbe o tráfego de veículos pesado na viela denominada Adutora, entre as quadras 43, 54 e 55'. Via local sem relevância para rota.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.922/2020 (18/02/2020)",
+     "artigo": "não lido",
+     "url": "https://www.legislacaodigital.com.br/AguasdeSaoPedro-SP/LeisOrdinarias/1922-2020"
+    }
+   ],
+   "nota": "Placeholder.",
+   "fonte_geometria": "não definida",
+   "vigencia_inicio": null,
+   "trechos": [
+    {
+     "inciso": "ementa",
+     "via": [
+      "Viela Adutora"
+     ],
+     "descricao": "viela Adutora entre as quadras 43, 54 e 55",
+     "aproximado": true
+    }
+   ],
+   "geometria": []
+  }
+ ]
+}

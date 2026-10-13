@@ -1,0 +1,312 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3126109",
+  "municipio": "Formiga",
+  "uf": "MG",
+  "fonte_id": "formiga",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/241654BD (Decreto 6.911/2016) ; http://sapl.formiga.mg.leg.br/media/sapl/public/normajuridica/2003/303/lei_municipal_no_3528.2003.pdf (Lei 3.528/2003) ; https://www.diariomunicipal.com.br/amm-mg/materia/A2BE9B6F (Decreto 6.283/2014)",
+    "licenca": "Atos oficiais de Formiga: domínio público (Lei 9.610/1998 art. 8º IV). Polígono aproximado da área urbana e linhas das pontes/praças derivados do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 6.911/2016: na área urbana, proibidas a circulação e a permanência de veículos com PBT acima de 14 t, carretas, cegonhas e CVC com mais de duas unidades (24 h). Perímetro urbano aproximado pelo OSM (Lei 4.686/2012 não obtida), sem as rodovias MG-050 e BR-354. Demais registros desativados ou revogados."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC.",
+  "regras": [
+    {
+      "id": "formiga_area_urbana_14t",
+      "tipo": "zona",
+      "regime": "Área urbana (PBT > 14 t, carretas e CVC)",
+      "nome": "Formiga: área urbana — proibidas a circulação e a permanência de veículos com PBT acima de 14 t, carretas, cegonhas e CVC com mais de duas unidades",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 14
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 1º, parágrafo único: circulação para carga e descarga nos bairros Industrial e Ouro Negro"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.911, de 08/11/2016 (DOM-AMM 14/11/2016, ed. 1874, cód. 241654BD)",
+          "artigo": "art. 1º, I a IV (PBT > 14 t com ou sem carga; carretas; caminhões-cegonha; CVC com mais de duas unidades incluída a tratora — bitrem, tritrem, treminhão, rodotrem) e parágrafo único (exceção de carga e descarga nos bairros Industrial e Ouro Negro); art. 2º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/241654BD",
+          "nota": "Sem alteração ou revogação no DOM-AMM (busca por 6911, veículos pesados, PBT, carretas etc., 2014–2026) nem no novo Código de Posturas (LC 284/2026, art. 206 revoga só a Lei 932/1973 e a Lei 4.331/2010)."
+        }
+      ],
+      "vigencia_inicio": "2016-11-14",
+      "nota": "Confiança média: o decreto é claro, mas não há confirmação recente de fiscalização e a 'área urbana' precisa ser desenhada pelo perímetro urbano da Lei 4.686/2012 (SAPL https://sapl.formiga.mg.leg.br/ — texto do perímetro não conferido aqui). 'Permanência' também proíbe estacionar. Cegonha não é identificável no perfil (as cegonhas são semirreboques, cobertas por 'carretas'). Caminhão + reboque (2 unidades) só é alvo pelo PBT > 14 t. Exceção dos bairros Industrial (às margens da MG-050, km 189) e Ouro Negro: tirá-los do polígono (a carga e descarga neles é livre e o acesso é pela MG-050). Rodovias MG-050 e BR-354 fora do polígono (o município não regula rodovia estadual/federal). Origem/destino dentro: avisa. IMPLEMENTAÇÃO: polígono aproximado (ver fonte_geometria).",
+      "fonte_geometria": "APROXIMAÇÃO conservadora do perímetro urbano (Lei 4.686/2012, texto não obtido): área urbana contínua da sede pelas ruas do OSM (contorno sobre as ruas mais externas), sem uma faixa de 40 m das rodovias com ref BR/MG (MG-050, BR-354 e travessias). Os bairros Industrial e Ouro Negro não estão identificados no OSM e não foram recortados (a carga e descarga neles fica coberta porque origem/destino dentro da zona não exclui). OSM ODbL.",
+      "verificado_em": "2026-10-11",
+      "vuc": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3126109_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02 (método em docs/layers/municipios/mun_sudeste/IMP02.md): ruas do OSM (PBF local) a até 6 km do centro com buffer 45 m, fechamento 90 m e recuo 45 m, menos 40 m das rodovias BR/MG.",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "formiga_lei3528_20t_licenca",
+      "tipo": "zona",
+      "regime": "Carga pesada (PBT > 20 t) com licença",
+      "nome": "Formiga: veículos com carga pesada (mais de 20 t incluído o veículo) só com licença prévia do Departamento de Trânsito; vedado estacionar ou pernoitar veículo pesado em via pública",
+      "status": "desativada",
+      "status_motivo": "Coberta pela regra formiga_area_urbana_14t (mesma área urbana e limiar menor, sem licença possível); fica como registro da exigência de licença e da proibição de estacionamento/pernoite. Ativar se o Dec. 6.911/2016 for revogado.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 20
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Licença da Secretaria Municipal de Obras (Departamento/Superintendência de Trânsito), mediante requerimento, vistoria do veículo e avaliação de riscos; o órgão pode exigir batedores e interditar vias (Lei 3.528/2003, art. 2º e §2º)",
+      "excecoes": [
+        "Art. 5º: estacionamento/pernoite permitido só para descarregamento autorizado"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.528, de 16/12/2003",
+          "artigo": "art. 1º e §1º (carga pesada = mais de 20 t incluído o peso do veículo; circulação depende de autorização prévia), art. 2º (licença), art. 5º (proibido estacionamento e/ou pernoite de veículo pesado em vias públicas, salvo descarregamento autorizado), art. 8º (multa de 5 UFPMF)",
+          "url": "http://sapl.formiga.mg.leg.br/media/sapl/public/normajuridica/2003/303/lei_municipal_no_3528.2003.pdf",
+          "nota": "PDF digitalizado (lido como imagem) e texto transcrito no campo observação do SAPL (norma 303); SAPL sem norma relacionada."
+        }
+      ],
+      "vigencia_inicio": "2003-12-16",
+      "nota": "O art. 1º fala em 'vias públicas no município'; a ementa limita à área urbana. Perigosos e fétidos também exigem licença (art. 1º, §§2º–3º; ver camada perigosos).",
+      "fonte_geometria": "Mesma aproximação da área urbana de formiga_area_urbana_14t. Registro de regra desativada.",
+      "vuc": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3126109_area_urbana.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "formiga_ponte_rio_formiga_5t_2014",
+      "tipo": "ponte",
+      "regime": "Ponte interditada (> 5 t)",
+      "nome": "Ponte sobre o Rio Formiga na confluência da R. Bernardes de Faria com a Av. Rio Branco: veículos acima de 5 t (interdição emergencial de 2014)",
+      "status": "revogada",
+      "status_motivo": "Interdição emergencial com prazo de 180 dias contados da publicação (art. 5º); expirou em 18/03/2015 e não há prorrogação publicada.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.283, de 18/09/2014 (DOM-AMM 19/09/2014, ed. 1332, cód. A2BE9B6F)",
+          "artigo": "art. 2º (interditado o trânsito de veículos acima de 5 t sobre a ponte); art. 5º (vigência de 180 dias)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/A2BE9B6F"
+        }
+      ],
+      "vigencia_inicio": "2014-09-19",
+      "vigencia_fim": "2015-03-18",
+      "fonte_geometria": "APROXIMAÇÃO: way 852345071 do OSM (ponte em obra na Rua Barão de Piumhi, no fim oeste da Av. Rio Branco, sobre o Rio Formiga); a R. Bernardes de Faria não tem nome no OSM. Registro histórico (revogada).",
+      "vuc": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3126109_ponte_rio_formiga.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02: way 852345071 do OSM (PBF local)."
+        }
+      ]
+    },
+    {
+      "id": "formiga_porticos_praca_matriz",
+      "tipo": "via",
+      "regime": "Pórtico de altura (Praça da Matriz)",
+      "nome": "Entorno da Igreja Matriz São Vicente Férrer (Praça São Vicente Férrer e Praça Olegário Maciel): pórticos limitadores de altura",
+      "status": "desativada",
+      "status_motivo": "Só notícia da Prefeitura (pórticos físicos aprovados pelo COMPAC); nenhum ato (decreto/portaria) localizado e alturas divergentes entre as notícias (3,2 m em 03/2026; 2,75 m em 09/2026).",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "altura_m",
+            "acima": 2.75
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Notícias da Prefeitura de Formiga (03/2026 e 01/09/2026)",
+          "artigo": "notícia: pórticos de 3,2 m na Praça Olegário Maciel (~nº 149) e na Praça São Vicente Férrer (~nº 90); pórtico de 2,75 m nas imediações da Praça São Vicente Férrer",
+          "url": "https://formiga.mg.gov.br/porticos-limitadores-de-altura-comecam-a-ser-instalados-no-entorno-da-igreja-matriz"
+        }
+      ],
+      "nota": "A notícia de 08/2026 fala em pórticos 'de altura e peso' e em sinalização de restrição ao tráfego de caminhões na região; conferir placas e o ato da Superintendência Municipal de Trânsito.",
+      "fonte_geometria": "OSM (ODbL) pelo nome: Praça São Vicente Férrer e Praça Olegário Maciel. Registro de regra desativada.",
+      "vuc": null,
+      "trechos": [
+        {
+          "inciso": "notícia",
+          "via": [
+            "Praça São Vicente Férrer"
+          ],
+          "descricao": "Praça São Vicente Férrer (entorno da Igreja Matriz)",
+          "aproximado": true
+        },
+        {
+          "inciso": "notícia",
+          "via": [
+            "Praça Olegário Maciel"
+          ],
+          "descricao": "Praça Olegário Maciel (entorno da Igreja Matriz)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3126109_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "formiga_ponte_baioes",
+      "tipo": "ponte",
+      "regime": "Ponte só para leves",
+      "nome": "Ponte da comunidade de Baiões (sentido Cerrado–Baiões, zona rural): só veículos leves",
+      "status": "desativada",
+      "status_motivo": "Só comunicado no site da Prefeitura (sem data e sem ato); provável restrição por condição estrutural, possivelmente temporária.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Comunicado da Prefeitura de Formiga",
+          "artigo": "comunicado: 'liberada apenas para veículos leves'; caminhões e veículos pesados não devem trafegar",
+          "url": "https://formiga.mg.gov.br/comunicado-1"
+        }
+      ],
+      "fonte_geometria": "APROXIMAÇÃO: way 495695013 do OSM (ponte na comunidade de Baiões); o comunicado não identifica a ponte. Registro de regra desativada.",
+      "vuc": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3126109_ponte_baioes.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02: way 495695013 do OSM (PBF local)."
+        }
+      ]
+    }
+  ]
+}

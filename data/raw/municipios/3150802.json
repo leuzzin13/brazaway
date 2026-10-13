@@ -1,0 +1,149 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3150802",
+  "municipio": "Piranga",
+  "uf": "MG",
+  "fonte_id": "piranga",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487 (Dec. 3.002/2020, Diário Oficial dos Municípios Mineiros, 03/02/2020)",
+    "licenca": "Ato oficial de Piranga: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono da área urbana derivado do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 3.002/2020, art. 2º, parágrafo único: 5 eixos ou mais das 11h às 17h e 3 eixos ou mais das 22h às 5h, todos os dias, na 'área urbana', até que exista o desvio. Área urbana não delimitada no ato: polígono aproximado. Vigência depende de um fato (o desvio) não confirmado: confiança média."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o critério é o número de eixos.",
+  "regras": [
+    {
+      "id": "piranga_urbana_5eixos_11_17",
+      "tipo": "zona",
+      "regime": "Grande porte 5+ eixos (11h-17h)",
+      "nome": "Piranga: veículos de grande porte com 5 eixos ou mais, proibidos na área urbana das 11h às 17h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "11:00",
+          "to": "17:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 3º: veículos com carga viva (suínos, bovinos, aves) e prestadores de serviços públicos essenciais identificados (energia, iluminação, água, esgoto, telecomunicação)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.002/2020, de 28/01/2020 (DOMM 03/02/2020)",
+          "artigo": "art. 2º, parágrafo único, I",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487"
+        }
+      ],
+      "nota": "Vale 'até que se alcance o desvio' (art. 2º). Com ou sem carga, fins de semana e feriados inclusive. Área urbana não delimitada no decreto. Polígono APROXIMADO da área urbana da sede (o decreto não a delimita): mancha das ruas com nome do OSM. A travessia urbana da BR-482 (Rua Nova, Rua Hélio Guimarães, Rua do Mercado, Rua Benedito Valadares etc., trunk no OSM) ficou LIVRE, fora da zona (folga de 40 m de cada lado, mais o recuo de 20 m da API): não há contorno da sede e, com a travessia dentro da zona, a carreta de passagem dava uma volta de cerca de 100 km. Decisão de 12/10/2026, mesmo critério de Arcos e Santa Branca: rodovia e as ruas por onde ela passa (trunk/primary sem ref incluídas) ficam livres. O decreto vale 'até que se alcance o almejado desvio' (art. 2º): como o desvio não existe, a travessia fica livre e reavaliar a geometria quando o desvio existir.",
+      "fonte_geometria": "Mancha urbana aproximada da sede pelas vias com nome do OpenStreetMap (ODbL), faixa de 60 m; não é o perímetro urbano legal.",
+      "vigencia_inicio": "2020-02-03",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3150802_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Mancha urbana aproximada da sede: união das faixas de 60 m em torno das vias urbanas com nome (Rua, Avenida, Praça, Travessa, Beco, Ladeira...) do OSM a até 2,5 km de (-20.685, -43.300), sem buracos e suavizada (curadoria do lote IMP04, ver docs/layers/municipios/mun_sudeste/IMP04.md). Travessia da rodovia (BR-482 MGC-482) recortada com folga de 40 m a partir da mancha original (data/raw/municipios/curadoria/base/3150802_area_urbana_mancha.geojson) por: python3 data/raw/municipios/curadoria/zona_liberar_travessia.py --epsg 31983 --osm data/cache/municipios/osm_hw_3150802.json --refs BR-482 MGC-482 --folga 40 --base data/raw/municipios/curadoria/base/3150802_area_urbana_mancha.geojson data/raw/municipios/geo/3150802_area_urbana.geojson (vias do PBF por osm_pbf_vias.py).",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "piranga_urbana_3eixos_22_05",
+      "tipo": "zona",
+      "regime": "Grande porte 3+ eixos (22h-5h)",
+      "nome": "Piranga: veículos de grande porte com 3 eixos ou mais, proibidos na área urbana das 22h às 5h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "05:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "22:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 3º: veículos com carga viva e prestadores de serviços públicos essenciais identificados"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.002/2020, de 28/01/2020 (DOMM 03/02/2020)",
+          "artigo": "art. 2º, parágrafo único, II",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487"
+        }
+      ],
+      "nota": "Janela noturna dividida em duas (00h-5h e 22h-24h). Mesmos pressupostos da regra de 5 eixos. Polígono APROXIMADO da área urbana da sede (o decreto não a delimita): mancha das ruas com nome do OSM. A travessia urbana da BR-482 (Rua Nova, Rua Hélio Guimarães, Rua do Mercado, Rua Benedito Valadares etc., trunk no OSM) ficou LIVRE, fora da zona (folga de 40 m de cada lado, mais o recuo de 20 m da API): não há contorno da sede e, com a travessia dentro da zona, a carreta de passagem dava uma volta de cerca de 100 km. Decisão de 12/10/2026, mesmo critério de Arcos e Santa Branca: rodovia e as ruas por onde ela passa (trunk/primary sem ref incluídas) ficam livres. O decreto vale 'até que se alcance o almejado desvio' (art. 2º): como o desvio não existe, a travessia fica livre e reavaliar a geometria quando o desvio existir.",
+      "fonte_geometria": "Mancha urbana aproximada da sede pelas vias com nome do OpenStreetMap (ODbL), faixa de 60 m; não é o perímetro urbano legal.",
+      "vigencia_inicio": "2020-02-03",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3150802_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Mancha urbana aproximada da sede: união das faixas de 60 m em torno das vias urbanas com nome (Rua, Avenida, Praça, Travessa, Beco, Ladeira...) do OSM a até 2,5 km de (-20.685, -43.300), sem buracos e suavizada (curadoria do lote IMP04, ver docs/layers/municipios/mun_sudeste/IMP04.md). Travessia da rodovia (BR-482 MGC-482) recortada com folga de 40 m a partir da mancha original (data/raw/municipios/curadoria/base/3150802_area_urbana_mancha.geojson) por: python3 data/raw/municipios/curadoria/zona_liberar_travessia.py --epsg 31983 --osm data/cache/municipios/osm_hw_3150802.json --refs BR-482 MGC-482 --folga 40 --base data/raw/municipios/curadoria/base/3150802_area_urbana_mancha.geojson data/raw/municipios/geo/3150802_area_urbana.geojson (vias do PBF por osm_pbf_vias.py).",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

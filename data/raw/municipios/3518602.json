@@ -1,0 +1,73 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3518602",
+  "municipio": "Guariba",
+  "uf": "SP",
+  "fonte_id": "guariba",
+  "fonte": {
+    "url": "https://sapl.guariba.sp.leg.br/norma/3508 (Lei 3.052/2017)",
+    "licenca": "Ato oficial de Guariba: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 3.052/2017: veículos pesados proibidos no sistema viário do perímetro urbano, 24 h; exceções de entrega no comércio local (nota fiscal), socorro/emergência e veículos emplacados em Guariba. Perímetro urbano aproximado (setores urbanos do IBGE 2022)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 3.052/2017 não define VUC: todo caminhão é alcançado.",
+  "regras": [
+    {
+      "id": "guariba_perimetro_urbano_pesados",
+      "tipo": "zona",
+      "regime": "Veículos pesados no perímetro urbano",
+      "nome": "Guariba: proibição de veículos pesados no sistema viário do perímetro urbano (Lei 3.052/2017)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, § 1º (entrega nos estabelecimentos comerciais da cidade, com nota fiscal)",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 1º, § 1º: entrega exclusiva de produtos e mercadorias em estabelecimentos comerciais da cidade (nota fiscal ou documento hábil)",
+        "Art. 1º, § 2º: socorro mecânico ou atendimento emergencial, desde que justificados",
+        "Art. 1º, § 2º: veículos licenciados e emplacados em Guariba"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.052, de 21/06/2017",
+          "artigo": "art. 1º, caput e §§ 1º e 2º; art. 2º (rotas alternativas)",
+          "url": "https://sapl.guariba.sp.leg.br/norma/3508",
+          "nota": "PDF escaneado lido por imagem."
+        }
+      ],
+      "nota": "A lei não define peso mínimo: 'veículos pesados' (caminhão, carreta, caminhão-trator, treminhão e similares) tratado como todo caminhão. A exceção dos veículos emplacados em Guariba não é modelável na rota (só no aviso). Com destino em Guariba vale a exceção de entrega (art. 1º, §1º); com origem ou destino dentro da zona a rota não exclui a zona e avisa. Perímetro urbano sem mapa no ato: aproximado pelos setores censitários urbanos do distrito-sede (IBGE 2022), sem as rotas alternativas do art. 2º que tocam a área (SPI-328/326 Via de Interligação José Corona, SP-253, SP-326). Confiança média (perímetro aproximado).",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem as rodovias do art. 2º (OSM, ODbL): aproximação do perímetro urbano legal",
+      "vigencia_inicio": "2017-06-21",
+      "geometria": [
+        {
+          "id": "guariba_perimetro_urbano",
+          "arquivo": "municipios/geo/3518602_guariba_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3518602_guariba_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> data/cache/municipios/osm_named_3518602.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a SP-326, a SPI-328/326 e a SP-253 (folga de 40 m)."
+        }
+      ]
+    }
+  ]
+}

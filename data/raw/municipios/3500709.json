@@ -1,0 +1,112 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3500709",
+  "municipio": "Agudos",
+  "uf": "SP",
+  "fonte_id": "agudos",
+  "fonte": {
+    "url": "https://www.dosp.com.br/exibe_do.php?i=ODE4OTE3 (DOSP Agudos ed. 1925, 15/05/2026: Lei 6.068/2026) ; https://www.dosp.com.br/exibe_do.php?i=MTg0ODQ= (Lei 5.079/2017, revogada)",
+    "licenca": "Atos oficiais de Agudos: domínio público (Lei 9.610/1998 art. 8º IV). Área da vila de Domélia: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE).",
+    "notas": "Lei 6.068/2026: caminhões de grande porte e articulados proibidos nas vias asfaltadas do Distrito de Domélia, 24 h; exceção só para acesso a propriedade rural sem alternativa, com autorização (art. 1º, §1º). Revoga a Lei 5.079/2017. Sem regulamento (art. 1º, §3º)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC nem 'grande porte': a regra vale para todo caminhão.",
+  "regras": [
+    {
+      "id": "agudos_domelia_grande_porte",
+      "tipo": "zona",
+      "regime": "Caminhões de grande porte e articulados proibidos (Domélia)",
+      "nome": "Agudos: Distrito de Domélia, proibido caminhões de grande porte e articulados nas vias asfaltadas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "autorizacao": "Autorização do órgão municipal competente após estudo técnico, só para acesso em sentido único a propriedade rural sem rota alternativa (art. 1º, §1º)",
+      "excecoes": [
+        "Art. 1º, §1º: acesso em sentido único a propriedades rurais sem rota alternativa viável, com autorização prévia, trajeto definido em estudo técnico e termo de responsabilidade por danos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 6.068, de 02/03/2026 (DOSP Agudos ed. 1925, 15/05/2026)",
+          "artigo": "art. 1º, caput e §§1º a 3º; art. 3º (vigência e revogação da Lei 5.079/2017)",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=ODE4OTE3"
+        }
+      ],
+      "nota": "'Caminhões de grande porte' não é definido na lei; alvo = qualquer caminhão (lado seguro; pode superestimar para caminhões leves). Sem decreto regulamentador (art. 1º, §3º) até 26/06/2026. Geometria aproximada: a lei alcança 'as vias com pavimentação asfáltica do Distrito de Domélia' sem listá-las; a zona é a área urbana da vila (setor censitário urbano do IBGE). Ficam de fora eventuais trechos asfaltados fora da vila (ex.: a Estrada para Domélia na zona rural do distrito). Origem ou destino na vila: a rota não exclui a zona e avisa (o §1º só admite acesso com autorização).",
+      "vigencia_inicio": "2026-05-15",
+      "origem_destino_dentro": "avisa",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3500709_domelia.geojson",
+          "construir": "manual",
+          "como_gerar": "Setor censitário urbano do distrito de Domélia (IBGE, Censo 2022, setor 350070910000001, CD_SIT=1) extraído de SP_setores_CD2022.zip (geoftp.ibge.gov.br), coordenadas com 6 casas."
+        }
+      ],
+      "fonte_geometria": "IBGE (setor censitário urbano de Domélia, Censo 2022): aproximação da área com vias asfaltadas do distrito"
+    },
+    {
+      "id": "agudos_domelia_lei5079_2017",
+      "tipo": "zona",
+      "regime": "Caminhões de grande porte e treminhões (Domélia) - revogada",
+      "nome": "Agudos: Lei 5.079/2017, ruas asfaltadas de Domélia",
+      "status": "revogada",
+      "status_motivo": "Revogada expressamente pelo art. 3º da Lei 6.068/2026.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.079, de 04/10/2017 (DOSP Agudos ed. 103-A extra)",
+          "artigo": "art. 1º (ruas asfaltadas de Domélia: caminhões de grande porte e treminhões); revogada pela Lei 6.068/2026, art. 3º",
+          "url": "https://www.dosp.com.br/exibe_do.php?i=MTg0ODQ="
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3500709_domelia.geojson",
+          "construir": "manual"
+        }
+      ],
+      "vigencia_fim": "2026-05-15",
+      "vigencia_inicio": "2017-10-04",
+      "excecoes": [],
+      "nota": "Registro histórico; geometria = a mesma área da regra vigente (vila de Domélia)."
+    }
+  ]
+}

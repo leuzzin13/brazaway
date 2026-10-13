@@ -1,0 +1,87 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3151107",
+  "municipio": "Pirapetinga",
+  "uf": "MG",
+  "fonte_id": "pirapetinga",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/1883ED17 (Dec. 130/2019, Diário Oficial dos Municípios Mineiros ed. 2577, 29/08/2019)",
+    "licenca": "Ato oficial de Pirapetinga: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono do perímetro urbano derivado do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 130/2019: carreta, romeu e julieta, bitrem, rodotrem e tritrem proibidos em todo o perímetro urbano, 24 h; exceção de carga e descarga na sede com nota fiscal (destino local), placa local e pernoite. Perímetro não delimitado no ato: polígono aproximado da sede."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o critério é o tipo de veículo (carreta e combinações).",
+  "regras": [
+    {
+      "id": "pirapetinga_perimetro_urbano_carretas_combinacoes",
+      "tipo": "zona",
+      "regime": "Perímetro urbano (carretas e combinações)",
+      "nome": "Pirapetinga: proibido tráfego de carreta, romeu e julieta, bitrem, rodotrem e tritrem em todo o perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "vuc": null,
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º, VIII (carga e descarga em estabelecimentos na sede, mediante nota fiscal)",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 2º, I-VII: emergência, guincho de socorro, cobertura jornalística, obras e serviços de emergência, Correios, sinalização emergencial e serviços públicos essenciais",
+        "Art. 2º, VIII: carga e descarga em estabelecimentos comerciais, industriais, empresariais ou domésticos da sede, com nota fiscal",
+        "Art. 2º, IX: veículo com placa de Pirapetinga",
+        "Art. 2º, X: pernoite com motorista domiciliado no município",
+        "Art. 4º: casos não previstos, análise técnica da Secretaria de Obras"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 130, de 28/08/2019 (DOMM ed. 2577, 29/08/2019)",
+          "artigo": "art. 1º, I-V (proibição); art. 2º (exceções); art. 5º (vigência 23/09/2019, revoga o Decreto 127/2019)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/1883ED17"
+        }
+      ],
+      "nota": "'Carreta' mapeado como semirreboque/cavalo mecânico (semitrailer); 'romeu e julieta' como truck_trailer; bitrem/rodotrem/tritrem como cvc. Perímetro urbano não delimitado no decreto. Polígono APROXIMADO da sede. A travessia urbana da BR-393 (Rua José de Freitas, Rua Martins Peixoto, Rua Sebastião Pereira de Andrade Sobrinho, Rodovia Lúcio Meira, trunk no OSM; e a RJ-186) ficou LIVRE, fora da zona (folga de 40 m de cada lado, mais o recuo de 20 m da API): não há contorno da sede (a via alternativa discutida na audiência pública de 2023 ainda não existe) e, com a travessia dentro da zona, a carreta de passagem dava uma volta de 165 km (Santo Antônio de Pádua–BR-393). Decisão de 12/10/2026, mesmo critério de Arcos e Santa Branca: rodovia federal/estadual e as ruas por onde ela passa (trunk/primary sem ref incluídas) ficam livres, porque o decreto municipal não alcança a rodovia e não há desvio; a zona cobre só o restante da malha urbana da sede.",
+      "fonte_geometria": "Mancha urbana aproximada da sede pelas vias com nome do OpenStreetMap (ODbL), faixa de 60 m; a lei do perímetro urbano de Pirapetinga não foi localizada. Distritos fora.",
+      "vigencia_inicio": "2019-09-23",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3151107_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Mancha urbana aproximada da sede: união das faixas de 60 m em torno das vias urbanas com nome do OSM a até 2,5 km de (-21.657, -42.347), sem buracos e suavizada (curadoria do lote IMP04, ver docs/layers/municipios/mun_sudeste/IMP04.md). Substituir pelo perímetro da lei municipal quando localizada. Travessia da rodovia (BR-393 RJ-186) recortada com folga de 40 m a partir da mancha original (data/raw/municipios/curadoria/base/3151107_perimetro_urbano_mancha.geojson) por: python3 data/raw/municipios/curadoria/zona_liberar_travessia.py --epsg 31983 --osm data/cache/municipios/osm_hw_3151107.json --refs BR-393 RJ-186 --folga 40 --base data/raw/municipios/curadoria/base/3151107_perimetro_urbano_mancha.geojson data/raw/municipios/geo/3151107_perimetro_urbano.geojson (vias do PBF por osm_pbf_vias.py).",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

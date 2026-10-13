@@ -1,0 +1,246 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3543907",
+  "municipio": "Rio Claro",
+  "uf": "SP",
+  "fonte_id": "rio-claro",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3543907/2021-12-22/9f31122e169cd4dfebb66bb53ce87c57bed6a06e.pdf (DOM ed. 1299, Dec. 12.448/2021) ; https://data.queridodiario.ok.org.br/3543907/2019-11-14/2bb14a0d3b050dda9758d0fe8f54e1a0e042ba0e.pdf (PlanMob, DOM 1028) ; https://data.queridodiario.ok.org.br/3543907/2019-05-03/7c94e73df88862347073ee1176259aba94c1fbbd.pdf (Dec. 11.440/2019)",
+    "licenca": "Atos oficiais de Rio Claro: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Registro revogado: limite municipal do IBGE.",
+    "notas": "Regra ativa: Dec. 12.448/2021, art. 1º, PBT acima de 3 t proibido em 9 vias do centro (Ruas 2 a 5 entre as Avs. 5 e 6; Rua 6 entre as Avs. 2 e 3; Avs. 1 a 4 entre as Ruas 1 e 8), 2ª a 6ª 9h–18h e sábado 9h–15h, sem exceção de feriado. As Leis 2.787/1995 e 3.480/2004 não puderam ser lidas (só o resumo do PlanMob): desativadas. Restrições só com notícia (16 t no Jd. Itapuã; ponte de madeira da Av. 14) e carga e descarga (Dec. 11.440/2019): desativadas, sem geometria."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Rio Claro não define VUC: a regra é por PBT (acima de 3 t).",
+  "regras": [
+    {
+      "id": "rioclaro_centro_3t",
+      "tipo": "via",
+      "regime": "Centro (PBT > 3 t)",
+      "nome": "Rio Claro: vias da área central (Ruas 2 a 6 e Avenidas 1 a 4), veículos de carga com PBT acima de 3 t em dias úteis 9h–18h e sábado 9h–15h",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5], "from": "09:00", "to": "18:00"},
+        {"days": [6], "from": "09:00", "to": "15:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 3}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 12.448, de 17/12/2021 (DOM Rio Claro ed. 1299, 22/12/2021, p. 1–2)",
+          "artigo": "art. 1º, itens 1 a 9 (vias e horários: 2ª a 6ª 9h–18h, sábado 9h–15h, PBT acima de 3 t); art. 2º (vigência na publicação; revoga o Dec. 6.172/2000)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2021-12-22/9f31122e169cd4dfebb66bb53ce87c57bed6a06e.pdf",
+          "nota": "Regulamenta a Lei municipal 2.787/1995 (trânsito de veículos de carga e similares no perímetro urbano), citada nos considerandos; o texto integral da lei não foi lido (SISCAM /arquivo?Id=50757 responde HTTP 500)."
+        }
+      ],
+      "nota": "Decreto lido na íntegra no DOM. Placas nas entradas da cidade (notícia da Prefeitura de 17/12/2021) confirmam a vigência. O ato não excetua feriados nem cita exceções; a Lei 2.787/1995 (não lida) pode ter exceções. O PlanMob (2019) resume a lei com sábado 9h–12h; vale o decreto de 2021 (9h–15h). Os itens seguem a mão única das vias (todas de mão única no OSM, no sentido de → até do decreto).",
+      "fonte_geometria": "OSM (ODbL): vias do centro pelo nome ('Rua 2' ... 'Avenida 4'; a Av. 1 entre a Rua 1 e a Rua 2 é 'Avenida Um' no OSM), recortadas pelos cruzamentos do OSM (pontas em lonlat, porque há homônimas em outros bairros)",
+      "vigencia_inicio": "2021-12-22",
+      "trechos": [
+        {"inciso": "art. 1º, 1", "via": ["Rua 2"], "de": {"lonlat": [-47.5599626, -22.4069742]}, "ate": {"lonlat": [-47.5583836, -22.4112469]}, "descricao": "Rua 02 da Avenida 06 até Avenida 05"},
+        {"inciso": "art. 1º, 2", "via": ["Rua 3"], "de": {"lonlat": [-47.5593285, -22.4115732]}, "ate": {"lonlat": [-47.5608848, -22.4072756]}, "descricao": "Rua 03 da Avenida 05 até Avenida 06"},
+        {"inciso": "art. 1º, 3", "via": ["Rua 4"], "de": {"lonlat": [-47.5617838, -22.4075581]}, "ate": {"lonlat": [-47.5601803, -22.411865]}, "descricao": "Rua 04 da Avenida 06 até Avenida 05"},
+        {"inciso": "art. 1º, 4", "via": ["Rua 5"], "de": {"lonlat": [-47.5611403, -22.4121413]}, "ate": {"lonlat": [-47.5627009, -22.407859]}, "descricao": "Rua 05 da Avenida 05 até Avenida 06"},
+        {"inciso": "art. 1º, 5", "via": ["Rua 6"], "de": {"lonlat": [-47.5630014, -22.4098743]}, "ate": {"lonlat": [-47.5623638, -22.4116046]}, "descricao": "Rua 06 da Avenida 02 até Avenida 03"},
+        {"inciso": "art. 1º, 6", "via": ["Avenida 3"], "de": {"lonlat": [-47.5641898, -22.4121653]}, "ate": {"lonlat": [-47.5578586, -22.4100825]}, "descricao": "Avenida 03 da Rua 08 até Rua 01"},
+        {"inciso": "art. 1º, 7", "via": ["Avenida Um"], "de": {"lonlat": [-47.5581748, -22.4092972]}, "ate": {"lonlat": [-47.5599481, -22.409875]}, "descricao": "Avenida 01 da Rua 01 até Rua 08 (parte 'Avenida Um' no OSM, a partir da Rua 1)"},
+        {"inciso": "art. 1º, 7", "via": ["Avenida 1"], "de": {"lonlat": [-47.5608182, -22.4101605]}, "ate": {"lonlat": [-47.5645382, -22.4113087]}, "descricao": "Avenida 01 da Rua 01 até Rua 08 (parte 'Avenida 1' no OSM, até a Rua 8)"},
+        {"inciso": "art. 1º, 8", "via": ["Avenida 2"], "de": {"lonlat": [-47.5584742, -22.4084827]}, "ate": {"lonlat": [-47.5648802, -22.4104587]}, "descricao": "Avenida 02 da Rua 01 até Rua 08"},
+        {"inciso": "art. 1º, 9", "via": ["Avenida 4"], "de": {"lonlat": [-47.5652421, -22.4096399]}, "ate": {"lonlat": [-47.5586852, -22.4075896]}, "descricao": "Avenida 04 da Rua 08 até Rua 01"}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3543907_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "rioclaro_centro_3t_dec6172_2000",
+      "tipo": "zona",
+      "regime": "Centro (PBT > 3 t) — revogado",
+      "nome": "Rio Claro: vias da área central, PBT acima de 3 t (Dec. 6.172/2000, revogado pelo Dec. 12.448/2021)",
+      "status": "revogada",
+      "status_motivo": "Revogado expressamente pelo art. 2º do Dec. 12.448/2021 (DOM 22/12/2021). Texto do Dec. 6.172/2000 conhecido só pela transcrição no PlanMob (DOM 1028, 14/11/2019): mesmas vias, horário da Lei 2.787/1995 (2ª a 6ª 9h–18h, sábado 9h–12h).",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 3}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.172, de 14/02/2000",
+          "artigo": "delimitação das vias (transcrita no PlanMob, item 8.16)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2019-11-14/2bb14a0d3b050dda9758d0fe8f54e1a0e042ba0e.pdf",
+          "nota": "Revogação: Dec. 12.448/2021, art. 2º (https://data.queridodiario.ok.org.br/3543907/2021-12-22/9f31122e169cd4dfebb66bb53ce87c57bed6a06e.pdf)"
+        }
+      ],
+      "nota": "Registro histórico (nunca aplicado nem avisado); geometria = limite do município, só como registro.",
+      "vigencia_fim": "2021-12-22",
+      "geometria": [{"municipios": ["3543907"], "simplificar": 0.002, "casas": 5}]
+    },
+    {
+      "id": "rioclaro_lei2787_art4_perigosos_distrito",
+      "tipo": "zona",
+      "regime": "Perigosos / Distrito Industrial / cana",
+      "nome": "Rio Claro: perímetro urbano, caminhões, carretas e articulados com produtos perigosos, com destino ou saída do Distrito Industrial, ou com cana ou materiais particulares — obrigados a usar a SP-310, a SP-191 e a Av. Brasil (Lei 2.787/1995, art. 4º)",
+      "status": "desativada",
+      "status_motivo": "Texto do art. 4º conhecido só pela transcrição no Plano Diretor de Mobilidade (DOM 1028, 14/11/2019, item 8.16.2); a Lei 2.787/1995 não foi lida (SISCAM com arquivo ausente; legislacaodigital bloqueado). A área (perímetro urbano menos as rotas) não está delimitada e perigosos é da camada perigosos. Sem geometria.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": ["Rotas obrigatórias: Rod. SP-310 (Washington Luís), Rod. SP-191 (Wilson Finardi) e Av. Brasil"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.787, de 06/12/1995",
+          "artigo": "art. 4º (transcrito no PlanMob)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2019-11-14/2bb14a0d3b050dda9758d0fe8f54e1a0e042ba0e.pdf",
+          "nota": "SISCAM da Câmara: https://rioclaro.siscam.com.br/Documentos/Documento/62421 (ficha; o PDF https://rioclaro.siscam.com.br/arquivo?Id=50757 devolve erro)."
+        }
+      ],
+      "nota": "O PlanMob considera revogado tacitamente o Dec. 3.419/1986 (cana) por esta lei. Produtos perigosos: encaminhar à camada perigosos se o texto for confirmado.",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_lei2787_zonas_residenciais",
+      "tipo": "zona",
+      "regime": "Zonas residenciais (noturno)",
+      "nome": "Rio Claro: zonas residenciais, circulação de veículos de carga acima de 3 t permitida só das 6h às 22h (Lei 2.787/1995, segundo o PlanMob)",
+      "status": "desativada",
+      "status_motivo": "Só a frase-resumo do PlanMob (DOM 1028, 2019, item 5.1: 'Nas zonas residenciais fica permitido o horário de circulação compreendido entre 6h às 22h'); lei não lida, artigo, alvo exato e delimitação das zonas residenciais desconhecidos. Sem geometria.",
+      "confianca": "unverifiable",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 3}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.787, de 06/12/1995",
+          "artigo": "não identificado (resumo do PlanMob, item 5.1)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2019-11-14/2bb14a0d3b050dda9758d0fe8f54e1a0e042ba0e.pdf"
+        }
+      ],
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_lei3480_mais_3_eixos",
+      "tipo": "zona",
+      "regime": "Mais de 3 eixos (autorização)",
+      "nome": "Rio Claro: vias públicas urbanas e rurais e estradas vicinais, veículos com mais de 3 eixos só com autorização excepcional e precária (Lei 3.480/2004, art. 1º, segundo o PlanMob)",
+      "status": "desativada",
+      "status_motivo": "Conhecida só pelo resumo do PlanMob (DOM 1028, 2019, item 8.16.2); o texto da Lei 3.480/2004 não foi lido (PDF do SISCAM ausente: https://rioclaro.siscam.com.br/arquivo?Id=54072). A ementa fala 'especialmente na Rodovia RCL-010, vicinal Rio Claro–Corumbataí', e o alcance real e as exceções não foram conferidos. Sem geometria.",
+      "confianca": "unverifiable",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}]},
+      "autorizacao": "Autorização excepcional e precária do Município (art. 1º, parágrafo único, segundo o PlanMob)",
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.480, de 10/11/2004",
+          "artigo": "art. 1º e parágrafo único (resumo do PlanMob)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2019-11-14/2bb14a0d3b050dda9758d0fe8f54e1a0e042ba0e.pdf",
+          "nota": "Ficha no SISCAM: https://rioclaro.siscam.com.br/Documentos/Documento/65755 (ementa: disciplina o trânsito e o tráfego de caminhões e outros veículos de carga, especialmente na Rodovia RCL-010 Vicinal Rio Claro/Corumbataí e em todo o território do Município)."
+        }
+      ],
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_rcl350_controle_trafego",
+      "tipo": "via",
+      "regime": "Controle de tráfego (fuga de pedágio)",
+      "nome": "Rio Claro: Estrada Municipal RCL-350 (1º km a partir da SP-191, rumo à SP-310) e vicinal SP-310–SP-191 (Irineu Penteado, bairro Fazendinha, Batovi): sistema de controle para impedir caminhões que fogem do pedágio do km 181+300 da SP-310",
+      "status": "desativada",
+      "status_motivo": "Lei 5.557/2021 só AUTORIZA o Executivo a implantar sistema de controle (cancela/câmeras), sem horário nem limite; não foi achado ato de implantação nem regra de circulação; caminhões locais têm tráfego autorizado mediante identificação (art. 2º, §2º). Sem geometria.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": ["Art. 2º, §2º: veículos de carga de moradores e empresas da região e os que escoam ou abastecem a produção local, mediante prévia identificação"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 5.557, de 18/11/2021 (DOM Rio Claro ed. 1286, 19/11/2021, p. 9)",
+          "artigo": "arts. 1º a 3º",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2021-11-19/7172447a415b7c4e2f8d674ab0a1e9838f90af76.pdf"
+        }
+      ],
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_itapua_portofino_16t",
+      "tipo": "via",
+      "regime": "PBT > 16 t (bairros)",
+      "nome": "Rio Claro: rota Av. Marginal → Av. 61 → R. João Polastri → Av. 4PF → R. 4PF → R. 9 → Estrada de Santa Gertrudes (Jd. Itapuã, Porto Fino e Leblon), caminhões acima de 16 t",
+      "status": "desativada",
+      "status_motivo": "Só notícia da Prefeitura (14/04/2021: sinalização a partir de 24/04/2021, 'caminhões acima de 16 toneladas', com sentidos); nenhum decreto/portaria achado no Diário Oficial (Querido Diário 2006–2026). Sem geometria (o OSM já tem maxweight=16 na Estrada Santa Gertrudes).",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 16}]},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Notícia da Prefeitura de Rio Claro, 14/04/2021",
+          "artigo": "notícia (sem ato)",
+          "url": "https://rioclaro.sp.gov.br/mobilidade-urbana-e-sistema-viario/prefeitura-limita-peso-de-caminhoes-nos-bairros-itapua-leblon-e-porto-fino/"
+        }
+      ],
+      "nota": "Notícia de 13/02/2025 relata fiscalização de caminhões nas vias que ladeiam o aeroclube (Jd. Itapuã), sem citar ato nem limite. Em 2015 a Prefeitura instalou limitador de altura (2,80 m) na R. Batista Russo (Porto Fino).",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_ponte_madeira_terra_nova",
+      "tipo": "ponte",
+      "regime": "Ponte de madeira",
+      "nome": "Rio Claro: ponte de madeira da Avenida 14 (Terra Nova / Jardim Novo), tráfego de caminhões e ônibus proibido",
+      "status": "desativada",
+      "status_motivo": "Só notícia da Prefeitura (07/01/2016) sobre placa; sem ato. O OSM já tem maxweight=3,5 na Avenida 14 JN / Avenida Quatorze Jn (ways 1377067694 e 1558180794), coerente com a placa. Sem geometria.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Notícia da Prefeitura de Rio Claro, 07/01/2016",
+          "artigo": "notícia (placa, sem ato)",
+          "url": "https://rioclaro.sp.gov.br/mobilidade-urbana-e-sistema-viario/ponte-de-madeira-no-terra-nova-tem-transito-proibido-para-caminhoes/"
+        }
+      ],
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "rioclaro_carga_descarga_dec11440",
+      "tipo": "zona",
+      "regime": "Carga e descarga (PBT > 3 t)",
+      "nome": "Rio Claro: carga e descarga com veículos de carga acima de 3 t proibida em 2ª a 6ª 9h–18h30 e sábado 9h–13h30 no quadrilátero Ruas 6–9 / Avenidas 6–42, no quadrilátero Ruas 13–15 / Avenidas 15–25 e em trechos da R. 6-A, R. Jacutinga, Av. 50-A e R. 3-A",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga (Dec. 11.440/2019), não de circulação: a camada não modela carga e descarga. Registro sem geometria.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "suspende",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 3}]},
+      "excecoes": [
+        "Art. 3º: veículos com PBT abaixo de 3 t podem carregar e descarregar todos os dias das 6h às 22h",
+        "Art. 4º: vias da Área Azul seguem legislação própria (Lei 3.548/2005, alterada; Lei 6.029/2025)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 11.440, de 29/04/2019 (DOM Rio Claro ed. 964, 03/05/2019, p. 1–2)",
+          "artigo": "art. 1º (áreas e horários proibidos), art. 2º (permitido 2ª a 6ª 6h–9h e 18h30–22h, sábado 13h30–22h, domingos e feriados 6h–22h), art. 3º (abaixo de 3 t, 6h–22h)",
+          "url": "https://data.queridodiario.ok.org.br/3543907/2019-05-03/7c94e73df88862347073ee1176259aba94c1fbbd.pdf"
+        }
+      ],
+      "vigencia_inicio": "2019-05-03",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

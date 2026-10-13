@@ -1,0 +1,128 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3104205",
+  "municipio": "Arcos",
+  "uf": "MG",
+  "fonte_id": "arcos",
+  "fonte": {
+    "url": "https://sapl.arcos.mg.leg.br/media/sapl/public/normajuridica/2009/9/codigo_de_posturas.pdf (Código de Posturas, Lei 2.253/2009) ; https://sapl.arcos.mg.leg.br/media/sapl/public/normajuridica/2009/1076/l02260-29092009.pdf (perímetro urbano, Lei 2.260/2009)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Área urbana aproximada derivada do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap); limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Código de Posturas, art. 33, parágrafo único: caminhão carregado com carga que não se destina ao perímetro urbano não transita (24 h). Zona aproximada pela malha urbana do OSM, sem as rodovias."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC.",
+  "regras": [
+    {
+      "id": "arcos_perimetro_urbano_passagem",
+      "tipo": "zona",
+      "regime": "Passagem proibida (perímetro urbano)",
+      "nome": "Arcos: perímetro urbano, proibido transitar ou estacionar caminhões e carretas carregados que não se destinam ao perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "vuc": null,
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 2.253/2009, art. 33, parágrafo único ('mercadorias que não se destinam ao perímetro urbano')",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Carga com destino ao perímetro urbano (art. 33, parágrafo único)",
+        "O ato fala em veículos 'carregados': caminhão vazio não é alcançado (o perfil do veículo não distingue; lado seguro = todo caminhão)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.253, de 18/09/2009 (Código de Posturas de Arcos)",
+          "artigo": "art. 33, parágrafo único",
+          "url": "https://sapl.arcos.mg.leg.br/media/sapl/public/normajuridica/2009/9/codigo_de_posturas.pdf",
+          "nota": "Alterações conferidas pelo verificador (Leis 2.262/2009, 2.273/2009, 2.565/2013, 2.730/2015, 2.886/2018, LC 1/2019, 93/2022, 207/2025, 211/2025, 218/2025): nenhuma toca o art. 33."
+        }
+      ],
+      "nota": "Sem limite de PBT no ato: vale para todo caminhão (PBT > 3,5 t). Sem horário: 24 h. Confiança média: lei clara e vigente, mas antiga (2009), genérica, sem sinalização ou fiscalização confirmada e sem polígono oficial digital do perímetro (Lei 2.260/2009). Zona APROXIMADA (área urbana da sede pelo OSM), recortando as rodovias federais e estaduais (BR-354, MG-170 e acessos), que seguem livres para a passagem.",
+      "fonte_geometria": "Área urbana aproximada pelo OSM (ODbL); o perímetro legal é o da Lei 2.260/2009 (https://sapl.arcos.mg.leg.br/media/sapl/public/normajuridica/2009/1076/l02260-29092009.pdf), não georreferenciado",
+      "vigencia_inicio": "2009-09-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104205_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Área urbana aproximada pelo OSM (PBF local): faixa de 45 m em torno das vias residenciais/nomeadas sem ref a até 4,5 km do centro, fechada 80 m e aberta 70 m, menos 25 m em torno das rodovias BR-/MG-/LMG-/AMG- (ver docs/layers/municipios/mun_sudeste/IMP01.md)",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "arcos_perimetro_urbano_perigosos",
+      "tipo": "zona",
+      "regime": "Perigosos (perímetro urbano)",
+      "nome": "Arcos: perímetro urbano, proibido o trânsito de veículos com explosivos ou inflamáveis, exceto com destino a ele",
+      "status": "desativada",
+      "status_motivo": "Regra de produtos perigosos (explosivos/inflamáveis): o schema municipal não tem predicado de carga perigosa; registrar na camada perigosos (hazmat_trechos_*) conforme as convenções.",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 2.253/2009, art. 94, § 3º ('exceto com destino ao mesmo')",
+      "excecoes": [
+        "Veículo com destino ao perímetro urbano (art. 94, § 3º); proibido também estacionar perto de residências, hospitais e áreas de diversão"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.253, de 18/09/2009 (Código de Posturas de Arcos)",
+          "artigo": "art. 94, § 3º",
+          "url": "https://sapl.arcos.mg.leg.br/media/sapl/public/normajuridica/2009/9/codigo_de_posturas.pdf"
+        }
+      ],
+      "nota": "Mesma geometria aproximada da regra arcos_perimetro_urbano_passagem. Não reexaminada a fundo pelo verificador.",
+      "vigencia_inicio": "2009-09-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3104205_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Área urbana aproximada pelo OSM (PBF local): faixa de 45 m em torno das vias residenciais/nomeadas sem ref a até 4,5 km do centro, fechada 80 m e aberta 70 m, menos 25 m em torno das rodovias BR-/MG-/LMG-/AMG- (ver docs/layers/municipios/mun_sudeste/IMP01.md)",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

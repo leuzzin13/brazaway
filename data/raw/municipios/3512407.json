@@ -1,0 +1,251 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3512407",
+  "municipio": "Cordeirópolis",
+  "uf": "SP",
+  "fonte_id": "cordeiropolis",
+  "fonte": {
+    "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429 (Decreto 6.642/2023; PDF do Siscam handler=Arquivo&id=118587)",
+    "licenca": "Ato oficial de Cordeirópolis: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Dec. 6.642/2023, art. 4º: caminhões, carretas, articulados e superdimensionados acima de 6 t proibidos 24 h em 6 vias centrais e de acesso (I a VI, com a Estrada Municipal Carmelo Fior COR 010); exceções só do art. 10. 'Acima de 6 t' lido como capacidade de carga (o art. 2º usa capacidade): confiança média. O art. 9º (PBT acima de 24 t ou tri-articulado no município) fica desativado (verificador: contradiz os arts. 3º, 5º, 11 e 13)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "cordeiropolis_vias_acima_6t",
+      "tipo": "via",
+      "regime": "Decreto 6.642/2023 art. 4",
+      "nome": "Cordeirópolis: vias centrais e acessos com proibição de caminhões acima de 6 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhão de utilidade pública",
+        "Caminhão em serviço de urgência (art. 29, VII, CTB)",
+        "Caminhão socorro mecânico de emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.642, de 23/01/2023",
+          "artigo": "art. 4º, incisos I a VI (e art. 3º, 5º, 10)",
+          "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429"
+        }
+      ],
+      "nota": "'Acima de 6 toneladas' sem dizer PBT ou capacidade; art. 2 usa capacidade (payload_t). Confiança média por isso. Verificado em 2026-10-11: AET (arts. 5, 11 e 13) não excepciona as vias do art. 4; só o art. 10 traz exceções. Efeitos 30 dias após a publicação (art. 18), data de publicação não conferida (assinaturas digitais de 10 e 13/02/2023). Nomes no OSM: 'Avenida do Barro Preto' (ato: Rua do Barro Preto) e 'Avenida Vereador Wilson Diório' (ato: Vilson Diório). As rodovias estaduais do art. 6º (SP-310, SP-316, SP-330) não entram.",
+      "vigencia_inicio": "2023-01-23",
+      "trechos": [
+        {
+          "inciso": "art. 4º, I",
+          "via": [
+            "Avenida do Barro Preto"
+          ],
+          "descricao": "Rua do Barro Preto (no OSM 'Avenida do Barro Preto'), da Av. Vereador Vilson Diório até a rotatória de acesso à Estrada Municipal do Barro Preto (COR 020): a via inteira no OSM"
+        },
+        {
+          "inciso": "art. 4º, I",
+          "via": [
+            "COR 010 - ESTRADA MUNICIPAL CARMELO FIOR"
+          ],
+          "descricao": "Estrada Municipal Carmelo Fior (COR 010), em toda a extensão no OSM",
+          "aproximado": true,
+          "nota": "O ato cita a estrada no inciso I sem trecho; no OSM ela tem ~0,9 km a partir da rotatória do Barro Preto (o resto não tem nome)."
+        },
+        {
+          "inciso": "art. 4º, II",
+          "via": [
+            "Rua Flamínio Levy"
+          ],
+          "descricao": "Rua Flamínio Levy, da Av. Vereador Vilson Diório até o cruzamento com a Rua do Barro Preto",
+          "nota": "Pontas por coordenada: a way do OSM entre a Av. Wilson Diório e a Av. do Barro Preto. Os ~60 m que o OSM também chama de Rua Flamínio Levy ao sul da Av. Wilson Diório (junção com a Av. Presidente Vargas) ficam fora, como no ato.",
+          "de": {
+            "lonlat": [
+              -47.45567,
+              -22.47921
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -47.45543,
+              -22.47374
+            ]
+          }
+        },
+        {
+          "inciso": "art. 4º, III",
+          "via": [
+            "Avenida Presidente Vargas"
+          ],
+          "de": {
+            "lonlat": [
+              -47.45573,
+              -22.48001
+            ]
+          },
+          "ate": [
+            "Rua Domingos Martins"
+          ],
+          "descricao": "Av. Presidente Vargas, da Av. Vereador Vilson Diório (no OSM 'Wilson Diório') até a Rua Domingos Martins",
+          "nota": "No OSM a Av. Vereador Wilson Diório termina ~70 m ao norte do início da Av. Presidente Vargas (junção com a R. Flamínio Levy): a ponta 'de' é a coordenada dessa junção."
+        },
+        {
+          "inciso": "art. 4º, IV",
+          "via": [
+            "Rua Francisco Minatel"
+          ],
+          "de": {
+            "lonlat": [
+              -47.47387,
+              -22.47337
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -47.4716,
+              -22.47656
+            ]
+          },
+          "aproximado": true,
+          "descricao": "Rua Francisco Minatel, do início até a Rua Domingos Martins (1º pedaço no OSM, a partir da ponta oeste)",
+          "nota": "'Início' lido como a ponta oeste (o ato termina no limite com a Rua Domingos Martins, lado do Centro). No OSM a rua está em dois pedaços desligados: um trecho por pedaço."
+        },
+        {
+          "inciso": "art. 4º, IV",
+          "via": [
+            "Rua Francisco Minatel"
+          ],
+          "de": {
+            "lonlat": [
+              -47.47108,
+              -22.47635
+            ]
+          },
+          "ate": [
+            "Rua Domingos Martins"
+          ],
+          "aproximado": true,
+          "descricao": "Rua Francisco Minatel, do início até a Rua Domingos Martins (2º pedaço no OSM, até a Rua Domingos Martins)"
+        },
+        {
+          "inciso": "art. 4º, V",
+          "via": [
+            "Rua Guilherme Krauter"
+          ],
+          "descricao": "Rua Guilherme Krauter, toda a extensão"
+        },
+        {
+          "inciso": "art. 4º, VI",
+          "via": [
+            "Rua José Moreira"
+          ],
+          "descricao": "Rua José Moreira, toda a extensão"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3512407_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) por nome e trecho",
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 6.3,
+        "payload_max_t": 3,
+        "exige_cadastro": false,
+        "orgao": "Prefeitura de Cordeirópolis",
+        "artigo": "Dec. 6.642/2023, art. 2º",
+        "nota": "O art. 2º põe sem restrição o VUC (até 3 t de capacidade, 2,20 × 6,30 m) e o toco (até 6 t de capacidade, 14 m, 2 eixos); o alvo do art. 4º (acima de 6 t, lido como capacidade) já deixa os dois de fora."
+      }
+    },
+    {
+      "id": "cordeiropolis_municipio_pbt24_triarticulado",
+      "tipo": "zona",
+      "regime": "Decreto 6.642/2023 art. 9",
+      "nome": "Cordeirópolis: município inteiro, vedado PBT acima de 24 t ou tri-articulado",
+      "status": "desativada",
+      "status_motivo": "Refutada pelo verificador: o art. 9º, lido literalmente, vedaria todo veículo com PBT acima de 24 t no município inteiro, o que contradiz os arts. 3º, 5º, 11 e 13 do mesmo decreto (cavalos mecânicos circulam com cadastro e autorização); alcance incerto (vedação geral ou só do tri-articulado). Não ativar sem ato ou regulamento que esclareça.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 24
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhão de utilidade pública",
+        "Caminhão em serviço de urgência (art. 29, VII, CTB)",
+        "Caminhão socorro mecânico de emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.642, de 23/01/2023",
+          "artigo": "art. 9º",
+          "url": "https://www.camaracordeiropolis.sp.gov.br/siscam/Documentos/Details?id=84429"
+        }
+      ],
+      "nota": "Texto literal: 'vedado o tráfego do Veículo de Carga Pesada Tri-articulado ou com PBT superior a 24.000 kg no Município'. O decreto lista como liberadas só rodovias estaduais (art. 6). O perfil não tem 'tri-articulado': no registro o tipo foi aproximado por 'cvc' (bitrem/rodotrem).",
+      "vigencia_inicio": "2023-01-23",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Verificado em 2026-10-11: art. 9 lido literalmente vedaria todo veículo com PBT >24 t no município inteiro, o que contradiz os arts. 3, 5, 11 e 13 do mesmo decreto (cavalo mecânico simples/trucado/LS, cujo PBT passa de 24 t, circula com cadastro e autorização prévia) e a página oficial de Autorização Especial de Caminhões da Prefeitura, que não menciona a vedação. Alcance incerto (vedação geral ou só do tri-articulado); não ativar sem ato/regulamento que esclareça.",
+      "fonte_geometria": "sem geometria: o alcance do art. 9º é incerto (registro sem feição, para não espalhar aviso de regra não aplicada pelo município inteiro)"
+    }
+  ]
+}

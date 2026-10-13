@@ -1,0 +1,112 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3554102",
+  "municipio": "Taubaté",
+  "uf": "SP",
+  "fonte_id": "taubate",
+  "fonte": {
+    "url": "https://camarasempapel.camarataubate.sp.gov.br/Arquivo/Documents/legislacao/html/L7681964.html (Lei 768/1964) ; https://camarasempapel.camarataubate.sp.gov.br/Arquivo/Documents/legislacao/html/C71991.html (LC 7/1991)",
+    "licenca": "Atos oficiais de Taubaté: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Só a Praça Dom Epaminondas (Lei 768/1964) é aplicada, e só na via do OSM com esse nome (way 214344458, ~63 m). As 'ruas centrais' da mesma lei e o art. 738 da LC 7/1991 ficam registrados sem geometria (sem área definida)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Taubaté não define VUC local.",
+  "regras": [
+    {
+      "id": "taubate_praca_dom_epaminondas",
+      "tipo": "via",
+      "regime": "Praça Dom Epaminondas (caminhões e carretas)",
+      "nome": "Taubaté: Praça Dom Epaminondas, proibida a caminhões e carretas, salvo carga e descarga (Lei 768/1964)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 768/1964, art. 1º, parágrafo único (tráfego permitido 'somente quando for para carregamentos e descarregamentos')",
+      "excecoes": ["Carregamento e descarregamento (art. 1º, parágrafo único)"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 768, de 02/01/1964 (Taubaté)",
+          "artigo": "art. 1º, caput (proibido o tráfego de caminhões e carretas em toda a extensão da Praça Dom Epaminondas) e parágrafo único (exceção para carga e descarga)",
+          "url": "https://camarasempapel.camarataubate.sp.gov.br/Arquivo/Documents/legislacao/html/L7681964.html",
+          "nota": "Situação 'Em Vigor' na base oficial da Câmara (https://camarasempapel.camarataubate.sp.gov.br/legislacao/norma.aspx?id=2969), sem remissão passiva."
+        }
+      ],
+      "nota": "Confiança média: a lei é de 1964, anterior ao CTB, e não foi achada sinalização nem fiscalização recente. A lei não diz peso, então vale para qualquer caminhão (PBT acima de 3,5 t). 24 h, todos os dias. A LC 7/1991 só tem cláusula genérica de revogação (art. 814) e não é incompatível com a lei. Correção do verificador (2026-10-11): geometria só da way 214344458; as ruas em volta do parque (Visconde do Rio Branco, Bispo Rodovalho, Doutor Pedro Costa e outras) não entram sem confirmação oficial.",
+      "fonte_geometria": "OSM (ODbL): só a via chamada 'Praça Dom Epaminondas' (way 214344458: residential, mão única, ~63 m, de -23.02682,-45.55580 a -23.02713,-45.55535), ao lado do parque da praça (way 625064859)",
+      "vigencia_inicio": "1964-01-02",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Praça Dom Epaminondas"],
+          "descricao": "Toda a extensão da Praça Dom Epaminondas (no OSM, só a via de ~63 m com esse nome)",
+          "nota": "A única via do OSM com esse nome é a way 214344458. As ruas em volta do parque têm outros nomes e não entram.",
+          "aproximado": false
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3554102_praca_dom_epaminondas.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "taubate_ruas_centrais_1964",
+      "tipo": "zona",
+      "regime": "Ruas centrais (caminhões e carretas)",
+      "nome": "Taubaté: 'ruas centrais da cidade', proibidas a caminhões e carretas, salvo carga e descarga (Lei 768/1964)",
+      "status": "desativada",
+      "status_motivo": "A Lei 768/1964 não define quais são as 'ruas centrais' e nenhum regulamento as delimita. Sem perímetro (sem geometria confiável), a regra fica só como registro.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "Lei 768/1964, art. 1º, parágrafo único",
+      "excecoes": ["Carregamento e descarregamento (art. 1º, parágrafo único)"],
+      "origem_destino_dentro": "avisa",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 768, de 02/01/1964 (Taubaté)",
+          "artigo": "art. 1º, caput ('e ruas centrais da cidade') e parágrafo único",
+          "url": "https://camarasempapel.camarataubate.sp.gov.br/Arquivo/Documents/legislacao/html/L7681964.html"
+        }
+      ],
+      "fonte_geometria": "Sem perímetro oficial das 'ruas centrais' (pendência: obter da SEMOB a definição, se houver).",
+      "vigencia_inicio": "1964-01-02",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    },
+    {
+      "id": "taubate_entrega_varejo_22h_7h",
+      "tipo": "zona",
+      "regime": "Entrega a varejo/atacado 22h–7h",
+      "nome": "Taubaté: veículos de carga em entrega a varejista ou atacadista só das 22h às 7h (LC 7/1991, art. 738, II)",
+      "status": "desativada",
+      "status_motivo": "Regra de destino (vale para quem entrega a varejo ou atacado) sem área definida, sem peso e sem regulamento (art. 733), e não foi achado sinal de que seja aplicada. O formato não tem regra só de destino; como zona municipal, barraria todo o trânsito de caminhões de dia. Fica registrada sem geometria.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "07:00", "to": "22:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "vuc": null,
+      "excecoes": [
+        "Entrega de perecíveis a varejistas de gêneros alimentícios, gás liquefeito, gelo, jornais, valores, cigarros e similares: sem restrição de horário ou itinerário (art. 738, I)",
+        "Vias e praças exclusivas de pedestres: só veículos leves de carga, das 22h às 7h em dias úteis (art. 738, §3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar municipal 7, de 17/05/1991 (Código de Ordenação Espacial de Taubaté), texto compilado da Câmara",
+          "artigo": "art. 738, I e II e §3º (horário especial das 22h às 7h para circulação e carga e descarga de entregas a varejistas e atacadistas); art. 733, V e VI (itinerários, horários e tonelagem por regulamento)",
+          "url": "https://camarasempapel.camarataubate.sp.gov.br/Arquivo/Documents/legislacao/html/C71991.html"
+        }
+      ],
+      "nota": "Janela registrada = período proibido (7h às 22h). A lei não excetua dias nem feriados. Sem geometria: o artigo não delimita onde vale, e o limite do município espalharia aviso a todo caminhão que atravessa Taubaté pela Dutra.",
+      "fonte_geometria": "Sem área: o artigo não delimita onde vale.",
+      "vigencia_inicio": "1991-05-17",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3146107",
+  "municipio": "Ouro Preto",
+  "uf": "MG",
+  "fonte_id": "ouro-preto",
+  "fonte": {
+    "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.047 (Dec. 8.047/2023, DO 3294) ; https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.348 (Dec. 8.348/2024, DO 3423)",
+    "licenca": "Atos oficiais de Ouro Preto: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria da Estrada da Purificação: OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Dec. 8.047/2023, art. 1º, IV (red. Dec. 8.348/2024): proibido na Estrada da Purificação (Antônio Pereira – sede, pelo Morro São João) o tráfego de veículos de carga com PBT acima de 7 t, sem horário; autorização excepcional da OUROTRAN (art. 3º). Nenhuma restrição geral no centro histórico achada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Sem definição local de VUC nem exceção para VUC: vale o PBT acima de 7 t.",
+  "regras": [
+    {
+      "id": "ouro_preto_estrada_purificacao_carga_7t",
+      "tipo": "via",
+      "regime": "Estrada da Purificação (PBT > 7 t)",
+      "nome": "Ouro Preto: Estrada da Purificação (Antônio Pereira – sede, pelo Morro São João), veículos de carga com PBT acima de 7 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "pbt_t", "acima": 7}]},
+      "vuc": null,
+      "autorizacao": "Excepcionalmente o órgão de trânsito municipal (OUROTRAN) pode autorizar o uso da via mediante solicitação e análise prévia (Dec. 8.047/2023, art. 3º)",
+      "excecoes": ["Art. 3º: autorização excepcional da OUROTRAN"],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 8.047, de 24/10/2023 (Diário Oficial de Ouro Preto, ed. 3294, 16/11/2023)",
+          "artigo": "art. 1º, IV (proíbe veículos de carga na Estrada da Purificação; redação original: capacidade > 7 t e comprimento > 8 m); art. 3º (autorização OUROTRAN); art. 4º (vigência na publicação)",
+          "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.047",
+          "nota": "Texto lido na pesquisa de diário do portal da prefeitura (resultado 'Publicações > Decretos')."
+        },
+        {
+          "ato": "Decreto municipal 8.348, de 20/05/2024 (Diário Oficial de Ouro Preto, ed. 3423, 24/05/2024)",
+          "artigo": "art. 1º (nova redação do art. 1º, IV, do Dec. 8.047: 'veículos de carga com peso bruto total superior a 07 (sete) toneladas'); art. 2º (vigência na publicação)",
+          "url": "https://www.ouropreto.mg.gov.br/transparencia/index.php?page=pesquisa-diario&q=8.348"
+        }
+      ],
+      "nota": "Os incisos I a III do art. 1º (veículos de mineradoras com adesivo, ônibus de trabalhadores de mineradoras, transporte turístico tipo jardineira/jipe) não são modeláveis por PBT e ficaram de fora. Sem horário: proibição permanente. Portaria PGM 07/2026 (DO 3863, 11/03/2026) e notícia da Itatiaia (09/2026) indicam a regra em vigor. Confiança média: a URL é uma busca dinâmica do diário e há uma segunda versão do Dec. 8.047 sem edição. Geometria: a Estrada da Purificação inteira como está no OSM (o ato não descreve pontas além de Antônio Pereira – sede).",
+      "fonte_geometria": "OSM (ODbL) por nome: 'Estrada da Purificação' inteira",
+      "vigencia_inicio": "2023-11-16",
+      "trechos": [
+        {"inciso": "art. 1º, IV", "via": ["Estrada da Purificação"], "descricao": "Estrada da Purificação, de Antônio Pereira à sede, via Morro São João", "aproximado": true, "nota": "Via inteira com esse nome no OSM; pontas não descritas no ato."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3146107_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

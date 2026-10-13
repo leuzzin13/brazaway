@@ -1,0 +1,189 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3300407",
+  "municipio": "Barra Mansa",
+  "uf": "RJ",
+  "fonte_id": "barra-mansa",
+  "fonte": {
+    "url": "https://sapl.barramansa.rj.leg.br/ta/655/text (Lei 4.580/2016, texto compilado) ; https://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2016/1984/lei-4580-16.pdf ; http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2019/3088/lei_4836-19_2.pdf ; http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2018/2020/lei-4704-18.pdf",
+    "licenca": "Atos oficiais de Barra Mansa: domínio público (Lei 9.610/1998, art. 8º, IV). Distrito de Nossa Senhora do Amparo: IBGE, Malha de Distritos do Censo 2022 (dados públicos, citar a fonte: IBGE). Viaduto: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3300407.json; verificação: verif/3300407.json (confirmado em 11/10/2026). Os decretos do Executivo (Boletim Oficial, atrás de Cloudflare) não puderam ser pesquisados. Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "Nenhum ato localizado define VUC em Barra Mansa.",
+  "regras": [
+    {
+      "id": "barramansa_distrito_amparo_14_5t",
+      "tipo": "zona",
+      "regime": "Distrito de Amparo (≥ 14,5 t)",
+      "nome": "Barra Mansa: Distrito de Nossa Senhora do Amparo proibido a veículos pesados com 14,5 t ou mais (salvo entrega/abastecimento local)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 14.5
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Veículos pesados que vão abastecer ou estão fazendo entregas de mercadorias ou produtos de qualquer natureza para o comércio local ou para particular (art. 1º, parágrafo único, incluído pela Lei 4.836/2019)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 4.580, de 23 de agosto de 2016 (Barra Mansa; promulgada pelo Presidente da Câmara; 'Notícia Oficial' ed. 925, 06/09/2016)",
+          "artigo": "art. 1º (proibido o tráfego de veículos pesados com carga igual ou superior a 14,5 toneladas no Distrito de Nossa Senhora do Amparo); art. 2º (sinalização e multa pela COORTRAN); art. 3º (vigência na publicação)",
+          "url": "https://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2016/1984/lei-4580-16.pdf",
+          "nota": "Texto compilado: https://sapl.barramansa.rj.leg.br/ta/655/text (vigência do texto atual a partir de 10/12/2019, sem revogação)."
+        },
+        {
+          "ato": "Lei nº 4.836, de 10 de dezembro de 2019 (Barra Mansa)",
+          "artigo": "art. 1º (acrescenta parágrafo único ao art. 1º da Lei 4.580/2016: exceção para abastecimento e entregas ao comércio local ou a particular)",
+          "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2019/3088/lei_4836-19_2.pdf"
+        }
+      ],
+      "nota": "Confiança média: (1) 'carga igual ou superior a 14,5 toneladas' (art. 1º) x 'acima de 14,5 toneladas' (ementa): adotado PBT acima de 14,5 t; se o órgão de trânsito ler como carga transportada, o alvo seria payload_t; (2) a exceção de entrega local é restrita ao distrito e fica coberta por origem/destino dentro = avisa (excecao_destino_local liberaria entregas em qualquer ponto do município); (3) a lei não excetua as estradas que cruzam o distrito (a zona alcança todas as vias dentro dele); (4) lei promulgada pela Câmara.",
+      "fonte_geometria": "Limite do Distrito de Nossa Senhora do Amparo (código 330040720) na Malha de Distritos do IBGE (Censo 2022), simplificado a ~10 m.",
+      "vigencia_inicio": "2016-09-06",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3300407_distrito_amparo.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono do distrito 330040720 (Nossa Senhora do Amparo) em RJ_distritos_CD2022.gpkg (IBGE, malhas de setores censitários / divisões intramunicipais, Censo 2022), simplificado a 0,0001° e 5 casas e depois para dentro, a 15 m (827 → 615 vértices, por data/raw/municipios/curadoria/simplificar_zona.py --epsg 31983 --tol 15); procedimento em docs/layers/municipios/mun_sudeste/IMP05.md"
+        }
+      ]
+    },
+    {
+      "id": "barramansa_lixo_outros_municipios",
+      "tipo": "zona",
+      "regime": "Lixo de outros municípios",
+      "nome": "Barra Mansa: caminhões de lixo de outros municípios proibidos nos bairros e no centro (só acesso ao CTR Cotiara pelo acesso 273 da Dutra)",
+      "status": "desativada",
+      "status_motivo": "O critério é a carga e a origem (caminhão de lixo proveniente de outro município), que o perfil do veículo não informa; a área ('bairros e áreas do centro') não é delimitada. Só registro, sem feição (a área não tem geometria).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-10",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Acesso ao Centro de Tratamento de Resíduos (Rod. Eng. Alexandre Drable, Cotiara) pelo acesso 273 da Rodovia Presidente Dutra (art. 1º, parágrafo único)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 4.704, de 14 de maio de 2018 (Barra Mansa)",
+          "artigo": "art. 1º e parágrafo único (penalidade do art. 187, I, do CTB)",
+          "url": "http://sapl.barramansa.rj.leg.br/media/sapl/public/normajuridica/2018/2020/lei-4704-18.pdf"
+        }
+      ],
+      "vigencia_inicio": "2018-05-14",
+      "vigencia_fim": null,
+      "fonte_geometria": "Área urbana de Barra Mansa (bairros e centro), não delimitada no ato: sem feição.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "barramansa_viaduto_elias_rodrigues_costa_osm",
+      "tipo": "ponte",
+      "regime": "Viaduto (maxweight OSM)",
+      "nome": "Barra Mansa: Viaduto Elias Rodrigues Costa com maxweight 20 t no OSM (sem ato)",
+      "status": "desativada",
+      "status_motivo": "Indício só do OSM (maxweight='20 t' no way 598454011); nenhum ato municipal localizado (SAPL sem norma; Boletim Oficial inacessível).",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-10",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 20
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "OpenStreetMap (sem ato municipal)",
+          "artigo": "tag maxweight='20 t' no way 598454011",
+          "url": "https://www.openstreetmap.org/way/598454011"
+        }
+      ],
+      "fonte_geometria": "OSM: Viaduto Elias Rodrigues Costa (Barbará), ODbL, casado por nome.",
+      "trechos": [
+        {
+          "inciso": "OSM",
+          "via": [
+            "Viaduto Elias Rodrigues Costa"
+          ],
+          "descricao": "Viaduto Elias Rodrigues Costa (Barbará)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3300407_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

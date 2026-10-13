@@ -1,0 +1,166 @@
+{
+  "ibge": "3149903",
+  "nome": "Perdões",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358",
+      "resultado": "Lida. Lei 3.513/2024 (05/12/2024; AMM ed. 3913, 09/12/2024): proíbe trânsito e estacionamento de veículos pesados/carretas com mais de 3 eixos no perímetro urbano e no Centro Histórico; revoga a Lei 2.658/2010."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/259AD4F6",
+      "resultado": "Título da Lei 2.658/2010 'proíbe trânsito de caminhões' (14/06/2010), sem texto na pista; revogada expressamente pelo art. 8º da Lei 3.513/2024."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3149903 (Lei 3.513; veículos pesados Centro Histórico decreto; multa veículos pesados eixos)",
+      "resultado": "Nenhuma alteração, regulamentação ou revogação da Lei 3.513/2024 achada na AMM."
+    },
+    {
+      "url": "https://sapl.perdoes.mg.leg.br (legislacao.py buscar)",
+      "resultado": "0 resultados para caminh/veículos pesados/peso bruto/tráfego/tonelad (leis municipais podem não estar no SAPL)."
+    },
+    {
+      "url": "https://leismunicipais.com.br/camara/mg/perdoes",
+      "resultado": "403 Cloudflare, não contornado."
+    },
+    {
+      "url": "https://perdoes.mg.gov.br/transparencia/legislacoes/tipo/ano/pagina-1",
+      "resultado": "Cliente heurístico: 0 atos."
+    }
+  ],
+  "observacoes": "Lei 3.513/2024: art. 1º proíbe trânsito e estacionamento de veículos pesados, carretas e similares com mais de 3 eixos em todo o perímetro urbano, exceto (I) carga e descarga de mercadorias dentro do perímetro, (II) transporte coletivo, (III) mudanças, materiais de construção, lixo e entulho (caçambas), (IV) trânsito para chegar a garagem/pátio particular no perímetro. Art. 2º proíbe no Centro Histórico e Cultural (Pça José Modesto Sobrinho, Pça Zoroastro Alvarenga, Av. Getúlio Vargas, Ruas Cristino Pereira dos Santos, Sá Fortes, Cel. Joaquim Francisco, Cel. Augusto Alvarenga, João Dias, Dr. Francisco Martins de Andrade e Maximiliano Modesto Pereira a partir do nº 165 sentido centro, e demais ruas do perímetro de tombamento) com exceção só para veículos de/ a serviço de empresas sediadas do bairro Várzea dos Barbosas/Eldorado em direção à comunidade rural dos Machados. Art. 6º multa R$ 500. Sem horário: vale 24h. Perímetro urbano não tem limite oficial citado: geometria a definir. Hierarquia: a regra do Centro Histórico não tem a exceção de carga e descarga. Verificado em 2026-10-11: lei reaberta na AMM (00171358, ed. 3913, 09/12/2024) e conferida (arts. 1º, 2º, 6º e 8º, exceções e lista de vias). AMM ('3.513', 'três eixos'): nenhuma alteração; só falsos positivos (Decreto 3.513/2016 de aposentadoria, contrato 3.513/12). Regras mantidas.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "perdoes_perimetro_urbano_3_eixos",
+      "tipo": "zona",
+      "regime": "Mais de 3 eixos no perímetro urbano",
+      "nome": "Perdões: perímetro urbano, veículos pesados com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, parágrafo único, I",
+      "excecoes": [
+        "Art. 1º, p.ú., I: carga e descarga de mercadorias dentro do perímetro urbano",
+        "II: transporte coletivo de passageiros",
+        "III: mudanças, materiais de construção, lixo e entulhos (caçambas)",
+        "IV: uso de logradouros como caminho para garagem ou pátio particular no perímetro urbano"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.513/2024 (Perdões, 05/12/2024; AMM ed. 3913)",
+          "artigo": "art. 1º e parágrafo único; art. 6º (multa); art. 8º (vigência e revoga Lei 2.658/2010)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358"
+        }
+      ],
+      "nota": "Perímetro urbano sem limite oficial no ato; a Lei também proíbe estacionamento. Interpretação de 'mais de 03 eixos' = eixos do veículo/combinação acima de 3.",
+      "vigencia_inicio": "2024-12-09",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3149903_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro/vias descritos no ato não têm limite oficial georreferenciado; desenhar a partir do ato e do OSM antes de ativar."
+        }
+      ]
+    },
+    {
+      "id": "perdoes_centro_historico_3_eixos",
+      "tipo": "zona",
+      "regime": "Centro Histórico e Cultural, mais de 3 eixos",
+      "nome": "Perdões: Centro Histórico e Cultural, veículos pesados com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º, p.ú.: veículos de propriedade ou a serviço de empresas com sede a partir do bairro Várzea dos Barbosas e Eldorado, sentido comunidade rural dos Machados"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.513/2024 (Perdões, 05/12/2024; AMM ed. 3913)",
+          "artigo": "art. 2º e parágrafo único; art. 6º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358"
+        }
+      ],
+      "nota": "Sem a exceção de carga e descarga do art. 1º. Ruas do perímetro de tombamento além das nomeadas não estão listadas.",
+      "vigencia_inicio": "2024-12-09",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Praça José Modesto Sobrinho",
+            "Praça Zoroastro Alvarenga",
+            "Avenida Getúlio Vargas",
+            "Rua Cristino Pereira dos Santos",
+            "Rua Sá Fortes",
+            "Rua Coronel Joaquim Francisco",
+            "Rua Coronel Augusto Alvarenga",
+            "Rua João Dias",
+            "Rua Doutor Francisco Martins de Andrade",
+            "Rua Maximiliano Modesto Pereira"
+          ],
+          "descricao": "Vias do Centro Histórico e Cultural (Maximiliano Modesto Pereira só a partir do nº 165 sentido centro)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3149903_centro_historico.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

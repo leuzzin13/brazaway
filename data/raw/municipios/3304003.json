@@ -1,0 +1,52 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3304003",
+  "municipio": "Piraí",
+  "uf": "RJ",
+  "fonte_id": "pirai",
+  "fonte": {
+    "url": "https://sapl.pirai.rj.leg.br/norma/1202 (Lei 704/2003; PDF: https://sapl.pirai.rj.leg.br/media/sapl/public/normajuridica/2003/1202/1202_texto_integral.pdf)",
+    "licenca": "Ato oficial de Piraí: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), casada por nome no PBF local que gerou o grafo do Valhalla.",
+    "notas": "Pesquisa: docs/research/cidades_sudeste/res/3304003.json; verificação: verif/3304003.json (confirmado em 11/10/2026). A lei não delimita os trechos: as três vias foram tomadas inteiras no 1º Distrito (sede). Doc: docs/layers/municipios/mun_sudeste/IMP05.md."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 704/2003 não define VUC; o alvo é carreta e caminhão trucado.",
+  "regras": [
+    {
+      "id": "pirai_trucados_carretas_3vias",
+      "tipo": "via",
+      "regime": "Carretas e trucados",
+      "nome": "Piraí: Rua Barão do Piraí, Rua Manoel Teixeira Campos Júnior e Av. Beira Rio (1º Distrito), carretas e caminhões trucados proibidos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {"campo": "eixos", "acima": 2},
+          {"campo": "tipo", "em": ["semitrailer", "truck_trailer", "cvc"]}
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 704, de 09/10/2003 (Piraí/RJ), sancionada em 24/10/2003",
+          "artigo": "art. 1º (proíbe o trânsito de carretas e caminhões trucados na Rua Barão do Piraí, na Rua Manoel Teixeira Campos Júnior e na Av. Beira Rio, 1º Distrito); art. 2º (cumprimento pelo Executivo); art. 4º (vigência na publicação)",
+          "url": "https://sapl.pirai.rj.leg.br/norma/1202",
+          "nota": "PDF oficial: https://sapl.pirai.rj.leg.br/media/sapl/public/normajuridica/2003/1202/1202_texto_integral.pdf. Data da publicação oficial não localizada; sem alteração ou revogação no SAPL (normarelacionada vazia)."
+        }
+      ],
+      "nota": "Confiança média: a lei não define 'carreta' nem 'caminhão trucado'; o alvo (mais de 2 eixos ou combinação articulada) é interpretação da pesquisa, conferida pelo verificador. Sem horário, dia, peso nem exceção: vale 24 h. No OSM a Rua Barão do Piraí está grafada 'Rua Barão de Piraí'. A Rua Manoel Teixeira Campos (sem 'Júnior', em outro ponto do município) não entra.",
+      "fonte_geometria": "OSM (ODbL) casado por nome no PBF local, só as vias do centro de Piraí (1º Distrito).",
+      "trechos": [
+        {"inciso": "art. 1º", "via": ["Rua Barão de Piraí", "Rua Barão do Piraí"], "descricao": "Rua Barão do Piraí, 1º Distrito (extensão inteira; o ato não delimita)", "aproximado": true},
+        {"inciso": "art. 1º", "via": ["Rua Manoel Teixeira Campos Júnior"], "descricao": "Rua Manoel Teixeira Campos Júnior, 1º Distrito (extensão inteira)", "aproximado": true},
+        {"inciso": "art. 1º", "via": ["Avenida Beira Rio"], "descricao": "Av. Beira Rio, 1º Distrito (extensão inteira)", "aproximado": true}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3304003_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

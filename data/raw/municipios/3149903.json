@@ -1,0 +1,92 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3149903",
+  "municipio": "Perdões",
+  "uf": "MG",
+  "fonte_id": "perdoes",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358 (Lei 3.513/2024, DOM-AMM ed. 3913, 09/12/2024)",
+    "licenca": "Ato oficial de Perdões: domínio público (Lei 9.610/1998, art. 8º, IV). Perímetro urbano aproximado e vias do Centro Histórico: derivados do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Lei 3.513/2024: proibidos trânsito e estacionamento de veículos pesados, carretas e similares com mais de 3 eixos em todo o perímetro urbano (art. 1º, com exceções de carga e descarga, coletivo, mudanças/obras e garagem) e no Centro Histórico e Cultural (art. 2º, sem a exceção de carga e descarga). Perímetro urbano sem limite oficial: polígono aproximado (BR-381 fora). Centro Histórico: só as vias nomeadas no art. 2º."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 3.513/2024 não define VUC: o critério é o número de eixos (mais de 3).",
+  "regras": [
+    {
+      "id": "perdoes_perimetro_urbano_3_eixos",
+      "tipo": "zona",
+      "regime": "Mais de 3 eixos no perímetro urbano",
+      "nome": "Perdões: perímetro urbano, veículos pesados com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}]},
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, parágrafo único, I (carga e descarga de mercadorias dentro do perímetro urbano)",
+      "excecoes": [
+        "Art. 1º, p.ú., I: carga e descarga de mercadorias dentro do perímetro urbano",
+        "II: transporte coletivo de passageiros",
+        "III: mudanças, materiais de construção, lixo e entulhos (caçambas)",
+        "IV: uso de logradouros como caminho para garagem ou pátio particular no perímetro urbano"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.513/2024 (Perdões, 05/12/2024; DOM-AMM ed. 3913, 09/12/2024)",
+          "artigo": "art. 1º e parágrafo único (proibição e exceções); art. 6º (multa); art. 8º (vigência na publicação e revogação da Lei 2.658/2010)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358"
+        }
+      ],
+      "nota": "'Mais de 03 eixos' = eixos do veículo/combinação acima de 3. A lei também proíbe estacionar (não modelado). Perímetro urbano sem limite oficial no ato: polígono aproximado (ver fonte_geometria); a BR-381 (Fernão Dias), que corta a cidade, fica livre.",
+      "fonte_geometria": "Aproximação conservadora do tecido urbano contínuo da sede no OSM (ODbL), dos dois lados da BR-381, com o corredor da rodovia fora.",
+      "vigencia_inicio": "2024-12-09",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3149903_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Vias com nome do OSM da sede (data/cache/municipios/osm_named_3149903.json, raio de ~3 km do centro) com buffer de 50 m, união, borda recuada a ~30 m do eixo da última rua, abertura de 60 m (tira braços ao longo de estradas) e corredor de 30 m da BR-381 excluído; ver docs/layers/municipios/mun_sudeste/IMP03.md",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "perdoes_centro_historico_3_eixos",
+      "tipo": "via",
+      "regime": "Centro Histórico e Cultural, mais de 3 eixos",
+      "nome": "Perdões: vias do Centro Histórico e Cultural, veículos pesados com mais de 3 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true, "qualquer": [{"campo": "eixos", "acima": 3}]},
+      "vuc": null,
+      "excecoes": ["Art. 2º, p.ú.: veículos de propriedade ou a serviço de empresas com sede a partir do bairro Várzea dos Barbosas e Eldorado, sentido comunidade rural dos Machados"],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.513/2024 (Perdões, 05/12/2024; DOM-AMM ed. 3913, 09/12/2024)",
+          "artigo": "art. 2º e parágrafo único (vias do Centro Histórico e Cultural e exceção); art. 6º (multa)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/00171358"
+        }
+      ],
+      "nota": "Registrada como VIA (no rascunho da pesquisa era zona): o art. 2º lista logradouros, não um polígono, e 'as demais ruas do perímetro de tombamento' não estão listadas nem delimitadas (ficam de fora). Sem a exceção de carga e descarga do art. 1º. Grafias do OSM: 'Rua Getúlio Vargas' (o ato diz Avenida) e 'Praça Doutor Zoroastro Alvarenga'. A R. Maximiliano Modesto Pereira entra inteira (o nº 165 não existe no OSM; aproximado). Todas ficam dentro do perímetro urbano (regra perdoes_perimetro_urbano_3_eixos), mas esta não tem a exceção de entrega local.",
+      "fonte_geometria": "OSM (ODbL) por nome",
+      "vigencia_inicio": "2024-12-09",
+      "trechos": [
+        {"inciso": "art. 2º", "via": ["Praça José Modesto Sobrinho"], "descricao": "Praça José Modesto Sobrinho"},
+        {"inciso": "art. 2º", "via": ["Praça Doutor Zoroastro Alvarenga", "Praça Zoroastro Alvarenga"], "descricao": "Praça Zoroastro Alvarenga"},
+        {"inciso": "art. 2º", "via": ["Rua Getúlio Vargas", "Avenida Getúlio Vargas"], "descricao": "Av. Getúlio Vargas ('Rua Getúlio Vargas' no OSM)"},
+        {"inciso": "art. 2º", "via": ["Rua Sá Fortes"], "descricao": "Rua Sá Fortes"},
+        {"inciso": "art. 2º", "via": ["Rua Coronel Joaquim Francisco"], "descricao": "Rua Coronel Joaquim Francisco"},
+        {"inciso": "art. 2º", "via": ["Rua Coronel Augusto Alvarenga"], "descricao": "Rua Coronel Augusto Alvarenga"},
+        {"inciso": "art. 2º", "via": ["Rua João Dias"], "descricao": "Rua João Dias"},
+        {"inciso": "art. 2º", "via": ["Rua Doutor Francisco Martins de Andrade"], "descricao": "Rua Dr. Francisco Martins de Andrade"},
+        {"inciso": "art. 2º", "via": ["Rua Maximiliano Modesto Pereira"], "descricao": "Rua Maximiliano Modesto Pereira, a partir do nº 165, sentido centro", "aproximado": true, "nota": "O nº 165 não existe no OSM: via inteira (mão única no OSM)."}
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3149903_vias.geojson", "construir": "trechos"}]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3516705",
+  "municipio": "Garça",
+  "uf": "SP",
+  "fonte_id": "garca",
+  "fonte": {
+    "url": "https://sapl.garca.sp.leg.br/norma/101682 (Lei 5.558/2023; texto http://sapl.garca.sp.leg.br/media/sapl/public/normajuridica/2023/101682/5558.doc)",
+    "licenca": "Ato oficial de Garça: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 5.558/2023 (Plano Diretor de Mobilidade Urbana), art. 39: Zona de Restrição à Circulação de Caminhões em todas as vias do perímetro urbano, 5h–23h, para veículos com mais de 3 eixos sem origem ou destino em Garça. Perímetro urbano aproximado (setores urbanos do IBGE 2022)."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A Lei 5.558/2023 não define VUC; a regra só alcança veículos com mais de 3 eixos.",
+  "regras": [
+    {
+      "id": "garca_zrc_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Zona de Restrição à Circulação de Caminhões",
+      "nome": "Garça: perímetro urbano, veículos pesados com mais de 3 eixos sem origem/destino em Garça, 5h-23h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "05:00",
+          "to": "23:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 39, §2º, II",
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "§2º, I: veículos licenciados em Garça",
+        "§2º, II: carga/descarga em empresas ou entidades de Garça, comprovada por documento fiscal",
+        "§2º, III: utilidade pública autorizada previamente",
+        "§2º, IV: socorro e emergência (CTB art. 29, VII)",
+        "§2º, V: mudança residencial em Garça"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 5.558/2023 de Garça (Plano Diretor de Mobilidade Urbana), publicada 12/07/2023",
+          "artigo": "art. 39 e §§ 1º a 4º; art. 48 (vigor na publicação)",
+          "url": "https://sapl.garca.sp.leg.br/norma/101682",
+          "nota": "Texto lido em http://sapl.garca.sp.leg.br/media/sapl/public/normajuridica/2023/101682/5558.doc"
+        }
+      ],
+      "nota": "Ambiguidade: 'veículos pesados' no caput x 'mais de 3 eixos' no §1º (adotado o §1º: eixos > 3). O ato vale para quem não tem Garça como origem ou destino: com destino em Garça vale a exceção de entrega (§2º, II); com origem ou destino dentro da zona a rota não exclui a zona e avisa. Perímetro urbano sem mapa no ato: aproximado pelos setores censitários urbanos do distrito-sede (IBGE 2022), SEM a travessia da SP-349 e da SP-294: as rodovias e as ruas e avenidas urbanas por onde passam (Av. Presidente Vargas, R. Cel. Joaquim Piza, Av. Dr. Labieno da Costa Machado, R. Rio Grande do Sul, mais as vias trunk/primary sem ref e as ligações) ficaram LIVRES, fora da zona (folga de 40 m de cada lado, mais o recuo de 20 m da API). Não há contorno da cidade e a lei municipal não alcança a rodovia estadual: com a travessia dentro da zona, a passagem pela SP-349 (norte de Garça → Gália) dava 113 km em vez de 28 km. Decisão de 12/10/2026, mesmo critério de Arcos e Santa Branca: a travessia fica livre e a zona cobre só o restante da malha urbana (antes, a primeira versão mantinha na zona as ruas urbanas com ref SP-349, porque o ato abrange 'todas as vias do perímetro urbano'). Placas do §4º não conferidas. Confiança média (perímetro aproximado).",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem os trechos de rodovia (OSM, ODbL): aproximação do perímetro urbano legal",
+      "vigencia_inicio": "2023-07-12",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3516705_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3516705_perimetro_urbano_curadoria.py <setores IBGE 2022 de SP (shapefile)> data/cache/municipios/osm_hw_3516705.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede, sem a travessia da SP-294 e da SP-349 (rodovias, ruas urbanas por onde passam, trunk/primary sem ref e ligações; folga de 40 m), todas as vias do PBF local extraídas por data/raw/municipios/curadoria/osm_pbf_vias.py."
+        }
+      ]
+    }
+  ]
+}

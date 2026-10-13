@@ -1,0 +1,158 @@
+{
+  "ibge": "3150802",
+  "nome": "Piranga",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487",
+      "resultado": "Lido na íntegra: Decreto 3.002, de 28/01/2020 (DOMM 03/02/2020): art. 1º restrição provisória (04 a 20/02/2020) a veículos de grande porte de 5 eixos ou mais por obras; art. 2º mantém a restrição 'até que se alcance o almejado desvio': I) 5 eixos ou mais das 11h às 17h; II) 3 eixos ou mais das 22h às 5h, inclusive fins de semana e feriados; art. 3º exceções (carga viva, serviços públicos essenciais)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3150802 (amm-mg) 'veículos de grande porte área urbana', 'revoga decreto 3.002', 'desvio veículos de grande porte', 'tráfego de caminhões eixos'",
+      "resultado": "Nenhum ato revogando o Dec. 3.002/2020 nem anunciando o desvio; Lei 2.142/2025 e Lei 2.149/2025 sem trecho de restrição; LC 072/2022 só estacionamento de caminhões em lote."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/mg/piranga",
+      "resultado": "403 Cloudflare (não contornado)."
+    },
+    {
+      "url": "https://camaradepiranga.mg.gov.br/leis.php (portal_proprio) e https://www.piranga.mg.gov.br (WordPress)",
+      "resultado": "Heurístico: 0 atos relevantes; WordPress 11 itens de site, nenhum relacionado."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/94854A12",
+      "resultado": "Decretos de desapropriação 2.825/2019 e 2.830/2019 (alargamento da R. Hélio Guimarães para veículos de maior porte): contexto, sem restrição."
+    }
+  ],
+  "observacoes": "Decreto 3.002/2020 está em vigor segundo o art. 2º (restrição continua até haver desvio); não achei revogação nem notícia de desvio no AMM, mas o portal de legislação principal está bloqueado, então a vigência em 2026 não está confirmada na prefeitura/Câmara: confiança média. Duas janelas sobrepostas: 11h-17h para 5+ eixos e 22h-5h para 3+ eixos, todos os dias, na 'área urbana' (sem delimitação). Recomenda-se confirmar com a prefeitura se já existe o desvio.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 3º: veículos com carga viva (suínos, bovinos, aves) e prestadores de serviços públicos essenciais identificados (energia, iluminação, água, esgoto, telecomunicação)"
+      ],
+      "id": "piranga_urbana_5eixos_11_17",
+      "tipo": "zona",
+      "regime": "Grande porte 5+ eixos (11h-17h)",
+      "nome": "Piranga: veículos de grande porte com 5 eixos ou mais, proibidos na área urbana das 11h às 17h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "11:00",
+          "to": "17:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.002/2020, de 28/01/2020 (DOMM 03/02/2020)",
+          "artigo": "art. 2º, parágrafo único, I",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487"
+        }
+      ],
+      "nota": "Vale 'até que se alcance o desvio' (art. 2º). Com ou sem carga, fins de semana e feriados inclusive. Área urbana não delimitada no decreto.",
+      "vigencia_inicio": "2020-02-03",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3150802_piranga_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar a área urbana da sede de Piranga."
+        }
+      ]
+    },
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 3º: veículos com carga viva e prestadores de serviços públicos essenciais identificados"
+      ],
+      "id": "piranga_urbana_3eixos_22_05",
+      "tipo": "zona",
+      "regime": "Grande porte 3+ eixos (22h-5h)",
+      "nome": "Piranga: veículos de grande porte com 3 eixos ou mais, proibidos na área urbana das 22h às 5h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "05:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "22:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 3.002/2020, de 28/01/2020 (DOMM 03/02/2020)",
+          "artigo": "art. 2º, parágrafo único, II",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487"
+        }
+      ],
+      "nota": "Janela noturna dividida em duas (00h-5h e 22h-24h). Mesmos pressupostos da regra de 5 eixos.",
+      "vigencia_inicio": "2020-02-03",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3150802_piranga_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Mesma área urbana da regra de 5 eixos."
+        }
+      ]
+    }
+  ]
+}

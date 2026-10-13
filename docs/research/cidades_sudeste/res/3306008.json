@@ -1,0 +1,78 @@
+{
+ "ibge": "3306008",
+ "nome": "Três Rios",
+ "uf": "RJ",
+ "status": "pontual",
+ "nivel_busca": "media",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://tresrios.rj.gov.br/legislacao-municipal",
+   "resultado": "403 para curl e legislacao.py (0 atos); portal da prefeitura inacessível."
+  },
+  {
+   "url": "https://cvtr.rj.gov.br/wp-json/wp/v2/search (Câmara; termos: circulação de caminhões, caminh, carga, veículos pesados)",
+   "resultado": "Lê o texto de Leis Municipais publicadas pela Câmara. Achados: Lei 3.769/2012 (horário exclusivo de carga e descarga, alterada pela Lei 4.660/2020) e requerimento 2023 do vereador Clecinho pedindo ESTUDO para proibir tráfego de carga pesada na Praça N. Sra. da Piedade (indicação, não é ato; indica que a regra geral não existe). Nenhuma lei de restrição de circulação de caminhões."
+  },
+  {
+   "url": "https://cvtr.rj.gov.br/lei-no-3-769-cria-horario-exclusivo-de-carga-e-descarga-no-municipio-e-da-outras-providencias/",
+   "resultado": "Texto lido: art. 2º horário exclusivo seg-sex 8h-17h, sáb 8h-13h (redação da Lei 4.660/13-03-2020); art. 4º fora do horário pode usar vaga livre; art. 5º sem multa. Só vagas de carga e descarga."
+  },
+  {
+   "url": "https://cvtr.rj.gov.br/camara-de-vereadores-aprova-alteracao-do-horario-de-carga-e-descarga-em-tres-rios/",
+   "resultado": "Notícia de 19/12/2019 confirma a alteração do art. 2º (8h-17h seg-sex, 8h-13h sáb)."
+  },
+  {
+   "url": "diarios_consolidados.py buscar (\"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\")",
+   "resultado": "0 resultados / município não coberto."
+  }
+ ],
+ "observacoes": "Só regra pontual (vagas de carga e descarga, Lei 3.769/2012 alterada pela Lei 4.660/2020); não restringe circulação. Texto da Lei 4.660/2020 não lido diretamente (horário conferido pela redação anotada na própria Lei 3.769 e pela notícia da Câmara). Portal da prefeitura 403. OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "tresrios_carga_descarga_horario",
+   "tipo": "via",
+   "regime": "Carga e descarga (vagas)",
+   "nome": "Três Rios: horário exclusivo de carga e descarga nas vagas regulamentadas",
+   "status": "desativada",
+   "status_motivo": "Regra de uso das vagas de carga e descarga (horário exclusivo), não de circulação; sem trechos/vias definidos no ato.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "17:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "13:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.769, de 17/12/2012 (art. 2º com redação da Lei 4.660, de 13/03/2020)",
+     "artigo": "art. 2º, 4º e 5º",
+     "url": "https://cvtr.rj.gov.br/lei-no-3-769-cria-horario-exclusivo-de-carga-e-descarga-no-municipio-e-da-outras-providencias/"
+    }
+   ],
+   "trechos": [],
+   "geometria": []
+  }
+ ]
+}

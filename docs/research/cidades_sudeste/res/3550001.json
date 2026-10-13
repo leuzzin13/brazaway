@@ -1,0 +1,160 @@
+{
+ "ibge": "3550001",
+ "nome": "São Luiz do Paraitinga",
+ "uf": "SP",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-11",
+ "fontes_consultadas": [
+  {
+   "url": "https://saoluizdoparaitinga.sp.gov.br/atos-normativos/leis-municipais?descricao=caminh (e tráfego, trânsito, pesados, carga, veículos)",
+   "resultado": "Portal próprio da prefeitura, busca por objeto funciona. Achadas Lei 1.135/2004, Lei 1.733/2015; também Lei 1.179/2005 (Zona Azul, entrada de ônibus em dias de carnaval, não lida) e leis de bicicleta no calçadão (irrelevantes)."
+  },
+  {
+   "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2004/1135.pdf",
+   "resultado": "LIDO (imagem do PDF). Lei 1.135/2004, art. 1º: proibido tráfego de caminhões e carretas acima de 3 eixos nas ruas do distrito de São Pedro de Catuçaba."
+  },
+  {
+   "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2015/1733.pdf",
+   "resultado": "LIDO (imagem do PDF). Lei 1.733/2015, art. 1º: toras de eucalipto, acima de 2 eixos e acima de 6 t, rua do Prolar e ruas de Catuçaba."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3550001 'circulação de caminhões' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nas 4 fontes."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3550001",
+   "resultado": "Cliente heurístico retornou 0 atos; a busca direta no portal (acima) é que funcionou."
+  },
+  {
+   "url": "Overpass IBGE:GEOCODIGO=3550001",
+   "resultado": "Ver osm_divergencias."
+  }
+ ],
+ "observacoes": "Duas leis municipais restringem caminhões, ambas só no Distrito de São Pedro de Catuçaba (zona rural/povoado), não na sede. Fora da sede, o impacto no roteamento é pequeno. Vigência: não achei revogação na busca por ementa; a Lei 1.179/2005 (Zona Azul) pode conter regra de ônibus e não foi lida. OSM da preparação: hgv=no 1, maxweight=40, maxlength=25 (não localizados, Overpass instável). Verificado em 2026-10-11: Lei 1.135/2004 confirmada (texto e vigência; sem revogação no portal). Lei 1.733/2015 lida de novo e vigente, mas rebaixada para desativada porque depende do tipo de carga (toras de eucalipto), que o perfil do veículo não informa.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "OSM: 1 way hgv=no, maxweight=40 e maxlength=25 não localizados; conferir se o hgv=no está em Catuçaba (compatível com Lei 1.135) ou na sede (sem ato)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "slparaitinga_catucaba_acima_3_eixos",
+   "tipo": "zona",
+   "regime": "Municipal (lei)",
+   "nome": "São Luiz do Paraitinga: proibido tráfego de caminhões e carretas acima de 3 eixos nas ruas do Distrito de São Pedro de Catuçaba",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei 1.135, de 18/08/2004 (São Luiz do Paraitinga)",
+     "artigo": "art. 1º (arts. 3º e parágrafo único do art. 4º vetados)",
+     "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2004/1135.pdf"
+    }
+   ],
+   "nota": "PDF escaneado, lido por imagem (salvo em atos/3550001/lei1135_2004.pdf). A ementa no portal diz 'de 03 eixos', mas o art. 1º diz 'acima de 03 (três) eixos'; adotado o texto do artigo. Página do ato: https://saoluizdoparaitinga.sp.gov.br/atos-normativos/leis-municipais/lei-1135-de-2004-18460. Alterações/revogação não pesquisadas além da busca por ementa no portal.",
+   "vigencia_inicio": "2004-08-18",
+   "trechos": [
+    {
+     "via": [
+      "ruas do Distrito de São Pedro de Catuçaba"
+     ],
+     "descricao": "Todas as ruas do perímetro urbano do distrito de São Pedro de Catuçaba",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3550001_sao_pedro_catucaba.geojson",
+     "construir": "manual",
+     "como_gerar": "Ruas urbanas do povoado de São Pedro de Catuçaba (OSM); excluir rodovia estadual se houver"
+    }
+   ]
+  },
+  {
+   "id": "slparaitinga_catucaba_toras_eucalipto",
+   "tipo": "zona",
+   "regime": "Municipal (lei)",
+   "nome": "São Luiz do Paraitinga: proibido caminhões acima de 2 eixos e capacidade acima de 6 t transportando toras de eucalipto no Prolar e nas ruas de São Pedro de Catuçaba",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     },
+     {
+      "campo": "payload_t",
+      "acima": 6
+     }
+    ]
+   },
+   "excecoes": [
+    "Aplica-se só ao transporte de toras de eucalipto (carga não representável no perfil do veículo)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei 1.733, de 19/05/2015 (São Luiz do Paraitinga)",
+     "artigo": "art. 1º (multa diária de 100 Ufesps, art. 3º)",
+     "url": "https://saoluizdoparaitinga.sp.gov.br/site/Leis/2015/1733.pdf"
+    }
+   ],
+   "nota": "PDF escaneado, lido por imagem (atos/3550001/lei1733_2015.pdf). 'Capacidade de peso superior a 6 toneladas' tratada como payload_t, não PBT. Restrição condicionada à carga (toras de eucalipto): o roteador não distingue carga; revisar antes de implementar (provável risco de falso positivo).",
+   "vigencia_inicio": "2015-05-19",
+   "trechos": [
+    {
+     "via": [
+      "rua-estrada em frente ao conjunto habitacional Prolar",
+      "ruas do Distrito de São Pedro de Catuçaba"
+     ],
+     "descricao": "Rua-estrada em frente ao Prolar e, de forma extensiva, ruas do distrito de São Pedro de Catuçaba",
+     "aproximado": true
+    }
+   ],
+   "status_motivo": "Restrição condicionada ao tipo de carga (toras de eucalipto), que o perfil do veículo não informa (mesmo critério de Macaé, cargas especiais). Ativa, bloquearia qualquer caminhão acima de 2 eixos e 6 t em Catuçaba, contrariando a Lei 1.135/2004 (só acima de 3 eixos). Ato vigente, sem revogação achada."
+  }
+ ]
+}

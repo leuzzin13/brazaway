@@ -1,0 +1,112 @@
+{
+ "ibge": "3162104",
+ "nome": "São Gotardo",
+ "uf": "MG",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.saogotardo.mg.leg.br/api/norma/normajuridica/",
+   "resultado": "legislacao.py buscar (termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|tonelad|eixos|carreta|zona de restri): 2 atos: Lei 1.983/2013 (carga e descarga) e Lei 1.728/2007 (desconto em folha, ruído)."
+  },
+  {
+   "url": "https://sapl.saogotardo.mg.leg.br/media/sapl/public/normajuridica/2013/925/leis_2013__1983.pdf",
+   "resultado": "PDF escaneado (sem texto, sem tesseract); página 1 lida visualmente: arts. 1º e 2º. Páginas 2-4 não lidas."
+  },
+  {
+   "url": "https://www.saogotardo.mg.leg.br/leis",
+   "resultado": "portal próprio da Câmara, busca heurística: LC 233/2023 (Código de Obras), LC 70/2008 (Plano Diretor), LC 175/2017 (tributário); nada de circulação de caminhões."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/32A8754A",
+   "resultado": "LC 233/2023 Código de Obras: trecho do lead é definição urbanística; ruído."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/5119A870",
+   "resultado": "Decretos 126 e 141/2020: toque de recolher COVID; ruído."
+  },
+  {
+   "url": "AMM-MG",
+   "resultado": "diarios_consolidados.py buscar (AMM-MG e QD): 'circulação de caminhões', 'trânsito de caminhões', 'tráfego de veículos pesados': sem ato de restrição a caminhões. LC 225/2022 é estrutura administrativa."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/mg/sao-gotardo",
+   "resultado": "403 Cloudflare (via cliente do toolkit), não contornado"
+  }
+ ],
+ "data": "2026-10-11",
+ "observacoes": "Pista do lead era ruído (Código de Obras, COVID). Único ato relacionado: Lei 1.983, de 12/09/2013, que fixa horários de operações de carga e descarga em 9 logradouros centrais (R. Bento Ferreira dos Santos, R. Gerson Duarte Coelho, Pç São Sebastião, Pç Ciro Franco, Pç São Geraldo, R. Cel. Fonte Boa, R. Frei Paulino, R. Cel. Frederico Coelho, Pç Sagrado Coração): só entre 18h e 10h de segunda a sexta e 13h às 22h aos sábados (art. 1º, I e II). Regula operação de carga/descarga no estacionamento, não trânsito de caminhões; sem alvo por peso; não roteável. Vigência não verificada (sem alteração/revogação localizada; páginas 2-4 do PDF não lidas). Interpretação do texto dos horários: o artigo diz que as operações 'somente poderão ser realizadas' nos períodos listados.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "3162104_carga_descarga_centro",
+   "tipo": "via",
+   "regime": "Carga e descarga em vias centrais",
+   "nome": "São Gotardo: horários de carga e descarga nas vias centrais",
+   "status": "desativada",
+   "status_motivo": "Regra de operação de carga e descarga (estacionamento), não de circulação; sem alvo por peso/eixos; vigência e páginas 2-4 do PDF escaneado não conferidas.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "18:00",
+     "to": "23:59"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "10:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "13:00",
+     "to": "22:00"
+    }
+   ],
+   "janelas_nota": "Janelas são os períodos PERMITIDOS para carga e descarga, não de proibição.",
+   "feriados": "aplica",
+   "alvo": {
+    "caminho": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 1.983/2013",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://sapl.saogotardo.mg.leg.br/norma/925"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Rua Bento Ferreira dos Santos",
+      "Rua Gerson Duarte Coelho",
+      "Praça São Sebastião",
+      "Praça Ciro Franco",
+      "Praça São Geraldo",
+      "Rua Coronel Fonte Boa",
+      "Rua Frei Paulino",
+      "Rua Coronel Frederico Coelho",
+      "Praça Sagrado Coração"
+     ],
+     "descricao": "vias públicas centrais do art. 2º",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,85 @@
+{
+  "ibge": "3111408",
+  "nome": "Campo Florido",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/C7903AEE",
+      "resultado": "Lida. Lei 1.615/2022 (11/10/2022; AMM 13/10/2022): proíbe caminhões e combinações com PBT > 30 t em toda a área urbana, exceto BR-262 e MGC-455; horários escolares; revoga Lei 895/2002."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/8F0779E1",
+      "resultado": "LC 09/2022 (Plano Diretor, 20/12/2022): só diretriz de identificar rotas de veículos pesados; não é regra."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3111408 (Lei 1615; tráfego caminhões 30 toneladas)",
+      "resultado": "Nenhuma alteração/revogação da Lei 1.615/2022 achada na AMM."
+    },
+    {
+      "url": "https://sapl.campoflorido.mg.leg.br (legislacao.py buscar)",
+      "resultado": "0 resultados para os termos; leismunicipais 403 Cloudflare."
+    }
+  ],
+  "observacoes": "Lei 1.615/2022: art. 1º proíbe o tráfego de todos os tipos de caminhões (com ou sem carreta, Romeu e Julieta, bitrem, tritrem, rodotrem, treminhão), carregados ou não, com PBT > 30 t em toda a área urbana, exceto BR-262 (DNIT) e MGC-455 (DER-MG); parágrafo único exclui ônibus, caminhões e máquinas da frota pública, coleta de lixo, emergências de saúde, manutenção de emergência em redes e guincho. Art. 2º proíbe esses veículos em frente a 5 escolas nos horários 07:00-07:30, 11:30-12:00, 16:30-17:00 (redundante com o art. 1º para PBT > 30 t). Art. 3º §2º: rota alternativa pelo anel viário. Art. 8º: Executivo pode autorizar passagem por decreto em catástrofe/obras públicas. Art. 10 revoga a Lei 895/2002. Limite da área urbana sem geometria oficial. Verificado em 2026-10-11: lei reaberta na AMM (C7903AEE, ed. 3368, 13/10/2022) e conferida (arts. 1º, 2º, 3º §2º, 8º, 10 e 11). Edição da AMM incluída na base legal. AMM ('1615', 'anel viário'): nenhuma alteração ou revogação. Regra mantida.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "campo_florido_area_urbana_pbt_30t",
+      "tipo": "zona",
+      "regime": "PBT > 30 t na área urbana",
+      "nome": "Campo Florido: área urbana, caminhões e combinações com PBT acima de 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º: BR-262 (DNIT) e MGC-455 (DER-MG) fora da proibição",
+        "Art. 1º p.ú.: ônibus, caminhões e máquinas da frota municipal/estadual/federal, coleta de lixo, emergências de saúde, manutenção emergencial de residências, vias e redes, guincho",
+        "Art. 8º: passagem autorizada por decreto em catástrofe ou obras públicas"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.615/2022 (Campo Florido, 11/10/2022; AMM ed. 3368, 13/10/2022)",
+          "artigo": "art. 1º e parágrafo único; arts. 3º §2º, 8º, 10, 11",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/C7903AEE"
+        }
+      ],
+      "nota": "Rota alternativa: anel viário (art. 3º §2º). Art. 2º (escolas, 07:00-07:30, 11:30-12:00, 16:30-17:00) cobre os mesmos veículos e fica absorvido pelo art. 1º.",
+      "vigencia_inicio": "2022-10-13",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3111408_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro/vias descritos no ato não têm limite oficial georreferenciado; desenhar a partir do ato e do OSM antes de ativar."
+        }
+      ]
+    }
+  ]
+}

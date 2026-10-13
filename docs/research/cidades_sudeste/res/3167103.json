@@ -1,0 +1,394 @@
+{
+  "ibge": "3167103",
+  "nome": "Serro",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "leads/penaestrada.json (preparação)",
+      "resultado": "Sem página do município no Pé na Estrada (ausente do sitemap e do seletor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/85DE4FC4",
+      "resultado": "Lido na íntegra: Decreto 4.801, de 11/02/2014 (DOMM 13/02/2014), caráter permanente: art. 2º PBT > 7 t proibido nas ruas Cel. João Lemos, Paulo Tolentino, Paraná, São Paulo, Dep. Augusto Clementino, Bela Vista, Av. D. José Pedro Costa e Av. do Pasto do Padilha; art. 3º idem na rodovia municipal SER-152; art. 4º idem em 16 logradouros do centro tombado; art. 5º AET pela Comissão Municipal de Trânsito."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DF287E6F",
+      "resultado": "Lido na íntegra: Decreto 4.844, de 11/04/2014 (DOMM 28/04/2014): autoriza 'em caráter temporário' o tráfego de PBT > 7 t na R. Dep. Augusto Clementino, R. Paraná e Av. Minas Gerais, condicionado a obras, educação e preservação; Comissão de Trânsito monitora e pode suspender."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3167103 (amm-mg) 'decreto 4.801', 'peso bruto 7 toneladas', 'tráfego de veículos pesados', 'Comissão Municipal de Trânsito'",
+      "resultado": "Só os Decretos 4.801 e 4.844/2014; nenhum ato posterior de revogação, suspensão ou novo prazo."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/mg/serro",
+      "resultado": "403 Cloudflare (não contornado)."
+    },
+    {
+      "url": "https://camaraserro.mg.gov.br/arquivos-publicos (portal_proprio) e WordPress da Câmara",
+      "resultado": "0 atos relevantes (WordPress 26 itens de site, nenhum de legislação de trânsito)."
+    }
+  ],
+  "observacoes": "Decreto 4.801/2014 (permanente) proíbe PBT > 7 t em 3 grupos de vias (art. 2º, 3º e 4º), por proteção do conjunto tombado (IPHAN). O Decreto 4.844/2014 autoriza 'em caráter temporário' o tráfego acima de 7 t em 3 ruas (Dep. Augusto Clementino, Paraná, Av. Minas Gerais), sem prazo; sem ato posterior achado. Por prudência, essas 3 ruas ficam numa regra desativada (autorização temporária de alcance incerto) e as demais vias numa regra ativa. Vigência de ambos não confirmada em portal da prefeitura (bloqueado), só pelo diário: confiança média. Horário: sem janela, 24 h.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 5º: autorização especial de trânsito da Comissão Municipal de Trânsito, com acompanhamento"
+      ],
+      "id": "serro_vias_7t_art2_art4",
+      "tipo": "via",
+      "regime": "PBT > 7 t (centro tombado)",
+      "nome": "Serro: veículos com PBT acima de 7 t proibidos nas vias do centro tombado listadas nos arts. 2º e 4º",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.801, de 11/02/2014 (DOMM 13/02/2014)",
+          "artigo": "art. 2º (exceto as ruas da regra desativada) e art. 4º; art. 5º-6º (AET)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/85DE4FC4"
+        }
+      ],
+      "nota": "Rua Paraná e Rua Dep. Augusto Clementino estão no art. 2º mas foram objeto do Dec. 4.844/2014 (ver regra serro_vias_7t_autorizacao_temporaria).",
+      "vigencia_inicio": "2014-02-13",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Coronel João Lemos"
+          ],
+          "descricao": "Rua Coronel João Lemos (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Paulo Tolentino"
+          ],
+          "descricao": "Rua Paulo Tolentino (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua São Paulo"
+          ],
+          "descricao": "Rua São Paulo (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Bela Vista"
+          ],
+          "descricao": "Rua Bela Vista (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Dom José Pedro Costa"
+          ],
+          "descricao": "Avenida Dom José Pedro Costa (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Pasto do Padilha"
+          ],
+          "descricao": "Avenida Pasto do Padilha (todo o logradouro urbano)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Avenida Dom José André"
+          ],
+          "descricao": "Avenida Dom José André",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Rio Branco"
+          ],
+          "descricao": "Rua Rio Branco",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Praça João Pessoa"
+          ],
+          "descricao": "Praça João Pessoa",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Santa Rita"
+          ],
+          "descricao": "Rua Santa Rita",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua General Osório"
+          ],
+          "descricao": "Rua General Osório",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Praça Teófilo Otoni"
+          ],
+          "descricao": "Praça Teófilo Otoni",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Fernando Vasconcelos"
+          ],
+          "descricao": "Rua Fernando Vasconcelos",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Praça Doutor João Pinheiro"
+          ],
+          "descricao": "Praça Doutor João Pinheiro",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Antônio Honório Pires"
+          ],
+          "descricao": "Rua Antônio Honório Pires",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Praça Dom Epaminondas"
+          ],
+          "descricao": "Praça Dom Epaminondas",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Nagib Bahmed"
+          ],
+          "descricao": "Rua Nagib Bahmed",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Luiz Advíncula Reis"
+          ],
+          "descricao": "Rua Luiz Advíncula Reis",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Doutor Simão"
+          ],
+          "descricao": "Rua Doutor Simão",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Rua Nelson de Sena"
+          ],
+          "descricao": "Rua Nelson de Sena",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Ladeira da Matriz"
+          ],
+          "descricao": "Ladeira da Matriz",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 4º",
+          "via": [
+            "Travessa do Magalhães"
+          ],
+          "descricao": "Travessa do Magalhães",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3167103_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [
+        "Art. 5º: autorização especial de trânsito da Comissão Municipal de Trânsito"
+      ],
+      "id": "serro_rodovia_municipal_ser152_7t",
+      "tipo": "via",
+      "regime": "PBT > 7 t (SER-152)",
+      "nome": "Serro: rodovia municipal SER-152 (BR-259 a MG-010, Várzea de Baixo), PBT acima de 7 t proibido",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.801, de 11/02/2014 (DOMM 13/02/2014)",
+          "artigo": "art. 3º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/85DE4FC4"
+        }
+      ],
+      "vigencia_inicio": "2014-02-13",
+      "trechos": [
+        {
+          "inciso": "art. 3º",
+          "via": [
+            "SER-152"
+          ],
+          "descricao": "Rodovia municipal SER-152 / 447 (liga a BR-259 à MG-010 via Várzea de Baixo; o decreto cita também 'rodovia municipal 447' nos considerandos)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3167103_serro_ser152.geojson",
+          "construir": "manual",
+          "como_gerar": "Localizar a rodovia municipal SER-152 (Várzea de Baixo) entre BR-259 e MG-010 no OSM."
+        }
+      ]
+    },
+    {
+      "verificado_em": "2026-10-11",
+      "feriados": "aplica",
+      "excecoes": [],
+      "id": "serro_vias_7t_autorizacao_temporaria",
+      "tipo": "via",
+      "regime": "PBT > 7 t (autorizado temporariamente)",
+      "nome": "Serro: R. Dep. Augusto Clementino, R. Paraná e Av. Minas Gerais, tráfego acima de 7 t autorizado em caráter temporário",
+      "status": "desativada",
+      "status_motivo": "O Decreto 4.844/2014 autoriza temporariamente o tráfego acima de 7 t nestas ruas, sem prazo nem revogação achados; alcance atual incerto, por isso a proibição do Dec. 4.801/2014 não é aplicada nelas.",
+      "confianca": "baixa",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 4.844, de 11/04/2014 (DOMM 28/04/2014)",
+          "artigo": "art. 1º e §§ 1º-2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/DF287E6F",
+          "nota": "Altera na prática o art. 2º do Decreto 4.801/2014 para estas ruas."
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Paraná"
+          ],
+          "descricao": "Rua Paraná",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Deputado Augusto Clementino"
+          ],
+          "descricao": "Rua Deputado Augusto Clementino",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Minas Gerais"
+          ],
+          "descricao": "Avenida Minas Gerais",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3167103_serro_autorizacao_temporaria.geojson",
+          "construir": "manual",
+          "como_gerar": "Ruas pelo nome no OSM, só se a proibição for restabelecida."
+        }
+      ]
+    }
+  ]
+}

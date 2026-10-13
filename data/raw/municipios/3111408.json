@@ -1,0 +1,79 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3111408",
+  "municipio": "Campo Florido",
+  "uf": "MG",
+  "fonte_id": "campo-florido",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mg/materia/C7903AEE (Lei 1.615/2022, AMM ed. 3368, 13/10/2022)",
+    "licenca": "Ato oficial municipal: domínio público (Lei 9.610/1998, art. 8º, IV). Área urbana aproximada derivada do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap); limite municipal: IBGE Malha Municipal (dados públicos, citar a fonte).",
+    "notas": "Lei 1.615/2022: PBT > 30 t proibido em toda a área urbana, 24 h, exceto BR-262 e MGC-455. Área urbana aproximada pelo OSM."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A regra é por PBT (> 30 t); não há VUC.",
+  "regras": [
+    {
+      "id": "campo_florido_area_urbana_pbt_30t",
+      "tipo": "zona",
+      "regime": "PBT > 30 t na área urbana",
+      "nome": "Campo Florido: área urbana, caminhões e combinações com PBT acima de 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 1º: BR-262 (DNIT) e MGC-455 (DER-MG) fora da proibição",
+        "Art. 1º, parágrafo único: ônibus, caminhões e máquinas da frota municipal/estadual/federal, coleta de lixo, emergências de saúde, manutenção emergencial de residências, vias e redes, guincho",
+        "Art. 8º: passagem autorizada por decreto em catástrofe ou obras públicas"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.615/2022 (Campo Florido, 11/10/2022; AMM ed. 3368, 13/10/2022)",
+          "artigo": "art. 1º e parágrafo único (PBT > 30 t na área urbana, exceto BR-262 e MGC-455); arts. 3º §2º (anel viário), 8º, 10 (revoga a Lei 895/2002) e 11 (vigência)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/C7903AEE"
+        }
+      ],
+      "nota": "Rota alternativa: anel viário (art. 3º §2º). O art. 2º (frente de 5 escolas, 07:00-07:30, 11:30-12:00, 16:30-17:00) cobre os mesmos veículos e fica absorvido pelo art. 1º. Confiança média: a área urbana não tem limite oficial; zona APROXIMADA pela malha urbana do OSM, sem a BR-262 e a MGC-455.",
+      "fonte_geometria": "Área urbana aproximada pelo OSM (ODbL), recortando a BR-262 e a MGC-455",
+      "vigencia_inicio": "2022-10-13",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3111408_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Área urbana aproximada pelo OSM (PBF local): faixa de 45 m em torno das vias residenciais/nomeadas sem ref a até 3 km do centro, fechada 80 m e aberta 70 m, menos 25 m em torno da BR-262 e da MGC-455 (ver docs/layers/municipios/mun_sudeste/IMP01.md)",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

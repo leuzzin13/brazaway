@@ -1,0 +1,137 @@
+{
+  "ibge": "3138807",
+  "nome": "Luz",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-11",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA",
+      "resultado": "Lido. Decreto 2.018/2015 (16/10/2015; AMM ed. 1605, 20/10/2015): proíbe na área urbana caminhão/carreta/combinações carregados acima de 25 t e veículos acima de 6 m de altura."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3138807 (2.018/2015; carreta 25 toneladas; tráfego de veículos de carga pesada; peso bruto total máximo)",
+      "resultado": "Só o próprio decreto; nenhum ato posterior que o altere/revogue achado. LC 134/2020 e LC 190/2025 aparecem com score baixo (não abertos)."
+    },
+    {
+      "url": "https://sapl.luz.mg.leg.br (legislacao.py buscar caminh/pesad/carga/tonelad/trânsito)",
+      "resultado": "0 resultados de caminhão/carga; 6 de trânsito (indenizações por acidente e Lei 2.742/2021, trânsito na Praça São José, não aberta). Decretos não estão no SAPL."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/FF029601",
+      "resultado": "Lei 2.650/2019: construção de anel rodoviário BR-262/MG-176 para retirar caminhões do perímetro urbano (trecho da pista). Autorização de obra, não é restrição."
+    }
+  ],
+  "observacoes": "Decreto 2.018/2015: art. 1º proíbe a passagem na área urbana de caminhão, carreta, romeu e julieta, bitrem, rodotrem, tritrem ou treminhão 'carregado acima de 25 toneladas', exceto (I) carga e descarga em estabelecimentos na sede mediante nota fiscal, (II) pernoite com motorista domiciliado em Luz, (III) veículos emplacados no município; comprovação do peso por nota fiscal da carga ou pesagem. Art. 2º proíbe veículos acima de 6 m de altura na área urbana. Ambiguidade: '25 toneladas' pode ser peso da carga ou PBT (adotado PBT, lado seguro, confiança média). Vigência: sem revogação achada, mas decreto de 2015 e o anel rodoviário (Lei 2.650/2019) podem ter alterado a prática; confirmar sinalização local. Limite da área urbana sem geometria oficial. Verificado em 2026-10-11: decreto reaberto na AMM (110F4DAA, ed. 1605, 20/10/2015) e conferido (arts. 1º a 3º; efeitos desde 16/10/2015). A ementa fala em 'peso bruto total máximo', o que apoia a leitura como PBT. AMM ('2.018', '25 toneladas'): nenhuma alteração ou revogação; a Lei 3.131/2026 é do Serviço de Inspeção Municipal (falso positivo). Regras mantidas.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "luz_area_urbana_25t",
+      "tipo": "zona",
+      "regime": "Carregado acima de 25 t na área urbana",
+      "nome": "Luz: área urbana, caminhões e combinações carregados acima de 25 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, I",
+      "excecoes": [
+        "Art. 1º, I: carga e descarga em estabelecimentos na sede mediante nota fiscal",
+        "Art. 1º, II: pernoite com motorista domiciliado em Luz",
+        "Art. 1º, III: veículos emplacados em Luz"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.018/2015 (Luz, 16/10/2015; AMM ed. 1605)",
+          "artigo": "art. 1º e parágrafo único; art. 3º (vigência)",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA"
+        }
+      ],
+      "nota": "'Carregado acima de 25 toneladas' ambíguo (carga x PBT); adotado pbt_t. Isenção por placa do município não é testável na rota. A ementa do Dec. 2.018/2015 ('fixa o peso bruto total máximo permitido') reforça a leitura como PBT.",
+      "vigencia_inicio": "2015-10-16",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138807_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro/vias descritos no ato não têm limite oficial georreferenciado; desenhar a partir do ato e do OSM antes de ativar."
+        }
+      ]
+    },
+    {
+      "id": "luz_area_urbana_altura_6m",
+      "tipo": "zona",
+      "regime": "Altura acima de 6 m na área urbana",
+      "nome": "Luz: área urbana, veículos de carga acima de 6 m de altura",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "altura_m",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 2.018/2015 (Luz, 16/10/2015; AMM ed. 1605)",
+          "artigo": "art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amm-mg/materia/110F4DAA"
+        }
+      ],
+      "nota": "Sem exceções no art. 2º. Altura de 6 m é pouco comum; regra de baixo impacto.",
+      "vigencia_inicio": "2015-10-16",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3138807_area_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro/vias descritos no ato não têm limite oficial georreferenciado; desenhar a partir do ato e do OSM antes de ativar."
+        }
+      ]
+    }
+  ]
+}

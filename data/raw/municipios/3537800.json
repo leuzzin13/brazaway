@@ -1,0 +1,209 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3537800",
+  "municipio": "Piedade",
+  "uf": "SP",
+  "fonte_id": "piedade",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/3537800/2019-01-04/ad04dd637d2595876c42b3d388119968f8ae039d.pdf ; https://www.piedade.sp.gov.br/portal/leis_decretos/6764/",
+    "licenca": "Atos oficiais de Piedade: domínio público (Lei 9.610/1998, art. 8º, IV). Vias centrais: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 7.341/2018, art. 1º: trânsito de veículos de carga proibido em 8 vias centrais (24 h); art. 2º: só carga e descarga das 19h às 9h; art. 4º: VUC e VLC isentos. Art. 3º (carga e descarga de articulados em 9 vias) registrado desativado."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.3,
+    "exige_cadastro": false,
+    "orgao": "Diretoria de Transportes e Mobilidade Urbana (fiscalização: Ditracopi)",
+    "artigo": "Decreto 7.341/2018, art. 4º, I, a (VUC: comprimento até 5,50 m, largura até 2,20 m) e b (VLC: comprimento de 5,50 m até 6,30 m, largura até 2,20 m)",
+    "nota": "O texto exige ainda 'carga útil acima de 1.500 kg' para VUC e VLC (redação literal, provável erro por 'até'); o limite de carga útil não entra no predicado."
+  },
+  "vuc_nota": "VUC (até 5,50 m) e VLC (5,50 a 6,30 m), largura até 2,20 m, isentos (Dec. 7.341/2018, art. 4º, I).",
+  "regras": [
+    {
+      "id": "piedade_centro_vias_caminhoes",
+      "tipo": "via",
+      "regime": "Vias centrais (caminhões)",
+      "nome": "Piedade: 8 vias centrais — trânsito de caminhões e combinações proibido (carga e descarga só das 19h às 9h)",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "vuc": {
+        "largura_max_m": 2.2,
+        "comprimento_max_m": 6.3,
+        "exige_cadastro": false,
+        "orgao": "Diretoria de Transportes e Mobilidade Urbana (fiscalização: Ditracopi)",
+        "artigo": "Decreto 7.341/2018, art. 4º, I, a (VUC: comprimento até 5,50 m, largura até 2,20 m) e b (VLC: comprimento de 5,50 m até 6,30 m, largura até 2,20 m)",
+        "nota": "O texto exige ainda 'carga útil acima de 1.500 kg' para VUC e VLC (redação literal, provável erro por 'até'); o limite de carga útil não entra no predicado."
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Requerimento à Diretoria de Transportes e Mobilidade Urbana com 5 dias de antecedência (48 h em urgência justificada) para obras na via, materiais de construção, terra/entulho/caçamba, concretagem, mudanças e produtos perigosos; perecíveis sem pedido antecipado (art. 5º)",
+      "excecoes": [
+        "Art. 2º: trânsito permitido exclusivamente para carga e descarga nas vias indicadas entre 19h de um dia e 9h do dia seguinte",
+        "Art. 4º, caput: veículos do art. 29, VII e VIII, do CTB",
+        "Art. 4º, I, a e b: VUC (até 5,50 m x 2,20 m) e VLC (5,50 a 6,30 m x 2,20 m)",
+        "Art. 4º, II: acesso a estacionamento próprio (só até o local de guarda), urgência, socorro mecânico de emergência, reportagem, saneamento ambiental, feiras livres, transporte de valores, coleta de lixo, obras e serviços de emergência",
+        "Art. 5º: autorização mediante requerimento (obras e serviços na via, materiais/máquinas de construção, terra/entulho/caçamba, concretagem, mudanças, produtos perigosos, perecíveis)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.341, de 28/12/2018 (Piedade) — Imprensa Oficial do Município de Piedade, ed. 423, 04/01/2019, p. 5",
+          "artigo": "art. 1º, I a VIII (vias e veículos), art. 2º (carga e descarga das 19h às 9h), art. 4º (exceções e VUC/VLC), art. 5º (autorização), art. 8º (vigência na publicação; revoga o Dec. 6.768/2017)",
+          "url": "https://data.queridodiario.ok.org.br/3537800/2019-01-04/ad04dd637d2595876c42b3d388119968f8ae039d.pdf",
+          "nota": "Ficha no Instar da Prefeitura ('Em vigor'): https://www.piedade.sp.gov.br/portal/leis_decretos/6764/ ; original escaneado: https://www.piedade.sp.gov.br/portal/download/legislacao/hRLTLj/"
+        }
+      ],
+      "nota": "O art. 1º não fixa horário nem dia: a passagem de caminhões é proibida 24 h, todos os dias (feriados inclusive); o art. 2º só libera a entrada para carga e descarga na própria via das 19h às 9h. Por isso a regra é 24 h e a origem/destino nessas ruas avisa. Vias inteiras (o decreto não dá trechos; vale a sinalização regulamentadora). O art. 1º alcança caminhão, articulado, conjugado, caminhão-trator, trator, reboque e semirreboque, carregados ou não.",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "Rua Comendador Parada"
+          ],
+          "descricao": "Rua Comendador Parada, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, II",
+          "via": [
+            "Rua Cônego José Rodrigues de Oliveira",
+            "Rua Cônego José Rodrigues"
+          ],
+          "descricao": "Rua Cônego José Rodrigues, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, III",
+          "via": [
+            "Praça Coronel João Rosa"
+          ],
+          "descricao": "Praça Coronel João Rosa (vias da praça)"
+        },
+        {
+          "inciso": "art. 1º, IV",
+          "via": [
+            "Rua Doutor Sebastião Pereira",
+            "Rua Sebastião Pereira"
+          ],
+          "descricao": "Rua Sebastião Pereira, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, V",
+          "via": [
+            "Rua Araújo Leite"
+          ],
+          "descricao": "Rua Araújo Leite, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, VI",
+          "via": [
+            "Rua Abdalla Marum",
+            "Rua Abdala Marum"
+          ],
+          "descricao": "Rua Abdala Marum, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, VII",
+          "via": [
+            "Rua Capitão Loureiro"
+          ],
+          "descricao": "Rua Capitão Loureiro, toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, VIII",
+          "via": [
+            "Rua Marechal Deodoro da Fonseca"
+          ],
+          "descricao": "Rua Marechal Deodoro da Fonseca, toda a extensão"
+        }
+      ],
+      "vigencia_inicio": "2019-01-04",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3537800_piedade_centro_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "piedade_carga_descarga_combinacoes",
+      "tipo": "via",
+      "regime": "Carga e descarga (articulados)",
+      "nome": "Piedade: carga e descarga de caminhões articulados, conjugados, caminhão-trator, reboque e semirreboque proibida das 8h às 20h em 9 vias",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga (art. 3º do Dec. 7.341/2018), não de circulação: a passagem de combinações por essas vias não é proibida. Como via, barraria o trânsito de passagem. Fica registrada para aviso.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "08:00",
+          "to": "20:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Requerimento à Diretoria de Transportes e Mobilidade Urbana (art. 5º)",
+      "excecoes": [
+        "Art. 4º: veículos do art. 29, VII e VIII, do CTB; serviços do inciso II (urgência, socorro mecânico, saneamento, feiras, valores, lixo, obras de emergência)",
+        "Art. 5º: autorização mediante requerimento"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.341, de 28/12/2018 (Piedade) — Imprensa Oficial, ed. 423, 04/01/2019",
+          "artigo": "art. 3º, I a IX (carga e descarga de articulados, conjugados, caminhão-trator, trator, reboque e semirreboque proibida das 8h às 20h)",
+          "url": "https://data.queridodiario.ok.org.br/3537800/2019-01-04/ad04dd637d2595876c42b3d388119968f8ae039d.pdf"
+        }
+      ],
+      "nota": "Vias do art. 3º: Av. Antônio Corrêa da Silva, Av. Eugênio Leite de Oliveira, Av. Leonel Ribeiro de Paiva, Av. Eunice Rosa Godinho, Via Antônio Leite de Oliveira, Av. Raimundo Nonato Leite, R. Marechal Floriano Peixoto, (R.) Capitão Antonio Parada, R. Major Lúcio Pinto. O art. 3º não cita o caminhão simples (rígido), só articulados e combinações; sem dia da semana, vale todos os dias. Sem geometria: a regra é de operação de carga e descarga; como via, barraria a passagem, que o art. 3º não proíbe.",
+      "vigencia_inicio": "2019-01-04",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

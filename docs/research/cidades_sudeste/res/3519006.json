@@ -1,0 +1,81 @@
+{
+  "ibge": "3519006",
+  "nome": "Herculândia",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.herculandia.sp.gov.br/legislacao",
+      "resultado": "403 (bloqueio) para curl; heurístico da toolkit sem resultado."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sp/herculandia",
+      "resultado": "403 Cloudflare ('Just a moment'); não contornado."
+    },
+    {
+      "url": "https://www.camaraherculandia.sp.gov.br/",
+      "resultado": "Home abre; busca ?s= com connection reset; sem portal de legislação identificado."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3519006",
+      "resultado": "Diários consolidados (doesp/dosp): 0 resultado nos 3 termos em 11/10/2026."
+    },
+    {
+      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3519006; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+      "resultado": "4 elementos: Rua Brigadeiro Tobias (secondary, way 124433444) e 3 ways ref=HER-03 (way 124651475, 196898055, 196898058), todos hgv=no, no mesmo ponto (-22.0002,-50.395)."
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Sem ato. OSM: hgv=no em trecho curto da Rua Brigadeiro Tobias / HER-03 (acesso/centro). Fontes principais fora do ar: NÃO conclusivo.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "hgv=no em Rua Brigadeiro Tobias e HER-03 (4 ways no mesmo trecho) sem ato localizado."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "herculandia_osm_hgv_no_brigadeiro_tobias",
+      "tipo": "via",
+      "regime": "hgv=no (OSM, sem ato)",
+      "nome": "Herculândia: Rua Brigadeiro Tobias / HER-03 com hgv=no no OSM",
+      "status": "desativada",
+      "status_motivo": "Pista só do OSM, sem ato municipal localizado (portais da prefeitura/Câmara fora do ar).",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "não localizado (pista OSM)",
+          "artigo": "n/d",
+          "url": "https://www.openstreetmap.org/way/124433444"
+        }
+      ],
+      "trechos": [
+        {
+          "via": [
+            "Rua Brigadeiro Tobias"
+          ],
+          "descricao": "ways 124433444, 124651475, 196898055, 196898058 (HER-03)",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
+}

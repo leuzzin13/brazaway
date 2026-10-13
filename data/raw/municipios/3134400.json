@@ -1,0 +1,138 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3134400",
+  "municipio": "Iturama",
+  "uf": "MG",
+  "fonte_id": "iturama",
+  "fonte": {
+    "url": "https://sapl.iturama.mg.leg.br/norma/5771 (Decreto 6.841/2017)",
+    "licenca": "Ato oficial de Iturama: domínio público (Lei 9.610/1998 art. 8º IV). Polígono aproximado do perímetro urbano derivado do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 6.841/2017: no perímetro urbano, veículos acima de 2,60 m de largura, 4,00 m de altura ou 19,80 m de comprimento (articulados) proibidos (24 h). Perímetro urbano aproximado pelo OSM, sem as rodovias."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "O município não define VUC; a regra é por dimensões.",
+  "regras": [
+    {
+      "id": "iturama_dim_altura_largura",
+      "tipo": "zona",
+      "regime": "Limite de altura e largura",
+      "nome": "Iturama: perímetro urbano, altura > 4,00 m ou largura > 2,60 m",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "altura_m",
+            "acima": 4.0
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.6
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.841, de 25/05/2017 (Iturama)",
+          "artigo": "art. 1º, I (largura 2,60 m), II (altura 4,00 m) e III (comprimentos); art. 3º (revoga o Dec. 3.280/2001); art. 4º (vigência)",
+          "url": "https://sapl.iturama.mg.leg.br/norma/5771",
+          "nota": "PDF no SAPL da Câmara (norma 5771), relido pelo verificador em 11/10/2026."
+        }
+      ],
+      "nota": "Vigência pós-2017 não confirmada na Prefeitura. Perímetro urbano aproximado (ver fonte_geometria).",
+      "vigencia_inicio": "2017-05-25",
+      "verificado_em": "2026-10-11",
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "fonte_geometria": "APROXIMAÇÃO conservadora do perímetro urbano (o decreto não o delimita): área urbana contínua da sede pelas ruas do OSM, contorno sobre as ruas mais externas, sem uma faixa de 40 m das rodovias BR-497/MG-497 e MG-255 (o decreto municipal não regula rodovia estadual/federal). OSM ODbL.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3134400_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02 (método em docs/layers/municipios/mun_sudeste/IMP02.md): ruas do OSM (PBF local) a até 6 km do centro com buffer 45 m, fechamento 90 m e recuo 45 m, menos 40 m das rodovias BR-497/MG-497 e MG-255.",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "iturama_dim_comprimento",
+      "tipo": "zona",
+      "regime": "Limite de comprimento",
+      "nome": "Iturama: perímetro urbano, comprimento > 14,00 m (rígidos) ou > 19,80 m (articulados)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 19.8
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 6.841, de 25/05/2017 (Iturama)",
+          "artigo": "art. 1º, I (largura 2,60 m), II (altura 4,00 m) e III (comprimentos); art. 3º (revoga o Dec. 3.280/2001); art. 4º (vigência)",
+          "url": "https://sapl.iturama.mg.leg.br/norma/5771",
+          "nota": "PDF no SAPL da Câmara (norma 5771), relido pelo verificador em 11/10/2026."
+        }
+      ],
+      "nota": "Aqui só o teto de 19,80 m; limite de 14,00 m para não articulados (art. 1º, III, a) exige distinguir o tipo e fica na observação. Perímetro urbano aproximado (ver fonte_geometria).",
+      "vigencia_inicio": "2017-05-25",
+      "verificado_em": "2026-10-11",
+      "vuc": null,
+      "origem_destino_dentro": "avisa",
+      "fonte_geometria": "APROXIMAÇÃO conservadora do perímetro urbano (o decreto não o delimita): área urbana contínua da sede pelas ruas do OSM, contorno sobre as ruas mais externas, sem uma faixa de 40 m das rodovias BR-497/MG-497 e MG-255 (o decreto municipal não regula rodovia estadual/federal). OSM ODbL.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3134400_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Curadoria IMP02 (método em docs/layers/municipios/mun_sudeste/IMP02.md): ruas do OSM (PBF local) a até 6 km do centro com buffer 45 m, fechamento 90 m e recuo 45 m, menos 40 m das rodovias BR-497/MG-497 e MG-255.",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    }
+  ]
+}

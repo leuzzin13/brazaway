@@ -1,0 +1,91 @@
+{
+  "ibge": "3115102",
+  "nome": "Cássia",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.cassia.mg.gov.br/portal/leis_decretos/ (Instar)",
+      "resultado": "hit relevante: Decreto 43/2020 (restrição de circulação de veículos longos e/ou pesados no centro); demais ruído (Dia do Caminhoneiro, compra de caminhão, Caminho da Escola)"
+    },
+    {
+      "url": "https://www.cassia.mg.gov.br/portal/leis_decretos/3312/",
+      "resultado": "página do ato; PDF digitalizado baixado e lido visualmente (https://www.cassia.mg.gov.br/publicos/43-2020_10075350.pdf)"
+    },
+    {
+      "url": "diarios_consolidados.py (amm-mg)",
+      "resultado": "0 resultados"
+    }
+  ],
+  "data": "2026-10-11",
+  "observacoes": "Decreto 043, de 08/04/2020: art. 1º restringe circulação de veículos longos e/ou de grande porte (ônibus, caminhões e similares) com comprimento superior a 10 m no centro da cidade, sem horário (permanente); art. 2º exceções (urgência, utilidade pública, socorro mecânico/guinchos com destino na área, escolares em rotas sinalizadas). Perímetro 'centro' não definido no decreto: sem lista de vias. Vigência na assinatura; não achei revogação/alteração. Pendência: delimitar o centro (sinalização local). Verificado em 2026-10-11: PDF do Dec. 043/2020 baixado de novo (mesmo hash) e relido; arts. 1º a 5º conferem; Instar 'Em vigor', sem alteração ou revogação. Regra REBAIXADA para desativada porque o 'centro da cidade' não é delimitado em ato nenhum (fica para a sinalização) e o art. 1º diz só 'restrita'.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "cassia_centro_comprimento_10m",
+      "tipo": "zona",
+      "regime": "Veículos longos/pesados > 10 m no centro",
+      "nome": "Cássia: centro da cidade, ônibus, caminhões e similares com mais de 10 m de comprimento",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º, I: urgência/socorro de incêndio",
+        "Art. 2º, II: serviços de utilidade pública",
+        "Art. 2º, III: socorro mecânico e guinchos com destino na área restrita",
+        "Art. 2º, IV: veículos escolares em rotas indicadas por sinalização"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 043, de 08/04/2020 (Cássia)",
+          "artigo": "art. 1º (restrição, comprimento > 10 m), art. 2º (exceções)",
+          "url": "https://www.cassia.mg.gov.br/portal/leis_decretos/3312/",
+          "nota": "PDF: https://www.cassia.mg.gov.br/publicos/43-2020_10075350.pdf"
+        }
+      ],
+      "vigencia_inicio": "2020-04-08",
+      "nota": "Decreto não delimita o 'centro da cidade' nem traz horário: restrição integral. Perímetro depende de sinalização local.",
+      "trechos": [
+        {
+          "via": [],
+          "descricao": "Centro da cidade de Cássia (perímetro não definido no decreto)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3115102_cassia.geojson",
+          "construir": "manual",
+          "como_gerar": "Delimitar o centro (sinalização/Plano Diretor LC 042/2010) antes de ativar na camada"
+        }
+      ],
+      "status_motivo": "'Centro da cidade' não delimitado no ato nem em ato posterior; 'restrita' sem definir horário ou condição"
+    }
+  ]
+}

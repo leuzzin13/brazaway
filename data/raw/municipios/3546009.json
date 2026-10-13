@@ -1,0 +1,80 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3546009",
+  "municipio": "Santa Branca",
+  "uf": "SP",
+  "fonte_id": "santa-branca",
+  "fonte": {
+    "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/lei_documento_anexo.php?id=593&tipo=16&cliente=pmsantabranca (Lei 1.115/2005) ; https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/formata_lei.php?Fnumero=970&Fpromulgacao=20/12/2002&categoria=01&cliente=pmsantabranca (Lei 970/2002, só ementa)",
+    "licenca": "Atos oficiais de Santa Branca: domínio público (Lei 9.610/1998 art. 8º IV). Perímetro urbano: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com a SP-077 recortada sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.115/2005, art. 1º: veículos de carga e de obras proibidos no perímetro urbano das 22h às 6h, exceto perecíveis. A lei não delimita o perímetro: aproximado pelos setores censitários urbanos do distrito-sede (IBGE 2022), sem a travessia da SP-077 (Rod. Nilo Máximo, que no OSM corre pelas Ruas Cel. Barros Leite, Brigadeiro Aguiar, São Sebastião, Constâncio Santana, Independência, Praça Rui Barbosa e Av. Benedito Eugênio de Oliveira). A Lei 970/2002 (texto não disponível) fica desativada."
+  },
+  "verificado_em": "2026-10-11",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: vale para 'veículos de carga e de obras', sem limite de peso (lido como caminhão do CTB, PBT acima de 3,5 t).",
+  "regras": [
+    {
+      "id": "santabranca_noturno_carga_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Perímetro urbano (22h–6h)",
+      "nome": "Santa Branca: proibido trânsito de veículos de carga e de obras no perímetro urbano, 22h às 6h (exceto perecíveis)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-11",
+      "janelas": [
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "22:00", "to": "24:00"},
+        {"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "06:00"}
+      ],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização excepcional da Secretaria de Transportes (requerimento com 5 dias de antecedência, 48 h se urgente), só para veículos licenciados em Santa Branca, válida por até 90 dias, renovável (arts. 2º e 3º)",
+      "excecoes": [
+        "Veículos que transportem produtos perecíveis (art. 1º)",
+        "Casos excepcionais com autorização da Secretaria de Transportes, só para veículos licenciados em Santa Branca, até 90 dias renováveis (arts. 2º e 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 1.115, de 13/04/2005 (Santa Branca), publicada por afixação em 13/04/2005",
+          "artigo": "art. 1º (proibição das 22h às 6h no perímetro urbano, exceto perecíveis), arts. 2º e 3º (autorização excepcional), art. 5º (infração gravíssima), art. 6º (vigência)",
+          "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/lei_documento_anexo.php?id=593&tipo=16&cliente=pmsantabranca"
+        }
+      ],
+      "nota": "Texto lido (anexo .doc do portal Siap e-Gov; o verificador baixou de novo e conferiu em 11/10/2026). Sem limite de peso: 'veículos de carga e de obras' lido como caminhão do CTB. A lei não excetua feriados. Confiança média: vigência conferida só no portal, que busca por ementa. Geometria aproximada: perímetro urbano pelos setores censitários urbanos do distrito-sede (IBGE 2022), sem a travessia da SP-077 (40 m de folga), porque a lei municipal não alcança a rodovia estadual. Perecíveis e autorização não estão no perfil do veículo: só nos avisos.",
+      "fonte_geometria": "IBGE, setores censitários urbanos do distrito-sede (Censo 2022), menos a SP-077 do OSM (ODbL) — geo/3546009_perimetro_urbano_curadoria.py",
+      "vigencia_inicio": "2005-04-13",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3546009_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3546009_perimetro_urbano_curadoria.py <setores IBGE 2022 SP> <vias OSM do município (formato Overpass)>: setores censitários urbanos do distrito-sede, sem a SP-077 (40 m); a lei não delimita o perímetro urbano.",
+          "props": {"aproximado": true}
+        }
+      ]
+    },
+    {
+      "id": "santabranca_lei970_pesados_perimetro",
+      "tipo": "zona",
+      "regime": "Veículos pesados no perímetro urbano (Lei 970/2002)",
+      "nome": "Santa Branca: Lei 970/2002, trânsito de veículos pesados no perímetro urbano (texto não lido)",
+      "status": "desativada",
+      "status_motivo": "Texto da Lei 970/2002 (e do Anexo I, alterado pela Lei 1.008/2003) não está disponível no portal; só a ementa foi vista. Pode estar superada pela Lei 1.115/2005. Não dá para extrair artigo, horário ou alvo.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-11",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária 970, de 20/12/2002 (Santa Branca), ementa 'Dispõe sobre a regulamentação do trânsito de veículos pesados dentro do perímetro urbano'",
+          "artigo": "não lido (só a ementa)",
+          "url": "https://pmsantabranca.geosiap.net.br/pmsantabranca/websis/siapegov/legislativo/leis/formata_lei.php?Fnumero=970&Fpromulgacao=20/12/2002&categoria=01&cliente=pmsantabranca",
+          "nota": "Câmara sem acervo acessível; santabranca.sp.leg.br e SAPL com 502 no proxy (11/10/2026)."
+        }
+      ],
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}
