@@ -4,7 +4,7 @@
  "uf": "SP",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "data": "2026-10-11",
+ "data": "2026-10-14",
  "fontes_consultadas": [
   {
    "url": "https://www.dosp.com.br/exibe_do.php?i=MTEyMzU5",
@@ -17,10 +17,41 @@
   {
    "url": "toolkit legislacao.py buscar 3516101 (webline Câmara, leismunicipais, portal_proprio da Prefeitura, 1doc)",
    "resultado": "Webline não responde; leismunicipais 403 Cloudflare; portal_proprio retornou só a página de um ato de reajuste (heurístico, sem busca útil); 1doc sem cliente."
+  },
+  {
+   "url": "https://www.florinea.sp.gov.br/legislacao/index/categoria/page/1/busca?descricao=caminh (e florinea.sp.gov.br/legislacao)",
+   "resultado": "HTTP 403, desafio Cloudflare (\"Just a moment\") com User-Agent de Chrome, Accept-Language e Referer/Origin do próprio site; também nas páginas de detalhe. Não contornado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.florinea.sp.gov.br/diario-oficial",
+   "resultado": "Página responde, mas \"Nenhum diário cadastrado no momento!\"; remete a https://www.imprensaoficialmunicipal.com.br/florinea (já pesquisado na R1: só a ed. 385/2020, ruído).",
+   "rodada": "R2"
+  },
+  {
+   "url": "http://camaraflorinea.sp.gov.br/ (+ www., sp.leg.br, wls.com.br)",
+   "resultado": "Sem conexão em todas as variantes testadas.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://florinea.1doc.com.br",
+   "resultado": "Aplicação SPA (1Doc) sem acervo de leis acessível por curl.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3516101)",
+   "resultado": "0 ways com hgv, maxweight, maxlength ou condicionais.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://web.archive.org/web/2025/https://www.florinea.sp.gov.br/legislacao/...",
+   "resultado": "archive.org/wayback/available responde (snapshot de 26/09/2024 da lista), mas o acesso ao snapshot é reiniciado pelo proxy (connection reset); sem conteúdo.",
+   "rodada": "R2"
   }
  ],
- "observacoes": "Indício do lote era ruído (plano de saneamento). Nenhuma restrição encontrada; fontes de legislação sem busca utilizável, ausência não conclusiva.",
+ "observacoes": "Indício do lote era ruído (plano de saneamento). Nenhuma restrição encontrada; fontes de legislação sem busca utilizável, ausência não conclusiva. R2: as fontes de legislação continuam inacessíveis (Prefeitura atrás de Cloudflare 403; Câmara sem conexão; 1Doc sem busca; Wayback reiniciado pelo proxy). O nao_achou NÃO é conclusivo; manter para pesquisa manual (navegador) do acervo da Prefeitura.",
  "falha_de_fonte": true,
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

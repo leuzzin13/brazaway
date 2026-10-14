@@ -2,7 +2,7 @@
  "ibge": "3532405",
  "nome": "Nazaré Paulista",
  "uf": "SP",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "fontes_consultadas": [
   {
@@ -20,13 +20,224 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3532405)",
    "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+  },
+  {
+   "url": "https://www.nazarepaulista.sp.gov.br/legislacao/index/categoria/page/1/busca?descricao=<caminh|carga|tráfego|trânsito|veículos|1611|407|744|João de Passos|Águas Claras|regulamenta>",
+   "resultado": "Portal Fácil v2 da Prefeitura (leis, decretos e portarias) respondeu. Achados relevantes: Lei 1.611/2021 (id 4256, \"Disciplina o tráfego de caminhões e demais veículos de transporte de cargas\"), Lei 407/97 (id 1994, \"Proíbe circulação de veículos de carga\") e Lei 744/08 (id 2343, \"Tráfego de veículos\"). Os três constam \"Ativa (Não consta revogação expressa)\", sem registro de alteração/revogação. Lei 707/07 (id 2299) só denomina a via \"Túnel das Águas Claras\". Nenhum decreto regulamentando a Lei 1.611 (art. 6º, 90 dias) apareceu nas buscas \"regulamenta\", \"caminh\", \"carga\", \"João de Passos\"; Lei 491/99 (id 2078) é convênio com o DER da rodovia Juvenal Ponciano de Camargo.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/4256/ ; https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/4256/",
+   "resultado": "Lei 1.611, de 26/05/2021 (PDF escaneado de 3 páginas, lido como imagem; atos baixados em atos/3532405/). Art. 2º: proibido o trânsito de caminhões na Rua João de Passos, no sentido Rotatória Principal (entrada) - Centro; parágrafo único I a IV define os veículos (acima de 7,99 t, 7,20 m e 2 eixos; VCP; VCPB; VCPT). Art. 3º: os veículos dos incisos I a IV só entram na cidade pela Rodovia Juvenal Ponciano de Camargo, na rotatória da Rodoviária (em frente ao destacamento da PM). Art. 4º: exceções (utilidade pública, urgência, obras e serviços de infraestrutura e de urgência, socorro mecânico). Art. 5º: sanções do CTB. Art. 6º: regulamentação em 90 dias. Art. 9º vigor na publicação (a numeração salta do 7º para o 9º).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/1994/",
+   "resultado": "Lei 407, de 07/05/1997 (texto digital): art. 1º proíbe a circulação de veículos com PBT acima de 9 t nas vias públicas pavimentadas municipais (exclui transporte de passageiros); art. 2º: o Executivo regulamentará por ato próprio (nenhum decreto achado); art. 3º vigor na publicação.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/2343/",
+   "resultado": "Lei 744, de 11/07/2008: art. 1º proíbe o tráfego de veículos de carga com mais de três eixos na Estrada Vicinal Túnel das Águas Claras, bairro Mascate Grande; art. 2º: regulamentação por decreto em 60 dias (nenhum achado); penalidades do CTB (parágrafo único).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.camaranazarepaulista.sp.gov.br/ (Busca Avançada Webline, texto; ids 5189, 3903, 4252)",
+   "resultado": "Câmara confirma as três leis: Lei 1.611 (ementa \"Disciplinamento do tráfego de caminhões e demais veículos de transporte de carga\", Projeto de Lei 0030-2021, situação \"Em vigor\"), Lei 407/97 e Lei 744/08 (\"Em vigor\"), todas sem alterações, regulamentações ou revogações registradas.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3532405)",
+   "resultado": "Rua João de Passos: ways 212059156 (tertiary) e 1008869145 (residential), sem etiqueta de caminhão. Estrada Túnel das Águas Claras não localizada por nome. Rodovia Juvenal Ponciano de Camargo (SP-036): 4 ways com hgv=no (31589546, 78182526, 185299329, 212059150), o que contradiz o art. 3º da Lei 1.611 (que manda os caminhões entrarem por ela): pendência.",
+   "rodada": "R2"
   }
  ],
- "data": "2026-10-11",
- "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=3.",
- "falha_de_fonte": true,
+ "data": "2026-10-14",
+ "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=3. R2: o portal da Prefeitura (Portal Fácil v2) e a Câmara (Webline) responderam e acharam três leis de circulação de carga. (1) Lei 1.611, de 26/05/2021 (regra ativa): art. 2º proíbe caminhões na Rua João de Passos, no sentido Rotatória Principal (entrada) para o Centro; exceções do art. 4º; art. 3º manda os veículos pesados entrarem pela Rodovia Juvenal Ponciano de Camargo (SP-036). Limitação: a proibição é só em um sentido, e a camada de vias não modela sentido (a regra vale nos dois sentidos da rua, trecho aproximado). Art. 6º previa regulamentação em 90 dias: nenhum decreto achado. (2) Lei 407/97 (PBT acima de 9 t em todas as vias pavimentadas municipais, sem horário): constou Em vigor, mas DESATIVADA: não é uma via/zona, nunca foi regulamentada e está em tensão com o art. 3º da Lei 1.611/2021 (que admite caminhões pesados na cidade); decisão do Arthur. (3) Lei 744/08 (veículos de carga com mais de 3 eixos na Estrada Vicinal Túnel das Águas Claras, Mascate Grande): ato vigente, mas DESATIVADA porque a via não foi localizada no OSM (pendência de geometria). Pendência OSM: SP-036 tem hgv=no em 4 ways, contra o art. 3º da Lei 1.611 (rodovia estadual, fora da competência municipal).",
+ "falha_de_fonte": false,
  "osm_divergencias": [
-  "OSM (contagem da preparação): hgv_no=3. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa."
+  "OSM (contagem da preparação): hgv_no=3. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa.",
+  "OSM: Rodovia Juvenal Ponciano de Camargo (SP-036) com hgv=no em 4 ways (31589546, 78182526, 185299329, 212059150); a Lei municipal 1.611/2021, art. 3º, manda os caminhões pesados entrarem por ela. Rodovia estadual: tag provavelmente desatualizada/inadequada; pendência para data/osm-overrides (sem ativação sem prova e decisão do Arthur).",
+  "OSM: Rua João de Passos (ways 212059156 tertiary e 1008869145 residential) sem restrição a caminhões, ao contrário da Lei 1.611/2021, art. 2º (ausência, não contradição)."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "nazare_paulista_rua_joao_de_passos_caminhoes",
+   "tipo": "via",
+   "regime": "Proibição de caminhões na Rua João de Passos (sentido Rotatória Principal - Centro)",
+   "nome": "Nazaré Paulista: Rua João de Passos, proibido o trânsito de caminhões (Lei 1.611/2021, art. 2º)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 7.99
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.2
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 4º, a: caminhão de utilidade pública",
+    "Art. 4º, b: veículo em serviço de urgência (art. 29, VII, CTB: socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito, com alarme sonoro e luz vermelha intermitente)",
+    "Art. 4º, c: obras e serviços de infraestrutura urbana",
+    "Art. 4º, d: obras e serviços de urgência",
+    "Art. 4º, e: socorro mecânico de emergência (caminhão que remove veículos sinistrados ou danificados, art. 4º, §2º)"
+   ],
+   "autorizacao": null,
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.611, de 26/05/2021 (Nazaré Paulista), \"Disciplina o tráfego de caminhões e demais veículos de transporte de cargas\"",
+     "artigo": "art. 2º e parágrafo único, I a IV (veículos); art. 4º (exceções); art. 5º (sanção CTB); art. 9º (vigor na publicação)",
+     "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/4256/",
+     "nota": "Página do ato: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/4256/ (Ativa, não consta revogação expressa); Câmara: https://www.camaranazarepaulista.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5189 (Em vigor). PDF em atos/3532405/lei_1611_2021_trafego_caminhoes.pdf."
+    }
+   ],
+   "nota": "Proibição só no sentido Rotatória Principal (entrada) para o Centro; a camada de vias não modela sentido, então a regra é aplicada à rua inteira (aproximação conservadora). Condição do parágrafo único: I) acima de 7,99 t, acima de 7,20 m e acima de 2 eixos (redação conjuntiva); II a IV) VCP (caminhão e caminhão trator com semirreboque), VCPB (bitrem, caminhão + reboque) e VCPT (treminhão). Adotado como OU entre PBT, comprimento e tipo (lado seguro). Regulamentação (art. 6º) não encontrada. VUC: o município não define.",
+   "fonte_geometria": "OSM por nome: ways 212059156 (tertiary) e 1008869145 (residential) \"Rua João de Passos\"; extensão do trecho no sentido entrada-Centro a conferir no mapa.",
+   "vigencia_inicio": "2021-05-26",
+   "trechos": [
+    {
+     "via": [
+      "Rua João de Passos"
+     ],
+     "descricao": "Rua João de Passos (ways 212059156 e 1008869145); proibição no sentido Rotatória Principal -> Centro",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "nazare_paulista_lei_407_97_pbt_9t",
+   "tipo": "via",
+   "regime": "PBT acima de 9 t nas vias pavimentadas municipais (Lei 407/97)",
+   "nome": "Nazaré Paulista: PBT acima de 9 t proibido nas vias pavimentadas municipais (Lei 407/1997)",
+   "status": "desativada",
+   "status_motivo": "Ato vigente no portal (sem revogação registrada), mas: (a) abrange todas as vias pavimentadas municipais, sem lista de vias nem horário, e a camada só modela via/zona/ponte nomeadas; (b) o art. 2º exige regulamentação por ato próprio e nenhum decreto foi achado; (c) a Lei 1.611/2021, art. 3º, admite a entrada de caminhões pesados pela SP-036 e só proíbe a Rua João de Passos, em tensão com a Lei 407/97 (sem revogação expressa). Decisão do Arthur.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 9
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 1º, parágrafo único: veículos de transporte de passageiros"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 407, de 07/05/1997 (Nazaré Paulista)",
+     "artigo": "art. 1º e parágrafo único; art. 2º (regulamentação); art. 3º (vigor)",
+     "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/1994/",
+     "nota": "Página: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/1994/ ; Câmara id 3903. PDF em atos/3532405/lei_407_1997_veiculos_carga_9t.pdf."
+    }
+   ],
+   "trechos": [
+    {
+     "via": [],
+     "descricao": "Todas as vias públicas pavimentadas municipais (sem lista)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "nazare_paulista_lei_744_08_estrada_tunel_aguas_claras",
+   "tipo": "via",
+   "regime": "Veículos de carga com mais de 3 eixos na Estrada Vicinal Túnel das Águas Claras (Lei 744/08)",
+   "nome": "Nazaré Paulista: Estrada Vicinal Túnel das Águas Claras (Mascate Grande), veículos de carga com mais de 3 eixos proibidos (Lei 744/2008)",
+   "status": "desativada",
+   "status_motivo": "Ato vigente no portal e na Câmara (sem revogação), mas a via \"Estrada Vicinal Túnel das Águas Claras\" (bairro Mascate Grande) não foi localizada no OSM por nome; sem geometria não dá para aplicar. O art. 2º previa regulamentação por decreto (nenhum achado). Reativar quando a via for identificada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 744, de 11/07/2008 (Nazaré Paulista)",
+     "artigo": "art. 1º e parágrafo único (penalidades do CTB); art. 2º (regulamentação); art. 3º (vigor)",
+     "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/2343/",
+     "nota": "Página: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/2343/ ; Câmara id 4252. PDF em atos/3532405/lei_744_2008_estrada_tunel_aguas_claras.pdf."
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Estrada Vicinal Túnel das Águas Claras"
+     ],
+     "descricao": "Via não localizada no OSM (bairro Mascate Grande)",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "rodada": "R2"
 }
