@@ -1,26 +1,54 @@
 {
- "ibge": "3301850",
- "nome": "Guapimirim",
- "uf": "RJ",
- "status": "nao_achou",
- "nivel_busca": "media",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://camaradeguapimirim.rj.gov.br/",
-   "resultado": "legislacao.py (heurístico, sem teste): 0 atos."
-  },
-  {
-   "url": "https://portalguapimirim.com.br (wordpress)",
-   "resultado": "76 resultados gerais, nenhum ato de restrição."
-  },
-  {
-   "url": "diarios_consolidados.py (aemerj, qd, dosp)",
-   "resultado": "Município sem cobertura em diário consolidado (preparação) ou buscas sem resultado."
-  }
- ],
- "observacoes": "Sem achado; fontes fracas (a legislação municipal não foi alcançada por automação). OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3301850",
+  "nome": "Guapimirim",
+  "uf": "RJ",
+  "status": "nao_achou",
+  "nivel_busca": "media",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://camaradeguapimirim.rj.gov.br/",
+      "resultado": "legislacao.py (heurístico, sem teste): 0 atos."
+    },
+    {
+      "url": "https://portalguapimirim.com.br (wordpress)",
+      "resultado": "76 resultados gerais, nenhum ato de restrição."
+    },
+    {
+      "url": "diarios_consolidados.py (aemerj, qd, dosp)",
+      "resultado": "Município sem cobertura em diário consolidado (preparação) ou buscas sem resultado."
+    },
+    {
+      "url": "https://camaradeguapimirim.rj.gov.br/legislação",
+      "resultado": "200 (Drupal), mas a página de legislação não lista atos (só menu e formulário de busca do site).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://guapimirim.rj.gov.br/transparencia/",
+      "resultado": "200: decretos e leis estão em pastas do Google Drive (Decretos 2020-2023; 'Decretos Municipais' com 4 PDFs; Leis Ordinárias; Legislação Específica). embeddedfolderview lista só nomes: Decretos Municipais = DECRETO 1041/2014, 1060, 1792/2021, 1828/2021 (nada de trânsito).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://guapimirim.rj.gov.br/?s=caminhões",
+      "resultado": "1 resultado: notícia sobre captação de água; nenhum ato. wp-json exige login (401).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://guapi.processolegislativo.com.br/areapublica/",
+      "resultado": "502 pelo proxy.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3301850)",
+      "resultado": "R2: respostas de erro/timeout; OSM não conferido.",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "Sem achado; fontes fracas (a legislação municipal não foi alcançada por automação). OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar. | R2: Câmara (Drupal) sem lista de legislação e prefeitura publica decretos em pastas do Google Drive sem busca textual (listadas só as 4 PDFs de 'Decretos Municipais'); diário em páginas 'novo-diario-2025/2026' sem busca. Sem acesso a texto: ausência fraca, falha_de_fonte permanece true.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "OSM não conferido (Overpass sem resposta na R2): pendência."
+  ],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

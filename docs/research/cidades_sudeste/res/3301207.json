@@ -1,28 +1,44 @@
 {
- "ibge": "3301207",
- "nome": "Carmo",
- "uf": "RJ",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://www.carmo.rj.leg.br/leis",
-   "resultado": "Busca heurística: 0 atos (página de 10 KB, sem busca por texto)"
-  },
-  {
-   "url": "https://api.carmo.rj.gov.br/arquivos.php?tipo=Legisla%C3%A7%C3%A3o+Municipal",
-   "resultado": "0 atos"
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301207)",
-   "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Portal da Câmara (/leis) e API de arquivos da prefeitura sem resultados na busca heurística (portal sem busca por texto). OSM hgv_no=3 não conferido (Overpass fora do ar).",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM hgv_no=3 não conferido: pendência."
- ],
- "regras_rascunho": []
+  "ibge": "3301207",
+  "nome": "Carmo",
+  "uf": "RJ",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.carmo.rj.leg.br/leis",
+      "resultado": "Busca heurística: 0 atos (página de 10 KB, sem busca por texto)"
+    },
+    {
+      "url": "https://api.carmo.rj.gov.br/arquivos.php?tipo=Legisla%C3%A7%C3%A3o+Municipal",
+      "resultado": "0 atos"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301207)",
+      "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+    },
+    {
+      "url": "https://api.carmo.rj.gov.br/get_api.php?tipo=Legislação Municipal&includeIndex=1 (JSON do explorador de arquivos da prefeitura)",
+      "resultado": "Respondeu: catálogo de 8.658 arquivos (2.557 leis, 2.016 decretos, 4.037 portarias, MP, IN). Busca por nome de arquivo (caminh, pesad, carga, trânsito, tráfego, circula, restri, frete, carga e descarga, sentido, interdi, tonelad, veículo, estacionamento): nenhum ato de restrição a caminhões. Únicos relacionados: Decs. 6163/2023, 5901/2022 e 5870/2021 (mão única), Lei 2524/2024 (espaço público para veículos de frete/caminhonetes na Praça Presidente Getúlio Vargas - estacionamento, pontual), Lei 2556/2025 (estacionamento rotativo), Lei 2173/2021 (remoção de veículos abandonados).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.carmo.rj.leg.br/leis",
+      "resultado": "200 (R1); sem busca textual.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3301207)",
+      "resultado": "Respondeu: 3 ways com hgv=no: RJ-144 (primary, ref RJ-144), 'Estrada Carmo - Duas Barras' (tertiary) e uma unclassified sem nome. Sem ato municipal que as respalde.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Portal da Câmara (/leis) e API de arquivos da prefeitura sem resultados na busca heurística (portal sem busca por texto). OSM hgv_no=3 não conferido (Overpass fora do ar). | R2: a prefeitura publica todo o acervo normativo em um explorador de arquivos com API JSON (api.carmo.rj.gov.br/get_api.php), 8.658 arquivos; busca pelos nomes dos arquivos (ementa) não achou restrição a caminhões. Limite: só o nome do arquivo foi pesquisado, não o texto dos PDFs (OCR não disponível). OSM hgv=no (3 ways) sem ato: pendência.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM hgv=no em 3 ways sem ato municipal: RJ-144 (primary; rodovia estadual, competência do DER-RJ), 'Estrada Carmo - Duas Barras' (tertiary) e uma via unclassified sem nome (way 828816586). Pendência: confirmar em campo/placa; sem ato, não vira regra."
+  ],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }
