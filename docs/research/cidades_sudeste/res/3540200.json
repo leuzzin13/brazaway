@@ -2,7 +2,7 @@
   "ibge": "3540200",
   "nome": "Pontal",
   "uf": "SP",
-  "status": "nao_achou",
+  "status": "regra_com_ato",
   "nivel_busca": "media",
   "fontes_consultadas": [
     {
@@ -20,11 +20,92 @@
     {
       "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
       "resultado": "sem resultado"
+    },
+    {
+      "url": "https://camarapontal.wls.com.br/?pag=T0RNPU9UZz1PVFk9... (Busca Avançada Webline da Câmara, palavraChave)",
+      "resultado": "Respondeu. caminh (10), tráfego (1), trânsito (14), veículos (11), carreta (2), anel (2), estacionamento (1), 2031: achou a Lei 2.031/1999 (\"Proibição do tráfego de caminhões transportando cargas, ou ligados à carretas pelas ruas e logradouros da cidade\"), Em vigor; sem lei posterior que a altere. Lei 1.800/1994 só dá nome ao Anel Viário.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarapontal.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5148&tipo= (+ POST indexAjax.php, GET /temp/...pdf)",
+      "resultado": "Lei 2.031, de 25/05/1999, lida (PDF imagem de 1 página): art. 1º, parágrafo único, arts. 2º e 3º como na regra.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://pontal.sp.gov.br/legislacoes/leis-e-decretos/{leis,decretos}-{2022..2026}",
+      "resultado": "Listas anuais de leis e decretos da prefeitura (2022–2026) lidas por ementa: nenhuma restrição a caminhões (só frota, transporte escolar, Covid, incêndios).",
+      "rodada": "R2"
+    },
+    {
+      "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=pontal (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
+      "resultado": "DiOE/DOSP pontal: termos caminhões, pesados, tráfego, carga e descarga, proibido; 17 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.private.coffee/api/interpreter (name~Liliana|Anel em IBGE:GEOCODIGO=3540200)",
+      "resultado": "Anel Viário Liliana Tenuto Rossi existe no OSM (primary, vários ways). A consulta de hgv/maxweight do município não respondeu hoje.",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Verificação rápida: busca no portal de legislação (termos caminh|carga e descarga|veículos pesados|tráfego|trânsito|VUC) e no lead/diários consolidados (sem acerto). Fontes principais fora do ar, bloqueadas (Cloudflare) ou só heurísticas: o nao_achou NÃO é conclusivo. Overpass fora do ar (HTTP 500/reset) em 11/10/2026: OSM não consultado.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": []
+  "data": "2026-10-14",
+  "observacoes": "Verificação rápida: busca no portal de legislação (termos caminh|carga e descarga|veículos pesados|tráfego|trânsito|VUC) e no lead/diários consolidados (sem acerto). Fontes principais fora do ar, bloqueadas (Cloudflare) ou só heurísticas: o nao_achou NÃO é conclusivo. Overpass fora do ar (HTTP 500/reset) em 11/10/2026: OSM não consultado. || R2: Câmara (Webline) respondeu e a Busca Avançada achou a Lei 2.031/1999, lida e confirmada: regra ATIVA (zona), 24 h, exceto o Anel Viário; exceção de carga/descarga/conserto/abastecimento e residentes. Lei de 1999 sem alteração achada; confiança média (aplicação/sinalização atual não verificada). Falta construir a geometria (perímetro urbano menos o Anel). || verificado na R2 (reabertura do PDF oficial): Lei 2.031/1999 confirmada, regra ativa, confiança média.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "Anel Viário Liliana Tenuto Rossi existe no OSM (primary); etiquetas hgv/maxweight do município não conferidas (Overpass sem resposta)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "pontal_lei2031_1999_caminhoes_ruas_anel_viario",
+      "tipo": "zona",
+      "regime": "Caminhões com carga ou ligados a carretas (24 h)",
+      "nome": "Pontal: Lei 2.031/1999, proibido o tráfego de caminhões transportando cargas ou ligados a carretas pelas ruas e logradouros da cidade (obrigatório o Anel Viário Liliana Tenuto Rossi)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, parágrafo único (carga, descarga, conserto ou abastecimento no perímetro urbano)",
+      "excecoes": [
+        "art. 1º, parágrafo único: veículos automotores para carga, descarga, conserto ou abastecimento no perímetro urbano",
+        "art. 1º, parágrafo único: proprietários de caminhões residentes na cidade, somente para pernoitar defronte às suas residências"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.031, de 25/05/1999 (Pontal/SP)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões transportando cargas, ou ligados a carretas, mesmo que vazios, pelas ruas e logradouros da cidade, que devem trafegar pelo Anel Viário \"Liliana Tenuto Rossi\") e parágrafo único (exceções); art. 2º (penalidade do CTB, art. 187, II); art. 3º (vigência na publicação)",
+          "url": "https://camarapontal.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5148&tipo=",
+          "nota": "Texto lido em PDF (imagem) baixado da Câmara: atos/3540200/lei_2031_1999_pontal.pdf. Webline: Em vigor."
+        }
+      ],
+      "trechos": [
+        {
+          "via": [
+            "Anel Viário Liliana Tenuto Rossi"
+          ],
+          "descricao": "Rota obrigatória (fica FORA da proibição): ways do OSM name=\"Anel Viário Liliana Tenuto Rossi\" (primary), p.ex. 191508494, 191508504, 669748514",
+          "aproximado": true
+        }
+      ],
+      "nota": "Zona = ruas e logradouros da cidade, exceto o Anel Viário; perímetro urbano a definir (geometria não construída). O texto cobre \"caminhões transportando cargas OU ligados a carretas, mesmo vazios\": um caminhão rígido vazio, a rigor, não é alcançado; o perfil do veículo não distingue carga, então o alvo é caminhão em geral (lado conservador). Sem revogação ou alteração achada: Câmara (leis), prefeitura (decretos 2022–2026) e DOSP (2022+). A Lei 1.800/1994 só denomina o Anel Viário.",
+      "vigencia_inicio": "1999-05-25"
+    }
+  ],
+  "rodada": "R2"
 }

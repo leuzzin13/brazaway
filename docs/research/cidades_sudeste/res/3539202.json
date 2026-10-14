@@ -2,7 +2,7 @@
   "ibge": "3539202",
   "nome": "Pirapozinho",
   "uf": "SP",
-  "status": "pista",
+  "status": "pontual",
   "fontes_consultadas": [
     {
       "url": "https://www.dosp.com.br/exibe_do.php?i=MzA3NDEx",
@@ -23,14 +23,103 @@
     {
       "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (área IBGE:GEOCODIGO=3539202)",
       "resultado": "HTTP 500 / conexão reiniciada"
+    },
+    {
+      "url": "https://www.pirapozinho.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=N&ano=AAAA (Webline da PREFEITURA: Leis, LC e Decretos, ementas lidas localmente)",
+      "resultado": "Respondeu, mas só indexa parte dos anos (leis: 1995, 2001–02 e 2014–2026; decretos: 14 anos; LC: 22 anos). Achados: Lei 4.392/2019 (carga e descarga, quadrilátero central), Lei 4.386/2019 (altera a 3.559/2009, já revogada), exonerações/nomeações de \"motorista de veículo pesado\" (ruído). Nenhuma proibição de circulação de caminhões.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.pirapozinho.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2882&idtipolei=1 (+ POST indexAjax.php, PDF)",
+      "resultado": "Lei 4.392/2019 lida (3 páginas): carga e descarga em estacionamento no quadrilátero central só 18h–10h (seg–sex) e 6h–9h (sáb), salvo utilitários até 3,4 t; pontual.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarapirapozinho.sp.gov.br/",
+      "resultado": "Webline da Câmara responde, mas sem leis na base (0).",
+      "rodada": "R2"
+    },
+    {
+      "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=pirapozinho (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
+      "resultado": "DiOE/DOSP pirapozinho: termos caminhões, pesados, tráfego, carga e descarga, circulação de veículos, proibido; 86 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (IBGE:GEOCODIGO=3539202)",
+      "resultado": "Sem resposta hoje.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Sem ato de restrição. Plano Diretor 2022 só traz diretrizes (art. 131). Indício OSM hgv=no (2 ways) sem ato. Portal de legislação fora do ar: não conclusivo.",
-  "falha_de_fonte": true,
+  "observacoes": "Sem ato de restrição. Plano Diretor 2022 só traz diretrizes (art. 131). Indício OSM hgv=no (2 ways) sem ato. Portal de legislação fora do ar: não conclusivo. || R2: Webline da prefeitura (principal) respondeu, embora só indexe parte dos anos (vazio não prova ausência). Único ato achado é pontual: Lei 4.392/2019 (horário de carga/descarga no quadrilátero central; desativada, não roteável). Plano Diretor 2022 (LC 07/2022) e plano de mobilidade só trazem diretrizes (arts. 50 e 131: \"estabelecer horários e restrições de tonelagem\" — ainda a fazer). hgv=no (2 ways) continua sem identificação nem ato: pendência.",
+  "falha_de_fonte": false,
   "osm_divergencias": [
     "2 ways com hgv=no (contagem da preparação), não identificados (Overpass fora do ar); sem ato localizado: pendência."
   ],
-  "data": "2026-10-11",
+  "data": "2026-10-14",
   "nivel_busca": "dirigida",
-  "regras_rascunho": []
+  "regras_rascunho": [
+    {
+      "id": "pirapozinho_lei4392_2019_carga_descarga_quadrilatero",
+      "tipo": "zona",
+      "regime": "Carga e descarga no quadrilátero central (horários)",
+      "nome": "Pirapozinho: Lei 4.392/2019, operações de carga e descarga no quadrilátero das ruas Tiradentes, Oscar Toledo Cezar, Rui Barbosa e Ailton Orlando",
+      "status": "desativada",
+      "status_motivo": "Regra de operação de carga e descarga em estacionamento (pontual), não de circulação: o veículo pode trafegar; a lei limita as operações a 18h–10h (seg–sex) e 6h–9h (sáb). Não roteável.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "10:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "00:00",
+          "to": "06:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "art. 5º, I: automóveis, motocicletas e utilitários com capacidade de carga até 3.400 kg de proprietários de estabelecimentos comerciais",
+        "art. 5º, II: concretagem de obras previamente autorizada",
+        "art. 5º, III: serviços de saúde e pronto-socorro em emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 4.392, de 27/06/2019 (Pirapozinho; consolida a carga e descarga; revoga as Leis 3.559/2009, 3.651/2010, 3.657/2010 e 4.387/2019)",
+          "artigo": "arts. 1º e 2º (horários e quadrilátero), art. 5º (exceções)",
+          "url": "https://www.pirapozinho.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2882&idtipolei=1",
+          "nota": "No portal a mesma lei aparece como \"4.391/2019\" na listagem e \"4.392/19\" no PDF; vale o PDF (atos/3539202/lei_4392_2019_carga_descarga.pdf)."
+        }
+      ],
+      "nota": "Janelas = período em que a carga/descarga é PROIBIDA (complemento das permitidas). Só informativa: não vira restrição de rota.",
+      "vigencia_inicio": "2019-06-27"
+    }
+  ],
+  "rodada": "R2"
 }
