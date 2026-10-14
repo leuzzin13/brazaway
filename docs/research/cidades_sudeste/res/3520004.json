@@ -1,26 +1,47 @@
 {
- "ibge": "3520004",
- "nome": "Igaraçu do Tietê",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "media",
- "fontes_consultadas": [
-  {
-   "url": "https://www.igaracudotiete.sp.gov.br",
-   "resultado": "instar (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Instar: módulo leis_decretos não respondeu em https://www.igaracudotiete.sp.gov.br (status 0)"
-  },
-  {
-   "url": "http://camaraigaracudotiete.sp.gov.br",
-   "resultado": "webline (camara) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==) não respondeu em http://camaraigaracudotiete.sp.gov.br"
-  },
-  {
-   "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
-   "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Busca rápida (nível médio) por ementa nos portais de legislação e nos diários consolidados: nenhum ato de circulação de caminhões. 'Não achou' não prova ausência. Fontes principais bloqueadas (Cloudflare/reCAPTCHA) ou inoperantes (heurístico/sem resposta): busca não conclusiva.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3520004",
+  "nome": "Igaraçu do Tietê",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.igaracudotiete.sp.gov.br",
+      "resultado": "instar (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Instar: módulo leis_decretos não respondeu em https://www.igaracudotiete.sp.gov.br (status 0)"
+    },
+    {
+      "url": "http://camaraigaracudotiete.sp.gov.br",
+      "resultado": "webline (camara) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==) não respondeu em http://camaraigaracudotiete.sp.gov.br"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
+      "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
+    },
+    {
+      "url": "https://www.igaracudotiete.sp.gov.br/portal/leis_decretos/ (toolkit legislacao.py buscar 3520004, termos caminh|carga|pesad|tonelad|restri|circula|trânsito, com --texto)",
+      "resultado": "Respondeu (2.877 normas). Sem ato de caminhões; 'trânsito' = 8 (autoridade/Comutran/multas).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.igaracudotiete.sp.gov.br/portal/diario-oficial/1/0/0/caminhões/0/ (21 edições baixadas e lidas por texto)",
+      "resultado": "Nenhum ato de restrição a caminhões nas 21 edições (ed. 68 a 595).",
+      "rodada": "R2"
+    },
+    {
+      "url": "http://camaraigaracudotiete.sp.gov.br/ (Webline)",
+      "resultado": "Home 200, módulo de legislação não respondeu.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://web.archive.org/web/2025/https://www.igaracudotiete.sp.gov.br/portal/leis_decretos/",
+      "resultado": "302 sem conteúdo útil (não necessário).",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "R2: o portal Instar da Prefeitura (www.igaracudotiete.sp.gov.br), que a R1 não conseguiu abrir, respondeu desta vez (2.877 normas). Busca por ementa e texto: 'trânsito' = 8 atos (autoridade de trânsito, Comutran, multas de trânsito, Lei 3.171/2019 sobre multas), 'caminh' = 0, 'carga' = 10 (só carga horária/benefício de gás), 'restri' = 1 (Covid). Diário Oficial (Instar): 'caminhões' = 21 edições, baixei e li em texto todas (2020-2026): nenhuma tem ato de circulação de caminhões (só propaganda eleitoral, compras, coleta); 'veículos pesados' = 9 e 'carga e descarga' = 10 edições não abertas (índice do diário parece incluir texto genérico). Câmara (Webline) não respondeu. Conclusão: sem ato de restrição na Prefeitura; Câmara e leis anteriores a 2017 não verificadas.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }
