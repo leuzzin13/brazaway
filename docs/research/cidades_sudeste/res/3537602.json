@@ -1,26 +1,70 @@
 {
- "ibge": "3537602",
- "nome": "Peruíbe",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "media",
- "fontes_consultadas": [
-  {
-   "url": "https://leismunicipais.com.br/prefeitura/sp/peruibe",
-   "resultado": "leismunicipais (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/sp/peruibe. Não contornar; usar a outra fonte do município (Câmara/SAPL, d"
-  },
-  {
-   "url": "https://www.peruibe.sp.gov.br",
-   "resultado": "wordpress (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 51 atos listados; contagens {'caminh': 10, 'veículos pesados': 0, 'veiculos pesados': 0, 'veículo de carga': 4, 'carga e descarga': 3, 'tráfego': 10, 'trafego': 10, 'trânsito': 10, 'transi"
-  },
-  {
-   "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
-   "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Busca rápida (nível médio) por ementa nos portais de legislação e nos diários consolidados: nenhum ato de circulação de caminhões. 'Não achou' não prova ausência. Fontes principais bloqueadas (Cloudflare/reCAPTCHA) ou inoperantes (heurístico/sem resposta): busca não conclusiva.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3537602",
+  "nome": "Peruíbe",
+  "uf": "SP",
+  "status": "pista",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sp/peruibe",
+      "resultado": "leismunicipais (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {} | ERRO: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/sp/peruibe. Não contornar; usar a outra fonte do município (Câmara/SAPL, d"
+    },
+    {
+      "url": "https://www.peruibe.sp.gov.br",
+      "resultado": "wordpress (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 51 atos listados; contagens {'caminh': 10, 'veículos pesados': 0, 'veiculos pesados': 0, 'veículo de carga': 4, 'carga e descarga': 3, 'tráfego': 10, 'trafego': 10, 'trânsito': 10, 'transi"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
+      "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
+    },
+    {
+      "url": "https://www.peruibe.sp.gov.br/wp-json/wp/v2/search?search=caminhões|carga e descarga|Estrada do Guaraú|decreto restrição circulação",
+      "resultado": "WordPress da Prefeitura respondeu. Achado: notícias de 12/2018 e 02/2019 sobre a Estrada do Guaraú (serra, km 6, risco de desmoronamento): 'Veículos proibidos: caminhões e ônibus; permitidos carros de passeio e pick-ups; coleta de lixo com caminhão pequeno' por 'motivos de força maior', sem número de decreto; obras de contenção seguem em 2021/2022. Medida de emergência de 2019 sem ato nem confirmação de vigência.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaraperuibe.sp.gov.br/ ; https://portallegislativoonline.gcaspp.com/wpHome.aspx?Legislacao,26",
+      "resultado": "Câmara usa portal GeneXus (Legislação filtrada por tipo/número/ano, sem busca por texto): não automatizado.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Busca rápida (nível médio) por ementa nos portais de legislação e nos diários consolidados: nenhum ato de circulação de caminhões. 'Não achou' não prova ausência. Fontes principais bloqueadas (Cloudflare/reCAPTCHA) ou inoperantes (heurístico/sem resposta): busca não conclusiva. R2: pista: restrição temporária de caminhões e ônibus na Estrada do Guaraú (serra) em 2019, sem ato localizado e provavelmente superada pelas obras; registrada como regra desativada. Não conclusivo.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "peruibe_estrada_guarau_serra_2019",
+      "tipo": "via",
+      "regime": "Interdição emergencial de caminhões e ônibus (notícia, sem ato)",
+      "nome": "Peruíbe: Estrada do Guaraú (serra, km 6), caminhões e ônibus proibidos em 2019",
+      "status": "desativada",
+      "status_motivo": "Só notícia oficial da Prefeitura de 2019 (medida de emergência geológica); sem decreto localizado, sem data de fim e obras concluídas depois; sem ato primário não pode ser ativa.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Coleta de lixo com caminhão de pequeno porte",
+        "Veículos públicos em serviço e emergenciais"
+      ],
+      "base_legal": [
+        {
+          "ato": "Notícia da Prefeitura 'Limitação parcial na estrada do Guaraú' (02/2019); sem número de ato",
+          "artigo": "não se aplica (fonte sem artigo: notícia)",
+          "url": "https://www.peruibe.sp.gov.br/2019/02/limitacao-parcial-na-estrada-do-guarau/"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3537602_peruibe.geojson",
+          "construir": "manual"
+        }
+      ],
+      "nota": "Estrada do Guaraú, km 6 da serra."
+    }
+  ],
+  "rodada": "R2"
 }

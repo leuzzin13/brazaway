@@ -2,9 +2,9 @@
   "ibge": "3510500",
   "nome": "Caraguatatuba",
   "uf": "SP",
-  "status": "nao_achou",
+  "status": "regra_com_ato",
   "nivel_busca": "profundo",
-  "data": "2026-10-11",
+  "data": "2026-10-14",
   "fontes_consultadas": [
     {
       "url": "https://caraguatatuba.legislacaocompilada.com.br/",
@@ -37,12 +37,181 @@
     {
       "url": "https://overpass-api.de/api/interpreter ; https://overpass.kumi.systems ; https://overpass.private.coffee ; https://maps.mail.ru/osm/tools/overpass",
       "resultado": "falha: connection reset pelo proxy / HTTP 500 / 504 em todas as instâncias (3 tentativas em 11/10/2026); WebFetch: ENOTFOUND. Etiquetas OSM não conferidas."
+    },
+    {
+      "url": "https://www.camaracaragua.sp.gov.br/legislativo/leis-municipais",
+      "resultado": "Câmara respondeu 200; o módulo de legislação remete ao banco https://caragua.leisonline.org/ (Leis Online).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://caragua.leisonline.org/leis (POST multipart, palavras=caminh|eixos|carga|central|REVOGA)",
+      "resultado": "Banco de leis da Câmara: 'caminh' devolveu Lei 1.643/2009 (proíbe trânsito de caminhões de carga na região central) e Lei 1.659/2009 (desvio de caminhões de dois eixos da Rod. dos Tamoios para o Rio do Ouro); demais acertos eram doação, caminhão de lixo, dia do caminhoneiro. Sem lei posterior com ementa de revogação/alteração dessas duas (busca 'central', 'REVOGA', 'eixos'). Não lista decretos.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.leisonline.org/leis/caraguatatuba/L16432009.pdf",
+      "resultado": "Lei 1.643/2009 lida (imagem do PDF): art. 1º (caminhões com capacidade de carga acima de 1.000 kg, 8h-18h, vias a-e), §1º, §2º, art. 2º (regulamentação em 30 dias).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.leisonline.org/leis/caraguatatuba/L16592009.pdf",
+      "resultado": "Lei 1.659/2009 lida: art. 1º proíbe o desvio de caminhões acima de dois eixos que saem da Rod. dos Tamoios sentido Caraguatatuba para o bairro Rio do Ouro.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://caraguatatuba.legislacaocompilada.com.br/",
+      "resultado": "Continua 403 (Cloudflare) para curl com UA de navegador; decretos de regulamentação não consultados.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Nenhum ato municipal de restrição a caminhões encontrado. As restrições conhecidas na região são estaduais (DER: proibição de caminhões de carga na Rodovia dos Tamoios em operação verão e feriados prolongados), fora desta camada. A Zona Azul tem vagas/tarifa de carga e descarga (pontual; o ato não foi lido porque a legislação compilada está atrás de Cloudflare). Lacunas: legislação compilada (403), Câmara inacessível, diário pesquisável só desde 07/2025 (edições anteriores no site da Prefeitura, sem busca por texto). osm_hints indica 1 hgv=no e 2 maxweight, não conferidos (Overpass fora).",
-  "falha_de_fonte": true,
+  "observacoes": "Nenhum ato municipal de restrição a caminhões encontrado. As restrições conhecidas na região são estaduais (DER: proibição de caminhões de carga na Rodovia dos Tamoios em operação verão e feriados prolongados), fora desta camada. A Zona Azul tem vagas/tarifa de carga e descarga (pontual; o ato não foi lido porque a legislação compilada está atrás de Cloudflare). Lacunas: legislação compilada (403), Câmara inacessível, diário pesquisável só desde 07/2025 (edições anteriores no site da Prefeitura, sem busca por texto). osm_hints indica 1 hgv=no e 2 maxweight, não conferidos (Overpass fora). R2: Banco de leis da Câmara (leisonline) deu duas leis de 2009. Lei 1.643/2009 virou regra ativa (central; 5 vias); Lei 1.659/2009 ficou desativada (geometria indefinível). Atos em atos/3510500/. Verificado na R2: ver verif/3510500.json.",
+  "falha_de_fonte": false,
   "osm_divergencias": [
     "osm_hints_por_municipio: hgv=no 1, maxweight 2 — não conferidos (Overpass indisponível em 11/10/2026). Pendente: verificar se são pontes de rodovia estadual (SP-055/SP-099, competência do DER) ou vias municipais sem ato."
   ],
-  "regras_rascunho": []
+  "regras_rascunho": [
+    {
+      "id": "caraguatatuba_centro_caminhoes_1000kg",
+      "tipo": "via",
+      "regime": "Proibição de caminhões de carga na região central",
+      "nome": "Caraguatatuba: vias da região central, caminhões com capacidade de carga acima de 1.000 kg (8h-18h; até 24h em fins de semana, feriados e temporada)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "08:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 1
+          }
+        ]
+      },
+      "excecoes": [
+        "§2º: serviços de carga e descarga, realizados das 8h às 10h e das 18h às 20h em dias úteis",
+        "Temporada de verão (15/dez até a terça-feira de carnaval): o §1º estende a proibição até 24h; período sazonal não modelado nas janelas"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.643, de 18/02/2009 (promulgada pelo Presidente da Câmara, art. 33, §3º da LOM)",
+          "artigo": "art. 1º, alíneas a-e (vias e restrição 8h-18h), §1º (até 24h em sáb., dom., feriados e verão), §2º (carga e descarga)",
+          "url": "https://www.leisonline.org/leis/caraguatatuba/L16432009.pdf",
+          "nota": "Texto completo no portal da Câmara: https://caragua.leisonline.org/html/1/1643-2009. PDF lido como imagem. Redação do art. 1º: 'nos horários de 8:00 e 18:00 horas' (lido como das 8h às 18h). Verificado na R2."
+        }
+      ],
+      "vigencia_inicio": "2009-02-18",
+      "trechos": [
+        {
+          "via": [
+            "Rua Guarulhos"
+          ],
+          "descricao": "Rua Guarulhos, em toda a sua extensão",
+          "aproximado": false
+        },
+        {
+          "via": [
+            "Rua Oswaldo Cruz"
+          ],
+          "de": "início da via",
+          "ate": "Avenida Frei Pacífico Wagner",
+          "descricao": "Rua Oswaldo Cruz do início até o cruzamento com a Av. Frei Pacífico Wagner",
+          "aproximado": false
+        },
+        {
+          "via": [
+            "Avenida Frei Pacífico Wagner"
+          ],
+          "de": "Rua Oswaldo Cruz",
+          "ate": "Rua Engenheiro João Fonseca",
+          "descricao": "Av. Frei Pacífico Wagner da R. Oswaldo Cruz até a R. Engenheiro João Fonseca",
+          "aproximado": false
+        },
+        {
+          "via": [
+            "Rua Engenheiro João Fonseca"
+          ],
+          "de": "Avenida Frei Pacífico Wagner",
+          "ate": "Avenida Anchieta",
+          "descricao": "R. Engenheiro João Fonseca da Av. Frei Pacífico Wagner até a Av. Anchieta",
+          "aproximado": false
+        },
+        {
+          "via": [
+            "Avenida Anchieta",
+            "Avenida Padre Anchieta"
+          ],
+          "de": "Rua Engenheiro João Fonseca",
+          "ate": "Rua Guarulhos",
+          "descricao": "Av. Anchieta da R. Engenheiro João Fonseca até a R. Guarulhos",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3510500_caraguatatuba.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "nota": "Art. 2º mandava regulamentar em 30 dias; decreto regulamentador e eventual alteração não localizados (legislação compilada e Prefeitura inacessíveis). Ambiguidade do horário ('8:00 e 18:00') e da exceção de carga e descarga 18h-20h: confiança média."
+    },
+    {
+      "id": "caraguatatuba_rio_do_ouro_tamoios",
+      "tipo": "via",
+      "regime": "Proibição de desvio de caminhões (acima de 2 eixos) para o Rio do Ouro",
+      "nome": "Caraguatatuba: saída da Rod. dos Tamoios (sentido Caraguatatuba) para o bairro Rio do Ouro, caminhões acima de 2 eixos",
+      "status": "desativada",
+      "status_motivo": "Ato primário lido (Lei 1.659/2009, art. 1º), mas só proíbe o 'desvio' de caminhões com mais de 2 eixos da Rod. dos Tamoios para o Rio do Ouro, sem indicar a via de saída: geometria não construível sem mapa; rebaixada na verificação da R2.",
+      "confianca": "media",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.659, de 07/04/2009 (sancionada pelo Prefeito)",
+          "artigo": "art. 1º",
+          "url": "https://www.leisonline.org/leis/caraguatatuba/L16592009.pdf",
+          "nota": "Texto: https://caragua.leisonline.org/html/1/1659-2009"
+        }
+      ],
+      "vigencia_inicio": "2009-04-07",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3510500_caraguatatuba.geojson",
+          "construir": "manual"
+        }
+      ],
+      "nota": "Sem horário; sem decreto regulamentador localizado."
+    }
+  ],
+  "rodada": "R2"
 }

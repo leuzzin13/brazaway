@@ -4,7 +4,7 @@
  "uf": "SP",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "data": "2026-10-11",
+ "data": "2026-10-14",
  "fontes_consultadas": [
   {
    "url": "https://www.camaracanas.sp.gov.br/processo-legislativo/legislacao (portal próprio, GET ementa)",
@@ -21,12 +21,35 @@
   {
    "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
    "resultado": "500: não conferido"
+  },
+  {
+   "url": "https://www.camaracanas.sp.gov.br/processo-legislativo/legislacao/ (GET ementa)",
+   "resultado": "Responde, mas o filtro não é aplicado (a mesma lista de 10 atos de 2025-2026 volta para qualquer termo) e o acervo é mínimo: busca ineficaz.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camaracanas.sp.gov.br/wp-json/wp/v2/search (caminh, caminhões, trânsito, veículos pesados, tráfego)",
+   "resultado": "0 resultados.",
+   "rodada": "R2"
+  },
+  {
+   "url": "Overpass (overpass.private.coffee; area IBGE:GEOCODIGO=3509957; hgv, maxweight, maxlength)",
+   "resultado": "13 ways: 12 hgv=discouraged (não é proibição) e 1 hgv=no em via service (way 161519526); nenhum maxweight/maxlength. Sem ato: não vira regra.",
+   "rodada": "R2"
+  },
+  {
+   "url": "http://www.canas.sp.gov.br/",
+   "resultado": "Prefeitura continua fora do ar.",
+   "rodada": "R2"
   }
  ],
- "observacoes": "Nada achado; fonte heurística. OSM hgv_no=13 (muitas vias, provável padrão do mapeador) não conferido: pendência.",
+ "observacoes": "Nada achado; fonte heurística. OSM hgv_no=13 (muitas vias, provável padrão do mapeador) não conferido: pendência. R2: Prefeitura fora do ar e portal da Câmara sem busca funcional/acervo: busca NÃO conclusiva. OSM reavaliado: padrão do mapeador (hgv=discouraged), 1 hgv=no em service; sem ato.",
  "falha_de_fonte": true,
  "osm_divergencias": [
-  "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: hgv_no=13)."
+  "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: hgv_no=13).",
+  "R2: Overpass: 12 ways hgv=discouraged (não restringem) e way 161519526 (service) hgv=no; sem ato."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [],
+ "status_r1": "nao_achou",
+ "rodada": "R2"
 }
