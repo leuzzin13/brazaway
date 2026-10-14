@@ -12,13 +12,50 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3300506)",
    "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+  },
+  {
+   "url": "https://sapl.bomjardim.rj.leg.br/api/norma/normajuridica/?page_size=100 (257 normas, varridas por ementa)",
+   "resultado": "Base agora tem 257 normas (1990-2026; na R1 mostrava 1): única relacionada a trânsito é a Lei 1.808/2026 (vagas de estacionamento para autistas). Sem restrição a caminhões.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://diariooficial.bomjardim.rj.gov.br/api/public/documentos?search=… (Diário Oficial eletrônico, 620 edições, busca textual; PDFs em /uploads/<storage_path>)",
+   "resultado": "Busca por caminhões, caminhão, circulação de caminhões, veículos pesados, carga pesada, tráfego pesado, restrição de tráfego, zona de restrição, toneladas, carga e descarga, transporte de carga; baixei ~135 edições candidatas (2023-2026) e li os trechos: só licitação de frota, lavador de caminhões, resíduos; nenhuma restrição.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://bomjardim.rj.gov.br/ (SPA React)",
+   "resultado": "Sem lista de legislação própria; links para diário e SEI.",
+   "rodada": "R2"
   }
  ],
- "data": "2026-10-11",
- "observacoes": "O SAPL da Câmara tem apenas 1 norma cadastrada (Lei 1.808/2026, vagas de estacionamento de autistas): base praticamente vazia, então a ausência de resultados não é conclusiva. Overpass indisponível: a via com hgv=no (1 way) não foi identificada. Nenhum diário consolidado cobre o município.",
- "falha_de_fonte": true,
+ "data": "2026-10-14",
+ "observacoes": "O SAPL da Câmara tem apenas 1 norma cadastrada (Lei 1.808/2026, vagas de estacionamento de autistas): base praticamente vazia, então a ausência de resultados não é conclusiva. Overpass indisponível: a via com hgv=no (1 way) não foi identificada. Nenhum diário consolidado cobre o município. | R2: diário oficial (desde 2023, texto integral) e SAPL varridos sem achado; atos anteriores a 2023 fora da cobertura. OSM R2: way 831770567 hgv=no residencial sem nome (-22.1767,-42.4317), sem ato: regra desativada.",
+ "falha_de_fonte": false,
  "osm_divergencias": [
-  "OSM hgv_no=1 não conferido (Overpass fora do ar): pendência."
+  "Way 831770567 (residential, sem nome, ~-22.1767,-42.4317) com hgv=no, sem ato localizado no SAPL nem no diário 2023-2026."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "3300506_osm_hgv_no",
+   "tipo": "via",
+   "regime": "hgv=no (OSM)",
+   "nome": "Bom Jardim: via sem nome com hgv=no (OSM)",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM, sem ato (SAPL e diário 2023-2026 sem restrição).",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [],
+   "trechos": [
+    {
+     "via": "way 831770567",
+     "aproximado": true,
+     "descricao": "~-22.1767,-42.4317"
+    }
+   ]
+  }
+ ],
+ "rodada": "R2"
 }

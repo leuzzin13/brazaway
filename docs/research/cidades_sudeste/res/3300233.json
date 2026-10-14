@@ -2,7 +2,7 @@
  "ibge": "3300233",
  "nome": "Armação dos Búzios",
  "uf": "RJ",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "fontes_consultadas": [
   {
@@ -20,13 +20,110 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3300233; hgv, maxweight, maxlength, *:conditional)",
    "resultado": "somente aeroway=helipad com maxweight (3 a 12 t): peso de heliponto, não é restrição viária; descartado."
+  },
+  {
+   "url": "https://sapl.armacaodosbuzios.rj.leg.br/api/norma/normajuridica/?page_size=50 (base inteira, 6.055 normas, varrida por ementa no cliente)",
+   "resultado": "Filtro de ementa do servidor é ignorado; baixei a base toda e filtrei: só Lei 1.266/2016 (trânsito na Rua das Pedras/R. Manoel Turíbio/Orla Bardot, lida), Lei 112/1998 (horário de carga e descarga nas mesmas ruas, lida), Lei 999/2013 (ônibus de excursão), Lei 2.073/2025 (coletores de chorume em caminhões de lixo: não é restrição).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://transparencia.buzios.rj.gov.br/decretos.php?Descr=… e leis.php?Descr=… (busca por descrição: caminh, pesad, carga, tráfego, trânsito, circula, veículos…)",
+   "resultado": "Portal da prefeitura (buzios.rj.gov.br fora do ar, 502; o portal de transparência responde): decretos achados e lidos: 128/2005 e 1.762/2021 (carga e descarga no Centro, 7h-12h nas vias do art. 3º), 164/2010 (Rua das Pedras), 577/2016 (só evento da tocha olímpica, 2/4/2016). Decretos 2.907/2025, 2.688/2024 e 1.761/2021 tratam de ônibus de turismo.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://transparencia.buzios.rj.gov.br/arquivos/10333/DECRETO_128_2005_0000001.pdf",
+   "resultado": "Decreto 128/2005 (PDF escaneado, lido por imagem): art. 2º proíbe trânsito e estacionamento de 'veículos de grande porte' (inclusive carga/descarga) na Rua das Pedras e na R. Manoel Turíbio de Farias; art. 3º carga e descarga 8h-20h em 3 ruas (alterado para 7h-12h pelo Dec. 1.762/2021); art. 5º ônibus. Cópias em atos/3300233/.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://transparencia.buzios.rj.gov.br/arquivos/9477/DECRETO_164_2010_0000001.pdf",
+   "resultado": "Decreto 164/2010 (escaneado, lido): revoga o Dec. 84/2003; proíbe veículos de passeio nas duas ruas; carga e descarga 8h-17h, 15 min.",
+   "rodada": "R2"
   }
  ],
- "data": "2026-10-11",
- "observacoes": "O SAPL da Câmara ignora o filtro de ementa (a API devolve as normas mais recentes sem filtrar), então a busca não foi efetiva; portal da Câmara sem resultado; busca geral do site da prefeitura só traz notícias de lixo. OSM: 5 ways, todos helipontos com maxweight (a pista 'maxweight=10' não é restrição viária).",
- "falha_de_fonte": true,
+ "data": "2026-10-14",
+ "observacoes": "O SAPL da Câmara ignora o filtro de ementa (a API devolve as normas mais recentes sem filtrar), então a busca não foi efetiva; portal da Câmara sem resultado; busca geral do site da prefeitura só traz notícias de lixo. OSM: 5 ways, todos helipontos com maxweight (a pista 'maxweight=10' não é restrição viária). | R2: Só regras locais de centro histórico/carga e descarga, sem restrição roteável a caminhão: status pontual (2 regras desativadas). Fontes principais (SAPL completo + decretos/leis do portal) pesquisadas: falha_de_fonte=false. Não pesquisei o diário oficial (jornal.php) por texto. OSM R1: só helipontos (descartados).",
+ "falha_de_fonte": false,
  "osm_divergencias": [
   "maxweight em heliponto: descartado."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "3300233_rua_das_pedras_grande_porte",
+   "tipo": "via",
+   "regime": "Veículos de grande porte proibidos (trânsito e estacionamento)",
+   "nome": "Armação dos Búzios: Rua das Pedras (Av. José Bento Ribeiro Dantas) e Rua Manoel Turíbio de Farias, veículos de grande porte",
+   "status": "desativada",
+   "status_motivo": "Decreto 128/2005 art. 2º proíbe trânsito e estacionamento de 'veículos de grande porte' nas duas ruas, mas não define o termo (sem PBT/dimensões, não roteável) e as mesmas ruas foram reguladas depois pelo Decreto 164/2010 (revogou o 84/2003) e pela Lei 1.266/2016 (proíbem veículos de passeio e limitam carga e descarga a 6h-17h, 15 min), sem revogação expressa do art. 2º do 128/2005: vigência incerta. Trecho curto de centro histórico/orla.",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Ambulâncias, veículos militares e da polícia; veículos oficiais; utilidade pública (água, energia, telefonia, tanque séptico) em atendimento (art. 2º, §1º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 128, de 19/09/2005 (publicado em 22/11/2005, Boletim Oficial)",
+     "artigo": "art. 2º, I e II, e §1º",
+     "url": "https://transparencia.buzios.rj.gov.br/arquivos/10333/DECRETO_128_2005_0000001.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Avenida José Bento Ribeiro Dantas"
+     ],
+     "de": "Rua Maria Joaquina",
+     "ate": "Travessa dos Pescadores",
+     "descricao": "trecho 'Rua das Pedras'",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua Manoel Turíbio de Farias"
+     ],
+     "descricao": "em toda a extensão",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "3300233_rua_das_pedras_carga_descarga",
+   "tipo": "via",
+   "regime": "Carga e descarga 6h-17h, 15 min (veículos de passeio proibidos)",
+   "nome": "Armação dos Búzios: Rua das Pedras, R. Manoel Turíbio de Farias e Orla Bardot, carga e descarga",
+   "status": "desativada",
+   "status_motivo": "Regra de carga e descarga/estacionamento (janela 6h-17h por 15 min) e de veículos de passeio; não restringe circulação de caminhão por peso/porte: não roteável (pontual).",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.266, de 18/08/2016",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://sapl.armacaodosbuzios.rj.leg.br/media/sapl/public/normajuridica/2016/1762/lo_1266.2016.pdf"
+    }
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Avenida José Bento Ribeiro Dantas"
+     ],
+     "descricao": "entre R. Mário Bulhões Pedreira Neto e Travessa dos Pescadores até a R. Morro do Humaitá ('Rua das Pedras e Orla Bardot')",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua Manoel Turíbio de Farias"
+     ],
+     "descricao": "em toda a extensão",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "rodada": "R2"
 }

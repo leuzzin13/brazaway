@@ -2,7 +2,7 @@
  "ibge": "3303807",
  "nome": "Paraty",
  "uf": "RJ",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "dirigida",
  "fontes_consultadas": [
   {
@@ -24,14 +24,61 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3303807; hgv, maxweight, maxlength, *:conditional)",
    "resultado": "12 ways: 5 hgv=no na RJ-165/BR-459 (Serra de Cunha) e 7 helipontos com maxweight"
+  },
+  {
+   "url": "https://paraty.rj.leg.br/site/pesquisa-legislacao/resultado/?texto=… (caminh, veículos pesados, carga, tráfego, circulação, tonel, trânsito, eixos, centro histórico, estacionamento, veículos, ônibus, vias; precisa Chrome UA + Accept)",
+   "resultado": "Base de leis da Câmara varrida por ementa: Lei 2.125/2017 (saibro, mineração), Lei 1.475/2005 (entrega de mercadorias no Centro Histórico: PISTA), Leis 1.973/2014 (depósito de veículos), 2.104/2017 (tradições no centro). Todos os PDFs devolvem 404 (…/camaraparaty/painel/Leis/…).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.paraty.rj.gov.br/API/API/Legislacoes?… e /CategoriasLegislacao (API do portal da prefeitura, AngularJS)",
+   "resultado": "Categorias existem (Decretos, Leis…), mas a listagem volta vazia (decretos inacessíveis).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://archive.org/wayback/available (PDF da Lei 1.475/2005)",
+   "resultado": "Sem cópia arquivada.",
+   "rodada": "R2"
+  },
+  {
+   "url": "WebSearch: Paraty decreto Centro Histórico entrega de mercadorias caminhões carga e descarga",
+   "resultado": "Sem resultado de Paraty.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems (R2, area IBGE:GEOCODIGO=3303807)",
+   "resultado": "5 ways hgv=no na Serra de Cunha (RJ-165/BR-459, secondary) + 7 helipontos; nenhuma condicional além.",
+   "rodada": "R2"
   }
  ],
- "data": "2026-10-11",
- "observacoes": "Portal da Câmara (paraty.rj.leg.br, busca por texto): caminh, tráfego, pesad, carga, veículos, trânsito, centro histórico: sem ato de restrição a caminhões (Lei 2.125/2017 trata de retirada de saibro da barreira da Ponte Branca por caminhões com mais de 2 eixos e 6 m³: ato de mineração, não circulação; Lei 2.037/2016 reorganização do Centro Histórico: PDF não obtido, não lida). SPL e leismunicipais indisponíveis (formulário ausente / Cloudflare). OSM: 5 ways hgv=no na 'Serra de Cunha' (RJ-165/BR-459, secondary): rodovia estadual/federal, competência DER/DNIT. 7 helipontos descartados. A preparação indicava 3 'outros condicionais' que a consulta não reproduziu (Overpass instável).",
+ "data": "2026-10-14",
+ "observacoes": "Portal da Câmara (paraty.rj.leg.br, busca por texto): caminh, tráfego, pesad, carga, veículos, trânsito, centro histórico: sem ato de restrição a caminhões (Lei 2.125/2017 trata de retirada de saibro da barreira da Ponte Branca por caminhões com mais de 2 eixos e 6 m³: ato de mineração, não circulação; Lei 2.037/2016 reorganização do Centro Histórico: PDF não obtido, não lida). SPL e leismunicipais indisponíveis (formulário ausente / Cloudflare). OSM: 5 ways hgv=no na 'Serra de Cunha' (RJ-165/BR-459, secondary): rodovia estadual/federal, competência DER/DNIT. 7 helipontos descartados. A preparação indicava 3 'outros condicionais' que a consulta não reproduziu (Overpass instável). | R2: decretos da prefeitura inacessíveis e PDFs da Câmara 404: falha de fonte mantida. Nova pista: Lei 1.475/2005 (entrega de mercadorias no Centro Histórico) a obter. Serra de Cunha: rodovia estadual/federal, fora da competência municipal.",
  "falha_de_fonte": true,
  "osm_divergencias": [
-  "Serra de Cunha (RJ-165/BR-459) hgv=no: rodovia estadual/federal, fora da competência municipal; divergência a registrar.",
-  "3 'outros condicionais' do OSM não reconferidos."
+  "Serra de Cunha (RJ-165/BR-459) hgv=no, 5 ways: rodovia estadual/federal, competência DER/DNIT; divergência a registrar.",
+  "Os '3 outros condicionais' da preparação não reapareceram (hgv:conditional/maxweight:conditional vazios na R2)."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "3303807_centro_historico_entrega_mercadorias",
+   "tipo": "zona",
+   "regime": "Entrega de mercadorias no Centro Histórico (texto não obtido)",
+   "nome": "Paraty: Centro Histórico, regras de entrega de mercadorias (Lei 1.475/2005, que altera a Lei 1.110/1999)",
+   "status": "desativada",
+   "status_motivo": "Só a ementa foi lida ('altera a Lei 1110/99, definindo novas diretrizes para a entrega de mercadorias no Centro Histórico'); o PDF da lei devolve 404 e a Lei 1.110/1999 não está na base: conteúdo, veículos e horários desconhecidos.",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [],
+   "trechos": [
+    {
+     "via": "Centro Histórico de Paraty",
+     "aproximado": true,
+     "descricao": "perímetro não identificado"
+    }
+   ]
+  }
+ ],
+ "rodada": "R2"
 }
