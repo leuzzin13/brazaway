@@ -1,0 +1,131 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3510500",
+  "municipio": "Caraguatatuba",
+  "uf": "SP",
+  "fonte_id": "caraguatatuba",
+  "fonte": {
+    "url": "https://caragua.leisonline.org/html/1/1643-2009 (Lei 1.643/2009); https://caragua.leisonline.org/html/1/1659-2009 (Lei 1.659/2009)",
+    "licenca": "Atos oficiais de Caraguatatuba: domínio público (Lei 9.610/1998 art. 8º IV). Geometria das vias: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.643/2009 ativa (cinco vias centrais). Lei 1.659/2009 (desvio para o Rio do Ouro) desativada: a lei não indica a via de saída nem horário. Decreto regulamentador e eventuais alterações não localizados (legislação compilada e Prefeitura inacessíveis na pesquisa)."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A Lei 1.643/2009 não define VUC: o alvo é todo caminhão com capacidade de carga acima de 1.000 kg.",
+  "regras": [
+    {
+      "id": "caraguatatuba_centro_caminhoes_1000kg",
+      "tipo": "via",
+      "regime": "Caminhões de carga na região central",
+      "nome": "Caraguatatuba: vias da região central, caminhões com capacidade de carga acima de 1.000 kg (8h-18h; até 24h em fins de semana, feriados e temporada)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "08:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 1
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, §2º: serviços de carga e descarga, das 8h às 10h e das 18h às 20h em dias úteis",
+        "Art. 1º, §1º: na temporada de verão (15/dez até a terça-feira de carnaval) a proibição vai até as 24h; o período sazonal não está nas janelas"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.643, de 18/02/2009 (Caraguatatuba; promulgada pelo Presidente da Câmara, art. 33, §3º da LOM)",
+          "artigo": "art. 1º, alíneas a-e (cinco vias e restrição de 8h às 18h), §1º (até 24h em sábados, domingos, feriados e verão), §2º (carga e descarga)",
+          "url": "https://www.leisonline.org/leis/caraguatatuba/L16432009.pdf",
+          "nota": "Texto no portal da Câmara: https://caragua.leisonline.org/html/1/1643-2009. PDF lido como imagem; redação do art. 1º: 'nos horários de 8:00 e 18:00 horas', lida como das 8h às 18h."
+        }
+      ],
+      "vigencia_inicio": "2009-02-18",
+      "nota": "Confiança média: horário ambíguo no ato ('8:00 e 18:00'), temporada de verão (15/dez até a terça de carnaval) não modelada, sem decreto regulamentador localizado. Capacidade de carga = payload_t (não PBT). No OSM a Av. Frei Pacífico Wagner e a R. Engenheiro João Fonseca (trecho primário) são a travessia urbana da SP-055/BR-101; o ato municipal as lista e a regra segue o ato.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3510500_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3510500_vias_curadoria.py data/cache/municipios/osm_named_3510500.json (ways do OSM recortadas entre os cruzamentos do art. 1º; ODbL)"
+        }
+      ]
+    },
+    {
+      "id": "caraguatatuba_rio_do_ouro_tamoios",
+      "tipo": "via",
+      "regime": "Desvio de caminhões para o Rio do Ouro",
+      "nome": "Caraguatatuba: saída da Rod. dos Tamoios (sentido Caraguatatuba) para o bairro Rio do Ouro, caminhões acima de 2 eixos",
+      "status": "desativada",
+      "status_motivo": "Sem geometria nem horário definíveis: a Lei 1.659/2009 (art. 1º) só proíbe o 'desvio' de caminhões com mais de 2 eixos da Rod. dos Tamoios para o Rio do Ouro, sem indicar a via de saída (rebaixada na verificação da R2).",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.659, de 07/04/2009 (Caraguatatuba; sancionada pelo Prefeito)",
+          "artigo": "art. 1º",
+          "url": "https://www.leisonline.org/leis/caraguatatuba/L16592009.pdf",
+          "nota": "Texto: https://caragua.leisonline.org/html/1/1659-2009"
+        }
+      ],
+      "vigencia_inicio": "2009-04-07",
+      "nota": "Sem horário e sem decreto regulamentador localizado. Pendência: localizar a via de saída (ofício à Prefeitura).",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

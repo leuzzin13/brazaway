@@ -1,0 +1,76 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3510807",
+  "municipio": "Casa Branca",
+  "uf": "SP",
+  "fonte_id": "casa-branca",
+  "fonte": {
+    "url": "https://leis.camaracasabranca.sp.gov.br/vlei.php?path=pdf/2018/3511.pdf&l=3511 (Lei 3.511/2018); https://leis.camaracasabranca.sp.gov.br/vlei.php?path=pdf/2019/3606.pdf&l=3606 (Lei 3.606/2019)",
+    "licenca": "Atos oficiais de Casa Branca: domínio público (Lei 9.610/1998 art. 8º IV). Geometria da via: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 3.511/2018 ativa (Rua Coronel José Júlio, 7h-18h de segunda a sexta). A regra dos distritos de Venda Branca e Lagoa Branca (Leis 3.124/2012, 3.136/2012 e 3.606/2019) fica desativada: 'caminhões pesados' sem definição e perímetro urbano dos distritos sem delimitação no ato."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "Os atos não definem VUC: o alvo é todo caminhão.",
+  "regras": [
+    {
+      "id": "casa_branca_rua_cel_jose_julio",
+      "tipo": "via",
+      "regime": "Proibição de caminhões, ônibus e veículos pesados em dias úteis",
+      "nome": "Casa Branca: Rua Coronel José Júlio, trânsito de caminhões proibido 7h-18h de segunda a sexta",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5], "from": "07:00", "to": "18:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [
+        "Parágrafo único do art. 1º: veículos que precisarem carregar ou descarregar na via",
+        "Parágrafo único do art. 1º: ônibus circulares do transporte público"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.511, de 24/04/2018 (Casa Branca; promulgada pelo Presidente da Câmara, art. 48, §5º da LOM)",
+          "artigo": "art. 1º e parágrafo único (proibição de 7h às 18h, de segunda a sexta; exceções), art. 2º (sinalização), art. 3º (vigor na publicação)",
+          "url": "https://leis.camaracasabranca.sp.gov.br/vlei.php?path=pdf/2018/3511.pdf&l=3511",
+          "nota": "PDF escaneado lido como imagem. A Lei 3.613/2019 revogou só a Lei 1.660/1991 (estacionamento na mesma rua), não esta."
+        }
+      ],
+      "vigencia_inicio": "2018-04-24",
+      "nota": "Confiança média: o ato não delimita o trecho da rua e não há decreto regulamentador localizado. O ato diz 'veículos pesados' sem definir PBT: alvo = caminhão. No OSM a rua se chama 'Rua Coronel José Julio' (sem acento), mão única; a restrição vale no sentido do desenho (o sentido contrário, se existir, é outra via).",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": ["Rua Coronel José Julio", "Rua Coronel José Júlio"],
+          "descricao": "Rua Coronel José Júlio, em toda a extensão (o ato não delimita trecho)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [{"arquivo": "municipios/geo/3510807_vias.geojson", "construir": "trechos"}]
+    },
+    {
+      "id": "casa_branca_distritos_venda_lagoa_branca",
+      "tipo": "zona",
+      "regime": "Proibição de caminhões pesados nas áreas urbanas dos distritos",
+      "nome": "Casa Branca: áreas urbanas dos distritos de Venda Branca e Lagoa Branca (caminhões pesados)",
+      "status": "desativada",
+      "status_motivo": "Alvo indefinido: a Lei 3.136/2012, na redação da Lei 3.606/2019, proíbe 'caminhões pesados' sem PBT/eixos, sem horário e sem delimitar o perímetro urbano dos distritos; rebaixada na verificação da R2.",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei 3.124, de 15/03/2012 (Venda Branca; caminhões que transportam cana), modificada pela Lei 3.136, de 06/07/2012 (inclui Lagoa Branca) e pela Lei 3.606, de 14/08/2019 (passa a 'caminhões pesados')",
+          "artigo": "art. 1º (redação da Lei 3.606/2019 dada ao art. 1º da Lei 3.136/2012)",
+          "url": "https://leis.camaracasabranca.sp.gov.br/vlei.php?path=pdf/2019/3606.pdf&l=3606",
+          "nota": "Textos das Leis 3.124 e 3.136 em https://leis.camaracasabranca.sp.gov.br/pdf/3124.pdf e https://leis.camaracasabranca.sp.gov.br/pdf/3136.pdf"
+        }
+      ],
+      "vigencia_inicio": "2019-08-14",
+      "nota": "Distritos rurais, sem impacto em rotas de longa distância. Reavaliar se houver definição de 'pesados' ou mapa do perímetro urbano dos distritos.",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}
