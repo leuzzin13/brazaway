@@ -152,7 +152,7 @@ Fluxo de `POST /api/route`:
    (`driving_plan`): parada de 30 min a cada 5h30 de direção e descanso de 11 h, escolhendo na janela antes do limite
    o ponto de maior prioridade (PPD válido > área de descanso > posto/pátio > SAU; ver `docs/layers/descanso.md`).
    O ETA de cada ponto é proporcional à distância ao longo da rota (aproximação).
-7. Sem rota viável: `409 NO_ROUTE` com `blocked_by` dizendo quais restrições bloquearam.
+7. Sem rota viável: `409 NO_ROUTE` com `blocked_by` dizendo quais restrições bloquearam. Se nenhuma regra bloqueou, `limited_by` diz qual medida do próprio veículo fecha todo caminho (`peso`, `peso_por_eixo`, `altura`, `largura`, `comprimento`, `carga_perigosa`), por exemplo a carreta de 41,5 t na balsa de Ilhabela (rampas com 40 t).
 
 ### Licença ODbL (OpenStreetMap)
 
@@ -177,7 +177,7 @@ web/              React + Vite + MapLibre
 |---|---|---|
 | `GET` | `/api/health` | status de db e valhalla |
 | `GET` | `/api/vehicles/presets` | presets (valores aproximados, confirmar) |
-| `POST` | `/api/route` | `{origin:{lat,lon}, destination:{lat,lon}, departure_at:"YYYY-MM-DDTHH:mm", vehicle:{preset, height_m, width_m, length_m, weight_t, axle_load_t, axle_count, hazmat, is_vuc, plate_last_digit}}` → `{geometry, distance_km, duration_s, avoided[], warnings[]}` ou `409 {error:"NO_ROUTE", blocked_by[]}` |
+| `POST` | `/api/route` | `{origin:{lat,lon}, destination:{lat,lon}, departure_at:"YYYY-MM-DDTHH:mm", vehicle:{preset, height_m, width_m, length_m, weight_t, axle_load_t, axle_count, hazmat, is_vuc, plate_last_digit}}` → `{geometry, distance_km, duration_s, avoided[], warnings[]}` ou `409 {error:"NO_ROUTE", message, blocked_by[], limited_by[]}` |
 | `GET` | `/api/reports?bbox=minLon,minLat,maxLon,maxLat` | reportes ativos |
 | `POST` | `/api/reports` | `{type, geometry(Point|LineString), value_num?, time_window?, note?, device_id}` |
 | `POST` | `/api/reports/:id/votes` | `{device_id, vote: 1|-1}` |

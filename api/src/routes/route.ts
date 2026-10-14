@@ -10,7 +10,7 @@ export async function routeRoutes(app: FastifyInstance) {
       return await computeRoute(parsed.data);
     } catch (e) {
       if (e instanceof RouteBlockedError) {
-        return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by });
+        return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by, limited_by: e.limited_by });
       }
       throw e;
     }

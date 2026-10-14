@@ -91,6 +91,10 @@ Pendências:
   ao contrário do art. 3º da Lei 1.611/2021, que manda os caminhões pesados entrarem por ela. Não corrigi a tag; é
   caso para `data/osm-overrides/overrides.json` (pendente, só com prova e decisão do Arthur). Isso pode contribuir para o
   `large_detour` das rotas de carreta que cruzam a cidade.
+  Decisão (14/10/2026): **sem override**. As 4 ways são o trecho sul da SP-036 (Nazaré → Mairiporã/Guarulhos, ~21 km,
+  `smoothness=very_bad`), rodovia estadual fora da competência municipal. O trecho norte, que liga a cidade à Dom Pedro I
+  (SP-065), não tem `hgv=no`, e por ele o caminhão chega à rotatória da Rodoviária que o art. 3º manda usar: o OSM não
+  contradiz a lei. Liberar a serra só com ato do DER-SP.
 
 ## 3537107 Pedreira — `pedreira`
 
@@ -151,5 +155,7 @@ Pendências:
 - A camada não tem como marcar "feriado vira dia proibido" (Ilhabela, art. 3º).
 - `linemerge` quebra no `de`/`ate` sobre uma via de uma way só (Rua Luiz Leite, Pedreira); contornado aplicando a rua
   inteira.
-- Carreta e bitrem não têm rota até Ilhabela (NO_ROUTE sem `blocked_by`), enquanto truck e toco têm: a diferença está
-  no grafo ou nas restrições do Valhalla, não na camada.
+- Carreta e bitrem não têm rota até Ilhabela (NO_ROUTE sem `blocked_by`), enquanto truck e toco têm. Causa (14/10/2026):
+  as rampas da balsa nas duas pontas (Av. Antônio Januário do Nascimento em São Sebastião e Av. Princesa Isabel em
+  Ilhabela) têm `maxweight=40t` no OSM; com 38 t a carreta passa. Mantido (limite plausível da travessia). A API agora
+  responde `limited_by: ["peso"]` e explica na mensagem (teste `api/test/04-no-route-limit.test.ts`).
