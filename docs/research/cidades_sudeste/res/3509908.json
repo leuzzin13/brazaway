@@ -1,40 +1,100 @@
 {
- "ibge": "3509908",
- "nome": "Cananéia",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://cananeia.sp.gov.br (WordPress, busca geral)",
-   "resultado": "124 posts/páginas com termos; só notícias (trânsito, caminhão de coleta, mudança de sentido de via, trânsito no Carnaval); nenhum ato de restrição."
-  },
-  {
-   "url": "https://cananeia.sp.gov.br/documentos?tipo=lei (portal próprio)",
-   "resultado": "0 atos."
-  },
-  {
-   "url": "http://camaracananeia.sp.gov.br (Webline)",
-   "resultado": "Sem resposta."
-  },
-  {
-   "url": "Overpass IBGE:GEOCODIGO=3509908",
-   "resultado": "Falhou (504/erro); contagem da preparação: hgv=no 1, maxweight 4."
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar 3509908 'circulação de caminhões' (doesp, apm, dosp, qd)",
-   "resultado": "0 resultados nas 4 fontes."
-  },
-  {
-   "url": "https://penaestrada.com.br/restricoes/",
-   "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
-  }
- ],
- "observacoes": "Nada achado; Webline da Câmara fora. Não conclusivo.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "1 hgv=no e 4 maxweight no OSM não conferidos."
- ],
- "regras_rascunho": []
+  "ibge": "3509908",
+  "nome": "Cananéia",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://cananeia.sp.gov.br (WordPress, busca geral)",
+      "resultado": "124 posts/páginas com termos; só notícias (trânsito, caminhão de coleta, mudança de sentido de via, trânsito no Carnaval); nenhum ato de restrição."
+    },
+    {
+      "url": "https://cananeia.sp.gov.br/documentos?tipo=lei (portal próprio)",
+      "resultado": "0 atos."
+    },
+    {
+      "url": "http://camaracananeia.sp.gov.br (Webline)",
+      "resultado": "Sem resposta."
+    },
+    {
+      "url": "Overpass IBGE:GEOCODIGO=3509908",
+      "resultado": "Falhou (504/erro); contagem da preparação: hgv=no 1, maxweight 4."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3509908 'circulação de caminhões' (doesp, apm, dosp, qd)",
+      "resultado": "0 resultados nas 4 fontes."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/",
+      "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
+    },
+    {
+      "url": "https://camaracananeia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2035&idtipolei=1",
+      "resultado": "Lei 1.680/2004 (Em vigor): art. 1º. PDF escaneado lido como imagem.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaracananeia.sp.gov.br/?pag=...busca avançada (palavraChave)",
+      "resultado": "tráfego: Lei 1.680/2004 e Lei 147/1971 (animais); trânsito: convênios/Demutran/ônibus de turismo; caminh: Lei 1.680 e ação civil pública 2001.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (nome ~ Marazul)",
+      "resultado": "Sem resposta (timeout/erro): hotel não localizado.",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "Nada achado; Webline da Câmara fora. Não conclusivo. | R2: Webline da Câmara (camaracananeia.sp.gov.br) respondeu; busca avançada ('tráfego', 'caminh', 'trânsito', 'veículos', 'circula') achou a Lei 1.680/2004 (proíbe caminhões na via ao lado do Hotel Marazul) e leis de ônibus de turismo (1.092/1997, 1.379/1999, 2.159/2012, 2.247/2015, 2.438/2024: ônibus, não caminhões). Regra local, via não identificada no OSM nesta rodada. | verificado na R2: ato oficial reaberto (portal da Câmara + PDF), número, artigos, vigência, alvo e exceções conferidos; confirmado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "cananeia_via_hotel_marazul",
+      "tipo": "via",
+      "regime": "Caminhões proibidos em via local",
+      "nome": "Cananéia: proibido o tráfego de caminhões na via de passagem ao lado do Hotel Marazul",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.680, de 06/12/2004 (Cananéia; promulgada pela Câmara após veto)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões na via de passagem ao lado do hotel Marazul); art. 3º (vigor na publicação)",
+          "url": "https://camaracananeia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2035&idtipolei=1",
+          "nota": "PDF escaneado lido como imagem (atos/3509908/lei1680_0_download_lei_1680.pdf). Portal da Câmara: 'Em vigor', sem alteração/revogação."
+        }
+      ],
+      "nota": "Ato sem peso, horário ou nome da via: todos os caminhões, sempre. Local não georreferenciado (consulta ao Overpass falhou).",
+      "vigencia_inicio": "2004-12-06",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509908_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "Localizar o Hotel Marazul em Cananéia (OSM/ofício à prefeitura) e traçar a via lateral"
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }

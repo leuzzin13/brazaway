@@ -1,36 +1,137 @@
 {
- "ibge": "3503109",
- "nome": "Arandu",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://www.arandu.sp.gov.br/legislacao/detalhe/1123/pdecretop",
-   "resultado": "403 do proxy."
-  },
-  {
-   "url": "https://camaradearandu.sp.gov.br/?pag=... (Webline)",
-   "resultado": "Sem resposta."
-  },
-  {
-   "url": "Overpass IBGE:GEOCODIGO=3503109",
-   "resultado": "Falhou (504/erro); contagem da preparação: maxweight 4."
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar 3503109 'circulação de caminhões' (doesp, apm, dosp, qd)",
-   "resultado": "0 resultados nas 4 fontes."
-  },
-  {
-   "url": "https://penaestrada.com.br/restricoes/",
-   "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
-  }
- ],
- "observacoes": "Nada achado; prefeitura bloqueada (403) e Webline fora. Não conclusivo. O toolkit listou 60 atos da Câmara que não eram de trânsito de caminhões.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "4 ways maxweight no OSM não conferidos."
- ],
- "regras_rascunho": []
+  "ibge": "3503109",
+  "nome": "Arandu",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.arandu.sp.gov.br/legislacao/detalhe/1123/pdecretop",
+      "resultado": "403 do proxy."
+    },
+    {
+      "url": "https://camaradearandu.sp.gov.br/?pag=... (Webline)",
+      "resultado": "Sem resposta."
+    },
+    {
+      "url": "Overpass IBGE:GEOCODIGO=3503109",
+      "resultado": "Falhou (504/erro); contagem da preparação: maxweight 4."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3503109 'circulação de caminhões' (doesp, apm, dosp, qd)",
+      "resultado": "0 resultados nas 4 fontes."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/",
+      "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
+    },
+    {
+      "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1",
+      "resultado": "Lei 2.395/2017 (Em vigor): art. 1º, 2º, 3º (multa 250 UFESP), 5º. PDF lido como imagem.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaradearandu.sp.gov.br/?pag=T0RNPU9UZz1PVFk9... (busca avançada, palavraChave)",
+      "resultado": "pesad: Lei 2.395/2017; trânsito: Leis 2.383/2017 (vilas), convênios Detran; sem outra norma de caminhões.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=816&idtipolei=1",
+      "resultado": "Lei 2.383/2017: restrição à circulação em vilas/ruas sem saída; não é de caminhões.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.arandu.sp.gov.br/legislacao (Portal Fácil v2)",
+      "resultado": "Busca por ementa devolve \"Nenhum resultado\" para qualquer termo (ementas dos decretos = \"DECRETO\"): fonte inútil para busca por assunto.",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "Nada achado; prefeitura bloqueada (403) e Webline fora. Não conclusivo. O toolkit listou 60 atos da Câmara que não eram de trânsito de caminhões. | R2: Prefeitura (Portal Fácil v2) responde, mas as ementas dos decretos são só 'DECRETO' (busca inútil). Webline da Câmara (camaradearandu.sp.gov.br) respondeu: busca avançada ('pesad', 'caminh', 'trânsito', 'circula', 'carga', 'tonelad', 'veículos', 'restri') achou a Lei 2.395/2017 (CVC > 57 t ou > 19,80 m e canavieiros proibidos nas vias urbanas e estradas pavimentadas). Lei 2.383/2017 (restrição à circulação em vilas e ruas sem saída a moradores/visitantes) lida: genérica, não é de caminhões. Overpass não respondeu (timeout). | verificado na R2: ato oficial reaberto (portal da Câmara + PDF), número, artigos, vigência, alvo e exceções conferidos; confirmado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "arandu_cvc_57t_19_80m",
+      "tipo": "zona",
+      "regime": "CVC com PBT > 57 t ou comprimento > 19,80 m",
+      "nome": "Arandu: CVC (mais de duas unidades) acima de 57 t ou 19,80 m proibidas nas vias urbanas e estradas municipais pavimentadas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ],
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 57
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 19.8
+          }
+        ]
+      },
+      "excecoes": [
+        "O ato não traz exceções; art. 2º aplica subsidiariamente a Res. CONTRAN 211/2006."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.395, de 20/09/2017 (Arandu)",
+          "artigo": "art. 1º (CVC com mais de duas unidades, incluída a tratora, com PBT acima de 57 t ou comprimento acima de 19,80 m não podem trafegar nas vias públicas urbanas e estradas municipais pavimentadas); art. 5º (vigor no trigésimo dia da publicação, ~20/10/2017)",
+          "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1",
+          "nota": "PDF lido como imagem (atos/3503109/lei2395_0_download_lei_2395.pdf). Portal da Câmara: 'Em vigor', sem alteração/revogação."
+        }
+      ],
+      "nota": "Leitura do art. 1º: CVC (>2 unidades) E (PBT>57 t OU comprimento>19,80 m). Vias públicas urbanas + estradas municipais pavimentadas: não nomeadas.",
+      "vigencia_inicio": "2017-10-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3503109_urbano_e_estradas_pavimentadas.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro urbano de Arandu + estradas municipais pavimentadas (OSM, surface=asphalt/paved, fora das rodovias estaduais/federais)"
+        }
+      ]
+    },
+    {
+      "id": "arandu_canavieiros",
+      "tipo": "zona",
+      "regime": "Caminhões canavieiros de qualquer porte",
+      "nome": "Arandu: caminhões canavieiros proibidos nas vias urbanas e estradas municipais pavimentadas",
+      "status": "desativada",
+      "status_motivo": "Alvo por tipo de carga (cana) que o perfil do veículo não expressa.",
+      "confianca": "media",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.395/2017",
+          "artigo": "art. 1º (caminhões canavieiros de qualquer porte)",
+          "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1"
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }
