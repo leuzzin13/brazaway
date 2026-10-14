@@ -2,7 +2,7 @@ import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
 import { env } from '../config.js';
 import type { RouteRequest } from '../schemas.js';
-import { resolveVehicle } from './vehicle.js';
+import { resolveVehicle, type Vehicle } from './vehicle.js';
 import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, crowdAlertsInBbox, reportToRing, type ReportRow } from './restrictions.js';
@@ -46,7 +46,37 @@ export interface RouteResponse {
 
 export class RouteBlockedError extends Error {
   statusCode = 409;
-  constructor(public blocked_by: AvoidedItem[], message: string) { super(message); }
+  constructor(public blocked_by: AvoidedItem[], message: string, public limited_by: VehicleLimit[] = []) { super(message); }
+}
+
+/** Medida do veículo que, sozinha, impede qualquer rota (limite do próprio grafo: maxweight, maxheight... do OSM). */
+export type VehicleLimit = 'peso' | 'peso_por_eixo' | 'altura' | 'largura' | 'comprimento' | 'carga_perigosa';
+const LIMIT_RELAX: Record<VehicleLimit, (v: Vehicle) => Partial<Vehicle> | null> = {
+  peso: (v) => (v.weight_t > 3.5 ? { weight_t: 3.5 } : null),
+  peso_por_eixo: (v) => (v.axle_load_t > 3 ? { axle_load_t: 3 } : null),
+  altura: (v) => (v.height_m > 2.5 ? { height_m: 2.5 } : null),
+  largura: (v) => (v.width_m > 2 ? { width_m: 2 } : null),
+  comprimento: (v) => (v.length_m > 6 ? { length_m: 6 } : null),
+  carga_perigosa: (v) => (v.hazmat ? { hazmat: false } : null),
+};
+const br = (n: number) => String(n).replace('.', ',');
+const LIMIT_LABEL: Record<VehicleLimit, (v: Vehicle) => string> = {
+  peso: (v) => `o peso do veículo (${br(v.weight_t)} t)`,
+  peso_por_eixo: (v) => `o peso por eixo (${br(v.axle_load_t)} t)`,
+  altura: (v) => `a altura do veículo (${br(v.height_m)} m)`,
+  largura: (v) => `a largura do veículo (${br(v.width_m)} m)`,
+  comprimento: (v) => `o comprimento do veículo (${br(v.length_m)} m)`,
+  carga_perigosa: () => 'carga perigosa',
+};
+
+/** Sem rota e sem regra culpada: descobre qual medida do veículo fecha o caminho (ex.: rampa da balsa de Ilhabela com
+ *  maxweight 40 t). Só roda na falha; até 6 consultas ao Valhalla, em paralelo. */
+async function diagnoseVehicleLimits(base: Parameters<typeof valhalla.route>[0]): Promise<VehicleLimit[]> {
+  const tries = (Object.keys(LIMIT_RELAX) as VehicleLimit[])
+    .map((k) => ({ k, patch: LIMIT_RELAX[k](base.vehicle) }))
+    .filter((t): t is { k: VehicleLimit; patch: Partial<Vehicle> } => t.patch !== null);
+  const ok = await Promise.all(tries.map((t) => valhalla.route({ ...base, vehicle: { ...base.vehicle, ...t.patch } }).then(() => true, () => false)));
+  return tries.filter((_, i) => ok[i]).map((t) => t.k);
 }
 
 interface Exclusion { item: AvoidedItem; rings: Ring[]; polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> }
@@ -251,11 +281,14 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       }
     }
     const names = blockedBy.map(itemLabel);
+    if (blockedBy.length) throw new RouteBlockedError(blockedBy, `Sem rota viável para este veículo: bloqueado por ${names.join(', ')}.`);
+    const limits = await timed(timings, 'valhalla:diagnostico', () => diagnoseVehicleLimits(base)).catch(() => [] as VehicleLimit[]);
     throw new RouteBlockedError(
-      blockedBy,
-      blockedBy.length
-        ? `Sem rota viável para este veículo: bloqueado por ${names.join(', ')}.`
+      [],
+      limits.length
+        ? `Sem rota para este veículo: todo caminho até o destino passa por via, ponte ou travessia (balsa) que não comporta ${limits.map((l) => LIMIT_LABEL[l](vehicle)).join(' nem ')}. Com essa medida menor existe rota.`
         : `Sem rota viável: ${e.valhallaMessage}. Verifique se origem/destino estão sobre vias acessíveis a caminhões.`,
+      limits,
     );
   }
   const line = turf.lineString(restricted.coordinates);

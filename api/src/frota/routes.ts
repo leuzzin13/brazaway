@@ -268,7 +268,7 @@ export async function frotaRoutes(app: FastifyInstance) {
         try {
           plan = await computeRoute({ origin: b.origin!, destination: b.destination!, departure_at: departure, vehicle });
         } catch (e) {
-          if (e instanceof RouteBlockedError) return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by });
+          if (e instanceof RouteBlockedError) return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by, limited_by: e.limited_by });
           throw e;
         }
       }
