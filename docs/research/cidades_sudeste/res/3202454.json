@@ -2,7 +2,7 @@
   "ibge": "3202454",
   "nome": "Ibatiba",
   "uf": "ES",
-  "status": "nao_achou",
+  "status": "pontual",
   "nivel_busca": "media",
   "fontes_consultadas": [
     {
@@ -24,11 +24,88 @@
     {
       "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar; DOM-ES/AMUNES + Querido Diário)",
       "resultado": "Buscas 'circulação de caminhões' e 'veículos pesados' em 11/10/2026 (+ 'trânsito de caminhões', 'tráfego de caminhões', 'carga e descarga', 'restrição de circulação'): nenhum ato de circulação. Só ruído (compras de manutenção de frota, processo seletivo, carga e descarga em contratação). Varredura prévia da preparação: 0 acerto."
+    },
+    {
+      "url": "https://ibatiba.es.leg.br/legislacao/localizar/a/lei-ordinaria.html (+ /lei-complementar, /decreto, páginas pg/N)",
+      "resultado": "Portal próprio da Câmara respondeu 200: 1.394 normas distintas varridas (Lei Ordinária 21 pp., Lei Complementar 5 pp., Decreto 1 p.), filtro local por palavra na ementa. Única de circulação: Lei 184/1993",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ibatiba.es.leg.br/legislacao/detalhe/471/lei-184-1993.html (+ PDF)",
+      "resultado": "Lei 184, de 11/11/1993, lida (pdftotext): autoriza o Executivo a interditar trecho da Rua Salomão Fadlalah 18h-22h, sáb., dom. e feriados, a veículos automotores, bicicletas, tração animal e animais; art. 1º par. único, art. 2º; \"Em vigor\", sem atos vinculados. Não é restrição a caminhão",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://sapl.ibatiba.es.leg.br/api/norma/normajuridica/",
+      "resultado": "API 200, 0 normas cadastradas (base vazia)",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ibatiba.es.gov.br/ e nopapercloud/legislacaocompilada",
+      "resultado": "403 Cloudflare em 14/10/2026; não lidas",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
+      "resultado": "\"tráfego de veículos\" (Decreto 011/2024, emergência por chuvas), \"caminhões\", \"toneladas\", \"veículos de carga\", \"trânsito pesado\", \"carretas\", \"rota de caminhões\", \"zona de restrição\", \"circulação de veículos\", \"estacionamento de caminhões\", \"caminhão\", \"fica proibido o trânsito\", \"proíbe o tráfego\", \"tráfego pesado\", \"Código de Posturas\", \"Plano de Mobilidade\": 0 acerto de restrição",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Nenhum ato de circulação de caminhões encontrado. As fontes principais de legislação (SPL/legislacaocompilada/nopapercloud/camarasempapel) devolveram 403 Cloudflare ou não responderam pelo proxy desta máquina; só a busca nos diários consolidados (DOM-ES) funcionou, e ela cobre apenas atos publicados desde 2021. Resultado NÃO conclusivo. Sugestão: repetir a busca por outro IP/navegador no portal de legislação da prefeitura/Câmara.",
-  "falha_de_fonte": true,
+  "data": "2026-10-14",
+  "observacoes": "Nenhum ato de circulação de caminhões encontrado. As fontes principais de legislação (SPL/legislacaocompilada/nopapercloud/camarasempapel) devolveram 403 Cloudflare ou não responderam pelo proxy desta máquina; só a busca nos diários consolidados (DOM-ES) funcionou, e ela cobre apenas atos publicados desde 2021. Resultado NÃO conclusivo. Sugestão: repetir a busca por outro IP/navegador no portal de legislação da prefeitura/Câmara. || R2: o portal de legislação da Câmara (ibatiba.es.leg.br, plataforma própria) responde e lista todas as normas; varri por inteiro as listas de Lei Ordinária (21 páginas), Lei Complementar (5) e Decreto (1; só decretos legislativos) = 1.394 normas distintas, filtrando ementas por caminh/trânsito/tráfego/pesad/carga/tonel/eixo/veículo. A única norma de circulação é a Lei 184/1993 (autoriza interditar trecho da Rua Salomão Fadlalah 18h-22h nos fins de semana e feriados; todos os veículos): pontual, não roteável, regra desativada. O resto é frota/alienação de veículos, táxi (Lei 833/2017), educação de trânsito (Lei 293/1998), programas \"caminhos\" e videomonitoramento (Lei 1.093/2025). O SAPL (sapl.ibatiba.es.leg.br) tem a base vazia (0 normas). A prefeitura (ibatiba.es.gov.br) e o SPL (nopapercloud/legislacaocompilada) seguem em 403 Cloudflare: decretos do Executivo só via DOM-ES (2021+, 6 termos novos, 0 acerto). falha_de_fonte=false porque a base de leis foi lida inteira; resta o ponto cego dos decretos do Executivo anteriores a 2021.",
+  "falha_de_fonte": false,
   "osm_divergencias": [],
-  "regras_rascunho": []
+  "regras_rascunho": [
+    {
+      "id": "ibatiba_rua_salomao_fadlalah_fechamento_lei184_1993",
+      "tipo": "via",
+      "regime": "Fechamento noturno de trecho (todos os veículos)",
+      "nome": "Ibatiba: Rua Salomão Fadlalah (Praça David Gomes até a ponte sobre o Rio Pardo), trânsito interditável 18h-22h aos sábados, domingos e feriados",
+      "status": "desativada",
+      "status_motivo": "Lei 184/1993 só AUTORIZA o Executivo a interditar o trecho (não fixa a interdição por si), vale para todos os veículos, bicicletas e animais (não é restrição a caminhão), sem decreto de regulamentação nem sinalização conhecidos, trecho curto de uso comunitário. Não roteável como restrição a caminhões.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "18:00",
+          "to": "22:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 1º, parágrafo único: proprietários de veículos e animais residentes no trecho têm trânsito livre, se comprovada a necessidade"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 184, de 11/11/1993 (Ibatiba)",
+          "artigo": "art. 1º (Rua Salomão Fadlalah, da Praça David Gomes até as proximidades da ponte sobre o Rio Pardo; 18h às 22h; sábados, domingos e feriados) e art. 2º (sinalização)",
+          "url": "https://ibatiba.es.leg.br/legislacao/detalhe/471/lei-184-1993.html",
+          "nota": "PDF: https://ibatiba.es.leg.br/arquivos/documentos/ibatiba/1993/11/lei/lei-184-1993-wsjdw.pdf (cópia em atos/3202454/lei-184-1993.pdf)"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "ibatiba_rua_salomao_fadlalah",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Salomão Fadlalah"
+          ],
+          "descricao": "da Praça David Gomes até as proximidades da ponte sobre o Rio Pardo, sede da cidade",
+          "aproximado": true
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }

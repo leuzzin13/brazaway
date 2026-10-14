@@ -1,34 +1,55 @@
 {
- "ibge": "3203056",
- "nome": "Jaguaré",
- "uf": "ES",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11072/141",
-   "resultado": "DOM/ES Ed. 2.989, 23/04/2026: Lei 1.942, de 22/04/2026 (Política Municipal de Mobilidade Urbana)"
-  },
-  {
-   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11072/143",
-   "resultado": "Lei 1.942/2026, art. 5º, VIII: 'infraestrutura de transporte de cargas e logística urbana, disciplinando o uso de vias, o controle de acesso, ... e os espaços destinados à circulação de veículos pesados': diretriz, sem vias, horários nem limites"
-  },
-  {
-   "url": "https://sapl.jaguare.es.leg.br/api/norma/normajuridica/ (legislacao.py buscar)",
-   "resultado": "caminh: 4 atos (Programa Novos Caminhos, Caminho do Campo, prazos de PPA/LDO); demais termos 0"
-  },
-  {
-   "url": "https://jaguare.legislacaocompilada.com.br/legislacao/",
-   "resultado": "legislacao.py: formulário não encontrado (Cloudflare)"
-  },
-  {
-   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
-   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': veículos pesados: 2 resultados (lei de mobilidade 1.942/2026 e contrato); demais 0"
-  }
- ],
- "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. A Lei 1.942/2026 é só política de mobilidade (diretriz).",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3203056",
+  "nome": "Jaguaré",
+  "uf": "ES",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11072/141",
+      "resultado": "DOM/ES Ed. 2.989, 23/04/2026: Lei 1.942, de 22/04/2026 (Política Municipal de Mobilidade Urbana)"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/11072/143",
+      "resultado": "Lei 1.942/2026, art. 5º, VIII: 'infraestrutura de transporte de cargas e logística urbana, disciplinando o uso de vias, o controle de acesso, ... e os espaços destinados à circulação de veículos pesados': diretriz, sem vias, horários nem limites"
+    },
+    {
+      "url": "https://sapl.jaguare.es.leg.br/api/norma/normajuridica/ (legislacao.py buscar)",
+      "resultado": "caminh: 4 atos (Programa Novos Caminhos, Caminho do Campo, prazos de PPA/LDO); demais termos 0"
+    },
+    {
+      "url": "https://jaguare.legislacaocompilada.com.br/legislacao/",
+      "resultado": "legislacao.py: formulário não encontrado (Cloudflare)"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+      "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': veículos pesados: 2 resultados (lei de mobilidade 1.942/2026 e contrato); demais 0"
+    },
+    {
+      "url": "https://sapl.jaguare.es.leg.br/api/norma/normajuridica/ (ementa__icontains, 15 termos)",
+      "resultado": "API 200: nenhuma lei de circulação de caminhões; tipos só Lei/LC/LO/Emenda/Promulgação",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://sapl.jaguare.es.leg.br/media/sapl/public/normajuridica/2026/1911/lei_1.942_2026.pdf",
+      "resultado": "Lei 1.942/2026 relida (pdftotext, 60 mil caracteres): sem restrição a caminhão; só art. 5º, VIII e definições",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://jaguare.legislacaocompilada.com.br/legislacao/",
+      "resultado": "403 Cloudflare em 14/10/2026; não lida",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
+      "resultado": "\"caminhões\", \"toneladas\", \"veículos de carga\" (Lei 1.942/2026 e lei de cargos de 2023), \"circulação de veículos\" (Lei 1.942/2026), \"carretas\", \"rota de caminhões\", \"zona de restrição\", \"trânsito pesado\", \"estacionamento de caminhões\", \"caminhão\": 0 acerto de restrição",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. A Lei 1.942/2026 é só política de mobilidade (diretriz). || R2: o SAPL da Câmara (sapl.jaguare.es.leg.br) responde e tem 1.926 normas, só Leis (Lei, LC, Lei Orgânica, Emenda, Promulgação), sem decretos. Busquei na ementa por pesad, carga, rodovi, veícul/veicul, tráfego, transit/trânsit, tonel, eixo, urbano, mobilidade, zona, restri, circula, carreta, estacionamento, sinaliza: nenhuma lei de circulação/restrição a caminhões (só carga horária, maquinas pesadas de servidores, Lei 1.626/2022 que autoriza absorver trecho rodoviário estadual urbano, perímetros urbanos, aquisição de veículos, Lei 1.055/2013 multas de trânsito). Lei 1.942/2026 (Plano de Mobilidade) baixada do SAPL e relida: só diretriz (art. 5º, VIII, infraestrutura de cargas e \"espaços destinados à circulação de veículos pesados\"; definição de transporte urbano de cargas e de ZRC não aparece como regra); sem zonas, vias, horários ou limites. O SPL (jaguare.legislacaocompilada.com.br) segue em 403 Cloudflare: decretos do Executivo só via DOM-ES (2021+, 15 termos novos: só a Lei 1.942/2026 e contratos). falha_de_fonte=false pela leitura das leis; ponto cego = decretos anteriores a 2021.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

@@ -1,26 +1,47 @@
 {
- "ibge": "3204302",
- "nome": "Presidente Kennedy",
- "uf": "ES",
- "status": "nao_achou",
- "nivel_busca": "media",
- "fontes_consultadas": [
-  {
-   "url": "https://presidentekennedy.legonline.com.br (url_busca do portal)",
-   "resultado": "portal_proprio sem cliente testado; busca heurística 0 atos"
-  },
-  {
-   "url": "https://presidentekennedy.es.leg.br",
-   "resultado": "SPL: formulário /legislacao/ não encontrado"
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 3204302 (DOM-ES/AMUNES + Querido Diário)",
-   "resultado": "0 acertos"
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Portal de legislação da prefeitura não pôde ser consultado de forma confiável; busca não conclusiva.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3204302",
+  "nome": "Presidente Kennedy",
+  "uf": "ES",
+  "status": "sem_restricao_declarada",
+  "nivel_busca": "media",
+  "fontes_consultadas": [
+    {
+      "url": "https://presidentekennedy.legonline.com.br (url_busca do portal)",
+      "resultado": "portal_proprio sem cliente testado; busca heurística 0 atos"
+    },
+    {
+      "url": "https://presidentekennedy.es.leg.br",
+      "resultado": "SPL: formulário /legislacao/ não encontrado"
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 3204302 (DOM-ES/AMUNES + Querido Diário)",
+      "resultado": "0 acertos"
+    },
+    {
+      "url": "https://presidentekennedy.legonline.com.br/busca/avancada?cat=0&page=1..N (catálogo completo)",
+      "resultado": "200: 4.561 atos varridos (ementa, data, situação); nenhum de restrição/circulação de caminhões; detalhes lidos: Decreto 78/2021 (auditoria de rotas do Transkennedy), Decreto 13/2022 (revoga ato normativo, tema trânsito), Decreto 56/2023 (comissão de mobilidade)",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://presidentekennedy.legonline.com.br/busca/tema/28, /busca/tema/81, /busca/familia-tema/13",
+      "resultado": "Temas TRANSPORTE E TRÂNSITO e MOBILIDADE URBANA: 3 atos (Decretos 78/2021, 13/2022 e 56/2023), nenhum de restrição a caminhões",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://presidentekennedy.es.leg.br/",
+      "resultado": "200 (SPL da Câmara sem formulário /legislacao/ para robô); redundante com o legonline",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
+      "resultado": "15 termos (caminhões, caminhão, carretas, veículos de carga, trânsito pesado, rota de caminhões, zona de restrição, circulação de veículos, estacionamento de caminhões, fica proibido o trânsito, proíbe o tráfego, tráfego pesado, Código de Posturas, Plano de Mobilidade): 0 acerto de circulação",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Portal de legislação da prefeitura não pôde ser consultado de forma confiável; busca não conclusiva. || R2: o portal certo é https://presidentekennedy.legonline.com.br (Legislação Online, \"Portal de Atos Normativos Compilados\"; a URL do mapa estava colada em duas, \"presidentekennedy.es.gov.br/https://...\"). Responde 200. Varri o catálogo INTEIRO via GET /busca/avancada?cat=0&page=N (a busca por palavra do formulário não filtra por POST): 4.561 atos (Leis, Leis Complementares, Decretos, de 1970 a 2026) e filtrei as ementas por caminh/trânsito/tráfego/pesad/tonel/eixo/circula/carga/mobilidade/sinaliza/estacionamento/rota. Nada de restrição de circulação de caminhões. Relevantes só: Lei 1.835/2025 (acordo com o DETRAN-ES para a Guarda Municipal fiscalizar trânsito), Decreto 56/2023 (comissão intersetorial de mobilidade urbana), Decreto 15/2025 (altera o 56/2023), Lei 1.119/2014 (vagas para idosos e PcD), Decretos 57/2019 (revogado) e 75/2019 (serviço de máquinas e veículos de carga a produtores rurais; é serviço da prefeitura, não restrição). Câmara (presidentekennedy.es.leg.br) abre (SPL sem formulário); não necessária. DOM-ES (2021+), 15 termos novos: 0 acerto. Busca completa sem nada: sem_restricao_declarada (não prova ausência de sinalização sem ato).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }
