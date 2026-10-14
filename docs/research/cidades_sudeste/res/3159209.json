@@ -1,22 +1,78 @@
 {
-  "ibge": "3159209",
-  "nome": "Santa Rita de Caldas",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "fontes_consultadas": [
+ "ibge": "3159209",
+ "nome": "Santa Rita de Caldas",
+ "uf": "MG",
+ "status": "pista",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://santaritadecaldas.mg.gov.br/?s= (WordPress)",
+   "resultado": "180 posts/páginas, nenhum ato de circulação"
+  },
+  {
+   "url": "diarios_consolidados.py (amm-mg)",
+   "resultado": "0 resultados"
+  },
+  {
+   "url": "https://santaritadecaldas.mg.gov.br/ (é o site da CÂMARA, não da Prefeitura) – requerimento-no-20-2019",
+   "resultado": "Requerimento 20/2019 pergunta se segue em vigor o Decreto nº 108/2008, 'Limita a circulação de cargas em toda malha viária do Município', PBT igual ou inferior a 7 t, com art. 2º (PM e fiscalização) – fonte do indício. Indicação 47/2026 pede proibir estacionamento de caminhões na Rua Geraldo de Melo (não é circulação).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.prefeiturasrc.mg.gov.br/legislacao (Prefeitura, sistema próprio; busca GET por categoria/número/ano)",
+   "resultado": "Site da Prefeitura localizado. Decretos nº 108 achados são de 2017 (ids 100 e 208, 'DECRETO 108', sem ementa nem arquivo); não há Decreto 108/2008 indexado (ano=2008 sem resultado); busca por ementa 'caminh' só traz crédito para compra de caminhões e convênios. Texto do decreto de 2008 não localizado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "AMM-MG (diarios_consolidados.py buscar 3159209)",
+   "resultado": "Refeito: 0 resultados (AMM começa em 2009).",
+   "rodada": "R2"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Site WordPress não é base de normas; legislação não pesquisada. Não conclusivo.\nR2: nova pista concreta: Decreto nº 108/2008 (limitação de circulação de cargas na malha viária; PBT <= 7 t segundo o Requerimento 20/2019), vigência incerta e texto não obtido; por isso só regra desativada. Pedir cópia à Prefeitura ou localizar o DOM/AMM de 2008.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santa_rita_caldas_dec108_2008_cargas",
+   "tipo": "zona",
+   "regime": "Limitação de circulação de cargas (PBT)",
+   "nome": "Santa Rita de Caldas: Decreto 108/2008, limitação de circulação de cargas na malha viária",
+   "status": "desativada",
+   "status_motivo": "Só citado em Requerimento da Câmara (20/2019); texto, artigos, vigência e eventual revogação não lidos; nenhum ato primário com URL obtido.",
+   "confianca": "baixa",
+   "janelas": [
     {
-      "url": "https://santaritadecaldas.mg.gov.br/?s= (WordPress)",
-      "resultado": "180 posts/páginas, nenhum ato de circulação"
-    },
-    {
-      "url": "diarios_consolidados.py (amm-mg)",
-      "resultado": "0 resultados"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
     }
-  ],
-  "data": "2026-10-11",
-  "observacoes": "Site WordPress não é base de normas; legislação não pesquisada. Não conclusivo.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": []
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 108/2008 (citado no Requerimento nº 20/2019)",
+     "artigo": "art. 1º (limitação) e art. 2º (fiscalização) conforme citação",
+     "url": "https://santaritadecaldas.mg.gov.br/requerimento-no-20-2019/"
+    }
+   ],
+   "nota": "Parâmetro (PBT) incerto: requerimento diz 'peso bruto total igual ou inferior a sete toneladas'.",
+   "vigencia_inicio": "2008",
+   "trechos": []
+  }
+ ],
+ "rodada": "R2"
 }
