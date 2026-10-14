@@ -16,13 +16,24 @@
     {
       "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3158409)",
       "resultado": "3 ways hgv=discouraged (unclassified), sem nome."
+    },
+    {
+      "url": "https://santanadecataguases.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Resultados: Decreto 213/2024 (vidro e som em festividades), Decreto 74/2018 (greve dos caminhoneiros): ruído; nada de circulação de caminhões. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3158409 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "0 em \"circulação/trânsito de caminhões\"; \"veículos pesados\" 65 (cargos de operador de máquinas, frota, covid): ruído.",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Sem ato nos diários (AMM). Portal inacessível; busca não conclusiva.",
-  "falha_de_fonte": true,
+  "data": "2026-10-14",
+  "observacoes": "Sem ato nos diários (AMM). Portal inacessível; busca não conclusiva. || R2: Portal Fácil lido: nenhuma norma de restrição a caminhões nas buscas por ementa e texto integral. Busca agora conclusiva para a Prefeitura (Executivo).",
+  "falha_de_fonte": false,
   "osm_divergencias": [
     "ways 802903071, 802903073, 1052540354 hgv=discouraged: não é proibição; sem ato."
   ],
-  "regras_rascunho": []
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

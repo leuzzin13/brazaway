@@ -2,7 +2,7 @@
   "ibge": "3147402",
   "nome": "Paraopeba",
   "uf": "MG",
-  "status": "nao_achou",
+  "status": "pista",
   "nivel_busca": "dirigida",
   "fontes_consultadas": [
     {
@@ -24,13 +24,63 @@
     {
       "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3147402)",
       "resultado": "Só 2 helipads com maxweight (Agéo Fazenda Paraopeba, Fazenda Retiro da Lagoa)."
+    },
+    {
+      "url": "https://paraopeba.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Achou Decreto 42/2015 e Decreto 6/2016 (ementas); outros resultados são ruído (vendedores ambulantes, SIM). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=1..10&arquivo={CEA70EEC-...}.pdf",
+      "resultado": "Sem acesso ao PDF do Decreto 42/2015 (arquivo não entregue; redirect google.com).",
+      "rodada": "R2"
+    },
+    {
+      "url": "WebSearch \"Paraopeba MG Decreto 042/2015 tráfego de veículos de carga na área urbana\"",
+      "resultado": "Sem resultado de Paraopeba.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3147402 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "0 resultados.",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Pista OSM era só maxweight de helipontos. Portal da prefeitura inacessível (proxy), só SAPL da Câmara consultado: busca não conclusiva.",
-  "falha_de_fonte": true,
+  "data": "2026-10-14",
+  "observacoes": "Pista OSM era só maxweight de helipontos. Portal da prefeitura inacessível (proxy), só SAPL da Câmara consultado: busca não conclusiva. || R2: Portal Fácil da Prefeitura lido (corpo do 302). ACHADO FORTE (pista): Decreto 42/2015 'Dispõe sobre tráfego de veículos de carga na área urbana' e Decreto 6/2016 que altera seus arts. 1º e 5º. Texto NÃO lido: abrir_arquivo.aspx devolve erro 'Buffer cannot be null'/redirect para qualquer cdLocal (1-10), AMM 0, SAPL da Câmara 0, 2ª WebSearch sem resultado. PRÓXIMO PASSO: abrir os PDFs em navegador real ou pedir à Prefeitura; páginas de detalhe existem em paraopeba.mg.gov.br/detalhe-da-legislacao/info/decreto-42-2015/<id> (id desconhecido; listagem por tipo não acessível). Pista OSM anterior era só helipontos.",
+  "falha_de_fonte": false,
   "osm_divergencias": [
     "maxweight em 2 helipads: não é restrição viária."
   ],
-  "regras_rascunho": []
+  "regras_rascunho": [
+    {
+      "id": "paraopeba_area_urbana_veiculos_de_carga",
+      "tipo": "zona",
+      "regime": "Tráfego de veículos de carga na área urbana (conteúdo não lido)",
+      "nome": "Paraopeba: tráfego de veículos de carga na área urbana (Decreto 042/2015, alterado pelo Decreto 006/2016)",
+      "status": "desativada",
+      "status_motivo": "Ato existe no portal oficial (ementas: Decreto 42/2015 \"Dispõe sobre o tráfego de veículos de carga na área urbana do Município de Paraopeba\"; Decreto 6/2016 \"Altera os artigos 1º e 5º do Decreto Municipal 042/2015\"), mas o texto não pôde ser lido: o PDF do Portal Fácil não abre por curl (arquivo ausente/redirect) e o DSRESUMO traz só a ementa; sem artigos, dias, horários, vias e veículos afetados. Ativar só após ler os PDFs.",
+      "confianca": "baixa",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 042/2015 (Paraopeba), 18/08/2015 conforme índice do portal",
+          "artigo": "não lido (art. 1º e 5º alterados pelo Decreto 006/2016)",
+          "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={CEA70EEC-343C-C7B2-2D5D-25ECBECACEAC}.pdf"
+        },
+        {
+          "ato": "Decreto municipal 006/2016 (Paraopeba), 15/01/2016 (mês +1 do índice do portal)",
+          "artigo": "não lido",
+          "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={B0ADCC5B-B6E4-D6CE-D8CA-588A76D5A7CA}.pdf"
+        }
+      ],
+      "trechos": [],
+      "geometria": []
+    }
+  ],
+  "rodada": "R2"
 }

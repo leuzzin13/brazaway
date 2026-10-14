@@ -1,26 +1,107 @@
 {
- "ibge": "3145901",
- "nome": "Ouro Branco",
- "uf": "MG",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://ourobranco.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3145901, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
-   "resultado": "endpoint ajaxpro leg_lis não encontrado (erro do cliente)."
-  },
-  {
-   "url": "https://www.ourobranco.mg.gov.br/legislacao (toolkit legislacao.py buscar 3145901, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
-   "resultado": "busca heurística: 0 em todos os termos."
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar 3145901 'circulação de caminhões' (amm-mg, qd)",
-   "resultado": "amm-mg 0; qd 0. Pistas da preparação: Lei 2.567/2022 (parques portáteis/estacionamento, https://www.diariomunicipal.com.br/amm-mg/materia/A804D9EE) e Lei 2.299/2018 (estrutura do órgão de trânsito, escolta de carga, https://www.diariomunicipal.com.br/amm-mg/materia/7B63CD2A) = ruído."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Pistas = ruído (parque de diversões; lei de estrutura do trânsito). Portal Fácil não respondeu ao cliente; só heurística. Município de 691 caminhões, vale nova tentativa de portal por ementa.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3145901",
+  "nome": "Ouro Branco",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://ourobranco.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3145901, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
+      "resultado": "endpoint ajaxpro leg_lis não encontrado (erro do cliente)."
+    },
+    {
+      "url": "https://www.ourobranco.mg.gov.br/legislacao (toolkit legislacao.py buscar 3145901, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
+      "resultado": "busca heurística: 0 em todos os termos."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3145901 'circulação de caminhões' (amm-mg, qd)",
+      "resultado": "amm-mg 0; qd 0. Pistas da preparação: Lei 2.567/2022 (parques portáteis/estacionamento, https://www.diariomunicipal.com.br/amm-mg/materia/A804D9EE) e Lei 2.299/2018 (estrutura do órgão de trânsito, escolta de carga, https://www.diariomunicipal.com.br/amm-mg/materia/7B63CD2A) = ruído."
+    },
+    {
+      "url": "https://www.ourobranco.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Achou Lei 2.897/2025 (ementa); texto do PDF indisponível por curl. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/L_1973_0_2013.pdf",
+      "resultado": "Lei 1.973/2013 lida integralmente (pdftotext). Achado via WebSearch (1 de 2) que revelou o padrão de URL dos PDFs da Câmara.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/LEI_2897_2025.pdf",
+      "resultado": "Lei 2.897/2025 lida (PDF com carimbos; artigos 1º a 4º legíveis). Reaberta na verificação: mesmo hash md5.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.itatiaia.com.br/ouropreto/ouro-branco-restringe-circulacao-de-veiculos-pesados/",
+      "resultado": "Notícia (pista): Estudo de Viabilidade Viária para pesados; sem ato citado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3145901 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "amm-mg: \"trânsito de caminhões\" 1 (Lei 2.531/2021, ambiental, ruído); \"veículos pesados\" 14 (decretos de empreendimento, ruído); sem ato de circulação.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Pistas = ruído (parque de diversões; lei de estrutura do trânsito). Portal Fácil não respondeu ao cliente; só heurística. Município de 691 caminhões, vale nova tentativa de portal por ementa. || R2: Portal Fácil lido (corpo do 302). Ementas: Lei 2.897/2025 (altera Lei 1.973/2013 'regulamenta o tráfego de carretas e caminhões') e Decretos/leis irrelevantes (Lei 2.750/2023 vagas de carga e descarga gratuitas; Lei 2.567/2022 parques). Textos lidos no site da Câmara (www.app.ourobranco.cam.mg.gov.br/docs/legislacao/...). Nada mais encontrado que altere ou revogue a Lei 1.973 (portal: só 2.897/2025 cita a 1.973). Notícia Itatiaia (pista): prefeitura exige Estudo de Viabilidade Viária para autorizar pesados com base em laudo de 2022 (ato não achado; não é regra de roteamento). Lei 2.531/2021 (AMM): infrações ambientais, estacionar veículos de minério em via pública, não é circulação. Atos em C/atos/3145901/. Geometria pendente (Centro Histórico não delimitado na lei). VERIFICADO na R2: ver C/verif/3145901.json.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "ouro_branco_centro_historico_3eixos",
+      "tipo": "zona",
+      "regime": "Carretas e caminhões com 3 eixos ou mais proibidos no Centro Histórico (exceção carga/descarga de comércio em faixas)",
+      "nome": "Ouro Branco: Centro Histórico, caminhões/carretas de 3 eixos ou mais",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 1.973/2013, art. 1º par. único: caminhões/carretas de 3 eixos ou mais que se destinam a carga e descarga de produtos do comércio em geral podem trafegar das 8h às 15h e das 20h às 5h",
+        "Lei 2.897/2025: veículos que realizam no município serviços de emplacamento, transferência, alteração de dados e outros do Detran podem trafegar das 8h às 19h (comprovação por documentos do serviço, inciso I)",
+        "Lei 2.897/2025 art. 2º: as exceções NÃO valem \"no perímetro de tombamento histórico\""
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.973, de 25/04/2013 (Ouro Branco)",
+          "artigo": "art. 1º e parágrafo único (proibição para carretas e caminhões com 3 eixos ou mais no Centro Histórico; exceção de carga/descarga do comércio 8h-15h e 20h-5h); art. 3º (apreensão e multa); art. 4º (vigência na publicação)",
+          "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/L_1973_0_2013.pdf"
+        },
+        {
+          "ato": "Lei municipal 2.897, de 04/09/2025 (Ouro Branco), altera o parágrafo único do art. 1º da Lei 1.973/2013",
+          "artigo": "arts. 2º e 3º (exceção do parágrafo único não vale no \"perímetro de tombamento histórico\"; serviços de Detran/emplacamento 8h-19h; inciso I comprovação por documentos); art. 4º (vigência na publicação)",
+          "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/LEI_2897_2025.pdf"
+        }
+      ],
+      "nota": "AMBIGUIDADE: a lei não delimita o \"Centro Histórico\" nem o \"perímetro de tombamento histórico\" (a redação de 2025 usa a segunda expressão como carve-out das exceções); sem mapa/ato de delimitação, a geometria é pendente. Modelado como proibição o dia todo para 3+ eixos (as exceções de carga/descarga ficam em excecoes). Texto da Lei 2.897/2025 lido de PDF com carimbos (legível, artigos conferidos). Lei 1.973 art. 2º também proíbe limpeza, manutenção e ESTACIONAMENTO de carretas, caminhões e ônibus em vias públicas em todo o município (não roteável).",
+      "vigencia_inicio": "2013-04-25",
+      "trechos": [],
+      "geometria": []
+    }
+  ],
+  "rodada": "R2"
 }
