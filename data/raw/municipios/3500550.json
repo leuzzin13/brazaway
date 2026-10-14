@@ -1,0 +1,112 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3500550",
+  "municipio": "Águas de Santa Bárbara",
+  "uf": "SP",
+  "fonte_id": "aguas-de-santa-barbara",
+  "fonte": {
+    "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1 (Lei 1.842/2020)",
+    "licenca": "Ato oficial do município: domínio público (Lei 9.610/1998 art. 8º IV). Zona aproximada pelos setores censitários urbanos do IBGE (Censo 2022, dados públicos, citar a fonte: IBGE) menos a travessia da SP-261 (vias do OpenStreetMap, ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.842/2020: circulação de veículos extrapesados de carga (bitrens, tritrens, treminhões, rodotrens ou 18 t ou mais de PBT/PBTC) proibida nas vias urbanas do perímetro urbano, sem exceções. Perímetro sem delimitação no ato: setores urbanos do IBGE 2022, sem a travessia da SP-261."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "aguas_de_santa_barbara_extrapesados_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Veículos extrapesados de carga (≥ 18 t ou CVC), proibição total",
+      "nome": "Águas de Santa Bárbara: proibida a circulação de veículos extrapesados de carga nas vias urbanas do perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 17.99
+          }
+        ]
+      },
+      "excecoes": [
+        "O ato não traz exceções (nem autorização especial, nem entrega local); art. 4º prevê regulamentação por decreto, não localizado."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.842, de 06/08/2020 (Estância Hidromineral de Águas de Santa Bárbara)",
+          "artigo": "art. 1º (proibição no perímetro urbano), art. 3º (extrapesado = bitrens, tritrens, treminhões, rodotrens ou outro veículo com capacidade de carga igual ou superior a 18 t de PBT ou PBTC), art. 5º (vigor 15 dias corridos após a publicação)",
+          "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1",
+          "nota": "Texto lido no PDF escaneado da Câmara (download_lei_1842.pdf), salvo em atos/3500550/lei_1842_2020.pdf. Portal da Câmara: situação 'Em vigor', sem alteração nem revogação."
+        }
+      ],
+      "nota": "Ambiguidade do art. 3º: 'capacidade de carga igual ou superior a 18 toneladas de peso bruto total'; adotado PBT de 18 t ou mais (lado seguro) e CVC por tipo. O ato não nomeia vias: vale em todo o perímetro urbano, aproximado pelos setores urbanos do IBGE 2022 (as Leis Complementares 186/2023 e 192/2023 e as Leis 1.624/2013 e 1.684/2015 ampliaram o perímetro). A SP-261, que cruza a cidade como Av. Ataliba Leonel, Rua Bahia etc., fica fora da zona (rodovia estadual, fora da competência municipal).",
+      "vigencia_inicio": "2020-08-22",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3500550_perimetro_urbano.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/imp15_perimetro_urbano_curadoria.py 3500550 <dir dos setores de SP> data/cache/municipios/osm_hw_3500550.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede (IBGE 2022), menos as vias com ref de rodovia (SP-261), as trunk/primary sem ref e as ligações, com folga de 40 m (OSM, ODbL)."
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "fonte_geometria": "IBGE, setores censitários urbanos do Censo 2022 (distrito-sede), menos a travessia da SP-261 (OSM, ODbL 1.0)"
+    },
+    {
+      "id": "aguas_de_santa_barbara_estacionamento_extrapesados",
+      "tipo": "zona",
+      "regime": "Estacionamento de extrapesados",
+      "nome": "Águas de Santa Bárbara: proibido o estacionamento de veículos extrapesados e seus vagões nas vias urbanas",
+      "status": "desativada",
+      "status_motivo": "Regra de estacionamento (art. 2º), não de circulação.",
+      "confianca": "media",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.842/2020",
+          "artigo": "art. 2º e §§ 1º-2º (remoção e diária de R$ 2.000)",
+          "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1"
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

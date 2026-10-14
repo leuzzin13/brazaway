@@ -1,0 +1,78 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3550902",
+  "municipio": "São Simão",
+  "uf": "SP",
+  "fonte_id": "sao-simao",
+  "fonte": {
+    "url": "https://camarasaosimao.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=3442&tipo= (Lei 2.825/2025)",
+    "licenca": "Ato oficial do município: domínio público (Lei 9.610/1998 art. 8º IV). Zona aproximada pelos setores censitários urbanos do IBGE (Censo 2022, dados públicos, citar a fonte: IBGE) menos a travessia das rodovias (vias do OpenStreetMap, ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.825/2025: caminhões a partir de 5 eixos proibidos nas vias públicas urbanas, com exceção ampla de destino local e de moradores; alternativa obrigatória pelo dispositivo Padre Gilberto Maria Defina (Anhanguera km 274+300) para a Rod. Conde Francisco Matarazzo Júnior (SP-253). Perímetro sem delimitação no ato: setores urbanos do IBGE 2022, sem as rodovias."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "sao_simao_lei2825_2025_5eixos",
+      "tipo": "zona",
+      "regime": "Caminhões de 5 eixos ou mais (veículos longos pesados)",
+      "nome": "São Simão: Lei 2.825/2025, proibição do tráfego de caminhões a partir de 5 eixos nas vias públicas urbanas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º, caput (veículos de proprietários residentes na área urbana e os que tenham como destino o Município de São Simão para os serviços/cargas listados nos incisos I a XIX)",
+      "excecoes": [
+        "art. 2º: veículos pesados cujos proprietários residem na área urbana e os que tenham como destino o Município e se destinem a: obras e serviços de emergência; transporte coletivo; veículos oficiais; PM, bombeiros e ambulâncias; Forças Armadas; concessionárias de serviços urbanos; reparos em oficinas locais (desacoplado da carreta/reboque/semirreboque); construção civil e concretagem; coleta de lixo; guincho; cobertura jornalística; cargas alimentícias; materiais de construção; combustíveis e gás; remoção de terra e obras civis; infraestrutura urbana; entulho em caçambas; transporte de valores; abastecimento da indústria e do comércio local (inciso XX em branco no texto)",
+        "art. 3º: o Executivo pode regulamentar por decreto exceções (inclusive veículos de moradores) e a utilização provisória enquanto a via principal não for concluída"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.825, de 03/06/2025 (São Simão/SP; PL 022/2025, autógrafo 028/2025)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões a partir de 5 eixos nas vias públicas da cidade: rodotrem, caminhão trator com semirreboque/reboque, romeu e julieta, bitrem, treminhão, canavieiro, de grãos e similares); § 1º (alternativa obrigatória: dispositivo \"Padre Gilberto Maria Defina\", Rod. Anhanguera km 274+300, para a rod. Conde Francisco Matarazzo Júnior); § 2º (sinalização); art. 2º (exceções); art. 4º (vigência na publicação)",
+          "url": "https://camarasaosimao.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=3442&tipo=",
+          "nota": "Texto lido em PDF (imagem) baixado da Câmara: atos/3550902/lei_2825_2025_sao_simao.pdf. Webline: Em vigor, sem alteração registrada"
+        }
+      ],
+      "nota": "Na prática é proibição de tráfego de passagem de 5+ eixos: a exceção de destino local (art. 2º) é ampla (inclui abastecimento da indústria e do comércio local). O ato não lista ruas: zona aproximada pelos setores urbanos do IBGE 2022, sem a SP-253 (a alternativa do § 1º). Art. 3º prevê decreto regulamentador: não localizado. Sinalização (§ 2º) e conclusão do dispositivo da Anhanguera não confirmadas.",
+      "vigencia_inicio": "2025-06-03",
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3550902_perimetro_urbano.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/imp15_perimetro_urbano_curadoria.py 3550902 <dir dos setores de SP> data/cache/municipios/osm_hw_3550902.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede de São Simão (IBGE 2022), menos as vias com ref de rodovia (SP-253), as trunk/primary sem ref e as ligações, com folga de 40 m (OSM, ODbL)."
+        }
+      ],
+      "fonte_geometria": "IBGE, setores censitários urbanos do Censo 2022 (distrito de São Simão), menos a travessia das rodovias (OSM, ODbL 1.0)"
+    }
+  ]
+}

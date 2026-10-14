@@ -1,0 +1,72 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3540200",
+  "municipio": "Pontal",
+  "uf": "SP",
+  "fonte_id": "pontal",
+  "fonte": {
+    "url": "https://camarapontal.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5148&tipo= (Lei 2.031/1999)",
+    "licenca": "Ato oficial do município: domínio público (Lei 9.610/1998 art. 8º IV). Zona aproximada pelos setores censitários urbanos do IBGE (Censo 2022, dados públicos, citar a fonte: IBGE) menos a travessia das rodovias e o Anel Viário (vias do OpenStreetMap, ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.031/1999: caminhões com carga ou ligados a carretas devem usar o Anel Viário Liliana Tenuto Rossi e não trafegar pelas ruas e logradouros da cidade. Perímetro urbano sem delimitação no ato: zona aproximada pelos setores urbanos do IBGE 2022, com o Anel Viário e as rodovias (SPA 343/322 e outras) fora da zona."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "pontal_lei2031_1999_caminhoes_ruas_anel_viario",
+      "tipo": "zona",
+      "regime": "Caminhões com carga ou ligados a carretas (24 h)",
+      "nome": "Pontal: Lei 2.031/1999, proibido o tráfego de caminhões transportando cargas ou ligados a carretas pelas ruas e logradouros da cidade (obrigatório o Anel Viário Liliana Tenuto Rossi)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, parágrafo único (carga, descarga, conserto ou abastecimento no perímetro urbano)",
+      "excecoes": [
+        "art. 1º, parágrafo único: veículos automotores para carga, descarga, conserto ou abastecimento no perímetro urbano",
+        "art. 1º, parágrafo único: proprietários de caminhões residentes na cidade, somente para pernoitar defronte às suas residências"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.031, de 25/05/1999 (Pontal/SP)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões transportando cargas, ou ligados a carretas, mesmo que vazios, pelas ruas e logradouros da cidade, que devem trafegar pelo Anel Viário \"Liliana Tenuto Rossi\") e parágrafo único (exceções); art. 2º (penalidade do CTB, art. 187, II); art. 3º (vigência na publicação)",
+          "url": "https://camarapontal.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5148&tipo=",
+          "nota": "Texto lido em PDF (imagem) baixado da Câmara: atos/3540200/lei_2031_1999_pontal.pdf. Webline: Em vigor."
+        }
+      ],
+      "nota": "Zona = ruas e logradouros da cidade, exceto o Anel Viário e as rodovias. O ato não delimita o perímetro urbano: aproximado pelos setores urbanos do IBGE 2022 (confiança média). O texto cobre 'caminhões transportando cargas OU ligados a carretas, mesmo vazios': o perfil do veículo não distingue carga, então o alvo é caminhão em geral (lado conservador). A exceção de carga, descarga, conserto ou abastecimento no perímetro urbano vai como entrega local. Sem revogação ou alteração achada; sinalização atual não verificada.",
+      "vigencia_inicio": "1999-05-25",
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3540200_perimetro_urbano.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/imp15_perimetro_urbano_curadoria.py 3540200 <dir dos setores de SP> data/cache/municipios/osm_hw_3540200.json: setores urbanos (CD_SIT 1 e 2) do distrito-sede de Pontal (IBGE 2022), menos as vias com ref de rodovia, as trunk/primary sem ref (inclui o Anel Viário Liliana Tenuto Rossi) e as ligações, com folga de 40 m (OSM, ODbL)."
+        }
+      ],
+      "fonte_geometria": "IBGE, setores censitários urbanos do Censo 2022 (distrito de Pontal), menos a travessia das rodovias e o Anel Viário (OSM, ODbL 1.0)"
+    }
+  ]
+}
