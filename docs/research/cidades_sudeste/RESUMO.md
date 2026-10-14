@@ -1,6 +1,6 @@
 # Resumo da pesquisa municipal — Sudeste
 
-Gerado por `workflow/consolidar.py`. Municípios: 1667; já no app: 35; com resultado em `res/`: **1633**; sem resultado: **0**.
+Gerado por `workflow/consolidar.py`. Municípios: 1667; já no app: 167; com resultado em `res/`: **1633**; sem resultado: **0**.
 
 ## Por status
 

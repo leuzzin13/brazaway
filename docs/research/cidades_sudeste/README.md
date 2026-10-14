@@ -9,6 +9,7 @@ Rascunhos de regras municipais de circulação de caminhões, um arquivo por mun
 - Por status: não achou 1.317; regra com ato 161; pontual 65; sem restrição declarada 35; pista 35; regra sem ato 19; confirmou que não tem 1.
 - Por nível de busca: varredura consolidada 850 (só pistas em massa, cidades pequenas sem nenhum indício), dirigida 385, média 252, profunda 146.
 - **280 cidades com `falha_de_fonte`** (SP 126, MG 103, ES 28, RJ 23): o portal principal estava fora do ar ou bloqueado (Cloudflare no leismunicipais, reCAPTCHA no CESPRO, sites de prefeitura sem resposta pelo proxy da nuvem). O "não achou" delas não é conclusivo — lista em `falhas_de_fonte.json`.
+- **2ª rodada (14/10/2026), triagem** (`r2_triagem.json`): das 280, 184 com fonte principal respondendo, 35 só com alternativa, 61 ainda bloqueadas (marcadas em `res/` com "R2 (2026-10-14): fontes ainda inacessíveis..."; seguem com `falha_de_fonte`). As 219 restantes estão em 18 lotes (`lotes_r2b` no mesmo arquivo), aguardando os agentes de pesquisa + verificação. Números de regras ativas/verificadas ainda sem mudança.
 - Totais por UF, tabela completa das cidades com regra e vereditos: **`RESUMO.md`**.
 
 ## Arquivos
