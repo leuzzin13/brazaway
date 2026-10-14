@@ -1,0 +1,67 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3509908",
+  "municipio": "Cananéia",
+  "uf": "SP",
+  "fonte_id": "cananeia",
+  "fonte": {
+    "url": "https://camaracananeia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2035&idtipolei=1 (Lei 1.680/2004)",
+    "licenca": "Ato oficial de Cananéia: domínio público (Lei 9.610/1998 art. 8º IV). Geometria da via: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.680/2004 (promulgada pela Câmara após veto): proíbe o tráfego de caminhões na via de passagem ao lado do Hotel Marazul. O ato não nomeia a via: a geometria é aproximada, por proximidade ao hotel no OSM. As leis de ônibus de turismo (1.092/1997 e outras) não são de caminhões."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A Lei 1.680/2004 não define VUC: todo caminhão é alcançado.",
+  "regras": [
+    {
+      "id": "cananeia_via_hotel_marazul",
+      "tipo": "via",
+      "regime": "Caminhões proibidos em via local",
+      "nome": "Cananéia: proibido o tráfego de caminhões na via de passagem ao lado do Hotel Marazul",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.680, de 06/12/2004 (Cananéia; promulgada pela Câmara após veto)",
+          "artigo": "art. 1º (proíbe o tráfego de caminhões na via de passagem ao lado do hotel Marazul); art. 3º (vigor na publicação)",
+          "url": "https://camaracananeia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=2035&idtipolei=1",
+          "nota": "PDF escaneado lido como imagem (atos/3509908/lei1680_0_download_lei_1680.pdf). Portal da Câmara: 'Em vigor', sem alteração nem revogação. Possível questão de iniciativa (promulgada após veto), sem registro de revogação ou ADI."
+        }
+      ],
+      "nota": "Confiança média: o ato não tem peso, horário nem nome da via (todos os caminhões, sempre). O Hotel Marazul está no OSM (way 1419724233); a via foi aproximada pelos trechos da Av. Luiz Wilson de Barbosa (orla) a até 70 m do hotel, as duas pistas de mão única, cerca de 280 m. Confirmar a via com a Prefeitura de Cananéia.",
+      "fonte_geometria": "OSM (ODbL): trechos da Av. Luiz Wilson de Barbosa a até 70 m do Hotel Marazul",
+      "vigencia_inicio": "2004-12-06",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509908_vias.geojson",
+          "construir": "manual",
+          "props": {
+            "aproximado": true
+          },
+          "como_gerar": "python3 data/raw/municipios/geo/3509908_vias_curadoria.py data/cache/municipios/osm_named_3509908.json (ways da Av. Luiz Wilson de Barbosa a até 70 m do Hotel Marazul; ODbL)"
+        }
+      ]
+    }
+  ]
+}

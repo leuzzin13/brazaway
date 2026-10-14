@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3503109",
+  "municipio": "Arandu",
+  "uf": "SP",
+  "fonte_id": "arandu",
+  "fonte": {
+    "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1 (Lei 2.395/2017)",
+    "licenca": "Atos oficiais de Arandu: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.395/2017: CVC (mais de duas unidades) acima de 57 t ou 19,80 m e caminhões canavieiros proibidos nas vias urbanas e estradas municipais pavimentadas. A regra dos canavieiros fica desativada (tipo de carga que o perfil do veículo não expressa). A zona cobre só o perímetro urbano da sede (aproximado); as estradas municipais pavimentadas não são nomeadas no ato e não entram."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A Lei 2.395/2017 não define VUC; o alvo são só os CVC acima de 57 t ou 19,80 m, que nenhum VUC alcança.",
+  "regras": [
+    {
+      "id": "arandu_cvc_57t_19_80m",
+      "tipo": "zona",
+      "regime": "CVC com PBT acima de 57 t ou comprimento acima de 19,80 m",
+      "nome": "Arandu: CVC (mais de duas unidades) acima de 57 t ou 19,80 m proibidas nas vias urbanas e estradas municipais pavimentadas",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [{"campo": "tipo", "em": ["cvc"]}],
+        "qualquer": [
+          {"campo": "pbt_t", "acima": 57},
+          {"campo": "comprimento_m", "acima": 19.8}
+        ]
+      },
+      "excecoes": ["O ato não traz exceções; o art. 2º aplica subsidiariamente a Res. CONTRAN 211/2006."],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.395, de 20/09/2017 (Arandu)",
+          "artigo": "art. 1º (CVC com mais de duas unidades, incluída a tratora, com PBT acima de 57 t ou comprimento acima de 19,80 m não podem trafegar nas vias públicas urbanas e estradas municipais pavimentadas); art. 5º (vigor no trigésimo dia da publicação, cerca de 20/10/2017)",
+          "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1",
+          "nota": "PDF lido como imagem (atos/3503109/lei2395_0_download_lei_2395.pdf). Portal da Câmara: 'Em vigor', sem alteração nem revogação."
+        }
+      ],
+      "nota": "Confiança média: leitura do art. 1º = CVC (mais de duas unidades) E (PBT acima de 57 t OU comprimento acima de 19,80 m), interpretativa. 'Vias públicas urbanas' sem delimitação no ato: aproximadas pelos setores censitários urbanos do IBGE 2022 do distrito-sede, sem as rodovias estaduais (SP-245, SPA-003/245), que o ato municipal não alcança. As 'estradas municipais pavimentadas' não são nomeadas e não entram na zona. Origem ou destino dentro da zona: a rota não exclui a zona e avisa.",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem as rodovias estaduais (OSM, ODbL): aproximação do perímetro urbano",
+      "vigencia_inicio": "2017-10-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3503109_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3503109_urbano_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_hw_3503109.json (setores urbanos do distrito Arandu menos as rodovias, folga de 40 m; ODbL)"
+        }
+      ]
+    },
+    {
+      "id": "arandu_canavieiros",
+      "tipo": "zona",
+      "regime": "Caminhões canavieiros de qualquer porte",
+      "nome": "Arandu: caminhões canavieiros proibidos nas vias urbanas e estradas municipais pavimentadas",
+      "status": "desativada",
+      "status_motivo": "Alvo por tipo de carga (cana) que o perfil do veículo não expressa.",
+      "confianca": "media",
+      "janelas": [{"days": [1, 2, 3, 4, 5, 6, 7], "from": "00:00", "to": "24:00"}],
+      "feriados": "aplica",
+      "alvo": {"caminhao": true},
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.395, de 20/09/2017 (Arandu)",
+          "artigo": "art. 1º (caminhões canavieiros de qualquer porte)",
+          "url": "https://camaradearandu.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=832&idtipolei=1"
+        }
+      ],
+      "vigencia_inicio": "2017-10-20",
+      "geometria": [{"geojson": {"type": "FeatureCollection", "features": []}}]
+    }
+  ]
+}
