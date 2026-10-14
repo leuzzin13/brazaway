@@ -2,8 +2,8 @@
   "ibge": "3169406",
   "nome": "Três Pontas",
   "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "media",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
   "fontes_consultadas": [
     {
       "url": "https://www.trespontas.mg.gov.br/legislacao",
@@ -20,11 +20,22 @@
     {
       "url": "diarios_consolidados.py (amm-mg)",
       "resultado": "0 resultados para 'circulação de caminhões'; preparação já varrera a AMM sem acerto"
+    },
+    {
+      "url": "https://www.trespontas.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Lei 3.546/2014 (alterada pela Lei 4.211/2018 nos arts. 4º e 5º) \"Regula a Área de Estacionamento para Operação de Carga e Descarga\": estacionamento/operação de carga e descarga, pontual (texto não indexado; só ementa), Lei 2.989/2009 Zona Azul. Nenhuma restrição de circulação de caminhões nas ementas. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3169406 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "AMM: \"veículos pesados\" 97 (processos seletivos de motorista: ruído); demais 0.",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Fontes de legislação fora do alcance; só o diário AMM foi varrido (sem acerto). Não conclusivo.",
-  "falha_de_fonte": true,
+  "data": "2026-10-14",
+  "observacoes": "Fontes de legislação fora do alcance; só o diário AMM foi varrido (sem acerto). Não conclusivo. || R2: Portal Fácil lido. Pontual: Lei 3.546/2014 + 4.211/2018 (área de estacionamento para carga e descarga), não roteável. Câmara (www.camaratrespontas.mg.gov.br) e Atende.net não consultados (sem cliente).",
+  "falha_de_fonte": false,
   "osm_divergencias": [],
-  "regras_rascunho": []
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

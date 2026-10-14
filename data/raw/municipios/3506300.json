@@ -1,0 +1,80 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3506300",
+  "municipio": "Bernardino de Campos",
+  "uf": "SP",
+  "fonte_id": "bernardino-de-campos",
+  "fonte": {
+    "url": "https://camarabcampos.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1889&idtipolei=1 (Lei 1.694/2011)",
+    "licenca": "Ato oficial de Bernardino de Campos: domínio público (Lei 9.610/1998 art. 8º IV). Zona: limite municipal do IBGE (dados públicos, citar a fonte: IBGE), com as rodovias estaduais recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.694/2011: veículos pesados (PBTC acima de 57 t, mais de 7 eixos ou mais de 22 m, isoladamente ou em conjunto) proibidos na malha viária do município. Decreto regulamentador (multas) não localizado. As rodovias estaduais (SP-270, SP-303) ficam fora da zona: o ato municipal não as alcança."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A Lei 1.694/2011 não define VUC; o alvo são só os veículos acima de 57 t, 7 eixos ou 22 m, que nenhum VUC alcança.",
+  "regras": [
+    {
+      "id": "bernardino_de_campos_veiculos_pesados_57t",
+      "tipo": "zona",
+      "regime": "Veículos pesados (PBTC acima de 57 t, mais de 7 eixos ou mais de 22 m), proibição total",
+      "nome": "Bernardino de Campos: proibido o trânsito de veículos pesados na malha viária do município",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 57
+          },
+          {
+            "campo": "eixos",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 22
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º: exceto veículos coletivos de passageiros"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.694, de 12/05/2011 (Bernardino de Campos)",
+          "artigo": "art. 1º (proíbe o trânsito de veículos pesados, exceto coletivos de passageiros, na malha viária do município); art. 2º (pesado = PBTC acima de 57 t, mais de 7 eixos ou mais de 22 m, 'isoladamente ou em conjunto'); art. 7º (vigor na publicação; regulamentação por decreto em 60 dias)",
+          "url": "https://camarabcampos.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1889&idtipolei=1",
+          "nota": "PDF em atos/3506300/lei1694_0_download_lei_1694.pdf; portal da Câmara: 'Em vigor', sem alteração. Decreto regulamentador (multas) não localizado."
+        }
+      ],
+      "nota": "Confiança média: leitura de 'isoladamente ou em conjunto' = basta uma das três características; decreto regulamentador não localizado. Os limiares estão acima do limite do CTB sem AET: na prática só alcança CVC com AET. Zona = limite municipal do IBGE sem as rodovias estaduais/federais (SP-270, SP-303 e travessias), recortadas com folga de 40 m; as vias municipais ficam na zona. Origem ou destino dentro da zona: a rota não exclui a zona e avisa.",
+      "fonte_geometria": "IBGE (malha municipal) sem as rodovias (OSM, ODbL)",
+      "vigencia_inicio": "2011-05-12",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3506300_municipio.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3506300_municipio_curadoria.py data/cache/municipios/ibge_malha_3506300.geojson data/cache/municipios/osm_hw_3506300.json (limite do IBGE menos as rodovias, folga de 40 m; ODbL)"
+        }
+      ]
+    }
+  ]
+}

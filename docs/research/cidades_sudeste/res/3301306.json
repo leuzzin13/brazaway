@@ -1,36 +1,68 @@
 {
- "ibge": "3301306",
- "nome": "Casimiro de Abreu",
- "uf": "RJ",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://casimirodeabreu.rj.gov.br/legislacao",
-   "resultado": "Busca heurística: 0 atos (cliente heurístico, não conclusivo)"
-  },
-  {
-   "url": "https://casimirodeabreu.rj.gov.br/wp-json/wp/v2/search",
-   "resultado": "Busca geral do site com 'circulação de caminhões', 'proibido caminhões', 'restrição veículos pesados', 'decreto trânsito caminhões': só notícias (toneladas de lixo, coleta); nenhum ato de restrição."
-  },
-  {
-   "url": "leads/querido_diario.json[3301306] (preparação)",
-   "resultado": "0 diários recuperados"
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar <ibge> 'circulação de caminhões' e 'tráfego de veículos pesados' (fontes aemerj, qd)",
-   "resultado": "0 resultados relevantes"
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301306)",
-   "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Portal de legislação da prefeitura (portal próprio) devolveu 0 atos na busca heurística; busca geral do site só traz notícias. QD sem diários recuperados (coleta pendente). OSM hgv_no=1 não conferido (Overpass fora do ar).",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM hgv_no=1 não conferido: pendência."
- ],
- "regras_rascunho": []
+  "ibge": "3301306",
+  "nome": "Casimiro de Abreu",
+  "uf": "RJ",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://casimirodeabreu.rj.gov.br/legislacao",
+      "resultado": "Busca heurística: 0 atos (cliente heurístico, não conclusivo)"
+    },
+    {
+      "url": "https://casimirodeabreu.rj.gov.br/wp-json/wp/v2/search",
+      "resultado": "Busca geral do site com 'circulação de caminhões', 'proibido caminhões', 'restrição veículos pesados', 'decreto trânsito caminhões': só notícias (toneladas de lixo, coleta); nenhum ato de restrição."
+    },
+    {
+      "url": "leads/querido_diario.json[3301306] (preparação)",
+      "resultado": "0 diários recuperados"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar <ibge> 'circulação de caminhões' e 'tráfego de veículos pesados' (fontes aemerj, qd)",
+      "resultado": "0 resultados relevantes"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301306)",
+      "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+    },
+    {
+      "url": "https://transparencia.casimirodeabreu.rj.gov.br/decretos.php e leis.php (NPI Brasil)",
+      "resultado": "200, mas 'Não existem registros'/só resoluções (CONGEM 2026, 2019): a lista de decretos/leis não está nesse portal.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://casimirodeabreu.rj.gov.br/decretos/ e /leis/ (páginas de legislação da prefeitura)",
+      "resultado": "Cloudflare 'Just a moment' (desafio); não contornado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://casimirodeabreu.rj.gov.br/wp-json/wp/v2/media?search=<termo> (caminh, veículos pesados, circulação, decreto trânsito)",
+      "resultado": "Respondeu: só imagens (caminhada, campanha Maio Amarelo); nenhum decreto indexado na mídia.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://casimirodeabreu.rj.leg.br/",
+      "resultado": "200, mas SPA genérico 'Portais Institucionais' (NPI Brasil) sem lista acessível; sapl.casimirodeabreu.rj.leg.br inexistente.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://archive.org/wayback/available?url=casimirodeabreu.rj.gov.br/decretos/",
+      "resultado": "Há captura de 22/02/2024, mas web.archive.org não resolve nesta rede.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3301306)",
+      "resultado": "Respondeu: RJ-106 (trunk, ponte, 'Rodovia Amaral Peixoto') com maxweight=45 e Rua Noêmia da Luz Marchon (residential) com hgv=no.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Portal de legislação da prefeitura (portal próprio) devolveu 0 atos na busca heurística; busca geral do site só traz notícias. QD sem diários recuperados (coleta pendente). OSM hgv_no=1 não conferido (Overpass fora do ar). | R2: o portal de transparência (NPI) não traz leis/decretos e as páginas /decretos/ e /leis/ da prefeitura estão atrás de Cloudflare; Câmara é SPA sem acesso. Sem fonte de decretos legível: falha_de_fonte permanece true. OSM: hgv=no em Rua Noêmia da Luz Marchon sem ato (pendência); maxweight=45 é de ponte da RJ-106 (descartado).",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "OSM maxweight=45 em ponte da RJ-106 (Rodovia Amaral Peixoto): limite de ponte de rodovia estadual (DER-RJ), não é ato municipal; descartado.",
+    "OSM hgv=no em Rua Noêmia da Luz Marchon (residential, way 1490302465) sem ato municipal localizado: pendência (a lista de decretos da prefeitura está atrás de Cloudflare)."
+  ],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

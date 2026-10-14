@@ -4,7 +4,7 @@
   "uf": "MG",
   "status": "nao_achou",
   "nivel_busca": "dirigida",
-  "data": "2026-10-11",
+  "data": "2026-10-14",
   "fontes_consultadas": [
     {
       "url": "leads/penaestrada.json (preparação)",
@@ -33,12 +33,30 @@
     {
       "url": "Overpass (overpass.kumi.systems, overpass-api.de, overpass.private.coffee, maps.mail.ru)",
       "resultado": "500/504/sem resposta pelo proxy desta máquina: ways com hgv/maxweight NÃO listados nesta rodada; vale só a contagem da preparação."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (entidade \"Prefeitura de Rodeiro\"; diariomunicipal.com.br/amm-mg, busca de texto integral desde 2009)",
+      "resultado": "Busca em texto integral (3.170 decretos, 9.071 leis indexados): \"circulação caminhões\" 5 (LCs 054/2020, 058/2022, 074/2025 e editais de concurso: cargo de motorista), \"trânsito caminhões\" 5 (extrato de dispensa; ata da Câmara 7ª sessão/2025), \"tráfego caminhões\" 0, \"veículos pesados\" 206 (licitações), \"proibido trânsito toneladas\" 0, \"restrição circulação veículos\" 2 (Decreto 229/2017 = Lei 13.019, parcerias), \"carga descarga horário\" 4 (licitações, atas, LC 056/2021), \"caminhões\" 87 (licitações; Decreto 511/2026 = cessão de caminhões a Ubá). Nenhum ato de restrição.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://rodeiro.mg.leg.br/api/leis (API JSON da Câmara, busca por termo)",
+      "resultado": "Responde. \"caminh\" 7 (projetos de lei de outros assuntos), \"trânsito\" 2 (LC 07/2025 Guarda Municipal; Lei 1.266/2026 faixa elevada de pedestres), \"tráfego\", \"pesados\", \"toneladas\": 0. Base só tem atos recentes.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.rodeiro.mg.gov.br/ e leismunicipais",
+      "resultado": "403 (desafio Cloudflare), não contornado.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Nada achado: os acertos são cargos de motorista, licitação de placas de carga e descarga e requerimento de vereador. As 4 ways com hgv=no do OSM (preparação) não foram listadas (Overpass fora do ar) e não têm ato; ficam como pendência. Portal principal bloqueado; só o AMM foi varrido.",
-  "falha_de_fonte": true,
+  "observacoes": "Nada achado: os acertos são cargos de motorista, licitação de placas de carga e descarga e requerimento de vereador. As 4 ways com hgv=no do OSM (preparação) não foram listadas (Overpass fora do ar) e não têm ato; ficam como pendência. Portal principal bloqueado; só o AMM foi varrido. R2: AMM (diário da prefeitura) e Câmara responderam e foram pesquisados; portal da prefeitura continua 403. Sem restrição. OSM: 4 ways com hgv=discouraged (unclassified) em Rodeiro (ids 360589262, 360590279, 810408778, 838924917), não \"hgv=no\" como se supunha na R1; é só desencorajamento de mapeador, sem ato.",
+  "falha_de_fonte": false,
   "osm_divergencias": [
-    "OSM: 4 ways hgv=no na preparação, não listados; sem ato municipal achado que os explique (provável tag de mapeador ou ponte/rodovia)."
+    "OSM: 4 ways hgv=no na preparação, não listados; sem ato municipal achado que os explique (provável tag de mapeador ou ponte/rodovia).",
+    "R2: 4 ways hgv=discouraged (360589262, 360590279, 810408778, 838924917; highway=unclassified) sem ato municipal; não são proibição."
   ],
-  "regras_rascunho": []
+  "regras_rascunho": [],
+  "status_r1": "nao_achou",
+  "rodada": "R2"
 }

@@ -1,0 +1,115 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3119005",
+  "municipio": "Cordislândia",
+  "uf": "MG",
+  "fonte_id": "cordislandia",
+  "fonte": {
+    "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf (Lei 928/2012) ; https://cordislandia.mg.leg.br/index.php/leis (lista de leis da Câmara)",
+    "licenca": "Ato oficial de Cordislândia: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria da zona: setores censitários urbanos do IBGE 2022 (dados públicos, citar a fonte) recortados com as vias da BR-267/MGC-267 derivadas do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 928/2012: veículos com carregamento acima de 12 t impedidos nas ruas e avenidas da cidade (art. 1º), com a Av. Cônego Francisco como única via de transposição (art. 3º); o art. 2º limita a 10 t a ponte sobre o Rio Sapucaí sem identificá-la (regra desativada). A publicação oficial e a vigência atual não foram confirmadas (PDF sem assinatura do Prefeito; nenhuma lei posterior a altera ou revoga na lista da Câmara 2009-2026): confiança média. O perímetro urbano não é delimitado na lei: zona aproximada pelos setores urbanos do IBGE 2022."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o critério é o carregamento (capacidade de carga, payload_t) acima de 12 t.",
+  "regras": [
+    {
+      "id": "cordislandia_ruas_12t_carga",
+      "tipo": "zona",
+      "regime": "Carga acima de 12 t (ruas e avenidas da cidade)",
+      "nome": "Cordislândia: veículos de transporte com carregamento acima de 12 t impedidos nas ruas e avenidas da cidade",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 12
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "excecoes": [
+        "Art. 3º: para transposição da cidade, a Av. Cônego Francisco é a única via de tráfego para estes veículos (fica fora da proibição como itinerário)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 928, de 05/03/2012 (Câmara Municipal de Cordislândia)",
+          "artigo": "art. 1º (carga > 12 t nas ruas e avenidas da cidade); art. 3º (Av. Cônego Francisco como via única de transposição); art. 4º-5º (fiscalização, apreensão e multas do CTB); art. 6º (vigência na publicação)",
+          "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf"
+        }
+      ],
+      "nota": "Carga acima de 12 t = 'veículos de transportes com carregamento acima de 12 toneladas' (capacidade/lotação, não PBT: payload_t). O PDF no portal da Câmara (escaneado) traz o texto da lei e a justificativa do vereador, sem assinatura do Prefeito; a lei ocupa o nº 928 da sequência de leis do município. Publicação oficial e vigência atual não confirmadas (diário da prefeitura no AMM quase vazio; portal da prefeitura atrás de desafio). Nenhum ato posterior a revoga (lista de leis da Câmara 2009-2026 e AMM sem menção). Sem dias nem horários: 24 h, todos os dias; a lei não exceta feriados. Geometria APROXIMADA: a lei não delimita a cidade; zona = setores censitários urbanos do IBGE 2022 do distrito-sede (CD_SIT 1 e 2), sem a Av. Cônego Francisco e o resto da BR-267/MGC-267 que cruza a cidade (Av. Dr. Belmiro de Medeiros, Rua Henrique Araújo, Rodovia Augusto Maria Junho), com folga de 40 m de cada lado, mais o recuo de 20 m da API: a travessia pela rodovia fica livre, como a lei prevê.",
+      "fonte_geometria": "Setores censitários urbanos do IBGE 2022 do distrito-sede, sem a BR-267/MGC-267 (OpenStreetMap, ODbL, folga de 40 m); não é o perímetro urbano legal.",
+      "vigencia_inicio": "2012-03-05",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3119005_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3119005_perimetro_urbano_curadoria.py <setores MG do IBGE 2022 (MG_setores_CD2022.zip)> data/cache/municipios/osm_hw_3119005.json (setores urbanos do distrito-sede menos as vias BR-267/MGC-267 com folga de 40 m; vias do PBF por data/raw/municipios/curadoria/osm_pbf_vias.py).",
+          "props": {
+            "aproximado": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "cordislandia_ponte_sapucai_10t",
+      "tipo": "ponte",
+      "regime": "Carga acima de 10 t (ponte sobre o Rio Sapucaí)",
+      "nome": "Cordislândia: ponte sobre o Rio Sapucaí, veículos com carregamento acima de 10 t impedidos",
+      "status": "desativada",
+      "status_motivo": "A Lei 928/2012, art. 2º, não identifica a ponte. No OSM só há uma ponte sobre o rio com restrição (way 297642389, hgv=no, secondary, ref BR-267;MGC-267), em rodovia federal/estadual, fora da competência municipal; a lei municipal não pode regulá-la. Ponte da lei não confirmada e geometria desconhecida: sem geometria confiável.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-14",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 928, de 05/03/2012 (Câmara Municipal de Cordislândia)",
+          "artigo": "art. 2º",
+          "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf"
+        }
+      ],
+      "nota": "O art. 2º limita a 10 t a ponte sobre o Rio Sapucaí sem nomear a via. Ativar só com a identificação da ponte (e se não for a da BR-267/MGC-267, de competência federal/estadual). Pendência para osm-overrides se a ponte for confirmada.",
+      "vigencia_inicio": "2012-03-05",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

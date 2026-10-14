@@ -1,36 +1,305 @@
 {
- "ibge": "3139003",
- "nome": "Machado",
- "uf": "MG",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://machado.mg.gov.br/legislacao",
-   "resultado": "Portal Fácil: o cliente não achou o endpoint ajaxpro; curl recebe 302 para https://www.google.com (bloqueio/redirecionamento do site para esta rede). Fonte fora."
-  },
-  {
-   "url": "https://sapl.machado.mg.leg.br",
-   "resultado": "API SAPL da Câmara funcionou: 0 normas para caminh, carga e descarga, veículos pesados, tráfego, tonelad, zona de restri."
-  },
-  {
-   "url": "https://leismunicipais.com.br/camara/mg/machado",
-   "resultado": "403 Cloudflare ('Just a moment'); não contornado. Sem leitura."
-  },
-  {
-   "url": "https://camaramachado.mg.gov.br/?s=caminh",
-   "resultado": "Só notícias (BR-267, passarelas); nenhum ato de circulação de caminhões."
-  },
-  {
-   "url": "Overpass (overpass-api.de, overpass.kumi.systems, overpass.private.coffee, maps.mail.ru; area IBGE:GEOCODIGO)",
-   "resultado": "Fora do ar nesta máquina em 11/10/2026 (500/reset/504 em todos os espelhos; overpass.osm.ch responde mas só tem a Suíça). As vias etiquetadas no OSM NÃO foram identificadas."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Nada achado no SAPL (que só cobre a Câmara; decretos do Executivo ficariam fora). Site da prefeitura redireciona ao Google. OSM: 1 way hgv=no não identificado (Machado fica na BR-267; pode ser trecho de rodovia).",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM: 1 way hgv=no (osm_hints), não identificado. PENDÊNCIA."
- ],
- "regras_rascunho": []
+  "ibge": "3139003",
+  "nome": "Machado",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://machado.mg.gov.br/legislacao",
+      "resultado": "Portal Fácil: o cliente não achou o endpoint ajaxpro; curl recebe 302 para https://www.google.com (bloqueio/redirecionamento do site para esta rede). Fonte fora."
+    },
+    {
+      "url": "https://sapl.machado.mg.leg.br",
+      "resultado": "API SAPL da Câmara funcionou: 0 normas para caminh, carga e descarga, veículos pesados, tráfego, tonelad, zona de restri."
+    },
+    {
+      "url": "https://leismunicipais.com.br/camara/mg/machado",
+      "resultado": "403 Cloudflare ('Just a moment'); não contornado. Sem leitura."
+    },
+    {
+      "url": "https://camaramachado.mg.gov.br/?s=caminh",
+      "resultado": "Só notícias (BR-267, passarelas); nenhum ato de circulação de caminhões."
+    },
+    {
+      "url": "Overpass (overpass-api.de, overpass.kumi.systems, overpass.private.coffee, maps.mail.ru; area IBGE:GEOCODIGO)",
+      "resultado": "Fora do ar nesta máquina em 11/10/2026 (500/reset/504 em todos os espelhos; overpass.osm.ch responde mas só tem a Suíça). As vias etiquetadas no OSM NÃO foram identificadas."
+    },
+    {
+      "url": "https://machado.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Lei 2.294/2010, 2.806/2018 e 2.814/2018 lidas. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://machado.mg.gov.br/legislacao (Portal Fácil) busca em texto integral \"2.294\"",
+      "resultado": "Só Leis 2.806/2018 e 2.814/2018 alteram a 2.294; nenhuma revogação encontrada.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3139003 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "0 resultados.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Nada achado no SAPL (que só cobre a Câmara; decretos do Executivo ficariam fora). Site da prefeitura redireciona ao Google. OSM: 1 way hgv=no não identificado (Machado fica na BR-267; pode ser trecho de rodovia). || R2: Portal Fácil da Prefeitura (machado.mg.gov.br) agora lido (corpo do 302). ACHADO: Lei 2.294/2010 'carga e descarga, trânsito de carretas e estacionamento de vans' alterada pelas Leis 2.806/2018 (23/02/2018: limiar passa a capacidade de carga 4 t) e 2.814/2018 (inclui Trav. Jacarandá). Nenhuma lei posterior cita a 2.294 (busca em texto integral por '2.294', 'carga e descarga', 'carretas', 'toneladas', 'veículos pesados': só 2.806 e 2.814). Pontuais/irrelevantes: Lei 1.506/2003 (Alameda Donatília, todos os veículos automotores 6h-9h30 e 18h-20h, residentes isentos), Lei 1.588/2003 (carroceria de resíduos a granel, 3 t por eixo/6 t truck: regras de transporte de resíduos), Lei 2.320/2011 (farmácias), Lei 1.110/1997 (área azul). AMM refeito: 0. Atos salvos em C/atos/3139003/. VERIFICADO na R2: ver C/verif/3139003.json.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM: 1 way hgv=no (osm_hints), não identificado. PENDÊNCIA."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "machado_vias_art2_capacidade_acima_4t",
+      "tipo": "via",
+      "regime": "Capacidade máxima de carga acima de 4 t (carretas): só nas 4 avenidas do art. 5º",
+      "nome": "Machado: 28 logradouros do art. 2º da Lei 2.294/2010 (+ Trav. Jacarandá), veículos de carga com capacidade acima de 4 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º §3º: ônibus do transporte coletivo sob concessão",
+        "Art. 5º: carretas (capacidade > 4 t) PERMITIDAS apenas nas Avenidas Artur Bernardes, Renato Azeredo, Ricardo Annoni Filho e Dr. Ataíde Pereira de Souza",
+        "Art. 1º §2º (red. Lei 2.806/2018): livre em qualquer dia o tráfego de veículos de carga com capacidade até 4 t"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.294, de 17/11/2010 (Machado), na redação da Lei 2.806/2018 (art. 1º, I e §2º; art. 4º dá nova redação ao art. 5º) e da Lei 2.814/2018 (inclui a Travessa Jacarandá no art. 2º)",
+          "artigo": "art. 1º, I e II; art. 2º (28 logradouros, incisos I a XXVIII + XXIX Trav. Jacarandá); art. 5º (carretas só nas 4 avenidas); art. 6º (multa 29 UFEMG e remoção); vigência 60 dias após a publicação (art. 8º); Leis de 2018 em vigor na publicação",
+          "url": "https://machado.mg.gov.br/legislacao",
+          "nota": "Texto lido do índice de texto integral do Portal Fácil da Prefeitura (campo DSRESUMO). Arquivos: https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={EDBAE6CE-5B00-37AA-7A1E-B4CABA2AC172}.pdf ; https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={B810ADDD-4CCE-DC24-6AC7-CDDA3035AAAD}.pdf ; https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={0AB5DBBD-BA5E-3725-2ECE-5EEB23025EA0}.pdf"
+        }
+      ],
+      "nota": "AMBIGUIDADE: a Lei 2.294 original usava comprimento de carroceria (>8 m = carreta; 6-8 m com janelas 5h-11h e 18h-22h seg-sex, 5h-11h sáb nas vias do art. 2º; até 6 m livre). A Lei 2.806/2018 trocou os dois limiares para capacidade de carga de 4 t (art. 1º I e §2º e art. 5º), mantendo o inciso II (janelas) sem mudar; com limiar único de 4 t, o efeito prático é: acima de 4 t só nas 4 avenidas (art. 5º). Janelas do art. 1º, II mantidas no texto mas sem faixa intermediária; modelado como proibição o dia todo nas vias do art. 2º (exceto Av. Dr. Ataíde, que consta também do art. 5º). \"Capacidade máxima de carga\" modelada como payload_t, não PBT. Divergência: texto de 2010 diz \"04 de novembro de 2010\" na assinatura e as leis de 2018 citam 17/11/2010.",
+      "vigencia_inicio": "2018-02-23",
+      "trechos": [
+        {
+          "via": [
+            "Avenida Santa Cruz"
+          ],
+          "descricao": "Avenida Santa Cruz (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Avenida Celso Sidney Gambi"
+          ],
+          "descricao": "Avenida Celso Sidney Gambi (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Airton Rodrigues Leite"
+          ],
+          "descricao": "Rua Airton Rodrigues Leite (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Floriano Peixoto"
+          ],
+          "descricao": "Rua Floriano Peixoto (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Almirante Saldanha"
+          ],
+          "descricao": "Rua Almirante Saldanha (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Marechal Deodoro"
+          ],
+          "descricao": "Rua Marechal Deodoro (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Barão de Caxias"
+          ],
+          "descricao": "Rua Barão de Caxias (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua São João Batista de La Salle"
+          ],
+          "descricao": "Rua São João Batista de La Salle (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Dom Hugo"
+          ],
+          "descricao": "Rua Dom Hugo (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Irmão Arnaldo Isidoro"
+          ],
+          "descricao": "Rua Irmão Arnaldo Isidoro (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Joaquim Teófilo"
+          ],
+          "descricao": "Rua Joaquim Teófilo (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Avenida Barão do Rio Branco"
+          ],
+          "descricao": "Avenida Barão do Rio Branco (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Praça Antônio Carlos"
+          ],
+          "descricao": "Praça Antônio Carlos (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Praça São Benedito"
+          ],
+          "descricao": "Praça São Benedito (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Professor Francisco Rafael"
+          ],
+          "descricao": "Rua Professor Francisco Rafael (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Coronel Flávio"
+          ],
+          "descricao": "Rua Coronel Flávio (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Professor José Cândido"
+          ],
+          "descricao": "Rua Professor José Cândido (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Silviano Brandão"
+          ],
+          "descricao": "Rua Silviano Brandão (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Major Onofre"
+          ],
+          "descricao": "Rua Major Onofre (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Coronel José Paulino"
+          ],
+          "descricao": "Rua Coronel José Paulino (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Major Feliciano"
+          ],
+          "descricao": "Rua Major Feliciano (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Sete de Setembro"
+          ],
+          "descricao": "Rua Sete de Setembro (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Astolfo Pio"
+          ],
+          "descricao": "Rua Astolfo Pio (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Quinze de Novembro"
+          ],
+          "descricao": "Rua Quinze de Novembro (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Professor Arthur Xavier Pedroso"
+          ],
+          "descricao": "Rua Professor Arthur Xavier Pedroso (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Coronel Jacinto"
+          ],
+          "descricao": "Rua Coronel Jacinto (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Rua Professor José Vieira"
+          ],
+          "descricao": "Rua Professor José Vieira (art. 2º)",
+          "aproximado": true
+        },
+        {
+          "via": [
+            "Travessa Jacarandá"
+          ],
+          "descricao": "Travessa Jacarandá (art. 2º)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3139003_machado.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }

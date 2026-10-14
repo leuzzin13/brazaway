@@ -1,0 +1,138 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3510203",
+  "municipio": "Capão Bonito",
+  "uf": "SP",
+  "fonte_id": "capao-bonito",
+  "fonte": {
+    "url": "https://capaobonito.sp.gov.br/lei_no_3-661-2012/ (Lei 3.661/2012); https://capaobonito.sp.gov.br/nova-lei-estabelece-area-e-horario-para-carga-e-descarga-na-area-central/ (notícia sobre a Lei 3.792/2013)",
+    "licenca": "Atos oficiais de Capão Bonito: domínio público (Lei 9.610/1998 art. 8º IV). Zona: IBGE, Malha de Setores Censitários do Censo 2022 (dados públicos, citar a fonte: IBGE), com as rodovias e as vias de acesso recortadas sobre o OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 3.661/2012 ativa (caminhões acima de 7 t de capacidade de carga, zona urbana, 24 h). Lei 3.792/2013 (carga e descarga no centro) desativada: só a notícia foi lida, o texto e o gráfico do perímetro não foram achados."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "A Lei 3.661/2012 não define VUC; o alvo é o caminhão com capacidade de carga acima de 7 t.",
+  "regras": [
+    {
+      "id": "capao_bonito_zona_urbana_lei3661",
+      "tipo": "zona",
+      "regime": "Caminhões acima de 7 t de capacidade proibidos (zona urbana)",
+      "nome": "Capão Bonito: circulação e estacionamento de caminhões com capacidade de carga acima de 7 t na zona urbana (Lei 3.661/2012)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 7
+          }
+        ]
+      },
+      "autorizacao": "Credencial do Departamento Municipal de Trânsito para empresas com pátio e/ou oficina na zona urbana (art. 2º); só para tráfego, nunca para estacionamento",
+      "excecoes": [
+        "Art. 1º, parágrafo único, I: caminhões carregados com mercadorias destinadas a endereços da zona urbana, comprovado por nota fiscal",
+        "Art. 1º, parágrafo único, II: a serviço da administração pública ou de concessionárias em obras ou serviços públicos",
+        "Art. 1º, parágrafo único, III-IV: circulando ou estacionados nas vias de acesso a rodovias/estradas municipais: Av. Plácido Batista da Silveira, Av. Capitão Calixto de Almeida, Av. Lucas Nogueira Garcês, R. Altino Arantes, R. Dr. Josino de Araújo, Av. Santos Dumont, Av. Amazonas, Av. Massaichi Kakihara, Av. Dona Nenê, Av. João Antunes Rodrigues, Av. Elias Jorge Daniel, R. Domingos Lírio",
+        "Art. 2º: credencial do Demutran (empresas com pátio/oficina na zona urbana)"
+      ],
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, parágrafo único, I",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.661, de 18/04/2012 (Capão Bonito)",
+          "artigo": "art. 1º e parágrafo único, I-IV (proibição e exceções); art. 2º (credencial); art. 4º (sanção); art. 5º (vigor na publicação)",
+          "url": "https://capaobonito.sp.gov.br/lei_no_3-661-2012/",
+          "nota": "Texto na página oficial da Prefeitura; resumo na notícia https://capaobonito.sp.gov.br/ja-esta-em-vigor-a-lei-que-disciplina-a-circulacao-estacionamento-carga-e-descarga-de-caminhoes-em-capao-bonito/"
+        }
+      ],
+      "nota": "Confiança média: sem alteração ou revogação encontrada no site da Prefeitura, mas a base da Câmara não respondeu. Capacidade de carga = payload_t (não PBT). A 'zona urbana' não tem polígono no ato: aproximada pelos setores censitários urbanos do IBGE 2022 do distrito-sede, sem as rodovias (SP-250/BR-373, SP-258, SP-127), que o ato municipal não alcança, e sem as 12 vias de acesso do parágrafo único (carve-out com 10 m de folga; a rota ainda recua a zona 20 m). No OSM a Av. Elias Jorge Daniel se chama 'Avenida Jorge daniel'. Origem ou destino dentro da zona: a rota não exclui a zona e avisa; com destino em Capão Bonito vale a exceção de entrega (inciso I).",
+      "fonte_geometria": "IBGE (setores censitários urbanos do distrito-sede, Censo 2022), sem rodovias e vias de acesso (OSM, ODbL): aproximação da zona urbana",
+      "vigencia_inicio": "2012-04-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3510203_zona_urbana.geojson",
+          "construir": "manual",
+          "como_gerar": "python3 data/raw/municipios/geo/3510203_zona_urbana_curadoria.py <setores IBGE 2022 SP> data/cache/municipios/osm_hw_3510203.json (setores urbanos do distrito Capão Bonito menos rodovias e as 12 vias de acesso; ODbL)"
+        }
+      ]
+    },
+    {
+      "id": "capao_bonito_carga_descarga_central_lei3792",
+      "tipo": "zona",
+      "regime": "Carga e descarga: janela por capacidade (centro)",
+      "nome": "Capão Bonito: carga e descarga no perímetro central, caminhões acima de 5 t só 19h-10h e sábados após 15h (Lei 3.792/2013)",
+      "status": "desativada",
+      "status_motivo": "Só a notícia da Prefeitura foi lida; o texto da Lei 3.792/2013 e o gráfico do perímetro não foram achados (sem artigo conferido). Regra de carga e descarga, não de circulação.",
+      "confianca": "unverifiable",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "10:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "00:00",
+          "to": "15:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões até 5 t: livre acesso para carga e descarga",
+        "Domingos e feriados livres (notícia)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.792, de 14/06/2013 (Capão Bonito) - texto NÃO lido",
+          "artigo": "não lido (notícia)",
+          "url": "https://capaobonito.sp.gov.br/nova-lei-estabelece-area-e-horario-para-carga-e-descarga-na-area-central/",
+          "nota": "Fonte: notícia da Prefeitura; remetida pelo Código de Posturas (LC 200/2017, art. 399)"
+        }
+      ],
+      "vigencia_inicio": "2013-06-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -24,13 +24,60 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3304144)",
    "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+  },
+  {
+   "url": "https://www.queimados.rj.leg.br/@@search?SearchableText=circulação de caminhões | veículos pesados | tráfego de caminhões (Câmara, Plone, indexa o Diário Oficial de Queimados em PDF)",
+   "resultado": "~20 PDFs de diário baixados e lidos por palavra-chave: só licitações/locação de caminhões, eleições do CMDCA, Código Tributário; nenhuma restrição.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.queimados.rj.leg.br/@@search?SearchableText=Túnel do Pontilhão",
+   "resultado": "Só indicações de limpeza/obras perto do pontilhão e 'túnel do pontilhão' em diários; nenhuma restrição de veículos.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://transparencia.queimados.rj.gov.br/ (Leis, Decretos e Portarias; Diários Oficiais)",
+   "resultado": "Portal em JS (?serv=17/37 devolve só o menu): não pesquisável por curl.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems (R2, area IBGE:GEOCODIGO=3304144)",
+   "resultado": "6 ways hgv=no: Túnel do Pontilhão (4 ways) e Av. Fluminense (2), residential, oneway, ~-22.709,-43.568; e 1 heliponto com maxweight 5 (descartado).",
+   "rodada": "R2"
   }
  ],
- "data": "2026-10-11",
- "observacoes": "SAPL da Câmara tem só 1 norma cadastrada (base vazia): sem fonte de legislação efetiva. Site da prefeitura (WordPress) sem resultado. QD sem diários recuperados. OSM hgv_no=6 e maxweight=2 não conferidos (Overpass fora do ar): é a cidade do lote com mais indício de OSM, merece nova checagem.",
+ "data": "2026-10-14",
+ "observacoes": "SAPL da Câmara tem só 1 norma cadastrada (base vazia): sem fonte de legislação efetiva. Site da prefeitura (WordPress) sem resultado. QD sem diários recuperados. OSM hgv_no=6 e maxweight=2 não conferidos (Overpass fora do ar): é a cidade do lote com mais indício de OSM, merece nova checagem. | R2: SAPL com 1 norma e portal de transparência sem busca: continua falha de fonte. OSM: Túnel do Pontilhão/Av. Fluminense hgv=no (provável limitação física do túnel sob a ferrovia), sem ato: regra desativada.",
  "falha_de_fonte": true,
  "osm_divergencias": [
-  "OSM hgv_no=6 e maxweight=2 não conferidos: pendência prioritária."
+  "Túnel do Pontilhão (ways 652041152/156/164/171) e Av. Fluminense (652041160/167), ~-22.709,-43.568, hgv=no sem ato localizado."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "3304144_osm_hgv_no",
+   "tipo": "via",
+   "regime": "hgv=no (OSM)",
+   "nome": "Queimados: Túnel do Pontilhão e Av. Fluminense com hgv=no (OSM)",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM, sem ato; provável limitação física do túnel (não confirmada).",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [],
+   "trechos": [
+    {
+     "via": "Túnel do Pontilhão (ways 652041152, 652041156, 652041164, 652041171)",
+     "aproximado": true,
+     "descricao": "~-22.709,-43.568"
+    },
+    {
+     "via": "Avenida Fluminense (ways 652041160, 652041167)",
+     "aproximado": true,
+     "descricao": "~-22.709,-43.568"
+    }
+   ]
+  }
+ ],
+ "rodada": "R2"
 }

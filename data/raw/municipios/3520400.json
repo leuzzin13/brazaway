@@ -1,0 +1,240 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3520400",
+  "municipio": "Ilhabela",
+  "uf": "SP",
+  "fonte_id": "ilhabela",
+  "fonte": {
+    "url": "https://www.ilhabela.sp.gov.br/uploads/32d6f1246ce4d5d2e71c7b362bfba103.pdf (Decreto 9.178/2022, DO Ilhabela ed. 823); https://www.ilhabela.sp.gov.br/uploads/f1c1d8e99a5289d1ca5c788c0e4752b0.pdf (Decreto 9.208/2022, ed. 831); https://www.ilhabela.sp.gov.br/uploads/4db4156476121500d34743616cb331d7.pdf (Decreto 10.188/2023, ed. 1243)",
+    "licenca": "Ato oficial do município: domínio público (Lei 9.610/1998 art. 8º IV). Limite municipal: IBGE, Malhas Municipais (dados públicos, citar a fonte: IBGE).",
+    "notas": "Dec. 9.178/2022 (alterado pelo Dec. 9.208/2022): entrada e circulação de caminhões pesados, cavalos mecânicos e carretas proibidas aos sábados, domingos e feriados em todo o município (ilha, acesso por balsa estadual). As janelas direcionais de entrada e saída (arts. 1º e 2º) ficam desativadas: a camada não modela o sentido da travessia. O regime de embarque da balsa (Semil/DH) é estadual e não entra."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "O Dec. 9.178/2022 isenta do art. 3º o 'Veículo Urbano de Carga (VUC)' e o caminhão toco (2 eixos), sem definir dimensões do VUC: vuc nulo e a isenção vai na regra (alvo exclui 2 eixos).",
+  "regras": [
+    {
+      "id": "ilhabela_circulacao_fim_de_semana_dec9178",
+      "tipo": "zona",
+      "regime": "Caminhões pesados, cavalos e carretas proibidos sáb/dom/feriados (município)",
+      "nome": "Ilhabela: entrada e circulação de caminhões pesados, cavalos mecânicos e carretas aos sábados, domingos e feriados (Dec. 9.178/2022, art. 3º)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 4º: VUC e caminhão toco (2 eixos) não são atingidos",
+        "Art. 5º: Forças Armadas, polícias, Corpo de Bombeiros e serviços essenciais (gêneros alimentícios perecíveis e não perecíveis, energia elétrica, água, coleta e transbordo de lixo, serviço postal, urgências e emergências, socorro mecânico/guincho), sem autorização especial",
+        "Art. 5º, parágrafo único (Dec. 9.208): combustíveis, entrada 6h-9h e saída até 13h aos sábados e feriados"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 9.178, de 04/04/2022, art. 3º na redação do Decreto 9.208, de 18/04/2022 (Prefeitura de Ilhabela)",
+          "artigo": "art. 3º (Dec. 9.208, art. 1º: proibida a entrada e circulação de caminhões aos sábados, domingos e feriados; incisos I-IV); art. 4º (exceção VUC e toco); art. 5º (exceções); art. 9º (vigor em 14/04/2022)",
+          "url": "https://www.ilhabela.sp.gov.br/uploads/32d6f1246ce4d5d2e71c7b362bfba103.pdf",
+          "nota": "DO Ilhabela ed. 823 (05/04/2022), Decreto 9.178; alteração: https://www.ilhabela.sp.gov.br/uploads/f1c1d8e99a5289d1ca5c788c0e4752b0.pdf (ed. 831, 19/04/2022). Reafirmado em 02/2024: https://www.ilhabela.sp.gov.br/uploads/757bcb03d837aeb521a7f0dcce7259e6.pdf"
+        }
+      ],
+      "nota": "Alvo: art. 3º, I-IV (Truck ou caminhão pesado; Cavalo Mecânico/extra-pesado; Cavalo Mecânico Trucado ou LS; Carreta 2 e 3 eixos) = 3 ou mais eixos ou combinação articulada; toco (2 eixos) e VUC ficam de fora (art. 4º). O art. 3º proíbe também feriados em dia útil: o calendário de feriados de Ilhabela deve tratá-los como dia proibido. A restrição vale para todo o município (a ilha).",
+      "vigencia_inicio": "2022-04-14",
+      "geometria": [
+        {
+          "municipios": [
+            "3520400"
+          ],
+          "simplificar": 0.0005,
+          "casas": 6,
+          "props": {
+            "descricao": "Limite municipal de Ilhabela (IBGE): o ato vale para todo o município"
+          }
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "fonte_geometria": "IBGE, Malhas Municipais (limite do município de Ilhabela, simplificado a ~50 m)"
+    },
+    {
+      "id": "ilhabela_entrada_dec9178",
+      "tipo": "zona",
+      "regime": "Entrada de caminhões proibida em janelas (município)",
+      "nome": "Ilhabela: proibida a entrada de caminhões sexta 16h-24h, sábado 8h-16h e domingo 8h-14h (Dec. 9.178/2022, art. 1º)",
+      "status": "desativada",
+      "status_motivo": "Regra direcional (entrada no município pela balsa): a camada não modela sentido de travessia; a entrada fica coberta por aviso/OD. Além disso a restrição do art. 3º já cobre sábado e domingo para pesados.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            5
+          ],
+          "from": "16:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "08:00",
+          "to": "16:00"
+        },
+        {
+          "days": [
+            7
+          ],
+          "from": "08:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 5º (serviços essenciais; combustíveis 6h-9h na entrada aos sábados e feriados)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 9.178, de 04/04/2022 (Prefeitura de Ilhabela)",
+          "artigo": "art. 1º, I-III (entrada); art. 5º (exceções); art. 9º (vigor em 14/04/2022)",
+          "url": "https://www.ilhabela.sp.gov.br/uploads/32d6f1246ce4d5d2e71c7b362bfba103.pdf",
+          "nota": "DO Ilhabela ed. 823 (05/04/2022)"
+        }
+      ],
+      "nota": "Leitura literal: o art. 4º exceta VUC e caminhão toco apenas da proibição do artigo anterior (art. 3º); logo a proibição de entrada (art. 1º) atinge todos os caminhões, inclusive toco e VUC, salvo as exceções do art. 5º. Ponto a confirmar com a Prefeitura. A camada não modela o sentido de travessia.",
+      "vigencia_inicio": "2022-04-14",
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "ilhabela_saida_dec9178",
+      "tipo": "zona",
+      "regime": "Saída de caminhões proibida em janelas (município)",
+      "nome": "Ilhabela: proibida a saída de caminhões sábado 16h-24h e domingo 10h-24h (Dec. 9.178/2022, art. 2º)",
+      "status": "desativada",
+      "status_motivo": "Regra direcional (saída do município pela balsa): a camada não modela sentido de travessia.",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            6
+          ],
+          "from": "16:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            7
+          ],
+          "from": "10:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 5º (serviços essenciais; combustíveis: saída até 13h aos sábados e feriados)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 9.178, de 04/04/2022 (Prefeitura de Ilhabela)",
+          "artigo": "art. 2º, I-II (saída); art. 5º (exceções)",
+          "url": "https://www.ilhabela.sp.gov.br/uploads/32d6f1246ce4d5d2e71c7b362bfba103.pdf",
+          "nota": "DO Ilhabela ed. 823 (05/04/2022)"
+        }
+      ],
+      "vigencia_inicio": "2022-04-14",
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "ilhabela_estacionamento_dec10188",
+      "tipo": "zona",
+      "regime": "Estacionamento de caminhões, carretas e barcos proibido",
+      "nome": "Ilhabela: proibido estacionar caminhões, carretas e barcos nas vias públicas (Dec. 10.188/2023)",
+      "status": "desativada",
+      "status_motivo": "Estacionamento, não circulação: não roteável (exceto carga e descarga pelo tempo necessário).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 1º § único: veículos de mercadorias em carga e descarga pelo tempo necessário"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 10.188, de 20/12/2023 (Prefeitura de Ilhabela)",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://www.ilhabela.sp.gov.br/uploads/4db4156476121500d34743616cb331d7.pdf",
+          "nota": "DO Ilhabela ed. 1243 (20/12/2023)"
+        }
+      ],
+      "vigencia_inicio": "2023-12-20",
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

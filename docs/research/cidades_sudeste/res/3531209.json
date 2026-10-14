@@ -1,84 +1,96 @@
 {
-  "ibge": "3531209",
-  "nome": "Monte Alegre do Sul",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
+ "ibge": "3531209",
+ "nome": "Monte Alegre do Sul",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/monte-alegre-do-sul",
+   "resultado": "403 Cloudflare ('Just a moment'); não contornado."
+  },
+  {
+   "url": "http://www.montealegredosul.sp.gov.br/atos-oficiais/leis-municipais e /decretos-municipais",
+   "resultado": "Heurístico da toolkit: página não respondeu; home abre (/atos-oficiais/decretos-municipais existe) mas a busca ?s=caminh retorna só notícias. Lista de decretos não varrida."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3531209",
+   "resultado": "Diários consolidados (doesp/dosp): 0 resultado nos 3 termos em 11/10/2026."
+  },
+  {
+   "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3531209; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+   "resultado": "3 elementos: Rua Coronel Luis Leite (way 909965072) e Rua João da Serra (way 910257081), ambas secondary com hgv=no, no mesmo ponto (-22.681,-46.6805); helipad maxweight=5."
+  },
+  {
+   "url": "https://montealegredosul.sp.gov.br/atos-oficiais/decretos-municipais e /leis-municipais (GET descricao=<termo>)",
+   "resultado": "Portal da Prefeitura respondeu e filtra por objeto (acervo de decretos e leis a partir de ~2019; 2010/2015 vazios). caminh, pesad, carga e descarga, tráfego, circulação, estacionamento, ônibus: 0; 'trânsito' -> Dec. 2.873/2026 (aulas práticas de direção veicular em vias públicas; lido, irrelevante); 'veículos' -> Dec. 2.783/2025 (brasão em veículos oficiais; irrelevante).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://montealegredosul.sp.gov.br/ (home)",
+   "resultado": "Sem seção de legislação anterior a 2019.",
+   "rodada": "R2"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem ato localizado; portal principal bloqueado e lista de decretos da prefeitura não varrida: NÃO conclusivo. OSM: hgv=no em duas ruas secundárias do centro (Cel. Luis Leite e João da Serra), sinal de proibição local a caminhões que merece conferência na prefeitura. R2: portal da Prefeitura pesquisado (acervo recente); nenhum ato de restrição a caminhões. As duas ruas com hgv=no no OSM seguem sem ato (pendência; atos anteriores a 2019 não estão no portal). Busca parcial.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "hgv=no em R. Cel. Luis Leite e R. João da Serra (secondary) sem ato achado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "montealegredosul_osm_hgv_no_centro",
+   "tipo": "via",
+   "regime": "hgv=no (OSM, sem ato)",
+   "nome": "Monte Alegre do Sul: R. Cel. Luis Leite e R. João da Serra com hgv=no no OSM",
+   "status": "desativada",
+   "status_motivo": "Pista só do OSM, sem ato municipal localizado (portal bloqueado).",
+   "confianca": "baixa",
+   "janelas": [
     {
-      "url": "https://leismunicipais.com.br/prefeitura/sp/monte-alegre-do-sul",
-      "resultado": "403 Cloudflare ('Just a moment'); não contornado."
-    },
-    {
-      "url": "http://www.montealegredosul.sp.gov.br/atos-oficiais/leis-municipais e /decretos-municipais",
-      "resultado": "Heurístico da toolkit: página não respondeu; home abre (/atos-oficiais/decretos-municipais existe) mas a busca ?s=caminh retorna só notícias. Lista de decretos não varrida."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3531209",
-      "resultado": "Diários consolidados (doesp/dosp): 0 resultado nos 3 termos em 11/10/2026."
-    },
-    {
-      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3531209; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
-      "resultado": "3 elementos: Rua Coronel Luis Leite (way 909965072) e Rua João da Serra (way 910257081), ambas secondary com hgv=no, no mesmo ponto (-22.681,-46.6805); helipad maxweight=5."
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
     }
-  ],
-  "data": "2026-10-11",
-  "observacoes": "Sem ato localizado; portal principal bloqueado e lista de decretos da prefeitura não varrida: NÃO conclusivo. OSM: hgv=no em duas ruas secundárias do centro (Cel. Luis Leite e João da Serra), sinal de proibição local a caminhões que merece conferência na prefeitura.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "hgv=no em R. Cel. Luis Leite e R. João da Serra (secondary) sem ato achado."
-  ],
-  "regras_rascunho": [
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
     {
-      "id": "montealegredosul_osm_hgv_no_centro",
-      "tipo": "via",
-      "regime": "hgv=no (OSM, sem ato)",
-      "nome": "Monte Alegre do Sul: R. Cel. Luis Leite e R. João da Serra com hgv=no no OSM",
-      "status": "desativada",
-      "status_motivo": "Pista só do OSM, sem ato municipal localizado (portal bloqueado).",
-      "confianca": "baixa",
-      "janelas": [
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-          ],
-          "from": "00:00",
-          "to": "24:00"
-        }
-      ],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true
-      },
-      "base_legal": [
-        {
-          "ato": "não localizado (pista OSM)",
-          "artigo": "n/d",
-          "url": "https://www.openstreetmap.org/way/909965072"
-        }
-      ],
-      "trechos": [
-        {
-          "via": [
-            "Rua Coronel Luis Leite"
-          ],
-          "descricao": "way 909965072",
-          "aproximado": true
-        },
-        {
-          "via": [
-            "Rua João da Serra"
-          ],
-          "descricao": "way 910257081",
-          "aproximado": true
-        }
-      ]
+     "ato": "não localizado (pista OSM)",
+     "artigo": "n/d",
+     "url": "https://www.openstreetmap.org/way/909965072"
     }
-  ]
+   ],
+   "trechos": [
+    {
+     "via": [
+      "Rua Coronel Luis Leite"
+     ],
+     "descricao": "way 909965072",
+     "aproximado": true
+    },
+    {
+     "via": [
+      "Rua João da Serra"
+     ],
+     "descricao": "way 910257081",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "status_r1": "nao_achou",
+ "rodada": "R2"
 }

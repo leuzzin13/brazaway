@@ -1,32 +1,122 @@
 {
- "ibge": "3500550",
- "nome": "Águas de Santa Bárbara",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "http://aguasdesantabarbara.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
-   "resultado": "Webline (legislação prefeitura): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
-  },
-  {
-   "url": "toolkit/legislacao.py buscar 3500550 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
-   "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 3500550 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
-   "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3500550)",
-   "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM (contagem da preparação): hgv_no=1. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa."
- ],
- "regras_rascunho": []
+  "ibge": "3500550",
+  "nome": "Águas de Santa Bárbara",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "http://aguasdesantabarbara.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
+      "resultado": "Webline (legislação prefeitura): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 3500550 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
+      "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 3500550 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
+      "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3500550)",
+      "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+    },
+    {
+      "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1",
+      "resultado": "Lei 1.842/2020 (Em vigor; texto lido no PDF escaneado): art. 1º proibição de extrapesados de carga no perímetro urbano; art. 3º definição; art. 5º vigor após 15 dias.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaraasb.sp.gov.br/?pag=T0RNPU9UZz1PVFk9T0RnPU9EWT1Oamc9T1dRPU9HRT1PVGM9T0dVPU9HTT1PVEU9T0dVPU4yST1PVFE9T1dFPVlUUT0= (busca avançada, palavraChave)",
+      "resultado": "Buscas: extrapesad (1: Lei 1.842), pesad (1), caminh (4, só compras/plano de turismo), trânsito (3: DEMUTRAN, convênios), carga, veículos, restri, circula: nada mais sobre caminhões.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (IBGE 3500550)",
+      "resultado": "1 way com hgv=no (Rua Marechal Deodoro da Fonseca); sem maxweight.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1. | R2: Webline da Câmara (camaraasb.sp.gov.br) respondeu; busca avançada por palavra-chave ('extrapesad', 'pesad', 'caminh', 'trânsito', 'carga', 'veículos') achou a Lei 1.842/2020 (proíbe veículos extrapesados de carga no perímetro urbano). Texto lido no PDF (escaneado, lido como imagem). Em vigor, sem alterações no portal. Prefeitura (aguasdesantabarbara.sp.gov.br) segue sem DNS; decreto regulamentador (art. 4º) não verificado. OSM: way 200663583 (Rua Marechal Deodoro da Fonseca, residential) com hgv=no, compatível com a lei (a lei não nomeia vias). | verificado na R2: ato oficial reaberto (portal da Câmara + PDF), número, artigos, vigência, alvo e exceções conferidos; confirmado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "aguas_santa_barbara_extrapesados_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Veículos extrapesados de carga (≥ 18 t ou CVC), proibição total",
+      "nome": "Águas de Santa Bárbara: proibida a circulação de veículos extrapesados de carga nas vias urbanas do perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 17.99
+          }
+        ]
+      },
+      "excecoes": [
+        "O ato não traz exceções (nem autorização especial, nem entrega local); art. 4º prevê regulamentação por decreto, não localizado."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.842, de 06/08/2020 (Estância Hidromineral de Águas de Santa Bárbara)",
+          "artigo": "art. 1º (proibição no perímetro urbano), art. 3º (extrapesado = bitrens, tritrens, treminhões, rodotrens ou outro veículo com capacidade de carga igual ou superior a 18 t de PBT ou PBTC), art. 5º (vigor 15 dias corridos após a publicação)",
+          "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1",
+          "nota": "Texto lido no PDF escaneado da Câmara (download_lei_1842.pdf), salvo em atos/3500550/lei_1842_2020.pdf. Portal da Câmara: situação 'Em vigor', sem alteração nem revogação."
+        }
+      ],
+      "nota": "Ambiguidade do art. 3º: 'capacidade de carga igual ou superior a 18 toneladas de peso bruto total'; adotado PBT ≥ 18 t (lado seguro) e CVC por tipo. O ato não nomeia vias: a regra vale em todo o perímetro urbano.",
+      "vigencia_inicio": "2020-08-22",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3500550_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono do perímetro urbano de Águas de Santa Bárbara (Leis Complementares 186/2023, 192/2023, Leis 1.624/2013 e 1.684/2015 ampliaram o perímetro; usar a mancha urbana atual do IBGE/OSM)"
+        }
+      ]
+    },
+    {
+      "id": "aguas_santa_barbara_estacionamento_extrapesados",
+      "tipo": "zona",
+      "regime": "Estacionamento de extrapesados",
+      "nome": "Águas de Santa Bárbara: proibido o estacionamento de veículos extrapesados e seus vagões nas vias urbanas",
+      "status": "desativada",
+      "status_motivo": "Regra de estacionamento (art. 2º), não de circulação.",
+      "confianca": "media",
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.842/2020",
+          "artigo": "art. 2º e §§ 1º-2º (remoção e diária de R$ 2.000)",
+          "url": "https://camaraasb.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=1890&idtipolei=1"
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }

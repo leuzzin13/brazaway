@@ -4,7 +4,7 @@
  "uf": "SP",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "data": "2026-10-11",
+ "data": "2026-10-14",
  "fontes_consultadas": [
   {
    "url": "https://www.indiana.sp.gov.br/leis-e-decretos (POST c_descricao=caminh, pesad, trânsito, tráfego)",
@@ -25,12 +25,29 @@
   {
    "url": "https://penaestrada.com.br/restricoes/",
    "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
+  },
+  {
+   "url": "https://www.camaraindiana.sp.gov.br/?pag=T0RNPU9UZz1PVFk9...&palavraChave=<termo>&set=<tipo> (Busca Avançada Webline da Câmara)",
+   "resultado": "Respondeu. Busca no texto: caminh, pesados, carga e descarga, tráfego, tonelad, veículos de carga = 0 em todos os tipos (leis ordinárias, complementares, resoluções, promulgadas, decretos, consolidadas, LOM); \"trânsito de\" = 1 (Lei 2.118/2019, convênio com o DETRAN): ruído. (O cliente legislacao.py ignora o termo nesta Câmara; não usar.)",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.indiana.sp.gov.br/leis-e-decretos (POST c_descricao / cmp_categoria)",
+   "resultado": "Página responde, mas o filtro não é aplicado (resposta idêntica de 40.394 bytes para qualquer termo; campo \"autentica\" depende de JavaScript); decretos da Prefeitura não pesquisáveis por curl.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3520608)",
+   "resultado": "2 ways terciárias sem nome com hgv=no (ids 427324545 e 558316916, perto de -22.145,-51.287 e -22.155,-51.282), sem ato municipal achado: só pista.",
+   "rodada": "R2"
   }
  ],
- "observacoes": "Nada achado; busca do portal sem filtro funcional e Webline fora. Não conclusivo.",
+ "observacoes": "Nada achado; busca do portal sem filtro funcional e Webline fora. Não conclusivo. R2: a Câmara (Webline, Busca Avançada no texto) respondeu e não tem lei de restrição a caminhões. Os decretos do Executivo (portal da Prefeitura) continuam sem busca utilizável: nao_achou parcial, NÃO conclusivo para decretos. OSM: 2 ways com hgv=no sem nome (427324545, 558316916): pista sem ato.",
  "falha_de_fonte": true,
  "osm_divergencias": [
-  "3 ways hgv=no no OSM não conferidos; sem ato."
+  "3 ways hgv=no no OSM não conferidos; sem ato.",
+  "OSM: way 427324545 e way 558316916 (terciárias sem nome, perto de -22.145,-51.287 / -22.155,-51.282) com hgv=no; nenhum ato municipal localizado: pendência, sem regra ativa."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

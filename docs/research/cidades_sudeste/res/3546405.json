@@ -2,9 +2,9 @@
   "ibge": "3546405",
   "nome": "Santa Cruz do Rio Pardo",
   "uf": "SP",
-  "status": "nao_achou",
+  "status": "pista",
   "nivel_busca": "profundo",
-  "data": "2026-10-11",
+  "data": "2026-10-14",
   "fontes_consultadas": [
     {
       "url": "http://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1 (Webline da Câmara)",
@@ -41,12 +41,132 @@
     {
       "url": "https://overpass-api.de/api/interpreter ; https://overpass.kumi.systems ; https://overpass.private.coffee ; https://maps.mail.ru/osm/tools/overpass",
       "resultado": "falha: connection reset pelo proxy / HTTP 500 / 504 em todas as instâncias (3 tentativas em 11/10/2026); WebFetch: ENOTFOUND. Etiquetas OSM não conferidas."
+    },
+    {
+      "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0RNPU9UZz1PVFk9T0RnPU9EWT1Oamc9T1dRPU9HRT1PVGM9T0dVPU9HTT1PVEU9T0dVPU4yST1PVFE9T1dFPVlUUT0 (Busca Avançada Webline da Câmara, palavraChave por ementa/texto, leis, LC e decretos)",
+      "resultado": "Passou a responder. Termos pesad, caminh, tráfego, trânsito, carga, circula, tonelad, rodovia, cana, 127, \"veículos de carga\", \"perímetro urbano\". Achados: Lei 294/1966 (veículos pesados, 8 t), Decreto 127/2009 (cana), Decreto 74/2008 (circulação de veículos de carga no perímetro urbano), Decreto 174/1978 (estacionamento noturno), Lei 4.250/2024 e Decreto 5/2026 (Ponto de Frete). O resto é ruído (créditos, tarifas de ônibus, agentes de trânsito).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=2063&tipo= (+ POST indexAjax.php, PDF)",
+      "resultado": "Lei 294, de 23/03/1966 lida (PDF imagem): art. 1º proíbe o trânsito de veículos com mais de 8 t de carga nas vias da cidade; § 1º exceção de carga/descarga completa; motivo: pavimentação e redes danificadas por tráfego da rodovia Iapuçu–Santa Cruz–Bauru nas ruas centrais. Situação no Webline: Em vigor, sem alteração registrada. Regra desativada (vigência efetiva duvidosa).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=8249&tipo= (+ PDF)",
+      "resultado": "Decreto 127, de 10/09/2009 lido: proíbe o trânsito de veículos de transporte de cana (mesmo vazios) nas vias urbanas, inclusive Caporanga e Sodrélia; Em vigor. Alvo é carga, não classe de veículo: regra desativada.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=7914&tipo= (+ PDF)",
+      "resultado": "Decreto 74, de 15/05/2008 lido: proibia veículos de carga com PBT > 19 t no trecho interditado da SP-225 (km 322 a 324+500) — desvio temporário por erosão da rodovia; ato de emergência, sem vigência atual (não é regra).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=2917&tipo= (+ PDF)",
+      "resultado": "O item rotulado \"Lei 174/2001\" é o Decreto 174, de 15/02/1978: proíbe o estacionamento noturno de caminhões, tratores e carretas na zona central e limita carga/descarga a 8h–18h. Só estacionamento (pontual), não roteável.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.santacruzdoriopardo.sp.gov.br/",
+      "resultado": "Site da prefeitura abre; a página de legislação aponta para a Câmara (Webline). Diário oficial (diariooficialnovo.jelastic.saveincloud.net) só busca resumo da edição, não reaberto.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Nenhum ato ou nota oficial de restrição a caminhões. Cobertura muito incompleta: a base de leis da Câmara (Webline) não respondeu, a cópia no leismunicipais está atrás de Cloudflare e o diário oficial só busca resumos de edição. A Área Azul (2026) cobra tarifa maior de 'veículos pesados', mas não proíbe. osm_hints indica 1 hgv=no, não conferido.",
-  "falha_de_fonte": true,
+  "observacoes": "Nenhum ato ou nota oficial de restrição a caminhões. Cobertura muito incompleta: a base de leis da Câmara (Webline) não respondeu, a cópia no leismunicipais está atrás de Cloudflare e o diário oficial só busca resumos de edição. A Área Azul (2026) cobra tarifa maior de 'veículos pesados', mas não proíbe. osm_hints indica 1 hgv=no, não conferido. || R2: A Câmara (Webline) respondeu e a Busca Avançada cobre leis, LC e decretos. Duas normas viárias que citam veículos pesados/carga existem e foram LIDAS: Lei 294/1966 (>8 t de carga, vias da cidade; vigência efetiva duvidosa → desativada, baixa) e Decreto 127/2009 (cana; alvo por carga, não modelável → desativada). Decreto 74/2008 (SP-225) era temporário. Decreto 174/1978 e Lei 4.250/2024 são só estacionamento/ponto de frete (pontual). Sem decreto posterior de restrição geral a caminhões. Status \"pista\": nenhuma regra ativa. Overpass: instâncias não responderam hoje (1 hgv=no da contagem da preparação segue sem identificar).",
+  "falha_de_fonte": false,
   "osm_divergencias": [
     "osm_hints_por_municipio: hgv=no 1 — não conferido (Overpass indisponível em 11/10/2026). Pendente: identificar a via e buscar ato."
   ],
-  "regras_rascunho": []
+  "regras_rascunho": [
+    {
+      "id": "santacruzriopardo_lei294_1966_8t_vias_urbanas",
+      "tipo": "zona",
+      "regime": "Veículos com mais de 8 t de carga (lei de 1966)",
+      "nome": "Santa Cruz do Rio Pardo: Lei 294/1966, trânsito de veículos com mais de 8 t de carga nas vias públicas da cidade",
+      "status": "desativada",
+      "status_motivo": "Ato de 1966 sem revogação registrada (Webline da Câmara: \"Em vigor\"), mas sem prova de vigência efetiva: motivado por rodovia (Iapuçu–Santa Cruz–Bauru) que então cruzava as ruas centrais, limite em \"toneladas de carga\" (não PBT), multa em salário-mínimo e nenhuma sinalização, decreto ou notícia posterior encontrada. Confirmar com o DEMUTRAN antes de ativar.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1º, § 1º",
+      "excecoes": [
+        "art. 1º, § 1º: não se aplica aos veículos que vierem fazer carga ou descarga completa na cidade"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 294, de 23/03/1966 (Santa Cruz do Rio Pardo)",
+          "artigo": "art. 1º (proíbe o trânsito de veículos de qualquer espécie com mais de 8 toneladas de carga pelas vias públicas da cidade) e § 1º (exceção de carga/descarga completa na cidade)",
+          "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=2063&tipo=",
+          "nota": "Texto lido em PDF (imagem) baixado da Câmara: atos/3546405/lei_294_1966.pdf"
+        }
+      ],
+      "nota": "\"8 toneladas de carga\" lido como capacidade de carga (payload_t), não PBT. Perímetro: \"vias públicas da cidade\" (sem lista de ruas); geometria a definir.",
+      "vigencia_inicio": "1966-03-23"
+    },
+    {
+      "id": "santacruzriopardo_dec127_2009_cana",
+      "tipo": "zona",
+      "regime": "Veículos de transporte de cana-de-açúcar (mesmo vazios)",
+      "nome": "Santa Cruz do Rio Pardo: Decreto 127/2009, proibido o trânsito de veículos que transportam cana-de-açúcar nas vias urbanas (inclui Caporanga e Sodrélia)",
+      "status": "desativada",
+      "status_motivo": "Ato primário lido (Decreto 127/2009, art. 1º) e sem revogação encontrada, mas o alvo é a CARGA/atividade (cana-de-açúcar, \"mesmo vazio\") e não uma classe de veículo: o predicado do núcleo (pbt/eixos/tipo) não o expressa, e ativar bloquearia todos os caminhões. Registrada para consulta; aplicar só se o perfil informar transporte de cana.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 127, de 10/09/2009 (Santa Cruz do Rio Pardo)",
+          "artigo": "art. 1º (fica proibido o trânsito de veículos que fazem o transporte de cana de açúcar, mesmo vazio, nas vias urbanas, inclusive Caporanga e Sodrélia); arts. 2º e 3º (fiscalização; CTB art. 187, I)",
+          "url": "https://camarasantacruzdoriopardo.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=8249&tipo=",
+          "nota": "PDF baixado: atos/3546405/decreto_127_2009_cana.pdf"
+        }
+      ],
+      "nota": "Vias urbanas da sede e dos distritos de Caporanga e Sodrélia; sem lista de ruas. Vigência inicial: 10/09/2009 (data do decreto; art. 4º: na publicação).",
+      "vigencia_inicio": "2009-09-10"
+    }
+  ],
+  "rodada": "R2"
 }

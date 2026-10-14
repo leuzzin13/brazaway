@@ -69,7 +69,12 @@ ESTADO = os.path.join(RAW, "estado.json")
 COBERTURA = os.path.join(RAW, "cobertura.json")
 LOG = os.path.join(RAW, "log.txt")
 UA = "Mozilla/5.0 (truck-router pesquisa municipal; contato via projeto)"
-HOJE = datetime.date.today().isoformat()
+# data de hoje no fuso de Brasília: com a data UTC (já "amanhã" à noite) o SIGPub/AMM devolve 0 resultados em tudo
+try:
+    from zoneinfo import ZoneInfo
+    HOJE = datetime.datetime.now(ZoneInfo("America/Sao_Paulo")).date().isoformat()
+except Exception:  # sem tzdata: UTC-3 fixo
+    HOJE = (datetime.datetime.utcnow() - datetime.timedelta(hours=3)).date().isoformat()
 
 # --------------------------------------------------------------------------------------
 # Termos-chave. "frase" = backends com frase exata; "sigpub" = palavras (E logico) no SIGPub

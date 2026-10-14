@@ -1,0 +1,286 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3305752",
+  "municipio": "Tanguá",
+  "uf": "RJ",
+  "fonte_id": "tangua",
+  "fonte": {
+    "url": "https://tangua.rj.gov.br/home/wp-content/uploads/2021/03/Gabinete-do-Prefeito.pdf (Decreto 29/2021) ; https://tangua.rj.gov.br/prefeitura-define-novas-regras-para-trafego-de-veiculos-pesados-no-centro/ (divulgação)",
+    "licenca": "Ato oficial de Tanguá: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), vias casadas por nome.",
+    "notas": "Decreto 29/2021, art. 1º: nas vias internas do perímetro formado pela via interior do Viaduto (BR-101, km 274) e sete ruas do centro, veículos com lotação acima de 5 t ou mais de 6,50 m ficam proibidos (seg-sex 7h-20h, sáb 7h-15h) e carretas e cavalos mecânicos em qualquer horário. Três das sete ruas (David Beloniel, Valdomiro Rosa, Augusto da Rocha) não têm nome no OSM e a via interior do Viaduto não é identificável: ficam sem geometria (pendência). Revogação não localizada, mas sem diário oficial acessível: confiança média."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: a faixa livre (até 5 t de lotação e 6,50 m de comprimento) funciona como isenção; os critérios são lotação (payload_t) e comprimento.",
+  "regras": [
+    {
+      "id": "tangua_centro_lotacao_5t_ou_6_5m",
+      "tipo": "via",
+      "regime": "Lotação acima de 5 t ou comprimento acima de 6,50 m (horário comercial)",
+      "nome": "Tanguá: vias internas do perímetro central (Viaduto BR-101 km 274 e 7 ruas), veículos com lotação > 5 t ou > 6,50 m",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "20:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "07:00",
+          "to": "15:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 6.5
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal nº 29, de 19/03/2021 (Gabinete do Prefeito de Tanguá)",
+          "artigo": "art. 1º, caput e II (circulação e operação de carga e descarga proibidas para veículos com lotação acima de 5 t ou comprimento superior a 6,50 m, de segunda a sexta 7h-20h e aos sábados 7h-15h); art. 1º, I (livre até 5 t e 6,50 m)",
+          "url": "https://tangua.rj.gov.br/home/wp-content/uploads/2021/03/Gabinete-do-Prefeito.pdf",
+          "nota": "PDF escaneado oficial hospedado no site da Prefeitura; divulgação: https://tangua.rj.gov.br/prefeitura-define-novas-regras-para-trafego-de-veiculos-pesados-no-centro/"
+        }
+      ],
+      "nota": "'Lotação' no decreto = capacidade de carga (payload_t). Domingos não restringidos; o decreto não exceta feriados (feriados: aplica). Sem exceções nem autorização no texto lido. O PDF traz 'Art. 10' como último artigo (vigência na publicação) sem os arts. 2º a 9º: texto possivelmente resumido ou erro de numeração. Nenhuma revogação ou alteração localizada (site da prefeitura); o diário oficial não pôde ser consultado. Geometria aproximada: as ruas David Beloniel, Valdomiro Rosa e Augusto da Rocha não existem com esse nome no OSM e ficaram de fora; a 'via interior do Viaduto' (BR-101 km 274) não tem nome nem identificação no ato e ficou de fora: as alças locais sob o viaduto ficam a menos de 15 m da pista da BR-101 e prenderiam também quem só atravessa pela rodovia.",
+      "fonte_geometria": "Ruas do perímetro do art. 1º casadas por nome no OpenStreetMap (ODbL), em toda a extensão com nome no município. A via interior do Viaduto (BR-101, km 274) ficou sem geometria.",
+      "vigencia_inicio": "2021-03-19",
+      "trechos": [
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Antonio Teixeira de Macedo",
+            "Rua Antônio Teixeira de Macedo"
+          ],
+          "descricao": "R. Antônio Teixeira de Macedo",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Vereador Manoel de Macedo",
+            "Rua Vereador Manoel Macedo"
+          ],
+          "descricao": "R. Ver. Manoel Macedo",
+          "aproximado": true,
+          "de": {
+            "lonlat": [
+              -42.7253782,
+              -22.7360637
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -42.7195323,
+              -22.7351807
+            ]
+          },
+          "nota": "No OSM: 'Rua Vereador Manoel de Macedo'. Aplicada só do extremo oeste até o viaduto da BR-101: a continuação a leste corre colada à pista da BR-101 (menos de 15 m) e prenderia quem só atravessa pela rodovia."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Manoel João Gonçalves"
+          ],
+          "descricao": "R. Manoel João Gonçalves",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua David Beloniel"
+          ],
+          "descricao": "R. David Beloniel",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Valdomiro Rosa"
+          ],
+          "descricao": "R. Valdomiro Rosa",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Augusto da Rocha"
+          ],
+          "descricao": "R. Augusto da Rocha",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Dezenove de Novembro"
+          ],
+          "descricao": "R. Dezenove de Novembro",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3305752_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "tangua_centro_carretas_cavalos_24h",
+      "tipo": "via",
+      "regime": "Carretas e caminhões-trator (cavalo mecânico) em qualquer horário",
+      "nome": "Tanguá: vias internas do perímetro central, carretas e cavalos mecânicos 24 h",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal nº 29, de 19/03/2021 (Gabinete do Prefeito de Tanguá)",
+          "artigo": "art. 1º, III (proibida a circulação de carretas e caminhões-trator, cavalos mecânicos, em qualquer horário)",
+          "url": "https://tangua.rj.gov.br/home/wp-content/uploads/2021/03/Gabinete-do-Prefeito.pdf",
+          "nota": "PDF escaneado oficial hospedado no site da Prefeitura; divulgação: https://tangua.rj.gov.br/prefeitura-define-novas-regras-para-trafego-de-veiculos-pesados-no-centro/"
+        }
+      ],
+      "nota": "'Carretas e caminhões-trator (cavalos mecânicos)' mapeados para semitrailer (cavalo + semirreboque) e cvc (bitrem/rodotrem). Caminhão + reboque (truck_trailer) não é citado: não incluído. Mesmas ressalvas de vigência e de geometria da regra irmã.",
+      "fonte_geometria": "Ruas do perímetro do art. 1º casadas por nome no OpenStreetMap (ODbL), em toda a extensão com nome no município. A via interior do Viaduto (BR-101, km 274) ficou sem geometria.",
+      "vigencia_inicio": "2021-03-19",
+      "trechos": [
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Antonio Teixeira de Macedo",
+            "Rua Antônio Teixeira de Macedo"
+          ],
+          "descricao": "R. Antônio Teixeira de Macedo",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Vereador Manoel de Macedo",
+            "Rua Vereador Manoel Macedo"
+          ],
+          "descricao": "R. Ver. Manoel Macedo",
+          "aproximado": true,
+          "de": {
+            "lonlat": [
+              -42.7253782,
+              -22.7360637
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -42.7195323,
+              -22.7351807
+            ]
+          },
+          "nota": "No OSM: 'Rua Vereador Manoel de Macedo'. Aplicada só do extremo oeste até o viaduto da BR-101: a continuação a leste corre colada à pista da BR-101 (menos de 15 m) e prenderia quem só atravessa pela rodovia."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Manoel João Gonçalves"
+          ],
+          "descricao": "R. Manoel João Gonçalves",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua David Beloniel"
+          ],
+          "descricao": "R. David Beloniel",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Valdomiro Rosa"
+          ],
+          "descricao": "R. Valdomiro Rosa",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Augusto da Rocha"
+          ],
+          "descricao": "R. Augusto da Rocha",
+          "aproximado": true,
+          "nota": "Sem via com esse nome no OSM do município (pendência)."
+        },
+        {
+          "inciso": "art. 1º, caput",
+          "via": [
+            "Rua Dezenove de Novembro"
+          ],
+          "descricao": "R. Dezenove de Novembro",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3305752_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3145901",
+  "municipio": "Ouro Branco",
+  "uf": "MG",
+  "fonte_id": "ouro-branco",
+  "fonte": {
+    "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/L_1973_0_2013.pdf (Lei 1.973/2013) ; https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/LEI_2897_2025.pdf (Lei 2.897/2025)",
+    "licenca": "Atos oficiais de Ouro Branco: domínio público (Lei 9.610/1998, art. 8º, IV). Limite municipal: IBGE (dados públicos, citar a fonte), só como registro.",
+    "notas": "Lei 1.973/2013, art. 1º: proibido o trânsito de carretas e caminhões com três eixos ou mais no Centro Histórico (exceção de carga e descarga do comércio 8h-15h e 20h-5h, que a Lei 2.897/2025 afasta no 'perímetro de tombamento histórico'). Nem o 'Centro Histórico' nem o perímetro de tombamento são delimitados nas leis; sem mapa ou ato de delimitação não há geometria honesta (o município todo é urbano em quase toda a malha, e os setores do IBGE não identificam o centro histórico). Regra registrada desativada; pendência: obter o perímetro de tombamento com a Prefeitura/IEPHA."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "As leis não definem VUC: o critério é o número de eixos (três ou mais).",
+  "regras": [
+    {
+      "id": "ouro_branco_centro_historico_3eixos",
+      "tipo": "zona",
+      "regime": "Carretas e caminhões com 3 eixos ou mais proibidos no Centro Histórico (exceção carga/descarga de comércio em faixas)",
+      "nome": "Ouro Branco: Centro Histórico, caminhões/carretas de 3 eixos ou mais",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: o 'Centro Histórico' (Lei 1.973/2013, art. 1º) e o 'perímetro de tombamento histórico' (Lei 2.897/2025) não são delimitados em nenhum ato localizado, e não há como georreferenciá-los com honestidade (a área urbana inteira restringiria muito além do ato). Ato confirmado pelo verificador; ativar quando houver o perímetro.",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 1.973/2013, art. 1º par. único: caminhões/carretas de 3 eixos ou mais que se destinam a carga e descarga de produtos do comércio em geral podem trafegar das 8h às 15h e das 20h às 5h",
+        "Lei 2.897/2025: veículos que realizam no município serviços de emplacamento, transferência, alteração de dados e outros do Detran podem trafegar das 8h às 19h (comprovação por documentos do serviço, inciso I)",
+        "Lei 2.897/2025 art. 2º: as exceções NÃO valem 'no perímetro de tombamento histórico'"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.973, de 25/04/2013 (Ouro Branco)",
+          "artigo": "art. 1º e parágrafo único (proibição para carretas e caminhões com 3 eixos ou mais no Centro Histórico; exceção de carga/descarga do comércio 8h-15h e 20h-5h); art. 3º (apreensão e multa); art. 4º (vigência na publicação)",
+          "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/L_1973_0_2013.pdf"
+        },
+        {
+          "ato": "Lei municipal 2.897, de 04/09/2025 (Ouro Branco), altera o parágrafo único do art. 1º da Lei 1.973/2013",
+          "artigo": "arts. 2º e 3º (exceção do parágrafo único não vale no 'perímetro de tombamento histórico'; serviços de Detran/emplacamento 8h-19h; inciso I comprovação por documentos); art. 4º (vigência na publicação)",
+          "url": "https://www.app.ourobranco.cam.mg.gov.br/docs/legislacao/LEI_2897_2025.pdf"
+        }
+      ],
+      "nota": "Modelado (quando houver geometria) como proibição o dia todo para 3+ eixos; as exceções de carga/descarga ficam em excecoes. A Lei 1.973 art. 2º também proíbe limpeza, manutenção e ESTACIONAMENTO de carretas, caminhões e ônibus em vias públicas em todo o município (não roteável). A geometria gravada é só o limite do município, como registro (a regra não é aplicada).",
+      "vigencia_inicio": "2013-04-25",
+      "geometria": [
+        {
+          "municipios": [
+            "3145901"
+          ],
+          "simplificar": 0.002,
+          "casas": 5
+        }
+      ]
+    }
+  ]
+}

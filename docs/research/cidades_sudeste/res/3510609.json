@@ -1,40 +1,56 @@
 {
- "ibge": "3510609",
- "nome": "Carapicuíba",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://www.carapicuiba.sp.gov.br/portal/leis_decretos/ (Instar, 2.738 normas; busca ementa e texto)",
-   "resultado": "'trânsito', 'caminhões', 'pesados', 'posturas', 'código' sem nenhum resultado em ementa ou texto, embora haja 2.738 normas (quase só portarias recentes): base Instar claramente incompleta para atos antigos."
-  },
-  {
-   "url": "https://www.camaracarapicuiba.sp.gov.br/legislacao/decretos",
-   "resultado": "página não respondeu"
-  },
-  {
-   "url": "https://leismunicipais.com.br/camara/sp/carapicuiba",
-   "resultado": "403 Cloudflare, não contornado"
-  },
-  {
-   "url": "WebSearch (1 consulta: 'Carapicuíba decreto proíbe circulação de caminhões vias centro horário restrição')",
-   "resultado": "Só decretos COVID de 2020-21 no portal da prefeitura; nada de caminhões."
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-   "resultado": "Sem acerto relevante. Só DOE-SP (caderno Municípios) cobre Carapicuíba."
-  },
-  {
-   "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
-   "resultado": "500: não conferido"
-  }
- ],
- "observacoes": "Nada achado, mas a conclusão é fraca: Instar de Carapicuíba não tem a legislação antiga, a Câmara não responde e leismunicipais está bloqueado. Maior cidade do lote (4.576 caminhões): candidata a nova tentativa (Câmara, Código de Posturas, SMTT/Secretaria de Trânsito). Pé na Estrada (2018-19) diz 'Não possui restrições'; OSM maxweight=2 não conferido.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: maxweight=2)."
- ],
- "regras_rascunho": []
+  "ibge": "3510609",
+  "nome": "Carapicuíba",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.carapicuiba.sp.gov.br/portal/leis_decretos/ (Instar, 2.738 normas; busca ementa e texto)",
+      "resultado": "'trânsito', 'caminhões', 'pesados', 'posturas', 'código' sem nenhum resultado em ementa ou texto, embora haja 2.738 normas (quase só portarias recentes): base Instar claramente incompleta para atos antigos."
+    },
+    {
+      "url": "https://www.camaracarapicuiba.sp.gov.br/legislacao/decretos",
+      "resultado": "página não respondeu"
+    },
+    {
+      "url": "https://leismunicipais.com.br/camara/sp/carapicuiba",
+      "resultado": "403 Cloudflare, não contornado"
+    },
+    {
+      "url": "WebSearch (1 consulta: 'Carapicuíba decreto proíbe circulação de caminhões vias centro horário restrição')",
+      "resultado": "Só decretos COVID de 2020-21 no portal da prefeitura; nada de caminhões."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+      "resultado": "Sem acerto relevante. Só DOE-SP (caderno Municípios) cobre Carapicuíba."
+    },
+    {
+      "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
+      "resultado": "500: não conferido"
+    },
+    {
+      "url": "https://www.carapicuiba.sp.gov.br/portal/diario-oficial/1/0/0/caminhões/0/ (e /portal/diario-oficial/ver/111|246|885/caminhões; download PDF)",
+      "resultado": "Busca em texto do diário respondeu: 2 edições (764-9, 573-7) com 'caminhões'; PDFs baixados, lidos e descartados (>5 MB): concurso público (motorista dirige caminhões). Outros termos: 0 edições.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit legislacao.py buscar 3510609 (Instar, termos caminh|carga|veículos|pesad|trânsito|tráfego, com --texto) e leis_decretos/{1703,2110,2248,2577,1201,1943}",
+      "resultado": "6 atos listados são falsos positivos (Lei 4.154/2025 caminhada do autismo; leis de acolhimento: 'encaminhamento'; Dec. 4.703/2017, 4.162/2012 sem tema de trânsito).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.camaracarapicuiba.sp.gov.br/ ; https://camaracarapicuiba.sp.gov.br/legislacao/decretos ; https://sapl.carapicuiba.sp.leg.br/ ; https://carapicuiba.siscam.com.br/ ; web.archive.org/web/2025/https://www.camaracarapicuiba.sp.gov.br/legislacao/decretos",
+      "resultado": "Sem resposta (reset/000/400/404).",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "R2: sem novo achado; fontes continuam insuficientes. Instar da Prefeitura (www.carapicuiba.sp.gov.br/portal/leis_decretos/): a busca por ementa/texto devolve só falsos positivos ('caminhada', 'encaminhamento'); a base tem poucas normas antigas. Diário Oficial (Instar, busca em texto GET /portal/diario-oficial/1/0/0/<termo>/0/): 'caminhões' e 'carga e descarga' acham apenas 2 edições indexadas (concurso 764-9 de 20/03/2026 e 573-7 de 06/03/2024, baixadas e lidas: só 'caminhões' como cargo de motorista); 'veículos pesados', 'tráfego de caminhões', 'zona de restrição' = 0. O índice de texto do diário cobre só 2 das 881 edições. Câmara (camaracarapicuiba.sp.gov.br), SAPL/Siscam e Wayback sem resposta; leismunicipais bloqueado (403). Pé na Estrada (2018-19): 'Não possui restrições'. OSM maxweight=2 não conferido (Overpass instável). Maior cidade do lote (4.576 caminhões): ainda vale uma tentativa por outra rede (Câmara/Código de Posturas/Secretaria de Trânsito).",
+  "falha_de_fonte": true,
+  "osm_divergencias": [
+    "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: maxweight=2)."
+  ],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

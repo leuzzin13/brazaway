@@ -19,11 +19,31 @@
     {
       "url": "toolkit legislacao.py buscar 3305000",
       "resultado": "Sem cliente: portal 'desconhecido'; o site https://www.sjb.rj.gov.br/ responde 200 (Angular, 26 kB) sem link de legislação extraível; sjb.rj.leg.br bloqueado pelo proxy (connect_rejected)."
+    },
+    {
+      "url": "https://www.sjb.rj.gov.br/controllers/legislacao/class_legislacao.php (POST func=7&param=1, portal Angular 'portalgov', com Origin/Referer)",
+      "resultado": "Respondeu: 105 atos, só tipos Lei e Resolução (1990 a 05/2025); nenhum decreto no portal; nenhuma ementa sobre circulação/trânsito/caminhões.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.sjb.rj.gov.br/controllers/diario_oficial/class_diario.php (POST func=5&param=1)",
+      "resultado": "Respondeu: 9.023 edições do diário (de 08/2002 a 09/10/2026, ed. 184/2026), lista só com número/data/PDF, sem busca por texto; não é viável ler todas.",
+      "rodada": "R2"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 3305000 'veículos de carga', 'tráfego pesado', 'proibido o tráfego', 'toneladas' (aemerj, qd)",
+      "resultado": "0 relevantes (só edital de 2015 sobre atividades de pequeno porte, mutirões de limpeza); confirma que só os Decs. 004/2022 e 005/2022 de janeiro de 2022 tratam do tema.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3305000)",
+      "resultado": "Respondeu: 2 ways com maxweight, ambas aeroway=helipad ('Mima' 3 t; 'Heliponto Do Açu' 6 t): peso de heliponto, não é restrição viária; descartado. Nenhum hgv=no.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Única regra de circulação de pesados achada foi temporária (emergência da interdição da BR-356) e foi revogada 4 dias depois: Decreto 004/2022 (13/01/2022) revogado pelo Decreto 005/2022 (17/01/2022). Nenhuma regra vigente localizada. Cobertura: só o Querido Diário (diário próprio); o portal de legislação da prefeitura e a Câmara não puderam ser pesquisados, então o resultado não prova ausência. Overpass fora do ar: as 4 ways com maxweight do OSM não foram listadas.",
+  "observacoes": "Única regra de circulação de pesados achada foi temporária (emergência da interdição da BR-356) e foi revogada 4 dias depois: Decreto 004/2022 (13/01/2022) revogado pelo Decreto 005/2022 (17/01/2022). Nenhuma regra vigente localizada. Cobertura: só o Querido Diário (diário próprio); o portal de legislação da prefeitura e a Câmara não puderam ser pesquisados, então o resultado não prova ausência. Overpass fora do ar: as 4 ways com maxweight do OSM não foram listadas. | R2: o portal da prefeitura (Angular 'portalgov') respondeu via POST com Origin/Referer: 105 leis/resoluções, sem restrição a caminhões; decretos não estão no portal, só no diário oficial (9.023 edições, sem busca textual). Buscas novas no QD/AEMERJ (veículos de carga, tráfego pesado, toneladas) não acharam nada além do Dec. 004/2022 (revogado pelo Dec. 005/2022). Lacuna: QD só até ~2023-2024; diários de 2024-2026 não foram lidos, então falha_de_fonte permanece true.",
   "osm_divergencias": [
-    "OSM: 4 ways com maxweight na preparação, não listadas (Overpass fora do ar). Sem ato municipal para respaldar. Pendência: listar e classificar (ponte de rodovia estadual/federal, heliponto etc.)."
+    "maxweight em 2 helipontos (Mima 3 t; Heliponto Do Açu 6 t): descartado, não é restrição viária (R2; a R1 falava em 4 ways, não listadas)."
   ],
   "falha_de_fonte": true,
   "regras_rascunho": [
@@ -73,5 +93,6 @@
   ],
   "ibge": "3305000",
   "uf": "RJ",
-  "data": "2026-10-11"
+  "data": "2026-10-14",
+  "rodada": "R2"
 }

@@ -1,0 +1,204 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3532405",
+  "municipio": "Nazaré Paulista",
+  "uf": "SP",
+  "fonte_id": "nazare-paulista",
+  "fonte": {
+    "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/4256/ (Lei 1.611/2021); https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/1994/ (Lei 407/1997); https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/2343/ (Lei 744/2008)",
+    "licenca": "Ato oficial do município: domínio público (Lei 9.610/1998 art. 8º IV). Geometria derivada do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 1.611/2021: proibição só no sentido Rotatória Principal -> Centro; a camada de vias não modela sentido, então a Rua João de Passos vale nos dois sentidos (aproximação conservadora). Lei 407/97 (PBT > 9 t em todas as vias pavimentadas) e Lei 744/08 (Estrada Vicinal Túnel das Águas Claras) ficam desativadas."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "regras": [
+    {
+      "id": "nazare_paulista_rua_joao_de_passos_caminhoes",
+      "tipo": "via",
+      "regime": "Proibição de caminhões na Rua João de Passos (sentido Rotatória Principal - Centro)",
+      "nome": "Nazaré Paulista: Rua João de Passos, proibido o trânsito de caminhões (Lei 1.611/2021, art. 2º)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.99
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.2
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 4º, a: caminhão de utilidade pública",
+        "Art. 4º, b: veículo em serviço de urgência (art. 29, VII, CTB: socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito, com alarme sonoro e luz vermelha intermitente)",
+        "Art. 4º, c: obras e serviços de infraestrutura urbana",
+        "Art. 4º, d: obras e serviços de urgência",
+        "Art. 4º, e: socorro mecânico de emergência (caminhão que remove veículos sinistrados ou danificados, art. 4º, §2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.611, de 26/05/2021 (Nazaré Paulista), \"Disciplina o tráfego de caminhões e demais veículos de transporte de cargas\"",
+          "artigo": "art. 2º e parágrafo único, I a IV (veículos); art. 4º (exceções); art. 5º (sanção CTB); art. 9º (vigor na publicação)",
+          "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/4256/",
+          "nota": "Página do ato: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/4256/ (Ativa, não consta revogação expressa); Câmara: https://www.camaranazarepaulista.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&id=5189 (Em vigor). PDF em atos/3532405/lei_1611_2021_trafego_caminhoes.pdf."
+        }
+      ],
+      "nota": "Proibição só no sentido Rotatória Principal (entrada) para o Centro; a camada de vias não modela sentido, então a regra é aplicada à rua inteira (aproximação conservadora). Condição do parágrafo único: I) acima de 7,99 t, acima de 7,20 m e acima de 2 eixos (redação conjuntiva); II a IV) VCP (caminhão e caminhão trator com semirreboque), VCPB (bitrem, caminhão + reboque) e VCPT (treminhão). Adotado como OU entre PBT, comprimento e tipo (lado seguro). Regulamentação (art. 6º) não encontrada. VUC: o município não define.",
+      "fonte_geometria": "OSM (ODbL) por nome: ways 212059156 (tertiary) e 1008869145 (residential) \"Rua João de Passos\"",
+      "vigencia_inicio": "2021-05-26",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua João de Passos"
+          ],
+          "descricao": "Rua João de Passos (ways 212059156 e 1008869145); proibição no sentido Rotatória Principal -> Centro",
+          "aproximado": true,
+          "nota": "O ato proíbe só o sentido Rotatória Principal -> Centro; aplicada à rua inteira, nos dois sentidos."
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3532405_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "nazare_paulista_lei_407_97_pbt_9t",
+      "tipo": "via",
+      "regime": "PBT acima de 9 t nas vias pavimentadas municipais (Lei 407/97)",
+      "nome": "Nazaré Paulista: PBT acima de 9 t proibido nas vias pavimentadas municipais (Lei 407/1997)",
+      "status": "desativada",
+      "status_motivo": "sem geometria confiável: a lei vale para todas as vias pavimentadas municipais, sem lista de vias nem horário, e a camada só modela via/zona/ponte nomeadas. Além disso o art. 2º exige regulamentação (nenhum decreto achado) e a Lei 1.611/2021, art. 3º, admite caminhões pesados pela SP-036, em tensão com ela. Decisão do Arthur.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 9
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, parágrafo único: veículos de transporte de passageiros"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 407, de 07/05/1997 (Nazaré Paulista)",
+          "artigo": "art. 1º e parágrafo único; art. 2º (regulamentação); art. 3º (vigor)",
+          "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/1994/",
+          "nota": "Página: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/1994/ ; Câmara id 3903. PDF em atos/3532405/lei_407_1997_veiculos_carga_9t.pdf."
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "nazare_paulista_lei_744_08_estrada_tunel_aguas_claras",
+      "tipo": "via",
+      "regime": "Veículos de carga com mais de 3 eixos na Estrada Vicinal Túnel das Águas Claras (Lei 744/08)",
+      "nome": "Nazaré Paulista: Estrada Vicinal Túnel das Águas Claras (Mascate Grande), veículos de carga com mais de 3 eixos proibidos (Lei 744/2008)",
+      "status": "desativada",
+      "status_motivo": "sem geometria confiável: a Estrada Vicinal Túnel das Águas Claras (bairro Mascate Grande) não foi localizada no OSM por nome (só \"Estrada do Mascate Grande\" e \"Estrada Mascate\", que não foram tomadas por ela); sem geometria não dá para aplicar. Reativar quando a via for identificada.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 744, de 11/07/2008 (Nazaré Paulista)",
+          "artigo": "art. 1º e parágrafo único (penalidades do CTB); art. 2º (regulamentação); art. 3º (vigor)",
+          "url": "https://www.nazarepaulista.sp.gov.br/legislacao/download-lei/2343/",
+          "nota": "Página: https://www.nazarepaulista.sp.gov.br/legislacao/detalhe/2343/ ; Câmara id 4252. PDF em atos/3532405/lei_744_2008_estrada_tunel_aguas_claras.pdf."
+        }
+      ],
+      "verificado_em": "2026-10-14",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

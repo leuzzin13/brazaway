@@ -3,7 +3,7 @@
   "nome": "São Joaquim de Bicas",
   "uf": "MG",
   "status": "nao_achou",
-  "nivel_busca": "media",
+  "nivel_busca": "dirigida",
   "fontes_consultadas": [
     {
       "url": "https://saojoaquimdebicas.mg.gov.br/legislacao",
@@ -24,11 +24,27 @@
     {
       "url": "diarios_consolidados.py",
       "resultado": "município não coberto"
+    },
+    {
+      "url": "https://saojoaquimdebicas.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Prefeitura e Câmara (Portal Fácil, 302 com corpo) lidas. Decreto 380/2014 (01/08/2014 pelo índice): \"Autoriza o trânsito de caminhões na estrada 269\" (ementa; texto não lido, PDF indisponível) = AUTORIZAÇÃO em estrada (provavelmente rural), não restrição; LC 65/2020 (integração ao SNT), Plano Diretor LC 59/2019 e LC 119/2024 (Código de Obras): sem restrição de caminhões nas ementas. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camarasaojoaquimdebicas.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+      "resultado": "Câmara: só LC 65/2020 e Lei 696/2022 (ruído). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+      "rodada": "R2"
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar 3162922 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+      "resultado": "AMM: 0 em todos os termos (município não coberto).",
+      "rodada": "R2"
     }
   ],
-  "data": "2026-10-11",
-  "observacoes": "Nenhuma fonte utilizável; resultado NÃO conclusivo.",
-  "falha_de_fonte": true,
+  "data": "2026-10-14",
+  "observacoes": "Nenhuma fonte utilizável; resultado NÃO conclusivo. || R2: Portal Fácil da Prefeitura e da Câmara lidos. Pista fraca: Decreto 380/2014 autoriza trânsito de caminhões na estrada 269 (sugere haver restrição geral nessa estrada; texto não lido). Sem regra roteável.",
+  "falha_de_fonte": false,
   "osm_divergencias": [],
-  "regras_rascunho": []
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

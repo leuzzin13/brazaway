@@ -1,34 +1,50 @@
 {
- "ibge": "3117836",
- "nome": "Cônego Marinho",
- "uf": "MG",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://www.diariomunicipal.com.br/amm-mg/materia/5DA12E9E",
-   "resultado": "Lei 526/2026 (consórcio; locação de caminhões a municípios); ruído."
-  },
-  {
-   "url": "toolkit diarios_consolidados.py buscar <ibge> \"circulação de caminhões / veículos pesados\" (amm-mg + Querido Diário)",
-   "resultado": "0 resultados relevantes."
-  },
-  {
-   "url": "toolkit legislacao.py buscar <ibge> \"caminh|carga e descarga|veículos pesados|...|tonelad\"",
-   "resultado": "https://conegomarinho.mg.gov.br/cgi-sys/suspendedpage.cgi: site suspenso; sem cliente automático."
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO, hgv/maxweight/hgv:conditional)",
-   "resultado": "0 ways com hgv, maxweight ou hgv:conditional."
-  },
-  {
-   "url": "https://penaestrada.com.br/restricoes/ (lead leads/penaestrada.json)",
-   "resultado": "Sem página/restrição para o município na preparação."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Pista do lote (acerto de diário só pelo regex do lead) conferida: ruído, sem ato de restrição de circulação. Site da prefeitura suspenso: busca só no AMM; não conclusivo.",
- "falha_de_fonte": true,
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "3117836",
+  "nome": "Cônego Marinho",
+  "uf": "MG",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/5DA12E9E",
+      "resultado": "Lei 526/2026 (consórcio; locação de caminhões a municípios); ruído."
+    },
+    {
+      "url": "toolkit diarios_consolidados.py buscar <ibge> \"circulação de caminhões / veículos pesados\" (amm-mg + Querido Diário)",
+      "resultado": "0 resultados relevantes."
+    },
+    {
+      "url": "toolkit legislacao.py buscar <ibge> \"caminh|carga e descarga|veículos pesados|...|tonelad\"",
+      "resultado": "https://conegomarinho.mg.gov.br/cgi-sys/suspendedpage.cgi: site suspenso; sem cliente automático."
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO, hgv/maxweight/hgv:conditional)",
+      "resultado": "0 ways com hgv, maxweight ou hgv:conditional."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/ (lead leads/penaestrada.json)",
+      "resultado": "Sem página/restrição para o município na preparação."
+    },
+    {
+      "url": "https://conegomarinho.mg.gov.br/ (WordPress)",
+      "resultado": "Site voltou ao ar (antes página suspensa). Seções /atos-oficiais/leis, /decretos e /portarias listam atos (últimos: Leis 521-525/2026, Decretos 2021-2022); a paginação do gerenciador de downloads não avança por GET, então só as primeiras páginas foram vistas.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://conegomarinho.mg.gov.br/?s=<termo> e wp-json/wp/v2/search (caminh, trânsito, tráfego, pesad, carga e descarga, veículos)",
+      "resultado": "Nenhum ato de circulação: só notícia de pavimentação, Lei 491/2025 (leilão de veículos) e Lei 432/2021 (veículos oficiais da Câmara).",
+      "rodada": "R2"
+    },
+    {
+      "url": "AMM-MG refeito (HOJE corrigido) com circulação/trânsito/tráfego de caminhões, veículos pesados, carga e descarga",
+      "resultado": "Únicos acertos relevantes: Lei 526/2026 (consórcio COMSAF; locação de caminhões, citação genérica de organizar trânsito); 'veículos pesados' 30 resultados, todos licitação/frota (score negativo). Nenhum ato de restrição.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Pista do lote (acerto de diário só pelo regex do lead) conferida: ruído, sem ato de restrição de circulação. Site da prefeitura suspenso: busca só no AMM; não conclusivo. R2: site da prefeitura voltou; busca interna, listagens e AMM sem ato de circulação de caminhões. Município pequeno, sem pista. Índice de leis/decretos do site só parcialmente navegável (limitação registrada).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

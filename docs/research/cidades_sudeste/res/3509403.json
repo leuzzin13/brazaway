@@ -1,32 +1,171 @@
 {
- "ibge": "3509403",
- "nome": "Cajuru",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "http://www.camaradecajuru.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
-   "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
-  },
-  {
-   "url": "toolkit/legislacao.py buscar 3509403 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
-   "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 3509403 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
-   "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3509403)",
-   "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: maxweight=2.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM (contagem da preparação): maxweight=2. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa."
- ],
- "regras_rascunho": []
+  "ibge": "3509403",
+  "nome": "Cajuru",
+  "uf": "SP",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "http://www.camaradecajuru.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
+      "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 3509403 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
+      "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 3509403 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
+      "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3509403)",
+      "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+    },
+    {
+      "url": "https://camaradecajuru.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=3415&idtipolei=1",
+      "resultado": "Lei 1.610/2007 (Em vigor): arts. 1º, 2º, 3º, 4º. PDF lido como imagem.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaradecajuru.wls.com.br/?pag=...busca avançada (palavraChave)",
+      "resultado": "pesad: Lei 1.610/2007; tráfego: Leis 981/1991 e 1.955/2017 (pedestres); caminh: só subvenções/compras; 1610: sem lei alteradora.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: maxweight=2. | R2: Webline da Câmara (camaradecajuru.wls.com.br) respondeu; busca avançada ('pesad', 'caminh', 'tráfego', 'trânsito', 'carga', 'veículos') achou a Lei 1.610/2007 (proíbe veículos pesados de carga no perímetro urbano, com exceções). Leis 981/1991 e 1.955/2017 tratam de tráfego em áreas de pedestres (calçadão), não de caminhões. Prefeitura (cajuru.sp.gov.br) sem DNS pelo proxy. Overpass sem resposta útil. | verificado na R2: ato oficial reaberto (portal da Câmara + PDF), número, artigos, vigência, alvo e exceções conferidos; confirmado.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "cajuru_pesados_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Veículos pesados de carga (> 4 t de capacidade, reboques e semirreboques), perímetro urbano",
+      "nome": "Cajuru: proibida a circulação de veículos pesados de carga no perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_incisos": [
+        "II"
+      ],
+      "excecao_destino_local_artigo": "art. 2º, II",
+      "excecoes": [
+        "Art. 2º, I: veículos emplacados no município de Cajuru",
+        "Art. 2º, II: veículos que precisem carregar ou descarregar no perímetro urbano, comprovado por nota fiscal ou documento hábil",
+        "Art. 2º, III: socorro mecânico",
+        "§2º: os excetuados circulam só para cumprir o motivo da exceção"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.610, de 12/06/2007 (Cajuru)",
+          "artigo": "art. 1º e parágrafo único (proíbe, carregados ou vazios, caminhões, carretas e similares com capacidade de carga > 4.000 kg ou litros, e reboques e semirreboques, no perímetro urbano); art. 2º, I-III (exceções); §2º; art. 4º (vigor na publicação)",
+          "url": "https://camaradecajuru.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=3415&idtipolei=1",
+          "nota": "PDF lido como imagem (atos/3509403/lei1610_0_download_lei_1610.pdf). Portal da Câmara: 'Em vigor', sem alteração/revogação."
+        }
+      ],
+      "nota": "Capacidade > 4.000 kg ou litros = payload_t > 4 (não PBT). Exceção I (placa local) não é modelável. O ato diz 'perímetro urbano' sem delimitá-lo.",
+      "vigencia_inicio": "2007-06-12",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509403_perimetro_urbano.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono do perímetro urbano de Cajuru (mancha urbana IBGE/OSM)"
+        }
+      ]
+    },
+    {
+      "id": "cajuru_ruas_centrais_praca",
+      "tipo": "zona",
+      "regime": "Ruas que circundam a Praça Municipal (inclusive excetuados)",
+      "nome": "Cajuru: ruas centrais em torno da Praça Municipal proibidas até aos veículos excetuados",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Só em casos excepcionais, quando não houver rota alternativa"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.610, de 12/06/2007 (Cajuru)",
+          "artigo": "art. 2º, §1º (mesmo os excetuados ficam proibidos nas ruas centrais que circundam a Praça Municipal, salvo caso excepcional sem rota alternativa)",
+          "url": "https://camaradecajuru.wls.com.br/?pag=T0dRPU9EZz1PR009T1RnPQ&id=3415&idtipolei=1",
+          "nota": "PDF lido como imagem (atos/3509403/lei1610_0_download_lei_1610.pdf). Portal da Câmara: 'Em vigor', sem alteração/revogação."
+        }
+      ],
+      "vigencia_inicio": "2007-06-12",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3509403_ruas_praca.geojson",
+          "construir": "manual",
+          "como_gerar": "Ruas que circundam a Praça Municipal de Cajuru (localizar no OSM; não nomeadas no ato)"
+        }
+      ]
+    }
+  ],
+  "rodada": "R2"
 }

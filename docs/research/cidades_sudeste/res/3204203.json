@@ -1,32 +1,253 @@
 {
- "ibge": "3204203",
- "nome": "Piúma",
- "uf": "ES",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "data": "2026-10-11",
- "fontes_consultadas": [
-  {
-   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/6520/465",
-   "resultado": "DOM/ES Ed. 1.925, 30/12/2021 (trecho do lead): lei de silêncio/raio de 100 m de hospitais e escolas; sem restrição a caminhão (ruído)"
-  },
-  {
-   "url": "https://www.camarapiuma.es.gov.br/legislacao/tipo/lei-ordinaria/3",
-   "resultado": "busca heurística: 0 atos; portalfacil (camarapiuma.es.gov.br/legislacao): endpoint não achado; piuma.legislacaocompilada.com.br: formulário não encontrado"
-  },
-  {
-   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
-   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 relevantes (veículos pesados: apostilamento de ata de preços; peso bruto total: permissão de serviço de táxi)"
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3204203)",
-   "resultado": "8 ways da Rodovia Jorge Feres (ES-375, secondary) com maxweight=24; sem hgv=no"
-  }
- ],
- "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte municipal de legislação inacessível. O maxweight=24 está na ES-375 (rodovia estadual), logo fora da competência municipal.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "maxweight=24 em 8 ways da ES-375 (Rodovia Jorge Feres): via estadual; sem ato municipal; pendência para DER-ES/OSM"
- ],
- "regras_rascunho": []
+  "ibge": "3204203",
+  "nome": "Piúma",
+  "uf": "ES",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "data": "2026-10-14",
+  "fontes_consultadas": [
+    {
+      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/6520/465",
+      "resultado": "DOM/ES Ed. 1.925, 30/12/2021 (trecho do lead): lei de silêncio/raio de 100 m de hospitais e escolas; sem restrição a caminhão (ruído)"
+    },
+    {
+      "url": "https://www.camarapiuma.es.gov.br/legislacao/tipo/lei-ordinaria/3",
+      "resultado": "busca heurística: 0 atos; portalfacil (camarapiuma.es.gov.br/legislacao): endpoint não achado; piuma.legislacaocompilada.com.br: formulário não encontrado"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+      "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 relevantes (veículos pesados: apostilamento de ata de preços; peso bruto total: permissão de serviço de táxi)"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3204203)",
+      "resultado": "8 ways da Rodovia Jorge Feres (ES-375, secondary) com maxweight=24; sem hgv=no"
+    },
+    {
+      "url": "https://www.camarapiuma.es.gov.br/legislacao (Portal Fácil, AjaxPro leg_lis; 302 -> google com corpo real)",
+      "resultado": "Respondeu: busca na ementa por caminh (13), trânsito, tráfego, pesad (0), carga, tonel, veículos, circula, estacionamento, sinaliza, posturas, ônibus, Scherrer, Beira-Mar, 1.386/1386/876 (sem referências posteriores). Achados: Leis 1.386/2008, 876/2000, 2.200/2017, 2.276/2018, 2.701/2024, 2.495/2022",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_1386_2008",
+      "resultado": "Lei 1.386, de 03/07/2008, lida (pdftotext): 15 t de tonelagem máxima de carga, art. 1º; multa 1.500 UFMP (art. 2º); sinalização (art. 3º). Sem situação \"Revogada\" na listagem",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_876_2000",
+      "resultado": "Lei 876, de 15/12/2000, lida (PDF escaneado, imagem): proibição sazonal 15/12-15/03 na Av. Pref. José de Vargas Scherrer, art. 1º I-II, §§1º-4º, art. 2º (Av. Beira-Rio), art. 3º (multa R$ 150,00 / R$ 500,00 e apreensão)",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_2200_2017, _2276_2018, _2495_2022, _910_2001 (imagem), _2564_2023",
+      "resultado": "Lidas: carga/descarga 6h-11h; estacionamento de ônibus e caminhões; área de lazer (todos os veículos, sáb/dom/feriados 8h-16h); Lei 910/2001 (estacionamento no verão, dez-abr; não revoga a 876); Lei 2.564/2023 (só autoriza absorção de trechos estaduais). Lei 2.701/2024 (14 MB escaneada) não lida",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/8292/149",
+      "resultado": "DOM/ES 08/08/2023: Lei 2.567/2023 (mão única em ruas; sem relação com caminhões)",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
+      "resultado": "\"caminhões\" (licitação de torno/soldagem), \"toneladas\" (RSU), \"tráfego de veículos\" (Lei 2.567/2023, transporte de passageiros), \"circulação de veículos\" (decreto 3.256/2026 orla/jet ski), \"carretas\" (ata de preços): nenhum ato de circulação de caminhões",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://piuma.legislacaocompilada.com.br/legislacao/ e https://piuma.es.gov.br/portal/",
+      "resultado": "403 Cloudflare em 14/10/2026; não lidas",
+      "rodada": "R2"
+    }
+  ],
+  "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte municipal de legislação inacessível. O maxweight=24 está na ES-375 (rodovia estadual), logo fora da competência municipal. || R2: DESCOBERTA de método: camarapiuma.es.gov.br e www.itapemirim.es.gov.br (Portal Fácil) respondem 302 para google.com mas o corpo é a página real; sem seguir o redirecionamento (curl sem -L, patch do http() do toolkit só na minha cópia) o AjaxPro leg_lis da Câmara de Piúma responde e a busca na ementa funciona. Download do ato: https://www.camarapiuma.es.gov.br/arquivo/legislacao/<tipo>_<numero>_<ano> (precisa de cookie/sessão da página /legislacao e curl -g). ACHADOS: (a) Lei 1.386/2008 limita a 15 t a \"tonelagem de carga\" nas vias públicas do município (art. 1º), multa 1.500 UFMP; sem revogação achada: candidata a regra, mantida DESATIVADA (rodovia estadual ES-375, ambiguidade carga x PBT, geometria, OSM maxweight=24 na ES-375 como pendência para a outra sessão; não corrigir a camada). (b) Lei 876/2000: de 15/12 a 15/03 de cada ano proíbe, na Av. Pref. José de Vargas Scherrer (Beira-Mar) entre a Av. Eduardo Rodrigues e a Rua Belo Horizonte, o tráfego de caminhão (terceiro eixo, toco, carreta, caçamba, baú), articulados, ônibus intermunicipais e de turismo e veículos de carga, com exceção de carga/descarga 8h-14h; sazonal e vigência não confirmada: desativada. (c) Lei 2.200/2017: carga e descarga só seg-sáb 6h-11h em todo o município (operação, não circulação): pontual, desativada. (d) Lei 2.276/2018 (alterada pela 2.701/2024): proíbe estacionar ônibus e caminhões na Beira-Mar: pontual. (e) Lei 2.495/2022 fecha a Beira-Mar entre o acesso à Ilha do Gambá e a Poliesportiva a todos os veículos aos sáb., dom. e feriados 8h-16h: não é restrição a caminhão. Lei 2.567/2023 e demais (mão única, estacionamento) irrelevantes; Lei 2.564/2023 só autoriza absorver trechos estaduais urbanos. Pesquisadas ementas por caminh, trânsito, tráfego, pesad, carga, tonel, veículos, circula, rodovia, estacionamento, sinaliza, posturas, ônibus, Scherrer, Beira-Mar. O portal da Câmara só tem leis, resoluções, portarias e atos da Mesa: decretos do Executivo só via DOM-ES (2021+, termos novos: 0 acerto); a prefeitura (piuma.es.gov.br) e o legislacaocompilada seguem em 403. falha_de_fonte=false pela leitura completa das leis.",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "maxweight=24 em 8 ways da ES-375 (Rodovia Jorge Feres): via estadual (DER-ES); a Lei municipal 1.386/2008 (15 t de carga nas vias do município) não distingue estaduais; sem prova de aplicação na ES-375. Pendência para a outra sessão (data/osm-overrides/overrides.json), sem corrigir a camada"
+  ],
+  "regras_rascunho": [
+    {
+      "id": "piuma_tonelagem_maxima_15t_lei1386_2008",
+      "tipo": "zona",
+      "regime": "Tonelagem máxima de carga",
+      "nome": "Piúma: tonelagem máxima de carga de 15 t nas vias públicas do município",
+      "status": "desativada",
+      "status_motivo": "Ato primário lido e sem revogação achada, mas: (1) abrange 'vias públicas do Município' sem separar as rodovias estaduais (ES-375/ES-060: DER-ES); a Lei 2.564/2023 só AUTORIZA a absorção de trechos estaduais urbanos, sem prova de que ocorreu, e a geometria por limite municipal incluiria a via estadual; (2) 'tonelagem de carga' não define se é capacidade de carga ou PBT (modelado como payload_t); (3) lei de 2008 sem decreto/sinalização/placa conhecidos e sem confirmação de que é fiscalizada; (4) OSM traz maxweight=24 na ES-375 (divergência registrada como pendência). Candidata forte: decidir se ativa com geometria só das vias municipais.",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "payload_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, parágrafo único: em casos de extrema urgência, devidamente justificados, a Prefeitura poderá autorizar o trânsito acima do limite",
+        "Art. 4º: nos 120 dias após a publicação (2008) só notificação, sem multa (período já esgotado)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.386, de 03/07/2008 (Piúma; autoria do Ver. Nelson Morghetti)",
+          "artigo": "art. 1º (15 t de carga máxima nas vias públicas do município; parágrafo único: autorização em urgência), art. 2º (multa de 1.500 UFMP, em dobro na reincidência), art. 3º (sinalização nas vias de acesso), art. 5º (vigência na publicação)",
+          "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_1386_2008",
+          "nota": "Cópia em atos/3204203/lei-ordinaria_1386_2008.pdf. A listagem do portal da Câmara não marca a lei como revogada (outras leis aparecem como 'Revogada') e nenhuma ementa a cita"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "piuma_limite_municipal",
+          "municipios": [
+            "3204203"
+          ]
+        }
+      ],
+      "vigencia_inicio": "2008-07-03"
+    },
+    {
+      "id": "piuma_av_beira_mar_verao_lei876_2000",
+      "tipo": "via",
+      "regime": "Proibição sazonal (15/12 a 15/03) de veículos de médio e grande porte",
+      "nome": "Piúma: Av. Prefeito José de Vargas Scherrer (Beira-Mar), da Av. Eduardo Rodrigues até a Rua Belo Horizonte, proibido tráfego de veículos de médio/grande porte e de carga no verão",
+      "status": "desativada",
+      "status_motivo": "Ato lido (PDF escaneado, conferido na imagem), mas a restrição é SAZONAL (de 15 de dezembro de um ano a 15 de março do ano seguinte, todo ano) e o formato não representa período do ano: ativá-la restringiria o ano todo. Vigência não confirmada: lei de 2000, sem revogação expressa achada; leis posteriores sobre a mesma avenida (910/2001, 953/2002, 2.276/2018 e 2.495/2022) tratam de estacionamento e área de lazer, e a Lei 2.276/2018 proíbe estacionamento de caminhões ali, o que sugere circulação permitida fora do verão. Art. 2º manda esses veículos usarem a Av. Beira-Rio.",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 1º, §1º: carga e descarga para comerciantes e moradores da avenida, das 8h às 14h",
+        "Art. 1º, §2º: ônibus de linhas regulares e circulares do município, veículos oficiais ou particulares a serviço público",
+        "Art. 1º, §3º: trio elétrico em evento popular oficial, com horário e trecho autorizados",
+        "Art. 1º, §4º: veículos de passeio/transporte de passageiros com mais de 10 lugares só com alvará"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 876, de 15/12/2000 (Piúma)",
+          "artigo": "art. 1º, I (caminhão terceiro eixo, toco, carreta, caçamba/basculante, baú, articulado, ônibus intermunicipal/turismo, veículo misto) e II (veículo de carga em geral), com §§1º a 4º; art. 2º (usar a Av. Beira-Rio); art. 3º (multa)",
+          "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_876_2000",
+          "nota": "Cópia em atos/3204203/lei-ordinaria_876_2000.pdf (2 páginas, imagem)"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "piuma_av_beira_mar",
+          "construir": "trechos",
+          "arquivo": "municipios/geo/3204203_piuma_av_beira_mar.geojson"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Prefeito José de Vargas Scherrer",
+            "Avenida Beira-Mar"
+          ],
+          "descricao": "entre a Av. Eduardo Rodrigues (bairro Acaiaca) e a Rua Belo Horizonte (bairros Itapuanga/Monte Aghá)",
+          "aproximado": true
+        }
+      ],
+      "vigencia_inicio": "2000-12-15"
+    },
+    {
+      "id": "piuma_carga_descarga_6_11h_lei2200_2017",
+      "tipo": "zona",
+      "regime": "Horário de carga e descarga de mercadorias",
+      "nome": "Piúma: operações de carga e descarga de mercadorias só de segunda a sábado, das 6h às 11h",
+      "status": "desativada",
+      "status_motivo": "Regime de OPERAÇÃO de carga e descarga (todos os veículos, sem alvo de caminhão nem via), não de circulação: não roteável. Lei promulgada pela Câmara (2017) sem regulamentação, sem definição de vias e com as leis 2.276/2018 e 876/2000 contando com carga e descarga em outros horários (8h-14h), o que indica aplicação incerta.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-14",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 2º: veículos de emergência de entidades públicas e de concessionárias de serviços públicos"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.200, de 30/05/2017 (Piúma; promulgada pela Presidente da Câmara)",
+          "artigo": "art. 1º (segunda a sábado, 6h às 11h) e art. 2º (exceções)",
+          "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_2200_2017",
+          "nota": "Cópia em atos/3204203/lei-ordinaria_2200_2017.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "piuma_limite_municipal",
+          "municipios": [
+            "3204203"
+          ]
+        }
+      ],
+      "vigencia_inicio": "2017-05-30"
+    },
+    {
+      "id": "piuma_estacionamento_caminhoes_beira_mar_lei2276_2018",
+      "tipo": "via",
+      "regime": "Proibição de estacionamento de ônibus e caminhões",
+      "nome": "Piúma: proibido estacionar ônibus e caminhões na Av. Prefeito José de Vargas Scherrer (Beira-Mar)",
+      "status": "desativada",
+      "status_motivo": "Só proíbe ESTACIONAMENTO (salvo embarque/desembarque e carga/descarga): não restringe circulação, logo não roteável. Alterada pela Lei 2.701/2024 (promulgada pela Câmara após veto; texto não lido, PDF escaneado de 14 MB).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-14",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 1º: pelo tempo necessário ao embarque e desembarque de passageiros ou à carga e descarga"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.276, de 22/10/2018 (Piúma), alterada pela Lei 2.701/2024",
+          "artigo": "art. 1º (proibição) e art. 2º (multa de 1.000 UFMP)",
+          "url": "https://www.camarapiuma.es.gov.br/arquivo/legislacao/lei-ordinaria_2276_2018",
+          "nota": "Cópia em atos/3204203/lei-ordinaria_2276_2018.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "id": "piuma_av_beira_mar",
+          "construir": "trechos",
+          "arquivo": "municipios/geo/3204203_piuma_av_beira_mar.geojson"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Prefeito José de Vargas Scherrer",
+            "Avenida Beira-Mar"
+          ],
+          "descricao": "avenida inteira",
+          "aproximado": true
+        }
+      ],
+      "vigencia_inicio": "2018-10-22"
+    }
+  ],
+  "rodada": "R2"
 }

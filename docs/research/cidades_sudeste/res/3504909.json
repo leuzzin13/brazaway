@@ -1,32 +1,46 @@
 {
- "ibge": "3504909",
- "nome": "Bananal",
- "uf": "SP",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "http://www.bananal.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
-   "resultado": "Webline (legislação prefeitura): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
-  },
-  {
-   "url": "toolkit/legislacao.py buscar 3504909 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
-   "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 3504909 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
-   "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
-  },
-  {
-   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3504909)",
-   "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=3.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM (contagem da preparação): hgv_no=3. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa."
- ],
- "regras_rascunho": []
+  "ibge": "3504909",
+  "nome": "Bananal",
+  "uf": "SP",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "http://www.bananal.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
+      "resultado": "Webline (legislação prefeitura): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 3504909 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
+      "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 3504909 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
+      "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3504909)",
+      "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+    },
+    {
+      "url": "https://www.bananal.sp.leg.br/@@search?SearchableText=caminh (e variantes)",
+      "resultado": "Texto integral da Câmara: sem lei/decreto de restrição; só requerimentos/indicações sobre caminhão (coleta, estacionado, pipa).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.bananal.sp.gov.br/legislacao",
+      "resultado": "404; bananal.sp.gov.br sem resolução.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://overpass.kumi.systems/api/interpreter (IBGE 3504909)",
+      "resultado": "0 ways com hgv/maxweight/hgv:conditional/maxlength.",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=3. | R2: Câmara (Plone, bananal.sp.leg.br) respondeu: busca de texto integral (@@search) por caminh/caminhão/caminhões/veículos pesados/carga e descarga/tráfego/tonelada/restrição circulação só acha indicações de vereadores, plano de resíduos (PL 045/2024) e relatório, nenhuma norma de restrição. Prefeitura (www.bananal.sp.gov.br, Webline) sem DNS/404; Wayback da home sem retorno. Overpass: 0 ways com hgv/maxweight na área (a pista OSM da preparação não se confirmou). Decretos do Executivo não consultados.",
+  "falha_de_fonte": true,
+  "osm_divergencias": [],
+  "regras_rascunho": [],
+  "rodada": "R2"
 }

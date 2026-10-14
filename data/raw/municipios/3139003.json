@@ -1,0 +1,308 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "3139003",
+  "municipio": "Machado",
+  "uf": "MG",
+  "fonte_id": "machado",
+  "fonte": {
+    "url": "https://machado.mg.gov.br/legislacao (Portal Fácil da Prefeitura: Lei 2.294/2010, Lei 2.806/2018 e Lei 2.814/2018)",
+    "licenca": "Atos oficiais de Machado: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM), vias casadas por nome.",
+    "notas": "Lei 2.294/2010 (carga e descarga, trânsito de carretas e estacionamento de vans), alterada pelas Leis 2.806/2018 (limiar passa a capacidade máxima de carga de 4 t) e 2.814/2018 (inclui a Travessa Jacarandá). Veículos de carga com capacidade acima de 4 t ficam proibidos nos 28 logradouros do art. 2º (+ Trav. Jacarandá); só as 4 avenidas do art. 5º são livres para eles. Nenhuma lei posterior cita a 2.294. Os PDFs do portal não abrem por curl: o texto foi lido do índice de texto integral. Cinco logradouros do ato têm grafia diferente no OSM (Rua em vez de Avenida, Marechal/da Fonseca, Travessa do Jacarandá), casados pelo nome."
+  },
+  "verificado_em": "2026-10-14",
+  "vuc": null,
+  "vuc_nota": "As leis não definem VUC: o critério é a capacidade máxima de carga (payload_t) acima de 4 t.",
+  "regras": [
+    {
+      "id": "machado_vias_art2_capacidade_acima_4t",
+      "tipo": "via",
+      "regime": "Capacidade máxima de carga acima de 4 t (carretas): só nas 4 avenidas do art. 5º",
+      "nome": "Machado: 28 logradouros do art. 2º da Lei 2.294/2010 (+ Trav. Jacarandá), veículos de carga com capacidade acima de 4 t",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-14",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º §3º: ônibus do transporte coletivo sob concessão",
+        "Art. 5º: carretas (capacidade > 4 t) PERMITIDAS apenas nas Avenidas Artur Bernardes, Renato Azeredo, Ricardo Annoni Filho e Dr. Ataíde Pereira de Souza",
+        "Art. 1º §2º (red. Lei 2.806/2018): livre em qualquer dia o tráfego de veículos de carga com capacidade até 4 t"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.294, de 17/11/2010 (Machado), na redação da Lei 2.806/2018 (art. 1º, I e §2º; art. 4º dá nova redação ao art. 5º) e da Lei 2.814/2018 (inclui a Travessa Jacarandá no art. 2º)",
+          "artigo": "art. 1º, I e II; art. 2º (28 logradouros, incisos I a XXVIII + XXIX Trav. Jacarandá); art. 5º (carretas só nas 4 avenidas); art. 6º (multa 29 UFEMG e remoção); vigência 60 dias após a publicação (art. 8º); Leis de 2018 em vigor na publicação",
+          "url": "https://machado.mg.gov.br/legislacao",
+          "nota": "Texto lido do índice de texto integral do Portal Fácil da Prefeitura (campo DSRESUMO). Arquivos: https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={EDBAE6CE-5B00-37AA-7A1E-B4CABA2AC172}.pdf ; https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={B810ADDD-4CCE-DC24-6AC7-CDDA3035AAAD}.pdf ; https://machado.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={0AB5DBBD-BA5E-3725-2ECE-5EEB23025EA0}.pdf. Cópias do texto em docs/research/cidades_sudeste/atos/3139003/."
+        }
+      ],
+      "nota": "AMBIGUIDADE: a Lei 2.294 original usava comprimento de carroceria (>8 m = carreta; 6-8 m com janelas 5h-11h e 18h-22h seg-sex, 5h-11h sáb nas vias do art. 2º; até 6 m livre). A Lei 2.806/2018 trocou os dois limiares para capacidade de carga de 4 t (art. 1º I e §2º e art. 5º), mantendo o inciso II (janelas) sem mudar; com limiar único de 4 t, o efeito prático é: acima de 4 t só nas 4 avenidas (art. 5º). Janelas do art. 1º, II mantidas no texto mas sem faixa intermediária; modelado como proibição o dia todo nas vias do art. 2º. 'Capacidade máxima de carga' modelada como payload_t, não PBT. Divergência: o texto de 2010 diz '04 de novembro de 2010' na assinatura e as leis de 2018 citam 17/11/2010. Os textos de 2806/2814 do índice são minuta/autógrafo com justificativa e parecer, sem o carimbo de sanção, mas constam como Lei Ordinária numerada no portal oficial (confiança média). Dr. Ataíde Pereira de Souza não consta da lista do art. 2º.",
+      "fonte_geometria": "Vias do art. 2º casadas por nome no OpenStreetMap (ODbL), em toda a extensão com nome na sede; cinco com grafia diferente da lei.",
+      "vigencia_inicio": "2018-02-23",
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Santa Cruz"
+          ],
+          "descricao": "Avenida Santa Cruz (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Celso Sidney Gambi",
+            "Rua Celso Sidney Gambi"
+          ],
+          "descricao": "Avenida Celso Sidney Gambi (todo o logradouro urbano)",
+          "nota": "No OSM: 'Rua Celso Sidney Gambi'."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Airton Rodrigues Leite"
+          ],
+          "descricao": "Rua Airton Rodrigues Leite (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Floriano Peixoto",
+            "Rua Marechal Floriano Peixoto"
+          ],
+          "descricao": "Rua Floriano Peixoto (todo o logradouro urbano)",
+          "nota": "No OSM: 'Rua Marechal Floriano Peixoto'."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Almirante Saldanha"
+          ],
+          "descricao": "Rua Almirante Saldanha (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Marechal Deodoro",
+            "Rua Marechal Deodoro da Fonseca"
+          ],
+          "descricao": "Rua Marechal Deodoro (todo o logradouro urbano)",
+          "nota": "No OSM: 'Rua Marechal Deodoro da Fonseca'."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Barão de Caxias"
+          ],
+          "descricao": "Rua Barão de Caxias (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua São João Batista de La Salle"
+          ],
+          "descricao": "Rua São João Batista de La Salle (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Dom Hugo"
+          ],
+          "descricao": "Rua Dom Hugo (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Irmão Arnaldo Isidoro"
+          ],
+          "descricao": "Rua Irmão Arnaldo Isidoro (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Joaquim Teófilo"
+          ],
+          "descricao": "Rua Joaquim Teófilo (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Barão do Rio Branco",
+            "Rua Barão do Rio Branco"
+          ],
+          "descricao": "Avenida Barão do Rio Branco (todo o logradouro urbano)",
+          "nota": "No OSM: 'Rua Barão do Rio Branco'."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Praça Antônio Carlos"
+          ],
+          "descricao": "Praça Antônio Carlos (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Praça São Benedito"
+          ],
+          "descricao": "Praça São Benedito (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Professor Francisco Rafael"
+          ],
+          "descricao": "Rua Professor Francisco Rafael (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Coronel Flávio"
+          ],
+          "descricao": "Rua Coronel Flávio (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Professor José Cândido"
+          ],
+          "descricao": "Rua Professor José Cândido (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Silviano Brandão"
+          ],
+          "descricao": "Rua Silviano Brandão (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Major Onofre"
+          ],
+          "descricao": "Rua Major Onofre (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Coronel José Paulino"
+          ],
+          "descricao": "Rua Coronel José Paulino (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Major Feliciano"
+          ],
+          "descricao": "Rua Major Feliciano (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Sete de Setembro"
+          ],
+          "descricao": "Rua Sete de Setembro (todo o logradouro urbano)",
+          "de": {
+            "lonlat": [
+              -45.9182724,
+              -21.6757265
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -45.9210344,
+              -21.6772326
+            ]
+          },
+          "nota": "Só a da sede: no OSM há outra 'Rua Sete de Setembro' em povoado a ~18 km, fora do trecho aplicado."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Astolfo Pio"
+          ],
+          "descricao": "Rua Astolfo Pio (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Quinze de Novembro"
+          ],
+          "descricao": "Rua Quinze de Novembro (todo o logradouro urbano)",
+          "de": {
+            "lonlat": [
+              -45.9207085,
+              -21.6744036
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -45.923133,
+              -21.6692189
+            ]
+          },
+          "nota": "Só a da sede: no OSM há outra 'Rua Quinze de Novembro' em povoado a ~18 km, fora do trecho aplicado."
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Professor Arthur Xavier Pedroso"
+          ],
+          "descricao": "Rua Professor Arthur Xavier Pedroso (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Coronel Jacinto"
+          ],
+          "descricao": "Rua Coronel Jacinto (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Rua Professor José Vieira"
+          ],
+          "descricao": "Rua Professor José Vieira (todo o logradouro urbano)"
+        },
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Travessa Jacarandá",
+            "Travessa do Jacarandá"
+          ],
+          "descricao": "Travessa Jacarandá (todo o logradouro urbano)",
+          "nota": "No OSM: 'Travessa do Jacarandá' (grafia diferente da lei, casada pelo nome)."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3139003_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

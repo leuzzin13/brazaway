@@ -4,7 +4,7 @@
   "uf": "MG",
   "status": "regra_com_ato",
   "nivel_busca": "dirigida",
-  "data": "2026-10-11",
+  "data": "2026-10-14",
   "fontes_consultadas": [
     {
       "url": "leads/penaestrada.json (preparação)",
@@ -29,14 +29,44 @@
     {
       "url": "https://www.diariomunicipal.com.br/amm-mg/materia/94854A12",
       "resultado": "Decretos de desapropriação 2.825/2019 e 2.830/2019 (alargamento da R. Hélio Guimarães para veículos de maior porte): contexto, sem restrição."
+    },
+    {
+      "url": "https://www.piranga.mg.gov.br/ (WordPress; 406/000 sem cabeçalhos de navegador, 200 com eles)",
+      "resultado": "Site agora lido. /decretos/ lista decretos de 2022 a 2026 como mídia: wp-json/wp/v2/media?search=decreto devolve 184 itens (2022-2026) sem nenhum de trânsito/veículos/tráfego/eixos; buscas por 3002, trânsito, tráfego, restrição, veículos de grande porte, carga e descarga, circulação, caminhões, eixos: 0. Decretos de 2020-2021 NÃO estão no site.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/materia/BE4D4487",
+      "resultado": "Dec. 3.002/2020 relido na íntegra: art. 1º (restrição provisória 04-20/02/2020, 5+ eixos, por obras), art. 2º (continua 'até que se alcance o almejado desvio'; parágrafo único I: 5+ eixos 11h-17h; II: 3+ eixos 22h-5h, inclusive fins de semana e feriados), art. 3º (exceções), art. 4º (fiscalização); 'área urbana' não é delimitada.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (diarios_consolidados.py buscar, amm-mg)",
+      "resultado": "busca do AMM fora do ar hoje.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://camaradepiranga.mg.gov.br/ e /leis.php",
+      "resultado": "403 também com cabeçalhos de navegador.",
+      "rodada": "R2"
+    },
+    {
+      "url": "WebSearch: Piranga MG decreto restrição tráfego veículos grande porte área urbana desvio",
+      "resultado": "Nada sobre Piranga (só portarias do DER-MG de feriados).",
+      "rodada": "R2"
+    },
+    {
+      "url": "web.archive.org (cdx de leismunicipais/leis.org Piranga)",
+      "resultado": "Sem capturas.",
+      "rodada": "R2"
     }
   ],
-  "observacoes": "Decreto 3.002/2020 está em vigor segundo o art. 2º (restrição continua até haver desvio); não achei revogação nem notícia de desvio no AMM, mas o portal de legislação principal está bloqueado, então a vigência em 2026 não está confirmada na prefeitura/Câmara: confiança média. Duas janelas sobrepostas: 11h-17h para 5+ eixos e 22h-5h para 3+ eixos, todos os dias, na 'área urbana' (sem delimitação). Recomenda-se confirmar com a prefeitura se já existe o desvio.",
+  "observacoes": "Decreto 3.002/2020 está em vigor segundo o art. 2º (restrição continua até haver desvio); não achei revogação nem notícia de desvio no AMM, mas o portal de legislação principal está bloqueado, então a vigência em 2026 não está confirmada na prefeitura/Câmara: confiança média. Duas janelas sobrepostas: 11h-17h para 5+ eixos e 22h-5h para 3+ eixos, todos os dias, na 'área urbana' (sem delimitação). Recomenda-se confirmar com a prefeitura se já existe o desvio. R2: o Dec. 3.002/2020 foi relido e é um ato primário real, mas a vigência hoje é incerta: o art. 2º é resolutivo ('até o desvio'), não há ato posterior no site da prefeitura (2022+) nem no AMM, mas a Câmara está bloqueada, os decretos de 2020-2021 não estão publicados e o AMM não pôde ser pesquisado de novo. Além disso a 'área urbana' não é delimitada pelo decreto, o que impede desenhar a zona. Regras rebaixadas para 'desativada' (verificado na R2: ver verif/3150802.json). Para reativar: confirmar com a prefeitura se o desvio existe e delimitar a área.",
   "falha_de_fonte": true,
   "osm_divergencias": [],
   "regras_rascunho": [
     {
-      "verificado_em": "2026-10-11",
+      "verificado_em": "2026-10-14",
       "feriados": "aplica",
       "excecoes": [
         "Art. 3º: veículos com carga viva (suínos, bovinos, aves) e prestadores de serviços públicos essenciais identificados (energia, iluminação, água, esgoto, telecomunicação)"
@@ -45,8 +75,8 @@
       "tipo": "zona",
       "regime": "Grande porte 5+ eixos (11h-17h)",
       "nome": "Piranga: veículos de grande porte com 5 eixos ou mais, proibidos na área urbana das 11h às 17h",
-      "status": "ativa",
-      "confianca": "media",
+      "status": "desativada",
+      "confianca": "baixa",
       "janelas": [
         {
           "days": [
@@ -86,10 +116,11 @@
           "construir": "manual",
           "como_gerar": "Delimitar a área urbana da sede de Piranga."
         }
-      ]
+      ],
+      "status_motivo": "Rebaixada na R2: vigência não confirmável (Dec. 3.002/2020, art. 2º vale 'até que se alcance o desvio'; Câmara bloqueada, decretos 2020-2021 fora do site, AMM sem busca) e 'área urbana' sem delimitação no ato."
     },
     {
-      "verificado_em": "2026-10-11",
+      "verificado_em": "2026-10-14",
       "feriados": "aplica",
       "excecoes": [
         "Art. 3º: veículos com carga viva e prestadores de serviços públicos essenciais identificados"
@@ -98,8 +129,8 @@
       "tipo": "zona",
       "regime": "Grande porte 3+ eixos (22h-5h)",
       "nome": "Piranga: veículos de grande porte com 3 eixos ou mais, proibidos na área urbana das 22h às 5h",
-      "status": "ativa",
-      "confianca": "media",
+      "status": "desativada",
+      "confianca": "baixa",
       "janelas": [
         {
           "days": [
@@ -152,7 +183,9 @@
           "construir": "manual",
           "como_gerar": "Mesma área urbana da regra de 5 eixos."
         }
-      ]
+      ],
+      "status_motivo": "Rebaixada na R2: vigência não confirmável (Dec. 3.002/2020, art. 2º vale 'até que se alcance o desvio'; Câmara bloqueada, decretos 2020-2021 fora do site, AMM sem busca) e 'área urbana' sem delimitação no ato."
     }
-  ]
+  ],
+  "rodada": "R2"
 }

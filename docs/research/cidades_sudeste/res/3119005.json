@@ -1,28 +1,146 @@
 {
- "ibge": "3119005",
- "nome": "Cordislândia",
- "uf": "MG",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "fontes_consultadas": [
-  {
-   "url": "https://cordislandia.mg.leg.br/index.php/leis",
-   "resultado": "Heurístico: 0 atos para todos os termos. Site com ?s= devolve 406."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/amm-mg (diarios_consolidados.py buscar 3119005)",
-   "resultado": "'circulação/trânsito/tráfego de caminhões', 'carga e descarga', 'tonelada', 'proibido caminhões': 0; 'veículos pesados' 15 (adesões a ata, contratos: ruído)."
-  },
-  {
-   "url": "Overpass (overpass-api.de, overpass.kumi.systems, overpass.private.coffee, maps.mail.ru; area IBGE:GEOCODIGO)",
-   "resultado": "Fora do ar nesta máquina em 11/10/2026 (500/reset/504 em todos os espelhos; overpass.osm.ch responde mas só tem a Suíça). As vias etiquetadas no OSM NÃO foram identificadas."
-  }
- ],
- "data": "2026-10-11",
- "observacoes": "Nada achado. OSM: 1 way hgv=no não identificado.",
- "falha_de_fonte": true,
- "osm_divergencias": [
-  "OSM: 1 way hgv=no, não identificado. PENDÊNCIA."
- ],
- "regras_rascunho": []
+  "ibge": "3119005",
+  "nome": "Cordislândia",
+  "uf": "MG",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "fontes_consultadas": [
+    {
+      "url": "https://cordislandia.mg.leg.br/index.php/leis",
+      "resultado": "Heurístico: 0 atos para todos os termos. Site com ?s= devolve 406."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg (diarios_consolidados.py buscar 3119005)",
+      "resultado": "'circulação/trânsito/tráfego de caminhões', 'carga e descarga', 'tonelada', 'proibido caminhões': 0; 'veículos pesados' 15 (adesões a ata, contratos: ruído)."
+    },
+    {
+      "url": "Overpass (overpass-api.de, overpass.kumi.systems, overpass.private.coffee, maps.mail.ru; area IBGE:GEOCODIGO)",
+      "resultado": "Fora do ar nesta máquina em 11/10/2026 (500/reset/504 em todos os espelhos; overpass.osm.ch responde mas só tem a Suíça). As vias etiquetadas no OSM NÃO foram identificadas."
+    },
+    {
+      "url": "https://cordislandia.mg.leg.br/index.php/leis (Câmara; exige User-Agent de navegador, senão 406)",
+      "resultado": "Lista completa de leis municipais 2009-2026 lida. Achado: LEI 928 (2012) \"Impede o trânsito de veículos com carga acima de 12 toneladas pelas ruas e avenidas e limita a 10 toneladas o peso dos mesmos na ponte sobre o rio Sapucaí\". Demais acertos: Lei 1143 (identificação de veículos oficiais), 974/946 (alienação de veículos). Sem lei posterior que altere ou revogue a 928.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf",
+      "resultado": "PDF escaneado (2 páginas, lido como imagem; pdftotext vazio, sem tesseract). Lei nº 928, de 05/03/2012: art. 1º carregamento > 12 t impedido nas avenidas e ruas da cidade; art. 2º > 10 t impedido na ponte sobre o Rio Sapucaí; art. 3º Av. Cônego Francisco como única via de transposição; art. 4º fiscalização; art. 5º apreensão e multas do CTB; art. 6º vigência na publicação. Página 2: justificativa do vereador Paulo Roberto Ximenes (areia, brita, terra). Arquivo salvo em atos/3119005/LEI_928.pdf.",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (entidade \"Prefeitura Municipal de Cordislândia\"; diariomunicipal.com.br/amm-mg, busca de texto integral desde 2009)",
+      "resultado": "Só 32 decretos e 8 portarias indexados (cobertura parcial). \"928\", \"ponte Sapucaí toneladas\", \"lei 928/2012\": 0; \"veículos de carga\" 3, \"veículos pesados\" 15 (ruído).",
+      "rodada": "R2"
+    },
+    {
+      "url": "https://www.cordislandia.mg.gov.br/decretos, /leis, /normativas",
+      "resultado": "Site Wix (renderizado por JavaScript) e depois 429 (verificação anti-robô); decretos da prefeitura não lidos.",
+      "rodada": "R2"
+    },
+    {
+      "url": "Overpass (kumi.systems), area IBGE:GEOCODIGO=3119005",
+      "resultado": "1 way: 297642389, bridge=yes, hgv=no, highway=secondary, ref BR-267;MGC-267 (lat -21.7907, lon -45.7160).",
+      "rodada": "R2"
+    }
+  ],
+  "data": "2026-10-14",
+  "observacoes": "Nada achado. OSM: 1 way hgv=no não identificado. R2: ACHADO NA R2: Lei municipal 928/2012 (Câmara), lida na íntegra. Regra das ruas (carga > 12 t) mantida ativa com confiança média por ser a lei publicada no portal oficial da Câmara na sequência numérica das leis do município, mas SEM comprovação da sanção/publicação (PDF sem assinatura do Prefeito) e sem confirmação de vigência pelo diário. Regra da ponte (10 t) desativada: ponte não identificada e a única ponte restrita no OSM está na BR-267/MGC-267. Geometria da regra das ruas: perímetro urbano menos a Av. Cônego Francisco, a definir. Pendência: confirmar a publicação da lei 928/2012 e a localização da ponte. Verificado na R2: corrigido (ver verif/3119005.json). Verificado na R2: corrigido (ponte rebaixada).",
+  "falha_de_fonte": false,
+  "osm_divergencias": [
+    "OSM: 1 way hgv=no, não identificado. PENDÊNCIA.",
+    "R2: way 297642389 (ponte, secondary, ref BR-267;MGC-267, hgv=no) em rodovia federal/estadual; não se atribui à Lei 928/2012 sem identificar a ponte do art. 2º. Pendência para osm-overrides se a ponte for confirmada."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "cordislandia_ruas_12t_carga",
+      "tipo": "zona",
+      "regime": "Carga acima de 12 t (ruas e avenidas da cidade)",
+      "nome": "Cordislândia: veículos de transporte com carregamento acima de 12 t impedidos nas ruas e avenidas da cidade",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 12
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 3º: para transposição da cidade, a Av. Cônego Francisco é a única via de tráfego para estes veículos (fica fora da proibição como itinerário)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 928, de 05/03/2012 (Câmara Municipal de Cordislândia)",
+          "artigo": "art. 1º (carga > 12 t nas ruas e avenidas da cidade); art. 3º (Av. Cônego Francisco como via única de transposição); art. 4º-5º (fiscalização, apreensão e multas do CTB); art. 6º (vigência na publicação)",
+          "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf"
+        }
+      ],
+      "nota": "Carga acima de 12 t = 'veículos de transportes com carregamento acima de 12 toneladas' (capacidade/lotação, não PBT: usar payload_t). O PDF no portal da Câmara (escaneado, lido como imagem) traz o texto da lei e a justificativa do vereador, sem assinatura do Prefeito; a lei ocupa o nº 928 da sequência de leis do município (927 = orçamento 2012, 929-931 de 2012). Publicação oficial e vigência atual não confirmadas (diário da prefeitura no AMM quase vazio; portal da prefeitura em Wix atrás de desafio). Nenhum ato posterior a revoga (lista de leis da Câmara 2009-2026 e AMM sem menção).",
+      "vigencia_inicio": "2012-03-05",
+      "trechos": [
+        {
+          "via": [
+            "Avenida Cônego Francisco"
+          ],
+          "descricao": "Av. Cônego Francisco: via única de transposição da cidade para estes veículos (art. 3º), fora da proibição",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/3119005_cordislandia.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro urbano de Cordislândia menos a Av. Cônego Francisco; conferir se a via é a mesma da ponte sobre o Rio Sapucaí."
+        }
+      ]
+    },
+    {
+      "id": "cordislandia_ponte_sapucai_10t",
+      "tipo": "ponte",
+      "regime": "Carga acima de 10 t (ponte sobre o Rio Sapucaí)",
+      "nome": "Cordislândia: ponte sobre o Rio Sapucaí, veículos com carregamento acima de 10 t impedidos",
+      "status": "desativada",
+      "status_motivo": "A Lei 928/2012, art. 2º, não identifica a ponte. No OSM só há uma ponte sobre o rio com restrição (way 297642389, hgv=no, secondary, ref BR-267;MGC-267), em rodovia federal/estadual, fora da competência municipal; a lei municipal não pode regulá-la. Ponte da lei não confirmada e geometria desconhecida.",
+      "confianca": "baixa",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei municipal 928, de 05/03/2012 (Câmara Municipal de Cordislândia)",
+          "artigo": "art. 2º",
+          "url": "https://cordislandia.mg.leg.br/images/legislativo/leis/LEIS-2012/LEI_928.pdf"
+        }
+      ],
+      "trechos": [],
+      "geometria": []
+    }
+  ],
+  "status_r1": "nao_achou",
+  "rodada": "R2"
 }
