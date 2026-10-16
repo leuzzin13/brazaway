@@ -555,7 +555,7 @@ export async function frotaRoutes(app: FastifyInstance) {
 
     // ---------------------------------------------------------- job (service_role)
     api.post('/jobs/compaction', async (req, reply) => {
-      const claims = requireService(req, reply);
+      const claims = await requireService(req, reply);
       return runCompaction(claims);
     });
   }, { prefix: '/api/frota' });
