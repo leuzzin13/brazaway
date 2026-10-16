@@ -1,0 +1,72 @@
+# Deploy do BrasaWay (piloto)
+
+```
+ Lovable (frontend)  ──login/Realtime/Storage──▶  Supabase (Auth + Postgres/PostGIS + Realtime + Storage)
+        │                                                   ▲
+        └──── HTTPS + Bearer <token do Supabase> ──▶  API BrasaWay (Node) ──┘  conecta como postgres
+                                                        │
+                                                        └──▶ Valhalla (rotas de caminhão, tiles do Sudeste)
+```
+
+O banco fica todo no Supabase: Frota, camadas, cidades e reportes. A API e o Valhalla rodam juntos num servidor
+(VPS ou o Mac com túnel). O Lovable só fala com o Supabase para login, tempo real e fotos. O resto vai pela API.
+
+## 1. Supabase
+
+1. Crie o projeto em supabase.com, região **São Paulo (sa-east-1)**. Para o piloto, o plano **Pro** é o indicado: o
+   banco com as camadas passa de 500 MB, que é o limite do Free.
+2. Pegue a connection string em Project Settings → Database → Connection string → **Session pooler** ou Direct
+   (porta 5432, nunca a 6543) e rode da sua máquina, com psql instalado:
+   ```bash
+   SUPABASE_DB_URL='postgresql://postgres.<ref>:<senha>@aws-0-sa-east-1.pooler.supabase.com:5432/postgres' \
+     deploy/supabase/aplicar.sh
+   ```
+   O script aplica as migrations (menos a `0300`, que só existe para o Postgres local), todos os seeds, a blindagem
+   (`9000`) e o bucket de comprovantes (`9100`). Pode rodar de novo a cada atualização.
+3. Authentication → URL Configuration: em Site URL coloque o domínio do Lovable e adicione o mesmo domínio em
+   Redirect URLs.
+4. Authentication → Providers → Email: ligado. Para o piloto, desligue "Confirm email" se for usar senha.
+5. A primeira empresa e o primeiro owner são criados com o service_role (onboarding comercial). Use
+   `db/seed/demo/frota_demo.sql.tpl` como modelo, ou me peça o SQL com o nome da transportadora e o e-mail do dono.
+
+**Segurança:** a senha do banco, a `service_role key` e as chaves da Anthropic/Voyage vão **só** no servidor da API.
+Nunca no Lovable e nunca no chat. No Lovable entram apenas a URL do Supabase e a **anon key**.
+
+## 2. API + Valhalla (servidor)
+
+Máquina mínima: 4 vCPU, 8 GB de RAM, 40 GB de disco (PBF do Sudeste ~0,9 GB, tiles ~1,1 GB, mais o build). Use
+`./scripts/build-tiles.sh` em vez de só `docker compose up valhalla`: sem as correções locais do OSM, o Rio volta
+a desviar caminhão por uma regra suspensa.
+
+```bash
+git clone https://github.com/leuzzin13/brazaway && cd brazaway
+./scripts/build-tiles.sh --swap       # 1ª vez: baixa o OSM do Sudeste, aplica as correções locais (data/osm-overrides)
+                                      # e gera os tiles (1–2 h com 4 vCPU); o --swap sobe o Valhalla com eles
+cd api && npm ci && npm run build
+```
+
+Variáveis de ambiente da API (no `EnvironmentFile` do systemd ou no `ecosystem` do pm2; a API não lê `.env` sozinha; nunca no git):
+
+| Variável | Valor |
+|---|---|
+| `DATABASE_URL` | connection string do Supabase (Session pooler, 5432) |
+| `SUPABASE_URL` | `https://<ref>.supabase.co`. Valida os tokens ES256 dos projetos novos pelo JWKS |
+| `SUPABASE_JWT_SECRET` | só se o projeto ainda usar o "Legacy JWT secret" (HS256) |
+| `VALHALLA_URL`, `VALHALLA_ELEV_URL` | `http://localhost:8002` |
+| `CONFIG_DIR` | caminho de `config/` no repositório |
+| `TZ` | `America/Sao_Paulo` |
+| `PORT` | `3000` |
+| `FROTA_JOBS_INTERVAL_MIN` | `15`: compacta viagens e apaga pings velhos |
+| `ANTHROPIC_API_KEY` | Mentor de Logística (assistente do painel) |
+| `VOYAGE_API_KEY` | busca do Second Brain (sem ela usa o embedder local, mais fraco) |
+
+Rode com `pm2`/systemd: `node dist/server.js`. Na frente, coloque HTTPS:
+- **VPS:** Caddy com `api.seudominio.com.br { reverse_proxy localhost:3000 }`, que emite o certificado sozinho.
+- **Mac:** `cloudflared tunnel --url http://localhost:3000` (ou um túnel nomeado com domínio fixo).
+
+Teste: `curl https://api.../api/health` deve responder com db e valhalla ok.
+
+## 3. Lovable
+
+Siga `deploy/LOVABLE_PROMPT.md`, uma etapa por vez. Antes de liberar para os motoristas, troque o CORS da API
+(`api/src/server.ts`, hoje `origin: true`) pelo domínio do Lovable.

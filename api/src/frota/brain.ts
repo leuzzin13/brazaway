@@ -450,7 +450,7 @@ export async function brainRoutes(app: FastifyInstance, opts: BrainOptions = {})
 
   // POST /api/frota/jobs/brain — service_role. Resume viagens concluídas sem resumo e (re)gera embeddings faltantes.
   app.post('/api/frota/jobs/brain', async (req, reply) => {
-    requireService(req, reply);
+    await requireService(req, reply);
     const parsed = JobBody.safeParse(req.body ?? {});
     if (!parsed.success) return reply.code(422).send({ error: 'VALIDATION', issues: parsed.error.issues });
     if (running) return reply.code(409).send({ error: 'BUSY', message: 'o job do Second Brain já está rodando' });

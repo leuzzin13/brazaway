@@ -89,7 +89,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
 
   // ------------------------------------------------------------------ POST /api/frota/mentor/chat
   app.post('/api/frota/mentor/chat', async (req, reply) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     const me = await requireStaff(claims);
     const body = ChatBody.safeParse(req.body);
     if (!body.success) return reply.code(422).send({ error: 'VALIDATION', issues: body.error.issues });
@@ -186,7 +186,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
 
   // ------------------------------------------------------------------ conversas (leitura; a RLS limita ao próprio gestor, admin vê todas)
   app.get('/api/frota/mentor/conversations', async (req) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     await requireStaff(claims);
     const rows = await withRls(claims, async (c) => (await c.query(
       `select id, title, user_id, created_at, updated_at from agent_conversations order by updated_at desc limit 100`)).rows);
@@ -194,7 +194,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
   });
 
   app.get('/api/frota/mentor/conversations/:id', async (req) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     await requireStaff(claims);
     const id = idOf(req);
     return withRls(claims, async (c) => {
@@ -212,7 +212,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
 
   // ------------------------------------------------------------------ ações
   app.get('/api/frota/mentor/actions', async (req, reply) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     await requireStaff(claims);
     const q = ActionsQuery.safeParse(req.query);
     if (!q.success) return reply.code(422).send({ error: 'VALIDATION', issues: q.error.issues });
@@ -233,7 +233,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
   const pub = (a: any) => { const { input, ...rest } = a; const { _resumo, ...args } = input ?? {}; return { ...rest, input: args, resumo: _resumo ?? null }; };
 
   app.post('/api/frota/mentor/actions/:id/confirm', async (req) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     const me = await requireStaff(claims);
     const id = idOf(req);
     const a = await loadAction(claims, id);
@@ -261,7 +261,7 @@ export async function frotaBrainMentorRoutes(app: FastifyInstance, opts: MentorO
   });
 
   app.post('/api/frota/mentor/actions/:id/reject', async (req) => {
-    const claims = claimsOf(req);
+    const claims = await claimsOf(req);
     await requireStaff(claims);
     const id = idOf(req);
     const a = await loadAction(claims, id);
