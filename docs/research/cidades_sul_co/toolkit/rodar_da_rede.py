@@ -335,12 +335,18 @@ def fonte_legislacao(c, cache_unused=None):
 
         def http_lento(url, *a, **k):
             espera(host_de(url))
+            k['timeout'] = min(k.get('timeout', 45), 30)   # sites fora do ar/bloqueados não podem travar a rodada
+            k['tentativas'] = 1
             return orig(url, *a, **k)
         legislacao.http = http_lento
         legislacao._throttle = True
     fontes = [fo for fo in c['portal'].get('fontes') or [] if fo.get('sistema') not in SEM_CLIENTE and fo.get('base')]
     out = {'fontes': [], 'termos': TERMOS_LEG}
+    t_ini = time.time()
     for fo in fontes[:4]:
+        if time.time() - t_ini > 240:
+            out['obs'] = 'orçamento de 240 s por cidade esgotado; fontes restantes puladas (--refazer-erros não as retoma: use --ibge)'
+            break
         r = legislacao.buscar_em(fo['sistema'], fo['base'], TERMOS_LEG, 100, False)
         r['orgao'] = fo.get('orgao')
         r['atos'] = r.get('atos', [])[:60]
