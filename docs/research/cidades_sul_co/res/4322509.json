@@ -2,7 +2,7 @@
  "ibge": "4322509",
  "nome": "Vacaria",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -17,12 +17,241 @@
   {
    "url": "https://vacaria.1doc.com.br/b.php?pg=o/login&n=3",
    "resultado": "1doc (prefeitura): falha: sem cliente automático; consultar manualmente: https://vacaria.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/6838 (Softcam, busca 'caminhões'/'carga e descarga' na Câmara)",
+   "resultado": "Decreto Municipal 1/2016 lido integralmente (art. 1º a 10); revoga o Decreto 88/2015 (alterado pelo 96/2015, 7 t, 10h-17h). Textos em atos/4322509/."
+  },
+  {
+   "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/31490",
+   "resultado": "Decreto 144/2024 lido: proíbe caminhões com guincho/com toras nas estradas do interior em dia de chuva e 24 h após (condicionado a chuva, por tipo de carga, sem delimitação): regra desativada."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Vacaria: só etiquetas OSM (hgv/maxweight/maxlength). trunk_link com maxlength=20 (alça de rodovia, provavelmente BR-116/BR-285): DESCARTADA por competência federal/estadual. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. Todas as etiquetas estão em rodovia federal/estadual (competência DNIT/DAER): descartadas, sem busca de ato municipal.",
+ "observacoes": "Vacaria: só etiquetas OSM (hgv/maxweight/maxlength). trunk_link com maxlength=20 (alça de rodovia, provavelmente BR-116/BR-285): DESCARTADA por competência federal/estadual. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. Todas as etiquetas estão em rodovia federal/estadual (competência DNIT/DAER): descartadas, sem busca de ato municipal. | R5 2026-10-18: ATO ENCONTRADO na Câmara (Softcam, busca em texto integral): Decreto 1/2016 — caminhões acima de 9 t PBT proibidos das 10h às 15h em 17 trechos do centro (alíneas a-q), com 4 pontos de carga e descarga para caminhões menores. Decreto 144/2024 (estradas rurais em dia de chuva) desativado. Textos em atos/4322509/. Falta confirmar eventual alteração posterior.",
  "osm_divergencias": [
   "trunk_link com maxlength=20 (alça de rodovia, provavelmente BR-116/BR-285): DESCARTADA por competência federal/estadual."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "vacaria_area_central_caminhoes_9t",
+   "tipo": "via",
+   "regime": "Proibição por peso e horário (10h–15h) em vias do centro",
+   "nome": "Vacaria: circulação de caminhões acima de 9 t (PBT) das 10h às 15h em 17 trechos da área central (Decreto 1/2016)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "10:00",
+     "to": "15:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 9
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: órgãos de segurança, SAMU e ambulâncias em emergência; transporte de valores; caminhões abaixo de 9 t PBT e até 7,50 m de comprimento para carga e descarga nos 4 pontos sinalizados (Rua Dr. Flores em frente ao Centro de Informações Turísticas; Rua Pinheiro Machado esq. Rua Júlio de Castilhos; Rua João Teodoro Duarte entre Rua Atílio Giuriolo e Rua Ramiro Barcelos; Av. Moreira Paz próx. nº 328)",
+    "Art. 4º: veículos do Poder Público/terceirizados e caminhões particulares em situações específicas, com permissão da Guarda Municipal durante o serviço"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 0001, de 12/01/2016 (Vacaria/RS; revogou o Decreto 88/2015, alterado pelo 96/2015)",
+     "artigo": "art. 1º, alíneas a) a q) (limite 'carga máxima permitida acima de 9 t Peso Bruto Total', 10h–15h); art. 2º (exceções); art. 9º (revoga o Decreto 88/2015)",
+     "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/6838"
+    }
+   ],
+   "nota": "Texto lido na página da Câmara (Softcam, 'caráter informativo'). O art. 1º do Decreto 1/2016 não repete 'nos dias úteis' do Decreto 88/2015 (7 t, 10h–17h, dias úteis): modelado 7 dias por fidelidade literal. 'Carga máxima permitida acima de 9 t Peso Bruto Total' é ambíguo (carga x PBT): usado pbt_t. Limites de trechos só por esquinas; alteração/revogação posterior não localizada (Câmara indexa só parte dos decretos); sinalização não confirmada.",
+   "vigencia_inicio": "2016-01-12",
+   "trechos": [
+    {
+     "inciso": "art. 1º, a)",
+     "via": [
+      "Rua Libório Rodrigues"
+     ],
+     "descricao": "Rua Libório Rodrigues até a esquina da Rua Pinheiro Machado e esquina com Rua General Lima",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, b)",
+     "via": [
+      "Rua Borges de Medeiros"
+     ],
+     "descricao": "da esquina da Rua General Lima até a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, c)",
+     "via": [
+      "Rua Atílio Giuriolo"
+     ],
+     "descricao": "da esquina com a Rua João Teodoro Duarte até a esquina com Rua Dr. Flores",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, d)",
+     "via": [
+      "Rua Quinze de Novembro"
+     ],
+     "descricao": "da esquina com Rua Libório Rodrigues até a esquina com Rua Campos Sales",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, e)",
+     "via": [
+      "Rua Ramiro Barcelos"
+     ],
+     "descricao": "da esquina Rua Campos Sales até a Avenida Militar",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, f)",
+     "via": [
+      "Rua Marechal Floriano"
+     ],
+     "descricao": "da esquina com Rua Libório Rodrigues até a Avenida Militar",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, g)",
+     "via": [
+      "Avenida Moreira Paz"
+     ],
+     "descricao": "da esquina da Rua João Teodoro Duarte até a Avenida Militar",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, h)",
+     "via": [
+      "Rua Pinheiro Machado"
+     ],
+     "descricao": "da esquina com Rua Inácia Vieira até a Rua Campos Sales",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, i)",
+     "via": [
+      "Rua João Borges Pinto"
+     ],
+     "descricao": "da esquina com Avenida Militar até a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, j)",
+     "via": [
+      "Rua Inácia Vieira"
+     ],
+     "descricao": "da Rua Farroupilha até a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, k)",
+     "via": [
+      "Rua João Teodoro Duarte"
+     ],
+     "descricao": "da esquina da Rua Atílio Giuriolo até a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, l)",
+     "via": [
+      "Rua Júlio de Castilhos"
+     ],
+     "descricao": "da esquina da Rua Atílio Giuriolo até a esquina com a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, m)",
+     "via": [
+      "Rua Dr. Flores"
+     ],
+     "descricao": "da esquina da Rua Atílio Giuriolo até a esquina com Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, n)",
+     "via": [
+      "Rua Silveira Martins"
+     ],
+     "descricao": "da esquina da Rua General Lima até a Rua Ramiro Barcelos",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, o)",
+     "via": [
+      "Rua Silveira Martins"
+     ],
+     "descricao": "da esquina da Rua Marechal Floriano até a Rua Cel. Avelino Paim",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, p)",
+     "via": [
+      "Rua São João"
+     ],
+     "descricao": "da esquina da Rua Marechal Floriano até Rua Pinheiro Machado",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, q)",
+     "via": [
+      "Rua Dona Laura"
+     ],
+     "descricao": "da esquina Rua Inácia Vieira até Rua João Teodoro Duarte",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "vacaria_estradas_rurais_chuva_dec144_2024",
+   "tipo": "via",
+   "regime": "Caminhões com guincho/toras em estradas rurais em dia de chuva",
+   "nome": "Vacaria: caminhões com guinchos ou carregados com toras nas estradas do interior em dia de chuva + 24 h (Decreto 144/2024)",
+   "status": "desativada",
+   "status_motivo": "Condicionada a chuva (e 24 h depois), restrita a tipo de carga (guinchos/toras; exclui produtos agrícolas) e sem vias nomeadas ('estradas do interior').",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 144, de 21/05/2024 (Vacaria)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/31490"
+    }
+   ],
+   "vigencia_inicio": "2024-05-21"
+  }
+ ]
 }
