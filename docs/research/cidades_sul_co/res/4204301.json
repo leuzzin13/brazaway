@@ -1,96 +1,100 @@
 {
- "ibge": "4204301",
- "nome": "Concórdia",
- "uf": "SC",
- "status": "pontual",
- "nivel_busca": "dirigida",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (via toolkit/diarios_consolidados.py buscar, fonte domsc)",
-   "resultado": "termos: trânsito de caminhões; proíbe caminhões; veículos pesados; toneladas; tráfego de caminhões; limite de peso veículos; circulação de veículos de carga; proibido tráfego de veículos; mais \"<via OSM> caminhões\" para até 2 vias nomeadas; nenhum ato de restrição a caminhões/peso encontrado (hits só de ruído: RH, orçamento, licitação, zoneamento)"
-  },
-  {
-   "url": "pistas da preparação (fila/R1-SC-DO02.json)",
-   "resultado": "reaproveitadas: acertos do diário consolidado são ruído; OSM {\"maxweight\": 2}"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=813453",
-   "resultado": "Decreto 6.006, 10/08/2015, lido integralmente: carga e descarga na área central"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (toolkit diarios_consolidados.py buscar, domsc) - rodada de aprofundamento",
-   "resultado": "buscas pelo nome das vias OSM municipais e por 'trânsito de caminhões', 'tonelagem', 'veículos pesados': só ruído (contratos, RH, plano de cargos, denominação de via, orçamento); nenhum ato de restrição/limite de peso. Trechos 'top' da preparação reconferidos: ruído (licitação, SIM, cargos, plano diretor, estacionamento)."
-  },
-  {
-   "url": "https://leismunicipais.com.br/prefeitura/sc/concordia",
-   "resultado": "toolkit legislacao.py buscar (caminh|tonelad|veículos pesados|carga e descarga|tráfego|trânsito|peso): fonte principal (leismunicipais) sem acerto/heurístico (0 atos, inclusive para 'trânsito' no cliente legislador: busca provavelmente não efetiva) ou bloqueada; alternativas: leismunicipais - Cloudflare 403 (não contornado); atende - Atende.net com captcha/SPA (sem busca automática); atende - Atende.net com captcha/SPA (sem busca automática)"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "DOM/SC ato 813453: Decreto 6.006/2015 disciplina operações de CARGA E DESCARGA em vias da área central (horários 7-18h seg-sex e 7-12h sáb para Veículo Urbano de Carga <7 t PBT/4 t carga; liberado 19-7h para os demais). Não restringe circulação; regra pontual de carga/descarga, sem perímetro/vias, vigência não verificada. Tags OSM (maxweight=4 em Rua Anita Garibaldi e Rua do Comércio, living_street) não têm ato localizado. Texto em atos/4204301/decreto-6006-2015.txt. | Aprofundamento: DOM/SC por nome das vias OSM e SAPL/portais sem novo ato.",
- "osm_divergencias": [
-  {
-   "way_id": 233332398,
-   "nome": "Rua Anita Garibaldi",
-   "tags": {
-    "highway": "living_street",
-    "maxweight": "4",
-    "name": "Rua Anita Garibaldi"
-   },
-   "nota": "tag OSM sem ato municipal localizado (DOM/SC por nome da via, termos de circulação/tonelagem e portais acessíveis); não vira regra"
-  },
-  {
-   "way_id": 255868002,
-   "nome": "Rua do Comércio",
-   "tags": {
-    "highway": "living_street",
-    "maxweight": "4",
-    "name": "Rua do Comércio"
-   },
-   "nota": "tag OSM sem ato municipal localizado (DOM/SC por nome da via, termos de circulação/tonelagem e portais acessíveis); não vira regra"
-  }
- ],
- "regras_rascunho": [
-  {
-   "id": "concordia_carga_descarga_central",
-   "tipo": "zona",
-   "regime": "carga e descarga",
-   "nome": "Operações de carga e descarga na área central",
-   "status": "desativada",
-   "status_motivo": "regra pontual de carga/descarga (não é restrição de circulação); área central sem perímetro definido no decreto; vigência/alterações não verificadas",
-   "confianca": "baixa",
-   "alvo": {
-    "caminhao": true
-   },
-   "janelas": [
+  "ibge": "4204301",
+  "nome": "Concórdia",
+  "uf": "SC",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5
-     ],
-     "from": "07:00",
-     "to": "18:00"
+      "url": "https://diariomunicipal.sc.gov.br/ (via toolkit/diarios_consolidados.py buscar, fonte domsc)",
+      "resultado": "termos: trânsito de caminhões; proíbe caminhões; veículos pesados; toneladas; tráfego de caminhões; limite de peso veículos; circulação de veículos de carga; proibido tráfego de veículos; mais \"<via OSM> caminhões\" para até 2 vias nomeadas; nenhum ato de restrição a caminhões/peso encontrado (hits só de ruído: RH, orçamento, licitação, zoneamento)"
     },
     {
-     "days": [
-      6
-     ],
-     "from": "07:00",
-     "to": "12:00"
-    }
-   ],
-   "excecoes": "Janela vale para Veículo Urbano de Carga (largura<=2,60 m, comprimento<=7 m, PBT<7 t, carga<=4 t); demais veículos de carga: 19h-7h seg-sex, após 12h sáb, 24 h dom/feriado (art. 4º, II)",
-   "base_legal": [
+      "url": "pistas da preparação (fila/R1-SC-DO02.json)",
+      "resultado": "reaproveitadas: acertos do diário consolidado são ruído; OSM {\"maxweight\": 2}"
+    },
     {
-     "ato": "Decreto Municipal 6.006, de 10/08/2015",
-     "artigo": "arts. 2º e 4º",
-     "url": "https://diariomunicipal.sc.gov.br/atos/813453"
+      "url": "https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=813453",
+      "resultado": "Decreto 6.006, 10/08/2015, lido integralmente: carga e descarga na área central"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/ (toolkit diarios_consolidados.py buscar, domsc) - rodada de aprofundamento",
+      "resultado": "buscas pelo nome das vias OSM municipais e por 'trânsito de caminhões', 'tonelagem', 'veículos pesados': só ruído (contratos, RH, plano de cargos, denominação de via, orçamento); nenhum ato de restrição/limite de peso. Trechos 'top' da preparação reconferidos: ruído (licitação, SIM, cargos, plano diretor, estacionamento)."
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/sc/concordia",
+      "resultado": "toolkit legislacao.py buscar (caminh|tonelad|veículos pesados|carga e descarga|tráfego|trânsito|peso): fonte principal (leismunicipais) sem acerto/heurístico (0 atos, inclusive para 'trânsito' no cliente legislador: busca provavelmente não efetiva) ou bloqueada; alternativas: leismunicipais - Cloudflare 403 (não contornado); atende - Atende.net com captcha/SPA (sem busca automática); atende - Atende.net com captcha/SPA (sem busca automática)"
+    },
+    {
+      "url": "R3 PIS-03 (releitura do res/atos, DOM/SC e web)",
+      "resultado": "Dec. 6.006/2015 relido: art. 4º fixa horários de C/D 'em vias do Município' sem listar vias nem perímetro da área central (só vagas sinalizadas): segue pontual, regra desativada."
     }
-   ]
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "DOM/SC ato 813453: Decreto 6.006/2015 disciplina operações de CARGA E DESCARGA em vias da área central (horários 7-18h seg-sex e 7-12h sáb para Veículo Urbano de Carga <7 t PBT/4 t carga; liberado 19-7h para os demais). Não restringe circulação; regra pontual de carga/descarga, sem perímetro/vias, vigência não verificada. Tags OSM (maxweight=4 em Rua Anita Garibaldi e Rua do Comércio, living_street) não têm ato localizado. Texto em atos/4204301/decreto-6006-2015.txt. | Aprofundamento: DOM/SC por nome das vias OSM e SAPL/portais sem novo ato. | R3 2026-10-18: Dec. 6.006/2015 relido: art. 4º fixa horários de C/D 'em vias do Município' sem listar vias nem perímetro da área central (só vagas sinalizadas): segue pontual, regra desativada.",
+  "osm_divergencias": [
+    {
+      "way_id": 233332398,
+      "nome": "Rua Anita Garibaldi",
+      "tags": {
+        "highway": "living_street",
+        "maxweight": "4",
+        "name": "Rua Anita Garibaldi"
+      },
+      "nota": "tag OSM sem ato municipal localizado (DOM/SC por nome da via, termos de circulação/tonelagem e portais acessíveis); não vira regra"
+    },
+    {
+      "way_id": 255868002,
+      "nome": "Rua do Comércio",
+      "tags": {
+        "highway": "living_street",
+        "maxweight": "4",
+        "name": "Rua do Comércio"
+      },
+      "nota": "tag OSM sem ato municipal localizado (DOM/SC por nome da via, termos de circulação/tonelagem e portais acessíveis); não vira regra"
+    }
+  ],
+  "regras_rascunho": [
+    {
+      "id": "concordia_carga_descarga_central",
+      "tipo": "zona",
+      "regime": "carga e descarga",
+      "nome": "Operações de carga e descarga na área central",
+      "status": "desativada",
+      "status_motivo": "regra pontual de carga/descarga (não é restrição de circulação); área central sem perímetro definido no decreto; vigência/alterações não verificadas",
+      "confianca": "baixa",
+      "alvo": {
+        "caminhao": true
+      },
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "07:00",
+          "to": "12:00"
+        }
+      ],
+      "excecoes": "Janela vale para Veículo Urbano de Carga (largura<=2,60 m, comprimento<=7 m, PBT<7 t, carga<=4 t); demais veículos de carga: 19h-7h seg-sex, após 12h sáb, 24 h dom/feriado (art. 4º, II)",
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 6.006, de 10/08/2015",
+          "artigo": "arts. 2º e 4º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/813453"
+        }
+      ]
+    }
+  ]
 }
