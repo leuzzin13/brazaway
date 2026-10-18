@@ -140,7 +140,7 @@ TERMOS_PDF_DOSP = {"circ_caminhoes", "traf_caminhoes", "trans_caminhoes", "circ_
                    "trans_pesados", "circ_carga", "zmrc", "restr_circ", "restr_a_circ", "estac_caminhoes"}
 
 # Teto de paginas por (fonte, termo) na varredura global.
-MAX_PAG = {"domsc": 40, "sigpub": 40, "domes": 60, "doesp": 20, "qd": 20, "qd_amplo": 6}  # qd: paginas de 10 diarios
+MAX_PAG = {"domsc": 20, "sigpub": 40, "domes": 60, "doesp": 20, "qd": 20, "qd_amplo": 6}  # qd: paginas de 10 diarios
 
 # Intervalo minimo entre pedidos ao MESMO host (segundos).
 DELAYS = {
