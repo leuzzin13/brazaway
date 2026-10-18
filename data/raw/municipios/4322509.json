@@ -1,0 +1,356 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4322509",
+  "municipio": "Vacaria",
+  "uf": "RS",
+  "fonte_id": "vacaria",
+  "fonte": {
+    "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/6838 (Decreto 0001/2016); https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/31490 (Decreto 144/2024)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Texto da Câmara (Softcam) é informativo; nenhum decreto posterior alterando ou revogando o 1/2016 foi achado (FAMURS cobre Vacaria só de 2023-07 a 2026-10). Nomes do ato que não batem com o OSM: 'Mal Floriano' = Rua Marechal Floriano; 'João Teodoro Duarte' = Rua João Teobaldo Duarte; 'Rua General Lima' não existe no OSM (assumida a Rua General Cunha); 'Rua João Borges Pinto' (alínea i) e 'Rua São João' (alínea p) não existem no OSM e ficam fora da geometria (pendência)."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o VUC é tratado como caminhão (o corte é PBT acima de 9 t, então um VUC de até 9 t fica fora da regra).",
+  "regras": [
+    {
+      "id": "vacaria_area_central_caminhoes_9t",
+      "tipo": "via",
+      "regime": "Proibição por peso e horário (10h–15h) em vias do centro",
+      "nome": "Vacaria: circulação de caminhões acima de 9 t (PBT) das 10h às 15h em 17 trechos da área central (Decreto 1/2016)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "10:00",
+          "to": "15:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 9
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: órgãos de segurança, SAMU e ambulâncias em emergência; transporte de valores; caminhões abaixo de 9 t PBT e até 7,50 m de comprimento para carga e descarga nos 4 pontos sinalizados (Rua Dr. Flores em frente ao Centro de Informações Turísticas; Rua Pinheiro Machado esq. Rua Júlio de Castilhos; Rua João Teodoro Duarte entre Rua Atílio Giuriolo e Rua Ramiro Barcelos; Av. Moreira Paz próx. nº 328)",
+        "Art. 4º: veículos do Poder Público/terceirizados e caminhões particulares em situações específicas, com permissão da Guarda Municipal durante o serviço"
+      ],
+      "autorizacao": "Permissão da Guarda Municipal, caso a caso e só durante o serviço (art. 4º)",
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 0001, de 12/01/2016 (Vacaria/RS; revogou o Decreto 88/2015, alterado pelo 96/2015)",
+          "artigo": "art. 1º, alíneas a) a q) (carga máxima permitida acima de 9 t Peso Bruto Total, 10h–15h); art. 2º (exceções); art. 4º (permissão da Guarda Municipal); art. 9º (revoga o Decreto 88/2015)",
+          "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/6838"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "nota": "Texto lido na página da Câmara (Softcam, 'caráter informativo'). O art. 1º do Decreto 1/2016 não menciona dias úteis (o Decreto 88/2015 dizia 'nos dias úteis'; o 96/2015 já havia retirado a expressão): modelado 7 dias por fidelidade literal; feriados não excetuados. 'Carga máxima permitida acima de 9 t Peso Bruto Total' é ambíguo (carga x PBT): usado pbt_t. Limites dos trechos só por esquinas, todos aproximados; a alínea a) não tem ponto de partida (leitura: entre a Pinheiro Machado e a General Lima). A Av. Militar (OSM: trunk, provável trecho urbano de rodovia) é só o limite final das alíneas e), f), g) e i) e NÃO entra na geometria. Não entram na geometria: i) Rua João Borges Pinto e p) Rua São João, que não existem no OSM (ver fonte.notas). Alteração ou revogação posterior não localizada (a Câmara indexa só parte dos decretos); sinalização não confirmada.",
+      "vigencia_inicio": "2016-01-12",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4322509_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º, a)",
+          "via": [
+            "Rua Libório Rodrigues"
+          ],
+          "descricao": "Rua Libório Rodrigues entre a Rua General Lima e a Rua Pinheiro Machado (o ato não dá o ponto de partida; leitura adotada pela pesquisa)",
+          "aproximado": true,
+          "de": [
+            "Rua General Cunha"
+          ],
+          "ate": [
+            "Rua Pinheiro Machado"
+          ],
+          "nota": "O ato cita a 'Rua General Lima', que não existe no OSM; assumida a Rua General Cunha (OSM), a transversal ao oeste do centro que fecha os trechos a), b) e n)."
+        },
+        {
+          "inciso": "art. 1º, b)",
+          "via": [
+            "Rua Borges de Medeiros"
+          ],
+          "descricao": "Rua Borges de Medeiros, da Rua General Lima até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua General Cunha"
+          ],
+          "ate": [
+            "Rua Coronel Avelino Paim"
+          ],
+          "nota": "O ato cita a 'Rua General Lima', que não existe no OSM; assumida a Rua General Cunha (OSM), a transversal ao oeste do centro que fecha os trechos a), b) e n)."
+        },
+        {
+          "inciso": "art. 1º, c)",
+          "via": [
+            "Rua Atílio Giuriolo"
+          ],
+          "descricao": "Rua Atílio Giuriolo, da Rua João Teodoro Duarte até a Rua Dr. Flores",
+          "aproximado": true,
+          "de": {
+            "lonlat": [
+              -50.93932,
+              -28.50609
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -50.93955,
+              -28.50378
+            ]
+          },
+          "nota": "O ato cita 'João Teodoro Duarte'; no OSM a rua é 'João Teobaldo Duarte' (mesmo local: via de mão única entre Atílio Giuriolo e Cel. Avelino Paim). Geometria pela malha (Valhalla) entre os dois cruzamentos: o OSM desenha a Atílio Giuriolo em mão única em dois ramos que não se encadeiam.",
+          "caminho": "valhalla",
+          "corredor_m": 40
+        },
+        {
+          "inciso": "art. 1º, d)",
+          "via": [
+            "Rua Quinze de Novembro",
+            "Rua 15 de Novembro"
+          ],
+          "descricao": "Rua Quinze de Novembro, da Rua Libório Rodrigues até a Rua Campos Sales",
+          "aproximado": true,
+          "de": [
+            "Rua Libório Rodrigues"
+          ],
+          "ate": [
+            "Rua Campos Sales"
+          ],
+          "nota": "No OSM a rua se chama 'Rua 15 de Novembro'."
+        },
+        {
+          "inciso": "art. 1º, e)",
+          "via": [
+            "Rua Ramiro Barcelos"
+          ],
+          "descricao": "Rua Ramiro Barcelos, da Rua Campos Sales até a Avenida Militar (a Av. Militar é só o limite e não entra na geometria)",
+          "aproximado": true,
+          "de": [
+            "Rua Campos Sales"
+          ],
+          "ate": [
+            "Avenida Militar"
+          ]
+        },
+        {
+          "inciso": "art. 1º, f)",
+          "via": [
+            "Rua Marechal Floriano"
+          ],
+          "descricao": "Rua Marechal Floriano ('Rua Mal Floriano' no ato), da Rua Libório Rodrigues até a Avenida Militar (a Av. Militar é só o limite)",
+          "aproximado": true,
+          "de": {
+            "lonlat": [
+              -50.9365761,
+              -28.5009149
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -50.9379242,
+              -28.5097158
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 40,
+          "nota": "A Av. Militar é só o limite (ponta no cruzamento, sem entrar nela). Geometria pela malha (Valhalla) entre os dois cruzamentos: o OSM desenha a Marechal Floriano em mão única em ramos que não se encadeiam."
+        },
+        {
+          "inciso": "art. 1º, g)",
+          "via": [
+            "Avenida Moreira Paz"
+          ],
+          "descricao": "Avenida Moreira Paz, da Rua João Teodoro Duarte até a Avenida Militar (a Av. Militar é só o limite)",
+          "aproximado": true,
+          "de": [
+            "Rua João Teobaldo Duarte"
+          ],
+          "ate": [
+            "Avenida Militar"
+          ],
+          "nota": "O ato cita 'João Teodoro Duarte'; no OSM a rua é 'João Teobaldo Duarte' (mesmo local: via de mão única entre Atílio Giuriolo e Cel. Avelino Paim)."
+        },
+        {
+          "inciso": "art. 1º, h)",
+          "via": [
+            "Rua Pinheiro Machado"
+          ],
+          "descricao": "Rua Pinheiro Machado, da Rua Inácia Vieira até a Rua Campos Sales",
+          "aproximado": true,
+          "de": [
+            "Rua Inácia Vieira"
+          ],
+          "ate": [
+            "Rua Campos Sales"
+          ]
+        },
+        {
+          "inciso": "art. 1º, j)",
+          "via": [
+            "Rua Inácia Vieira"
+          ],
+          "descricao": "Rua Inácia Vieira, da Rua Farroupilha até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua Coronel Avelino Paim"
+          ],
+          "ate_extremo": "oeste",
+          "nota": "A Rua Farroupilha fica além da ponta oeste da Rua Inácia Vieira no OSM; o trecho vai até o extremo oeste da via mapeada."
+        },
+        {
+          "inciso": "art. 1º, k)",
+          "via": [
+            "Rua João Teobaldo Duarte"
+          ],
+          "descricao": "Rua João Teodoro Duarte, da Rua Atílio Giuriolo até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua Atílio Giuriolo"
+          ],
+          "ate": [
+            "Rua Coronel Avelino Paim"
+          ],
+          "nota": "O ato cita 'João Teodoro Duarte'; no OSM a rua é 'João Teobaldo Duarte' (mesmo local: via de mão única entre Atílio Giuriolo e Cel. Avelino Paim)."
+        },
+        {
+          "inciso": "art. 1º, l)",
+          "via": [
+            "Rua Júlio de Castilhos"
+          ],
+          "descricao": "Rua Júlio de Castilhos, da Rua Atílio Giuriolo até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua Atílio Giuriolo"
+          ],
+          "ate": [
+            "Rua Coronel Avelino Paim"
+          ]
+        },
+        {
+          "inciso": "art. 1º, m)",
+          "via": [
+            "Rua Doutor Flores"
+          ],
+          "descricao": "Rua Dr. Flores, da Rua Atílio Giuriolo até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua Atílio Giuriolo"
+          ],
+          "ate": [
+            "Rua Coronel Avelino Paim"
+          ]
+        },
+        {
+          "inciso": "art. 1º, n)",
+          "via": [
+            "Rua Silveira Martins"
+          ],
+          "descricao": "Rua Silveira Martins, da Rua General Lima até a Rua Ramiro Barcelos",
+          "aproximado": true,
+          "de": [
+            "Rua General Cunha"
+          ],
+          "ate": [
+            "Rua Ramiro Barcelos"
+          ],
+          "nota": "O ato cita a 'Rua General Lima', que não existe no OSM; assumida a Rua General Cunha (OSM), a transversal ao oeste do centro que fecha os trechos a), b) e n)."
+        },
+        {
+          "inciso": "art. 1º, o)",
+          "via": [
+            "Rua Silveira Martins"
+          ],
+          "descricao": "Rua Silveira Martins, da Rua Marechal Floriano até a Rua Cel. Avelino Paim",
+          "aproximado": true,
+          "de": [
+            "Rua Marechal Floriano"
+          ],
+          "ate": [
+            "Rua Coronel Avelino Paim"
+          ]
+        },
+        {
+          "inciso": "art. 1º, q)",
+          "via": [
+            "Rua Dona Laura"
+          ],
+          "descricao": "Rua Dona Laura, da Rua Inácia Vieira até a Rua João Teodoro Duarte",
+          "aproximado": true,
+          "de": [
+            "Rua Inácia Vieira"
+          ],
+          "ate": [
+            "Rua João Teobaldo Duarte"
+          ],
+          "nota": "O ato cita 'João Teodoro Duarte'; no OSM a rua é 'João Teobaldo Duarte' (mesmo local: via de mão única entre Atílio Giuriolo e Cel. Avelino Paim)."
+        }
+      ]
+    },
+    {
+      "id": "vacaria_estradas_rurais_chuva_dec144_2024",
+      "tipo": "via",
+      "regime": "Caminhões com guincho/toras em estradas rurais em dia de chuva",
+      "nome": "Vacaria: caminhões com guinchos ou carregados com toras nas estradas do interior em dia de chuva + 24 h (Decreto 144/2024)",
+      "status": "desativada",
+      "status_motivo": "Condicionada a chuva (e 24 h depois), restrita a tipo de carga (guinchos/toras; exclui produtos agrícolas) e sem vias nomeadas ('estradas do interior'): sem geometria confiável.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 144, de 21/05/2024 (Vacaria)",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://www.vacaria.rs.leg.br/proposicoes/pesquisa/0/1/0/31490"
+        }
+      ],
+      "vigencia_inicio": "2024-05-21",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "excecoes": [
+        "Parágrafo único do art. 1º: ficam excluídos da proibição os caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero"
+      ]
+    }
+  ]
+}
