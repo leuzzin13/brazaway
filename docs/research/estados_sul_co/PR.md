@@ -6,7 +6,7 @@ Somente leitura no repositório. Amostras e textos extraídos em `fontes/PR/` (m
 
 | Tema | O que existe | Pronto para importar? |
 |---|---|---|
-| 1. Restrições em rodovias estaduais | 22 atos DER/PR de peso/comprimento/eixos, todos 24 h. Não há portaria de horário de feriado, serra ou travessia urbana. Exceções de horário: ferry boat de Guaratuba. Graciosa proíbe carga >= 16 t | Parcial: 6 portarias têm código de trecho SRE com km e geometria no WFS (16 de 21 códigos achados). As outras 15 exigem curadoria manual |
+| 1. Restrições em rodovias estaduais | 20 portarias DER/PR vigentes na página do DER (de peso/comprimento/eixos, todas 24 h) + 2 do ferry (414/2012 e 702/2025, sazonal e vencida). Não há portaria de horário de feriado, serra ou travessia urbana. Graciosa proíbe carga >= 16 t | Parcial (rebaixado em 18/10/2026): 4 portarias prontas por código SRE (280/2020, 365/2022, 501/2022, 451/2026); 075/2023 e 239/2026 com ressalvas; 16 de 21 códigos achados. As outras 15 exigem curadoria manual |
 | 2. Pedágio | Nenhuma concessão estadual. Os 6 lotes novos são ANTT (rodovias estaduais delegadas + BRs): 43 praças nos lotes + 4 das Autopistas, todas no CSV da ANTT (CC-BY) | Sim (CSV testado, 47 linhas de PR). Tarifa só em HTML para a Via Araucária; os outros lotes estão em imagem |
 | 3. Balanças | Sem base aberta. DER/PR opera balanças (Guaratuba km 8+000 e Matinhos confirmadas em 06/2026) | Não |
 | 4. Feriados | Nenhum feriado estadual (Lei 18.384/2014). Municipais: Decreto Judiciário TJPR 621/2025 (municípios sede de comarca, ~165 cidades) | Estadual: regra vazia pronta. Municipal: parcial (PDF, falta parser) |
@@ -21,8 +21,8 @@ Fonte da lista: `https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego`. O texto
 
 | Ato | Rodovia e trecho | Limite | Obs. |
 |---|---|---|---|
-| Port. 481/2005 | PR-534 Centenário do Sul - Miraselva (19,16 km) | PBTC > 25 t proibido | só PDF do DOE |
-| Port. 421/2005 | PR-489 Porto Camargo - Porto Figueira - Alto Paraíso; PR-485 Alto Paraíso - Casa Branca; PR-182 Casa Branca - Pérola/Xambrê; PR-489 Xambrê - Umuarama | PBTC > 45 t proibido | item 2: cargas de/para MS pela ponte de Porto Camargo seguem por Icaraíma, Ivaté, Serra dos Dourados |
+| Port. 481/2005 (29/11/2005) | PR-534 Centenário do Sul - Miraselva (19,16 km) | PBTC > 25 t proibido | só PDF do DOE (06/12/2005) |
+| Port. 421/2005 (27/10/2005) | PR-489 Porto Camargo - Porto Figueira - Alto Paraíso; PR-485 Alto Paraíso - Casa Branca; PR-182 Casa Branca - Pérola/Xambrê; PR-489 Xambrê - Umuarama | PBTC > 45 t proibido | item 2: cargas de/para MS pela ponte de Porto Camargo seguem por Icaraíma, Ivaté, Serra dos Dourados |
 | Port. 318/2009 (11/11/2009) | PR-518 Entr. BR-369 - Porto Quebra Canoa | PBTC 45 t | |
 | Port. 010/2010 (08/02/2010) | PR-160 Distrito Paranagi - Entr. PR-323 (Mariporã) | PBT > 25 t, > 14 m | |
 | Port. 095/2010 (05/04/2010) | PR-151 Ribeirão Claro - divisa SP | PBTC 45 t, 16 m | |
@@ -39,14 +39,16 @@ Fonte da lista: `https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego`. O texto
 | Port. 365/2022 | PR-691 (691S0010EPR) Porto Rico - Porto São José | PBTC > 16 t | |
 | Port. 501/2022 | PRC-476 (476S0160PRC, km 363,7-363,93) ponte Manoel Ribas - União da Vitória | PBTC > 25 t | |
 | Port. 075/2023 (24/03/2023), arts. 1º e 2º | PR-410 Estrada da Graciosa, km 3-19,2 (súmula diz 0-19,2) | carga >= 16 t proibida; só passeio, vans e ônibus até 9 m x 2,50 m (linha regular até 14 m x 4,40 m) | revoga 313/2021 |
-| Port. 239/2026 (17/04/2026), arts. 1º e 2º | PR-412, PR-807, PR-508: 10 trechos em Guaratuba e Matinhos (Ponte de Guaratuba) | PBT/PBTC <= 26 t E <= 18,60 m E <= 4 eixos | 5 dos 10 códigos SRE não existem no SRE 2024 |
-| Port. 451/2026 (09/07/2026), arts. 1º e 2º | PRC-466 km 80,790-97,050; PRC-272 km 239,62-254,64 (Cruzmaltina, Lidianópolis) | PBT/PBTC <= 36 t | 5 trechos SRE, todos achados |
+| Port. 239/2026 (17/04/2026), arts. 1º e 2º | PR-412, PR-807, PR-508: 10 trechos em Guaratuba e Matinhos (Ponte de Guaratuba) | PBT/PBTC <= 26 t E <= 18,60 m E <= 4 eixos | 5 dos 10 códigos SRE não existem no SRE 2024; 412S0030EPR tem 3,87 km só no SIDER 2024 (6,82 km no geoserver); 807S0010EPR: 1,20 km no ato, 1,02 km no SRE |
+| Port. 451/2026 (09/07/2026), arts. 1º e 2º | PRC-466 km 80,790-97,050; PRC-272 km 239,62-254,64 (Cruzmaltina, Lidianópolis) | PBT/PBTC <= 36 t | 5 trechos SRE, todos achados; os mesmos trechos estão no Anexo I da 029/2022 (CVC 74 t): sobreposição não resolvida |
 | Port. 414/2012 (17/09/2012) | PR-412 de Prainha aos atracadouros do ferry e ramais | PBT > 26 t proibido | sobreposição com a 239/2026 não resolvida |
-| Port. 702/2025 (02/12/2025), arts. 1º a 3º | ferry boat de Guaratuba | > 3 eixos só dias úteis 00h-06h de 19/12/2025 a 22/02/2026; carnaval 13-18/02/2026 proibido; PP isolado | vencida pelo prazo; ferry fora de operação em 10/10/2026 |
+| Port. 702/2025 (02/12/2025), arts. 1º a 3º (art. 4º revoga disposições anteriores) | ferry boat de Guaratuba | > 3 eixos só dias úteis 00h-06h de 19/12/2025 a 22/02/2026; carnaval 13-18/02/2026 proibido; PP isolado | vencida pelo prazo; ferry fora de operação em 10/10/2026 |
 
-Liberação de CVC por AET (não restringe, libera): Port. 029/2022 (bitrem longo, 57-74 t, 19,80-30 m, AET até 30 unidades tracionadas) com emendas 371/2022, 332/2024, 363/2024, 106/2025, 172/2025, 478/2026; Port. 368/2022 (bitrem curto 19,80 m, tracionadoras licenciadas até 31/12/2011, AET até 10 unidades) com 148/2023, 328/2023, 333/2024, 107/2025; Port. 362/2021 (canavieiro, álcool, açúcar, vinhaça) com 019/2023, 421/2024, 326/2026, 529/2026. Os anexos (rodovia + trecho) estão extraídos em `fontes/PR/portaria_*_anexoI*.txt`.
+Não listada pelo DER, achada no portal: Port. 208/2010 (12/07/2010, DOE 07/10/2010), PR-151 Entr. BR-476 - divisa SC, PBT > 45 t proibido; vigência desconhecida, não importar como vigente.
 
-Geometria testada: WFS `https://geoserver.pr.gov.br/geoserver/ows` camada `seil_der:sistema_rodoviario_lin_p31982` (2.268 trechos, campos trecho, km_inicial, km_final, jurisdicao, resp). Também `https://sider.der.pr.gov.br/geoserver/wfs` camada `derpr:VGEOTRECHO` (SRE por ano 2012-2024). Shapefile do SRE 2021 (4,4 MB) e SRE 2024 em PDF (Decreto 9.774/2025) também baixáveis.
+Liberação de CVC por AET (não restringe, libera): Port. 029/2022 (bitrem longo, 57-74 t, 19,80-30 m, AET até 30 unidades tracionadas) com emendas 371/2022, 332/2024, 363/2024, 106/2025, 172/2025, 478/2026 (DOE 20/07/2026); Port. 368/2022 (bitrem curto 19,80 m, tracionadoras licenciadas até 31/12/2011, AET até 10 unidades) com 148/2023, 328/2023, 333/2024, 107/2025; Port. 362/2021 (canavieiro, álcool, açúcar, vinhaça) com 019/2023, 421/2024, 326/2026 (DOE 27/05/2026), 529/2026 (DOE 17/08/2026). Conflito: a 326/2026 inclui a PR-160 (km 0-16,90), onde a Port. 010/2010 limita PBT a 25 t e 14 m. Os anexos (rodovia + trecho) estão extraídos em `fontes/PR/portaria_*_anexoI*.txt`.
+
+Geometria testada (refeita em 18/10/2026): WFS `https://geoserver.pr.gov.br/geoserver/ows` camada `seil_der:sistema_rodoviario_lin_p31982` (2.268 trechos, campos trecho, km_inicial, km_final, jurisdicao, resp; versão antiga do SRE). Também `https://sider.der.pr.gov.br/geoserver/wfs` camada `derpr:VGEOTRECHO` (SRE por ano 2012-2024). Shapefile do SRE 2021 (4,4 MB) e SRE 2024 em PDF (Decreto 9.774/2025) também baixáveis.
 
 ## 2. Pedágio
 
@@ -55,13 +57,13 @@ Não existe concessão estadual vigente. O Anel de Integração (1997-2021) acab
 - Praças: CSV da ANTT (`dados.antt.gov.br`, pacote `praca-de-pedagio`, CC-BY, atualizado em 28/07/2026): 47 linhas de PR. Lotes: Via Araucária 5, EPR Litoral Pioneiro 8, Motiva Paraná 7, EPR Paraná 10 (com duplicatas por sentido e validador), Via Campo 3, EPR Iguaçu 10. Mais 4 praças das Autopistas (federais).
 - Free flow: EPR Iguaçu P1 (BR-163 Santa Lúcia, norte e sul), P8 (PR-182 Ampére), P9 (PR-280 Vitorino); EPR Paraná P5 a P8; Motiva P2 (Mauá da Serra) e P7 (PR-445, Londrina).
 - Armadilha: no CSV, rodovias estaduais vêm sem o prefixo ("280", "182", "444", "445", "323", "317", "092", "151").
-- Tarifa por eixo transcrita (ANTT, Via Araucária, atualizada em 28/08/2026), 5 eixos em R$: P1 49,00; P2 61,50; P3 57,50; P4 56,50; P5 64,50. Os demais lotes publicam imagem; a página ANTT da EPR Paraná está vazia.
+- Tarifa por eixo transcrita e reconferida (ANTT, Via Araucária, atualizada em 28/08/2026), 5 eixos em R$: P1 49,00; P2 61,50; P3 57,50; P4 56,50; P5 64,50. Os demais lotes publicam imagem; a página ANTT da EPR Paraná está vazia.
 - Camada `seil_der:pedagio_pto_p4674` do geoserver é de 2013 (modelo antigo): não importar.
 - Ferry boat de Guaratuba: Decreto 4.456/2023 (cobrança a partir de 01/01/2024; reajuste anual por IPCA): caminhão 3 eixos R$ 26,70; semirreboque 5 eixos R$ 44,50; 9 eixos R$ 80,10.
 
 ## 3. Balanças
 
-Sem dataset. Confirmado em 02/06/2026 (AEN): duas balanças na PR-412, Guaratuba (km 8+000, 3.477 veículos de carga fiscalizados em abril/2026 e 3.315 em maio/2026) e Matinhos. Em 2023: cinco estáticas na SR Oeste (PRC-467, PR-180, PRC-280, PR-317, PR-488, deslocáveis), duas na PR-151 em Piraí do Sul. A lista oficial atual precisa ser pedida por LAI. O geoserver tem 60 postos fiscais agropecuários da SEAB (não são balanças).
+Sem dataset. Confirmado em 02/06/2026 (AEN): duas balanças na PR-412, Guaratuba (km 8+000, 3.477 veículos de carga fiscalizados de 1º a 29/04/2026 e 3.315 de 2 a 29/05/2026) e Matinhos. Para 2026 não há confirmação das demais. Em 2023: cinco estáticas na SR Oeste (PRC-467, PR-180, PRC-280, PR-317, PR-488, deslocáveis), duas na PR-151 em Piraí do Sul. A lista oficial atual precisa ser pedida por LAI. O geoserver tem 60 postos fiscais agropecuários da SEAB (não são balanças).
 
 ## 4. Feriados
 
@@ -89,7 +91,7 @@ O relatório estatístico criminal da SESP/CAPE 2025 (fonte BOU, 19/03/2026) tem
 
 - Ponte de Guaratuba: 26 t, 18,60 m, 4 eixos (Port. 239/2026). Ferry fora de operação em 10/10/2026 segundo a operadora; regra sazonal de horário e carnaval (Port. 702/2025) já vencida.
 - Estrada da Graciosa: carga >= 16 t proibida.
-- Ponte do Rio Ivaí: 36 t em PRC-466/PRC-272 (Port. 451/2026) e liberação temporária de bitrem longo em PR-082, PR-170, PR-453, PR-457, PRC-369 e PRC-466 até concluir as obras (Port. 478/2026). A camada de ocorrências do DER ainda mostra PRC-466 km 429,9-432,83 "apenas veículos leves" com liberação de 2020 (dado possivelmente defasado).
+- Ponte do Rio Ivaí: 36 t em PRC-466/PRC-272 (Port. 451/2026) e liberação temporária de bitrem longo em PR-082, PR-170, PR-453, PR-457, PRC-369 e PRC-466 até concluir as obras (Port. 478/2026). A camada de ocorrências do DER mostra PRC-466 km 429,9-432,83 "apenas veículos leves" (liberação de 2020), mas essa ocorrência é de União da Vitória (Rio Iguaçu, Ponte Manoel Ribas), não do Rio Ivaí; dado possivelmente defasado.
 - OAEs: 1.591 pontes e viadutos estaduais com estado de conservação (3 críticas, 20 graves, 570 a classificar), sem vão, largura ou carga.
 - Balsas/portos fluviais: 62 pontos com coordenada, sem limite de carga.
 - Rodotrem/bitrem: lista permitida por trecho (Anexo I), sempre com AET. Não achei regra de horário de safra.
@@ -97,9 +99,19 @@ O relatório estatístico criminal da SESP/CAPE 2025 (fonte BOU, 19/03/2026) tem
 
 ## Pendências
 
-- Datas exatas das Portarias 481/2005 e 421/2005 (PDF do DOE).
-- Revogações e sobreposições (414/2012 x 239/2026; portarias antigas) não verificadas uma a uma.
+- Número do DOE da Portaria 421/2005 (data do ato 27/10/2005 conferida; DOE de 31/10/2005 só pelo metadado do PDF).
+- Revogações: nenhuma localizada, mas a busca textual do portal da Casa Civil é incompleta. Sobreposições abertas: 414/2012 x 239/2026, 010/2010 x 326/2026, 451/2026 x Anexo I da 029/2022; vigência da 208/2010.
 - Km de 15 portarias; geometria dos 5 trechos de Matinhos da Port. 239/2026.
 - Transcrever os tarifários em imagem dos lotes 2, 4, 5 e 6.
 - Lista de balanças do DER/PR (LAI).
 - Parser do Decreto TJPR 621/2025.
+
+## Verificação cética (2026-10-18)
+
+Segunda passada independente, relendo as fontes oficiais. Detalhe por tema no campo `verificado_em` de cada tema em `PR.json`.
+
+- **Confirmado**: texto, número, data, DOE, limites e extensões das 20 portarias da página do DER e das 3 de liberação de CVC (releitura no portal da Casa Civil e nos PDFs do DOE); lista de emendas de CVC igual à página AET do DER; 2.268 trechos e 16 de 21 códigos no WFS; CSV da ANTT (CC-BY, 47 linhas de PR, 43 + 4); tarifas da Via Araucária (28/08/2026); Decreto 4.456/2023; Lei 18.384/2014; Decreto Judiciário TJPR 621/2025 (idêntico ao texto guardado); relatório SESP 2025 (45 páginas, sem "carga"); RENAEST (recontado em streaming: mesmos totais e zero coordenadas no PR); OAEs, balsas, postos SEAB.
+- **Corrigido**: contagem "22 atos, todos 24 h" (são 20 vigentes + 2 do ferry, uma vencida); datas das Portarias 481/2005 (29/11/2005) e 421/2005 (27/10/2005); 412S0030EPR (3,87 km só no SIDER 2024; 6,82 km no geoserver) e 807S0010EPR (1,20 km no ato x 1,02 km no SRE); lei do eixo suspenso (Lei 13.103/2015 art. 17, redação da Lei 13.711/2018, não "13.711/2008"); a ocorrência "PRC-466 km 429,9" é de União da Vitória, não do Rio Ivaí; a frase de que as balanças "seguem em operação em 2026" (só PR-412 está confirmada); a "outra Portaria 414/2012" é da Secretaria de Educação.
+- **Achados novos**: Portaria 208/2010 (PR-151, 45 t) fora da lista do DER; conflitos de cobertura 010/2010 x 326/2026 (PR-160) e 451/2026 x Anexo I da 029/2022 (PRC-466/PRC-272).
+- **Rebaixado**: `rodovias_estaduais.pronto_para_importar` de true para parcial. Demais flags mantidos (ANTT true; feriado estadual true como regra vazia; municipais parcial; balanças, acidentes, roubo false).
+- **Não verificado**: revogação posterior por texto completo (portal incompleto); Lei 13.711 e Res. CONTRAN direto no planalto (host inacessível pelo proxy); frase de uso livre do Portal de Dados Abertos do PR; lista de balanças de Antonina/Almirante Tamandaré/União da Vitória/São Mateus do Sul; reajuste do preço do ferry; decreto judiciário posterior ao 621/2025.
