@@ -1,0 +1,210 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4217501",
+  "municipio": "Seara",
+  "uf": "SC",
+  "fonte_id": "seara",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/4974009 ; https://diariomunicipal.sc.gov.br/atos/8065190",
+    "licenca": "Atos oficiais de Seara: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e limites municipais do IBGE.",
+    "notas": "Lei 2.218/2023: só o inciso II (Rua Prefeito Etelvino Pedro Tumelero, via municipal) ativo; o inciso I (descida da SC-283/SC-155, rodovia estadual) fica desativado por jurisdição duvidosa. Dec. 3.717/2026 (evento de março) desativado: encerrado."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Seara não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "seara_lei2218_2023_contorno_etelvino_tumelero",
+      "tipo": "via",
+      "regime": "Zona de Restrição de Tráfego de ônibus e caminhões > 10 t",
+      "nome": "Seara: Lei 2.218/2023 art. 2, II, descida do Contorno Viario pela Rua Prefeito Etelvino Pedro Tumelero ate a Rua Rico Garghetti (onibus e caminhoes acima de 10 t)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos oficiais, de utilidade pública, serviços públicos, urgência/emergência, obras e infraestrutura, remoção de entulho, coleta de lixo, socorro mecânico, transporte coletivo e escolar, carga e descarga em estabelecimentos da zona (art. 3º)",
+        "Empresas sediadas nos logradouros da zona trafegam livremente (art. 2º, parágrafo único)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 2.218, de 19/07/2023",
+          "artigo": "arts. 2º (vias), parágrafo único (empresas sediadas na zona), 3º (exceções), 5º (rota alternativa: Contorno Rodoviário Oeste), 8º (vigência 60 dias após a publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/4974009",
+          "nota": "DOM/SC 20/07/2023"
+        },
+        {
+          "ato": "Decreto nº 3.717, de 05/03/2026 (confirma a vigência)",
+          "artigo": "art. 10 (suspende temporariamente, de 07 a 17/03/2026, 'a restrição de circulação de veículos com PBT superior a 10 t' com base no art. 7º da Lei 2.218/2023)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8065190"
+        }
+      ],
+      "vigencia_inicio": "2023-09-17",
+      "trechos": [
+        {
+          "inciso": "art. 2º, II",
+          "via": [
+            "Rua Prefeito Etelvino Pedro Tumelero"
+          ],
+          "de": {
+            "lonlat": [
+              -52.33082,
+              -27.16022
+            ]
+          },
+          "ate": [
+            "Rua Rico Carghetti",
+            "Rua Rico Garghetti"
+          ],
+          "descricao": "Rua Prefeito Etelvino Pedro Tumelero, da ponta oeste (descida do Contorno Viário) até a Rua Rico Garghetti",
+          "aproximado": true
+        }
+      ],
+      "nota": "Ato diz 'caminhões acima de 10 toneladas' sem dizer PBT ou capacidade; o Dec. 3.717/2026 trata como PBT, adotado aqui. Vigência = 60 dias após 20/07/2023 (cálculo, aprox.). Rota alternativa: Contorno Rodoviário Oeste. Parte do trecho é a descida da SC-283/SC-155 (rodovia estadual) dentro da área urbana: a lei municipal a regula, conferir competência. Verificado 18/10/2026: regra limitada ao inciso II (rua municipal nomeada, com ponto final definido). Decreto 3.717/2026 e de 04/03/2026 (nao 05/03) e trata o limite de 10 t como PBT; a Lei diz apenas 'acima de 10 toneladas'. No OSM a Rua Rico Garghetti está como \"Rua Rico Carghetti\". O ponto de partida (ponta oeste da Rua Tumelero) é aproximado: o ato fala em descida do Contorno Viário sem ponto inicial.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4217501_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome: Rua Prefeito Etelvino Pedro Tumelero do fim da descida do Contorno até a Rua Rico Garghetti"
+    },
+    {
+      "id": "seara_lei2218_2023_descida_sc283_sc155",
+      "tipo": "via",
+      "regime": "Zona de Restrição de Tráfego de ônibus e caminhões > 10 t",
+      "nome": "Seara: Lei 2.218/2023 art. 2, I, descida da SC-283/SC-155 sentido Rua Prefeito Theodoro Barbieri (restricao a onibus e caminhoes acima de 10 t)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos oficiais, de utilidade pública, serviços públicos, urgência/emergência, obras e infraestrutura, remoção de entulho, coleta de lixo, socorro mecânico, transporte coletivo e escolar, carga e descarga em estabelecimentos da zona (art. 3º)",
+        "Empresas sediadas nos logradouros da zona trafegam livremente (art. 2º, parágrafo único)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 2.218, de 19/07/2023",
+          "artigo": "arts. 2º (vias), parágrafo único (empresas sediadas na zona), 3º (exceções), 5º (rota alternativa: Contorno Rodoviário Oeste), 8º (vigência 60 dias após a publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/4974009",
+          "nota": "DOM/SC 20/07/2023"
+        },
+        {
+          "ato": "Decreto nº 3.717, de 05/03/2026 (confirma a vigência)",
+          "artigo": "art. 10 (suspende temporariamente, de 07 a 17/03/2026, 'a restrição de circulação de veículos com PBT superior a 10 t' com base no art. 7º da Lei 2.218/2023)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8065190"
+        }
+      ],
+      "vigencia_inicio": "2023-09-17",
+      "nota": "Ato diz 'caminhões acima de 10 toneladas' sem dizer PBT ou capacidade; o Dec. 3.717/2026 trata como PBT, adotado aqui. Vigência = 60 dias após 20/07/2023 (cálculo, aprox.). Rota alternativa: Contorno Rodoviário Oeste. Parte do trecho é a descida da SC-283/SC-155 (rodovia estadual) dentro da área urbana: a lei municipal a regula, conferir competência.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Verificado 18/10/2026: o inciso I regula a descida de rodovias estaduais (SC-283/SC-155), de competencia do DER, por lei municipal sem anuencia documentada; o inicio da 'descida' nao e delimitado; 'toda sua extensao' pode se referir a Rua Prefeito Theodoro Barbieri ou a descida. Jurisdicao duvidosa.",
+      "feriados": "aplica"
+    },
+    {
+      "id": "seara_dec3717_2026_evento_marco",
+      "tipo": "via",
+      "regime": "Evento (pontual)",
+      "nome": "Seara: Dec. 3.717/2026, interrupção de veículos pesados (PBT > 8 t) em ruas do centro nos dias 13 a 15/03/2026",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Restrição temporária de evento (13 a 15/03/2026), já encerrada. Decreto 3.092/2024 (31/03 a 08/04/2024) é do mesmo tipo.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 3.717, de 05/03/2026",
+          "artigo": "art. 2º (PBT > 8 t, ruas Herculano Hércules Zanuzzo, Sete de Setembro, Três de Abril, Orlando Dezem e Beira Rio, 13 a 15/03/2026); art. 8º (exceções)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8065190"
+        }
+      ],
+      "vigencia_inicio": "2026-03-13",
+      "vigencia_fim": "2026-03-15",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica"
+    }
+  ]
+}

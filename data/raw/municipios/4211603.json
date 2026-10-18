@@ -1,0 +1,270 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4211603",
+  "municipio": "Nova Veneza",
+  "uf": "SC",
+  "fonte_id": "nova-veneza",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/2526303 ; https://diariomunicipal.sc.gov.br/atos/2165515 ; https://diariomunicipal.sc.gov.br/atos/1846579 ; https://diariomunicipal.sc.gov.br/atos/1414598 ; https://diariomunicipal.sc.gov.br/atos/1436309",
+    "licenca": "Atos oficiais de Nova Veneza: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e limites municipais do IBGE.",
+    "notas": "Lei 2.663/2018 delega a lista de vias a decretos. Dec. 187/2020 e 457/2019 ativos (extensão exata no projeto anexo, não lido: ruas inteiras). Dec. 462/2017 (perímetro central 12 t) e 486/2017 (parte de duas ruas, 10 t) desativados: plantas anexas não disponíveis."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Nova Veneza não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "novaveneza_dec187_2020_imigrantes_gava",
+      "tipo": "via",
+      "regime": "Vias do Bairro Elisa: PBT > 15 t",
+      "nome": "Nova Veneza: Dec. 187/2020, proibido o trânsito de veículos com PBT > 15 t na Rua dos Imigrantes e na Rua Ângelo Gava (Bairro Elisa)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Prestadores de serviços de utilidade pública em atendimento, identificados (Lei 2.663/2018, art. 4º, I)",
+        "Veículos oficiais a serviço, identificados (art. 4º, II)",
+        "Veículos com Autorização Especial de Circulação (AEC) (art. 4º, III; arts. 5º a 12)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 187, de 16/06/2020",
+          "artigo": "art. 1º e parágrafo único (exceções do art. 4º da Lei 2.663/2018)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2526303"
+        },
+        {
+          "ato": "Lei nº 2.663, de 18/12/2018 (Nova Veneza)",
+          "artigo": "art. 3º (PBT > 12 t em vias determinadas por ato do Executivo), art. 4º (exceções), arts. 5º a 12 (AEC/EIIV)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1846579",
+          "nota": "DOM/SC 21/12/2018"
+        }
+      ],
+      "vigencia_inicio": "2020-06-16",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua dos Imigrantes"
+          ],
+          "descricao": "Rua dos Imigrantes, Bairro Elisa (extensão exata no projeto anexo, não lido: aplicada a rua inteira)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Ângelo Gava"
+          ],
+          "descricao": "Rua Ângelo Gava, Bairro Elisa (idem)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Os trechos exatos estão em 'justificativa técnica e projeto anexos' ao decreto (não vieram no texto do DOM/SC). O OSM marca hgv=no e maxweight=12 na Rua dos Imigrantes (way 319719139, 1087538842) e na Rua Cônego Miguel Giacca, e maxweight=15 em outro trecho: 12 t é o limite padrão do art. 3º da Lei, mas o decreto fixa 15 t. Verificado 18/10/2026: texto sem trecho; o decreto remete a 'justificativa tecnica e projeto anexos' (nao lidos), entao a extensao exata em cada rua e incerta (aplicada a rua inteira). Divergência com o OSM: a Rua dos Imigrantes tem hgv=no e maxweight=12 (ways 319719139 e 1087538842) e maxweight=15 em outros trechos; o decreto fixa 15 t. O Valhalla já respeita o maxweight do OSM nesses ways; a regra não corrige a tag.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4211603_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome; a rua inteira (extensão exata no projeto anexo ao decreto, não lido)"
+    },
+    {
+      "id": "novaveneza_dec457_2019_natal_coral",
+      "tipo": "via",
+      "regime": "Rua Natal Coral: PBT > 15 t",
+      "nome": "Nova Veneza: Dec. 457/2019, proibido o trânsito de veículos com PBT > 15 t na Rua Natal Coral (Bairro Elisa)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Prestadores de serviços de utilidade pública em atendimento, identificados (Lei 2.663/2018, art. 4º, I)",
+        "Veículos oficiais a serviço, identificados (art. 4º, II)",
+        "Veículos com Autorização Especial de Circulação (AEC) (art. 4º, III; arts. 5º a 12)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 457, de 02/09/2019",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2165515"
+        },
+        {
+          "ato": "Lei nº 2.663, de 18/12/2018 (Nova Veneza)",
+          "artigo": "art. 3º (PBT > 12 t em vias determinadas por ato do Executivo), art. 4º (exceções), arts. 5º a 12 (AEC/EIIV)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1846579",
+          "nota": "DOM/SC 21/12/2018"
+        }
+      ],
+      "vigencia_inicio": "2019-09-02",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Natal Coral"
+          ],
+          "descricao": "Rua Natal Coral, Bairro Elisa (extensão no projeto anexo; aplicada a rua inteira)",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4211603_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "nota": "Verificado 18/10/2026: texto sem trecho; o decreto remete a 'justificativa tecnica e projeto anexos' (nao lidos), entao a extensao exata em cada rua e incerta (aplicada a rua inteira). Parte da Rua Natal Coral já tem maxweight=15 no OSM (way 1043511665).",
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome; a rua inteira"
+    },
+    {
+      "id": "novaveneza_dec462_2017_perimetro_central_12t",
+      "tipo": "zona",
+      "regime": "Perimetro urbano central: PBT > 12 t",
+      "nome": "Nova Veneza: Dec. 462/2017, limite de 12 t de PBT por caminhao nas vias do perimetro urbano central (plantas anexas)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Verificado 18/10/2026: perimetro definido apenas por 'justificativa tecnica e plantas baixas anexas' (nao presentes no texto do DOM/SC), logo sem delimitacao georreferenciavel; vigencia atual nao confirmada (Lei 2.663/2018 passou a exigir ato por via). Nao constava no res.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 462, de 11/10/2017 (Nova Veneza)",
+          "artigo": "art. 1 (12 t por caminhao), p.u. (excecao veiculos oficiais)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1414598"
+        }
+      ],
+      "vigencia_inicio": "2017-10-11",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica"
+    },
+    {
+      "id": "novaveneza_dec486_2017_pedro_tomasi_constante_mattia_10t",
+      "tipo": "via",
+      "regime": "Rua Pedro Tomasi e Rua Constante de Mattia: PBT > 10 t",
+      "nome": "Nova Veneza: Dec. 486/2017, limite de 10 t de PBT por caminhao em parte da Rua Pedro Tomasi e da Rua Constante de Mattia (Bairro Bortolotto)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Verificado 18/10/2026: o decreto limita 'parte' das duas ruas, conforme plantas anexas nao presentes no texto; trecho nao delimitavel; vigencia atual nao confirmada. Nao constava no res.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 486, de 03/11/2017 (Nova Veneza)",
+          "artigo": "art. 1 (10 t por caminhao), p.u. (veiculos oficiais)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1436309"
+        }
+      ],
+      "vigencia_inicio": "2017-11-03",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica"
+    }
+  ]
+}

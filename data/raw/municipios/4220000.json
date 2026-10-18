@@ -1,0 +1,304 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4220000",
+  "municipio": "Balneário Rincão",
+  "uf": "SC",
+  "fonte_id": "balneario-rincao",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/2485075 ; https://diariomunicipal.sc.gov.br/atos/2696769 ; https://diariomunicipal.sc.gov.br/atos/6535817 ; https://diariomunicipal.sc.gov.br/atos/2770651",
+    "licenca": "Atos oficiais de Balneário Rincão: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e limites municipais do IBGE.",
+    "notas": "Dec. 057/2020 (UTM SIRGAS 2000 zona 22S) e Dec. 160/2024 ativos; Dec. 136/2020 desativado (ruas de acesso sem nome); Dec. 164/2020 sucedido pelo 160/2024 (registro revogado). Lei 728/2025 renomeou a ICR-350."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Balneário Rincão não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "balneariorincao_dec057_2020_icr_33t",
+      "tipo": "via",
+      "regime": "Veículos de carga > 4 eixos e PBT > 33 t",
+      "nome": "Balneário Rincão: Dec. 057/2020, proibido veículo de carga com mais de 4 eixos e PBT > 33 t nas ICR-353, ICR-358 (até Barra Velha) e ICR-350 (acesso sul)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 33
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de serviço público em emergência e restabelecimento (§ 1º)",
+        "Veículos que transportam perecíveis, combustíveis e guinchos em operação (§ 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto GP nº 057/2020, de 18/05/2020 (revoga o Decreto 052/2020)",
+          "artigo": "art. 1º, I e II (trechos), §§ 1º e 2º (exceções), art. 2º (vigência em 25/05/2020), art. 3º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2485075"
+        }
+      ],
+      "vigencia_inicio": "2020-05-25",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I (trecho A, ICR-353)",
+          "via": [
+            "Rodovia Jorge Fortulino"
+          ],
+          "de": {
+            "lonlat": [
+              -49.294643,
+              -28.844442
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -49.312538,
+              -28.86169
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 400,
+          "descricao": "ICR-353 (no OSM, SC-100 Rodovia Jorge Fortulino), 2,65 km do ponto 1 (UTM N 6.808.054,00 / L 666.363,00, frente da Igreja São Jorge) à rótula do bairro Barra Velha (N 6.806.167,59 / L 664.589,84)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, I (trecho A, ICR-358)",
+          "via": [
+            "Rodovia Ibanez Zanette"
+          ],
+          "de": {
+            "lonlat": [
+              -49.312538,
+              -28.86169
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -49.293543,
+              -28.873167
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 600,
+          "descricao": "ICR-358, 2,64 km da rótula de Barra Velha ao início do perímetro urbanizado de Barra Velha (N 6.804.869,27 / L 666.424,47)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, II (trecho B, ICR-350)",
+          "via": [
+            "Rodovia Antônio Pedro Cândido"
+          ],
+          "de": {
+            "lonlat": [
+              -49.260142,
+              -28.829742
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -49.273434,
+              -28.816979
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 150,
+          "descricao": "ICR-350, 1,92 km da rótula do acesso sul (N 6.809.634,17 / L 669.753,05) ao limite com Içara (N 6.811.067,51 / L 668.476,54)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Alvo = mais de 4 eixos E PBT acima de 33 t (as duas condições). Trechos definidos por coordenadas UTM SIRGAS 2000 (zona 22S) e extensão. Sem alteração achada no DOM/SC 2020-2026. Pontos UTM SIRGAS 2000 zona 22S (EPSG:31982) convertidos para WGS84 (pyproj). A ICR-350 foi renomeada Avenida Gilmar Celoy Custódio (Lei 728/2025), no mesmo trecho; no OSM ainda é \"Rodovia Antônio Pedro Cândido\". Os atos municipais tratam as ICR como rodovias do município.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4220000_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome entre os pontos UTM (SIRGAS 2000, zona 22S) do ato, convertidos para WGS84"
+    },
+    {
+      "id": "balneariorincao_dec136_2020_pedreiras",
+      "tipo": "via",
+      "regime": "PBT > 7,7 t proibido de entrar/sair da Rua Teodorico Pedro Lino",
+      "nome": "Balneário Rincão: Dec. 136/2020, veículos de carga com PBT > 7,7 t proibidos de entrar ou sair da Rua Teodorico Pedro Lino pelas ruas do Bairro Pedreiras",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de serviço público em atendimento de emergência (§ 1º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto GP nº 136/2020, de 27/10/2020",
+          "artigo": "art. 1º, § 1º (exceção emergência), art. 2º (vigência 30/10/2020)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2696769"
+        }
+      ],
+      "vigencia_inicio": "2020-10-30",
+      "nota": "Redação ambígua: proíbe ENTRAR ou SAIR da Rua Teodorico Pedro Lino 'pelas Ruas do Bairro Pedreiras'. Leis 500/2021 e 610/2023 renomeiam ruas projetadas que terminam na Rua Teodorico Pedro Lino (a rua continua citada).",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Verificado 18/10/2026: o decreto proibe entrar ou sair da Rua Teodorico Pedro Lino 'pelas Ruas do Bairro Pedreiras' sem nomea-las nem delimitar o bairro; sem delimitacao georreferenciavel e semantica ambigua (acesso, nao circulacao em via definida).",
+      "feriados": "aplica"
+    },
+    {
+      "id": "balneariorincao_dec160_2024_waldemar_petrini",
+      "tipo": "via",
+      "regime": "Caminhões: só veículos leves",
+      "nome": "Balneário Rincão: Dec. 160/2024, proibido trânsito de caminhões na Av. Waldemar Carlos Petrini, da SC-445 (Plataforma de Pesca Norte) até a Rua Adelino Rossoni",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Caminhões oficiais e dos serviços de emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto GP nº 160/2024, de 21/10/2024 (amplia o trecho do Decreto 164/2020, que ia até a Rua Castro Alves)",
+          "artigo": "art. 1º e §§ 1º e 2º (somente veículos leves)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6535817"
+        }
+      ],
+      "vigencia_inicio": "2024-10-21",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Waldemar Carlos Petrini"
+          ],
+          "de": [
+            "Rodovia Paulino Búrigo"
+          ],
+          "ate": [
+            "Rua Adelino Rossoni"
+          ],
+          "descricao": "Av. Waldemar Carlos Petrini, da SC-445 (Plataforma de Pesca Norte) até a Rua Adelino Rossoni"
+        }
+      ],
+      "nota": "Substitui na prática o Decreto 164/2020 (mesmo objeto, trecho até a Rua Castro Alves); o 160/2024 não o revoga expressamente. 'Somente veículos leves' = o ato proíbe todo caminhão (sem limite de PBT).",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4220000_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome"
+    },
+    {
+      "id": "balneariorincao_dec164_2020_waldemar_petrini",
+      "tipo": "via",
+      "regime": "Caminhões (trecho curto)",
+      "nome": "Balneário Rincão: Dec. 164/2020, trânsito de caminhões proibido na Av. Waldemar Carlos Petrini, da SC-445 à Rua Castro Alves (ampliado pelo Dec. 160/2024)",
+      "status": "revogada",
+      "confianca": "media",
+      "status_motivo": "Mesmo objeto do Dec. 160/2024, que fixa trecho maior (até a Rua Adelino Rossoni); o texto não traz cláusula revogatória expressa, mas é regra sucedida.",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto GP nº 164/2020, de 18/12/2020",
+          "artigo": "art. 1º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2770651"
+        }
+      ],
+      "vigencia_inicio": "2020-12-18",
+      "vigencia_fim": "2024-10-21",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica"
+    }
+  ]
+}

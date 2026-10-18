@@ -1,0 +1,200 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4213500",
+  "municipio": "Porto Belo",
+  "uf": "SC",
+  "fonte_id": "porto-belo",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/8700408 ; https://diariomunicipal.sc.gov.br/atos/6503805 ; https://diariomunicipal.sc.gov.br/atos/7787707 ; https://diariomunicipal.sc.gov.br/atos/7856599",
+    "licenca": "Atos oficiais de Porto Belo: domínio público (Lei 9.610/1998 art. 8º IV). Limites municipais do IBGE (dados públicos).",
+    "notas": "Dec. 4.564/2026 (ponte sobre o Rio Santa Luzia) vigente, mas a ponte não foi localizada no OSM com segurança: regra desativada até confirmar a via. Lei 3.512/2024 (Estrada Parque) e decretos de alta temporada 2025/26 também desativados."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Porto Belo não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "portobelo_dec4564_2026_ponte_santa_luzia",
+      "tipo": "ponte",
+      "regime": "Ponte com limite de peso",
+      "nome": "Porto Belo/Tijucas: Ponte sobre o Rio Santa Luzia, proibição de PBT > 12 t ou mais de 2 eixos (Dec. 4.564/2026)",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          },
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 4.564, de 11/09/2026 (Porto Belo)",
+          "artigo": "art. 1º (proibição), art. 2º (revisão por nova avaliação técnica), art. 4º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8700408"
+        }
+      ],
+      "vigencia_inicio": "2026-09-11",
+      "nota": "Restrição preventiva por laudo técnico (Nível 1 - Estado Crítico); revisável (art. 2º). Divergência/observação: a ponte da Av. José Neoli Cruz (PBL-010) sobre o rio já tem hgv=no no OSM no trecho adjacente, mas nada prova que seja a ponte do decreto.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica",
+      "status_motivo": "Ponte não localizada no OSM com segurança: o decreto (art. 1º) não nomeia a via e o Rio Santa Luzia, na divisa com Tijucas, tem várias travessias rodoviárias no OSM (BR-101, Av. José Neoli Cruz/PBL-010, Ponte Gercino Pereira e uma via terciária), sem tag que identifique a do laudo. Ato vigente (Dec. 4.564/2026, PBT acima de 12 t ou mais de 2 eixos), confirmado pelo verificador em 18/10/2026; ativar quando a via da ponte for confirmada."
+    },
+    {
+      "id": "portobelo_lei3512_2024_estrada_parque",
+      "tipo": "via",
+      "regime": "Estrada Parque Porto Belo-Bombinhas",
+      "nome": "Porto Belo: Estrada Parque Porto Belo-Bombinhas, proibido trânsito de caminhões de grande porte (Lei 3.512/2024, art. 9º)",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Municipal nº 3.512, de 09/10/2024",
+          "artigo": "art. 1º (trajeto de cerca de 5 km, do ponto de captação de água de Bombinhas até o antigo CTG, bairro Vila Nova) e art. 9º (proíbe caminhões de grande porte; só caminhões e ônibus de porte reduzido, 'toco')",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6503805",
+          "nota": "DOM/SC 10/10/2024"
+        }
+      ],
+      "vigencia_inicio": "2024-10-10",
+      "nota": "'Caminhão de grande porte' não é definido na lei; o alvo (mais de 2 eixos, carreta, reboque, CVC) é interpretação de 'toco' (2 eixos) como único permitido. A lei cria a estrada parque 'em trajeto já existente' e a implantação depende de projeto (art. 6º); a via em OSM não foi identificada. Conferir sinalização e eventual decreto regulamentador.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Verificado 18/10/2026: 'caminhoes de grande porte' sem definicao (so 'toco' permitido), trajeto descrito por marcos (captacao de agua de Bombinhas ate o antigo CTG) sem nome oficial da via, e a propria lei condiciona a implantacao/projeto da estrada parque (art. 6) e fiscalizacao/sinalizacao futuras; sem delimitacao georreferenciavel nem criterio mensuravel.",
+      "excecoes": [],
+      "feriados": "aplica"
+    },
+    {
+      "id": "portobelo_dec4309_4332_2025_alta_temporada",
+      "tipo": "zona",
+      "regime": "Alta temporada: carretas e betoneiras",
+      "nome": "Porto Belo: proibição de carretas e caminhões-betoneiras na alta temporada 2025/26 (Dec. 4.309/2025 alterado pelo 4.332/2025)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Vigência encerrada em 04/01/2026. É restrição recorrente de alta temporada (decretos anuais desde 2019 para carretas/betoneiras e para veículos > 3 eixos, ex.: Dec. 3.980 e 3.981/2024), mas as datas mudam a cada ano; só vale quando um novo decreto for publicado.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "05:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Carretas e betoneiras de obras públicas comunicadas com antecedência à Secretaria de Segurança Pública (Dec. 4.309/2025, art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 4.309, de 01/12/2025",
+          "artigo": "art. 1º (proibição), art. 2º (exceção obras públicas)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7787707"
+        },
+        {
+          "ato": "Decreto nº 4.332, de 19/12/2025",
+          "artigo": "art. 1º (nova redação: 23/12/2025 a 04/01/2026, proibido 5h-24h, permitido 0h-5h) - efeito de tutela de urgência no MS 5007411-63.2025.8.24.0139",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7856599"
+        }
+      ],
+      "vigencia_inicio": "2025-12-23",
+      "vigencia_fim": "2026-01-04",
+      "nota": "Alvo: carreta = veículo articulado (parágrafo único do art. 1º do Dec. 4.309); 'caminhão-betoneira' não tem classe própria no schema (alvo aproximado). Antes da alteração, o 4.309 proibia a partir de 23/12/2025 13h; foi alterado após mandado de segurança. Geometria = limite do município, só como registro (o decreto fala em vias do município sem delimitá-las); desativada, nunca aplicada.",
+      "geometria": [
+        {
+          "municipios": [
+            "4213500"
+          ],
+          "simplificar": 0.002
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "Limite do município de Porto Belo (IBGE); registro, regra desativada"
+    }
+  ]
+}
