@@ -3,8 +3,8 @@
  "nome": "Reserva",
  "uf": "PR",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,25 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Contagens {\"hgv_no\": 1}, todas em rodovia estadual/federal (ref) ou etiqueta não restritiva: fora da competência municipal; descartado como pista."
+  },
+  {
+   "url": "https://reserva.oxy.elotech.com.br",
+   "resultado": "R3: fonte elotech inacessível/sem busca automática: Elotech: /portaltransparencia(-api)/api/entidades não respondeu lista JSON em https://rese"
+  },
+  {
+   "url": "https://www.camarareserva.pr.gov.br/",
+   "resultado": "R3: fonte desconhecido inacessível/sem busca automática: sem cliente automático; consultar manualmente: https://www.camarareserva.pr.gov.br/"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4121703",
+   "resultado": "R3: API respondeu 522/sem resposta (HTTP 000) em 2026-10-18; não conclusivo"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp (seletor de entidades, 189 entidades)",
+   "resultado": "R3: município não consta entre as entidades do AMP"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (24856 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (elotech, https://reserva.oxy.elotech.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (24856 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (elotech, https://reserva.oxy.elotech.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: nenhuma fonte municipal pesquisável (bloqueada/vazia: https://reserva.oxy.elotech.com.br; https://www.camarareserva.pr.gov.br/); negativo NÃO conclusivo, falha_de_fonte=true.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
