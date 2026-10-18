@@ -1,0 +1,101 @@
+{
+ "ibge": "4128534",
+ "nome": "Ventania",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.ventania.pr.leg.br/api/norma/normajuridica/",
+   "resultado": "API SAPL abre mas a base de normas está VAZIA (0 normas): a Câmara não publica legislação ali; busca por 'caminh|veículos pesados|carga e descarga|tonelad|tráfego|trânsito|carreta' = 0, inconclusiva"
+  },
+  {
+   "url": "https://ventania.pr.gov.br/filtrarTudo?busca=trânsito de determinados",
+   "resultado": "ACHOU Lei Municipal 779/2019 'Proíbe o trânsito de determinados tipos de veículos nas vias que especifica'"
+  },
+  {
+   "url": "https://ventania.pr.gov.br/legislacao/o_1d6gogi0012pvt611g4cs6r4e3i.pdf",
+   "resultado": "LIDO integral (PDF escaneado, 2 págs, leitura visual; sem tesseract). Texto transcrito em atos/4128534/lei_779_2019.txt. Publicada Diário dos Campos 20/03/2019"
+  },
+  {
+   "url": "https://ventania.pr.gov.br/filtrarTudo?busca=779/2019 | caminhões | Enelcio",
+   "resultado": "nenhuma alteração/revogação encontrada"
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter",
+   "resultado": "FORA DO AR (conexão derrompida pelo proxy; kumi.systems e private.coffee: 500). Usados só os exemplos já anotados em pistas.osm"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 779/2019 lida na íntegra e vigente (Status Ativo no portal). Lead da classe DO resolvido: vias do OSM (Rua Enelcio Carneiro e Travessa Santa Felicidade) NÃO constam da lei; as vias da lei não foram conferidas no OSM (Overpass fora do ar). Faixa de peso: 'peso igual ou superior a 16 t' de caminhões carregados; bitrens/treminhões sempre.",
+ "osm_divergencias": [
+  "OSM: Rua Enelcio Carneiro (211310969, residential) e Travessa Santa Felicidade (732205140, residential) têm hgv=no mas não estão na Lei 779/2019 (sem ato achado); as 11 ruas da lei não foram comparadas ao OSM (Overpass fora)"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "4128534-lei779-2019",
+   "tipo": "via",
+   "regime": "proibicao_permanente_com_autorizacao",
+   "nome": "Restrição a caminhões >=16 t, bitrens e treminhões em vias urbanas da sede e do Distrito de Novo Barro Preto",
+   "status": "ativa",
+   "status_motivo": "Portal da prefeitura marca 'Ativo' em 18/10/2026; nenhuma alteração ou revogação encontrada nas buscas ('779/2019', 'veículos nas vias').",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "vale",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima_ou_igual": 16,
+      "nota": "'peso igual ou superior a 16 toneladas' de caminhões CARREGADOS (peso, não capacidade); não detalha PBT vs peso total carregado"
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "bitrem",
+       "treminhao"
+      ],
+      "nota": "carregados ou não"
+     }
+    ]
+   },
+   "excecoes": [
+    "autorização especial de trânsito da Prefeitura (§2º; original no para-brisa, §3º)",
+    "serviços públicos essenciais",
+    "emergência",
+    "socorro mecânico/guincho",
+    "cobertura jornalística",
+    "obras e serviços de emergência",
+    "Correios",
+    "sinalização emergencial de trânsito"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 779/2019 (19/03/2019)",
+     "artigo": "art. 1º, §§1º a 4º; art. 2º (CTB art. 187, I)",
+     "url": "https://ventania.pr.gov.br/legislacao/o_1d6gogi0012pvt611g4cs6r4e3i.pdf"
+    }
+   ],
+   "vigencia_inicio": "2019-03-20",
+   "vigencia_fim": null,
+   "trechos": "Sede: Ruas Abel Alves da Silva, Flórido Caetano Ferreira, Francisco Karas Naggi, Henrique Lemes Pinheiro, João Santiago, Manoel Barbosa. Distrito Novo Barro Preto: Ruas 7 de Setembro, 15 de Novembro, Barão do Rio Branco, Castro Alves, Rui Barbosa (extensão total das ruas, sem limites).",
+   "geometria": null
+  }
+ ]
+}
