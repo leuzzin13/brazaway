@@ -7,47 +7,26 @@
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
-   "url": "fila/R1-RS-DO01.json (pistas.osm)",
-   "resultado": "Pistas OSM do lote usadas como base."
+   "url": "toolkit/diarios_consolidados.py buscar 4301008",
+   "resultado": "município sem diário consolidado (nem Querido Diário): sem busca"
   },
   {
-   "url": "https://arroiodomeio.cespro.com.br/ ; https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238",
-   "resultado": "CESPRO reCAPTCHA: nao consultado. Sem diario consolidado nem QD."
+   "url": "https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238",
+   "resultado": "cespro (camara): falha: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238) passa por re"
   },
   {
-   "url": "https://arroiodomeio.rs.gov.br/?s=caminhões",
-   "resultado": "200: so pagina turistica 'Ponte de Ferro' (https://arroiodomeio.rs.gov.br/turismo/visualizar/id/1007/?ponte-de-ferro.html), sem ato."
+   "url": "https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238",
+   "resultado": "cespro (prefeitura): falha: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238) passa por re"
   },
   {
-   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
-   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+   "url": "https://arroiodomeio.cespro.com.br/",
+   "resultado": "cespro (prefeitura): falha: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://arroiodomeio.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Unica pista e OSM (Ponte de Ferro maxweight 3.5 t). Fonte principal (CESPRO) bloqueada e sem diario: nao conclusivo. Status nao_achou.",
+ "observacoes": "Arroio do Meio: só etiquetas OSM (hgv/maxweight/maxlength). Ponte de Ferro (secondary) maxweight=3.5 e via tertiary sem nome com maxweight=80 (valor implausível, provável erro de tag): sem ato achado. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo.",
  "osm_divergencias": [
-  "Ponte de Ferro (way 176546011, secondary): maxweight=3.5 (ponte; possivel limite real da ponte); way 1291380565 (tertiary, sem nome): maxweight=80 (provavel erro de tag/velocidade)."
+  "Ponte de Ferro (secondary) maxweight=3.5 e via tertiary sem nome com maxweight=80 (valor implausível, provável erro de tag): sem ato achado."
  ],
- "regras_rascunho": [
-  {
-   "id": "arroiodomeio_ponte_de_ferro",
-   "tipo": "ponte",
-   "regime": "pista_osm",
-   "nome": "Ponte de Ferro (maxweight=3,5 t, OSM)",
-   "status": "desativada",
-   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
-   "confianca": "baixa",
-   "janelas": [],
-   "feriados": null,
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [],
-   "vigencia_inicio": null,
-   "vigencia_fim": null,
-   "trechos": "Ponte de Ferro (maxweight=3,5 t, OSM)",
-   "geometria": null
-  }
- ]
+ "regras_rascunho": []
 }

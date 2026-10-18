@@ -2,56 +2,23 @@
  "ibge": "4308201",
  "nome": "Flores da Cunha",
  "uf": "RS",
- "status": "pista",
+ "status": "nao_achou",
  "nivel_busca": "dirigida",
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
-   "url": "fila/R1-RS-DO01.json (pistas.osm)",
-   "resultado": "Pistas OSM do lote usadas como base."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/famurs (4308201: circulação/trânsito de caminhões, veículos pesados, toneladas, Avenida 25 de Julho)",
-   "resultado": "Sem ato; so licitacoes (requalificacao da Av. 25 de Julho, 5,8 km)."
+   "url": "toolkit/diarios_consolidados.py buscar 4308201 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Avenida 25 de Julho caminhões; Avenida 25 de Julho caminhões; veículos de carga; carretas",
+   "resultado": "sem resultado"
   },
   {
    "url": "https://leismunicipais.com.br/leis/rs/floresdacunha/?o=tcers",
-   "resultado": "Cloudflare 403: nao consultado."
-  },
-  {
-   "url": "https://www.floresdacunha.rs.gov.br",
-   "resultado": "busca ?s= com reset de conexao."
-  },
-  {
-   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
-   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+   "resultado": "leismunicipais (prefeitura): falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/leis/rs/floresdacunha/?o=tcers. Não contornar; usar"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "hgv=no em 3 ways da Av. 25 de Julho (eixo central, ex-rodovia?) sem ato; portal de legislacao bloqueado: nao conclusivo.",
+ "observacoes": "Flores da Cunha: só etiquetas OSM (hgv/maxweight/maxlength). Av. 25 de Julho (secondary) hgv=no (3 ways): sem ato achado. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo.",
  "osm_divergencias": [
-  "Avenida 25 de Julho (ways 947603977, 947725578, 1466626834, secondary): hgv=no; sem ato."
+  "Av. 25 de Julho (secondary) hgv=no (3 ways): sem ato achado."
  ],
- "regras_rascunho": [
-  {
-   "id": "floresdacunha_av_25_de_julho",
-   "tipo": "via",
-   "regime": "pista_osm",
-   "nome": "Avenida 25 de Julho (hgv=no, OSM)",
-   "status": "desativada",
-   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
-   "confianca": "baixa",
-   "janelas": [],
-   "feriados": null,
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [],
-   "vigencia_inicio": null,
-   "vigencia_fim": null,
-   "trechos": "Avenida 25 de Julho (hgv=no, OSM)",
-   "geometria": null
-  }
- ]
+ "regras_rascunho": []
 }

@@ -5,39 +5,33 @@
  "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
- "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "https://sapl.saojeronimo.rs.leg.br/api/norma/normajuridica/ (ementa peso|trânsito|caminh|4.274)",
-   "resultado": "Achou só o Decreto 4.274/2010; nenhum ato modificador"
+   "url": "toolkit/diarios_consolidados.py buscar 4318408",
+   "resultado": "município sem diário consolidado (nem Querido Diário): sem busca"
   },
   {
-   "url": "https://sapl.saojeronimo.rs.leg.br/media/sapl/public/normajuridica/2010/244/244_texto_integral.pdf",
-   "resultado": "Lido (PDF imagem; OCR + conferência visual pág. 1)"
+   "url": "https://sapl.saojeronimo.rs.leg.br",
+   "resultado": "sapl (camara): 8 atos para os termos caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso; nenhum de circulação de caminhões"
   },
   {
    "url": "https://www.saojeronimo.rs.gov.br/",
-   "resultado": "HTTP 403"
-  },
-  {
-   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
-   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+   "resultado": "desconhecido (prefeitura): falha: sem cliente automático; consultar manualmente: https://www.saojeronimo.rs.gov.br/"
   }
  ],
- "observacoes": "Decreto 4.274/2010 fixa limites de PBT nas vias urbanas (10 t vias locais/coletoras; 15 t e 30 t em vias listadas), peso por eixo 5 t, largura 2,60 m, altura 4,60 m, comprimento 14 m (não articulado) e 20 m (articulado). SAPL da Câmara só tem esse decreto sobre o tema; site da prefeitura (www.saojeronimo.rs.gov.br) dá 403 e não há diário consolidado, então alteração/revogação posterior não pôde ser descartada (confiança média). Os 261 ways OSM com maxweight (10/30) refletem este decreto. Limites de dimensão e peso por eixo não foram transcritos como regra por serem (em essência) os do CTB; o art. 1º III diz 5 t por eixo (conferido na imagem).",
+ "data": "2026-10-18",
+ "observacoes": "São Jerônimo: o OSM traz 261 ways com maxweight (30 t em Rua Dr. José Athanásio/Rua Barão do Rio Branco, 10 t em Rua Trinta de Setembro etc.), compatível com o Decreto 4.274/2010 (SAPL da Câmara, norma 244), lido por OCR e conferência visual: art. 2º fixa PBT máx. de 10 t nas vias locais e coletoras, 15 t em Av. Ramiro Barcelos, Av. Rio Branco (Rua Flores da Cunha a Rua Marechal Floriano) e Rua Antônio de Carvalho, e 30 t em Rua Flores da Cunha (Av. Rio Branco ao atracadouro da balsa), Av. Rio Branco (Flores da Cunha a Av. Dr. José Athanásio), Av. Dr. José Athanásio, Rua Gal. Osório, Rua Sen. Salgado Filho (Gal. Osório a Rafael Athanásio), Rua Rafael Athanásio (Salgado Filho a Flores da Cunha), Av. Maurício Cardoso, Rua Dona Délia Drebes e Rua Marechal Floriano. Art. 1º: largura 2,60 m, altura 4,60 m, comprimento 14 m (não articulado) / 20 m (articulado) e 5 t por eixo. Decreto do Executivo (não consta no portal da prefeitura, sem cliente); vigência: nenhuma revogação/alteração achada no SAPL (busca por peso/pesados/caminh). Confiança média por não ter confirmado a situação atual no portal da prefeitura.",
  "osm_divergencias": [
-  "OSM Rua General Osório maxweight=10, mas o Decreto 4.274 dá 30 t em toda a extensão.",
-  "OSM Rua Antônio de Carvalho maxweight=10, mas o decreto dá 15 t em toda a extensão.",
-  "OSM Rua Doutor José Athanásio/Barão do Rio Branco 30 t: coerente com o decreto (Av. Dr. José Athanásio e trecho da Av. Rio Branco).",
-  "Muitos ways OSM (261) em vias locais com 10 t: coerente com o inciso I do art. 2º; conferir se algum esteja em via fora do perímetro urbano."
+  "261 ways com maxweight (30 t, 10 t): compatíveis com o Decreto 4.274/2010; não comparei via a via."
  ],
  "regras_rascunho": [
   {
-   "id": "4318408_dec4274_pbt10_locais",
+   "id": "saojeronimo_pbt_10t_vias_locais_coletoras",
    "tipo": "via",
-   "regime": "Limite de PBT 10 t",
-   "nome": "São Jerônimo: PBT máx. 10 t nas vias locais e coletoras (Dec. 4.274/2010, art. 2º, I)",
+   "regime": "Limite de PBT",
+   "nome": "Vias locais e coletoras de São Jerônimo - PBT máximo 10 t",
    "status": "ativa",
+   "status_motivo": null,
    "confianca": "media",
    "janelas": [
     {
@@ -67,22 +61,31 @@
    "excecoes": [],
    "base_legal": [
     {
-     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
-     "artigo": "art. 2º",
+     "ato": "Decreto Municipal 4.274, de 15/09/2010",
+     "artigo": "art. 2º, inciso I",
      "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
-     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+     "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
     }
    ],
-   "trechos": "Vias locais e coletoras do município (exceto as listadas nos incisos II e III)",
    "geometria": null,
-   "vigencia_inicio": "2010-09-15"
+   "trechos": [
+    {
+     "inciso": "I",
+     "via": [
+      "vias locais e coletoras"
+     ],
+     "descricao": "todas as vias locais e coletoras (sem lista; depende da hierarquia viária)",
+     "aproximado": true
+    }
+   ]
   },
   {
-   "id": "4318408_dec4274_pbt15_15t",
+   "id": "saojeronimo_pbt_15t",
    "tipo": "via",
-   "regime": "Limite de PBT 15 t",
-   "nome": "São Jerônimo: PBT máx. 15 t (Dec. 4.274/2010, art. 2º, II)",
+   "regime": "Limite de PBT",
+   "nome": "Av. Ramiro Barcelos, Av. Rio Branco (Rua Flores da Cunha a Rua Marechal Floriano) e Rua Antônio de Carvalho - PBT máximo 15 t",
    "status": "ativa",
+   "status_motivo": null,
    "confianca": "media",
    "janelas": [
     {
@@ -112,22 +115,50 @@
    "excecoes": [],
    "base_legal": [
     {
-     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
-     "artigo": "art. 2º",
+     "ato": "Decreto Municipal 4.274, de 15/09/2010",
+     "artigo": "art. 2º, inciso II",
      "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
-     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+     "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
     }
    ],
-   "trechos": "Av. Ramiro Barcelos (toda); Av. Rio Branco entre R. Flores da Cunha e R. Marechal Floriano; R. Antônio de Carvalho (toda)",
    "geometria": null,
-   "vigencia_inicio": "2010-09-15"
+   "trechos": [
+    {
+     "inciso": "II-a",
+     "via": [
+      "Avenida Ramiro Barcelos"
+     ],
+     "descricao": "em toda a extensão"
+    },
+    {
+     "inciso": "II-b",
+     "via": [
+      "Avenida Rio Branco"
+     ],
+     "de": [
+      "Rua Flores da Cunha"
+     ],
+     "ate": [
+      "Rua Marechal Floriano"
+     ],
+     "descricao": "trecho entre Rua Flores da Cunha e Rua Marechal Floriano"
+    },
+    {
+     "inciso": "II-c",
+     "via": [
+      "Rua Antônio de Carvalho"
+     ],
+     "descricao": "em toda a extensão"
+    }
+   ]
   },
   {
-   "id": "4318408_dec4274_pbt30_30t",
+   "id": "saojeronimo_pbt_30t",
    "tipo": "via",
-   "regime": "Limite de PBT 30 t",
-   "nome": "São Jerônimo: PBT máx. 30 t (Dec. 4.274/2010, art. 2º, III)",
+   "regime": "Limite de PBT",
+   "nome": "Vias arteriais de São Jerônimo (Av. Dr. José Athanásio, Rua Gal. Osório etc.) - PBT máximo 30 t",
    "status": "ativa",
+   "status_motivo": null,
    "confianca": "media",
    "janelas": [
     {
@@ -157,15 +188,103 @@
    "excecoes": [],
    "base_legal": [
     {
-     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
-     "artigo": "art. 2º",
+     "ato": "Decreto Municipal 4.274, de 15/09/2010",
+     "artigo": "art. 2º, inciso III (a-i)",
      "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
-     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+     "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
     }
    ],
-   "trechos": "R. Flores da Cunha entre Av. Rio Branco e atracadouro da balsa (travessia São Jerônimo x Triunfo); Av. Rio Branco entre R. Flores da Cunha e Av. Dr. José Athanásio; Av. Dr. José Athanásio (toda); R. Gal. Osório (toda); R. Sen. Salgado Filho entre R. Gal. Osório e R. Rafael Athanásio; R. Rafael Athanásio entre R. Sen. Salgado Filho e R. Flores da Cunha; Av. Maurício Cardoso (toda); R. Dona Délia Drebes (toda); R. Marechal Floriano (toda)",
    "geometria": null,
-   "vigencia_inicio": "2010-09-15"
+   "trechos": [
+    {
+     "inciso": "III-a",
+     "via": [
+      "Rua Flores da Cunha"
+     ],
+     "de": [
+      "Avenida Rio Branco"
+     ],
+     "ate": [
+      "atracadouro da balsa São Jerônimo x Triunfo"
+     ],
+     "descricao": "entre a Av. Rio Branco e o atracadouro da balsa"
+    },
+    {
+     "inciso": "III-b",
+     "via": [
+      "Avenida Rio Branco"
+     ],
+     "de": [
+      "Rua Flores da Cunha"
+     ],
+     "ate": [
+      "Avenida Doutor José Athanásio"
+     ],
+     "descricao": "entre Rua Flores da Cunha e Av. Dr. José Athanásio"
+    },
+    {
+     "inciso": "III-c",
+     "via": [
+      "Avenida Doutor José Athanásio",
+      "Rua Doutor José Athanásio"
+     ],
+     "descricao": "em toda a extensão"
+    },
+    {
+     "inciso": "III-d",
+     "via": [
+      "Rua General Osório"
+     ],
+     "descricao": "em toda a extensão"
+    },
+    {
+     "inciso": "III-e",
+     "via": [
+      "Rua Senador Salgado Filho"
+     ],
+     "de": [
+      "Rua General Osório"
+     ],
+     "ate": [
+      "Rua Rafael Athanásio"
+     ],
+     "descricao": "entre Rua Gal. Osório e Rua Rafael Athanásio"
+    },
+    {
+     "inciso": "III-f",
+     "via": [
+      "Rua Rafael Athanásio"
+     ],
+     "de": [
+      "Rua Senador Salgado Filho"
+     ],
+     "ate": [
+      "Rua Flores da Cunha"
+     ],
+     "descricao": "entre Rua Sen. Salgado Filho e Rua Flores da Cunha"
+    },
+    {
+     "inciso": "III-g",
+     "via": [
+      "Avenida Maurício Cardoso"
+     ],
+     "descricao": "em toda a extensão"
+    },
+    {
+     "inciso": "III-h",
+     "via": [
+      "Rua Dona Délia Drebes"
+     ],
+     "descricao": "em toda a extensão"
+    },
+    {
+     "inciso": "III-i",
+     "via": [
+      "Rua Marechal Floriano"
+     ],
+     "descricao": "em toda a extensão"
+    }
+   ]
   }
  ]
 }

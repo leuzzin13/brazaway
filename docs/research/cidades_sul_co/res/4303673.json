@@ -4,25 +4,25 @@
  "uf": "RS",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
- "data": "2026-10-18",
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
+   "url": "toolkit/diarios_consolidados.py buscar 4303673",
+   "resultado": "município sem diário consolidado (nem Querido Diário): sem busca"
+  },
+  {
    "url": "https://www.camaracampestredaserra.rs.gov.br/leis-municipais",
-   "resultado": "heurístico: ocorrências genéricas, sem ato de caminhões"
+   "resultado": "portal_proprio (camara): falha: heurístico (formulário GET https://www.camaracampestredaserra.rs.gov.br/leis-municipais campo=texto); conferir cada ato na fonte"
   },
   {
    "url": "https://leismunicipais.com.br/prefeitura/rs/campestredaserra",
-   "resultado": "Cloudflare, não consultado"
-  },
-  {
-   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
-   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+   "resultado": "leismunicipais (prefeitura): falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/rs/campestredaserra. Não contornar; usar"
   }
  ],
- "observacoes": "43 ways OSM com maxlength=20, exemplos todos BR-116 (rodovia federal): descartado. Câmara (portal próprio) com 'carga e descarga' em leis genéricas (heurístico), nada relevante lido.",
+ "data": "2026-10-18",
+ "observacoes": "Campestre da Serra: só etiquetas OSM (hgv/maxweight/maxlength). 43 ways BR-116 (primary) maxlength=20: DESCARTADAS por competência federal (DNIT). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. Todas as etiquetas estão em rodovia federal/estadual (competência DNIT/DAER): descartadas, sem busca de ato municipal.",
  "osm_divergencias": [
-  "maxlength=20 em BR-116: descartado."
+  "43 ways BR-116 (primary) maxlength=20: DESCARTADAS por competência federal (DNIT)."
  ],
  "regras_rascunho": []
 }

@@ -5,44 +5,28 @@
  "status": "nao_achou",
  "nivel_busca": "dirigida",
  "falha_de_fonte": true,
- "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "diariomunicipal.com.br/famurs via diarios_consolidados.py buscar 4310538 [circulação de caminhões; trânsito de caminhões; veículos pesados; toneladas]",
-   "resultado": "só ruído: LC 24/2025 (tributária), extratos de contrato"
+   "url": "toolkit/diarios_consolidados.py buscar 4310538 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Estrada do Perau caminhões; Estrada do Perau; veículos de carga; carretas",
+   "resultado": "1 ocorrências na 1ª rodada, todas ruído (cargos, frota, ISS, estrutura administrativa) ou sem ato de restrição"
   },
   {
    "url": "https://leismunicipais.com.br/prefeitura/rs/itaara",
-   "resultado": "Cloudflare, não consultado"
+   "resultado": "leismunicipais (prefeitura): falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/rs/itaara. Não contornar; usar a outra f"
   },
   {
-   "url": "https://itaara.1doc.com.br/ ; https://cmitaara.1doc.com.br/",
-   "resultado": "sem cliente automático"
+   "url": "https://cmitaara.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1doc (camara): falha: sem cliente automático; consultar manualmente: https://cmitaara.1doc.com.br/b.php?pg=o/login&n=3"
   },
   {
-   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
-   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+   "url": "https://itaara.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1doc (prefeitura): falha: sem cliente automático; consultar manualmente: https://itaara.1doc.com.br/b.php?pg=o/login&n=3"
   }
  ],
- "observacoes": "OSM hgv=no em 3 ways da Estrada do Perau (terciária municipal) sem ato achado. FAMURS: único acerto é a LC 24/2025 (tributária: preço do km de caminhões da prefeitura / ISS), ruído; contratos de aquisição de veículo, ruído. Portais leismunicipais (Cloudflare) e 1doc sem busca automática.",
+ "data": "2026-10-18",
+ "observacoes": "Itaara: só etiquetas OSM (hgv/maxweight/maxlength). Estrada do Perau (tertiary) hgv=no (3 ways): sem ato achado. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo.",
  "osm_divergencias": [
-  "OSM hgv=no em Estrada do Perau (ways 263385456, 983413389, 983413390) sem ato."
+  "Estrada do Perau (tertiary) hgv=no (3 ways): sem ato achado."
  ],
- "regras_rascunho": [
-  {
-   "id": "4310538_osm_estrada_perau",
-   "tipo": "via",
-   "regime": "hgv=no (OSM)",
-   "nome": "Itaara: Estrada do Perau (só OSM)",
-   "status": "desativada",
-   "status_motivo": "Apenas etiqueta OSM; sem ato primário",
-   "confianca": "baixa",
-   "alvo": {
-    "caminhao": true
-   },
-   "base_legal": [],
-   "trechos": "Estrada do Perau",
-   "geometria": null
-  }
- ]
+ "regras_rascunho": []
 }

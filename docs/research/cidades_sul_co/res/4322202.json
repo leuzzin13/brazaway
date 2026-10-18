@@ -2,72 +2,35 @@
  "ibge": "4322202",
  "nome": "Tupanciretã",
  "uf": "RS",
- "status": "pista",
+ "status": "nao_achou",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
   {
-   "url": "fila/R1-RS-DO01.json (pistas.osm)",
-   "resultado": "Pistas OSM do lote usadas como base."
+   "url": "toolkit/diarios_consolidados.py buscar 4322202 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Avenida Vaz Ferreira caminhões; Rua Coronel Luiz Azevedo caminhões; Coronel Luiz Azevedo; veículos de carga; carretas",
+   "resultado": "8 ocorrências na 1ª rodada, todas ruído (cargos, frota, ISS, estrutura administrativa) ou sem ato de restrição"
   },
   {
-   "url": "https://www.tupancireta.rs.gov.br/portal/leis_decretos (instar, prefeitura e camara; termos caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, eixos, carreta)",
-   "resultado": "7 atos: so editais de contratacao de motorista de caminhao e GTA: ruido."
+   "url": "https://www.tupancireta.rs.gov.br",
+   "resultado": "instar (camara): 7 atos para os termos caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso; nenhum de circulação de caminhões"
   },
   {
-   "url": "https://www.diariomunicipal.com.br/famurs (4322202: circulação/trânsito de caminhões, veículos pesados, toneladas, Coronel Luiz Azevedo, Vaz Ferreira)",
-   "resultado": "Leis complementares 4365/2021, 4529/2022, 5043/2025 (taxas sanitarias, cargo de motorista): ruido. Lei 4118/2019 (https://www.diariomunicipal.com.br/famurs/materia/3648D93D): competencias do orgao de transito (fiscalizar excesso de peso, escolta); nao e restricao. Decreto 7898/2026 (31/08/2026, https://www.diariomunicipal.com.br/famurs/materia/D15BB396): LIDO; proibe estacionamento 21h-6h de TODOS os veiculos na Av. Vaz Ferreira (R. Frederico Herter a R. Anibal Soares Cardoso) e no entorno Av. Cel. Luiz Azevedo x R. Bento Goncalves; nao e restricao a caminhoes."
+   "url": "https://www.tupancireta.rs.gov.br",
+   "resultado": "instar (prefeitura): 7 atos para os termos caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso; nenhum de circulação de caminhões"
   },
   {
-   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
-   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+   "url": "https://cmtupancireta.cittatec.com.br/portal-legislativo/proposicoes/consulta?ANO=2000,2040&amp;amp;amp;amp;amp;CLASSIFICACAO=12",
+   "resultado": "cittatec (camara): falha: sem cliente automático; consultar manualmente: https://cmtupancireta.cittatec.com.br/portal-legislativo/proposicoes/consulta?ANO=2000,2040&amp;amp;amp;amp;amp;C"
+  },
+  {
+   "url": "https://tupancireta.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1doc (prefeitura): falha: sem cliente automático; consultar manualmente: https://tupancireta.1doc.com.br/b.php?pg=o/login&n=3"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "As vias com hgv=no (Cel. Luiz Azevedo, Vaz Ferreira) sao as mesmas do Decreto 7898/2026 (estacionamento noturno); sugere que o hgv=no pode vir de sinalizacao/regra de caminhoes ainda nao achada em ato. Fontes principais (instar e FAMURS) abertas: busca conclusiva ate onde cobre.",
+ "observacoes": "Tupanciretã: só etiquetas OSM (hgv/maxweight/maxlength). Rua Coronel Luiz Azevedo (secondary), Av. Vaz Ferreira (tertiary) e vias sem nome (6 ways) hgv=no: sem ato achado; hits de diário (LC 4365/2021, 4529/2022, 5043/2025, 4842/2025) eram cargos de motorista e taxas sanitárias de vistoria de caminhões. Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado.",
  "osm_divergencias": [
-  "6 ways hgv=no: Rua Coronel Luiz Azevedo (256107624, 1116051927, 1116051928; secondary), Avenida Vaz Ferreira (1116022034, tertiary) e way 681975051 sem nome; sem ato municipal que confirme."
+  "Rua Coronel Luiz Azevedo (secondary), Av. Vaz Ferreira (tertiary) e vias sem nome (6 ways) hgv=no: sem ato achado; hits de diário (LC 4365/2021, 4529/2022, 5043/2025, 4842/2025) eram cargos de motorista e taxas sanitárias de vistoria de caminhões."
  ],
- "regras_rascunho": [
-  {
-   "id": "tupancireta_rua_cel_luiz_azevedo",
-   "tipo": "via",
-   "regime": "pista_osm",
-   "nome": "Rua/Avenida Coronel Luiz Azevedo (hgv=no, OSM)",
-   "status": "desativada",
-   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
-   "confianca": "baixa",
-   "janelas": [],
-   "feriados": null,
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [],
-   "vigencia_inicio": null,
-   "vigencia_fim": null,
-   "trechos": "Rua/Avenida Coronel Luiz Azevedo (hgv=no, OSM)",
-   "geometria": null
-  },
-  {
-   "id": "tupancireta_av_vaz_ferreira",
-   "tipo": "via",
-   "regime": "pista_osm",
-   "nome": "Avenida Vaz Ferreira (hgv=no, OSM)",
-   "status": "desativada",
-   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
-   "confianca": "baixa",
-   "janelas": [],
-   "feriados": null,
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [],
-   "vigencia_inicio": null,
-   "vigencia_fim": null,
-   "trechos": "Avenida Vaz Ferreira (hgv=no, OSM)",
-   "geometria": null
-  }
- ]
+ "regras_rascunho": []
 }

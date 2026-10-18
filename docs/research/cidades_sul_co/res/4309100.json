@@ -2,51 +2,31 @@
  "ibge": "4309100",
  "nome": "Gramado",
  "uf": "RS",
- "status": "pista",
+ "status": "nao_achou",
  "nivel_busca": "dirigida",
  "falha_de_fonte": true,
- "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "https://sapl.gramado.rs.leg.br/api/norma/normajuridica/",
-   "resultado": "0 resultados para trânsito/caminhões (acervo SAPL quase vazio)"
+   "url": "toolkit/diarios_consolidados.py buscar 4309100 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Avenida Borges de Medeiros caminhões; Rua Pedro Benetti caminhões; Borges de Medeiros caminhões; carretas; veículos de carga",
+   "resultado": "sem resultado"
   },
   {
-   "url": "diariomunicipal.com.br/famurs via diarios_consolidados.py buscar 4309100 [circulação de caminhões; trânsito de caminhões; veículos pesados; toneladas]",
-   "resultado": "0 resultados"
+   "url": "https://sapl.gramado.rs.leg.br",
+   "resultado": "sapl (camara): 0 atos"
   },
   {
-   "url": "https://gramado.atende.net/ ; https://leismunicipais.com.br/camara/rs/gramado",
-   "resultado": "captcha / Cloudflare, não consultados"
+   "url": "https://leismunicipais.com.br/camara/rs/gramado",
+   "resultado": "leismunicipais (camara): falha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/camara/rs/gramado. Não contornar; usar a outra font"
   },
   {
-   "url": "WebSearch: Gramado decreto proíbe circulação de caminhões Av. Borges de Medeiros",
-   "resultado": "nenhum resultado de Gramado"
-  },
-  {
-   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
-   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+   "url": "https://gramado.atende.net",
+   "resultado": "atende (prefeitura): falha: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://gramado.atende.net/autoatendimento/ser"
   }
  ],
- "observacoes": "OSM marca hgv=no + goods=yes em ~22 ways e maxweight em 16 (Av. Borges de Medeiros, R. Pedro Benetti, Av. das Hortênsias, R. Fredolino Guilherme Bier, R. Emílio Sorgetz access=destination): sugere restrição de circulação de caminhões no centro, sem ato localizado. SAPL da Câmara tem poucas normas (API sem resultado para 'trânsito'), FAMURS sem acertos, prefeitura em Atende.net (captcha) e leismunicipais (Cloudflare). 1 WebSearch sem resultado de Gramado. Falha de fonte: não conclusivo.",
+ "data": "2026-10-18",
+ "observacoes": "Gramado: só etiquetas OSM (hgv/maxweight/maxlength). 38 ways (22 hgv=no, 16 maxweight): Rua Pedro Benetti, Av. Borges de Medeiros e links primary: restrição provável (cidade turística) mas sem ato achado (SAPL da Câmara vazio para qualquer termo; Atende captcha; FAMURS sem hits). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo.",
  "osm_divergencias": [
-  "~22 ways hgv=no/goods=yes e 16 maxweight em Gramado sem ato primário localizado."
+  "38 ways (22 hgv=no, 16 maxweight): Rua Pedro Benetti, Av. Borges de Medeiros e links primary: restrição provável (cidade turística) mas sem ato achado (SAPL da Câmara vazio para qualquer termo; Atende captcha; FAMURS sem hits)."
  ],
- "regras_rascunho": [
-  {
-   "id": "4309100_osm_centro",
-   "tipo": "via",
-   "regime": "hgv=no (OSM)",
-   "nome": "Gramado: Av. Borges de Medeiros, R. Pedro Benetti, Av. das Hortênsias, R. Fredolino Guilherme Bier (só OSM)",
-   "status": "desativada",
-   "status_motivo": "Apenas etiquetas OSM (hgv=no, goods=yes); sem ato primário",
-   "confianca": "baixa",
-   "alvo": {
-    "caminhao": true
-   },
-   "base_legal": [],
-   "trechos": "Conforme ways OSM 220917679, 312408398/399/403, 419486824, 493160746",
-   "geometria": null
-  }
- ]
+ "regras_rascunho": []
 }
