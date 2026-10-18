@@ -1,0 +1,149 @@
+{
+ "ibge": "4104204",
+ "nome": "Campo Largo",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/4104204/2015-01-09/825a0a48ffb3e454f1b2b50275c198d9c46162c1.pdf",
+   "resultado": "LIDO integral (QD .txt, Diário Oficial de Campo Largo 09/01/2015): Lei 2654, de 16/12/2014 - Zona Central de Tráfego (ZCT), 11 artigos. Salvo em atos/4104204/lei_2654_2014.txt"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4104204/2024-10-01/abfde37a966ef935a7bf919c4320063915cb5dee.pdf",
+   "resultado": "LIDO trecho (Diário Oficial 01/10/2024): Lei 3.798/2024 (Plano Municipal de Mobilidade), arts. 63-64: o Município \"deverá viabilizar a implantação do sistema de controle de circulação de veículos na ZCT com instalação de sinalização de regulamentação e restrição\" e estudar se os horários atendem - indica ZCT ainda sem sinalização/fiscalização em 2024. Salvo em atos/4104204/lei_3798_2024_trecho.txt"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4104204/2021-05-26/60a3987ed53f63b273fc6828ddcdc8060a6585d2.pdf",
+   "resultado": "LIDO trecho: norma do Estacionamento Regulamentado (ESTAR) art. 9º §2º: carga e descarga com veículos > 5 t só fora do horário do ESTAR, com autorização do DEPTRAN (regra de estacionamento, não de circulação)."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes (4104204; \"Lei nº 2654\", \"ZCT\", \"altera lei 2654\")",
+   "resultado": "QD abriu; ZCT só aparece na Lei 2654 (2015), no edital de audiência pública (17/10/2014) e na Lei 3.798/2024. Nenhuma alteração/revogação encontrada (busca textual do QD é aproximada)."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/campo-largo/",
+   "resultado": "404 (sem página)."
+  },
+  {
+   "url": "https://campolargo.atende.net / sapl.campolargo.pr.leg.br",
+   "resultado": "Não consultados individualmente (QD supriu o texto integral)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Campo Largo: Querido Diário abriu e deu o texto integral da Lei 2654/2014 (ZCT, central). 1 regra ativa (confiança média): >7 t PBT ou >7 m só entra na ZCT dias úteis 19h30-07h30 e sáb. 13h30 a seg. 07h30; >15 t PBT, >14 m ou >2,6 m de largura proibidos. Dúvida: Lei 3.798/2024 (PMU) manda implantar a sinalização e fiscalização da ZCT e rever horários, ou seja, aplicação efetiva pode estar pendente; nenhuma alteração/revogação da Lei 2654 encontrada. Também há regra de estacionamento (ESTAR: C/D > 5 t fora do horário do rotativo). Pendências: mapa (Anexo I), decreto de sanções (art. 9º), sinalização em campo.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "campolargo_zct_lei_2654",
+   "tipo": "zona",
+   "regime": "Zona Central de Tráfego",
+   "nome": "Zona Central de Tráfego – ZCT (Lei 2654/2014)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:30",
+     "to": "19:30"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "07:30",
+     "to": "13:30"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 7.0
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2654, de 16/12/2014 (Campo Largo)",
+     "artigo": "arts. 2º, 3º, 4º, 5º, 7º, 8º",
+     "url": "https://data.queridodiario.ok.org.br/4104204/2015-01-09/825a0a48ffb3e454f1b2b50275c198d9c46162c1.pdf",
+     "nota": "Texto integral lido no Diário Oficial de 09/01/2015. Art. 11 revoga a Lei 1500/2000. Mapa (Anexo I) não lido."
+    }
+   ],
+   "variantes": [
+    {
+     "classe": "PBT > 15 t, comprimento > 14 m ou largura > 2,6 m (acesso proibido)",
+     "quando": {
+      "qualquer": [
+       {
+        "campo": "pbt_t",
+        "acima": 15.0
+       },
+       {
+        "campo": "comprimento_m",
+        "acima": 14.0
+       },
+       {
+        "campo": "largura_m",
+        "acima": 2.6
+       }
+      ]
+     },
+     "janelas": [
+      {
+       "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "from": "00:00",
+       "to": "24:00"
+      }
+     ]
+    }
+   ],
+   "excecoes": [
+    "Art. 3º I: até 7 t PBT e 7 m: acesso livre",
+    "Art. 3º II: de 7 t a 15 t PBT e até 14 m: acesso só em dias úteis 19h30-07h30 e de sáb. 13h30 a seg. 07h30",
+    "Art. 3º III: proibidos PBT > 15 t, > 14 m, > 2,6 m de largura e cavalos mecânicos sem carga a carregar/descarregar",
+    "Art. 4º II: carga e descarga (7-15 t) só em espaços desmarcados para C/D: dias úteis 19h-10h e sáb. 13h30 a seg. 10h",
+    "Art. 7º: urgência, socorro, jornalismo, obras de emergência, acesso a estacionamento próprio, serviços públicos essenciais (integral); valores/serviços essenciais/feiras 7h-19h dias úteis e 7h-13h30 sáb.; mudanças 13h30-17h30 dias úteis e 9h-13h30 sáb.; caçambas 6h-11h/14h-17h dias úteis; combustíveis só 19h-07h seg-sex e sáb. 13h a seg. 7h"
+   ],
+   "autorizacao": "Autorização Especial do DEPTRAN (art. 8º), requerimento com 48 h de antecedência; 7h-19h dias úteis e 7h-13h30 sáb. para obras, concretagem, remoção de terra/entulho/caçambas, produtos perigosos de consumo local",
+   "nota": "Janelas de restrição = complemento do período permitido (art. 3º II): seg-sex 07h30-19h30 e sáb. 07h30-13h30 (a faixa sáb. 00h-07h30 foi tratada como continuação da noite de sexta, permitida). Feriados: o ato não os menciona (aplica). Lei 3.798/2024 (PMU) arts. 63-64 diz que o Município deve ainda implantar a sinalização/controle da ZCT e revisar os horários: aplicação efetiva pode estar pendente; confiança média. Cavalo mecânico sem carga (art. 3º III d) não modelável. Polígono: Av. Vereador Arlindo Chemin (cruz. Av. Padre Natal Pigato) até a Rua Monsenhor Aluísio Domanski com a Rua João Pessoa, Rua João Batista Vallões e de volta à Av. Vereador Arlindo Chemin.",
+   "vigencia_inicio": "2014-12-16",
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Vereador Arlindo Chemin",
+      "Avenida Padre Natal Pigato",
+      "Rua Monsenhor Aluísio Domanski",
+      "Rua João Pessoa",
+      "Rua João Batista Vallões"
+     ],
+     "descricao": "Perímetro da ZCT: parte da Av. Vereador Arlindo Chemin no cruzamento com a Av. Padre Natal Pigato, segue até a Rua Monsenhor Aluísio Domanski na intersecção com a Rua João Pessoa, desta até a Rua João Batista Vallões e desta ao ponto inicial, no cruzamento com a Av. Vereador Arlindo Chemin.",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

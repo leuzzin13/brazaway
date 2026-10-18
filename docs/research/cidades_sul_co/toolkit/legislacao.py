@@ -814,6 +814,32 @@ def c_elotech(base, termo, maxn=100, texto=False):
     return {'total': total, 'atos': atos[:maxn]}
 
 
+def c_atende(base, termo, maxn=100, texto=False):
+    """IPM Atende.net — o módulo "Consulta Legislação Municipal" (rotina 25040, controller wlg_class_controller_consulta_texto_juridico_portal)
+    é uma SPA que consulta atende.php por AJAX atrás de validação de captcha/anti-robô ("atividade incomum originada da sua rede"):
+    NÃO automatizado (não contornar). Este "cliente" só confirma que o módulo existe no host e devolve a URL certa para consulta manual."""
+    o = _origem(base)
+    urls = [o + '/autoatendimento/servicos/legislacao-municipal/detalhar/1', o + '/transparencia/item/legislacao-municipal']
+    if urlparse(base).path.strip('/'):
+        urls.insert(0, base)
+    ok = []
+    for u in urls:
+        r = http(u, timeout=40, tentativas=1)
+        if r and r.status == 200 and 'atende' in (r.text[:60000] + r.url).lower() and 'captcha' not in r.text[:3000].lower():
+            ok.append(u)
+            break
+    raise Erro('Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo %s em: %s. '
+               'Consulte manualmente no navegador ou use a Câmara/diário oficial/Querido Diário.' % (
+                   'presente' if ok else 'NÃO confirmado', ok[0] if ok else urls[0]))
+
+
+def c_nucleogov(base, termo, maxn=100, texto=False):
+    """NucleoGov (acessoainformacao.<m>.<uf>.gov.br|leg.br/cidadao/legislacao/{leis,decretos,portarias,...}) — lista carregada por JS
+    (cidadao/controller/lei/leis em static.nucleogov.com.br). Sem cliente: o host bloqueou (403) o IP desta pesquisa depois do mapeamento."""
+    raise Erro('NucleoGov: listagem de atos em %s é montada por JavaScript (controller cidadao/controller/lei/leis em static.nucleogov.com.br); '
+               'sem cliente automático. Abra a página (filtro Buscar) manualmente.' % base)
+
+
 def c_cespro(cd, termo, maxn=100, texto=False):
     raise Erro('CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=%s) passa por reCAPTCHA e devolve 0 '
                'via API; não automatizar. Use a lista por ano no navegador/WebFetch ou outra fonte (Câmara, Querido Diário).' % cd)
@@ -843,8 +869,18 @@ CLIENTES = {
     'legver': (c_legver, 'Portal ES/MG /legislacao?busca= (itens /legislacao/ver/<id>/detalhes)'),
     'docman': (c_docman, 'Joomla DOCman (listagem por categoria, search em título)'),
     'portal_proprio': (c_generico, 'Portal próprio: heurístico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'mpx': (c_generico, 'MPX Brasil (transparencia.<m>.mt.gov.br/Legislacao) — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'legislador': (c_generico, 'Legislador (legislador.com.br) — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'legislacaomunicipal': (c_generico, 'legislacaomunicipal.com — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'leisnaweb': (c_generico, 'Leis na Web (leisnaweb.com.br) — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'megasoft': (c_generico, 'Megasoft transparência — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'cr2': (c_generico, 'Portal CR2 — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'legissuper': (c_generico, 'Legissuper — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
+    'sinsoft': (c_generico, 'Sinsoft (pg.php?area=LEGISLACAO) — heurístico genérico (formulário de busca da página + regex de Lei/Decreto nº)'),
     'generico': (c_generico, 'Heurístico genérico (igual a portal_proprio)'),
     'elotech': (c_elotech, 'Elotech Oxy/eloweb — API pública do Portal da Transparência (/portaltransparencia-api/api/leisatos, ementa)'),
+    'atende': (c_atende, 'IPM Atende.net — módulo de legislação em SPA com captcha: só confirma o módulo/URL (sem busca automática)'),
+    'nucleogov': (c_nucleogov, 'NucleoGov (GO) — listagem por JS; sem cliente'),
     'cespro': (c_cespro, 'CESPRO — sem cliente (reCAPTCHA)'),
     'leismunicipais': (c_bloqueado, 'Leis Municipais / leis.org — Cloudflare, sem cliente'),
     'legislacaodigital': (c_legislacaodigital, 'Legislação Digital (Sino): domínio próprio funciona; www.legislacaodigital.com.br dá Cloudflare (erro explícito)'),

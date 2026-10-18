@@ -1,0 +1,97 @@
+{
+ "ibge": "4101408",
+ "nome": "Apucarana",
+ "uf": "PR",
+ "status": "pista",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.apucarana.pr.leg.br/media/sapl/public/normajuridica/2015/7093/7093_texto_integral.pdf",
+   "resultado": "LIDO integral (SAPL, PDF): Lei Complementar 006/2015, 13 artigos: ZRCD (carga e descarga) e ARC (circulação). Salvo em atos/4101408/lei_complementar_006_2015.txt"
+  },
+  {
+   "url": "https://sapl.apucarana.pr.leg.br/media/sapl/public/normajuridica/2014/6931/6931_texto_integral.pdf",
+   "resultado": "LIDO (imagem escaneada, sem OCR; lida visualmente na pág. 3): Lei 182/2014, versão anterior do mesmo conteúdo; REVOGADA pelo art. 13 da LC 006/2015."
+  },
+  {
+   "url": "https://sapl.apucarana.pr.leg.br/media/sapl/public/normajuridica/2017/7310/7310_texto_integral.pdf",
+   "resultado": "LIDO: Lei 21/2017 (altera a Lei 8/2017 do estacionamento rotativo: C/D de materiais de construção com autorização especial do IDEPPLAN). Estacionamento."
+  },
+  {
+   "url": "https://sapl.apucarana.pr.leg.br (API normajuridica)",
+   "resultado": "ABRIU. Normas relevantes: Lei 182/2014, LC 006/2015, Lei 21/2017, Lei 97/2022 (vagas C/D de motos). Não há decreto no SAPL (decretos do Executivo não são normas da Câmara)."
+  },
+  {
+   "url": "https://api.queridodiario.org.br (4101408; QD nível 3)",
+   "resultado": "ABRIU; 3 buscas sobre ARC/restrição a circulação/caminhões: sem decreto de ARC/VRC/ZRCD; só licitações e leis de servidão da SANEPAR (irrelevantes)."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/apucarana/",
+   "resultado": "404."
+  },
+  {
+   "url": "https://apucarana.atende.net / http://www.apucarana.pr.gov/diariooficial/novo/",
+   "resultado": "Não acessados (JS); decreto de ARC/VRC pode estar lá."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Apucarana: SAPL abriu e deu o texto integral da LC 006/2015 (revoga a Lei 182/2014): art. 5º proíbe caminhões e tratores nas Áreas de Restrição a Circulação (ARC) 10h-17h seg-sex e 9h-14h sáb/dom/feriados; VUC definido (2,20 m x 7,50 m). Problema: as ARC (e as vias do \"anel central\", art. 11) não são delimitadas na lei - delegadas ao IDEPPLAN/decreto (arts. 6º e 12), decreto não localizado (QD, SAPL). Por isso a regra fica desativada. ZRCD: carga e descarga proibida 10h-17h seg-sex e 9h-14h sáb. na área do Anexo 1 (Anexo não incluído no PDF). Pendências: decreto de ARC/VRC/ZRCD e Anexo 1 (diário oficial/atende.net).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "apucarana_arc_lc_006_2015",
+   "tipo": "zona",
+   "regime": "Área de Restrição a Circulação",
+   "nome": "Áreas de Restrição a Circulação (ARC) – caminhões e tratores (LC 006/2015)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "10:00",
+     "to": "17:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "09:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Complementar Municipal 006, de 11/12/2015 (Apucarana)",
+     "artigo": "arts. 2º IV, 5º, 6º, 11, 12",
+     "url": "https://sapl.apucarana.pr.leg.br/media/sapl/public/normajuridica/2015/7093/7093_texto_integral.pdf",
+     "nota": "Texto integral lido. O perímetro das ARC não consta da lei: delegado ao IDEPPLAN (art. 6º) e ao Decreto do art. 12; art. 11 mantém as restrições do \"anel central\"."
+    }
+   ],
+   "status_motivo": "Horários e alvo definidos (art. 5º: caminhões e tratores não podem transitar nas ARC de 10h-17h seg-sex e 9h-14h sáb/dom/feriados; exceção: serviços essenciais do art. 3º §1º II; VUC até 2,20 m x 7,50 m excluído por definição, horário de VUC e caminhões de transporte regulável por decreto), mas o perímetro das ARC não está na lei (delegado ao IDEPPLAN/decreto, art. 12; art. 11 só mantém o \"anel central\" sem listar vias) e o decreto não foi achado. Sem geometria, não pode ser aplicada.",
+   "excecoes": [
+    "Art. 5º §2º: caminhões/tratores dos serviços do art. 3º §1º II (água, energia e combustíveis, saúde, funerário, esgoto e lixo, telecomunicações, coleta de lixo, concretagem, oxigênio líquido, remoção de veículos sinistrados etc.)",
+    "VUC (art. 2º II: largura até 2,20 m e comprimento até 7,50 m) não é \"caminhão\" para a lei"
+   ],
+   "autorizacao": "Autorização especial do IDEPPLAN (art. 10)",
+   "trechos": [],
+   "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 7.5,
+    "exige_cadastro": false,
+    "artigo": "LC 006/2015, art. 2º, II"
+   }
+  }
+ ]
+}
