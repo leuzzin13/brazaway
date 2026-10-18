@@ -2,37 +2,33 @@
  "ibge": "5205497",
  "nome": "Cidade Ocidental",
  "uf": "GO",
- "status": "nao_achou",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "status": "sem_restricao_declarada",
+ "nivel_busca": "profundo",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "https://cidadeocidental.go.gov.br/leis (e wp-json search)",
-   "resultado": "Página de leis sem lista (links para acessoainformacao 403); só notícias."
+   "url": "https://leis.cidadeocidental.go.gov.br/api/leis (NucleoLeg, base de Leis do portal https://cidadeocidental.go.gov.br/leis/; 1.681 normas de 1993 a 2026, incluindo Lei Organica, 12 LC e 1.665 leis; nao ha decretos nem portarias nesta base)",
+   "resultado": "Baixei o texto integral de todas e fiz regex local (caminhão/caminhões, veículos pesados/de carga, carga e descarga, tonelad*, VUC, transporte de carga, circulação/trânsito/tráfego de veículos, mão única). Nenhuma lei restringe caminhao. Hits relevantes: Lei Organica art. (competencia) XXIX: 'disciplinar os servicos de carga e descarga e fixar a tonelagem maxima permitida a veiculos que circulem em vias publicas municipais' (apenas competencia); Lei 596/2005 (Superintendencia Municipal de Transito) art. XXX: regulamentar e fiscalizar as operacoes de carga e descarga (competencia); Codigo de Posturas Lei 727/2009 e Lei 545/2003: carga e descarga so quanto a limpeza e mercadoria momentanea no passeio 'observados os horarios preestabelecidos pelo Poder Publico', par. 4 do art. de estacionamentos: 'Regulamento disporá sobre ... estacionamentos especiais, tais como taxi, carga e descarga' (sem regulamento localizado); Lei 993/2016 (Plano Diretor): sistema viario estruturante, Plano Municipal de Mobilidade (art. 162, projeto) sem regra de caminhao. Lei 1.025/1.026/1.027 de 2016: carga e descarga/circulacao so como exigencia de projeto."
+  },
+  {
+   "url": "https://dom.cidadeocidental.go.gov.br/api/materias?search=<termo> (Diario Oficial NucleoGov; 12.112 materias de 02/2023 a 09/2026: decretos, portarias, leis, avisos)",
+   "resultado": "Busca de texto: caminhões 7, caminhão 20, carga e descarga 3, veículos pesados 39, trânsito 226, tráfego 6, toneladas 0, mais 30 termos auxiliares (tonelagem, peso bruto, VUC, mão única, interdição, zona azul, mobilidade etc.), com regex sobre o texto integral. Todos os acertos de caminhao/veiculo pesado sao licitacao/contrato/locacao, nomeacao de motorista de veiculos pesados, designacao de fiscal; portarias SMT/SMSPT/ARCO/GCM tratam de transporte escolar, taxi, mototaxi, lombadas (Portaria SMT 008/2023), conducao de veiculos oficiais. Nenhum ato de restricao a circulacao de caminhoes."
+  },
+  {
+   "url": "https://cidadeocidental.go.gov.br/wp-json/wp/v2/search (caminhões; carga e descarga; veículos pesados)",
+   "resultado": "So noticias e paginas de secretarias."
   },
   {
    "url": "https://cidadeocidental.go.leg.br",
-   "resultado": "Template genérico (sem legislação)."
+   "resultado": "Pagina minima sem legislacao."
   },
   {
-   "url": "https://acessoainformacao.cidadeocidental.go.gov.br",
-   "resultado": "403."
-  },
-  {
-   "url": "AGM/FGM, Querido Diário",
-   "resultado": "Sem cobertura."
-  },
-  {
-   "url": "leismunicipais.com.br/prefeitura/go/cidadeocidental",
-   "resultado": "403 (Cloudflare) / não automatizável."
-  },
-  {
-   "url": "penaestrada.com.br/restricoes/cidade-ocidental/ (leads/penaestrada.json)",
-   "resultado": "404, sem página."
+   "url": "Querido Diario / diarios_consolidados.py lead 5205497; penaestrada.com.br/restricoes/cidade-ocidental/",
+   "resultado": "0 acertos; sem pagina no penaestrada."
   }
  ],
- "data": "2026-10-18",
- "observacoes": "Nada localizado; fontes de legislação inacessíveis.",
+ "observacoes": "Nenhuma regra municipal de circulacao de caminhoes localizada em leis (1993-2026) nem em decretos/portarias do DOM (fev/2023-set/2026). Lacuna: decretos e portarias anteriores a fev/2023 nao estao em nenhuma base consultavel (a base de Leis nao traz decretos). Existe base legal de competencia (Lei Organica; Lei 596/2005) para regulamentar carga e descarga e tonelagem, sem regulamento publicado. Nao ha regras ativas nem rascunhos.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

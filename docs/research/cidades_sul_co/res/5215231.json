@@ -2,33 +2,41 @@
  "ibge": "5215231",
  "nome": "Novo Gama",
  "uf": "GO",
- "status": "nao_achou",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "status": "sem_restricao_declarada",
+ "nivel_busca": "profundo",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "https://acessoainformacao.novogama.go.gov.br/cidadao/legislacao/leis (e .go.leg.br)",
-   "resultado": "403."
+   "url": "https://acessoainformacao.novogama.go.gov.br/api (NucleoGov, POST leis/buscaAvancada e atos/buscaAvancada; leis, decretos tipo=1, portarias tipo=2)",
+   "resultado": "Funciona com cookie de sessao. Busca por ementa: caminh (5 leis, todas 'caminhada'), carga e descarga 0, veículos pesados 0, VUC 0, trânsito 7 leis (CMT/JARI, municipalizacao, sinalizacao, dia do agente; nenhuma restringe caminhao), tráfego 2 leis (Lei 1.586/2016 mao unica Rua 209 Pedregal; Lei 1.738/2019 fechamento de ruas sem saida do MCMV, art. 3 par. 3: fecho nao pode impedir acesso de caminhoes), mobilidade 2, estacionamento 10, rodovi 12 (Lei 1.130/2011 autoriza anel rodoviario por croqui, sem regra de circulacao). Decretos: caminh 0, carga e descarga 0, trânsito 10 e tráfego 0 (nomeacoes, convenio CMT-GCM, nenhum sobre caminhao). Portarias: caminh 3 (encaminhamento), trânsito 4 (designacoes). Busca por texto integral nao suportada (parametro texto ignorado)."
   },
   {
-   "url": "https://novogama.go.gov.br e novogama.go.leg.br (wp-json search: caminhões, carga e descarga, tráfego de caminhões, carretas)",
-   "resultado": "Só notícias; sem ato. Câmara aprovou novo Plano Diretor (notícia) não lido."
+   "url": "https://acessoainformacao.novogama.go.gov.br/cidadao/legislacao/lei/id=2430 (Lei 2.362/2026, Plano Diretor, sancionada 01/07/2026; 149 p. escaneadas, lidas por OCR)",
+   "resultado": "Art. 156 II (estrategia: medidas de controle da circulacao de transporte de carga, restringindo vias, horarios, rotas e sinalizacao, tratamento especial na Zona de Consolidacao e Qualificacao Urbana), art. 165 (Politica Municipal de Transporte de Cargas: criar regulamento do transporte de cargas; regular estacionamento de carga e descarga; definir rotas, horarios, padroes de veiculos, tonelagem e pontos de carga e descarga; coibir estacionamento de caminhoes ociosos). Sao DIRETRIZES: o regulamento ainda precisa ser criado; nao ha via, horario ou tonelagem. Texto em atos/5215231/lei_2362_2026_plano_diretor_ocr.txt."
   },
   {
-   "url": "AGM/FGM, Querido Diário",
-   "resultado": "Sem cobertura (0 matérias)."
+   "url": "https://acessoainformacao.novogama.go.gov.br/cidadao/legislacao/lei/id=652 (LC 374/2002, Codigo de Posturas, OCR)",
+   "resultado": "Sem regra de circulacao de caminhao (so estradas e caminhos publicos, art. 156 proibe transporte arrastado de madeira e transito de tracao animal sem eixo)."
   },
   {
-   "url": "leismunicipais.com.br/prefeitura/go/novogama",
-   "resultado": "403 (Cloudflare) / não automatizável."
+   "url": "https://acessoainformacao.novogama.go.gov.br/cidadao/legislacao/lei/id=215, id=30, id=133, id=1735, id=1746 (Leis 1.130/2011, 1.586/2016, 1.347/2013, 1.738/2019, 1.745/2019)",
+   "resultado": "Lidas (OCR ou pdftotext). Nenhuma restringe caminhao."
   },
   {
-   "url": "penaestrada.com.br/restricoes/novo-gama/ (leads/penaestrada.json)",
-   "resultado": "404, sem página."
+   "url": "https://acessoainformacao.novogama.go.leg.br/cidadao/legislacao/leis e https://novogama.go.leg.br/wp-json/wp/v2/search",
+   "resultado": "Camara (NucleoGov) mesma plataforma; busca WP sem noticias de restricao."
+  },
+  {
+   "url": "https://novogama.go.gov.br/wp-json/wp/v2/search (caminhões; carga e descarga; veículos pesados)",
+   "resultado": "So noticias de frota e obras."
+  },
+  {
+   "url": "Querido Diario / diarios_consolidados.py lead 5215231; penaestrada.com.br/restricoes/novo-gama/",
+   "resultado": "0 acertos; sem pagina no penaestrada."
   }
  ],
- "data": "2026-10-18",
- "observacoes": "Nada localizado; portais de legislação 403. Pendência: Plano Diretor/Plano de Mobilidade e leis de trânsito.",
+ "observacoes": "Nenhum ato municipal vigente restringe circulacao de caminhoes (horario, via, zona, anel obrigatorio, VUC, carga e descarga). O Plano Diretor de 2026 manda criar regulamento de transporte de cargas (art. 165) e controle de circulacao de carga (art. 156 II): acompanhar decreto regulamentador futuro. Limites: busca de leis/decretos por ementa; Codigo de Posturas, Plano Diretor e 5 leis lidos na integra. Nao ha regras ativas nem rascunhos.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }
