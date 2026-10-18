@@ -4,7 +4,7 @@
  "uf": "PR",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://sapl.pinhao.pr.leg.br (legislacao.py --texto)",
@@ -21,10 +21,30 @@
   {
    "url": "overpass-api.de ; overpass.kumi.systems ; overpass.private.coffee",
    "resultado": "connection reset / HTTP 500 em 18/10/2026; Overpass não reconsultado"
+  },
+  {
+   "url": "https://sapl.pinhao.pr.leg.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 8 ato(s). Ementas lidas: sem restrição de circulação (ruído: compra de caminhão, consórcio, cargos)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/pr/pinhao",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/"
+  },
+  {
+   "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
+   "resultado": "base com 3572 normas; 'trânsito' na ementa = 3; decretos = 50."
+  },
+  {
+   "url": "https://www.pinhao.pr.gov.br/",
+   "resultado": "R3 home prefeitura: HTTP 200; links de legislação/diário: https://pinhao.oxy.elotech.com.br/portaltransparencia/1/publicacoes/10"
+  },
+  {
+   "url": "https://www.pinhao.pr.leg.br:443",
+   "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Estradas rurais/faxinais com hgv=no. Nenhum ato municipal; a fonte da prefeitura (leismunicipais) está bloqueada e o SAPL respondeu de forma irregular, então o resultado é parcialmente inconclusivo.",
+ "observacoes": "Estradas rurais/faxinais com hgv=no. Nenhum ato municipal; a fonte da prefeitura (leismunicipais) está bloqueada e o SAPL respondeu de forma irregular, então o resultado é parcialmente inconclusivo. | R3 2026-10-18: SAPL da Câmara funcional (3572 normas, 50 decretos), sem ato. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados.",
  "osm_divergencias": [
   "Estrada Pinhalzinho, Estrada Faxinal das Taquara, Estrada Avencal hgv=no sem ato; 4 ways sem nome"
  ],

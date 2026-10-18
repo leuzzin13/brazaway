@@ -4,7 +4,7 @@
  "uf": "PR",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://cmiguaracu.pr.gov.br (webline)",
@@ -21,10 +21,34 @@
   {
    "url": "https://overpass-api.de/api/interpreter",
    "resultado": "FORA DO AR (conexão derrompida pelo proxy; kumi.systems e private.coffee: 500). Usados só os exemplos já anotados em pistas.osm"
+  },
+  {
+   "url": "https://cmiguaracu.pr.gov.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 48 ato(s); erro: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==) não respondeu em https://cmiguaracu.pr.gov.br. Ementas lidas: sem restrição de circulação (ruído: compra de caminhão, consórcio, cargos)."
+  },
+  {
+   "url": "https://www.cmiguaracu.pr.gov.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 40 ato(s). Ementas lidas: sem restrição de circulação (ruído: compra de caminhão, consórcio, cargos)."
+  },
+  {
+   "url": "https://leis.org/prefeitura/pr/iguaracu",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leis.org/prefeitura/pr/iguaracu. "
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (diarios_consolidados.py buscar --fonte amp)",
+   "resultado": "R3: 5 consultas novas ('proibido trânsito de caminhões', 'proibida circulação veículos de carga', 'peso bruto total veículos vias', 'horário carga e descarga área central', 'restrição tráfego veículos pesados'); 5 concluídas, 9 matérias distintas; nenhuma é ato de restrição de circulação de caminhões (ruído: plano diretor/uso do solo, sísmica, feira, tributos, cargos)."
+  },
+  {
+   "url": "https://www.iguaracu.pr.gov.br/",
+   "resultado": "R3 home prefeitura: HTTP 000 (bloqueio/erro)"
+  },
+  {
+   "url": "https://cmiguaracu.pr.gov.br/",
+   "resultado": "R3 home camara: HTTP 200; links de legislação/diário: ?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=4 , ?pag=T0dRPU9EZz1PR0U9T0dVPU9UZz1PVE09T0RnPU9XUT1PV1U9T1dRPU9HTT1ZVEE9 "
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Pistas dc_acerto eram ruído; legislação da prefeitura (leismunicipais) bloqueada. Não conclusivo.",
+ "observacoes": "Pistas dc_acerto eram ruído; legislação da prefeitura (leismunicipais) bloqueada. Não conclusivo. | R3 2026-10-18: Diário AMP (SIGPub) cobre o município (matérias desde 2017), 5 consultas novas + 8 da R1 sem ato de restrição. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados.",
  "osm_divergencias": [
   "OSM (pistas): 9 ways hgv=no em via sem ref de rodovia; unclassified/service sem nome (ex. 171881361, 368759118). Sem ato municipal localizado: pista, não regra."
  ],

@@ -2,7 +2,7 @@
  "ibge": "5106257",
  "nome": "Nova Xavantina",
  "uf": "MT",
- "status": "regra_sem_ato",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -33,20 +33,31 @@
   {
    "url": "https://leismunicipais.com.br/prefeitura/mt/novaxavantina",
    "resultado": "403 Cloudflare"
+  },
+  {
+   "url": "https://sapl.novaxavantina.mt.leg.br/api/norma/anexonormajuridica/?norma=3043",
+   "resultado": "achou o PDF da lei sancionada"
+  },
+  {
+   "url": "https://sapl.novaxavantina.mt.leg.br/media/sapl/public/anexonormajuridica/2025/2478/lei_no_2.936.2025-mao_unica._trecho_av._beira_rio..pdf",
+   "resultado": "LIDO integral"
+  },
+  {
+   "url": "https://sapl.novaxavantina.mt.leg.br/api/norma/normajuridica/?ementa__icontains=Beira Rio|caminh",
+   "resultado": "sem lei posterior"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lead veio da DR mas o achado real é outro: Lei 2.936/2025 (sancionada 04/09/2025; ementa 'alteração do sentido de circulação e proibição de circulação de caminhões na Avenida Beira Rio Setor Nova Brasília'). O texto sancionado não está publicado no SAPL nem no portal; só li o Projeto de Lei 95/2025 (art. 1º mão única da Praia do Sol ao embarcador municipal, sentido BR-158; art. 2º proíbe trânsito de caminhões em toda a Av. Beira Rio, exceto carga e descarga). Como o texto final não foi lido, a regra fica desativada (regra_sem_ato). Reabrir se o texto sancionado for obtido (Diário AMM-MT de set/2025 ou prefeitura). Via curta e local (um único logradouro).",
+ "observacoes": "Lead veio da DR mas o achado real é outro: Lei 2.936/2025 (sancionada 04/09/2025; ementa 'alteração do sentido de circulação e proibição de circulação de caminhões na Avenida Beira Rio Setor Nova Brasília'). O texto sancionado não está publicado no SAPL nem no portal; só li o Projeto de Lei 95/2025 (art. 1º mão única da Praia do Sol ao embarcador municipal, sentido BR-158; art. 2º proíbe trânsito de caminhões em toda a Av. Beira Rio, exceto carga e descarga). Como o texto final não foi lido, a regra fica desativada (regra_sem_ato). Reabrir se o texto sancionado for obtido (Diário AMM-MT de set/2025 ou prefeitura). Via curta e local (um único logradouro). R3 2026-10-18: TAREFA (b): ACHADO o texto sancionado da Lei 2.936/2025 no anexo da norma no SAPL (api/norma/anexonormajuridica/?norma=3043). Art. 2º: proibido o trânsito de caminhões em toda a Av. Beira Rio, exceto carga e descarga; art. 1º mão única. Regra ATIVA (via nomeada, 24 h). SAPL sem alteração posterior. Dica: o texto de norma sem texto_integral costuma estar em /api/norma/anexonormajuridica/.",
  "osm_divergencias": [],
  "regras_rascunho": [
   {
    "id": "novaxavantina_lei2936_2025_beirario",
    "tipo": "via",
-   "regime": "Proibição de trânsito de caminhões na Av. Beira Rio (exceto carga e descarga)",
-   "nome": "Nova Xavantina: Lei 2.936/2025, Avenida Beira Rio (Setor Nova Brasília)",
-   "status": "desativada",
-   "confianca": "baixa",
-   "status_motivo": "Texto sancionado da Lei 2.936/2025 não lido (SAPL sem texto_integral); conteúdo conhecido só pelo ementa da lei e pelo texto do PL 95/2025. Ativar após ler a lei publicada.",
+   "regime": "Proibição de caminhões (via)",
+   "nome": "Nova Xavantina: Avenida Beira Rio (Setor Nova Brasília), trânsito de caminhões proibido (Lei 2.936/2025)",
+   "status": "ativa",
+   "confianca": "media",
    "janelas": [
     {
      "days": [
@@ -67,19 +78,29 @@
     "caminhao": true
    },
    "excecoes": [
-    "exceto para carga e descarga (art. 2º do PL 95/2025)"
+    "Carga e descarga (art. 2º)"
    ],
    "base_legal": [
     {
-     "ato": "Lei 2.936, de 04/09/2025 (Nova Xavantina/MT); texto conhecido via PL 95/2025",
-     "artigo": "art. 2º do PL 95/2025 (a confirmar na lei)",
-     "url": "https://sapl.novaxavantina.mt.leg.br/norma/3043"
+     "ato": "Lei Ordinária nº 2.936, de 04/09/2025 (Nova Xavantina/MT)",
+     "artigo": "art. 2º (proibição em toda a Av. Beira Rio, exceto carga e descarga); art. 1º (mão única, estacionamento da Praia do Sol ao embarcador municipal, sentido BR-158)",
+     "url": "https://sapl.novaxavantina.mt.leg.br/norma/3043",
+     "nota": "Texto lido no anexo PDF da norma: https://sapl.novaxavantina.mt.leg.br/media/sapl/public/anexonormajuridica/2025/2478/lei_no_2.936.2025-mao_unica._trecho_av._beira_rio..pdf"
     }
    ],
    "vigencia_inicio": "2025-09-04",
    "vigencia_fim": null,
-   "trechos": "Avenida Beira Rio, Setor Nova Brasília (mão única da Praia do Sol ao embarcador municipal, sentido BR-158)",
-   "geometria": null
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Beira Rio"
+     ],
+     "descricao": "Toda a extensão da Av. Beira Rio (Setor Nova Brasília). Mão única apenas entre o estacionamento da Praia do Sol e o embarcador municipal, sentido BR-158 (art. 1º).",
+     "aproximado": false
+    }
+   ],
+   "nota": "Data de publicação oficial não vista (vigência 'na publicação'); usada a data da sanção. Busca no SAPL por 'Beira Rio'/'caminh' sem lei posterior. Sinalização em 30 dias (art. 3º) não verificada."
   }
  ]
 }

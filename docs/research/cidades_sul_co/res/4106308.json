@@ -1,22 +1,42 @@
 {
-  "ibge": "4106308",
-  "nome": "Corbélia",
-  "uf": "PR",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "falha_de_fonte": true,
-  "fontes_consultadas": [
-    {
-      "url": "https://sapl.corbelia.pr.leg.br",
-      "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (sapl): abriu; sapl https://sapl.corbelia.pr.leg.br total 6 erro None None"
-    },
-    {
-      "url": "diarios_consolidados.py buscar 4106308 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
-      "resultado": "0 e 0 resultados; sem cobertura do AMP para o município (0 e 0)"
-    }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Conferência barata (classe DR): pista da preparação era ruído; 1 busca no portal principal e 2 no AMP não revelaram ato de restrição a caminhões. AMP sem matérias do município (0/0): diário oficial não coberto pela fonte.",
-  "osm_divergencias": [],
-  "regras_rascunho": []
+ "ibge": "4106308",
+ "nome": "Corbélia",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.corbelia.pr.leg.br",
+   "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (sapl): abriu; sapl https://sapl.corbelia.pr.leg.br total 6 erro None None"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4106308 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
+   "resultado": "0 e 0 resultados; sem cobertura do AMP para o município (0 e 0)"
+  },
+  {
+   "url": "https://sapl.corbelia.pr.leg.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 6 ato(s); erro: SAPL/SAGL sem resposta reconhecível em https://sapl.corbelia.pr.leg.br. Ementas lidas: sem restrição de circulação (ruído: compra de caminhão, consórcio, cargos)."
+  },
+  {
+   "url": "https://corbelia.atende.net",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https:"
+  },
+  {
+   "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
+   "resultado": "base com 1577 normas; 'trânsito' na ementa = 1; decretos = 5."
+  },
+  {
+   "url": "https://corbelia.atende.net/",
+   "resultado": "R3 home prefeitura: HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://www.corbelia.pr.leg.br:443",
+   "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Conferência barata (classe DR): pista da preparação era ruído; 1 busca no portal principal e 2 no AMP não revelaram ato de restrição a caminhões. AMP sem matérias do município (0/0): diário oficial não coberto pela fonte. | R3 2026-10-18: SAPL da Câmara funcional (1577 normas, 5 decretos), sem ato. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados.",
+ "osm_divergencias": [],
+ "regras_rascunho": []
 }

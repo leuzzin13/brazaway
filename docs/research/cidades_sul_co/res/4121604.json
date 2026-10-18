@@ -4,7 +4,7 @@
  "uf": "PR",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://sapl.renascenca.pr.leg.br (API norma, termos caminh|veículos pesados|veículo de carga|carga e descarga|tonelad|eixos|carreta|betoneira|zona de restrição|tráfego)",
@@ -21,10 +21,34 @@
   {
    "url": "https://www.diariomunicipal.com.br/amp/materia/BC463BDE",
    "resultado": "Decreto 2.757/2026: emergência/Defesa Civil mobilizando veículos pesados; ruído."
+  },
+  {
+   "url": "https://sapl.renascenca.pr.leg.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
+  },
+  {
+   "url": "https://www.renascenca.pr.gov.br/",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (diarios_consolidados.py buscar --fonte amp)",
+   "resultado": "R3: 5 consultas novas ('proibido trânsito de caminhões', 'proibida circulação veículos de carga', 'peso bruto total veículos vias', 'horário carga e descarga área central', 'restrição tráfego veículos pesados'); 4 concluídas, 9 matérias distintas; nenhuma é ato de restrição de circulação de caminhões (ruído: plano diretor/uso do solo, sísmica, feira, tributos, cargos)."
+  },
+  {
+   "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
+   "resultado": "base com 0 normas; 'trânsito' na ementa = 0; decretos = 0."
+  },
+  {
+   "url": "https://www.renascenca.pr.gov.br/",
+   "resultado": "R3 home prefeitura: HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://www.renascenca.pr.leg.br:443",
+   "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "SAPL da Câmara fora/sem API; busca coberta só pelo diário AMP (sem ato de circulação), por isso falha_de_fonte=true (não conclusivo para atos fora do AMP).",
+ "observacoes": "SAPL da Câmara fora/sem API; busca coberta só pelo diário AMP (sem ato de circulação), por isso falha_de_fonte=true (não conclusivo para atos fora do AMP). | R3 2026-10-18: Diário AMP (SIGPub) cobre o município (matérias desde 2017), 5 consultas novas + 8 da R1 sem ato de restrição. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

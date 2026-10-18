@@ -4,7 +4,7 @@
  "uf": "PR",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://sapl.jardimalegre.pr.leg.br (legislacao.py --texto)",
@@ -21,10 +21,30 @@
   {
    "url": "overpass-api.de ; overpass.kumi.systems ; overpass.private.coffee",
    "resultado": "connection reset / HTTP 500 em 18/10/2026; Overpass não reconsultado"
+  },
+  {
+   "url": "https://sapl.jardimalegre.pr.leg.br",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 6 ato(s). Ementas lidas: sem restrição de circulação (ruído: compra de caminhão, consórcio, cargos)."
+  },
+  {
+   "url": "https://jardimalegre.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: sem cliente automático; consultar manualmente: https://jardimalegre.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
+   "resultado": "base com 2390 normas; 'trânsito' na ementa = 0; decretos = 31."
+  },
+  {
+   "url": "https://www.jardimalegre.pr.gov.br/",
+   "resultado": "R3 home prefeitura: HTTP 200; links de legislação/diário: http://www.legislacao.pr.gov.br/legislacao/pesquisarAto.do?action=exib, https://www.jardimalegre.pr.gov.br/diariooficial, https://www.jardimalegre.pr.gov.br/diariooficial/"
+  },
+  {
+   "url": "https://www.jardimalegre.pr.leg.br:443",
+   "resultado": "R3 home camara: HTTP 000 (bloqueio/erro)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "5 ways tertiary sem nome com hgv=no. Prefeitura (1doc) sem busca e sem diário consolidado; só SAPL da Câmara consultado.",
+ "observacoes": "5 ways tertiary sem nome com hgv=no. Prefeitura (1doc) sem busca e sem diário consolidado; só SAPL da Câmara consultado. | R3 2026-10-18: SAPL da Câmara funcional (2390 normas, 31 decretos), sem ato. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados.",
  "osm_divergencias": [
   "5 ways hgv=no tertiary sem nome, sem ato"
  ],
