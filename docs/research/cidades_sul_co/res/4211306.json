@@ -32,7 +32,7 @@
       "resultado": "não aberto: Cloudflare 403 (conhecido); portal da prefeitura/atende também não automatizável"
     }
   ],
-  "observacoes": "Regra para caminhão-contêiner (porto de Navegantes) vigente via Dec. 1.069/2013 com o art. 1º dado pelo Dec. 618/2025. Texto-base do 1.069 não localizado: lacuna (por exemplo, regra geral de PBT > 16 t). falha_de_fonte=false porque o DOM/SC abriu, mas o portal de legislação não.",
+  "observacoes": "Regra para caminhão-contêiner (porto de Navegantes) vigente via Dec. 1.069/2013 com o art. 1º dado pelo Dec. 618/2025. Texto-base do 1.069 não localizado: lacuna (por exemplo, regra geral de PBT > 16 t). falha_de_fonte=false porque o DOM/SC abriu, mas o portal de legislação não. | verificado em 2026-10-18: Dec. 618/2025 (atos/7843295) relido, mas SUCEDIDO pelo Dec. 72/2026 (atos/8076657, 05/03/2026, vigencia 30/03/2026, revoga o Dec. 1.069/2013): criterio passa a ser combinacao (caminhao-trator com reboque/semirreboque), nao carga de container. Regra mantida desativada (allowlist, complemento inclui BR-470 e vias estaduais). Dec. 805/2013 permanece desativado (nao lido).",
   "osm_divergencias": [
     "OSM hgv=no em Rua Carlos de Góes Rebello, Rua Manoel Gaya Neto, Rua Francisco de Paula Seara, Rua Gastorina Polucena Rocha etc.: Carlos de Góes Rebelo e Francisco de Paula Seara eram vias PERMITIDAS ao contêiner em 2013 e saíram da lista em 2025 (compatível com hgv=no parcial); o ato proíbe só o caminhão com contêiner, não todo hgv."
   ],
@@ -40,9 +40,9 @@
     {
       "id": "navegantes_dec1069_2013_conteiner_vias_permitidas",
       "tipo": "zona",
-      "regime": "Caminhão com contêiner: só vias permitidas",
-      "nome": "Navegantes: Dec. 1.069/2013 (nova redação do art. 1º dada pelo Dec. 618/2025), caminhões que transportam contêiner só podem trafegar nas vias listadas",
-      "status": "ativa",
+      "regime": "Allowlist de vias para caminhao-trator com reboque/semirreboque",
+      "nome": "Navegantes: Dec. 72/2026, caminhao-trator com reboque e/ou semirreboque so pode trafegar nas vias listadas (suceda Dec. 1.069/2013 e Dec. 618/2025)",
+      "status": "desativada",
       "confianca": "media",
       "janelas": [
         {
@@ -65,25 +65,25 @@
           {
             "campo": "tipo",
             "em": [
-              "semitrailer"
+              "semitrailer",
+              "cvc"
             ]
           }
         ]
       },
       "base_legal": [
         {
-          "ato": "Decreto nº 618, de 15/12/2025 (altera o art. 1º do Decreto nº 1.069, de 14/10/2013)",
-          "artigo": "art. 1º (nova lista de vias), art. 2º (art. 2º-A do Dec. 1.069: infração média, CTB art. 187, I), art. 3º (vigência em 90 dias da publicação)",
-          "url": "https://diariomunicipal.sc.gov.br/atos/7843295",
-          "nota": "DOM/SC 18/12/2025; vigência a partir de cerca de 18/03/2026"
+          "ato": "Decreto nº 72, de 05/03/2026 (Navegantes)",
+          "artigo": "art. 1 (vias permitidas, p.u. requerimento), art. 2 (estacionamento proibido), art. 3 (infracao media, CTB 187 I), art. 4 (vigencia 30/03/2026; revoga o Dec. 1.069/2013)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8076657"
         },
         {
-          "ato": "Decreto nº 139, de 19/05/2022 (acrescenta o art. 2º-A ao Dec. 1.069/2013)",
-          "artigo": "art. 1º",
-          "url": "https://diariomunicipal.sc.gov.br/atos/3916806"
+          "ato": "Decreto nº 618, de 15/12/2025 (revogado indiretamente pelo Dec. 72/2026 ao revogar o 1.069/2013)",
+          "artigo": "art. 1",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7843295"
         }
       ],
-      "vigencia_inicio": "2026-03-18",
+      "vigencia_inicio": "2026-03-30",
       "trechos": [
         {
           "inciso": "art. 1º, a)",
@@ -122,7 +122,7 @@
           "via": [
             "Rua Jornalista Ruy Ademar Rodrigues"
           ],
-          "descricao": "via permitida",
+          "descricao": "via permitida: trecho entre a BR-470 e a Rua Vereador Norival José Bento",
           "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
         },
         {
@@ -138,7 +138,7 @@
           "via": [
             "Rua Onório Bortolato"
           ],
-          "descricao": "via permitida",
+          "descricao": "via permitida: trecho entre a BR-470 e a Rua Pedro Virgílio Ricobon",
           "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
         },
         {
@@ -162,7 +162,7 @@
           "via": [
             "Rua Aníbal Gaya"
           ],
-          "descricao": "via permitida - trecho entre o porto e a Via Portuária",
+          "descricao": "via permitida: trecho entre o porto e a Avenida Portuária Vicente Coelho (Via Portuária)",
           "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
         },
         {
@@ -206,8 +206,9 @@
           "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
         }
       ],
-      "nota": "Regra de ALLOWLIST: o tráfego de 'caminhões que transportam container' é 'permitido, exclusivamente' nas vias listadas; em todas as demais é proibido (a geometria é o complemento da lista, ainda não montada). O decreto-base nº 1.069/2013 não foi achado no DOM/SC nem lido por mim, só a nova redação do art. 1º e o art. 2º-A. A lista de 2025 retirou vias que estavam nos decretos de 2013 (Germano Lemos, Francisco de Paula Seara, Ricardo Mafra, Carlos de Góes Rebelo, Joinville, Comandante Francisco Dias). 'Container' = alvo aproximado por semirreboque/prancha; caminhão-trator solto circula em todas as vias (Dec. 805/2013 art. 2º, parágrafo único; regra do 1.069 não conferida). Data de início do efeito calculada (90 dias).",
-      "geometria": []
+      "nota": "Dec. 72/2026 (DOM/SC atos/8076657) substituiu o regime de 'caminhao que transporta container' (Dec. 1.069/2013 + 618/2025) por criterio de COMBINACAO de veiculos: caminhao-trator com reboque, com semirreboque ou com reboque e semirreboque; o caminhao-trator solto circula em todas as vias (art. 2 p.u.); estacionamento dessas combinacoes proibido nas vias. Vias permitidas iguais as do Dec. 618/2025, com os trechos de Rua Jornalista Ruy Ademar Rodrigues e Rua Onório Bortolato limitados a partir da BR-470. Regra de allowlist: geometria seria o complemento, ainda nao montada.",
+      "geometria": [],
+      "status_motivo": "Verificado 18/10/2026: regra sucedida pelo Decreto 72/2026 (que revoga o Dec. 1.069/2013). Mantida desativada porque e uma allowlist (tráfego permitido EXCLUSIVAMENTE nas vias listadas): o complemento incluiria rodovias federais/estaduais (BR-470 etc.) e vias fora da competencia municipal, sem perimetro de proibicao georreferenciavel; excecao por requerimento previo (art. 1 p.u.)."
     },
     {
       "id": "navegantes_dec805_2013_pbt16",
