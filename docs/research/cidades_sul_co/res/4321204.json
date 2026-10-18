@@ -1,0 +1,53 @@
+{
+ "ibge": "4321204",
+ "nome": "Taquara",
+ "uf": "RS",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "fila/R1-RS-DO01.json (pistas.osm)",
+   "resultado": "Pistas OSM do lote usadas como base."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (4321204: circulação/trânsito de caminhões, veículos pesados, toneladas, Rua Federação)",
+   "resultado": "Sem ato: so licitacoes e enderecos."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/rs/taquara ; https://www.taquara.rs.gov.br",
+   "resultado": "Cloudflare 403; site 403. Querido Diario (nivel 1) fora do ar (522)."
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
+   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "OSM com hgv=no e maxweight 3,5 t na Rua Federacao (centro de Taquara) sugere regra real nao localizada; fontes de legislacao bloqueadas. Nao conclusivo.",
+ "osm_divergencias": [
+  "Rua Federação (ways 895028474, 926488591, 926488592, tertiary): hgv=no + maxweight=3.5; +3 ways nao listadas. Nenhum ato achado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "taquara_rua_federacao",
+   "tipo": "via",
+   "regime": "pista_osm",
+   "nome": "Rua Federação (hgv=no, maxweight=3,5 t, OSM)",
+   "status": "desativada",
+   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": "Rua Federação (hgv=no, maxweight=3,5 t, OSM)",
+   "geometria": null
+  }
+ ]
+}

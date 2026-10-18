@@ -1,0 +1,77 @@
+{
+ "ibge": "4321709",
+ "nome": "Três Coroas",
+ "uf": "RS",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "fila/R1-RS-DO01.json (pistas.osm)",
+   "resultado": "Pistas OSM do lote usadas como base."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (4321709: circulação/trânsito de caminhões, veículos pesados, Rua Mundo Novo)",
+   "resultado": "Sem ato de restricao a caminhoes."
+  },
+  {
+   "url": "https://www.trescoroas.rs.gov.br/?s=caminhões",
+   "resultado": "Noticia de 2015 'Estrada de Figueira terá restrições para veículos pesados' (https://www.trescoroas.rs.gov.br/noticias/2015/11/estrada-de-figueira-tera-restricoes-para-veiculos-pesados/) - pista de noticia, ato nao localizado; demais itens: compra de caminhoes."
+  },
+  {
+   "url": "https://trescoroas.cespro.com.br/",
+   "resultado": "CESPRO reCAPTCHA: nao consultado."
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
+   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Pista de noticia (2015) sobre restricao de veiculos pesados na Estrada de Figueira, sem ato; ato nao encontrado por CESPRO bloqueado. OSM hgv=no na Rua Mundo Novo sem ato.",
+ "osm_divergencias": [
+  "Rua Mundo Novo (way 390066029, secondary): hgv=no; nenhum ato achado no FAMURS (buscas 'Rua Mundo Novo' so trazem decretos de pontos de venda/eventos)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "trescoroas_rua_mundo_novo",
+   "tipo": "via",
+   "regime": "pista_osm",
+   "nome": "Rua Mundo Novo (hgv=no, OSM)",
+   "status": "desativada",
+   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": "Rua Mundo Novo (hgv=no, OSM)",
+   "geometria": null
+  },
+  {
+   "id": "trescoroas_estrada_figueira",
+   "tipo": "via",
+   "regime": "pista_osm",
+   "nome": "Estrada de Figueira (noticia 2015, restricao a veiculos pesados)",
+   "status": "desativada",
+   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": "Estrada de Figueira (noticia 2015, restricao a veiculos pesados)",
+   "geometria": null
+  }
+ ]
+}

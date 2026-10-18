@@ -1,0 +1,53 @@
+{
+ "ibge": "4301008",
+ "nome": "Arroio do Meio",
+ "uf": "RS",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "fila/R1-RS-DO01.json (pistas.osm)",
+   "resultado": "Pistas OSM do lote usadas como base."
+  },
+  {
+   "url": "https://arroiodomeio.cespro.com.br/ ; https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7238",
+   "resultado": "CESPRO reCAPTCHA: nao consultado. Sem diario consolidado nem QD."
+  },
+  {
+   "url": "https://arroiodomeio.rs.gov.br/?s=caminhões",
+   "resultado": "200: so pagina turistica 'Ponte de Ferro' (https://arroiodomeio.rs.gov.br/turismo/visualizar/id/1007/?ponte-de-ferro.html), sem ato."
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
+   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Unica pista e OSM (Ponte de Ferro maxweight 3.5 t). Fonte principal (CESPRO) bloqueada e sem diario: nao conclusivo. Status nao_achou.",
+ "osm_divergencias": [
+  "Ponte de Ferro (way 176546011, secondary): maxweight=3.5 (ponte; possivel limite real da ponte); way 1291380565 (tertiary, sem nome): maxweight=80 (provavel erro de tag/velocidade)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "arroiodomeio_ponte_de_ferro",
+   "tipo": "ponte",
+   "regime": "pista_osm",
+   "nome": "Ponte de Ferro (maxweight=3,5 t, OSM)",
+   "status": "desativada",
+   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": "Ponte de Ferro (maxweight=3,5 t, OSM)",
+   "geometria": null
+  }
+ ]
+}

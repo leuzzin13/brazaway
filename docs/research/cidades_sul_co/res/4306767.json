@@ -1,0 +1,53 @@
+{
+ "ibge": "4306767",
+ "nome": "Eldorado do Sul",
+ "uf": "RS",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "fila/R1-RS-DO01.json (pistas.osm)",
+   "resultado": "Pistas OSM do lote usadas como base."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (buscar 4306767: circulação de caminhões, trânsito de caminhões, veículos pesados, toneladas, Estrada do Conde)",
+   "resultado": "Sem ato de restricao. Acertos so de estrutura administrativa (Lei 5.980/2025 e Lei 6.306/2026: gerenciar frota de veiculos pesados da prefeitura), decretos de CNAE (2023), turma volante e requisicao de imovel na Estrada do Conde: ruido."
+  },
+  {
+   "url": "https://eldoradodosul.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1Doc sem busca automatica; nao consultado. Site www.eldorado.rs.gov.br: reset de conexao na busca ?s=."
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
+   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Unica pista e OSM (maxweight=7 t na Estrada do Conde). Portal de legislacao 1Doc nao pesquisavel; diario FAMURS sem ato. Fonte principal inacessivel: nao conclusivo.",
+ "osm_divergencias": [
+  "Estrada do Conde (EM-1;AP-12, highway=primary): maxweight=7 em 12 ways e hgv=no em way 629955305 (demais hgv=yes); sem ato municipal achado. Ref EM-1/AP-12 pode ser estrada municipal ou de acesso, nao confirmada."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "eldorado_estrada_do_conde",
+   "tipo": "via",
+   "regime": "pista_osm",
+   "nome": "Estrada do Conde (maxweight=7 t, OSM)",
+   "status": "desativada",
+   "status_motivo": "Pista apenas de OSM; nenhum ato primário municipal localizado (ou fonte de legislação bloqueada). Não ativar sem ato.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": "Estrada do Conde (maxweight=7 t, OSM)",
+   "geometria": null
+  }
+ ]
+}

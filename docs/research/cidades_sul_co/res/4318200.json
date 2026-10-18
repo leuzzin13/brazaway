@@ -1,0 +1,208 @@
+{
+ "ibge": "4318200",
+ "nome": "São Francisco de Paula",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "fila/R1-RS-DO01.json (pistas.osm)",
+   "resultado": "Pistas OSM do lote usadas como base."
+  },
+  {
+   "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/",
+   "resultado": "LIDO (PDF escaneado, transcricao visual; sem tesseract): Decreto 2308/2022 de 01/08/2022 (publ. 04/08/2022), art. 1o estacionamento de carretas/bitrem etc. no perimetro urbano; art. 2o veda circulacao de qualquer caminhao na Av. Julio de Castilhos entre R. Coronel Serrano e R. Benjamin Constant (excecoes: manutencao e C/D sinalizada; autorizacao escrita do orgao de transito); art. 4o revoga Dec. 309/2007; art. 5o vigor 45 dias apos publicacao. Texto em atos/4318200/decreto_2308_2022.txt"
+  },
+  {
+   "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/8932/",
+   "resultado": "LIDO: Decreto 2410/2023 de 14/06/2023, horarios de carga e descarga na area central e na Av. Julio de Castilhos (R. Coronel Serrano a R. Bento Goncalves): seg-sex 6-9h e 18-22h; sab 6-9h e a partir de 13h; excecoes. Pagina 3 nao lida."
+  },
+  {
+   "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7284/ ; https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/8691/",
+   "resultado": "Decretos 2309/2022 e 2388/2023 (GT sobre estacionamento e transito de caminhoes, prazo ate 15/06/2023): sem efeito normativo. Nao foi achado ato posterior do GT nem revogacao do 2308 (busca no portal instar: caminh, carga e descarga, Julio de Castilhos, estacionamento, mobilidade)."
+  },
+  {
+   "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/5033/",
+   "resultado": "Lei 3623/2021 (PlanMob) citada nos decretos; nao lida."
+  },
+  {
+   "url": "https://api.queridodiario.org.br",
+   "resultado": "HTTP 522."
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter ; overpass-api.de ; overpass.kumi.systems",
+   "resultado": "Overpass fora do ar (HTTP 500 / connection reset / 504); usados os exemplos OSM anotados em pistas.osm do lote. Geometria/valores de tag nao reconferidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Regra real: circulacao de caminhoes vedada na Av. Julio de Castilhos (trecho R. Coronel Serrano - R. Benjamin Constant), Dec. 2308/2022 art. 2o, vigente desde ~18/09/2022. Mapa/perimetro do anexo 1 (coordenadas) so para o estacionamento no perimetro urbano. Possivel ato posterior do GT nao encontrado; conferir se houve nova regulamentacao em 2023-2026. Aviso: ruas citadas devem ser casadas com OSM (R. Coronel Serrano, R. Benjamin Constant).",
+ "osm_divergencias": [
+  "way 549366613 (unclassified, sem nome): maxweight=12; nao relacionado a nenhum ato; Av. Julio de Castilhos nao confrontada com OSM (Overpass fora do ar)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "saofranciscodepaula_av_julio_castilhos_caminhoes",
+   "tipo": "via",
+   "regime": "proibicao_circulacao",
+   "nome": "Av. Júlio de Castilhos (R. Coronel Serrano a R. Benjamin Constant): circulação de caminhões vedada",
+   "status": "ativa",
+   "status_motivo": "Decreto 2.308/2022 art. 2º lido; nenhuma revogação/alteração localizada; verificar ato posterior do GT (Dec. 2.309/2022 e 2.388/2023).",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "manutenção do logradouro público",
+    "carga/descarga em pontos sinalizados na via",
+    "autorização escrita excepcional do Órgão de Trânsito Municipal (parágrafo único)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 2.308, de 01/08/2022 (publicado 04/08/2022)",
+     "artigo": "art. 2º e parágrafo único; art. 5º (vigência 45 dias após publicação)",
+     "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/"
+    }
+   ],
+   "vigencia_inicio": "2022-09-18",
+   "vigencia_fim": null,
+   "trechos": "Avenida Júlio de Castilhos, entre a Rua Coronel Serrano e a Rua Benjamin Constant (sede de São Francisco de Paula)",
+   "geometria": null
+  },
+  {
+   "id": "saofranciscodepaula_estacionamento_carretas_perimetro",
+   "tipo": "zona",
+   "regime": "proibicao_estacionamento",
+   "nome": "Perímetro urbano da sede: estacionamento de carretas, bitrem, tritrem, bitruck e similares proibido",
+   "status": "desativada",
+   "status_motivo": "Restrição de estacionamento (art. 1º do Dec. 2.308/2022), não de circulação; não aplicável ao roteamento.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "carreta",
+       "bitrem",
+       "tritrem",
+       "bitruck",
+       "treminhao"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 2.308/2022",
+     "artigo": "art. 1º e art. 3º (anexo 1)",
+     "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/"
+    }
+   ],
+   "vigencia_inicio": "2022-09-18",
+   "vigencia_fim": null,
+   "trechos": "Vias públicas do perímetro urbano da sede (anexo 1, 6 vértices com coordenadas)",
+   "geometria": null
+  },
+  {
+   "id": "saofranciscodepaula_carga_descarga_horarios",
+   "tipo": "via",
+   "regime": "horario_carga_descarga",
+   "nome": "Área central e Av. Júlio de Castilhos (R. Coronel Serrano a R. Bento Gonçalves): horários de carga e descarga",
+   "status": "desativada",
+   "status_motivo": "Disciplina operação de carga/descarga (estacionamento), não circulação; pontual.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "18:00",
+     "to": "22:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "13:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": null,
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "veículos até 1.000 kg",
+    "materiais de construção/entulho/concretagem com autorização prévia 24 h",
+    "bancos, saúde e emergências"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 2.410, de 14/06/2023",
+     "artigo": "arts. 1º, 2º e 8º",
+     "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/8932/"
+    }
+   ],
+   "vigencia_inicio": "2023-06-14",
+   "vigencia_fim": null,
+   "trechos": "Área central do Distrito Sede; Av. Júlio de Castilhos entre R. Coronel Serrano e R. Bento Gonçalves",
+   "geometria": null
+  }
+ ]
+}

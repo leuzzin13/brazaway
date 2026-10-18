@@ -2,29 +2,92 @@
  "ibge": "4101309",
  "nome": "Antônio Olinto",
  "uf": "PR",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
+ "data": "2026-10-18",
  "fontes_consultadas": [
   {
-   "url": "https://sapl.antonioolinto.pr.leg.br",
-   "resultado": "legislacao.py buscar (camara/sapl): ver observações"
+   "url": "https://sapl.antonioolinto.pr.leg.br/api/norma/normajuridica/?ementa__icontains=... (via toolkit/legislacao.py buscar --principal, termos caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|tráfego|trafego)",
+   "resultado": "Termo 'tráfego': 2 atos — Lei Ordinária 976/2022 (norma/393) e 984/2022 (norma/575, mesma ementa, matéria PLO 9/2022); sem texto original anexado no SAPL."
   },
   {
-   "url": "https://antonioolinto.pr.gov.br/portal/leis_decretos",
-   "resultado": "legislacao.py buscar (prefeitura/instar): ver observações"
+   "url": "https://antonioolinto.pr.gov.br/portal/leis_decretos/284/",
+   "resultado": "Instar da prefeitura: texto integral da Lei 976/2022 lido (arts. 1º a 7º). Salvo em atos/4101309/lei_976_2022.txt."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4101309 --fonte prefeitura (estradas rurais|precipita|caminh|pesados|tráfego)",
+   "resultado": "Instar: só a Lei 976/2022 relevante; decretos 46/2017, 19/2017 e 117/2015 e portaria 2/2018 são crédito/consignado (ruído). Nenhum decreto de aplicação (§4º) encontrado."
   },
   {
    "url": "https://leismunicipais.com.br/prefeitura/pr/antonio-olinto",
-   "resultado": "legislacao.py buscar (prefeitura/leismunicipais): ver observações"
+   "resultado": "403 Cloudflare, não contornado."
   },
   {
-   "url": "diarios_consolidados.py buscar (AMP/QD) circulação/trânsito de caminhões, veículos pesados",
-   "resultado": "executado; ver observações"
+   "url": "https://data.queridodiario.ok.org.br/4101309/2025-09-22/f70622d786324ef6e457d503068ef2e240858f19.pdf",
+   "resultado": "Trecho da preparação: indicação/requerimento sobre trânsito de veículos pesados e pavimento (Diário 2132, p.186; 'Interceder junto ao Governo Estadual') — pedido de vereador, pista, não ato."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4101309/2025-04-07/1d426bec0868640ceffdf7c7f154c3f86dca64a5.pdf",
+   "resultado": "Trecho da preparação: servidão SANEPAR. Ruído."
   }
  ],
- "data": "2026-10-18",
- "observacoes": "Conferência barata (DR): trechos da preparação reconferidos (ruído: servidão SANEPAR/Copel, ISS, motorista de veículos pesados, lei orgânica/plano diretor genéricos); 1 busca no portal/Câmara e buscas no diário sem ato de restrição. Nada concreto.",
+ "observacoes": "[Lote R1-PR-DR03] Lead da DR virou achado: Lei Municipal 976/2022 (05/12/2022) autoriza o Executivo a limitar o tráfego de veículos pesados (carga >= 40 t) nas estradas rurais municipais em dias de chuva: 25-50 mm = 24 h; 51-80 mm = 36 h; >81 mm = 48 h; exclui perecíveis, rações e cargas vivas (art. 1º §3º); multa R$ 500 (art. 3º). A limitação de cada episódio depende de decreto municipal publicado (art. 1º §4º). Nenhum decreto encontrado. Lei 984/2022 no SAPL repete a ementa (provável duplicidade de cadastro). Regra gravada como desativada: não há janela fixa nem lista de estradas; é pista para aviso de estrada rural em chuva, sem geometria.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "antonioolinto_estradas_rurais_chuva_40t",
+   "tipo": "via",
+   "regime": "Proibição condicional (chuva) em estradas rurais",
+   "nome": "Estradas rurais municipais: veículos com carga >= 40 t em dias de alta precipitação (Lei 976/2022)",
+   "status": "desativada",
+   "status_motivo": "Lei só autoriza o Executivo; a limitação vale por episódio de chuva (24/36/48 h conforme 25-50, 51-80, >81 mm) mediante decreto (art. 1º §4º), e nenhum decreto foi encontrado. Sem janela fixa nem lista de estradas; condição meteorológica não modelável na camada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 40
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 1º §3º: transporte de cargas perecíveis, rações e cargas vivas"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 976, de 05/12/2022 (Antônio Olinto)",
+     "artigo": "art. 1º, §§1º-4º; art. 3º",
+     "url": "https://antonioolinto.pr.gov.br/portal/leis_decretos/284/",
+     "nota": "Texto integral lido no portal da prefeitura (Instar). 'Peso da carga igual ou superior a 40 t' registrado como payload_t acima de 40 (aproximação)."
+    }
+   ],
+   "vigencia_inicio": "2022-12-05",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Todas as estradas rurais municipais (classificação da Lei 724/2011: principais, secundárias, vicinais).",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
 }
