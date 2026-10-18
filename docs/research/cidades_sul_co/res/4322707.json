@@ -4,7 +4,7 @@
  "uf": "RS",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.veracruz.rs.gov.br/portal/leis_decretos",
@@ -17,10 +17,34 @@
   {
    "url": "leads/diarios_consolidados.json (pista da preparação)",
    "resultado": "Portal instar da prefeitura: \"caminh\" = 7 atos (caminhão de bombeiros, caminhódromo, caminhada, serviços de máquinas e caminhões a produtor rural); veículos pesados/carga e descarga/tráfego/tonelad = 0."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4322707 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "instar/prefeitura https://www.veracruz.rs.gov.br: 7 atos; leismunicipais/camara https://leismunicipais.com.br/camara/rs/veracruz: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec/camara https://cmveracruz.cittatec.com.br/portal-legislativo/proposicoes/consulta?ANO=1900,2100&CLASSIFICACAO=11: sem cliente automático; consultar manualmente: https://cmveracruz.citt; atende/camara https://camaraveracruz.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://veracruz.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc/prefeitura https://veracruz.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://veracruz.1doc.c"
+  },
+  {
+   "url": "https://veracruz.rs.leg.br/",
+   "resultado": "R3: home http 200 (74982 bytes)"
+  },
+  {
+   "url": "https://www.veracruz.rs.gov.br/",
+   "resultado": "R3: home http 200 (438561 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4322707 (FAMURS) R3: tráfego de caminhões, trânsito de veículos pesados, carga e descarga, zona de restrição de caminhões, proibido estacionar caminhões, circulação de caminhões, toneladas",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4322707",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente vera-cruz, veracruz, vera-cruz-rs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Conferência barata: Portal instar da prefeitura: \"caminh\" = 7 atos (caminhão de bombeiros, caminhódromo, caminhada, serviços de máquinas e caminhões a produtor rural); veículos pesados/carga e descarga/tráfego/tonelad = 0. Portal instar pesquisado sem achado; Querido Diário (único diário que cobre o município) fora do ar (HTTP 522), então o não achou é parcial.",
+ "observacoes": "Conferência barata: Portal instar da prefeitura: \"caminh\" = 7 atos (caminhão de bombeiros, caminhódromo, caminhada, serviços de máquinas e caminhões a produtor rural); veículos pesados/carga e descarga/tráfego/tonelad = 0. Portal instar pesquisado sem achado; Querido Diário (único diário que cobre o município) fora do ar (HTTP 522), então o não achou é parcial. R3 2026-10-18: fonte alternativa que cobre a legislação consultada: portal instar da prefeitura (veracruz.rs.gov.br/portal/leis_decretos) respondeu (controle positivo ok: leis e decretos 2026); só ruído (caminhada, caminhão do bombeiro, máquinas). Nenhum ato de restrição de circulação de caminhões. falha_de_fonte=false. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

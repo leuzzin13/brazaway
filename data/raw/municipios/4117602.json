@@ -1,0 +1,149 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4117602",
+  "municipio": "Palmas",
+  "uf": "PR",
+  "fonte_id": "palmas",
+  "fonte": {
+    "url": "https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa/0/1/0/2251 (Lei 2293/2015)",
+    "licenca": "Ato oficial do Município de Palmas: domínio público (Lei 9.610/1998 art. 8º IV). Geometria derivada do OpenStreetMap (ODbL 1.0, © colaboradores do OpenStreetMap).",
+    "notas": "Uma regra ativa (confiança média): anel viário central, caminhões com PBT acima de 10 t, 24 h, exceção por autorização do DEPALTRAN. A faixa de 3,5 a 10 t (art. 2º) entra desativada (ambiguidade tara x PBT). Vigência após 2019 não comprovada (acervo da Câmara termina em 2019). Perímetro descrito só por vias nomeadas, sem anexo cartográfico: polígono aproximado."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Palmas não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "palmas_anel_central_pbt_gt10t",
+      "tipo": "zona",
+      "regime": "Proibição por peso (zona/anel viário)",
+      "nome": "Anel viário central de Palmas: caminhões pesados (Lei 2293/2015)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 2293, de 22/04/2015 (Palmas/PR)",
+          "artigo": "art. 1º, §§1º-2º; art. 4º; art. 5º",
+          "url": "https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa/0/1/0/2251",
+          "nota": "Texto integral lido (PDF em https://www.cloudsoftcam.com.br/PR/PALMAS/importacao/2015/04/lei_2293.pdf). Cópia em atos/4117602/lei-2293-2015.txt. Vigência a partir de 01/01/2016 (art. 5º); revoga a Lei 1.736/2007. Nenhuma lei posterior citando a 2293 na busca de texto integral da Câmara."
+        }
+      ],
+      "excecoes": [
+        "art. 4º: autorização prévia e por 1 dia expedida pelo Diretor do DEPALTRAN (CRLV + comprovação de imprescindibilidade); §3º: veículos de classe especial mediante autorização do DEPALTRAN"
+      ],
+      "nota": "Lei proíbe o tráfego de 'caminhões pesados' no anel viário: Rua Manoel Inácio de Loyola (esq. R. Marechal Deodoro) > Av. Barão do Rio Branco > R. Ver. Amazonas Fonseca > R. Augusto Guimarães > R. Marechal Floriano Peixoto > R. Marechal Deodoro > ponto inicial; §2º inclui as vias internas ao anel. AMBIGUIDADE: o §1º define caminhão pesado como 'PBT acima de 3,5 t (três vírgula cinco toneladas de tara, equivalente a dez toneladas do PBT)'; adotada a leitura tara>3,5 t = PBT>10 t (confiança média). A classe de PBT de 3,5 a 10 t está na regra seguinte (art. 2º). | Verificado em 2026-10-18 (PDF reaberto): a Lei 1.736/2007 revogada usava 'tonelagem superior a 3.500 kg' (sem definir tara/PBT), o que reforça a ambiguidade; o corte PBT>10 t é a leitura segura (proibido sob qualquer das leituras). Alterações pós-2019 NÃO verificáveis: acervo da Câmara termina em 2019 e Palmas não é entidade do diário AMP.",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Manoel Inácio de Loyola",
+            "Rua Marechal Deodoro",
+            "Avenida Barão do Rio Branco",
+            "Rua Ver. Amazonas Fonseca",
+            "Rua Augusto Guimarães",
+            "Rua Marechal Floriano Peixoto"
+          ],
+          "descricao": "Anel viário e vias internas (art. 1º, §2º); perímetro descrito por vias nomeadas, sem anexo cartográfico.",
+          "aproximado": true
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4117602_anel_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono aproximado do anel viário central (art. 1º da Lei 2293/2015) montado sobre as vias nomeadas do OSM (Rua Manoel Inácio de Loyola, Rua Marechal Deodoro, Av. Barão do Rio Branco, Rua Ver. Amazonas Fonseca, Rua Augusto Guimarães, Rua Marechal Floriano Peixoto): borda sul pela Marechal Deodoro, oeste pela Marechal Floriano Peixoto, norte por Augusto Guimarães e Barão do Rio Branco, leste na meridiana do início da Rua Manoel Inácio de Loyola; ampliado cerca de 30 m para dentro dos limites das vias (o recuo de 20 m da camada devolve as ruas-limite). Inclui as vias internas (art. 1º, §2º). Fora: rodovias."
+        }
+      ]
+    },
+    {
+      "id": "palmas_anel_central_pbt_3_5a10t_janela",
+      "tipo": "zona",
+      "regime": "Restrição de horário (zona/anel viário)",
+      "nome": "Anel viário central de Palmas: caminhões leves (3,5 a 10 t) só 18h-9h30 seg-sáb (Lei 2293/2015 art. 2º)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "09:30",
+          "to": "18:00"
+        },
+        {
+          "days": [
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 3.5
+          },
+          {
+            "campo": "pbt_t",
+            "ate": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 2293, de 22/04/2015 (Palmas/PR)",
+          "artigo": "art. 2º; art. 4º, §1º",
+          "url": "https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa/0/1/0/2251",
+          "nota": "Mesmo ato da regra anterior."
+        }
+      ],
+      "excecoes": [
+        "art. 4º, §1º: autorização do DEPALTRAN para trânsito em horário/dia diverso"
+      ],
+      "nota": "Art. 2º: caminhões 'com PBT de até 3,5 t (tara; ~10 t de PBT)' só podem transitar no anel entre 18h e 9h30, de segunda a sábado; domingo não consta como permitido (interpretado como restrito o dia todo). Texto internamente ambíguo (mistura tara e PBT): confiança baixa; revisar antes de usar.",
+      "status_motivo": "Faixa de 3,5 a 10 t de PBT depende de leitura ambígua do art. 1º §1º e do art. 2º ('3,5 t de tara, equivalente a 10 t do PBT'): se o corte for PBT 3,5 t, a classe fica proibida o dia todo (art. 1º) e não em janela; se for tara equivalente a 10 t de PBT, a janela vale e o limite inferior seria 0. Qualquer parametrização erra; verificador rebaixou a regra a desativada.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

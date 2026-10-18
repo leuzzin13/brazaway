@@ -40,10 +40,26 @@
    "url": "diarios_consolidados.py lead 4303103",
    "resultado": "Sem diário consolidado (FAMURS não tem entidade de Cachoeirinha; QD sem cobertura).",
    "rodada": "R2"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4303103 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/prefeitura https://leismunicipais.com.br/prefeitura/rs/cachoeirinha: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende/camara https://camaracachoeirinha.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://cachoeirinha.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4303103 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4303103",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente cachoeirinha, cachoeirinha-rs, cachoeirinhars); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem achado, mas nenhuma fonte de legislação pesquisável: portal Atende com busca atrás de Turnstile, leismunicipais bloqueado, site oficial com TLS inválido e Câmara com captcha. Páginas institucionais da Sec. Mun. de Mobilidade (SMMOB) lidas sem regra de caminhões. 'Não achou' NÃO é conclusivo; necessário acesso manual ao Diário Oficial (cachoeirinha.atende.net/diariooficial/) ou à Câmara.",
+ "observacoes": "Sem achado, mas nenhuma fonte de legislação pesquisável: portal Atende com busca atrás de Turnstile, leismunicipais bloqueado, site oficial com TLS inválido e Câmara com captcha. Páginas institucionais da Sec. Mun. de Mobilidade (SMMOB) lidas sem regra de caminhões. 'Não achou' NÃO é conclusivo; necessário acesso manual ao Diário Oficial (cachoeirinha.atende.net/diariooficial/) ou à Câmara. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://cachoeirinha.atende.net; https://camaracachoeirinha.atende.net; https://leismunicipais.com.br/prefeitura/rs/cachoeirinha. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [
   "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight nas vias."
  ],

@@ -21,10 +21,34 @@
   {
    "url": "toolkit/legislacao.py buscar 4321626 'caminh|pesad|tonelad|trânsito|transito|carga e descarga' --principal",
    "resultado": "CESPRO (prefeitura): sem cliente (CESPRO/Atende com reCAPTCHA/captcha ou portal sem automação) - 0 atos; portal principal não consultado."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4321626 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "cespro/prefeitura https://travesseiro.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdM; desconhecido/camara https://travesseiro.rs.leg.br/: sem cliente automático; consultar manualmente: https://travesseiro.rs."
+  },
+  {
+   "url": "https://travesseiro.rs.leg.br/",
+   "resultado": "R3: home http 403 (5358 bytes)"
+  },
+  {
+   "url": "https://www.travesseiro.rs.gov.br/",
+   "resultado": "R3: home http 403 (5362 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4321626 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4321626",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente travesseiro, travesseiro-rs, travesseirors); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhum ato localizado: os acertos são ruído (incentivos agrícolas, processos físicos). Portal principal (CESPRO) bloqueado por reCAPTCHA; município pequeno (2 mil hab.) - busca inconclusiva.",
+ "observacoes": "Nenhum ato localizado: os acertos são ruído (incentivos agrícolas, processos físicos). Portal principal (CESPRO) bloqueado por reCAPTCHA; município pequeno (2 mil hab.) - busca inconclusiva. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://travesseiro.cespro.com.br/; https://travesseiro.rs.leg.br/. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

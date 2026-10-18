@@ -2,7 +2,7 @@
  "ibge": "4308607",
  "nome": "Garibaldi",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "media",
  "falha_de_fonte": true,
  "fontes_consultadas": [
@@ -21,10 +21,82 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 4308607 (famurs/qd) termos adicionais 'tonelagem', 'proíbe trânsito caminhões', 'veículos de carga', 'carga e descarga', 'tráfego de caminhões'",
    "resultado": "sem ato de restrição; só ruído (licitação, RH, ISS, contratos)"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4308607 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "portal_proprio/prefeitura https://www.garibaldi.rs.gov.br/: 0 atos; leismunicipais/camara https://leis.org/camara/rs/garibaldi: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We"
+  },
+  {
+   "url": "https://www.camaragaribaldi.rs.gov.br/",
+   "resultado": "R3: home http 200 (1705 bytes)"
+  },
+  {
+   "url": "https://www.garibaldi.rs.gov.br/",
+   "resultado": "R3: home http 200 (603720 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4308607 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4308607",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "https://www.camaragaribaldi.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camaragaribaldi.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 1006 itens no teste 'orçamento' (mais antigo 14/07/2011, mais recente 05/02/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo. Acertos por termo: {'caminhões': 25, 'caminhão': 90, 'veículos pesados': 1, 'toneladas': 8, 'eixos': 7, 'carretas': 3, 'veículos de carga': 9}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente garibaldi, garibaldi-rs, garibaldirs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Garibaldi: site da prefeitura sem busca automatizável; Câmara via leismunicipais (bloqueado); FAMURS sem ato. Lote R1-RS-M02 (segunda passada manual, 18/10/2026).",
+ "observacoes": "Garibaldi: site da prefeitura sem busca automatizável; Câmara via leismunicipais (bloqueado); FAMURS sem ato. Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://leis.org/camara/rs/garibaldi. | R4 2026-10-18: varredura da Câmara em Softcam (www.camaragaribaldi.rs.gov.br): acervo com 1006 itens no teste 'orçamento' (mais antigo 14/07/2011, mais recente 05/02/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo {'caminhões': 25, 'caminhão': 90, 'veículos pesados': 1, 'toneladas': 8, 'eixos': 7, 'carretas': 3, 'veículos de carga': 9}. Lei 141/1950 (estradas municipais, PBT > 6 t em dia de chuva): rascunho desativado (condicionada a chuva). Status pontual. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "garibaldi_estradas_chuva_6t",
+   "tipo": "via",
+   "regime": "Restrição por chuva (estradas municipais)",
+   "nome": "Estradas municipais em dia de chuva: PBT acima de 6 t (Lei 141/1950)",
+   "status": "desativada",
+   "status_motivo": "Restrição condicionada à chuva e a estradas municipais sem nomeação; lei de 1950 sem confirmação de vigência.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 6
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 141, de 11/07/1950 (Garibaldi/RS)",
+     "artigo": "arts. 1º, 2º e 4º",
+     "url": "https://www.camaragaribaldi.rs.gov.br/proposicoes/pesquisa/0/1/0/11930",
+     "nota": "Cópia em atos/4308607/lei-141-1950.txt. Proíbe automotores com PBT > 6.000 kg em dias de chuva (livres até 2.000 kg, e até 6.000 kg com pneus lameiro)."
+    }
+   ],
+   "nota": "Condicionada a chuva."
+  }
+ ]
 }

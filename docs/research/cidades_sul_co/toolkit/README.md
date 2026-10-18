@@ -6,6 +6,7 @@ Português do Brasil. Portais mapeados em 18/10/2026 (1.659 municípios de `../m
 | arquivo | para quê |
 |---|---|
 | `legislacao.py` | busca de **atos normativos** (leis, decretos, portarias) nos sistemas de legislação da prefeitura/câmara de cada município |
+| `plenus_1dom.py` | busca por termo nos diários **DIOENET/Plenus** (texto integral) e **1dom** (por título/fuzzy), descoberta de plataforma e faixa do acervo. Ver seção 7 |
 | `../leads/portais.json` | mapa dos 1.659 municípios → sistema de legislação da prefeitura e da câmara, URL de busca, se o cliente foi testado e todas as fontes achadas |
 | `diarios_consolidados.py` | busca em **diários oficiais consolidados**. Ver o docstring no topo do próprio arquivo; lead pronto em `../leads/diarios_consolidados.json` |
 | `../portais_work/` | scripts e caches que geraram o `portais.json` (ver seção 5) |
@@ -209,3 +210,64 @@ Não cobertos por esta ferramenta (avaliados, sem busca automatizável por aqui)
 * `../leads/diarios_consolidados.json`: 1.187 municípios (cobertos por ≥ 1 diário), **647 com ao menos um acerto** (score ≥ limiar). Por UF (no arquivo / com acerto / só indício / cobertos sem achado): SC 294/234/44/16 · PR 218/171/17/30 · RS 297/66/39/192 · GO 174/38/23/113 · MT 141/99/23/19 · MS 62/38/4/20 · DF 1/1/0/0.
 * Sem nenhum diário consolidado (`_meta.sem_diario_consolidado`): PR 181 · RS 200 · GO 72 · MS 17 · MT 1 · SC 1 · DF 0.
 * Bruto por diário e progresso: `../leads/diarios_consolidados_raw/` (`hits_<fonte>.jsonl`, `progresso_<fonte>.jsonl`, `estado.json`, `cobertura.json`, `log.txt`).
+
+---
+
+## 6. `nucleogov.py` — API pública dos diários NucleoGov (GO) — R4 2026-10-18
+
+O portal `acessoainformacao.<m>.go.gov.br` dá 403, mas quando o município usa o **diário NucleoGov**, `https://dom.<dominio>/api/...` responde JSON sem login
+(Laravel, 150 req/min): `/api/diarios` (edições, ordem decrescente), `/api/materias?search=<termo>&per_page=50&page=P` (texto integral em `texto`, `titulo`, `tipo.descricao`, `diario.data`), `/api/orgaos`.
+`/api/legislacao|leis|atos|normas|tipos` devolvem o HTML da SPA (não existem como API). A busca ignora acento.
+
+```bash
+python3 nucleogov.py descobrir 5214606            # acha dom.* e mostra a faixa do acervo (primeiro/último diário, nº de matérias)
+python3 nucleogov.py buscar 5214606 --termos "caminhões,toneladas" --saida /tmp/x.json
+python3 nucleogov.py lote ../fila_r3/R4-NUCLEOGOV-GO.json /tmp/saida --workers 8
+```
+Como módulo: `descobrir(nome, sites)`, `acervo(host)`, `buscar(host, termo)`, `varrer(host)`, `relevante(m)` (pontua: ato normativo + veículo pesado + restrição; licitação/ata/extrato rebaixa).
+
+**Resultado da varredura (82 cidades GO com portal NucleoGov na lista):** só **2** têm `dom.*` — Niquelândia (acervo 2023-04 a 2026-10, 339 edições, só licitações/atas/portarias de pessoal, nenhum ato de trânsito) e Abadia de Goiás (1 edição, 2025-11-26, 0 matérias). Nos outros 80 o host `dom.<slug>.go.gov.br` não existe (o proxy responde 502 no CONNECT).
+Os municípios com acervo desde 2018 ou antes (critério para negativo conclusivo) não apareceram: o DOM NucleoGov é recente (2023+), então `falha_de_fonte` permanece como estava. Outros diários citados nas homes: Gameleira de Goiás e Trindade (`diariomunicipal.com.br/agm/`), Caldas Novas (`caldasnovas.integrame.app.br/app/#/site/diario-oficial`), Jataí (`intranet.jatai.go.gov.br/.../diario-site.php`), Vicentinópolis (Câmara `/diariooficial`).
+
+---
+
+## 8. `sigpub_texto.py` — texto integral no SIGPub (AGM/FGM, GO) por entidade — R4-AGM 2026-10-18
+
+O SIGPub (`diariomunicipal.com.br/<assoc>/pesquisar`, GET `busca_avancada[texto|titulo|entidade|dataInicio|dataFim|ordenacao|pagina]`) já é a busca de texto integral
+(E lógico, 25/pág., teto 10.000); não há API JSON separada. O que faltava: **entidade + faixa do acervo**. `texto` vazio + `entidade` lista tudo, e `ordenacao=antiga|recente` dá a primeira/última data e o total.
+```bash
+python3 sigpub_texto.py faixa 5221403                      # entidades do município em AGM/FGM + faixa/total
+python3 sigpub_texto.py varrer 5221403 --saida /tmp/x.json  # 6 termos x (todos|decreto|lei|portaria) x 2 págs; score + 'plausivel'
+python3 sigpub_texto.py lote ../fila_r3/R4-AGM-GO.json /tmp/saida
+```
+* O seletor de entidades do AGM traz nomes truncados ("Município de Abadia", "Município Gameleira", "Municipal de São Francisco", "Município de Montes Claros"...) que `resolve_entidade` deixa sem IBGE; `ALIAS` no módulo os mapeia (conferido: o cabeçalho das matérias diz ESTADO DE GOIÁS). Entidades como "Município de Niquelandia", Goianésia e Uruaçu existem mas estão **vazias** (0 matérias): a prefeitura não publica ali.
+* Das 82 cidades do lote R4-AGM-GO, **26 são entidades** (AGM 20, FGM 6; 4 delas vazias): Abadia, Campestre, Corumbá(vazia), Cristalina, Gameleira, Goianira, Guarani, Ipiranga, Iporá, Lagoa Santa, Montes Claros, Niquelândia(vazia), Nova Iguaçu, Palmeiras, Petrolina, Pilar, Porangatu, Posse, São Francisco, Trindade (AGM); Diorama, Goianésia(vazia), Mineiros, Planaltina, Uruaçu(vazia), Teresina (FGM). As outras 56 não estão em nenhum SIGPub de GO.
+* Faixa do acervo (primeira matéria): 2011 Diorama, Mineiros; 2013 Iporá, Lagoa Santa, Palmeiras; 2014 Abadia, Campestre, Guarani; 2015 Montes Claros; 2017 Ipiranga, Petrolina (só até 03/2021); 2018 Trindade (01), Posse (04), Gameleira (06); 2020 Planaltina; 2021 Goianira, Porangatu, Nova Iguaçu, São Francisco, Teresina; 2022 Cristalina; 2024 Pilar (só até 05/2025).
+* Resultado: nenhum ato de restrição de circulação de caminhões novo. Em Trindade, os acertos plausíveis eram os já tratados (Decretos 606/2019, 505/2023, 737/2024, 2.960/2026 da Romaria), Portaria 009/2021 (acesso de caminhões ao aterro: só pesagem), Decreto 3.012/2026 (caminhão-pipa no Parque Lara Guimarães) e Lei 2.406/2025 art. 34 (carga e descarga x estacionamento rotativo). Negativo conclusivo (acervo ≤ 2018 e ≥ 500 matérias): Abadia de Goiás, Diorama, Gameleira de Goiás, Guarani de Goiás, Ipiranga de Goiás, Iporá, Lagoa Santa, Mineiros, Montes Claros de Goiás, Palmeiras de Goiás, Posse, Trindade → `falha_de_fonte=false` (a entidade pode não publicar tudo no AGM; relevância limita a ~50 matérias por consulta).
+* Diários próprios: Vicentinópolis (Câmara) `/diariooficial` → 302 para `/ops/404` (inexistente); a "Legislação" da Câmara tem ~20 documentos e a busca (POST `/legislacao/filter`) para caminh/pesad/tonel dá 0. Jataí e Caldas Novas já tinham sido varridos (R3). SAPL das Câmaras .go.leg.br: só Cristalina, Porangatu e Uruaçu têm API (vazias ou 77 normas); o resto sem SAPL.
+
+
+---
+
+## 6. `softcam.py` — Câmaras em plataforma Softcam (R4, 18/10/2026)
+
+Cliente de `/proposicoes/pesquisa` (busca em texto integral das leis). Usa `curl` puro (UA de navegador cai em 'Bot Verification').
+`python3 softcam.py descobrir <cidade> <uf> [url_camara]` acha o host (camara<slug>, cm<slug>, camaramunicipal<slug>, <slug>.<uf>.leg.br...);
+`acervo <host>` testa o acervo com 'orçamento' (total, item mais antigo e mais recente: **acervo vazio ou parado não conta como negativo**);
+`buscar <host> "<termo>"` (expressão exata; 25 itens/página, páginas seguintes em `/proposicoes/pesquisa/0/<pg>/0?<mesma query>`).
+Cada item tem página `/proposicoes/pesquisa/0/1/0/<id>` com o PDF em `cloudsoftcam.com.br` (às vezes escaneado: OCR; às vezes .doc).
+Throttle interno de 1 s por host. No lote R4-SOFTCAM (522 cidades), 75 tinham Câmara Softcam (RS 46, PR 21, SC 8, MS 1).
+
+## 7. `plenus_1dom.py` (R4, 18/10/2026)
+```bash
+python3 plenus_1dom.py descobrir <ibge>...                      # acha a plataforma/slug (links na home + slug provável)
+python3 plenus_1dom.py buscar plenus barra-do-ribeiro "caminhões" --paginas 2
+python3 plenus_1dom.py buscar 1dom imigrante "caminhões"
+python3 plenus_1dom.py acervo plenus barra-do-ribeiro           # (mais antiga, mais recente)
+python3 plenus_1dom.py lote ../fila_r3/<LOTE>.json saida.json   # retomável
+```
+* **DIOENET/Plenus** (`plenussistemas.dioenet.com.br/list/<slug>?pesquisa=`): GET sem captcha, texto integral com trechos destacados; `?pagina=N` pagina; a última página da lista sem termo dá a edição mais antiga (acervo). Slug inválido = 307 para a home. O cadastro da plataforma é público: `POST home/getCitiesByUf` (com cookie/CSRF da home, `uf=23` = RS) devolve `[{nome, slug}]`. **No RS só Barra do Ribeiro** (`barra-do-ribeiro`, acervo 28/07/2022–hoje) usa Plenus; AP, MS, MG, PB, PR, RJ, SP também têm UF no seletor.
+* **1dom** (`<slug>.1dom.com.br/search/?search=&type=0&location=0&order=2&date=all`): slug inexistente = 404 (DNS curinga). A busca é **fuzzy e por título do ato** (ruído alto: "veículos pesados" devolve portarias), então só o acerto no título vale como pista. Cuidado com **homônimos**: `santarosa.1dom.com.br` é Santa Rosa do Viterbo/SP. Muitos sites 1dom existem sem edição indexada (busca "lei" = 0). A home não mostra a UF (exceto alguns, ex.: "Torres/RS").
+* Lote R4-PLENUS-RS (233 cidades RS): nenhuma usa Plenus; 8 têm site 1dom (Brochier, Caiçara, Caraá, Encantado, Imigrante, São José do Norte, Torres e o homônimo falso de Santa Rosa), só Imigrante tem acervo (2026). Nenhuma home continha link dioenet/plenus/1dom.
+
+**R4 2026-10-18 (SIGPub alias, todas as associações):** `sigpub_entidades_mapa.json` mapeia as 923 entidades dos 6 seletores (famurs 303, amp 188, agm 128, fgm 78, amm-mt 167, ms 59): 845 com município (auto 829, alias 15, corrigido 1) e 78 sem município único (consórcios, associações, fornecedores). O `sigpub_texto.py` carrega o mapa (`ALIAS` + `aplicar_mapa()`, que também corrige `hit['ibge']`). Só 3 ajustes novos além dos 14 aliases do AGM/FGM: **"Município de Divinópolis" (AGM id 16457) é Divinópolis de Goiás 5208301** (o `resolve_entidade` dava Davinópolis 5206909; 170 hits em `hits_agm.jsonl` ainda estão com o ibge errado), "Prefeitura Municipal de Rio Verde de MT" (ms id 521, vazia) = Rio Verde de Mato Grosso 5007406. FAMURS, AMP e AMM-MT não têm nenhum nome de município truncado (só consórcios/associações sem município). `leads/diarios_consolidados_raw/sem_municipio_r4_resolvidos.json` = 97 dos 427 hits sem município que o mapa resolve (AGM/FGM); nenhum é ato de restrição de caminhões.

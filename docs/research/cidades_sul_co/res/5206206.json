@@ -22,9 +22,37 @@
   {
    "url": "https://cristalina.go.gov.br/wp-json/wp/v2/search?search=caminhões (e 'veículos pesados', 'decreto trânsito', 'carretas', 'tonelada')",
    "resultado": "Só páginas de história/turismo; nada de circulação."
+  },
+  {
+   "url": "home prefeitura: https://cristalina.go.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "home camara: https://cristalina.go.leg.br/",
+   "resultado": "HTTP 200; links de legislação/diário: http://acessoainformacao.cristalina.go.leg.br/cidadao/legislacao/leis; https://acessoainformacao.cristalina.go.leg.br/cidadao/legislacao/apre; https://acessoainformacao.cristalina.go.leg.br/cidadao/legislacao/ativ"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 5206206 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
+   "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
+  },
+  {
+   "url": "WP REST /wp-json/wp/v2/search (prefeitura https://cristalina.go.gov.br/) 4 termos",
+   "resultado": "R3: 2 resultados, só notícias/páginas institucionais; nenhum ato normativo de restrição"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5206206",
+   "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
+  },
+  {
+   "url": "https://dom.cristalina.go.gov.br/api/diarios (+ variantes .go.leg.br e domínio do site; toolkit/nucleogov.py)",
+   "resultado": "R4 2026-10-18: API NucleoGov (dom.<dominio>/api) inexistente para este município (conexão recusada/DNS); links de diário na home da prefeitura/Câmara: nenhum"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/agm/pesquisar (busca_avancada[entidade]=46421)",
+   "resultado": "R4 2026-10-18: toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 10 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Cristalina' (id 46421): 1188 matérias, 2022-02-07 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões."
   }
  ],
- "observacoes": "Cidade com 2.955 caminhões (agro, BR-040/050). Nenhuma pista; legislação inacessível (SAPL vazio, NucleoGov 403). OSM: maxweight em 2 ways da 'Rodovia Presidente Juscelino Kubitschek' (BR-040;BR-050): rodovia federal.",
+ "observacoes": "Cidade com 2.955 caminhões (agro, BR-040/050). Nenhuma pista; legislação inacessível (SAPL vazio, NucleoGov 403). OSM: maxweight em 2 ways da 'Rodovia Presidente Juscelino Kubitschek' (BR-040;BR-050): rodovia federal. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados'). | R4 2026-10-18: varredura NucleoGov (dom.<dominio>/api/materias): este município NÃO tem diário NucleoGov (domínio dom.* não existe); sem novidade, status mantido. | R4 2026-10-18 (AGM/FGM texto integral): toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 10 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Cristalina' (id 46421): 1188 matérias, 2022-02-07 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões. Acervo curto/vazio ou volume baixo: negativo NÃO conclusivo; falha_de_fonte mantido.",
  "osm_divergencias": [
   "maxweight em 2 ways trunk BR-040;BR-050 (Rodovia Presidente JK): federal, competência DNIT, descartado."
  ],

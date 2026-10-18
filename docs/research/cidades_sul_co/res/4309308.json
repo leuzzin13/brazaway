@@ -25,10 +25,30 @@
   {
    "url": "OSM hgv=no: Rua Coronel Marcos de Andrade, Rua Kenji Usui, Rua São João",
    "resultado": "Sem ato municipal localizado."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4309308 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/prefeitura https://leismunicipais.com.br/prefeitura/rs/guaiba: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende/camara https://camaraguaiba.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://guaiba.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "https://camaraguaiba.rs.gov.br/",
+   "resultado": "R3: home http 403 (5359 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4309308 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4309308",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente guaiba, guaiba-rs, guaibars); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhum ato de circulação de caminhões nos diários FAMURS (três buscas sem resultado); acertos da preparação são ruído (tração animal, quadro de pessoal). Os portais de legislação (leismunicipais/Atende) estão bloqueados, por isso falha_de_fonte=true; município de 96 mil hab. merece conferência manual (Código de Trânsito/Posturas).",
+ "observacoes": "Nenhum ato de circulação de caminhões nos diários FAMURS (três buscas sem resultado); acertos da preparação são ruído (tração animal, quadro de pessoal). Os portais de legislação (leismunicipais/Atende) estão bloqueados, por isso falha_de_fonte=true; município de 96 mil hab. merece conferência manual (Código de Trânsito/Posturas). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camaraguaiba.atende.net; https://guaiba.atende.net; https://leismunicipais.com.br/prefeitura/rs/guaiba. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [
   "3 ways com hgv=no em ruas urbanas (Cel. Marcos de Andrade, Kenji Usui, São João) sem ato localizado."
  ],

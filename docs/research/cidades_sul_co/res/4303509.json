@@ -25,10 +25,26 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 4303509 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
    "resultado": "diário(s) ['qd']: resultados por termo ['0', '0', '0']; só ruído (licitação, RH, frota, ISS); 2 falha(s) de rede (http 0) com retentativa"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4303509 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/prefeitura https://leismunicipais.com.br/prefeitura/rs/camaqua: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende/camara https://camaracamaqua.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://camaqua.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc/prefeitura https://camaqua.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://camaqua.1doc.co"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4303509 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4303509",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente camaqua, camaqua-rs, camaquars); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (leismunicipais) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; só o diário ['qd'] foi varrido. Algumas consultas ao diário falharam por rede (http 0). ",
+ "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (leismunicipais) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; só o diário ['qd'] foi varrido. Algumas consultas ao diário falharam por rede (http 0).  R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camaqua.1doc.com.br/b.php?pg=o/login&n=3; https://camaqua.atende.net; https://camaracamaqua.atende.net; https://leismunicipais.com.br/prefeitura/rs/camaqua. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

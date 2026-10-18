@@ -4,7 +4,7 @@
  "uf": "GO",
  "status": "nao_achou",
  "nivel_busca": "r3_fonte_municipal",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -46,9 +46,17 @@
   {
    "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
    "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
+  },
+  {
+   "url": "https://dom.montesclarosdegoias.go.gov.br/api/diarios (+ variantes .go.leg.br e domínio do site; toolkit/nucleogov.py)",
+   "resultado": "R4 2026-10-18: API NucleoGov (dom.<dominio>/api) inexistente para este município (conexão recusada/DNS); links de diário na home da prefeitura/Câmara: nenhum"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/agm/pesquisar (busca_avancada[entidade]=16304)",
+   "resultado": "R4 2026-10-18: toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 73 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Montes Claros' (id 16304): 6399 matérias, 2015-05-06 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (9074 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nucleogov, https://acessoainformacao.montesclarosdegoias.go.leg.br/cidadao/legislacao/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Legislação (prefeitura e/ou Câmara) hospedada em https://acessoainformacao.montesclarosdegoias.go.leg.br/cidadao/legislacao/leis e https://acessoainformacao.montesclarosdegoias.go.gov.br/cidadao/legislacao/leis (bloqueado ao IP da pesquisa) Busca REST WordPress dos sites institucionais e (quando aplicável) clientes legislacao.py não acharam ato sobre caminhões; SIGPub/AGM/FGM/ASSOMASUL e Querido Diário não cobrem o município. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (9074 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nucleogov, https://acessoainformacao.montesclarosdegoias.go.leg.br/cidadao/legislacao/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Legislação (prefeitura e/ou Câmara) hospedada em https://acessoainformacao.montesclarosdegoias.go.leg.br/cidadao/legislacao/leis e https://acessoainformacao.montesclarosdegoias.go.gov.br/cidadao/legislacao/leis (bloqueado ao IP da pesquisa) Busca REST WordPress dos sites institucionais e (quando aplicável) clientes legislacao.py não acharam ato sobre caminhões; SIGPub/AGM/FGM/ASSOMASUL e Querido Diário não cobrem o município. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo. | R4 2026-10-18: varredura NucleoGov (dom.<dominio>/api/materias): este município NÃO tem diário NucleoGov (domínio dom.* não existe); sem novidade, status mantido. | R4 2026-10-18 (AGM/FGM texto integral): toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 73 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Montes Claros' (id 16304): 6399 matérias, 2015-05-06 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões. Acervo desde 2015 (<=2018): negativo CONCLUSIVO para o diário; falha_de_fonte=false.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

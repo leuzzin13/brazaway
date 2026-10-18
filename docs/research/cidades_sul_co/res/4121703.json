@@ -2,8 +2,8 @@
  "ibge": "4121703",
  "nome": "Reserva",
  "uf": "PR",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,99 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Contagens {\"hgv_no\": 1}, todas em rodovia estadual/federal (ref) ou etiqueta não restritiva: fora da competência municipal; descartado como pista."
+  },
+  {
+   "url": "https://reserva.oxy.elotech.com.br",
+   "resultado": "R3: fonte elotech inacessível/sem busca automática: Elotech: /portaltransparencia(-api)/api/entidades não respondeu lista JSON em https://rese"
+  },
+  {
+   "url": "https://www.camarareserva.pr.gov.br/",
+   "resultado": "R3: fonte desconhecido inacessível/sem busca automática: sem cliente automático; consultar manualmente: https://www.camarareserva.pr.gov.br/"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4121703",
+   "resultado": "R3: API respondeu 522/sem resposta (HTTP 000) em 2026-10-18; não conclusivo"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp (seletor de entidades, 189 entidades)",
+   "resultado": "R3: município não consta entre as entidades do AMP"
+  },
+  {
+   "url": "https://www.camarareserva.pr.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarareserva.pr.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 351 itens no teste 'orçamento' (mais antigo 01/01/2002, mais recente 12/02/2026). Acertos por termo: {'veículos pesados': 1}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (24856 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (elotech, https://reserva.oxy.elotech.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (24856 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (elotech, https://reserva.oxy.elotech.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: nenhuma fonte municipal pesquisável (bloqueada/vazia: https://reserva.oxy.elotech.com.br; https://www.camarareserva.pr.gov.br/); negativo NÃO conclusivo, falha_de_fonte=true. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarareserva.pr.gov.br): acervo com 351 itens no teste 'orçamento' (mais antigo 01/01/2002, mais recente 12/02/2026); acertos por termo {'veículos pesados': 1}. Lei 413/2011 lida (perímetro urbano com proibição de veículos com carga > 3,5 t; altera a Lei 153/2007). Falha_de_fonte mantida como estava para a prefeitura; Câmara Softcam com acervo desde 2002. | verificado em 2026-10-18: PDF da Lei 413/2011 reaberto (conf. texto salvo). Contradição parágrafo único x Anexo I confirmada e irresolúvel pelo texto; regra rebaixada a desativada. Câmara Softcam (índice por ementa): só Leis 153/2007 e 413/2011 tratam do tema; nenhuma outra alteração/revogação da 153/2007 localizada (busca por ementa; decretos do Executivo e a prefeitura (Elotech) não acessíveis: negativo não conclusivo).",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "reserva_perimetro_urbano_carga_gt3_5t",
+   "tipo": "zona",
+   "regime": "Proibição por capacidade de carga (zona)",
+   "nome": "Perímetro urbano central de Reserva: veículos com carga superior a 3,5 t (Lei 413/2011)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 3.5
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 413, de 27/10/2011 (altera a Lei 153/2007) (Reserva/PR)",
+     "artigo": "art. 1º, parágrafo único, art. 2º, art. 3º e Anexo I",
+     "url": "https://www.camarareserva.pr.gov.br/proposicoes/pesquisa/0/1/0/873",
+     "nota": "Texto integral lido em PDF (https://www.cloudsoftcam.com.br/PR/RESERVA/importacao/2011/1.2291331_iddoc_2300229.pdf); cópia em atos/4121703/lei-413-2011.txt. A Lei 153/2007 (https://www.camarareserva.pr.gov.br/proposicoes/pesquisa/0/1/0/617) tinha proibição mais restrita (Ruas Marcílio Dias, Generoso Marques, Av. Cel. Rogério Borba) e também limitava ônibus > 26 lugares."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: o Executivo pode estabelecer horários pré-determinados de carga e descarga, desde que referendado pelo Legislativo (horários não localizados)",
+    "parágrafo único: o tráfego deve se dar pelas vias que delimitam o perímetro"
+   ],
+   "nota": "Veda o tráfego de 'veículos com carga superior a 3,5 toneladas' (capacidade de carga: payload_t) nas vias compreendidas no perímetro descrito (começa no bairro Ferreira, R. Leôncio Miró Rocha x R. Pastor Gregório Szeremeta Filho; segue por Marcílio Dias, Av. Cel. Rogério Borba, Pedro Soltovski, Gov. Ney Braga, Osires de Oliveira Viana, XV de Novembro, Quintino Bocaiúva, Ademar de Holleben, Benjamin Constant, PR-160, Trav. Eucalipto, Dom Pedro II, Miguel Régis de Miranda). O parágrafo único manda o tráfego pelas vias que DELIMITAM o perímetro; o Anexo I lista as vias com proibição (inclui algumas citadas como de contorno, p.ex. Benjamin Constant, Dom Pedro II, XV de Novembro em trecho): inconsistência a resolver na geometria. Multa 1 a 5 UFM. Sem alteração/revogação encontrada na Câmara (busca de texto integral).",
+   "vigencia_inicio": "2011-10-27",
+   "trechos": [
+    {
+     "inciso": "art. 1º + Anexo I",
+     "via": [
+      "Rua Marcílio Dias",
+      "Avenida Coronel Rogério Borba",
+      "Rua Generoso Marques",
+      "Rua Dom Pedro II",
+      "Rua Benjamin Constant",
+      "Rua Quintino Bocaiúva",
+      "Rua Presidente Getúlio Vargas",
+      "Rua General Osório",
+      "Rua Marechal Floriano Peixoto",
+      "(demais do Anexo I)"
+     ],
+     "descricao": "Perímetro descrito em texto (ver nota) e 40 vias do Anexo I; vias de contorno do perímetro ficam como rota permitida (parágrafo único).",
+     "aproximado": true
+    }
+   ],
+   "status_motivo": "Lei 413/2011 se contradiz: o parágrafo único manda o tráfego de veículos >3,5 t se dar pelas vias que DELIMITAM o perímetro (Leôncio Miró Rocha, Miguel Régis de Miranda, XV de Novembro, Dom Pedro II, Trav. Eucalipto, Benjamin Constant, Ademar de Holleben, Quintino Bocaiúva, Osires de Oliveira Viana, Gov. Ney Braga, Pedro Soltovski, Pastor Gregório Szeremeta Filho, trechos de Marcílio Dias e Av. Cel. Rogério Borba), mas o Anexo I ('vias com proibição de circulação') lista justamente Benjamin Constant, Dom Pedro II, Quintino Bocaiúva, Osires de Oliveira Viana, Av. Cel. Rogério Borba, Marcílio Dias, e XV de Novembro/Pastor Gregório em trechos. A Lei 413 'altera' a 153/2007 sem dizer o que revoga (a 153 proíbe Marcílio Dias, Generoso Marques e Av. Cel. Rogério Borba 'incluindo transversais', com carga/descarga). Sem como saber quais vias de contorno ficam liberadas, a geometria não é determinável. Ainda: 'veículos com carga superior a 3,5 t' (capacidade de carga) e art. 2 (sinalização/horários de carga e descarga a regulamentar) sem decreto localizado."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

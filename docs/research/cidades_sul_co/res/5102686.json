@@ -2,9 +2,9 @@
  "ibge": "5102686",
  "nome": "Campos de Júlio",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://sapl.camposdejulio.mt.leg.br",
@@ -21,10 +21,64 @@
   {
    "url": "https://www.camposdejulio.mt.gov.br/Servicos/Leis/",
    "resultado": "portal próprio, cliente heurístico: 0 atos"
+  },
+  {
+   "url": "home prefeitura: https://www.camposdejulio.mt.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "home camara: https://www.camposdejulio.mt.leg.br:443/",
+   "resultado": "HTTP 200; links de legislação/diário: https://amm.diariomunicipal.org/; https://www.camposdejulio.mt.leg.br/institucional/legislaturas; https://www.camposdejulio.mt.leg.br/processo-legislativo"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=447 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 11 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2018-2026"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL da Câmara fora do ar/sem resposta reconhecível; prefeitura (portal próprio, heurístico) 0 atos; AMM-MT 0 resultados para 'trânsito de caminhões'. LC 005/2014 do lead é ruído (britagem/carga e descarga de material particulado, ambiental). Fonte principal indisponível: 'nao_achou' inconclusivo.",
+ "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL da Câmara fora do ar/sem resposta reconhecível; prefeitura (portal próprio, heurístico) 0 atos; AMM-MT 0 resultados para 'trânsito de caminhões'. LC 005/2014 do lead é ruído (britagem/carga e descarga de material particulado, ambiental). Fonte principal indisponível: 'nao_achou' inconclusivo. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — Campos de Júlio: centro, veículos pesados (PBT > 16 t ou > 3 eixos) em horários de pico (LC 15/2025). Textos em atos/5102686/. Ver status_motivo das regras desativadas.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "camposdejulio_lc_15_2025_veiculos_pesados_centro",
+   "tipo": "zona",
+   "regime": "Circulação de veículos pesados (PBT > 16 t ou mais de 3 eixos) restringida nos horários de pico, no centro",
+   "nome": "Campos de Júlio: centro, veículos pesados (PBT > 16 t ou > 3 eixos) em horários de pico (LC 15/2025)",
+   "status": "desativada",
+   "status_motivo": "R3: 'centro do município' não delimitado, horários de pico e rotas remetidos a decreto (art. 114 par. único, art. 115 par. único, art. 120) que não foi localizado; sem janelas nem geometria. Ato lido; vigente na publicação.",
+   "confianca": "baixa",
+   "janelas": [],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     },
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 118: abastecimento de comércio essencial; carga e descarga autorizada pela Secretaria de Administração; emergências e serviços essenciais; e-commerce/última milha"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal 15, de 22/12/2025 (Campos de Júlio; AMM-MT 23/12/2025)",
+     "artigo": "arts. 114 a 120 (Cap. VI)",
+     "url": "https://amm.diariomunicipal.org/publicacao/1750556/"
+    }
+   ],
+   "trechos": [
+    "centro do município (não delimitado)"
+   ],
+   "vigencia_inicio": "2025-12-23",
+   "vigencia_fim": null,
+   "nota": "Pátio de apoio fora do perímetro urbano em até 4 anos (art. 117). Procurar decreto regulamentador dos horários de pico."
+  }
+ ]
 }

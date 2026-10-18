@@ -21,10 +21,30 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 4310207 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
    "resultado": "sem diário consolidado/QD para o município"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4310207 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/camara https://leismunicipais.com.br/camara/rs/ijui: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; leismunicipais/prefeitura https://leismunicipais.com.br/prefeitura/rs/ijui: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc/prefeitura https://ijui.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://ijui.1doc.com.b"
+  },
+  {
+   "url": "https://camaraijui.rs.gov.br/",
+   "resultado": "R3: home http 200 (232696 bytes)"
+  },
+  {
+   "url": "https://www.ijui.rs.gov.br/",
+   "resultado": "R3: home http 200 (269569 bytes)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4310207",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente ijui, ijui-rs, ijuirs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (leismunicipais) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; sem diário consolidado que cubra. ",
+ "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (leismunicipais) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; sem diário consolidado que cubra.  R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, sem diário consolidado que cubra, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://ijui.1doc.com.br/b.php?pg=o/login&n=3; https://leismunicipais.com.br/camara/rs/ijui; https://leismunicipais.com.br/prefeitura/rs/ijui. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

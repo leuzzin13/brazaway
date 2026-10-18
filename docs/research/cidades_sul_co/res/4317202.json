@@ -2,9 +2,9 @@
  "ibge": "4317202",
  "nome": "Santa Rosa",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "media",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.camarasantarosa.rs.gov.br/camara/membros/legislaturas",
@@ -29,10 +29,72 @@
   {
    "url": "https://api.queridodiario.org.br/gazettes",
    "resultado": "HTTP 522 (fora do ar) em 18/10/2026; sem busca no Querido Diário"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4317202 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "portal_proprio/camara https://www.camarasantarosa.rs.gov.br/camara/membros/legislaturas: 0 atos; atende/prefeitura https://santarosa.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc/prefeitura https://santarosa.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://santarosa.1doc."
+  },
+  {
+   "url": "https://www.camarasantarosa.rs.gov.br/",
+   "resultado": "R3: home http 200 (1705 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4317202 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4317202",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "https://www.camarasantarosa.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarasantarosa.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 454 itens no teste 'orçamento' (mais antigo 01/01/1948, mais recente 28/10/2025). Acertos por termo: {'caminhões': 7, 'caminhão': 13, 'veículos pesados': 13, 'toneladas': 4, 'eixos': 8, 'veículos de carga': 1}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
+  },
+  {
+   "url": "https://santarosa.1dom.com.br/search/?search=<termo>",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): NÃO é a cidade (Santa Rosa do Viterbo/SP)."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Santa Rosa: Atende/1doc bloqueados; Câmara sem busca; Querido Diário fora do ar (522). Lote R1-RS-M02 (segunda passada manual, 18/10/2026).",
+ "observacoes": "Santa Rosa: Atende/1doc bloqueados; Câmara sem busca; Querido Diário fora do ar (522). Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://santarosa.1doc.com.br/b.php?pg=o/login&n=3; https://santarosa.atende.net. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarasantarosa.rs.gov.br): acervo com 454 itens no teste 'orçamento' (mais antigo 01/01/1948, mais recente 28/10/2025); acertos por termo {'caminhões': 7, 'caminhão': 13, 'veículos pesados': 13, 'toneladas': 4, 'eixos': 8, 'veículos de carga': 1}. Lei 4.539/2009 art. 49 (veículos pesados nos pontos centrais; tonelagem e ruas por ato da Secretaria): rascunho desativado, ato regulamentador não localizado (Câmara Softcam não tem decretos/portarias da Secretaria). Status pista. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): Plenus: RS tem só Barra do Ribeiro cadastrada (home/getCitiesByUf), este município não usa. 1dom: ATENÇÃO homônimo: santarosa.1dom.com.br é Prefeitura de Santa Rosa do Viterbo (SP), NÃO Santa Rosa/RS; descartado (falso positivo).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "santarosa_centro_veiculos_pesados",
+   "tipo": "zona",
+   "regime": "Proibição (zona central)",
+   "nome": "Pontos centrais: veículos pesados (Lei 4.539/2009, art. 49)",
+   "status": "desativada",
+   "status_motivo": "O art. 49 proíbe 'veículos pesados nos pontos centrais da cidade', mas delega a tonelagem e as ruas à Secretaria Municipal de Habitação e Mobilidade Urbana (parágrafo único); o ato regulamentador não foi localizado.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 4.539, de 22/06/2009 (Santa Rosa/RS) (consolida a legislação de trânsito)",
+     "artigo": "art. 49 e 50",
+     "url": "https://www.camarasantarosa.rs.gov.br/proposicoes/pesquisa/0/1/0/6282",
+     "nota": "Cópia em atos/4317202/lei-4539-2009.txt; alterações posteriores (4759/2010, 4840/2011, 5071/2013, 5090/2014, 5096/2014, 5114/2014, 5238/2015, 5359/2017, 5519/2019, 5805/2023, 5993/2026) não lidas uma a uma. Substituiu a Lei 1.383/1977."
+    }
+   ],
+   "nota": "Ato delega tonelagem e ruas."
+  }
+ ]
 }

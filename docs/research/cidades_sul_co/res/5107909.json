@@ -2,9 +2,9 @@
  "ibge": "5107909",
  "nome": "Sinop",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt (toolkit diarios_consolidados.py buscar 5107909: circulação de caminhões, carga e descarga, veículos pesados, tráfego de caminhões, restrição de tráfego, caminhões proibido, zona de restrição, veículos de carga, toneladas caminhões, VUC)",
@@ -37,10 +37,128 @@
   {
    "url": "https://www.sinop.mt.gov.br/legislacao e WebSearch (decreto restrição caminhões Sinop)",
    "resultado": "/legislacao só redireciona para leismunicipais (Cloudflare 403); busca web sem nenhum resultado sobre Sinop."
+  },
+  {
+   "url": "home prefeitura: https://www.sinop.mt.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=344 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 28 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2015-2017"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5107909",
+   "resultado": "R3: HTTP 522 (uma tentativa, API fora do ar)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma restrição localizada; as fontes oficiais de legislação de Sinop (Câmara com reCAPTCHA, diário 403, Cespro SPA) não abriram. Pendências: leis de trânsito/posturas e decretos de carga e descarga via navegador.",
+ "observacoes": "Nenhuma restrição localizada; as fontes oficiais de legislação de Sinop (Câmara com reCAPTCHA, diário 403, Cespro SPA) não abriram. Pendências: leis de trânsito/posturas e decretos de carga e descarga via navegador. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — Sinop: Avenida Nelson Moggi, veículos de carga acima de 8 t; Sinop: prolongamento da Avenida das Figueiras, veículos de carga acima de 8 t. Textos em atos/5107909/. Ver status_motivo das regras desativadas.  AMM-MT cobre Sinop só até 2017; vigência posterior das Leis 2.241/2.243 de 2015 não verificada (diário próprio pós-2017 não achado).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "sinop_av_nelson_moggi_8t",
+   "tipo": "via",
+   "regime": "Proibido tráfego de veículos de carga acima de 8 t (24 h)",
+   "nome": "Sinop: Avenida Nelson Moggi, veículos de carga acima de 8 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 1º, §1º: veículos de carga que precisem carregar/descarregar produtos ou mercadorias no perímetro da avenida, fora do horário de pico (horário de pico não definido no ato)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.243, de 11/12/2015 (Sinop; publ. Jornal Oficial AMM-MT 16/12/2015)",
+     "artigo": "art. 1º e §1º; art. 2º (vigência na publicação)",
+     "url": "https://amm.diariomunicipal.org/publicacao/99406/"
+    },
+    {
+     "ato": "Lei municipal 2.111, de 06/04/2015 (cria a Av. Nelson Moggi, extensão 23.180 m, memorial descritivo)",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://amm.diariomunicipal.org/publicacao/16478/"
+    }
+   ],
+   "trechos": [
+    "Avenida Nelson Moggi, perímetro urbano de Sinop/MT (extensão 23.180 m, Lei 2.111/2015), sem trecho específico"
+   ],
+   "vigencia_inicio": "2015-12-16",
+   "vigencia_fim": null,
+   "nota": "Ato lido integralmente. 'peso ou carga acima de 8 t' é ambíguo (PBT x capacidade): adotado pbt_t > 8. Sem revogação achada no AMM-MT (cobre Sinop só 2015-2017 e busca por 'Nelson Moggi' e '2243/2015' não retorna nada posterior); o diário próprio de Sinop pós-2017 e a sinalização não foram verificados. Confiança média."
+  },
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "sinop_prolong_av_figueiras_8t",
+   "tipo": "via",
+   "regime": "Proibido tráfego de veículos de carga acima de 8 t (24 h)",
+   "nome": "Sinop: prolongamento da Avenida das Figueiras, veículos de carga acima de 8 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 1º, §1º: veículos de carga que precisem carregar/descarregar produtos ou mercadorias no perímetro da avenida, fora do horário de pico (horário de pico não definido no ato)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.241, de 11/12/2015 (Sinop; publ. Jornal Oficial AMM-MT 16/12/2015)",
+     "artigo": "art. 1º e §1º; art. 2º (vigência na publicação)",
+     "url": "https://amm.diariomunicipal.org/publicacao/99403/"
+    }
+   ],
+   "trechos": [
+    "Prolongamento da Avenida das Figueiras, perímetro urbano de Sinop/MT; limites e extensão na Lei 2.042/2014 (não lida)"
+   ],
+   "vigencia_inicio": "2015-12-16",
+   "vigencia_fim": null,
+   "nota": "Ato lido integralmente. Limites do prolongamento estão na Lei 2.042/2014 (alterada pela Lei 2.260/2015), que não foi lida: geometria depende da via 'Avenida das Figueiras' no OSM. 'peso ou carga' ambíguo: adotado pbt_t > 8. Revogação não achada (mesma ressalva da Av. Nelson Moggi). Confiança média."
+  }
+ ]
 }

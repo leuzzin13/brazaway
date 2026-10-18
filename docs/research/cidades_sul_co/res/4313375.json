@@ -25,10 +25,30 @@
   {
    "url": "toolkit/legislacao.py buscar 4313375 'caminh|pesad|tonelad|carga e descarga' --principal",
    "resultado": "Câmara em Atende (captcha) - 0 atos; prefeitura em leismunicipais (Cloudflare) - não consultada."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4313375 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/prefeitura https://leismunicipais.com.br/prefeitura/rs/nova-santa-rita: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec/camara https://cmnovasantarita.cittatec.com.br/portal-legislativo/comissoes/3: sem cliente automático; consultar manualmente: https://cmnovasantarita; atende/camara https://camaranovasantarita.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://novasantarita.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "https://novasantarita.rs.leg.br/",
+   "resultado": "R3: home http 200 (288829 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4313375 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4313375",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente nova-santa-rita, novasantarita, nova-santa-rita-rs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "O PLANMOB (Lei 1.557/2019) só autoriza o Poder Público a fixar restrições por porte/tipo de veículo; não localizei decreto que as fixe. Decreto 37/21 trata de faixa de servidão. Portais bloqueados (falha_de_fonte=true).",
+ "observacoes": "O PLANMOB (Lei 1.557/2019) só autoriza o Poder Público a fixar restrições por porte/tipo de veículo; não localizei decreto que as fixe. Decreto 37/21 trata de faixa de servidão. Portais bloqueados (falha_de_fonte=true). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camaranovasantarita.atende.net; https://cmnovasantarita.cittatec.com.br/portal-legislativo/comissoes/3; https://leismunicipais.com.br/prefeitura/rs/nova-santa-rita; https://novasantarita.atende.net. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

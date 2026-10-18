@@ -21,10 +21,34 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 4305355 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
    "resultado": "diário(s) ['famurs']: resultados por termo ['0', '0', '0']; só ruído (licitação, RH, frota, ISS)"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4305355 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "cespro/camara https://charqueadas.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7388: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdM; cespro/prefeitura https://charqueadas.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdM; cittatec/camara https://cmcharqueadas.cittatec.com.br/portal-legislativo/proposicoes/consulta: sem cliente automático; consultar manualmente: https://cmcharqueadas.c"
+  },
+  {
+   "url": "https://charqueadas.rs.leg.br/",
+   "resultado": "R3: home http 200 (165531 bytes)"
+  },
+  {
+   "url": "https://www.charqueadas.rs.gov.br/",
+   "resultado": "R3: home http 200 (35112 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4305355 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4305355",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente charqueadas, charqueadas-rs, charqueadasrs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (cespro) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; só o diário ['famurs'] foi varrido. ",
+ "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (cespro) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; só o diário ['famurs'] foi varrido.  R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://charqueadas.cespro.com.br/; https://charqueadas.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7388; https://cmcharqueadas.cittatec.com.br/portal-legislativo/proposicoes/consulta. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

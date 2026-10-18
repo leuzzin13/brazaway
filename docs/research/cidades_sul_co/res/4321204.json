@@ -2,9 +2,9 @@
  "ibge": "4321204",
  "nome": "Taquara",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "toolkit/diarios_consolidados.py buscar 4321204 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs; Querido Diário); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Rua Federação caminhões; Rua Federação; veículos de carga; carretas",
@@ -17,12 +17,86 @@
   {
    "url": "https://www.taquara.rs.gov.br",
    "resultado": "desconhecido (prefeitura): falha: sem cliente automático; consultar manualmente: https://www.taquara.rs.gov.br"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4321204 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/camara https://leismunicipais.com.br/camara/rs/taquara: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; desconhecido/prefeitura https://www.taquara.rs.gov.br: sem cliente automático; consultar manualmente: https://www.taquara.rs."
+  },
+  {
+   "url": "https://www.camarataquara.rs.gov.br/",
+   "resultado": "R3: home http 200 (1705 bytes)"
+  },
+  {
+   "url": "https://www.taquara.rs.gov.br",
+   "resultado": "R3: home http 403 (15305 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4321204 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, zona de restrição de caminhões, proibido estacionar caminhões, toneladas",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4321204",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "https://www.camarataquara.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarataquara.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 156 itens no teste 'orçamento' (mais antigo 05/01/1962, mais recente 03/09/2026). Acertos por termo: {'caminhões': 4, 'caminhão': 5, 'veículos pesados': 1, 'tráfego pesado': 2, 'toneladas': 1, 'eixos': 2, 'veículos de carga': 1}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente taquara, taquara-rs, taquarars); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Taquara: só etiquetas OSM (hgv/maxweight/maxlength). Rua Federação (tertiary) hgv=no + maxweight=3.5 (3 ways hgv=no, 3 maxweight): sugere restrição a caminhões, sem ato achado (leismunicipais bloqueado; FAMURS e QD sem resultado). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo.",
+ "observacoes": "Taquara: só etiquetas OSM (hgv/maxweight/maxlength). Rua Federação (tertiary) hgv=no + maxweight=3.5 (3 ways hgv=no, 3 maxweight): sugere restrição a caminhões, sem ato achado (leismunicipais bloqueado; FAMURS e QD sem resultado). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://leismunicipais.com.br/camara/rs/taquara; https://www.taquara.rs.gov.br. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarataquara.rs.gov.br): acervo com 156 itens no teste 'orçamento' (mais antigo 05/01/1962, mais recente 03/09/2026); acertos por termo {'caminhões': 4, 'caminhão': 5, 'veículos pesados': 1, 'tráfego pesado': 2, 'toneladas': 1, 'eixos': 2, 'veículos de carga': 1}. Lei 5.230/2013 (proíbe bitrem nas vias do interior; sem vias nomeadas) rascunhada como desativada. Status pista. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [
   "Rua Federação (tertiary) hgv=no + maxweight=3.5 (3 ways hgv=no, 3 maxweight): sugere restrição a caminhões, sem ato achado (leismunicipais bloqueado; FAMURS e QD sem resultado)."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "taquara_bitrem_vias_interior",
+   "tipo": "zona",
+   "regime": "Proibição por tipo de veículo (vias do interior)",
+   "nome": "Caminhões tipo bitrem nas vias públicas do interior (Lei 5.230/2013)",
+   "status": "desativada",
+   "status_motivo": "Refere-se genericamente às 'vias públicas do interior' (estradas rurais) sem listá-las nem delimitar; parágrafo único manda sinalizar as vias, mas nenhuma é nomeada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "tipo",
+      "em": [
+       "truck_trailer"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 5.230, de 28/05/2013 (Taquara/RS)",
+     "artigo": "art. 1º e parágrafo único; art. 2º (vigor na publicação, efeitos em 30 dias)",
+     "url": "https://www.camarataquara.rs.gov.br/proposicoes/pesquisa/0/1/0/5213",
+     "nota": "Cópia em atos/4321204/lei-5230-2013.txt."
+    }
+   ],
+   "nota": "Mapeamento de 'bitrem' para truck_trailer é aproximado."
+  }
+ ]
 }

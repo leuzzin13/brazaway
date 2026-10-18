@@ -2,9 +2,9 @@
  "ibge": "5107404",
  "nome": "São Pedro da Cipa",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,106 @@
   {
    "url": "leads/portais.json (São Pedro da Cipa)",
    "resultado": "Nenhum portal de legislação de prefeitura ou Câmara encontrado (nao_encontrado); sem como consultar legislação pós-2015."
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=347 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 14 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2017-2026"
   }
  ],
- "observacoes": "Sem ato de restrição a caminhões no diário. Sem portal localizável, a busca é inconclusiva para o período posterior ao acervo do AMM-MT (~2015): falha_de_fonte true.",
+ "observacoes": "Sem ato de restrição a caminhões no diário. Sem portal localizável, a busca é inconclusiva para o período posterior ao acervo do AMM-MT (~2015): falha_de_fonte true. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — São Pedro da Cipa: perímetro urbano, veículos pesados com mais de 3 eixos (Lei 529/2017); São Pedro da Cipa: Rua Floriano Peixoto, estacionamento de caminhões no perímetro da escola. Textos em atos/5107404/. Ver status_motivo das regras desativadas.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "saopedrodacipa_lei_529_2017_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Proibido tráfego de veículos pesados (mais de 3 eixos), carregados ou não, no perímetro urbano",
+   "nome": "São Pedro da Cipa: perímetro urbano, veículos pesados com mais de 3 eixos (Lei 529/2017)",
+   "status": "desativada",
+   "status_motivo": "R3: perímetro urbano sem delimitação no ato (nenhuma via nomeada nem polígono), 'três eixos' ambíguo (acima de três) e exceções amplas (carga e descarga no comércio local, mudanças, obras, caçambas); ato lido e vigente por ausência de revogação achada, mas sem geometria confiável.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: carga e descarga no comércio local; coleta de lixo; mudanças; obras e serviços de infraestrutura urbana; serviços públicos essenciais; remoção de entulho/caçambas; remoção de terra em obras; sinalização emergencial; socorro mecânico",
+    "Art. 1º, §2º: suspensa nos distritos e povoados sem pavimentação asfáltica"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 529, de 26/01/2017 (São Pedro da Cipa; publ. AMM-MT 23/08/2017)",
+     "artigo": "arts. 1º, 2º, 6º (30 dias de adequação), 8º (revoga o Decreto 46/2013)",
+     "url": "https://amm.diariomunicipal.org/publicacao/316115/"
+    }
+   ],
+   "trechos": [
+    "todo o perímetro urbano de São Pedro da Cipa/MT"
+   ],
+   "vigencia_inicio": "2017-02-25",
+   "vigencia_fim": null,
+   "nota": "Vigência: publicada no AMM em 23/08/2017 (a lei é datada de 26/01/2017); início aproximado. Revogação não achada no AMM-MT (2017-2026)."
+  },
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "saopedrodacipa_lei_830_2025_rua_floriano_peixoto",
+   "tipo": "via",
+   "regime": "Estacionamento de caminhões vedado junto à escola, 6h-18h dias úteis",
+   "nome": "São Pedro da Cipa: Rua Floriano Peixoto, estacionamento de caminhões no perímetro da escola",
+   "status": "desativada",
+   "status_motivo": "só estacionamento (não restringe circulação/passagem).",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "18:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 830, de 07/04/2025 (São Pedro da Cipa)",
+     "artigo": "art. 2º",
+     "url": "https://amm.diariomunicipal.org/publicacao/1596960/"
+    }
+   ],
+   "trechos": [
+    "Rua Floriano Peixoto (mão única norte-sul), perímetro da Escola Municipal"
+   ],
+   "vigencia_inicio": "2025-04-07",
+   "vigencia_fim": null,
+   "nota": "Só estacionamento."
+  }
+ ]
 }

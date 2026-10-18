@@ -2,9 +2,9 @@
  "ibge": "5105903",
  "nome": "Nobres",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.nobres.mt.leg.br/Leis/Legislacao-municipal/",
@@ -21,10 +21,82 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/059AB577",
    "resultado": "lido: LEI MUNICIPAL Nº. 1.251/2013 DE 03 DE ABRIL DE 2013. - ruído confirmado"
+  },
+  {
+   "url": "home prefeitura: https://www.nobres.mt.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: Secretarias/Agricultura-meio-ambiente-e-assuntos-fundiarios; Secretarias/Agricultura-meio-ambiente-e-assuntos-fundiarios/"
+  },
+  {
+   "url": "home camara: https://www.nobres.mt.leg.br/",
+   "resultado": "HTTP 200; links de legislação/diário: Institucional/Comissao-de-legislacao-e-redacao/; Institucional/O-poder-legislativo/; Leis/Legislacao-municipal/"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=402 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 15 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2020-2026"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR02 (conferência barata). Lei 1.251/2013 (AMM-MT 059AB577): quadro de cargos (motorista de veículo pesado). Ruído. Fonte principal bloqueada/sem cliente (Cloudflare/1doc/NucleoGov/sem busca efetiva): 'não achou' não conclusivo.",
+ "observacoes": "Lote R1-MT-DR02 (conferência barata). Lei 1.251/2013 (AMM-MT 059AB577): quadro de cargos (motorista de veículo pesado). Ruído. Fonte principal bloqueada/sem cliente (Cloudflare/1doc/NucleoGov/sem busca efetiva): 'não achou' não conclusivo. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — Nobres: perímetro urbano, carga e descarga de máquinas agrícolas, caminhões, carretas e bitrens (Lei 1.938/2025, art. 123). Textos em atos/5105903/. Ver status_motivo das regras desativadas.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "nobres_lei_1938_2025_carga_descarga",
+   "tipo": "zona",
+   "regime": "Carga e descarga de caminhões/carretas/bitrens só em janelas fixas no perímetro urbano",
+   "nome": "Nobres: perímetro urbano, carga e descarga de máquinas agrícolas, caminhões, carretas e bitrens (Lei 1.938/2025, art. 123)",
+   "status": "desativada",
+   "status_motivo": "só carga e descarga (art. 123 §1º): circulação apenas remetida à regulamentação do Município; perímetro urbano sem delimitação.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "19:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "06:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "13:00",
+     "to": "18:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.938/2025 (Nobres; AMM-MT 23/12/2025)",
+     "artigo": "art. 123 e §§",
+     "url": "https://amm.diariomunicipal.org/publicacao/1750780/"
+    }
+   ],
+   "trechos": [
+    "perímetro urbano de Nobres"
+   ],
+   "vigencia_inicio": "2025-12-23",
+   "vigencia_fim": null,
+   "nota": "Janelas de carga e descarga (seg-sex 19h-6h; sáb, dom e feriados 13h-18h), não de proibição de passagem. Feriados não modelados."
+  }
+ ]
 }

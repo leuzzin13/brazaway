@@ -21,10 +21,34 @@
   {
    "url": "leads/diarios_consolidados.json (pista da preparação)",
    "resultado": "Sem trecho anotado (top vazio no QD); FAMURS 0 resultados."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4316758 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/camara https://leismunicipais.com.br/camara/rs/santa-clara-do-sul: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc/prefeitura https://santaclaradosul.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://santaclaradosul"
+  },
+  {
+   "url": "https://santaclaradosul.rs.leg.br/",
+   "resultado": "R3: home http 200 (255315 bytes); WordPress: wp-json search caminhões/veículos pesados/carga e descarga só devolveu notícias/licitações"
+  },
+  {
+   "url": "https://www.santaclaradosul.rs.gov.br/",
+   "resultado": "R3: home http 200 (1200138 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4316758 (FAMURS) R3: circulação de caminhões, trânsito de veículos pesados, toneladas, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4316758",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente santa-clara-do-sul, santaclaradosul, santa-clara-sul); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Conferência barata (lote R1-RS-DR01): Sem trecho anotado (top vazio no QD); FAMURS 0 resultados. Nenhum ato de restrição de circulação de caminhões encontrado. Portal de legislação (leismunicipais) não pesquisável e Querido Diário fora do ar (522): não conclusivo.",
+ "observacoes": "Conferência barata (lote R1-RS-DR01): Sem trecho anotado (top vazio no QD); FAMURS 0 resultados. Nenhum ato de restrição de circulação de caminhões encontrado. Portal de legislação (leismunicipais) não pesquisável e Querido Diário fora do ar (522): não conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://leismunicipais.com.br/camara/rs/santa-clara-do-sul; https://santaclaradosul.1doc.com.br/b.php?pg=o/login&n=3. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

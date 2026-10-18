@@ -2,8 +2,8 @@
  "ibge": "4103800",
  "nome": "Cambira",
  "uf": "PR",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,90 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "SAPL https://sapl.cambira.pr.leg.br (48 normas; ementa: estacionamento)",
+   "resultado": "R3: busca por ementa (caminh, pesad, carga e descarga, tonelad, tráfego, trânsito, VUC, restrição) sem ato de restrição de caminhões [ver observações]"
+  },
+  {
+   "url": "elotech https://cambira.eloweb.net (21 atos nos termos; busca por ementa)",
+   "resultado": "R3: busca por ementa (caminh, pesad, carga e descarga, tonelad, tráfego, trânsito, VUC, restrição) sem ato de restrição de caminhões [ver observações]"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4103800",
+   "resultado": "R3: API respondeu 522/sem resposta (HTTP 000) em 2026-10-18; não conclusivo"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp (seletor de entidades, 189 entidades)",
+   "resultado": "R3: município não consta entre as entidades do AMP"
+  },
+  {
+   "url": "https://cambira.eloweb.net/portaltransparencia-api/api/leisatos (descricaoSumula=PESADOS/1728, exercícios 2016-2026)",
+   "resultado": "Lei 1728/2016 LIDA integral (PDF idArquivo 35517). Salva em atos/4103800/lei_1728_2016.txt. Nenhuma lei posterior de alteração/revogação localizada por ementa."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (10182 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.cambira.pr.leg.br/norma/pesquisar) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (10182 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.cambira.pr.leg.br/norma/pesquisar) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: ACHADO Lei 1.728/2016 (22/03/2016): art. 1º proíbe circulação de caminhões e carretas > 10 t nas vias urbanas, inclusive bairros, 24 h; §3º estende à Rodovia Municipal Florindo Picoli; exceções amplas (§1º I-XIII, ex.: cargas alimentícias, produtos fabricados/consumidos no município) e §2º todos os veículos emplacados em Cambira. Sem vias nomeadas nem perímetro: regra desativada. Vigência: sem revogação localizada (busca por ementa).",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "cambira_vias_urbanas_10t",
+   "tipo": "zona",
+   "regime": "Proibição por porte (zona urbana)",
+   "nome": "Vias urbanas e Rodovia Municipal Florindo Picoli: caminhões e carretas > 10 t (Lei 1.728/2016)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "coleta de lixo, obras/emergência, guincho, cargas alimentícias, sinalização, mudança, infraestrutura urbana, caçambas, valores, combustíveis, correios (art. 1º §1º I-XI)",
+    "produtos fabricados/cultivados ou a consumir/armazenar no município (§1º XII-XIII)",
+    "veículos emplacados em Cambira (§2º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.728/2016 (Cambira)",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://cambira.eloweb.net/portaltransparencia-api/api/files/arquivo/35517"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "vias urbanas do Município, inclusive bairros",
+      "Rodovia Municipal Florindo Picoli (§3º)"
+     ],
+     "descricao": "toda a área urbana, sem perímetro ou vias nomeadas"
+    }
+   ],
+   "vigencia_inicio": "2016-03-23",
+   "nota": "'Capacidade superior a 10 t' mapeada como payload_t; ambiguidade PBT x carga. Exceções amplas.",
+   "status_motivo": "Sem delimitação georreferenciável (área urbana genérica) e exceções muito amplas (inclui todos os veículos emplacados no município)."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

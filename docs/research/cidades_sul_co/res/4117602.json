@@ -2,7 +2,7 @@
  "ibge": "4117602",
  "nome": "Palmas",
  "uf": "PR",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "media",
  "falha_de_fonte": true,
  "fontes_consultadas": [
@@ -25,10 +25,131 @@
   {
    "url": "https://www.palmas.pr.leg.br:443",
    "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://www.camarapalmas.pr.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 40 itens no teste 'orçamento' (mais antigo 28/10/1960, mais recente 05/06/2019); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo. Acertos por termo: {'caminhões': 6, 'caminhão': 1, 'toneladas': 1}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem fonte da prefeitura; inconclusivo. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: nenhum portal de legislação/diário próprio identificado (sem site de prefeitura/câmara achado).",
+ "observacoes": "Sem fonte da prefeitura; inconclusivo. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: nenhum portal de legislação/diário próprio identificado (sem site de prefeitura/câmara achado). | R4 2026-10-18: varredura da Câmara em Softcam (www.camarapalmas.pr.gov.br): acervo com 40 itens no teste 'orçamento' (mais antigo 28/10/1960, mais recente 05/06/2019); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo {'caminhões': 6, 'caminhão': 1, 'toneladas': 1}. Lei 2293/2015 lida (anel viário central, caminhões pesados, a partir de 01/01/2016); revoga a Lei 1.736/2007 (que reeditava a Lei 1.431/2001). Busca de texto integral por 'caminhões pesados', '2293', 'anel viário', 'DEPALTRAN': nenhuma alteração/revogação posterior. | verificado em 2026-10-18: R4a reabriu o PDF da Lei 2293/2015. Regra do anel PBT>10 t mantida ativa (média); regra 3,5-10 t com janela 18h-9h30 desativada por ambiguidade tara x PBT. Sem alteração posterior localizada, mas acervo da Câmara só vai até 2019 e Palmas não consta no diário AMP (nem no Querido Diário): vigência pós-2019 não comprovada.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "palmas_anel_central_pbt_gt10t",
+   "tipo": "zona",
+   "regime": "Proibição por peso (zona/anel viário)",
+   "nome": "Anel viário central de Palmas: caminhões pesados (Lei 2293/2015)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2293, de 22/04/2015 (Palmas/PR)",
+     "artigo": "art. 1º, §§1º-2º; art. 4º; art. 5º",
+     "url": "https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa/0/1/0/2251",
+     "nota": "Texto integral lido (PDF em https://www.cloudsoftcam.com.br/PR/PALMAS/importacao/2015/04/lei_2293.pdf). Cópia em atos/4117602/lei-2293-2015.txt. Vigência a partir de 01/01/2016 (art. 5º); revoga a Lei 1.736/2007. Nenhuma lei posterior citando a 2293 na busca de texto integral da Câmara."
+    }
+   ],
+   "excecoes": [
+    "art. 4º: autorização prévia e por 1 dia expedida pelo Diretor do DEPALTRAN (CRLV + comprovação de imprescindibilidade); §3º: veículos de classe especial mediante autorização do DEPALTRAN"
+   ],
+   "nota": "Lei proíbe o tráfego de 'caminhões pesados' no anel viário: Rua Manoel Inácio de Loyola (esq. R. Marechal Deodoro) > Av. Barão do Rio Branco > R. Ver. Amazonas Fonseca > R. Augusto Guimarães > R. Marechal Floriano Peixoto > R. Marechal Deodoro > ponto inicial; §2º inclui as vias internas ao anel. AMBIGUIDADE: o §1º define caminhão pesado como 'PBT acima de 3,5 t (três vírgula cinco toneladas de tara, equivalente a dez toneladas do PBT)'; adotada a leitura tara>3,5 t = PBT>10 t (confiança média). A classe de PBT de 3,5 a 10 t está na regra seguinte (art. 2º). | Verificado em 2026-10-18 (PDF reaberto): a Lei 1.736/2007 revogada usava 'tonelagem superior a 3.500 kg' (sem definir tara/PBT), o que reforça a ambiguidade; o corte PBT>10 t é a leitura segura (proibido sob qualquer das leituras). Alterações pós-2019 NÃO verificáveis: acervo da Câmara termina em 2019 e Palmas não é entidade do diário AMP.",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua Manoel Inácio de Loyola",
+      "Rua Marechal Deodoro",
+      "Avenida Barão do Rio Branco",
+      "Rua Ver. Amazonas Fonseca",
+      "Rua Augusto Guimarães",
+      "Rua Marechal Floriano Peixoto"
+     ],
+     "descricao": "Anel viário e vias internas (art. 1º, §2º); perímetro descrito por vias nomeadas, sem anexo cartográfico.",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "palmas_anel_central_pbt_3_5a10t_janela",
+   "tipo": "zona",
+   "regime": "Restrição de horário (zona/anel viário)",
+   "nome": "Anel viário central de Palmas: caminhões leves (3,5 a 10 t) só 18h-9h30 seg-sáb (Lei 2293/2015 art. 2º)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "from": "09:30",
+     "to": "18:00"
+    },
+    {
+     "days": [
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 3.5
+     },
+     {
+      "campo": "pbt_t",
+      "ate": 10
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2293, de 22/04/2015 (Palmas/PR)",
+     "artigo": "art. 2º; art. 4º, §1º",
+     "url": "https://www.camarapalmas.pr.gov.br/proposicoes/pesquisa/0/1/0/2251",
+     "nota": "Mesmo ato da regra anterior."
+    }
+   ],
+   "excecoes": [
+    "art. 4º, §1º: autorização do DEPALTRAN para trânsito em horário/dia diverso"
+   ],
+   "nota": "Art. 2º: caminhões 'com PBT de até 3,5 t (tara; ~10 t de PBT)' só podem transitar no anel entre 18h e 9h30, de segunda a sábado; domingo não consta como permitido (interpretado como restrito o dia todo). Texto internamente ambíguo (mistura tara e PBT): confiança baixa; revisar antes de usar.",
+   "status_motivo": "Faixa 3,5-10 t de PBT depende de leitura ambígua do art. 1º §1º/art. 2º ('3,5 t de tara, equivalente a 10 t do PBT'): se o corte for PBT 3,5 t, esta classe fica PROIBIDA o dia todo (art. 1º) e não em janela; se for tara≈10 t PBT, a janela vale e o limite inferior seria 0 (art. 2º alcança todo caminhão até o corte). Qualquer parametrização erra; rebaixada."
+  }
+ ]
 }

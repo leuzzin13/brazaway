@@ -21,10 +21,34 @@
   {
    "url": "leads/diarios_consolidados.json (pista da preparação)",
    "resultado": "Trecho do QD de 2019-04-12: crédito orçamentário (manutenção de veículos pesados da frota)."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4309605 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "leismunicipais/camara https://leismunicipais.com.br/camara/rs/horizontina: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende/camara https://camarahorizontina.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende/prefeitura https://horizontina.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "https://www.camarahorizontina.rs.gov.br/",
+   "resultado": "R3: home http 200 (1705 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4309605 (FAMURS) R3: tráfego de caminhões, carga e descarga, zona de restrição de caminhões, circulação de caminhões, trânsito de veículos pesados, toneladas, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4309605",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  },
+  {
+   "url": "https://www.camarahorizontina.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarahorizontina.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 72 itens no teste 'orçamento' (mais antigo 09/07/2019, mais recente 16/10/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo. Acertos por termo: {'caminhão': 1, 'veículos pesados': 1, 'toneladas': 2}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente horizontina, horizontina-rs, horizontinars); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Conferência barata (lote R1-RS-DR01): Trecho do QD de 2019-04-12: crédito orçamentário (manutenção de veículos pesados da frota). Nenhum ato de restrição de circulação de caminhões encontrado. Portal de legislação (leismunicipais) não pesquisável e Querido Diário fora do ar (522): não conclusivo.",
+ "observacoes": "Conferência barata (lote R1-RS-DR01): Trecho do QD de 2019-04-12: crédito orçamentário (manutenção de veículos pesados da frota). Nenhum ato de restrição de circulação de caminhões encontrado. Portal de legislação (leismunicipais) não pesquisável e Querido Diário fora do ar (522): não conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camarahorizontina.atende.net; https://horizontina.atende.net; https://leismunicipais.com.br/camara/rs/horizontina. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarahorizontina.rs.gov.br): acervo com 72 itens no teste 'orçamento' (mais antigo 09/07/2019, mais recente 16/10/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo {'caminhão': 1, 'veículos pesados': 1, 'toneladas': 2}. Itens lidos/triados pela ementa e pelo texto do PDF: sem ato de restrição de circulação de caminhões (ruído: compras, orçamento, plano diretor/mobilidade só com diretriz, códigos de obras/posturas). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

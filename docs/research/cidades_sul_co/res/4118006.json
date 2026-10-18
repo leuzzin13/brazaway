@@ -2,8 +2,8 @@
  "ibge": "4118006",
  "nome": "Paraíso do Norte",
  "uf": "PR",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,325 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://camaraparaisodonorte.atende.net",
+   "resultado": "R3: fonte atende inacessível/sem busca automática: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizad"
+  },
+  {
+   "url": "https://paraisodonorte.atende.net",
+   "resultado": "R3: fonte atende inacessível/sem busca automática: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizad"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4118006",
+   "resultado": "R3: API respondeu 522/sem resposta (HTTP 000) em 2026-10-18; não conclusivo"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp (seletor de entidades, 189 entidades)",
+   "resultado": "R3: município não consta entre as entidades do AMP"
+  },
+  {
+   "url": "https://www.paraisodonorte.pr.leg.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 81 itens no teste 'orçamento' (mais antigo 06/07/1993, mais recente 08/10/2026). Acertos por termo: {'caminhões': 1, 'veículos pesados': 2, 'eixos': 3}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13819 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (atende, https://camaraparaisodonorte.atende.net/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13819 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (atende, https://camaraparaisodonorte.atende.net/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: nenhuma fonte municipal pesquisável (bloqueada/vazia: https://camaraparaisodonorte.atende.net; https://paraisodonorte.atende.net); negativo NÃO conclusivo, falha_de_fonte=true. | R4 2026-10-18: varredura da Câmara em Softcam (www.paraisodonorte.pr.leg.br): acervo com 81 itens no teste 'orçamento' (mais antigo 06/07/1993, mais recente 08/10/2026); acertos por termo {'caminhões': 1, 'veículos pesados': 2, 'eixos': 3}. Lei 346/2018 (OCR do PDF escaneado) + Lei 369/2019 lidas: Av. Tapejara com proibição para PBT > 14 t (ativa, rascunho) e outras restrições desativadas (Rui Barbosa e prolongamento sem número, demais vias sem delimitação, tipo de carga, só estacionamento). Também Lei 48/2003 (proíbe estacionamento de caminhões na Rua Monteiro Lobato): só estacionamento. | verificado em 2026-10-18: Av. Tapejara confirmada como via municipal (não é trecho de PR-xxx). Lei 346/2018 (OCR do PDF reaberto) e 369/2019 (que só suspende a alínea a, Av. Rui Barbosa, durante obras da PR-685) sem alteração posterior: Câmara Softcam, acervo até 09/2026, só 2 normas com 'veículos pesados' (346 e 369). Demais regras desativadas confirmadas. Exceções do art. 2 exigem destino final no município.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "paraisodonorte_av_tapejara_pbt_14t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Avenida Tapejara: veículos pesados com PBT acima de 14 t (Lei 346/2018)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 14
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 1º, b; art. 2º (exceções); art. 6º (rotas alternativas); art. 8º (multa 5 a 50 URM)",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: isentos os veículos pesados com destino final no Município nos serviços listados (emergência, transporte coletivo, oficiais, PM/bombeiros/ambulância, concessionárias, oficinas, construção civil/concretagem, coleta de lixo, guincho, cargas alimentícias, materiais de construção, combustíveis/gás, remoção de terra/entulho, valores, abastecimento do comércio local)",
+    "art. 3º: veículos com grãos/colheitas de agricultores com propriedade rural no Município podem usar a Av. Rui Barbosa",
+    "art. 7º §4º: moradores cadastrados podem estacionar (só estacionamento)"
+   ],
+   "nota": "Proibição sem horário ('todos os dias e horários, ininterruptamente'). As exceções do art. 2º exigem destino final no Município, ou seja, na prática a restrição pesa sobre o tráfego de passagem; confiança média por causa disso. Rotas alternativas (art. 6º): PR-492 km 30,6 / Estrada Suruquá e Estrada da Juranda (PR-492 km 16,7 / PR-559 km 6,83). | Verificado em 2026-10-18: Av. Tapejara é via urbana municipal (OSM: 'Avenida Tapejara' unclassified/tertiary sem ref PR; endereço da Prefeitura; a lei trata a PR-492 como via distinta). Atenção: o 'prolongamento' (da Av. Luiz Curioni ao Lote 5-A/Cocamar, art. 1º d) tem limite diferente (o da PR-492) e não deve receber o corte de 14 t; limites exatos desse ponto não localizados no texto.",
+   "trechos": [
+    {
+     "inciso": "art. 1º, b",
+     "via": [
+      "Avenida Tapejara"
+     ],
+     "descricao": "Avenida Tapejara (via municipal); excluir o prolongamento a partir da Av. Luiz Curioni (art. 1º d), que tem outro limite.",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "paraisodonorte_av_rui_barbosa_limite_pr559",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Avenida Rui Barbosa: acima dos limites de peso da PR-559 (Lei 346/2018, art. 1º, a)",
+   "status": "desativada",
+   "status_motivo": "O limite é remetido 'aos limites de peso permitidos para a rodovia PR-559', sem valor numérico no ato; além disso a Lei 369/2019 suspende esta restrição enquanto durarem as obras de pavimentação da PR-685 (Tamboara-Juranda). Sem número não há como parametrizar.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 1º, a; art. 3º",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    },
+    {
+     "ato": "Lei Municipal 369, de 20/03/2019 (Paraíso do Norte/PR)",
+     "artigo": "art. 1º (acrescenta §4º ao art. 1º da Lei 346/2018)",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2710",
+     "nota": "Suspende a restrição da alínea a enquanto durarem as obras da PR-685; fim das obras não verificado."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: isentos os veículos pesados com destino final no Município nos serviços listados (emergência, transporte coletivo, oficiais, PM/bombeiros/ambulância, concessionárias, oficinas, construção civil/concretagem, coleta de lixo, guincho, cargas alimentícias, materiais de construção, combustíveis/gás, remoção de terra/entulho, valores, abastecimento do comércio local)",
+    "art. 3º: veículos com grãos/colheitas de agricultores com propriedade rural no Município podem usar a Av. Rui Barbosa",
+    "art. 7º §4º: moradores cadastrados podem estacionar (só estacionamento)"
+   ],
+   "nota": "Via: Avenida Rui Barbosa.",
+   "trechos": [
+    {
+     "inciso": "art. 1º, a",
+     "via": [
+      "Avenida Rui Barbosa"
+     ],
+     "descricao": "Avenida Rui Barbosa.",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "paraisodonorte_demais_vias_urbanas_pbt_14t",
+   "tipo": "zona",
+   "regime": "Proibição por peso (zona urbana)",
+   "nome": "Bairros e demais ruas de Paraíso do Norte: veículos acima de 14 t PBT (Lei 346/2018, art. 1º, c)",
+   "status": "desativada",
+   "status_motivo": "Abrange 'bairros e demais ruas do Município' sem delimitação (sem perímetro urbano descrito nem lista de vias): não georreferenciável pelo ato.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 14
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 1º, c",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: isentos os veículos pesados com destino final no Município nos serviços listados (emergência, transporte coletivo, oficiais, PM/bombeiros/ambulância, concessionárias, oficinas, construção civil/concretagem, coleta de lixo, guincho, cargas alimentícias, materiais de construção, combustíveis/gás, remoção de terra/entulho, valores, abastecimento do comércio local)",
+    "art. 3º: veículos com grãos/colheitas de agricultores com propriedade rural no Município podem usar a Av. Rui Barbosa",
+    "art. 7º §4º: moradores cadastrados podem estacionar (só estacionamento)"
+   ],
+   "nota": "Poderia virar zona se o perímetro urbano oficial for adotado (decisão de modelagem)."
+  },
+  {
+   "id": "paraisodonorte_prolongamento_tapejara_limite_pr492",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Prolongamento da Av. Tapejara (Av. Luiz Curioni ao Lote 5-A, Cocamar): acima dos limites da PR-492 (Lei 346/2018, art. 1º, d)",
+   "status": "desativada",
+   "status_motivo": "Limite remetido à PR-492, sem valor numérico no ato; acesso exclusivamente pela PR-492.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 1º, d, §§1º-3º",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: isentos os veículos pesados com destino final no Município nos serviços listados (emergência, transporte coletivo, oficiais, PM/bombeiros/ambulância, concessionárias, oficinas, construção civil/concretagem, coleta de lixo, guincho, cargas alimentícias, materiais de construção, combustíveis/gás, remoção de terra/entulho, valores, abastecimento do comércio local)",
+    "art. 3º: veículos com grãos/colheitas de agricultores com propriedade rural no Município podem usar a Av. Rui Barbosa",
+    "art. 7º §4º: moradores cadastrados podem estacionar (só estacionamento)"
+   ],
+   "nota": "Trecho entre a Av. Luiz Curioni (acesso ao Conj. Eldorado) e o Lote 5-A E 285 B-1 (Cocamar)."
+  },
+  {
+   "id": "paraisodonorte_barro_argila_cana",
+   "tipo": "zona",
+   "regime": "Proibição por tipo de carga",
+   "nome": "Veículos com barro, argila e cana-de-açúcar: proibidos em qualquer via urbana (Lei 346/2018, art. 4º)",
+   "status": "desativada",
+   "status_motivo": "Restrição por tipo de carga (barro, argila, cana), sem relação com o veículo; todas as vias urbanas sem delimitação.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 4º; art. 1º §2º; art. 6º, II",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    }
+   ],
+   "excecoes": [
+    "rota alternativa: Estrada da Juranda (PR-492 km 16,7) a Juranda (PR-559 km 6,83) (Anexo V)"
+   ],
+   "nota": "Por tipo de carga."
+  },
+  {
+   "id": "paraisodonorte_estacionamento_gt14m",
+   "tipo": "zona",
+   "regime": "Estacionamento",
+   "nome": "Estacionamento de veículos pesados com mais de 14 m nas vias urbanas (Lei 346/2018, art. 7º)",
+   "status": "desativada",
+   "status_motivo": "só estacionamento (não restringe a circulação/passagem)",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "comprimento_m",
+      "acima": 14
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 346, de 18/12/2018 (Paraíso do Norte/PR), alterada pela Lei 369/2019",
+     "artigo": "art. 7º",
+     "url": "https://www.paraisodonorte.pr.leg.br/proposicoes/pesquisa/0/1/0/2538",
+     "nota": "Texto lido por OCR do PDF escaneado (cópia em atos/4118006/lei-346-2018.txt); vigência 30 dias após a publicação (art. 9º; data da publicação não localizada)."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: isentos os veículos pesados com destino final no Município nos serviços listados (emergência, transporte coletivo, oficiais, PM/bombeiros/ambulância, concessionárias, oficinas, construção civil/concretagem, coleta de lixo, guincho, cargas alimentícias, materiais de construção, combustíveis/gás, remoção de terra/entulho, valores, abastecimento do comércio local)",
+    "art. 3º: veículos com grãos/colheitas de agricultores com propriedade rural no Município podem usar a Av. Rui Barbosa",
+    "art. 7º §4º: moradores cadastrados podem estacionar (só estacionamento)"
+   ],
+   "nota": "Só estacionamento."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

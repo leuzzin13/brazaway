@@ -4,7 +4,7 @@
  "uf": "GO",
  "status": "nao_achou",
  "nivel_busca": "media",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://leismunicipais.com.br/camara/go/ipora",
@@ -21,9 +21,41 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 5210208 'circulação de caminhões' | 'trânsito de caminhões' | 'veículos pesados' | 'tráfego de caminhões' | 'carretas' (agm, fgm)",
    "resultado": "'veículos pesados' 48 hits e 'carretas' 27, todos licitação, estatuto de consórcio, dispensa (score <= 1); demais frases 0."
+  },
+  {
+   "url": "home prefeitura: https://ipora.go.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.ipora.go.gov.br/legislacao/leis"
+  },
+  {
+   "url": "home camara: https://ipora.go.leg.br/",
+   "resultado": "HTTP 200; links de legislação/diário: http://acessoainformacao.ipora.go.leg.br/legislacao/leis; https://acessoainformacao.ipora.go.leg.br/cidadao/legislacao/apreciaca; https://acessoainformacao.ipora.go.leg.br/cidadao/legislacao/decreto/i"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 5210208 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
+   "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
+  },
+  {
+   "url": "WP REST /wp-json/wp/v2/search (prefeitura https://ipora.go.gov.br/) 4 termos",
+   "resultado": "R3: 5 resultados, só notícias/páginas institucionais; nenhum ato normativo de restrição"
+  },
+  {
+   "url": "WP REST /wp-json/wp/v2/search (camara https://ipora.go.leg.br/) 4 termos",
+   "resultado": "R3: 1 resultados, só notícias/páginas institucionais; nenhum ato normativo de restrição"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5210208",
+   "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
+  },
+  {
+   "url": "https://dom.ipora.go.gov.br/api/diarios (+ variantes .go.leg.br e domínio do site; toolkit/nucleogov.py)",
+   "resultado": "R4 2026-10-18: API NucleoGov (dom.<dominio>/api) inexistente para este município (conexão recusada/DNS); links de diário na home da prefeitura/Câmara: nenhum"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/agm/pesquisar (busca_avancada[entidade]=7486)",
+   "resultado": "R4 2026-10-18: toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 138 matérias únicas, 1 plausíveis lidas. Entidade(s): AGM 'Município de Iporá' (id 7486): 10001+ matérias, 2013-01-30 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões."
   }
  ],
- "observacoes": "Nenhum ato localizado no AGM (cobre o município); portais de legislação inacessíveis, por isso a conclusão fica restrita ao diário.",
+ "observacoes": "Nenhum ato localizado no AGM (cobre o município); portais de legislação inacessíveis, por isso a conclusão fica restrita ao diário. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados'). | R4 2026-10-18: varredura NucleoGov (dom.<dominio>/api/materias): este município NÃO tem diário NucleoGov (domínio dom.* não existe); sem novidade, status mantido. | R4 2026-10-18 (AGM/FGM texto integral): toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 138 matérias únicas, 1 plausíveis lidas. Entidade(s): AGM 'Município de Iporá' (id 7486): 10001+ matérias, 2013-01-30 a 2026-10-16. Nenhum ato de restrição de circulação de caminhões. Acervo desde 2013 (<=2018): negativo CONCLUSIVO para o diário; falha_de_fonte=false.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "data": "2026-10-18"

@@ -2,9 +2,9 @@
  "ibge": "4311304",
  "nome": "Lagoa Vermelha",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "r3_fonte_municipal",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -42,11 +42,115 @@
   {
    "url": "https://lagoavermelha.rs.gov.br/?s=caminh%C3%B5es",
    "resultado": "busca geral do site (prefeitura) por 'caminhões': 0 acerto(s) de título, todos irrelevantes (notícias/licitações de frota); não é busca em legislação"
+  },
+  {
+   "url": "https://www.lagoavermelha.rs.leg.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.lagoavermelha.rs.leg.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R4 2026-10-18: acervo com 902 itens no teste 'orçamento' (mais antigo 25/11/1947, mais recente 23/12/2025). Acertos por termo: {'caminhões': 54, 'caminhão': 63, 'veículos pesados': 1, 'tráfego pesado': 1, 'toneladas': 10, 'eixos': 4, 'carretas': 3, 'veículos de carga': 3}. Texto dos itens plausíveis (filtro por ementa) lido; ver observações."
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente lagoa-vermelha, lagoavermelha, lagoa-vermelha-rs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (28622 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/camara/rs/lagoa-vermelha) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: atende camara https://camaralagoavermelha.atende.net ; atende prefeitura https://lagoavermelha.atende.net ; leismunicipais camara https://leismunicipais.com.br/camara/rs/lagoa-vermelha ; leismunicipais prefeitura https://leis.org/municipais/rs/lagoa-vermelha. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (28622 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/camara/rs/lagoa-vermelha) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: atende camara https://camaralagoavermelha.atende.net ; atende prefeitura https://lagoavermelha.atende.net ; leismunicipais camara https://leismunicipais.com.br/camara/rs/lagoa-vermelha ; leismunicipais prefeitura https://leis.org/municipais/rs/lagoa-vermelha. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva. | R4 2026-10-18: varredura da Câmara em Softcam (www.lagoavermelha.rs.leg.br): acervo com 902 itens no teste 'orçamento' (mais antigo 25/11/1947, mais recente 23/12/2025); acertos por termo {'caminhões': 54, 'caminhão': 63, 'veículos pesados': 1, 'tráfego pesado': 1, 'toneladas': 10, 'eixos': 4, 'carretas': 3, 'veículos de carga': 3}. Câmara (Softcam) tem Leis 3.750/1991 (art. 5º: >8 t, 'vias asfaltadas centrais', sem delimitar), 2.246/1973 (caminhões pesados em 3 avenidas centrais, só carga/descarga) e 1.633/1964 (caminhões com madeira): todas rascunhadas/desativadas por falta de delimitação ou de critério de peso e vigência duvidosa. Status pista. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "lagoavermelha_vias_asfaltadas_centrais_toco_8t",
+   "tipo": "zona",
+   "regime": "Proibição por capacidade de carga",
+   "nome": "Vias asfaltadas centrais: veículos com carga acima de 8 t (caminhão toco) (Lei 3.750/1991 art. 5º, red. Lei 4.104/1994)",
+   "status": "desativada",
+   "status_motivo": "Refere-se genericamente a 'todas as vias asfaltadas centrais da cidade', sem delimitação (sem lista de vias nem perímetro).",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 8
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 3.750, de 14/10/1991, art. 5º com a redação da Lei 4.104, de 10/06/1994 (Lagoa Vermelha/RS)",
+     "artigo": "art. 5º",
+     "url": "https://www.lagoavermelha.rs.leg.br/proposicoes/pesquisa/0/1/0/3527",
+     "nota": "Texto compilado na Câmara (cópia em atos/4311304/lei-3750-1991-com-alteracoes.txt). A Lei 7.740/2021 mexeu só no art. 6º (carga e descarga); a Lei 4.104/1994 (item 3171) não foi lida em separado."
+    }
+   ],
+   "nota": "A redação original do art. 5º era 'acima de 3,5 t'; foi substituída em 1994 por 'caminhão toco, superior a 8 t'."
+  },
+  {
+   "id": "lagoavermelha_av_julio_castilhos_afonso_pena_benjamin_constant",
+   "tipo": "via",
+   "regime": "Proibição (via) com exceção para carga e descarga",
+   "nome": "Av. Júlio de Castilhos, Afonso Pena e Benjamin Constant (e transversais entre R. Dr. Jorge Moojen e R. Maximiliano de Almeida): caminhões pesados (Lei 2.246/1973)",
+   "status": "desativada",
+   "status_motivo": "Ato de 1973 sem critério de peso ('caminhões pesados'), com vigência duvidosa (a Lei 3.750/1991, art. 5º, passou a regular por peso as vias centrais; a 2.246 não foi revogada expressamente) e permite o tráfego para carga e descarga; a regulamentação do art. 3º não foi localizada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2.246, de 18/09/1973 (Lagoa Vermelha/RS)",
+     "artigo": "art. 1º e 2º",
+     "url": "https://www.lagoavermelha.rs.leg.br/proposicoes/pesquisa/0/1/0/5031",
+     "nota": "Altera a Lei 1.376/1962; cópia em atos/4311304/lei-2246-1973.txt."
+    }
+   ],
+   "excecoes": [
+    "art. 2º: tráfego permitido para fins de carga e descarga"
+   ],
+   "nota": "Vias nomeadas no centro; transversais entre Dr. Jorge Moojen e Maximiliano de Almeida.",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Júlio de Castilhos",
+      "Avenida Afonso Pena",
+      "Avenida Benjamin Constant"
+     ],
+     "descricao": "Avenidas e transversais entre as ruas Dr. Jorge Moojen e Maximiliano de Almeida.",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
