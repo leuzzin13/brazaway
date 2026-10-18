@@ -2,7 +2,21 @@
 # -*- coding: utf-8 -*-
 """
 diarios_consolidados.py - cliente unico para DIARIOS OFICIAIS CONSOLIDADOS (varios municipios num diario so)
-do Sudeste, para achar atos de restricao de caminhoes. Somente leitura; nao chama Valhalla; nao escreve no repo.
+do Sudeste e do SUL/CENTRO-OESTE (PR, SC, RS, GO, MT, MS, DF), para achar atos de restricao de caminhoes.
+Somente leitura; nao chama Valhalla; nao escreve no repo.
+
+SUL/CENTRO-OESTE (extensao de 18/10/2026) - fontes novas, mesma CLI:
+  domsc   DOM/SC (FECAM/CIGA)          diariomunicipal.sc.gov.br          SC  (294 municipios, Solr; busca por entidade+categoria)
+  famurs  FAMURS (SIGPub)              www.diariomunicipal.com.br/famurs  RS
+  amp     AMP (SIGPub)                 www.diariomunicipal.com.br/amp     PR
+  agm     AGM (SIGPub)                 www.diariomunicipal.com.br/agm     GO
+  fgm     FGM (SIGPub)                 www.diariomunicipal.com.br/fgm     GO (federacao goiana; poucos municipios)
+  amm-mt  AMM-MT (SIGPub)              www.diariomunicipal.com.br/amm-mt  MT
+  ms      ASSOMASUL/AMM-MS (SIGPub)    www.diariomunicipal.com.br/ms      MS  (o slug /assomasul nao existe; e /ms)
+  Fluxo: `cobertura --fontes domsc,famurs,amp,agm,fgm,amm-mt,ms` -> `varrer --fontes ...` (varreduras globais por termo)
+         -> `varrer-municipios --fontes ...` (termos x CADA municipio coberto; retomavel) -> `consolidar`.
+  Termos extras do Sul/CO (ver TERMOS): vuc_sigla, zona_restricao, transito_pesado, veic_pesados, veic_carga, toneladas.
+  `buscar 4106902 "veículos pesados"` / `buscar Joinville "carga e descarga"` / `lead 4209102` funcionam para essas UFs.
 
 USO (agentes de pesquisa por cidade) - SEMPRE comece pelo lead pronto, depois busque termos novos:
   python3 diarios_consolidados.py lead 3118601                    # o que a varredura ja achou (JSON)
@@ -60,7 +74,9 @@ import urllib.request
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 CIDADES = os.path.dirname(AQUI)
-CSV_MUN = os.path.join(CIDADES, "municipios_sudeste.csv")
+CSV_MUN = os.path.join(CIDADES, "municipios.csv")  # Sul/Centro-Oeste (ibge;nome;uf)
+CSV_MUN_SE = os.path.join(CIDADES, "municipios_sudeste.csv")  # opcional (Sudeste), se existir
+UFS_RX = "sp|mg|rj|es|pr|sc|rs|go|mt|ms|df"
 QD_CITIES = os.path.join(CIDADES, "qd_cities.json")
 LEADS = os.path.join(CIDADES, "leads")
 RAW = os.path.join(LEADS, "diarios_consolidados_raw")
@@ -98,13 +114,33 @@ TERMOS = [
     {"id": "carretas", "frase": "circulação de carretas", "sigpub": "carretas circulação", "amplo": True},
     {"id": "vuc", "frase": "veículo urbano de carga", "sigpub": None, "amplo": True},
     {"id": "bitrem", "frase": "bitrem", "sigpub": "bitrem circulação", "amplo": True},
+    # --- termos do Sul/Centro-Oeste (frase/sigpub como acima; "sc" = consulta Solr do DOM/SC) ---
+    {"id": "veic_pesados", "frase": "veículos pesados", "sigpub": "veículos pesados", "sc": '"veículos pesados"', "sul_co": True},
+    {"id": "veic_carga", "frase": "veículos de carga", "sigpub": "veículos carga", "sc": '"veículos de carga"', "sul_co": True},
+    {"id": "vuc_sigla", "frase": "VUC", "sigpub": "VUC", "sc": "VUC", "sul_co": True},
+    {"id": "zona_restricao", "frase": "zona de restrição", "sigpub": "zona restrição", "sc": '"zona de restrição"', "sul_co": True},
+    {"id": "transito_pesado", "frase": "trânsito pesado", "sigpub": "trânsito pesado", "sc": '"trânsito pesado"', "sul_co": True},
+    {"id": "toneladas", "frase": "toneladas", "sigpub": "toneladas caminhões", "sc": "(toneladas AND caminhões)", "sul_co": True, "amplo": True},
+    {"id": "cam_circ", "frase": "caminhões circulação", "sigpub": "caminhões circulação", "sc": "(caminhões AND circulação)", "sul_co": True},
 ]
+# Termos varridos POR MUNICIPIO nos diarios SIGPub (1 pagina de 25 por termo/entidade, ordem de relevancia), por prioridade.
+TERMOS_MUN_SIGPub = ["caminhões circulação", "veículos pesados", "veículos carga", "carga descarga", "zona restrição",
+                     "trânsito pesado", "VUC", "toneladas caminhões"]
+SIGPUB_TITULOS = ["", "decreto", "lei", "portaria"]  # varredura global por tipo de ato (o filtro de título do SIGPub)
+CATEGORIAS_SC = ["Leis", "Decretos", "Portarias", "Instrução Normativa", "Resoluções"]  # DOM/SC: atos normativos
+# DOM/SC, consulta Solr por municipio: OR de frases (so funciona com tudo entre parenteses, sem aninhar)
+SC_Q_A = ('("circulação de caminhões" OR "tráfego de caminhões" OR "trânsito de caminhões" OR "veículos pesados" OR '
+          '"veículos de carga" OR VUC)')
+SC_Q_B = '("carga e descarga" OR "zona de restrição" OR "trânsito pesado" OR "tráfego pesado" OR "veículo urbano de carga")'
+TERMOS_QD_MUN = ["circulação de caminhões", "veículos pesados", "zona de restrição", "carga e descarga"]  # Querido Diário (lento)
+SC_CONSULTAS = (("sc_a", SC_Q_A), ("sc_b", SC_Q_B), ("sc_caminhao", "(caminhões OR caminhão OR carretas OR bitrem)"))  # a URL aceita ~8 frases
+
 # Termos mais especificos que valem o custo de abrir PDF (DOSP, sem trecho na busca).
 TERMOS_PDF_DOSP = {"circ_caminhoes", "traf_caminhoes", "trans_caminhoes", "circ_pesados", "traf_pesados",
                    "trans_pesados", "circ_carga", "zmrc", "restr_circ", "restr_a_circ", "estac_caminhoes"}
 
 # Teto de paginas por (fonte, termo) na varredura global.
-MAX_PAG = {"sigpub": 40, "domes": 60, "doesp": 20, "qd": 20, "qd_amplo": 6}  # qd: paginas de 10 diarios
+MAX_PAG = {"domsc": 40, "sigpub": 40, "domes": 60, "doesp": 20, "qd": 20, "qd_amplo": 6}  # qd: paginas de 10 diarios
 
 # Intervalo minimo entre pedidos ao MESMO host (segundos).
 DELAYS = {
@@ -114,6 +150,8 @@ DELAYS = {
     "www.imprensaoficialmunicipal.com.br": 0.5,
     "www.dosp.com.br": 1.0,
     "api.queridodiario.org.br": 2.0,
+    "diariomunicipal.sc.gov.br": 1.0,
+    "www.diariomunicipal.sc.gov.br": 1.0,
 }
 
 _lock_log = threading.Lock()
@@ -275,6 +313,15 @@ ALIASES = {  # variantes de grafia -> nome oficial normalizado
     "itu": "itu", "itabirinha de mantena": "itabirinha", "pingo dagua": "pingo d agua",
     "olhos dagua": "olhos d agua", "passa 4": "passa quatro", "sao luis do paraitinga": "sao luiz do paraitinga",
     "santa barbara do oeste": "santa barbara d oeste",
+    # Sul / Centro-Oeste
+    "rio verde de": "rio verde de mato grosso", "sant ana do livramento": "santana do livramento",
+    "santa cruz do sul": "santa cruz do sul", "pinhal de sao bento": "pinhal de sao bento",
+    "mirassol d oeste": "mirassol d oeste", "alta floresta d oeste": "alta floresta d oeste",
+    "sao luis de montes belos": "sao luis de montes belos", "bela vista do paraiso": "bela vista do paraiso",
+    "sao miguel do oeste": "sao miguel do oeste", "herval d oeste": "herval d oeste",
+    "xangri la": "xangri la", "dona francisca": "dona francisca", "passo de torres": "passo de torres",
+    "balneario picarras": "balneario picarras", "picarras": "balneario picarras",
+    "santa teresinha de goias": "santa terezinha de goias", "santa terezinha de goias": "santa terezinha de goias",
 }
 
 
@@ -282,11 +329,14 @@ def municipios():
     global _MUN
     if _MUN is None:
         _MUN = {}
-        with open(CSV_MUN, encoding="utf-8") as f:
-            for ln in f:
-                p = ln.strip().split(";")
-                if len(p) >= 3 and p[0].isdigit():
-                    _MUN[p[0]] = {"ibge": p[0], "nome": p[1], "uf": p[2], "n": norm(p[1])}
+        for arq in (CSV_MUN_SE, CSV_MUN):
+            if not os.path.exists(arq):
+                continue
+            with open(arq, encoding="utf-8") as f:
+                for ln in f:
+                    p = ln.strip().split(";")
+                    if len(p) >= 3 and p[0].isdigit():
+                        _MUN[p[0]] = {"ibge": p[0], "nome": p[1], "uf": p[2], "n": norm(p[1])}
     return _MUN
 
 
@@ -311,7 +361,7 @@ def _rx_contido(uf):
 def resolve_nome(nome, uf=None, fuzzy=0.88):
     """nome livre -> ibge (ou None). Tenta exato, alias e difflib dentro da UF."""
     n = norm(nome)
-    n = re.sub(r"\b(sp|mg|rj|es)$", "", n).strip()
+    n = re.sub(r"\b(%s)$" % UFS_RX, "", n).strip()
     n = ALIASES.get(n, n)
     idx = _idx_uf(uf)
     if n in idx:
@@ -323,7 +373,7 @@ def resolve_nome(nome, uf=None, fuzzy=0.88):
     return idx[c[0]] if c else None
 
 
-PREFIXOS_ENT = r"^(prefeitura municipal|prefeitura|camara municipal|camara|municipio|poder legislativo|poder executivo)( (de|do|da|dos|das))?\s+"
+PREFIXOS_ENT = r"^(prefeitura municipal|prefeitura|camara municipal de vereadores|camara de vereadores|camara municipal|camara|municipio|poder legislativo|poder executivo|governo municipal|fundo municipal)( (de|do|da|dos|das))?\s+"
 
 
 def resolve_entidade(nome_ent, uf):
@@ -333,7 +383,7 @@ def resolve_entidade(nome_ent, uf):
         return None
     m = re.sub(PREFIXOS_ENT, "", n).strip()
     if m != n:
-        m = re.split(r"\s+(estado de|mg|rj|sp|es)\b", m)[0].strip()
+        m = re.split(r"\s+(estado de|%s)\b" % UFS_RX, m)[0].strip()
         r = resolve_nome(m, uf)
         if r:
             return r
@@ -353,7 +403,7 @@ def resolve_municipio_arg(arg, uf=None):
     arg = arg.strip()
     if arg.isdigit():
         return [arg] if arg in municipios() else []
-    m = re.match(r"(.+?)\s*[/-]\s*(SP|MG|RJ|ES)$", arg, re.I)
+    m = re.match(r"(.+?)\s*[/-]\s*(%s)$" % UFS_RX.upper(), arg, re.I)
     if m:
         arg, uf = m.group(1), m.group(2).upper()
     n = ALIASES.get(norm(arg), norm(arg))
@@ -470,8 +520,8 @@ class SIGPub(object):
                 return e["ibge"]
         return resolve_entidade(nome_ent, self.uf)
 
-    def pesquisar(self, texto, pagina=1, entidade="", ordenacao="relevancia", desde="2009-01-01", ate=None):
-        params = [("busca_avancada[texto]", texto), ("busca_avancada[titulo]", ""),
+    def pesquisar(self, texto, pagina=1, entidade="", ordenacao="relevancia", desde="2009-01-01", ate=None, titulo=""):
+        params = [("busca_avancada[texto]", texto), ("busca_avancada[titulo]", titulo),
                   ("busca_avancada[entidade]", entidade), ("busca_avancada[orgao]", ""),
                   ("busca_avancada[dataInicio]", desde), ("busca_avancada[dataFim]", ate or HOJE),
                   ("busca_avancada[ordenacao]", ordenacao), ("busca_avancada[pagina]", str(pagina))]
@@ -519,9 +569,39 @@ class SIGPub(object):
         q = termo.get("sigpub")
         if not q:
             return None
-        hits, total = self.pesquisar(q, pagina=pagina)
+        hits, total = self.pesquisar(q, pagina=pagina, titulo=termo.get("titulo", ""))
         npag = min((total + 24) // 25, 400, MAX_PAG["sigpub"])
         return hits, total, pagina < npag
+
+    def termos_varredura(self, termos):
+        """Termos x filtro de titulo (decreto/lei/portaria): o ranking por relevancia do SIGPub e dominado por licitacao;
+        o filtro de titulo traz os atos normativos (teto de 1.000 por consulta)."""
+        out = []
+        for t in termos:
+            if not t.get("sigpub"):
+                continue
+            for tit in SIGPUB_TITULOS:
+                v = dict(t, titulo=tit)
+                v["id"] = t["id"] + ("@" + tit if tit else "")
+                out.append(v)
+        return out
+
+    def entidades_municipio(self, ibge):
+        """Entidades de um municipio no seletor; prefere Prefeitura/Municipio/Camara (as que publicam atos normativos)."""
+        ents = [e for e in self.entidades() if e["ibge"] == ibge]
+        pref = [e for e in ents if re.match(r"(prefeitura|municipio|camara)", norm(e["nome"]))]
+        return pref or ents
+
+    def varre_municipio(self, ibge, registra):
+        """Varre TERMOS_MUN_SIGPub (1 pagina por termo) em cada entidade do municipio. registra(qid, hits, total) grava."""
+        for e in self.entidades_municipio(ibge):
+            for q in TERMOS_MUN_SIGPub:
+                qid = "mun:" + q
+                chave = "%s|%s|%s" % (self.nome, e["id"], qid)
+                if registra.feito(chave):
+                    continue
+                hits, total = self.pesquisar(q, pagina=1, entidade=e["id"], ordenacao="relevancia")
+                registra.grava(chave, qid, hits, total)
 
     def buscar_municipio(self, ibge, termo_txt, max_pag=4):
         ents = [e for e in self.entidades() if e["ibge"] == ibge]
@@ -552,6 +632,206 @@ class SIGPub(object):
         sem = [e["nome"] for e in ents if not e["ibge"]]
         return {"municipios": {k: {"entidades": v} for k, v in sorted(cob.items())},
                 "entidades_sem_municipio": sem, "n_entidades": len(ents)}
+
+
+# --------------------------------------------------------------------------------------
+# Progresso por (fonte, entidade, consulta) - append-only (retomavel; o estado.json nao aguenta milhares de chaves)
+class Progresso(object):
+    def __init__(self, fonte):
+        self.fonte = fonte
+        self.arq = os.path.join(RAW, "progresso_%s.jsonl" % fonte)
+        self._lk = threading.Lock()
+        self._feitos = set()
+        if os.path.exists(self.arq):
+            with open(self.arq, encoding="utf-8") as f:
+                for ln in f:
+                    try:
+                        self._feitos.add(json.loads(ln)["k"])
+                    except Exception:
+                        pass
+
+    def feito(self, chave):
+        return chave in self._feitos
+
+    def grava(self, chave, qid, hits, total, erro=None):
+        with self._lk:
+            if hits:
+                anexa_hits(self.fonte, qid, hits)
+            with open(self.arq, "a", encoding="utf-8") as f:
+                f.write(json.dumps({"k": chave, "n": len(hits), "total": total, "erro": erro, "em": HOJE}, ensure_ascii=False) + "\n")
+            if not erro:
+                self._feitos.add(chave)
+
+
+# --------------------------------------------------------------------------------------
+# Fonte: DOM/SC (FECAM / CIGA) - diariomunicipal.sc.gov.br (Solr; busca por palavras, entidade, categoria e data)
+class DOMSC(object):
+    tipo = "domsc"
+    uf = "SC"
+    nome = "domsc"
+    BASE = "https://diariomunicipal.sc.gov.br/"
+    descricao = ("Diário Oficial dos Municípios de Santa Catarina (DOM/SC, FECAM/CIGA): 1.040 entidades em 294 dos 295 municípios; "
+                 "Solr com busca por termos/frase, entidade (nome exato), categoria (Leis, Decretos, Portarias...) e data; 10 por página, "
+                 "ordem de data decrescente; acervo desde ~2013.")
+
+    def __init__(self):
+        self._ent = None
+
+    def _get(self, params):
+        st, b = http(self.BASE, params=params, timeout=120)
+        if st != 200:
+            raise IOError("DOM/SC status %s" % st)
+        return b.decode("utf-8", "ignore")
+
+    def entidades(self, atualizar=False):
+        """[{ibge, municipio, entidades:[{id, nome, ativa, primeira, ultima, total}]}] da página 'Quais entidades publicam'."""
+        cache = os.path.join(RAW, "domsc_entidades.json")
+        if self._ent is not None and not atualizar:
+            return self._ent
+        if os.path.exists(cache) and not atualizar:
+            self._ent = json.load(open(cache, encoding="utf-8"))
+            return self._ent
+        st, b = http(self.BASE, params=[("r", "site/page"), ("view", "entidades")], timeout=120)
+        h = b.decode("utf-8", "ignore")
+        out = []
+        for m in re.finditer(r"<h2><a[^>]*>(.*?)</a></h2><ul class=\"entidades-publicadoras\">(.*?)</ul>", h, re.S):
+            nome_m = limpa_html(m.group(1))
+            ents = []
+            for li in re.finditer(r"<li><a href=\"[^\"]*codigoEntidade=(\d+)[^\"]*\">(.*?)</a>(?:<span class=\"([^\"]*)\">(.*?)</span>)?</li>", m.group(2), re.S):
+                info = limpa_html(li.group(4) or "")
+                pr = re.search(r"Primeira publicação: (\d\d/\d\d/\d{4})", info)
+                ul = re.search(r"Última publicação: (\d\d/\d\d/\d{4})", info)
+                tt = re.search(r"Total: (\d+)", info)
+                ents.append({"id": li.group(1), "nome": limpa_html(li.group(2)), "ativa": "alert-danger" not in (li.group(3) or ""),
+                             "primeira": pr.group(1) if pr else "", "ultima": ul.group(1) if ul else "",
+                             "total": int(tt.group(1)) if tt else -1})  # -1 = sem estatística na página (ex.: Joinville)
+            out.append({"ibge": resolve_nome(nome_m, "SC"), "municipio": nome_m, "entidades": ents})
+        if not out:
+            raise IOError("DOM/SC: lista de entidades vazia (layout mudou?)")
+        os.makedirs(RAW, exist_ok=True)
+        json.dump(out, open(cache, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        self._ent = out
+        return out
+
+    def entidades_municipio(self, ibge):
+        """Nomes exatos das entidades 'Prefeitura/Município' (atos do Executivo: leis, decretos, portarias)."""
+        r = []
+        for m in self.entidades():
+            if m["ibge"] == ibge:
+                r += [e for e in m["entidades"] if re.match(r"(prefeitura|municipio|governo)", norm(e["nome"])) and e["total"] != 0]
+        return r
+
+    @staticmethod
+    def _data(d):
+        return d  # dd/mm/aaaa
+
+    def pesquisar(self, q, pagina=1, categoria="", cod_entidade="", desde="01/01/2000", ate=None):
+        """Paginação só funciona pelas rotas dos próprios links: site/portal (com codigoEntidade) ou site/index."""
+        ate = ate or datetime.datetime.strptime(HOJE, "%Y-%m-%d").strftime("%d/%m/%Y")
+        params = [("r", "site/portal" if cod_entidade else "site/index"), ("q", q), ("id", ""), ("categoria", categoria),
+                  ("dataInicial", desde), ("dataFinal", ate), ("excluiTermos", "")]
+        if cod_entidade:
+            params.append(("codigoEntidade", str(cod_entidade)))
+        if pagina > 1:
+            params.append(("AtoASolrDocument_page", str(pagina)))
+        h = self._get(params)
+        m = re.search(r"Foram encontradas ([\d.]+) publica|Foi encontrada (1) publica", h)
+        if not m:
+            if re.search(r"Foi encontrada 0 publica|Nenhuma publica", h):
+                return [], 0
+            if "resultado-pesquisa" not in h:
+                raise IOError("DOM/SC: resposta sem contagem (q=%r)" % q[:80])
+            total = 0
+        else:
+            total = int((m.group(1) or m.group(2)).replace(".", ""))
+        hits = []
+        for bloco in h.split('<h4><a href="/atos/')[1:]:
+            mi = re.match(r'(\d+)">(.*?)</a></h4><span class="quiet">(.*?)</span>', bloco, re.S)
+            if not mi:
+                continue
+            cod, titulo, meta = mi.group(1), limpa_html(mi.group(2)), limpa_html(mi.group(3))
+            mm = re.match(r"N\.º (\d+) - (\d\d)/(\d\d)/(\d{4}) - (.*?) - (.*)$", meta)
+            data, cat, ent = ("", "", "")
+            if mm:
+                data, cat, ent = "%s-%s-%s" % (mm.group(4), mm.group(3), mm.group(2)), mm.group(5), mm.group(6)
+            orig = re.search(r'href="(https://diariomunicipal\.sc\.gov\.br/arquivosbd/[^"]+)"', bloco)
+            mp = re.search(r"</a><p>(.*?)<p/>", bloco, re.S)
+            trecho = limpa_html(re.sub(r"</?em>", "", mp.group(1))) if mp else ""
+            hits.append({
+                "fonte": "domsc", "id": "domsc:%s" % cod, "ibge": resolve_entidade(ent, "SC") if ent else None,
+                "entidade": ent, "orgao": cat, "titulo": titulo, "trecho": trecho, "data": data, "edicao": "",
+                "url": self.BASE + "atos/" + cod, "url_pdf": orig.group(1) if orig else "",
+            })
+        return hits, total
+
+    # --- varredura global (retomável pela mecânica de varre_fonte): termo x categoria
+    def termos_varredura(self, termos):
+        out = []
+        for t in termos:
+            sc = t.get("sc") or ('"%s"' % t["frase"] if t.get("frase") else None)
+            if not sc:
+                continue
+            for cat in CATEGORIAS_SC:
+                v = dict(t, categoria=cat, sc=sc)
+                v["id"] = "%s@%s" % (t["id"], cat)
+                out.append(v)
+        return out
+
+    def varrer_termo(self, termo, pagina):
+        q = termo.get("sc")
+        if not q:
+            return None
+        hits, total = self.pesquisar(q, pagina=pagina, categoria=termo.get("categoria", ""))
+        npag = min((total + 9) // 10, MAX_PAG.get("domsc", 40))
+        return hits, total, pagina < npag
+
+    # --- varredura por município: OR de frases + OR de caminhão/carreta, por categoria, entidade 'Prefeitura Municipal de X'
+    def varre_municipio(self, ibge, registra):
+        for e in self.entidades_municipio(ibge):
+            for cat in CATEGORIAS_SC:
+                for qid, q in SC_CONSULTAS:
+                    chave = "domsc|%s|%s|%s" % (e["id"], cat, qid)
+                    if registra.feito(chave):
+                        continue
+                    todos, total = [], 0
+                    for pag in range(1, 11):
+                        hs, total = self.pesquisar(q, pagina=pag, categoria=cat, cod_entidade=e["id"])
+                        for h in hs:
+                            if not h.get("ibge"):
+                                h["ibge"] = ibge
+                        todos += hs
+                        if pag * 10 >= total or not hs:
+                            break
+                    registra.grava(chave, "%s@%s" % (qid, cat), todos, total)
+
+    def buscar_municipio(self, ibge, termo_txt, max_pag=3):
+        q = termo_txt.strip()
+        if " " in q and not q.startswith(("(", '"')):
+            q = '"%s"' % q.replace('"', "")
+        out = []
+        for e in self.entidades_municipio(ibge):
+            for pag in range(1, max_pag + 1):
+                hs, total = self.pesquisar(q, pagina=pag, cod_entidade=e["id"])
+                for h in hs:
+                    h["ibge"] = h.get("ibge") or ibge
+                out += hs
+                if pag * 10 >= total or not hs:
+                    break
+        return out
+
+    def cobertura(self, atualizar=False):
+        cob, sem = {}, []
+        for m in self.entidades(atualizar=atualizar):
+            if not m["ibge"]:
+                sem.append(m["municipio"])
+                continue
+            pref = [e for e in m["entidades"] if re.match(r"(prefeitura|municipio|governo)", norm(e["nome"])) and e["total"] != 0]
+            if pref:
+                cob[m["ibge"]] = {"entidades": [e["nome"] for e in pref],
+                                  "desde": min((datetime.datetime.strptime(e["primeira"], "%d/%m/%Y").date().isoformat() for e in pref if e["primeira"]), default=""),
+                                  "ate": max((datetime.datetime.strptime(e["ultima"], "%d/%m/%Y").date().isoformat() for e in pref if e["ultima"]), default=""),
+                                  "atos": sum(max(0, e["total"]) for e in pref)}
+        return {"municipios": cob, "entidades_sem_municipio": sem, "n_entidades": sum(len(m["entidades"]) for m in self.entidades())}
 
 
 # --------------------------------------------------------------------------------------
@@ -981,7 +1261,8 @@ class QD(object):
             d = json.load(open(QD_CITIES, encoding="utf-8"))
         except Exception:
             return {}
-        return {c["territory_id"]: c for c in d.get("cities", []) if c.get("state_code") in ("SP", "MG", "RJ", "ES")}
+        mun = municipios()
+        return {c["territory_id"]: c for c in d.get("cities", []) if c.get("territory_id") in mun and c.get("state_code") == mun[c["territory_id"]]["uf"]}
 
     def pesquisar(self, frase, ids, offset=0, size=100):
         p = [("territory_ids", i) for i in ids]
@@ -1025,6 +1306,15 @@ class QD(object):
                 break
         return out
 
+    def varre_municipio(self, ibge, registra):
+        """Sul/CO: poucas frases específicas por cidade, 1 página de 10 diários (API lenta: ~40 s por pedido)."""
+        for frase in TERMOS_QD_MUN:
+            chave = "qd|%s|%s" % (ibge, frase)
+            if registra.feito(chave):
+                continue
+            hits, total = self.pesquisar(frase, [ibge], offset=0, size=10)
+            registra.grava(chave, "qd:" + frase, hits, total)
+
     def cobertura(self, atualizar=False):
         t = self.territorios()
         return {"municipios": {k: {"nivel": v.get("level"), "desde": v.get("availability_date"),
@@ -1036,6 +1326,13 @@ FONTES = {
     "amm-mg": SIGPub("amm-mg", "MG", "Diário Oficial dos Municípios Mineiros (AMM) - SIGPub/Vox. Busca por MATÉRIA (título, entidade, trecho, data, edição, código), diário inteiro ou por entidade, desde 2009."),
     "aemerj": SIGPub("aemerj", "RJ", "Diário Oficial dos Municípios do RJ (AEMERJ) - SIGPub/Vox; mesma busca do AMM. Poucos municípios aderentes."),
     "apm": SIGPub("apm", "SP", "Diário Oficial dos Municípios (APM - Associação Paulista de Municípios) - SIGPub/Vox; mesma busca do AMM. Poucos municípios aderentes."),
+    "famurs": SIGPub("famurs", "RS", "Diário Oficial dos Municípios do RS (FAMURS) - SIGPub/Vox; mesma busca do AMM-MG."),
+    "amp": SIGPub("amp", "PR", "Diário Oficial dos Municípios do Paraná (AMP - Associação dos Municípios do Paraná) - SIGPub/Vox; mesma busca do AMM-MG."),
+    "agm": SIGPub("agm", "GO", "Diário Oficial dos Municípios de Goiás (AGM - Associação Goiana de Municípios) - SIGPub/Vox."),
+    "fgm": SIGPub("fgm", "GO", "Diário Oficial da FGM (Federação Goiana de Municípios) - SIGPub/Vox; poucas Câmaras/Prefeituras de GO."),
+    "amm-mt": SIGPub("amm-mt", "MT", "Diário Oficial dos Municípios de Mato Grosso (AMM-MT) - SIGPub/Vox."),
+    "ms": SIGPub("ms", "MS", "Diário Oficial dos Municípios de Mato Grosso do Sul (ASSOMASUL) - SIGPub/Vox (slug /ms; /assomasul dá 404)."),
+    "domsc": DOMSC(),
     "domes": DOMES(),
     "doesp": DOESP(),
     "dosp": DOSP(),
@@ -1045,6 +1342,13 @@ URLS = {
     "amm-mg": "https://www.diariomunicipal.com.br/amm-mg/pesquisar",
     "aemerj": "https://www.diariomunicipal.com.br/aemerj/pesquisar",
     "apm": "https://www.diariomunicipal.com.br/apm/pesquisar",
+    "famurs": "https://www.diariomunicipal.com.br/famurs/pesquisar",
+    "amp": "https://www.diariomunicipal.com.br/amp/pesquisar",
+    "agm": "https://www.diariomunicipal.com.br/agm/pesquisar",
+    "fgm": "https://www.diariomunicipal.com.br/fgm/pesquisar",
+    "amm-mt": "https://www.diariomunicipal.com.br/amm-mt/pesquisar",
+    "ms": "https://www.diariomunicipal.com.br/ms/pesquisar",
+    "domsc": "https://diariomunicipal.sc.gov.br/ (busca: /?q=<termos>&entidade=<nome>&categoria=<cat>&dataInicial=dd/mm/aaaa)",
     "domes": "https://ioes.dio.es.gov.br/dom (API: /busca/busca/buscar/query/<pag>/?q=\"frase\"&subtheme=dom)",
     "doesp": "https://doe.sp.gov.br/busca-avancada (API: https://do-api-web-search.doe.sp.gov.br/v2/advanced-search/publications)",
     "dosp": "https://www.imprensaoficialmunicipal.com.br/<slug> (POST /pesquisar.php?c=<slug>)",
@@ -1086,7 +1390,19 @@ OUTRAS_PLATAFORMAS = {
     "diariomunicipal.com.br (outras associações)": "Plataforma SIGPub também hospeda AAM, AGM, AMA, AMM-MT, AMP, AMUPE, APRECE, FAMURS etc. — fora do Sudeste; no Sudeste só amm-mg, aemerj e apm.",
     "atende.net, Instar, SAPL, legislacaodigital, etc.": "Plataformas por cidade (sem busca entre cidades); ver ferramentas por cidade em cidades/_tools_A01 e similares.",
 }
-UF_FONTES = {"MG": ["amm-mg", "qd"], "RJ": ["aemerj", "qd"], "SP": ["doesp", "apm", "dosp", "qd"], "ES": ["domes", "qd"]}
+DIARIO_NOME = {
+    "domsc": "DOM/SC (FECAM/CIGA) - diariomunicipal.sc.gov.br",
+    "famurs": "FAMURS (SIGPub) - diariomunicipal.com.br/famurs",
+    "amp": "AMP Paraná (SIGPub) - diariomunicipal.com.br/amp",
+    "agm": "AGM Goiás (SIGPub) - diariomunicipal.com.br/agm",
+    "fgm": "FGM Goiás (SIGPub) - diariomunicipal.com.br/fgm",
+    "amm-mt": "AMM-MT (SIGPub) - diariomunicipal.com.br/amm-mt",
+    "ms": "ASSOMASUL/MS (SIGPub) - diariomunicipal.com.br/ms",
+    "amm-mg": "AMM-MG (SIGPub)", "aemerj": "AEMERJ (SIGPub)", "apm": "APM-SP (SIGPub)", "domes": "DOM-ES (AMUNES)",
+    "doesp": "DOE-SP Municípios", "dosp": "DiOE/Imprensa Oficial Municipal", "qd": "Querido Diário",
+}
+UF_FONTES = {"PR": ["amp"], "SC": ["domsc"], "RS": ["famurs"], "GO": ["agm", "fgm"], "MT": ["amm-mt"], "MS": ["ms"], "DF": [],
+             "MG": ["amm-mg", "qd"], "RJ": ["aemerj", "qd"], "SP": ["doesp", "apm", "dosp", "qd"], "ES": ["domes", "qd"]}
 
 
 # --------------------------------------------------------------------------------------
@@ -1130,6 +1446,8 @@ def anexa_hits(fonte, termo_id, hits):
 
 def varre_fonte(nome, termos, refazer=False):
     f = FONTES[nome]
+    if hasattr(f, "termos_varredura"):  # SIGPub: termo x titulo (decreto/lei/portaria); DOM/SC: termo x categoria
+        termos = f.termos_varredura(termos)
     for t in termos:
         chave = "%s|%s" % (nome, t["id"])
         st = le_estado().get(chave, {})
@@ -1381,7 +1699,18 @@ def consolidar(max_ocorr=40):
         if ib in mun and ib not in res:
             res[ib] = {"nome": mun[ib]["nome"], "uf": mun[ib]["uf"], "acertos": 0, "acertos_brutos": 0,
                        "ocorrencias": [], "_ruido": []}
+    def _dedup(lst):  # DOM/SC e SIGPub repetem o mesmo ato (várias cópias/partes): fica uma por fonte+data+título+trecho
+        vistos, out = set(), []
+        for o in sorted(lst, key=lambda o: -o.get("score", 0)):
+            k = (o.get("fonte"), o.get("data"), norm(o.get("titulo", ""))[:100], norm(o.get("trecho", ""))[:80])
+            if k not in vistos:
+                vistos.add(k)
+                out.append(o)
+        return out
     for ib, r in res.items():
+        r["ocorrencias"] = _dedup(r["ocorrencias"])
+        r["acertos"] = len(r["ocorrencias"])
+        r["_ruido"] = _dedup(r["_ruido"])
         r["ocorrencias"].sort(key=lambda o: (o.get("score", 0), o.get("data") or ""), reverse=True)
         r["ocorrencias"] = r["ocorrencias"][:max_ocorr]
         r["ocorrencias_omitidas"] = max(0, r["acertos"] - len(r["ocorrencias"]))
@@ -1391,6 +1720,7 @@ def consolidar(max_ocorr=40):
         r["n_indicios"] = len(ind)
         r["descartadas_como_ruido"] = len(ruido) - len(ind)
         r["fontes_que_cobrem"] = sorted(cob_por_ibge.get(ib, []))
+        r["diario"] = "; ".join(DIARIO_NOME.get(f, f) for f in r["fontes_que_cobrem"]) or None
         r["fontes_com_acerto"] = sorted(set(o["fonte"] for o in r["ocorrencias"]))
     resumo_f, resumo_uf = {}, {}
     for h in hits.values():
@@ -1433,6 +1763,8 @@ def consolidar(max_ocorr=40):
                           "ibges": sorted(set(cobertura_efetiva(f, c)) | set(ib for ib, fs in vistos_fonte.items() if f in fs))}
                       for f, c in cob.get("fontes", {}).items()},
         "cobertura_detalhe": os.path.join(RAW, "cobertura.json"),
+        "sem_diario_consolidado": {uf: sorted(ib for ib, m in mun.items() if m["uf"] == uf and not cob_por_ibge.get(ib))
+                                   for uf in sorted(set(m["uf"] for m in mun.values()))},
         "sem_municipio": len(sem),
         "sem_municipio_arquivo": os.path.join(RAW, "sem_municipio.json"),
         "outras_plataformas_avaliadas": OUTRAS_PLATAFORMAS,
@@ -1470,7 +1802,7 @@ def grava_cobertura(fonte, c):
 
 def cmd_cobertura(args):
     os.makedirs(RAW, exist_ok=True)
-    alvo = args.fontes.split(",") if args.fontes else list(FONTES)
+    alvo = lista_fontes(args.fontes, list(FONTES))
     for f in alvo:
         log("cobertura: %s ..." % f)
         try:
@@ -1486,10 +1818,80 @@ def cmd_cobertura(args):
         log("cobertura: %s -> %d municípios" % (f, len(c.get("municipios") or {})))
 
 
+SUL_CO_FONTES = ["domsc", "famurs", "amp", "agm", "fgm", "amm-mt", "ms"]
+SUL_CO_TERMOS = {"circ_caminhoes", "traf_caminhoes", "trans_caminhoes", "circ_pesados", "traf_pesados", "circ_carga",
+                 "carga_descarga", "zmrc", "restr_circ", "veic_pesados", "veic_carga", "vuc_sigla", "zona_restricao",
+                 "transito_pesado", "toneladas", "cam_circ"}
+
+
+def lista_fontes(txt, padrao):
+    if not txt:
+        return padrao
+    out = []
+    for x in txt.split(","):
+        out += SUL_CO_FONTES if x in ("sul_co", "sul-co") else [x]
+    return out
+
+
+def ordem_prioridade():
+    """ibges por população decrescente (prioridade.json) - as maiores cidades primeiro."""
+    try:
+        return [c["ibge"] for c in json.load(open(os.path.join(CIDADES, "prioridade.json"), encoding="utf-8"))]
+    except Exception:
+        return []
+
+
+def cmd_varrer_municipios(args):
+    """Termos-chave x CADA município coberto (retomável: progresso_<fonte>.jsonl). SIGPub: 8 termos x entidade (1 pág. de 25
+    por relevância); DOM/SC: 3 consultas OR x 5 categorias normativas x Prefeitura (todas as páginas, até 100)."""
+    os.makedirs(RAW, exist_ok=True)
+    alvo = lista_fontes(args.fontes, SUL_CO_FONTES)
+    try:
+        cob = json.load(open(COBERTURA, encoding="utf-8")).get("fontes", {})
+    except Exception:
+        cob = {}
+    ordem = {ib: i for i, ib in enumerate(ordem_prioridade())}
+    ufs = args.ufs.split(",") if args.ufs else None
+    grupos = {}
+    for fn in alvo:
+        grupos.setdefault("sigpub" if FONTES[fn].tipo == "sigpub" else fn, []).append(fn)
+
+    def run(fs):
+        for fn in fs:
+            f = FONTES[fn]
+            prog = Progresso(fn)
+            ibges = sorted(cob.get(fn, {}).get("municipios", {}), key=lambda ib: ordem.get(ib, 10 ** 6))
+            if ufs:
+                ibges = [ib for ib in ibges if municipios().get(ib, {}).get("uf") in ufs]
+            if fn == "qd":  # QD (lento): só cidades sem outro diário consolidado + as 40 maiores
+                outras = set(ib for o, c in cob.items() if o != "qd" for ib in c.get("municipios", {}))
+                ibges = [ib for ib in ibges if ib not in outras or ordem.get(ib, 10 ** 6) < 40]
+            if args.limite:
+                ibges = ibges[:args.limite]
+            log("varrer-municipios %s: %d municípios" % (fn, len(ibges)))
+            for i, ib in enumerate(ibges):
+                try:
+                    f.varre_municipio(ib, prog)
+                except Exception as ex:
+                    log("ERRO %s %s %s: %s - sigo (retome depois)" % (fn, ib, municipios().get(ib, {}).get("nome"), str(ex)[:160]))
+                if (i + 1) % 20 == 0:
+                    log("varrer-municipios %s: %d/%d" % (fn, i + 1, len(ibges)))
+            log("varrer-municipios %s: terminado" % fn)
+    ths = [threading.Thread(target=run, args=(fs,)) for fs in grupos.values()]
+    for t in ths:
+        t.start()
+    for t in ths:
+        t.join()
+    if not args.sem_consolidar:
+        consolidar()
+
+
 def cmd_varrer(args):
     os.makedirs(RAW, exist_ok=True)
-    alvo = args.fontes.split(",") if args.fontes else ["amm-mg", "aemerj", "apm", "domes", "doesp", "qd", "dosp"]
+    alvo = lista_fontes(args.fontes, None) if args.fontes else ["amm-mg", "aemerj", "apm", "domes", "doesp", "qd", "dosp"]
     termos = [t for t in TERMOS if not args.termos or t["id"] in args.termos.split(",")]
+    if not args.termos and alvo and all(f in SUL_CO_FONTES for f in alvo):
+        termos = [t for t in termos if t["id"] in SUL_CO_TERMOS]
     grupos = {}
     for f in alvo:
         host = {"sigpub": "sigpub"}.get(FONTES[f].tipo, f)
@@ -1522,17 +1924,17 @@ def cmd_varrer(args):
 def cmd_buscar(args):
     ibges = resolve_municipio_arg(args.municipio, args.uf)
     if not ibges:
-        print("Município não encontrado no Sudeste: %s" % args.municipio)
+        print("Município não encontrado (municipios.csv / municipios_sudeste.csv): %s" % args.municipio)
         sys.exit(2)
     mun = municipios()
     todos = []
     for ib in ibges:
         m = mun[ib]
-        fs = args.fonte.split(",") if args.fonte else UF_FONTES[m["uf"]]
+        fs = args.fonte.split(",") if args.fonte else UF_FONTES.get(m["uf"], [])
         print("# %s (%s/%s) termo=%r fontes=%s" % (ib, m["nome"], m["uf"], args.termo, ",".join(fs)), file=sys.stderr)
         for fn in fs:
             f = FONTES[fn]
-            if f.uf and f.uf != m["uf"]:
+            if getattr(f, "uf", None) and f.uf != m["uf"]:
                 continue
             try:
                 kw = {}
@@ -1604,6 +2006,11 @@ def main():
     v.add_argument("--sem-pdf", action="store_true")
     v.add_argument("--sem-consolidar", action="store_true")
     v.add_argument("--paralelo", type=int, default=1, help="dosp: nº de cidades em paralelo (taxa por host mantida)")
+    vm = sp.add_parser("varrer-municipios", help="Sul/CO: termos-chave x cada município coberto (retomável)")
+    vm.add_argument("--fontes", help="padrão: sul_co (domsc,famurs,amp,agm,fgm,amm-mt,ms)")
+    vm.add_argument("--ufs", help="ex.: SC,PR")
+    vm.add_argument("--limite", type=int, help="só os N maiores municípios de cada diário (teste)")
+    vm.add_argument("--sem-consolidar", action="store_true")
     c = sp.add_parser("cobertura", help="mede a cobertura de cada diário (municípios)")
     c.add_argument("--fontes")
     c.add_argument("--ufs", help="dosp: UFs onde descobrir slugs (padrão SP)")
@@ -1622,6 +2029,8 @@ def main():
         cmd_lead(a)
     elif a.cmd == "varrer":
         cmd_varrer(a)
+    elif a.cmd == "varrer-municipios":
+        cmd_varrer_municipios(a)
     elif a.cmd == "cobertura":
         cmd_cobertura(a)
     elif a.cmd == "consolidar":

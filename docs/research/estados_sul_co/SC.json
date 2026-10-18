@@ -1,0 +1,1993 @@
+{
+ "uf": "SC",
+ "data": "2026-10-18",
+ "nota_metodo": "Pesquisa feita em 18/10/2026 por curl/leitura direta. O site do DEINFRA (www.deinfra.sc.gov.br) nao resolve/aceita conexao pelo proxy do ambiente (Connection reset / ENOTFOUND); o orgao hoje opera sob a SIE (Secretaria de Estado da Infraestrutura e Mobilidade, www.sie.sc.gov.br), cujo site e uma SPA Angular lida pelo bundle main.js (7.135 textos varridos). O achado central e o GeoSIE (geo.sie.sc.gov.br), que serve GeoJSON anonimo sem chave. Usadas 3 buscas web (nenhuma achou portaria de restricao de caminhao do DEINFRA/SIE). OSM/Overpass e DNIT WFS falharam pelo proxy (reset), entao nada sobre hgv no OSM foi testado.",
+ "temas": {
+  "rodovias_estaduais": {
+   "orgao": "SIE/SC (Secretaria de Estado da Infraestrutura e Mobilidade) com o DEINFRA como autarquia; policiamento: PMRv (Batalhao de Policia Militar Rodoviaria, 25 postos). Autoridade de transito com circunscricao nas rodovias estaduais: SIE (cita a Res. CONTRAN 798/2020 em pagina de radares).",
+   "resumo": "NAO foi localizada nenhuma portaria/ato estadual de restricao de horario de caminhao (feriado prolongado, serra, travessia urbana) nem limite de peso/altura/comprimento por trecho. A busca web, o site da SIE (7.135 textos, paginas de legislacao e instrucoes normativas) e o GeoSIE nao trazem esse tipo de ato. O que existe e (a) o regime de AET com rotas liberadas por tipo de CVC/CTV, em km, e (b) avisos operacionais temporarios (GeoSIE geo_sos). Ausencia nao e prova de inexistencia: o DEINFRA/SIE nao pode ser lido diretamente.",
+   "fontes": [
+    {
+     "nome": "GeoSIE - rotas de AET (4 subcamadas)",
+     "url": "https://geo.sie.sc.gov.br/api/geo_rotas_aet.php?CDROTA=4|6|8|9",
+     "formato": "GeoJSON (LineString) com SGRODOVIA, CDTRECHO, NUKMINICIAL/NUKMFINAL (virgula decimal), NUEXTENSAO, DETRECHOROTA, DEROTA, DEOBSERVACAO",
+     "licenca": "nao declarada (dado publico de orgao estadual; Lei 12.527/2011)",
+     "atualizado_em": "sem data no payload; camada citada no release GeoSIE de 09/06/2026"
+    },
+    {
+     "nome": "GeoSIE - rodovias estaduais (malha com km)",
+     "url": "https://geo.sie.sc.gov.br/api/geo_rodovia_estadual.php",
+     "formato": "GeoJSON LineString, 624 trechos, 6.333,3 km: SGRODOVIA, CDTRECHO, NMTRECHO, NUKMINICIAL/NUKMFINAL, SGSITUACAO",
+     "licenca": "nao declarada",
+     "atualizado_em": "sem data; config.php dt_atualizacao 2026-09-11"
+    },
+    {
+     "nome": "GeoSIE - travessias urbanas",
+     "url": "https://geo.sie.sc.gov.br/api/geo_travessia_urbana.php",
+     "formato": "GeoJSON LineString, 433 trechos, 1.143,0 km: SGRODOVIA, NUKMINICIO/NUKMFIM, DEOBSERVACAO (localidade)",
+     "licenca": "nao declarada",
+     "atualizado_em": "base legal: Resolucao SIE 001/2021 de 14/01/2021"
+    },
+    {
+     "nome": "GeoSIE - ocorrencias/interdicoes vivas (SOS)",
+     "url": "https://geo.sie.sc.gov.br/api/geo_sos.php",
+     "formato": "GeoJSON Point: NM_RODOVIA, NR_KM, DS_OCORRENCIA, STATUS, SITUACAO",
+     "licenca": "nao declarada",
+     "atualizado_em": "vivo (3 ocorrencias em 18/10/2026)"
+    },
+    {
+     "nome": "Pagina AET da SIE (texto extraido do bundle Angular)",
+     "url": "https://www.sie.sc.gov.br/autorizacao-especial-transito",
+     "formato": "HTML/SPA; texto salvo em fontes/SC/sie_pagina_aet_texto.txt",
+     "licenca": "nao declarada",
+     "atualizado_em": "lida em 18/10/2026"
+    },
+    {
+     "nome": "Base de conhecimento GeoSIE: Rotas de AET como usar",
+     "url": "https://geo.sie.sc.gov.br/docs/index.php?artigo=15_rotas_de_aet_no_geosie_como_usar",
+     "formato": "HTML",
+     "licenca": "nao declarada",
+     "atualizado_em": "release 09/06/2026"
+    },
+    {
+     "nome": "Mapoteca GeoSIE (mapas PDF e shapefile das diretrizes do Plano Rodoviario Estadual, Decreto 759/2011)",
+     "url": "https://geo.sie.sc.gov.br/docs/index.php?artigo=mapoteca",
+     "formato": "PDF/SHP (link 'clique aqui' do shapefile nao testado)",
+     "licenca": "nao declarada",
+     "atualizado_em": "mapa valido para 2025"
+    }
+   ],
+   "atos": [
+    {
+     "ato": "Resolucao SIE 001/2021, de 14/01/2021",
+     "assunto": "Define e limita as travessias urbanas que constituem as rodovias do Plano Rodoviario Estadual (PRE)",
+     "fonte": "titulo lido na pagina de legislacao da SIE (texto integral nao lido)",
+     "artigo": "nao lido",
+     "trechos": "camada geo_travessia_urbana (433 trechos)",
+     "veiculos": "n/a (nao e restricao de caminhao)"
+    },
+    {
+     "ato": "Decreto estadual 759, de 21/12/2011",
+     "assunto": "Plano Rodoviario Estadual (diretrizes georreferenciadas em shapefile na Mapoteca)",
+     "fonte": "GeoSIE Mapoteca",
+     "artigo": "nao lido"
+    },
+    {
+     "ato": "Lei estadual 13.662, de 28/12/2005",
+     "assunto": "Taxas de servico da SIE, inclusive AET (cobranca desde 29/03/2006) e TUV",
+     "fonte": "pagina AET da SIE",
+     "artigo": "nao lido"
+    },
+    {
+     "ato": "Resolucoes CONTRAN 210/2006, 211/2006, 305/2009, 213/2006, 735/2018, 12/98 (TUV)",
+     "assunto": "Limites, CVC, CTV/CTVP e taxa de utilizacao de vias; base federal que a SIE aplica",
+     "fonte": "pagina AET da SIE",
+     "artigo": "nao lido"
+    },
+    {
+     "ato": "Instrucao Normativa SIE 007/2021",
+     "assunto": "Altera a validade das AETs das CVC (Res. CONTRAN 211/2006); a pagina da SIE diz que CVC tem validade de 1 ano e guindaste 6 meses",
+     "fonte": "titulo na pagina de instrucoes normativas; PDF nao localizado",
+     "artigo": "nao lido"
+    }
+   ],
+   "regras_aet": {
+    "sem_trecho_pre_estabelecido": "AET de carga indivisivel com validade por final de placa: ate 4,40 m altura, 3,20 m largura, 23 m comprimento e 45 t, sem excesso fora da carroceria; acima disso, AET de viagem unica.",
+    "validade": "Cegonheiros (CTV/CTVP) e carga indivisivel sem excesso: por final de placa do cavalo. CVC (bitrenzao, rodotrem, tritrem, romeu e julieta, bitrem): 1 ano. Guindaste: 6 meses.",
+    "taxas_servico_rs": {
+     "ate_25m_3_2m_5m_45t": 82.48,
+     "CVC_ou_comp_gt_25_larg_gt_3_2_pbt_45_80t": 119.97,
+     "pbt_gt_80t": 194.93,
+     "segunda_via_alteracao_prorrogacao": 44.98,
+     "escolta_por_km": 12.5
+    },
+    "TUV": "Fator1 x (PBT-45 t), so para carga indivisivel acima de 45 t; 57 faixas de distancia, Fator1 de R$ 60,58 (0-19 km) a R$ 399,83 (3.920-3.999 km). Tabela completa na pagina da SIE e em fontes/SC/sie_pagina_aet_texto.txt.",
+    "contato": "GEROP, (48) 3664-9289, aet@sie.sc.gov.br / gerop@sie.sc.gov.br",
+    "documentos_cvc": "CRLV, laudo de conformidade, ART do laudo e projeto da combinacao (Res. CONTRAN 211/2006)."
+   },
+   "rotas_aet_resumo": {
+    "bitrem_romeu_julieta_pbtc_ate_57t": {
+     "cdrota": 4,
+     "trechos": 75,
+     "km": 972.7,
+     "rodovias": [
+      "A470A",
+      "SC110",
+      "SC114",
+      "SC120",
+      "SC135",
+      "SC150",
+      "SC155",
+      "SC157",
+      "SC160",
+      "SC350",
+      "SC416",
+      "SC418",
+      "SC480"
+     ]
+    },
+    "cegonheiros_ctv_ctvp": {
+     "cdrota": 6,
+     "trechos": 101,
+     "km": 1148.2,
+     "rodovias": [
+      "A101F",
+      "A108A",
+      "A155A",
+      "A280C",
+      "A470A",
+      "R108",
+      "SC108",
+      "SC110",
+      "SC114",
+      "SC120",
+      "SC135",
+      "SC150",
+      "SC157",
+      "SC283",
+      "SC340",
+      "SC350",
+      "SC410",
+      "SC412",
+      "SC418",
+      "SC442",
+      "SC443",
+      "SC445",
+      "SC447",
+      "SC453",
+      "SC459",
+      "SC477",
+      "SC480",
+      "SC486"
+     ]
+    },
+    "bitrenzao_rodotrem_tritrem_57_a_74t": {
+     "cdrota": 8,
+     "trechos": 44,
+     "km": 642.8,
+     "rodovias": [
+      "SC114",
+      "SC120",
+      "SC135",
+      "SC150",
+      "SC157",
+      "SC340",
+      "SC350",
+      "SC355",
+      "SC390",
+      "SC407",
+      "SC412",
+      "SC415",
+      "SC416",
+      "SC417",
+      "SC465",
+      "SC480",
+      "SC486"
+     ]
+    },
+    "treminhoes_57_a_74t": {
+     "cdrota": 9,
+     "trechos": 9,
+     "km": 153.5,
+     "rodovias": [
+      "SC120",
+      "SC350",
+      "SC480"
+     ]
+    }
+   },
+   "rotas_aet_trechos": {
+    "bitrem_romeu_julieta": [
+     {
+      "rodovia": "A470A",
+      "km_ini": 0.0,
+      "km_fim": 7.73,
+      "trecho": "ENTR. BR-470 (P/ POUSO REDONDO)  - MIRIM DOCE"
+     },
+     {
+      "rodovia": "SC110",
+      "km_ini": 279.53,
+      "km_fim": 297.62,
+      "trecho": "ITUPORANGA (ENTR. SUL SC-350)  - PETROLÂNDIA (ENTR. SC-284)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 129.64,
+      "km_fim": 146.31,
+      "trecho": "TAIÓ (ENTR. SC-350)  - ENTR. BR-470 (P/ POUSO REDONDO)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 168.78,
+      "km_fim": 184.65,
+      "trecho": "ENTR. BR-470 (P/ CURITIBANOS)  - ENTR. SC-281 (P/ PONTE ALTA)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 184.65,
+      "km_fim": 186.64,
+      "trecho": "ENTR. SC-281 (P/ PONTE ALTA) - JURISDIÇÃO SIE FINAL (OTACÍLIO COSTA)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 192.79,
+      "km_fim": 199.68,
+      "trecho": "JURISDIÇÃO SIE INICIAL (OTACÍLIO COSTA) - PALMEIRA (ENTR.  SC-284)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 199.68,
+      "km_fim": 224.31,
+      "trecho": "PALMEIRA (ENTR.  SC-284) - DISTRITO ÍNDIOS (ENTR. BR-282)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 159.72,
+      "km_fim": 163.98,
+      "trecho": "ENTR. SC-350 (P/ CAÇADOR)  - LEBON RÉGIS"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 163.98,
+      "km_fim": 165.03,
+      "trecho": "LEBON RÉGIS  - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 165.03,
+      "km_fim": 166.31,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO)  - ENTR. SC-350 (P/ SANTA CECÍLIA)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 0.0,
+      "km_fim": 33.35,
+      "trecho": "ENTR. SC-280 (P/ PORTO UNIÃO)  - MATOS COSTA (ENTR. SC-462)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 33.35,
+      "km_fim": 51.01,
+      "trecho": "MATOS COSTA (ENTR. SC-462)  - CALMON"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 51.01,
+      "km_fim": 66.63,
+      "trecho": "CALMON  - ENTR. SC-459"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 66.63,
+      "km_fim": 82.82,
+      "trecho": "ENTR. SC-459  - CAÇADOR (ENTR. LESTE SC-350)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 103.8,
+      "km_fim": 119.29,
+      "trecho": "RIO DAS ANTAS  - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 119.29,
+      "km_fim": 120.3,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO)  - ENTR. SC-355 (P/ VIDEIRA)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 120.3,
+      "km_fim": 126.19,
+      "trecho": "ENTR. SC-355 (P/ VIDEIRA)  - VIDEIRA (ENTR. CONTORNO RODOVIÁRIO SUL)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 126.19,
+      "km_fim": 136.35,
+      "trecho": "VIDEIRA (ENTR. CONTORNO RODOVIÁRIO SUL) - PINHEIRO PRETO"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 136.35,
+      "km_fim": 144.7,
+      "trecho": "PINHEIRO PRETO  - TANGARÁ (ENTR. SC-453)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 56.98,
+      "km_fim": 75.95,
+      "trecho": "ENTR. SC-355 (P/ CATANDUVAS)  - LUZERNA (ENTR. SC-453)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 86.54,
+      "km_fim": 98.64,
+      "trecho": "JOAÇABA (ENTR. BR-282)  - LACERDÓPOLIS"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 98.64,
+      "km_fim": 111.8,
+      "trecho": "LACERDÓPOLIS  - ENTR. SC-467 (P/ DISTRITO SANTA LÚCIA)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 111.8,
+      "km_fim": 116.25,
+      "trecho": "ENTR. SC-467 (P/ DISTRITO SANTA LÚCIA)  - OURO"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 120.13,
+      "km_fim": 129.43,
+      "trecho": "ENTR. SC-467 (P/ ZORTÉA)  - ENTR. SC-390 (P/ DISTRITO BARRO PRETO)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 129.43,
+      "km_fim": 135.32,
+      "trecho": "ENTR. SC-390 (P/ DISTRITO BARRO PRETO)  - ENTR. SC-390 (P/ PIRATUBA)"
+     },
+     {
+      "rodovia": "SC155",
+      "km_ini": 0.0,
+      "km_fim": 17.74,
+      "trecho": "DIVISA SC/PR  - ABELARDO LUZ (ENTR. SC-350)"
+     },
+     {
+      "rodovia": "SC155",
+      "km_ini": 17.74,
+      "km_fim": 22.57,
+      "trecho": "ABELARDO LUZ (ENTR. SC-350)  - ENTR. SC-479 (P/ IPUAÇU)"
+     },
+     {
+      "rodovia": "SC155",
+      "km_ini": 22.57,
+      "km_fim": 34.99,
+      "trecho": "ENTR. SC-479 (P/ IPUAÇU)  - ENTR. ACESSO OURO VERDE"
+     },
+     {
+      "rodovia": "SC155",
+      "km_ini": 34.99,
+      "km_fim": 40.04,
+      "trecho": "ENTR. ACESSO OURO VERDE  - BOM JESUS (ENTR. SC-480)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 0.0,
+      "km_fim": 4.3,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-480/BR-158/ DIVISA SC/PR)  - ENTR. SC-305 (P/ CAMPO ERÊ)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 4.3,
+      "km_fim": 12.86,
+      "trecho": "ENTR. SC-305 (P/ CAMPO ERÊ)  - NOVO HORIZONTE"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 12.86,
+      "km_fim": 40.59,
+      "trecho": "NOVO HORIZONTE  - FORMOSA DO SUL (ENTR. ACESSO IRATI)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 40.59,
+      "km_fim": 54.48,
+      "trecho": "FORMOSA DO SUL (ENTR. ACESSO IRATI)  - ENTR. NORTE SC-482 (P/ QUILOMBO)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 54.48,
+      "km_fim": 66.33,
+      "trecho": "ENTR. NORTE SC-482 (P/ QUILOMBO)  - ENTR. SUL SC-482"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 66.33,
+      "km_fim": 82.64,
+      "trecho": "ENTR. SUL SC-482  - CORONEL FREITAS"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 82.64,
+      "km_fim": 95.84,
+      "trecho": "CORONEL FREITAS  - ENTR. OESTE BR-282 (P/ NOVA ITABERABA)"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 0.0,
+      "km_fim": 26.8,
+      "trecho": "CAMPO ERÊ (ENTR. SC-305 P/ ANCHIETA)  - SALTINHO"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 26.8,
+      "km_fim": 38.05,
+      "trecho": "SALTINHO  - ENTR. ACESSO BOM JESUS DO OESTE"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 38.05,
+      "km_fim": 47.45,
+      "trecho": "ENTR. ACESSO BOM JESUS DO OESTE  - SERRA ALTA"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 47.45,
+      "km_fim": 52.69,
+      "trecho": "SERRA ALTA  - ENTR. ACESSO SUL BRASIL"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 52.69,
+      "km_fim": 54.52,
+      "trecho": "ENTR. ACESSO SUL BRASIL  - MODELO"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 54.52,
+      "km_fim": 63.41,
+      "trecho": "MODELO  - ENTR. BR-282 (P/ MARAVILHA)"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 65.53,
+      "km_fim": 78.48,
+      "trecho": "PINHALZINHO (ENTR. BR-282)  - SAUDADES"
+     },
+     {
+      "rodovia": "SC160",
+      "km_ini": 78.48,
+      "km_fim": 87.77,
+      "trecho": "SAUDADES  - ENTR. ACESSO MUNICIPAL DE CUNHATAÍ"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 100.25,
+      "km_fim": 134.41,
+      "trecho": "ENTR. NORTE BR-153 (P/ DIVISA SC/PR) - ENTR. SC-465 (P/ MACIEIRA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 134.41,
+      "km_fim": 155.22,
+      "trecho": "ENTR. SC-465 (P/ MACIEIRA) - CAÇADOR (ENTR. OESTE SC-135)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 168.97,
+      "km_fim": 198.59,
+      "trecho": "ENTR. SC-458 (P/ TIMBÓ GRANDE)  - ENTR. SC-120 (P/ TIMBÓ GRANDE)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 205.18,
+      "km_fim": 230.82,
+      "trecho": "ENTR. SC-120 (P/ CURITIBANOS)  - ENTR. BR-116 (P/ MONTE CASTELO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 241.01,
+      "km_fim": 280.35,
+      "trecho": "ENTR. BR-116 (P/ PONTE ALTA DO NORTE)  - ENTR. SC-427 (P/ RIO DO CAMPO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 280.35,
+      "km_fim": 301.48,
+      "trecho": "ENTR. SC-427 (P/ RIO DO CAMPO)  - TAIÓ (ENTR. SC-114)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 301.48,
+      "km_fim": 333.69,
+      "trecho": "TAIÓ (ENTR. SC-114)  - RIO DO OESTE (ENTR. SC- 112)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 333.69,
+      "km_fim": 341.03,
+      "trecho": "RIO DO OESTE (ENTR. SC- 112)  - LAURENTINO"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 341.03,
+      "km_fim": 346.39,
+      "trecho": "LAURENTINO  - ENTR. BR-470 (P/ AGRONÔMICA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 350.79,
+      "km_fim": 365.06,
+      "trecho": "RIO DO SUL (ENTR. BR-470)  - AURORA"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 365.06,
+      "km_fim": 377.5,
+      "trecho": "AURORA  - ENTR. SC-281 (P/ ATALANTA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 380.2,
+      "km_fim": 397.03,
+      "trecho": "ENTR. SC-110 (P/ PETROLÂNDIA) - ENTR. ACESSO CHAPADÃO DO LAGEADO"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 397.03,
+      "km_fim": 412.96,
+      "trecho": "ENTR. ACESSO CHAPADÃO DO LAGEADO  - ENTR. SC-284 (P/ CHAPADÃO DO LAGEADO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 412.96,
+      "km_fim": 434.34,
+      "trecho": "ENTR. SC-284 (P/ CHAPADÃO DO LAGEADO) - ALFREDO WAGNER (ENTR. SC-408)"
+     },
+     {
+      "rodovia": "SC416",
+      "km_ini": 0.0,
+      "km_fim": 27.44,
+      "trecho": "ENTR. SC-417 (P/ GARUVA)  - ITAPOÁ"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 0.0,
+      "km_fim": 13.3,
+      "trecho": "ENTR. BR-101 (P/ JOINVILLE)  - KM 13,3"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 13.3,
+      "km_fim": 13.6,
+      "trecho": "KM 13,3 - KM 13,6"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 13.6,
+      "km_fim": 14.8,
+      "trecho": "KM 13,6 - KM 14,8"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 14.8,
+      "km_fim": 15.1,
+      "trecho": "KM 14,8 - KM 15,1"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 15.1,
+      "km_fim": 15.4,
+      "trecho": "KM 15,1 - KM 15,4"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 15.4,
+      "km_fim": 15.8,
+      "trecho": "KM 15,4 - KM 15,8"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 15.8,
+      "km_fim": 16.4,
+      "trecho": "KM 15,8 - KM 16,4"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 16.4,
+      "km_fim": 16.7,
+      "trecho": "KM 16,4 - KM 16,7 (ALTO DA SERRA DONA FRANCISCA)"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 16.7,
+      "km_fim": 44.25,
+      "trecho": "KM 16,7 (ALTO DA SERRA DONA FRANCISCA) - CAMPO ALEGRE (ENTR. SC-110)"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 44.25,
+      "km_fim": 59.7,
+      "trecho": "CAMPO ALEGRE (ENTR. SC-110)  - SÃO BENTO DO SUL"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 59.7,
+      "km_fim": 67.99,
+      "trecho": "SÃO BENTO DO SUL  - DISTRITO DE FRAGOSOS (DIVISA SC/PR)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 0.0,
+      "km_fim": 16.52,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-157/BR-158/ DIVISA SC/PR) - JURISDIÇÃO DEINFRA FINAL (JUPIÁ)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 62.49,
+      "km_fim": 76.74,
+      "trecho": "IPUAÇU (ENTR. SUL SC-479)  - BOM JESUS (ENTR. SC-155)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 76.74,
+      "km_fim": 90.52,
+      "trecho": "BOM JESUS (ENTR. SC-155)  - ENTR. ACESSO XANXERÊ"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 90.52,
+      "km_fim": 95.88,
+      "trecho": "ENTR. ACESSO XANXERÊ - ENTR. BR-282/SC-155 (P/ XANXERÊ)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 142.83,
+      "km_fim": 166.17,
+      "trecho": "CHAPECÓ (ENTR. SC-283)  - DISTRITO GOIO-EN (DIVISA SC/RS)"
+     }
+    ],
+    "cegonheiros": [
+     {
+      "rodovia": "A101F",
+      "km_ini": 0.0,
+      "km_fim": 3.59,
+      "trecho": "ENTR. BR-101  - LAGUNA"
+     },
+     {
+      "rodovia": "A108A",
+      "km_ini": 0.0,
+      "km_fim": 0.83,
+      "trecho": "ENTR. SC-108 (P/ SÃO JOÃO BATISTA) - DISTRITO CLARAÍBA (ACESSO NORTE)"
+     },
+     {
+      "rodovia": "A155A",
+      "km_ini": 0.0,
+      "km_fim": 5.93,
+      "trecho": "ENTR. SC-155 (P/ BOM JESUS)  - OURO VERDE (ACESSO OESTE)"
+     },
+     {
+      "rodovia": "A280C",
+      "km_ini": 0.0,
+      "km_fim": 8.12,
+      "trecho": "ENTR. BR-280 (P/ RIO NEGRINHO)  - SÃO BENTO DO SUL (ACESSO OESTE)"
+     },
+     {
+      "rodovia": "A470A",
+      "km_ini": 0.0,
+      "km_fim": 7.73,
+      "trecho": "ENTR. BR-470 (P/ POUSO REDONDO)  - MIRIM DOCE"
+     },
+     {
+      "rodovia": "R108",
+      "km_ini": 28.33,
+      "km_fim": 34.33,
+      "trecho": "ENTR. NOROESTE SC-445 (P/ SIDERÓPOLIS)  - ENTR. NORTE SC-108 (P/ COCAL DO SUL)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 32.39,
+      "km_fim": 45.85,
+      "trecho": "GUARAMIRIM (ENTR. BR-280)  - ENTR. SC-415 (P/ SÃO JOÃO DO ITAPERIÚ)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 45.85,
+      "km_fim": 50.02,
+      "trecho": "ENTR. SC-415 (P/ SÃO JOÃO DO ITAPERIÚ)  - MASSARANDUBA"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 149.1,
+      "km_fim": 150.01,
+      "trecho": "ENTR. SC-410 (P/ NOVA TRENTO)  - ENTR. SC-410 (P/ CANELINHA)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 150.01,
+      "km_fim": 151.5,
+      "trecho": "ENTR. SC-410 (P/ CANELINHA)  - SÃO JOÃO BATISTA"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 333.61,
+      "km_fim": 350.66,
+      "trecho": "ORLEANS (ENTR. SC-390)  - URUSSANGA (ENTR. SC-440)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 350.66,
+      "km_fim": 352.39,
+      "trecho": "URUSSANGA (ENTR. SC-440) - URUSSANGA (ENTR. NORTE SC-445)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 352.39,
+      "km_fim": 353.29,
+      "trecho": "URUSSANGA (ENTR. NORTE SC-445) - URUSSANGA (ENTR. SUL SC-445)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 353.29,
+      "km_fim": 362.5,
+      "trecho": "URUSSANGA (ENTR. SUL SC-445)  - COCAL DO SUL (ENTR. SC-442)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 362.5,
+      "km_fim": 366.92,
+      "trecho": "COCAL DO SUL (ENTR. SC-442)  - CRICIÚMA (ENTR. NORTE ANEL RODOVIÁRIO)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 366.92,
+      "km_fim": 371.46,
+      "trecho": "CRICIÚMA (ENTR. NORTE ANEL RODOVIÁRIO) - ENTR. SC-443 (P/ MORRO DA FUMAÇA)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 371.46,
+      "km_fim": 372.67,
+      "trecho": "ENTR. SC-443 (P/ MORRO DA FUMAÇA)  - ENTR. SC-445 (P/ SIDERÓPOLIS)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 375.66,
+      "km_fim": 378.2,
+      "trecho": "ENTR. SC-443 (P/ DISTRITO VILA MARIA)  - CRICIÚMA (ENTR. SUDOESTE ANEL RODOVIÁRIO)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 378.2,
+      "km_fim": 388.15,
+      "trecho": "CRICIÚMA (ENTR. SUDOESTE ANEL RODOVIÁRIO)  - FORQUILHINHA (ENTR. SUL SC-446)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 388.58,
+      "km_fim": 406.83,
+      "trecho": "FORQUILHINHA (ENTR. NORTE SC-446)  - MELEIRO (ENTR. SC-447)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 406.83,
+      "km_fim": 418.31,
+      "trecho": "MELEIRO (ENTR. SC-447)  - TURVO (ENTR. SC-285)"
+     },
+     {
+      "rodovia": "SC108",
+      "km_ini": 426.44,
+      "km_fim": 439.48,
+      "trecho": "ERMO (ENTR. SC-285)  - JACINTO MACHADO (ENTR. SC-449)"
+     },
+     {
+      "rodovia": "SC110",
+      "km_ini": 279.53,
+      "km_fim": 297.62,
+      "trecho": "ITUPORANGA (ENTR. SUL SC-350)  - PETROLÂNDIA (ENTR. SC-284)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 129.64,
+      "km_fim": 146.31,
+      "trecho": "TAIÓ (ENTR. SC-350)  - ENTR. BR-470 (P/ POUSO REDONDO)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 159.72,
+      "km_fim": 163.98,
+      "trecho": "ENTR. SC-350 (P/ CAÇADOR)  - LEBON RÉGIS"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 163.98,
+      "km_fim": 165.03,
+      "trecho": "LEBON RÉGIS  - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 165.03,
+      "km_fim": 166.31,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO)  - ENTR. SC-350 (P/ SANTA CECÍLIA)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 0.0,
+      "km_fim": 33.35,
+      "trecho": "ENTR. SC-280 (P/ PORTO UNIÃO)  - MATOS COSTA (ENTR. SC-462)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 33.35,
+      "km_fim": 51.01,
+      "trecho": "MATOS COSTA (ENTR. SC-462)  - CALMON"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 51.01,
+      "km_fim": 66.63,
+      "trecho": "CALMON  - ENTR. SC-459"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 66.63,
+      "km_fim": 82.82,
+      "trecho": "ENTR. SC-459  - CAÇADOR (ENTR. LESTE SC-350)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 103.8,
+      "km_fim": 119.29,
+      "trecho": "RIO DAS ANTAS  - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 119.29,
+      "km_fim": 120.3,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO)  - ENTR. SC-355 (P/ VIDEIRA)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 120.3,
+      "km_fim": 126.19,
+      "trecho": "ENTR. SC-355 (P/ VIDEIRA)  - VIDEIRA (ENTR. CONTORNO RODOVIÁRIO SUL)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 126.19,
+      "km_fim": 136.35,
+      "trecho": "VIDEIRA (ENTR. CONTORNO RODOVIÁRIO SUL) - PINHEIRO PRETO"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 136.35,
+      "km_fim": 144.7,
+      "trecho": "PINHEIRO PRETO  - TANGARÁ (ENTR. SC-453)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 56.98,
+      "km_fim": 75.95,
+      "trecho": "ENTR. SC-355 (P/ CATANDUVAS)  - LUZERNA (ENTR. SC-453)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 86.54,
+      "km_fim": 98.64,
+      "trecho": "JOAÇABA (ENTR. BR-282)  - LACERDÓPOLIS"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 98.64,
+      "km_fim": 111.8,
+      "trecho": "LACERDÓPOLIS  - ENTR. SC-467 (P/ DISTRITO SANTA LÚCIA)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 111.8,
+      "km_fim": 116.25,
+      "trecho": "ENTR. SC-467 (P/ DISTRITO SANTA LÚCIA)  - OURO"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 120.13,
+      "km_fim": 129.43,
+      "trecho": "ENTR. SC-467 (P/ ZORTÉA)  - ENTR. SC-390 (P/ DISTRITO BARRO PRETO)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 129.43,
+      "km_fim": 135.32,
+      "trecho": "ENTR. SC-390 (P/ DISTRITO BARRO PRETO)  - ENTR. SC-390 (P/ PIRATUBA)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 0.0,
+      "km_fim": 4.3,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-480/BR-158/ DIVISA SC/PR)  - ENTR. SC-305 (P/ CAMPO ERÊ)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 4.3,
+      "km_fim": 12.86,
+      "trecho": "ENTR. SC-305 (P/ CAMPO ERÊ)  - NOVO HORIZONTE"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 12.86,
+      "km_fim": 40.59,
+      "trecho": "NOVO HORIZONTE  - FORMOSA DO SUL (ENTR. ACESSO IRATI)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 40.59,
+      "km_fim": 54.48,
+      "trecho": "FORMOSA DO SUL (ENTR. ACESSO IRATI)  - ENTR. NORTE SC-482 (P/ QUILOMBO)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 54.48,
+      "km_fim": 66.33,
+      "trecho": "ENTR. NORTE SC-482 (P/ QUILOMBO)  - ENTR. SUL SC-482"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 66.33,
+      "km_fim": 82.64,
+      "trecho": "ENTR. SUL SC-482  - CORONEL FREITAS"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 82.65,
+      "km_fim": 95.84,
+      "trecho": "CORONEL FREITAS  - ENTR. OESTE BR-282 (P/ NOVA ITABERABA)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 121.59,
+      "km_fim": 124.86,
+      "trecho": "CHAPECÓ (ENTR. SC-283)  - ENTR. CONTORNO DE CHAPECÓ"
+     },
+     {
+      "rodovia": "SC283",
+      "km_ini": 2.98,
+      "km_fim": 8.35,
+      "trecho": "ENTR. ACESSO LESTE CONCÓRDIA  - ENTR. ACESSO NORTE CONCÓRDIA"
+     },
+     {
+      "rodovia": "SC283",
+      "km_ini": 8.35,
+      "km_fim": 12.21,
+      "trecho": "ENTR. ACESSO NORTE CONCÓRDIA  - CONCÓRDIA (ENTR. SC-390)"
+     },
+     {
+      "rodovia": "SC283",
+      "km_ini": 12.21,
+      "km_fim": 22.51,
+      "trecho": "CONCÓRDIA (ENTR. SC-390)  - ENTR. SC-154 (P/ ARABUTÃ)"
+     },
+     {
+      "rodovia": "SC340",
+      "km_ini": 0.0,
+      "km_fim": 43.88,
+      "trecho": "ENTR. SC-280 (P/ PORTO UNIÃO)  - DISTRITO ESPRAIADO (ENTR. SC-459)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 100.23,
+      "km_fim": 134.41,
+      "trecho": "ENTR. NORTE BR-153 (P/ DIVISA SC/PR)  - ENTR. SC-465 (P/ MACIEIRA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 134.41,
+      "km_fim": 161.87,
+      "trecho": "ENTR. SC-465 (P/ MACIEIRA)  - CAÇADOR (ENTR. OESTE SC-135)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 168.97,
+      "km_fim": 198.59,
+      "trecho": "ENTR. SC-458 (P/ TIMBÓ GRANDE)  - ENTR. SC-120 (P/ TIMBÓ GRANDE)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 205.18,
+      "km_fim": 230.82,
+      "trecho": "ENTR. SC-120 (P/ CURITIBANOS)  - ENTR. BR-116 (P/ MONTE CASTELO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 241.01,
+      "km_fim": 280.35,
+      "trecho": "ENTR. BR-116 (P/ PONTE ALTA DO NORTE)  - ENTR. SC-427 (P/ RIO DO CAMPO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 280.35,
+      "km_fim": 301.48,
+      "trecho": "ENTR. SC-427 (P/ RIO DO CAMPO)  - TAIÓ (ENTR. SC-114)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 301.48,
+      "km_fim": 333.69,
+      "trecho": "TAIÓ (ENTR. SC-114)  - RIO DO OESTE (ENTR. SC- 112)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 333.69,
+      "km_fim": 341.03,
+      "trecho": "RIO DO OESTE (ENTR. SC- 112)  - LAURENTINO"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 341.03,
+      "km_fim": 346.39,
+      "trecho": "LAURENTINO  - ENTR. BR-470 (P/ AGRONÔMICA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 350.79,
+      "km_fim": 365.06,
+      "trecho": "RIO DO SUL (ENTR. BR-470)  - AURORA"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 365.06,
+      "km_fim": 377.5,
+      "trecho": "AURORA  - ENTR. SC-281 (P/ ATALANTA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 380.2,
+      "km_fim": 397.03,
+      "trecho": "ENTR. SC-110 (P/ PETROLÂNDIA) - ENTR. ACESSO CHAPADÃO DO LAGEADO"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 397.03,
+      "km_fim": 412.96,
+      "trecho": "ENTR. ACESSO CHAPADÃO DO LAGEADO  - ENTR. SC-284 (P/ CHAPADÃO DO LAGEADO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 412.96,
+      "km_fim": 434.34,
+      "trecho": "ENTR. SC-284 (P/ CHAPADÃO DO LAGEADO) - ALFREDO WAGNER (ENTR. SC-408)"
+     },
+     {
+      "rodovia": "SC410",
+      "km_ini": 24.44,
+      "km_fim": 33.4,
+      "trecho": "ENTR. SC-108 (P/ BRUSQUE)  - NOVA TRENTO"
+     },
+     {
+      "rodovia": "SC410",
+      "km_ini": 33.4,
+      "km_fim": 34.78,
+      "trecho": "NOVA TRENTO  - ENTR. ACESSO SUL DISTRITO CLARAÍBA"
+     },
+     {
+      "rodovia": "SC412",
+      "km_ini": 0.0,
+      "km_fim": 13.0,
+      "trecho": "ENTR. BR-101 (P/ ITAJAÍ)  - ILHOTA"
+     },
+     {
+      "rodovia": "SC412",
+      "km_ini": 13.0,
+      "km_fim": 25.24,
+      "trecho": "ILHOTA  - ENTR. ACESSO GASPAR"
+     },
+     {
+      "rodovia": "SC412",
+      "km_ini": 25.24,
+      "km_fim": 28.81,
+      "trecho": "ENTR. ACESSO GASPAR  - CONTORNO RODOVIÁRIO GASPAR (ENTR. SC-108 P/ BRUSQUE)"
+     },
+     {
+      "rodovia": "SC418",
+      "km_ini": 44.25,
+      "km_fim": 59.7,
+      "trecho": "CAMPO ALEGRE (ENTR. SC-110)  - SÃO BENTO DO SUL"
+     },
+     {
+      "rodovia": "SC442",
+      "km_ini": 13.0,
+      "km_fim": 23.0,
+      "trecho": "DISTRITO ESTAÇÃO COCAL (ENTR. SC-445) - COCAL DO SUL (ENTR. SC-108)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 10.57,
+      "km_fim": 13.18,
+      "trecho": "MORRO DA FUMAÇA (ENTR. NORTE SC-445)  - MORRO DA FUMAÇA (ENTR. SUL SC-445)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 13.18,
+      "km_fim": 26.01,
+      "trecho": "MORRO DA FUMAÇA (ENTR. SUL SC-445)  - CRICIÚMA (ENTR. LESTE ANEL RODOVIÁRIO)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 26.01,
+      "km_fim": 28.46,
+      "trecho": "CRICIÚMA (ENTR. LESTE ANEL RODOVIÁRIO)  - ENTR. SC-445 (P/ IÇARA)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 28.46,
+      "km_fim": 31.41,
+      "trecho": "ENTR. SC-445 (P/ IÇARA)  - ENTR. SC-108 (P/ COCAL DO SUL)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 35.6,
+      "km_fim": 37.16,
+      "trecho": "ENTR. SC-108 (P/ FORQUILHINHA)  - CRICIÚMA (ENTR. OESTE ANEL RODOVIÁRIO)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 37.16,
+      "km_fim": 42.96,
+      "trecho": "CRICIÚMA (ENTR. OESTE ANEL RODOVIÁRIO)  - ENTR. SC-446 (P/ NOVA VENEZA)"
+     },
+     {
+      "rodovia": "SC443",
+      "km_ini": 62.7,
+      "km_fim": 77.43,
+      "trecho": "ENTR. ACESSO DISTRITO VILA MARIA  - MELEIRO (ENTR. SC-447)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 0.0,
+      "km_fim": 3.96,
+      "trecho": "ENTR. BR-101 (P/ JAGUARUNA)  - MORRO DA FUMAÇA (ENTR. SUL SC-443)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 26.09,
+      "km_fim": 42.91,
+      "trecho": "URUSSANGA (ENTR. NORTE SC-108)  - SIDERÓPOLIS (ENTR. NORTE SC-446 P/ TREVISO)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 42.91,
+      "km_fim": 44.49,
+      "trecho": "SIDERÓPOLIS (ENTR. NORTE SC-446 P/ TREVISO)  - ENTR. SUL SC-446 (P/ NOVA VENEZA)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 44.49,
+      "km_fim": 44.98,
+      "trecho": "ENTR. SUL SC-446 (P/ NOVA VENEZA) - ENTR. SC-442 (P/ COCAL DO SUL)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 44.98,
+      "km_fim": 52.13,
+      "trecho": "ENTR. SC-442 (P/ COCAL DO SUL) - CRICIÚMA (ENTR. NOROESTE ANEL RODOVIÁRIO)"
+     },
+     {
+      "rodovia": "SC445",
+      "km_ini": 52.13,
+      "km_fim": 54.94,
+      "trecho": "CRICIÚMA (ENTR. NOROESTE ANEL RODOVIÁRIO) - CRICIÚMA (ENTR. SC-108/SC-443)"
+     },
+     {
+      "rodovia": "SC447",
+      "km_ini": 4.12,
+      "km_fim": 11.23,
+      "trecho": "ENTR. SC-100 (P/ DISTRITO LAGOA DOS ESTEVES)  - ARARANGUÁ (ENTR. BR-101)"
+     },
+     {
+      "rodovia": "SC447",
+      "km_ini": 11.23,
+      "km_fim": 15.82,
+      "trecho": "ARARANGUÁ (ENTR. BR-101)  - ENTR. SC-448 (P/ ERMO)"
+     },
+     {
+      "rodovia": "SC447",
+      "km_ini": 15.82,
+      "km_fim": 29.17,
+      "trecho": "ENTR. SC-448 (P/ ERMO)  - MELEIRO (ENTR. SC-108)"
+     },
+     {
+      "rodovia": "SC447",
+      "km_ini": 29.17,
+      "km_fim": 29.98,
+      "trecho": "MELEIRO (ENTR. SC-108)  - MELEIRO (ENTR. SC-443)"
+     },
+     {
+      "rodovia": "SC453",
+      "km_ini": 35.89,
+      "km_fim": 55.1,
+      "trecho": "TANGARÁ (ENTR. SC-135)  - IBICARÉ (ENTR. SC-465)"
+     },
+     {
+      "rodovia": "SC453",
+      "km_ini": 55.1,
+      "km_fim": 69.43,
+      "trecho": "IBICARÉ (ENTR. SC-465)  - LUZERNA (ENTR. SC-150)"
+     },
+     {
+      "rodovia": "SC459",
+      "km_ini": 0.0,
+      "km_fim": 25.34,
+      "trecho": "ENTR. SC-340 (P/ TIMBÓ GRANDE)  - ENTR. SC-135 (P/ CAÇADOR)"
+     },
+     {
+      "rodovia": "SC477",
+      "km_ini": 191.7,
+      "km_fim": 198.06,
+      "trecho": "TIMBÓ (ENTR. SC-110 P/ POMERODE) - INDAIAL (ENTR. BR-470)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 0.0,
+      "km_fim": 16.52,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-157/BR-158/ DIVISA SC/PR) - JURISDIÇÃO DEINFRA FINAL (JUPIÁ)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 142.83,
+      "km_fim": 166.17,
+      "trecho": "CHAPECÓ (ENTR. SC-283)  - DISTRITO GOIO-EN (DIVISA SC/RS)"
+     },
+     {
+      "rodovia": "SC486",
+      "km_ini": 0.0,
+      "km_fim": 30.17,
+      "trecho": "ITAJAÍ (ENTR. BR-101)  - BRUSQUE (ENTR. SC-108)"
+     },
+     {
+      "rodovia": "SC486",
+      "km_ini": 30.17,
+      "km_fim": 32.0,
+      "trecho": "BRUSQUE (ENTR. SC-108)  - KM 32,0"
+     },
+     {
+      "rodovia": "SC486",
+      "km_ini": 32.0,
+      "km_fim": 35.7,
+      "trecho": "KM 32,0 - KM 35,7"
+     }
+    ],
+    "bitrenzao_rodotrem_tritrem": [
+     {
+      "rodovia": "SC114",
+      "km_ini": 168.78,
+      "km_fim": 184.65,
+      "trecho": "ENTR. BR-470 (P/ CURITIBANOS) - ENTR. SC-281 (P/ PONTE ALTA)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 184.65,
+      "km_fim": 186.64,
+      "trecho": "ENTR. SC-281 (P/ PONTE ALTA) - JURISDIÇÃO DEINFRA FINAL (OTACÍLIO COSTA)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 192.79,
+      "km_fim": 199.68,
+      "trecho": "JURISDIÇÃO DEINFRA INICIAL (OTACÍLIO COSTA) - PALMEIRA (ENTR. SC-284)"
+     },
+     {
+      "rodovia": "SC114",
+      "km_ini": 199.68,
+      "km_fim": 224.31,
+      "trecho": "PALMEIRA (ENTR. SC-284) - DISTRITO ÍNDIOS (ENTR. BR-282)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 3.79,
+      "km_fim": 10.51,
+      "trecho": "ENTR. ACESSO CANOINHAS  - ENTR. BR-280 (P/ MAFRA)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 159.72,
+      "km_fim": 163.98,
+      "trecho": "ENTR. SC-350 (P/ CAÇADOR)  - LEBON RÉGIS"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 163.98,
+      "km_fim": 165.03,
+      "trecho": "LEBON RÉGIS  - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 165.03,
+      "km_fim": 166.31,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO)  - ENTR. SC-350 (P/ SANTA CECÍLIA)"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 33.35,
+      "km_fim": 51.01,
+      "trecho": "MATOS COSTA (ENTR. SC-462)  - CALMON"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 51.01,
+      "km_fim": 66.63,
+      "trecho": "CALMON  - ENTR. SC-459"
+     },
+     {
+      "rodovia": "SC135",
+      "km_ini": 66.63,
+      "km_fim": 74.33,
+      "trecho": "ENTR. SC-459 - JURISDIÇÃO SIE FINAL (CAÇADOR)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 14.76,
+      "km_fim": 30.09,
+      "trecho": "ENTR. SUL BR-153 (P/ IRANI)  - DISTRITO HERCILIÓPOLIS (ENTR. SC-464 P/ SALTO VELOSO)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 30.09,
+      "km_fim": 53.16,
+      "trecho": "DISTRITO HERCILIÓPOLIS (ENTR. SC-464 P/ SALTO VELOSO) - JURISDIÇÃO SIE FINAL (ÁGUA DOCE)"
+     },
+     {
+      "rodovia": "SC150",
+      "km_ini": 55.16,
+      "km_fim": 56.98,
+      "trecho": "JURISDIÇÃO SIE INICIAL (ÁGUA DOCE) - ENTR. SC-355 (P/ CATANDUVAS)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 0.0,
+      "km_fim": 4.3,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-480/BR-158/ DIVISA SC/PR)  - ENTR. SC-305 (P/ CAMPO ERÊ)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 4.3,
+      "km_fim": 12.86,
+      "trecho": "ENTR. SC-305 (P/ CAMPO ERÊ)  - NOVO HORIZONTE"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 12.86,
+      "km_fim": 40.59,
+      "trecho": "NOVO HORIZONTE  - FORMOSA DO SUL (ENTR. ACESSO IRATI)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 40.59,
+      "km_fim": 52.04,
+      "trecho": "FORMOSA DO SUL (ENTR. ACESSO IRATI)  - ENTR. NORTE SC-482 (P/ QUILOMBO)"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 52.04,
+      "km_fim": 66.33,
+      "trecho": "ENTR. NORTE SC-482 (P/ QUILOMBO)  - ENTR. SUL SC-482"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 66.33,
+      "km_fim": 82.64,
+      "trecho": "ENTR. SUL SC-482  - CORONEL FREITAS"
+     },
+     {
+      "rodovia": "SC157",
+      "km_ini": 82.65,
+      "km_fim": 95.84,
+      "trecho": "CORONEL FREITAS  - ENTR. OESTE BR-282 (P/ NOVA ITABERABA)"
+     },
+     {
+      "rodovia": "SC340",
+      "km_ini": 62.91,
+      "km_fim": 103.75,
+      "trecho": "TIMBÓ GRANDE (ENTR. SC-120) - ENTR. BR-116 (P/ SANTA CECÍLIA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 100.25,
+      "km_fim": 134.41,
+      "trecho": "ENTR. NORTE BR-153 (P/ DIVISA SC/PR)  - ENTR. SC-465 (P/ MACIEIRA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 134.41,
+      "km_fim": 157.24,
+      "trecho": "ENTR. SC-465 (P/ MACIEIRA) - JURISDIÇÃO DEINFRA FINAL (CAÇADOR)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 170.25,
+      "km_fim": 198.59,
+      "trecho": "JURISDIÇÃO DEINFRA INICIAL (CAÇADOR) - ENTR. SC-120 (P/ TIMBÓ GRANDE)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 205.18,
+      "km_fim": 230.82,
+      "trecho": "ENTR. SC-120 (P/ CURITIBANOS)  - ENTR. BR-116 (P/ MONTE CASTELO)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 365.06,
+      "km_fim": 377.24,
+      "trecho": "AURORA - JURISDIÇÃO SIE FINAL (ITUPORANGA)"
+     },
+     {
+      "rodovia": "SC355",
+      "km_ini": 89.12,
+      "km_fim": 89.94,
+      "trecho": "TREZE TÍLIAS (ENTR. SC-465 P/ IBICARÉ)  - TREZE TÍLIAS (ENTR. SC-465 P/ SALTO VELOSO)"
+     },
+     {
+      "rodovia": "SC355",
+      "km_ini": 89.94,
+      "km_fim": 109.96,
+      "trecho": "TREZE TÍLIAS (ENTR. SC-465 P/ SALTO VELOSO) - JURISDIÇÃO SIE FINAL (ÁGUA DOCE) = ENTR. SC-150"
+     },
+     {
+      "rodovia": "SC355",
+      "km_ini": 113.11,
+      "km_fim": 127.48,
+      "trecho": "ENTR. SC-150 (P/ LUZERNA)  - CATANDUVAS (ENTR. BR-282)"
+     },
+     {
+      "rodovia": "SC390",
+      "km_ini": 204.4,
+      "km_fim": 207.18,
+      "trecho": "CERRO NEGRO  - CAMPO BELO DO SUL (ENTR. SC-120)"
+     },
+     {
+      "rodovia": "SC390",
+      "km_ini": 207.18,
+      "km_fim": 235.0,
+      "trecho": "CAMPO BELO DO SUL (ENTR. SC-120)  - CAPÃO ALTO"
+     },
+     {
+      "rodovia": "SC390",
+      "km_ini": 235.0,
+      "km_fim": 239.19,
+      "trecho": "CAPÃO ALTO  - ENTR. BR-116 (P/ LAGES)"
+     },
+     {
+      "rodovia": "SC390",
+      "km_ini": 256.04,
+      "km_fim": 282.8,
+      "trecho": "ENTR. BR-116 (P/ DIVISA SC-RS) - RINCÃO DO PERIGO (COXILHA RICA)"
+     },
+     {
+      "rodovia": "SC407",
+      "km_ini": 0.0,
+      "km_fim": 11.43,
+      "trecho": "BIGUAÇU (ENTR. BR-101) - JURISDIÇÃO SIE FINAL (ANTÔNIO CARLOS)"
+     },
+     {
+      "rodovia": "SC412",
+      "km_ini": 0.0,
+      "km_fim": 1.8,
+      "trecho": "ENTR. BR-101 (P/ ITAJAÍ) - FIM TRECHO DUPLICADO"
+     },
+     {
+      "rodovia": "SC415",
+      "km_ini": 0.0,
+      "km_fim": 10.05,
+      "trecho": "ENTR. ACESSO BALNEÁRIO CAPRI - ENTR. BR-280 (P/ SÃO FRANCISCO DO SUL)"
+     },
+     {
+      "rodovia": "SC416",
+      "km_ini": 0.0,
+      "km_fim": 27.44,
+      "trecho": "ENTR. SC-417 (P/ GARUVA)  - ITAPOÁ"
+     },
+     {
+      "rodovia": "SC417",
+      "km_ini": 5.3,
+      "km_fim": 10.64,
+      "trecho": "ENTR. SC- 416 (P/ ITAPOÁ)  - GARUVA (ENTR. BR-101)"
+     },
+     {
+      "rodovia": "SC417",
+      "km_ini": 10.64,
+      "km_fim": 12.0,
+      "trecho": "ENTR. CONTORNO DE GARUVA - GARUVA (ENTR. BR-101)"
+     },
+     {
+      "rodovia": "SC465",
+      "km_ini": 46.21,
+      "km_fim": 60.76,
+      "trecho": "TREZE TÍLIAS (ENTR. SC-355 P/ IOMERÊ)  - IBICARÉ (ENTR. SC-453)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 0.0,
+      "km_fim": 16.52,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-157/BR-158/ DIVISA SC/PR) - JURISDIÇÃO DEINFRA FINAL (JUPIÁ)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 142.83,
+      "km_fim": 166.17,
+      "trecho": "CHAPECÓ (ENTR. SC-283)  - DISTRITO GOIO-EN (DIVISA SC/RS)"
+     },
+     {
+      "rodovia": "SC486",
+      "km_ini": 0.0,
+      "km_fim": 23.86,
+      "trecho": "ITAJAÍ (ENTR. BR-101) - JURISDIÇÃO DEINFRA FINAL (BRUSQUE)"
+     }
+    ],
+    "treminhoes": [
+     {
+      "rodovia": "SC120",
+      "km_ini": 159.72,
+      "km_fim": 163.98,
+      "trecho": "ENTR. SC-350 (P/ CAÇADOR)  - LEBON RÉGIS"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 163.98,
+      "km_fim": 165.03,
+      "trecho": "LEBON RÉGIS - ENTR. SC-355 (P/ FRAIBURGO)"
+     },
+     {
+      "rodovia": "SC120",
+      "km_ini": 165.03,
+      "km_fim": 166.31,
+      "trecho": "ENTR. SC-355 (P/ FRAIBURGO) - ENTR. SC-350 (P/ SANTA CECÍLIA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 100.23,
+      "km_fim": 134.41,
+      "trecho": "ENTR. NORTE BR-153 (P/ DIVISA SC/PR) - ENTR. SC-465 (P/ MACIEIRA)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 134.41,
+      "km_fim": 155.22,
+      "trecho": "ENTR. SC-465 (P/ MACIEIRA) - CAÇADOR (ENTR. OESTE SC-135)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 172.17,
+      "km_fim": 198.56,
+      "trecho": "ENTR. SC-458 (P/ TIMBÓ GRANDE) - ENTR. SC-120 (P/ TIMBÓ GRANDE)"
+     },
+     {
+      "rodovia": "SC350",
+      "km_ini": 205.18,
+      "km_fim": 230.82,
+      "trecho": "ENTR. SC-120 (P/ CURITIBANOS) - ENTR. BR-116 (P/ MONTE CASTELO)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 0.0,
+      "km_fim": 16.52,
+      "trecho": "SÃO LOURENÇO DO OESTE (ENTR. SC-157/BR-158/ DIVISA SC/PR) - JURISDIÇÃO DEINFRA FINAL (JUPIÁ)"
+     },
+     {
+      "rodovia": "SC480",
+      "km_ini": 142.83,
+      "km_fim": 166.17,
+      "trecho": "CHAPECÓ (ENTR. SC-283)  - DISTRITO GOIO-EN (DIVISA SC/RS)"
+     }
+    ]
+   },
+   "avisos_operacionais_vivos_18_10_2026": [
+    {
+     "rodovia": "SC-418",
+     "km": 16.6,
+     "municipio": "Joinville",
+     "texto": "Queda de faixa de rolamento. Transito em meia pista somente para veiculos com PBT ate 7,5 toneladas (evento Chuvas de agosto)",
+     "status": "Nao Solucionado",
+     "id": "26E09102-001",
+     "fonte": "https://geo.sie.sc.gov.br/api/geo_sos.php"
+    },
+    {
+     "rodovia": "SC-155",
+     "km": 90.3,
+     "municipio": "Xavantina",
+     "texto": "Desabamento/queda de parte do pavimento; trecho em meia pista (El Nino)",
+     "status": "Nao Solucionado",
+     "id": "26E19606-001"
+    },
+    {
+     "rodovia": "SC-161",
+     "km": 73.0,
+     "municipio": "Romelandia",
+     "texto": "Ponte sobre o Rio Sargento interditada; liberada",
+     "status": "Solucionado",
+     "id": "26E15208-001"
+    }
+   ],
+   "teste_download": "OK em 18/10/2026: geo_rotas_aet (4 chamadas, 44 a 101 feicoes), geo_rodovia_estadual (4,9 MB, 624 feicoes), geo_travessia_urbana (0,8 MB, 433), geo_sos (3). HTTP 200 anonimo, sem cookie/chave. Amostras em fontes/SC/geosie_*.json.",
+   "limitacao_importacao": "As rotas de AET sao uma lista de PERMISSAO (liberado para o tipo), nao de proibicao: para CVC, o trecho fora da lista nao tem AET possivel. Servem para a regra 'caminhao de configuracao X so em trechos listados'. Cuidado com siglas A470A, A108A, R108 (acessos/rodovias de acesso) e com jurisdicao SIE intercalada com federal/municipal (lacunas de km). Nao ha restricao temporal (horario) nesses dados.",
+   "serras_observacoes": [
+    "SC-418 Serra Dona Francisca (km 13,3 a 16,7): COM trechos liberados para bitrem/romeu e julieta (7 segmentos individualizados), SEM rodotrem, SEM treminhao e SEM cegonheiro; cegonheiro so em SC-418 km 44,25-59,70.",
+    "SC-390 Serra do Rio do Rastro (km 403,939-410,595, marcada na malha SRE): NENHUM trecho de CVC nas 4 listas cobre esse intervalo. Rodotrem so em SC-390 km 204,4-239,19 e 256,04-282,80.",
+    "Treminhao: apenas SC-120, SC-350 e SC-480."
+   ],
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "SIM para rotas de AET (4 camadas), malha estadual com km e travessias urbanas (todas testadas, campos conferidos). NAO ha dado de horario/peso por portaria para importar. Aviso SOS (PBT 7,5 t em SC-418 km 16,6) e temporario: importar como evento, nao como regra fixa."
+  },
+  "pedagio": {
+   "resumo": "Nenhuma concessao rodoviaria ESTADUAL com cobranca foi localizada. Todas as 11 pracas ANTT em SC estao em BR (BR-101 e BR-116). O GeoSIE nao tem camada de pedagio e as 111 bases do portal dados.sc.gov.br nao trazem pedagio. Em SC, as concessoes em andamento (BR-153/282/470/480 no Oeste, free flow previsto para 2027, leilao em nov/2026 segundo reportagem NSC) sao FEDERAIS. Nao foi possivel confirmar por fonte oficial estadual a inexistencia de PPP/concessao estadual em estudo (site do DEINFRA inacessivel).",
+   "fontes": [
+    {
+     "nome": "ANTT - Dados das Pracas de Pedagio (CSV)",
+     "url": "https://dados.antt.gov.br/dataset/a7e1e12d-f8e8-40cd-bc1f-57973a4a4a6d/resource/9aa29243-c54c-4084-bc3d-c44a75c9bd7e/download/dados-dos-pracas-de-pedagio6_2026.csv",
+     "formato": "CSV ; campos concessionaria, praca_de_pedagio, rodovia, uf, km_m, municipal, situacao, latitude, longitude",
+     "licenca": "Creative Commons Atribuicao (CKAN ANTT)",
+     "atualizado_em": "2026-07-28"
+    }
+   ],
+   "pracas_federais_em_sc": [
+    {
+     "concessionaria": "Autopista Litoral Sul",
+     "praca": "P2",
+     "rodovia": "BR-101",
+     "km": 1.35,
+     "municipio": "Garuva",
+     "lat": -25.991898,
+     "lon": -48.881469
+    },
+    {
+     "concessionaria": "Autopista Litoral Sul",
+     "praca": "P3",
+     "rodovia": "BR-101",
+     "km": 79.3,
+     "municipio": "Araquari",
+     "lat": -26.591635,
+     "lon": -48.722079
+    },
+    {
+     "concessionaria": "Autopista Litoral Sul",
+     "praca": "P4",
+     "rodovia": "BR-101",
+     "km": 157.4,
+     "municipio": "Porto Belo",
+     "lat": -27.185065,
+     "lon": -48.612362
+    },
+    {
+     "concessionaria": "Autopista Litoral Sul",
+     "praca": "P5",
+     "rodovia": "BR-101",
+     "km": 242.8,
+     "municipio": "Palhoca",
+     "lat": -27.885105,
+     "lon": -48.647677
+    },
+    {
+     "concessionaria": "Via Costeira",
+     "praca": "P1-Laguna",
+     "rodovia": "BR-101",
+     "km": 298.66,
+     "municipio": "Laguna",
+     "lat": -28.350722,
+     "lon": -48.739429
+    },
+    {
+     "concessionaria": "Via Costeira",
+     "praca": "P2-Tubarao",
+     "rodovia": "BR-101",
+     "km": 344.7,
+     "municipio": "Tubarao",
+     "lat": -28.554278,
+     "lon": -49.054214
+    },
+    {
+     "concessionaria": "Via Costeira",
+     "praca": "P3-Ararangua",
+     "rodovia": "BR-101",
+     "km": 404.55,
+     "municipio": "Maracaja",
+     "lat": -28.89774,
+     "lon": -49.473136
+    },
+    {
+     "concessionaria": "Via Costeira",
+     "praca": "P4-Sao Joao do Sul",
+     "rodovia": "BR-101",
+     "km": 457.53,
+     "municipio": "Sao Joao do Sul",
+     "lat": -29.243667,
+     "lon": -49.754475
+    },
+    {
+     "concessionaria": "Autopista Planalto Sul",
+     "praca": "Monte Castelo",
+     "rodovia": "BR-116",
+     "km": 81.6,
+     "municipio": "Monte Castelo",
+     "lat": -26.570363,
+     "lon": -50.221795
+    },
+    {
+     "concessionaria": "Autopista Planalto Sul",
+     "praca": "Santa Cecilia",
+     "rodovia": "BR-116",
+     "km": 152.0,
+     "municipio": "Santa Cecilia",
+     "lat": -27.010584,
+     "lon": -50.428716
+    },
+    {
+     "concessionaria": "Autopista Planalto Sul",
+     "praca": "Correia Pinto",
+     "rodovia": "BR-116",
+     "km": 233.16,
+     "municipio": "Correia Pinto",
+     "lat": -27.010584,
+     "lon": -50.374335
+    }
+   ],
+   "tarifas_por_eixo": "Nao se aplica a estadual (nao ha). Federais ja cobertas por toll_antt.py (tarifas na ANTT).",
+   "teste_download": "CSV ANTT baixado (33,9 KB, 277 linhas, 11 em SC, todas Ativo). Amostra em fontes/SC/antt_pracas_pedagio_SC.csv.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nada estadual a importar. As 11 pracas federais ja entram pelo importador nacional da ANTT."
+  },
+  "balancas": {
+   "resumo": "Nao foi localizada nenhuma lista de balancas/postos de pesagem estaduais de SC (nem camada no GeoSIE, nem pagina no site da SIE, nem dataset no portal de dados abertos). A fiscalizacao de peso em rodovias estaduais seria da PMRv/SIE por balanca movel, nao confirmado. Balancas federais da ANTT (PPV) em SC ja estao no seed nacional (3 segundo a auditoria).",
+   "fontes": [
+    {
+     "nome": "GeoSIE postos da PMRv (25 postos, nao sao balancas)",
+     "url": "https://geo.sie.sc.gov.br/api/geo_postos_pmrv.php",
+     "formato": "GeoJSON Point: SGPOSTOABREV, NMPOSTORODOV, DEENDERECO",
+     "licenca": "nao declarada",
+     "atualizado_em": "sem data"
+    }
+   ],
+   "teste_download": "geo_postos_pmrv OK (25 pontos com endereco textual); sem campo de pesagem.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao ha fonte de balanca estadual. Os 25 postos PMRv servem como contexto, nao como balanca."
+  },
+  "feriados": {
+   "estaduais": [
+    {
+     "data_nominal": "11/08",
+     "nome": "Dia do Estado de Santa Catarina (Data Magna)",
+     "lei": "Lei 12.906/2004 (art. 1) com paragrafo unico da Lei 13.408/2005; hoje consolidada na Lei 18.531/2022 (Anexo unico)",
+     "regra": "Sempre que 11/08 coincidir com dia util da semana, o feriado e os eventos sao transferidos para o DOMINGO subsequente.",
+     "datas_efetivas": {
+      "2026": "2026-08-16 (11/08 e terca)",
+      "2027": "2027-08-15 (11/08 e quarta)",
+      "2028": "2028-08-13 (11/08 e sexta)"
+     }
+    },
+    {
+     "data_nominal": "25/11",
+     "nome": "Dia de Santa Catarina de Alexandria (tambem data magna)",
+     "lei": "Lei 10.306/1996 art. 1 (alterada pelas Leis 11.213/1999, 12.906/2004 e 13.408/2005); consolidada na Lei 18.531/2022 (Anexo unico)",
+     "regra": "Sempre que 25/11 coincidir com dia util, o feriado e transferido para o DOMINGO subsequente.",
+     "datas_efetivas": {
+      "2026": "2026-11-29 (25/11 e quarta)",
+      "2027": "2027-11-28 (25/11 e quinta)",
+      "2028": "25/11/2028 e sabado: a lei so manda transferir quando cai em dia util; sabado nao esta claro; na pratica nao e dia de semana util"
+     }
+    }
+   ],
+   "conclusao_transito": "Os dois feriados estaduais de SC nunca caem em dia de semana: sao transferidos por lei para domingo. Para a restricao de caminhao isso equivale a nenhum feriado estadual em dia util. Importar apenas como registro informativo (ativo=false para regra de transito).",
+   "pl_23_2026": "O PL 23/2026 (governador Jorginho Mello, protocolado em fev/2026) propoe instituir 25/11 como feriado estadual. COFEM/FIESC/CDL pediram a rejeicao (oficios de 10 a 18/02/2026 lidos no portal ALESC), citando a Lei federal 9.093/1995 (um feriado estadual: a data magna) e a Lei 18.531/2022. A lei 18.531 consolidada (alterada ate a Lei 20.053/2026) ainda mostra 25/11 transferido para domingo; NAO confirmei se o PL virou lei. Verificar na ALESC antes de importar.",
+   "municipais": {
+    "base_estadual_estruturada": "Nao existe. Nem o Estado nem a FECAM (site 403 no proxy) publicam tabela estruturada de feriados municipais.",
+    "caminho_mais_viavel": "1) DOM/SC (Diario Oficial dos Municipios de SC, CIGA): dumps mensais em JSON (ZIP) no CKAN dados.sc/ciga, com titulo, data, municipio, entidade, categoria (Decretos, Leis) e texto integral; cobre mais de 550 entidades. Teste: 3 dias de dez/2025 (7.951 atos) acharam so 5 titulos com feriado/ponto facultativo/calendario, ou seja, o filtro por titulo tem baixo rendimento e exige leitura do texto dos decretos e leis. 2) Atos de tribunais (CNJ Rec. 44/2020 manda publicar feriados locais ate 19/12): TJSC e TRT12 (TJSC tem site SPA nao lido; TRT12 inacessivel pelo proxy; TRF4 acessivel) - nao testados a fundo. 3) Leis organicas e leis municipais de data de fundacao/padroeiro no LeisMunicipais (nao testado). Mesmo metodo do Sudeste (ato de tribunal + decreto anual) e o recomendado.",
+    "fontes": [
+     {
+      "nome": "DOM/SC - Dados Abertos (CKAN CIGA) - Publicacoes mensais",
+      "url": "https://dados.ciga.sc.gov.br/dataset/?tags=DOMSC",
+      "formato": "ZIP com JSON (autopublicacoes, edicoes ordinarias); recortes por dia e faixa horaria",
+      "licenca": "nao declarada no CKAN (license_title None)",
+      "atualizado_em": "2026-10-18 (pacote 10/2026)"
+     },
+     {
+      "nome": "DOM/SC busca",
+      "url": "https://www.diariomunicipal.sc.gov.br/?q=feriados",
+      "formato": "HTML",
+      "licenca": "nao declarada",
+      "atualizado_em": "vivo"
+     }
+    ]
+   },
+   "fontes": [
+    {
+     "nome": "ALESC - Lei 18.531/2022 (consolidacao + Calendario Oficial)",
+     "url": "https://leis.alesc.sc.gov.br/html/2022/18531_2022_lei.html",
+     "formato": "HTML",
+     "licenca": "ato oficial, dominio publico (Lei 9.610/1998 art. 8 IV)",
+     "atualizado_em": "alterada ate Lei 20.053/2026"
+    },
+    {
+     "nome": "ALESC - Lei 10.306/1996, 11.213/1999, 12.906/2004, 13.408/2005",
+     "url": "https://leis.alesc.sc.gov.br/html/1996/10306_1996_lei.html",
+     "formato": "HTML",
+     "licenca": "ato oficial",
+     "atualizado_em": "historicas"
+    },
+    {
+     "nome": "ALESC portal e-Legis - manifestacoes sobre PL 23/2026",
+     "url": "https://portalelegis.alesc.sc.gov.br/documentos/rr6g0",
+     "formato": "PDF",
+     "licenca": "documento publico",
+     "atualizado_em": "fev/2026"
+    }
+   ],
+   "teste_download": "Textos das leis baixados e conferidos; amostra DOM/SC baixada (ZIP 13 KB e 3 dias de dez/2025) e campos conferidos (codigo, titulo, data, municipio, entidade, categoria, link, texto).",
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "Estaduais: SIM, mas como regra 'domingo' (sem efeito em dia util); ver a nota do PL 23/2026. Municipais em massa: NAO (sem base; exige pipeline sobre DOM/SC + atos de tribunal)."
+  },
+  "perigosos": {
+   "orgao_ambiental": "IMA (Instituto do Meio Ambiente de SC). Licenciamento do transporte rodoviario de produtos perigosos na modalidade LAC (Licenca Ambiental por Compromisso), digital e autodeclaratoria. Mais de 7.200 licencas (nota de mar/2025). Comissao estadual CE-P2R2/SC e plantao PARE 0800 644 1520 (24 h).",
+   "resumo": "Nao foi localizado ato estadual de restricao de trecho (mananciais, tuneis, pontes) para produtos perigosos. Ha fiscalizacao (cerca de 50 operacoes/ano) e uso de 'rotas criticas', sem lista publicada. O Tunel Antonieta de Barros (Florianopolis) apareceu como cenario de simulado de caminhao-tanque em jun/2026, sem ato de proibicao nas paginas lidas.",
+   "fontes": [
+    {
+     "nome": "IMA - noticia de fiscalizacao PP",
+     "url": "https://www.ima.sc.gov.br/ima-participa-de-operacoes-para-fiscalizar-transporte-de-produtos-perigosos-em-santa-catarina/",
+     "formato": "HTML",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-03-20"
+    },
+    {
+     "nome": "IMA - simulado no Tunel Antonieta de Barros",
+     "url": "https://www.ima.sc.gov.br/ima-participa-de-importante-simulado-de-emergencia-com-produtos-perigosos-em-florianopolis/",
+     "formato": "HTML",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026-06-26"
+    }
+   ],
+   "atos": [],
+   "pendencias_verificar": "Ato normativo do IMA/CONSEMA que define a LAC de transporte de PP (numero nao confirmado); restricoes de tunel/ponte em Florianopolis e Grande Floripa (competencia municipal/SIE); restricoes federais de PP em BR ja cobertas por camadas nacionais.",
+   "teste_download": "Paginas lidas por curl (HTTP 200).",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Sem dado de trecho para importar."
+  },
+  "acidentes": {
+   "resumo": "Existe base estadual: Boletins de Ocorrencia (BOAT) da PMRv em rodovias ESTADUAIS, com coordenada, no GeoSIE. 5.543 BOs de 01/01/2026 a 17/10/2026, todos com latitude/longitude. NAO traz tipo de veiculo nem flag de caminhao (so QTVEICULOENVOLV). O endpoint devolve apenas o ano corrente (NUANO=2026), sem parametro de ano: historico exige coleta periodica. Para BR em SC vale a PRF (ja nacional).",
+   "campos": [
+    "NMPOSTORODOV",
+    "NUANO",
+    "NUBOLETIM",
+    "NMMUNICIPIO",
+    "SGRODOVIA",
+    "NMRODOVIA",
+    "NUKM",
+    "NMTRECHO",
+    "DTACIDENTE (dd/mm/aaaa)",
+    "DECLASSIFICACAO",
+    "QTVEICULOENVOLV",
+    "QTFERIDO",
+    "QTILESO",
+    "QTVITIMAFATAL",
+    "DECONDICAOTEMPO",
+    "CDGRAVIDADE",
+    "LATITUDE",
+    "LONGITUDE",
+    "SGPOSTOABREV",
+    "CDPOSTORODOV"
+   ],
+   "estatisticas_2026": {
+    "bos": 5543,
+    "periodo": "2026-01-01 a 2026-10-17",
+    "gravidade_1": 175,
+    "gravidade_2": 2674,
+    "gravidade_3": 2694,
+    "vitimas_fatais_total": 202,
+    "nota_gravidade": "mapa inferido pelos totais: 1 = com vitima fatal (202 mortos, todos na classe 1), 2 = com feridos, 3 = sem vitima; nao documentado pela fonte",
+    "classificacao": {
+     "ABALROAMENTO": 1646,
+     "OUTRO": 1382,
+     "COLISAO": 1338,
+     "SAIDA DE PISTA": 780,
+     "CHOQUE": 176,
+     "ATROPELAMENTO": 139,
+     "TOMBAMENTO": 58,
+     "CAPOTAMENTO": 24
+    },
+    "top_rodovias": {
+     "SC108": 694,
+     "SC401": 428,
+     "SC445": 259,
+     "SC406": 216,
+     "SC370": 189,
+     "SC390": 187,
+     "SC350": 180,
+     "SC405": 166,
+     "SC283": 165,
+     "SC114": 134
+    }
+   },
+   "croqui": "api/existe_acidente_croqui.php e exibe_acidente_croqui.php (por NUANO, NUBOLETIM, CDPOSTORODOV); croqui pode trazer veiculos, nao testado.",
+   "outras_fontes": [
+    "ROST (Registro Online de Sinistro de Transito) da SIE: apenas sinistros sem feridos; nao e dado aberto.",
+    "RENAEST/Senatran (dados.transportes.gov.br, Public Domain): nacional, com latitude_acidente e TipoVeiculo, zip mensal de ~520 MB; nao baixado (limite de disco). Cobertura de coordenada em SC nao medida.",
+    "SSP-SC Seguranca em Numeros: so agregados (ver roubo_carga)."
+   ],
+   "fontes": [
+    {
+     "nome": "GeoSIE - boletins de ocorrencia PMRv",
+     "url": "https://geo.sie.sc.gov.br/api/geo_acidente.php",
+     "formato": "GeoJSON Point (3,6 MB)",
+     "licenca": "nao declarada",
+     "atualizado_em": "vivo; ultimo BO 2026-10-17"
+    },
+    {
+     "nome": "GeoSIE - lista de classificacoes",
+     "url": "https://geo.sie.sc.gov.br/api/lista_classificacao_acidente.php",
+     "formato": "JSON",
+     "licenca": "nao declarada",
+     "atualizado_em": "-"
+    }
+   ],
+   "teste_download": "OK: 5.543 feicoes, 0 sem coordenada, bbox lon -53,709/-48,395 lat -29,310/-25,982 (dentro de SC). Amostra de 300 em fontes/SC/geosie_acidente_amostra300.json.",
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "SIM como camada de acidentes em rodovias estaduais (ponto, rodovia, km, gravidade, mortos), SEM filtro de caminhao. Rodar periodicamente para acumular historico."
+  },
+  "roubo_carga": {
+   "resumo": "Nao ha roubo de carga com coordenada. SSP-SC publica so o Boletim Mensal de Indicadores (PDF) com ROUBO e FURTO totais (jan-jul/2026: 2.860 roubos; 63.712 furtos), sem categoria carga. O Sinesp VDE (MJSP) da roubo de carga por UF e mes: SC teve 13 casos em 2025 (nacional 8.565; RJ 3.777, SP 3.470). Irrelevante para rotas de caminhao em SC.",
+   "fontes": [
+    {
+     "nome": "SSP-SC Seguranca em Numeros (boletim mensal PDF)",
+     "url": "https://ssp.sc.gov.br/segurancaemnumeros/",
+     "formato": "PDF por mes (jul/2026: https://ssp.sc.gov.br/wp-content/uploads/2026/08/2026-julho.pdf)",
+     "licenca": "nao declarada; CKAN dados.sc.gov.br marca 'Outra (Aberta)' para o item Seguranca em Numeros",
+     "atualizado_em": "dados ate 31/07/2026"
+    },
+    {
+     "nome": "Sinesp VDE 2025 (MJSP)",
+     "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+     "formato": "XLSX 26,6 MB; campos uf, municipio, evento, data_referencia, total, abrangencia",
+     "licenca": "nao declarada no arquivo",
+     "atualizado_em": "2025"
+    }
+   ],
+   "sinesp_sc_2025_mensal": {
+    "2025-01": 1,
+    "2025-02": 2,
+    "2025-03": 2,
+    "2025-04": 0,
+    "2025-05": 1,
+    "2025-06": 0,
+    "2025-07": 0,
+    "2025-08": 0,
+    "2025-09": 3,
+    "2025-10": 2,
+    "2025-11": 1,
+    "2025-12": 1,
+    "total": 13
+   },
+   "teste_download": "PDF SSP jul/2026 baixado e lido (452 linhas); xlsx Sinesp baixado (retomada de download), linhas de SC extraidas e o arquivo bruto apagado. Amostra em fontes/SC/sinesp_vde_2025_roubo_carga_SC.csv.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao: 13 ocorrencias/ano por UF, sem local."
+  },
+  "particularidades": {
+   "balsas_travessias": "Ferry-boat/balsa no Rio Itajai-Acu (Itajai-Navegantes): servico de transporte intermunicipal subsidiado pela SIE (Passe Livre; Lei estadual 12.119 e Decreto 1.780/2022; Resolucoes SIE 001/2024 de 22/10/2024, 001/2025 de 20/03/2025 e 030/2025 de 17/11/2025 sobre valores e reajuste do subsidio). O Passe Livre cobre pedestres, ciclistas e motociclistas; limites de peso/altura para caminhao, horario e operador da balsa NAO foram encontrados. Outras travessias estaduais com balsa: nao localizadas por fonte oficial (a DNIT lista 1 travessia federal em SC; WFS falhou pelo proxy).",
+   "serras": [
+    "SC-418 Serra Dona Francisca (km 13,3-16,7): bitrem permitido, rodotrem/treminhao/cegonheiro nao.",
+    "SC-390 Serra do Rio do Rastro (km 403,939-410,595, Lauro Muller/Bom Jardim da Serra): nenhum CVC liberado; interdicoes por gelo e queda de rochas noticiadas (NSC), indicacoes na ALESC pedindo manutencao (2023 e 2024); SC-390 caminhoes e onibus muitas vezes invadem a faixa oposta nas curvas (guia turistico, nao norma)."
+   ],
+   "rodotrem_cvc": "Regime por lista de trechos da AET (ver rodovias_estaduais.rotas_aet_trechos). Rodotrem/bitrenzao 57-74 t em 17 rodovias (642,8 km); treminhao so SC-120, SC-350, SC-480. Sem regra de safra encontrada.",
+   "malha_estadual": "624 trechos / 6.333,3 km: pavimentada 5.089,3 km (514 trechos), leito natural 784,6 km (48), em obras de pavimentacao 312,3 km (28), duplicada 117,3 km (28), implantada 17,6 km (3), em obras de duplicacao 12,3 km (3). Cerca de 785 km de leito natural sao candidatos a restricao pratica para caminhao, sem ato.",
+   "obras": "59 obras ativas no GeoSIE (geo_obra.php, MultiLineString, so CDOBRA e NMOBRA).",
+   "malha_patrulhada": "geo_malha_patrulhada.php (3,4 MB) mostra a malha coberta pela PMRv; nao analisada.",
+   "osm_hgv_sem_ato": "NAO TESTADO: nao ha PBF do Sul no repo e Overpass falhou pelo proxy (reset). Pendencia.",
+   "fontes": [],
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Particularidades sao notas; os dados importaveis estao em rodovias_estaduais e acidentes."
+  }
+ },
+ "decisoes_para_o_projeto": [
+  "Camada estadual de AET/CVC: importar geo_rotas_aet (4 subcamadas) como regra 'tipo de combinacao so nos trechos listados'. Chave: SGRODOVIA + km (virgula decimal).",
+  "Referencia linear: geo_rodovia_estadual (SGRODOVIA, CDTRECHO, km) serve de malha SRE de SC para casar km das rotas, dos avisos SOS e dos BOs.",
+  "Acidentes estaduais: importar geo_acidente.php periodicamente (historico so a partir de coletas); sem filtro de caminhao.",
+  "Feriado estadual: nenhum efeito em dia util (transferido para domingo). Verificar o PL 23/2026 antes de fechar 2026-2028.",
+  "Nao ha: portaria de horario de caminhao, pedagio estadual, balanca estadual, roubo de carga com local, restricao estadual de PP.",
+  "Para fechar as lacunas: acessar deinfra.sc.gov.br e sie.sc.gov.br fora do proxy; baixar PBF do Sul para checar hgv/maxweight/ferry; ler texto da Resolucao SIE 001/2021 e IN SIE 007/2021."
+ ]
+}
