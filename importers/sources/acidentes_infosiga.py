@@ -217,6 +217,9 @@ def janela(max_date: dt.date) -> tuple[dt.date, dt.date]:
 class Hotspots:
     """Acumula eventos (já filtrados pela janela) por célula de GRID_M metros. Nada individual sai daqui."""
 
+    # peso do acidente com caminhão SEM vítima no score (as fontes que não separam vítima de não vítima podem trocar o peso)
+    peso_sem_vitima = PESO_SEM_VITIMA
+
     def __init__(self):
         self.cells: dict[tuple[int, int], dict] = {}
         self.n_events = 0
@@ -267,7 +270,7 @@ class Hotspots:
             mun = (c['mun'].most_common(1) or [(None, 0)])[0][0]
             per = {k: c['per'].get(k, 0) for k in FAIXAS}
             pico = max(FAIXAS, key=lambda k: per[k]) if any(per.values()) else None
-            score = round(c['caminhao_vitima'] + 2 * c['caminhao_fatais'] + PESO_SEM_VITIMA * (n - c['caminhao_vitima']), 1)
+            score = round(c['caminhao_vitima'] + 2 * c['caminhao_fatais'] + self.peso_sem_vitima * (n - c['caminhao_vitima']), 1)
             nivel = 'muito_alto' if score >= NIVEL_MUITO_ALTO else 'alto' if score >= NIVEL_ALTO else 'moderado'
             cell = f'{GRID_M}m:{ix}:{iy}'
             name = via or (f'Ponto crítico em {mun}' if mun else 'Ponto crítico de acidentes')

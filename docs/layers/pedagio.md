@@ -7,6 +7,10 @@ Concessões **estaduais do RJ e de MG e municipais** (fontes `agetransp`, `artem
 `toll_agetransp.py`, `toll_artemig.py`, `toll_municipais.py`): ver [pedagio_estaduais.md](pedagio_estaduais.md),
 com as regras por concessão (ato e artigo), a janela da TBA da Via Lagos, a tabela não linear da Rota 116, o free flow
 da MG-459 e os registros inativos. O ES não tem pedágio estadual desde 22/12/2023.
+Concessões **estaduais do RS, MS e MT** (fontes `rs-estadual`, `agems`, `agermt`; importadores `toll_rs_estadual.py`,
+`toll_agems.py`, `toll_agermt.py`; testes `api/test/layers/pedagio_sul_co.test.ts` e `importers/tests/test_pedagio_sul_co.py`):
+ver a seção "Sul e Centro-Oeste" de [pedagio_estaduais.md](pedagio_estaduais.md). PR, SC, GO e DF não têm concessão
+rodoviária estadual com cobrança (só as praças federais da ANTT, já na fonte `antt`).
 
 A camada **não bloqueia nem penaliza nada**. Depois da rota calculada, ela:
 

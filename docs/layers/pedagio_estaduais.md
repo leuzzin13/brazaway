@@ -1,4 +1,4 @@
-# Pedágio e balanças das concessões estaduais e municipais (RJ, MG, ES)
+# Pedágio e balanças das concessões estaduais e municipais (RJ, MG, ES) e pedágio estadual do Sul e Centro-Oeste (RS, MS, MT)
 
 Frente `concessoes_estaduais` do Sudeste. Não cria camada: são **fontes novas** das camadas
 [`pedagio`](pedagio.md) e [`balancas`](balancas.md).
@@ -17,6 +17,9 @@ registros inativos. Biblioteca comum: `importers/sources/_toll_estaduais.py`; ro
 
 Pesquisa de origem: `concessoes_estaduais` e `ders_estaduais` (research.json + verify.json; as correções do verify
 estão aplicadas, ver "Decisões").
+
+Sul e Centro-Oeste (18/10/2026): três fontes novas, no arquivo `data/raw/pedagio/concessoes_estaduais_sul_co.json` (mesmo
+esquema; `_toll_estaduais.load()` soma os dois arquivos) — ver "Sul e Centro-Oeste" abaixo.
 
 ## Regras por concessão
 
@@ -98,6 +101,78 @@ A concessão Rodosol (Terceira Ponte e Rodovia do Sol, ES-060) acabou em 22/12/2
 de Tarifa em vigor a partir de 1º/01/2023 até 21/12/2023" (`arsp.es.gov.br/tarifas-infraestrutura`; a data do fim foi
 deduzida da tabela, sem ato conferido). O OSM não tem nó de pedágio da Rodosol (coerente). No ES só há pedágio
 federal (Ecovias Capixaba, BR-101), já na fonte `antt`. Nada a importar.
+
+## Sul e Centro-Oeste (RS, MS, MT; carga de 18/10/2026)
+
+Pesquisa de origem: `docs/research/estados_sul_co/{PR,SC,RS,GO,MT,MS,DF}.json` (verificação cética de 18/10/2026), com a
+releitura das páginas das concessionárias na carga. Mesma política dos importadores de MG/RJ: só entra tarifa com ato ou
+tabela oficial conferida; a posição vem dos nós de pedágio do OSM do mesmo operador (nenhum destes estados publica
+coordenada das praças; o KML da EGR confere com os nós do OSM a menos de 130 m); o que não tem fonte conferida fica
+pendente (abaixo), nunca com valor "estimado" inventado.
+
+| Fonte (`source`) | Importador | Concessões | Praças |
+|---|---|---|---|
+| `agems` | `toll_agems.py` | Way-306 (MS-306/BR-359) e Way-112 (MS-112/BR-158/BR-436), AGEMS | 9 |
+| `agermt` | `toll_agermt.py` | Morro da Mesa (MT-130), Via Brasil MT-246, MT-320/MT-208 e MT-100, AGER/MT | 11 |
+| `rs-estadual` | `toll_rs_estadual.py` | EGR (estatal, 10 praças em 5 grupos de tarifa) e Rota de Santa Maria (RSC-287) | 15 |
+
+Valores para carreta de **5 eixos, rodagem dupla, dia útil** (R$ por passagem, por praça):
+
+| UF | Concessão | Ato / fonte da tarifa | 5 eixos | Vigência | Praças |
+|---|---|---|---|---|---|
+| MS | **Way-306** (Contrato 002/2020) | Portaria AGEMS nº 333, de 07/04/2026 (DOE-MS 12.121, pp. 37-38): categoria 1 R$ 14,40; 14 categorias por eixo | **72,00** | a partir de 09/04/2026 | P1 Costa Rica, P2 Chapadão do Sul, P3 Cassilândia (MS-306) |
+| MS | **Way-112** (Contrato 02/2023) | Portaria AGEMS nº 326, de 09/02/2026 (DOE-MS 12.071, pp. 60-62): categoria 1 R$ 14,00 (P4, P5, P7, P8, P9) | **70,00** | a partir de 11/02/2026 | P4 Paranaíba, P5 e P7 Aparecida do Taboado (BR-158), P8 Selvíria e P9 Cassilândia II (MS-112) |
+| MS | **Way-112, praça P6** (BR-436) | idem, Anexo II: categoria 1 R$ 4,60 | **23,00** | a partir de 11/02/2026 | P6 Aparecida do Taboado II |
+| MT | **Morro da Mesa** (Contrato 001/2011) | AGER/MT, reajuste anual (IPCA fev/2026), DOE 17/03/2026, p. 177: TBP R$ 11,70; tabela do site | **58,50** | 01/04/2026 (só o site declara a data) | P-01 Rondonópolis e P-02 Primavera do Leste |
+| MT | **Via Brasil MT-246** (Contrato 007/2021) | AGER/MT, 5º reajuste, DOE 31/08/2026, p. 92: TBP R$ 11,40; tabela do site | **57,00** | o ato não declara a data | Rosário Oeste, Barra do Bugres (MT-344) e 2 em Tangará da Serra (MT-358) |
+| MT | **Via Brasil MT-320/MT-208** (Contrato 001/2019) | AGER/MT, 6º reajuste, DOE 22/10/2025, p. 75: TBP R$ 11,70; tabela do site | **58,50** | 29/10/2025 a 28/10/2026 (7º reajuste em tramitação) | P1 Colíder, P2 Nova Canaã do Norte, P3 Alta Floresta |
+| MT | **Via Brasil MT-100** (Contrato 001/2018) | AGER/MT, reajuste 2024/2025, DOE 11/12/2025, p. 55: TBP R$ 11,70; tabela do site (04/2026) | **58,50** | reajuste 2025/2026 ainda não publicado | P1 Alto Taquari e P2 Alto Araguaia |
+| RS | **Rota de Santa Maria** (Contrato 20/2021, RSC-287) | tarifa 2026 da concessionária; categoria I R$ 5,40 desde 29/01/2026 (planilha de evolução tarifária da AGERGS, 05/2026) | **27,00** | desde 29/01/2026 | P01 Taquari (km 47), P02 Venâncio Aires, P03 Candelária, P04 Paraíso do Sul, P05 Santa Maria (km 220, "Pedágio da Palma" no OSM) |
+| RS | **EGR** (estatal) grupos A a E | tabelas da página "Tarifas" da EGR (imagens de 05/2022): por eixo A 6,30; B 7,10; C 3,25; D 4,90; E 6,30 | A **31,50** · B **35,50** · C **16,25** · D **24,50** · E **31,50** | a página não informa; `data_desc` diz "imagens de 05/2022" | A: Boa Vista do Sul, Cruzeiro do Sul (RSC-453), Santo Antônio da Patrulha (ERS-474), Viamão (ERS-040); B: Gramado, São Francisco de Paula (ERS-235), Três Coroas (ERS-115); C: Campo Bom; D: Coxilha; E: Encantado |
+
+Estruturas: as tabelas da AGEMS têm 14 categorias (rodagem simples 3 e 4 eixos = 1,5 e 2; dupla = nº de eixos até 9);
+acima de 9 eixos vale a categoria 9 mais a tarifa da categoria 1 por eixo excedente (nota 2 das portarias; `eixo_adicional`
+= categoria 1). Morro da Mesa: "acima de 9 eixos, tarifa básica x nº de eixos" (site). A AGER/MT fixa a **tarifa básica** e
+"reproduz seus efeitos nas demais categorias": os valores por categoria vêm da imagem da concessionária (conferida com a
+TBP do DOE). A categoria VI da Rota de Santa Maria é a de **4 eixos** (descrição da AGERGS, RED 701/2023); o site a rotula
+"5 eixos" por engano. Na EGR só foram transcritos os comerciais de 2 a 6 eixos (rodagem dupla) e o eixo adicional; o OSM
+tem o mesmo valor por eixo em Campo Bom (R$ 3,25, conferido em 2023).
+
+**Ressalvas**
+- **EGR**: as imagens são de 05/2022 e a EGR não publica data de vigência nem ato; confiança média (`confianca: media`,
+  `data_desc` na tarifa e `vigencia_obs`). A pesquisa recomendava não tratar como vigente; mantivemos porque é a única
+  tabela publicada pela própria estatal e confere com o `charge` do OSM, mas qualquer reajuste posterior não está aqui.
+- **Via Brasil MT-320**: a tabela vale até 28/10/2026 (aniversário do reajuste; processo AGER-PRO-2026/03089 em tramitação).
+  A partir daí a API devolve o valor como **estimado** ("tabela vencida em 28/10/2026; pode ter havido reajuste").
+- **Via Brasil MT-246**: a lista e o km das praças vêm de fonte secundária (emsampa) e do OSM; a tarifa é oficial
+  (`confianca: media`). O km da concessão não é o km do SRE.
+- Posição pelo OSM: âncora = centro do grupo de nós do operador (`raio_m` 500); método em `props.posicao_metodo`.
+- Reajustes anuais esperados (inferência pelo histórico, não por ato): Way-112 em 02/2027, Way-306 em 04/2027, MT-100 em
+  ~12/2026, Morro da Mesa em ~03-04/2027, MT-246 em ~08/2027, Rota de Santa Maria em ~01/2027.
+
+**Pendentes (não entram) e por quê**
+- **PR, SC, GO, DF**: sem concessão rodoviária estadual com cobrança (PR: lotes novos são ANTT/delegação, já na fonte `antt`;
+  GO: Lei 19.999/2018 revogada pela Lei 21.549/2022; SC e DF: nenhuma). O ferry de Guaratuba (PR, Decreto 4.456/2023) é travessia,
+  não pedágio de rodovia, e ficou fora.
+- **RS, Caminhos da Serra Gaúcha (Bloco 3, free flow, 6 pórticos)**: a tabela por pórtico da pesquisa (RED 724/2024) está
+  **vencida**; só a categoria I (automóvel) de 29/04/2026 está publicada na planilha da AGERGS. Derivar caminhão por multiplicador
+  seria inferência. Os nós dos pórticos já existem no OSM (sem tarifa). Blocos 1 e 2: sem concessionária (leilão do Bloco 2
+  cancelado em 03/06/2026).
+- **MT, Rota dos Grãos (MT-130)**: tarifa de R$ 11,27 (DOE 13/10/2026) condicionada a ato autorizativo e o site ainda mostra
+  R$ 10,90; 6 pórticos free flow com km mas sem coordenada; as "praças convencionais" km 167 e 243 só em fonte secundária.
+- **MT, Via Norte Sul (MT-220)**: TBP R$ 11,40 oficial (DOE 22/01/2026, vigência 27/01/2026), mas sem tabela por categoria
+  publicada que eu tenha conseguido ler; **Intervias, APASI, SPS, Rodovia da Mudança**: sem valor oficial atual (Rodovia da
+  Mudança: R$ 11,50 de 02/2025, possivelmente defasado). **Fase 1 e Fase 2 do programa estadual de MT**: sem cobrança confirmada.
+- **MS, Rota da Celulose**: cobrança só a partir de ~02/2027, tarifas finais não publicadas.
+
+Exemplos (API local, carreta 5 eixos, 20-21/10/2026): Costa Rica → Cassilândia (MS-306) **R$ 144,00** (P2 + P3, 72 + 72);
+Rondonópolis → Primavera do Leste (Morro da Mesa) **R$ 117,00**; Rosário Oeste → Barra do Bugres (MT-246) **R$ 114,00**;
+Paraíso do Sul → Venâncio Aires (RSC-287, P04 + P03) **R$ 54,00**; Gramado → São Francisco de Paula (EGR, grupo B)
+**R$ 71,00**.
+
+Como atualizar: transcrever a nova tabela em `concessoes_estaduais_sul_co.json` (valores, `vigencia_*`, `ato`) e rodar
+`python3 run.py toll_agems toll_agermt toll_rs_estadual` (ver o comando nativo no README dos importadores); depois
+`importers/tests/test_pedagio_sul_co.py` e `api/test/layers/pedagio_sul_co.test.ts`.
 
 ## Como entra no cálculo
 
@@ -200,7 +275,8 @@ docker compose --profile import run --rm importer toll_agetransp toll_artemig to
   processo) e o log avisa. Isso cobre o `run.py all`, que roda em ordem alfabética e chama `toll_agetransp`,
   `toll_artemig` e `toll_municipais` **antes** do `toll_osm`. Mesmo assim, rode o `toll_osm` junto quando o extrato
   mudar (a API casa a rota com os nós da fonte `osm` do banco).
-- **Testes**: `api/test/layers/pedagio_estaduais.test.ts`, `api/test/layers/balancas_dermg.test.ts` e
+- **Testes**: `api/test/layers/pedagio_sul_co.test.ts`, `importers/tests/test_pedagio_sul_co.py` (RS, MS, MT),
+  `api/test/layers/pedagio_estaduais.test.ts`, `api/test/layers/balancas_dermg.test.ts` e
   `importers/tests/test_pedagio_estaduais.py` (sem rede: `docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data:/data
   --entrypoint python truck-router-importer -m unittest tests.test_pedagio_estaduais -v`).
 

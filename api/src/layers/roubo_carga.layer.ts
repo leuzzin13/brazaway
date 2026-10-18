@@ -151,7 +151,7 @@ const layer: RouteLayer = {
   meta: {
     id: LAYER,
     label: 'Roubo de carga',
-    description: 'Áreas de 1 km com roubo ou furto de carga registrado pela SSP-SP (ano corrente e anterior), por faixa do dia.',
+    description: 'Áreas de 1 km com roubo ou furto de carga registrado pela SSP-SP (ano corrente e anterior), por faixa do dia. Só o estado de SP: nenhum outro estado pesquisado (MG, RJ, Sul e Centro-Oeste) publica roubo de carga com coordenada em dado aberto.',
     group: 'seguranca',
     sources: [
       {
@@ -204,7 +204,7 @@ const layer: RouteLayer = {
     const anosAll = [...new Set(rows.flatMap((r) => props(r).anos ?? []))];
     if (!rows.length) {
       return {
-        summary: ['Nenhuma área com roubo de carga registrado na rota (SSP-SP; cobre só o estado de SP).'],
+        summary: ['Nenhuma área com roubo de carga registrado na rota (SSP-SP; a camada cobre só o estado de SP: não há dado aberto com coordenada de roubo de carga nos demais estados, e ausência de área fora de SP não significa ausência de risco).'],
         data: { areas: 0, trechos: [] },
       };
     }
