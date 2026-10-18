@@ -1,0 +1,959 @@
+{
+ "uf": "DF",
+ "data": "2026-10-18",
+ "nota_metodo": "Pesquisa somente leitura. Hosts do GDF que NÃO abriram a partir deste ambiente (timeout no TLS ou 502 do proxy de saída; não contornei): der.df.gov.br, detran.df.gov.br, dados.df.gov.br, dadosabertos.df.gov.br, geoportal.seduh.df.gov.br, dodf.df.gov.br, pmdf, pcdf, semob, dftrans, tc.df.gov.br; WebFetch também não resolve *.df.gov.br. Funcionaram: sinj.df.gov.br (com User-Agent de navegador), ssp.df.gov.br, ibram.df.gov.br, cbm.df.gov.br, transparencia.df.gov.br, www.geoservicos.ide.df.gov.br (ArcGIS REST do IDE/DF), dados.antt.gov.br, dados.transportes.gov.br, gov.br/mj (Sinesp). Por isso os atos do DER-DF e do DETRAN-DF foram lidos no SINJ (texto consolidado) e não no site dos órgãos; listas de portarias/instruções do próprio DER-DF não foram vistas. A busca do SINJ indexa ementa, não texto integral: ato com ementa genérica pode ter escapado. DF é unidade única (sem municípios): o 'estadual' é o distrital e o único município é Brasília (IBGE 5300108). Usei 2 das 3 WebSearch (nenhuma achou fonte útil de sinistros do DETRAN-DF). Overpass não respondeu; o OSM foi lido do PBF local data/valhalla/central-west-latest.osm.pbf (somente leitura, recorte por bbox em área de rascunho).",
+ "temas": {
+  "rodovias_estaduais": {
+   "resumo": "O DF não tem 'rodovias estaduais' de órgão separado: o sistema rodoviário distrital (SRDF) é do DER-DF, que também age por delegação do DNIT em trechos de BR (Convênio 572/2013) e divide a fiscalização de trânsito com o DETRAN-DF. Achei no SINJ (o sistema de legislação do GDF) 8 atos que mexem com caminhão (um já revogado). Três valem como regra viária hoje: (1) DF-002 (Eixão): veículos pesados proibidos todos os dias (Decreto 32.563/2010, art. 2º) e via fechada a todos os automotores aos domingos e feriados das 06h às 18h; (2) Barragem do Paranoá (DF-001): caminhões com mais de 2 eixos simples proibidos (Instrução DER 3/2019); (3) Ponte do Rio Melchior (DF-180): idem (Instrução DER 14/2021), mas sem km nem coordenada. Dois atos de horário em vias de acesso (BR-040/EPIA 06h-09h de 2013 e EPTG de 2008) têm vigência indefinida e ficam inativos. A proibição da DF-463 (2024) foi revogada em 2025. Não há portaria de feriado prolongado para caminhão, nem limite de peso/altura/comprimento por trecho, nem regra de safra/rodotrem, nem proibição por ponte além das duas citadas. A AET para CVC acima de 45 t foi mantida por instrução de 2005 e custa R$ 97,25 (2025). A malha do DER-DF (501 segmentos, km, jurisdição, TMD) e 764 OAE estão no IDE/DF em ArcGIS REST testado.",
+   "fontes": [
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/",
+     "formato": "HTML por ato (TextoArquivoNorma.aspx?id_file=<uuid>) e JSON não documentado: POST ashx/Visualizacao/NormaDetalhes.ashx?id_norma=<ch_norma> (metadados, situação, uuid do arquivo) e POST ashx/Datatable/ResultadoDePesquisaNormaDatatable.ashx?tipo_pesquisa=geral&all=<termos>&bbusca=sinj_norma (busca; só indexa ementa/indexação, não o texto integral). Requer um GET prévio em /sinj/ e User-Agent de navegador (curl puro leva 403)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2026-10-18 (consultado); cada ato traz sua data"
+    },
+    {
+     "url": "https://www.geoservicos.ide.df.gov.br/arcgis/rest/services/Publico/SISTEMA_VIARIO/MapServer",
+     "formato": "ArcGIS REST MapServer (SIRGAS 2000 / UTM 23S, wkid 31983; saída JSON ou geoJSON com outSR=4326; maxRecordCount 1000). Camadas: 0 Pontes, Viadutos e Passarelas (764, polígonos); 5 Eixo das Pontes (161); 9 Eixo do Trecho Rodoviário (9.344); 14 Faixa de Domínio (176); 16 Vias Marginais (40); 17 Rodovia (501); 18 Distritos Rodoviários (5)",
+     "licenca": "não declarada no serviço (copyrightText 'SEDUH'); confirmar termos de uso do IDE/DF antes de redistribuir",
+     "atualizado_em": "não informado pelo serviço; campo rod_fonte cita 'DER-DF/COPLAN/GEGEO e SUTEC/NUTOP, escala 1:10.000' (486 segmentos) e 'ortofotos 2014/Terracap' (15 segmentos)"
+    },
+    {
+     "url": "https://www.der.df.gov.br/",
+     "formato": "site do DER-DF: não abriu (timeout no TLS); a página de AET está citada no art. 5º da Instrução 5/2025",
+     "licenca": "n/a",
+     "atualizado_em": "não verificado"
+    }
+   ],
+   "atos": [
+    {
+     "ato": "Decreto 32.563, de 08/12/2010 (DODF 233 de 09/12/2010), que altera o Decreto 13.250/1991; parágrafo único do art. 1º acrescido pelo Decreto 38.571, de 20/10/2017 (DODF 44 Extra, 20/10/2017)",
+     "orgao": "Governador do DF",
+     "situacao": "SINJ: Decreto 13.250 'Alterado', Decreto 32.563 'Alterado', Decreto 38.571 'Sem Revogação Expressa'; nada que revogue encontrado",
+     "artigos": {
+      "1": "veda o tráfego de veículos automotores na DF-002 (Eixo Rodoviário Sul e Norte) das 06:00 às 18:00 aos domingos e feriados nacionais, salvo veículos autorizados pela autoridade de trânsito em casos excepcionais",
+      "par_unico_art1_(Dec_38.571/2017)": "a vedação vai das 07h às 19h 'durante a hora de verão' do Decreto federal 6.558/2008 (o horário de verão não vigora no país desde 2019; dispositivo morto na prática, não reverificado aqui)",
+      "2": "veda o tráfego de 'veículos pesados' na DF-002 (Eixo Rodoviário Sul e Norte) em TODOS os dias da semana, exceto veículos autorizados pelo DER/DF em situações especiais",
+      "3": "permite expressos do transporte coletivo na faixa da direita",
+      "4": "desvio de fluxo e aviso à população com 48 h de antecedência (só para o fechamento de domingos e feriados)"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-002 (Eixo Rodoviário Norte)",
+       "km_ini": 0.0,
+       "km_fim": 7.2,
+       "descricao_ide_df": "ENTR. DF-007 (EPTT) / Ponte do Braghetto até a Rodoviária de Brasília",
+       "fonte_km": "IDE/DF camada 17 (rod_km_i e rod_km_f)"
+      },
+      {
+       "rodovia": "DF-002 (Eixo Rodoviário Sul)",
+       "km_ini": 7.2,
+       "km_fim": 13.8,
+       "descricao_ide_df": "Rodoviária de Brasília até o Trevo de Triagem Sul (DF-047)",
+       "fonte_km": "IDE/DF camada 17"
+      }
+     ],
+     "dias_horarios": "art. 2º: 24 h, todos os dias; art. 1º: 06:00-18:00 domingos e feriados nacionais (todos os veículos automotores)",
+     "veiculos": "'veículos pesados' sem definição no decreto (não há PBT nem eixos); o app deve tratar como caminhões/CVC e tratar ônibus à parte",
+     "confianca": "alta no texto; média na definição de 'pesados'",
+     "ativa_recomendada": true,
+     "obs": "OSM não marca hgv=no no Eixo (lacuna): as vias DF-002 aparecem com tunnel=yes e maxheight 'default' no recorte local.",
+     "fontes": [
+      {
+       "sinj_ch_norma": "66779",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=7732413e-3269-3b23-893d-9a9894dcbf9f",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=66779"
+      },
+      {
+       "sinj_ch_norma": "4e12103ca5224695a5f0be0b9060058f",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=e925b140-2699-34b6-bb22-2a1705ccbf58",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=4e12103ca5224695a5f0be0b9060058f"
+      },
+      {
+       "sinj_ch_norma": "20430",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=636b2ef8-3ae1-3d46-9d59-b7bbe2577177",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=20430"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_dec_32563_2010_eixo.txt, sinj_dec_38571_2017_eixo.txt, sinj_dec_13250_1991_eixo.txt"
+    },
+    {
+     "ato": "Instrução Normativa DER-DF 3, de 18/10/2024 (DODF 203, 22/10/2024; republicada no DODF 204, 23/10/2024; alterada pela IN 1 de 27/01/2025), Plano de Uso e Ocupação do Eixão do Lazer",
+     "orgao": "DER-DF",
+     "situacao": "SINJ: 'Alterado'",
+     "artigos": {
+      "2": "o Eixão do Lazer abrange os Eixos Rodoviários Norte e Sul na DF-002",
+      "3": "aos domingos e feriados, das 06h00 às 18h00, o trânsito de veículos automotores fica interrompido; montagem de estrutura das 06h às 10h; carga e descarga só nas áreas de estacionamento definidas nos anexos",
+      "anexo": "proíbe circulação de veículo com motor a combustão no Eixo, salvo os do art. 29, VII, do CTB e fiscalização em serviço"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-002 (Eixo Rodoviário Sul e Norte)",
+       "km_ini": 0.0,
+       "km_fim": 13.8
+      }
+     ],
+     "dias_horarios": "domingos e feriados, 06:00-18:00",
+     "veiculos": "todos os automotores",
+     "confianca": "alta",
+     "ativa_recomendada": true,
+     "fontes": [
+      {
+       "sinj_ch_norma": "0369dd38dd5040c788b4074a59947178",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=b342387f-67fe-3802-8119-0e587d97885a",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=0369dd38dd5040c788b4074a59947178"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_int_3_2024_eixao_do_lazer.txt"
+    },
+    {
+     "ato": "Instrução DER-DF 3, de 13/02/2019 (DODF 33, 15/02/2019; republicada DODF 34, 18/02/2019)",
+     "orgao": "DER-DF (Diretor-Geral substituto, Fábio Cardoso da Silva)",
+     "situacao": "SINJ: 'Sem Revogação Expressa'",
+     "artigos": {
+      "1": "proíbe o tráfego de caminhões com configuração superior a dois eixos simples sobre a Barragem do Paranoá, trecho da DF-001 (Estrada Parque do Contorno, EPCT)",
+      "2": "entra em vigor em 01/03/2018 (data anterior à assinatura: provável erro material no texto; tratar como em vigor desde a publicação)"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-001 (EPCT) sobre a Barragem do Paranoá",
+       "km_ini": 17.9,
+       "km_fim": 19.8,
+       "observacao": "segmento IDE/DF 'ENTR. DF-025(A)/Barragem do Paranoá até ENTR. DF-025(B)'; a extensão exata da barragem não é publicada no ato; o OSM tem a via 'Barragem do Paranoá' (ref DF-001, bridge=yes) no ponto aproximado lat -15.79896, lon -47.78442"
+      }
+     ],
+     "dias_horarios": "permanente (24 h)",
+     "veiculos": "caminhões com mais de 2 eixos simples (leitura literal; 'configuração superior a dois eixos simples' não define PBT)",
+     "confianca": "alta no texto; média no km",
+     "ativa_recomendada": true,
+     "fontes": [
+      {
+       "sinj_ch_norma": "50ed4c175c444eff8bdf064e5a4683df",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=83b45de6-d1dd-3a67-9dae-16031774eb2c",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=50ed4c175c444eff8bdf064e5a4683df"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_3_2019_barragem_paranoa.txt"
+    },
+    {
+     "ato": "Instrução DER-DF 14, de 30/12/2021 (DODF 245, 31/12/2021)",
+     "orgao": "DER-DF (Diretor-Geral substituto, Fábio Cardoso da Silva)",
+     "situacao": "SINJ: 'Sem Revogação Expressa'",
+     "artigos": {
+      "1": "proíbe o tráfego de caminhões com configuração superior a dois eixos simples sobre a Ponte do Rio Melchior, na DF-180",
+      "2": "vigor na publicação"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-180",
+       "km_ini": null,
+       "km_fim": null,
+       "observacao": "o ato não informa km nem coordenada. O OSM tem 'Córrego Melchior' (waterway) em Ceilândia/Samambaia (aprox. lat -15.89, lon -48.20), mas a travessia exata com a DF-180 não foi identificada; as pontes do IDE/DF não têm nome. Localização manual necessária"
+      }
+     ],
+     "dias_horarios": "permanente (24 h)",
+     "veiculos": "caminhões com mais de 2 eixos simples",
+     "confianca": "alta no texto; sem posição",
+     "ativa_recomendada": false,
+     "motivo_inativa": "sem km nem coordenada: só entra depois de curadoria manual da ponte",
+     "fontes": [
+      {
+       "sinj_ch_norma": "3c630ef28923432f8044fd3166669d8b",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=e5224d8a-178c-331c-a764-95577db76323",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=3c630ef28923432f8044fd3166669d8b"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_14_2021_ponte_melchior.txt"
+    },
+    {
+     "ato": "Instrução DER-DF 148, de 13/09/2013 (DODF 192, 16/09/2013, p. 21), suspensa por 40 dias pela Instrução DER-DF 1, de 03/01/2014 (DODF 3, seção 2, 06/01/2014)",
+     "orgao": "DER-DF, com base no art. 21, II e III, do CTB e no Convênio de Delegação 572/2013 entre DER/DF e DNIT",
+     "situacao": "SINJ: 'Sem Revogação Expressa' para as duas; a Instrução 1/2014 suspendeu os efeitos por 40 dias a partir de 23/12/2013 e não achei ato posterior que a restabeleça ou revogue. VIGÊNCIA NÃO CONFIRMADA (a restrição era ligada às obras do BRT Sul)",
+     "artigos": {
+      "1": "proíbe o trânsito de caminhões na BR-040 do km 7 ao km 0 e na DF-003 (EPIA) do km 36 ao km 24, das 06:00 às 09:00, de segunda a sexta (dias úteis), no sentido Valparaíso-GO para Brasília-DF",
+      "2": "infração do art. 187, I, do CTB; comete a mesma infração quem entra na rodovia nesse horário",
+      "3": "DER/DF pode autorizar veículos de serviço público ou de apoio às obras do BRT Sul",
+      "4": "vigor em 19/09/2013"
+     },
+     "trechos": [
+      {
+       "rodovia": "BR-040 (delegada ao DER-DF)",
+       "km_ini": 0.0,
+       "km_fim": 7.0,
+       "sentido": "Valparaíso-GO para Brasília-DF"
+      },
+      {
+       "rodovia": "DF-003 (EPIA)",
+       "km_ini": 24.0,
+       "km_fim": 36.0,
+       "sentido": "Valparaíso-GO para Brasília-DF",
+       "observacao": "no IDE/DF a DF-003 tem trechos em km 24,5-24,9, 24,9-33,6 e 33,6-36,9 (até o entroncamento com BR-040/050/251 e DF-001)"
+      }
+     ],
+     "dias_horarios": "segunda a sexta, 06:00-09:00",
+     "veiculos": "caminhões (sem PBT)",
+     "confianca": "baixa na vigência",
+     "ativa_recomendada": false,
+     "motivo_inativa": "vigência não confirmada (suspensão de 2014 sem fim registrado; obra de 2013); só informar",
+     "fontes": [
+      {
+       "sinj_ch_norma": "75049",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=8f5416e4-10f4-3229-800f-ce56844ad44b",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=75049"
+      },
+      {
+       "sinj_ch_norma": "75846",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=b0b4801e-e58a-3153-8bea-1c765e4d28ad",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=75846"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_148_2013.txt, sinj_der_ins_1_2014.txt"
+    },
+    {
+     "ato": "Instrução Conjunta DETRAN-DF/DER-DF 1, de 04/06/2008 (DODF 107, 05/06/2008; retificada no DODF 114, 16/06/2008)",
+     "orgao": "DETRAN-DF e DER-DF",
+     "situacao": "SINJ: 'Revogado' pela Instrução Conjunta 1, de 17/02/2011 (DODF 36, 21/02/2011); esta, por sua vez, consta 'Tornado(a) sem efeito' pela Instrução 10, de 24/02/2011, que não localizei. Possível repristinação da norma de 2008: SITUAÇÃO INDEFINIDA",
+     "artigos": {
+      "1": "proíbe o trânsito de caminhões na DF-085 (EPTG), das 06h30 às 09h no sentido Taguatinga-Plano Piloto e das 17h30 às 20h no sentido Plano Piloto-Taguatinga, de segunda a sexta",
+      "2": "infração do art. 187 do CTB",
+      "3": "prazo de adaptação de 30 dias",
+      "4": "sinalização em 30 dias"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-085 (EPTG)",
+       "km_ini": 0.0,
+       "km_fim": 11.2,
+       "observacao": "IDE/DF: DF-085 km 0,0-5,8 (EPIA até DF-087/EPVL), 5,8-7,2 e 7,2-11,2 (até BR-251/DF-001); o ato diz 'EPTG' sem km"
+      }
+     ],
+     "dias_horarios": "segunda a sexta; 06:30-09:00 (sentido Plano Piloto) e 17:30-20:00 (sentido Taguatinga)",
+     "veiculos": "caminhões (sem PBT)",
+     "confianca": "baixa",
+     "ativa_recomendada": false,
+     "motivo_inativa": "cadeia de revogações contraditória (2008 revogada em 21/02/2011, revogação tornada sem efeito em 24/02/2011); sem Instrução 10/2011 em mãos",
+     "historico": "EPTG já teve proibição de caminhões na Instrução de Serviço DETRAN 329, de 04/05/1978 (revogada pela IS 948, de 27/08/1980, que restabeleceu o tráfego de caminhões de qualquer espécie na EPTG)",
+     "fontes": [
+      {
+       "sinj_ch_norma": "57821",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=a43a81a2-db19-33e7-b6bf-0766f5a01525",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=57821"
+      },
+      {
+       "sinj_ch_norma": "67376",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=24dae546-caeb-371c-b463-2ba216457704",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=67376"
+      },
+      {
+       "sinj_ch_norma": "7343",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=83376672-49a2-300c-b47c-0945bfc70309",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=7343"
+      },
+      {
+       "sinj_ch_norma": "5779",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=060a6177-d24e-319d-ba35-77d31910f76f",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=5779"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_detran_der_ic_1_2008_df085.txt, sinj_detran_ic_1_2011_sem_efeito.txt, sinj_detran_is_948_1980_eptg.txt, sinj_detran_is_329_1978_eptg.txt"
+    },
+    {
+     "ato": "Instrução DETRAN-DF 98, de 04/06/2008 (DODF 107, 05/06/2008; DODF 114, 16/06/2008)",
+     "orgao": "DETRAN-DF",
+     "situacao": "SINJ: 'Sem Revogação Expressa'",
+     "artigos": {
+      "1": "'Ficam proibidas as operações de carga e descarga nas quadras comerciais da Asa Sul e Asa Norte (SCLS e SCLN), sendo tais operações permitidas nos dias úteis, de 2ª a 6ª feira, nos horários compreendidos entre 08h às 11h30min, de 14h às 17h e das 20h às 07h'",
+      "2": "sábados, domingos e feriados as proibições do art. 1º não se aplicam",
+      "3": "infração do art. 181, XVIII, do CTB (o ato escreve 'Lei 9.503 de 23/09/2007'), multa e remoção"
+     },
+     "trechos": [
+      {
+       "rodovia": "SCLS e SCLN (comércio local sul e norte, Plano Piloto)",
+       "km_ini": null,
+       "km_fim": null
+      }
+     ],
+     "dias_horarios": "leitura provável: carga e descarga só em dias úteis nas janelas 08:00-11:30, 14:00-17:00 e 20:00-07:00, ou seja, vedadas 07:00-08:00, 11:30-14:00 e 17:00-20:00; fins de semana e feriados livres",
+     "veiculos": "operações de carga e descarga (qualquer veículo de carga)",
+     "confianca": "média (redação ambígua, interpretação minha)",
+     "ativa_recomendada": false,
+     "motivo_inativa": "ato urbano (vias locais, não rodovia), redação ambígua e sem polígono; vale como aviso, como as regras de carga e descarga municipais",
+     "fontes": [
+      {
+       "sinj_ch_norma": "57820",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=5001f717-cc42-389d-9960-2c0e7d019723",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=57820"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_detran_ins_98_2008_carga_descarga_asas.txt"
+    },
+    {
+     "ato": "Decreto 46.287, de 23/09/2024 (DODF 69-A Extra, 23/09/2024), revogado pelo Decreto 47.208, de 09/05/2025 (DODF 44-A Extra, 09/05/2025)",
+     "orgao": "Governador do DF",
+     "situacao": "REVOGADO em 09/05/2025 (não aplicar)",
+     "artigos": {
+      "1": "proibia o trânsito de caminhões na DF-463 no sentido São Sebastião, exceto veículos de emergência e de serviços públicos essenciais",
+      "2": "casos excepcionais com o DER/DF"
+     },
+     "trechos": [
+      {
+       "rodovia": "DF-463",
+       "km_ini": 0.0,
+       "km_fim": 3.9,
+       "observacao": "IDE/DF: 'ENTR. DF-001 (EPCT) até São Sebastião'"
+      }
+     ],
+     "dias_horarios": "permanente enquanto vigeu",
+     "veiculos": "caminhões",
+     "confianca": "alta",
+     "ativa_recomendada": false,
+     "motivo_inativa": "revogado",
+     "fontes": [
+      {
+       "sinj_ch_norma": "02b2c3f544ea49429c3b48c65809cc8e",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=64148228-395e-3332-8b6b-c17bf0c2be12",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=02b2c3f544ea49429c3b48c65809cc8e"
+      },
+      {
+       "sinj_ch_norma": "116d2b48bbe144dc8624fb5dad5ab330",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=cbe41da4-cf60-3af8-881d-971f0b3475eb",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=116d2b48bbe144dc8624fb5dad5ab330"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_dec_46287_2024_df463.txt, sinj_dec_47208_2025_revoga_df463.txt"
+    }
+   ],
+   "atos_permissao_cvc_aet": [
+    {
+     "ato": "Instrução DER-DF de 13/04/2005 (sem número no SINJ; DODF 70, 14/04/2005)",
+     "situacao": "SINJ: 'Sem Revogação Expressa'",
+     "conteudo": "art. 1º mantém a necessidade de AET para CVC com PBT combinado superior a 45 t nas vias e rodovias sob circunscrição do DER-DF; art. 2º o Superintendente de Trânsito concede; art. 3º responsabilidade por danos às OAE; art. 4º fiscalização pela Companhia de Polícia Rodoviária (CPRv). A base federal citada (Res. CONTRAN 164/2004) foi substituída: não usar o limite de 45 t sem checar a regra federal em vigor",
+     "fontes": [
+      {
+       "sinj_ch_norma": "46606",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=83ae430d-82b0-3795-9c8a-1f24efdb3617",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=46606"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_2005_aet_cvc.txt"
+    },
+    {
+     "ato": "Instrução (Normativa) DER-DF 5, de 07/04/2025 (DODF 68, 09/04/2025)",
+     "situacao": "SINJ: 'Sem Revogação Expressa'; vigor 30 dias após a publicação",
+     "conteudo": "tarifa de emissão de AET R$ 97,25 (INPC anual, LC distrital 435/2001), devida por todo veículo/CVC que exceda limites de peso e dimensões do CONTRAN, validade por viagem ou período, até 1 ano; pedido pelo site do DER-DF (https://www.der.df.gov.br/autorizacao-especial-de-transito-aet-para-cargas-especiais, citado no art. 5º, não aberto daqui); infração do art. 231, IV/VI, do CTB sem AET; fiscalização pelo DER-DF e/ou PMDF-BPRv",
+     "fontes": [
+      {
+       "sinj_ch_norma": "649ba31b0aac46498cd63db0385a4dad",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=ce92fbce-3d46-38ed-84f5-74ac735abbb6",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=649ba31b0aac46498cd63db0385a4dad"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_5_2025_aet_tarifa.txt"
+    },
+    {
+     "ato": "Decreto 48.239, de 04/02/2026 (DODF 24, 05/02/2026), Regimento Interno do DER/DF",
+     "situacao": "em vigor (revogou o Decreto 37.949/2017)",
+     "conteudo": "Anexo, art. 2º: DER/DF administra o SRDF 'mediante o seu disciplinamento, imposição de pedágio, taxas de utilização e contribuição de melhoria' (inciso X) e arrecada AET e escolta de cargas superdimensionadas ou de produtos perigosos (inciso XIX); superintendências de operação/fiscalização executam a fiscalização de excesso de peso e dimensões, produtos perigosos e cargas excedentes",
+     "fontes": [
+      {
+       "sinj_ch_norma": "82450fd879514422af2b615cf1485a56",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=82735fe2-2ebb-3e51-a580-ccd66f3ffe4d",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=82450fd879514422af2b615cf1485a56"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_dec_48239_2026_regimento_der_trechos.txt (só trechos; o texto completo tem 350 KB)"
+    }
+   ],
+   "malha_ide_df": {
+    "camada_17_rodovia": {
+     "registros": 501,
+     "campos": [
+      "rod_nome (ex. DF003, BR040)",
+      "rod_cod_distri (ex. 430EDF0050; chave das OAE)",
+      "rod_descricao e rod_descricao2 (entroncamentos inicial e final)",
+      "rod_km_i",
+      "rod_km_f",
+      "rod_extensao_km",
+      "rod_situafisic (IMP implantada, PAV pavimentada, DUP duplicada, PLA planejada, EOP e EOD em obras)",
+      "rod_circunscri (DISTRITAL 340, VICINAL 77, FEDERAL 46, SUPERPOSTA 38)",
+      "rod_cod_federa",
+      "rod_tiporevest",
+      "rod_tmd",
+      "rod_fxrsentn_s e rod_fxrsentl_o (faixas por sentido) e rod_fxrtotal (valor decimal, provavelmente largura em m; não confirmado)",
+      "rod_fd_grupo, rod_fd_larg_m, rod_fd_legis (faixa de domínio)"
+     ],
+     "nomes_distintos_sem_vicinais": 86,
+     "km_distrital_mais_superposta": 1417.5,
+     "km_por_situacao_distrital_e_superposta": {
+      "PAV": 547.9,
+      "DUP": 270.5,
+      "IMP": 494.3,
+      "PLA": 75.6,
+      "EOD": 18.6,
+      "EOP": 10.6
+     }
+    },
+    "camada_0_oae": {
+     "registros": 764,
+     "tipos": {
+      "PONTE": 364,
+      "VIADUTO": 313,
+      "PASSARELA": 64,
+      "PASSARELAS SUB": 17,
+      "TUNEL": 6
+     },
+     "campos": [
+      "oea_tipo",
+      "oea_codtrecho (casa com rod_cod_distri em 661 de 764)",
+      "oea_descricao (entroncamento)",
+      "oea_obs"
+     ],
+     "limitacao": "sem nome, sem capacidade de carga e sem gabarito; a camada 5 (Eixo das Pontes, 161) tem os campos cargasuportmaxima, vaovertical e vaolivrehoriz, mas TODOS zerados nos 161 registros"
+    },
+    "tuneis_oae": [
+     {
+      "cod": "047EDF0010",
+      "desc": "Aeroporto Internacional de Brasília",
+      "lat": -15.86019,
+      "lon": -47.93489
+     },
+     {
+      "cod": "025EDF0010",
+      "desc": "entr. DF-003 (EPIA)",
+      "lat": -15.86547,
+      "lon": -47.94241
+     },
+     {
+      "cod": "047EDF0030",
+      "desc": "entr. DF-025 (EPDB)",
+      "lat": -15.8569,
+      "lon": -47.93392
+     },
+     {
+      "cod": "085EDF0010",
+      "desc": "entr. DF-003 (EPIA)",
+      "lat": -15.81229,
+      "lon": -47.99993
+     },
+     {
+      "cod": "495EDF0030",
+      "desc": "Ferrovia Centro-Atlântica (2 registros, ferroviário)",
+      "lat": -16.03384,
+      "lon": -47.95326
+     }
+    ]
+   },
+   "osm_df": {
+    "o_que_foi_lido": "PBF local central-west, recorte bbox -48.30,-16.06,-47.28,-15.49 (inclui um pouco de entorno de GO)",
+    "achados": "hgv=no só em ruas de pedestres (27 ways no oeste do DF, perto de lat -15.82, lon -48.12, região de Ceilândia); maxweight só em heliportos/prédios (nenhuma via); maxheight em 127 feições: 5,5 m e 6,0 m na DF-003 (EPIA/BR-040/050), 4,6 m na DF-025, 3,55 a 4,05 m nas passagens subterrâneas das CLN/CLS (tesourinhas do Plano Piloto, tunnel=yes), 2,55 m num serviço; nenhum toll_booth, toll_gantry, weighbridge ou ferry no recorte",
+    "lacunas_osm_sem_ato_no_mapa": "Eixo Rodoviário DF-002 (veículos pesados proibidos), Barragem do Paranoá DF-001 (mais de 2 eixos) e DF-180 Rio Melchior não têm hgv/maxweight no OSM",
+    "amostra": "fontes/DF/osm_df_bbox_hgv_max_weighbridge_toll.json"
+   },
+   "sem_ato": [
+    "feriado prolongado (portaria de horário de caminhão estilo GOINFRA/DER-MG): nenhuma achada no SINJ",
+    "limite de peso, altura ou comprimento por trecho: nenhum além das 2 pontes",
+    "serra, safra, rodotrem, bitrem: nenhum ato (relevo plano; combinações especiais caem na AET)",
+    "balsas e travessias: nenhuma no DF",
+    "restrição de caminhão no Plano Piloto/W3/zonas urbanas além da carga e descarga SCLS/SCLN (Instrução DETRAN 98/2008): nenhuma achada; o site do DETRAN-DF não abriu, então portarias novas fora do SINJ podem existir"
+   ],
+   "duvidas": [
+    "Instrução 10, de 24/02/2011 (DER/DETRAN), que tornou sem efeito a revogação da restrição da EPTG: não localizada",
+    "a Instrução 148/2013 voltou a valer depois da suspensão de 40 dias?",
+    "significado de 'veículos pesados' no Decreto 32.563/2010 e se há convênio PMDF/CPRv que o aplica a ônibus",
+    "km e posição da Ponte do Rio Melchior (DF-180)",
+    "portarias do DER-DF publicadas só no site do órgão ou no DODF e não indexadas por ementa no SINJ"
+   ],
+   "teste_download": "SINJ: 29 atos baixados como texto (arquivos em fontes/DF/sinj_*.txt) por GET de TextoArquivoNorma.aspx e POST de NormaDetalhes.ashx; IDE/DF: layers 0, 5, 9 (contagem), 17 (501 registros com atributos e geometria, JSON e geoJSON em EPSG:4326) e 18 testados com 200.",
+   "pronto_para_importar": {
+    "malha_ide_df": true,
+    "oae_ide_df": "parcial (sem nome nem capacidade)",
+    "regras_caminhao": "parcial: DF-002 (km conhecidos), Barragem DF-001 (km aproximado) prontas como regra; Rio Melchior só manual; EPIA/BR-040 2013, EPTG 2008 e SCLS/SCLN 2008 ficam inativas",
+    "detalhe": "sugestão de regra_id: df_002_eixao_pesados_24h, df_002_eixao_domingos_feriados_06_18, df_001_barragem_paranoa_mais_2_eixos, df_180_ponte_melchior_mais_2_eixos (inativa até localizar)"
+   }
+  },
+  "pedagio": {
+   "resumo": "O DF não tem pedágio distrital nem concessão rodoviária distrital vigente: não achei lei, edital ou contrato, e o Regimento do DER-DF (Decreto 48.239/2026, Anexo, art. 2º, X) apenas lista a 'imposição de pedágio' entre as competências. O CSV de praças da ANTT (277 linhas, atualizado em 28/07/2026) não tem nenhuma linha com uf=DF e o de PPV (45 linhas) também não. As praças federais mais próximas ficam fora do DF: CONCEBRA P1 Alexânia (BR-060 km 43,1, GO, lat -16,1157, lon -48,5892), Via Cristais P1 Paracatu (BR-040 km 17,65, MG, lat -17,0983, lon -47,0263) e, na BR-060, as 8 praças free flow da Rota Verde Goiás a partir de Abadia de Goiás (km 172-182). Não há free flow distrital. Tarifas por eixo: não se aplica.",
+   "fontes": [
+    {
+     "url": "https://dados.antt.gov.br/dataset/praca-de-pedagio",
+     "formato": "CSV ';' ISO-8859-1 (resource 9aa29243-c54c-4084-bc3d-c44a75c9bd7e, 'dados-dos-pracas-de-pedagio6_2026.csv', 277 linhas, colunas concessionaria;praca_de_pedagio;ano_do_pnv_snv;rodovia;uf;km_m;municipal;tipo_de_pista;sentido;situacao;data_da_inativacao;latitude;longitude); também JSON e KMZ",
+     "licenca": "CC-BY (license_id do CKAN)",
+     "atualizado_em": "2026-07-28 (CSV); pacote modificado em 2026-07-29"
+    },
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/",
+     "formato": "Decreto 48.239/2026 (regimento do DER-DF)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2026-02-04"
+    }
+   ],
+   "concessoes_estaduais_vigentes": [],
+   "pracas": [],
+   "tarifas_por_eixo": null,
+   "free_flow": null,
+   "pracas_federais_vizinhas": "fontes/DF/antt_pracas_vizinhas_DF_GO_MG.csv (amostra do CSV da ANTT: BR-040, BR-050 e BR-060 em GO e MG)",
+   "armadilhas": [
+    "rodovia vem sem zero à esquerda ('BR-40', 'BR-60')",
+    "coordenadas de algumas praças de Ecovias Minas Goiás têm 2 casas",
+    "o CSV não traz praça de pedágio com uf=DF em nenhuma BR; se houver cobrança federal em BR do DF, ela não está nesta fonte (não verificado)"
+   ],
+   "teste_download": "CSV da ANTT baixado (33.935 bytes, 277 linhas); filtro uf=DF devolve 0 linhas.",
+   "pronto_para_importar": {
+    "pedagio_distrital": false,
+    "detalhe": "Nada a importar do DF. As praças federais já entram pela fonte ANTT do projeto."
+   }
+  },
+  "balancas": {
+   "resumo": "Não há lista pública de balanças ou postos de pesagem distritais. O DER-DF tem a competência de fiscalizar excesso de peso e dimensões (Regimento, Decreto 48.239/2026) e usa 'dados de pesagem' para o pavimento, mas nenhum posto fixo, sentido ou horário foi publicado onde consegui chegar. O CSV de PPV da ANTT (45 postos) não tem posto no DF; os mais próximos são os PPV 01 e 02 da Ecovias Minas Goiás (BR-050, Ipameri-GO). O recorte do OSM do DF não tem amenity=weighbridge. Fiscalização de peso na prática: operações do DER-DF e da PMDF-BPRv (Instrução 5/2025, art. 13, cita 'DER-DF e/ou PMDF-BPRv, conforme convênio').",
+   "fontes": [
+    {
+     "url": "https://dados.antt.gov.br/dataset/ppv",
+     "formato": "CSV ';' ISO-8859-1, 45 linhas (resource 28011202-0256-4eae-a772-f47fe0843825); colunas concessionaria;nome_do_ppv;ano_do_pnv_snv;rodovia;uf;km_m;municipio;tipo_de_pista;sentido;situacao;data_da_inativacao;latitude;longitude;tipo_ppv",
+     "licenca": "CC-BY",
+     "atualizado_em": "2026-08-28"
+    },
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/",
+     "formato": "HTML por ato (TextoArquivoNorma.aspx?id_file=<uuid>) e JSON não documentado: POST ashx/Visualizacao/NormaDetalhes.ashx?id_norma=<ch_norma> (metadados, situação, uuid do arquivo) e POST ashx/Datatable/ResultadoDePesquisaNormaDatatable.ashx?tipo_pesquisa=geral&all=<termos>&bbusca=sinj_norma (busca; só indexa ementa/indexação, não o texto integral). Requer um GET prévio em /sinj/ e User-Agent de navegador (curl puro leva 403)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2026-10-18 (consultado); cada ato traz sua data"
+    }
+   ],
+   "itens": [],
+   "outras_camadas_relevantes": "fontes/DF/antt_ppv_vizinhos_GO_MG.csv (PPV de GO; nenhum em DF)",
+   "como_obter": "LAI ao DER-DF (Superintendência de Trânsito/Fiscalização) pedindo a lista de balanças fixas e móveis, locais de operação e relatório de autuações por excesso de peso; ou o canal e-SIC do GDF.",
+   "teste_download": "CSV de PPV baixado; 0 linhas com uf=DF.",
+   "pronto_para_importar": {
+    "balancas": false,
+    "detalhe": "Sem dado. A camada nacional de balanças (ANTT) continua valendo para BRs."
+   }
+  },
+  "feriados": {
+   "resumo": "O DF é um único município (Brasília, IBGE 5300108; as Regiões Administrativas não têm feriado próprio), então 'estadual' e 'municipal' coincidem e NÃO há base de feriados municipais a coletar. Feriados distritais por lei: 21/04 Aniversário de Brasília (Lei 72/1989, art. 1º, I), Sexta-feira da Paixão e Corpus Christi (Lei 72/1989, art. 1º, parágrafo único), 30/11 Dia do Evangélico (Lei 963/1995, art. 1º). A Lei 72/1989 também lista 12/10 e a Lei 1.701/1997 o 02/11, hoje nacionais. O Decreto 48.117, de 30/12/2025, divulga anualmente os feriados e pontos facultativos; para 2026 repete a lista acima e marca como ponto facultativo (não feriado): 02/01, 16 e 17/02 (Carnaval), 18/02 até 14h, 20/04, 05/06, 28/10 (Dia do Servidor, LC 840/2011 art. 278), 24 e 31/12 após 14h. O Decreto vale para a administração direta; para trânsito de caminhão só interessa o feriado. Nenhum ato do DER-DF usa feriado para restringir caminhão (só o Eixão fecha em domingos e feriados).",
+   "fontes": [
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/",
+     "formato": "HTML por ato (TextoArquivoNorma.aspx?id_file=<uuid>) e JSON não documentado: POST ashx/Visualizacao/NormaDetalhes.ashx?id_norma=<ch_norma> (metadados, situação, uuid do arquivo) e POST ashx/Datatable/ResultadoDePesquisaNormaDatatable.ashx?tipo_pesquisa=geral&all=<termos>&bbusca=sinj_norma (busca; só indexa ementa/indexação, não o texto integral). Requer um GET prévio em /sinj/ e User-Agent de navegador (curl puro leva 403)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2026-10-18 (consultado); cada ato traz sua data"
+    },
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=7649edea-5f46-38bc-b7b0-c3e069958711",
+     "formato": "HTML (Decreto 48.117/2025, DODF 247, 31/12/2025)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2025-12-30"
+    }
+   ],
+   "estadual": {
+    "feriados": [
+     {
+      "nome": "Aniversário de Brasília",
+      "regra": "fixa:04-21",
+      "base_legal": "Lei distrital 72/1989, art. 1º, I",
+      "observacao": "em 2026 coincide com Tiradentes (nacional)"
+     },
+     {
+      "nome": "Sexta-feira da Paixão",
+      "regra": "pascoa:-2",
+      "base_legal": "Lei 72/1989, art. 1º, parágrafo único (nacional também)"
+     },
+     {
+      "nome": "Corpus Christi",
+      "regra": "pascoa:+60",
+      "base_legal": "Lei 72/1989, art. 1º, parágrafo único; o Decreto 48.117/2025 o classifica como 'feriado local' (04/06/2026)"
+     },
+     {
+      "nome": "Dia do Evangélico",
+      "regra": "fixa:11-30",
+      "base_legal": "Lei distrital 963/1995, art. 1º (data comemorativa da Lei 893/1995, citada no art. 1º); em 2026 cai numa segunda-feira"
+     },
+     {
+      "nome": "Nossa Senhora Aparecida",
+      "regra": "fixa:10-12",
+      "base_legal": "Lei 72/1989, art. 1º, II (já nacional)",
+      "redundante": true
+     },
+     {
+      "nome": "Finados",
+      "regra": "fixa:11-02",
+      "base_legal": "Lei 1.701/1997, art. 1º (já nacional)",
+      "redundante": true
+     }
+    ],
+    "pontos_facultativos_2026_nao_valem_como_feriado": [
+     "2026-01-02",
+     "2026-02-16",
+     "2026-02-17",
+     "2026-02-18 (até 14h)",
+     "2026-04-20",
+     "2026-06-05",
+     "2026-10-28",
+     "2026-12-24 (após 14h)",
+     "2026-12-31 (após 14h)"
+    ],
+    "decreto_anual": "Decreto 48.117/2025 (2026); anos anteriores: Decreto 40.440/2020 (2020), Decreto 34.099/2013 (2013) e assim por diante, um por ano",
+    "outros": "CLDF publica seu próprio calendário (Ato da Mesa Diretora 6, de 12/01/2026; DCL 11, 20/01/2026); calendário do TJDFT não coletado"
+   },
+   "municipais": {
+    "base_estadual": "não se aplica: o DF não tem municípios; Brasília é o único",
+    "como_foi_no_sudeste": "no Sudeste os municipais vieram de calendários de tribunal (portaria conjunta do TJMG, edital do TJSP, TRT3, TRF2) e de decretos das capitais (ver docs/research/sudeste_feriados_sudeste); no DF basta a regra distrital acima, com município 5300108",
+    "importador": "em importers/sources/feriados_sudeste.py o UF_BY_PREFIX precisa da chave '53':'DF' (a AUDITORIA já registra isso); regra distrital entra como feriado estadual da UF DF"
+   },
+   "teste_download": "5 atos baixados do SINJ como texto (Leis 72/1989, 963/1995, 1.701/1997, Decreto 48.117/2025, Ato da Mesa CLDF 6/2026).",
+   "pronto_para_importar": {
+    "feriados_distritais": true,
+    "feriados_municipais": false,
+    "detalhe": "4 regras próprias (21/04, Paixão, Corpus Christi, 30/11), mais as 2 redundantes marcadas; municipal não se aplica."
+   }
+  },
+  "perigosos": {
+   "resumo": "Nenhuma restrição viária de produtos perigosos vigente por ato distrital: o DER-DF chegou a restringir os perigosos às 06h-09h e 17h30-19h15 em EPCL (DF-095), EPNB (DF-075), EPTG (DF-085), EPCT (DF-001, pistão Sul e Norte, da DF-075 à DF-095) e EPIA (DF-003) e a proibir totalmente perto da Barragem do Paranoá, mas a sequência de instruções de 2018 (17, 19 e 21) foi encerrada pela Instrução DER-DF 1, de 31/01/2019, que revogou a última sem substituir. Sobra a Instrução de Serviço DETRAN 576/1984 (sem revogação expressa, apoiada num decreto federal já substituído) que proíbe carga perigosa a granel ou de elevada periculosidade, exceto GLP, na W3 Norte e Sul, nos Setores Comerciais e Bancários, nas avenidas comerciais de Taguatinga e nas quadras residenciais. Órgão ambiental: IBRAM (Instituto Brasília Ambiental, vinculado à SEMA-DF): a Instrução IBRAM 82/2009 exige licenciamento ambiental específico para transportar produto perigoso no DF. Sem túneis ou mananciais com ato; a única OAE com restrição é a Barragem do Paranoá, hoje só para caminhões com mais de 2 eixos simples.",
+   "fontes": [
+    {
+     "url": "https://www.sinj.df.gov.br/sinj/",
+     "formato": "HTML por ato (TextoArquivoNorma.aspx?id_file=<uuid>) e JSON não documentado: POST ashx/Visualizacao/NormaDetalhes.ashx?id_norma=<ch_norma> (metadados, situação, uuid do arquivo) e POST ashx/Datatable/ResultadoDePesquisaNormaDatatable.ashx?tipo_pesquisa=geral&all=<termos>&bbusca=sinj_norma (busca; só indexa ementa/indexação, não o texto integral). Requer um GET prévio em /sinj/ e User-Agent de navegador (curl puro leva 403)",
+     "licenca": "ato oficial (domínio público, Lei 9.610/1998 art. 8º, IV); o SINJ avisa que o texto consolidado não substitui o publicado no DODF",
+     "atualizado_em": "2026-10-18 (consultado); cada ato traz sua data"
+    }
+   ],
+   "atos": [
+    {
+     "ato": "Instrução DER-DF 17, de 12/11/2018 (DODF 217, 14/11/2018)",
+     "situacao": "REVOGADA pela Instrução 19, de 14/11/2018",
+     "conteudo": "06h-09h e 17h30-19h15 nas cinco vias acima; proibição total perto da Barragem do Paranoá (art. 2º); pátios de estacionamento (art. 3º, referência ao Decreto 96.044/1988); placas nas entradas; pavimentar DF-100 (DF-250 até DF-295) e DF-295; AET de perigosos devem seguir os horários",
+     "fontes": [
+      {
+       "sinj_ch_norma": "e19ec224fae74b9c981d07a23f35eca8",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=314b85f5-152e-3154-b71f-72fe762ceb63",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=e19ec224fae74b9c981d07a23f35eca8"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_17_2018_perigosos_horario.txt"
+    },
+    {
+     "ato": "Instrução DER-DF 19, de 14/11/2018 (DODF 219, 19/11/2018)",
+     "situacao": "REVOGADA pela Instrução 21, de 18/12/2018",
+     "conteudo": "mesmas vias e horários, vigor 30 dias após a publicação",
+     "fontes": [
+      {
+       "sinj_ch_norma": "f21cf248b26d40b382daa906ae79e3de",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=65fb3db6-ceb0-369a-a06d-8319bfd69b0c",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=f21cf248b26d40b382daa906ae79e3de"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_19_2018_perigosos_horario.txt"
+    },
+    {
+     "ato": "Instrução DER-DF 21, de 18/12/2018 (DODF 240, 19/12/2018, p. 32)",
+     "situacao": "REVOGADA pela Instrução 1, de 31/01/2019 (DODF 24, 04/02/2019), antes de entrar em vigor (vigor 90 dias após a publicação)",
+     "conteudo": "mesmas vias e horários",
+     "fontes": [
+      {
+       "sinj_ch_norma": "85bd66bf5769405bb4121bc96ca80ab0",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=c6cfd047-5c72-3d9e-80ea-e52e3be55ece",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=85bd66bf5769405bb4121bc96ca80ab0"
+      },
+      {
+       "sinj_ch_norma": "2db4bc43584843c4b6fa12007b3d2947",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=c97287a0-14b0-3766-a345-22b261813d7c",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=2db4bc43584843c4b6fa12007b3d2947"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_der_ins_21_2018_perigosos.txt, sinj_der_ins_1_2019_revoga_21_2018.txt"
+    },
+    {
+     "ato": "Instrução de Serviço DETRAN-DF 576, de 31/05/1984 (DODF 111, Suplemento, 11/06/1984)",
+     "situacao": "SINJ: 'Sem Revogação Expressa'; baseada no Decreto federal 88.821/1983 (a regra federal atual é outra: as Instruções do DER de 2018 já citam o Decreto 96.044/1988). Vigência prática duvidosa",
+     "itens_do_ato": {
+      "2": "proíbe o tráfego de veículo de qualquer espécie transportando carga perigosa a granel ou de elevada periculosidade (definição do Ministério dos Transportes), exceto GLP, na Avenida W/3 Norte e Sul, nos Setores Comerciais e Bancários Norte e Sul, nas avenidas comerciais Norte e Sul de Taguatinga e no interior das quadras residenciais",
+      "par_unico_art2": "proíbe parada e estacionamento ao longo de vias de grande movimento e em áreas de parqueamento de centros comerciais e de diversões",
+      "3": "GPFT e GETRAN fixam itinerários para hospitais e consumidores e locais de carga/descarga",
+      "5": "transportador avisa o itinerário com 72 h de antecedência"
+     },
+     "trechos": [
+      {
+       "rodovia": "Avenida W/3 Norte e Sul; Setores Comerciais e Bancários Norte e Sul; Avenidas Comerciais Norte e Sul de Taguatinga; interior das quadras residenciais (redação literal do ato)",
+       "km_ini": null,
+       "km_fim": null
+      }
+     ],
+     "veiculos": "carga perigosa a granel ou de elevada periculosidade, menos GLP",
+     "confianca": "média no texto, baixa na vigência",
+     "ativa_recomendada": false,
+     "fontes": [
+      {
+       "sinj_ch_norma": "10870",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=40eb4c44-37fd-3a13-95e8-03d2bd789592",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=10870"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_detran_is_576_1984_cargas_perigosas.txt"
+    },
+    {
+     "ato": "Instrução IBRAM 82, de 23/12/2009 (DODF 250, 29/12/2009); art. 10 revogado pelo Decreto 36.992/2015",
+     "situacao": "SINJ: 'Alterado'",
+     "artigos": {
+      "4": "transporte e/ou armazenamento de produto perigoso no DF só com licenciamento ambiental distinto do IBRAM/DF",
+      "5": "restrições: compatibilidade com responsável técnico; procedimento no Termo de Referência do IBRAM; embalagens vazias seguem as mesmas regras; transportadores de resíduos de saúde com frota própria mínima",
+      "6": "proíbe transportar produto perigoso junto com carga para consumo humano ou animal",
+      "8": "condições de circulação, parada, estacionamento e carga e descarga nas vias serão disciplinadas pelos órgãos competentes (ou seja, não há trecho neste ato)",
+      "13": "penalidades: multa, suspensão e cancelamento da licença"
+     },
+     "trechos": [],
+     "confianca": "alta",
+     "ativa_recomendada": false,
+     "obs": "é licença do transportador, não regra de rota",
+     "fontes": [
+      {
+       "sinj_ch_norma": "62126",
+       "texto_url": "https://www.sinj.df.gov.br/sinj/TextoArquivoNorma.aspx?id_file=971d6b3b-0f05-3395-9357-769edba54383",
+       "detalhe_url_post": "https://www.sinj.df.gov.br/sinj/ashx/Visualizacao/NormaDetalhes.ashx?id_norma=62126"
+      }
+     ],
+     "copia_local": "fontes/DF/sinj_ibram_ins_82_2009_transporte_produto_perigoso.txt"
+    }
+   ],
+   "orgao_ambiental": "IBRAM (Instituto Brasília Ambiental), vinculado à SEMA-DF; a lista do SINJ mostra também a Instrução Normativa SEMA/IBRAM 5, de 02/02/2026, sobre comunicação e resposta a emergências e acidentes ambientais (só a ementa lida)",
+   "lacunas": [
+    "texto do Termo de Referência do IBRAM para transporte de produto perigoso: não obtido",
+    "ato de proteção de manancial (Descoberto, Santa Maria/Torto) com restrição de tráfego: nenhum achado",
+    "túneis: o IDE/DF lista 6 OAE do tipo TUNEL (4 rodoviários, 2 ferroviários); nenhum com ato",
+    "site do DER-DF/DETRAN-DF fora do ar para este ambiente"
+   ],
+   "teste_download": "6 atos baixados como texto; nenhum trecho vigente para importar.",
+   "pronto_para_importar": {
+    "perigosos": false,
+    "detalhe": "Sem trecho vigente. Se o produto quiser aviso, a Instrução DETRAN 576/1984 pode entrar como regra informativa (ativa=false) com polígonos manuais da W3 e dos setores comerciais."
+   }
+  },
+  "acidentes": {
+   "resumo": "A fonte útil é o RENAEST (Senatran, Outra - Domínio Público): 332.101 acidentes do DF de 01/2018 a 31/05/2026, com tipo de veículo por acidente. Diferente de GO, o tipo de veículo vem bem preenchido (800 'NAO INFORMADO' e 1.506 'DESCONHECIDO' em 564 mil veículos), mas a COORDENADA só existe em 2018, 2019, 2025 e 2026 (jan-mai): de 2020 a 2024 os campos vêm '-0000000000' em 100% dos registros, e o campo tp_rodovia é 'NAO INFORMADO' em 98% dos registros de 2025 e 2026, então não dá para separar rodovia distrital de urbana pelo campo. O km_via_acidente vem sempre '0000'. Em 2025 há 3.587 acidentes com caminhão, cavalo, semirreto ou reboque (3.538 com coordenada válida, 38 óbitos); 2026 jan-mai: 755 (747). Cruzando as 3.538 coordenadas de 2025 com a camada Rodovia do IDE/DF a até 40 m, 563 caem em rodovia da malha do DER-DF (397 DISTRITAL, 88 FEDERAL, 72 SUPERPOSTA, 6 VICINAL), principalmente DF-003 (129), DF-075 (86), DF-001 superposta à BR-251 (67), BR-010 (27), DF-095 (25), BR-070 (20), BR-060 (16), DF-085 (15), BR-251 (15). Os demais são vias urbanas ou coordenadas imprecisas. Não achei base própria de sinistros do DETRAN-DF/CPRv/PCDF/SSP-DF em dado aberto (dados.df.gov.br não abriu deste ambiente; a WebSearch não confirmou dataset). Para BRs a PRF segue a fonte; filtrar as BRs fora do RENAEST evita duplicar.",
+   "fontes": [
+    {
+     "url": "https://dados.transportes.gov.br/dataset/renaest",
+     "formato": "ZIP mensal acumulado (resource 05-2026: https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip, 529 MB) com Acidentes (8,66 milhões de linhas nacionais, 2,7 GB), Localidade, TipoVeiculo e Vitimas; CSV ';' latin-1. Lido por HTTP Range + inflate em fluxo, sem gravar o ZIP; a conexão cai no meio e precisa de retomada por Range",
+     "licenca": "Outra (Domínio Público) segundo o CKAN",
+     "atualizado_em": "dados até 2026-05-31; recurso publicado em 2026-10-09"
+    },
+    {
+     "url": "https://www.ssp.df.gov.br/serie-historica",
+     "formato": "XLS/XLSX/PDF de crimes por RA (sem sinistros)",
+     "licenca": "não declarada",
+     "atualizado_em": "página atualizada em 10/09/2026"
+    }
+   ],
+   "renaest_df": {
+    "periodo": "2018-01-01 a 2026-05-31",
+    "por_ano": {
+     "2018": {
+      "acidentes": 8105,
+      "coordenada_valida": 7817,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 253,
+      "destes_com_coordenada_valida": 241,
+      "obitos_nesses_acidentes": 28
+     },
+     "2019": {
+      "acidentes": 8609,
+      "coordenada_valida": 8266,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 292,
+      "destes_com_coordenada_valida": 286,
+      "obitos_nesses_acidentes": 33
+     },
+     "2020": {
+      "acidentes": 43115,
+      "coordenada_valida": 0,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 2727,
+      "destes_com_coordenada_valida": 0,
+      "obitos_nesses_acidentes": 23
+     },
+     "2021": {
+      "acidentes": 47851,
+      "coordenada_valida": 0,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 3054,
+      "destes_com_coordenada_valida": 0,
+      "obitos_nesses_acidentes": 9
+     },
+     "2022": {
+      "acidentes": 55521,
+      "coordenada_valida": 0,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 3464,
+      "destes_com_coordenada_valida": 0,
+      "obitos_nesses_acidentes": 9
+     },
+     "2023": {
+      "acidentes": 57400,
+      "coordenada_valida": 0,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 3751,
+      "destes_com_coordenada_valida": 0,
+      "obitos_nesses_acidentes": 8
+     },
+     "2024": {
+      "acidentes": 47983,
+      "coordenada_valida": 0,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 3122,
+      "destes_com_coordenada_valida": 0,
+      "obitos_nesses_acidentes": 4
+     },
+     "2025": {
+      "acidentes": 53084,
+      "coordenada_valida": 52762,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 3587,
+      "destes_com_coordenada_valida": 3538,
+      "obitos_nesses_acidentes": 38
+     },
+     "2026": {
+      "acidentes": 10433,
+      "coordenada_valida": 10334,
+      "com_caminhao_cavalo_semirreboque_ou_reboque": 755,
+      "destes_com_coordenada_valida": 747,
+      "obitos_nesses_acidentes": 14
+     }
+    },
+    "colunas_acidentes": [
+     "num_acidente",
+     "chv_localidade",
+     "data_acidente",
+     "uf_acidente",
+     "ano_acidente",
+     "codigo_ibge",
+     "dia_semana",
+     "fase_dia",
+     "tp_acidente",
+     "cond_meteorologica",
+     "end_acidente",
+     "bairro_acidente",
+     "km_via_acidente",
+     "latitude_acidente",
+     "longitude_acidente",
+     "hora_acidente",
+     "tp_rodovia",
+     "cond_pista",
+     "tp_pavimento",
+     "tp_pista",
+     "qtde_envolvidos",
+     "qtde_obitos"
+    ],
+    "tabela_tipoveiculo": "num_acidente;tipo_veiculo;ind_veic_estrangeiro;qtde_veiculos. Total de 564.033 veículos no período: AUTOMOVEL 435.802, MOTOCICLETA 53.537, CAMINHONETE 26.238, CAMINHAO 20.975, ONIBUS 17.844, REBOQUE 661, SEMIRREBOQUE 325; não aparece CAMINHAO-TRATOR no DF",
+    "qualidade": [
+     "coordenada válida só em 2018 (96,4%), 2019 (96,0%), 2025 (99,4%) e 2026 (99,1%); 2020-2024 '-0000000000'",
+     "hora_acidente vem arredondada/placeholder (muitos '120100', '170000', '190000')",
+     "tp_rodovia: 2018 e 2019 têm 100% preenchido (ESTADUAL/FEDERAL/MUNICIPAL); de 2020 a 2026 só 2% a 8% dos registros trazem valor, o resto é 'NAO INFORMADO'",
+     "end_acidente é 'GERAL' ou vazio em ~53% dos registros de 2024; bairro_acidente é o nome da RA",
+     "codigo_ibge sempre 5300108 (Brasília)",
+     "em 2018 há 69 pontos fora do bbox do DF"
+    ],
+    "amostra": "fontes/DF/renaest_df_caminhao_2025_amostra300.csv (300 acidentes de caminhão de 2025 com lat/lon); resumo em fontes/DF/renaest_df_resumo.json"
+   },
+   "teste_download": "Stream do ZIP testado de ponta a ponta: Acidentes 336 MB comprimidos (com 1 retomada), TipoVeiculo e Localidade; DF filtrado = 332.101 acidentes e 420.043 linhas de veículo; nada gravado além de amostras (brutos de trabalho em área de rascunho, apagados).",
+   "pronto_para_importar": {
+    "acidentes": true,
+    "detalhe": "Sim para 2018, 2019, 2025 e 2026 com coordenada; descartar linhas com lat/lon '-0000000000'. Marcar caminhão por tipo_veiculo em {CAMINHAO, CAMINHAO-TRATOR, SEMIRREBOQUE, REBOQUE}. Para 'só rodovia' usar o cruzamento espacial com a camada Rodovia do IDE/DF e excluir BRs se a PRF já cobre."
+   }
+  },
+  "roubo_carga": {
+   "resumo": "Não achei dado aberto de roubo/furto de carga do DF com coordenada ou município. O que existe: (a) Sinesp VDE/MJSP (xlsx nacional): o DF registra 'Roubo de carga' com abrangência Estadual de forma agregada, município 'NÃO INFORMADO': 5 ocorrências em 2025 (abril 1, junho 3, dezembro 1) e 1 em 2026 até agosto (julho 1), ou seja, muito baixo e provável subnotificação; (b) a Série histórica da SSP-DF (página atualizada em 10/09/2026) traz crimes contra o patrimônio por Região Administrativa e ano (2011 a 2022; roubo de veículo, furto de veículo, roubo em coletivo, em comércio, a transeunte, latrocínio), sem natureza 'roubo de carga'; (c) o portal de dados abertos do DF (dados.df.gov.br) e o das ocorrências da PCDF/SSP-DF não abriram deste ambiente. Para um agregado útil por rodovia ou RA, só por LAI à SSP-DF/PCDF (não identifiquei delegacia especializada em roubo de carga no DF, não afirmo nome).",
+   "fontes": [
+    {
+     "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+     "formato": "XLSX 26,6 MB (2025) e 18,0 MB (2026, /bancovde-2026.xlsx/...); aba única; colunas uf, municipio, evento, data_referencia, agente, arma, faixa_etaria, feminino, masculino, nao_informado, total_vitima, total, total_peso, abrangencia",
+     "licenca": "não declarada no arquivo",
+     "atualizado_em": "2025 completo; 2026 até agosto"
+    },
+    {
+     "url": "https://www.ssp.df.gov.br/serie-historica",
+     "formato": "XLS e XLSX por natureza (ex.: /documents/d/ssp/ccp-roubo_de_veiculo-3-xlsx, 745 KB, linhas = RA, colunas = ano com registros e taxa por 100 mil habitantes; o testado cobre 2011 a 2015)",
+     "licenca": "não declarada",
+     "atualizado_em": "2026-09-10 (página)"
+    }
+   ],
+   "sinesp_df": {
+    "roubo_de_carga_estadual": {
+     "2025": 5,
+     "2026_ate_agosto": 1
+    },
+    "municipio": "NÃO INFORMADO",
+    "amostra": "fontes/DF/sinesp_vde_roubo_carga_DF_2025_2026.csv (40 linhas, 20 'Estadual' e 20 'Polícia Federal' sem valor)",
+    "serie_ssp_amostra": "fontes/DF/ssp_df_serie_roubo_de_veiculo_por_RA_amostra.csv"
+   },
+   "teste_download": "Sinesp 2025 e 2026 baixados e filtrados (uf=DF, evento contém 'carga'); SSP-DF xlsx baixado e lido (167 linhas).",
+   "pronto_para_importar": {
+    "roubo_carga": false,
+    "detalhe": "Sem coordenada nem município. Pedir por LAI os BOs de roubo e furto de carga por RA e rodovia."
+   }
+  },
+  "particularidades": {
+   "resumo": "Pontos do DF que mudam a rota do caminhão e não vêm do OSM.",
+   "itens": [
+    {
+     "tema": "Eixo Rodoviário (Eixão) DF-002",
+     "texto": "Veículos pesados proibidos todos os dias (Decreto 32.563/2010, art. 2º), via fechada a todos os automotores aos domingos e feriados, 06h-18h (art. 1º; IN DER 3/2024, art. 3º). O OSM não marca hgv no Eixo."
+    },
+    {
+     "tema": "Barragem do Paranoá (DF-001, EPCT)",
+     "texto": "Caminhões com mais de 2 eixos simples proibidos (Instrução DER 3/2019). Ponto aproximado lat -15.79896, lon -47.78442 (OSM)."
+    },
+    {
+     "tema": "Ponte do Rio Melchior (DF-180)",
+     "texto": "Caminhões com mais de 2 eixos simples proibidos (Instrução DER 14/2021), sem km."
+    },
+    {
+     "tema": "EPIA (DF-003) e BR-040 de manhã",
+     "texto": "Instrução DER 148/2013 (06h-09h, seg-sex, sentido Valparaíso-Brasília, BR-040 km 7-0 e DF-003 km 36-24) com vigência incerta desde a suspensão de 2014; ver rodovias_estaduais."
+    },
+    {
+     "tema": "EPTG (DF-085)",
+     "texto": "A proibição de caminhões nos picos (Instrução Conjunta 1/2008) teve revogação e anulação da revogação em 2011: situação indefinida."
+    },
+    {
+     "tema": "DF-463 (São Sebastião)",
+     "texto": "Proibição de caminhões de 2024 foi revogada em 05/2025."
+    },
+    {
+     "tema": "Passagens inferiores do Plano Piloto",
+     "texto": "OSM tem maxheight de 3,55 a 4,05 m nas passagens subterrâneas das quadras CLN/CLS (tesourinhas) e 5,5 m a 6,0 m na DF-003/EPIA; nenhum ato do DER fixa gabarito."
+    },
+    {
+     "tema": "Malha do DER-DF",
+     "texto": "501 segmentos, 1.417,5 km distritais e superpostas (547,9 pavimentados, 270,5 duplicados, 494,3 implantados sem pavimento, 75,6 planejados, 29,2 em obras), mais 324,2 km vicinais (285,8 implantados). O IDE/DF marca 38 segmentos como SUPERPOSTA (DF e BR no mesmo traçado, p.ex. DF-001 com BR-251, DF-003 com BR-040/050) e 46 como FEDERAL (197,6 km)."
+    },
+    {
+     "tema": "Balsas, serras, safra, rodotrem, free flow",
+     "texto": "Nenhum no DF. Combinações especiais exigem AET do DER-DF (CVC acima de 45 t, instrução de 2005; tarifa R$ 97,25 desde 2025)."
+    },
+    {
+     "tema": "Apoio ao caminhoneiro",
+     "texto": "Lei distrital 6.404/2019 dispõe sobre pontos de apoio para caminhoneiros nas vias de acesso às RAs (só a ementa lida); LC 877/2014 trata do Setor de Transporte Rodoviário de Cargas (SIA)."
+    },
+    {
+     "tema": "Entorno (GO)",
+     "texto": "As BR-010, 020, 030, 040, 050, 060, 070 e 251 aparecem na camada Rodovia do IDE/DF (46 segmentos FEDERAL e 38 SUPERPOSTA) e levam ao entorno em GO; as regras de GO ficam em GO.json. Praças federais mais próximas: BR-060 Alexânia (GO) e BR-040 Paracatu (MG)."
+    },
+    {
+     "tema": "Rodovias com hgv no OSM sem ato",
+     "texto": "Não há: hgv=no no recorte do DF só aparece em ruas de pedestres. O inverso (ato sem hgv no OSM) é a lacuna: DF-002, Barragem do Paranoá, DF-180."
+    }
+   ]
+  }
+ },
+ "decisoes_para_o_projeto": [
+  "Importar a malha DER-DF e as OAE do IDE/DF como camada de referência (rodovias_estaduais_der_df, oae_ide_df); a chave oea_codtrecho = rod_cod_distri liga ponte e trecho.",
+  "Criar 3 regras de caminhão ativas (DF-002 pesados 24 h, DF-002 domingos/feriados 06-18 h para todos, Barragem DF-001 mais de 2 eixos) e manter 4 inativas com motivo (Melchior sem km; BR-040/EPIA 2013; EPTG 2008; SCLS/SCLN 2008).",
+  "Feriados: UF_BY_PREFIX ganha '53':'DF'; regras fixa:04-21, pascoa:-2, pascoa:+60 e fixa:11-30; sem feriado municipal.",
+  "Acidentes: importar RENAEST-DF só com coordenada válida (2018-19 e 2025-26) e marcar caminhão por tipo_veiculo; pedágio, balanças, perigosos e roubo de carga: nada a importar.",
+  "Mapa: ufAt escolhe a UF de menor bbox; o retângulo do DF está dentro do de GO, então testar pontos de Valparaíso/Águas Lindas (GO) para não virarem 'DF'."
+ ],
+ "pendencias": [
+  "Abrir der.df.gov.br e detran.df.gov.br de um ambiente com acesso (ou LAI) para ver portarias e instruções que o SINJ não indexa por ementa.",
+  "Achar a Instrução 10, de 24/02/2011 (EPTG) e dizer se a proibição de 2008 vale.",
+  "Confirmar se a Instrução DER 148/2013 (BR-040/EPIA 06h-09h) voltou a vigorar depois de 2014.",
+  "Localizar a Ponte do Rio Melchior na DF-180 (km e coordenada).",
+  "Definição de 'veículos pesados' do Decreto 32.563/2010 e eventual portaria do DETRAN/DER que a regulamente.",
+  "Lista de balanças e postos de pesagem do DER-DF (LAI).",
+  "Termo de Referência do IBRAM para transporte de produto perigoso e eventual restrição em manancial.",
+  "Dados de sinistros do DETRAN-DF/CPRv/SSP-DF em dados.df.gov.br (inacessível aqui) para cobrir 2020-2024, quando o RENAEST vem sem coordenada.",
+  "Roubo/furto de carga por RA ou rodovia (LAI à SSP-DF/PCDF).",
+  "Termos de uso/licença do IDE/DF para a malha e as OAE.",
+  "Calendário do TJDFT 2026 (não coletado) para conferir os feriados forenses.",
+  "Capacidade e gabarito das OAE do DER-DF (camada 5 do IDE/DF tem os campos zerados)."
+ ]
+}
