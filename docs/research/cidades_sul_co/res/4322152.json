@@ -3,8 +3,8 @@
  "nome": "Tunas",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/rs/tunas",
+   "resultado": "R3: leismunicipais (camara) NAO consultavel por curl: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/camara/rs/tunas. Não contornar;"
+  },
+  {
+   "url": "https://leismunicipais.com.br/leis/rs/tunas/?o=tcers",
+   "resultado": "R3: leismunicipais (prefeitura) NAO consultavel por curl: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/leis/rs/tunas/?o=tcers. Não con"
+  },
+  {
+   "url": "https://www.camaratunas.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200; wp-json search: 2 itens, nenhum relevante"
+  },
+  {
+   "url": "https://www.tunas.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200; wp-json search: 4 itens, nenhum relevante"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4322152",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3732 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/camara/rs/tunas) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3732 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/camara/rs/tunas) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: leismunicipais https://leismunicipais.com.br/camara/rs/tunas: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://lei; leismunicipais https://leismunicipais.com.br/leis/rs/tunas/?o=tcers: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://lei. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +67,7 @@
    "url_busca": "https://leismunicipais.com.br/camara/rs/tunas",
    "cliente": false,
    "testado": false
-  }
+  },
+  "cobertura_minima_fechada_r3": false
  }
 }

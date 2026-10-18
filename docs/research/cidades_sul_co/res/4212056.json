@@ -1,125 +1,141 @@
 {
-  "ibge": "4212056",
-  "nome": "Palmeira",
-  "uf": "SC",
-  "status": "regra_com_ato",
-  "nivel_busca": "dirigida",
-  "falha_de_fonte": false,
-  "fontes_consultadas": [
+ "ibge": "4212056",
+ "nome": "Palmeira",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6735737",
+   "resultado": "Decreto 2.380/2024 (DOM/SC) aberto e lido. Texto em atos/4212056/dec2380_2024.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/5213701",
+   "resultado": "Decreto 2.158/2023 lido (estradas rurais em chuva). Texto em atos/4212056/dec2158_2023.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6185641",
+   "resultado": "Decreto 2.303/2024 lido. Texto em atos/4212056/dec2303_2024.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6212622",
+   "resultado": "Decreto 2.307/2024 lido. Texto em atos/4212056/dec2307_2024.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4212056 'trânsito de veículos pesados', 'produtos florestais in natura avenidas centro', 'estradas do interior períodos chuvosos' (domsc)",
+   "resultado": "só os quatro decretos; nenhuma revogação"
+  },
+  {
+   "url": "https://palmeira.eloweb.net/",
+   "resultado": "Elotech não consultado (DOM/SC bastou)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6735737",
+   "resultado": "R3: reaberto e relido; Dec. 2.380/2024"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/5213701",
+   "resultado": "R3: reaberto e relido; Dec. 2.158/2023"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6185641",
+   "resultado": "R3: reaberto e relido; Dec. 2.303/2024"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6212622",
+   "resultado": "R3: reaberto e relido; Dec. 2.307/2024"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Quatro decretos vigentes, todos desativados na modelagem: madeira in natura nas avenidas centrais (alvo não expressável) e estradas rurais em período de chuva (condicional). OSM só tem maxweight=45 na SC-114 (rodovia estadual, fora de competência). R3 2026-10-18: Decs. 2.380/2024, 2.158/2023, 2.303/2024 e 2.307/2024 reabertos no DOM/SC: textos conferem (carga florestal in natura em 3 avenidas; > 10 t no interior em período chuvoso, 100 mm/7 dias, +48 h). Sem revogação achada. Confirmado (ambas desativadas).",
+ "osm_divergencias": [
+  "OSM: maxweight=45 na SC-114 (Rodovia Coronel Aristiliano Laureano Ramos), rodovia estadual; sem relação com os decretos municipais"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "palmeira_avenidas_centro_madeira_in_natura",
+   "tipo": "via",
+   "regime": "Carga florestal",
+   "nome": "Avenidas Roberto Hemkemaier, Alexandre Murara e Ricardo Beffart (centro): proibida a circulação de veículos particulares carregados com produtos florestais in natura",
+   "status": "desativada",
+   "confianca": "media",
+   "status_motivo": "O alvo é só veículo carregado com produtos florestais in natura (carga, não porte/peso), que o schema não expressa; ativar como 'caminhão' bloquearia todo o frete. Ato vigente (60 dias após 20/12/2024, ~18/02/2025). Também proíbe estacionar veículos particulares com capacidade acima de 5 t nas mesmas avenidas (art. 2º).",
+   "janelas": [
     {
-      "url": "https://diariomunicipal.sc.gov.br/atos/6735737",
-      "resultado": "Decreto 2.380/2024 (DOM/SC) aberto e lido. Texto em atos/4212056/dec2380_2024.txt"
-    },
-    {
-      "url": "https://diariomunicipal.sc.gov.br/atos/5213701",
-      "resultado": "Decreto 2.158/2023 lido (estradas rurais em chuva). Texto em atos/4212056/dec2158_2023.txt"
-    },
-    {
-      "url": "https://diariomunicipal.sc.gov.br/atos/6185641",
-      "resultado": "Decreto 2.303/2024 lido. Texto em atos/4212056/dec2303_2024.txt"
-    },
-    {
-      "url": "https://diariomunicipal.sc.gov.br/atos/6212622",
-      "resultado": "Decreto 2.307/2024 lido. Texto em atos/4212056/dec2307_2024.txt"
-    },
-    {
-      "url": "diarios_consolidados.py buscar 4212056 'trânsito de veículos pesados', 'produtos florestais in natura avenidas centro', 'estradas do interior períodos chuvosos' (domsc)",
-      "resultado": "só os quatro decretos; nenhuma revogação"
-    },
-    {
-      "url": "https://palmeira.eloweb.net/",
-      "resultado": "Elotech não consultado (DOM/SC bastou)"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Quatro decretos vigentes, todos desativados na modelagem: madeira in natura nas avenidas centrais (alvo não expressável) e estradas rurais em período de chuva (condicional). OSM só tem maxweight=45 na SC-114 (rodovia estadual, fora de competência).",
-  "osm_divergencias": [
-    "OSM: maxweight=45 na SC-114 (Rodovia Coronel Aristiliano Laureano Ramos), rodovia estadual; sem relação com os decretos municipais"
-  ],
-  "regras_rascunho": [
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
     {
-      "id": "palmeira_avenidas_centro_madeira_in_natura",
-      "tipo": "via",
-      "regime": "Carga florestal",
-      "nome": "Avenidas Roberto Hemkemaier, Alexandre Murara e Ricardo Beffart (centro): proibida a circulação de veículos particulares carregados com produtos florestais in natura",
-      "status": "desativada",
-      "confianca": "media",
-      "status_motivo": "O alvo é só veículo carregado com produtos florestais in natura (carga, não porte/peso), que o schema não expressa; ativar como 'caminhão' bloquearia todo o frete. Ato vigente (60 dias após 20/12/2024, ~18/02/2025). Também proíbe estacionar veículos particulares com capacidade acima de 5 t nas mesmas avenidas (art. 2º).",
-      "janelas": [
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-          ],
-          "from": "00:00",
-          "to": "24:00"
-        }
-      ],
-      "alvo": {
-        "caminhao": true
-      },
-      "base_legal": [
-        {
-          "ato": "Decreto 2.380/2024 (20/12/2024)",
-          "artigo": "art. 1º e parágrafo único (avenidas); art. 3º (caminhão sem carga liberado); art. 5º (acessos liberados); art. 9º (vigência 60 dias após a publicação)",
-          "url": "https://diariomunicipal.sc.gov.br/atos/6735737"
-        }
-      ],
-      "vigencia_inicio": "2025-02-18",
-      "trechos": [
-        {
-          "via": "Avenida Roberto Hemkemaier"
-        },
-        {
-          "via": "Avenida Alexandre Murara"
-        },
-        {
-          "via": "Avenida Ricardo Beffart",
-          "nota": "no centro; o trecho do bairro Oracides Francisco de Souza é rota de acesso liberada (art. 5º)"
-        }
-      ],
-      "geometria": []
+     "ato": "Decreto 2.380/2024 (20/12/2024)",
+     "artigo": "art. 1º e parágrafo único (avenidas); art. 3º (caminhão sem carga liberado); art. 5º (acessos liberados); art. 9º (vigência 60 dias após a publicação)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6735737"
+    }
+   ],
+   "vigencia_inicio": "2025-02-18",
+   "trechos": [
+    {
+     "via": "Avenida Roberto Hemkemaier"
     },
     {
-      "id": "palmeira_estradas_rurais_chuva_10t",
-      "tipo": "zona",
-      "regime": "Estradas rurais em período de chuva",
-      "nome": "Estradas do interior: proibido veículo acima de 10 t em período chuvoso (>=100 mm em 7 dias) e 48 h após",
-      "status": "desativada",
-      "confianca": "media",
-      "status_motivo": "Regra condicionada ao clima (precipitação) e a 'estradas do interior' sem lista de vias: não modelável como via/janela fixa. 'Veículos com mais de dez toneladas' sem dizer PBT ou capacidade.",
-      "alvo": {
-        "caminhao": true,
-        "todas": [
-          {
-            "campo": "pbt_t",
-            "acima": 10
-          }
-        ]
-      },
-      "base_legal": [
-        {
-          "ato": "Decreto 2.158/2023 (19/10/2023)",
-          "artigo": "art. 1º (período chuvoso: 100 mm em 7 dias); art. 3º (multa); art. 4º (vigência)",
-          "url": "https://diariomunicipal.sc.gov.br/atos/5213701"
-        },
-        {
-          "ato": "Decreto 2.303/2024 (11/07/2024, urgência)",
-          "artigo": "art. 1º",
-          "url": "https://diariomunicipal.sc.gov.br/atos/6185641"
-        },
-        {
-          "ato": "Decreto 2.307/2024 (17/07/2024)",
-          "artigo": "art. 1º (48 h após cessar as chuvas e/ou o término da recuperação)",
-          "url": "https://diariomunicipal.sc.gov.br/atos/6212622"
-        }
-      ],
-      "geometria": []
+     "via": "Avenida Alexandre Murara"
+    },
+    {
+     "via": "Avenida Ricardo Beffart",
+     "nota": "no centro; o trecho do bairro Oracides Francisco de Souza é rota de acesso liberada (art. 5º)"
     }
-  ]
+   ],
+   "geometria": []
+  },
+  {
+   "id": "palmeira_estradas_rurais_chuva_10t",
+   "tipo": "zona",
+   "regime": "Estradas rurais em período de chuva",
+   "nome": "Estradas do interior: proibido veículo acima de 10 t em período chuvoso (>=100 mm em 7 dias) e 48 h após",
+   "status": "desativada",
+   "confianca": "media",
+   "status_motivo": "Regra condicionada ao clima (precipitação) e a 'estradas do interior' sem lista de vias: não modelável como via/janela fixa. 'Veículos com mais de dez toneladas' sem dizer PBT ou capacidade.",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto 2.158/2023 (19/10/2023)",
+     "artigo": "art. 1º (período chuvoso: 100 mm em 7 dias); art. 3º (multa); art. 4º (vigência)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/5213701"
+    },
+    {
+     "ato": "Decreto 2.303/2024 (11/07/2024, urgência)",
+     "artigo": "art. 1º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6185641"
+    },
+    {
+     "ato": "Decreto 2.307/2024 (17/07/2024)",
+     "artigo": "art. 1º (48 h após cessar as chuvas e/ou o término da recuperação)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6212622"
+    }
+   ],
+   "geometria": []
+  }
+ ]
 }

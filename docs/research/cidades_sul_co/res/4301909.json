@@ -2,8 +2,8 @@
  "ibge": "4301909",
  "nome": "Barra do Ribeiro",
  "uf": "RS",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "pontual",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,63 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://sapl.barradoribeiro.rs.leg.br (sapl, camara; legislacao.py buscar, 9 termos)",
+   "resultado": "busca ok; 0 ato(s) por ementa, nenhum de restrição de caminhões"
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/rs/barradoribeiro (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/rs/barradoribeiro. Não contornar; usar a outra fonte do município (Câmara/SAPL, "
+  },
+  {
+   "url": "https://barradoribeiro.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7264 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://barradoribeiro.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7264) passa por reCAPTCHA e devolve 0 via API; "
+  },
+  {
+   "url": "https://barradoribeiro.1doc.com.br/b.php?pg=o/login&n=3 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: sem cliente automático; consultar manualmente: https://barradoribeiro.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://www.barradoribeiro.rs.gov.br/busca?q=caminh%C3%B5es",
+   "resultado": "busca geral do site (prefeitura) por 'caminhões': 4 acerto(s) de título, todos irrelevantes (notícias/licitações de frota); não é busca em legislação"
+  },
+  {
+   "url": "https://plenussistemas.dioenet.com.br/list/barra-do-ribeiro?pesquisa=<termo> (DIOENET/Plenus, diário oficial do município, desde 2022; termos: caminhões, circulação de caminhões, carga e descarga, veículos pesados, trânsito pesado, toneladas)",
+   "resultado": "Diário varrido. Único acerto de regra: Lei 2.922/2026 (calçadão, proíbe todos os veículos automotores, exceção carga e descarga) -> desativada. Outros: protocolo de intenções CMPC (pista, sem regra), licitações, PLANCON."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (12476 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.barradoribeiro.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (12476 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.barradoribeiro.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Diário oficial DIOENET varrido por 6 termos (texto integral). Lei 2.922/2026 (calçadão central) -> pontual, regra desativada (veda todos os veículos). Protocolo de intenções CMPC (set/2025) cita tráfego pesado de caminhões, só pista, sem regra.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "barradoribeiro_calcadao_central",
+   "tipo": "via",
+   "regime": "Calçadão (pedestre)",
+   "nome": "Calçadão Central José Alcibiades Gattino (Rua Dr. Maurício Cardoso, 1 quadra): veda circulação e estacionamento de veículos automotores (Lei 2.922/2026)",
+   "status": "desativada",
+   "confianca": "alta",
+   "status_motivo": "Proibição para TODOS os veículos automotores em calçadão de uma quadra (não é restrição específica a caminhões); exceções para emergência, carga e descarga em horários a regulamentar pelo Executivo e eventos; sem horário definido no ato.",
+   "base_legal": [
+    {
+     "ato": "Lei nº 2.922, de 20/03/2026 (Barra do Ribeiro)",
+     "artigo": "art. 3º, caput e I-III",
+     "url": "https://plenussistemas.dioenet.com.br/diario/publicacoes/33811"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Rua Dr. Maurício Cardoso (trecho de uma quadra, \"Calçadão Central José Alcibiades Gattino\")"
+     ],
+     "descricao": "croqui no Anexo Único da lei (não lido)"
+    }
+   ],
+   "vigencia_inicio": "2026-03-20",
+   "nota": "Texto em atos/4301909/lei_2922_2026.txt. Cai na política de coordenação: via de pedestres/carga e descarga, não penaliza a passagem de caminhões em rota."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
@@ -43,6 +95,7 @@
    "url_busca": "https://sapl.barradoribeiro.rs.leg.br",
    "cliente": true,
    "testado": true
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

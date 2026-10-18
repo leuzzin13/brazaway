@@ -3,8 +3,8 @@
  "nome": "Ibarama",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,21 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://ibarama.rs.leg.br/decretos-legislativos.html (portal_proprio, camara; legislacao.py buscar, 9 termos)",
+   "resultado": "busca ok; 0 ato(s) por ementa, nenhum de restrição de caminhões"
+  },
+  {
+   "url": "https://ibarama.cespro.com.br/pesquisaLegislacao.php?cdMunicipio=7559&cdTipo=11592?cdMunicipio=7559&cdTipoDiploma=11592 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://ibarama.cespro.com.br/pesquisaLegislacao.php?cdMunicipio=7559&cdTipo=11592?cdMunicipio=7559&cdTipoDiploma=11592) "
+  },
+  {
+   "url": "https://www.ibarama.cespro.com.br/visualizarLeisPorAno.php?cdMunicipio=7559&cdTipoDiploma=11580 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.ibarama.cespro.com.br/visualizarLeisPorAno.php?cdMunicipio=7559&cdTipoDiploma=11580) passa por reCAPTCHA e de"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3787 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://ibarama.rs.leg.br/decretos-legislativos.html) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3787 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://ibarama.rs.leg.br/decretos-legislativos.html) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: cespro prefeitura https://ibarama.cespro.com.br/pesquisaLegislacao.php?cdMunicipio=7559&cdTipo=11592?cdMunicipio=7559&cdTipoDiploma=11592 ; cespro prefeitura https://www.ibarama.cespro.com.br/visualizarLeisPorAno.php?cdMunicipio=7559&cdTipoDiploma=11580. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +55,7 @@
    "url_busca": "https://ibarama.rs.leg.br/decretos-legislativos.html",
    "cliente": true,
    "testado": false
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

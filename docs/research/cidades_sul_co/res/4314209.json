@@ -3,8 +3,8 @@
  "nome": "Pedro Osório",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,25 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "R3: 1doc (prefeitura) NAO consultavel por curl: sem cliente automático; consultar manualmente: https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://www.pedroosorio.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4314209",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (7631 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (1doc, https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (7631 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (1doc, https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: 1doc https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://pedroosorio.1doc.com.br/b.php?pg=o/. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +59,7 @@
    "url_busca": "https://pedroosorio.1doc.com.br/b.php?pg=o/login&n=3",
    "cliente": false,
    "testado": false
-  }
+  },
+  "cobertura_minima_fechada_r3": false
  }
 }

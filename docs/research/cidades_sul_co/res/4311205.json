@@ -3,7 +3,7 @@
  "nome": "Júlio de Castilhos",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.juliodecastilhos.rs.gov.br (instar, prefeitura; legislacao.py buscar, 9 termos)",
+   "resultado": "busca ok; 3 ato(s) por ementa, nenhum de restrição de caminhões (acertos: Portaria 69/2026; Lei Ordinária 4000/2025; Lei Ordinária 3841/2022 - ruído: nomeações/licitação/denominação/saúde etc.)"
+  },
+  {
+   "url": "https://leismunicipais.com.br/leis/rs/juliodecastilhos/?o=tcers (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/leis/rs/juliodecastilhos/?o=tcers. Não contornar; usar a outra fonte do município (Câmara/S"
+  },
+  {
+   "url": "https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7612 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7612) passa por reCAPTCHA e devolve 0 via API; não automat"
+  },
+  {
+   "url": "https://juliodecastilhos.cespro.com.br/ (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://juliodecastilhos.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não automatizar. Use a lista por ano no"
+  },
+  {
+   "url": "https://juliodecastilhos.1doc.com.br/b.php?pg=o/login&n=3 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: sem cliente automático; consultar manualmente: https://juliodecastilhos.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://www.juliodecastilhos.rs.gov.br/?s=caminh%C3%B5es",
+   "resultado": "busca geral do site (prefeitura) por 'caminhões': 0 acerto(s) de título, todos irrelevantes (notícias/licitações de frota); não é busca em legislação"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (18545 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.juliodecastilhos.rs.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (18545 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.juliodecastilhos.rs.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Busca ok em sistema com API de ementa (SAPL/Instar/Sinsoft/Leis na Web), sem restrição de caminhões.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +67,7 @@
    "url_busca": "https://www.juliodecastilhos.rs.gov.br/portal/leis_decretos/",
    "cliente": true,
    "testado": true
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

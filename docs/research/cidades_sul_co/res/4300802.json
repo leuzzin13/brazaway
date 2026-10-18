@@ -3,8 +3,8 @@
  "nome": "Antônio Prado",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,21 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.camaraantonioprado.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&tipo=&number=&ano=&data_ini=&data_fim=&autoria=&vigencia=&interesse=&palavras_chave=&palavras_chave_opcao=palavra_todas&criterios_titulo=Atividades+Legislativas&criterios=#pesquisa (portal_proprio, camara; legislacao.py buscar, 9 termos)",
+   "resultado": "busca ok; 6 ato(s) por ementa, nenhum de restrição de caminhões (acertos: LEI MUNICIPAL 3595/2026; LEI MUNICIPAL 3594/2026; LEI MUNICIPAL 3589/2026; RESOLUÇÃO 22/2026 - ruído: nomeações/licitação/denominação/saúde etc.)"
+  },
+  {
+   "url": "https://www.antonioprado.cespro.com.br (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.antonioprado.cespro.com.br) passa por reCAPTCHA e devolve 0 via API; não automatizar. Use a lista por ano no "
+  },
+  {
+   "url": "https://antonioprado.cespro.com.br/ (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://antonioprado.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não automatizar. Use a lista por ano no nav"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13332 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaraantonioprado.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&tipo=&number=&ano=&data_ini=&data_fim=&autoria=&vigencia=&interesse=&palavras_chave=&palavras_chave_opcao=palavra_todas&criterios_titulo=Atividades+Legislativas&criterios=#pesquisa) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13332 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaraantonioprado.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&tipo=&number=&ano=&data_ini=&data_fim=&autoria=&vigencia=&interesse=&palavras_chave=&palavras_chave_opcao=palavra_todas&criterios_titulo=Atividades+Legislativas&criterios=#pesquisa) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: cespro prefeitura https://antonioprado.cespro.com.br/ ; cespro prefeitura https://www.antonioprado.cespro.com.br. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +55,7 @@
    "url_busca": "https://www.camaraantonioprado.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&tipo=&number=&ano=&data_ini=&data_fim=&autoria=&vigencia=&interesse=&palavras_chave=&palavras_chave_opcao=palavra_todas&criterios_titulo=Atividades+Legislativas&criterios=#pesquisa",
    "cliente": true,
    "testado": false
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

@@ -1,79 +1,89 @@
 {
-  "ibge": "4115739",
-  "nome": "Mato Rico",
-  "uf": "PR",
-  "status": "regra_com_ato",
-  "nivel_busca": "dirigida",
-  "falha_de_fonte": false,
-  "fontes_consultadas": [
+ "ibge": "4115739",
+ "nome": "Mato Rico",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/54AB473B",
+   "resultado": "LC 7/2025 (AMP, 26/03/2025) aberta e lida: art. 235, XI proíbe trafegar na Zona Central com caminhões >5 m e 7 t, seg-sex 07-20h e sáb 09-14h; art. 410 revoga a Lei 374/2011. Texto em atos/4115739/lc07_2025_posturas.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/0082E773",
+   "resultado": "LC 1/2025 (plano/sistema viário): diretriz 'definindo a rota de ônibus e caminhões'; não é regra"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/2FC363BF",
+   "resultado": "Resolução 003/2021 (RISPOA): ruído"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/54AB473B",
+   "resultado": "R3: reaberto e relido; LC 7/2025 art. 235 XI (caminhões > 5 m e 7 t, seg-sex 7-20h, sáb 9-14h) e art. 410 conferidos; Zona Central sem definição"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4115739 \"Zona Central\"; \"tráfego de caminhões\"",
+   "resultado": "só LC 7/2025 e LCs 1,3,4,5,6/2025 (plano/diretrizes); nada define a zona"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Mesma cláusula-padrão de 'Zona Central' do Código de Posturas (modelo repetido em Terra Roxa e Campina do Simão). Sem perímetro: desativada. OSM tem 1 way hgv=no (terciária sem nome) não cruzada com ato. R3 2026-10-18: LC 7/2025 reaberta no AMP: art. 235, XI e art. 410 conferidos; \"Zona Central\" não é definida em nenhum trecho do Código de Posturas; buscas AMP \"Zona Central\" sem decreto/lei que delimite. Sem alteração posterior. Confirmado (desativada: sem perímetro).",
+ "osm_divergencias": [
+  "1 way terciária sem nome com hgv=no no OSM sem ato municipal correspondente"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "matorico_zona_central_posturas",
+   "tipo": "zona",
+   "regime": "Zona Central",
+   "nome": "Zona Central de Mato Rico: proibido trafegar com caminhões com mais de 5 m e 7 t",
+   "status": "desativada",
+   "confianca": "media",
+   "status_motivo": "O perímetro da 'Zona Central' não é definido no Código de Posturas; sem perímetro não há geometria. Ambiguidade 'mais de 5 metros e 7 toneladas' lida como cumulativa.",
+   "janelas": [
     {
-      "url": "https://www.diariomunicipal.com.br/amp/materia/54AB473B",
-      "resultado": "LC 7/2025 (AMP, 26/03/2025) aberta e lida: art. 235, XI proíbe trafegar na Zona Central com caminhões >5 m e 7 t, seg-sex 07-20h e sáb 09-14h; art. 410 revoga a Lei 374/2011. Texto em atos/4115739/lc07_2025_posturas.txt"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:00",
+     "to": "20:00"
     },
     {
-      "url": "https://www.diariomunicipal.com.br/amp/materia/0082E773",
-      "resultado": "LC 1/2025 (plano/sistema viário): diretriz 'definindo a rota de ônibus e caminhões'; não é regra"
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/amp/materia/2FC363BF",
-      "resultado": "Resolução 003/2021 (RISPOA): ruído"
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "14:00"
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Mesma cláusula-padrão de 'Zona Central' do Código de Posturas (modelo repetido em Terra Roxa e Campina do Simão). Sem perímetro: desativada. OSM tem 1 way hgv=no (terciária sem nome) não cruzada com ato.",
-  "osm_divergencias": [
-    "1 way terciária sem nome com hgv=no no OSM sem ato municipal correspondente"
-  ],
-  "regras_rascunho": [
+   ],
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "comprimento_m",
+      "acima": 5
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 7
+     }
+    ]
+   },
+   "base_legal": [
     {
-      "id": "matorico_zona_central_posturas",
-      "tipo": "zona",
-      "regime": "Zona Central",
-      "nome": "Zona Central de Mato Rico: proibido trafegar com caminhões com mais de 5 m e 7 t",
-      "status": "desativada",
-      "confianca": "media",
-      "status_motivo": "O perímetro da 'Zona Central' não é definido no Código de Posturas; sem perímetro não há geometria. Ambiguidade 'mais de 5 metros e 7 toneladas' lida como cumulativa.",
-      "janelas": [
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "from": "07:00",
-          "to": "20:00"
-        },
-        {
-          "days": [
-            6
-          ],
-          "from": "09:00",
-          "to": "14:00"
-        }
-      ],
-      "alvo": {
-        "caminhao": true,
-        "todas": [
-          {
-            "campo": "comprimento_m",
-            "acima": 5
-          },
-          {
-            "campo": "pbt_t",
-            "acima": 7
-          }
-        ]
-      },
-      "base_legal": [
-        {
-          "ato": "Lei Complementar 7/2025 (Código de Posturas, DOM-PR 26/03/2025)",
-          "artigo": "art. 235, XI (art. 410: vigência na publicação)",
-          "url": "https://www.diariomunicipal.com.br/amp/materia/54AB473B"
-        }
-      ],
-      "geometria": []
+     "ato": "Lei Complementar 7/2025 (Código de Posturas, DOM-PR 26/03/2025)",
+     "artigo": "art. 235, XI (art. 410: vigência na publicação)",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/54AB473B"
     }
-  ]
+   ],
+   "geometria": [],
+   "feriados": "aplica",
+   "excecoes": []
+  }
+ ]
 }

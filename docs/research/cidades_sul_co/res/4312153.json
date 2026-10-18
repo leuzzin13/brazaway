@@ -3,8 +3,8 @@
  "nome": "Mato Leitão",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,21 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Contagens {\"maxweight\": 1}, todas em rodovia estadual/federal (ref) ou etiqueta não restritiva: fora da competência municipal; descartado como pista."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/rs/matoleitao (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/rs/matoleitao. Não contornar; usar a outra fonte do município (Câmara/SAPL, diár"
+  },
+  {
+   "url": "https://leis.org/prefeitura/rs/mato-leitao/busca?termo=Decreto (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leis.org/prefeitura/rs/mato-leitao/busca?termo=Decreto. Não contornar; usar a outra fonte do município (Câmara/SA"
+  },
+  {
+   "url": "https://matoleitao.rs.gov.br/?s=caminh%C3%B5es",
+   "resultado": "busca geral do site (prefeitura) por 'caminhões': 0 acerto(s) de título, todos irrelevantes (notícias/licitações de frota); não é busca em legislação"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5001 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/prefeitura/rs/matoleitao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5001 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/prefeitura/rs/matoleitao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: leismunicipais prefeitura https://leis.org/prefeitura/rs/mato-leitao/busca?termo=Decreto ; leismunicipais prefeitura https://leismunicipais.com.br/prefeitura/rs/matoleitao. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +55,7 @@
    "url_busca": "https://leismunicipais.com.br/prefeitura/rs/matoleitao",
    "cliente": false,
    "testado": false
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

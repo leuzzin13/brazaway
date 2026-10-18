@@ -2,25 +2,103 @@
  "ibge": "4204558",
  "nome": "Correia Pinto",
  "uf": "SC",
- "status": "nao_achou",
- "nivel_busca": "media",
- "falha_de_fonte": true,
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
+   "url": "https://diariomunicipal.sc.gov.br/atos/7723986",
+   "resultado": "Lead da preparação (DECRETO Nº 2518/2025) conferido: Decreto 2518/2025: tabela de diárias de depósito de veículos apreendidos (caminhão, ônibus)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, entidade do município; toolkit diarios_consolidados.py buscar)",
+   "resultado": "\"trânsito de caminhões\": 0 resultado(s) relevantes ; \"circulação de veículos pesados\": 0 resultado(s)"
+  },
+  {
    "url": "https://correiapinto.sc.gov.br/pagina-15367/",
-   "resultado": "busca de portal (portal_proprio) com caminh|carga e descarga|veículos pesados: sem acesso/sem retorno útil"
+   "resultado": "legislacao.py buscar --principal \"caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad\": cliente heurístico do portal da Câmara: 0 atos com caminh|veículos pesados|carga e descarga|tonelad (conferência limitada)"
   },
   {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/search (DOM/SC, entidade do município)",
-   "resultado": "busca \"trânsito de caminhões\": ver observações"
+   "url": "https://www.camaracorreiapinto.sc.gov.br/proposicoes/pesquisa (Softcam, busca texto integral: caminhões, caminhão, veículos pesados, veículos de carga, carga e descarga, toneladas, circulação de veículos, tráfego de veículos, carretas, 1361, Tancredo Neves)",
+   "resultado": "Achou Lei 1361/2005 (id 3697) \"Proíbe a circulação de veículos pesados nas áreas que determina\". Demais acertos = ruído (leilões, tarifas de reboque, COVID, ambulantes). Câmara responde com curl puro (o UA de navegador cai em Bot Verification)."
   },
   {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/search (DOM/SC, entidade do município)",
-   "resultado": "busca \"veículos pesados\": ver observações"
+   "url": "https://www.cloudsoftcam.com.br/SC/CORREIAPINTO/importacao/anexos/20180109153120666.pdf",
+   "resultado": "PDF escaneado (1 pág.) lido por OCR tesseract; texto salvo em atos/4204558/lei_1361_2005.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (domsc: \"1361/2005\", \"Tancredo Neves veículos de carga\", \"Tancredo Neves caminhões\")",
+   "resultado": "Sem revogação/alteração posterior localizada"
+  },
+  {
+   "url": "https://nominatim.openstreetmap.org/search?q=Avenida+Tancredo+Neves,+Correia+Pinto",
+   "resultado": "Av. Presidente Tancredo Neves = highway=tertiary, sem ref (via municipal)"
+  },
+  {
+   "url": "https://correiapinto.sc.gov.br/",
+   "resultado": "403 (WAF) ao nosso IP"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote de conferência barata (DR). Acerto da preparação confirmado como ruído (domsc None \"DECRETO Nº 2518/2025\" https://diariomunicipal.sc.gov.br/atos/7723986); buscas no DOM/SC por \"trânsito de caminhões\" e \"veículos pesados\" sem ato de restrição de circulação de caminhões.",
+ "observacoes": "Lote DR (conferência barata): acerto da preparação re-pontuado como ruído e confirmado. Decreto 2518/2025: tabela de diárias de depósito de veículos apreendidos (caminhão, ônibus). Nenhum ato municipal de restrição de circulação de caminhões encontrado no DOM/SC (busca por \"trânsito de caminhões\" e \"circulação de veículos pesados\"). | R3 2026-10-18: ACHADA via Câmara (Softcam): Lei 1361/2005, art. 1º proíbe circulação de veículos de carga de grande porte na Av. Tancredo Neves entre Rua Ema Sevei e Rua Presidente Kenedy (exceto ônibus; carga/descarga 7h-10h30 e 16h30-19h30). Sem revogação localizada na Câmara (busca \"1361\") nem no DOM/SC. Regra ativa, confiança média (OCR; sem peso mínimo; sinalização não confirmada).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "correiapinto_lei1361_2005_av_tancredo_neves",
+   "tipo": "via",
+   "regime": "Proibida a circulação de veículos de carga de grande porte (exceto ônibus); carga e descarga só 7h00-10h30 e 16h30-19h30",
+   "nome": "Correia Pinto: Lei 1361/2005 - Av. Tancredo Neves (Rua Ema Sevei a Rua Presidente Kenedy)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 1º: ônibus",
+    "art. 1º, § 1º: tráfego para carga e descarga permitido das 7h00 às 10h30 e das 16h30 às 19h30",
+    "art. 1º, § 2º: casos de excepcional necessidade autorizados pela SEPLAN mediante requerimento"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1361, de 15/12/2005 (Correia Pinto/SC)",
+     "artigo": "art. 1º, caput e §§ 1º e 2º; art. 2º (sinalização em 60 dias)",
+     "url": "https://www.camaracorreiapinto.sc.gov.br/proposicoes/pesquisa/0/1/0/3697"
+    }
+   ],
+   "vigencia_inicio": "2005-12-15",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Tancredo Neves"
+     ],
+     "de": [
+      "Rua Ema Sevei"
+     ],
+     "ate": [
+      "Rua Presidente Kenedy"
+     ],
+     "descricao": "Av. Tancredo Neves entre o cruzamento com a Rua Ema Sevei e o cruzamento com a Rua Presidente Kenedy",
+     "aproximado": false
+    }
+   ],
+   "nota": "Lei não fixa peso: 'veículos de carga de grande porte'. Texto lido por OCR do PDF escaneado (pode haver erro em grafia de rua: 'Ema Sevei', 'Presidente Kenedy'). Via OSM: Avenida Presidente Tancredo Neves, highway=tertiary, sem ref (municipal)."
+  }
+ ]
 }

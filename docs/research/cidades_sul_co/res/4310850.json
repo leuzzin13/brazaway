@@ -3,8 +3,8 @@
  "nome": "Jaboticaba",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596) passa por reCAPTCHA e devolve 0 via API; não automatizar"
+  },
+  {
+   "url": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596 (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596) passa por reCAPTCHA e devolve 0 via API; não automatizar"
+  },
+  {
+   "url": "https://jaboticaba.cespro.com.br/ (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://jaboticaba.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não automatizar. Use a lista por ano no naveg"
+  },
+  {
+   "url": "https://camarajaboticaba.atende.net (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://camarajaboticaba.atende.net/autoatendimento/servicos/legislacao-municipal/deta"
+  },
+  {
+   "url": "https://jaboticaba.atende.net (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://jaboticaba.atende.net/autoatendimento/servicos/legislacao-municipal/detalhar/1"
+  },
+  {
+   "url": "https://camarajaboticaba.rs.gov.br/?s=caminh%C3%B5es",
+   "resultado": "busca geral do site (camara) por 'caminhões': 0 acerto(s) de título, todos irrelevantes (notícias/licitações de frota); não é busca em legislação"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3847 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3847 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: atende camara https://camarajaboticaba.atende.net ; atende prefeitura https://jaboticaba.atende.net ; cespro camara https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596 ; cespro prefeitura https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596 ; cespro prefeitura https://jaboticaba.cespro.com.br/. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +67,7 @@
    "url_busca": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7596",
    "cliente": false,
    "testado": false
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

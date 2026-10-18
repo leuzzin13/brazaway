@@ -3,7 +3,7 @@
  "nome": "Boa Esperança do Norte",
  "uf": "MT",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,25 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://boaesperancadonorte.mt.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP ?); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://boaesperancadonorte.mt.leg.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP ?); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
+  },
+  {
+   "url": "https://boaesperancadonorte.mt.gov.br/transparencia?c=Publicacao_Transparencia_view&f=1",
+   "resultado": "Legislação: 5 leis (2025), nenhuma sobre caminhões; município novo"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5983 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nao_encontrado, None) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5983 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nao_encontrado, None) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Município novo (portal boaesperancadonorte.mt.gov.br/transparencia?c=Publicacao_Transparencia_view&f=1 lista só 5 leis, todas de 2025; Lei 005/2025 adota a legislação do município de origem). Sem ato próprio sobre caminhões; eventual regra seria a do município de origem (fora do escopo). Negativo considerado conclusivo para a fonte varrida.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

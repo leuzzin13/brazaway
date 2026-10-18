@@ -2,9 +2,9 @@
  "ibge": "5107800",
  "nome": "Santo Antônio de Leverger",
  "uf": "MT",
- "status": "regra_sem_ato",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -38,11 +38,112 @@
   {
    "url": "https://www.leverger.mt.gov.br/",
    "resultado": "HTTP 200; home sem acesso a normas; links levam a transparencia.leverger.mt.gov.br e gp.srv.br (não abertos)."
+  },
+  {
+   "url": "https://transparencia.leverger.mt.gov.br/Legislacao/Leis/ e /Decretos/",
+   "resultado": "portal respondeu; achou Lei 1.428/2023 (Trânsito Urbano)"
+  },
+  {
+   "url": "https://transparencia.leverger.mt.gov.br/fotos_documentos/1319.pdf",
+   "resultado": "LIDO integral: Lei 1.428/2023"
   }
  ],
- "observacoes": "Há ato primário com valores (Lei 1.095/2013) mas o perímetro da ZRM está só em MAPA anexo aos Decretos 33/2013 e 53/2014 (não textual) e o portal da prefeitura (MPX) estava fora do ar: regra fica desativada (regra_sem_ato). Vigência atual não confirmada (diário cobre até ~2015). falha_de_fonte true porque o portal principal não respondeu.",
+ "observacoes": "Há ato primário com valores (Lei 1.095/2013) mas o perímetro da ZRM está só em MAPA anexo aos Decretos 33/2013 e 53/2014 (não textual) e o portal da prefeitura (MPX) estava fora do ar: regra fica desativada (regra_sem_ato). Vigência atual não confirmada (diário cobre até ~2015). falha_de_fonte true porque o portal principal não respondeu. R3 2026-10-18: TAREFA (b): o portal MPX da Prefeitura (transparencia.leverger.mt.gov.br) voltou a responder; em Legislacao/Leis achada a Lei nº 1.428/2023 (06/10/2023, subcategoria Trânsito Urbano), que restringe caminhões de 3 eixos e > 20 t em Av. Américo Pinto Brasil (trecho), Rua Amilton Figueiredo e Rua Guaporé. PDF lido (URL .../fotos_documentos/1319.pdf). Regra ATIVA (vias nomeadas). Regras da ZRM (mapa anexo, Lei 1.095/2013) e do Decreto 06/2012 seguem desativadas (perímetro só em mapa / provisória; vigência não confirmada). O portal só lista essa lei e 3 decretos recentes; sem alteração. falha_de_fonte=false.",
  "osm_divergencias": [],
  "regras_rascunho": [
+  {
+   "id": "santoantonioleverger_lei1428_2023_vias",
+   "tipo": "via",
+   "regime": "Restrição de caminhões 3 eixos e > 20 t (vias)",
+   "nome": "Santo Antônio de Leverger: Av. Américo Pinto Brasil (trecho), Rua Amilton Figueiredo e Rua Guaporé (Av. Clóvis Dias), caminhões de três eixos e acima de 20 t (Lei 1.428/2023)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "excecoes": [
+    "Obras e serviços de emergência",
+    "Transporte coletivo de passageiros",
+    "Veículos oficiais federais, estaduais e municipais",
+    "PM, bombeiros, ambulâncias",
+    "Forças Armadas",
+    "Empresas públicas/concessionárias/permissionárias de serviços urbanos",
+    "Veículos pesados indo a oficinas/comércio de manutenção no município, sem carreta/reboque/semirreboque acoplado",
+    "Coleta e transporte de lixo",
+    "Socorro mecânico (guincho)",
+    "Cobertura jornalística"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.428, de 06/10/2023 (Santo Antônio de Leverger/MT; portal: 09/10/2023)",
+     "artigo": "art. 1º (a, b, c), art. 2º (exceções), art. 3º (multa), art. 5º (regulamentação por decreto, inclusive exceções a moradores)",
+     "url": "https://transparencia.leverger.mt.gov.br/Legislacao/Leis/Lei-14282023-1315",
+     "nota": "PDF lido: https://transparencia.leverger.mt.gov.br/fotos_documentos/1319.pdf"
+    }
+   ],
+   "vigencia_inicio": "2023-10-09",
+   "vigencia_fim": null,
+   "trechos": [
+    {
+     "inciso": "art. 1º, a",
+     "via": [
+      "Avenida Américo Pinto Brasil"
+     ],
+     "de": [
+      "Rua Coronel Arruda"
+     ],
+     "ate": [
+      "Rua Amilton Figueiredo"
+     ],
+     "descricao": "Av. Américo Pinto Brasil, do entroncamento com a Rua Coronel Arruda até o entroncamento com a Rua Amilton Figueiredo",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 1º, b",
+     "via": [
+      "Rua Amilton Figueiredo"
+     ],
+     "descricao": "Toda a rua",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 1º, c",
+     "via": [
+      "Rua Guaporé",
+      "Avenida Clóvis Dias"
+     ],
+     "descricao": "Rua Guaporé (Avenida Clovis Dias)",
+     "aproximado": false
+    }
+   ],
+   "nota": "Ambiguidade: 'caminhões de três eixos e acima de 20 toneladas' foi lido como eixos >= 3 E peso > 20 t (leitura menos restritiva). A lei não diz se são 20 t de PBT ou de carga. Data de publicação oficial não vista (usada a data do portal). Decreto regulamentador (art. 5º) não localizado; portal só lista 3 decretos. Sinalização não verificada."
+  },
   {
    "id": "santoantonioleverger_zrm_pbt_10_16",
    "tipo": "zona",

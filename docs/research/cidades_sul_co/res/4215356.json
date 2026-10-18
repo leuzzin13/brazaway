@@ -3,24 +3,44 @@
  "nome": "Saltinho",
  "uf": "SC",
  "status": "nao_achou",
- "nivel_busca": "media",
+ "nivel_busca": "dirigida",
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8427414",
+   "resultado": "acerto da preparação lido/conferido: LEI COMPLEMENTAR Nº 141/2026 — ruído (ver observações)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca ao vivo via toolkit diarios_consolidados.py)",
+   "resultado": "'trânsito de caminhões': 0; 'circulação de caminhões': 0; 'veículos pesados': 6 (só ruído: licitação/ARP/pessoal/estrutura); 'carretas': 0 (implementos agrícolas/alienação/licitação, nenhum ato normativo de restrição)"
+  },
+  {
    "url": "https://saltinho.siscam.com.br/legislaturas",
-   "resultado": "portal mapeado (siscam) devolveu normas de homônimo paulista (Saltinho/SP, Novo Horizonte/SP; legislacaodigital.com.br/Saltinho): descartado"
+   "resultado": "legislacao.py buscar --principal 'caminh|veículos pesados|carga e descarga|tonelad|tráfego': {'caminh': 3, 'veículos pesados': 0, 'veiculos pesados': 0, 'carga e descarga': 0, 'tonelad': 0, 'tráfego': 1, 'trafego': 1}  atos=3"
   },
   {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/search (DOM/SC, entidade do município)",
-   "resultado": "busca \"trânsito de caminhões\": ver observações"
+   "url": "https://novohorizonte.sc.gov.br/legislacao-2/ ; https://www.saltinho.sc.gov.br/",
+   "resultado": "HTTP 403 (WAF) ao IP da nuvem"
   },
   {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/search (DOM/SC, entidade do município)",
-   "resultado": "busca \"veículos pesados\": ver observações"
+   "url": "https://diariomunicipal.sc.gov.br/ (toolkit domsc R3, 14 termos: caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, zona de restrição, VUC, trânsito pesado, carretas, etc.)",
+   "resultado": "Sem ato de restrição de circulação; acertos = ruído"
+  },
+  {
+   "url": "https://www.camarasaltinho.sc.gov.br/proposicoes/pesquisa (Câmara Softcam, curl puro)",
+   "resultado": "0 acertos para caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, trânsito, circulação/tráfego de veículos, carretas; mas o acervo de leis da Câmara é vazio -> negativo NÃO conclusivo"
+  },
+  {
+   "url": "https://www.saltinho.sc.gov.br/",
+   "resultado": "403 (WAF) ao nosso IP"
+  },
+  {
+   "url": "https://saltinho.siscam.com.br/legislaturas",
+   "resultado": "homônimo paulista - descartado"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote de conferência barata (DR). Acerto da preparação confirmado como ruído (domsc 2026-06-17 \"LEI COMPLEMENTAR Nº 141/2026\" https://diariomunicipal.sc.gov.br/atos/8427414); buscas no DOM/SC por \"trânsito de caminhões\" e \"veículos pesados\" sem ato de restrição de circulação de caminhões.",
+ "observacoes": "Lote DR (conferência barata). Acerto re-pontuado confirmado como ruído. ATENÇÃO homônimo: o cliente siscam apontado em portais.json (saltinho.siscam.com.br) é de Saltinho/SP (resultados Saltinho-SP em legislacaodigital.com.br, incluindo a Lei 18/1993 que proíbe tráfego de caminhões — NÃO é de SC, descartada). Para Saltinho/SC só valem DOM/SC e site da prefeitura (www.saltinho.sc.gov.br dá 403 ao IP). LC 141/2026 (acerto) trata de ambulantes/eventos e cita atos de carga e descarga: ruído. Sem ato em SC. Fonte própria do município indisponível/errada; DOM/SC (acervo ~2013+) foi a única base efetiva, então o 'não achou' é parcial. | R3 2026-10-18: Sem restrição encontrada nas fontes alternativas abaixo, mas continua INCONCLUSIVO. Bloqueio específico: www.saltinho.sc.gov.br (403 WAF).",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

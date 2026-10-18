@@ -2,9 +2,9 @@
  "ibge": "4121406",
  "nome": "Realeza",
  "uf": "PR",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.diariomunicipal.com.br/amp/pesquisar (busca \"trânsito de caminhões\")",
@@ -13,10 +13,52 @@
   {
    "url": "https://leismunicipais.com.br/legislacao-municipal/3445/leis-de-realeza?q=",
    "resultado": "403 Cloudflare, não contornado; portal principal indisponível"
+  },
+  {
+   "url": "https://leismunicipais.com.br/legislacao-municipal/3445/leis-de-realeza?q=",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/legislacao-"
+  },
+  {
+   "url": "https://realeza.cespro.com.br/",
+   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://realeza.cespro.com.br/) passa por"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (diarios_consolidados.py buscar --fonte amp)",
+   "resultado": "R3: 5 consultas novas ('proibido trânsito de caminhões', 'proibida circulação veículos de carga', 'peso bruto total veículos vias', 'horário carga e descarga área central', 'restrição tráfego veículos pesados'); 4 concluídas, 18 matérias distintas; nenhuma é ato de restrição de circulação de caminhões (ruído: plano diretor/uso do solo, sísmica, feira, tributos, cargos)."
+  },
+  {
+   "url": "https://www.realeza.pr.gov.br/",
+   "resultado": "R3 home prefeitura: HTTP 406 (bloqueio/erro)"
+  },
+  {
+   "url": "https://camaraderealeza.pr.gov.br/",
+   "resultado": "R3 home camara: HTTP 406 (bloqueio/erro)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Conferência barata (DR). Trechos anotados são ruído: LC 06/2019 e demais: dimensões de faixas do sistema viário para veículos de carga, aquisições sísmicas, cargos, uso do solo; nada de restrição de circulação. Nenhum ato municipal de restrição a caminhões encontrado na busca de diário AMP. Portal de legislação inacessível/sem busca: conclusão baseada só no diário AMP (cobre o município), por isso falha_de_fonte=true.",
+ "observacoes": "Conferência barata (DR). Trechos anotados são ruído: LC 06/2019 e demais: dimensões de faixas do sistema viário para veículos de carga, aquisições sísmicas, cargos, uso do solo; nada de restrição de circulação. Nenhum ato municipal de restrição a caminhões encontrado na busca de diário AMP. Portal de legislação inacessível/sem busca: conclusão baseada só no diário AMP (cobre o município), por isso falha_de_fonte=true. | R3 2026-10-18: Diário AMP + decreto de carga e descarga localizado. Limite: diário/base só cobre o período publicado; leis anteriores à adesão e decretos fora da base não verificados. Decreto 4.797/2024 regula só vagas de carga e descarga do estacionamento rotativo CirculaR (1 h, isenção de cobrança): não restringe circulação; gravado desativado ('só carga e descarga').",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "realeza_carga_descarga_circular",
+   "tipo": "zona",
+   "regime": "Vagas de carga e descarga (estacionamento rotativo)",
+   "nome": "Realeza: vagas de carga e descarga do CirculaR (Decreto 4.797/2024)",
+   "status": "desativada",
+   "status_motivo": "só carga e descarga: o decreto regula tempo (1 h) e cobrança das vagas de carga e descarga do estacionamento rotativo; não restringe circulação nem passagem e não lista vias.",
+   "confianca": "alta",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 4.797, de 19/11/2024",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/0CD9406E"
+    }
+   ]
+  }
+ ]
 }

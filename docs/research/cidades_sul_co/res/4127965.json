@@ -1,142 +1,146 @@
 {
- "ibge": "4127965",
- "nome": "Turvo",
- "uf": "PR",
- "status": "pista",
- "nivel_busca": "dirigida",
- "falha_de_fonte": false,
- "data": "2026-10-18",
- "fontes_consultadas": [
-  {
-   "url": "https://camaraturvo.pr.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&&idtipolei=4 (Webline, via toolkit)",
-   "resultado": "Cliente excedeu 300 s sem resposta (timeout); portal da Câmara não consultado."
-  },
-  {
-   "url": "https://leismunicipais.com.br/prefeitura/pr/turvo",
-   "resultado": "Bloqueio Cloudflare (conhecido), não tentado."
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 4127965 \"trânsito de caminhões\" (AMP/SIGPub)",
-   "resultado": "17 resultados; o principal é a LC 06/2022 (Sistema Viário), lida; demais ruído (anexo de cargos, concurso)."
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 4127965 \"circulação de veículos pesados\" (AMP/SIGPub)",
-   "resultado": "16 resultados, ruído (comissão processante 2014, LC 05/2022 uso do solo)."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
-   "resultado": "LC 06/2022 (sistema viário, de 14/12/2022, publicada em 02/02/2023, DOM-PR ed. 2702) lida; Título IX (Transporte de Cargas) arts. 50-53 e art. 67 salvos em atos/4127965/lc_06_2022.txt. Art. 52: 'Na área urbana da sede de Turvo/PR, a rota permitida para veículos de carga é ... PR 466; Rodovia Municipal João Maria de Jesus (acesso 6); Rua Arvoredo (acesso 5); trecho da Av. XV de Novembro (acesso 2) até a Rua Aristóteles Leão'. Art. 53: distrito Faxinal da Boa Vista: Rodovia Municipal João Maria de Jesus; Via Industrial; Via de Penetração 06 seguida da Via Coletora 09 até o Circuito Estrutural 01 e Via Coletora 02. Mapas nos Anexos V e VI não disponíveis."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/amp/materia/B89588B1",
-   "resultado": "LC 05/2022 (uso do solo): ruído."
-  }
- ],
- "observacoes": "[Lote R1-PR-DR03] Achado real vindo da DR: a LC 06/2022 institui 'rota permitida' para veículos de carga na sede e em Faxinal da Boa Vista, mas não traz proibição expressa fora da rota, nem critério de veículo (peso/eixos), nem sanção; os Anexos V/VI (mapas) não estavam no texto do diário. Interpretação (veículos de carga proibidos fora da rota) é inferência; por isso status 'pista' e regra desativada. Não foi pesquisado ato posterior de alteração/revogação nem decreto de regulamentação (portal da Câmara em timeout; prefeitura em Leis Municipais bloqueado). Vale aprofundar: olhar decreto de regulamentação/sinalização e os mapas.",
- "osm_divergencias": [],
- "regras_rascunho": [
-  {
-   "id": "turvo_rota_carga_sede",
-   "tipo": "via",
-   "regime": "Rota permitida para veículos de carga",
-   "nome": "Sede de Turvo: rota permitida para veículos de carga (LC 06/2022, art. 52)",
-   "status": "desativada",
-   "status_motivo": "O ato define a rota permitida (PR-466, Rod. Mun. João Maria de Jesus, Rua Arvoredo, Av. XV de Novembro até R. Aristóteles Leão) mas não proíbe expressamente a carga fora dela, não fixa veículo-alvo nem sanção; mapa do Anexo V não lido; sem regulamentação nem sinalização conferida.",
-   "confianca": "baixa",
-   "janelas": [
+  "ibge": "4127965",
+  "nome": "Turvo",
+  "uf": "PR",
+  "status": "regra_sem_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [
+      "url": "https://camaraturvo.pr.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&&idtipolei=4 (Webline, via toolkit)",
+      "resultado": "Cliente excedeu 300 s sem resposta (timeout); portal da Câmara não consultado."
+    },
     {
-     "ato": "Lei Complementar 06/2022 (Turvo/PR), de 14/12/2022",
-     "artigo": "arts. 50-52 e 67",
-     "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
-     "nota": "Texto lido no DOM-PR (AMP), ed. 2702 de 02/02/2023."
-    }
-   ],
-   "vigencia_inicio": "2023-02-02",
-   "trechos": [
+      "url": "https://leismunicipais.com.br/prefeitura/pr/turvo",
+      "resultado": "Bloqueio Cloudflare (conhecido), não tentado."
+    },
     {
-     "inciso": "art. 52",
-     "via": [
-      "PR 466",
-      "Rodovia Municipal João Maria de Jesus",
-      "Rua Arvoredo",
-      "Avenida XV de Novembro (até a Rua Aristóteles Leão)"
-     ],
-     "descricao": "Rota permitida na área urbana da sede (as demais vias seriam as restritas, por inferência; Anexo V).",
-     "aproximado": true
-    }
-   ]
-  },
-  {
-   "id": "turvo_rota_carga_faxinal",
-   "tipo": "via",
-   "regime": "Rota permitida para veículos de carga",
-   "nome": "Distrito Faxinal da Boa Vista: rota permitida para veículos de carga (LC 06/2022, art. 53)",
-   "status": "desativada",
-   "status_motivo": "Mesmo caso da sede: define apenas a rota permitida; Anexo VI não lido.",
-   "confianca": "baixa",
-   "janelas": [
+      "url": "toolkit/diarios_consolidados.py buscar 4127965 \"trânsito de caminhões\" (AMP/SIGPub)",
+      "resultado": "17 resultados; o principal é a LC 06/2022 (Sistema Viário), lida; demais ruído (anexo de cargos, concurso)."
+    },
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [
+      "url": "toolkit/diarios_consolidados.py buscar 4127965 \"circulação de veículos pesados\" (AMP/SIGPub)",
+      "resultado": "16 resultados, ruído (comissão processante 2014, LC 05/2022 uso do solo)."
+    },
     {
-     "ato": "Lei Complementar 06/2022 (Turvo/PR), de 14/12/2022",
-     "artigo": "art. 53",
-     "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
-     "nota": "Texto lido no DOM-PR (AMP)."
-    }
-   ],
-   "vigencia_inicio": "2023-02-02",
-   "trechos": [
+      "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
+      "resultado": "LC 06/2022 (sistema viário, de 14/12/2022, publicada em 02/02/2023, DOM-PR ed. 2702) lida; Título IX (Transporte de Cargas) arts. 50-53 e art. 67 salvos em atos/4127965/lc_06_2022.txt. Art. 52: 'Na área urbana da sede de Turvo/PR, a rota permitida para veículos de carga é ... PR 466; Rodovia Municipal João Maria de Jesus (acesso 6); Rua Arvoredo (acesso 5); trecho da Av. XV de Novembro (acesso 2) até a Rua Aristóteles Leão'. Art. 53: distrito Faxinal da Boa Vista: Rodovia Municipal João Maria de Jesus; Via Industrial; Via de Penetração 06 seguida da Via Coletora 09 até o Circuito Estrutural 01 e Via Coletora 02. Mapas nos Anexos V e VI não disponíveis."
+    },
     {
-     "inciso": "art. 53",
-     "via": [
-      "Rodovia Municipal João Maria de Jesus",
-      "Via Industrial",
-      "Via de Penetração 06",
-      "Via Coletora 09",
-      "Via Coletora 02"
-     ],
-     "descricao": "Rota permitida no distrito Faxinal da Boa Vista.",
-     "aproximado": true
+      "url": "https://www.diariomunicipal.com.br/amp/materia/B89588B1",
+      "resultado": "LC 05/2022 (uso do solo): ruído."
+    },
+    {
+      "url": "AMP buscar 4127965 \"rota veículos de carga\" / \"decreto regulamenta LC 06/2022\"",
+      "resultado": "só a LC 06/2022 e ruído"
     }
-   ]
-  }
- ]
+  ],
+  "observacoes": "[Lote R1-PR-DR03] Achado real vindo da DR: a LC 06/2022 institui 'rota permitida' para veículos de carga na sede e em Faxinal da Boa Vista, mas não traz proibição expressa fora da rota, nem critério de veículo (peso/eixos), nem sanção; os Anexos V/VI (mapas) não estavam no texto do diário. Interpretação (veículos de carga proibidos fora da rota) é inferência; por isso status 'pista' e regra desativada. Não foi pesquisado ato posterior de alteração/revogação nem decreto de regulamentação (portal da Câmara em timeout; prefeitura em Leis Municipais bloqueado). Vale aprofundar: olhar decreto de regulamentação/sinalização e os mapas. | R3 2026-10-18: LC 06/2022 arts. 52-53: rota permitida para veículos de carga (sede: PR-466, Rod. Mun. João Maria de Jesus, R. Arvoredo, Av. XV de Novembro até R. Aristóteles Leão; Faxinal da Boa Vista: rota própria), sem proibição expressa fora da rota, sem critério de veículo e com mapas (Anexos V/VI) não obtidos. AMP reconsultado: nenhum decreto regulamentador. Desativada.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "turvo_rota_carga_sede",
+      "tipo": "via",
+      "regime": "Rota permitida para veículos de carga",
+      "nome": "Sede de Turvo: rota permitida para veículos de carga (LC 06/2022, art. 52)",
+      "status": "desativada",
+      "status_motivo": "O ato define a rota permitida (PR-466, Rod. Mun. João Maria de Jesus, Rua Arvoredo, Av. XV de Novembro até R. Aristóteles Leão) mas não proíbe expressamente a carga fora dela, não fixa veículo-alvo nem sanção; mapa do Anexo V não lido; sem regulamentação nem sinalização conferida.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 06/2022 (Turvo/PR), de 14/12/2022",
+          "artigo": "arts. 50-52 e 67",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
+          "nota": "Texto lido no DOM-PR (AMP), ed. 2702 de 02/02/2023."
+        }
+      ],
+      "vigencia_inicio": "2023-02-02",
+      "trechos": [
+        {
+          "inciso": "art. 52",
+          "via": [
+            "PR 466",
+            "Rodovia Municipal João Maria de Jesus",
+            "Rua Arvoredo",
+            "Avenida XV de Novembro (até a Rua Aristóteles Leão)"
+          ],
+          "descricao": "Rota permitida na área urbana da sede (as demais vias seriam as restritas, por inferência; Anexo V).",
+          "aproximado": true
+        }
+      ]
+    },
+    {
+      "id": "turvo_rota_carga_faxinal",
+      "tipo": "via",
+      "regime": "Rota permitida para veículos de carga",
+      "nome": "Distrito Faxinal da Boa Vista: rota permitida para veículos de carga (LC 06/2022, art. 53)",
+      "status": "desativada",
+      "status_motivo": "Mesmo caso da sede: define apenas a rota permitida; Anexo VI não lido.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 06/2022 (Turvo/PR), de 14/12/2022",
+          "artigo": "art. 53",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DAAFCB86",
+          "nota": "Texto lido no DOM-PR (AMP)."
+        }
+      ],
+      "vigencia_inicio": "2023-02-02",
+      "trechos": [
+        {
+          "inciso": "art. 53",
+          "via": [
+            "Rodovia Municipal João Maria de Jesus",
+            "Via Industrial",
+            "Via de Penetração 06",
+            "Via Coletora 09",
+            "Via Coletora 02"
+          ],
+          "descricao": "Rota permitida no distrito Faxinal da Boa Vista.",
+          "aproximado": true
+        }
+      ]
+    }
+  ]
 }

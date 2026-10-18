@@ -3,8 +3,8 @@
  "nome": "Boqueirão do Leão",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,17 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.boqueiraodoleao.rs.gov.br/php/leis.php?t=1 (portal_proprio, prefeitura; legislacao.py buscar, 9 termos)",
+   "resultado": "busca ok; 1 ato(s) por ementa, nenhum de restrição de caminhões (acertos: LEI MUNICIPAL 2221/2024 - ruído: nomeações/licitação/denominação/saúde etc.)"
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/rs/boqueiraodoleao (legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|tráfego pesado|tonelada|trânsito pesado)",
+   "resultado": "FONTE INACESSÍVEL ao automatizado: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/camara/rs/boqueiraodoleao. Não contornar; usar a outra fonte do município (Câmara/SAPL, diá"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (6202 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.boqueiraodoleao.rs.gov.br/php/leis.php?t=1) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (6202 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.boqueiraodoleao.rs.gov.br/php/leis.php?t=1) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: leismunicipais camara https://leismunicipais.com.br/camara/rs/boqueiraodoleao. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +51,7 @@
    "url_busca": "https://www.boqueiraodoleao.rs.gov.br/php/leis.php?t=1",
    "cliente": true,
    "testado": true
-  }
+  },
+  "r3_cm": "R3-CM-RS1"
  }
 }

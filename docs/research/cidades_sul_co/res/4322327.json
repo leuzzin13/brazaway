@@ -3,7 +3,7 @@
  "nome": "Turuçu",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,45 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://sapl.turucu.rs.leg.br",
+   "resultado": "R3: legislacao.py sapl (camara) termos(ementa) {\"caminh\": 0, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 0 ato(s); 0 resultado"
+  },
+  {
+   "url": "https://www.turucu.rs.gov.br",
+   "resultado": "R3: legislacao.py instar (camara) termos(ementa) {\"caminh\": 1, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 1 ato(s); nenhum sobre restricao de caminhoes (ementas irrelevantes: Lei Ordinária 1623/2026)"
+  },
+  {
+   "url": "https://www.turucu.rs.gov.br",
+   "resultado": "R3: legislacao.py instar (prefeitura) termos(ementa) {\"caminh\": 1, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 1 ato(s); nenhum sobre restricao de caminhoes (ementas irrelevantes: Lei Ordinária 1623/2026)"
+  },
+  {
+   "url": "https://turucu.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "R3: 1doc (prefeitura) NAO consultavel por curl: sem cliente automático; consultar manualmente: https://turucu.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://sapl.turucu.rs.leg.br/api/norma/normajuridica/?ementa__icontains=",
+   "resultado": "R3: API SAPL ok; totais por termo {\"caminh\": 0, \"carga e descarga\": 0, \"pesado\": 0, \"tonelada\": 0, \"trânsito\": 5, \"transito\": 0, \"zona de restri\": 0, \"veículo\": 2, \"veiculo\": 0}; ementas conferidas: nenhuma restringe circulacao de caminhoes"
+  },
+  {
+   "url": "https://www.turucu.rs.leg.br/?s=caminhões",
+   "resultado": "R3: home http 0; busca do site http 0"
+  },
+  {
+   "url": "https://www.turucu.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4322327",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3488 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.turucu.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3488 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.turucu.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: cobertura minima fechada. Fonte municipal pesquisavel (https://sapl.turucu.rs.leg.br, https://www.turucu.rs.gov.br) varrida com caminh/carga e descarga/veiculos pesados/transito pesado/tonelada(+transito/veiculo/zona de restricao em SAPL): nada sobre restricao de caminhoes. nao_achou com fonte coberta (busca por ementa; texto integral nao varrido). Fontes nao consultaveis: 1doc https://turucu.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://turucu.1doc.com.br/b.php?pg=o/login.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +79,7 @@
    "url_busca": "https://sapl.turucu.rs.leg.br",
    "cliente": true,
    "testado": true
-  }
+  },
+  "cobertura_minima_fechada_r3": true
  }
 }

@@ -3,8 +3,8 @@
  "nome": "Paraíso das Águas",
  "uf": "MS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://paraisodasaguas.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://camaraparaisodasaguas.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://camaraparaisodasaguas.ms.gov.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "https://cmparaisodasaguas.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "sistema 1doc: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "https://paraisodasaguas.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "sistema 1doc: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5904 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (webline, https://camaraparaisodasaguas.ms.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=4) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (5904 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (webline, https://camaraparaisodasaguas.ms.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=4) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Prefeitura https://paraisodasaguas.ms.gov.br não resolve DNS (só /site/), leismunicipais.com.br/prefeitura/ms/paraiso-das-aguas bloqueado (Cloudflare); webline da Câmara estourou o tempo. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

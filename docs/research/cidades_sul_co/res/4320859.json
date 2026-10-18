@@ -3,8 +3,8 @@
  "nome": "Tabaí",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://tabai.rs.gov.br/legislacao",
+   "resultado": "R3: legislacao.py portal_proprio (prefeitura) termos(ementa) {\"caminh\": 0, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 0 ato(s); 0 resultado [busca heuristica/sem cobertura comprovada: nao conclusivo]"
+  },
+  {
+   "url": "https://tabai.rs.leg.br/",
+   "resultado": "R3: desconhecido (camara) NAO consultavel por curl: sem cliente automático; consultar manualmente: https://tabai.rs.leg.br/"
+  },
+  {
+   "url": "https://sapl.tabai.rs.leg.br",
+   "resultado": "R3: sapl.<cidade>.rs.leg.br sondado, sem API (http 0)"
+  },
+  {
+   "url": "https://tabai.rs.leg.br/?s=caminhões",
+   "resultado": "R3: home http 403; busca do site http 403"
+  },
+  {
+   "url": "https://tabai.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4320859",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4569 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://tabai.rs.gov.br/legislacao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4569 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://tabai.rs.gov.br/legislacao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: desconhecido https://tabai.rs.leg.br/: sem cliente automático; consultar manualmente: https://tabai.rs.leg.br/. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +71,7 @@
    "url_busca": "https://tabai.rs.gov.br/legislacao",
    "cliente": true,
    "testado": false
-  }
+  },
+  "cobertura_minima_fechada_r3": false
  }
 }
