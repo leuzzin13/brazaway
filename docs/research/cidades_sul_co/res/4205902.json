@@ -1,0 +1,100 @@
+{
+ "ibge": "4205902",
+ "nome": "Gaspar",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1780805",
+   "resultado": "Pista da preparação (2018-10-23, LEI Nº 3.926, DE 17 DE OUTUBRO DE 2018.). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/7248492",
+   "resultado": "Pista da preparação (2025-05-23, DECRETO Nº 12.478, DE 16 DE MAIO DE 2025). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/352871",
+   "resultado": "Pista da preparação (2013-05-20, DECRETO Nº 5.477, DE 16 DE MAIO DE 2013.). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br (diarios_consolidados.py buscar 4205902, fonte domsc)",
+   "resultado": "Busca ao vivo no DOM/SC: 27 consultas (frases \"circulação/tráfego/trânsito de caminhões\", \"veículos pesados\", \"tráfego pesado\", \"carretas\", \"toneladas\", \"veículos de carga\", \"peso bruto total\", \"limite de peso ponte\", \"rota de caminhões\", \"betoneira(s)\", \"tonelagem\", \"grande porte\", \"alta temporada\", \"vias rurais chuva\" e palavras soltas \"caminhões\", \"caminhão\", \"pesados\", entre outras): 210 atos distintos retornados; 114 textos integrais (excluídos editais, contratos, extratos, atas e licitações pelo título) obtidos via getHtml e varridos por regex de restrição (proibir/vedar/restringir/limitar + caminhão/veículo pesado/de carga/PBT/tonelada/carreta/betoneira)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sc/gaspar",
+   "resultado": "legislacao.py (leismunicipais, prefeitura): Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/prefeitura/sc/gaspar. Não conto"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/432947",
+   "resultado": "Decreto 5.699/2013 lido (limite original 25 t / 3 eixos), alterado pelo Decreto 7.588/2017."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Ponte Hercílio Deeke (centro de Gaspar): Decreto 7.588/2017 (DOM/SC atos/1349250, lido via getHtml) limita a 10 t de PBT a travessia de veículos automotores, exceto transporte coletivo do município e caminhões de Bombeiros em emergência; altera o art. 1º do Decreto 5.699/2013 (atos/432947, que limitava a 25 t ou caminhões de até 3 eixos). Não foi encontrado ato posterior que altere/revogue (busca no DOM/SC por 'Ponte Hercílio Deeke', 'limita peso', '7.588', '5.699'), por isso ativa com confiança média. OSM tem a ponte com hgv=no + maxweight=10 (nome grafado 'Decke'): o maxweight bate com o decreto, mas hgv=no é mais restritivo que o ato (que permite até 10 t); Rua Coronel Aristiliano Ramos (hgv=no, maxweight=4) e Rua Barão do Rio Branco (hgv=no / maxweight=25) não têm ato localizado. Lei Complementar 65/2015 (zoneamento/sistema viário) e Leis 3.377-3.378/2011 só trazem diretrizes (vias locais devem proibir veículos pesados de passagem; proibição de estacionar veículo de carga a menos de 10 m de esquina) - não são regra de circulação. [Onda R1 DX01, classe DW.]",
+ "osm_divergencias": [
+  "Gaspar: Ponte Hercílio Decke (way 112322733) hgv=no + maxweight=10; o Decreto 7.588/2017 limita a 10 t de PBT sem proibir caminhões abaixo disso (OSM mais restritivo).",
+  "Gaspar: Rua Coronel Aristiliano Ramos (way 150090849, hgv=no, maxweight=4) e Rua Barão do Rio Branco (ways 173630562/305078391, hgv=no, maxweight=25) sem ato localizado; 49 ways hgv=no e 82 maxweight no município."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "gaspar_dec7588_2017_ponte_hercilio_deeke",
+   "tipo": "ponte",
+   "regime": "Limite de PBT na Ponte Hercílio Deeke",
+   "nome": "Gaspar: Decreto 7.588/2017 - travessia da Ponte Hercílio Deeke limitada a 10 t de PBT",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "transporte coletivo do município",
+    "caminhões de Bombeiros em emergência"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 7.588, de 20/07/2017 (Gaspar/SC), que altera o art. 1º do Decreto 5.699/2013",
+     "artigo": "art. 1º (nova redação do art. 1º do Decreto 5.699/2013: limite de 10 t de PBT para veículo automotor na travessia)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1349250",
+     "nota": "Decreto 5.699/2013 (atos/432947) fixava 25 t / caminhões até 3 eixos; substituído."
+    }
+   ],
+   "vigencia_inicio": "2017-07-20",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Ponte Hercílio Deeke",
+      "Ponte Hercílio Decke"
+     ],
+     "descricao": "Travessia sobre a Ponte Hercílio Deeke, município de Gaspar (OSM way 112322733).",
+     "aproximado": false
+    }
+   ],
+   "nota": "O decreto motiva a restrição pela rotatória de acesso e pelo tráfego de estudantes. Sem ato posterior localizado; vigência não confirmada junto ao portal da prefeitura (leismunicipais bloqueado)."
+  }
+ ]
+}
