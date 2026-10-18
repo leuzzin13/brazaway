@@ -227,3 +227,20 @@ Como módulo: `descobrir(nome, sites)`, `acervo(host)`, `buscar(host, termo)`, `
 
 **Resultado da varredura (82 cidades GO com portal NucleoGov na lista):** só **2** têm `dom.*` — Niquelândia (acervo 2023-04 a 2026-10, 339 edições, só licitações/atas/portarias de pessoal, nenhum ato de trânsito) e Abadia de Goiás (1 edição, 2025-11-26, 0 matérias). Nos outros 80 o host `dom.<slug>.go.gov.br` não existe (o proxy responde 502 no CONNECT).
 Os municípios com acervo desde 2018 ou antes (critério para negativo conclusivo) não apareceram: o DOM NucleoGov é recente (2023+), então `falha_de_fonte` permanece como estava. Outros diários citados nas homes: Gameleira de Goiás e Trindade (`diariomunicipal.com.br/agm/`), Caldas Novas (`caldasnovas.integrame.app.br/app/#/site/diario-oficial`), Jataí (`intranet.jatai.go.gov.br/.../diario-site.php`), Vicentinópolis (Câmara `/diariooficial`).
+
+---
+
+## 8. `sigpub_texto.py` — texto integral no SIGPub (AGM/FGM, GO) por entidade — R4-AGM 2026-10-18
+
+O SIGPub (`diariomunicipal.com.br/<assoc>/pesquisar`, GET `busca_avancada[texto|titulo|entidade|dataInicio|dataFim|ordenacao|pagina]`) já é a busca de texto integral
+(E lógico, 25/pág., teto 10.000); não há API JSON separada. O que faltava: **entidade + faixa do acervo**. `texto` vazio + `entidade` lista tudo, e `ordenacao=antiga|recente` dá a primeira/última data e o total.
+```bash
+python3 sigpub_texto.py faixa 5221403                      # entidades do município em AGM/FGM + faixa/total
+python3 sigpub_texto.py varrer 5221403 --saida /tmp/x.json  # 6 termos x (todos|decreto|lei|portaria) x 2 págs; score + 'plausivel'
+python3 sigpub_texto.py lote ../fila_r3/R4-AGM-GO.json /tmp/saida
+```
+* O seletor de entidades do AGM traz nomes truncados ("Município de Abadia", "Município Gameleira", "Municipal de São Francisco", "Município de Montes Claros"...) que `resolve_entidade` deixa sem IBGE; `ALIAS` no módulo os mapeia (conferido: o cabeçalho das matérias diz ESTADO DE GOIÁS). Entidades como "Município de Niquelandia", Goianésia e Uruaçu existem mas estão **vazias** (0 matérias): a prefeitura não publica ali.
+* Das 82 cidades do lote R4-AGM-GO, **26 são entidades** (AGM 20, FGM 6; 4 delas vazias): Abadia, Campestre, Corumbá(vazia), Cristalina, Gameleira, Goianira, Guarani, Ipiranga, Iporá, Lagoa Santa, Montes Claros, Niquelândia(vazia), Nova Iguaçu, Palmeiras, Petrolina, Pilar, Porangatu, Posse, São Francisco, Trindade (AGM); Diorama, Goianésia(vazia), Mineiros, Planaltina, Uruaçu(vazia), Teresina (FGM). As outras 56 não estão em nenhum SIGPub de GO.
+* Faixa do acervo (primeira matéria): 2011 Diorama, Mineiros; 2013 Iporá, Lagoa Santa, Palmeiras; 2014 Abadia, Campestre, Guarani; 2015 Montes Claros; 2017 Ipiranga, Petrolina (só até 03/2021); 2018 Trindade (01), Posse (04), Gameleira (06); 2020 Planaltina; 2021 Goianira, Porangatu, Nova Iguaçu, São Francisco, Teresina; 2022 Cristalina; 2024 Pilar (só até 05/2025).
+* Resultado: nenhum ato de restrição de circulação de caminhões novo. Em Trindade, os acertos plausíveis eram os já tratados (Decretos 606/2019, 505/2023, 737/2024, 2.960/2026 da Romaria), Portaria 009/2021 (acesso de caminhões ao aterro: só pesagem), Decreto 3.012/2026 (caminhão-pipa no Parque Lara Guimarães) e Lei 2.406/2025 art. 34 (carga e descarga x estacionamento rotativo). Negativo conclusivo (acervo ≤ 2018 e ≥ 500 matérias): Abadia de Goiás, Diorama, Gameleira de Goiás, Guarani de Goiás, Ipiranga de Goiás, Iporá, Lagoa Santa, Mineiros, Montes Claros de Goiás, Palmeiras de Goiás, Posse, Trindade → `falha_de_fonte=false` (a entidade pode não publicar tudo no AGM; relevância limita a ~50 matérias por consulta).
+* Diários próprios: Vicentinópolis (Câmara) `/diariooficial` → 302 para `/ops/404` (inexistente); a "Legislação" da Câmara tem ~20 documentos e a busca (POST `/legislacao/filter`) para caminh/pesad/tonel dá 0. Jataí e Caldas Novas já tinham sido varridos (R3). SAPL das Câmaras .go.leg.br: só Cristalina, Porangatu e Uruaçu têm API (vazias ou 77 normas); o resto sem SAPL.
