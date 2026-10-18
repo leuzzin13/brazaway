@@ -3,7 +3,7 @@
  "nome": "Aral Moreira",
  "uf": "MS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://aralmoreira.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca WordPress REST (8 termos: caminhões, caminhão, veículos pesados, carga e descarga, tráfego pesado, toneladas, carretas, trânsito de veículos): 0 resultado(s) distintos, nenhum ato normativo de restrição a caminhões (notícias/páginas institucionais)"
+  },
+  {
+   "url": "https://cmaralmoreira.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://cmaralmoreira.ms.gov.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "legislacao.py buscar 5001243 (14 termos) -> portal_proprio https://cmaralmoreira.ms.gov.br/?page_id=185",
+   "resultado": "total=0; heurístico (formulário GET https://cmaralmoreira.ms.gov.br campo=s); conferir cada ato na fonte"
+  },
+  {
+   "url": "legislacao.py buscar 5001243 (14 termos) -> portal_proprio https://aralmoreira.ms.gov.br/",
+   "resultado": "total=0; heurístico (página filtrada localmente); conferir cada ato na fonte"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
+  },
+  {
+   "url": "https://diario.aralmoreira.ms.gov.br/public/diario/procurar?query=<termo>",
+   "resultado": "ver observações: 25 edições baixadas e lidas, negativo"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (11163 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://cmaralmoreira.ms.gov.br/?page_id=185) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (11163 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://cmaralmoreira.ms.gov.br/?page_id=185) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Diário oficial próprio (diario.aralmoreira.ms.gov.br, busca em texto integral dos PDFs): termos \"veículos pesados\"(1), \"toneladas\"(4), \"veículos de carga\"(3), \"circulação de\"(18), \"tráfego\"(3), \"trânsito de veículos\"(1), \"peso bruto\"(1) -> 25 edições baixadas e lidas com regex (OCR não necessário): só ruído (toque de recolher COVID, licitação). \"tráfego pesado\", \"trânsito de caminhões\", \"carga e descarga\" = 0 edições. Negativo conclusivo para o período indexado. Negativo considerado conclusivo para a fonte varrida.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

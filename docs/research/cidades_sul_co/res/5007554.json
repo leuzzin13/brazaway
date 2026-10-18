@@ -3,8 +3,8 @@
  "nome": "Santa Rita do Pardo",
  "uf": "MS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.santaritadopardo.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://www.santaritadopardo.ms.leg.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://www.santaritadopardo.ms.leg.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "legislacao.py buscar 5007554 (14 termos) -> portal_proprio https://www.santaritadopardo.ms.leg.br/leis",
+   "resultado": "total=0; genérico: página não respondeu: https://www.santaritadopardo.ms.leg.br/leis"
+  },
+  {
+   "url": "legislacao.py buscar 5007554 (14 termos) -> portal_proprio https://www.santaritadopardo.ms.gov.br/paginas/acessos-rapidos/teste-1",
+   "resultado": "total=0; heurístico (página filtrada localmente); conferir cada ato na fonte"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (7156 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.santaritadopardo.ms.leg.br/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (7156 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.santaritadopardo.ms.leg.br/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Páginas /paginas/legislacao da prefeitura retornam 404/listas avulsas; Câmara (https://www.santaritadopardo.ms.leg.br) sem busca por ementa funcional. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

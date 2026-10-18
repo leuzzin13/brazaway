@@ -3,8 +3,8 @@
  "nome": "Corguinho",
  "uf": "MS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.corguinho.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://camaracorguinho.ms.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 404); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://camaracorguinho.ms.gov.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "legislacao.py buscar 5003108 (14 termos) -> portal_proprio https://camaracorguinho.ms.gov.br/transparencia/legislacao?category%5B0%5D=2&category_children=1",
+   "resultado": "total=0; heurístico (formulário GET https://camaracorguinho.ms.gov.br/pesquisa campo=q); conferir cada ato na fonte"
+  },
+  {
+   "url": "legislacao.py buscar 5003108 (14 termos) -> portal_proprio https://www.corguinho.ms.gov.br/legislacao",
+   "resultado": "total=0; heurístico (formulário GET https://www.corguinho.ms.gov.br/pesquisa campo=q); conferir cada ato na fonte"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
+  },
+  {
+   "url": "https://www.corguinho.ms.gov.br/legislacao/p/1/?legislacao.html (..p/6)",
+   "resultado": "regex caminh|pesad|carga|trânsito|tráfego|tonel|circula: 0 acertos em 5 páginas"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4890 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://camaracorguinho.ms.gov.br/transparencia/legislacao?category%5B0%5D=2&category_children=1) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4890 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://camaracorguinho.ms.gov.br/transparencia/legislacao?category%5B0%5D=2&category_children=1) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Listagem \"Leis\" da prefeitura (https://www.corguinho.ms.gov.br/legislacao/p/1..6) varrida por regex (5 de 6 páginas responderam): 0 acertos; diário em http://www.publicacoesmunicipais.com.br/eatos/#corguinho (SPA, não consultado). Negativo parcial. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

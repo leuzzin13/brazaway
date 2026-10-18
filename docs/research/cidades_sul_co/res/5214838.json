@@ -3,8 +3,8 @@
  "nome": "Nova Crixás",
  "uf": "GO",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,33 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://novacrixas.go.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca WordPress REST (8 termos: caminhões, caminhão, veículos pesados, carga e descarga, tráfego pesado, toneladas, carretas, trânsito de veículos): 6 resultado(s) distintos, nenhum ato normativo de restrição a caminhões (notícias/páginas institucionais)"
+  },
+  {
+   "url": "https://camaranovacrixas.go.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca WordPress REST (8 termos: caminhões, caminhão, veículos pesados, carga e descarga, tráfego pesado, toneladas, carretas, trânsito de veículos): 1 resultado(s) distintos, nenhum ato normativo de restrição a caminhões (notícias/páginas institucionais)"
+  },
+  {
+   "url": "https://camaranovacrixas.go.gov.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "https://acessoainformacao.camaranovacrixas.go.gov.br/cidadao/legislacao/leis",
+   "resultado": "sistema nucleogov: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "https://acessoainformacao.novacrixas.go.gov.br/cidadao/legislacao/leis_cnt",
+   "resultado": "sistema nucleogov: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13210 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nucleogov, https://acessoainformacao.camaranovacrixas.go.gov.br/cidadao/legislacao/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13210 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (nucleogov, https://acessoainformacao.camaranovacrixas.go.gov.br/cidadao/legislacao/leis) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Legislação (prefeitura e/ou Câmara) hospedada em https://acessoainformacao.camaranovacrixas.go.gov.br/cidadao/legislacao/leis e https://acessoainformacao.novacrixas.go.gov.br/cidadao/legislacao/leis_cnt (bloqueado ao IP da pesquisa) Busca REST WordPress dos sites institucionais e (quando aplicável) clientes legislacao.py não acharam ato sobre caminhões; SIGPub/AGM/FGM/ASSOMASUL e Querido Diário não cobrem o município. Fonte principal bloqueada: ver URLs com NucleoGov/Atende/Cloudflare/captcha em fontes_consultadas; negativo NÃO conclusivo.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

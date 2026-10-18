@@ -3,7 +3,7 @@
  "nome": "Jussara",
  "uf": "GO",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,45 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://jussara.go.gov.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca REST indisponível (HTTP 401); site sem API pública de busca/ou bloqueado ao IP da pesquisa"
+  },
+  {
+   "url": "https://jussara.go.leg.br/wp-json/wp/v2/search?search=<termo>",
+   "resultado": "busca WordPress REST (8 termos: caminhões, caminhão, veículos pesados, carga e descarga, tráfego pesado, toneladas, carretas, trânsito de veículos): 1 resultado(s) distintos, nenhum ato normativo de restrição a caminhões (notícias/páginas institucionais)"
+  },
+  {
+   "url": "https://jussara.go.leg.br/api/norma/normajuridica/ (SAPL na própria Câmara) e sapl.<domínio da Câmara>",
+   "resultado": "sem SAPL (404/sem resposta)"
+  },
+  {
+   "url": "legislacao.py buscar 5212204 (14 termos) -> megasoft https://jussara.megasofttransparencia.com.br/legislacao-e-publicacoes/legislacao-municipal",
+   "resultado": "total=0; heurístico (página filtrada localmente); conferir cada ato na fonte"
+  },
+  {
+   "url": "legislacao.py buscar 5212204 (14 termos) -> nucleogov https://acessoainformacao.jussara.go.leg.br/cidadao/legislacao/mgleis",
+   "resultado": "total=0; NucleoGov: listagem de atos em https://acessoainformacao.jussara.go.leg.br/cidadao/legislacao/mgleis é montada por JavaScript (controller cidadao/controller/lei/leis em static.nucleogov.com.br); sem c"
+  },
+  {
+   "url": "legislacao.py buscar 5212204 (14 termos) -> nucleogov https://acessoainformacao.jussara.go.gov.br/legislacao/mgleis",
+   "resultado": "total=0; NucleoGov: listagem de atos em https://acessoainformacao.jussara.go.gov.br/legislacao/mgleis é montada por JavaScript (controller cidadao/controller/lei/leis em static.nucleogov.com.br); sem cliente a"
+  },
+  {
+   "url": "https://acessoainformacao.jussara.go.leg.br/cidadao/legislacao/mgleis",
+   "resultado": "sistema nucleogov: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "https://acessoainformacao.jussara.go.gov.br/legislacao/mgleis",
+   "resultado": "sistema nucleogov: não consultável daqui (403/SPA/captcha/Cloudflare), conforme orientação da rodada"
+  },
+  {
+   "url": "diariomunicipal.com.br/agm|fgm|ms|amm-mt (SIGPub, listas de entidades em leads/diarios_consolidados_raw/sigpub_*_entidades.json)",
+   "resultado": "município não é entidade de nenhum diário SIGPub (nem AGM/FGM/ASSOMASUL/AMM-MT); busca global por nome inviável por ruído"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (19949 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (megasoft, https://jussara.megasofttransparencia.com.br/legislacao-e-publicacoes/legislacao-municipal) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (19949 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (megasoft, https://jussara.megasofttransparencia.com.br/legislacao-e-publicacoes/legislacao-municipal) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: Cliente Megasoft (megasofttransparencia.com.br/legislacao) buscou 14 termos sem acerto; Câmara no NucleoGov (403). Negativo moderado (sem texto integral). Negativo considerado conclusivo para a fonte varrida.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
