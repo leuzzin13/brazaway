@@ -47,7 +47,31 @@ def leis(host, ent, ano, termo='', natureza=None, pref='/portaltransparencia-api
         if d.get('last', True) or not d.get('content'): break
     return out
 
+def detalhes(host, ent, id_, ano, pref='/portaltransparencia-api/api'):
+    q = urlencode({'entidade': ent, 'id': id_, 'exercicio': ano, 'sistema': 'C'})
+    b = get('https://%s%s/leisatos/detalhes?%s' % (host, pref, q))
+    return json.loads(b) if b else None
+
+def baixa_pdf(host, idarq, saida, pref='/portaltransparencia-api/api'):
+    b = get('https://%s%s/files/arquivo/%s' % (host, pref, idarq), binario=True, timeout=180)
+    if b:
+        open(saida, 'wb').write(b)
+    return bool(b)
+
 if __name__ == '__main__':
     a = sys.argv[1:]
     if a[0] == 'sonda':
         print(sonda(a[1]))
+    elif a[0] == 'buscar':      # buscar <host> "t1,t2" [ent,ent]
+        host = a[1]; ents = (a[3] if len(a) > 3 else '1').split(',')
+        for e in ents:
+            vistos = {}
+            for t in a[2].split(','):
+                for c in leis(host, e, 2025, t):
+                    vistos[c['id']] = c
+            for c in sorted(vistos.values(), key=lambda c: (c.get('exercicio') or 0)):
+                print(e, c['id'], c.get('natureza'), c.get('numero'), c.get('exercicio'), (c.get('sumula') or c.get('descricao') or '').replace('\n', ' ')[:160], sep=' | ')
+    elif a[0] == 'pdf':         # pdf <host> <ent> <id> <ano> <saida-prefixo>
+        d = detalhes(a[1], a[2], a[3], a[4])
+        for i, arq in enumerate((d or {}).get('arquivos') or []):
+            print(arq.get('nomeArquivo'), baixa_pdf(a[1], arq['idArquivo'], '%s_%d.pdf' % (a[5], i)))

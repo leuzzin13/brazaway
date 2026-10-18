@@ -1,0 +1,74 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4121703",
+  "municipio": "Reserva",
+  "uf": "PR",
+  "fonte_id": "reserva",
+  "fonte": {
+    "url": "https://www.camarareserva.pr.gov.br/proposicoes/pesquisa/0/1/0/873 (Lei 413/2011)",
+    "licenca": "Ato oficial do Município de Reserva: domínio público (Lei 9.610/1998 art. 8º IV).",
+    "notas": "Uma regra, desativada: a Lei 413/2011 se contradiz (parágrafo único x Anexo I) e o perímetro não é georreferenciável com honestidade. Registro sem geometria. Sem alteração posterior localizada na Câmara; prefeitura (Elotech) não acessível."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Reserva não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "reserva_perimetro_urbano_carga_gt3_5t",
+      "tipo": "zona",
+      "regime": "Proibição por capacidade de carga (zona)",
+      "nome": "Perímetro urbano central de Reserva: veículos com carga superior a 3,5 t (Lei 413/2011)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "payload_t",
+            "acima": 3.5
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 413, de 27/10/2011 (altera a Lei 153/2007) (Reserva/PR)",
+          "artigo": "art. 1º, parágrafo único, art. 2º, art. 3º e Anexo I",
+          "url": "https://www.camarareserva.pr.gov.br/proposicoes/pesquisa/0/1/0/873",
+          "nota": "Texto integral lido em PDF (https://www.cloudsoftcam.com.br/PR/RESERVA/importacao/2011/1.2291331_iddoc_2300229.pdf); cópia em atos/4121703/lei-413-2011.txt. A Lei 153/2007 (https://www.camarareserva.pr.gov.br/proposicoes/pesquisa/0/1/0/617) tinha proibição mais restrita (Ruas Marcílio Dias, Generoso Marques, Av. Cel. Rogério Borba) e também limitava ônibus > 26 lugares."
+        }
+      ],
+      "excecoes": [
+        "art. 2º: o Executivo pode estabelecer horários pré-determinados de carga e descarga, desde que referendado pelo Legislativo (horários não localizados)",
+        "parágrafo único: o tráfego deve se dar pelas vias que delimitam o perímetro"
+      ],
+      "nota": "Veda o tráfego de 'veículos com carga superior a 3,5 toneladas' (capacidade de carga: payload_t) nas vias compreendidas no perímetro descrito (começa no bairro Ferreira, R. Leôncio Miró Rocha x R. Pastor Gregório Szeremeta Filho; segue por Marcílio Dias, Av. Cel. Rogério Borba, Pedro Soltovski, Gov. Ney Braga, Osires de Oliveira Viana, XV de Novembro, Quintino Bocaiúva, Ademar de Holleben, Benjamin Constant, PR-160, Trav. Eucalipto, Dom Pedro II, Miguel Régis de Miranda). O parágrafo único manda o tráfego pelas vias que DELIMITAM o perímetro; o Anexo I lista as vias com proibição (inclui algumas citadas como de contorno, p.ex. Benjamin Constant, Dom Pedro II, XV de Novembro em trecho): inconsistência a resolver na geometria. Multa 1 a 5 UFM. Sem alteração/revogação encontrada na Câmara (busca de texto integral).",
+      "vigencia_inicio": "2011-10-27",
+      "status_motivo": "Lei 413/2011 se contradiz: o parágrafo único manda o tráfego de veículos acima de 3,5 t pelas vias que delimitam o perímetro, mas o Anexo I (vias com proibição de circulação) lista as mesmas vias de contorno (Benjamin Constant, Dom Pedro II, Quintino Bocaiúva, Osires de Oliveira Viana, Av. Cel. Rogério Borba, Marcílio Dias, XV de Novembro e Pastor Gregório em trechos). A Lei 413 altera a 153/2007 sem dizer o que revoga. Sem geometria confiável: registro desativado; não é possível saber quais vias de contorno ficam liberadas. Art. 2º (horários de carga e descarga) sem decreto localizado.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
