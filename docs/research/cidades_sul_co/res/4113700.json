@@ -7,6 +7,18 @@
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
+   "url": "https://portal.londrina.pr.gov.br/busca-jornal (Jornal Oficial do Municipio; busca por termo via com_ajax 'web_sampa_search', texto das edicoes 2007-2026; acesso com cookie de sessao e token CSRF da propria pagina)",
+   "resultado": "ABRE E PESQUISA. Termos (com contagem): 'circulação de caminhões' (1: loteamento 2007, via 'projetada para facilitar a circulação de caminhões'), 'tráfego de caminhões' (0), 'trânsito de caminhões' (0), 'restrição de circulação' (0), 'zona de restrição' (0), 'restringe a circulação' (0), 'proibição de tráfego' (0), 'circulação de veículos de carga' (0), 'veículos pesados' (381, so cargos/licitacoes/Lei do EIV), 'tráfego de veículos pesados' (5: EIV e uso do solo), 'veículos de carga' (14: padroes de loteamento/EIV), 'carga e descarga de mercadorias' (24: ato de 03/01/2025 (Jornal 5381), art. 19: areas de carga e descarga nas vias demarcadas pela CMTU-LD; EIV), 'caminhões de grande porte', 'estacionamento de caminhões' (2: protocolo de empresa 2007-2008), 'carretas', 'toneladas', 'peso bruto total'. Nenhum ato de restricao de circulacao de caminhoes. (O filtro por categoria do formulario nao filtra; resultados mostram o primeiro trecho do termo.)"
+  },
+  {
+   "url": "https://cmtu.londrina.pr.gov.br/index.php/transporte-comercial/legislacao.html (+ /transporte-cargas.html, /transporte-comercial.html, /fiscalizacao.html, /sinalizacao-viaria.html, /autorizacoes-2.html, /perguntas-frequentes1.html)",
+   "resultado": "LIDAS. A pagina de legislacao de Transporte Comercial da CMTU lista, para 'Transporte de Cargas', so o Decreto 128 e a Lei 302. Lei Municipal 302, de 04/05/1956 (www1.londrina.pr.gov.br/.../LEI_MUNICIPAL_N%20302_CARGAS.pdf, texto lido) e Decreto 128 (www1.londrina.pr.gov.br/.../DECRETO_CARGAS.pdf, escaneado, OCR): alvara e pontos de estacionamento de veiculos de aluguel/frete (passageiros ou carga) em vias publicas; nao restringem circulacao. 'Transporte Cargas' = cadastro de veiculos (tc.cmtuld.org). Nenhuma pagina da CMTU fala de zona/horario de restricao a caminhoes; a de Autorizacoes cobre eventos, reserva de vaga, interdicao, cacamba."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4113700 (consultas adicionais: 'veículos de carga' 'área central', 'carga e descarga' 'área central' horário, 'restrição de circulação' caminhões, 'circulação de caminhões')",
+   "resultado": "Sem ato de restricao. Achados: Plano de Mobilidade (Decreto 865/2022, Diario 4699) e Lei 11.747/2012 (vagas para motos) ja registrados; Lei 10.172/2007 (verticalizacao); Diario 4541 (19/01/2022) com atribuicoes de orgao ('analisar, regulamentar e fiscalizar o transporte...'; 'contornos rodoviarios para desviar o transito de passagem dos veiculos pesados da area urbana'). A API deu varios 520/'no available server' na rodada final."
+  },
+  {
    "url": "https://portal.londrina.pr.gov.br/ (e /legislacao, /busca-jornal)",
    "resultado": "Portal responde, mas a legislacao e o Jornal Oficial exigem busca por formulario/JS; nao automatizado. Nenhuma pagina de servico 'carga e descarga' ou 'restricao de caminhoes' localizada."
   },
@@ -40,9 +52,9 @@
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma regra de circulacao de caminhoes de Londrina encontrada. O unico documento oficial lido que trata do tema (Plano de Mobilidade, Decreto 865/2022, Anexo II) afirma que a regulacao de areas/horarios de carga e descarga e as restricoes de circulacao de cargas ainda seriam estudadas. Nao e prova negativa: o portal de legislacao do municipio e o Jornal Oficial nao foram pesquisaveis aqui e a busca textual do Querido Diario e ruidosa. Pendencias: confirmar no Jornal Oficial/CMTU se houve decreto ou portaria da CMTU apos 08/2022; Lei de uso do solo (2025) exige area interna de carga/descarga para VUC 2,20 m x 7,20 m (requisito de projeto, nao de circulacao). Nao ha definicao municipal de VUC de circulacao encontrada.",
+ "observacoes": "Nenhuma regra de circulacao de caminhoes de Londrina encontrada, agora com o Jornal Oficial do Municipio pesquisavel (2007-2026) e a pagina de legislacao de Transporte Comercial da CMTU lidas. O Plano de Mobilidade (Decreto 865/2022, Anexo II) diz que restricoes de circulacao de cargas ainda seriam estudadas (tabela de exemplo hipotetica) e o texto de 2022 fala em 'contornos rodoviarios para desviar o transito de passagem dos veiculos pesados': nao ha restricao municipal vigente declarada. As unicas normas de 'cargas' da CMTU (Lei 302/1956, Decreto 128) tratam de alvara e pontos de aluguel/frete. Lacunas que mantem falha_de_fonte=true: leismunicipais.com.br (403), Camara (pagina de verificacao anti-robo) e www.cmtu-ld.com.br nao acessiveis; a busca do Jornal Oficial so alcanca 2007 em diante (edicoes anteriores e atos nao publicados no Jornal nao cobertos); nao ha portaria da CMTU-LD na pagina de legislacao. Londrina nao define VUC de circulacao (a Lei de uso do solo exige area de carga/descarga para VUC 2,20 x 7,20 m em empreendimentos: projeto, nao circulacao).",
  "osm_divergencias": [
-  "OSM nao consultado."
+  "Fonte: osm_hints_por_municipio.json (Overpass nao consultado): 6 vias com hgv=no (todas highway=track/footway, algumas sem nome, ex.: Trilha do Cuica), 0 hgv:conditional, 0 maxweight; sem ato municipal que as sustente: sao trilhas/caminhos de mapeador, nao restricao formal."
  ],
  "regras_rascunho": []
 }

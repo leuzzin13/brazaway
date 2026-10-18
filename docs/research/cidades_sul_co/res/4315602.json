@@ -25,12 +25,32 @@
   {
    "url": "https://www.diariomunicipal.com.br/famurs (entidade 1700781)",
    "resultado": "13 termos: nada relevante"
+  },
+  {
+   "url": "https://www2.riogrande.rs.gov.br/ ; https://www.riogrande.rs.gov.br/",
+   "resultado": "HTTP 403 em curl (UA de navegador e curl) por WAF (SafeLine): portal da Prefeitura inacessível; riogrande.atende.net e demais subdomínios (diariooficial, legislacao, sistemas) não resolvem pelo proxy.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://transparencia.riogrande.rs.gov.br/",
+   "resultado": "Responde (portal de transparência RHSys), sem módulo de legislação.",
+   "rodada": "R2"
+  },
+  {
+   "url": "legislacao.py buscar 4315602 --fonte camara (SAPL da Câmara)",
+   "resultado": "Só 5 atos da própria Câmara (resoluções e decretos legislativos de circulação interna e covid); leismunicipais 403, cittatec e atende sem automação.",
+   "rodada": "R2"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4315602 (FAMURS; 15 termos: circulação de caminhões, tráfego de veículos pesados, carga e descarga, trânsito de caminhões, restrição trânsito, veículos de carga, tonelada, transporte de cargas, trânsito, estacionamento, vias, Porto, restrição de circulação, tráfego)",
+   "resultado": "Cobertura FAMURS de Rio Grande só desde 2023/2024. Achados sem regra de circulação: Decretos 21.586 e 21.587/2025 (Conselho Consultivo de Transporte e Trânsito), Decreto 22.577/2026 (tarifa do estacionamento rotativo), Decreto 22.626/2026 (grupo de trabalho da Secretaria de Município de Mobilidade, Acessibilidade e Segurança).",
+   "rodada": "R2"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem achado. Acesso ao porto (regras de caminhões do Superporto) não localizado em fonte municipal; pendência.",
+ "observacoes": "Sem achado. O portal da Prefeitura (www2.riogrande.rs.gov.br) está atrás de WAF (403) e o acervo de leis (leismunicipais, Câmara cittatec/atende) não é automatizável; o diário oficial consolidado só cobre 2023/2024 em diante. Há órgão de trânsito (Secretaria de Município de Mobilidade, Acessibilidade e Segurança) e Conselho Consultivo de Transporte e Trânsito, mas nenhum ato de restrição de caminhões foi localizado. Pendência: acesso ao Superporto/Porto Novo e regras de caminhões no Centro e na Av. Rheingantz não verificadas na fonte primária. 'Não achou' NÃO é conclusivo.",
  "osm_divergencias": [
-  "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+  "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight nas vias."
  ],
  "regras_rascunho": [
   {

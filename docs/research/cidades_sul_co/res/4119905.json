@@ -2,29 +2,33 @@
  "ibge": "4119905",
  "nome": "Ponta Grossa",
  "uf": "PR",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "profunda",
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
-   "url": "https://www.pontagrossa.pr.gov.br/ (busca do site: caminhões, carga e descarga, veículos pesados, restrição de trânsito, VUC; /legislacao)",
-   "resultado": "Portal responde (WordPress); a busca so devolve noticias (obras, vagas de emprego), nenhuma pagina de servico/ato sobre restricao de caminhoes. /legislacao so remete ao leismunicipais.com.br."
+   "url": "https://www.pontagrossa.pr.leg.br/processo-legislativo/legislacao -> https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiConsulta&ID=9&dsVerbete=... (base Legislador WEB da Camara Municipal de Ponta Grossa: leis ordinarias, complementares, decretos legislativos, resolucoes; busca por verbete no texto)",
+   "resultado": "ABRE E PESQUISA. Verbetes: caminhoes (23 leis), carga e descarga (13), veiculos pesados (8), veiculos de carga (1), tonelada, anel central (4), cargas, caminhao, tráfego pesado, circuito periferico, VUC, veiculos de grande porte, zona azul. Nenhuma lei de restricao geral de circulacao de caminhoes; so as leis abaixo. Decretos do Executivo nao estao nessa base."
   },
   {
-   "url": "https://www.pontagrossa.pr.leg.br/leis/legislacao-municipal (Camara)",
-   "resultado": "Cloudflare 'Just a moment' (nao contornado). sapl.pontagrossa.pr.leg.br e cmpg.pr.gov.br: 502."
+   "url": "https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=8392&aaLei=2005 e nrLei=13331&aaLei=2018",
+   "resultado": "LIDAS. Lei 8.392, de 29/12/2005 (trafego de veiculos de CARGAS PERIGOSAS): art. 1 cria circuito periferico; art. 2 manda definir areas/ruas liberadas (redacao dada pela Lei 13.331/2018: Autarquia Municipal de Transito e Transporte); art. 4 proibe circulacao e estacionamento de veiculos de cargas perigosas no anel central, zonas residenciais e areas densamente habitadas, inclusive vazios, exceto distribuicao de GLP envasado; art. 5 permite entrada para carregamento/entrega nos horarios de carga e descarga; art. 9 manda regulamentar em 90 dias. Perimetro do anel central nao esta no ato; decreto regulamentador nao localizado. Ficha de leis associadas: so a Lei 13.331/2018 (altera art. 2)."
   },
   {
-   "url": "https://servicos.pontagrossa.pr.gov.br/portaltransparencia/1/diario-oficial",
-   "resultado": "Connection reset (tentado varias vezes)."
+   "url": "https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=14311&aaLei=2022",
+   "resultado": "LIDA. Lei 14.311, de 27/07/2022 (Plano de Mobilidade Urbana), art. 28: DIRETRIZES para o transporte de cargas ('restricao de acesso de veiculos de grande porte nas areas centrais'; 'politica de controle para carga e descarga, definindo horarios e locais'). Nao ha regra operacional nem perimetro."
   },
   {
-   "url": "https://pontagrossa.oxy.elotech.com.br/governo-digital/servicos/transito-e-transporte",
-   "resultado": "Portal SPA (Elotech) sem conteudo estatico; nenhuma pagina de carga/descarga ou restricao lida."
+   "url": "https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=14803&aaLei=2023 (EstaR) e Lei 14.523/2022 (Codigo de Posturas), Lei 7.461/2004 (caminhoes de aluguel)",
+   "resultado": "LIDAS: EstaR art. 3 isenta de preco publico veiculos de carga e descarga nos horarios prefixados e caminhao/caminhonete de aluguel por 1 h (estacionamento regulamentado); Codigo de Posturas: so sinalizacao de carga e descarga (art. 91) e lavagem de caminhoes (art. 97); Lei 7.461/2004: alvara e pontos de caminhoes de aluguel. Nenhuma restringe circulacao."
   },
   {
-   "url": "https://leismunicipais.com.br/prefeitura/pr/pontagrossa",
-   "resultado": "403 Cloudflare; nao contornado."
+   "url": "https://www.pontagrossa.pr.gov.br/legislacao-municipal/ e /diario-oficial/",
+   "resultado": "Pagina de 'Consulta as Legislacoes' aponta para leismunicipais.com.br (403 Cloudflare, nao contornado); /diario-oficial redireciona para servicos.pontagrossa.pr.gov.br (conexao encerrada pelo servidor, repetido com varios parametros TLS). Decretos do Executivo e portarias da Autarquia de Transito (VPTRAN) continuam inacessiveis."
+  },
+  {
+   "url": "https://www.pontagrossa.pr.leg.br/ (Camara, Plone Interlegis)",
+   "resultado": "Abre (200); a busca de legislacao redireciona ao Legislador WEB (ver acima). sapl.pontagrossa.pr.leg.br e cmpg.pr.gov.br: bloqueados no proxy."
   },
   {
    "url": "api.queridodiario.org.br (Ponta Grossa)",
@@ -36,9 +40,91 @@
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nao localizado nenhum ato de restricao de circulacao de caminhoes. Falha de fonte relevante: legislacao municipal (leismunicipais/Camara), Diario Oficial e orgao de transito (VPTRAN) inacessiveis neste ambiente; o resultado NAO e conclusivo. Cidade grande com BR-376/BR-373 e anel; ha chance de existir regra de carga/descarga ou zona central. Proxima acao: Diario Oficial (servicos.pontagrossa.pr.gov.br) e Camara em rede sem bloqueio.",
+ "observacoes": "Na base de leis da Camara (Legislador WEB, texto integral) nao ha lei geral de restricao a caminhoes. Ha a Lei 8.392/2005 (alterada pela Lei 13.331/2018), que proibe a circulacao e o estacionamento de veiculos de CARGAS PERIGOSAS no 'anel central', zonas residenciais e areas densamente habitadas (inclusive vazios; excecao GLP envasado), mas o perimetro do 'anel central' nao esta no ato (depende de estudo/decreto da Autarquia de Transito) e a regra e por tipo de carga, nao por classe de veiculo: nao roteavel sem decreto (nao localizado) -> 'pontual', regra desativada. O Plano de Mobilidade (Lei 14.311/2022, art. 28) so traz diretrizes ('restricao de acesso de veiculos de grande porte nas areas centrais'; 'politica de controle para carga e descarga'): nao e regra. Carga e descarga em estacionamento regulamentado: Lei 14.803/2023 (EstaR), art. 3. Lacuna importante: decretos e portarias do Executivo/VPTRAN (Prefeitura, leismunicipais.com.br e Diario Oficial inacessiveis aqui) podem trazer restricao de caminhoes na area central; o Plano de 2022 trata a restricao como ainda a regulamentar, o que sugere que nao havia ate entao. Pendencia: Diario Oficial/leismunicipais fora do bloqueio, decreto regulamentador da Lei 8.392/2005. Querido Diario nao cobre Ponta Grossa; nao ha definicao municipal de VUC lida.",
  "osm_divergencias": [
-  "OSM nao consultado."
+  "Fonte: osm_hints_por_municipio.json (Overpass nao consultado): 0 vias com hgv=no, 0 hgv:conditional, 0 maxweight no municipio: sem divergencia a registrar (nenhuma restricao de caminhoes mapeada no OSM)."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "pontagrossa_lei8392_cargas_perigosas_anel_central",
+   "tipo": "zona",
+   "regime": "Proibição de veículos de cargas perigosas no anel central",
+   "nome": "Ponta Grossa: veículos de cargas perigosas, proibidos no anel central, zonas residenciais e áreas densamente habitadas (Lei 8.392/2005)",
+   "status": "desativada",
+   "status_motivo": "Regra por tipo de carga (cargas perigosas), nao por classe de veiculo; o perimetro do 'anel central' nao esta no ato (art. 2 manda a Autarquia de Transito definir areas e ruas) e o decreto regulamentador (art. 9) nao foi localizado; o perfil de veiculo da camada nao tem 'carga perigosa'.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 4: exceto veiculos de distribuicao de GLP envasado",
+    "Art. 5: entrada, circulacao e estacionamento em area proibida so para carregamento/entrega, mediante comprovacao do destinatario e nos horarios de carga e descarga; excecoes de urgencia comprovada (paragrafo unico)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei 8.392, de 29/12/2005 (Ponta Grossa), com redação do art. 2 dada pela Lei 13.331, de 14/11/2018",
+     "artigo": "arts. 1, 2, 4, 5 e 9",
+     "url": "https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=8392&aaLei=2005",
+     "nota": "Texto lido na base Legislador WEB da Camara. Alteracao: https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=13331&aaLei=2018. Publicada em 19/01/2006."
+    }
+   ],
+   "vigencia_inicio": "2006-01-19",
+   "limites": [
+    "'Anel central', 'zonas residenciais' e 'areas densamente habitadas': sem perimetro no ato; 'circuito periferico' a definir pela Autarquia de Transito."
+   ],
+   "nota": "Nao roteavel nem aplicavel a caminhoes em geral. Revisar se surgir decreto com o perimetro."
+  },
+  {
+   "id": "pontagrossa_plano_mobilidade_2022_diretriz_cargas",
+   "tipo": "zona",
+   "regime": "Diretriz de restrição a veículos de grande porte nas áreas centrais",
+   "nome": "Ponta Grossa: diretriz do Plano de Mobilidade para restringir veículos de grande porte nas áreas centrais",
+   "status": "desativada",
+   "status_motivo": "Apenas diretriz (art. 28, I): sem perimetro, peso, horario ou regulamentacao.",
+   "confianca": "unverifiable",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei 14.311, de 27/07/2022 (Plano de Mobilidade Urbana de Ponta Grossa)",
+     "artigo": "art. 28, I e II",
+     "url": "https://www.legislador.com.br/LegisladorWEB.ASP?WCI=LeiTexto&ID=9&inEspecieLei=1&nrLei=14311&aaLei=2022"
+    }
+   ],
+   "nota": "Nao ativar."
+  }
+ ]
 }
