@@ -1,105 +1,109 @@
 {
-  "ibge": "5007109",
-  "nome": "Ribas do Rio Pardo",
-  "uf": "MS",
-  "status": "pista",
-  "nivel_busca": "dirigida",
-  "falha_de_fonte": false,
-  "fontes_consultadas": [
+ "ibge": "5007109",
+ "nome": "Ribas do Rio Pardo",
+ "uf": "MS",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1294",
+   "resultado": "Decreto 62/2022 (25/04/2022): mão única + 'corredor de deslocamento de caminhões, carretas e ônibus' (art. 1º, IV). Lido (PDF DIRIBAS ed. 279). REVOGADO pelo Decreto 64/2024."
+  },
+  {
+   "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1838",
+   "resultado": "Decreto 64/2024 (11/03/2024): consolida mão única e repete o corredor no art. 1º, XI; art. 5º revoga 59/2022, 62/2022, 122/2022 e 16/2024. Lido (PDF DIRIBAS ed. 738)."
+  },
+  {
+   "url": "https://sapl.ribasdoriopardo.ms.leg.br/api/norma/normajuridica/?ementa__icontains=mão única&ano=2025",
+   "resultado": "Decretos 148, 149 e 150/2025 (mão única em outras ruas): 148 e 150 lidos, sem menção a caminhões nem ao Decreto 64/2024; 149 não lido."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 5007109 'caminh|...' --principal (SAPL)",
+   "resultado": "6 resultados; só o Decreto 62/2022 é pertinente. Os demais são portarias/resoluções."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 5007109 'corredor|mão única|trânsito|tráfego'",
+   "resultado": "17 atos: decretos de mão única e atos de organização do trânsito; nenhum outro sobre caminhões."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/780BD4E7",
+   "resultado": "LC 037/2017 (plano diretor): hierarquia viária, vias de trânsito rápido 'adequadas para veículos pesados e de carga'; travessia urbana da BR-262. Diretriz, sem regra."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/24AE3014",
+   "resultado": "Lei 1.115/2018: sistema de trânsito do município (competências do CTB). Genérico."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/D3FA5D68, 601EFB52",
+   "resultado": "Lei 987/2012 (PPA) e LC 036/2017 (ISS). Ruído."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 5007109 'trânsito de caminhões' / 'corredor caminhões' / 'veículos pesados'",
+   "resultado": "Só LCs de cargos e ISS (ruído)."
+  },
+  {
+   "url": "varredura '?s=caminhões|veículos pesados' nos sites da prefeitura e da Câmara (WP) e toolkit R4 já aplicados",
+   "resultado": "R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lead da DR convertido em pista real, achado pelo SAPL da Câmara e não pela pista da preparação (plano diretor). Há corredor de caminhões/carretas/ônibus no Decreto 64/2024 (vigente), que revogou o 62/2022. O texto designa o corredor, sem vedar expressamente outras vias nem prever penalidade, então a regra fica desativada (confiança baixa) até confirmar a sinalização e se a Av. Aureliano Moura Brandão (centro comercial) é de fato vedada a caminhões. Dá para tratar como preferência de rota em BR-262 -> Av. Júlio Viana -> Nelson Lírio -> Senador Filinto Muller. | R3 2026-10-18: reanálise dos atos já lidos e buscas adicionais (fontes acima); nenhum ato novo de restrição de circulação com vias nomeadas, vigente e não condicionado. Status mantido (pista). | R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos.",
+ "osm_divergencias": [
+  "OSM não consultado (Overpass fora do escopo da conferência DR); conferir se Av. Aureliano Moura Brandão tem hgv=no/destination."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "ribasriopardo_dec64_2024_corredor_caminhoes",
+   "tipo": "via",
+   "regime": "Corredor de deslocamento de caminhões, carretas e ônibus",
+   "nome": "Ribas do Rio Pardo: Decreto 64/2024, corredor de deslocamento de caminhões, carretas e ônibus (Av. Júlio Viana, R. Delminda Coelho, Av. Nelson Lírio, Av. Senador Filinto Muller)",
+   "status": "desativada",
+   "status_motivo": "O ato vigente (Decreto 64/2024, art. 1º, XI, que revogou o Decreto 62/2022) apenas 'estabelece o corredor de deslocamento' de caminhões, carretas e ônibus, com exceção para entrega de mercadorias na Av. Aureliano Moura Brandão. Não há proibição expressa nas demais vias nem sanção; a efetividade depende de implantação de sinalização (prazo de 30 dias, art. 4º) não confirmada. Sem proibição explícita não se gera restrição para o roteador; usar no máximo como preferência de rota. Pendente: confirmar sinalização/Av. Aureliano Moura Brandão com a prefeitura.",
+   "confianca": "baixa",
+   "janelas": [
     {
-      "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1294",
-      "resultado": "Decreto 62/2022 (25/04/2022): mão única + 'corredor de deslocamento de caminhões, carretas e ônibus' (art. 1º, IV). Lido (PDF DIRIBAS ed. 279). REVOGADO pelo Decreto 64/2024."
-    },
-    {
-      "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1838",
-      "resultado": "Decreto 64/2024 (11/03/2024): consolida mão única e repete o corredor no art. 1º, XI; art. 5º revoga 59/2022, 62/2022, 122/2022 e 16/2024. Lido (PDF DIRIBAS ed. 738)."
-    },
-    {
-      "url": "https://sapl.ribasdoriopardo.ms.leg.br/api/norma/normajuridica/?ementa__icontains=mão única&ano=2025",
-      "resultado": "Decretos 148, 149 e 150/2025 (mão única em outras ruas): 148 e 150 lidos, sem menção a caminhões nem ao Decreto 64/2024; 149 não lido."
-    },
-    {
-      "url": "toolkit legislacao.py buscar 5007109 'caminh|...' --principal (SAPL)",
-      "resultado": "6 resultados; só o Decreto 62/2022 é pertinente. Os demais são portarias/resoluções."
-    },
-    {
-      "url": "toolkit legislacao.py buscar 5007109 'corredor|mão única|trânsito|tráfego'",
-      "resultado": "17 atos: decretos de mão única e atos de organização do trânsito; nenhum outro sobre caminhões."
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/ms/materia/780BD4E7",
-      "resultado": "LC 037/2017 (plano diretor): hierarquia viária, vias de trânsito rápido 'adequadas para veículos pesados e de carga'; travessia urbana da BR-262. Diretriz, sem regra."
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/ms/materia/24AE3014",
-      "resultado": "Lei 1.115/2018: sistema de trânsito do município (competências do CTB). Genérico."
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/ms/materia/D3FA5D68, 601EFB52",
-      "resultado": "Lei 987/2012 (PPA) e LC 036/2017 (ISS). Ruído."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 5007109 'trânsito de caminhões' / 'corredor caminhões' / 'veículos pesados'",
-      "resultado": "Só LCs de cargos e ISS (ruído)."
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Lead da DR convertido em pista real, achado pelo SAPL da Câmara e não pela pista da preparação (plano diretor). Há corredor de caminhões/carretas/ônibus no Decreto 64/2024 (vigente), que revogou o 62/2022. O texto designa o corredor, sem vedar expressamente outras vias nem prever penalidade, então a regra fica desativada (confiança baixa) até confirmar a sinalização e se a Av. Aureliano Moura Brandão (centro comercial) é de fato vedada a caminhões. Dá para tratar como preferência de rota em BR-262 -> Av. Júlio Viana -> Nelson Lírio -> Senador Filinto Muller. | R3 2026-10-18: reanálise dos atos já lidos e buscas adicionais (fontes acima); nenhum ato novo de restrição de circulação com vias nomeadas, vigente e não condicionado. Status mantido (pista).",
-  "osm_divergencias": [
-    "OSM não consultado (Overpass fora do escopo da conferência DR); conferir se Av. Aureliano Moura Brandão tem hgv=no/destination."
-  ],
-  "regras_rascunho": [
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "entrega (carga e descarga) de mercadorias na Av. Aureliano Moura Brandão"
+   ],
+   "base_legal": [
     {
-      "id": "ribasriopardo_dec64_2024_corredor_caminhoes",
-      "tipo": "via",
-      "regime": "Corredor de deslocamento de caminhões, carretas e ônibus",
-      "nome": "Ribas do Rio Pardo: Decreto 64/2024, corredor de deslocamento de caminhões, carretas e ônibus (Av. Júlio Viana, R. Delminda Coelho, Av. Nelson Lírio, Av. Senador Filinto Muller)",
-      "status": "desativada",
-      "status_motivo": "O ato vigente (Decreto 64/2024, art. 1º, XI, que revogou o Decreto 62/2022) apenas 'estabelece o corredor de deslocamento' de caminhões, carretas e ônibus, com exceção para entrega de mercadorias na Av. Aureliano Moura Brandão. Não há proibição expressa nas demais vias nem sanção; a efetividade depende de implantação de sinalização (prazo de 30 dias, art. 4º) não confirmada. Sem proibição explícita não se gera restrição para o roteador; usar no máximo como preferência de rota. Pendente: confirmar sinalização/Av. Aureliano Moura Brandão com a prefeitura.",
-      "confianca": "baixa",
-      "janelas": [
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-          ],
-          "from": "00:00",
-          "to": "24:00"
-        }
-      ],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true
-      },
-      "excecoes": [
-        "entrega (carga e descarga) de mercadorias na Av. Aureliano Moura Brandão"
-      ],
-      "base_legal": [
-        {
-          "ato": "Decreto municipal 64, de 11/03/2024 (Ribas do Rio Pardo/MS; DIRIBAS ed. 738, 12/03/2024)",
-          "artigo": "art. 1º, XI (corredor de deslocamento de caminhões, carretas e ônibus); art. 4º (implantação em até 30 dias); art. 5º (revoga Decretos 59/2022, 62/2022, 122/2022 e 16/2024, efeitos após implantação)",
-          "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1838",
-          "nota": "Texto lido no PDF do SAPL; extraído em atos/5007109/decreto_64_2024.txt"
-        },
-        {
-          "ato": "Decreto municipal 62, de 25/04/2022 (art. 1º, IV) — REVOGADO pelo Decreto 64/2024, art. 5º",
-          "artigo": "art. 1º, IV",
-          "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1294",
-          "nota": "Texto em atos/5007109/decreto_62_2022.txt"
-        }
-      ],
-      "vigencia_inicio": "2024-03-11",
-      "trechos": [
-        "Av. Júlio Viana, do trecho entre a BR-262 e a Rua Delminda Coelho",
-        "Rua Delminda Coelho, do trecho entre a Av. Júlio Viana e a Av. Nelson Lírio",
-        "Av. Nelson Lírio, do trecho entre a Rua Delminda Coelho e a Av. Senador Filinto Muller",
-        "Av. Senador Filinto Muller, do trecho entre a Av. Nelson Lírio e a BR-262"
-      ]
+     "ato": "Decreto municipal 64, de 11/03/2024 (Ribas do Rio Pardo/MS; DIRIBAS ed. 738, 12/03/2024)",
+     "artigo": "art. 1º, XI (corredor de deslocamento de caminhões, carretas e ônibus); art. 4º (implantação em até 30 dias); art. 5º (revoga Decretos 59/2022, 62/2022, 122/2022 e 16/2024, efeitos após implantação)",
+     "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1838",
+     "nota": "Texto lido no PDF do SAPL; extraído em atos/5007109/decreto_64_2024.txt"
+    },
+    {
+     "ato": "Decreto municipal 62, de 25/04/2022 (art. 1º, IV) — REVOGADO pelo Decreto 64/2024, art. 5º",
+     "artigo": "art. 1º, IV",
+     "url": "https://sapl.ribasdoriopardo.ms.leg.br/norma/1294",
+     "nota": "Texto em atos/5007109/decreto_62_2022.txt"
     }
-  ]
+   ],
+   "vigencia_inicio": "2024-03-11",
+   "trechos": [
+    "Av. Júlio Viana, do trecho entre a BR-262 e a Rua Delminda Coelho",
+    "Rua Delminda Coelho, do trecho entre a Av. Júlio Viana e a Av. Nelson Lírio",
+    "Av. Nelson Lírio, do trecho entre a Rua Delminda Coelho e a Av. Senador Filinto Muller",
+    "Av. Senador Filinto Muller, do trecho entre a Av. Nelson Lírio e a BR-262"
+   ]
+  }
+ ]
 }
