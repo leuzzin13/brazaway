@@ -1,0 +1,103 @@
+{
+ "ibge": "4215752",
+ "nome": "São Bernardino",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "leads/diarios_consolidados.json (preparacao, DOM/SC) https://diariomunicipal.sc.gov.br/atos/8398741",
+   "resultado": "pistas da preparacao re-pontuadas como ruido pelo orquestrador; trechos conferidos"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4215752 \"transito de caminhoes\" (DOM/SC)",
+   "resultado": "consulta feita; ver observacoes"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4215752 \"veiculos pesados\" (DOM/SC)",
+   "resultado": "consulta feita; resultados sem norma de circulacao de caminhao (ver observacoes)"
+  },
+  {
+   "url": "https://www.saobernardino.sc.gov.br/",
+   "resultado": "legislacao.py buscar --principal: site da prefeitura sem portal de legislacao identificado (legislacao.py sem cliente); 0 atos"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=8398741 (X-Requested-With: XMLHttpRequest)",
+   "resultado": "texto integral da Lei 1.596/2026 lido"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4215752 \"Eurico Schultz\" / \"transporte de madeira\"",
+   "resultado": "so a propria lei e atos de licitacao/pavimentacao; sem alteracao"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "R1-SC-DR01 (DR; lead real). Lei 1.596/2026 lida integralmente via DOM/SC getHtml (id 8398741, publicada em 05/06/2026): proibe veiculos de transporte de madeira com PBT > 40 t na Estrada Rural Eurico Schultz (da Rua Veronica Scheid ao entroncamento Linha Sao Paulinho/Santa Maria). Regra gravada como desativada porque depende do tipo de carga (madeira). Sem alteracao/revogacao no DOM/SC. Texto em atos/4215752/lei_1596_2026.txt.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saobernardino_lei1596_2026_eurico_schultz",
+   "tipo": "via",
+   "regime": "Transporte de madeira (PBT > 40 t)",
+   "nome": "Sao Bernardino: Estrada Rural Eurico Schultz, proibicao a veiculos de transporte de madeira com PBT acima de 40 t",
+   "status": "desativada",
+   "status_motivo": "Restricao vale so para veiculos que transportam madeira (art. 1o, paragrafo unico); o schema nao tem condicao por tipo de carga, entao ativar bloquearia todo caminhao > 40 t na via. Reavaliar se houver campo de carga.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 40
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorizacao excepcional do Executivo por ato administrativo em caso de interesse publico relevante, emergencia ou servicos essenciais (art. 4o)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.596, de 05/06/2026",
+     "artigo": "art. 1o e paragrafo unico (proibicao, PBT > 40 t, so transporte de madeira), art. 4o (autorizacao excepcional)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8398741"
+    }
+   ],
+   "vigencia_inicio": "2026-06-05",
+   "vigencia_fim": null,
+   "trechos": [
+    {
+     "inciso": "art. 1o",
+     "via": [
+      "Estrada Rural Eurico Schultz",
+      "Estrada Eurico Schultz"
+     ],
+     "de": [
+      "Rua Verônica Scheid"
+     ],
+     "ate": [
+      "Linha São Paulinho",
+      "Linha Santa Maria"
+     ],
+     "descricao": "Estrada Rural Eurico Schultz, do inicio da Rua Veronica Scheid ate o entroncamento das estradas de Linha Sao Paulinho e Santa Maria"
+    }
+   ],
+   "nota": "Lei publicada em 05/06/2026; lida integralmente. Busca no DOM/SC por \"Eurico Schultz\" e \"transporte de madeira\" nao achou alteracao."
+  }
+ ]
+}
