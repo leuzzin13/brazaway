@@ -1,0 +1,133 @@
+{
+  "ibge": "4218103",
+  "nome": "Timbé do Sul",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/3646745",
+      "resultado": "Decreto 23/2022 (DOM/SC 28/02/2022) aberto e lido; texto sem o fim (vigência). Texto em atos/4218103/dec023_2022.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2956092",
+      "resultado": "Lei 2.013/2021 (DOM/SC 31/03/2021) aberta e lida na íntegra. Texto em atos/4218103/lei2013_2021.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4218103 'tráfego de caminhões veículos pesados', 'Decreto 23/2022 rodovias municipais TBS', 'peso bruto total vias urbanas' (domsc)",
+      "resultado": "sem alteração/revogação visível (buscas devolveram só os dois atos nas primeiras consultas)"
+    },
+    {
+      "url": "https://camaratimbedosul.atende.net/",
+      "resultado": "Atende.net (captcha/JS), não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Duas regras vigentes pelo DOM/SC: Lei 2.013/2021 (20 t nas vias urbanas) e Decreto 23/2022 (15 t nas rodovias municipais TBS-010 e TBS-379).",
+  "osm_divergencias": [
+    "OSM: Rua Pedro Zilli (residencial) com hgv=no sem ato municipal específico; coberta em tese pelo limite de 20 t da Lei 2.013/2021, mas hgv=no é mais restritivo"
+  ],
+  "regras_rascunho": [
+    {
+      "id": "timbedosul_tbs010_tbs379_15t",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Rodovias municipais TBS-010 e TBS-379: proibido PBT acima de 15 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo regular; bens e valores bancários; coleta de lixo e emergências de saúde; manutenção de emergência de redes; guincho (art. 2º)",
+        "Caminhões para escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados nessas rodovias (art. 2º, IV)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 23/2022 (24/02/2022; DOM/SC 28/02/2022)",
+          "artigo": "art. 1º, I e II (vias); art. 2º (exceções); art. 3º (CTB)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/3646745"
+        }
+      ],
+      "vigencia_inicio": "2022-02-28",
+      "trechos": [
+        {
+          "via": "TBS-010 (rodovia municipal)",
+          "de": "Amola Faca",
+          "ate": "divisa com Turvo"
+        },
+        {
+          "via": "TBS-379 (rodovia municipal)",
+          "de": "Rio do Salto",
+          "ate": "divisa com Turvo"
+        }
+      ],
+      "geometria": [],
+      "nota": "Rodovias 'TBS' são municipais; confirmar que não coincidem com rodovias estaduais. Último artigo (vigência) não aparece no texto extraído."
+    },
+    {
+      "id": "timbedosul_vias_urbanas_20t",
+      "tipo": "zona",
+      "regime": "Limite de PBT",
+      "nome": "Vias urbanas de Timbé do Sul: veículo de carga com PBT acima de 20 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 20
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei 2.013/2021 (30/03/2021)",
+          "artigo": "art. 1º (limite de 20 t nas vias urbanas); art. 2º (rotas rurais e BR-285); art. 4º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2956092"
+        }
+      ],
+      "vigencia_inicio": "2021-03-31",
+      "geometria": [],
+      "nota": "Todas as vias urbanas, sem lista; acima do limite devem usar rotas rurais ou a BR-285. Sem exceções no texto. O Decreto 23/2022 fala em 'regulamentação definitiva' de veículos acima de 15 t nas rodovias TBS."
+    }
+  ]
+}

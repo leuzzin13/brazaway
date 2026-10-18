@@ -1,0 +1,86 @@
+{
+  "ibge": "4208104",
+  "nome": "Itaiópolis",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/6785236",
+      "resultado": "Decreto 3.391/2025 (DOM/SC 16/01/2025) aberto e lido na íntegra. Texto em atos/4208104/dec3391_2025.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4208104 'Ponte Deneke' e 'Ponte Deneke tráfego veículos de carga' (domsc)",
+      "resultado": "só o Decreto 3.391/2025; nenhuma alteração/revogação (ponte não reaberta no DOM/SC)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/4851952",
+      "resultado": "Lei 1067/2023 (zoneamento): 'atividades geradoras de tráfego pesado' em zona; ruído"
+    },
+    {
+      "url": "https://camaraitaiopolis.atende.net/",
+      "resultado": "Atende.net (captcha/JS), não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 3.391/2025 vigente (medida cautelar por laudo técnico de estabilidade da ponte).",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "itaiopolis_ponte_deneke",
+      "tipo": "ponte",
+      "regime": "Limite de carga em ponte",
+      "nome": "Ponte Deneke (Rio Hercílio/Itajaí Norte, divisa Itaiópolis–Vitor Meireles): proibido caminhão com PBTC acima de 10 t, comprimento acima de 7 m e tara acima de 2 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Socorro de incêndio e salvamento; veículos de socorro e emergência (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 3.391/2025 (14/01/2025)",
+          "artigo": "art. 1º e parágrafo único; art. 2º (exceções); art. 3º (CTB); art. 6º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6785236"
+        }
+      ],
+      "vigencia_inicio": "2025-01-16",
+      "trechos": [
+        {
+          "via": "Ponte Deneke",
+          "nota": "sobre o Rio Hercílio/Itajaí Norte, divisa Itaiópolis/Vitor Meireles; aplicável a veículos de qualquer licenciamento"
+        }
+      ],
+      "geometria": [],
+      "nota": "O decreto exige os três limites juntos (PBTC >10 t, comprimento >7 m e tara >2 t); a tara (>2 t) não tem campo no schema e foi omitida do predicado. Município vizinho (Vitor Meireles) tem decreto próprio sobre a mesma ponte (fora deste lote)."
+    }
+  ]
+}

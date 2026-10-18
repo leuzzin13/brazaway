@@ -1,0 +1,152 @@
+{
+  "ibge": "4219705",
+  "nome": "Xaxim",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2589606",
+      "resultado": "Decreto 352/2020 (DOM/SC 04/08/2020) aberto e lido na íntegra. Texto em atos/4219705/dec352_2020.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1780845",
+      "resultado": "Decreto 282/2018 lido: cria corredor exclusivo para circulação e estacionamento de caminhões, ônibus e vans na Rua Santo Honório Savaris (Rua Farrapos a Av. Giacomo Lunardi, lado direito, sentido N-S) e faixa elevada; é facilitação, não restrição. Texto em atos/4219705/dec282_2018.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4219705 'veículos pesados vias centrais', 'Decreto 352/2020', 'Área Restrita para Veículos de Carga', 'altera decreto 352' (domsc)",
+      "resultado": "só o próprio Decreto 352/2020; nenhuma alteração/revogação"
+    },
+    {
+      "url": "https://www.camaraxaxim.sc.gov.br/",
+      "resultado": "sem cliente de legislação (sistema desconhecido); não consultado"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7221175 e /6217019",
+      "resultado": "Decretos 251/2025 (estrutura do trânsito) e 258/2024 (inspeção de laticínios): ruído"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 352/2020 vigente: 11 trechos centrais com restrição a veículos acima de 10 t (carga e descarga permitida em locais sinalizados).",
+  "osm_divergencias": [
+    "OSM: 3 ways highway=service com hgv=no sem ato municipal (provavelmente vias internas)"
+  ],
+  "regras_rascunho": [
+    {
+      "id": "xaxim_area_restrita_veiculos_carga",
+      "tipo": "zona",
+      "regime": "Área Restrita para Veículos de Carga",
+      "nome": "Vias centrais de Xaxim: veículos com PBT acima de 10 t restritos (11 trechos); abaixo de 10 t circulam livremente",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo, ônibus de fretamento, veículos oficiais, PM/bombeiros/ambulâncias, Forças Armadas, concessionárias de serviço público em serviço, caminhão-trator desacoplado, concretagem com autorização de 24 h, manutenção/entulho/limpeza de fossa (art. 3º)",
+        "Carga e descarga em locais sinalizados com comprovação fiscal, em qualquer via, para PBT > 10 t (art. 6º)",
+        "Eventos: autorização onerosa do Departamento de Trânsito (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 352/2020 (22/07/2020; DOM/SC 04/08/2020)",
+          "artigo": "art. 1º e art. 2º (Área Restrita, alíneas a a k, Anexo 1 mapa); art. 3º (exceções); art. 4º (eventos); art. 6º (carga e descarga em locais sinalizados); art. 7º (livre abaixo de 10 t); art. 11 (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2589606"
+        }
+      ],
+      "vigencia_inicio": "2020-08-04",
+      "trechos": [
+        {
+          "via": "Rua Independência",
+          "de": "Rua Cândido Teston",
+          "ate": "Avenida Plínio Arlindo de Nês",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua Vista Alegre",
+          "de": "Rua Duque de Caxias",
+          "ate": "Avenida Plínio Arlindo de Nês",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Avenida Luiz Lunardi",
+          "de": "Rua Duque de Caxias",
+          "ate": "Rua Pedro Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua Rio Grande",
+          "de": "Rua Duque de Caxias",
+          "ate": "Rua Pedro Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Avenida Júlio Lunardi",
+          "de": "Rua Duque de Caxias",
+          "ate": "Rua Pedro Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua Senador Nereu Ramos",
+          "de": "Rua Duque de Caxias",
+          "ate": "Rua Pedro Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua Cândido Teston",
+          "de": "Rua Independência",
+          "ate": "Rua Senador Nereu Ramos",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua da Matriz",
+          "de": "Rua Dez de Novembro",
+          "ate": "Avenida Luiz Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Avenida Plínio Arlindo de Nês",
+          "de": "Rua Farrapos",
+          "ate": "Rua Santo Antônio",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Travessa Independência",
+          "de": "Rua Dez de Novembro",
+          "ate": "Avenida Luiz Lunardi",
+          "nota": "art. 2º"
+        },
+        {
+          "via": "Rua Avelino Piana",
+          "de": "Rua Rui Barbosa",
+          "ate": "Rua Pedro Lunardi",
+          "nota": "art. 2º"
+        }
+      ],
+      "geometria": [],
+      "nota": "O decreto não escreve a proibição em artigo próprio: o art. 3º se refere à 'proibição constante do artigo 3º' (remissão errada) e o art. 1º trata de 'normas para a circulação de veículos pesados acima de 10 t nas vias centrais'. A restrição (circulação em 'Área Restrita para Veículos de Carga', com carga e descarga liberada em locais sinalizados) foi lida a partir do conjunto, por isso confiança 'media'. Anexo 1 (mapa) fora do texto extraído."
+    }
+  ]
+}

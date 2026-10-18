@@ -1,0 +1,227 @@
+{
+ "ibge": "5107800",
+ "nome": "Santo Antônio de Leverger",
+ "uf": "MT",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/640B5EF0",
+   "resultado": "Lida. Lei 1.095/GP/2013 (06/05/2013, publ. 14/05/2013): disciplina circulação de veículos de carga na Zona de Restrição Máxima (ZRM): art. 2º I PBT até 10 t livre; II PBT até 16 t (toco) só 8h-12h e 14h-17h30; art. 4º PBT > 16 t exige AET; art. 3º ZRM criada por decreto; art. 21 demais procedimentos por decreto."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/B93921BB",
+   "resultado": "Lido. Decreto 33/2013 (04/07/2013): cria a ZRM 'conforme mapa anexo' (sem descrição textual das vias) e regulamenta documentos da AET."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/508BC65C",
+   "resultado": "Lido. Decreto 53/GP/2014 (26/11/2014): cria 'nova' ZRM 'conforme mapa anexo' (sem texto de vias); não revoga o Decreto 33."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/A0398270",
+   "resultado": "Lido. Decreto 58/GP/2013: só parcelamento da taxa da AET. Não altera a restrição."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/0A544CED",
+   "resultado": "Lido. Decreto Municipal 06/GP/2012 (17/01/2012): proíbe provisoriamente caminhões e carretas na Rua Américo Pinto Brasil (R. N. Sra. da Conceição a R. Marechal Rondon), bairros Fronteira e Lixá, enquanto durar a recuperação da malha viária, até a lei do tráfego de cargas pesadas (a Lei 1.095/2013 depois a editou); 12 exceções (art. 2º)."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5107800 'Zona de Restrição Máxima' / 'ZRM' / 'Autorização Especial de Trânsito' / 'veículos de carga' (amm-mt)",
+   "resultado": "Apenas Lei 1.095/2013 e Decretos 33/2013, 58/2013, 53/2014; nenhum ato posterior encontrado (acervo AMM-MT cobre sobretudo 2011-2015)."
+  },
+  {
+   "url": "https://transparencia.leverger.mt.gov.br/Legislacao/",
+   "resultado": "Portal MPX sem resposta (toolkit: 'página não respondeu'; curl HTTP 000). Legislação posterior (2016+) não conferida."
+  },
+  {
+   "url": "https://www.leverger.mt.gov.br/",
+   "resultado": "HTTP 200; home sem acesso a normas; links levam a transparencia.leverger.mt.gov.br e gp.srv.br (não abertos)."
+  }
+ ],
+ "observacoes": "Há ato primário com valores (Lei 1.095/2013) mas o perímetro da ZRM está só em MAPA anexo aos Decretos 33/2013 e 53/2014 (não textual) e o portal da prefeitura (MPX) estava fora do ar: regra fica desativada (regra_sem_ato). Vigência atual não confirmada (diário cobre até ~2015). falha_de_fonte true porque o portal principal não respondeu.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santoantonioleverger_zrm_pbt_10_16",
+   "tipo": "zona",
+   "regime": "Zona de Restrição Máxima: caminhões com PBT entre 10 t e 16 t só em horário permitido",
+   "nome": "ZRM (mapa anexo aos Decretos 33/2013 e 53/2014): PBT > 10 t até 16 t só 8h-12h e 14h-17h30",
+   "status": "desativada",
+   "status_motivo": "Perímetro da ZRM está apenas em mapa anexo aos decretos (não obtido); vigência atual e portal da prefeitura não confirmados.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "12:00",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "17:30",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10,
+      "ate": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "Caminhões com PBT até 10 t circulam em qualquer horário (art. 2º, I)",
+    "Janelas modeladas como complemento dos horários permitidos 8h-12h e 14h-17h30 (art. 2º, II); sem menção a feriados/fins de semana na lei"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei 1.095/GP/2013, de 06/05/2013",
+     "artigo": "arts. 2º e 3º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/640B5EF0"
+    },
+    {
+     "ato": "Decreto 33/2013, de 04/07/2013 (cria a ZRM, mapa anexo)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/B93921BB"
+    },
+    {
+     "ato": "Decreto 53/GP/2014, de 26/11/2014 (nova ZRM, mapa anexo)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/508BC65C"
+    }
+   ],
+   "vigencia_inicio": "2013-05-14",
+   "trechos": [
+    {
+     "descricao": "Perímetro da ZRM conforme mapa anexo aos decretos (sem texto de vias)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "santoantonioleverger_zrm_pbt_16_aet",
+   "tipo": "zona",
+   "regime": "Zona de Restrição Máxima: PBT acima de 16 t exige AET",
+   "nome": "ZRM: caminhões com PBT > 16 t só com Autorização Especial de Trânsito (AET)",
+   "status": "desativada",
+   "status_motivo": "Perímetro da ZRM está apenas em mapa anexo aos decretos (não obtido); vigência atual não confirmada.",
+   "confianca": "baixa",
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "Circulação permitida mediante AET (art. 4º; taxa art. 17; rota indicada pela Secretaria de Finanças, Dec. 33/2013 art. 5º); isenção para veículos oficiais e de utilidade pública (art. 15)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei 1.095/GP/2013, de 06/05/2013",
+     "artigo": "art. 4º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/640B5EF0"
+    },
+    {
+     "ato": "Decreto 33/2013",
+     "artigo": "arts. 1º, 5º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/B93921BB"
+    }
+   ],
+   "vigencia_inicio": "2013-05-14",
+   "trechos": [
+    {
+     "descricao": "Perímetro da ZRM conforme mapa anexo aos decretos",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "santoantonioleverger_rua_americo_pinto_brasil",
+   "tipo": "via",
+   "regime": "Proibição provisória de caminhões e carretas",
+   "nome": "Rua Américo Pinto Brasil (R. N. Sra. da Conceição a R. Marechal Rondon): caminhões e carretas proibidos",
+   "status": "desativada",
+   "status_motivo": "Decreto declara a proibição 'provisória', enquanto durar a recuperação da malha viária e até a lei de tráfego de cargas (Lei 1.095/2013, posterior); sem confirmação de vigência.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Coleta de lixo; mudanças; obras e serviços de emergência e de infraestrutura urbana; serviços públicos essenciais; remoção de entulho/caçambas; remoção de terra em obras; sinalização emergencial; socorro mecânico; perecíveis alimentícios; perigosos de consumo local; transporte de valores (art. 2º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 06/GP/2012, de 17/01/2012",
+     "artigo": "art. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/0A544CED"
+    }
+   ],
+   "vigencia_inicio": "2012-01-17",
+   "trechos": [
+    {
+     "via": [
+      "Rua Américo Pinto Brasil"
+     ],
+     "de": "Rua Nossa Senhora da Conceição",
+     "ate": "Rua Marechal Cândido Mariano da Silva Rondon",
+     "descricao": "bairros Fronteira e Lixá",
+     "aproximado": false
+    }
+   ]
+  }
+ ]
+}
