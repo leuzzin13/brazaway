@@ -2,8 +2,8 @@
  "ibge": "4311718",
  "nome": "Maçambará",
  "uf": "RS",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "softcam_camara",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,127 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.camaramacambara.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camaramacambara.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R5 2026-10-18: acervo com 102 itens no teste 'orçamento' (mais antigo 16/01/1997, mais recente 26/03/2026); acervo real (>=20 itens, mais antigo antes de 2010 e mais recente de 2024+). Acertos por termo: {'caminhões': 1, 'caminhão': 0, 'veículos pesados': 0, 'trânsito pesado': 0, 'tráfego pesado': 0, 'toneladas': 4, 'eixos': 0, 'carretas': 0, 'veículos de carga': 2}. 5 itens únicos nos acertos; 4 plausíveis (filtro por ementa) com PDF baixado e grep de proibição/restrição; leitura dos que sobraram (OCR nos escaneados)."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4485 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (atende, https://camaramacambara.atende.net/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4485 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (atende, https://camaramacambara.atende.net/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. | R5 2026-10-18 (Softcam): Lei Municipal 891, de 27/05/2009 (Câmara Softcam, item 1112; PDF escaneado, OCR + conferência visual): art. 1º proíbe trânsito de caminhões de carga pesada acima de 10 t nas principais vias dentro do perímetro do mapa anexo; o anexo lista as vias com restrição (R. Otacílio M. de Almeida, R. Wilson P. Gavião, R. Otávio Silveira, R. Luiz Antônio Medeiros e Trav. Francisco Ramos). Art. 3º: a proibição vigora 'a partir da sinalização das vias' (sinalização não verificada); art. 2º: carga/descarga 07h-20h. Nenhuma lei posterior revoga/altera no acervo (busca '891', 'carga pesada', 'tráfego', 'sinalização'); lei 1934/2026 e 914/2009 lidas, sem relação. Confiança média; o coordenador manda verificador.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "macambara_centro_pesados_gt10t",
+   "tipo": "via",
+   "regime": "Proibição por carga (vias centrais)",
+   "nome": "Maçambará: vias centrais, caminhões de carga pesada acima de 10 t (Lei 891/2009)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: carga e descarga de caminhões de carga pesada compreendida no horário das 07h às 20h (não é exceção à proibição de tráfego; registrada como informação)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 891, de 27/05/2009 (Maçambará/RS)",
+     "artigo": "art. 1º (proibição >10 t no perímetro do mapa anexo); art. 3º (vigência da proibição a partir da sinalização)",
+     "url": "https://www.camaramacambara.rs.gov.br/proposicoes/pesquisa/0/1/0/1112",
+     "nota": "Texto lido (PDF https://www.cloudsoftcam.com.br/RS/MACAMBARA/importacao/anexos/LEI-ORDINARIA-OFICIAL-0891-2009.pdf). Cópia em atos/4311718/lei-891-2009.txt. 'Carga pesada acima de 10 toneladas' é ambíguo (capacidade de carga x PBT): adotado payload_t > 10 (a camada testa as capacidades até o PBT)."
+    }
+   ],
+   "nota": "Vias do anexo (mapa com hachura + legenda 'RESTRIÇÕES'): Rua Otacílio M. de Almeida (entre R. Altivo Nunes e R. Francisco Sanchotene); Rua Wilson P. Gavião (idem); Rua Otávio Silveira (entre R. Ottoni Tarragô e R. Norberto Acosta); Rua Luiz Antônio Medeiros (entre R. Ottoni Tarragô e R. Wilson P. Gavião); Travessa Francisco Ramos (toda a extensão). Sinalização das vias não verificada (art. 3º).",
+   "vigencia_inicio": "2009-05-27",
+   "trechos": [
+    {
+     "inciso": "anexo",
+     "via": [
+      "Rua Otacílio M. de Almeida",
+      "Rua Otacílio Mendes de Almeida"
+     ],
+     "de": [
+      "Rua Altivo Nunes"
+     ],
+     "ate": [
+      "Rua Francisco Sanchotene"
+     ],
+     "descricao": "Trecho entre R. Altivo Nunes e R. Francisco Sanchotene"
+    },
+    {
+     "inciso": "anexo",
+     "via": [
+      "Rua Wilson Pires Gavião",
+      "Rua Wilson P. Gavião"
+     ],
+     "de": [
+      "Rua Altivo Nunes"
+     ],
+     "ate": [
+      "Rua Francisco Sanchotene"
+     ],
+     "descricao": "Trecho entre R. Altivo Nunes e R. Francisco Sanchotene"
+    },
+    {
+     "inciso": "anexo",
+     "via": [
+      "Rua Otávio Silveira",
+      "Rua Otavio Silveira"
+     ],
+     "de": [
+      "Rua Ottoni Tarragô"
+     ],
+     "ate": [
+      "Rua Norberto Acosta"
+     ],
+     "descricao": "Trecho entre R. Ottoni Tarragô e R. Norberto Acosta"
+    },
+    {
+     "inciso": "anexo",
+     "via": [
+      "Rua Luiz Antônio Medeiros",
+      "Rua Luiz Antonio Medeiros"
+     ],
+     "de": [
+      "Rua Ottoni Tarragô"
+     ],
+     "ate": [
+      "Rua Wilson Pires Gavião"
+     ],
+     "descricao": "Trecho entre R. Ottoni Tarragô e R. Wilson P. Gavião"
+    },
+    {
+     "inciso": "anexo",
+     "via": [
+      "Travessa Francisco Ramos"
+     ],
+     "descricao": "Toda a extensão"
+    }
+   ]
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

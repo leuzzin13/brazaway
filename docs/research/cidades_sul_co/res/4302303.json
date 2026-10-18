@@ -2,8 +2,8 @@
  "ibge": "4302303",
  "nome": "Bom Jesus",
  "uf": "RS",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "pontual",
+ "nivel_busca": "softcam_camara",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,41 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.camarabomjesus.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camarabomjesus.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R5 2026-10-18: acervo com 1471 itens no teste 'orçamento' (mais antigo 05/05/1948, mais recente 25/09/2026); acervo real (>=20 itens, mais antigo antes de 2010 e mais recente de 2024+). Acertos por termo: {'caminhões': 9, 'caminhão': 3, 'veículos pesados': 0, 'trânsito pesado': 0, 'tráfego pesado': 0, 'toneladas': None, 'eixos': 5, 'carretas': 0, 'veículos de carga': 0}. 17 itens únicos nos acertos; 11 plausíveis (filtro por ementa) com PDF baixado e grep de proibição/restrição; leitura dos que sobraram (OCR nos escaneados)."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (11429 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (1doc, https://cmbomjesus.1doc.com.br/b.php?pg=o/login&n=3) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (11429 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (1doc, https://cmbomjesus.1doc.com.br/b.php?pg=o/login&n=3) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. | R5 2026-10-18 (Softcam): Lei 182, de 17/07/1956 (Câmara Softcam, item 3644; manuscrito, lido na imagem): art. 1º proíbe tráfego de caminhões de carga nas ESTRADAS municipais em dias de chuva ou com estradas molhadas, e (parágrafo único) uso de correntes. Condicionada à chuva e a estradas rurais sem delimitação de vias: regra DESATIVADA (sem geometria, condicionada).",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "bomjesus_estradas_chuva_lei182_1956",
+   "tipo": "via",
+   "regime": "Proibição condicionada (chuva)",
+   "nome": "Bom Jesus: estradas municipais em dias de chuva, caminhões de carga (Lei 182/1956)",
+   "status": "desativada",
+   "status_motivo": "Proibição condicionada a chuva/estrada molhada, em estradas municipais sem vias nomeadas (sem delimitação georreferenciável); ato de 1956 de vigência não comprovada.",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 182, de 17/07/1956 (Bom Jesus/RS)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://www.camarabomjesus.rs.gov.br/proposicoes/pesquisa/0/1/0/3644",
+     "nota": "Manuscrito transcrito em atos/4302303/lei-182-1956.txt."
+    }
+   ],
+   "nota": "Condicionada à chuva; estradas municipais rurais.",
+   "trechos": []
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
