@@ -1,0 +1,83 @@
+{
+ "ibge": "5006606",
+ "nome": "Ponta Porã",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://pontapora.ms.gov.br/v2/wp-content/uploads/Leis/2026/Lei%204739%20-%20Institui%20a%20Politica%20Municipal%20de%20Ordenamento%20de%20Trafego%20de%20carga%20pesada.pdf",
+   "resultado": "Lei 4.739/2026 lida integralmente (4 páginas, pdftotext)."
+  },
+  {
+   "url": "WebSearch (1 de 2): 'Ponta Porã decreto proíbe circulação caminhões carretas Avenida Brasil perímetro urbano'",
+   "resultado": "Levou à Lei 4.739/2026 e ao Decreto de Mobilidade Urbana 2025 (não aberto); nenhum decreto regulamentador achado."
+  },
+  {
+   "url": "https://pontapora.ms.gov.br/v2/?s=carga+pesada ; ?s=caminhões",
+   "resultado": "200; busca do site sem links de ato com os termos."
+  },
+  {
+   "url": "legislacao.py buscar 5006606 (câmara e prefeitura portal_proprio)",
+   "resultado": "0 resultados (heurístico)."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5006606 'caminhões' (ms)",
+   "resultado": "0 resultados; QD nível 1 sem acertos."
+  },
+  {
+   "url": "OSM Overpass (4 instâncias)",
+   "resultado": "Fora do ar; usado o hint da preparação: 57 ways hgv=no, exemplos Avenida Brasil com ref MS-164/BR-463 (rodovia)."
+  }
+ ],
+ "observacoes": "Lei 4.739/2026 cria a política de carga pesada (PBT > 12 t) no perímetro urbano, mas depende de regulamentação de rotas, zonas e horários e de sinalização; regra desativada até haver decreto. OSM hgv=no em Av. Brasil (ref MS-164/BR-463) é rodovia, descartado. Pendente: decreto regulamentador (e Decreto de Mobilidade Urbana 10.306/2025).",
+ "osm_divergencias": [
+  "hgv=no em 57 ways, exemplos na Av. Brasil com ref MS-164/BR-463 (rodovias estaduais/federal, competência DER/DNIT); sem ato municipal; não reconferido (Overpass fora)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "ponta_pora_carga_pesada_12t",
+   "tipo": "zona",
+   "regime": "Política de ordenamento do tráfego de carga pesada",
+   "nome": "Ponta Porã: circulação e permanência de veículos de carga com PBT acima de 12 t restringidas no perímetro urbano (rotas, zonas e horários a regulamentar)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 12
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 4º I: carga/descarga de mercadorias essenciais ou perecíveis autorizada",
+    "art. 4º II: serviços públicos essenciais (emergência, segurança, coleta de lixo, manutenção, transporte de valores)",
+    "art. 4º III: combustíveis, produtos perigosos, cargas indivisíveis com AET e rotas definidas",
+    "art. 4º IV: casos excepcionais autorizados"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal nº 4.739, de 13/05/2026 (Ponta Porã/MS)",
+     "artigo": "arts. 2º (PBT > 12 t), 3º, 4º (exceções), 7º",
+     "url": "https://pontapora.ms.gov.br/v2/wp-content/uploads/Leis/2026/Lei%204739%20-%20Institui%20a%20Politica%20Municipal%20de%20Ordenamento%20de%20Trafego%20de%20carga%20pesada.pdf"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "A lei restringe o PBT > 12 t no perímetro urbano do Plano Diretor, mas remete rotas, zonas de restrição e horários ao Executivo (art. 2º §2º); a implantação é gradativa e depende de sinalização prévia, sob pena de invalidade das autuações (art. 4º parágrafo único). Regulamentação não localizada: sem janelas, vias ou polígono.",
+   "autorizacao": "Autoridade municipal de trânsito (art. 4º)",
+   "vigencia_inicio": "2026-05-13",
+   "nota": "Art. 3º: proibido estacionar/formar filas de veículos > 12 t em vias urbanas fora das áreas e horários permitidos. Perímetro urbano = o do Plano Diretor (geometria: limite urbano a obter)."
+  }
+ ]
+}

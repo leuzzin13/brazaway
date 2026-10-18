@@ -1,0 +1,88 @@
+{
+  "ibge": "4108809",
+  "nome": "Guaíra",
+  "uf": "PR",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/77B2B89E ; https://sapl.guaira.pr.leg.br/norma/2082",
+      "resultado": "LC 007/2025 (18/12/2025; Sistema Viário) lida no diário (atos/4108809/lc_007_2025.txt) e no PDF da Câmara (imagem, sem OCR; numeração dos artigos conferida visualmente): art. 37 rotas de carga; art. 38 estacionamento"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/AB70024A",
+      "resultado": "pista da preparação (AMP, 2025-12-19, \"LEI COMPLEMENTAR Nº 011/2025 DATA: 18.12.2025 EMENTA: DISPÕE SOBRE O C\"): aberta/conferida; ver observacoes"
+    },
+    {
+      "url": "https://sapl.guaira.pr.leg.br",
+      "resultado": "legislacao.py buscar caminh|veículos pesados|carga e descarga|tráfego|tonelad|carreta|betoneira: SAPL da Câmara: acertos só de aquisição/alienação de caminhão, repasses e rotas turísticas; nenhum ato de restrição"
+    },
+    {
+      "url": "diarios_consolidados.py buscar <ibge> (AMP/SIGPub, www.diariomunicipal.com.br/amp), 8 termos: \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de caminhões\", \"veículos pesados\", \"proíbe caminhões\", \"carretas\", \"toneladas\", \"veículos de carga\"",
+      "resultado": "respondeu; só ruído (frota, cargo de motorista de veículos pesados, ISS 11.04, servidão \"transitar com veículos pesados\", plano diretor/sistema viário genérico, aquisição de carretas); nenhum ato proibindo ou restringindo circulação de caminhão"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/2E72AAD9 ; https://www.diariomunicipal.com.br/amp/materia/0E732FF9",
+      "resultado": "Decreto 235/2024 (Plano Municipal de Mobilidade; cita caminhões do porto na área central: diagnóstico) e Decreto 213/2017 (tarifas do Porto Sete Quedas): sem regra de circulação"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Pista relevante. LC 007/2025 (Sistema Viário), art. 37: \"Ficam definidas as rotas de veículos de transporte de carga para caminhões e/ou reboques, que transportam produtos em trânsito\": Porto Internacional > Rua Bandeirantes > Rua Barão do Rio Branco > Rua Ministro Gabriel Passos > BR-272 > cruzamento BR-272/BR-163 > BR-272 ou BR-163; BR-272/BR-163 sentido MS: Rua Osvaldo Cruz > Praça Castelo Branco > Rua Almirante Tamandaré > BR-163 (Ponte Ayrton Senna); e o inverso. O artigo DEFINE rotas mas não proíbe expressamente o trânsito de carga fora delas nem fixa peso/horário. Art. 38: \"Ficam proibidos estacionamentos de veículos de carga, acima de peso bruto máximo de 23 toneladas, em todo o perímetro urbano da sede\" (§1º exceto as rotas de transporte de cargas; §2º exceto combustíveis em postos; §3º exceto Zonas de Comércio e Serviços 03 e 04): é estacionamento, não circulação. Ambas registradas desativadas. Avaliar uso das rotas do art. 37 como rota preferencial/obrigatória (interpretação) antes de qualquer ativação. OSM não consultado. O diário do município (AMP) traz a LC com os artigos sem numeração.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "guaira_rotas_carga_transito",
+      "tipo": "via",
+      "regime": "rota_definida",
+      "nome": "Rotas de veículos de carga em trânsito (Porto Internacional / BR-272 / BR-163 / Ponte Ayrton Senna)",
+      "status": "desativada",
+      "status_motivo": "O art. 37 define as rotas de caminhões e reboques que transportam produtos em trânsito, mas não proíbe expressamente circular fora delas nem fixa peso ou horário; sem regra de restrição aplicável ao roteamento.",
+      "confianca": "baixa",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Complementar nº 007/2025 (Sistema Viário)",
+          "artigo": "art. 37, I a III",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/77B2B89E"
+        }
+      ],
+      "vigencia_inicio": "2025-12-19",
+      "trechos": "Rua Bandeirantes; Rua Barão do Rio Branco; Rua Ministro Gabriel Passos; BR-272; BR-163; Rua Osvaldo Cruz; Praça Castelo Branco; Rua Almirante Tamandaré; Ponte Ayrton Senna",
+      "geometria": []
+    },
+    {
+      "id": "guaira_estacionamento_carga_23t",
+      "tipo": "zona",
+      "regime": "estacionamento_proibido",
+      "nome": "Proibição de estacionamento de veículos de carga acima de 23 t no perímetro urbano da sede",
+      "status": "desativada",
+      "status_motivo": "Restrição de ESTACIONAMENTO, não de circulação; exceta as rotas de carga, combustíveis em postos e as Zonas de Comércio e Serviços 03 e 04. Perímetro urbano sem polígono.",
+      "confianca": "media",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 23
+          }
+        ]
+      },
+      "excecoes": "Rotas de transporte de cargas; veículos de combustível fóssil ou vegetal para descarga em postos; Zonas de Comércio e Serviços 03 e 04.",
+      "base_legal": [
+        {
+          "ato": "Lei Complementar nº 007/2025 (Sistema Viário)",
+          "artigo": "art. 38, caput e §§ 1º a 3º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/77B2B89E"
+        }
+      ],
+      "vigencia_inicio": "2025-12-19",
+      "trechos": "Perímetro urbano da sede de Guaíra",
+      "geometria": []
+    }
+  ]
+}

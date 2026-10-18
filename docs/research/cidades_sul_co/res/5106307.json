@@ -1,0 +1,243 @@
+{
+ "ibge": "5106307",
+ "nome": "Paranatinga",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/825C7BDB",
+   "resultado": "Lida integralmente. Decreto 1.067, de 24/11/2014 (publ. 22/01/2015): art. 1º §1º veda tráfego de caminhões/bitrem/carretas/truck/toco/trator com reboque nas avenidas centrais (Brasil, Bandeirantes, Mato, XV de Novembro) do Km 0 até a divisa em direção a Sorriso; define VUC, ZLC, ZRC, ZMRC e FCET (zonas 'conforme sinalização', sem lista de vias); exceções arts. 6º a 11º; AET art. 7º."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/5B8AC828 e 709BAF86",
+   "resultado": "Decretos 912/2013 (horários de carga/descarga) e 913/2013 (revoga o 912): só estacionamento/carga e descarga, sem relevância para circulação; não abertos além do trecho da pista."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5106307 '1067/2014' / 'circulação de caminhões' / 'Zona de Restrição' (amm-mt)",
+   "resultado": "Só o Decreto 1.067/2014; nenhuma alteração/revogação localizada (acervo AMM-MT até ~2015)."
+  },
+  {
+   "url": "https://sapl.paranatinga.mt.leg.br (via toolkit, termo 'caminh')",
+   "resultado": "20 normas, todas ruído (contribuições a festas, aquisição de caminhão, LDO) exceto Lei 691/2010 'Proíbe estacionamento de caminhão nas avenidas' (https://sapl.paranatinga.mt.leg.br/norma/952), só estacionamento, não aberta. SAPL lista leis, não decretos. Nenhuma lei posterior regulando circulação."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/mt/paranatinga",
+   "resultado": "Cloudflare 403 (não contornado)."
+  }
+ ],
+ "observacoes": "Decreto 1.067/2014 é ato primário com artigo e texto lido. Regra ativa: proibição permanente (sem horário) de caminhões nas avenidas centrais (trajeto Km 0 até a divisa rumo a Sorriso; extensão aproximada em texto). ZRC e ZMRC têm horários e limites (VUC 10 t PBT, 2,20 m x 7,30 m x 4,40 m) mas as vias são definidas só pela 'sinalização de regulamentação' no local: desativadas até obter a lista de vias. Vigência atual não reconfirmada (diário e SAPL sem ato revogador, portal da prefeitura/leismunicipais inacessível). A pista (Lei 691/2010 estacionamento) é de estacionamento, fora do escopo. | verificado em 2026-10-18: paranatinga_avenidas_centrais_caminhoes: Rebaixada para desativada: trajeto sem delimitacao e risco de jurisdicao.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "paranatinga_avenidas_centrais_caminhoes",
+   "tipo": "via",
+   "regime": "Proibição de tráfego de caminhões nas avenidas centrais",
+   "nome": "Avenidas centrais (Brasil, Bandeirantes, Mato, XV de Novembro), do Km 0 à divisa rumo a Sorriso: caminhões vedados",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Decreto não repete exceções para este §1º; as dos arts. 6º a 11º são escritas para ZRC/ZMRC (socorro mecânico, correios, valores, utilidade pública, obras emergenciais); art. 7º AET para carga indivisível"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto 1.067, de 24/11/2014",
+     "artigo": "art. 1º, §§ 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/825C7BDB"
+    }
+   ],
+   "vigencia_inicio": "2014-11-24",
+   "trechos": [
+    {
+     "via": [
+      "Avenida Brasil",
+      "Avenida Bandeirantes",
+      "Avenida Mato",
+      "Avenida XV de Novembro"
+     ],
+     "de": "Km 0 (perímetro urbano)",
+     "ate": "divisa intermunicipal rumo a Sorriso",
+     "descricao": "Avenidas centrais: trajeto do Km 0 no perímetro urbano em direção a Sorriso até a divisa; ordem e extensão exatas das avenidas não detalhadas",
+     "aproximado": true
+    }
+   ],
+   "nota": "Vedados: caminhões, bitrem, carretas, trucks, toco, trator com reboque/semirreboque. Vigência atual não reconfirmada.",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: trajeto sem delimitacao e risco de jurisdicao. Decreto 1.067/2014 art. 1 par. 1 relido (AMM-MT 825C7BDB): veda caminhoes nas 'Avenidas Central' (Brasil, Bandeirantes, Mato, XV de Novembro) em trajeto 'a partir do Km 0 ... em direcao a Sorriso, terminando na divisa intermunicipal'; ordem e extensao nao detalhadas e o trajeto ate a divisa sugere o eixo da rodovia que sai para Sorriso (jurisdicao estadual duvidosa). Sem sinalizacao confirmada."
+  },
+  {
+   "id": "paranatinga_zrc_nao_vuc",
+   "tipo": "zona",
+   "regime": "Zona de Restrição de Circulação (ZRC)",
+   "nome": "ZRC (vias com sinalização): caminhões acima do VUC proibidos 0h-10h e 16h-24h",
+   "status": "desativada",
+   "status_motivo": "As vias da ZRC não são listadas no decreto (só 'conforme sinalização de regulamentação'); sem perímetro não há como aplicar.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "10:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "16:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     },
+     {
+      "campo": "largura_m",
+      "acima": 2.2
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.3
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     }
+    ]
+   },
+   "excecoes": [
+    "VUC credenciado circula em período integral (art. 3º)",
+    "Arts. 6º a 11º: socorro, correios, valores, concretagem e entulho 10h-16h seg-sex, utilidade pública 10h-16h seg-sex, perigosos de consumo local, obras emergenciais 48 h"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto 1.067/2014",
+     "artigo": "art. 2º, III",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/825C7BDB"
+    }
+   ],
+   "vigencia_inicio": "2014-11-24",
+   "trechos": [
+    {
+     "descricao": "Vias definidas pela sinalização local (não listadas)",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "paranatinga_zmrc_nao_vuc",
+   "tipo": "zona",
+   "regime": "Zona Máxima de Restrição de Circulação (ZMRC)",
+   "nome": "ZMRC (vias com sinalização): caminhões acima do VUC proibidos 6h-20h seg-sex e 6h-13h sáb; VUC só 10h-16h",
+   "status": "desativada",
+   "status_motivo": "As vias da ZMRC não são listadas no decreto (só 'conforme sinalização de regulamentação'); sem perímetro não há como aplicar.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "13:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     },
+     {
+      "campo": "largura_m",
+      "acima": 2.2
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.3
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     }
+    ]
+   },
+   "excecoes": [
+    "VUC com selo só 10h-16h (art. 5º); mesmas exceções dos arts. 6º a 11º"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto 1.067/2014",
+     "artigo": "art. 2º, IV; art. 5º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/825C7BDB"
+    }
+   ],
+   "vigencia_inicio": "2014-11-24",
+   "trechos": [
+    {
+     "descricao": "Vias definidas pela sinalização local (não listadas)",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "vuc": {
+  "largura_max_m": 2.2,
+  "comprimento_max_m": 7.3,
+  "altura_max_m": 4.4,
+  "pbt_max_t": 10,
+  "exige_cadastro": true,
+  "artigo": "Decreto 1.067/2014, art. 2º, I; selo de credenciamento art. 4º",
+  "nota": "VUC só circula nas ZMRC das 10h às 16h com selo (art. 5º)."
+ }
+}

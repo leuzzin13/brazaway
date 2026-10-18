@@ -1,0 +1,90 @@
+{
+ "ibge": "5005707",
+ "nome": "Naviraí",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/C6CA40CE",
+   "resultado": "Decreto 85/2012 lido integralmente (3 artigos)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/4312A147",
+   "resultado": "LC 195/2018 (revisão do Plano Diretor) lida: art. 101 VI (anel viário para controle de veículos pesados) e art. 109 §1º 'a circulação de veículos pesados se dará pelo anel viário' são diretriz de plano diretor, sem perímetro/horário/sanção; não é regra."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5005707 'Praça Euclides Antonio Fabris caminhões' / 'Decreto 85 2012 tráfego' / 'circulação de caminhões' / 'anel viário veículos pesados' (ms)",
+   "resultado": "Sem alteração/revogação do Dec. 85/2012; Dec. 108/2015, 19/2016, 10/2019 e IN 006/2017 aparecem sem restrição relevante (Dec. 108/2015 é tabela de depreciação; Dec. 10/2019 é estrada vicinal; não abertos integralmente)."
+  },
+  {
+   "url": "legislacao.py buscar 5005707 (sapl câmara, mpx prefeitura, leismunicipais, 1doc)",
+   "resultado": "SAPL 0; MPX heurístico sem ato útil; leismunicipais 403 Cloudflare; 1doc sem cliente."
+  }
+ ],
+ "observacoes": "Dec. 85/2012 é real mas as avenidas não são nomeadas: regra desativada por geometria indefinível. OSM hgv=no é via de pedestres (way 722069447), descartado.",
+ "osm_divergencias": [
+  "hgv=no na way 722069447 (highway=pedestrian, sem nome): via de pedestres, sem relação com restrição municipal a caminhões; descartado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "navirai_avenidas_praca_central",
+   "tipo": "via",
+   "regime": "Proibição de ônibus, micro-ônibus, vans e caminhões entre a Rua dos Jardins e a Praça Prefeito Euclides Antonio Fabris",
+   "nome": "Naviraí: proibido o tráfego de ônibus, micro-ônibus, vans e caminhões pelos trechos das Avenidas entre a Rua dos Jardins e a Praça Prefeito Euclides Antonio Fabris",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal nº 85, de 15/10/2012 (Naviraí/MS)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/C6CA40CE"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "O art. 1º não nomeia as avenidas: fala em 'trechos das Avenidas compreendidos entre a Rua dos Jardins e a Praça Prefeito Euclides Antonio Fabris'; sem vias identificadas não há como montar a geometria. Vigência não confirmada em portal (diário ASSOMASUL sem alteração).",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua dos Jardins"
+     ],
+     "ate": [
+      "Praça Prefeito Euclides Antonio Fabris"
+     ],
+     "descricao": "Trechos das avenidas (não nomeadas no ato) entre a Rua dos Jardins e a Praça Prefeito Euclides Antonio Fabris",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2012-10-16",
+   "nota": "Finalidade declarada: fluidez de veículos e pedestres no interior da praça central. Fiscalização: Município e Polícia Militar (art. 2º)."
+  }
+ ]
+}

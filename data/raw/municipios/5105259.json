@@ -1,0 +1,78 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5105259",
+  "municipio": "Lucas do Rio Verde",
+  "uf": "MT",
+  "fonte_id": "lucas-do-rio-verde",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/482D8AD7 (Decreto 2.656/2014, AMM-MT)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Linhas das vias montadas pelo nome sobre o OpenStreetMap (PBF local): derivadas do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Decreto 2.656/2014, art. 1º: veículos acima de três eixos na Av. das Acácias (MT-449 a Linha 5). Vigência atual não reconfirmada; mapa anexo não lido. Decretos 2.529/2013 e 2.579/2013 são só de estacionamento."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O ato não define VUC: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "lucasdorioverde_av_acacias_mais_3_eixos",
+      "tipo": "via",
+      "regime": "Proibição de trânsito e estacionamento de veículos com mais de três eixos",
+      "nome": "Av. das Acácias (MT-449 a Linha 5): veículos acima de três eixos proibidos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto 2.656, de 24/04/2014",
+          "artigo": "art. 1º",
+          "url": "https://www.diariomunicipal.com.br/amm-mt/materia/482D8AD7"
+        }
+      ],
+      "vigencia_inicio": "2014-04-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida das Acácias"
+          ],
+          "descricao": "Av. das Acácias a partir da rotatória da MT-449 (extremo nordeste) até o fim da via no OSM; a Linha 5 não toca a Av. das Acácias no OSM (fica a ~1,7 km do extremo sudoeste)",
+          "aproximado": true,
+          "nota": "Mapa anexo do decreto não lido: adotada a Av. das Acácias inteira no OSM (rotatória da MT-449 ao extremo sudoeste)."
+        }
+      ],
+      "nota": "Vigência atual não reconfirmada (sem revogação localizada). O decreto fala em 'veículos' acima de três eixos, sem restringir a caminhões.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5105259_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+ "ibge": "5005202",
+ "nome": "Ladário",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "toolkit/legislacao.py buscar 5005202 \"caminh|veículos pesados|...\" --principal (instar, prefeitura)",
+   "resultado": "4 atos: Lei 1.246/2026, Lei 1.117/2023 (relevantes); Parecer 7/2026 e Lei 838/2009 (ruído)"
+  },
+  {
+   "url": "https://www.ladario.ms.gov.br/portal/leis_decretos/14819/",
+   "resultado": "lido: Lei Ordinária 1.246/2026 (21/08/2026), 'Em vigor', autor Executivo; texto no PDF /publicos/lei_ordinAria1246__proIbe_a_circulaCAo_de_caminhOes_pesados__21053734.pdf (digitalizado; OCR): art. 1º PBT > 14 t"
+  },
+  {
+   "url": "https://www.ladario.ms.gov.br/portal/leis_decretos/12159/",
+   "resultado": "lido: Lei Ordinária 1.117/2023 (16/05/2023), 'Em vigor' no portal; PDF /publicos/lei_1117-2023-pml_proibe_circulacao_caminhoes_pesados_area_c_27085628.pdf (art. 1º PBT > 23 t); republicada no ASSOMASUL nº 3367 (23/06/2023) após cancelar a publicação nº 3355"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/5A7C007E",
+   "resultado": "Decreto 4.768/2019 (e 4.652/2019, 4.490/2019, 2019-02..09): proibição de circulação/estacionamento em trechos nas festas (eventos), com carga e descarga autorizada até 3h/6h: pontual, não lido na íntegra nesta rodada"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 5005202 \"trânsito de caminhões / circulação de caminhões / caminhões pesados / 1.246\" (ASSOMASUL/MS)",
+   "resultado": "nenhum decreto regulamentador nem a Lei 1.246 no diário SIGPub (só Decretos 2.813/2.859 de 2015, uso de frota: ruído)"
+  },
+  {
+   "url": "osm_hints_por_municipio.json",
+   "resultado": "0 etiquetas"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "ACHADO REAL a partir de lead DR: Lei Ordinária 1.246/2026 (Ladário), de 11/08/2026, art. 1º proíbe caminhões pesados (PBT > 14 t) na 'área central e vias dos bairros'; exceções amplas no art. 2º (só para veículos com destino final em Ladário e a serviço de uma lista de atividades), rota alternativa no art. 4º (Rua Frei Liberato Keterre, Rua Emília Alves e estrada rural), multa do CTB. Substitui a Lei 1.117/2023 (23 t), mesmo texto. Sem polígono da 'área central' e sem decreto regulamentador achado. Lei 1.246 lida só por OCR do PDF digitalizado: conferir 14 t no original se for usar. Lead veio da DR (os acertos da preparação eram decretos de festas). Pendente: ler os decretos de festa de 2019 (pontual) e conferir se a Lei 1.246 foi publicada no diário com outra data de vigência. | verificado em 2026-10-18: ladario_pesados_14t: Rebaixada para desativada: 'area central e vias dos bairros' sem delimitacao.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "ladario_pesados_14t",
+   "tipo": "zona",
+   "regime": "PBT > 14 t (proibição na área central e vias dos bairros)",
+   "nome": "Ladário: circulação de caminhões pesados (PBT > 14 t) proibida na área central e vias dos bairros",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 14
+     }
+    ]
+   },
+   "origem_destino_dentro": "permite",
+   "excecoes": [
+    "Art. 2º: só vale para veículos com destino final em Ladário E a serviço de: emergência; transporte coletivo; veículos oficiais; PM/Bombeiros/ambulâncias; Forças Armadas; concessionárias/serviços urbanos públicos; reparo em oficinas locais (desacoplado de carreta/reboque); construção civil e concretagem; coleta de lixo; guincho; imprensa; cargas alimentícias; materiais de construção; combustíveis e gás; remoção de terra/obras civis; infraestrutura urbana; entulho em caçambas; transporte de valores; abastecimento do comércio local",
+    "Art. 4º: rota alternativa para caminhões/carretas/bitrens: acesso/saída pela Rua Frei Liberato Keterre, Rua Emília Alves e a estrada rural"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 1.246/2026 (Ladário/MS), de 11/08/2026 (portal: 21/08/2026)",
+     "artigo": "arts. 1º a 4º",
+     "url": "https://www.ladario.ms.gov.br/portal/leis_decretos/14819/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "área central",
+      "vias dos bairros do Município (todas as vias urbanas; sem lista nominal)"
+     ],
+     "descricao": "proibição geral na área urbana; a lei não delimita polígono da 'área central'"
+    },
+    {
+     "inciso": "art. 4º, par. único, I",
+     "via": [
+      "Rua Frei Liberato Keterre",
+      "Rua Emília Alves",
+      "estrada rural"
+     ],
+     "descricao": "rota alternativa assegurada"
+    }
+   ],
+   "vigencia_inicio": "2026-08-21",
+   "nota": "Texto lido do PDF digitalizado por OCR (atos/5005202/Lei-1246-2026.txt); limiar 14 t conferido no OCR ('14 (quatorze) toneladas'). Eleva o rigor da Lei 1.117/2023 (23 t). Vigência 'na data da publicação': usei a data do portal (21/08/2026); publicação no diário não localizada. Como as exceções do art. 2º cobrem quase todo o tráfego de carga com destino em Ladário, o efeito prático é sobretudo sobre trânsito de passagem. Sem geometria da 'área central' (Ladário é pequeno e quase toda a malha urbana é 'área central ou bairros'). Multa: do CTB (art. 3º).",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: 'area central e vias dos bairros' sem delimitacao. Lei 1.246/2026 (OCR do PDF oficial do portal, 14 t PBT) relida: art. 1 proibe em 'area central e vias dos bairros' (todo o perimetro urbano, sem lista de vias nem poligono); art. 2 excetua 19 categorias de veiculos com destino final em Ladario (obras, alimentos, materiais de construcao, comercio local etc.), de modo que a regra so atinge trafego de passagem; art. 4 rota alternativa so em texto. Sem delimitacao georreferenciavel. Publicacao em diario nao localizada."
+  },
+  {
+   "id": "ladario_pesados_23t_2023",
+   "tipo": "zona",
+   "regime": "PBT > 23 t (proibição na área central e vias dos bairros)",
+   "nome": "Ladário: Lei 1.117/2023 (PBT > 23 t), substituída pela Lei 1.246/2026 (14 t)",
+   "status": "revogada",
+   "status_motivo": "Lei 1.246/2026 regula a mesma matéria com texto praticamente idêntico e limiar de 14 t, revogando disposições em contrário (art. 6º, revogação tácita); o portal ainda marca a Lei 1.117/2023 como 'Em vigor' e não há revogação expressa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 23
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: mesmas exceções (a)-(s); multa de 20 UPFL (art. 3º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 1.117/2023 (Ladário/MS), de 16/05/2023, republicada no Diário ASSOMASUL nº 3367 de 23/06/2023",
+     "artigo": "arts. 1º a 4º",
+     "url": "https://www.ladario.ms.gov.br/portal/leis_decretos/12159/"
+    }
+   ],
+   "vigencia_inicio": "2023-05-16",
+   "vigencia_fim": "2026-08-21",
+   "nota": "Texto em atos/5005202/Lei-1117-2023.txt (a 1ª publicação, ASSOMASUL nº 3355 de 06/06/2023, foi tornada sem efeito por erro material e republicada)."
+  }
+ ]
+}

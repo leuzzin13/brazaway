@@ -1,0 +1,80 @@
+{
+  "ibge": "4127205",
+  "nome": "Terra Boa",
+  "uf": "PR",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/DD1B50B0",
+      "resultado": "Lei 1.329/2015 (AMP, 15/05/2015) aberta e lida na íntegra. Texto em atos/4127205/lei1329_2015.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/0128EA21",
+      "resultado": "Decreto 3.418/2023 lido: só proíbe estacionamento de caminhões e ônibus no canteiro central da Av. Melvin Jones (art. 6º), não circulação. Texto em atos/4127205/dec3418_2023.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/9CD415E4",
+      "resultado": "Ata do Conselho de Trânsito 24/07/2025 (pista): estacionamento de caminhões no estacionamento central; ata não é ato"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4127205 'veículos pesados 1.329' (amp)",
+      "resultado": "só a própria Lei 1.329/2015; nenhuma alteração/revogação"
+    },
+    {
+      "url": "https://sapl.terraboa.pr.leg.br (legislacao.py buscar, caminh|pesad|carga|1.329|trânsito|contorno)",
+      "resultado": "0 resultados (SAPL sem acervo)"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Regra real (Lei 1.329/2015) com perímetro só na Planta Parcial anexa: desativada até obtê-la. Decreto 3.418/2023 e ata de 2025 são só estacionamento (pontual).",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "terraboa_perimetro_central_pesados",
+      "tipo": "zona",
+      "regime": "Perímetro central",
+      "nome": "Perímetro central de Terra Boa: veículos de carga >7 t e/ou >7 m, cargas vivas, graneleiros e canavieiros desviam para os Contornos Norte e Sul",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Ato primário lido e sem alteração/revogação encontrada, mas o perímetro central é só a 'Planta Parcial' anexa (não publicada no texto do diário): sem perímetro não há geometria. 'Veículos de cargas acima de 7 toneladas' é ambíguo (PBT x capacidade); a proibição vale também, sem limite de peso, para cargas vivas, graneleiros (rações avícolas) e canavieiros. Desvio obrigatório: Contorno Norte (PR-082, trevos de Cianorte e Engenheiro Beltrão) e Contorno Sul (Ruas Marialva, Mônica, Marabá e Estrada Azul).",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei 1.329/2015",
+          "artigo": "art. 1º (proibição); arts. 2º e 3º (fiscalização/penalidades); art. 5º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DD1B50B0"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

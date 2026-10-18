@@ -1,0 +1,155 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5007695",
+  "municipio": "São Gabriel do Oeste",
+  "uf": "MS",
+  "fonte_id": "sao-gabriel-do-oeste",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/ms/materia/8CDC772B (LC 185/2017, ASSOMASUL)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Linhas das vias montadas pelo nome sobre o OpenStreetMap (PBF local): derivadas do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Código de Posturas (LC 185/2017), art. 42: veículos de grande porte em 3 vias da área central, exceto carga e descarga em horário a regulamentar (decreto não localizado). Vigência não confirmada em portal."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O ato não define VUC: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "sgo_centro_grande_porte",
+      "tipo": "via",
+      "regime": "Proibição de veículos de grande porte na área central",
+      "nome": "São Gabriel do Oeste: proibido o trânsito de veículos de grande porte na Av. Getúlio Vargas (até a Av. São Francisco), Av. Mato Grosso do Sul e R. Paraná (trecho), exceto carga e descarga",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "art. 42: exceto para carga e descarga, em horário a ser regulamentado por ato do Chefe do Executivo (decreto regulamentador não localizado)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar municipal nº 185, de 21/12/2017 (Código de Posturas de São Gabriel do Oeste/MS)",
+          "artigo": "art. 42 (e art. 41)",
+          "url": "https://www.diariomunicipal.com.br/ms/materia/8CDC772B"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5007695_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 42",
+          "via": [
+            "Avenida Getúlio Vargas"
+          ],
+          "de": {
+            "lonlat": [
+              -54.56768,
+              -19.39629
+            ]
+          },
+          "ate": [
+            "Avenida São Francisco"
+          ],
+          "descricao": "Av. Getúlio Vargas do início (extremo leste, junto à rodovia) até a Av. São Francisco",
+          "aproximado": true,
+          "nota": "O ato diz \"do início da via\" sem dizer qual extremo: adotado o extremo leste (entrada pela rodovia)."
+        },
+        {
+          "inciso": "art. 42",
+          "via": [
+            "Avenida Getúlio Vargas"
+          ],
+          "de": {
+            "lonlat": [
+              -54.5676,
+              -19.39643
+            ]
+          },
+          "ate": [
+            "Avenida São Francisco"
+          ],
+          "descricao": "Av. Getúlio Vargas do início até a Av. São Francisco (outra pista da via dupla)",
+          "aproximado": true,
+          "nota": "Segunda pista da Av. Getúlio Vargas (as duas pistas são ways de mão única separados no OSM)."
+        },
+        {
+          "inciso": "art. 42",
+          "via": [
+            "Avenida Mato Grosso do Sul"
+          ],
+          "descricao": "Avenida Mato Grosso do Sul, em toda a extensão no OSM (o ato não delimita trecho)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 42",
+          "via": [
+            "Rua Paraná"
+          ],
+          "caminho": "valhalla",
+          "de": {
+            "lonlat": [
+              -54.5766144,
+              -19.3872493
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -54.57106,
+              -19.39622
+            ]
+          },
+          "descricao": "Rua Paraná entre a R. Raimundo do Prado e o entroncamento com a Av. Mato Grosso do Sul",
+          "aproximado": false,
+          "nota": "1ª metade do trecho entre a R. Raimundo do Prado e a R. Martimiano Alves Dias (R. Maritimiano no OSM); o entroncamento é um conjunto de mãos únicas, que o OSM não liga em linha."
+        },
+        {
+          "inciso": "art. 42",
+          "via": [
+            "Rua Paraná"
+          ],
+          "caminho": "valhalla",
+          "de": {
+            "lonlat": [
+              -54.57073,
+              -19.39678
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -54.5694077,
+              -19.3989176
+            ]
+          },
+          "descricao": "Rua Paraná do entroncamento até a R. Martimiano Alves Dias",
+          "aproximado": false,
+          "nota": "2ª metade do trecho; o vão de ~65 m do entroncamento (mãos únicas) fica sem linha."
+        }
+      ],
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 42 (carga e descarga)",
+      "vigencia_inicio": "2017-12-22",
+      "nota": "'Veículos de grande porte' não é definido em peso/dimensão; tratado como caminhão. Sem alteração localizada no diário ASSOMASUL (LC 196/2018 só aparece por citação do Código). Multa média."
+    }
+  ]
+}

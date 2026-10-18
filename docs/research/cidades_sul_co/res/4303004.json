@@ -1,0 +1,164 @@
+{
+ "ibge": "4303004",
+ "nome": "Cachoeira do Sul",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/4303004/2023-12-22/ebfe62a11d603406d15436fb638b7dc8f7f62015.txt",
+   "resultado": "LIDO (QD, texto da edição 430, 22/12/2023): Lei Complementar 09, 20/12/2023, art. 16 dá nova redação ao art. 107 da LC 07/2021: proibição de caminhões acima de 4 t na Av. Brasil e Ruas Júlio de Castilhos, Saldanha Marinho, Sete de Setembro, Pinheiro Machado, David Barcelos e Andrade Neves entre 07h30 e 18h30; art. 21: art. 16 com 365 dias de adaptação. atos/4303004/lc_09_2023_trecho.txt"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4303004/2021-12-30/6323d3c273561ef1b8e05ca942a3efe74e64a35a.txt",
+   "resultado": "LIDO (QD, edição 39, 30/12/2021): LC 07/2021 (Plano Diretor/uso do solo), art. 107 original: proibição de caminhões nas mesmas vias entre 18h30 e 07h30; nos demais horários, carga e descarga com veículos de até 10 t. Substituído pela LC 09/2023 art. 16. atos/4303004/lc_07_2021_art107_trecho.txt"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4303004/2023-09-23/610fd8704566d306d4fb656803e917bf6d0d94bd.txt",
+   "resultado": "LIDO: Decreto 75/2023 (chuvas, calamidade): caminhões com guincho e carregados de toras/areia proibidos em dias de chuva + 24 h nas estradas do interior; duração de 30 dias - vencido. atos/4303004/decreto_75_2023.txt"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4303004/2026-06-18/add2055b805e96a56e965564534b268bf1462d33.txt",
+   "resultado": "Trecho (QD) do plano de mobilidade em consulta (2025-26): cita a Lei 1983/83, a LC 003/2014 (horários de carga e descarga nas ruas Saldanha Marinho, Sete de Setembro, Júlio de Castilhos, Andrade Neves, Av. Brasil, Pinheiro Machado, Davi Barcelos e Conde de Porto Alegre) e resoluções do COMTRAN sobre rotas de veículos de carga - não localizei esses atos (anteriores ao acervo do QD, que começa em 2021/2023); pista aberta."
+  },
+  {
+   "url": "api.queridodiario.org.br gazettes (4303004): 'caminhões acima de 4 toneladas'; 'tráfego de caminhões'; 'circulação de caminhões'; 'Andrade Neves caminhões toneladas'; 'COMTRAN resolução rota veículos de carga'",
+   "resultado": "API abriu (lenta/intermitente com erro JSON em 2 chamadas). Sem alteração posterior da LC 09/2023 art. 16 encontrada."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4303004 (3 termos)",
+   "resultado": "Consultou só FAMURS (sem hits); QD usado diretamente."
+  },
+  {
+   "url": "cespro.com.br/visualizarLegislacao.php?cdMunicipio=7309",
+   "resultado": "Não aberto (reCAPTCHA); falha de fonte do portal principal, mitigada pelo QD."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "O art. 107 da LC 07/2021 (Plano Diretor) foi reescrito pela LC 09/2023 (art. 16, com 365 dias de adaptação a contar de dez/2023, logo exigível desde ~21/12/2024): caminhões acima de 4 t proibidos na Av. Brasil e Ruas Júlio de Castilhos, Saldanha Marinho, Sete de Setembro, Pinheiro Machado, David Barcelos e Andrade Neves entre 07h30 e 18h30 (dias não especificados). ATENÇÃO: o texto de 2021 proibia caminhões no período inverso (18h30-07h30) e permitia carga/descarga até 10 t nos demais horários; a nova redação parece inverter ou resumir a regra (possível erro de redação) - modelei estritamente o que está escrito na LC 09/2023, confiança baixa; a LC 003/2014 e resoluções do COMTRAN (horários de carga/descarga e rotas) podem detalhar - não localizadas. Decreto 75/2023 (chuva) expirou. OSM: 15 ways com hgv=no (Rua Bento Gonçalves, Rua Andrade Neves, 15 de Novembro etc.), parcialmente coincidentes com as vias da lei (Andrade Neves). | verificado em 2026-10-18: LC 09/2023 art. 16 e art. 21 (365 dias) e LC 07/2021 art. 107 relidos no QD (ed. 430 e ed. 39). Redacao de 2023 inverte o horario de 2021; rebaixada. API do QD fora do ar (503) na reverificacao posterior; Dec. 75/2023 segue vencido.",
+ "osm_divergencias": [
+  "15 ways com hgv=no (Rua Bento Gonçalves, Rua Andrade Neves, Rua 15 de Novembro, Rua Dona Odenira/ERS-403 etc.) e 2 com maxweight: apenas a Rua Andrade Neves coincide com a LC 09/2023; as demais sem ato municipal localizado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "cachoeiradosul_lc_09_2023_art107_4t",
+   "tipo": "via",
+   "regime": "Restrição horária de caminhões > 4 t (centro)",
+   "nome": "Av. Brasil e Ruas Júlio de Castilhos, Saldanha Marinho, Sete de Setembro, Pinheiro Machado, David Barcelos, Andrade Neves: caminhões > 4 t proibidos 07h30-18h30 (LC 09/2023 art. 16)",
+   "status": "desativada",
+   "status_motivo": "Verificado em 2026-10-18: rebaixada - horario provavelmente invertido: LC 07/2021 art. 107 proibia 18h30-07h30 (carga/descarga ate 10 t nos demais horarios) e a LC 09/2023 art. 16 passou a 'acima de 4 t entre 07:30 e 18:30'; sem erratum/regulamentacao localizada; peso PBT x capacidade nao especificado (antes: Lei Complementar vigente (exigível após 365 dias de adaptação, ~dez/2024); redação divergente da de 2021 (que proibia 18h30-07h30); LC 003/2014 e COMTRAN não localizados. Sinalização não verificada.)",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "07:30",
+     "to": "18:30"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 4.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Complementar Municipal 09, de 20/12/2023 (Cachoeira do Sul), que dá nova redação ao art. 107 da Lei Complementar 07/2021",
+     "artigo": "art. 16 (novo art. 107); art. 21 (prazo de 365 dias)",
+     "url": "https://data.queridodiario.ok.org.br/4303004/2023-12-22/ebfe62a11d603406d15436fb638b7dc8f7f62015.txt",
+     "nota": "Texto lido no Diário Oficial (ed. 430) via Querido Diário; peso não especificado (PBT ou capacidade)."
+    }
+   ],
+   "excecoes": [],
+   "trechos": [
+    {
+     "inciso": "art. 107 (nova redação)",
+     "via": [
+      "Avenida Brasil",
+      "Rua Júlio de Castilhos",
+      "Rua Saldanha Marinho",
+      "Rua Sete de Setembro",
+      "Rua Pinheiro Machado",
+      "Rua David Barcelos",
+      "Rua Andrade Neves"
+     ],
+     "descricao": "Vias do centro, sem trechos.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2024-12-21",
+   "nota": "Dias da semana não restringidos pelo texto: todos. Feriados: silente."
+  },
+  {
+   "id": "cachoeiradosul_dec_75_2023_chuva",
+   "tipo": "zona",
+   "regime": "Restrição condicional (chuva) - estradas rurais",
+   "nome": "Estradas do interior: caminhões com guincho/carregados de toras e areia proibidos em dias de chuva + 24 h (Dec. 75/2023, 30 dias)",
+   "status": "desativada",
+   "status_motivo": "Duração de 30 dias a contar da publicação (set/2023): expirado.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "caminhao_com_guincho",
+       "carga_toras",
+       "carga_areia"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 75/2023 (Cachoeira do Sul)",
+     "artigo": "arts. 1º e 3º",
+     "url": "https://data.queridodiario.ok.org.br/4303004/2023-09-23/610fd8704566d306d4fb656803e917bf6d0d94bd.txt"
+    }
+   ],
+   "excecoes": [
+    "Cargas vivas, ração e produtos agrícolas"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Estradas do interior do município.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2023-09-23",
+   "vigencia_fim": "2023-10-23"
+  }
+ ]
+}

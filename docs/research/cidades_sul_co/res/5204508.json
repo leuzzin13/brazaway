@@ -3,32 +3,48 @@
  "nome": "Caldas Novas",
  "uf": "GO",
  "status": "nao_achou",
- "nivel_busca": "profunda",
+ "nivel_busca": "profundo",
  "falha_de_fonte": true,
+ "data": "2026-10-18",
  "fontes_consultadas": [
   {
+   "url": "https://caldasnovas.integrame.app.br/api/diario-oficial/atos/{1=decreto,4=portaria}/publicacoes/<offset> (POST, campo texto; API publica do portal de Atos Normativos da prefeitura)",
+   "resultado": "Funciona. Busca por palavra inteira no texto: caminhão 1 decreto/5 portarias, caminhões 2/3, carga 1607 decretos/3311 portarias, descarga 0, pesados 16/145, toneladas 0, tonelagem 0, circulação 17/7, estacionamento 4/10, restrição 4/4, tráfego 3/10. Os textos com caminhão/caminhões/veículos pesados/carga e descarga/VUC lidos por regex: todos sao designacao de fiscal de contrato, condutor da frota municipal, controle de acesso do DEMAE, titulo honorifico. Nenhum ato de restricao de circulacao de caminhoes. Cobertura: decretos/portarias de 2022 em diante (os mais antigos aparecem sem numero/ano no indice). Atos relacionados a transito achados e sem regra de caminhao: Portaria 011/2025 (Manual de Conduta Operacional dos Agentes de Transito e Mobilidade Urbana), Portarias 142/2023 e 002/2023 (responsabilidade por infracoes de transito), Portaria 003/2023-SMM (rodizio do Trenzinho da Alegria), Decreto sobre area azul (estacionamento rotativo) e suspensao do transporte recreativo turistico."
+  },
+  {
+   "url": "https://caldasnovas.cespro.com.br/pesquisaLegislacao.php?cdMunicipio=2053 e _data/api.php (CESPRO, base de LEIS e Lei Complementar da prefeitura e da camara)",
+   "resultado": "Pagina carrega (Vue) mas a API interna _data/api.php?operacao=content-* devolve corpo vazio (HTTP 200, 0 bytes) a clientes automaticos; pesquisa tem reCAPTCHA; WebFetch: ENOTFOUND. Leis municipais (Codigo de Posturas, Plano Diretor, lei de transito) NAO lidas."
+  },
+  {
    "url": "https://sapl.caldasnovas.go.leg.br",
-   "resultado": "Responde mas tem 1 norma só (inútil)."
+   "resultado": "Responde mas indexa 1 norma so (inutil)."
   },
   {
-   "url": "https://caldasnovas.integrame.app.br/app/ (atos normativos, diário oficial)",
-   "resultado": "SPA Angular sem API encontrada; não automatizável."
+   "url": "https://acessoainformacao.caldasnovas.go.gov.br/legislacao/leis e acessoainformacao.caldasnovas.go.leg.br/legislacao/leis",
+   "resultado": "Redirecionam para o CESPRO (mesma limitacao)."
   },
   {
-   "url": "https://acessoainformacao.caldasnovas.go.gov.br/legislacao/leis e caldasnovas.cespro.com.br",
-   "resultado": "403 / CAPTCHA-JS."
+   "url": "https://www.caldasnovas.go.gov.br/wp-json/wp/v2/search e https://caldasnovas.go.leg.br/wp-json/wp/v2/search (caminhões; carga e descarga; veículos pesados)",
+   "resultado": "Sem pagina ou noticia de restricao de caminhoes (so noticias de campanhas e paginas de secretarias)."
   },
   {
-   "url": "https://www.caldasnovas.go.gov.br, AGM/FGM, Querido Diário",
-   "resultado": "Home abre; sem cobertura em diários consolidados."
+   "url": "https://caldasnovas.integrame.app.br/api/diario-oficial/edicoes/dia/<data>",
+   "resultado": "Edicoes do Diario Oficial sao PDFs no Google Drive (indice de edicoes exige token); varredura de texto nao viavel."
   },
   {
-   "url": "penaestrada.com.br/restricoes/caldas-novas/ (leads/penaestrada.json)",
-   "resultado": "404, sem página."
+   "url": "Querido Diario / diarios_consolidados.py lead 5204508; penaestrada.com.br/restricoes/caldas-novas/",
+   "resultado": "0 acertos; sem pagina no penaestrada (leads/penaestrada.json sem entrada)."
+  },
+  {
+   "url": "WebSearch (2 consultas)",
+   "resultado": "Nenhum ato municipal de restricao de caminhoes em Caldas Novas. Pista estadual (fora do escopo municipal): restricao a veiculos pesados na virada de ano em rodovias estaduais, incluindo GO-139 Caldas Novas-Corumbaiba (noticia Mais Goias; nao verificada)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/go/caldas-novas",
+   "resultado": "HTTP 403 (Cloudflare); nao contornado."
   }
  ],
- "data": "2026-10-18",
- "observacoes": "Nenhuma fonte de legislação acessível. Pendências: atos de trânsito/carga e descarga no Integrame (navegador).",
+ "observacoes": "Decretos e portarias (Integrame, 2022+) lidos sem regra de caminhao. A lacuna e a legislacao em LEI (Codigo de Posturas, Plano Diretor/Lei de uso do solo, eventual lei de transito/carga e descarga) hospedada no CESPRO, inacessivel a automacao: por isso falha_de_fonte=true e o nao_achou NAO e conclusivo. Pendencia: abrir caldasnovas.cespro.com.br em navegador e pesquisar caminh*, carga e descarga, tonelagem, transito.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

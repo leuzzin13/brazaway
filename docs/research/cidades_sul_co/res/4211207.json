@@ -1,0 +1,613 @@
+{
+  "ibge": "4211207",
+  "nome": "Morro da Fumaça",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1554250",
+      "resultado": "Decreto 035/2018 aberto e lido (DOM/SC). Textos em atos/4211207/dec035_2018.txt etc."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2434605",
+      "resultado": "Decreto 058/2020 lido até o art. 1º/2º (atos/4211207/dec058_2020.txt)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1686514 e /2150166",
+      "resultado": "Decretos 115/2018 e 120/2019 lidos (Rua João de Rocchi)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1833432",
+      "resultado": "Decreto 195/2018 lido (Ruas Santo Antônio e Paschoal Zaccaron)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5729670",
+      "resultado": "Decreto 046/2024 lido (Rod. Líbero Fortunato)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/8084274",
+      "resultado": "Decreto 036/2026 lido (bitrem; revoga 155, 182 e 195/2020)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2486666, /2627308, /2662024, /2686133, /2753408",
+      "resultado": "Decretos 081/2020, 155/2020, 182/2020, 195/2020 e 224/2020 lidos (cadeia Tranquilo Sartor/Urussanga/Líbero Fortunato)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1456349 e /247060",
+      "resultado": "Decretos 180/2017 (revogado pelo 035/2018) e 053/2012 lidos"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/3853133",
+      "resultado": "Lei 2.238/2022 (plano de mobilidade): art. 9º só prevê 'regulamentar restrições de veículos de carga no polígono central'; diretriz"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4211207 'tráfego de veículos de carga', 'proíbe a entrada parada estacionamento circulação', 'veículos com PBT acima', 'Decreto 142/2019' (domsc)",
+      "resultado": "cadeia de ~14 decretos 2012-2026; Decreto 142/2019 não localizado (revogado pelos 081 e 155/2020); Querido Diário (qd) sem resultado relevante"
+    },
+    {
+      "url": "https://camaramorrodafumaca.atende.net/",
+      "resultado": "Atende.net (captcha/JS), não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Cadeia de decretos de PBT por via. Vigentes pelo que o DOM/SC mostra: 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026. Rod. Tranquilo Sartor (081/2020) ficou sem restrição porque o Decreto 155/2020 o revogou; Decreto 142/2019 (anterior) não foi achado. Possível decreto não captado pela busca por termos (hits cortados em ~10 por consulta). | verificado em 2026-10-18: Decretos 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026 reabertos no DOM/SC e conferem (ver verif). OMISSÃO CORRIGIDA: Decreto 097/2026 (17/06/2026, DOM/SC atos/8436683; vias centrais, PBT>15 t/altura>3 m/articulados/bitrem) não estava no res; acrescentado como regra desativada (trechos por bairro/landmark). Cadeia 155/182/195-2020 revogada pelo 036/2026 art. 4º lida.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "morrodafumaca_dec035_2018_vias_centrais",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Rua 20 de Maio (trecho), Rua José Cechinel (trecho) e Rua Prefeito Verginio Maccari: proibido PBT acima de 7,7 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.7
+          }
+        ]
+      },
+      "excecoes": [
+        "Carga e descarga no comércio local, desde que não afete as vias e benfeitorias públicas (art. 2º)",
+        "Redes, coleta de lixo, imprensa, valores, transporte escolar e coletivo, manutenção viária, socorro, oficinas/borracharias nas vias centrais (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 035/2018 (08/03/2018; DOM/SC 13/03/2018)",
+          "artigo": "art. 1º (vias, 'outras vias identificadas por sinalização'); art. 2º (exceções, inclusive carga e descarga no comércio local); art. 4º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1554250"
+        }
+      ],
+      "vigencia_inicio": "2018-03-13",
+      "trechos": [
+        {
+          "via": "Rua 20 de Maio",
+          "de": "Rua Euclides Manoel Mendes",
+          "ate": "rotatória com a Rodovia municipal Tranquilo Sartor"
+        },
+        {
+          "via": "Rua José Cechinel",
+          "de": "Rua Vanteiro Margotti",
+          "ate": "Rua José Guglielmi"
+        },
+        {
+          "via": "Rua Prefeito Verginio Maccari",
+          "nota": "toda a extensão"
+        }
+      ],
+      "geometria": [],
+      "nota": "Revogou o Decreto 180/2017. O Decreto 053/2012 (Rua José Cechinel, 8 t) ficou superado por este, sem revogação expressa."
+    },
+    {
+      "id": "morrodafumaca_dec058_2020_euclides_genoveva",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Rua Euclides Piva e Rua Genoveva Guglielmi Bortolatto: proibido PBT acima de 7,7 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.7
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção/reparo de redes (energia, água/esgoto, gás, telecom), coleta de lixo, cobertura jornalística e transporte de valores; transporte coletivo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro médico, incêndio, policiamento, fiscalização; socorro mecânico de emergência (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 058/2020 (08/04/2020; DOM/SC 09/04/2020)",
+          "artigo": "art. 1º, I e II (toda a extensão das vias); art. 2º (exceções)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2434605"
+        }
+      ],
+      "vigencia_inicio": "2020-04-09",
+      "trechos": [
+        {
+          "via": "Rua Euclides Piva",
+          "nota": "toda a extensão"
+        },
+        {
+          "via": "Rua Genoveva Guglielmi Bortolatto",
+          "nota": "toda a extensão"
+        }
+      ],
+      "geometria": [],
+      "nota": "Texto lido só até o art. 1º e início do art. 2º (restante igual ao padrão dos demais decretos); vigência não detalhada além de entrar em vigor na publicação (a conferir)."
+    },
+    {
+      "id": "morrodafumaca_dec115_2018_joao_rocchi",
+      "tipo": "via",
+      "regime": "Limite de PBT/comprimento",
+      "nome": "Rua João de Rocchi (Distrito de Estação Cocal): proibido PBT acima de 25 t, comprimento acima de 14 m ou veículo articulado",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção/reparo de redes (energia, água/esgoto, gás, telecom), coleta de lixo, cobertura jornalística e transporte de valores; transporte coletivo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro médico, incêndio, policiamento, fiscalização; socorro mecânico de emergência (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 115/2018 (16/07/2018), art. 1º com a redação do Decreto 120/2019 (05/09/2019; acrescentou os articulados)",
+          "artigo": "art. 1º (redação do Dec. 120/2019); art. 2º (exceções); art. 4º (vigência 01/09/2018)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1686514"
+        },
+        {
+          "ato": "Decreto 120/2019",
+          "artigo": "art. 1º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2150166"
+        }
+      ],
+      "vigencia_inicio": "2018-09-01",
+      "trechos": [
+        {
+          "via": "Rua João de Rocchi",
+          "nota": "toda a extensão, Distrito de Estação Cocal"
+        }
+      ],
+      "geometria": [],
+      "nota": "'comprimento Máximo de 14 metros' no texto original; lido como proibição acima de 14 m."
+    },
+    {
+      "id": "morrodafumaca_dec195_2018_santo_antonio_zaccaron",
+      "tipo": "via",
+      "regime": "Limite de PBT/comprimento",
+      "nome": "Rua Santo Antônio e Rua Professor Paschoal Zaccaron (Distrito de Estação Cocal): proibido PBT acima de 25 t ou comprimento acima de 14 m",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção/reparo de redes (energia, água/esgoto, gás, telecom), coleta de lixo, cobertura jornalística e transporte de valores; transporte coletivo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro médico, incêndio, policiamento, fiscalização; socorro mecânico de emergência (art. 2º)",
+        "Veículos de carga e descarga nas empresas situadas nessas vias (art. 2º, VI)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 195/2018 (13/12/2018)",
+          "artigo": "art. 1º; art. 2º (exceções, inclusive carga e descarga em empresas das vias); art. 4º (vigência 15/01/2019)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1833432"
+        }
+      ],
+      "vigencia_inicio": "2019-01-15",
+      "trechos": [
+        {
+          "via": "Rua Santo Antônio",
+          "nota": "toda a extensão, Distrito de Estação Cocal"
+        },
+        {
+          "via": "Rua Professor Paschoal Zaccaron",
+          "nota": "toda a extensão, Distrito de Estação Cocal"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "morrodafumaca_dec046_2024_libero_fortunato",
+      "tipo": "via",
+      "regime": "Limite de PBT/bitrem",
+      "nome": "Rodovia municipal Líbero Fortunato: proibido PBT acima de 35 t, bitrem e rodotrem",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 35
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção/reparo de redes (energia, água/esgoto, gás, telecom), coleta de lixo, cobertura jornalística e transporte de valores; transporte coletivo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro médico, incêndio, policiamento, fiscalização; socorro mecânico de emergência (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 046/2024 (08/03/2024; DOM/SC 12/03/2024)",
+          "artigo": "art. 1º; art. 2º (exceções); art. 4º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5729670"
+        }
+      ],
+      "vigencia_inicio": "2024-03-12",
+      "trechos": [
+        {
+          "via": "Rodovia Municipal Líbero Fortunato (Libero Fortunato Bortolatto)",
+          "nota": "toda a extensão"
+        }
+      ],
+      "geometria": [],
+      "nota": "Substitui na prática o Decreto 224/2020 (só bitrem e rodotrem, mesma via), sem revogação expressa."
+    },
+    {
+      "id": "morrodafumaca_dec036_2026_bitrem",
+      "tipo": "via",
+      "regime": "Proibição de bitrem",
+      "nome": "Rua José Cechinel, Rua Vanteiro Margotti e Rua Urussanga: proibido bitrem (circulação, parada e estacionamento)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção/reparo de redes (energia, água/esgoto, gás, telecom), coleta de lixo, cobertura jornalística e transporte de valores; transporte coletivo; manutenção e sinalização viária a serviço do órgão de trânsito; socorro médico, incêndio, policiamento, fiscalização; socorro mecânico de emergência (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 036/2026 (10/03/2026)",
+          "artigo": "art. 1º; art. 2º (exceções); art. 4º (vigência na publicação; revoga os Decretos 155, 182 e 195/2020)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8084274"
+        }
+      ],
+      "vigencia_inicio": "2026-03-10",
+      "trechos": [
+        {
+          "via": "Rua José Cechinel",
+          "nota": "toda a extensão"
+        },
+        {
+          "via": "Rua Vanteiro Margotti",
+          "nota": "toda a extensão"
+        },
+        {
+          "via": "Rua Urussanga",
+          "nota": "toda a extensão"
+        }
+      ],
+      "geometria": [],
+      "nota": "Data de vigência = data do decreto (a data de publicação no DOM/SC não foi conferida)."
+    },
+    {
+      "id": "morrodafumaca_dec155_2020_urussanga",
+      "tipo": "via",
+      "regime": "Limite de PBT/bitrem",
+      "nome": "Rua Urussanga (parte): proibido PBT acima de 35 t e bitrem",
+      "status": "revogada",
+      "confianca": "media",
+      "status_motivo": "Revogado expressamente pelo Decreto 036/2026, art. 4º. O mesmo Decreto 155/2020 já havia revogado o Decreto 081/2020 (Rodovia Tranquilo Sartor, 35 t/bitrem)",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 35
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 155/2020 (28/08/2020), prorrogado pelos Decretos 182 e 195/2020 (vigor em 01/12/2020)",
+          "artigo": "art. 1º (Rua Urussanga entre Rua Julio Coral e o entroncamento Rua José Cechinel/Rua Vanteiro Margotti); art. 4º (revoga os Decretos 142/2019 e 081/2020)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2627308"
+        },
+        {
+          "ato": "Decreto 036/2026",
+          "artigo": "art. 4º (revoga os Decretos 155, 182 e 195/2020)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8084274"
+        }
+      ],
+      "vigencia_inicio": "2020-12-01",
+      "geometria": [],
+      "vigencia_fim": "2026-03-10"
+    },
+    {
+      "id": "morrodafumaca_dec180_2017",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Decreto 180/2017: caminhões acima de 7,7 t em cinco vias centrais",
+      "status": "revogada",
+      "confianca": "media",
+      "status_motivo": "Revogado pelo Decreto 035/2018, art. 4º",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 180/2017 (12/12/2017)",
+          "artigo": "art. 1º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1456349"
+        },
+        {
+          "ato": "Decreto 035/2018",
+          "artigo": "art. 4º (revoga o Decreto 180/2017)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1554250"
+        }
+      ],
+      "vigencia_inicio": "2017-12-14",
+      "geometria": [],
+      "vigencia_fim": "2018-03-13"
+    },
+    {
+      "id": "morrodafumaca_dec053_2012_cechinel",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Rua José Cechinel: veículos de carga acima de 8 t PBT",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Superado pelos Decretos 180/2017 e 035/2018 (mesma via, 7,7 t), embora sem revogação expressa; remete ao desvio pela Avenida Contorno (SC-443)",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 053/2012 (12/06/2012)",
+          "artigo": "art. 1º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/247060"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "morrodafumaca_dec097_2026_vias_centrais",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Vias centrais de Morro da Fumaça (8 vias, algumas em trechos por referência): proibidos combinações de carga, carretas, bitrem, articulados e caminhões com altura acima de 3 m e/ou PBT acima de 15 t",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Acrescentada na verificação de 18/10/2026 (Decreto 097/2026 não constava do res). As vias são delimitadas por bairro ('Bairro Centro'), por 'trecho correspondente a via de mão única', 'trecho correspondente ao Parque Linear' e 'até a altura do Supermercado Giassi', sem perímetro nem extremos por vias transversais: não georreferenciável de forma confiável. Reativar quando as geometrias forem construídas. A Rua Prefeito Virgínio Maccari já está coberta (inteira, 7,7 t) pelo Decreto 035/2018, mais restritivo.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "altura_m",
+            "acima": 3
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões de serviços essenciais (Lei 7.783/89, art. 10), de emergência, guincho e obras/serviços de emergência (art. 2º)",
+        "Rua XV de Novembro: caminhões de manutenção da borracharia em frente ao Colégio Princesa Isabel (art. 1º, VII)",
+        "Casos não previstos: autorização da Secretaria de Obras (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 097/2026 (17/06/2026; DOM/SC 19/06/2026)",
+          "artigo": "art. 1º, I a VIII; art. 2º; art. 4º; art. 5º (estacionamento vedado, só parada para carga e descarga); art. 6º (vigor na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8436683"
+        }
+      ],
+      "vigencia_inicio": "2026-06-19",
+      "trechos": [
+        {
+          "via": "Rua Primo Ítalo Naspolini",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Prefeito Paulino Bif",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Prefeito Virgínio Maccari",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Vinte de Maio",
+          "nota": "Bairro Centro, trecho de mão única"
+        },
+        {
+          "via": "Avenida Inocente Pagnan",
+          "nota": "Bairro Centro, trecho do Parque Linear"
+        },
+        {
+          "via": "Avenida Celeste Recco",
+          "nota": "Bairro Centro, trecho do Parque Linear"
+        },
+        {
+          "via": "Rua XV de Novembro",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Avenida Nicolau João de Souza",
+          "nota": "Bairro Esperança, até a altura do Supermercado Giassi"
+        }
+      ],
+      "geometria": [],
+      "nota": "Altura 'superior a 03 metros e/ou PBT superior a 15 t': lido como qualquer um dos critérios. Não revoga nem altera os decretos anteriores; onde coincide com o Decreto 035/2018 (Rua Prefeito Virgínio Maccari, Rua Vinte de Maio) prevalece o mais restritivo."
+    }
+  ]
+}

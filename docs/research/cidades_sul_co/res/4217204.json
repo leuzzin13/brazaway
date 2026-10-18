@@ -1,0 +1,68 @@
+{
+  "ibge": "4217204",
+  "nome": "São Miguel do Oeste",
+  "uf": "SC",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1308605",
+      "resultado": "Decreto 8.878/2017 lido (texto integral): rotativo; art. 21 carga e descarga por capacidade de carga útil."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1647625",
+      "resultado": "Decreto 8.996/2018 lido: tarifas e abrangência do rotativo."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1251488",
+      "resultado": "Lei 7.395/2017 lida: base do estacionamento rotativo, sem restrição de circulação."
+    },
+    {
+      "url": "DOM/SC buscar 4217204 'trânsito de caminhões', 'tráfego de caminhões', 'circulação de caminhões', 'veículos pesados', 'proíbe caminhões', 'restrição de tráfego de veículos de carga'",
+      "resultado": "Sem ato de restrição de circulação; 'veículos pesados' só traz licitações."
+    }
+  ],
+  "observacoes": "Nenhuma restrição de circulação encontrada; só carga e descarga no rotativo. Pistas do OSM (hgv=no em service/unclassified sem nome) sem ato.",
+  "osm_divergencias": [
+    "OSM hgv=no em 7 ways (service/unclassified, a maioria sem nome) e maxweight em 3: nenhum ato municipal de restrição encontrado no DOM/SC."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "saomigueldooeste_dec8878_2017_carga_descarga_rotativo",
+      "tipo": "zona",
+      "regime": "Carga e descarga no estacionamento rotativo",
+      "nome": "São Miguel do Oeste: Dec. 8.878/2017 art. 21, carga e descarga > 4 t ou > 7 m só fora do horário do rotativo (±1 h)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Só regula carga e descarga dentro da área do estacionamento rotativo pago (parada/estacionamento), não circulação. O horário do rotativo e as vias estão no Dec. 8.996/2018, não extraídos aqui. Pontual.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 4
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 8.878, de 30/06/2017",
+          "artigo": "art. 21, II e § 1º (veículos > 4 t de carga útil ou > 7 m: carga/descarga só até 1 h antes do início e 1 h depois do fim do rotativo)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1308605"
+        },
+        {
+          "ato": "Decreto nº 8.996, de 08/06/2018 (locais e tarifas do rotativo)",
+          "artigo": "arts. de tarifa e abrangência",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1647625"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+ "ibge": "4203808",
+ "nome": "Canoinhas",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1233817",
+   "resultado": "LIDO integral (DOM/SC): Lei 6.002, 03/04/2017 - veda tráfego de caminhões e veículos pesados acima de 8 m e 7 t no Residencial Nossa Senhora Aparecida (bairro Piedade). atos/4203808/lei_6002_2017.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/5196864",
+   "resultado": "LIDO integral: Decreto 303, 06/10/2023 - em dias de chuva e até 48 h depois proíbe caminhões com guincho e caminhões carregados (toras, areia) nas estradas do interior. atos/4203808/decreto_303_2023.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2072776",
+   "resultado": "Trecho: Lei 6.386/2019 = incentivo à Fricasa (ruído). Lei 5.956/2016 (trecho): estacionamento rotativo de carga e descarga 8-18h (estacionamento, não circulação). Não lidas integralmente."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4203808 ('Residencial Nossa Senhora Aparecida','caminhões estradas chuva','veículos pesados','tráfego de caminhões','circulação de caminhões')",
+   "resultado": "DOM/SC abriu; sem alteração/revogação da Lei 6.002/2017 nem do Dec. 303/2023. Portarias 'veículos pesados' = ruído (FG/cargos)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Duas normas: (1) Lei 6.002/2017 veda o tráfego de caminhões e veículos pesados 'acima de 8 metros de comprimento e acima de 7 toneladas' no Residencial Nossa Senhora Aparecida (Piedade), 24 h, exceto emergência, socorro mecânico, coleta seletiva e lixo - regra ativa, confiança média (o texto não diz PBT x capacidade; combinei comprimento > 8 m E peso > 7 t como está escrito). (2) Decreto 303/2023: regra condicional à chuva (+48 h) para caminhões com guincho e carregados de toras/areia nas estradas do interior, exceto carga viva, ração e leite - pontual/condicional, sem vias nomeadas; fica desativada no rascunho. Estacionamento rotativo (Lei 5.956/2016) não é circulação. | verificado em 2026-10-18: Lei 6.002/2017 relida (DOM/SC atos/1233817): art. 1 e par. unico conferem, sem alteracao posterior localizada; rebaixada por falta de delimitacao georreferenciavel e ambiguidade PBT x capacidade. Dec. 303/2023 (atos/5196864) relido: condicional a chuva, segue desativado.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "canoinhas_lei_6002_2017_res_nsa_aparecida",
+   "tipo": "zona",
+   "regime": "Proibição por porte (loteamento)",
+   "nome": "Residencial Nossa Senhora Aparecida (Piedade): caminhões/pesados > 8 m e > 7 t proibidos (Lei 6.002/2017)",
+   "status": "desativada",
+   "status_motivo": "Verificado em 2026-10-18: rebaixada - zona sem delimitacao (so o nome do loteamento, nenhuma via listada); texto 'acima de 8 m de comprimento e acima de 7 t' sem dizer PBT ou capacidade de carga (antes: Lei sem alteração/revogação localizada no DOM/SC; sinalização não verificada; vias internas do loteamento não nomeadas.)",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "comprimento_m",
+      "acima": 8.0
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 7.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 6.002, de 03/04/2017 (Canoinhas)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1233817",
+     "nota": "Texto integral lido."
+    }
+   ],
+   "excecoes": [
+    "Veículos de serviços de emergência, socorro mecânico, coleta seletiva e caminhão de lixo (parágrafo único)"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Todo o Residencial Nossa Senhora Aparecida, bairro Piedade (zona, sem lista de ruas).",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2017-04-03",
+   "nota": "Texto: 'acima de 8 metros de comprimento e acima de 7 toneladas' - peso não especificado (PBT ou capacidade); pbt_t usado como rascunho."
+  },
+  {
+   "id": "canoinhas_dec_303_2023_chuva",
+   "tipo": "zona",
+   "regime": "Restrição condicional (chuva) - estradas rurais",
+   "nome": "Estradas do interior: caminhões com guincho e carregados (toras, areia) proibidos em dias de chuva e 48 h depois (Dec. 303/2023)",
+   "status": "desativada",
+   "status_motivo": "Condicional a chuva, sem vias nomeadas nem janela fixa; ato vigente sem revogação localizada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "caminhao_com_guincho",
+       "carga_toras",
+       "carga_areia"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 303, de 06/10/2023 (Canoinhas)",
+     "artigo": "art. 1º e parágrafo único; arts. 2º-3º (penalidades)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/5196864"
+    }
+   ],
+   "excecoes": [
+    "Caminhões que transportam cargas vivas, ração e leite"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Estradas do interior do município.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2023-10-06"
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "ibge": "4317509",
+ "nome": "Santo Ângelo",
+ "uf": "RS",
+ "status": "pontual",
+ "nivel_busca": "media",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://santoangelo.cespro.com.br/",
+   "resultado": "cespro: sem busca automática/bloqueado — CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://santoangelo.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não "
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4317509 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
+   "resultado": "diário(s) ['famurs']: resultados por termo ['1', '6', '24']; só ruído (licitação, RH, frota, ISS)"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/materia/2406703A",
+   "resultado": "Decreto 4116/2022 lido; art. 8º carga/descarga PBT > 3,5 t no rotativo"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal (cespro) sem busca automática/bloqueada (Cloudflare/CESPRO/Atende/1doc/Cittatec); resultado 'nao_achou' é inconclusivo; só o diário ['famurs'] foi varrido. Achado do diário FAMURS: Decreto 4116/2022 (regulamenta Lei 3.552/2011, estacionamento rotativo pago): art. 8º restringe carga e descarga com veículos PBT > 3.500 kg nas áreas do estacionamento rotativo (vagas exclusivas, 2 h máx., seg–sex 8–18h e sáb 8–12h; fora disso livre). É regra de estacionamento/carga e descarga, não de circulação; as áreas do rotativo mudam por decretos posteriores (3.759/2018, 3.783/2018 etc.), vigência do 4116 não verificada. Demais acertos (Leis 4.161/2017, 4.389/2021, 4.388/2020, 4.393/2021) são ruído. Texto: atos/4317509/decreto_4116_2022.txt.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santoangelo_dec4116_2022_carga_descarga_rotativo",
+   "tipo": "zona",
+   "regime": "Carga e descarga com veículos PBT > 3,5 t só em vagas exclusivas no estacionamento rotativo (pontual: estacionamento)",
+   "nome": "Santo Ângelo: Decreto 4116/2022 art. 8º",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento/carga e descarga, não de circulação; áreas do rotativo em atos alterados; vigência não verificada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "18:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "12:00"
+    }
+   ],
+   "feriados": "nao_verificado",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 3.5
+     }
+    ]
+   },
+   "excecoes": [
+    "parágrafo único do art. 8º: fora dessas janelas a carga e descarga é permitida nas áreas do rotativo"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 4116, de 20/04/2022 (regulamenta Lei 3.552/2011)",
+     "artigo": "art. 8º, caput e parágrafo único",
+     "url": "https://www.diariomunicipal.com.br/famurs/materia/2406703A"
+    }
+   ],
+   "vigencia_inicio": "2022-04-20",
+   "vigencia_fim": null,
+   "trechos": "Áreas do estacionamento rotativo (definidas em decretos; não listadas)",
+   "geometria": null
+  }
+ ]
+}

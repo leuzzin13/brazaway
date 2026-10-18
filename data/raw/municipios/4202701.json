@@ -1,0 +1,85 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4202701",
+  "municipio": "Botuverá",
+  "uf": "SC",
+  "fonte_id": "botuvera",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/5356877",
+    "licenca": "Ato oficial de Botuverá: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 3.213/2023 lido integralmente no DOM/SC; por tempo indeterminado, sem revogação localizada, mas de origem emergencial (cheias de nov/2023): pode ter sido levantado de fato sem publicação. O decreto manda os veículos acessarem pela SC-486 (parágrafo único). Botuverá não define VUC."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Botuverá não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "botuvera_dec3213_2023_rua_joao_assini",
+      "tipo": "via",
+      "regime": "Rua com danos de enchente: PBT > 30 t",
+      "nome": "Botuverá: Rua João Assini, Dec. 3.213/2023, proibida a circulação de carretas e caminhões com PBT > 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos públicos do Município de Botuverá (placa e identificação)",
+        "Transporte coletivo regular, inclusive escolar",
+        "Coleta de lixo e serviços emergenciais de saúde",
+        "Manutenção de emergência em residências e vias públicas (energia, telefonia, pluvial, sanitária, água)",
+        "Serviços de guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 3.213, de 21/11/2023",
+          "artigo": "art. 1º (proibição, por tempo indeterminado, a partir da publicação), parágrafo único (acesso obrigatório pela SC-486), art. 2º (exceções), art. 4º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5356877"
+        }
+      ],
+      "vigencia_inicio": "2023-11-21",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua João Assini"
+          ],
+          "descricao": "a rua que costeia o Rio Itajaí-Mirim (bairro Águas Negras); o decreto não delimita trecho",
+          "aproximado": true
+        }
+      ],
+      "nota": "Medida adotada após enchentes de nov/2023 (emergência, Decretos 3.191 e 3.211/2023), mas 'por tempo indeterminado': sem revogação achada no DOM/SC até 18/10/2026. Pode ter sido levantada sem publicação — confirmar no local/prefeitura. Acesso dos veículos deve ser pela SC-486.",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4202701_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome; via inteira (o decreto não delimita trecho)"
+    }
+  ]
+}

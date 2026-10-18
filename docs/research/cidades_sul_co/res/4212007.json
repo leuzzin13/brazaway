@@ -1,0 +1,84 @@
+{
+ "ibge": "4212007",
+ "nome": "Palma Sola",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6952853",
+   "resultado": "LIDO integral (docx do DOM/SC): Decreto 136, 14/02/2025 - homologa Regimento da Comissão Municipal de Trânsito e as deliberações da assembleia de 14/02/2025; art. 2º III proíbe tráfego de veículos de carga viva na Av. José Folador (videomonitoramento); art. 2º VI proíbe estacionamento de caminhões nas avenidas. atos/4212007/decreto_136_2025.txt"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4212007 ('caminhões', 'tráfego carga viva Avenida José Folador', 'estacionamento de caminhões')",
+   "resultado": "DOM/SC abriu; só o Dec. 136/2025 trata do tema. Sem ato posterior. Demais acertos: Plano Diretor LC 079/2024, leis de gestão de resíduos, pregões - ruído."
+  },
+  {
+   "url": "https://leismunicipais.com.br/legislacao-municipal/4372/leis-de-palma-sola/",
+   "resultado": "Não aberto (Cloudflare 403 conhecido); fonte alternativa DOM/SC suficiente."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 136/2025 (art. 2º, III) homologa deliberação da Comissão Municipal de Trânsito que proíbe o tráfego de veículos de carga viva (transporte de animais vivos) na Avenida José Folador, com fiscalização por videomonitoramento; prazo de 90 dias para implementação (art. 3º). Sem horários, sem peso, sem exceções. Regra estreita (só carga viva); o item VI (estacionamento de caminhões nas avenidas, máximo 15 min p/ carga e descarga) é estacionamento e não vira regra de circulação. Sinalização/efetivação não verificada. | verificado em 2026-10-18: Dec. 136/2025 art. 2 III relido (atos/6952853): Av. Jose Folador, veiculos de carga viva; sem alteracao posterior (Dec. 171/2025 e interdicao de ponte, nao relacionado). Rebaixada para desativada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "palmasola_dec_136_2025_carga_viva_av_folador",
+   "tipo": "via",
+   "regime": "Proibição por tipo de carga (via)",
+   "nome": "Avenida José Folador: veículos de carga viva proibidos (Dec. 136/2025, art. 2º III)",
+   "status": "desativada",
+   "status_motivo": "Verificado em 2026-10-18: rebaixada - restricao por tipo de carga (carga viva/animais), nao modelada pelo schema (antes: Decreto vigente sem alteração localizada; implementação em até 90 dias (art. 3º) - efetivação/sinalização não verificada.)",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "carga_viva"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 136/2025, de 14/02/2025 (Palma Sola)",
+     "artigo": "art. 2º, III; art. 3º (prazo 90 dias); art. 4º (fiscalização)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6952853",
+     "nota": "Texto integral lido. Homologa deliberação da Comissão Municipal de Trânsito (ata de 14/02/2025)."
+    }
+   ],
+   "excecoes": [],
+   "trechos": [
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Avenida José Folador"
+     ],
+     "descricao": "Avenida inteira, sem delimitar trecho.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2025-02-20",
+   "nota": "'Veículos de carga viva' = transporte de animais vivos; campo tipo=carga_viva é rascunho (não existe no vocabulário padrão)."
+  }
+ ]
+}

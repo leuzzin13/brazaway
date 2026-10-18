@@ -1,0 +1,105 @@
+{
+ "ibge": "4127106",
+ "nome": "Telêmaco Borba",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "toolkit/legislacao.py buscar 4127106 (SAPL da Câmara)",
+   "resultado": "Achou Lei 1623/2007 e LC 137/2023; buscas 'carga e descarga', 'área central', 'veículos pesados' sem outra norma posterior."
+  },
+  {
+   "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf",
+   "resultado": "LIDO integral (texto): LC 137/2023, 9 arts. Salvo em atos/4127106/lc_137_2023.txt"
+  },
+  {
+   "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf",
+   "resultado": "LIDO (PDF escaneado, visualmente): Lei 1.623/2007, revogada. Salvo resumo em atos/4127106/lei_1623_2007.txt"
+  },
+  {
+   "url": "https://telemacoborba.atende.net",
+   "resultado": "captcha; decretos do Executivo/alterações da LC 137 não consultados."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "LC 137/2023 art. 6º: proíbe circulação de veículos >7 t e/ou >7 m na Área Central de Tráfego, seg-sex 9h-19h e sáb 9h-13h30. Art. 3º: janelas de carga/descarga por porte (até 1,8 t livre; 1,8-7 t e 7-14 t só em espaços demarcados fora do horário comercial) - não modelado como regra separada. Pendência: alterações por decreto/lei posterior (art. 8º) e esclarecer se 7 t é PBT ou capacidade (art. 3º usa capacidade útil).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "telemacoborba_area_central_lc137_2023",
+   "tipo": "zona",
+   "regime": "Área Central de Tráfego",
+   "nome": "Área Central de Tráfego - circulação de veículos acima de 7 t e/ou 7 m (LC 137/2023, art. 6º)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "09:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "13:30"
+    }
+   ],
+   "feriados": "não detalhado para o art. 6º (art. 7º trata sábado, domingo e feriados apenas para carga/descarga do art. 3º)",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 7
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": "Art. 5º: autorização especial do DMSPT/TBTran para concreto, materiais de construção, mudanças e casos excepcionais (carga/descarga).",
+   "base_legal": [
+    {
+     "ato": "Lei Complementar 137/2023 (28/07/2023; Boletim Oficial 2195)",
+     "artigo": "arts. 2º e 6º",
+     "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf"
+    }
+   ],
+   "vigencia_inicio": "2023-07-28",
+   "vigencia_fim": null,
+   "trechos": "Perímetro da 'Área Central de Tráfego' (art. 2º): Rua Manoel Simeão de Souza esq. Rua José Augusto Nocera, por esta até Av. das Nações Unidas Leste, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin, até a Rua Manoel Simeão de Souza.",
+   "geometria": null,
+   "status_motivo": "Art. 6º diz 'veículos acima de 7,0 toneladas e/ou comprimento acima de 7,0 metros' sem dizer se é PBT ou capacidade de carga (o art. 3º usa capacidade de carga útil); modelado como payload_t, a confirmar. Art. 8º permite ao Conselho Municipal de Mobilidade/Trânsito ajustar áreas, dimensões e horários (não localizado ajuste)."
+  },
+  {
+   "id": "telemacoborba_lei_1623_2007",
+   "tipo": "zona",
+   "regime": "Perímetro urbano",
+   "nome": "Proibição de carretas, romeu e julieta e trucados carregados no perímetro urbano (Lei 1.623/2007, exceto PR-160)",
+   "status": "revogada",
+   "status_motivo": "Revogada expressamente pelo art. 9º da LC 137/2023.",
+   "confianca": "alta",
+   "base_legal": [
+    {
+     "ato": "Lei 1.623/2007 (05/09/2007)",
+     "artigo": "art. 1º",
+     "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf"
+    }
+   ],
+   "vigencia_inicio": "2007-09-14",
+   "vigencia_fim": "2023-07-28",
+   "geometria": null
+  }
+ ]
+}

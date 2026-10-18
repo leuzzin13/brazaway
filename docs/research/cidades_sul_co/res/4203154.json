@@ -1,0 +1,98 @@
+{
+ "ibge": "4203154",
+ "nome": "Calmon",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8686775",
+   "resultado": "LIDO integral (PDF do DOM/SC): Decreto 101, 08/09/2026 - limite de 23 t (PBT/PBTC) em 15 vias do perímetro urbano; exceto Av. Manoel Fortunato e Rua Guilherme Whöeringer (art. 1º §4º). atos/4203154/decreto_101_2026.txt"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4203154 ('veículos pesados','limite peso toneladas','circulação de caminhões')",
+   "resultado": "DOM/SC abriu; só o Dec. 101/2026 (+ leilão de veículos = ruído); sem ato posterior ou anterior sobre o tema."
+  },
+  {
+   "url": "https://calmon.1doc.com.br / camaracalmon.sc.gov.br",
+   "resultado": "Não consultados (1doc sem automação)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 101/2026 (publicado 08/09/2026, vigência na publicação - art. 12): proíbe a circulação de veículos ou combinações com PBT/PBTC > 23 t em 15 ruas do perímetro urbano, de calçamento poliédrico; sem horário (24 h todos os dias); exceções autorizáveis (art. 5º: emergência, obras e serviços públicos, concessionárias, acesso a imóvel sem rota alternativa, abastecimento sem rota alternativa, interesse público) com autorização que pode fixar trajeto/horário (art. 6º). Prefeitura deve implantar sinalização (art. 4º); implantação não verificada. Avenida Manoel Fortunato e Rua Guilherme Whöeringer ficam fora da restrição. Cita Lei 147/1997 (classificação de vias) e art. 21 do Código de Posturas, não lidos.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "calmon_dec_101_2026_23t",
+   "tipo": "via",
+   "regime": "Proibição por peso (vias)",
+   "nome": "15 ruas do perímetro urbano de Calmon: PBT/PBTC > 23 t proibido (Decreto 101/2026)",
+   "status": "ativa",
+   "status_motivo": "Decreto em vigor desde 08/09/2026; sinalização (art. 4º) a implantar - não verificada. Sem alteração posterior localizada.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 23.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 101, de 08/09/2026 (Calmon)",
+     "artigo": "art. 1º caput e §§1º-4º; art. 5º-6º (autorização excepcional); art. 12 (vigência)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8686775",
+     "nota": "Texto integral lido. PBT ou PBTC (conjunto completo, com carga)."
+    }
+   ],
+   "excecoes": [
+    "Autorização excepcional (art. 5º): emergência, obras/serviços públicos, serviços essenciais, concessionárias, transporte de máquinas/materiais para obra em imóvel só acessível por essas vias, abastecimento sem rota alternativa, interesse público",
+    "Autorização pode fixar trajeto, horário, validade, velocidade (art. 6º)"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º, I-XV",
+     "via": [
+      "Rua Matilde Whöeringer",
+      "Rua João Serafini",
+      "Rua Miguel Dzumann",
+      "Rua Pedro Almeida",
+      "Rua José Ramos",
+      "Rua João Alves",
+      "Rua Alberto Bendlin",
+      "Rua Napoleão Pigatto",
+      "Rua Estanislau Pacevicz",
+      "Rua João Bariulka",
+      "Rua Fortunato Souza",
+      "Rua Alexandre Gregório",
+      "Rua Vereador Theodósio Paulek",
+      "Rua Carlos Hoepfner",
+      "Rua Nicolau Krauchuk"
+     ],
+     "descricao": "Ruas do perímetro urbano com pavimentação poliédrica; Matilde Whöeringer e Vereador Theodósio Paulek têm trechos asfaltados. Avenida Manoel Fortunato e Rua Guilherme Whöeringer excluídas (§4º).",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2026-09-08"
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "ibge": "4117107",
+ "nome": "Nova Londrina",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "varredura_consolidada",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://penaestrada.com.br/restricoes-sitemap.xml + seletor de /restricoes/ e sondagem do slug https://penaestrada.com.br/restricoes/nova-londrina/ (leads/penaestrada.json)",
+   "resultado": "penaestrada: sem página do município (índice de 53 páginas, só Florianópolis no Sul/CO; slug sondado: status 404, 2026-10-18)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4117107 (leads/querido_diario.json)",
+   "resultado": "Querido Diário (nível 1): 8 termos (caminhões + circulação; \"veículos pesados\"; \"carga e descarga\"; VUC; \"zona de restrição\"; \"trânsito pesado\"; toneladas + caminhões + trânsito; \"veículos de carga\"), 10 diários mais relevantes por termo, em 2026-10-18: 0 acerto relevante (0 diários distintos recuperados)."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes (toolkit/diarios_consolidados.py; leads/diarios_consolidados.json)",
+   "resultado": "Querido Diário (Open Knowledge Brasil): agregador com busca full-text (OpenSearch) nos diários das cidades com spider. Filtro territory_ids  — varredura por cidade com 4 frases, 1 página de 10 diários (via diarios_consolidados.py), em 2026-10-18. Resultado consolidado: 0 acerto(s), 0 indício(s)."
+  },
+  {
+   "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
+   "resultado": "Nenhuma etiqueta contada no município."
+  }
+ ],
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (13065 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/legislacao-municipal/3385/leis-de-nova-londrina) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "triagem": {
+  "rodada": "R1",
+  "decisao": "direto",
+  "populacao": 13065,
+  "caminhoes": 658,
+  "diarios_que_cobrem": [
+   "qd"
+  ],
+  "no_querido_diario": true,
+  "cobertura_minima": false,
+  "n_indicios_diario": 0,
+  "osm_so_rodovia": false,
+  "portal_nao_consultado": {
+   "sistema": "leismunicipais",
+   "orgao": "camara",
+   "url_busca": "https://leismunicipais.com.br/legislacao-municipal/3385/leis-de-nova-londrina",
+   "cliente": false,
+   "testado": false
+  }
+ }
+}

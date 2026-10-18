@@ -1,0 +1,89 @@
+{
+  "ibge": "4208302",
+  "nome": "Itapema",
+  "uf": "SC",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7769359",
+      "resultado": "Decreto 119/2025 aberto (DOCX do DOM/SC) e lido na íntegra. Texto em atos/4208302/dec119_2025.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5339761",
+      "resultado": "Decreto 103/2023 lido: 20/12/2023 a 14/01/2024. Texto em atos/4208302/dec103_2023.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/6664324",
+      "resultado": "Decreto 086/2024 lido: 23/12/2024 a 06/01/2025. Texto em atos/4208302/dec086_2024.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1435027",
+      "resultado": "Decreto 076/2017 (pista da fila) aberto; mesma série anual; texto não mantido"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4208302 'circulação de carretas e caminhões betoneiras' (domsc)",
+      "resultado": "série anual de decretos 2016-2025 (Decretos 376/2016, 172/2018, 072/2019, 090/2020, 079/2021, 088/2022, 108 e 119/2023); sem decreto para 2026/27 nem lei permanente"
+    },
+    {
+      "url": "https://itapema.1doc.com.br/",
+      "resultado": "1doc, sem cliente automático; não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Restrição sazonal recorrente, mas feita por decreto novo a cada ano (período de ~2 semanas entre 20/12 e 14/01): pontual. Sem lei permanente encontrada. Quando o decreto de 2026/27 sair, entra como janela com vigencia_inicio/fim. OSM: 2 ways 'service' hgv=no sem ato.",
+  "osm_divergencias": [
+    "2 ways highway=service hgv=no sem nome; sem relação com os decretos (não são rodovias urbanas)"
+  ],
+  "regras_rascunho": [
+    {
+      "id": "itapema_alta_temporada_carretas_betoneiras",
+      "tipo": "zona",
+      "regime": "Alta temporada de verão",
+      "nome": "Itapema: proibida a circulação de carretas e caminhões betoneiras no perímetro das rodovias urbanas, de 22/12/2025 a 04/01/2026 (decreto anual)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Decreto anual com período fixo já encerrado (22/12/2025 a 04/01/2026). O de 2026/27 ainda não foi publicado em 18/10/2026 (os anteriores saíram em nov/dez). 'Carretas e caminhões betoneiras' sem definição de eixos/PBT; 'dentro do perímetro de rodovias urbanas' sem lista de vias. Reativar quando sair o decreto do verão 2026/27.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 119/2025 (24/11/2025; DOM/SC 25/11/2025)",
+          "artigo": "art. 1º (proibição e período); art. 2º (fiscalização DETRAMI/Guarda); art. 3º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7769359"
+        }
+      ],
+      "vigencia_inicio": "2025-12-22",
+      "geometria": [],
+      "vigencia_fim": "2026-01-04",
+      "nota": "Série anual de decretos no DOM/SC: 376/2016, 076/2017, 172/2018, 072/2019, 090/2020, 079/2021, 088/2022, 103/2023 (20/12/2023 a 14/01/2024; alterado pelos Decretos 108 e 119/2023), 086/2024 (23/12/2024 a 06/01/2025), 119/2025."
+    }
+  ]
+}

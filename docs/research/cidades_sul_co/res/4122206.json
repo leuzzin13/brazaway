@@ -1,0 +1,189 @@
+{
+ "ibge": "4122206",
+ "nome": "Rio Branco do Sul",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/E4A4C524",
+   "resultado": "LIDO integral. Salvo em atos/4122206/lei_1097_2015.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/9E7A4384",
+   "resultado": "LIDO integral (Dec. 4.905/2015, cita mandado de segurança). Salvo em atos/4122206/decreto_4905_2015.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/D2106898",
+   "resultado": "LIDO integral (Dec. 4.907/2015). Salvo em atos/4122206/decreto_4907_2015.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/A29251A3",
+   "resultado": "trecho via busca: Lei 1.463/2024, diretriz de trânsito de pesados"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4122206 (Lei 1.097 altera revoga suspende; Área de Restrição Máxima; AET decreto; mandado de segurança)",
+   "resultado": "sem ato posterior sobre a Lei 1.097"
+  },
+  {
+   "url": "https://sapl.riobrancodosul.pr.leg.br/materia/pesquisar-materia",
+   "resultado": "SAPL não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 1.097/2015 (02/06/2015; AMP 05/06/2015; vigor 45 dias depois), lida integralmente: art. 1º proíbe nas vias do Anexo I (9 vias, incluindo o trecho urbano da PR-092 estadual) caminhões com PBTC > 57 t, comprimento > 19,8 m ou 8+ eixos; art. 2º, Área de Restrição Máxima (12 vias do Anexo II em torno da R. Cel. Carlos Pioli, mapa no Anexo III): PBTC > 8 t, > 10 m ou > 2 eixos, com exceções por horário (07h-16h; 07h-10h30/13h30-16h30), AET e serviços do art. 3º. PORÉM os Decretos 4.905 e 4.907/2015 (lidos) citam mandado de segurança (Proc. 000.3479-05.2015.8.16.0147) que impede, por ora, a vigência integral da lei, e mandam levantar o trânsito de caminhões de 8+ eixos até 01/08/2015. Não achada decisão final nem revogação -> regras registradas como SUSPENSAS (confiança média), a confirmar no processo/Prefeitura. Lei 1.463/2024 (trecho: plano de mobilidade) só diretriz.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "riobrancodosul_vias_anexo1_57t",
+   "tipo": "via",
+   "regime": "Corredores (porte)",
+   "nome": "Vias urbanas do Anexo I (inclui trecho urbano da PR-092): caminhões > 57 t PBTC, > 19,8 m ou 8+ eixos (Lei 1.097/2015, art. 1º)",
+   "status": "suspensa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 57
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 19.8
+     },
+     {
+      "campo": "eixos",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorização Especial de Trânsito, com prazo (art. 1º §2º; art. 5º)",
+    "acesso eventual sem carga a residência (art. 1º §1º)",
+    "urgência, socorro mecânico, obras de emergência, correios, sinalização, forças armadas, jornalismo, acesso a estacionamento próprio, valores, coleta de lixo, manutenção de emergência e serviços essenciais (art. 3º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.097, de 02/06/2015 (Rio Branco do Sul), publ. AMP 05/06/2015, vigor 45 dias depois",
+     "artigo": "arts. 1º e 2º; Anexos I e II",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/E4A4C524"
+    }
+   ],
+   "status_motivo": "Decreto 4.905/2015 (AMP 27/07/2015, lido) cita o deferimento de mandado de segurança (Proc. 000.3479-05.2015.8.16.0147) que impede, por ora, a vigência integral da Lei 1.097/2015; resultado final da ação e vigência atual não verificados (sem ato posterior de revogação/alteração no AMP).",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Ermírio de Moraes",
+      "Avenida Industrial",
+      "Rua Otávio Furquim",
+      "Avenida Brasil",
+      "Avenida Derson Costa",
+      "PR-092",
+      "Rua Manoel Muller de Siqueira",
+      "Rua Sete de Abril",
+      "Rua Generoso Marques"
+     ],
+     "descricao": "Anexo I: Av. Ermírio de Moraes, Av. Industrial, R. Otávio Furquim, Av. Brasil (prolong. R. Otávio Furquim), Av. Derson Costa, trecho urbano da PR-092 do trevo de acesso a Cerro Azul até a R. Otávio Furquim (rodovia estadual), R. Manoel Muller de Siqueira, R. Sete de Abril, R. Generoso Marques; todas em toda a extensão"
+    }
+   ],
+   "vigencia_inicio": "2015-07-17"
+  },
+  {
+   "id": "riobrancodosul_area_restricao_maxima",
+   "tipo": "zona",
+   "regime": "Zona de restrição máxima (porte)",
+   "nome": "Área de Restrição Máxima (Rua Cel. Carlos Pioli e vias do Anexo II): caminhões > 8 t PBTC, > 10 m ou mais de 2 eixos (Lei 1.097/2015, art. 2º)",
+   "status": "suspensa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 10
+     },
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorização Especial de Trânsito, com prazo (art. 1º §2º; art. 5º)",
+    "acesso eventual sem carga a residência (art. 1º §1º)",
+    "urgência, socorro mecânico, obras de emergência, correios, sinalização, forças armadas, jornalismo, acesso a estacionamento próprio, valores, coleta de lixo, manutenção de emergência e serviços essenciais (art. 3º)",
+    "07h-16h: obras/infraestrutura urbana, concretagem, mudanças; 07h-10h30 e 13h30-16h30: alimentos perecíveis, produtos perigosos de consumo local, remoção de terra/entulho/caçambas (art. 2º §1º, a regulamentar por decreto)",
+    "30 min após entrega com comprovante (art. 2º §2º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.097, de 02/06/2015 (Rio Branco do Sul), publ. AMP 05/06/2015, vigor 45 dias depois",
+     "artigo": "arts. 1º e 2º; Anexos I e II",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/E4A4C524"
+    }
+   ],
+   "status_motivo": "Decreto 4.905/2015 (AMP 27/07/2015, lido) cita o deferimento de mandado de segurança (Proc. 000.3479-05.2015.8.16.0147) que impede, por ora, a vigência integral da Lei 1.097/2015; resultado final da ação e vigência atual não verificados (sem ato posterior de revogação/alteração no AMP).",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Rua Coronel Carlos Pioli",
+      "Rua Domingos de Faria",
+      "Rua Sete de Setembro",
+      "Rua Doutor Zony",
+      "Rua Padre Ribeiro",
+      "Rua Generoso Marques",
+      "Rua Manoel Pinto Ferro",
+      "Rua Pedro Wosch",
+      "Rua Horacy Santos",
+      "Travessa Aidê Rocha",
+      "Rua Benjamin Bontorin",
+      "Rua José Pedroso de Moraes"
+     ],
+     "descricao": "Anexo II: R. Cel. Carlos Pioli, R. Domingos de Faria, R. Sete de Setembro, R. Doutor Zony, R. Manoel Pinto Ferro, Trav. Aidê Rocha, R. Benjamin Bontorin (todas inteiras); R. Padre Ribeiro (entre R. Benjamin Bontorin e R. Cel. Carlos Pioli); R. Generoso Marques (entre Av. Derson Costa e R. Manoel Pinto Ferro); R. Pedro Wosch (entre R. Cel. Carlos Pioli e R. João Costa); R. Horacy Santos (entre Av. Derson Costa e R. João Costa); R. José Pedroso de Moraes. Mapa no Anexo III disponível só na Prefeitura"
+    }
+   ],
+   "vigencia_inicio": "2015-07-17",
+   "nota": "Os limites do art. 2º usam \"Peso Bruto Total Combinado\" 8 t, comprimento 10 m e mais de 2 eixos (qualquer característica). Decreto regulamentador das exceções não achado."
+  }
+ ]
+}

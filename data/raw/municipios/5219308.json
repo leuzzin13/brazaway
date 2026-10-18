@@ -1,0 +1,78 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5219308",
+  "municipio": "Santa Helena de Goiás",
+  "uf": "GO",
+  "fonte_id": "santa-helena-de-goias",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/fgm/materia/F050206F (Lei 3.504/2026, FGM; republicada em 7296EE7A)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Limite do município: IBGE (dados públicos), usado só como registro da regra desativada.",
+    "notas": "Lei 3.504/2026 (publicada em 20/07/2026): veículos de carga com PBT acima de 12 t na Alameda Hildebrando Domingues da Silva entre o trevo do Anel Viário e o trevo da GO-162. Lei muito recente; sinalização (art. 3º) pode não estar instalada."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O ato não define VUC: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "santahelena_alameda_hildebrando_12t",
+      "tipo": "zona",
+      "regime": "Proibição de veículos de carga acima de 12 t em via urbana",
+      "nome": "Santa Helena de Goiás: Alameda Hildebrando Domingues da Silva (entre o trevo do Anel Viário/Plataforma Multimodal e o trevo da GO-162), veículos de carga com PBT acima de 12 t",
+      "status": "desativada",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º I: veículos realizando carga ou descarga dentro do perímetro urbano delimitado",
+        "Art. 2º II: serviços essenciais ao Município, devidamente comprovados",
+        "Art. 2º III: missão de interesse público, caracterizada por órgão competente"
+      ],
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 2º, I (carga/descarga dentro do trecho delimitado)",
+      "base_legal": [
+        {
+          "ato": "Lei Municipal nº 3.504, de 16/07/2026 (Câmara Municipal de Santa Helena de Goiás), publicada no Diário Oficial dos Municípios de Goiás (FGM) ed. 3870 de 20/07/2026",
+          "artigo": "arts. 1º (proibição, PBT > 12 t, trecho), 2º (exceções), 3º (sinalização), 5º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/fgm/materia/F050206F",
+          "nota": "Texto lido na íntegra; cópia em atos/5219308/lei-3504-2026.txt. Mesma lei republicada em https://www.diariomunicipal.com.br/fgm/materia/7296EE7A. Sem horário: proibição permanente, sem excetuar feriados."
+        }
+      ],
+      "vigencia_inicio": "2026-07-20",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "municipios": [
+            "5219308"
+          ],
+          "simplificar": 0.002
+        }
+      ],
+      "nota": "Lei muito recente (15 semanas antes da pesquisa); sinalização (art. 3º) pode não estar instalada. Pontas do trecho dependem do OSM (nome da via e trevos). Registro: o limite municipal do IBGE só mantém a fonte no banco; a regra está desativada e nunca é aplicada.",
+      "status_motivo": "Sem geometria confiável: a Alameda Hildebrando Domingues da Silva, o trevo do Anel Viário/Plataforma Multimodal e a GO-162 não constam no OSM (nenhum way, nome, ref ou ponto com esses nomes na malha do município). As rodovias estaduais GO-164, GO-210 e GO-407 do OSM são de competência do DER e não foram assumidas como a alameda. Ato vigente (Lei 3.504/2026, PBT acima de 12 t), confirmado pelo verificador em 18/10/2026; ativar quando a via e os dois trevos forem localizados. O limite do município entra só como registro (a regra nunca é aplicada)."
+    }
+  ]
+}

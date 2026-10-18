@@ -1,0 +1,105 @@
+{
+  "ibge": "4205803",
+  "nome": "Garuva",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/398581",
+      "resultado": "Decreto 218/2013 (DOM/SC 19/09/2013) aberto e lido na íntegra. Texto em atos/4205803/dec218_2013.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1471271",
+      "resultado": "Decreto 224/2017 (DOM/SC 26/12/2017) lido: estacionamento/parada na Av. Celso Ramos, vigência até 31/01/2018. Texto em atos/4205803/dec224_2017.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7301353",
+      "resultado": "Decreto 138/2025: inspeção sanitária; ruído"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7523399",
+      "resultado": "Lei 2749/2025: outorga onerosa para áreas portuárias/logística; só considerando sobre tráfego pesado; não é restrição"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4205803 'caminhões', 'caminhões estacionamento parada peso bruto', 'veículos PBT 15 toneladas', 'Decreto 218/2013' (domsc)",
+      "resultado": "nenhuma alteração/revogação do Decreto 218/2013"
+    },
+    {
+      "url": "https://garuva.atende.net / camaragaruva.atende.net",
+      "resultado": "Atende.net (captcha/JS), não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 218/2013 vigente por falta de ato posterior no DOM/SC: janela de fim de semana e feriados para PBT >=15 t. Decreto 224/2017 expirou (estacionamento). | verificado em 2026-10-18: Decreto 218/2013 (DOM/SC 398581) reaberto: art. 1o (09:00-23:59, sabado/domingo/feriados, PBT>=15 t, vias municipais), art. 2o (excecoes, VCPP ate 7,20 x 2,30 m), art. 5o (autorizacao), art. 6o (vigor na publicacao) conferem; nenhuma alteracao localizada. REBAIXADO para desativada: sem delimitacao geografica.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "garuva_fimdesemana_pbt15",
+      "tipo": "zona",
+      "regime": "Janela de fim de semana",
+      "nome": "Vias municipais de Garuva: proibido veículo com PBT igual ou maior que 15 t, sábados, domingos e feriados, das 09:00 às 23:59",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "09:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 14.99
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de carga de pequeno porte (até 7,20 m de comprimento e 2,30 m de largura)",
+        "Caminhões de serviços essenciais, emergência, guincho, imprensa, obras de emergência, correios, valores bancários, coleta de lixo/saúde, manutenção de redes, sinalização emergencial (art. 2º)",
+        "Autorização excepcional da Secretaria de Infraestrutura (art. 5º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 218/2013 (12/09/2013; DOM/SC 19/09/2013)",
+          "artigo": "art. 1º (proibição); art. 2º (exceções); art. 5º (autorização excepcional); art. 6º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/398581"
+        }
+      ],
+      "vigencia_inicio": "2013-09-19",
+      "geometria": [],
+      "nota": "PBT 'igual ou maior que 15 t' modelado como acima de 14,99 t (o schema só tem 'acima'). 'Até 23:59' tratado como até 24:00. Em feriados a proibição vale no mesmo horário (aplicada também em dias de semana: feriados 'aplica'; a janela de dias 6 e 7 não cobre feriados em dia útil, que dependem do calendário de feriados). Vias: todas as municipais.",
+      "status_motivo": "Verificacao 18/10/2026: o Decreto 218/2013 (art. 1o) vale para 'as vias publicas municipais' sem lista nem perimetro (nao georreferenciavel; os considerandos citam a regiao central, mas o dispositivo nao delimita), alem de depender do calendario de feriados e de ser anterior a 2014 sem confirmacao de sinalizacao/fiscalizacao."
+    },
+    {
+      "id": "garuva_celso_ramos_estacionamento",
+      "tipo": "via",
+      "regime": "Estacionamento (não circulação)",
+      "nome": "Avenida Celso Ramos: proibida parada e estacionamento de caminhões acima de 12 t / 14 m",
+      "status": "revogada",
+      "confianca": "media",
+      "status_motivo": "Só estacionamento/parada (não circulação) e com vigência até 31/01/2018 pelo próprio art. 2º",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 224/2017 (21/12/2017)",
+          "artigo": "art. 1º; art. 2º (vigência até 31/01/2018)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1471271"
+        }
+      ],
+      "vigencia_inicio": "2017-12-26",
+      "geometria": [],
+      "vigencia_fim": "2018-01-31"
+    }
+  ]
+}

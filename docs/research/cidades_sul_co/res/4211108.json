@@ -1,0 +1,148 @@
+{
+ "ibge": "4211108",
+ "nome": "Monte Castelo",
+ "uf": "SC",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8704841",
+   "resultado": "LIDO integral (docx do DOM/SC): Lei 2.892, 14/09/2026 - em dias de chuva, estradas rurais com revestimento primário: proíbe caminhões/equipamentos com PBT > 16 t (toco) ou > 23 t (truck), tolerância 5%; carreta/julieta/reboques proibidos; multa 10-20 UFM + taxa de recuperação. atos/4211108/lei_2892_2026.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8598264",
+   "resultado": "LIDO integral: Decreto 2.998, 11/08/2026 - em dias de chuva, caminhões com guincho e carregados de toras proibidos nas estradas do interior (exceto carga viva, ração e produtos agrícolas). atos/4211108/decreto_2998_2026.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/5868568",
+   "resultado": "Trecho (DOM/SC): Decreto 2.671, 16/04/2024 = plano/diagnóstico de logística de cargas com meta de 'regulamentar a circulação de veículos pesados' (Rua Cel. Otávio Xavier Rauen, rota da Cooperpomares); não é regra. Não lido integralmente."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4211108 ('veículos pesados','tráfego de caminhões','perímetro urbano veículos pesados','carga e descarga')",
+   "resultado": "DOM/SC abriu; nenhuma regra urbana/permanente; LC 69/70/72 de 2025 só como ruído de carga e descarga (não lidas)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Duas normas de 2026, ambas condicionadas a chuva e a estradas rurais (primárias): Lei 2.892 (14/09/2026) restringe por peso e tipo (toco > 16 t, truck > 23 t PBT; carretas/julietas/reboques proibidos) e fixa multa/taxa de recuperação; Decreto 2.998 (11/08/2026) proíbe caminhões com guincho e carregados de toras. Sem vias nomeadas e sem janela fixa, logo status pontual e regras desativadas (não modeláveis no roteamento). Não há regra urbana de circulação. O plano do Decreto 2.671/2024 só tem metas.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "montecastelo_lei_2892_2026_chuva",
+   "tipo": "zona",
+   "regime": "Restrição condicional (chuva) - estradas rurais primárias",
+   "nome": "Estradas rurais com revestimento primário, em dias de chuva: toco > 16 t, truck > 23 t PBT; carretas/julietas proibidas (Lei 2.892/2026)",
+   "status": "desativada",
+   "status_motivo": "Condicional a chuva e a estradas sem pavimento; sem vias nomeadas; ato vigente desde 14/09/2026.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 16.0
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "carreta",
+       "julieta",
+       "reboque"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2.892, de 14/09/2026 (Monte Castelo)",
+     "artigo": "arts. 1º-2º; art. 1º parágrafo único (tolerância 5%)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8704841",
+     "nota": "Texto integral lido. Limiar 16 t vale para toco (um eixo traseiro) e 23 t para truck (dois eixos traseiros); modelado como rascunho."
+    }
+   ],
+   "excecoes": [],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Estradas rurais municipais com revestimento primário.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2026-09-14",
+   "nota": "Dois limiares por configuração de eixos: 16 t (toco) e 23 t (truck); alvo simplificado."
+  },
+  {
+   "id": "montecastelo_dec_2998_2026_chuva",
+   "tipo": "zona",
+   "regime": "Restrição condicional (chuva) - estradas do interior",
+   "nome": "Estradas do interior, em dias de chuva: caminhões com guincho e carregados com toras de madeira proibidos (Dec. 2.998/2026)",
+   "status": "desativada",
+   "status_motivo": "Condicional a chuva; sem vias nomeadas.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "caminhao_com_guincho",
+       "carga_toras"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 2.998, de 11/08/2026 (Monte Castelo)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8598264"
+    }
+   ],
+   "excecoes": [
+    "Caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Estradas do interior.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2026-08-11"
+  }
+ ]
+}

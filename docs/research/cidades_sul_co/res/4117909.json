@@ -1,0 +1,119 @@
+{
+ "ibge": "4117909",
+ "nome": "Palotina",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "/home/user/brazaway/docs/research/cidades_sul_co/fila/R1-PR-DO01.json",
+   "resultado": "Pistas OSM do lote (Overpass fora do ar nesta sessão: reset de conexão; usados os exemplos anotados)."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter",
+   "resultado": "Connection reset pelo proxy (Palotina testado); nova consulta não refeita."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4117909",
+   "resultado": "termos 'caminhões', 'trânsito de caminhões', 'veículos pesados', 'toneladas' e outros no AMP: ver observações."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Câmara (Elotech) pesquisada: 14 atos para caminh/carga/trânsito, todos ruído (diárias, carga horária, lei 2405/2009 cria Companhia de Trânsito). Prefeitura (1doc/palotina.pr.gov.br) bloqueada por Cloudflare/login; leismunicipais não acessível. WebSearch (1 uso) sem resultado. 25 ways maxweight, avenidas secondary com maxweight=4 t, valor suspeito (artéria principal de polo agroindustrial; possível erro de mapeamento ou limite de ponte/viaduto), sem ato.",
+ "osm_divergencias": [
+  "25 ways maxweight; Avenidas Presidente Kennedy e Independência (secondary) com maxweight=4 sem ato, valor implausível para avenida arterial de polo agro (provável erro OSM)"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "palotina_av_pres_kennedy",
+   "tipo": "via",
+   "regime": "Proibição/limite por etiqueta OSM (sem ato)",
+   "nome": "Avenida Presidente Kennedy (OSM maxweight=4)",
+   "status": "desativada",
+   "status_motivo": "Somente etiqueta OSM (maxweight=4 (ways 345798395, 356053468, 580885714)); nenhum ato municipal primário localizado. Pista, não regra.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 4
+     }
+    ]
+   },
+   "base_legal": [],
+   "excecoes": [],
+   "trechos": [
+    {
+     "via": [
+      "Avenida Presidente Kennedy"
+     ],
+     "descricao": "OSM way(s) 345798395",
+     "aproximado": true
+    }
+   ]
+  },
+  {
+   "id": "palotina_av_independencia",
+   "tipo": "via",
+   "regime": "Proibição/limite por etiqueta OSM (sem ato)",
+   "nome": "Avenida Independência (OSM maxweight=4)",
+   "status": "desativada",
+   "status_motivo": "Somente etiqueta OSM (maxweight=4 (ways 351487738, 356053466)); nenhum ato municipal primário localizado. Pista, não regra.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 4
+     }
+    ]
+   },
+   "base_legal": [],
+   "excecoes": [],
+   "trechos": [
+    {
+     "via": [
+      "Avenida Independência"
+     ],
+     "descricao": "OSM way(s) 351487738",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

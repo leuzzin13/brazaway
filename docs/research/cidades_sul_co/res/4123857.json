@@ -1,0 +1,92 @@
+{
+ "ibge": "4123857",
+ "nome": "Santa Maria do Oeste",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/617EB501",
+   "resultado": "LIDO integral. Salvo em atos/4123857/lei_611_2022.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4123857 (Lei 611/2022 circulação de caminhões; altera revoga Lei 611)",
+   "resultado": "sem alteração/revogação"
+  },
+  {
+   "url": "https://www.santamariadooeste.pr.gov.br/legislacao_view/3",
+   "resultado": "portal próprio não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 611/2022 (AMP 01/09/2022), lida integralmente: nas vias da área urbana é proibida a circulação de caminhões carregados com PBTC acima de 57 t, comprimento acima de 18 m ou 7 ou mais eixos; exceções amplas do art. 2º e Autorização Especial de Trânsito (art. 8º). Sem alteração/revogação achada. Decretos 058 e 059/2025 são servidão (ruído). Perímetro = área urbana (sem polígono no ato). | verificado em 2026-10-18: santamariadooeste_vias_urbanas_57t: Rebaixada para desativada: area urbana sem delimitacao no ato; vale so para caminhoes carregados e com excecoes muito amplas.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santamariadooeste_vias_urbanas_57t",
+   "tipo": "zona",
+   "regime": "Restrição por porte (zona urbana)",
+   "nome": "Vias urbanas: caminhões carregados > 57 t PBTC, > 18 m ou com 7+ eixos (Lei 611/2022)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 57
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 18
+     },
+     {
+      "campo": "eixos",
+      "acima": 6
+     }
+    ]
+   },
+   "excecoes": [
+    "sem carga, circulação eventual para acesso à residência ou socorro mecânico (§1º, só incisos I-II)",
+    "Autorização Especial de Trânsito da Secretaria de Urbanismo, com prazo (art. 1º §2º e art. 8º)",
+    "urgência, socorro mecânico, obras/serviços de emergência, forças armadas, valores, coleta de lixo, serviços essenciais, infraestrutura urbana, concretagem, mudanças, alimentos/perecíveis, produtos perigosos de consumo local, remoção de terra/entulho/caçambas (art. 2º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 611/2022 (Santa Maria do Oeste)",
+     "artigo": "arts. 1º a 2º e 8º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/617EB501"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "vias da área urbana"
+     ],
+     "descricao": "todas as vias da área urbana do município (perímetro urbano)"
+    }
+   ],
+   "vigencia_inicio": "2022-09-01",
+   "nota": "Vale só para caminhões CARREGADOS (o schema não distingue carregado/vazio). Limiares altos (PBTC 57 t, 18 m, 7 eixos), com exceções amplas (concreto, mudanças, alimentos, entulho). Data de vigência = publicação no AMP (01/09/2022).",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada para desativada: area urbana sem delimitacao no ato; vale so para caminhoes carregados e com excecoes muito amplas."
+  }
+ ]
+}

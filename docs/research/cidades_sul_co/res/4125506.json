@@ -7,6 +7,22 @@
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
+   "url": "https://www.sjp.pr.gov.br/, https://diariooficial.sjp.pr.gov.br/, https://transparencia.sjp.pr.gov.br/ (repetido com varios User-Agents, sem tentar contornar)",
+   "resultado": "HTTP 403 com pagina 'Just a moment...' (desafio Cloudflare) em todos os hosts da Prefeitura; nao contornado."
+  },
+  {
+   "url": "https://www.cmsjp.pr.gov.br/ (e /leis, /legislacao, /sapl, /pesquisa-legislacao)",
+   "resultado": "Responde 200 mas so com a pagina 'Bot Verification' (reCAPTCHA invisivel do LiteSpeed, 1,7 KB); nao contornado. Hosts alternativos (sapl.cmsjp, cmsjp.pr.leg.br, sjp.1doc [login], cmsjp.cespro.com.br [pagina generica do CESPRO sem acervo]) sem legislacao acessivel."
+  },
+  {
+   "url": "api.queridodiario.org.br/gazettes?territory_ids=4125506",
+   "resultado": "total_gazettes=0 (confirmado: sem cobertura; o lead do toolkit que lista 'qd' como cobertura nao se confirma). SIGPub/AMP: SJP nao esta entre os municipios cobertos."
+  },
+  {
+   "url": "WebSearch: 'Sao Jose dos Pinhais decreto proibe caminhoes centro horario circulacao restricao veiculos pesados'",
+   "resultado": "Sem nenhum ato municipal; so restricoes da PRF na BR-277/BR-376 (rodovias federais, fora desta camada) e decretos de COVID."
+  },
+  {
    "url": "https://www.sjp.pr.gov.br/portal/ e https://sjp.pr.gov.br/ e diariooficial.sjp.pr.gov.br",
    "resultado": "403 ('Just a moment...' / bloqueio); nao contornado."
   },
@@ -32,9 +48,9 @@
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma fonte primaria de SJP foi acessivel (prefeitura e Diario Oficial atras de bloqueio; Camara atras de reCAPTCHA; sem cobertura do Querido Diario). O resultado NAO e conclusivo. Cidade do aeroporto Afonso Pena, do Contorno Leste/BR-277 e do porto seco da RMC: provavel regra de carga/descarga ou vias. Proxima acao: Diario Oficial Eletronico e portal de legislacao em rede sem bloqueio.",
+ "observacoes": "Nenhuma fonte primaria de Sao Jose dos Pinhais foi acessivel (Prefeitura e Diario Oficial atras de desafio Cloudflare; Camara atras de reCAPTCHA; Querido Diario sem cobertura; leismunicipais 403): o resultado NAO e conclusivo. A busca na web nao achou nenhuma restricao municipal a caminhoes; so ha restricoes da PRF em rodovias federais (BR-277/BR-376) em feriados, fora da camada municipal. Cidade do aeroporto Afonso Pena, do Contorno Leste/BR-277 e do porto seco da RMC: provavel regra de carga/descarga ou vias, ainda a confirmar. Proxima acao: Diario Oficial Eletronico e portal de legislacao em rede sem desafio/bloqueio.",
  "osm_divergencias": [
-  "OSM nao consultado."
+  "Fonte: osm_hints_por_municipio.json (Overpass nao consultado): 22 vias com hgv=no (ex.: Travessa Sete Quedas e Travessa Valentin Zen, residential; way 500410571 com access=private/goods=no/hgv=no), 0 hgv:conditional, 0 maxweight, 1 outra condicao. Sem ato municipal acessivel para comparar; hgv=no de mapeador em ruas locais e propriedade privada nao sustenta regra (nao ativar)."
  ],
  "regras_rascunho": []
 }

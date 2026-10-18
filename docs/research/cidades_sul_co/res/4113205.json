@@ -1,0 +1,139 @@
+{
+ "ibge": "4113205",
+ "nome": "Lapa",
+ "uf": "PR",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/A4B635C5",
+   "resultado": "LIDO integral. Salvo em atos/4113205/decreto_23604_2018.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/24390201",
+   "resultado": "LIDO integral. Salvo em atos/4113205/decreto_27318_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/B1E9F6D9",
+   "resultado": "trecho via busca: Lei 3.701/2020, art. 208 (Prefeitura disciplina horário e local de tráfego de pesados)"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/9896CEDE",
+   "resultado": "trecho via busca: Lei 4.000/2022, carga e descarga (EstaR)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4113205 (3 termos AMP)",
+   "resultado": "sem proibição urbana"
+  },
+  {
+   "url": "https://sapl.lapa.pr.leg.br/norma/pesquisar",
+   "resultado": "SAPL não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decretos lidos integralmente: 23.604/2018 (AMP 13/06/2018; estradas do interior, veículos de carga > 8 t/eixo ou > 32 t proibidos por 12 a 48 h conforme a chuva) e 27.318/2023 (13/10/2023; estradas não pavimentadas, proibidos caminhões e pesados em dias de chuva, exceto cargas vivas, ração e produtos agrícolas). Ambos dependem de chuva (condição meteorológica): regras desativadas, status pontual. Lei 3.701/2020 (Posturas) e Lei 4.000/2022 (carga e descarga, EstaR; trecho) apenas delegam horário/local de tráfego de pesados ao Executivo e fixam carga e descarga em área rotativa. Nenhuma proibição urbana de caminhões achada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "lapa_estradas_rurais_chuva_decreto_27318",
+   "tipo": "via",
+   "regime": "Chuva (estradas rurais)",
+   "nome": "Estradas não pavimentadas do interior: caminhões e pesados proibidos em dias de chuva (Decreto 27.318/2023)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "caminhões com cargas vivas, ração e produtos agrícolas"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 27.318, de 13/10/2023 (Lapa)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/24390201"
+    }
+   ],
+   "status_motivo": "Condição meteorológica (\"em dias de chuva\") sem limiar nem peso; não representável em janelas fixas.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas não pavimentadas do interior"
+     ],
+     "descricao": "malha viária rural não pavimentada"
+    }
+   ]
+  },
+  {
+   "id": "lapa_estradas_rurais_chuva_tabela_23604",
+   "tipo": "via",
+   "regime": "Chuva (estradas rurais)",
+   "nome": "Estradas do interior: veículos de carga > 8 t/eixo ou > 32 t, proibidos por 12 a 48 h após chuva (Decreto 23.604/2018)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 32
+     }
+    ]
+   },
+   "excecoes": [
+    "utilidade pública, interesse público, transporte escolar e de passageiros, emergência, urgência e militares"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 23.604, de 08/06/2018 (Lapa)",
+     "artigo": "art. 1º (tabela de precipitação) e art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/A4B635C5"
+    }
+   ],
+   "status_motivo": "Proibição condicionada a chuva (até 20 mm: 12 h; 21-50 mm: 24 h; 51-80 mm: 36 h; >= 81 mm: 48 h) e a peso (> 8 t por eixo ou > 32 t); condição meteorológica não representável; relação com o Decreto 27.318/2023 (mais novo, sem limiar) não esclarecida.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas do interior"
+     ],
+     "descricao": "estradas rurais do município"
+    }
+   ]
+  }
+ ]
+}

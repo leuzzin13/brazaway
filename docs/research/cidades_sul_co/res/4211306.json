@@ -1,0 +1,255 @@
+{
+  "ibge": "4211306",
+  "nome": "Navegantes",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7843295",
+      "resultado": "Decreto 618/2025 aberto e lido (texto integral): nova redação do art. 1º do Dec. 1.069/2013."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/3916806",
+      "resultado": "Decreto 139/2022 lido: acrescenta art. 2º-A (multa) ao Dec. 1.069/2013."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/364021",
+      "resultado": "Decreto 805/2013 lido: lista de vias, PBT > 16 t; revoga o Dec. 730/2013."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/352772",
+      "resultado": "Decreto 730/2013 lido: versão anterior, revogada pelo 805/2013."
+    },
+    {
+      "url": "DOM/SC entidade 173 (Prefeitura de Navegantes): consultas 'container', 'caminhão', '1069', 'Decreto nº 805' entre 07/2013 e 03/2014",
+      "resultado": "Decreto 1.069/2013 (14/10/2013) NÃO aparece no DOM/SC; o texto-base não foi lido."
+    },
+    {
+      "url": "leismunicipais.com.br (portal principal da fila)",
+      "resultado": "não aberto: Cloudflare 403 (conhecido); portal da prefeitura/atende também não automatizável"
+    }
+  ],
+  "observacoes": "Regra para caminhão-contêiner (porto de Navegantes) vigente via Dec. 1.069/2013 com o art. 1º dado pelo Dec. 618/2025. Texto-base do 1.069 não localizado: lacuna (por exemplo, regra geral de PBT > 16 t). falha_de_fonte=false porque o DOM/SC abriu, mas o portal de legislação não. | verificado em 2026-10-18: Dec. 618/2025 (atos/7843295) relido, mas SUCEDIDO pelo Dec. 72/2026 (atos/8076657, 05/03/2026, vigencia 30/03/2026, revoga o Dec. 1.069/2013): criterio passa a ser combinacao (caminhao-trator com reboque/semirreboque), nao carga de container. Regra mantida desativada (allowlist, complemento inclui BR-470 e vias estaduais). Dec. 805/2013 permanece desativado (nao lido).",
+  "osm_divergencias": [
+    "OSM hgv=no em Rua Carlos de Góes Rebello, Rua Manoel Gaya Neto, Rua Francisco de Paula Seara, Rua Gastorina Polucena Rocha etc.: Carlos de Góes Rebelo e Francisco de Paula Seara eram vias PERMITIDAS ao contêiner em 2013 e saíram da lista em 2025 (compatível com hgv=no parcial); o ato proíbe só o caminhão com contêiner, não todo hgv."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "navegantes_dec1069_2013_conteiner_vias_permitidas",
+      "tipo": "zona",
+      "regime": "Allowlist de vias para caminhao-trator com reboque/semirreboque",
+      "nome": "Navegantes: Dec. 72/2026, caminhao-trator com reboque e/ou semirreboque so pode trafegar nas vias listadas (sucede o Dec. 1.069/2013 e Dec. 618/2025)",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 72, de 05/03/2026 (Navegantes)",
+          "artigo": "art. 1 (vias permitidas, p.u. requerimento), art. 2 (estacionamento proibido), art. 3 (infracao media, CTB 187 I), art. 4 (vigencia 30/03/2026; revoga o Dec. 1.069/2013)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8076657"
+        },
+        {
+          "ato": "Decreto nº 618, de 15/12/2025 (revogado indiretamente pelo Dec. 72/2026 ao revogar o 1.069/2013)",
+          "artigo": "art. 1",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7843295"
+        }
+      ],
+      "vigencia_inicio": "2026-03-30",
+      "trechos": [
+        {
+          "inciso": "art. 1º, a)",
+          "via": [
+            "Avenida Portuária Vicente Coelho"
+          ],
+          "descricao": "via permitida - Via Portuária",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, b)",
+          "via": [
+            "Rua José Francisco Laurindo"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, c)",
+          "via": [
+            "Rua Orlando Ferreira"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, d)",
+          "via": [
+            "Rua Prefeito Manoel Evaldo Müller"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, e)",
+          "via": [
+            "Rua Jornalista Ruy Ademar Rodrigues"
+          ],
+          "descricao": "via permitida: trecho entre a BR-470 e a Rua Vereador Norival José Bento",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, f)",
+          "via": [
+            "Rua Itajaí"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, g)",
+          "via": [
+            "Rua Onório Bortolato"
+          ],
+          "descricao": "via permitida: trecho entre a BR-470 e a Rua Pedro Virgílio Ricobon",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, h)",
+          "via": [
+            "Rua João Aragão"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, i)",
+          "via": [
+            "Rua João Gazaniga"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, j)",
+          "via": [
+            "Rua Aníbal Gaya"
+          ],
+          "descricao": "via permitida: trecho entre o porto e a Avenida Portuária Vicente Coelho (Via Portuária)",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, k)",
+          "via": [
+            "Rua Gracelíades Coelho Reiser"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, l)",
+          "via": [
+            "Rua Nereu Liberato Nunes"
+          ],
+          "descricao": "via permitida - trecho da Rua Gracelíades Coelho Reiser até a Rua Pedro Dionísio de Souza",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, m)",
+          "via": [
+            "Rua Pedro Dionísio de Souza"
+          ],
+          "descricao": "via permitida - trecho entre as ruas Nereu Liberato Nunes e Osmar Gaya",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, n)",
+          "via": [
+            "Rua Manoel Leopoldo Rocha"
+          ],
+          "descricao": "via permitida",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        },
+        {
+          "inciso": "art. 1º, o)",
+          "via": [
+            "Rua Osmar Gaya"
+          ],
+          "descricao": "via permitida - trecho entre as ruas Pedro Dionísio de Souza e Manoel Leopoldo Rocha",
+          "nota": "lista de vias PERMITIDAS (as demais ficam proibidas ao caminhão com contêiner)"
+        }
+      ],
+      "nota": "Dec. 72/2026 (DOM/SC atos/8076657) substituiu o regime de 'caminhao que transporta container' (Dec. 1.069/2013 + 618/2025) por criterio de COMBINACAO de veiculos: caminhao-trator com reboque, com semirreboque ou com reboque e semirreboque; o caminhao-trator solto circula em todas as vias (art. 2 p.u.); estacionamento dessas combinacoes proibido nas vias. Vias permitidas iguais as do Dec. 618/2025, com os trechos de Rua Jornalista Ruy Ademar Rodrigues e Rua Onório Bortolato limitados a partir da BR-470. Regra de allowlist: geometria seria o complemento, ainda nao montada.",
+      "geometria": [],
+      "status_motivo": "Verificado 18/10/2026: regra sucedida pelo Decreto 72/2026 (que revoga o Dec. 1.069/2013). Mantida desativada porque e uma allowlist (tráfego permitido EXCLUSIVAMENTE nas vias listadas): o complemento incluiria rodovias federais/estaduais (BR-470 etc.) e vias fora da competencia municipal, sem perimetro de proibicao georreferenciavel; excecao por requerimento previo (art. 1 p.u.)."
+    },
+    {
+      "id": "navegantes_dec805_2013_pbt16",
+      "tipo": "zona",
+      "regime": "PBT acima de 16 t só em vias listadas (2013)",
+      "nome": "Navegantes: Dec. 805/2013, caminhões com PBT > 16 t só nas vias do art. 1º (revogação/continuidade pelo Dec. 1.069/2013 não confirmada)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Decreto de 2013 cujo sucessor (Dec. 1.069/2013, de 14/10/2013, que o Dec. 618/2025 chama de 'regulamenta o tráfego e o estacionamento de caminhão para transporte de container e caminhão-trator') não foi lido: não se sabe se mantém a regra geral de PBT > 16 t. Sem confirmação, fica desativada.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 16
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 805, de 18/06/2013",
+          "artigo": "art. 3º, § 1º (PBT > 16 t apenas nas vias do art. 1º, com comunicação prévia), § 2º (estacionamento > 16 t)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/364021"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

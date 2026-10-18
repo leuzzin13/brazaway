@@ -1,0 +1,149 @@
+{
+ "ibge": "4126207",
+ "nome": "Sapopema",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/B5A4C6B5",
+   "resultado": "LIDO integral. Salvo em atos/4126207/lei_930_2014.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/ABF8E908",
+   "resultado": "LIDO integral. Salvo em atos/4126207/decreto_074_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/3FE7CA01",
+   "resultado": "trecho via busca: Lei 1.476/2023, diretriz de disciplinar carga e descarga/rotas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4126207 (Lei 930/2014; revoga altera lei 930; tráfego de caminhões perímetro urbano)",
+   "resultado": "sem alteração/revogação"
+  },
+  {
+   "url": "https://www.sapopema.pr.gov.br/legislacao",
+   "resultado": "não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "(1) Lei 930/2014 (29/04/2014; AMP 02/05/2014), lida: proibido o trânsito de caminhões/veículos pesados carregados acima de 10 t no perímetro urbano, exceto vazios e carga/descarga com nota fiscal; fiscalização PM. Sem alteração/revogação achada. (2) Decreto 074/2023 (lido): estradas rurais não pavimentadas, em dias de chuva, proibidos combinações com 4+ eixos, romeu e julieta, bitrem, tritrem, rodotrem e treminhão carregados de madeira de exploração comercial -> desativada (condição de chuva e tipo de carga). Lei 1.476/2023 (sistema viário/plano) só diretriz. Decreto 061/2020 não trata de restrição. | verificado em 2026-10-18: sapopema_perimetro_urbano_10t: Rebaixada para desativada: 'perimetro urbano' sem delimitacao no ato; vale so para carregados e a lei nao diz se 10 t e PBT ou carga.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "sapopema_perimetro_urbano_10t",
+   "tipo": "zona",
+   "regime": "Restrição por peso (zona urbana)",
+   "nome": "Perímetro urbano: caminhões/veículos pesados carregados acima de 10 t (Lei 930/2014)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "veículos vazios/sem carga",
+    "carga e descarga no perímetro urbano mediante nota fiscal com o local de carga/descarga (art. 1º, §1º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 930, de 29/04/2014 (Sapopema)",
+     "artigo": "art. 1º e §1º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/B5A4C6B5"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "perímetro urbano"
+     ],
+     "descricao": "todo o perímetro urbano de Sapopema"
+    }
+   ],
+   "vigencia_inicio": "2014-05-02",
+   "nota": "\"Carregados acima de 10 toneladas\": interpretado como peso do conjunto carregado (PBT) > 10 t; a lei não diz se é PBT ou carga. Exceção por nota fiscal torna a restrição só para tráfego de passagem. Fiscalização pela PM.",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada para desativada: 'perimetro urbano' sem delimitacao no ato; vale so para carregados e a lei nao diz se 10 t e PBT ou carga."
+  },
+  {
+   "id": "sapopema_estradas_rurais_madeira_chuva",
+   "tipo": "via",
+   "regime": "Chuva + carga de madeira",
+   "nome": "Estradas rurais não pavimentadas: combinações carregadas com madeira em dias de chuva (Decreto 074/2023)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 074/2023 (Sapopema), de 09/03/2023",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/ABF8E908"
+    }
+   ],
+   "status_motivo": "Restrição só para carga de madeira de exploração comercial/industrial, em dias de chuva e até a secagem da estrada; condição meteorológica e de carga, não representável no schema.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas rurais municipais"
+     ],
+     "descricao": "não pavimentadas ou com calçamento de pedras irregulares, em toda a extensão"
+    }
+   ]
+  }
+ ]
+}

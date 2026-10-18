@@ -1,0 +1,183 @@
+{
+ "ibge": "5106372",
+ "nome": "Pedra Preta",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/561775C2",
+   "resultado": "Lida. Decreto 060/2013 (24/07/2013, publ. 06/08/2013): art. 1º proíbe trânsito e carga/descarga de veículos de carga ou tração com comprimento total acima de 7 m no perímetro urbano (áreas residencial e comercial); parágrafo único: carga/descarga de veículos até 7 m só seg-sex 18h-22h e sáb/dom/feriados 14h-22h; art. 2º zona restrita a partir dos entroncamentos com a BR-364 e MT-459; art. 3º rotas obrigatórias; art. 4º exclusões; revoga o Decreto 031/2013."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/0B506D46",
+   "resultado": "Lida. Decreto 062/2013 (31/07/2013): altera só o art. 3º do Dec. 060 (rotas e exceções, inclusive Av. Presidente Médici até oficinas e lava-jatos, material de construção); mantém o restante."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/259A7128",
+   "resultado": "Decreto 047/2012 (mesma matéria, anterior); não lido na íntegra, tratado como substituído pelo Dec. 060/2013 ('revogando-se disposições em contrário')."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5106372 'trânsito de caminhões' / 'carga e descarga' / 'perímetro urbano caminhões' / 'Decreto 060' (amm-mt)",
+   "resultado": "Só os Decretos 047/2012, 060/2013 e 062/2013; nenhum ato posterior (acervo AMM-MT até ~2015)."
+  },
+  {
+   "url": "https://sapl.pedrapreta.mt.leg.br (toolkit)",
+   "resultado": "11 normas com os termos (caminh, trânsito, carga): todas ruído (auxílios, semana do trânsito, pista de caminhada). Sem lei de circulação de caminhões, até out/2026."
+  },
+  {
+   "url": "https://transparencia.pedrapreta.mt.gov.br/Legislacao/",
+   "resultado": "MPX respondeu; 0 atos para os termos (cliente heurístico, pode estar incompleto)."
+  },
+  {
+   "url": "https://pedrapreta.cespro.com.br/",
+   "resultado": "CESPRO com reCAPTCHA (não automatizado)."
+  }
+ ],
+ "observacoes": "Decreto 060/2013 + 062/2013 são atos primários lidos, sem revogação localizada, regra ativa com confiança média (vigência 2026 não confirmada em portal oficial; CESPRO/MPX sem busca útil). A zona restrita é descrita por entroncamentos (Posto Marca/Av. André Passos Amorim, Rua Pernambuco/Trevo JBS, Av. Presidente Médici/Posto Locomotiva, Rua Luiz Correia de Lima/Motel e MT-459 x Av. das Flores), sem polígono: trechos aproximados. Carga e descarga de veículos até 7 m em janelas é regra de operação, registrada desativada. | verificado em 2026-10-18: pedrapreta_perimetro_urbano_acima_7m: Rebaixada para desativada: zona descrita por entroncamentos, sem delimitacao.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "pedrapreta_perimetro_urbano_acima_7m",
+   "tipo": "zona",
+   "regime": "Proibição de veículos de carga/tração acima de 7 m no perímetro urbano",
+   "nome": "Perímetro urbano (áreas residencial e comercial): veículos de carga ou tração com mais de 7 m proibidos",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 3º (redação do Dec. 062/2013): rota obrigatória MT-459 -> BR-364 por Av. das Flores, R. Cajueiro, Av. José Simar de Carvalho, Av. Frei Servácio e R. Luiz Correa de Lima; BR-364 (Posto Marca) -> assentamento Canudos só pela Av. André Passos Amorim; veículos da BR-364 (Posto Locomotiva) pela Av. Presidente Médici até oficinas/lava-jatos até a R. Monte Castelo; carga/descarga de material de construção pelas Av. Presidente Médici e Frei Servácio",
+    "Art. 4º: veículos oficiais, a serviço da Prefeitura e de utilidade pública em atendimento"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto 060/2013, de 24/07/2013",
+     "artigo": "arts. 1º, 2º, 3º, 4º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/561775C2"
+    },
+    {
+     "ato": "Decreto 062/2013, de 31/07/2013 (altera art. 3º)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/0B506D46"
+    }
+   ],
+   "vigencia_inicio": "2013-07-24",
+   "trechos": [
+    {
+     "via": [
+      "Avenida André Passos Amorim",
+      "Rua Pernambuco",
+      "Avenida Presidente Médici",
+      "Rua Luiz Correia de Lima",
+      "Avenida das Flores"
+     ],
+     "descricao": "Zona restrita a partir dos entroncamentos da BR-364 com Av. André Passos Amorim (Posto Marca), R. Pernambuco (Trevo JBS), Av. Presidente Médici (Trevo Posto Locomotiva) e R. Luiz Correia de Lima (Motel); e da MT-459 (Estrada da Taboca) com a Av. das Flores; perímetro interno não detalhado",
+     "aproximado": true
+    }
+   ],
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: zona descrita por entroncamentos, sem delimitacao. Decretos 060/2013 e 062/2013 relidos (AMM-MT 561775C2 e 0B506D46): art. 1 (>7 m de comprimento) vale no 'perimetro urbano compreendido as areas residencial e comercial'; art. 2 define a zona apenas 'a partir dos entroncamentos' da BR-364 e MT-459 com cinco vias, sem poligono nem lista; art. 3 (redacao do 062) cria rotas obrigatorias dentro da zona. Vias de acesso a rodovias federal/estadual. Sem ato posterior achado (acervo ~2015)."
+  },
+  {
+   "id": "pedrapreta_carga_descarga_ate_7m",
+   "tipo": "zona",
+   "regime": "Janelas de carga e descarga para veículos até 7 m",
+   "nome": "Perímetro urbano: carga/descarga de veículos até 7 m só seg-sex 18h-22h e sáb/dom/feriados 14h-22h",
+   "status": "desativada",
+   "status_motivo": "Regra de operação de carga e descarga (parada), não de circulação; mesma zona aproximada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "18:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "22:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "22:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "ate": 7
+     }
+    ]
+   },
+   "excecoes": [
+    "Aplica-se à operação de carga e descarga, não ao simples trânsito"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto 060/2013",
+     "artigo": "art. 1º, parágrafo único",
+     "url": "https://www.diariomunicipal.com.br/amm-mt/materia/561775C2"
+    }
+   ],
+   "vigencia_inicio": "2013-07-24",
+   "trechos": [
+    {
+     "descricao": "Mesma zona do Dec. 060/2013 art. 2º",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

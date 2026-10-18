@@ -1,0 +1,152 @@
+{
+  "ibge": "4218806",
+  "nome": "Turvo",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5204854",
+      "resultado": "Decreto 68/2023 aberto e lido (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5447012 ; /5447023",
+      "resultado": "Leis 2.547/2023 e 2.549/2023 lidas: renumeração de trechos da TVO-150 (TVO-374 e TVO-375)."
+    },
+    {
+      "url": "DOM/SC buscar 4218806 'Rodovias Municipais veículos de grande porte', 'Decreto 68/23', 'TVO 150', 'circulação de veículos de grande porte'",
+      "resultado": "Nenhuma alteração do Dec. 68/2023."
+    },
+    {
+      "url": "Preparação: OSM só em Rua Leoberto Leal (SC-108)",
+      "resultado": "rodovia estadual, descartada."
+    }
+  ],
+  "observacoes": "Regra vigente em rodovias municipais rurais (TVO), PBT > 15 t, sem revogação achada. | verificado em 2026-10-18: Dec. 68/2023 (atos/5204854) relido: PBT>15 t nas rodovias municipais TVO-150 (Vila Progresso ate 'SC-285') e TVO-352; excecoes art. 2 (inclui escoamento agropecuario de imoveis nessas rodovias). Regra dividida: TVO-352 mantida ativa (extremos descritos); TVO-150 desativada (trecho nao identificavel apos renumeracao Leis 2.547/2.549/2023 e 2.700/2026).",
+  "osm_divergencias": [
+    "OSM maxweight=45 só na SC-108 (Rua Leoberto Leal): rodovia estadual, fora da competência municipal; as rodovias TVO do decreto não aparecem com restrição no OSM."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "turvo_dec68_2023_tvo352",
+      "tipo": "via",
+      "regime": "Rodovias municipais TVO: PBT > 15 t",
+      "nome": "Turvo: Dec. 68/2023 art. 1, II, proibido tráfego de caminhões e veículos pesados com PBT > 15 t na TVO-352 (divisa Timbé do Sul, Rio do Salto, até a Rua São João Batista, Morro Chato)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo regular",
+        "Carga e descarga de bens e valores bancários",
+        "Coleta de lixo e serviços emergenciais de saúde",
+        "Caminhões e veículos de carga para escoamento da produção agrícola, pecuária ou agroindustrial de imóveis situados nas rodovias do art. 1º (art. 2º, IV)",
+        "Manutenção de emergência em redes e guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 68, de 24/08/2023 (publicado no DOM/SC em 16/10/2023)",
+          "artigo": "art. 1º, I e II (rodovias), art. 2º (exceções, inclusive escoamento de produção agrícola/pecuária/agroindustrial das propriedades nessas rodovias), art. 4º (balanças privadas)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5204854"
+        }
+      ],
+      "vigencia_inicio": "2023-08-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º, II",
+          "via": [
+            "Rodovia Municipal TVO-352"
+          ],
+          "descricao": "da divisa Turvo/Timbé do Sul, em Rio do Salto, até a Rua São João Batista, no Distrito de Morro Chato",
+          "aproximado": true
+        }
+      ],
+      "nota": "Atenção à renumeração: as Leis 2.547/2023 (TVO-150 -> TVO-374, de São José/TVO-250 até Morro Azul/TVO-153) e 2.549/2023 (TVO-150 -> TVO-375, da Vila Progresso/BR-285 até o limite com Timbé do Sul), de 19/12/2023, renumeraram trechos da TVO-150 sem alterar o decreto (que ainda cita TVO-150). Conferir a numeração atual ao montar a geometria.",
+      "geometria": []
+    },
+    {
+      "id": "turvo_dec68_2023_tvo150",
+      "tipo": "via",
+      "regime": "Rodovias municipais TVO: PBT > 15 t",
+      "nome": "Turvo: Dec. 68/2023 art. 1, I, TVO-150 da Vila Progresso ate a 'SC-285' (PBT > 15 t)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo regular",
+        "Carga e descarga de bens e valores bancários",
+        "Coleta de lixo e serviços emergenciais de saúde",
+        "Caminhões e veículos de carga para escoamento da produção agrícola, pecuária ou agroindustrial de imóveis situados nas rodovias do art. 1º (art. 2º, IV)",
+        "Manutenção de emergência em redes e guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 68, de 24/08/2023 (publicado no DOM/SC em 16/10/2023)",
+          "artigo": "art. 1º, I e II (rodovias), art. 2º (exceções, inclusive escoamento de produção agrícola/pecuária/agroindustrial das propriedades nessas rodovias), art. 4º (balanças privadas)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5204854"
+        }
+      ],
+      "vigencia_inicio": "2023-08-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "Rodovia Municipal TVO-150"
+          ],
+          "descricao": "da Vila Progresso até a SC-285 (o decreto escreve 'SC-285'; a Lei 2.549/2023 cita a 'BR 285')",
+          "aproximado": true
+        }
+      ],
+      "nota": "Atenção à renumeração: as Leis 2.547/2023 (TVO-150 -> TVO-374, de São José/TVO-250 até Morro Azul/TVO-153) e 2.549/2023 (TVO-150 -> TVO-375, da Vila Progresso/BR-285 até o limite com Timbé do Sul), de 19/12/2023, renumeraram trechos da TVO-150 sem alterar o decreto (que ainda cita TVO-150). Conferir a numeração atual ao montar a geometria.",
+      "geometria": [],
+      "status_motivo": "Verificado 18/10/2026: o decreto fala em 'TVO 150 - Vila Progresso ate a SC-285' (nao existe SC-285; a Lei 2.549/2023 cita BR-285) e a numeracao mudou (Leis 2.547 e 2.549/2023 renumeraram trechos para TVO-374/TVO-375; Lei 2.700/2026 define a TVO-150 como TVO-364 ate TVO-153 no Morro Azul, 8,5 km). O trecho do decreto nao e identificavel com seguranca."
+    }
+  ]
+}

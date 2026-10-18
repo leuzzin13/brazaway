@@ -1,0 +1,123 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4204251",
+  "municipio": "Cocal do Sul",
+  "uf": "SC",
+  "fonte_id": "cocal-do-sul",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/2034020",
+    "licenca": "Ato oficial de Cocal do Sul: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto SAF 322/2019 lido integralmente no DOM/SC; sem alteração localizada; vias municipais urbanas (a SC-108 é estadual e não faz parte do decreto). Cocal do Sul não define VUC."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Cocal do Sul não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "cocaldosul_dec322_2019_vias_centrais",
+      "tipo": "via",
+      "regime": "PBT > 25 t ou comprimento > 14 m",
+      "nome": "Cocal do Sul: Decreto SAF 322/2019, proibida a entrada, parada, estacionamento e circulação de veículos com PBT > 25 t ou comprimento > 14 m em quatro vias centrais",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção e reparo de redes (energia, água, esgoto, gás, telecom), coleta de lixo, cobertura jornalística, transporte de valores",
+        "Transporte coletivo de passageiros",
+        "Manutenção, conservação e sinalização viária a serviço do órgão de trânsito",
+        "Socorro médico, incêndio, policiamento, fiscalização",
+        "Socorro mecânico de emergência",
+        "Cargas e descargas nas empresas localizadas nas vias citadas (art. 2º, VI)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto SAF nº 322, de 24/05/2019 (Cocal do Sul)",
+          "artigo": "art. 1º (a, b, c), art. 2º (exceções), art. 3º (sinalização)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2034020",
+          "nota": "DOM/SC 28/05/2019"
+        }
+      ],
+      "vigencia_inicio": "2019-05-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º, a",
+          "via": [
+            "Avenida Polidoro Santiago"
+          ],
+          "descricao": "Avenida Doutor Polidoro Santiago, do cruzamento com a Rua Anita Garibaldi até a Rua Guy Marcos Nunes de Souza",
+          "de": [
+            "Rua Anita Garibaldi"
+          ],
+          "ate": [
+            "Rua Guy Marcos Nunes de Souza"
+          ]
+        },
+        {
+          "inciso": "art. 1º, b",
+          "via": [
+            "Rua Guy Marcos Nunes de Souza"
+          ],
+          "descricao": "Rua Guy Marcos Nunes de Souza, da Av. Dr. Polidoro Santiago até a Rua Dr. Edson Gaidzinski",
+          "de": [
+            "Avenida Polidoro Santiago"
+          ],
+          "ate": [
+            "Rua Doutor Edson Gaidzinski"
+          ]
+        },
+        {
+          "inciso": "art. 1º, c",
+          "via": [
+            "Rua Doutor Edson Gaidzinski"
+          ],
+          "descricao": "Rua Doutor Edson Gaidzinski, em toda a extensão"
+        },
+        {
+          "inciso": "art. 1º, c",
+          "via": [
+            "Rua Voluntários da Pátria"
+          ],
+          "descricao": "Rua Voluntários da Pátria, em toda a extensão"
+        }
+      ],
+      "nota": "Sem alteração achada no DOM/SC (2019-2026). A Rua Voluntários da Pátria tem no OSM hgv=no e maxweight=25 (compatível). Estas vias são urbanas; as rodovias SC-108 (OSM hgv=no/maxweight 25, 21 ways) são estaduais e não fazem parte do decreto. Comprimento: o ato diz \"comprimento máximo de 14 m\"; leitura do verificador (18/10/2026): comprimento acima de 14 m. OSM: Av. Polidoro Santiago, Rua Dr. Edson Gaidzinski e Rua Voluntários da Pátria já têm hgv=no e maxweight=25 (o roteador as evita sozinho); a Rua Guy Marcos Nunes de Souza não tem restrição no OSM.",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4204251_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "ibge": "4107736",
+  "nome": "Fernandes Pinheiro",
+  "uf": "PR",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.fernandespinheiro.pr.leg.br/leis/legislacao-municipal",
+      "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (portal_proprio): abriu; portal_proprio https://www.fernandespinheiro.pr.leg.br/leis/legislacao-municipal total 6 erro None heurístico (formulário GET https://www.fernandespinheiro.pr.l"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4107736 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
+      "resultado": "2 e 100 resultados; só ruído (cargos/frota/licitação/ISS/servidão/plano diretor/LOM genérica); nenhum ato restringindo circulação de caminhão"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/7BD12250",
+      "resultado": "pista da preparação (AMP 2018-12-21, \"LEI N° 681/2018 - CÓDIGO DE OBRAS\"): re-pontuada como ruído; não é restrição"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/7353B358",
+      "resultado": "Decreto 023/2021 LIDO integralmente (AMP, Edição 2189, 28/01/2021); texto em atos/4107736/decreto_023_2021.txt. Na 1a passagem foi descartado por engano (forca 0)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4107736 'estradas rurais madeira' e 'decreto 023/2021' (amp)",
+      "resultado": "Só o próprio decreto; nenhum ato posterior de revogação/alteração localizado."
+    },
+    {
+      "url": "https://www.fernandespinheiro.pr.leg.br/leis/legislacao-municipal (busca madeira|estradas rurais|023/2021)",
+      "resultado": "Sem decreto/lei revogando; 'Lei 023/2021' é projeto de lei (Lei 771/2021), homônimo, não relacionado."
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Reaberto na conferência: o Decreto 023/2021 (AMP 7353B358, publ. 28/01/2021) estava na pista como forca 0 mas é ato real. Proíbe, em dias de chuva e até a secagem, a circulação em TODAS as estradas rurais municipais não pavimentadas (ou com calçamento irregular) de caminhão+reboque a partir de 4 eixos, Romeu e Julieta, bitrem, tritrem, rodotrem e treminhão CARREGADOS COM MADEIRA; multa CTB art. 187, I. Só estradas rurais, condicional à chuva, só carga de madeira: sem lista de vias nem geometria (pontual). Revogação/alteração não localizada (AMP e portal da Câmara). Não aplicável à rota urbana.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "fernandes_pinheiro_rurais_madeira_chuva",
+      "tipo": "via",
+      "regime": "Estradas rurais - chuva - carga de madeira",
+      "nome": "Fernandes Pinheiro: estradas rurais municipais, composições de 4+ eixos com carga de madeira em dia de chuva",
+      "status": "ativa",
+      "confianca": "media",
+      "status_motivo": "Ato primário lido; vigente salvo revogação não localizada. Condicional a chuva, só estradas rurais não pavimentadas, sem lista de vias: não modelável em geometria.",
+      "vias_texto": "todas as estradas rurais municipais não pavimentadas ou com calçamento de pedras irregulares",
+      "janelas_texto": "dias de chuva e período subsequente até a secagem satisfatória da estrada",
+      "alvo_texto": "caminhão mais reboque a partir de 4 eixos, caminhão Romeu e Julieta, bitrem, tritrem, rodotrem, treminhão, quando carregados com madeira de floresta para exploração comercial/industrial",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "em": "4+"
+          }
+        ]
+      },
+      "excecoes": [
+        "§2º: se a chuva surgir com o veículo em deslocamento, deve parar no primeiro ponto seguro e aguardar a secagem"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 023/2021 de Fernandes Pinheiro (26/01/2021)",
+          "artigo": "art. 1º, caput e §§1º-2º; art. 2º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/7353B358"
+        }
+      ],
+      "vigencia_inicio": "2021-01-26"
+    }
+  ]
+}

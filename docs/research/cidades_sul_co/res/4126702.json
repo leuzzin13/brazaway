@@ -1,0 +1,82 @@
+{
+ "ibge": "4126702",
+ "nome": "Tamboara",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/4126702/2025-08-07/c225e21edacd491c881981354921d59ffb884d38.txt",
+   "resultado": "LIDO (Querido Diário, Diário Oficial ed. 1.369, 07/08/2025): Decreto 180/2025, 7 artigos. Texto em atos/4126702/decreto_180_2025.txt"
+  },
+  {
+   "url": "https://doem.org.br/pr/tamboara/pesquisar (keyword: carga pesada; 180/2025; trânsito de veículos; restrição de trânsito; desde 01/08/2025)",
+   "resultado": "ABRIU; só o próprio Decreto 180/2025 aparece; sem alteração/revogação encontrada (Decreto 193/2026 e portaria 010/2026 verificados: transporte universitário/outro assunto)."
+  },
+  {
+   "url": "https://cmtamboara.pr.gov.br (webline, Câmara)",
+   "resultado": "1 resultado, irrelevante."
+  },
+  {
+   "url": "api.queridodiario.org.br",
+   "resultado": "522 (fora do ar) na busca complementar."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lead da DR (re-pontuado como ruído) era um ato real: Decreto 180/2025 (07/08/2025) restringe, em toda a área urbana, veículos de carga com PBT > 23.000 kg e proíbe caminhões com mais de 3 eixos (motivo: pavimento recapeado). Exceções (art. 2): perecíveis, medicamentos, combustíveis, higiene/limpeza e outros bens essenciais, com necessidade e urgência comprovadas; art. 3: autorização especial do setor de engenharia para carga/descarga nas áreas restritas; art. 4: trânsito autorizado nas Ruas Campo Salles, Dario Veloso e Cândido de Abreu; art. 5 fiscalização por fiscais de tributos com sanções do CTB. Sem janela horária (24 h). Redação ambígua: \"restrito PBT > 23 t, proibido caminhões com mais de 3 eixos\" (modelado como OU). Sem geometria: \"área urbana, toda a sua extensão\" (limite do perímetro urbano).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "tamboara_carga_pesada_urbana",
+   "tipo": "zona",
+   "regime": "restricao_circulacao",
+   "nome": "Área urbana - veículos de carga > 23 t PBT ou > 3 eixos",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 23
+     },
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": "Cargas perecíveis, medicamentos, combustíveis, produtos de higiene e limpeza e outros bens essenciais com necessidade/urgência comprovadas (art. 2); autorização especial para carga/descarga (art. 3); vias liberadas: Rua Campo Salles, Rua Dario Veloso, Rua Cândido de Abreu (art. 4).",
+   "autorizacao": "Setor de engenharia do Município de Tamboara (art. 3)",
+   "base_legal": [
+    {
+     "ato": "Decreto 180/2025 (07/08/2025)",
+     "artigo": "arts. 1 a 4",
+     "url": "https://data.queridodiario.ok.org.br/4126702/2025-08-07/c225e21edacd491c881981354921d59ffb884d38.pdf"
+    }
+   ],
+   "vigencia_inicio": "2025-08-07",
+   "trechos": [
+    "Área urbana do Município de Tamboara, em toda a extensão; exceto Rua Campo Salles, Rua Dario Veloso e Rua Cândido de Abreu (liberadas)"
+   ],
+   "geometria": []
+  }
+ ]
+}

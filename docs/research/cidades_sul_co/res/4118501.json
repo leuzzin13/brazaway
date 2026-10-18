@@ -1,0 +1,157 @@
+{
+ "ibge": "4118501",
+ "nome": "Pato Branco",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/814EED8A",
+   "resultado": "LIDO integral. Salvo em atos/4118501/decreto_10412_2025.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/85253F75",
+   "resultado": "LIDO integral (Dec. 10.374/2025, revogado). Salvo em atos/4118501/decreto_10374_2025.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/5E4D54AC",
+   "resultado": "LIDO integral. Salvo em atos/4118501/decreto_8260_2018.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/E860FAEA",
+   "resultado": "trecho via busca: Dec. 9.807/2024 (ESTAR; sucedido)"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/AF66EFBC",
+   "resultado": "trecho via busca: Lei 6.551/2026, diretriz de logística de cargas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4118501 (ESTAR revoga 10.412; veículos acima de 16 toneladas; estradas do interior; Decreto 8.260)",
+   "resultado": "sem ato posterior ao 10.412"
+  },
+  {
+   "url": "https://sapl.patobranco.pr.leg.br",
+   "resultado": "SAPL da Câmara não consultado (decretos são do Executivo)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 10.412/2025 (08/07/2025; AMP 09/07/2025), lido: no centro (área do ESTAR, Anexo I com 17 trechos de ruas) proibida a circulação, parada e estacionamento de veículos acima de 16 t PBT, salvo autorização do DEPATRAN; define também carga/descarga (6-16 t, 6h-9h seg-sáb e 16h30-20h seg-sex). Revoga o Decreto 10.374/2025 (lido: limite de 7 t de capacidade de carga), que por sua vez substituiu o 9.807/2024. Sem ato posterior achado. Decreto 8.260/2018 (lido): estradas do interior, \"PBT acima de 7 toneladas por eixo\" - redação ambígua, regra desativada. Lei 6.551/2026 (sistema viário/logística) só diretriz.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "patobranco_estar_centro_16t",
+   "tipo": "zona",
+   "regime": "Restrição por PBT (centro/ESTAR)",
+   "nome": "Centro (área do ESTAR, Anexo I): proibida circulação, parada e estacionamento de veículos > 16 t PBT (Decreto 10.412/2025)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "prévia autorização do DEPATRAN com análise de comprovada necessidade (art. 17, §5º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 10.412, de 08/07/2025 (Pato Branco); revoga o Decreto 10.374/2025",
+     "artigo": "art. 17, §§4º e 5º; Anexo I",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/814EED8A"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Tupi",
+      "Avenida Brasil",
+      "Rua Tamoio",
+      "Rua Caramuru",
+      "Rua Guarani",
+      "Rua Tapajós",
+      "Rua Tocantins",
+      "Rua Goianases",
+      "Rua Tapir",
+      "Rua Itabira",
+      "Rua Ibiporã",
+      "Rua Iguaçu",
+      "Rua Doutor Silvio Vidal",
+      "Rua Pedro Ramires de Mello",
+      "Rua Araribóia",
+      "Rua Itacolomi"
+     ],
+     "descricao": "Avenida Tupi (Rua Tapir até Rua Doutor Silvio Vidal); Avenida Tupi (Rua Guarani até Rua Xavantes); Avenida Brasil (Rua Xingu até Rua Iguaçu); Rua Tamoio (Rua Xavantes até Rua Ibiporã); Rua Caramuru (Rua Tapir até Rua Tamoio); Rua Guarani (Avenida Tupi até Rua Osvaldo Aranha); Rua Tapajós (Rua Osvaldo Aranha até Rua Iguaçu); Rua Tocantins (Rua Itabira até Rua Itacolomi); Rua Goianases (Rua Jaciretã até Rua Araribóia); Rua Tapir (Avenida Tupi até Rua Caramuru); Rua Itabira (Rua Caramuru até Rua Tocantins); Rua Ibiporã (Rua Tamoio até Rua Goianases); Rua Iguaçu (Rua Tamoio até Rua Goianases); Rua Doutor Silvio Vidal (Avenida Tupi até Rua Goianases); Rua Pedro Ramires de Mello (Rua Guarani até Rua Paraná); Rua Araribóia (Rua Tamoio até Rua Goianases); Rua Itacolomi (Avenida Tupi até Avenida Brasil)"
+    }
+   ],
+   "vigencia_inicio": "2025-07-09",
+   "nota": "O art. 17 §4º não traz horário (aplicado 24 h); o ESTAR funciona seg-sex 9h-12h/13h30-18h30 e sáb 9h-13h, mas a proibição de circular não é limitada a esses horários no texto. Antecessor: Decreto 10.374/2025 (>7 t de capacidade de carga), Decreto 9.807/2024 e anteriores, revogados em cadeia. Carga e descarga 6-16 t: vagas delimitadas, 6h-9h seg-sáb e 16h30-20h seg-sex (art. 17 §1º)."
+  },
+  {
+   "id": "patobranco_estradas_interior_7t_eixo",
+   "tipo": "via",
+   "regime": "Restrição por peso (rural)",
+   "nome": "Estradas do interior: veículos de carga acima de 7 t \"por eixo\" (Decreto 8.260/2018)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 8.260, de 19/02/2018 (Pato Branco), publ. AMP 03/05/2018",
+     "artigo": "art. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/5E4D54AC"
+    }
+   ],
+   "status_motivo": "Redação ambígua (\"peso bruto total acima de 7 toneladas por eixo\"): mistura PBT e peso por eixo, e o schema não tem peso por eixo; interpretação incerta. Isentos serviços de utilidade pública, emergência, urgência e militares.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas do interior"
+     ],
+     "descricao": "estradas rurais do município, sem lista"
+    }
+   ]
+  }
+ ]
+}

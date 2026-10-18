@@ -1,0 +1,91 @@
+{
+  "ibge": "4219507",
+  "nome": "Xanxerê",
+  "uf": "SC",
+  "status": "pista",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1278958",
+      "resultado": "Lei AM 3.918/2017 aberta e lida (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1649634",
+      "resultado": "Decreto AM 095/2018 lido (texto integral); errata em /atos/1656527 (trecho da preparação)."
+    },
+    {
+      "url": "DOM/SC buscar 4219507 'Lei 3918', 'área central', 'veículos pesados', '10 toneladas', 'perímetro urbano caminhões'",
+      "resultado": "Nenhum decreto que defina a área central nem altere a Lei 3.918/2017."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2727710",
+      "resultado": "LC 4209/2020 (edificações, trecho da preparação): vão de garagem; não é regra."
+    }
+  ],
+  "observacoes": "Lei vigente (PBT > 10 t proibido na área central), mas sem perímetro: não ativar sem a área. Mesmo padrão de Apucarana (lei sem perímetro).",
+  "osm_divergencias": [
+    "OSM maxweight=10 na Avenida Brasil, Rua Victor Konder (secondary) e em trunk_link/tertiary sem nome: compatível com a Lei 3.918/2017 (PBT > 10 t na área central), mas o ato não delimita a área, então não confirma o OSM."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "xanxere_lei3918_2017_area_central_10t",
+      "tipo": "zona",
+      "regime": "Área central: PBT > 10 t",
+      "nome": "Xanxerê: Lei 3.918/2017, proibido o trânsito e estacionamento de veículos com PBT > 10 t em toda a área central do perímetro urbano",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "A 'área central do perímetro urbano' não é delimitada na lei nem no Decreto AM 095/2018 (lido); o art. 4º remete horários a decreto. Sem polígono/lista de vias não há como aplicar. O OSM tem maxweight=10 em Av. Brasil e Rua Victor Konder (secondary), compatíveis com a Lei, mas não delimitam a área.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo de passageiros nos locais regulamentados por decreto; ônibus de fretamento para parada e estadia",
+        "Veículos oficiais, PM, bombeiros, ambulâncias, Forças Armadas",
+        "Empresas públicas/concessionárias em serviço urbano de caráter público ou emergencial",
+        "Caminhão-trator desacoplado",
+        "Construção civil/concretagem com autorização do Departamento de Trânsito com 48 h de antecedência",
+        "Eventos: autorização onerosa (art. 3º)",
+        "Carga e descarga > 10 t em qualquer via entre 19h e 07h, de seg a sáb (Dec. AM 095/2018, art. 4º, II)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº AM 3.918, de 22/05/2017 (Xanxerê; revoga a Lei 2.851/2005)",
+          "artigo": "art. 1º (proibição), art. 2º (exceções), art. 3º (autorização onerosa em eventos), art. 4º (ingresso só para carga e descarga em locais e horários de decreto), art. 6º (vigência)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1278958",
+          "nota": "DOM/SC 30/05/2017"
+        },
+        {
+          "ato": "Decreto nº AM 095, de 06/06/2018 (carga e descarga e circulação > 10 t PBT)",
+          "artigo": "art. 4º, II (> 10 t liberados para carga e descarga em qualquer via 19h-07h, seg-sáb); errata de 19/06/2018",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1649634",
+          "nota": "DOM/SC 12/06/2018"
+        }
+      ],
+      "vigencia_inicio": "2017-05-22",
+      "geometria": []
+    }
+  ]
+}

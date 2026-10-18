@@ -1,0 +1,181 @@
+{
+ "ibge": "5002159",
+ "nome": "Bodoquena",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/1326A9C2",
+   "resultado": "Decreto 058/2012 lido integralmente (arts. 1º-5º e Anexo I)."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5002159 '058/2012' / 'carga e descarga' / 'toneladas caminhões' / 'caminhões circulação' (ms)",
+   "resultado": "Só o próprio decreto (e ISS, licitações). Nenhum ato revogador ou alterador."
+  },
+  {
+   "url": "legislacao.py buscar 5002159 (legissuper câmara; portal_proprio prefeitura bodoquena.ms.gov.br)",
+   "resultado": "0 resultados em ambos (heurístico/login); inconclusivo."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/721E8807",
+   "resultado": "LC 037/2011 (Código de trânsito local; competência), sem regra de caminhões — apenas pista de trecho (não aberto integralmente)."
+  }
+ ],
+ "observacoes": "Decreto 058/2012 restringe veículos > 9 t PBT às vias fora do Anexo I (área central proibida), exceto carga/descarga com NF local. Redação ambígua (ver base_legal.nota). Vigência não confirmada além do diário ASSOMASUL; portais sem busca eficaz. | verificado em 2026-10-18: bodoquena_centro_acima_9t: Rebaixada para desativada: texto contraditorio e delimitacao vaga.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "bodoquena_centro_acima_9t",
+   "tipo": "via",
+   "regime": "Proibição de veículos > 9 t PBT na área central",
+   "nome": "Bodoquena: veículos acima de 9 t de PBT proibidos nas ruas do Anexo I (área central), salvo carga/descarga comprovada por nota fiscal",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 9
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 1º, parágrafo único: transporte coletivo, escolar, coleta de resíduos e veículos especiais para eventos autorizados; veículos até 9 t",
+    "art. 2º: moradores com cadastro no DEMUTB podem chegar à residência por vias fora do Anexo I (estacionamento de carretas/caminhões carregados em frente às residências nas vias proibidas é vedado)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal nº 058, de 07/05/2012 (Bodoquena/MS)",
+     "artigo": "arts. 1º e 2º e Anexo I (ruas proibidas)",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/1326A9C2",
+     "nota": "Redação ambígua: art. 1º diz que veículos > 9 t só transitam nas vias do Anexo I para carga e descarga, mas o Anexo I se intitula 'RUAS PROIBIDAS' e o art. 2º manda 'respeitar as ruas em proibição constante no anexo I'. Interpretado como proibição nas vias do Anexo I (área central), com exceção de carga/descarga comprovada por nota fiscal a estabelecimento do município."
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Avenida Manoel Rodrigues de Oliveira"
+     ],
+     "de": [
+      "Rua Kadweus"
+     ],
+     "ate": [
+      "Rua Guilherme Maidana"
+     ],
+     "descricao": "Av. Manoel Rodrigues de Oliveira da R. Kadweus até a R. Guilherme Maidana",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua José Roque de Carvalho"
+     ],
+     "descricao": "Em toda a extensão (mesmo trecho 'Kadweus a Guilherme Maidana' do ato)",
+     "aproximado": true
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Miguel José Fagundes"
+     ],
+     "descricao": "Em toda a extensão",
+     "aproximado": true
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Manoel de Pinho"
+     ],
+     "descricao": "Em toda a extensão",
+     "aproximado": true
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Yossio Okaneko"
+     ],
+     "de": [
+      "Avenida Treze de Maio"
+     ],
+     "ate": [
+      "Rua Guilherme Maidana"
+     ],
+     "descricao": "Da Av. Treze de Maio até a R. Guilherme Maidana",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Victor Alves dos Santos"
+     ],
+     "de": [
+      "Avenida Treze de Maio"
+     ],
+     "ate": [
+      "Rua Guilherme Maidana"
+     ],
+     "descricao": "Da Av. Treze de Maio até a R. Guilherme Maidana",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Silvio de Castro Cunha"
+     ],
+     "de": [
+      "Avenida Treze de Maio"
+     ],
+     "ate": [
+      "Rua Guilherme Maidana"
+     ],
+     "descricao": "Da Av. Treze de Maio até a R. Guilherme Maidana",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I",
+     "via": [
+      "Rua Kadweus",
+      "Rua Treze de Maio",
+      "Rua Venâncio de Freitas Pedrosa",
+      "Rua Assembléia de Deus",
+      "Rua Guilherme Maidana"
+     ],
+     "descricao": "Ruas transversais entre a R. Silvio de Castro Cunha e a R. Manoel de Pinho ('área central')",
+     "aproximado": true
+    }
+   ],
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 1º, I (carga e descarga comprovada por nota fiscal endereçada a estabelecimento do município)",
+   "vigencia_inicio": "2012-05-09",
+   "nota": "Sem janela horária no ato (proibição permanente). Vigência não confirmada em portal oficial (prefeitura e Câmara sem busca útil; nenhum ato revogador/alterador achado no diário ASSOMASUL). Art. 4º mandava regulamentar em 30 dias; regulamento não localizado. Vias com grafia do ato; 'Kadweus' e 'Treze de Maio' a conferir no OSM.",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: texto contraditorio e delimitacao vaga. Decreto 058/2012 relido (ASSOMASUL 1326A9C2, 09/05/2012): art. 1 I diz que >9 t PBT 'somente poderao transitar' nas vias do Anexo I para C/D, mas o Anexo I se intitula 'RUAS PROIBIDAS' e o art. 2 manda respeitar as 'ruas em proibicao'; a leitura literal e a inversa da adotada. Anexo I mistura vias com trecho e 'ruas transversais' sem limites ('area central'). Regulamento do art. 4 nao localizado; sem alteracao no diario."
+  }
+ ]
+}

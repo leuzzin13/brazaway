@@ -1,0 +1,162 @@
+{
+ "ibge": "4202875",
+ "nome": "Brunópolis",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1688638",
+   "resultado": "LIDO integral (DOM/SC): Lei 917, 18/07/2018 - proíbe circulação de veículos carregados exclusivamente com produtos florestais in natura em ruas descritas por pontos de referência; art. 3º: capacidade de carga > 8 t, 24 h. atos/4202875/lei_917_2018.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1900428",
+   "resultado": "LIDO integral: Decreto 08, 01/02/2019 - regulamenta a Lei 917/2018: Avenida Marombas (do Colégio Augusto Carlos Stefani ao acesso de saída para Galegos e Vila Brasília); desvio pela 'Estrada Velho'. atos/4202875/decreto_08_2019.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2186492",
+   "resultado": "Aberto: Decreto 050/2019 = licenciamento ambiental (irrelevante, não salvo)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2234295",
+   "resultado": "Aberto: Lei 946/2019 = área urbana consolidada/APP (irrelevante, não salvo)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4202875 ('veículos pesados','produtos florestais','lei 917')",
+   "resultado": "DOM/SC abriu; nenhuma alteração/revogação da Lei 917 ou do Dec. 08/2019 localizada. Demais acertos: concursos, licitações, Dec. 08/2026 (SIM)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 917/2018 (art. 2º e 3º) e Decreto 08/2019 (arts. 1º e 2º) proíbem, 24 h, a circulação de veículos carregados com produtos florestais in natura (toras/madeira) em trechos da cidade: Lei 917 em ruas descritas por referências de imóveis (começando na Av. Palmares, 820 m até a Padaria Doce Sabor, mais 150 m até o Centro de Convivência da Terceira Idade, e Rua Firmino Lisboa até uma residência) e Decreto 08/2019 na Avenida Marombas inteira (A = Colégio Augusto Carlos Stefani; B = saída para Galegos/Vila Brasília). O caput fala em qualquer veículo carregado EXCLUSIVAMENTE com produtos florestais in natura; o artigo seguinte repete a proibição para capacidade > 8 t. Alvo é por tipo de carga (madeira), não por todos os caminhões. Estacionamento dos mesmos veículos proibido no centro (parágrafo do art. 3º / art. 2º §1º). Sinalização (placas) não verificada. Trechos da Lei 917 só por pontos de referência - geometria aproximada. | verificado em 2026-10-18: textos da Lei 917 (art. 2-3,7) e Dec. 08/2019 (art. 1-2,5) relidos no DOM/SC; numeros/artigos/vigencia conferem, sem alteracao posterior (busca DOM/SC); ambas as regras rebaixadas para desativada por serem por tipo de carga.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "brunopolis_dec_08_2019_av_marombas",
+   "tipo": "via",
+   "regime": "Proibição por tipo de carga (madeira) - via",
+   "nome": "Avenida Marombas: veículos carregados com produtos florestais in natura (>8 t de capacidade) proibidos (Dec. 08/2019)",
+   "status": "desativada",
+   "status_motivo": "Verificado em 2026-10-18: rebaixada - Lei 917/2018 e Dec. 08/2019 alvejam carga (produtos florestais in natura), tipo de carga que o schema nao modela; alem disso a Lei 917 so tem referencias a imoveis (sem delimitacao georreferenciavel) (antes: Decreto vigente, sem alteração localizada; regulamenta Lei 917/2018. Sinalização não verificada.)",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 8.0
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "carga_produtos_florestais_in_natura"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 08, de 01/02/2019 (Brunópolis)",
+     "artigo": "art. 1º e art. 2º (+§1º estacionamento)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1900428",
+     "nota": "Texto integral lido; regulamenta a Lei 917/2018."
+    }
+   ],
+   "excecoes": [
+    "Lei/decreto não preveem exceções"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Marombas"
+     ],
+     "descricao": "Integralidade da Av. Marombas, do ponto A (Colégio Augusto Carlos Stefani) ao ponto B (acesso de saída para Galegos e Vila Brasília). Desvio indicado: 'Estrada Velho'.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2019-02-06",
+   "nota": "Alvo: carga de produtos florestais in natura (madeira). Art. 1º sem limite de peso; art. 2º reforça >8 t de capacidade de carga (usado payload_t). Campo tipo é rascunho."
+  },
+  {
+   "id": "brunopolis_lei_917_2018_ruas",
+   "tipo": "via",
+   "regime": "Proibição por tipo de carga (madeira) - vias",
+   "nome": "Ruas do centro (Av. Palmares ... Rua Firmino Lisboa): veículos com produtos florestais in natura >8 t proibidos (Lei 917/2018)",
+   "status": "desativada",
+   "status_motivo": "Verificado em 2026-10-18: rebaixada - Lei 917/2018 e Dec. 08/2019 alvejam carga (produtos florestais in natura), tipo de carga que o schema nao modela; alem disso a Lei 917 so tem referencias a imoveis (sem delimitacao georreferenciavel) (antes: Lei vigente sem revogação localizada; trechos definidos por pontos de referência (residências), sem geometria precisa.)",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 8.0
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "carga_produtos_florestais_in_natura"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 917, de 18/07/2018 (Brunópolis)",
+     "artigo": "art. 2º e 3º (+ parágrafo único estacionamento); art. 7º (sinalização)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1688638",
+     "nota": "Texto integral lido."
+    }
+   ],
+   "excecoes": [
+    "Lei/decreto não preveem exceções"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Palmares (a partir da residência do Sr. Amantino Prigoli, 820 m até a Padaria Doce Sabor)",
+      "trecho de 150 m até o Centro de Convivência da Terceira Idade",
+      "Rua Firmino Lisboa (até a residência do Sr. Lauro Alonso)"
+     ],
+     "descricao": "Descrição por pontos de referência; a leitura da sequência é ambígua.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2018-07-18"
+  }
+ ]
+}

@@ -1,0 +1,819 @@
+{
+ "ibge": "5001003",
+ "nome": "Aparecida do Taboado",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/AB3ED261",
+   "resultado": "LC 54/2014 (Código de Posturas) lida integralmente: arts. 190-199, 210-211 e Anexo I."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/2B9365D7",
+   "resultado": "Republicação por incorreção (23/07/2014): art. 195 igual."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/B039A240",
+   "resultado": "LC 065/2015 (plano diretor/mobilidade): diretriz 'retirada da circulação de veículos pesados das zonas residenciais'; sem regra."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5001003 'Código de Posturas' / 'altera artigo 195' / 'Lei Complementar 54/2014' / 'veículos pesados caminhões' (ms)",
+   "resultado": "Nenhuma alteração ou revogação dos arts. 193-199 encontrada (Decretos 014 e 064/2015 e Leis 1.477/2014, 1.485/2014, 1.518/2015 aparecem só por menção ao Código; não abertos)."
+  },
+  {
+   "url": "legislacao.py buscar 5001003 (câmara portal_proprio; prefeitura 1doc)",
+   "resultado": "0 resultados / 1doc sem cliente automático."
+  }
+ ],
+ "observacoes": "Código de Posturas (LC 54/2014) traz regra real para a área central (Anexo I): art. 195, IV proíbe veículos > 18 t de carga útil ou > 4,40 m; art. 195, I fixa horários permitidos para > 5 t (redação ambígua; registrado como desativada). Pontes municipais (art. 210-211): excesso de peso proibido, limite por sinalização (sem valor no ato). Vigência não confirmada em portal oficial (consulta só no diário). | verificado em 2026-10-18: regras ativas confirmadas.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "aparecida_taboado_centro_18t_440",
+   "tipo": "zona",
+   "regime": "Proibição de veículos > 18 t de carga útil ou > 4,40 m de altura na área central",
+   "nome": "Aparecida do Taboado: veículos com mais de 18 t de carga útil e/ou altura superior a 4,40 m proibidos de circular na área central (vias do Anexo I)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 18
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 196: autorização especial do Departamento de Trânsito para concreto usinado, materiais de construção, mudanças e casos excepcionais (pedido com 3 dias úteis de antecedência)",
+    "art. 199: veículos a serviço do poder público e de manutenção de água/esgoto, energia, vias, obras e limpeza pública"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal nº 54, de 30/06/2014 (Código de Posturas de Aparecida do Taboado/MS)",
+     "artigo": "art. 193 §2º e Anexo I (área central); art. 195, I e IV; arts. 196 e 199 (exceções)",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/AB3ED261",
+     "nota": "Republicada por incorreção em 23/07/2014 (https://www.diariomunicipal.com.br/ms/materia/2B9365D7); art. 195 idêntico nas duas publicações."
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Orlando Mascarenhas"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua da Liberdade"
+     ],
+     "descricao": "Avenida Orlando Mascarenhas da Avenida Presidente Vargas até a Rua da Liberdade",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Presidente Vargas"
+     ],
+     "de": [
+      "Eduardo Jesuíno Thiago"
+     ],
+     "ate": [
+      "Av. João Pedro Pedrossian"
+     ],
+     "descricao": "Avenida Presidente Vargas da Eduardo Jesuíno Thiago até a Av. João Pedro Pedrossian",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Duque de Caxias"
+     ],
+     "de": [
+      "Rua Laudelino de Mello"
+     ],
+     "ate": [
+      "Avenida dos Estudantes"
+     ],
+     "descricao": "Rua Duque de Caxias da Rua Laudelino de Mello até a Avenida dos Estudantes",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida dos Estudantes"
+     ],
+     "de": [
+      "Rua Duque de Caxias"
+     ],
+     "ate": [
+      "Rua Maximiano José da Rocha"
+     ],
+     "descricao": "Avenida dos Estudantes da Rua Duque de Caxias até Rua Maximiano José da Rocha",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Francisco de Queiroz"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Francisco de Queiroz da Avenida Presidente Vargas até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua José Bernardes da Silva"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua José Bernardes da Silva da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida São Cristóvão"
+     ],
+     "de": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "ate": [
+      "Avenida Porto Taboado"
+     ],
+     "descricao": "Avenida São Cristóvão da Rua José Antonio de Carvalho até a Avenida Porto Taboado",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Presidente Dutra"
+     ],
+     "de": [
+      "Rua Laudelino de Mello"
+     ],
+     "ate": [
+      "Avenida dos Estudantes"
+     ],
+     "descricao": "Rua Presidente Dutra da Rua Laudelino de Mello até a Avenida dos Estudantes",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Sebastião Marinho Goulart"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Presidente Dutra"
+     ],
+     "descricao": "Rua Sebastião Marinho Goulart da Avenida Presidente Vargas até a Rua Presidente Dutra",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Eduardo Jesuíno Thiago"
+     ],
+     "de": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua Eduardo Jesuíno Thiago da Rua José Antonio de Carvalho até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua João Valeriano Duarte"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua João Valeriano Duarte da Avenida Presidente Vargas até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "de": [
+      "Rua Primeiro de Maio"
+     ],
+     "ate": [
+      "Rua Laudelino de Melo"
+     ],
+     "descricao": "Rua José Antonio de Carvalho da Rua Primeiro de Maio até a Rua Laudelino de Melo",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua 9 de Julho"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua 9 de Julho da Avenida Presidente Vargas até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Carlos Alves Ferreira"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "descricao": "Rua Carlos Alves Ferreira da Avenida Presidente Vargas até a Rua José Antonio de Carvalho",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Vergilio Antonio de Queiroz"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Vergilio Antonio de Queiroz da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Marcolino Teixeira de Queiroz"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Marcolino Teixeira de Queiroz da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Primeiro de Maio"
+     ],
+     "de": [
+      "Avenida João Pedro Pedrossian"
+     ],
+     "ate": [
+      "Avenida Presidente Vargas"
+     ],
+     "descricao": "Rua Primeiro de Maio da Avenida João Pedro Pedrossian até a Avenida Presidente Vargas",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Manoel R. de Souza"
+     ],
+     "de": [
+      "Avenida São Cristóvão"
+     ],
+     "ate": [
+      "Rua Pedro J. de Queiroz"
+     ],
+     "descricao": "Rua Manoel R. de Souza da Avenida São Cristóvão até a Rua Pedro J. de Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Maranhão"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua José R. da Silva"
+     ],
+     "descricao": "Rua Maranhão da Rua Três Lagoas até a Rua José R. da Silva",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Abadio R. de Almeida"
+     ],
+     "de": [
+      "Avenida São Cristóvão"
+     ],
+     "ate": [
+      "Rua José R. da Silva"
+     ],
+     "descricao": "Rua Abadio R. de Almeida da Avenida São Cristóvão até a Rua José R. da Silva",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua da Liberdade"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua Rosália D. Queiroz"
+     ],
+     "descricao": "Rua da Liberdade da Rua Três Lagoas até a Rua Rosália D. Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Cuiabá"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua Rosália D. Queiroz"
+     ],
+     "descricao": "Avenida Cuiabá da Rua Três Lagoas até a Rua Rosália D. Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida da Saudade"
+     ],
+     "de": [
+      "Avenida João Pedro Pedrossian"
+     ],
+     "ate": [
+      "Alameda Amor Perfeito"
+     ],
+     "descricao": "Avenida da Saudade da Avenida João Pedro Pedrossian até a Alameda Amor Perfeito",
+     "aproximado": false
+    }
+   ],
+   "autorizacao": "Departamento Municipal de Trânsito (art. 196)",
+   "vigencia_inicio": "2014-07-04",
+   "nota": "Art. 195 está sob a epígrafe de carga e descarga; o inciso IV, porém, proíbe expressamente a circulação. 'Carga útil' tratada como payload_t. O inciso III do art. 195 não existe no texto publicado (pula de II para IV). A área central é a lista do Anexo I (linhas, não polígono): rever se a geometria será por vias ou por entorno."
+  },
+  {
+   "id": "aparecida_taboado_centro_acima5t_horarios",
+   "tipo": "zona",
+   "regime": "Janela de circulação de veículos > 5 t na área central (inferida)",
+   "nome": "Aparecida do Taboado: veículos com capacidade de carga acima de 5 t 'permitidos' na área central só 19h-05h (seg-sex) e 12h-21h (sáb)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1
+     ],
+     "from": "00:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "05:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "05:00",
+     "to": "12:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "21:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 196 e art. 199 (mesmas exceções)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal nº 54, de 30/06/2014 (Código de Posturas de Aparecida do Taboado/MS)",
+     "artigo": "art. 193 §2º e Anexo I (área central); art. 195, I e IV; arts. 196 e 199 (exceções)",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/AB3ED261",
+     "nota": "Republicada por incorreção em 23/07/2014 (https://www.diariomunicipal.com.br/ms/materia/2B9365D7); art. 195 idêntico nas duas publicações."
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "O inciso I do art. 195 só diz que a circulação 'será permitida' nesses horários, dentro do artigo sobre operações de carga e descarga em vagas; a proibição fora dos horários é inferida (não expressa) e o texto não deixa claro se vale para trânsito ou só para carga/descarga. Janelas abaixo (proibição) são a leitura inversa: seg 00-19, ter-sex 05-19, sáb 05-12 e 21-24, dom o dia todo.",
+   "trechos": [
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Orlando Mascarenhas"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua da Liberdade"
+     ],
+     "descricao": "Avenida Orlando Mascarenhas da Avenida Presidente Vargas até a Rua da Liberdade",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Presidente Vargas"
+     ],
+     "de": [
+      "Eduardo Jesuíno Thiago"
+     ],
+     "ate": [
+      "Av. João Pedro Pedrossian"
+     ],
+     "descricao": "Avenida Presidente Vargas da Eduardo Jesuíno Thiago até a Av. João Pedro Pedrossian",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Duque de Caxias"
+     ],
+     "de": [
+      "Rua Laudelino de Mello"
+     ],
+     "ate": [
+      "Avenida dos Estudantes"
+     ],
+     "descricao": "Rua Duque de Caxias da Rua Laudelino de Mello até a Avenida dos Estudantes",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida dos Estudantes"
+     ],
+     "de": [
+      "Rua Duque de Caxias"
+     ],
+     "ate": [
+      "Rua Maximiano José da Rocha"
+     ],
+     "descricao": "Avenida dos Estudantes da Rua Duque de Caxias até Rua Maximiano José da Rocha",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Francisco de Queiroz"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Francisco de Queiroz da Avenida Presidente Vargas até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua José Bernardes da Silva"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua José Bernardes da Silva da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida São Cristóvão"
+     ],
+     "de": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "ate": [
+      "Avenida Porto Taboado"
+     ],
+     "descricao": "Avenida São Cristóvão da Rua José Antonio de Carvalho até a Avenida Porto Taboado",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Presidente Dutra"
+     ],
+     "de": [
+      "Rua Laudelino de Mello"
+     ],
+     "ate": [
+      "Avenida dos Estudantes"
+     ],
+     "descricao": "Rua Presidente Dutra da Rua Laudelino de Mello até a Avenida dos Estudantes",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Sebastião Marinho Goulart"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Presidente Dutra"
+     ],
+     "descricao": "Rua Sebastião Marinho Goulart da Avenida Presidente Vargas até a Rua Presidente Dutra",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Eduardo Jesuíno Thiago"
+     ],
+     "de": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua Eduardo Jesuíno Thiago da Rua José Antonio de Carvalho até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua João Valeriano Duarte"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua João Valeriano Duarte da Avenida Presidente Vargas até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "de": [
+      "Rua Primeiro de Maio"
+     ],
+     "ate": [
+      "Rua Laudelino de Melo"
+     ],
+     "descricao": "Rua José Antonio de Carvalho da Rua Primeiro de Maio até a Rua Laudelino de Melo",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua 9 de Julho"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Rua 9 de Julho da Avenida Presidente Vargas até a Rua Duque de Caxias",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Carlos Alves Ferreira"
+     ],
+     "de": [
+      "Avenida Presidente Vargas"
+     ],
+     "ate": [
+      "Rua José Antonio de Carvalho"
+     ],
+     "descricao": "Rua Carlos Alves Ferreira da Avenida Presidente Vargas até a Rua José Antonio de Carvalho",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Vergilio Antonio de Queiroz"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Vergilio Antonio de Queiroz da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Marcolino Teixeira de Queiroz"
+     ],
+     "de": [
+      "Rua Joaquim Murtinho"
+     ],
+     "ate": [
+      "Rua Dom Aquino Correa"
+     ],
+     "descricao": "Rua Marcolino Teixeira de Queiroz da Rua Joaquim Murtinho até a Rua Dom Aquino Correa",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Primeiro de Maio"
+     ],
+     "de": [
+      "Avenida João Pedro Pedrossian"
+     ],
+     "ate": [
+      "Avenida Presidente Vargas"
+     ],
+     "descricao": "Rua Primeiro de Maio da Avenida João Pedro Pedrossian até a Avenida Presidente Vargas",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Manoel R. de Souza"
+     ],
+     "de": [
+      "Avenida São Cristóvão"
+     ],
+     "ate": [
+      "Rua Pedro J. de Queiroz"
+     ],
+     "descricao": "Rua Manoel R. de Souza da Avenida São Cristóvão até a Rua Pedro J. de Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Maranhão"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua José R. da Silva"
+     ],
+     "descricao": "Rua Maranhão da Rua Três Lagoas até a Rua José R. da Silva",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua Abadio R. de Almeida"
+     ],
+     "de": [
+      "Avenida São Cristóvão"
+     ],
+     "ate": [
+      "Rua José R. da Silva"
+     ],
+     "descricao": "Rua Abadio R. de Almeida da Avenida São Cristóvão até a Rua José R. da Silva",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Rua da Liberdade"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua Rosália D. Queiroz"
+     ],
+     "descricao": "Rua da Liberdade da Rua Três Lagoas até a Rua Rosália D. Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida Cuiabá"
+     ],
+     "de": [
+      "Rua Três Lagoas"
+     ],
+     "ate": [
+      "Rua Rosália D. Queiroz"
+     ],
+     "descricao": "Avenida Cuiabá da Rua Três Lagoas até a Rua Rosália D. Queiroz",
+     "aproximado": false
+    },
+    {
+     "inciso": "Anexo I (área central, art. 193 §2º)",
+     "via": [
+      "Avenida da Saudade"
+     ],
+     "de": [
+      "Avenida João Pedro Pedrossian"
+     ],
+     "ate": [
+      "Alameda Amor Perfeito"
+     ],
+     "descricao": "Avenida da Saudade da Avenida João Pedro Pedrossian até a Alameda Amor Perfeito",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2014-07-04",
+   "nota": "Leitura de interpretação; só ativar após confirmação com o órgão de trânsito. Sem janelas para domingo à noite além do 'dia todo'."
+  }
+ ]
+}

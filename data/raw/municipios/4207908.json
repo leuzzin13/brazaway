@@ -1,0 +1,128 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4207908",
+  "municipio": "Irineópolis",
+  "uf": "SC",
+  "fonte_id": "irineopolis",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/1416153 ; https://diariomunicipal.sc.gov.br/atos/878661 ; https://diariomunicipal.sc.gov.br/atos/1210026",
+    "licenca": "Atos oficiais de Irineópolis: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e limites municipais do IBGE.",
+    "notas": "Dec. 3.314/2017 (ativo) relido no DOM/SC em 2026-10-18; Lei 1.885/2015 e Dec. 3.177/2017 (5 estradas sem nome) registrados como desativados. Sem alteração ou revogação localizada. BR-280 e SC-120 fora da regra."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Irineópolis não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "irineopolis_lei1885_2015_estradas",
+      "tipo": "via",
+      "regime": "Estradas rurais: PBT > 30 t",
+      "nome": "Irineópolis: Lei 1.885/2015 (e Dec. 3.177/2017), proibido tráfego de caminhões com PBT > 30 t em cinco estradas municipais",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei nº 1.885, de 16/12/2015",
+          "artigo": "art. 1º, I a V (estradas) e parágrafo único (prefeito pode estender por decreto)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/878661",
+          "nota": "DOM/SC 17/12/2015"
+        },
+        {
+          "ato": "Decreto nº 3.177, de 15/03/2017 (regulamenta a Lei 1.885/2015, repete as cinco estradas)",
+          "artigo": "art. 1º, I a V, art. 2º (fiscalização)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1210026"
+        }
+      ],
+      "vigencia_inicio": "2015-12-16",
+      "nota": "Estradas rurais sem nome oficial, descritas só por localidades (Pé da Serra, Boa Vista, Bom Sossego I e II, Rio Branco, São Sebastião do Tokarski, Km 20, Aparecida dos Pardos). Boa parte fica dentro da área do Dec. 3.314/2017. Sem geometria no OSM por nome.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "status_motivo": "Verificado 18/10/2026: cinco estradas rurais sem nome oficial, descritas apenas por localidades (Pe da Serra, Boa Vista, Bom Sossego, Rio Branco, Sao Sebastiao do Tokarski, Km 20, Aparecida dos Pardos); sem delimitacao georreferenciavel. Em grande parte contidas na area do Dec. 3.314/2017.",
+      "excecoes": [],
+      "feriados": "aplica"
+    },
+    {
+      "id": "irineopolis_dec3314_2017_esquerda_br280",
+      "tipo": "zona",
+      "regime": "Todas as vias à esquerda da BR-280: PBT > 30 t",
+      "nome": "Irineópolis: Dec. 3.314/2017, proibido tráfego de caminhões com PBT > 30 t em todas as vias do município à esquerda da BR-280 (sentido Canoinhas - Porto União)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 3.314, de 30/10/2017",
+          "artigo": "art. 1º, I (área), art. 2º (fiscalização), art. 3º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1416153",
+          "nota": "DOM/SC 01/11/2017"
+        }
+      ],
+      "vigencia_inicio": "2017-10-30",
+      "nota": "Zona = território à esquerda da BR-280 no sentido Canoinhas-Porto União (sul do município; a sede fica ao norte, fora). O ato define a área por referência à rodovia, sem polígono: aproximado, desenhado sobre o limite do IBGE e o eixo da BR-280 no OSM. BR-280 e SC-120 ficam livres (faixa de 15 m retirada; competência federal/estadual). O ato não fixa horário nem exceções: todo dia, 24 h, sem exceção de feriado. Rodovia municipal que cruze a BR-280 só entra na parte sul.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4207908_esquerda_br280.geojson",
+          "construir": "manual",
+          "como_gerar": "Limite municipal do IBGE (malha 4207908) cortado pelo eixo da BR-280 (way com ref=BR-280 do OSM, de leste a oeste, prolongado até o limite). Fica a parte SUL, que é a esquerda da rodovia no sentido Canoinhas (leste) -> Porto União (oeste). Retirada uma faixa de 15 m em torno da BR-280 e da SC-120 (competência da União e do Estado, fora do ato) e descartados fragmentos menores que 0,05 km²."
+        }
+      ],
+      "excecoes": [],
+      "feriados": "aplica",
+      "fonte_geometria": "Limite do município (IBGE) cortado pelo eixo da BR-280 no OSM (ODbL); aproximado"
+    }
+  ]
+}

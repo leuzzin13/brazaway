@@ -1,0 +1,125 @@
+{
+  "ibge": "4203709",
+  "nome": "Canelinha",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2494598",
+      "resultado": "Decreto 507/2007 aberto e lido (texto integral): PBTC 35 t na malha urbana; > 3 eixos carregados nas duas pontes do Rio Tijucas."
+    },
+    {
+      "url": "DOM/SC buscar 4203709 'veículos pesados', 'pontes sobre o Rio Tijucas', 'decreto 507', 'PBTC toneladas'",
+      "resultado": "Nenhum ato posterior que altere ou revogue o Dec. 507/2007; só licitações e atas."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/4367342",
+      "resultado": "Lei 4058/2022 (trecho da preparação, competências da autarquia de trânsito): não é regra."
+    }
+  ],
+  "observacoes": "Decreto de 2007 sem revogação encontrada; confiança média por idade do ato e falta de confirmação no portal (leismunicipais bloqueado) e de perímetro. | verificado em 2026-10-18: Dec. 507/2007 relido no DOM/SC (atos/2494598): art. 1 limite 35 t de PBTC na malha viaria urbana, art. 2 proibe >3 eixos carregados nas duas pontes sobre o Rio Tijucas. Sem revogacao localizada, mas ambas as regras rebaixadas para desativada (sem perimetro/vias nomeadas; jurisdicao de rodovia estadual duvidosa).",
+  "osm_divergencias": [
+    "OSM maxweight=10 na Rua Pedro Voltolini (way 314939027, residential) sem ato municipal que o sustente; o Dec. 507/2007 fixa 35 t de PBTC, não 10 t."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "canelinha_dec507_2007_pbtc_malha_urbana",
+      "tipo": "zona",
+      "regime": "Limite de PBTC na malha urbana",
+      "nome": "Canelinha: Dec. 507/2007, limite de 35 t de PBTC para veículos na malha viária urbana",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 35
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 507, de 11/06/2007 (Canelinha)",
+          "artigo": "art. 1º (limite de 35 t de PBTC na malha urbana), art. 2º (pontes), art. 3º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2494598",
+          "nota": "DOM/SC, republicação/arquivo de 2007"
+        }
+      ],
+      "nota": "Ato diz 'limite máximo de até 35 t de PBTC (Peso Bruto Total Combinado)'; 'carga bruta = tara + carga'. Sem perímetro explícito: 'malha viária urbana' (não distingue as rodovias estaduais que cruzam a cidade, SC-410 etc., de competência do DER). Vigência não confirmada além de nenhuma revogação achada no DOM/SC (2013 em diante); decreto de 2007, sem mapa de vias. Zona não desenhada.",
+      "geometria": [],
+      "status_motivo": "Verificado 18/10/2026: 'malha viaria urbana' sem perimetro nem lista de vias (nao georreferenciavel) e sem comprovacao de vigencia/sinalizacao do decreto de 2007; cruza rodovias estaduais (competencia DER) sem anuencia documentada."
+    },
+    {
+      "id": "canelinha_dec507_2007_pontes_rio_tijucas",
+      "tipo": "ponte",
+      "regime": "Pontes sobre o Rio Tijucas",
+      "nome": "Canelinha: Dec. 507/2007, art. 2º, proibido tráfego acima de 3 eixos carregados nas duas pontes sobre o Rio Tijucas",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 507, de 11/06/2007 (Canelinha)",
+          "artigo": "art. 1º (limite de 35 t de PBTC na malha urbana), art. 2º (pontes), art. 3º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2494598",
+          "nota": "DOM/SC, republicação/arquivo de 2007"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Ponte sobre o Rio Tijucas"
+          ],
+          "descricao": "as duas pontes sobre o Rio Tijucas no município (o decreto não as nomeia nem localiza)",
+          "aproximado": true
+        }
+      ],
+      "nota": "O decreto fala em 'veículos acima de 03 eixos carregados': a rota não sabe se o veículo está carregado, lado seguro = aplicar. Pontes não identificadas (podem ser em rodovia estadual/SC-410 e SC-108?); conferir.",
+      "geometria": [],
+      "status_motivo": "Verificado 18/10/2026: as duas pontes sobre o Rio Tijucas nao sao nomeadas nem localizadas no decreto e podem estar em rodovia estadual (SC-410); sem delimitacao georreferenciavel e sem comprovacao de vigencia."
+    }
+  ]
+}

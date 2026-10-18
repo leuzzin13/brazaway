@@ -2,7 +2,7 @@
  "ibge": "4300604",
  "nome": "Alvorada",
  "uf": "RS",
- "status": "pista",
+ "status": "regra_com_ato",
  "nivel_busca": "profunda",
  "falha_de_fonte": true,
  "fontes_consultadas": [
@@ -25,14 +25,86 @@
   {
    "url": "https://www.diariomunicipal.com.br/famurs/materia/C26CA3A4",
    "resultado": "LIDO: Lei 4.321/2026 arts. 28-29 (diretrizes de transporte de cargas)"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/materia/EFB2DBAB (Lei Municipal nº 3.955, de 01/12/2023, Plano Diretor; texto em atos/4300604/lei_3955_2023_plano_diretor.txt)",
+   "resultado": "LIDO na íntegra: Título V, Capítulo I, art. 26 (hierarquia viária vinculada à tonelagem máxima), art. 28 (transporte pesado, mais de 20 T, só nas vias estruturais e principais; parágrafo único manda regulamentar por decreto o tráfego acima disso), art. 36 (gabaritos: estruturais 30 m ou mais; principais 16 a 26 m) e art. 38 (vias estruturais e principais 'graficadas no mapa do Sistema Viário, Anexo 11'). Art. 143: vigência na publicação (05/12/2023, DOM-RS ed. 3711). O texto publicado não traz os anexos/mapas.",
+   "rodada": "R2"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4300604 (FAMURS; termos 3955, 3.955, Plano Diretor, transporte pesado, tráfego de veículos peso superior, vias estruturais, tonelagem, tráfego/circulação de caminhões)",
+   "resultado": "Alterações da Lei 3.955/2023 localizadas: Lei 4.004/2024 (art. 142, revogações), Lei 4.294/2026 (art. 106), Leis 4.225/2025, 4.234/2025, 4.356/2026 e 4.362/2026 (zoneamento/lotes). Nenhuma altera o art. 28 ou o Anexo 11; nenhum decreto regulamentador do art. 28, parágrafo único, foi localizado. Lei 4.321/2026 (PlanMob) lida: arts. 28-30 só diretrizes, sem revogar a 3.955.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/materia/D099C866 (Decreto 031/2022), EDA08759 (Lei 3.130/2017), AC8465CF (Lei 3.671/2022), 2AB120B4 e 7DD7440C (Portarias 010/2025 e 001/2025)",
+   "resultado": "LIDOS: Área Azul (estacionamento rotativo, tarifa de vaga de carga e descarga), caçambas estacionárias (art. 11: obedecer horários de carga e descarga onde houver), quadro de pessoal e valores de remoção/vistoria de veículos pesados. Nenhum é restrição de circulação.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camaraalvorada.atende.net/ ; https://alvorada.atende.net/ ; leismunicipais",
+   "resultado": "Câmara responde (Atende, busca atrás de captcha); prefeitura/leismunicipais bloqueados ou JS. Anexo 11 não encontrado.",
+   "rodada": "R2"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "A Lei Municipal 4.321, de 12/06/2026 (PlanMob Alvorada), arts. 28-29, apenas manda estabelecer regras e horários de circulação de veículos de carga, rotas e áreas de carga e descarga; não traz regra operativa. Pendência: decreto regulamentador posterior.",
+ "observacoes": "ALTERADO na R2: achado ato primário vigente com regra operativa de peso e classe viária. Lei Municipal nº 3.955/2023 (Plano Diretor de Alvorada), art. 28: o 'transporte pesado', assim considerado o que trafega com mais de 20 T, só é permitido nas vias estruturais e principais; parágrafo único manda regulamentar por decreto o tráfego de veículos acima disso. Não há horário. A lista das vias estruturais e principais está só no mapa Anexo 11 (art. 38), que o texto do Diário Oficial não traz; sem o mapa a restrição não vira geometria, e não se sabe se '20 T' é PBT ou peso real. Por isso a regra fica desativada até obter o Anexo 11 (Prefeitura/Secretaria de Planejamento e Gestão Urbana) e o eventual decreto regulamentar. Lei 4.321/2026 (PlanMob) segue só com diretrizes de transporte de cargas (arts. 28-30), sem regra operativa. Corredores de centralidade do art. 9º (Itararé, Umbu, Getúlio Vargas, Piratini, Oscar Schick, Tibúrcio de Azevedo, Frederico Dihl, Tiradentes-Zero Hora, Maringá, Estrada do Caminho do Meio-Lourdes Monteiro, Estrada Diogo Inácio de Barcelos, ERS-118) NÃO são a lista de vias estruturais/principais: não usar como tal. Fontes de busca de legislação (Atende/leismunicipais) continuam bloqueadas.",
  "osm_divergencias": [
-  "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+  "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight."
  ],
  "regras_rascunho": [
+  {
+   "id": "alvorada_pd3955_2023_transporte_pesado_vias",
+   "tipo": "zona",
+   "regime": "Transporte pesado (mais de 20 t) só em vias estruturais e principais",
+   "nome": "Alvorada: Plano Diretor (Lei 3.955/2023), transporte pesado acima de 20 T restrito às vias estruturais e principais",
+   "status": "desativada",
+   "status_motivo": "Ato primário vigente e lido (art. 28), mas a regra é por classe viária: só vale por exclusão das vias estruturais e principais, listadas apenas no mapa Anexo 11 (art. 38), que o Diário Oficial não publica no texto; sem Anexo 11 não há geometria. Também falta o decreto regulamentador (art. 28, parágrafo único) e não está claro se as 20 T são PBT ou peso real. Reativar com o Anexo 11 e modelar como vias permitidas (resto do município proibido).",
+   "confianca": "media",
+   "verificado_em": "2026-10-18",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "vuc": null,
+   "excecoes": [
+    "O parágrafo único do art. 28 remete a decreto municipal o tráfego de veículos acima de 20 T; nenhum decreto localizado. Sem exceção de destino local no texto."
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal nº 3.955, de 01/12/2023 (Plano Diretor de Alvorada)",
+     "artigo": "art. 28 caput e parágrafo único; art. 26, II (hierarquia viária e tonelagem máxima); art. 36 (gabaritos); art. 38 (vias no mapa Anexo 11)",
+     "url": "https://www.diariomunicipal.com.br/famurs/materia/EFB2DBAB",
+     "nota": "Vigência na publicação (art. 143), 05/12/2023, DOM-RS ed. 3711. Alterações localizadas (Leis 4.004/2024, 4.294/2026, zoneamentos) não tocam o art. 28."
+    }
+   ],
+   "vigencia_inicio": "2023-12-05",
+   "vigencia_fim": null,
+   "trechos": [],
+   "geometria": [],
+   "nota": "Janela 24 h é só a leitura de 'somente é permitido' (sem horário no ato). Mapear como proibição fora das vias estruturais/principais."
+  },
   {
    "id": "alvorada_planmob_transporte_cargas",
    "tipo": "zona",

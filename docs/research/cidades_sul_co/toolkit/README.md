@@ -151,3 +151,61 @@ python3 smoke.py             # teste de fumaça dos clientes (REFAZ=1, SO=<siste
 * O teste de fumaça prova que o cliente **funciona** naquela instância, não que a base esteja completa ou atualizada.
 * Atende.net, NucleoGov, CESPRO e Leis Municipais, os mais comuns na região, **não têm busca automática** (captcha/JS/Cloudflare/403) — são ~45% das prefeituras.
 * Nenhum ato, artigo ou horário foi inferido aqui — este mapa só diz **onde** e **como** buscar.
+
+---
+
+## 7. Diários consolidados do Sul/Centro-Oeste (PR, SC, RS, GO, MT, MS, DF) — gerado em 18/10/2026
+
+`diarios_consolidados.py` foi estendido (mesma CLI) para o Sul/Centro-Oeste; `municipios.csv` (ibge;nome;uf) é a base de municípios.
+Lead pronto: **`../leads/diarios_consolidados.json`** → `{ibge: {nome, uf, diario, acertos, ocorrencias:[{data, titulo, trecho, url, fonte, score, motivos...}], indicios[...], fontes_que_cobrem, ...}}`
+(`diario` = nome(s) do(s) diário(s) que cobrem o município; `acertos` = ocorrências com score ≥ 6 — ≥ 8 no Querido Diário — já sem duplicatas; `_meta` traz critério, termos, cobertura por diário e `sem_diario_consolidado` por UF).
+
+```bash
+python3 diarios_consolidados.py lead 4106902                          # o que a varredura achou (Curitiba)
+python3 diarios_consolidados.py buscar 4209102 "veículos pesados"      # busca nova (Joinville) nos diários que a cobrem
+python3 diarios_consolidados.py buscar "Pelotas/RS" "carga e descarga" --json
+python3 diarios_consolidados.py fontes                                 # cobertura medida de cada diário
+# regenerar / retomar (tudo retomável; se cair, rode de novo):
+python3 diarios_consolidados.py cobertura --fontes sul_co,qd
+python3 diarios_consolidados.py varrer-municipios --fontes sul_co --sem-consolidar   # termos x cada município coberto
+python3 diarios_consolidados.py varrer-municipios --fontes qd --sem-consolidar
+python3 diarios_consolidados.py varrer --fontes sul_co --sem-consolidar              # varredura global por termo
+python3 diarios_consolidados.py consolidar
+```
+`lead` mostra só o consolidado; `buscar` consulta o diário ao vivo (mostra `score` e `url`). Lead **não é prova**: abrir a `url`, conferir
+número, data, artigo e vigência do ato. Municípios com `acertos=0` e `fontes_que_cobrem` não vazio foram varridos sem achado (só nos termos/períodos abaixo).
+
+### Cobertura de cada diário (medida em 18/10/2026)
+| fonte | diário | UF | municípios cobertos | como busca / observações |
+|---|---|---|---|---|
+| `domsc` | DOM/SC (FECAM/CIGA) `diariomunicipal.sc.gov.br` (sem `www`: o `www` redireciona) | SC | **294 de 295** (falta 1) | Solr; q + data + categoria + `codigoEntidade`. Paginação só funciona pelas rotas `r=site/portal` (com entidade) ou `r=site/index`; **sem data o site assume só as últimas 3 semanas** (o cliente sempre manda `dataInicial=01/01/2000`); teto 20 páginas (200 resultados) por consulta; OR só entre parênteses e ≤ ~8 frases por URL (senão 400); ordem por data decrescente. Entidades sem estatística (ex.: Joinville) são tratadas como ativas. |
+| `famurs` | FAMURS `diariomunicipal.com.br/famurs` | RS | **270 de 497** | SIGPub; busca E-lógica por palavras (sem frase exata), 25 por página, relevância, teto 1.000/consulta. Entidades ≠ município (consórcios) ficam sem município. |
+| `amp` | AMP `diariomunicipal.com.br/amp` | PR | **182 de 399** | idem. Curitiba, Londrina, Maringá etc. **não** estão (têm diário próprio → Querido Diário). |
+| `agm` | AGM `diariomunicipal.com.br/agm` | GO | **108 de 246** | idem; alguns itens "Município de X" ambíguos ficam sem município. |
+| `fgm` | FGM `diariomunicipal.com.br/fgm` | GO | **62** (sobrepõe parte do AGM) | idem. |
+| `amm-mt` | AMM-MT `diariomunicipal.com.br/amm-mt` | MT | **141 de 142** | idem. |
+| `ms` | ASSOMASUL `diariomunicipal.com.br/ms` (o slug `/assomasul` dá 404) | MS | **56 de 79** | idem. |
+| `qd` | Querido Diário (API) | todas | **187** (SC 63, PR 46, RS 40, GO 16, MS 14, MT 7, DF 1) | só as cidades com spider; 82 delas não estão em nenhum outro diário (inclui Curitiba, Goiânia, Porto Alegre, Campo Grande, Londrina, Brasília). Varrido por cidade com 4 frases, 1 página de 10 diários (API lenta, 520 frequente); só as cidades sem outro diário + as 40 maiores. |
+
+Municípios sem nenhum diário consolidado: ver `_meta.sem_diario_consolidado` do JSON (por UF) — para eles use `legislacao.py` (portais municipais) e os sites das prefeituras/câmaras.
+Não cobertos por esta ferramenta (avaliados, sem busca automatizável por aqui): `assomasul.org.br` e `agm.org.br` (403), portais próprios de capitais
+(Curitiba, Goiânia, Campo Grande, Cuiabá, Brasília: proxy 502 ou JS), `diariomunicipal.com.br/amm-go` e `/assomasul` (inexistentes). Querido Diário é o caminho para as capitais.
+
+### Como a varredura foi feita
+* **Por município** (`varrer-municipios`): SIGPub = 8 termos (`caminhões circulação`, `veículos pesados`, `veículos carga`, `carga descarga`, `zona restrição`, `trânsito pesado`, `VUC`, `toneladas caminhões`; E-lógico) × entidades Prefeitura/Câmara do município, 1ª página (25 por relevância).
+  DOM/SC = 3 consultas (OR de frases: circulação/tráfego/trânsito de caminhões, veículos pesados, veículos de carga, VUC | carga e descarga, zona de restrição, trânsito pesado, tráfego pesado, veículo urbano de carga | caminhões/caminhão/carretas/bitrem) × categorias Leis, Decretos, Portarias, Instrução Normativa, Resoluções × Prefeitura, todas as páginas (até 20).
+* **Global por termo** (`varrer`): 16 termos (ver `SUL_CO_TERMOS`) em cada diário; SIGPub ainda por filtro de título (todos | decreto | lei | portaria) para furar o ruído de licitação; DOM/SC por categoria normativa (teto 200).
+* **Pontuação** (`pontua`): regex em título+trecho — veículo pesado/carga + circulação + restrição/horário/ato normativo − ruído de licitação/contrato/frota/covid. Duplicatas (mesma fonte+data+título+trecho) são fundidas.
+* "toneladas" entra como `toneladas caminhões` (SIGPub), `(toneladas AND caminhões)` (varredura global DOM/SC) e como pontuação de limite em t no texto.
+
+### Limitações
+* SIGPub não tem frase exata: "veículos pesados" casa "veículos leves, pesados"; muito ruído de compras/licitações/RH ("Motorista - Veículos Pesados"). Os hits de maior score são os melhores pistas, mas **todo** achado exige leitura do ato.
+* Varredura por município do SIGPub olha só os 25 mais relevantes por termo; a global tem teto de 1.000 por consulta; DOM/SC, 200 (global) e 200 por consulta/categoria (município).
+* Atos de categorias fora da lista (ex.: "Outras publicações", "Edital") no DOM/SC não foram varridos por município; Câmaras (resoluções) só entram quando aparecem nas varreduras globais/SIGPub.
+* Acervo anterior à adesão do município ao diário não existe (DOM/SC desde ~2013; SIGPub desde 2009 conforme a adesão). Leis antigas (anos 80-2000) estão em `legislacao.py`/portais.
+* Retentativas: a rede/proxy às vezes derruba conexões (`http 0`); o cliente retenta (5 s … 180 s) e o `estado.json`/`progresso_*.jsonl` permitem retomar.
+
+### Resultado da varredura (18/10/2026)
+* `../leads/diarios_consolidados.json`: 1.187 municípios (cobertos por ≥ 1 diário), **647 com ao menos um acerto** (score ≥ limiar). Por UF (no arquivo / com acerto / só indício / cobertos sem achado): SC 294/234/44/16 · PR 218/171/17/30 · RS 297/66/39/192 · GO 174/38/23/113 · MT 141/99/23/19 · MS 62/38/4/20 · DF 1/1/0/0.
+* Sem nenhum diário consolidado (`_meta.sem_diario_consolidado`): PR 181 · RS 200 · GO 72 · MS 17 · MT 1 · SC 1 · DF 0.
+* Bruto por diário e progresso: `../leads/diarios_consolidados_raw/` (`hits_<fonte>.jsonl`, `progresso_<fonte>.jsonl`, `estado.json`, `cobertura.json`, `log.txt`).

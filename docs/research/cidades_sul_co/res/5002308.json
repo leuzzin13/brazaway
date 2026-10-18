@@ -1,0 +1,95 @@
+{
+ "ibge": "5002308",
+ "nome": "Brasilândia",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/A7B5D4E9",
+   "resultado": "Decreto 4539/2017 lido integralmente (art. 1º-6º): proíbe veículos pesados/caminhões/carretas na parte central, rota obrigatória, exceções do art. 4º."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/5E4BB991",
+   "resultado": "Decreto 4709/2018 (diárias) lido: art. 8º revoga 'em especial o Decreto nº 4539/2017'."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/4B71A344",
+   "resultado": "Decreto 5011/2019 (Praça Santa Maria): proíbe estacionamento de caminhões na praça e via que a circunda; pontual (estacionamento)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/A3C8D516",
+   "resultado": "Decreto 4998/2019: desapropriação/alargamento Rua José Francisco da Silva e Av. Brasil; sem restrição."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5002308 '4539' / 'veículos pesados' / 'tráfego caminhões'",
+   "resultado": "Nenhum ato posterior que restabeleça ou altere o 4539; só licitações."
+  },
+  {
+   "url": "https://www.brasilandia.ms.gov.br/portal/leis_decretos",
+   "resultado": "Connection reset / módulo instar não respondeu (cliente legislacao.py erro). Portal principal fora; falha de fonte parcial."
+  }
+ ],
+ "observacoes": "Dec. 4539/2017 é regra real (proíbe pesados no centro, rota obrigatória), mas o Dec. 4709/2018 art. 8º o revoga expressamente (norma de diárias; possível erro material). Rota Av. Brasil/R. José Francisco da Silva aberta pela Dec. 4998/2019 (obras). Sem confirmação no portal (fora do ar). Dec. 5011/2019 proíbe estacionamento de caminhões na Praça Santa Maria e entorno (pontual).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "brasilandia_centro_pesados",
+   "tipo": "via",
+   "regime": "Proibição de veículos pesados na parte central + rota obrigatória",
+   "nome": "Brasilândia: proibido tráfego de veículos pesados, caminhões, carretas e cavalos mecânicos na parte central; rota obrigatória R. José Francisco da Silva, Av. Brasil e R. Albano Thomé até a BR-158",
+   "status": "revogada",
+   "confianca": "baixa",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 4º: veículos que efetuam carga/descarga na parte central e veículos emplacados no município ou cujo proprietário/motorista resida no município"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal nº 4539, de 13/07/2017 (Brasilândia/MS)",
+     "artigo": "arts. 1º a 4º",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/A7B5D4E9"
+    },
+    {
+     "ato": "Decreto nº 4709, de 08/06/2018 (diárias)",
+     "artigo": "art. 8º (cláusula 'revogam-se... em especial o Decreto nº 4539/2017')",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/5E4BB991"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "Decreto 4709/2018, art. 8º, revoga expressamente o Decreto 4539/2017 (a norma é de diárias; a menção parece erro material, mas o texto literal revoga). Sem confirmação no portal da prefeitura (site fora do ar).",
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Rua José Francisco da Silva"
+     ],
+     "descricao": "Rota obrigatória (MS-395/MS-040 até BR-158): Rua José Francisco da Silva, Avenida Brasil e Rua Albano Thomé",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "parte central de Brasilândia"
+     ],
+     "descricao": "'parte central' sem delimitação no ato",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2017-07-17",
+   "vigencia_fim": "2018-06-20",
+   "nota": "Sem janelas horárias: proibição permanente. Perímetro 'parte central' não definido no ato."
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4219358",
+  "municipio": "Vitor Meireles",
+  "uf": "SC",
+  "fonte_id": "vitor-meireles",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/6866516",
+    "licenca": "Atos oficiais de Vitor Meireles: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e limites municipais do IBGE.",
+    "notas": "Dec. 009/2025 relido no DOM/SC; divergência de datas no próprio ato (cabeçalho 05/02/2025, assinatura 16/12/2024). Tara acima de 2 t não é modelada (condição mais fraca)."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Vitor Meireles não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "vitormeireles_dec009_2025_ponte_denecke",
+      "tipo": "ponte",
+      "regime": "Ponte com limite de peso",
+      "nome": "Vitor Meireles/Itaiópolis: Ponte Denecke (Rio Hercílio/Itajaí Norte), caminhão com PBTC > 10 t, comprimento > 7 m e tara > 2 t proibido (Dec. 009/2025)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de socorro de incêndio e salvamento",
+        "Veículos de socorro e emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 009/2025 (Vitor Meireles; data do cabeçalho 05/02/2025, assinatura 16/12/2024)",
+          "artigo": "art. 1º (proibição), art. 2º (exceções: socorro de incêndio e emergência), art. 6º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6866516",
+          "nota": "DOM/SC; divergência de datas no próprio ato (cabeçalho 05/02/2025 x assinatura 16/12/2024)"
+        }
+      ],
+      "vigencia_inicio": "2025-02-05",
+      "nota": "O ato pede PBTC > 10 t E comprimento total > 7,00 m E tara > 2 t (a condição de tara não está no schema: 'campo' só aceita pbt_t, payload_t, comprimento, largura, altura, eixos, tipo; tara > 2 t omitida, é a condição mais fraca). Alvo 'todas' = pbt_t > 10 e comprimento > 7 m. A ponte está na divisa: Itaiópolis tem decreto próprio (Dec. 3.391/2025, segundo a preparação; não conferido, fora do lote). Sinalização: placas nos limites da ponte (art. 1º, parágrafo único). Ponte localizada no OSM por exclusão: única ponte (bridge=yes, 86 m) sobre o Rio Itajaí do Norte no limite com Itaiópolis, na estrada para Itaiópolis; o OSM não a nomeia (existe o Rio Deneke próximo).",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4219358_ponte_denecke.geojson",
+          "construir": "manual",
+          "como_gerar": "Way bridge=yes (unclassified, 86 m, (-49.77229,-26.77274)->(-49.77287,-26.77325)) sobre o Rio Itajaí do Norte, no limite Vitor Meireles/Itaiópolis, ao lado da \"Estrada para Itaiópolis\"; é a única ponte rodoviária do OSM sobre o rio nessa divisa."
+        }
+      ],
+      "feriados": "aplica",
+      "fonte_geometria": "Way da ponte no OSM (bridge=yes, 86 m) no limite com Itaiópolis, sobre o Rio Itajaí do Norte (ODbL)"
+    }
+  ]
+}

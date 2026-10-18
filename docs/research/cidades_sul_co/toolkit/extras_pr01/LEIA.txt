@@ -1,0 +1,7 @@
+Ferramentas avulsas do lote P-PR-01 (18/10/2026). Somente leitura; use curl (urllib toma 403 no Querido Diario).
+- legislador_web.py: base "Legislador WEB" (legislador.com.br, ex.: Camara de Ponta Grossa, ID=9). Busca por verbete NO TEXTO: python3 legislador_web.py 9 "caminhoes". texto(ID,esp,nr,aa) devolve o texto da lei. Outros municipios: achar o ID no link LegisladorWEB.ASP?WCI=...&ID=<n> do site da Camara.
+- londrina_jornal_busca.py: busca full-text no Jornal Oficial de Londrina (2007+) via com_ajax (cookie + token CSRF da pagina /busca-jornal).
+- ipm_atende_diario_oficial_cascavel.py: Orgao Oficial de Cascavel (IPM Atende): POST atende.php?rot=54015&aca=101&processo=loadPluginDiarioOficial; busca por termo SO funciona de 2024 em diante, janela maxima 6 meses e e OR por palavra (muito ruido). PDF: atende.php?rot=54002&aca=737&processo=visualizar&parametro={"codigo":..,"hash":..}.
+- sapl_ementa.py: busca na API do SAPL por ementa (2o argumento = bundle CA (ou -) para sites com cadeia TLS incompleta).
+- Truque TLS sem desligar verificacao: sites com certificado intermediario faltando (ex.: Camara de Maringa, cmm.pr.gov.br): baixar o intermediario pelo AIA do certificado (openssl x509 -text), converter para PEM e usar curl --cacert <bundle do proxy + intermediario>. Servidores com DH fraco (www1.londrina.pr.gov.br): curl --ciphers 'DEFAULT:@SECLEVEL=0'.
+- Hosts do Cloudflare/"Bot Verification" (sjp.pr.gov.br, cmsjp.pr.gov.br, leismunicipais.com.br) nao foram contornados.

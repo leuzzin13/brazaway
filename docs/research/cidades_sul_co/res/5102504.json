@@ -1,0 +1,197 @@
+{
+ "ibge": "5102504",
+ "nome": "Cáceres",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.caceres.mt.leg.br (toolkit legislacao.py buscar, 15 termos: caminh, veículos pesados, veículo de carga, carga e descarga, tráfego, tonelad, eixos, carreta, betoneira, bitrem, zona de restrição, com/sem acento)",
+   "resultado": "Lei Ordinária 3224/2023 'Disciplina a circulação de veículos de carga, tratores, operações de carga e descarga no Município de Cáceres': texto integral LIDO (PDF). Busca por ZAC/3.224/autorização especial não trouxe decreto nem alteração."
+  },
+  {
+   "url": "https://sapl.caceres.mt.leg.br/media/sapl/public/normajuridica/2023/956/lei_no_3.224_de_08_de_novembro_de_2023.pdf",
+   "resultado": "LIDO integral (pdftotext, 2 colunas)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/ (diarios_consolidados.py buscar (AMM-MT/SIGPub): 'circulação de caminhões', 'veículos pesados tráfego', 'caminhões trânsito') ibge 5102504",
+   "resultado": "'Lei 3.224 ZAC decreto' 0; 'circulação de caminhões' 1 (edital 2013, ruído); 'veículos pesados tráfego' 2 (Leis 2.384/2.389 de 2013, táxi/mototáxi: ruído); Lei 2.435/2014 (trânsito, só diretriz de C/D) não detalhada."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/CFF08720",
+   "resultado": "Pista da preparação (LEI Nº 2.435 DE 13 DE JUNHO DE 2014., 2014-07-21): não lida em texto integral; trecho é ruído (ISS/frota/cargo/ata/emergência) ou não é restrição."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/CF3B3064",
+   "resultado": "Pista da preparação (LEI Nº 2.435 DE 13 DE JUNHO DE 2014., 2014-07-01): não lida em texto integral; trecho é ruído (ISS/frota/cargo/ata/emergência) ou não é restrição."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/B313C8E0",
+   "resultado": "Pista da preparação (LEI COMPLEMENTAR Nº 104 DE 20 DE JANEIRO DE 2015, 2015-01-22): não lida em texto integral; trecho é ruído (ISS/frota/cargo/ata/emergência) ou não é restrição."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/F7B8CD05",
+   "resultado": "Pista da preparação (LEI COMPLEMENTAR Nº. 100 DE 04 DE FEVEREIRO DE 2014, 2014-03-13): não lida em texto integral; trecho é ruído (ISS/frota/cargo/ata/emergência) ou não é restrição."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Cáceres: Lei Ordinária 3.224/2023 (que revoga a Lei 1.946/2005) lida integralmente (SAPL, PDF do DOM-MT/AMM de 08/12/2023, p. 76; texto em atos/5102504/lei_3224_2023.txt). Art. 4º proíbe circulação de >24 t PBT sem Autorização Especial e de qualquer veículo >2,6 m largura/>4,4 m altura; art. 3º dá janelas por PBT na ZAC (decreto/polígono não achado, regra desativada); VUC = 2,20 m x 6,50 m, 2 eixos. Lead veio do SAPL (a pista da preparação era só Lei 2.435/2014 e ruído de folha de pagamento). Pendências: decreto de regulamentação (ZAC/ARC/ZROCD), eventual alteração posterior, portal da prefeitura (não acessado). | verificado em 2026-10-18: caceres_art4_pbt24_lei_3224_2023: Rebaixada para desativada: perimetro urbano sem delimitacao e art. 4 ambiguo. caceres_art4p_dimensoes_lei_3224_2023: Rebaixada para desativada: perimetro urbano sem delimitacao.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "caceres_art4_pbt24_lei_3224_2023",
+   "tipo": "zona",
+   "regime": "Restrição de circulação por PBT e dimensões no perímetro urbano",
+   "nome": "Cáceres - veículos acima de 24 t PBT (carretas) sem Autorização Especial (Lei 3.224/2023, art. 4º)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 24
+     }
+    ]
+   },
+   "excecoes": [
+    "Veículos com Autorização Especial de Circulação e Estacionamento (art. 6º: concretagem, mudanças, alimentos perecíveis, imprensa; art. 4º/6º)",
+    "Veículos que se destinem a carga e descarga nas áreas definidas na lei",
+    "Socorro de incêndio/salvamento, polícia, fiscalização de trânsito, ambulâncias, serviços de utilidade pública em atendimento (art. 5º)",
+    "Art. 3º III permite >24 t das 20h às 6h na ZAC regulamentada (ver regra da ZAC)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 3.224, de 08/11/2023 (Cáceres)",
+     "url": "https://sapl.caceres.mt.leg.br/media/sapl/public/normajuridica/2023/956/lei_no_3.224_de_08_de_novembro_de_2023.pdf",
+     "artigo": "arts. 1º, 4º, 5º, 6º, 9º",
+     "nota": "Texto integral lido (DOM-MT/AMM 08/12/2023 p. 76 via SAPL). Perímetro = 'perímetro urbano' sem delimitação; art. 4º é ambíguo (sem a AEC e que não se destinem à C/D nas áreas da lei). Não foi achado decreto de regulamentação nem alteração/revogação em SAPL/AMM-MT."
+    }
+   ],
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: perimetro urbano sem delimitacao e art. 4 ambiguo. Lei 3.224/2023 relida (SAPL PDF; DOM-MT 08/12/2023): art. 1 diz que a circulacao no perimetro urbano 'sera permitida nos pontos demarcados' (demarcacao por decreto/poligono inexistente no acervo); art. 4 ('sem Autorizacao Especial e que nao se destinem a C/D nas areas definidas nesta lei') depende dessas areas. Sem poligono nem decreto. SAPL sem alteracao posterior.",
+   "vigencia_inicio": "2023-12-08",
+   "trechos": [
+    "Perímetro urbano de Cáceres (sem delimitação na lei)"
+   ],
+   "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.5,
+    "eixos_max": 2,
+    "exige_cadastro": false,
+    "artigo": "Lei 3.224/2023, art. 2º IV"
+   }
+  },
+  {
+   "id": "caceres_art4p_dimensoes_lei_3224_2023",
+   "tipo": "zona",
+   "regime": "Restrição por dimensões no perímetro urbano",
+   "nome": "Cáceres - veículos com largura > 2,6 m ou altura > 4,4 m (Lei 3.224/2023, art. 4º parágrafo único)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "largura_m",
+      "acima": 2.6
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorização Especial de Circulação e Estacionamento (arts. 4º e 6º)",
+    "Exclusões do art. 5º"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 3.224, de 08/11/2023 (Cáceres)",
+     "url": "https://sapl.caceres.mt.leg.br/media/sapl/public/normajuridica/2023/956/lei_no_3.224_de_08_de_novembro_de_2023.pdf",
+     "artigo": "art. 4º parágrafo único",
+     "nota": "'quaisquer veículos automotores cujas dimensões ultrapassem 2,6 m de largura ou 4,4 m de altura'."
+    }
+   ],
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: perimetro urbano sem delimitacao. Art. 4 par. unico (>2,6 m largura ou >4,4 m altura) confere, mas vale no 'perimetro urbano' sem delimitacao; veto a veiculos de carga so descrito no art. 1 'pontos demarcados'.",
+   "vigencia_inicio": "2023-12-08",
+   "trechos": [
+    "Perímetro urbano de Cáceres"
+   ]
+  },
+  {
+   "id": "caceres_zac_janelas_lei_3224_2023",
+   "tipo": "zona",
+   "regime": "Janelas por PBT na Zona de Área Central (ZAC)",
+   "nome": "Cáceres - ZAC e vias de acesso ao comércio/indústria: janelas por PBT (Lei 3.224/2023, art. 3º)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [],
+   "janelas_por_classe": {
+    "pbt_ate_10t_2eixos": "qualquer horário",
+    "pbt_16_a_24t": "seg-sex 06-08 e 18-21; sáb 06-08 e 12-18",
+    "pbt_acima_24t": "20h às 6h"
+   },
+   "feriados": "nao_informado",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Veículo de tração animal: ZAC exceto ZRM 05-07, 18-21; sáb 06-08 e 12-18",
+    "Faixa de 10 a 16 t PBT não prevista no art. 3º (lacuna da lei)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 3.224, de 08/11/2023 (Cáceres)",
+     "url": "https://sapl.caceres.mt.leg.br/media/sapl/public/normajuridica/2023/956/lei_no_3.224_de_08_de_novembro_de_2023.pdf",
+     "artigo": "arts. 2º VIII-IX, 3º",
+     "nota": "A ZAC e as vias de acesso são 'regulamentadas por decreto do executivo, ou medida similar (polígonos)'; decreto não localizado. A ZRM (Zona de Restrição Máxima) tem ruas descritas no art. 2º IX (Costa Marques/Bom Jardim/Boa Vista/Dr. Sábino Vieira/Alan Coberlino/Cel. Faria até Prof. Rizo; Prof. Rizo/13 de Junho até da Tapagem; Tapagem/Esmeraldas até Costa Marques), mas a lei não diz expressamente o que é proibido nela."
+    }
+   ],
+   "status_motivo": "Perímetro da ZAC depende de decreto/polígono não localizado e a lei não declara o regime da ZRM; sem geometria não pode ser aplicada.",
+   "trechos": [
+    "ZRM: rua Costa Marques esq. Bom Jardim; ruas Boa Vista, Dr. Sábino Vieira, Alan Coberlino, Cel. Faria, Prof. Rizo, 13 de Junho, da Tapagem, das Esmeraldas (descrição do art. 2º IX)"
+   ],
+   "vuc": {
+    "largura_max_m": 2.2,
+    "comprimento_max_m": 6.5,
+    "eixos_max": 2,
+    "exige_cadastro": false,
+    "artigo": "Lei 3.224/2023, art. 2º IV"
+   }
+  }
+ ]
+}

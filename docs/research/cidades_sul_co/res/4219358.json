@@ -1,0 +1,88 @@
+{
+  "ibge": "4219358",
+  "nome": "Vitor Meireles",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/6866516",
+      "resultado": "Decreto 009/2025 aberto e lido (texto integral)."
+    },
+    {
+      "url": "DOM/SC buscar 4219358 'Ponte Denecke', 'Ponte Deneke', 'veículos de carga ponte'",
+      "resultado": "Só este decreto; nenhuma alteração ou revogação."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5184076 ; /3694798 ; /3412205",
+      "resultado": "LCs 166/2023, 146/2022 e 144/2021 (trechos da preparação, especificação de lajotas 'tráfego de caminhões'): ruído, não são regras."
+    }
+  ],
+  "observacoes": "Ponte Denecke (divisa com Itaiópolis): regra ativa. Acertos restantes da preparação (28) são ruído de especificação de pavimento.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "vitormeireles_dec009_2025_ponte_denecke",
+      "tipo": "ponte",
+      "regime": "Ponte com limite de peso",
+      "nome": "Vitor Meireles/Itaiópolis: Ponte Denecke (Rio Hercílio/Itajaí Norte), caminhão com PBTC > 10 t, comprimento > 7 m e tara > 2 t proibido (Dec. 009/2025)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de socorro de incêndio e salvamento",
+        "Veículos de socorro e emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 009/2025 (Vitor Meireles; data do cabeçalho 05/02/2025, assinatura 16/12/2024)",
+          "artigo": "art. 1º (proibição), art. 2º (exceções: socorro de incêndio e emergência), art. 6º (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6866516",
+          "nota": "DOM/SC; divergência de datas no próprio ato (cabeçalho 05/02/2025 x assinatura 16/12/2024)"
+        }
+      ],
+      "vigencia_inicio": "2025-02-05",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Ponte Denecke"
+          ],
+          "descricao": "ponte sobre o Rio Hercílio/Itajaí Norte, divisa entre Itaiópolis e Vitor Meireles",
+          "aproximado": true
+        }
+      ],
+      "nota": "O ato pede PBTC > 10 t E comprimento total > 7,00 m E tara > 2 t (a condição de tara não está no schema: 'campo' só aceita pbt_t, payload_t, comprimento, largura, altura, eixos, tipo; tara > 2 t omitida, é a condição mais fraca). Alvo 'todas' = pbt_t > 10 e comprimento > 7 m. A ponte está na divisa: Itaiópolis tem decreto próprio (Dec. 3.391/2025, segundo a preparação; não conferido, fora do lote). Sinalização: placas nos limites da ponte (art. 1º, parágrafo único).",
+      "geometria": []
+    }
+  ]
+}

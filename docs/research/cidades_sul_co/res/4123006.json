@@ -1,0 +1,68 @@
+{
+  "ibge": "4123006",
+  "nome": "Salto do Lontra",
+  "uf": "PR",
+  "status": "pista",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/B676E852",
+      "resultado": "pista da preparação (AMP, 2021-07-09, \"DECRETO MUNICIPAL Nº. 142, DE 08 DE JULHO DE 2021.\"): aberta/conferida; ver observacoes"
+    },
+    {
+      "url": "https://leismunicipais.com.br/prefeitura/pr/saltodolontra",
+      "resultado": "legislacao.py buscar caminh|veículos pesados|carga e descarga|tráfego|tonelad|carreta|betoneira: 403 Cloudflare (\"Just a moment\"); não contornado"
+    },
+    {
+      "url": "diarios_consolidados.py buscar <ibge> (AMP/SIGPub, www.diariomunicipal.com.br/amp), 8 termos: \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de caminhões\", \"veículos pesados\", \"proíbe caminhões\", \"carretas\", \"toneladas\", \"veículos de carga\"",
+      "resultado": "respondeu; só ruído (frota, cargo de motorista de veículos pesados, ISS 11.04, servidão \"transitar com veículos pesados\", plano diretor/sistema viário genérico, aquisição de carretas); nenhum ato proibindo ou restringindo circulação de caminhão"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4123006 \"Avenida Nicolau Inácio\" / \"Nicolau Inácio caminhões\" / \"proibido tráfego de veículos de carga\" (AMP)",
+      "resultado": "só hospital, loteamento e licitação de recapeamento; nenhum ato de restrição"
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 4123006 (AMP) 'circulação de caminhões' / 'tráfego de veículos pesados' / 'proibido caminhões'",
+      "resultado": "reconferido em 2026-10-18 (lote R1-PR-DW01): só ruído (obras, frota, patrimônio, sistema viário genérico); nenhum ato que restrinja circulação de caminhão"
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 4123006 (todas as fontes)",
+      "resultado": "portal de legislação sem busca automática (leismunicipais Cloudflare / Atende captcha / 1doc / site sem cliente); sem consulta ao portal. Conclusão apoiada só no AMP/SIGPub"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 142/2021 e leis 257/2021 (indústria) e 324/2021 (polo gerador de tráfego) são ruído. OSM: hgv=no em Avenida Nicolau Inácio (highway=primary, sem ref, 2 ways 169871824 e 169871834), via urbana municipal; busca por \"Nicolau Inácio\" no AMP só retornou hospital, loteamento e licitação de recapeamento: nenhum ato achado. [R1-PR-DW01: portal de legislação inacessível, então o 'não achou' cobre só o diário AMP.]",
+  "osm_divergencias": [
+    {
+      "via": "Avenida Nicolau Inácio",
+      "osm": "hgv=no, highway=primary, sem ref (ways 169871824 e 169871834)",
+      "ato": "nenhum ato municipal achado",
+      "nota": "etiqueta OSM não confirmada em ato; não ativa regra"
+    }
+  ],
+  "regras_rascunho": [
+    {
+      "id": "salto_do_lontra_av_nicolau_inacio_hgv",
+      "tipo": "via",
+      "regime": "proibicao_circulacao",
+      "nome": "Avenida Nicolau Inácio: hgv=no no OSM (sem ato)",
+      "status": "desativada",
+      "status_motivo": "Apenas etiqueta OSM (hgv=no) em via urbana municipal; nenhum ato achado no AMP nem nos portais (leismunicipais 403).",
+      "confianca": "unverifiable",
+      "janelas": [],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "OSM (ways 169871824 e 169871834); sem ato",
+          "artigo": "n/a",
+          "url": "https://www.openstreetmap.org/way/169871824"
+        }
+      ],
+      "trechos": "Avenida Nicolau Inácio",
+      "geometria": []
+    }
+  ]
+}

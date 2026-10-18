@@ -211,7 +211,9 @@ def build_trecho(osm: list[dict], spec: dict, clip_utm) -> tuple[list[dict], lis
         lines = []
         for _, L in ways:
             lines.extend([g for g in getattr(L, 'geoms', [L]) if g.geom_type == 'LineString'])
-        merged = linemerge(unary_union(lines))
+        u = unary_union(lines)
+        # via de um way só: unary_union devolve LineString e o linemerge (shapely 2) recusa — nada a juntar
+        merged = u if u.geom_type == 'LineString' else linemerge(u)
         comps = [g for g in getattr(merged, 'geoms', [merged]) if g.geom_type == 'LineString']
         tol = float(spec.get('tolerancia_m', 60))
         A = _anchor_points(osm, comps, spec.get('de'), tol)

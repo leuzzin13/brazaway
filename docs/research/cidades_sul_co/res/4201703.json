@@ -1,0 +1,99 @@
+{
+  "ibge": "4201703",
+  "nome": "Ascurra",
+  "uf": "SC",
+  "status": "pista",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5215255",
+      "resultado": "Decreto 4.736/2023 lido: acesso emergencial no Saltinho (temporário, enchente)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/68924",
+      "resultado": "Decreto 2.157/2010 lido: Travessa Zonta, mão única 'para veículos leves'; não diz expressamente que caminhões são proibidos."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1318759",
+      "resultado": "Lei 1.482/2017 (denomina ponte na Travessa Zonta): sem restrição."
+    },
+    {
+      "url": "DOM/SC buscar 4201703 'Travessa Zonta', 'trânsito de caminhões', 'veículos pesados', 'tonelada'",
+      "resultado": "Nada além de contratos/atas (ruído); LCs 262/263/264/265 de 2022 (plano diretor/parcelamento) só tratam de vagas e rebaixos para veículos de carga."
+    }
+  ],
+  "observacoes": "Nenhuma regra permanente clara. A Travessa Zonta (OSM hgv=no) tem só o Dec. 2.157/2010 (mão única para leves). Resto: ruído de planejamento.",
+  "osm_divergencias": [
+    "OSM hgv=no em 5 ways da Travessa Zonta (maxweight=3 em um): o Dec. 2.157/2010 só fala em 'mão única para veículos leves'; restrição para caminhões não confirmada em ato."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "ascurra_dec2157_2010_travessa_zonta",
+      "tipo": "via",
+      "regime": "Via de mão única para veículos leves",
+      "nome": "Ascurra: Travessa Zonta, Dec. 2.157/2010 (mão única 'para veículos leves'), indício de proibição a caminhões",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "O decreto fixa mão única 'para veículos leves' mas não proíbe caminhão em termos expressos (nem PBT/altura). O OSM tem hgv=no na Travessa Zonta (vias way 284745957, 333713916 e outras; maxweight 3 em uma), compatível com restrição por passagem sob a ponte, mas sem ato que a diga.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 2.157, de 12/05/2010",
+          "artigo": "art. 1º e parágrafo único (mão única para veículos leves, sentido Av. Getúlio Vargas/Centro, por baixo da ponte sobre o Ribeirão São Paulo junto à BR-470)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/68924"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Travessa Zonta"
+          ],
+          "descricao": "mão única no sentido Av. Getúlio Vargas/Centro, passando sob a ponte do Ribeirão São Paulo (BR-470)",
+          "sentido": true
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "ascurra_dec4736_2023_saltinho",
+      "tipo": "via",
+      "regime": "Acesso emergencial (pontual)",
+      "nome": "Ascurra: Rua Aderbal Ramos da Silva (Saltinho), Dec. 4.736/2023: só veículos de passeio até normalização do rio",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Acesso provisório aberto por causa das chuvas (emergência, Dec. 4.720/2023), 'até que o leito do rio volte à normalidade'; sem data de fim e sem notícia de revogação, mas presumivelmente encerrado. Pontual.",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 4.736, de 11/10/2023",
+          "artigo": "art. 1º e parágrafo único (caminhões, ônibus, tratores e rebocadores proibidos)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5215255"
+        }
+      ],
+      "vigencia_inicio": "2023-10-11",
+      "geometria": []
+    }
+  ]
+}

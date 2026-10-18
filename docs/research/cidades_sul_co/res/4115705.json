@@ -1,0 +1,157 @@
+{
+ "ibge": "4115705",
+ "nome": "Matinhos",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B",
+   "resultado": "LIDO integral. Salvo em atos/4115705/decreto_4604_2025.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4115705 (3 termos AMP)",
+   "resultado": "nenhum ato posterior; Leis 2.743/2025 (arts. 38-41: diretrizes, delega a decreto, dispensas) e 2.731/2025 (plano diretor) abertas: sem regra concreta de horário/via"
+  },
+  {
+   "url": "https://camaramatinhos.atende.net/",
+   "resultado": "não aberto (Atende/captcha)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 4604/2025 (30/12/2025; DOM-PR 07/01/2026) lido integralmente. Art. 5º: na Av. Atlântica (R. Ipiranga a R. Itacolomi) circulação de veículos com PBT > 7 t ou comprimento > 7 m permitida só em dias úteis 7h-19h e sáb/dom/feriados 8h-15h; art. 6º: proibição integral em grandes eventos e 24/12, 30/12, 01/01; art. 3º: áreas de pedestres só utilitários até 1,8 t de carga útil (08h-16h, com autorização). Não achado ato posterior alterando/revogando (busca AMP por \"Decreto 4604\" e \"carga e descarga Avenida Atlântica\"); art. 7º delega ajustes a portarias do Departamento de Trânsito (não localizadas). Lei 2.743/2025 (Política de Mobilidade; lida): art. 39 manda regulamentar horários e vias de veículos de carga por decreto (base do Dec. 4604/2025) e art. 40 lista dispensas; Lei 2.731/2025 (Plano Diretor) sem regra de circulação.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "matinhos_av_atlantica_pesados",
+   "tipo": "via",
+   "regime": "Restrição de horário (via)",
+   "nome": "Av. Atlântica (Rua Ipiranga a Rua Itacolomi): veículos > 7 t PBT ou > 7 m só em janelas permitidas (Decreto 4604/2025)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "07:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "19:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "15:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 7.0
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.0
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorização Especial do Departamento Municipal de Trânsito para permanência em áreas de pedestres (art. 3º, parágrafo único)",
+    "Lei 2.743/2025, art. 40 (lida, AMP E136446E): dispensados das restrições de tráfego em vias urbanas caminhão de utilidade pública, serviço de urgência, obras/serviços de infraestrutura urbana e de urgência, socorro mecânico e caminhões de combustível para o Município"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 4604/2025 (Matinhos), de 30/12/2025, publ. DOM-PR/AMP 07/01/2026",
+     "artigo": "art. 5º (e art. 2º, I)",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Atlântica"
+     ],
+     "descricao": "trecho entre a Rua Ipiranga (Balneário Caiobá) e a Rua Itacolomi (Balneário Matinhos)",
+     "de": [
+      "Rua Ipiranga"
+     ],
+     "ate": [
+      "Rua Itacolomi"
+     ]
+    }
+   ],
+   "nota": "O art. 5º diz \"fica permitida a circulação ... nos seguintes períodos\" (dias úteis 7h-19h; sáb, dom e feriados 8h-15h); as janelas aqui são o complemento (fora do permitido = restrito) - inferência do texto. Feriado em dia útil: o decreto o trata como sábado/domingo (permitido só 8h-15h), o que é mais restritivo que a janela de dia útil; \"aplica\" é o lado seguro parcial. Art. 7º permite ao Departamento de Trânsito ajustar horários/capacidades por portaria (não pesquisadas)."
+  },
+  {
+   "id": "matinhos_av_atlantica_datas_eventos",
+   "tipo": "via",
+   "regime": "Proibição por data",
+   "nome": "Av. Atlântica: proibição integral de pesados em dias de grandes eventos e 24/12, 30/12, 01/01 (Decreto 4604/2025)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 7.0
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.0
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 4604/2025 (Matinhos)",
+     "artigo": "art. 6º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B"
+    }
+   ],
+   "status_motivo": "Proibição por datas (Natal, Ano Novo, Carnaval, shows do Verão Maior Paraná - datas variáveis - e 24/12, 30/12, 01/01), não representável como janelas semanais; registrada como texto. Descarregamento de estruturas de grande porte nessas datas só 21h-05h com Autorização Especial.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Atlântica"
+     ],
+     "descricao": "mesmo trecho do art. 2º, I"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+{
+ "ibge": "5107065",
+ "nome": "Querência",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.querencia.mt.leg.br (toolkit legislacao.py buscar, 15 termos: caminh, veículos pesados, veículo de carga, carga e descarga, tráfego, tonelad, eixos, carreta, betoneira, bitrem, zona de restrição, com/sem acento)",
+   "resultado": "Lei 950/2015 achada (veículos pesados no perímetro urbano). Lei 892/2015 e 1677/2026 só mão única de tráfego. Nada de revogação."
+  },
+  {
+   "url": "https://sapl.querencia.mt.leg.br/media/sapl/public/normajuridica/2015/1042/1042_texto_integral.pdf",
+   "resultado": "LIDO integral (imagem sem camada de texto; sem tesseract no ambiente; leitura visual das 2 páginas)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/ (diarios_consolidados.py buscar (AMM-MT/SIGPub): 'circulação de caminhões', 'veículos pesados tráfego', 'caminhões trânsito') ibge 5107065",
+   "resultado": "0 acertos (apenas ata de registro de preços/contrato de transporte escolar 2013/2014, ruído)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Querência: Lei 950/2015 (SAPL, PDF escaneado, lido visualmente; transcrição em atos/5107065/lei_950_2015.txt) veda veículos pesados (>10 t) e caminhões no perímetro urbano, exceto carga/descarga/uso local, e só permite as vias do § 1º. Não é restrição por horário. vigencia_inicio é aproximação (90 dias após publicação não datada). Pendências: confirmar ausência de revogação no portal da prefeitura/diário; geometria do perímetro urbano. | verificado em 2026-10-18: querencia_lei_950_2015_perimetro_urbano: Rebaixada para desativada: perimetro urbano sem delimitacao, vias permitidas sem geometria, vigencia aproximada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "querencia_lei_950_2015_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Proibição de tráfego de veículos pesados no perímetro urbano, com vias permitidas",
+   "nome": "Querência - tráfego de veículos pesados e caminhões (>10 t) vedado no perímetro urbano, exceto vias listadas (Lei 950/2015)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "Carga e descarga, embarque e desembarque de passageiros e uso local (art. 1º)",
+    "Ônibus do transporte coletivo urbano; veículos das Forças Armadas, Polícias Civil/Militar e Bombeiros em serviço essencial/emergência (art. 5º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 950, de 06/10/2015 (Querência)",
+     "artigo": "arts. 1º, 2º, 5º, 7º",
+     "url": "https://sapl.querencia.mt.leg.br/media/sapl/public/normajuridica/2015/1042/1042_texto_integral.pdf",
+     "nota": "PDF escaneado, lido visualmente (2 páginas). Vigência 90 dias após a publicação (art. 7º); data de publicação não consta no SAPL (vigencia_inicio aproximada). 'Mais de 10 toneladas' sem dizer se PBT ou capacidade: assumido PBT."
+    }
+   ],
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada: perimetro urbano sem delimitacao, vias permitidas sem geometria, vigencia aproximada. Lei 950/2015 (SAPL, PDF de imagem; transcricao em atos/): veda >10 t e caminhoes no perimetro urbano exceto vias listadas no par. 1; perimetro urbano nao delimitado no ato (depende de LC 102/2018 e alteracoes), 'toneladas' sem dizer PBT ou carga, data de publicacao ausente (vigor 90 dias depois, inicio aproximado), excecao ampla de carga/descarga e uso local.",
+   "vigencia_inicio": "2016-01-01",
+   "trechos": [
+    "Vias onde o tráfego pesado é PERMITIDO (§ 1º): Avenidas Sul; Av. Norberto Schwanttes (R-20); Rua 02 de Novembro (R-21); Rua Padre Roque Ripller (R-19); Rua Juvino Gomes (R-9); Perímetro Industrial entre Av. Sul e Rua Herta Kist Mallmann"
+   ]
+  }
+ ]
+}

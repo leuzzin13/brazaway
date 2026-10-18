@@ -1,0 +1,93 @@
+{
+ "ibge": "4122404",
+ "nome": "Rolândia",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/AF5A03A4",
+   "resultado": "LIDO integral. Salvo em atos/4122404/lei_4351_2025.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/D401C823",
+   "resultado": "LIDO integral. Salvo em atos/4122404/decreto_650_2025.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4122404 (Lei 4.351; altera Lei 4.351; AET caminhões)",
+   "resultado": "sem alteração/revogação"
+  },
+  {
+   "url": "https://www.cmrolandia.pr.gov.br/",
+   "resultado": "portal da Câmara não consultado; atos obtidos pelo AMP"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 4.351/2025 (05/12/2025; AMP 08/12/2025; vigor 30 dias após) e Decreto 650/2025 (22/12/2025; AMP 24/12/2025), ambos lidos integralmente: restrição ao tráfego de caminhões a partir de 3 eixos, carregados ou não, em toda a área comercial e residencial de Rolândia (foco na Av. Ayrton Rodrigues Alves entre a rotatória PR-170/PR-323 e a Av. Presidente Vargas), obrigando o uso dos contornos Sul (PR-986) e Norte (PR-323); exceções por AET para empresas/residentes locais e autorização pontual de carga e descarga (22h-07h, até 10h, após 16h). Sem alteração/revogação achada no AMP. Pendência: perímetro das \"áreas comercial e residencial\" não é um polígono do ato; sinalização/campo. Lei 3.844/2017 cita fiscalização de caminhões em vias com peso vetado por lei específica (não localizada). | verificado em 2026-10-18: rolandia_area_urbana_caminhoes_3_eixos: Rebaixada para desativada: perimetro 'area comercial e residencial' sem delimitacao no ato, criterio de eixos divergente entre lei e decreto, trecho focal possivelmente em travessia de rodovia estadual.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "rolandia_area_urbana_caminhoes_3_eixos",
+   "tipo": "zona",
+   "regime": "Restrição por eixos (zona urbana)",
+   "nome": "Área comercial e residencial de Rolândia: caminhões a partir de 3 eixos devem usar os contornos (Lei 4.351/2025)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Autorização Especial de Tráfego (AET, 1 ano, gratuita) para veículos de empresas com sede/CNPJ em Rolândia e de proprietários residentes, só para acesso a garagens/depósitos/pontos de carga (Lei art. 2º; Dec. art. 3º)",
+    "Autorização Pontual de Carga e Descarga (24 h de antecedência) para cargas essenciais/inadiáveis: preferencialmente 22h-07h, até 10h e após 16h (Lei art. 3º; Dec. art. 5º)",
+    "emergência ou força maior: autorização excepcional imediata (art. 3º, §3º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 4.351, de 05/12/2025 (Rolândia), vigência 30 dias após publicação (08/12/2025)",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/AF5A03A4"
+    },
+    {
+     "ato": "Decreto nº 650, de 22/12/2025 (regulamenta a Lei 4.351/2025)",
+     "artigo": "arts. 1º a 6º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/D401C823"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Ayrton Rodrigues Alves"
+     ],
+     "descricao": "toda a área comercial e residencial do município; atenção especial à Av. Ayrton Rodrigues Alves entre a rotatória PR-170/PR-323 e a Av. Presidente Vargas. Contornos: Contorno Sul (PR-986) e Contorno Norte (PR-323)"
+    }
+   ],
+   "vigencia_inicio": "2026-01-07",
+   "nota": "Lei: \"a partir de 03 eixos\"; Decreto art. 1º: \"acima de 03 eixos\" no caput e \"a partir de 03\" no parágrafo único - adotado >= 3 eixos (eixos > 2). Perímetro = \"área comercial e residencial\" sem polígono no ato (usar zoneamento/perímetro urbano). Vigência calculada: publicação 08/12/2025 + 30 dias.",
+   "status_motivo": "Verificacao 2026-10-18: Rebaixada para desativada: perimetro 'area comercial e residencial' sem delimitacao no ato, criterio de eixos divergente entre lei e decreto, trecho focal possivelmente em travessia de rodovia estadual."
+  }
+ ]
+}
