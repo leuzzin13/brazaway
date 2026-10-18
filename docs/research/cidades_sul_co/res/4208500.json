@@ -2,21 +2,33 @@
  "ibge": "4208500",
  "nome": "Ituporanga",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
   {
-   "url": "https://diariomunicipal.sc.gov.br/ (via toolkit/diarios_consolidados.py buscar, fonte domsc)",
-   "resultado": "termos: trânsito de caminhões; proíbe caminhões; veículos pesados; toneladas; tráfego de caminhões; limite de peso veículos; circulação de veículos de carga; proibido tráfego de veículos; mais \"<via OSM> caminhões\" para até 2 vias nomeadas; nenhum ato de restrição a caminhões/peso encontrado (hits só de ruído: RH, orçamento, licitação, zoneamento)"
+   "url": "https://diariomunicipal.sc.gov.br/ (toolkit diarios_consolidados.buscar, fonte domsc)",
+   "resultado": "Consultas por frase: \"trânsito/tráfego/circulação de caminhões\", \"tráfego/trânsito/circulação de veículos pesados\", \"veículos de carga\", \"proibido o trânsito/tráfego\", \"limite de peso\", \"peso máximo\", \"carga e descarga\", \"restrição de tráfego\", \"carretas\", \"betoneiras\", \"proibida a circulação\" + nomes das vias OSM. Hits normativos abertos via ?r=ato/getHtml: todos ruído (ver observacoes)."
   },
   {
-   "url": "pistas da preparação (fila/R1-SC-DO01.json)",
-   "resultado": "reaproveitadas: acertos do diário consolidado são ruído; OSM {\"hgv_no\": 1, \"maxweight\": 2}"
+   "url": "https://www.legislacaomunicipal.com/pesquisa/?municipio=83102640000130 (GET com cookie permission=true; leis e decretos)",
+   "resultado": "Busca de texto por \"caminhões\", \"veículos pesados\", \"tonelad\", \"tráfego\", \"trânsito\" e nome das vias: nenhuma lei/decreto de restrição de caminhões."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1053775",
+   "resultado": "Decreto 577/2016 lido (texto em atos/4208500/decreto_577_2016.txt)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2166216",
+   "resultado": "Portaria 1.164/2019 lida: designação de gestor de obra, sem restrição."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter",
+   "resultado": "Connection reset pelo proxy; etiquetas OSM conferidas só pelos exemplos de pistas.osm da fila."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote só OSM. Nenhum ato municipal que sustente as tags OSM (hgv=no/maxweight/maxlength) foi achado no DOM/SC. Portal de legislação da prefeitura (legislacaomunicipal) não consultado (anti-robô/JS); possível sinalização sem ato publicado no diário.",
+ "observacoes": "Lote só OSM (R1-SC-DO01). Dec. 577/2016 (regulamento do estacionamento rotativo/Área Azul), art. 21: carga e descarga com PBT > 5.000 kg só fora do horário do rotativo (seg-sex 8-12h e 13:30-17:30; sáb 8-12h, art. 9), com licença especial (§1º). É regra de estacionamento/carga e descarga (pontual); as vias estão no Anexo I (não lido) e não confirmei se a concessão do rotativo segue vigente. Dec. 86/2017 revogou apenas o art. 20 do Dec. 577. Lei 3.014/2025 (Plano de Mobilidade) encontrada, texto não lido. Portaria 1.164/2019 só designa gestor de obra de terceira pista. OSM: hgv=no + maxweight 1 t em via sem nome; SC-350 descartada.",
  "osm_divergencias": [
   {
    "way_id": 423990335,
@@ -26,7 +38,7 @@
     "highway": "residential",
     "maxweight": "1 t"
    },
-   "nota": "sem ato municipal localizado no DOM/SC"
+   "nota": "via municipal sem ato localizado (DOM/SC e portais)"
   },
   {
    "way_id": 423990319,
@@ -37,8 +49,69 @@
     "name": "Rodovia Ministro Victor Konder",
     "ref": "SC-350"
    },
-   "nota": "rodovia estadual/federal (ref SC-350), competência DER/DNIT, descartada"
+   "nota": "rodovia SC-350, competência DER/DNIT, descartada"
   }
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "ituporanga_rotativo_carga_descarga_pbt5t",
+   "tipo": "zona",
+   "regime": "Carga e descarga de veículos com PBT acima de 5 t apenas fora do horário do estacionamento rotativo",
+   "nome": "Ituporanga: vias do estacionamento rotativo (Anexo I do Dec. 577/2016) - carga e descarga PBT > 5 t",
+   "status": "desativada",
+   "status_motivo": "Pontual (regra de estacionamento/carga e descarga, não de circulação); vias no Anexo I não lidas e vigência da concessão do rotativo não confirmada.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "12:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "13:30",
+     "to": "17:30"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "12:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "Licença especial do Departamento Municipal de Trânsito para concreto, materiais de construção, mudanças e casos excepcionais (art. 21 §1º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 577, de 15/08/2016",
+     "artigo": "arts. 9 e 21",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1053775"
+    }
+   ],
+   "trechos": []
+  }
+ ]
 }
