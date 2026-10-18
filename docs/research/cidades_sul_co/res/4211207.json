@@ -49,10 +49,14 @@
     {
       "url": "https://camaramorrodafumaca.atende.net/",
       "resultado": "Atende.net (captcha/JS), não consultado"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/228302",
+      "resultado": "Decreto 037/2012 lido na íntegra (Av. Júlio Coral, > 8 t). Texto em atos/4211207/dec037_2012.txt"
     }
   ],
   "data": "2026-10-18",
-  "observacoes": "Cadeia de decretos de PBT por via. Vigentes pelo que o DOM/SC mostra: 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026. Rod. Tranquilo Sartor (081/2020) ficou sem restrição porque o Decreto 155/2020 o revogou; Decreto 142/2019 (anterior) não foi achado. Possível decreto não captado pela busca por termos (hits cortados em ~10 por consulta). | verificado em 2026-10-18: Decretos 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026 reabertos no DOM/SC e conferem (ver verif). OMISSÃO CORRIGIDA: Decreto 097/2026 (17/06/2026, DOM/SC atos/8436683; vias centrais, PBT>15 t/altura>3 m/articulados/bitrem) não estava no res; acrescentado como regra desativada (trechos por bairro/landmark). Cadeia 155/182/195-2020 revogada pelo 036/2026 art. 4º lida.",
+  "observacoes": "Cadeia de decretos de PBT por via. Vigentes pelo que o DOM/SC mostra: 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026. Rod. Tranquilo Sartor (081/2020) ficou sem restrição porque o Decreto 155/2020 o revogou; Decreto 142/2019 (anterior) não foi achado. Possível decreto não captado pela busca por termos (hits cortados em ~10 por consulta). | verificado em 2026-10-18: Decretos 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026 reabertos no DOM/SC e conferem (ver verif). OMISSÃO CORRIGIDA: Decreto 097/2026 (17/06/2026, DOM/SC atos/8436683; vias centrais, PBT>15 t/altura>3 m/articulados/bitrem) não estava no res; acrescentado como regra desativada (trechos por bairro/landmark). Cadeia 155/182/195-2020 revogada pelo 036/2026 art. 4º lida. | verificado em 2026-10-18 (2a passagem cetica): segunda OMISSÃO CORRIGIDA: Decreto 037/2012 (18/04/2012; DOM/SC atos/228302; Avenida Júlio Coral, caminhão > 8 t) não estava no res; acrescentado como regra desativada (traçado por croqui ausente, ato antigo, sem confirmação de vigência prática). Reabertos pelo getHtml do DOM/SC: 036/2026, 097/2026, 046/2024, 035/2018, 058/2020, 115/2018, 120/2019, 195/2018 conferem. Ressalva: 036/2026 proíbe só 'bitrem' (o schema usa 'cvc', mais amplo); 115/2018 e 195/2018 dizem 'comprimento Máximo de 14 metros' (lido como > 14 m). Novas buscas (veículos pesados, PBT, toneladas, bitrem, rodotrem, nomes das vias) não mostram outro decreto de restrição nem alteração posterior.",
   "osm_divergencias": [],
   "regras_rascunho": [
     {
@@ -608,6 +612,59 @@
       ],
       "geometria": [],
       "nota": "Altura 'superior a 03 metros e/ou PBT superior a 15 t': lido como qualquer um dos critérios. Não revoga nem altera os decretos anteriores; onde coincide com o Decreto 035/2018 (Rua Prefeito Virgínio Maccari, Rua Vinte de Maio) prevalece o mais restritivo."
+    },
+    {
+      "id": "morrodafumaca_dec037_2012_julio_coral",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Avenida Júlio Coral (Bairro Maccari): proibido caminhão acima de 8 t",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões de serviços essenciais (Lei 7.783/89, art. 10) e de emergência; socorro mecânico (guincho); obras e serviços de emergência (art. 3º)",
+        "Casos não previstos: autorização da Secretaria de Obras por instrumento adequado (art. 5º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 037/2012 (18/04/2012; DOM/SC 23/04/2012)",
+          "artigo": "art. 1º (veículos automotores pesados, tipo caminhão, acima de 08 toneladas); art. 2º (Avenida Júlio Coral = travessa da Rua Silvio Sartor, passando pelas Ruas Giocundo Sartor e Francisco Rodrigues Junior, até a Rua Urussanga); art. 3º (exceções); art. 6º (croqui); art. 8º (vigor 30 dias após a publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/228302"
+        }
+      ],
+      "vigencia_inicio": "2012-05-23",
+      "trechos": [
+        {
+          "via": "Avenida Júlio Coral (Bairro Maccari)",
+          "nota": "composta pelas Ruas Silvio Sartor, Giocundo Sartor e Francisco Rodrigues Junior, até a Rua Urussanga (art. 2º)"
+        }
+      ],
+      "geometria": [],
+      "status_motivo": "Verificação 18/10/2026: omissão do res original, achada na 2ª passagem. Ato de 2012 sem revogação expressa localizada no DOM/SC, mas o traçado depende de croqui (art. 6º) não disponível no texto, 'Avenida Júlio Coral' não existe como via única (é uma sequência de ruas) e não há confirmação de sinalização/vigência prática; na dúvida, desativada. Pode ser promovida se as ruas Silvio Sartor, Giocundo Sartor e Francisco Rodrigues Junior forem confirmadas no OSM e a sinalização atestada.",
+      "nota": "Mesmo padrão de redação do Decreto 097/2026. A Rua Urussanga (trecho Rua Julio Coral) também aparece no Decreto 155/2020 (revogado pelo 036/2026)."
     }
   ]
 }
