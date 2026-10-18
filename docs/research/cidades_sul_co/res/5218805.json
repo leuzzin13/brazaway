@@ -1,159 +1,163 @@
 {
- "ibge": "5218805",
- "nome": "Rio Verde",
- "uf": "GO",
- "status": "pista",
- "nivel_busca": "profunda",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://acessoainformacao.rioverde.go.gov.br (NucleoGov, Prefeitura: 80.516 atos desde 2005 e 5.390 leis desde 1988; ementa)",
-   "resultado": "Termos caminhoes, veiculos pesados, carga e descarga, tráfego, trânsito, circulação, proíbe, veda, sentido, rota, restringe, mão única, estacionamento, sinalização, descarga, AMT, Betel, Rosas, L-5, Enio: nenhum decreto, portaria ou lei de restricao de circulacao de caminhoes ou de carga e descarga. Achados irrelevantes: Decretos 2439/2021 e 2922/2022 e 1883/2023 (impactos de transito e vagas de estacionamento de empreendimentos), Decreto 3350/2025 e Lei 6275/2013 (Area Verde, estacionamento rotativo), Decreto 949/2026 (estrutura da AMT), Decreto 1764/2024 (instrumentos de menor potencial ofensivo). As medidas da AMT de 2013 (ponte do Parque Betel, Rua L-5, rota BR-060/GO-174) nao tem decreto/portaria publicado no portal."
-  },
-  {
-   "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel/ ; /proibido-trafego-de-caminhoes-e-onibus-na-rua-l-5/ ; /amt-fiscaliza-rota-obrigatoria-para-caminhoes/ ; /fiscalizacao-de-restricao-ao-transito-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel-e-intensificada/",
-   "resultado": "Lidas via wp-json (portal oficial): noticias de 2013 da AMT sobre ponte do Parque Betel, Rua L-5 e rota obrigatoria para caminhoes. Pistas sem ato."
-  },
-  {
-   "url": "https://www.rioverde.go.gov.br/smt-informa-sobre-delimitacao-de-area-e-horario-para-carga-e-descarga/ ; /reuniao-debate-carga-e-descarga-em-ruas-de-rio-verde/ ; /amt-implanta-novas-proibicoes-de-estacionamento-para-caminhoes-e-onibus/",
-   "resultado": "Noticias: SMT fez estudo (2010) de areas e horarios de carga e descarga (relat_smt.pdf em rioverdegoias.com.br, certificado invalido: nao lido); em 20/03/2017 a AMT debateu a \"minuta de lei\" de carga e descarga enviada a Camara; proibicoes de estacionamento de caminhoes/onibus (Av. Pedro Ludovico, Rua Agenor Diamantino) em 2015. Nenhuma lei sancionada achada."
-  },
-  {
-   "url": "https://proleis.goyas.com.br/consulta (ProLeis da Camara de Rio Verde; JSON ano=0; termos: caminhoes, caminhao, carga, descarga, pesados, trafego, veiculos, circulacao, transito, AMT, Mobilidade, ponte)",
-   "resultado": "66 leis de \"veiculos\", 30 de \"transito\", 97 de \"ponte\": nenhuma de restricao de circulacao de caminhoes nem de carga e descarga; a minuta de 2017 nao aparece como lei. Sem lei posterior."
-  },
-  {
-   "url": "https://acessoainformacao.rioverde.go.gov.br/cidadao/legislacao/leis ; /legislacao/portarias ; https://rioverde.go.leg.br",
-   "resultado": "403 Forbidden (portal de legislacao do Executivo bloqueado ao acesso automatico); site da Camara sem legislacao propria alem do ProLeis."
-  },
-  {
-   "url": "diarios_consolidados.py buscar 5218805 (agm,fgm) e Querido Diario (territory 5218805)",
-   "resultado": "AGM/FGM com falhas HTTP (http 0) e sem resultado; QD 0 diarios para \"veiculos pesados\"/\"caminhoes tráfego proibido\". Nao conclusivo."
-  },
-  {
-   "url": "penaestrada.com.br/restricoes/rio-verde (leads/penaestrada.json)",
-   "resultado": "Sem pagina (404)."
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Rio Verde: so pistas. O portal oficial registra, em 2013, tres medidas da AMT (ponte do Parque Betel/Rua das Rosas sem caminhoes/onibus nos dois sentidos; Rua L-5 sentido Vila Borges; rota obrigatoria BR-060 -> GO-174 com conversao proibida na Rua Enio Jaime Fernandes) e, em 2010/2017, estudos e minuta de lei sobre carga e descarga, mas nenhum ato (decreto, portaria, lei) com numero, artigo e texto foi localizado: ProLeis da Camara sem lei, portal de legislacao do Executivo e AGM inacessiveis, QD sem diarios. Todas as regras ficam desativadas. Pendencias: obter decretos/portarias da AMT (acessoainformacao.rioverde.go.gov.br e diario oficial) e a lei de carga e descarga (2017+); verificar PLAMUS (plano de mobilidade em andamento). | REVISAO 2026-10-18 (2a passada, portais abertos): Portal do Executivo (antes 403) agora lido via API NucleoGov: confirma que nao ha decreto/portaria/lei de circulacao de caminhoes nem de carga e descarga (a minuta de 2017 nao virou lei). As 3 medidas da AMT (2013) continuam so como pistas de noticia: regras desativadas.",
- "osm_divergencias": [
-  "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
- ],
- "regras_rascunho": [
-  {
-   "id": "rioverde_ponte_parque_betel_rua_das_rosas",
-   "tipo": "ponte",
-   "regime": "Ponte do Parque Betel (Rua das Rosas): veiculos pesados proibidos",
-   "nome": "Rio Verde: AMT, proibicao de caminhoes e onibus na ponte do Parque Betel (Rua das Rosas), dois sentidos (noticia de 10/10/2013)",
-   "status": "desativada",
-   "confianca": "baixa",
-   "status_motivo": "So noticia de 2013 do portal da prefeitura; nenhum ato (decreto/portaria da AMT) com numero e artigo foi localizado (Camara/ProLeis sem lei; diario oficial AGM inacessivel) e nao ha confirmacao de que a ponte continue restrita (a interdicao da ponte do Corrego do Sapo, na Rua Cel. Vaiano, em 2013, aumentou o uso da ponte). Rotas alternativas citadas: Av. Presidente Vargas e Ponte da Justica do Trabalho (Rua Helizio Guerra).",
-   "janelas": [
+  "ibge": "5218805",
+  "nome": "Rio Verde",
+  "uf": "GO",
+  "status": "pista",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [
+      "url": "https://acessoainformacao.rioverde.go.gov.br (NucleoGov, Prefeitura: 80.516 atos desde 2005 e 5.390 leis desde 1988; ementa)",
+      "resultado": "Termos caminhoes, veiculos pesados, carga e descarga, tráfego, trânsito, circulação, proíbe, veda, sentido, rota, restringe, mão única, estacionamento, sinalização, descarga, AMT, Betel, Rosas, L-5, Enio: nenhum decreto, portaria ou lei de restricao de circulacao de caminhoes ou de carga e descarga. Achados irrelevantes: Decretos 2439/2021 e 2922/2022 e 1883/2023 (impactos de transito e vagas de estacionamento de empreendimentos), Decreto 3350/2025 e Lei 6275/2013 (Area Verde, estacionamento rotativo), Decreto 949/2026 (estrutura da AMT), Decreto 1764/2024 (instrumentos de menor potencial ofensivo). As medidas da AMT de 2013 (ponte do Parque Betel, Rua L-5, rota BR-060/GO-174) nao tem decreto/portaria publicado no portal."
+    },
     {
-     "ato": "Noticia da Prefeitura de Rio Verde (AMT), 10/10/2013 e 30/10/2013 (fiscalizacao: \"a restricao e antiga\")",
-     "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
-     "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel/",
-     "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta. Segunda noticia: https://www.rioverde.go.gov.br/fiscalizacao-de-restricao-ao-transito-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel-e-intensificada/. Multa citada: art. 187 CTB."
-    }
-   ],
-   "nota": "Restricao por estrutura (ponte estreita), 2 sentidos; peso/dimensoes nao informados. A localizar: ponte do Parque Betel na Rua das Rosas sobre o Corrego do Sapo."
-  },
-  {
-   "id": "rioverde_rua_l5_vila_borges",
-   "tipo": "via",
-   "regime": "Rua L-5 (sentido Vila Borges): onibus e caminhoes proibidos",
-   "nome": "Rio Verde: AMT, proibicao de onibus e caminhoes na Rua L-5, sentido Bairro Canaa -> Vila Borges (noticia de 11/11/2013)",
-   "status": "desativada",
-   "confianca": "baixa",
-   "status_motivo": "So noticia de 2013, motivada pela interdicao temporaria das pontes da Rua Cel. Vaiano e do Parque Betel e pelo forte aclive; sem ato numerado e sem confirmar se ainda vale. Rota alternativa: esquerda na Rua das Rosas e direita nas Ruas L-4 e L-3.",
-   "janelas": [
+      "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel/ ; /proibido-trafego-de-caminhoes-e-onibus-na-rua-l-5/ ; /amt-fiscaliza-rota-obrigatoria-para-caminhoes/ ; /fiscalizacao-de-restricao-ao-transito-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel-e-intensificada/",
+      "resultado": "Lidas via wp-json (portal oficial): noticias de 2013 da AMT sobre ponte do Parque Betel, Rua L-5 e rota obrigatoria para caminhoes. Pistas sem ato."
+    },
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [
+      "url": "https://www.rioverde.go.gov.br/smt-informa-sobre-delimitacao-de-area-e-horario-para-carga-e-descarga/ ; /reuniao-debate-carga-e-descarga-em-ruas-de-rio-verde/ ; /amt-implanta-novas-proibicoes-de-estacionamento-para-caminhoes-e-onibus/",
+      "resultado": "Noticias: SMT fez estudo (2010) de areas e horarios de carga e descarga (relat_smt.pdf em rioverdegoias.com.br, certificado invalido: nao lido); em 20/03/2017 a AMT debateu a \"minuta de lei\" de carga e descarga enviada a Camara; proibicoes de estacionamento de caminhoes/onibus (Av. Pedro Ludovico, Rua Agenor Diamantino) em 2015. Nenhuma lei sancionada achada."
+    },
     {
-     "ato": "Noticia da Prefeitura de Rio Verde (AMT), 11/11/2013",
-     "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
-     "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-na-rua-l-5/",
-     "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta."
-    }
-   ],
-   "nota": "Sentido unico (Canaa -> Vila Borges), a partir da Alameda das Rosas, Bairro Lindolfina; veiculos leves podem passar."
-  },
-  {
-   "id": "rioverde_rota_obrigatoria_br060_go174",
-   "tipo": "via",
-   "regime": "Rota obrigatoria para caminhoes BR-060 -> GO-174",
-   "nome": "Rio Verde: AMT, rota obrigatoria para caminhoes da BR-060 para a GO-174 e proibicao de conversao a direita na Rua Enio Jaime Fernandes (noticia de 01/11/2013)",
-   "status": "desativada",
-   "confianca": "baixa",
-   "status_motivo": "So noticia de 2013; ato da AMT e sinalizacao atual nao confirmados. Rota obrigatoria: Av. Presidente Vargas, direita na Av. Joao Belo, esquerda na Rua 72, direita na Av. Pauzanes de Carvalho ate a GO-174; proibida a conversao a direita na Rua Enio Jaime Fernandes (entrada da cidade, vindo da BR-060).",
-   "janelas": [
+      "url": "https://proleis.goyas.com.br/consulta (ProLeis da Camara de Rio Verde; JSON ano=0; termos: caminhoes, caminhao, carga, descarga, pesados, trafego, veiculos, circulacao, transito, AMT, Mobilidade, ponte)",
+      "resultado": "66 leis de \"veiculos\", 30 de \"transito\", 97 de \"ponte\": nenhuma de restricao de circulacao de caminhoes nem de carga e descarga; a minuta de 2017 nao aparece como lei. Sem lei posterior."
+    },
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [],
-   "base_legal": [
+      "url": "https://acessoainformacao.rioverde.go.gov.br/cidadao/legislacao/leis ; /legislacao/portarias ; https://rioverde.go.leg.br",
+      "resultado": "403 Forbidden (portal de legislacao do Executivo bloqueado ao acesso automatico); site da Camara sem legislacao propria alem do ProLeis."
+    },
     {
-     "ato": "Noticia da Prefeitura de Rio Verde (AMT), 01/11/2013",
-     "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
-     "url": "https://www.rioverde.go.gov.br/amt-fiscaliza-rota-obrigatoria-para-caminhoes/",
-     "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta. A noticia cita infracao do art. 187 CTB."
+      "url": "diarios_consolidados.py buscar 5218805 (agm,fgm) e Querido Diario (territory 5218805)",
+      "resultado": "AGM/FGM com falhas HTTP (http 0) e sem resultado; QD 0 diarios para \"veiculos pesados\"/\"caminhoes tráfego proibido\". Nao conclusivo."
+    },
+    {
+      "url": "penaestrada.com.br/restricoes/rio-verde (leads/penaestrada.json)",
+      "resultado": "Sem pagina (404)."
+    },
+    {
+      "url": "diarios_consolidados.py buscar 5218805 'rota obrigatória caminhões' (agm,fgm)",
+      "resultado": "0 resultados"
     }
-   ],
-   "nota": "Regra de rota/conversao proibida, nao de via proibida; modelagem exigiria restricao de manobra (nao ha) ou custo nas vias de atalho. Registrada como informacao."
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Rio Verde: so pistas. O portal oficial registra, em 2013, tres medidas da AMT (ponte do Parque Betel/Rua das Rosas sem caminhoes/onibus nos dois sentidos; Rua L-5 sentido Vila Borges; rota obrigatoria BR-060 -> GO-174 com conversao proibida na Rua Enio Jaime Fernandes) e, em 2010/2017, estudos e minuta de lei sobre carga e descarga, mas nenhum ato (decreto, portaria, lei) com numero, artigo e texto foi localizado: ProLeis da Camara sem lei, portal de legislacao do Executivo e AGM inacessiveis, QD sem diarios. Todas as regras ficam desativadas. Pendencias: obter decretos/portarias da AMT (acessoainformacao.rioverde.go.gov.br e diario oficial) e a lei de carga e descarga (2017+); verificar PLAMUS (plano de mobilidade em andamento). | REVISAO 2026-10-18 (2a passada, portais abertos): Portal do Executivo (antes 403) agora lido via API NucleoGov: confirma que nao ha decreto/portaria/lei de circulacao de caminhoes nem de carga e descarga (a minuta de 2017 nao virou lei). As 3 medidas da AMT (2013) continuam so como pistas de noticia: regras desativadas. | R3 2026-10-18: reanálise dos atos já lidos e buscas adicionais (fontes acima); nenhum ato novo de restrição de circulação com vias nomeadas, vigente e não condicionado. Status mantido (pista).",
+  "osm_divergencias": [
+    "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "rioverde_ponte_parque_betel_rua_das_rosas",
+      "tipo": "ponte",
+      "regime": "Ponte do Parque Betel (Rua das Rosas): veiculos pesados proibidos",
+      "nome": "Rio Verde: AMT, proibicao de caminhoes e onibus na ponte do Parque Betel (Rua das Rosas), dois sentidos (noticia de 10/10/2013)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "So noticia de 2013 do portal da prefeitura; nenhum ato (decreto/portaria da AMT) com numero e artigo foi localizado (Camara/ProLeis sem lei; diario oficial AGM inacessivel) e nao ha confirmacao de que a ponte continue restrita (a interdicao da ponte do Corrego do Sapo, na Rua Cel. Vaiano, em 2013, aumentou o uso da ponte). Rotas alternativas citadas: Av. Presidente Vargas e Ponte da Justica do Trabalho (Rua Helizio Guerra).",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Noticia da Prefeitura de Rio Verde (AMT), 10/10/2013 e 30/10/2013 (fiscalizacao: \"a restricao e antiga\")",
+          "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
+          "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel/",
+          "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta. Segunda noticia: https://www.rioverde.go.gov.br/fiscalizacao-de-restricao-ao-transito-de-caminhoes-e-onibus-sobre-a-ponte-do-parque-betel-e-intensificada/. Multa citada: art. 187 CTB."
+        }
+      ],
+      "nota": "Restricao por estrutura (ponte estreita), 2 sentidos; peso/dimensoes nao informados. A localizar: ponte do Parque Betel na Rua das Rosas sobre o Corrego do Sapo."
+    },
+    {
+      "id": "rioverde_rua_l5_vila_borges",
+      "tipo": "via",
+      "regime": "Rua L-5 (sentido Vila Borges): onibus e caminhoes proibidos",
+      "nome": "Rio Verde: AMT, proibicao de onibus e caminhoes na Rua L-5, sentido Bairro Canaa -> Vila Borges (noticia de 11/11/2013)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "So noticia de 2013, motivada pela interdicao temporaria das pontes da Rua Cel. Vaiano e do Parque Betel e pelo forte aclive; sem ato numerado e sem confirmar se ainda vale. Rota alternativa: esquerda na Rua das Rosas e direita nas Ruas L-4 e L-3.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Noticia da Prefeitura de Rio Verde (AMT), 11/11/2013",
+          "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
+          "url": "https://www.rioverde.go.gov.br/proibido-trafego-de-caminhoes-e-onibus-na-rua-l-5/",
+          "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta."
+        }
+      ],
+      "nota": "Sentido unico (Canaa -> Vila Borges), a partir da Alameda das Rosas, Bairro Lindolfina; veiculos leves podem passar."
+    },
+    {
+      "id": "rioverde_rota_obrigatoria_br060_go174",
+      "tipo": "via",
+      "regime": "Rota obrigatoria para caminhoes BR-060 -> GO-174",
+      "nome": "Rio Verde: AMT, rota obrigatoria para caminhoes da BR-060 para a GO-174 e proibicao de conversao a direita na Rua Enio Jaime Fernandes (noticia de 01/11/2013)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "So noticia de 2013; ato da AMT e sinalizacao atual nao confirmados. Rota obrigatoria: Av. Presidente Vargas, direita na Av. Joao Belo, esquerda na Rua 72, direita na Av. Pauzanes de Carvalho ate a GO-174; proibida a conversao a direita na Rua Enio Jaime Fernandes (entrada da cidade, vindo da BR-060).",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Noticia da Prefeitura de Rio Verde (AMT), 01/11/2013",
+          "artigo": "sem artigo (noticia; ato da AMT nao localizado)",
+          "url": "https://www.rioverde.go.gov.br/amt-fiscaliza-rota-obrigatoria-para-caminhoes/",
+          "nota": "Noticia do portal oficial da prefeitura (pista), nao e ato normativo; o numero do decreto/portaria da AMT nao consta. A noticia cita infracao do art. 187 CTB."
+        }
+      ],
+      "nota": "Regra de rota/conversao proibida, nao de via proibida; modelagem exigiria restricao de manobra (nao ha) ou custo nas vias de atalho. Registrada como informacao."
+    }
+  ]
 }
