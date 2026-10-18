@@ -2,7 +2,7 @@
  "ibge": "5106653",
  "nome": "Pontal do Araguaia",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -29,10 +29,63 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/199EF3BD",
    "resultado": "pista da preparação (2013-04-03, DECRETO N.º 1180/2013, DE 01 DE ABRIL DE 2013): trecho conferido, ruído"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=375 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 132 acertos nos termos, 51 nas combinações; 31 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 375) de 27/02/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL sem atos; AMM-MT: IN 032/2011 (controle interno de frota), Lei 608/2011, decretos de concurso para mecânico (ruído). Lei Orgânica genérica.",
+ "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL sem atos; AMM-MT: IN 032/2011 (controle interno de frota), Lei 608/2011, decretos de concurso para mecânico (ruído). Lei Orgânica genérica. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 375) de 27/02/15 a 16/10/26. Lei 1.315/2025 (16/04/2025; AMM 17/04/2025): proíbe o ESTACIONAMENTO de caminhões, carretas e veículos de carga na Av. Universitária e no entorno de áreas públicas (não a circulação) -> desativada por política (só estacionamento). O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "pontaldoaraguaia_lei_1315_2025_estacionamento",
+   "tipo": "via",
+   "regime": "Estacionamento de caminhões (via)",
+   "nome": "Avenida Universitária: estacionamento de caminhões/carretas/veículos de carga proibido (Lei 1.315/2025)",
+   "status": "desativada",
+   "status_motivo": "Só estacionamento (não circulação/passagem); política de coordenação: desativada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.315, de 16/04/2025 (Pontal do Araguaia; AMM-MT 17/04/2025)",
+     "artigo": "art. 1º",
+     "url": "https://amm.diariomunicipal.org/publicacao/1603547/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Universitária"
+     ],
+     "descricao": "toda a extensão, mais entorno de praças, escolas, unidades de saúde e prédios públicos",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2025-04-17",
+   "vigencia_fim": null,
+   "nota": "Exceção: carga e descarga autorizada no horário do Executivo."
+  }
+ ]
 }

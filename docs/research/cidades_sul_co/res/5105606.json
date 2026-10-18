@@ -2,7 +2,7 @@
  "ibge": "5105606",
  "nome": "Matupá",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -25,10 +25,62 @@
   {
    "url": "toolkit/sigpub_texto.py varrer 5105606 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
    "resultado": "(R5 2026-10-18) Prefeitura Municipal de Matupá 4807 atos 2011-03-31..2015-03-02; 75 hits, 3 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=404 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 1020 acertos nos termos, 338 nas combinações; 111 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 404) de 03/03/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Decreto 1969/2014 (lido): regulamento do Réveillon 2015 (carga e descarga das tendas até 18h de 31/12/2014): evento pontual de 2014, sem vigência atual, sem restrição viária geral -> ruído. Diário: só processo seletivo. Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário. R5 2026-10-18: legislacao.py --texto: lidas portal_proprio=0, portal_proprio=0; sem leitura: nenhuma; SIGPub texto integral: Prefeitura Municipal de Matupá 4807 atos 2011-03-31..2015-03-02.",
+ "observacoes": "Decreto 1969/2014 (lido): regulamento do Réveillon 2015 (carga e descarga das tendas até 18h de 31/12/2014): evento pontual de 2014, sem vigência atual, sem restrição viária geral -> ruído. Diário: só processo seletivo. Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário. R5 2026-10-18: legislacao.py --texto: lidas portal_proprio=0, portal_proprio=0; sem leitura: nenhuma; SIGPub texto integral: Prefeitura Municipal de Matupá 4807 atos 2011-03-31..2015-03-02. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 404) de 03/03/15 a 16/10/26. Decreto 2.656/2018 (17/04/2018; AMM 20/04/2018): limites ao tráfego de veículos de carga com PBT > 16 t 'até a entrada da cidade' por seis acessos (trevos da BR-163, MT-322, estradas), exceto zonas industriais ZI-02, ZI-03, ZI-06 e paralelas da BR-163; carga e descarga em horários; art. 8º proíbe veículos com mais de uma unidade tracionada nas áreas restritas. Áreas definidas só por pontos de entrada, sem vias/polígono -> desativada. O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "matupa_dec_2656_2018_pbt_16t",
+   "tipo": "zona",
+   "regime": "Proibição por peso (zona)",
+   "nome": "Perímetro urbano: veículos de carga PBT > 16 t limitados aos acessos da cidade (Decreto 2.656/2018)",
+   "status": "desativada",
+   "status_motivo": "Área restrita definida por pontos de entrada (trevos/estradas) sem vias nomeadas nem perímetro; exceções para zonas industriais ZI-02/03/06 e paralelas da BR-163 (rodovia federal) e várias atividades.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 2.656, de 17/04/2018 (Matupá; AMM-MT 20/04/2018)",
+     "artigo": "arts. 1º, 2º, 5º, 6º, 8º",
+     "url": "https://amm.diariomunicipal.org/publicacao/396285/"
+    }
+   ],
+   "trechos": [
+    "área urbana a partir dos acessos: trevo Posto Bandeirantes e trevo Posto Trevão (BR-163), Estrada do Ranário, MT-322 (Horto Florestal; Av. Sebastião Alves Júnior; estrada do cemitério)"
+   ],
+   "vigencia_inicio": "2018-04-20",
+   "vigencia_fim": null,
+   "nota": "Art. 6º cita também 9.600 kg (9.000 no parágrafo) para autorização de acesso: texto incoerente. Revogação/alteração não localizada (Decreto 5.509/2025 do diário é de readaptação, ruído)."
+  }
+ ]
 }

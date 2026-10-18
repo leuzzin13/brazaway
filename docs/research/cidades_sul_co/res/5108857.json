@@ -2,7 +2,7 @@
  "ibge": "5108857",
  "nome": "Nova Marilândia",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,79 @@
   {
    "url": "diarios_consolidados.py buscar 5108857 'trânsito de caminhões' (amm-mt)",
    "resultado": "sem ato de restrição a caminhões; só ruído (cargos, ISS, licitação, estrutura)."
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=394 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 316 acertos nos termos, 51 nas combinações; 30 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 394) de 06/03/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "LC 658/2013 (lida; atos/5108857/61DBEC08.txt) art. 141: 'o Prefeito baixará Decreto regulamentando os horários de carga e descarga' e art. 142 multa de 20 UPFM. Delegação sem horários nem vias; nenhum decreto regulamentador achado no diário AMM-MT (1 resultado, a própria LC) nem em MPX (0). Pista fraca, não regra. Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário.",
+ "observacoes": "LC 658/2013 (lida; atos/5108857/61DBEC08.txt) art. 141: 'o Prefeito baixará Decreto regulamentando os horários de carga e descarga' e art. 142 multa de 20 UPFM. Delegação sem horários nem vias; nenhum decreto regulamentador achado no diário AMM-MT (1 resultado, a própria LC) nem em MPX (0). Pista fraca, não regra. Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 394) de 06/03/15 a 16/10/26. Lei 1.143/2026 (22/04/2026; AMM 23/04/2026): proíbe entrada e circulação de veículos pesados com capacidade de carga >= 8 t em dois trechos escolares (Rua das Azaleias entre Rua Flor de Tubarão e Rua das Bromélias; Rua dos Cravos entre Av. Blairo Maggi e Rua das Bromélias). O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "novamarilandia_lei_1143_2026_escolas_8t",
+   "tipo": "via",
+   "regime": "Proibição por capacidade (via)",
+   "nome": "Rua das Azaleias e Rua dos Cravos (frente do Colégio Criança Esperança e da Creche Tia Eliza): veículos pesados com capacidade >= 8 t (Lei 1.143/2026)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 7.99
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: caminhão de utilidade pública, urgência, obras e serviços de infraestrutura urbana, socorro mecânico, entrega ao Colégio Criança Esperança, transporte escolar e coletivo urbano"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.143, de 22/04/2026 (Nova Marilândia; AMM-MT 23/04/2026)",
+     "artigo": "art. 1º, I e II; art. 3º (penalidade CTB 187 I e 231 IV)",
+     "url": "https://amm.diariomunicipal.org/publicacao/1820281/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º, I",
+     "via": [
+      "Rua das Azaleias"
+     ],
+     "descricao": "entre a Rua Flor de Tubarão e a Rua das Bromélias (frente do Colégio Criança Esperança)",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 1º, II",
+     "via": [
+      "Rua dos Cravos"
+     ],
+     "descricao": "entre a Avenida Blairo Maggi e a Rua das Bromélias (frente da Creche Tia Eliza)",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2026-04-23",
+   "vigencia_fim": null,
+   "nota": "'Capacidade de carga igual ou superior a 8 t' -> payload_t (acima de 7,99). Lei recente (6 meses): sinalização não confirmada. Sem horário: 24 h."
+  }
+ ]
 }

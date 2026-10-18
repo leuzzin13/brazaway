@@ -2,8 +2,8 @@
  "ibge": "5106208",
  "nome": "Nova Brasilândia",
  "uf": "MT",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,63 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=398 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 417 acertos nos termos, 107 nas combinações; 29 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 398) de 09/03/15 a 16/10/26."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3730 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (mpx, https://transparencia.novabrasilandia.mt.gov.br/Legislacao/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (3730 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (mpx, https://transparencia.novabrasilandia.mt.gov.br/Legislacao/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 398) de 09/03/15 a 16/10/26. Lei 972/2025 (09/04/2025; AMM 10/04/2025): proíbe trânsito e estacionamento de veículos pesados (PBT > 23 t) nas vias do perímetro urbano; fora de carga e descarga (06h-18h) só circula/estaciona das 16h às 07h (art. 8º). Perímetro urbano sem delimitação -> regra desativada. Vigência 30 dias após a sinalização (art. 11): sinalização não confirmada. O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "novabrasilandia_lei_972_2025_pesados_23t",
+   "tipo": "zona",
+   "regime": "Proibição por peso (zona)",
+   "nome": "Perímetro urbano: veículos pesados PBT > 23 t proibidos de transitar/estacionar 07h-16h (Lei 972/2025)",
+   "status": "desativada",
+   "status_motivo": "Perímetro urbano sem delimitação no ato; vigência condicionada à sinalização (art. 11), não confirmada; exceções amplas (C&D 06h-18h, residentes com garagem, oficinas).",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "07:00",
+     "to": "16:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 23
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 972, de 09/04/2025 (Nova Brasilândia; AMM-MT 10/04/2025)",
+     "artigo": "art. 1º, §1º (23 t PBT), art. 8º (janela 16h-07h permitida), art. 11 (vigência)",
+     "url": "https://amm.diariomunicipal.org/publicacao/1599025/"
+    }
+   ],
+   "trechos": [
+    "vias públicas do perímetro urbano (não delimitado)"
+   ],
+   "vigencia_inicio": "2025-04-10",
+   "vigencia_fim": null,
+   "nota": "Janela inferida do art. 8º (permitido 16h-07h). A lei chama-se 'Lei Complementar' no preâmbulo e 'Lei' no título."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

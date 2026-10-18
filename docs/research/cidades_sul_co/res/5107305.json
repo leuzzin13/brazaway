@@ -2,7 +2,7 @@
  "ibge": "5107305",
  "nome": "São José do Rio Claro",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -25,10 +25,71 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/1E6E46BC",
    "resultado": "lido: LEI N° 1.029, DE 24 DE NOVEMBRO DE 2014 - ruído confirmado"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=350 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 512 acertos nos termos, 102 nas combinações; 50 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 350) de 04/03/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR02 (conferência barata). Lei 955/2013 (39E4610B) é código ambiental/cargos; Lei 1.029/2014 (1E6E46BC) cargos (gari, mecânico). Ruído. Sem ato de restrição de caminhões nas fontes consultadas (clientes de portal próprio são heurísticos).",
+ "observacoes": "Lote R1-MT-DR02 (conferência barata). Lei 955/2013 (39E4610B) é código ambiental/cargos; Lei 1.029/2014 (1E6E46BC) cargos (gari, mecânico). Ruído. Sem ato de restrição de caminhões nas fontes consultadas (clientes de portal próprio são heurísticos). | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 350) de 04/03/15 a 16/10/26. Lei 1.238/2019 (26/09/2019; AMM 27/09/2019): proíbe veículos pesados, caminhões, carretas com peso > 15 t em toda a extensão da Avenida Siegfried Buss (antiga Av. Brasil), salvo carga e descarga em comércio/residência da própria avenida. Sem alteração/revogação localizada (Leis 1.251/2019 e 1.304/2021 do diário são outros assuntos pelo título; não lidas). O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "saojosedorioclaro_av_siegfried_buss_15t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Avenida Siegfried Buss (antiga Av. Brasil): veículos > 15 t (Lei 1.238/2019)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 15
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 4º: trânsito acima de 15 t permitido somente para carga e descarga em comércio ou residência localizada na própria avenida"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.238, de 26/09/2019 (São José do Rio Claro; AMM-MT 27/09/2019)",
+     "artigo": "art. 1º (proibição), art. 4º (exceção C&D), art. 3º (multa 100 UPFS)",
+     "url": "https://amm.diariomunicipal.org/publicacao/594036/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Siegfried Buss (antiga Avenida Brasil)"
+     ],
+     "descricao": "toda a extensão",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2019-09-27",
+   "vigencia_fim": null,
+   "nota": "A lei diz 'peso superior a quinze toneladas' sem definir PBT; assumido PBT. Não foi verificado se a avenida coincide com trecho de rodovia estadual (nesse caso a regra perderia efeito)."
+  }
+ ]
 }

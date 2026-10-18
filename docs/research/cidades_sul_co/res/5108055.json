@@ -2,7 +2,7 @@
  "ibge": "5108055",
  "nome": "Terra Nova do Norte",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "data": "2026-10-18",
@@ -22,9 +22,64 @@
   {
    "url": "https://transparencia.terranovadonorte.mt.gov.br/Legislacao/",
    "resultado": "MPX respondeu; 0 atos para os mesmos termos."
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=339 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 777 acertos nos termos, 84 nas combinações; 51 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 339) de 03/03/15 a 16/10/26."
   }
  ],
- "observacoes": "Pista fraca (plano de cargos) sem substância. Nenhuma restrição de caminhões localizada em diário, SAPL e MPX.",
+ "observacoes": "Pista fraca (plano de cargos) sem substância. Nenhuma restrição de caminhões localizada em diário, SAPL e MPX. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 339) de 03/03/15 a 16/10/26. Lei 1.716/2022 (AMM 19/08/2022): proíbe trânsito e estacionamento de veículos articulados, carregados ou não, nas vias do perímetro urbano; C&D no comércio local 19h-06h; exclui ônibus, caminhões de cargas vivas/ração/produtos agrícolas, frota pública e serviços. Perímetro urbano sem delimitação -> desativada. O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "terranovadonorte_lei_1716_2022_articulados",
+   "tipo": "zona",
+   "regime": "Proibição de articulados (zona)",
+   "nome": "Perímetro urbano: veículos articulados proibidos de transitar/estacionar (Lei 1.716/2022)",
+   "status": "desativada",
+   "status_motivo": "Perímetro urbano sem delimitação no ato; exceções amplas (cargas agrícolas, C&D 19h-06h, serviços).",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.716/2022 (Terra Nova do Norte; AMM-MT 19/08/2022)",
+     "artigo": "art. 1º, caput, §§1º e 2º",
+     "url": "https://amm.diariomunicipal.org/publicacao/1069140/"
+    }
+   ],
+   "trechos": [
+    "vias do perímetro urbano (não delimitado)"
+   ],
+   "vigencia_inicio": "2022-08-19",
+   "vigencia_fim": null,
+   "nota": "Data da lei não aparece no texto lido (a ementa fala 'veículos pesados'; o corpo, 'articulados'). Janela 24 h; exceção C&D 19h-06h."
+  }
+ ]
 }

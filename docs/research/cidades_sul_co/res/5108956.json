@@ -2,7 +2,7 @@
  "ibge": "5108956",
  "nome": "Nova Monte Verde",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -29,10 +29,85 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/1BC538CB",
    "resultado": "pista da preparação (2013-02-19, DECRETO Nº 055/2013): trecho conferido, ruído"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=392 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 617 acertos nos termos, 103 nas combinações; 20 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 392) de 09/03/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL sem atos; AMM-MT: leis orçamentárias 631/2013, 703/2014, 680/2014 (ruído); lead Lei 724/2015 (cargo), LC 710/2014 (ISS), Lei 625/2013 (ambiental), Dec. 055/2013 (emergência chuvas): ruído.",
+ "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL sem atos; AMM-MT: leis orçamentárias 631/2013, 703/2014, 680/2014 (ruído); lead Lei 724/2015 (cargo), LC 710/2014 (ISS), Lei 625/2013 (ambiental), Dec. 055/2013 (emergência chuvas): ruído. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 392) de 09/03/15 a 16/10/26. Lei 741/2015 (06/05/2015; AMM 08/05/2015): proíbe trânsito e estacionamento de caminhões > 14 m, 'tipo Truck ou superiores' e carretas nas Avenidas Mato Grosso e Genésio Alves da Fonseca e ao redor da Praça da Bíblia, em qualquer horário (carga e descarga pelas vias laterais). O Código de Posturas (Lei 778/2015) repete a regra no art. 250 §2º. Sem alteração/revogação localizada. O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "novamonteverde_avs_mato_grosso_genesio_biblia",
+   "tipo": "via",
+   "regime": "Proibição de caminhões pesados (via)",
+   "nome": "Avs. Mato Grosso e Genésio Alves da Fonseca e entorno da Praça da Bíblia: caminhões > 14 m, truck ou maiores e carretas (Lei 741/2015)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 14
+     },
+     {
+      "campo": "eixos",
+      "acima": 2
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: sinalização informa proibida a circulação acima do tipo 'toco'",
+    "§1º: carga e descarga do comércio só pelas vias laterais"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 741, de 06/05/2015 (Nova Monte Verde; AMM-MT 08/05/2015) e Lei 778/2015 (Código de Posturas), art. 250 §2º",
+     "artigo": "art. 1º e §1º",
+     "url": "https://amm.diariomunicipal.org/publicacao/27741/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Mato Grosso",
+      "Avenida Genésio Alves da Fonseca",
+      "entorno da Praça da Bíblia"
+     ],
+     "descricao": "toda a extensão das avenidas e o redor da praça",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2015-05-08",
+   "vigencia_fim": null,
+   "nota": "Alvo modelado como comprimento > 14 m, mais de 2 eixos (truck = 3 eixos; 'toco' = 2) ou semirreboque/reboque: interpretação do texto 'caminhões tipo Truck ou superiores e carretas'. Não verificado se a Av. Mato Grosso coincide com trecho de rodovia estadual."
+  }
+ ]
 }
