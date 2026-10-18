@@ -1,0 +1,69 @@
+{
+ "ibge": "4216909",
+ "nome": "São Lourenço do Oeste",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/7169402",
+   "resultado": "Resolução 001/2025/DEMUTRAN/SLO lida integralmente (texto em atos/4216909/resolucao_001_2025_demutran.txt)"
+  },
+  {
+   "url": "https://sapl.saolourencodooeste.sc.leg.br",
+   "resultado": "busca \"caminh|...\" no SAPL da Câmara: 24 normas, só aquisições/auxílios e leis de 1959-1964 sobre trânsito de caminhões (L. 16/1959, 30/1959, 34/1964), não vigentes na prática/sem texto lido; Resolução 001/2025 não consta no SAPL (é ato do Executivo)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (busca DEMUTRAN / peso bruto total / 29 toneladas)",
+   "resultado": "sem alteração nem revogação da Resolução 001/2025 localizada"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lead veio da DR. Resolução 001/2025/DEMUTRAN/SLO (24/04/2025, assinada pelo diretor do DEMUTRAN e pelo prefeito) limita a 29 t o PBT/PBTC nas vias municipais com pavimentação asfáltica da ÁREA RURAL (art. 1º a 4º); autorização especial de trânsito possível (art. 6º); vigência na publicação (art. 9º). O ato não lista as vias: geometria exige identificar no OSM as vias asfaltadas rurais municipais (excluir rodovias SC/BR). Outros acertos (L.C. 175/2015 plano diretor, Lei 2.954/2026 plano de mobilidade) são diretrizes genéricas sem restrição. Leis de 1959/1964 sobre trânsito de caminhões no perímetro urbano não foram lidas (sem texto no SAPL consultado) e são pista antiga; não ativadas.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "slo_vias_rurais_asfaltadas_pbt29",
+   "tipo": "via",
+   "regime": "limite de peso",
+   "nome": "Vias municipais asfaltadas da área rural: PBT/PBTC máx. 29 t",
+   "status": "ativa",
+   "confianca": "media",
+   "nota": "Ato primário lido, sem lista de vias (geometria a levantar no OSM: vias municipais pavimentadas na zona rural). Sem revogação localizada no DOM/SC.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 29
+     }
+    ]
+   },
+   "autorizacao": "Autorização especial de trânsito (art. 6º) concedida pela autoridade com circunscrição sobre a via.",
+   "base_legal": [
+    {
+     "ato": "Resolução nº 001/2025/DEMUTRAN/SLO, de 24/04/2025",
+     "artigo": "arts. 1º, 3º, 4º, 6º e 9º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/7169402"
+    }
+   ],
+   "vias_texto": "Vias de circulação públicas municipais dotadas de pavimentação asfáltica situadas na área rural de São Lourenço do Oeste"
+  }
+ ]
+}
