@@ -1,0 +1,160 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5212501",
+  "municipio": "Luziânia",
+  "uf": "GO",
+  "fonte_id": "luziania",
+  "fonte": {
+    "url": "https://sapl.luziania.go.leg.br/norma/2847 (Lei 3.073/2007) ; https://sapl.luziania.go.leg.br/norma/2951 (Lei 1.579/1993)",
+    "licenca": "Atos oficiais de Luziânia: domínio público (Lei 9.610/1998, art. 8º, IV). Linhas das vias montadas pelo nome sobre o OpenStreetMap (PBF local): derivadas do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Duas leis municipais antigas sem revogação localizada no SAPL: Lei 3.073/2007 (Ruas do Rosário, São Benedito e Bate-Couro; carga e descarga só 20h-22h) e Lei 1.579/1993 (Ruas do Comércio, Cel. Antônio Carneiro e Santíssimo Sacramento; exceto carga e descarga). Sem horário, zona, VUC ou decreto regulamentador localizado. Sinalização e fiscalização não confirmadas; portarias da SMT e diário oficial não consultados."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "As leis não definem VUC nem PBT mínimo: 'caminhões e carretas' são tratados como caminhão (PBT acima de 3,5 t) e o VUC como caminhão.",
+  "regras": [
+    {
+      "id": "luziania_lei3073_2007_rosario",
+      "tipo": "via",
+      "regime": "Ruas do Rosario, Sao Benedito e Bate-Couro",
+      "nome": "Luziania: Lei 3.073/2007, trafego de onibus, caminhoes e carretas proibido nas ruas do Rosario, Sao Benedito e Bate-Couro (Bairro Rosario)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "art. 1: onibus de turismo e escolares (nao caminhoes)",
+        "art. 1, par. 1: carga e descarga so entre 20h e 22h"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 3.073, de 12/09/2007 (Luziania/GO)",
+          "artigo": "art. 1 (proibe o trafego de onibus, caminhoes e carretas, exceto onibus de turismo e escolares, nas Ruas do Rosario, Sao Benedito e Bate-Couro, Bairro Rosario); art. 1, par. 1 (carga e descarga das 20h as 22h); par. 2 (multa pelo CTB); art. 2 (placas)",
+          "url": "https://sapl.luziania.go.leg.br/media/sapl/public/normajuridica/2007/2847/3073.pdf",
+          "nota": "Texto lido do PDF do SAPL (norma https://sapl.luziania.go.leg.br/norma/2847). Nao ha lei posterior que a altere ou revogue na busca por tráfego, Rosario, Bate-Couro, circulacao e revoga (a Lei 3.097/2007 mexe so no tombamento da Lei 3.077)."
+        }
+      ],
+      "nota": "Proibicao sem horario (24 h, todos os dias) com unica janela de carga e descarga 20h-22h, que so interessa a entrega local; para a rota de passagem equivale a via vedada. Ruas do centro historico (Bairro Rosario, tombado pela Lei 3.077/2007); a localizar no OSM. Sinalizacao (art. 2) nao confirmada. A Lei diz \"caminhoes, carretas\" sem PBT: tratado como caminhao (PBT acima de 3,5 t).",
+      "vigencia_inicio": "2007-09-12",
+      "trechos": [
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua do Rosário"
+          ],
+          "descricao": "Rua do Rosário, em toda a extensão (Bairro Rosário)"
+        },
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua São Benedito"
+          ],
+          "descricao": "Rua São Benedito, em toda a extensão (Bairro Rosário)"
+        },
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua Bate Couro",
+            "Rua Bate-Couro"
+          ],
+          "descricao": "Rua Bate-Couro, em toda a extensão (Bairro Rosário)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5212501_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "luziania_lei1579_1993_comercio",
+      "tipo": "via",
+      "regime": "Ruas do Comercio, Cel. Antonio Carneiro e Santissimo Sacramento",
+      "nome": "Luziania: Lei 1.579/1993, trafego de caminhoes e carretas proibido nas ruas do Comercio, Coronel Antonio Carneiro e Santissimo Sacramento, exceto carga e descarga",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecao_destino_local": true,
+      "excecao_destino_local_artigo": "art. 1 (exceto carga e descarga)",
+      "excecoes": [
+        "art. 1: carga e descarga (sem horario definido)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 1.579, de 09/12/1993 (Luziania/GO)",
+          "artigo": "art. 1 (proibido o trafego de caminhoes e carretas nas Ruas do Comercio, Coronel Antonio Carneiro e Santissimo Sacramento, exceto carga e descarga); art. 2 (sinalizacao pelo Executivo)",
+          "url": "https://sapl.luziania.go.leg.br/media/sapl/public/normajuridica/1993/2951/1579.pdf",
+          "nota": "Texto lido do PDF do SAPL (OCR com erros, art. 1 legivel; norma https://sapl.luziania.go.leg.br/norma/2951). Sem ato posterior achado."
+        }
+      ],
+      "nota": "Lei de 1993, sem horario: proibicao permanente exceto carga e descarga (entrega local). Excecao modelada por excecao_destino_local. Vias a localizar no OSM (centro de Luziania). Sinalizacao nao confirmada; lei antiga e nunca citada em outros atos: confianca media.",
+      "vigencia_inicio": "1993-12-09",
+      "trechos": [
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua do Comércio"
+          ],
+          "descricao": "Rua do Comércio, em toda a extensão (centro)"
+        },
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua Coronel Antônio Carneiro"
+          ],
+          "descricao": "Rua Coronel Antônio Carneiro, em toda a extensão (centro)"
+        },
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Rua Santíssimo Sacramento"
+          ],
+          "descricao": "Rua Santíssimo Sacramento, em toda a extensão (centro)"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5212501_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5008305",
+  "municipio": "Três Lagoas",
+  "uf": "MS",
+  "fonte_id": "tres-lagoas",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/ms/materia/3FCD7B99 (Decreto 141/2011) ; https://www.diariomunicipal.com.br/ms/materia/933397B9 (Decreto 154/2011, vigência) ; https://www.diariomunicipal.com.br/ms/materia/17BB1F4A (Decreto 140/2012)",
+    "licenca": "Atos oficiais de Três Lagoas: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono montado sobre as vias do OpenStreetMap (PBF local): derivado do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Decreto 141/2011 (arts. 1º-5º), em vigor 40 dias após a publicação (Dec. 154/2011), com o art. 1º e o art. 4º alterados pelo Decreto 140/2012: caminhões de carga com PBT acima de 12 t proibidos no quadrilátero central (24 h); carga e descarga num perímetro proibida 9h-17h seg-sex e 9h-14h sáb (desativada: não é circulação). Confiança média: o diário ASSOMASUL não cobre Três Lagoas depois de 2019 e leismunicipais/leis.org estavam bloqueados, então alteração posterior não pôde ser excluída."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O Decreto 141/2011 não define VUC: o VUC é tratado como caminhão (a regra restringe PBT acima de 12 t, de modo que o VUC comum não é atingido).",
+  "regras": [
+    {
+      "id": "tres_lagoas_d141_retangulo_central",
+      "tipo": "zona",
+      "regime": "Retângulo central",
+      "nome": "Três Lagoas: proibição de trânsito de caminhões de carga com PBT acima de 12 t no retângulo central (Decreto 141/2011, art. 1º, redação do Decreto 140/2012)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 12
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial do DEPTRAN (art. 3º)",
+      "excecoes": [
+        "Decreto 141/2011, art. 2º: serviços de urgência; socorro mecânico de emergência; cobertura jornalística; obras e serviços de emergência; acesso a estacionamento próprio; obras e serviços de infraestrutura urbana; concretagem e concretagem-bomba; feiras livres; mudanças; serviços públicos essenciais",
+        "art. 2º, §2º: combustíveis (gasolina, diesel, álcool) - autorização especial de tráfego, com restrição de estacionamento",
+        "art. 3º: DEPTRAN pode autorizar caso a caso ('Autorização Especial')"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto n. 141, de 26/09/2011, com redação do art. 1º do Decreto n. 140, de 26/10/2012",
+          "artigo": "art. 1º e parágrafo único (140/2012); art. 2º e 3º (141/2011); infração: CTB art. 187 (art. 5º)",
+          "url": "https://www.diariomunicipal.com.br/ms/materia/3FCD7B99",
+          "nota": "Alteração: https://www.diariomunicipal.com.br/ms/materia/17BB1F4A ; vigência diferida 40 dias: https://www.diariomunicipal.com.br/ms/materia/933397B9"
+        }
+      ],
+      "nota": "Confiança media: texto lido, mas não foi possível verificar alteração/revogação posterior a 2019 (diário ASSOMASUL sem cobertura de Três Lagoas depois disso; leismunicipais bloqueado). Sem janela de horário no texto: proibição integral (todos os dias, 24 h). Início de vigência calculado: 07/10/2011 + 40 dias (Decreto 154/2011). Também não há definição de VUC. O art. 1º original (141/2011) incluía a Av. Filinto Muller; revogado nesse ponto pelo 140/2012. Geometria aproximada: o ato não traz mapa; o quadrilátero foi montado pelas vias nomeadas no OSM e a Av. Filinto Muller (liberada pelo Dec. 140/2012) fica fora do polígono. Carga e descarga com nota fiscal fora do horário do art. 4º (art. 4º, §1º do 141/2011) não é modelada (lado seguro: proibição 24 h).",
+      "fonte_geometria": "Art. 1º (redação 140/2012): Ruas Duque de Caxias; Avenida Rosário Congro; Rua João Silva; Rua José Amílcar Congro Bastos, fechando o quadrilátero até a Rua Duque de Caxias. Parágrafo único: incluídas as vias existentes entre a Rua João Silva e a Avenida Filinto Muller dentro do quadrilátero. A Av. Filinto Muller deixou de integrar o perímetro (considerando do 140/2012: corredor de ligação).",
+      "vigencia_inicio": "2011-11-16",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5008305_retangulo_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Quadrilátero do art. 1º (Dec. 141/2011 com a redação do Dec. 140/2012) montado com as vias do cache OSM (osm_named_5008305.json): R. Duque de Caxias, Av. (Advogado) Rosário Congro, R. José Amilcar Congro Bastos e, a oeste, a Av. Filinto Muller (que fecha a faixa 'entre a R. João Silva e a Av. Filinto Muller' do parágrafo único), com a própria Av. Filinto Muller deixada livre como corredor (ver docs/layers/municipios/mun_sul_co/IMPSC01.md)"
+        }
+      ]
+    },
+    {
+      "id": "tres_lagoas_d141_carga_descarga",
+      "tipo": "zona",
+      "regime": "Carga e descarga",
+      "nome": "Três Lagoas: proibição de operações de carga e descarga no perímetro entre Av. Eloy de Miranda Chaves, Av. Rosário Congro, Rua João Silva e Rua Alfredo Justino (Decreto 141/2011, art. 4º, redação do 140/2012)",
+      "status": "desativada",
+      "status_motivo": "Restrição de operação de carga e descarga (parada/estacionamento), não de circulação; não aplicável como bloqueio de rota. Mantida como registro.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "17:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "14:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "art. 4º, §2º (141/2011): utilitários de pequeno porte com PBT até 3 t, desde que estacionados em local permitido",
+        "art. 4º, §1º (141/2011): fora do horário, não se aplica a restrição do art. 1º para carga e descarga mediante nota fiscal/documento de embarque"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto n. 141, de 26/09/2011, com redação do art. 1º do Decreto n. 140, de 26/10/2012",
+          "artigo": "art. 4º (e §§ 1º e 2º)",
+          "url": "https://www.diariomunicipal.com.br/ms/materia/17BB1F4A"
+        }
+      ],
+      "nota": "Horário atual (140/2012): 9h-17h seg-sex, 9h-14h sáb. Sem geometria: o perímetro do art. 4º (Av. Eloy de Miranda Chaves, Av. Rosário Congro, R. João Silva e R. Alfredo Justino) não foi georreferenciado porque a regra é de parada/operação, não de circulação, e está desativada.",
+      "fonte_geometria": "Art. 4º (140/2012): perímetro entre as avenidas Eloy de Miranda Chaves e Rosário Congro, e ruas João Silva e Alfredo Justino. (Redação original 141/2011: Avenidas Elóy de Miranda Chaves, Rosário Congro, Filinto Muller e Rua Alfredo Justino, 8h-17h seg-sex e 8h-14h sáb.)",
+      "vigencia_inicio": "2012-10-31",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
