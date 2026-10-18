@@ -1,0 +1,82 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5107305",
+  "municipio": "São José do Rio Claro",
+  "uf": "MT",
+  "fonte_id": "sao-jose-do-rio-claro",
+  "fonte": {
+    "url": "https://amm.diariomunicipal.org/publicacao/594036/ (Lei 1.238/2019)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Lei Municipal 1.238, de 26/09/2019 (AMM-MT 27/09/2019). Sem alteração ou revogação posterior (leis 1.251/2019, 1.279/2020 e 1.304/2021 tratam de outros temas). A Av. Siegfried Buss é via urbana municipal no OSM (sem ref de rodovia). Exceção de carga e descarga na própria avenida (art. 4º) não modelada; placas não confirmadas."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o VUC é tratado como caminhão (o corte é PBT acima de 15 t, então um VUC de até 15 t fica fora da regra).",
+  "regras": [
+    {
+      "id": "sao_jose_do_rio_claro_av_siegfried_buss_15t",
+      "tipo": "via",
+      "regime": "Proibição por peso (via)",
+      "nome": "Avenida Siegfried Buss (antiga Av. Brasil): veículos > 15 t (Lei 1.238/2019)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 4º: trânsito acima de 15 t permitido somente para carga e descarga em comércio ou residência localizada na própria avenida"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.238, de 26/09/2019 (São José do Rio Claro; AMM-MT 27/09/2019)",
+          "artigo": "art. 1º (proibição), art. 4º (exceção C&D), art. 3º (multa 100 UPFS)",
+          "url": "https://amm.diariomunicipal.org/publicacao/594036/"
+        }
+      ],
+      "vigencia_inicio": "2019-09-27",
+      "vigencia_fim": null,
+      "nota": "A lei diz 'peso superior a quinze toneladas' sem definir PBT; assumido PBT. Toda a extensão da avenida (antiga Av. Brasil). A exceção de carga e descarga na própria avenida não é modelada. Placas não confirmadas.",
+      "fonte_geometria": "OSM (ODbL) casado por nome",
+      "autorizacao": "Trânsito acima de 15 t permitido somente para carga e descarga em comércio ou residência localizada na própria avenida (art. 4º): não modelado, só nos avisos.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5107305_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Siegfried Buss"
+          ],
+          "descricao": "toda a extensão da Avenida Siegfried Buss (antiga Avenida Brasil)",
+          "aproximado": false
+        }
+      ]
+    }
+  ]
+}

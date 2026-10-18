@@ -1,0 +1,106 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5108956",
+  "municipio": "Nova Monte Verde",
+  "uf": "MT",
+  "fonte_id": "nova-monte-verde",
+  "fonte": {
+    "url": "https://amm.diariomunicipal.org/publicacao/27741/ (Lei 741/2015); https://amm.diariomunicipal.org/publicacao/91098/ (Lei 778/2015)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Lei Municipal 741, de 06/05/2015 (AMM-MT 08/05/2015) e Lei 778/2015 (Código de Posturas), art. 254, §2º, que repete o critério. Nenhuma alteração ou revogação posterior encontrada. O Código de Posturas citava art. 250 §2º na pesquisa; a verificação corrigiu para art. 254 §2º. A Praça da Bíblia não está mapeada por nome no OSM e o 'ao redor' não tem raio no ato: o entorno fica fora da geometria (a praça fica na própria Av. Mato Grosso, que está inteira na regra)."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "As leis não definem VUC: o VUC é tratado como caminhão (o preset VUC tem comprimento e eixos abaixo dos cortes, então só é atingido se a medida passar de 14 m, tiver mais de 2 eixos ou for conjunto articulado).",
+  "regras": [
+    {
+      "id": "nova_monte_verde_avs_mato_grosso_genesio_biblia",
+      "tipo": "via",
+      "regime": "Proibição de caminhões pesados (via)",
+      "nome": "Avs. Mato Grosso e Genésio Alves da Fonseca e entorno da Praça da Bíblia: caminhões > 14 m, truck ou maiores e carretas (Lei 741/2015)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          },
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2º: sinalização informa proibida a circulação acima do tipo 'toco'",
+        "§1º: carga e descarga do comércio só pelas vias laterais"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 741, de 06/05/2015 (Nova Monte Verde; AMM-MT 08/05/2015)",
+          "artigo": "art. 1º e §1º; art. 2º (sinalização acima do tipo 'toco')",
+          "url": "https://amm.diariomunicipal.org/publicacao/27741/"
+        },
+        {
+          "ato": "Lei Municipal 778/2015 (Código de Posturas)",
+          "artigo": "art. 254, §2º",
+          "url": "https://amm.diariomunicipal.org/publicacao/91098/"
+        }
+      ],
+      "vigencia_inicio": "2015-05-08",
+      "vigencia_fim": null,
+      "nota": "Alvo modelado como comprimento > 14 m, mais de 2 eixos (truck = 3 eixos; 'toco' = 2, liberado pelo art. 2º) ou semirreboque/reboque: interpretação do texto 'caminhões tipo Truck ou superiores e carretas'. Avenidas existem no OSM como vias municipais sem ref ('Avenida Mato Grosso' e 'Avenida Genesio Alves Fonseca', grafia sem acento e sem 'da'). O entorno da Praça da Bíblia (sem delimitação de raio e não mapeada) fica fora da geometria; a praça está na Av. Mato Grosso (~-9.9796, -57.4672), já inteira na regra. Carga e descarga do comércio só pelas vias laterais (§1º), não modelado.",
+      "fonte_geometria": "OSM (ODbL) casado por nome; entorno da Praça da Bíblia não georreferenciado",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5108956_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Mato Grosso"
+          ],
+          "descricao": "toda a extensão da Avenida Mato Grosso",
+          "aproximado": false
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Genesio Alves Fonseca"
+          ],
+          "descricao": "toda a extensão da Avenida Genésio Alves da Fonseca (no OSM 'Avenida Genesio Alves Fonseca')",
+          "aproximado": false
+        }
+      ]
+    }
+  ]
+}
