@@ -1,28 +1,36 @@
 {
-  "ibge": "4120804",
-  "nome": "Quatro Barras",
-  "uf": "PR",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "falha_de_fonte": false,
-  "fontes_consultadas": [
-    {
-      "url": "https://sapl.quatrobarras.pr.leg.br/materia/pesquisar-materia",
-      "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (sapl): abriu; sapl https://sapl.quatrobarras.pr.leg.br total 0 erro None None"
-    },
-    {
-      "url": "diarios_consolidados.py buscar 4120804 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
-      "resultado": "3 e 73 resultados; só ruído (cargos/frota/licitação/ISS/servidão/plano diretor/LOM genérica); nenhum ato restringindo circulação de caminhão"
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/amp/materia/246E675B",
-      "resultado": "pista da preparação (AMP 2024-04-23, \"DECRETO Nº 9812/2024\"): re-pontuada como ruído; não é restrição"
-    }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Conferência barata (classe DR): pista da preparação era ruído; 1 busca no portal principal e 2 no AMP não revelaram ato de restrição a caminhões.",
-  "osm_divergencias": [
-    "OSM maxweight=8.5 (3 ways 717613266, 1004149615, 1004149618) na Estrada da Graciosa, ref PR-410, highway=primary: rodovia estadual (DER-PR), fora da camada municipal; sem ato municipal. Descartado."
-  ],
-  "regras_rascunho": []
+ "ibge": "4120804",
+ "nome": "Quatro Barras",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.quatrobarras.pr.leg.br/materia/pesquisar-materia",
+   "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (sapl): abriu; sapl https://sapl.quatrobarras.pr.leg.br total 0 erro None None"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4120804 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
+   "resultado": "3 e 73 resultados; só ruído (cargos/frota/licitação/ISS/servidão/plano diretor/LOM genérica); nenhum ato restringindo circulação de caminhão"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/246E675B",
+   "resultado": "pista da preparação (AMP 2024-04-23, \"DECRETO Nº 9812/2024\"): re-pontuada como ruído; não é restrição"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4120804 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
+   "resultado": "(R5 2026-10-18) Fontes lidas: sapl=0. Nenhum ato de restrição a caminhões. Sem leitura (bloqueio/sem cliente): atende.net (captcha), leismunicipais (Cloudflare)."
+  },
+  {
+   "url": "toolkit/sigpub_texto.py varrer 4120804 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
+   "resultado": "(R5 2026-10-18) Prefeitura Municipal de Quatro Barras >=10000 atos 2017-09-26..2026-10-16; 193 hits, 28 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Conferência barata (classe DR): pista da preparação era ruído; 1 busca no portal principal e 2 no AMP não revelaram ato de restrição a caminhões. R5 2026-10-18: legislacao.py --texto: lidas sapl=0; sem leitura: atende.net (captcha), leismunicipais (Cloudflare); SIGPub texto integral: Prefeitura Municipal de Quatro Barras >=10000 atos 2017-09-26..2026-10-16.",
+ "osm_divergencias": [
+  "OSM maxweight=8.5 (3 ways 717613266, 1004149615, 1004149618) na Estrada da Graciosa, ref PR-410, highway=primary: rodovia estadual (DER-PR), fora da camada municipal; sem ato municipal. Descartado."
+ ],
+ "regras_rascunho": []
 }

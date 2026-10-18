@@ -2,7 +2,7 @@
  "ibge": "4108601",
  "nome": "Goioerê",
  "uf": "PR",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,69 @@
   {
    "url": "https://www.goioere.pr.gov.br/",
    "resultado": "portal sem sistema de legislação identificado; não consultado"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4108601 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
+   "resultado": "(R5 2026-10-18) Fontes lidas: nenhuma. Nenhum ato de restrição a caminhões além do citado em observacoes. Sem leitura (bloqueio/sem cliente): portal sem cliente."
+  },
+  {
+   "url": "toolkit/sigpub_texto.py varrer 4108601 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
+   "resultado": "(R5 2026-10-18) Prefeitura Municipal de Goioerê >=10000 atos 2012-07-11..2026-10-16; 303 hits, 30 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/6ADA8B8A",
+   "resultado": "(R5 2026-10-18) Lei 2.515/2017 lida; art. 2º proíbe tráfego de veículos com carga de fracking; ver atos/4108601/lei_2515_2017.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Pista da preparação era ruído: Lei Compl. 49/2020 (Código de Posturas; lida): só limpa-fossa, carga/descarga como diretriz do Executivo (art. 206 §1º) e carga a granel (art. 212); LC 53/2020 apenas define \"tráfego pesado\"; decretos 6.847/2020, 8.759/2024, 8.899/2024, 9.623/2026 são servidão (proibido transitar com veículos pesados na faixa de servidão). Lei 2.515/2017 proíbe o tráfego de veículos com insumos para exploração de gás de xisto/fraturamento (não é regra de circulação de caminhões). Nenhuma restrição de via/horário/peso encontrada. Portal da prefeitura sem sistema identificado.",
+ "observacoes": "Pista da preparação era ruído: Lei Compl. 49/2020 (Código de Posturas; lida): só limpa-fossa, carga/descarga como diretriz do Executivo (art. 206 §1º) e carga a granel (art. 212); LC 53/2020 apenas define \"tráfego pesado\"; decretos 6.847/2020, 8.759/2024, 8.899/2024, 9.623/2026 são servidão (proibido transitar com veículos pesados na faixa de servidão). Lei 2.515/2017 proíbe o tráfego de veículos com insumos para exploração de gás de xisto/fraturamento (não é regra de circulação de caminhões). Nenhuma restrição de via/horário/peso encontrada. Portal da prefeitura sem sistema identificado. R5 2026-10-18: legislacao.py --texto: lidas nenhuma; sem leitura: portal sem cliente; SIGPub texto integral: Prefeitura Municipal de Goioerê >=10000 atos 2012-07-11..2026-10-16. Achado (SIGPub/AMP texto integral): Lei 2.515/2017 (09/11/2017, DOM-PR 10/11/2017, matéria 6ADA8B8A), art. 2º, proíbe o tráfego de veículos que transportem equipamentos e produtos químicos/radioativos de fracking nas vias municipais urbanas, rurais e vicinais; regra desativada (por tipo de carga). Demais hits (LC 53/2020 Plano de Mobilidade com 'tráfego pesado' só como conceito de zoneamento, LC 49/2020 limpa-fossa, decretos de abatedouro) são ruído. Texto em atos/4108601/lei_2515_2017.txt.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "goioere_fracking_todas_vias",
+   "tipo": "zona",
+   "regime": "Proibição por tipo de carga (equipamentos/produtos de fracking)",
+   "nome": "Goioerê: vias municipais, veículos que transportam equipamentos/produtos de fracking (Lei 2.515/2017)",
+   "status": "desativada",
+   "status_motivo": "Proibição por tipo de carga (veículos que transportam equipamentos e produtos químicos/radioativos para fraturamento hidráulico), sem janela horária nem lista de vias: o art. 2º vale para todas as vias municipais. Não é restrição por porte/PBT; não modelável na camada.",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2.515/2017 (Goioerê, 09/11/2017; DOM-PR 10/11/2017)",
+     "artigo": "art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/6ADA8B8A",
+     "nota": "Texto integral lido no Diário Oficial dos Municípios do Paraná (AMP)."
+    }
+   ],
+   "vigencia_inicio": "2017-11-10",
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [],
+     "descricao": "Todas as vias públicas municipais, urbanas, rurais e vicinais e respectivas faixas de domínio.",
+     "aproximado": false
+    }
+   ]
+  }
+ ]
 }
