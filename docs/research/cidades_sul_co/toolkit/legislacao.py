@@ -784,6 +784,8 @@ def c_elotech(base, termo, maxn=100, texto=False):
         ents = r.json()
     except Exception:
         raise Erro('Elotech: /portaltransparencia-api/api/entidades não respondeu JSON em %s (status %s)' % (o, r.status if r else '?'))
+    if not isinstance(ents, list):
+        raise Erro('Elotech: /portaltransparencia-api/api/entidades devolveu %s em %s (host sem o Portal da Transparência Oxy?)' % (str(ents)[:80], o))
     ano = time.localtime().tm_year
     atos, total, vistos = [], 0, set()
     for e in ents[:6]:
@@ -811,7 +813,7 @@ def c_elotech(base, termo, maxn=100, texto=False):
             if d.get('last', True) or not d['content']:
                 break
             pag += 1
-    return {'total': total, 'atos': atos[:maxn]}
+    return {'total': total, 'atos': atos[:maxn], 'obs': 'entidades: ' + '; '.join('%s/%s' % (e.get('cidade'), e.get('uf')) for e in ents[:3])}
 
 
 def c_atende(base, termo, maxn=100, texto=False):

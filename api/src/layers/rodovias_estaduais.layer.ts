@@ -9,7 +9,7 @@ import { runsNear } from './rodovias_horario.layer.js';
 import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, RouteLayer } from './types.js';
 
 /**
- * Rodovias estaduais do Sudeste fora de SP (camada 'rodovias_estaduais'). Doc: docs/layers/rodovias_estaduais.md.
+ * Rodovias estaduais fora de SP: Sudeste (MG, ES, RJ), Sul (PR, RS) e Centro-Oeste (GO, MT, DF) (camada 'rodovias_estaduais'). Doc: docs/layers/rodovias_estaduais.md.
  *
  * 1) Pontos críticos vivos do DER-MG (source 'der-mg', kind 'ponto_critico'; importador rodovias_estaduais_der_mg).
  *    Bloqueio duro, só no ponto (círculo de props.bloqueio.raio_m sobre a pista), e só quando o ponto está ATIVO (o
@@ -24,10 +24,12 @@ import type { LayerCostLine, LayerExclusion, LayerItem, LayerWarning, RouteCtx, 
  *    bloqueia — um endereço a poucos metros, mas numa aresta que segue no grafo (ex.: a outra cabeceira da ponte), é
  *    alcançado pelo desvio.
  *    "Na rota" = a rota passa dentro do círculo de bloqueio (como passaPor da camada oae); sem bloqueio, a até 30 m.
- * 2) Regras de trecho dos DERs (kind 'regra_trecho'; importadores rodovias_estaduais_der_es e _der_rj; curadoria em
- *    data/raw/ders_estaduais/regras.json). Regra `ativa` e vigente cujo critério alcança o veículo vira trecho
- *    penalizado (linear_cost_factors, fator 1000 = proibido salvo sem alternativa) recortado da própria rota, como em
+ * 2) Regras de trecho dos DERs (kind 'regra_trecho'; importadores rodovias_estaduais_der_es, _der_rj, _der_pr, _daer_rs,
+ *    _goinfra, _sinfra_mt e _der_df; curadoria em data/raw/ders_estaduais/regras.json). Regra `ativa` e vigente cujo
+ *    critério alcança o veículo (e cujas `janelas`, se houver, valem no instante de saída) vira trecho penalizado
+ *    (linear_cost_factors, fator 1000 = proibido salvo sem alternativa) recortado da própria rota, como em
  *    rodovias_horario. Regra desativada (confiança baixa/sem confirmação) só informa; revogada nunca é aplicada.
+ *    O critério combina peso, eixos e comprimento com OU (ou E com `cumulativo`; `ou` lista combinações alternativas).
  */
 
 const LAYER = 'rodovias_estaduais';
@@ -63,12 +65,25 @@ export interface PontoCriticoProps {
   criado_em?: string | null; editado_em?: string | null; consultado_em?: string | null; fonte_ultima_edicao?: string | null; fonte_url?: string;
   bloqueio?: Bloqueio | null;
 }
-export interface CriterioTrecho { todos?: boolean; caminhoes?: boolean; exceto_vuc?: boolean; peso_acima_t?: number; eixos_acima?: number }
+/** Quem o ato alcança. Sem `cumulativo`, peso, eixos e comprimento combinam com OU (o ato lista limites que o veículo não
+ *  pode exceder: passar de qualquer um já proíbe). Com `cumulativo`, todos os campos numéricos têm que valer (ex.: MT-040,
+ *  Portaria SINFRA 010/2023: PBT > 45 t, mais de 6 eixos E mais de 16 m). `ou` lista combinações alternativas (cada uma
+ *  avaliada como cumulativa), ex.: DAER-RS DN 148/2022 (CR6 ou CTS11). `isenta_carga`: cargo_type isento (GOINFRA: perecíveis). */
+export interface CriterioTrecho {
+  todos?: boolean; caminhoes?: boolean; exceto_vuc?: boolean;
+  peso_acima_t?: number; peso_igual_ou_acima_t?: number; peso_ate_t?: number;
+  eixos_acima?: number; eixos_ate?: number;
+  comprimento_acima_m?: number; comprimento_ate_m?: number;
+  cumulativo?: boolean; ou?: CriterioTrecho[]; isenta_carga?: string[];
+}
+/** Janela de vigência da regra no horário LOCAL de saída: `datas` (YYYY-MM-DD) e/ou `dias_semana` (1=seg … 7=dom), das
+ *  `inicio` às `fim` (HH:MM; padrão o dia todo). Sem janelas, a regra vale sempre. */
+export interface Janela { datas?: string[]; dias_semana?: number[]; inicio?: string; fim?: string }
 export interface RegraTrechoProps {
   regra_id: string; orgao: string; uf: string; rodovia?: string | null; nome: string; trecho?: string | null;
   criterio: CriterioTrecho; horario?: string | null; ato: string; ato_url: string; publicacao?: string | null;
   status: 'vigente' | 'revogada' | 'desativada'; ativa: boolean; motivo_inativa?: string | null; confianca?: string | null;
-  verificacao?: string | null; excecoes?: string | null; resumo: string; fonte_geometria?: string | null;
+  verificacao?: string | null; excecoes?: string | null; resumo: string; fonte_geometria?: string | null; janelas?: Janela[];
 }
 type PcRow = DataFeatureRow & { props: PontoCriticoProps };
 interface Trecho { id: string; name: string; p: RegraTrechoProps; geometry: GeoJSON.LineString | GeoJSON.MultiLineString; bbox: [number, number, number, number] }
@@ -103,15 +118,47 @@ export function motivoBloqueioPC(p: PontoCriticoProps, v: Vehicle): MotivoPC | n
   return null;
 }
 
-/** O critério de uma regra de trecho alcança este veículo? (`>` estrito no peso e nos eixos, como no texto dos atos) */
+/** Os limites numéricos de um critério, um booleano por limite informado (`>` estrito nos "acima de", como no texto dos atos). */
+function condicoesNumericas(c: CriterioTrecho, v: Vehicle): boolean[] {
+  const out: boolean[] = [];
+  if (c.peso_acima_t != null) out.push(v.weight_t > c.peso_acima_t);
+  if (c.peso_igual_ou_acima_t != null) out.push(v.weight_t >= c.peso_igual_ou_acima_t);
+  if (c.peso_ate_t != null) out.push(v.weight_t <= c.peso_ate_t);
+  if (c.eixos_acima != null) out.push(v.axle_count > c.eixos_acima);
+  if (c.eixos_ate != null) out.push(v.axle_count <= c.eixos_ate);
+  if (c.comprimento_acima_m != null) out.push(v.length_m > c.comprimento_acima_m);
+  if (c.comprimento_ate_m != null) out.push(v.length_m <= c.comprimento_ate_m);
+  return out;
+}
+
+/** O critério de uma regra de trecho alcança este veículo? */
 export function criterioTrechoAplica(c: CriterioTrecho | undefined, v: Vehicle, ano: number): boolean {
   if (!c) return false;
   if (c.exceto_vuc && isVucSP(v, ano)) return false;
+  if (c.isenta_carga?.length && v.cargo_type && c.isenta_carga.includes(v.cargo_type)) return false;
   if (c.todos) return true;
   if (c.caminhoes && !v.is_truck) return false;
-  // peso e eixos combinam com OU (ex.: Lei ES 4.463/1990: "mais de 2 eixos ou PBT acima de 15 t")
-  if (c.peso_acima_t == null && c.eixos_acima == null) return !!c.caminhoes;
-  return (c.peso_acima_t != null && v.weight_t > c.peso_acima_t) || (c.eixos_acima != null && v.axle_count > c.eixos_acima);
+  if (c.ou?.length) {
+    return c.ou.some((s) => {
+      const cs = condicoesNumericas(s, v);
+      return cs.length > 0 && cs.every(Boolean);
+    });
+  }
+  const cs = condicoesNumericas(c, v);
+  // peso e eixos combinam com OU (ex.: Lei ES 4.463/1990: "mais de 2 eixos ou PBT acima de 15 t"), salvo `cumulativo`
+  if (!cs.length) return !!c.caminhoes;
+  return c.cumulativo ? cs.every(Boolean) : cs.some(Boolean);
+}
+
+/** A regra vale no instante de saída (hora local "YYYY-MM-DDTHH:mm")? Sem janelas, sempre. */
+export function janelaVale(js: Janela[] | undefined, departureLocal: string): boolean {
+  if (!js?.length) return true;
+  const data = departureLocal.slice(0, 10), hora = departureLocal.slice(11, 16);
+  const dow = ((new Date(`${data}T12:00:00Z`).getUTCDay() + 6) % 7) + 1;
+  return js.some((j) => {
+    const diaOk = (j.datas?.includes(data) ?? false) || (j.dias_semana?.includes(dow) ?? false) || (!j.datas?.length && !j.dias_semana?.length);
+    return diaOk && hora >= (j.inicio ?? '00:00') && hora < (j.fim ?? '24:00');
+  });
 }
 
 // ------------------------------------------------------------------------------------------------ utilidades
@@ -284,7 +331,8 @@ async function doPrepare(ctx: RouteCtx): Promise<Stash> {
   const box = corridor(ctx);
   const alvo: Trecho[] = [];
   for (const t of await loadTrechos()) {
-    if (!t.p.ativa || t.p.status !== 'vigente' || !boxesTouch(t.bbox, box) || !criterioTrechoAplica(t.p.criterio, ctx.vehicle, ano)) continue;
+    if (!t.p.ativa || t.p.status !== 'vigente' || !boxesTouch(t.bbox, box) || !criterioTrechoAplica(t.p.criterio, ctx.vehicle, ano)
+      || !janelaVale(t.p.janelas, ctx.departureLocal)) continue;
     const onde = odPertoDoTrecho(ctx, t.geometry);
     if (onde) out.isentos.push({ t, onde }); else alvo.push(t);
   }
@@ -346,15 +394,16 @@ function displayProps(r: DataFeatureRow): Record<string, unknown> {
 const layer: RouteLayer = {
   meta: {
     id: LAYER,
-    label: 'Rodovias estaduais (DER-MG, DER-ES, DER-RJ)',
-    description: 'Pontos críticos vivos do DER-MG (pista interrompida bloqueia; interrompida para pesados bloqueia caminhão acima de 3,5 t, VUC inclusive; variante e meia-pista avisam) e restrições de trecho dos DERs do ES e do RJ com ato confirmado.',
+    label: 'Rodovias estaduais (DERs de MG, ES, RJ, PR, RS, GO, MT, DF)',
+    description: 'Pontos críticos vivos do DER-MG (pista interrompida bloqueia; interrompida para pesados bloqueia caminhão acima de 3,5 t, VUC inclusive; variante e meia-pista avisam) e restrições de trecho (peso, eixos, comprimento, feriados) dos DERs do ES, RJ, PR, RS, GO, MT e DF com ato confirmado.',
     group: 'restricoes',
     sources: [
       { name: 'DER-MG/SEINFRA — Pontos críticos (Observatório da Infraestrutura, painel público)', url: 'https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/pontos_criticos_publico/FeatureServer/0', license: 'Não declarada (licenseInfo vazio); site do DER-MG: reutilização com fonte e crédito. Risco de uso comercial: ver docs/layers/rodovias_estaduais.md' },
       { name: 'DER-ES — Instruções de Serviço de restrição de tráfego (DIO-ES)', url: 'https://ioes.dio.es.gov.br/busca', license: 'Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV)' },
       { name: 'DER-ES — SRE (malha com km), WFS do GEOBASES', url: 'https://ide.geobases.es.gov.br/geoserver/ows', license: 'Não declarada ("Not Specified" no GEOBASES); só localiza os trechos dos atos' },
       { name: 'DER-RJ — notícias oficiais (RJ-127, Serra de Paracambi)', url: 'https://www.der.rj.gov.br/detalhe_noticia.asp?ident=1035', license: 'Fatos de notícia oficial, com citação (rodapé PRODERJ: todos os direitos reservados)' },
-      { name: 'OpenStreetMap (traçado da RJ-127 via Valhalla e pistas para o ponto de bloqueio)', url: 'https://www.openstreetmap.org/copyright', license: '© OpenStreetMap contributors (ODbL 1.0)' },
+      { name: 'DER-PR, DAER-RS, GOINFRA, SINFRA-MT e DER-DF — portarias, decisões normativas e instruções de restrição de trecho', url: 'https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego', license: 'Ato oficial — domínio público (Lei 9.610/98, art. 8º, IV); pontas dos trechos pelo SRE do órgão (licença não declarada)' },
+      { name: 'OpenStreetMap (traçado da RJ-127 via Valhalla, trechos dos atos do Sul e Centro-Oeste e pistas para o ponto de bloqueio)', url: 'https://www.openstreetmap.org/copyright', license: '© OpenStreetMap contributors (ODbL 1.0)' },
     ],
     style: { kind: 'circle', color: '#dc2626', radius: 5, width: 3, minzoom: 6, icon: '🚧', opacity: 0.9 },
     defaultVisible: false,
@@ -497,6 +546,13 @@ const layer: RouteLayer = {
       }
       if (!aplica) {
         if (runs.length) summary.push(`${t.p.nome}: ${t.p.resumo}; não alcança o seu veículo (${t.p.ato}).`);
+        continue;
+      }
+      if (!janelaVale(t.p.janelas, ctx.departureLocal)) {
+        // restrição de horário/data que não vale na saída: o app só vê o instante de saída, a viagem pode chegar ao trecho depois
+        if (runs.length) {
+          warnings.push({ ...base, severity: 'info', code: 'regra_estadual_fora_da_janela', message: `${t.p.nome}: ${t.p.resumo} (${t.p.ato}). Não vale na data e hora de saída informadas; o app confere só o instante de saída, então confira o horário em que você chega ao trecho.` });
+        }
         continue;
       }
       const isento = isentos.find((x) => x.t.id === t.id);

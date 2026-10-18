@@ -1,20 +1,24 @@
-# Camada `rodovias_estaduais`: DERs de MG, ES e RJ (e OAEs do DER-MG e do DER-ES na camada `oae`)
+# Camada `rodovias_estaduais`: DERs de MG, ES, RJ e, no Sul e Centro-Oeste, PR, RS, GO, MT e DF (e OAEs do DER-MG e do DER-ES na camada `oae`)
 
 Módulo: `api/src/layers/rodovias_estaduais.layer.ts` · Testes: `api/test/layers/rodovias_estaduais.test.ts` e
 `importers/tests/test_ders_estaduais.py` · Frente: `ders_estaduais` · Pesquisa: `docs/research/sudeste_ders_estaduais/`
 (com a verificação) e, para os atos do DER-ES de 2024–2026, `docs/research/sudeste_vitoria_es/`.
 
-A frente cobre os três DERs do Sudeste fora de SP:
+A frente cobre os três DERs do Sudeste fora de SP e, desde 18/10/2026, as regras de trecho do Sul e do Centro-Oeste
+(seção [Sul e Centro-Oeste](#sul-e-centro-oeste-pr-rs-go-mt-df); testes em `api/test/layers/rodovias_estaduais_sul_co.test.ts`;
+pesquisa em `docs/research/estados_sul_co/`):
 
 | O quê | Onde entra | Importador | Efeito na rota |
 |---|---|---|---|
 | Pontos críticos vivos do DER-MG (459 ativos em 10/10/2026) | `rodovias_estaduais`, source `der-mg` | `rodovias_estaduais_der_mg` | bloqueio só no ponto ativo e para o veículo afetado; aviso nos demais |
 | Restrições de trecho do DER-ES (IS no DIO-ES) | `rodovias_estaduais`, source `der-es` | `rodovias_estaduais_der_es` | trecho penalizado (fator 1000) se a regra está ativa e alcança o veículo |
 | RJ-127, Serra de Paracambi (DER-RJ, só notícia) | `rodovias_estaduais`, source `der-rj` | `rodovias_estaduais_der_rj` | desativada: só informa |
+| Restrições de trecho do DER-PR (20 portarias de peso/comprimento/eixos), DAER-RS (Estrada do Mar, Rota do Sol, 165 trechos CR6/CTS11), GOINFRA (feriados prolongados), SINFRA-MT (Estrada-Parque, AET) e DER-DF (Eixão, Barragem do Paranoá, Ponte do Rio Melchior) | `rodovias_estaduais`, sources `der-pr`, `daer-rs`, `goinfra`, `sinfra-mt`, `der-df` | `rodovias_estaduais_der_pr`, `_daer_rs`, `_goinfra`, `_sinfra_mt`, `_der_df` | trecho penalizado (fator 1000) se a regra está ativa, alcança o veículo e a `janela` vale na saída |
 | 4.370 OAEs do DER-MG (cadastro + inspeção) | `oae`, source `der-mg` | `oae_der_mg` | contagem, ponte de madeira, ponte estreita (só aviso) |
 | 17 pontes estaduais do ES com PBT máximo (IS do DER-ES) | `oae`, source `der-es` | `oae_der_es` | bloqueio sobre a ponte para quem pesa mais que o limite |
 
-Curadoria das regras do ES e do RJ: `data/raw/ders_estaduais/regras.json` (versionado com `git add -f`).
+Curadoria das regras do ES, do RJ, do Sul e do Centro-Oeste: `data/raw/ders_estaduais/regras.json` (versionado com `git add -f`;
+o anexo da DN 148/2022 do DAER-RS fica em `data/raw/ders_estaduais/rs_dn148_trechos.json`).
 
 ## O que a camada faz na rota
 
@@ -82,9 +86,53 @@ Curadoria das regras do ES e do RJ: `data/raw/ders_estaduais/regras.json` (versi
 | `desativada` (confiança baixa, sem verificação ou vigência não confirmada) | nenhum | `regra_estadual_nao_aplicada` (`info`, com o motivo) |
 | `revogada` | nunca aplicada nem mostrada | — |
 
-Critério: `peso_acima_t` (PBT **acima** de X t, estrito, como nos atos "superior a"), `eixos_acima`, `caminhoes`, `todos`;
-peso e eixos combinam com OU (Lei ES 4.463/1990). Tolerância rota ↔ eixo do SRE: 40 m (o SRE do DER-ES desenha uma linha
-só nas pistas duplas), trecho mínimo de 200 m.
+Critério: `peso_acima_t` (PBT **acima** de X t, estrito, como nos atos "superior a"), `peso_igual_ou_acima_t`, `peso_ate_t`,
+`eixos_acima`, `eixos_ate`, `comprimento_acima_m`, `comprimento_ate_m`, `caminhoes`, `todos`, `isenta_carga` (lista de
+`cargo_type` isentos, ex.: `perishable`); peso, eixos e comprimento combinam com OU (Lei ES 4.463/1990; os atos listam limites
+que o veículo não pode exceder), ou com E se `cumulativo` (MT: "mais de 45 t, com mais de 6 eixos e mais de 16 m"); `ou` lista
+combinações alternativas, cada uma cumulativa (RS, DN 148/2022: CR6 ou CTS11). `janelas` (opcional, na regra): `datas`
+(`YYYY-MM-DD`) e/ou `dias_semana` (1 = segunda … 7 = domingo) com `inicio`/`fim` (hora local de saída, `fim` exclusivo); fora
+da janela a regra não penaliza e o app avisa (`regra_estadual_fora_da_janela`, `info`). **A janela é conferida só no instante
+de saída**, não na hora em que a viagem chega ao trecho. Tolerância rota ↔ eixo do SRE: 40 m (o SRE do DER-ES desenha uma
+linha só nas pistas duplas), trecho mínimo de 200 m.
+
+## Sul e Centro-Oeste (PR, RS, GO, MT, DF)
+
+Pesquisa verificada: `docs/research/estados_sul_co/<UF>.json` e `.md` (e `AUDITORIA.md`). Só entra **ativa** a regra com ato
+primário vigente conferido (texto lido na fonte oficial, artigo citado, sem revogação localizada); o resto fica registrado
+como `desativada` (só informa) ou só neste documento.
+
+| UF | Órgão | Entrou ativa | Registrada e desativada | Pendente (por quê) |
+|---|---|---|---|---|
+| PR | DER-PR | 19 portarias de peso/comprimento/eixos, 24 h: 481/2005 (PR-534, 25 t), 421/2005 (Porto Camargo–Umuarama, 45 t), 318/2009 (PR-518, 45 t), 010/2010 (PR-160, 25 t e 14 m), 095/2010 (PR-151, 45 t e 16 m), 158/2010 (PR-281 e PR-433), 319/2010 (PR-092, 45 t e 17,50 m), 284/2011 (PR-680), 299/2012 (PR-364 e PR-825), 356/2012 (PR-683), 518/2012 (PR-482), 519/2012 (PR-561), 094/2013 (PR-586, 25 t), 280/2020 (PR-447, 45 t), 365/2022 (PR-691, 16 t), 501/2022 (ponte Manoel Ribas, 25 t), 075/2023 (Graciosa, todo caminhão), 239/2026 (Guaratuba: 26 t, 18,60 m, 4 eixos), 451/2026 (PRC-466/PRC-272, 36 t) | 208/2010 (PR-151 sul; fora da lista do DER, vigência desconhecida), 095/2016 (PR-408/PR-804, 26 t; trecho curto sem como localizar), 414/2012 (ferry; sobrepõe a 239/2026), 702/2025 (ferry, vencida em 22/02/2026) | Ramal Casa Branca–Pérola (PR-182) da 421/2005 e PR-508 (508S0020/0030) da 239/2026 sem geometria. Sobreposições abertas com as liberações de CVC por AET (010/2010 × 326/2026; 451/2026 × 029/2022). Não há portaria de horário (feriado, serra, travessia) |
+| SC | SIE/DEINFRA | — | — | Nenhum ato de restrição de trecho, de horário (feriado, serra, travessia) nem de peso/altura: só o regime de AET (rotas de CVC/CTV **liberadas**, uma lista de permissão cuja leitura como proibição fora da lista é inferência, IN SIE 007/2021 não lida) e avisos operacionais temporários do GeoSIE (SC-418 km 16,6, meia-pista só até 7,5 t, evento de chuva; não é regra fixa) |
+| RS | DAER-RS | DN 152/2023 (ERS-389 Estrada do Mar: PBT > 23 t, > 3 eixos ou > 16 m vedado); DN 135/2021 art. 2º (Rota do Sol: > 19,80 m, > 7 eixos e > 57 t); DN 148/2022 (CR6/CTS11 em 122 dos 165 trechos do Anexo I) | DN 59/2007 (ERS-030, mais de 3 eixos; vigência não confirmada), DN 90/2014 (CVC 19,80 m/9 eixos/74 t; vale para toda a malha, sem trecho), DN 158/2026 (feriados; só excedentes e sem trechos) | Janelas das DN 152 (veículos de 12–23 t com AEC) e 135 (23–57 t, alta/baixa temporada) e produtos perigosos (DN 127/136): janelas semanais com feriados móveis e alta/baixa temporada não são modeladas. 43 trechos da DN 148 sem geometria: 17 com km do SRE alterado desde 2022, 24 sem ref/traçado casável no OSM e 2 sem código no SRE (lista em `rs_dn148_trechos.json`) |
+| GO | GOINFRA | Portaria 20/2026 (feriados prolongados, 25 datas de 14/02/2026 a 03/01/2027, 07h–20h, e 18/02/2026 só das 07h às 12h): CVC e combinações com mais de 3 eixos; perecíveis isentos (art. 4º). 7 dos 23 trechos do art. 3º (GO-139 Cristianópolis–Quinca Mariano, GO-217, GO-338, GO-431, GO-507, GO-225, GO-330) | Interdição da Ponte Quinca Mariano (GO-139): só notícia da GOINFRA, vigência não reconfirmada | 16 trechos do art. 3º sem localização segura (descritivos, sem km nem SRE; ex.: GO-164, GO-206, GO-241, GO-210, GO-118, GO-080, GO-530, GO-441, GO-108, GO-239, GO-116, GO-213, GO-010/GO-139). O ato vale só para pista simples com duplo sentido e não diz quais segmentos duplicados ficam de fora. Portaria anual: reconfirmar em 2027. Base legal (Decreto 10.213/2023) revogada em 09/03/2026 |
+| MT | SINFRA-MT | Portaria 010/2023 (MT-040/MT-361 Estrada-Parque, 175,7 km: > 45 t, > 6 eixos e > 16 m, só com AET em dia útil); Portaria 061/2021 incisos I e III (MT-010 Rosário Oeste–Acorizal e MT-246: ≥ 26 t, > 3 eixos e > 14 m) | Portaria 061/2021 inciso IV (MT-251 Estrada-Parque): o km do ato não casa com o SRE | Inciso II da 061/2021 (MT-010 até o km 4+600, Rodoanel). Os limites são lidos como cumulativos (o texto os liga com vírgula e "e"); a SINFRA está inacessível, vigência "provável" (sem revogação na busca do IOMAT). Janelas (só dia útil, fim de semana e feriado proibidos mesmo com AET) não são modeladas: a regra penaliza sempre |
+| MS | AGESUL | — | — | Nenhum ato vigente de restrição de trecho: só a Res. SEOP/AGESUL 001/2009 (AET, nascer ao pôr do sol; vigência atual não confirmada) e duas resoluções de 2010 (Carnaval e Semana Santa, sem repetição). As restrições de obra (MS-345 10 t, MS-040 km 205/223, MS-168, MS-455) vêm de notícia e boletim, sem ato |
+| DF | DER-DF / GDF | Decreto 32.563/2010 art. 2º (DF-002 Eixão: veículos pesados vedados todos os dias, lidos como caminhões); Decreto 46.226/2024 art. 2º (Eixão do Lazer: domingos e feriados nacionais, 6h–18h, todos os veículos); Instrução DER-DF 3/2019 (Barragem do Paranoá, DF-001: caminhão com mais de 2 eixos) | Instrução DER-DF 14/2021 (Ponte do Rio Melchior, DF-180 km ~19,5): não se sabe qual estrutura o ato cobre nem se a ponte nova (Codevasf, prevista para 05/2026) já abriu | Instrução DER-DF 148/2013 (EPIA/BR-040, 6h–9h) e Instrução Conjunta DETRAN/DER 1/2008 (EPTG): vigência indefinida; carga e descarga SCLS/SCLN (Instrução DETRAN 98/2008) regula parada, não circulação; feriados só distritais não entram no Eixão do Lazer |
+
+As regras do DF (Eixão, Barragem do Paranoá e Ponte do Rio Melchior) também aparecem como rascunho em
+`docs/research/cidades_sul_co/res/5300108.json` (Brasília); ficam **aqui** (rodovia distrital, ato do DER-DF/GDF) e não na
+camada de restrições municipais, para não duplicar penalidade e aviso.
+
+### Como a geometria é montada (`importers/sources/_ders_sulco.py`)
+
+Os atos citam o trecho por rodovia + entroncamento/cidade (ou código SRE + km), nunca com geometria. O importador procura, no
+OSM do Valhalla, os ways com `ref` igual ao da rodovia (`PR-534`, `ERS-389`, `GO-217`, `MT-040`, `DF-002`...), junta as falhas
+curtas do ref (um way sem `ref` no meio, até 200 m, ou o `lacuna_m` da regra) e traça o caminho mais curto entre duas
+**âncoras** guardadas em `regras.json`: as pontas do trecho SRE citado no ato (SRE do DER-PR no geoserver, planilha SRE 08/2026 do
+DAER, GeoDados-MT), um nó `place=*` do OSM ou o cruzamento com outra rodovia. As pistas paralelas (até 60 m) entram junto. A
+extensão pelo OSM é conferida contra a do ato (aviso se passar de 25%): nas regras com código SRE bate em 1% (PR-447: 45,61 km
+no ato, 45,61 km no OSM; MT-040/MT-361: 177,8 km contra 175,7 km). Rodovia sem `ref` no OSM (PR-691, PR-807) e trechos urbanos
+usam uma rota de carro do Valhalla entre as pontas (`geometria.rota`, com `via` opcional). O índice de ways por ref sai do PBF
+(`osmium tags-filter w/ref`, ~5 min na 1ª vez) e fica em `data/cache/ders_sulco_refidx.json.gz`.
+
+Limitações da geometria: (1) no GO, os trechos do art. 3º são descritivos; 7 foram localizados por cidades e entroncamentos
+(a GO-139 e a GO-330 por rota do Valhalla, 75% e 86% sobre ways do ref; trechos concorrentes com BR no OSM, como a GO-330/BR-352,
+entram inteiros); (2) o corredor da Portaria 421/2005 (PR) usa a numeração do ato (PR-489/PR-485/PR-182), que no OSM é PR-489/
+PR-683/PR-485/PR-182: o traçado é uma rota por Porto Camargo, Porto Figueira, Alto Paraíso e Xambrê até Umuarama (95 km, conferida
+contra os refs); (3) o PR-586 (Portaria 094/2013) é a rodovia inteira entre as pontas do ref no OSM.
 
 ## Fontes
 
@@ -198,6 +246,8 @@ Traçado: caminho de carro Paracambi → Mendes no grafo do Valhalla (OSM; aprox
 | DIO-ES (IS do DER-ES), Lei ES 4.463/1990 | ato oficial, domínio público (Lei 9.610/98, art. 8º, IV) | — |
 | SRE do DER-ES (GEOBASES) | "Not Specified" | só localiza os trechos dos atos; atribuição DER-ES/GEOBASES |
 | Notícias do DER-RJ | fatos com citação (rodapé PRODERJ "todos os direitos reservados") | só fatos e link |
+| Atos do DER-PR (Casa Civil/DER), DAER-RS (DN), GOINFRA (portaria/DOE-GO), SINFRA-MT (IOMAT) e DER-DF/GDF (SINJ-DF) | ato oficial, domínio público (Lei 9.610/98, art. 8º, IV) | — |
+| SRE do DER-PR (geoserver), do DAER-RS (planilha `rel-sre-082026.xls`) e do GeoDados-MT | **não declarada** (GetCapabilities do PR: `Fees=NONE`, `AccessConstraints=NONE`) | só as pontas dos trechos viram âncora (coordenadas em `regras.json`); a geometria publicada é o OSM |
 | OSM (ponto de bloqueio, traçado da RJ-127) | ODbL 1.0 | extração não substancial; nada volta para o OSM |
 
 ## Fora desta frente (sobreposição e lacunas)
@@ -220,7 +270,13 @@ Traçado: caminho de carro Paracambi → Mendes no grafo do Valhalla (OSM; aprox
 docker compose --profile import run --rm importer rodovias_estaduais_der_mg
 # OAEs do DER-MG (mensal), regras e pontes do ES/RJ (depois de editar data/raw/ders_estaduais/regras.json)
 docker compose --profile import run --rm importer oae_der_mg oae_der_es rodovias_estaduais_der_es rodovias_estaduais_der_rj
+# Sul e Centro-Oeste (precisa do PBF do Valhalla e, para as rotas `rota`, do Valhalla no ar)
+docker compose --profile import run --rm importer rodovias_estaduais_der_pr rodovias_estaduais_daer_rs rodovias_estaduais_goinfra rodovias_estaduais_sinfra_mt rodovias_estaduais_der_df
 ```
+- Nova regra do Sul/Centro-Oeste: acrescentar em `regras.json` (`uf`, `orgao`, `criterio`, `janelas` se for por data/hora, `geometria`
+  com `osm_ref`+`de`/`para` ou `rota`); conferir a extensão no log (`geometria_info.aviso`) e rodar o importador da UF. SC e MS
+  não têm importador (sem regra com ato vigente); ao surgir uma, criar `rodovias_estaduais_<orgao>.py` copiando o do DER-PR.
+- A GOINFRA reedita a Portaria dos feriados todo ano (a de 2027 sai até fevereiro): trocar `janelas` e `publicacao` da regra.
 - Curadoria: cada regra precisa citar ato e artigo/item; `ativa: true` só com `status: vigente` e confiança alta ou média;
   `ativa: false` exige `motivo_inativa`; revogada fica `status: revogada`. O importador recusa a carga se algo falhar.
 - Para ativar uma regra desativada (ex.: IS 009-N/2008 da ES-010), confirmar a vigência no portal de Instruções de
@@ -229,6 +285,12 @@ docker compose --profile import run --rm importer oae_der_mg oae_der_es rodovias
   remover em `regras.json` e rodar `oae_der_es`. `oae__der-es.sql` depende do grafo do Valhalla (ponto de bloqueio).
 
 ## Testes
+- `api/test/layers/rodovias_estaduais_sul_co.test.ts` (API em `API_URL`): critérios novos sem rota (comprimento com OU, `cumulativo`, `ou`
+  CR6/CTS11, `isenta_carga`, `janelaVale` com datas, dias da semana e fim exclusivo); seeds (ato com artigo, confiança, motivo da
+  inativa; Melchior desativada); **uma rota por UF com regra**: PR (PR-447, carreta de 50 t com alerta × 44 t em silêncio; ponte
+  Manoel Ribas, carreta desvia × toco passa), RS (Estrada do Mar, DN 148/2022 com bitrem × carreta, Rota do Sol com rodotrem ×
+  bitrem), GO (Finados 02/11/2026 às 9h desvia, no dia seguinte e depois das 20h não; perecível isento), MT (rodotrem × carreta na
+  MT-040), DF (Eixão, Eixão do Lazer no domingo às 10h × às 19h, Barragem do Paranoá). SC e MS não têm regra.
 - `api/test/layers/rodovias_estaduais.test.ts` (API em `API_URL`): regras sem rota (pesados × VUC — inclusive "VUC" de
   14 t — e utilitário, interrompida, variante, meia-pista, limite com e sem valor, ponto inativo, critério de trecho
   estrito e com OU); **ponto crítico de teste "pista interrompida para pesados" no meio de uma rota Lagoa Santa → Pedro
@@ -252,3 +314,6 @@ docker compose --profile import run --rm importer oae_der_mg oae_der_es rodovias
 - Variante: o traçado (camada `pontos_criticos_variantes`) não é usado; "com variante" só avisa.
 - Regras de trecho por sentido não existem no ES (os atos valem nos dois sentidos).
 - O km do SRE é interpolado na geometria (erro típico < 1%); o Portal de Aracruz (ES-010) é aproximado.
+- Sul e Centro-Oeste: `janelas` só são conferidas no instante de saída (uma viagem de 6 h pode chegar ao trecho depois da janela);
+  a geometria vem do OSM e pode incluir pistas concorrentes com BR (GO-330/BR-352, RSC-453/BR-453) ou deixar de fora o que o OSM
+  não marca com o `ref` do ato; janelas semanais com feriados móveis (RS Estrada do Mar, Rota do Sol; MT dia útil) não são modeladas.
