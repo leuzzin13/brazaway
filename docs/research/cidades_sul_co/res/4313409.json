@@ -1,48 +1,64 @@
 {
-  "ibge": "4313409",
-  "nome": "Novo Hamburgo",
-  "uf": "RS",
-  "status": "nao_achou",
-  "nivel_busca": "profunda",
-  "falha_de_fonte": true,
-  "fontes_consultadas": [
-    {
-      "url": "https://www.novohamburgo.rs.gov.br",
-      "resultado": "falha: 403"
-    },
-    {
-      "url": "https://novohamburgo.atende.net; https://novohamburgo.atende.net/diariooficial",
-      "resultado": "portal acessado; legislação/diário em JS, não automatizados"
-    },
-    {
-      "url": "camaranh.rs.gov.br; cmnh.rs.gov.br; diario.novohamburgo.rs.gov.br",
-      "resultado": "falha: inacessíveis pelo proxy"
-    },
-    {
-      "url": "api.queridodiario.org.br territory 4313409; famurs buscar 4313409",
-      "resultado": "0 resultados (sem cobertura)"
-    },
-    {
-      "url": "leads/penaestrada.json 4313409",
-      "resultado": "sem página (404)"
-    },
-    {
-      "url": "https://www.novohamburgo.rs.gov.br; https://novohamburgo.rs.gov.br; /diario",
-      "resultado": "falha: 403 (bloqueio por WAF)"
-    },
-    {
-      "url": "https://novohamburgo.atende.net; https://novohamburgo.cespro.com.br",
-      "resultado": "Atende (SPA com captcha) e CESPRO (reCAPTCHA) não automatizáveis"
-    },
-    {
-      "url": "api.queridodiario.org.br territory 4313409; FAMURS",
-      "resultado": "sem cobertura (0 diários no Querido Diário; FAMURS não cobre Novo Hamburgo)"
-    }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Nada encontrado, e a busca falhou: o site da Prefeitura retorna 403, a Câmara está inacessível e o Atende (JS) não foi automatizado. O resultado NÃO é conclusivo. Pendência: legislação de Novo Hamburgo (Leis Municipais/Atende) e decretos de trânsito (SEMOB) sobre caminhões na área central e Av. Pedro Adams Filho. | Rodada 2: nenhuma fonte acessível; resultado inconclusivo.",
-  "osm_divergencias": [
-    "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
-  ],
-  "regras_rascunho": []
+ "ibge": "4313409",
+ "nome": "Novo Hamburgo",
+ "uf": "RS",
+ "status": "nao_achou",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.novohamburgo.rs.gov.br",
+   "resultado": "falha: 403"
+  },
+  {
+   "url": "https://novohamburgo.atende.net; https://novohamburgo.atende.net/diariooficial",
+   "resultado": "portal acessado; legislação/diário em JS, não automatizados"
+  },
+  {
+   "url": "camaranh.rs.gov.br; cmnh.rs.gov.br; diario.novohamburgo.rs.gov.br",
+   "resultado": "falha: inacessíveis pelo proxy"
+  },
+  {
+   "url": "api.queridodiario.org.br territory 4313409; famurs buscar 4313409",
+   "resultado": "0 resultados (sem cobertura)"
+  },
+  {
+   "url": "leads/penaestrada.json 4313409",
+   "resultado": "sem página (404)"
+  },
+  {
+   "url": "https://www.novohamburgo.rs.gov.br; https://novohamburgo.rs.gov.br; /diario",
+   "resultado": "falha: 403 (bloqueio por WAF)"
+  },
+  {
+   "url": "https://novohamburgo.atende.net; https://novohamburgo.cespro.com.br",
+   "resultado": "Atende (SPA com captcha) e CESPRO (reCAPTCHA) não automatizáveis"
+  },
+  {
+   "url": "api.queridodiario.org.br territory 4313409; FAMURS",
+   "resultado": "sem cobertura (0 diários no Querido Diário; FAMURS não cobre Novo Hamburgo)"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4313409 caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad|eixos|carreta|betoneira|bitrem|zona de restrição (R3, todas as fontes)",
+   "resultado": "atende/prefeitura https://novohamburgo.atende.net: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "https://www.novohamburgo.rs.gov.br/",
+   "resultado": "R3: home http 403 (39 bytes)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4313409 (FAMURS) R3: circulação de caminhões, tráfego de caminhões, trânsito de veículos pesados, carga e descarga, zona de restrição de caminhões, proibido estacionar caminhões",
+   "resultado": "varredura R3 com 7 termos; ocorrências score>=6 revisadas: só ruído (cemitério, ISS/CNAE, licitação de placas, plano diretor/diretriz, estacionamento)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4313409",
+   "resultado": "R3: HTTP 522 (API fora do ar hoje; 1 tentativa)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Nada encontrado, e a busca falhou: o site da Prefeitura retorna 403, a Câmara está inacessível e o Atende (JS) não foi automatizado. O resultado NÃO é conclusivo. Pendência: legislação de Novo Hamburgo (Leis Municipais/Atende) e decretos de trânsito (SEMOB) sobre caminhões na área central e Av. Pedro Adams Filho. | Rodada 2: nenhuma fonte acessível; resultado inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://novohamburgo.atende.net.",
+ "osm_divergencias": [
+  "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+ ],
+ "regras_rascunho": []
 }
