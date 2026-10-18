@@ -202,3 +202,61 @@ tudo ISS/frota): a re-pontuação mandou 306 cidades para conferência barata (D
 ## Aprendizado das ondas (18/10/2026)
 - **DOM/SC — texto integral do ato:** a página do ato não traz o texto, mas `https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=<id>` com o header `X-Requested-With: XMLHttpRequest` devolve o texto completo. Rendeu 17 cidades com regra ativa em 2 lotes de SC. Confira alteração/revogação buscando no DOM/SC pela entidade.
 - **Querido Diário:** use `api.queridodiario.org.br` via curl (o domínio `...ok.org.br` falha no TLS daqui; pelo Python dá 403).
+
+---
+
+## 8. Reavaliação da RODADA 2 (18/10/2026, orquestrador)
+
+**Decisão: nenhuma fila R2 nova (parar).** Estado conferido em disco:
+* Os 1.659 municípios têm `res/<ibge>.json`. Nenhuma cidade ficou sem resultado por falha do agente.
+* Os 522 municípios com `falha_de_fonte: true` já estão todos nas filas das rodadas 3 e 4 (`$C/fila_r3/`): R3-FF-* (fontes que
+  falharam), R3-CM-* (cobertura mínima), R3-PIS-* / R3-VER-* (pistas e verificação), R3-MT-AMM, R4-NUCLEOGOV-GO
+  (`toolkit/nucleogov.py`), R4-AGM-GO, R4-ELOTECH-PR-MS, R4-PLENUS-RS e R4-SOFTCAM. Uma fila R2 repetiria esse trabalho.
+* Só 2 cidades com `pista`/`regra_sem_ato` ficaram fora dessas filas: Bodoquena-MS (Dec. 058/2012 contraditório, verificado
+  2 vezes) e Porto Amazonas-PR (faltam a Lei 843/2009 original e a Lei 838/2009, verificado). O que falta é consulta manual
+  à prefeitura, não pesquisa automatizada.
+
+### Aprendizados consolidados das ondas R1 (por UF e sistema)
+**SIGPub (AMP, FAMURS, AGM, FGM, AMM-MT, /ms)**: `diariomunicipal.com.br/<slug>/materia/<id>` por curl devolve o ato inteiro.
+Tire as tags; no AMM-MT, corte entre "Baixar a edição completa (PDF)" e "A autenticidade desta matéria". Há connection reset
+de vez em quando: repita depois de 2 s. As frases limpas são "circulação de caminhões" e "trânsito de caminhões".
+"veículos pesados" e "carretas" trazem quase só licitação e cargo de motorista. Para achar decreto regulamentador, busque
+pelo nome do conceito ("Zona de Restrição Máxima", "Autorização Especial de Trânsito"). Acervo: AMM-MT forte em 2011-2015;
+/ms até cerca de 2019. Atos mais novos saem do SAPL ou do portal.
+**`diarios_consolidados.py buscar`**: dá "http 0" na 1ª tentativa e se recupera sozinho. Com `--json`, o log de retentativa
+pode vir antes do JSON (parseie a partir do primeiro `[`). Cidade só no QD: use `--fonte qd`. Rode com timeout, em primeiro
+plano ou uma cidade por vez.
+**Querido Diário**: o `.txt` estático (`data.queridodiario.ok.org.br/...txt`) baixa por curl via proxy. Troque `.pdf` por `.txt`.
+**SAPL**: a API REST funciona por curl mesmo quando o cliente diz "sem resposta reconhecível" (Bonito-MS). Confira o total sem
+filtro: Cristalina, Porangatu e Lucas do Rio Verde dão 0, e base vazia não prova ausência. `texto_integral` vem em http://:
+troque por https://. "caminh" casa "encaminhamento", "Caminho da Escola" e "Caminhada"; use `caminh(?!ad|ar|ei|am|ou)` e filtre
+pela ementa. Em DR, rodar SAPL com `caminh|carga e descarga|corredor|mão única|tráfego` achou ato real fora do trecho anotado:
+Ribas do Rio Pardo, Colniza, Nova Xavantina e Comodoro.
+**NucleoLeg (GO)**: há API pública em `https://leis.<m>.go.gov.br/api/leis?per_page=100&page=N` (ou `.go.leg.br`). O campo `estrutura`
+traz o texto integral. A busca é ignorada, então baixe tudo e filtre. Só leis, sem decretos. Teste antes com `per_page=1`
+(Posse e Niquelândia: 200 com 0 atos).
+**Instar (MS)**: o PDF da lei está em `/portal/download/legislacao/<codigo>/`, que faz meta-refresh para `/publicos/<arq>.pdf`.
+O portal achou a Lei 1.246/2026 de Ladário, que nenhum diário tinha.
+**WordPress de prefeitura e Câmara**: `/wp-json/wp/v2/search?search=<termo>` acha notícias e requerimentos. É pista, não ato.
+**PDF imagem sem tesseract**: `pdftoppm -r 150 -png` e depois `rapidocr_onnxruntime` (python3 -I), ou ler o PNG como imagem. Anote "OCR".
+**WebSearch**: rende pouco em GO. Achou a Lei 4.739/2026 de Ponta Porã-MS: vale 1 busca para cidade de 90 mil hab. ou mais sem pista.
+**Bloqueios recorrentes**: NucleoGov `acessoainformacao.*` (403), leismunicipais e leis.org (Cloudflare), 1doc, CESPRO (reCAPTCHA),
+MPX (fora do ar ou heurístico), Overpass (reset/504 o dia todo; use os `exemplos` de `osm_hints`). Hosts recusados pelo proxy:
+belavistadegoias.go.gov.br. Hosts caídos: paranaiba e brasilandia.ms.gov.br. Guarde scripts no scratchpad (`/tmp` foi limpo).
+
+### Convenções firmadas nas ondas
+* Ato que cria zona ou rota sem listar vias ("conforme mapa anexo", "conforme sinalização", "em vias urbanas") → `regra_com_ato`
+  se o ato primário foi lido. A regra fica `desativada`, com horário e peso registrados e o motivo dito. `pista` fica para quem
+  só tem menção indireta ao ato (Rio Brilhante, Aquidauana).
+* Lei autorizativa cujo decreto de rotas nunca saiu (Jaraguá-GO) → `regra_sem_ato`.
+* "Corredor de deslocamento"/"rota de caminhões" que designa a rota sem vedar o resto → regra desativada, confiança baixa.
+* Proibição em "todas as vias do município" (Alto Horizonte) → zona urbana sem rodovias estaduais ou federais, com geometria manual.
+* Janela inferida ("permitida das 19h às 5h") → janela inversa em regra desativada, confiança baixa.
+* Lei nova sem revogação expressa da anterior (Ladário 14 t × 23 t) → anterior revogada tacitamente, confiança média.
+* Cláusula revogatória que cita o decreto errado (Brasilândia) → revogada com confiança baixa e nota de possível erro material.
+* Separe estacionamento de circulação (Lucas do Rio Verde, Alto Garças). Uma restrição a ônibus não é restrição a caminhão (Colíder).
+* Ruído confirmado em todas as UFs: ISS 11.04; plano de cargos; PPA/LDO; frota; lei orgânica com "fixar a tonelagem"; leis de
+  órgão de trânsito/JARI ("escolta de cargas superdimensionadas"); uso do solo com "estacionamento de caminhões"; decreto de
+  "situação de emergência"; taxa de serviço por veículo pesado.
+* `falha_de_fonte`: false só quando uma fonte cobre o período e não teve acerto. Fica true quando a única fonte foi o diário
+  antigo (AMM-MT 2011-2015, /ms até 2019) e o portal era bloqueado ou heurístico (o cliente `portal_proprio` devolve 0 mesmo com o site no ar).
