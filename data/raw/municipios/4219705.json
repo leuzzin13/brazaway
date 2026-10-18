@@ -1,0 +1,301 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4219705",
+  "municipio": "Xaxim",
+  "uf": "SC",
+  "fonte_id": "xaxim",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/2589606 (Decreto 352/2020, DOM/SC 04/08/2020)",
+    "licenca": "Atos oficiais do município: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Texto obtido no Diário Oficial dos Municípios de Santa Catarina (DOM/SC).",
+    "notas": "Decreto 352/2020: 'Área Restrita para Veículos de Carga' (PBT acima de 10 t) em 11 trechos centrais. O verificador (18/10/2026) rebaixou a confiança para baixa (nenhum artigo contém verbo proibitivo; mapa do Anexo 1 ausente); a camada não deixa regra de confiança baixa ativa, então entra desativada, com as vias montadas para o caso de reativação."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Xaxim não define VUC no Decreto 352/2020: o VUC é tratado como caminhão (veículos de até 10 t circulam livremente, art. 7º).",
+  "regras": [
+    {
+      "id": "xaxim_area_restrita_veiculos_carga",
+      "tipo": "via",
+      "regime": "Área Restrita para Veículos de Carga",
+      "nome": "Vias centrais de Xaxim: veículos com PBT acima de 10 t restritos (11 trechos); abaixo de 10 t circulam livremente",
+      "status": "desativada",
+      "status_motivo": "Confiança baixa (verificação de 18/10/2026): o Decreto 352/2020 não escreve a proibição em artigo próprio (o art. 3º remete a uma 'proibição constante do artigo 3º', remissão errada; o art. 9º cita infração de estacionamento) e o mapa do Anexo 1 não está no texto. A intenção de restringir PBT > 10 t nas 11 vias é clara pelo conjunto, mas a camada só aplica regra de confiança média ou alta. Reativar se a Prefeitura confirmar o ato. As 11 vias estão montadas no OSM.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo, ônibus de fretamento, veículos oficiais, PM/bombeiros/ambulâncias, Forças Armadas, concessionárias de serviço público em serviço, caminhão-trator desacoplado, concretagem com autorização de 24 h, manutenção/entulho/limpeza de fossa (art. 3º)",
+        "Carga e descarga em locais sinalizados com comprovação fiscal, em qualquer via, para PBT > 10 t (art. 6º)",
+        "Eventos: autorização onerosa do Departamento de Trânsito (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 352/2020 (22/07/2020; DOM/SC 04/08/2020)",
+          "artigo": "art. 1º e art. 2º (Área Restrita, alíneas a a k, Anexo 1 mapa); art. 3º (exceções); art. 4º (eventos); art. 6º (carga e descarga em locais sinalizados); art. 7º (livre abaixo de 10 t); art. 11 (vigência na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2589606"
+        }
+      ],
+      "nota": "O decreto não escreve a proibição em artigo próprio: o art. 3º se refere à 'proibição constante do artigo 3º' (remissão errada) e o art. 1º trata de 'normas para a circulação de veículos pesados acima de 10 t nas vias centrais'. A restrição (circulação em 'Área Restrita para Veículos de Carga', com carga e descarga liberada em locais sinalizados) foi lida a partir do conjunto, por isso confiança 'media'. Anexo 1 (mapa) fora do texto extraído. Verificacao 18/10/2026: reaberto o Decreto 352/2020 inteiro (DOM/SC 2589606): nenhum artigo contem verbo proibitivo; a proibicao e inferida do art. 3o ('Excetua-se a proibicao...'), do art. 7o (livre circulacao abaixo de 10 t) e da denominacao 'Area Restrita para Veiculos de Carga' (art. 2o); art. 9o cita art. 181, XVII do CTB (estacionamento). Anexo 1 (mapa) ausente do texto. Confianca rebaixada para baixa; regra mantida ativa porque os 11 trechos sao delimitados por vias nomeadas. Modelada como 11 vias nomeadas (o rascunho a chamava de zona), por falta de perímetro/mapa.",
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho (cache do PBF local)",
+      "vigencia_inicio": "2020-08-04",
+      "trechos": [
+        {
+          "inciso": "art. 2º, a",
+          "via": [
+            "Rua Independência"
+          ],
+          "descricao": "Rua Independência, da Rua Cândido Teston à Av. Plínio Arlindo de Nês",
+          "de": {
+            "lonlat": [
+              -52.537205,
+              -26.958637
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.5354055,
+              -26.957687
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, b",
+          "via": [
+            "Rua Vista Alegre"
+          ],
+          "descricao": "Rua Vista Alegre, da Rua Duque de Caxias à Av. Plínio Arlindo de Nês",
+          "de": [
+            "Rua Duque de Caxias"
+          ],
+          "ate": [
+            "Avenida Plínio Arlindo de Nes",
+            "Avenida Plínio Arlindo de Nês"
+          ]
+        },
+        {
+          "inciso": "art. 2º, c",
+          "via": [
+            "Avenida Luiz Lunardi"
+          ],
+          "descricao": "Av. Luiz Lunardi, da Rua Duque de Caxias à Rua Pedro Lunardi",
+          "de": {
+            "lonlat": [
+              -52.535505,
+              -26.963485
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.529845,
+              -26.960526
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, d",
+          "via": [
+            "Rua Rio Grande"
+          ],
+          "descricao": "Rua Rio Grande, da Rua Duque de Caxias à Rua Pedro Lunardi",
+          "de": {
+            "lonlat": [
+              -52.534875,
+              -26.964462
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.529242,
+              -26.96146
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, e",
+          "via": [
+            "Avenida Júlio Lunardi"
+          ],
+          "descricao": "Av. Júlio Lunardi, da Rua Duque de Caxias à Rua Pedro Lunardi",
+          "de": {
+            "lonlat": [
+              -52.534224,
+              -26.965424
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.528573,
+              -26.962485
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, f",
+          "via": [
+            "Rua Senador Nereu Ramos"
+          ],
+          "descricao": "Rua Senador Nereu Ramos, da Rua Duque de Caxias à Rua Pedro Lunardi",
+          "de": [
+            "Rua Duque de Caxias"
+          ],
+          "ate": [
+            "Rua Pedro Lunardi"
+          ]
+        },
+        {
+          "inciso": "art. 2º, g",
+          "via": [
+            "Rua Cândido Teston"
+          ],
+          "descricao": "Rua Cândido Teston, da Rua Independência à Rua Senador Nereu Ramos",
+          "de": {
+            "lonlat": [
+              -52.537205,
+              -26.958637
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.532497,
+              -26.965837
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, h",
+          "via": [
+            "Rua da Matriz"
+          ],
+          "descricao": "Rua da Matriz, da Rua Dez de Novembro à Av. Luiz Lunardi",
+          "de": {
+            "lonlat": [
+              -52.534183,
+              -26.960876
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.533265,
+              -26.962277
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, i",
+          "via": [
+            "Avenida Plínio Arlindo de Nes",
+            "Avenida Plínio Arlindo de Nês"
+          ],
+          "descricao": "Av. Plínio Arlindo de Nês, da Rua Farrapos à Rua Santo Antônio",
+          "de": {
+            "lonlat": [
+              -52.536013,
+              -26.95675
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.530067,
+              -26.965866
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, j",
+          "via": [
+            "Travessa Independência"
+          ],
+          "descricao": "Travessa Independência, da Rua Dez de Novembro à Av. Luiz Lunardi",
+          "de": {
+            "lonlat": [
+              -52.53292,
+              -26.960223
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -52.532006,
+              -26.961653
+            ]
+          },
+          "caminho": "valhalla",
+          "corredor_m": 70,
+          "aproximado": true,
+          "nota": "Pontas nos cruzamentos do ato (coordenadas do OSM); trecho percorrido pela malha do Valhalla porque a via tem mão única/um só way no OSM."
+        },
+        {
+          "inciso": "art. 2º, k",
+          "via": [
+            "Rua Avelino Piana",
+            "Travessa Avelino Piana"
+          ],
+          "descricao": "Rua Avelino Piana, da Rua Rui Barbosa à Rua Pedro Lunardi",
+          "aproximado": true,
+          "nota": "A Rua Rui Barbosa não toca a Rua Avelino Piana no OSM (123 m): aplicada a via inteira (e a Travessa Avelino Piana) até a Rua Pedro Lunardi."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4219705_vias.geojson",
+          "construir": "trechos",
+          "props": {
+            "fonte_trecho": "Decreto 352/2020, art. 2º, a a k"
+          }
+        }
+      ]
+    }
+  ]
+}
