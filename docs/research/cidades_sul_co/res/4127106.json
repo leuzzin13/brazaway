@@ -1,0 +1,115 @@
+{
+ "ibge": "4127106",
+ "nome": "Telêmaco Borba",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.telemacoborba.pr.leg.br/norma/2623",
+   "resultado": "LIDO integral (PDF SAPL, Boletim Oficial 2195, 28/07/2023): Lei Complementar 137/2023, 9 artigos; art. 6 restringe circulação de veículos > 7 t e/ou > 7 m na Área Central 9h-19h dias úteis e 9h-13h30 sábado; art. 3 janelas de carga/descarga; art. 9 revoga a Lei 1623/2007. Texto em atos/4127106/lc_137_2023.txt"
+  },
+  {
+   "url": "https://sapl.telemacoborba.pr.leg.br/norma/847",
+   "resultado": "LIDO (PDF escaneado, lido na imagem): Lei 1623/2007 proibia carretas/romeu e julieta/trucadas carregadas no perímetro urbano exceto PR-160; REVOGADA pelo art. 9 da LC 137/2023."
+  },
+  {
+   "url": "https://sapl.telemacoborba.pr.leg.br/api/norma/normajuridica/ (ementa: 137, carga e descarga, Área Central de Tráfego, mobilidade)",
+   "resultado": "ABRIU; sem alteração/revogação posterior da LC 137/2023 encontrada. Existe LC 131/2023 (Plano de Mobilidade), não lida."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4127106 \"carga e descarga\"",
+   "resultado": "AMP não cobre o município: 0 resultados."
+  },
+  {
+   "url": "https://telemacoborba.atende.net",
+   "resultado": "Atende.net (captcha) - não acessado."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "LC 137/2023 (28/07/2023): art. 2 define a Área Central de Tráfego por logradouros (Rua Manoel Simeão de Souza esq. Rua José Augusto Nocera, Av. das Nações Unidas Leste, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin); art. 6 proíbe circulação de veículos acima de 7,0 t e/ou 7,0 m 9h-19h dias úteis e 9h-13h30 sábado; art. 3 limita carga/descarga por classe (1,8-7 t e 7-14 t) a espaços demarcados em janelas noturnas/fim de semana; art. 5 autorização especial DMSPT/TBTran; art. 8 permite ao Conselho de Mobilidade ampliar áreas. Dúvidas: art. 6 diz \"toneladas\" sem distinguir PBT/capacidade (modelado como payload_t, coerente com o art. 3, confiança média); domingo/feriado não restritos pelo art. 6 (art. 7 trata liberações de fim de semana). Perímetro é um polígono definido em texto (sem geometria).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "tb_area_central_circulacao",
+   "tipo": "zona",
+   "regime": "restricao_circulacao",
+   "nome": "Área Central de Tráfego - circulação > 7 t / > 7 m",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "09:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "13:30"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 7
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": "Autorização especial DMSPT/TBTran para carga/descarga excepcional (art. 5); carga/descarga nos espaços e janelas do art. 3.",
+   "base_legal": [
+    {
+     "ato": "Lei Complementar 137/2023 (28/07/2023)",
+     "artigo": "art. 6 (área: art. 2)",
+     "url": "https://sapl.telemacoborba.pr.leg.br/norma/2623"
+    }
+   ],
+   "vigencia_inicio": "2023-07-28",
+   "trechos": [
+    "Perímetro: Rua Manoel Simeão de Souza (esq. Rua José Augusto Nocera) -> Rua José Augusto Nocera -> Av. das Nações Unidas Leste -> Av. Euclides Bonifácio Londres -> Av. Chanceler Horácio Lafer -> Av. Paraná -> Av. Samuel Klabin -> Rua Manoel Simeão de Souza"
+   ],
+   "geometria": []
+  },
+  {
+   "id": "tb_lei_1623_2007",
+   "tipo": "zona",
+   "regime": "proibicao_circulacao",
+   "nome": "Perímetro urbano - carretas, romeu e julieta e trucadas carregadas",
+   "status": "revogada",
+   "status_motivo": "Revogada pelo art. 9 da LC 137/2023.",
+   "confianca": "alta",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei 1.623/2007 (05/09/2007)",
+     "artigo": "art. 1",
+     "url": "https://sapl.telemacoborba.pr.leg.br/norma/847"
+    }
+   ],
+   "vigencia_inicio": "2007-09-14",
+   "vigencia_fim": "2023-07-28",
+   "trechos": [
+    "Ruas e avenidas do perímetro urbano, exceto Rodovia do Papel (PR-160)"
+   ],
+   "geometria": []
+  }
+ ]
+}
