@@ -2,9 +2,9 @@
  "ibge": "5105622",
  "nome": "Mirassol d'Oeste",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/1068C3B4",
@@ -21,10 +21,73 @@
   {
    "url": "diarios_consolidados.py buscar 5105622 'trânsito de caminhões' (amm-mt)",
    "resultado": "sem ato de restrição a caminhões; só ruído (cargos, ISS, licitação, estrutura)."
+  },
+  {
+   "url": "home prefeitura: https://www.mirassoldoeste.mt.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=403 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 19 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2020-2026"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Trechos anotados são decreto de cargo de motorista (<3.5 t) e LC tributária (ISS 11.04): ruído. Portal leismunicipais atrás de Cloudflare; só diário AMM-MT (0 resultados p/ 'trânsito de caminhões'). Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário.",
+ "observacoes": "Trechos anotados são decreto de cargo de motorista (<3.5 t) e LC tributária (ISS 11.04): ruído. Portal leismunicipais atrás de Cloudflare; só diário AMM-MT (0 resultados p/ 'trânsito de caminhões'). Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — Mirassol d'Oeste: Distrito de Sonho Azul, veículos de carga com mais de 3 eixos (Decreto 5.400/2026). Textos em atos/5105622/. Ver status_motivo das regras desativadas.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "mirassoldoeste_dec_5400_2026_sonho_azul_3eixos",
+   "tipo": "zona",
+   "regime": "Proibida circulação de veículos de carga com mais de 3 eixos, 24 h, nas vias urbanas do Distrito de Sonho Azul",
+   "nome": "Mirassol d'Oeste: Distrito de Sonho Azul, veículos de carga com mais de 3 eixos (Decreto 5.400/2026)",
+   "status": "desativada",
+   "status_motivo": "R3: eficácia condicionada à conclusão da sinalização (art. 17, termo próprio do art. 10 §1º, não localizado) e perímetro do Distrito só em croqui (Anexo I cita ruas apenas a título exemplificativo); ato vigente lido integralmente e rota alternativa obrigatória pela Estrada Municipal Brás João da Costa (liga MT-175/BR-174). Reativar quando houver termo de sinalização e geometria do distrito.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 6º: emergência/segurança pública; serviços públicos essenciais; transporte coletivo e escolar; veículos do Município e concessionárias em obra/intervenção na via; AET",
+    "Art. 7º: AET só para origem/destino dentro do Distrito (nunca para mera passagem)",
+    "Art. 5º: veículos permitidos/excepcionados a 30 km/h e (>3 eixos excepcionados) só 7h-20h"
+   ],
+   "autorizacao": "Autorização Especial de Trânsito (AET), órgão executivo de trânsito do Município (arts. 7º a 9º)",
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 5.400, de 21/08/2026 (Mirassol d'Oeste; publ. AMM-MT 24/08/2026)",
+     "artigo": "arts. 3º, 4º, 10, 17, Anexos I e II",
+     "url": "https://amm.diariomunicipal.org/publicacao/1895376/"
+    }
+   ],
+   "trechos": [
+    "Vias urbanas do Distrito de Sonho Azul (Rua Um, Rua Dois, Travessa Três, Rua Maria Mendes, Rua Dez, Rua Vitório Picadeiro, Rua Mato Grosso, Rua Vicente Fernandes, Rua Brasil, acesso à Estrada do Guarani), perímetro em croqui"
+   ],
+   "vigencia_inicio": "2026-08-24",
+   "vigencia_fim": null,
+   "nota": "Eixos: soma de todos os eixos do conjunto (unidade tratora + reboques). Proíbe também parada, estacionamento e C/D nos locais sinalizados (§4º)."
+  }
+ ]
 }

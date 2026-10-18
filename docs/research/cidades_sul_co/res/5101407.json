@@ -2,9 +2,9 @@
  "ibge": "5101407",
  "nome": "Aripuanã",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/697665FD",
@@ -17,10 +17,65 @@
   {
    "url": "diarios_consolidados.py buscar 5101407 'trânsito de caminhões' (amm-mt)",
    "resultado": "sem ato de restrição a caminhões; só ruído (cargos, ISS, licitação, estrutura)."
+  },
+  {
+   "url": "home prefeitura: https://aripuana.mt.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "home camara: https://camaraaripuanamt.com.br/",
+   "resultado": "HTTP 403; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=455 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 14 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2023-2026"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "LC 084/2013 é ISS 11.04: ruído. Diário: 1 edital de licitação. leismunicipais bloqueado (Cloudflare). Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário.",
+ "observacoes": "LC 084/2013 é ISS 11.04: ruído. Diário: 1 edital de licitação. leismunicipais bloqueado (Cloudflare). Lote R1-MT-DR01 (conferência barata); nenhuma regra com ato primário. | R3 2026-10-18: ATO ENCONTRADO no Jornal Oficial AMM-MT (nova busca em texto integral, amm.diariomunicipal.org) — Aripuanã: Av. Osmar Demeneck, parada/estacionamento de qualquer veículo junto ao canteiro central. Textos em atos/5101407/. Ver status_motivo das regras desativadas.  Decreto 5.968/2026 é só parada/estacionamento na Av. Osmar Demeneck (obra).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "feriados": "aplica",
+   "origem_destino_dentro": "avisa",
+   "id": "aripuana_dec_5968_2026_av_osmar_demeneck",
+   "tipo": "via",
+   "regime": "Parada e estacionamento proibidos junto ao canteiro central (obras)",
+   "nome": "Aripuanã: Av. Osmar Demeneck, parada/estacionamento de qualquer veículo junto ao canteiro central",
+   "status": "desativada",
+   "status_motivo": "só estacionamento/parada, de todos os veículos, em razão de obras no canteiro central (condicionada a obra).",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 5.968, de 2026 (Aripuanã; AMM-MT 13/08/2026)",
+     "artigo": "art. 1º",
+     "url": "https://amm.diariomunicipal.org/publicacao/1889429/"
+    }
+   ],
+   "trechos": [
+    "Avenida Osmar Demeneck, lado da pista contíguo ao canteiro central"
+   ],
+   "vigencia_inicio": "2026-08-13",
+   "vigencia_fim": null,
+   "nota": "Não restringe circulação."
+  }
+ ]
 }

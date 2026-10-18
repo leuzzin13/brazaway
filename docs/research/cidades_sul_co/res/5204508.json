@@ -42,9 +42,29 @@
   {
    "url": "https://leismunicipais.com.br/prefeitura/go/caldas-novas",
    "resultado": "HTTP 403 (Cloudflare); nao contornado."
+  },
+  {
+   "url": "home prefeitura: https://www.caldasnovas.go.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.caldasnovas.go.gov.br/cidadao/legislacao/dec; https://acessoainformacao.caldasnovas.go.gov.br/cidadao/legislacao/mp/; https://acessoainformacao.caldasnovas.go.gov.br/legislacao/leis"
+  },
+  {
+   "url": "home camara: https://caldasnovas.go.leg.br/",
+   "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.caldasnovas.go.leg.br/cidadao/legislacao/res; https://caldasnovas.go.leg.br/memoria-do-legislativo/; https://caldasnovas.go.leg.br/servico/producao-legislativa/"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 5204508 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
+   "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
+  },
+  {
+   "url": "WP REST /wp-json/wp/v2/search (prefeitura https://www.caldasnovas.go.gov.br/) 4 termos",
+   "resultado": "R3: 34 resultados, só notícias/páginas institucionais; nenhum ato normativo de restrição"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5204508",
+   "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
   }
  ],
- "observacoes": "Decretos e portarias (Integrame, 2022+) lidos sem regra de caminhao. A lacuna e a legislacao em LEI (Codigo de Posturas, Plano Diretor/Lei de uso do solo, eventual lei de transito/carga e descarga) hospedada no CESPRO, inacessivel a automacao: por isso falha_de_fonte=true e o nao_achou NAO e conclusivo. Pendencia: abrir caldasnovas.cespro.com.br em navegador e pesquisar caminh*, carga e descarga, tonelagem, transito.",
+ "observacoes": "Decretos e portarias (Integrame, 2022+) lidos sem regra de caminhao. A lacuna e a legislacao em LEI (Codigo de Posturas, Plano Diretor/Lei de uso do solo, eventual lei de transito/carga e descarga) hospedada no CESPRO, inacessivel a automacao: por isso falha_de_fonte=true e o nao_achou NAO e conclusivo. Pendencia: abrir caldasnovas.cespro.com.br em navegador e pesquisar caminh*, carga e descarga, tonelagem, transito. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados').",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

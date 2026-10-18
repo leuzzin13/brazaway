@@ -2,7 +2,7 @@
  "ibge": "5208806",
  "nome": "Goianira",
  "uf": "GO",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "media",
  "falha_de_fonte": true,
  "fontes_consultadas": [
@@ -21,9 +21,29 @@
   {
    "url": "WebSearch: Goianira prefeitura proíbe trânsito de caminhões decreto lei vias horário",
    "resultado": "Só resultados de Goiânia (Dec. 2716/2025 carga/descarga em obras, Lei 9.028/2011); nada de Goianira."
+  },
+  {
+   "url": "home prefeitura: https://goianira.go.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "home camara: https://camaragoianira.go.gov.br/",
+   "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.camaragoianira.go.gov.br/cidadao/legislacao/"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 5208806 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
+   "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
+  },
+  {
+   "url": "WP REST /wp-json/wp/v2/search (camara https://camaragoianira.go.gov.br/) 4 termos",
+   "resultado": "R3: 4 resultados, só notícias/páginas institucionais; nenhum ato normativo de restrição"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5208806",
+   "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
   }
  ],
- "observacoes": "Nenhum ato de restrição localizado. Portais da Prefeitura (leismunicipais) e da Câmara (NucleoGov) inacessíveis; o AGM não achou nada, mas só cobre o período de adesão do município. Não conclusivo no portal, por isso falha_de_fonte true.",
+ "observacoes": "Nenhum ato de restrição localizado. Portais da Prefeitura (leismunicipais) e da Câmara (NucleoGov) inacessíveis; o AGM não achou nada, mas só cobre o período de adesão do município. Não conclusivo no portal, por isso falha_de_fonte true. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados'). R3: Câmara (camaragoianira.go.gov.br) tem notícia de requerimento solicitando proibição de tráfego de veículos pesados nas avenidas principais: pista, sem ato primário.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "data": "2026-10-18"
