@@ -4,10 +4,11 @@
 #   ./scripts/build-tiles-regioes.sh            # baixa (se faltar) -> correções locais -> tiles em data/valhalla_build (porta 8004)
 #   ./scripts/build-tiles-regioes.sh --swap     # idem e troca o Valhalla principal (o atual vai para data/cache/valhalla_anterior)
 #
-# Por que não um PBF só: os extratos regionais repetem os objetos da divisa, às vezes em versões diferentes, e o
-# `osmium extract` recusa o arquivo fundido ("Node ID twice"). O Valhalla lê os PBF regionais juntos sem problema; para
-# os importadores (radares, altura, lacunas, pedágio, descanso, postos), scripts/osm/dedup_pbf.py gera
-# data/osm/sse_co.osm.pbf sem duplicatas (lido por importers/common.py:osm_pbf()).
+# Os extratos regionais repetem os objetos da divisa, às vezes em versões diferentes (o download.openstreetmap.fr
+# atualiza ao longo do dia). `osmium merge` não remove essas duplicatas, e o Valhalla, lendo os PBF regionais juntos,
+# monta um grafo QUEBRADO na divisa ("Could not find candidate edge used for destination label" em Itararé/Sengés).
+# Por isso tudo sai de um PBF único sem duplicatas, data/osm/sse_co.osm.pbf (scripts/osm/dedup_pbf.py): os tiles e os
+# importadores (radares, altura, lacunas, pedágio, descanso, postos; ver importers/common.py:osm_pbf()).
 # As correções locais (data/osm-overrides) são aplicadas em cada PBF regional que tenha regra ativa no seu bbox.
 # Variáveis: REGIOES (default "southeast south central-west", nomes do download.openstreetmap.fr), BUILD_THREADS (3).
 set -euo pipefail
@@ -38,14 +39,15 @@ for r in $REGIOES; do
     grep -q '<way ' "$W/$r.$id.osc" && OSCS+=("$W/$r.$id.osc")
     rm -f "$W/$r.$id.pbf"
   done < "$W/rules.tsv"
-  if [ ${#OSCS[@]} -gt 0 ]; then osmium apply-changes "$in" "${OSCS[@]}" -o "$B/$r-latest.osm.pbf" --overwrite
-  else ln -f "$in" "$B/$r-latest.osm.pbf"; fi
+  if [ ${#OSCS[@]} -gt 0 ]; then osmium apply-changes "$in" "${OSCS[@]}" -o "$W/$r-latest.osm.pbf" --overwrite
+  else ln -f "$in" "$W/$r-latest.osm.pbf"; fi
 done
 
-# 3) PBF fundido dos importadores (com as correções)
-log "PBF fundido dos importadores"
-osmium merge "$B"/*-latest.osm.pbf -o "$W/fundido_tmp.osm.pbf" --overwrite
+# 3) PBF único sem duplicatas (com as correções): ~1 h de Python para Sudeste+Sul+CO
+log "PBF fundido"
+osmium merge "$W"/*-latest.osm.pbf -o "$W/fundido_tmp.osm.pbf" --overwrite; rm -f "$W"/*-latest.osm.pbf
 python3 -I "$ROOT/scripts/osm/dedup_pbf.py" "$W/fundido_tmp.osm.pbf" "$SRC/sse_co.osm.pbf"; rm -f "$W/fundido_tmp.osm.pbf"
+ln -f "$SRC/sse_co.osm.pbf" "$B/sse_co.osm.pbf"
 
 # 4) tiles (o contêiner não tem internet: fusos horários e velocidades vêm do conjunto atual)
 cp "$ROOT/data/valhalla/valhalla.json" "$ROOT/data/valhalla/default_speeds.json" "$ROOT/data/valhalla/timezones.sqlite" "$B/"
