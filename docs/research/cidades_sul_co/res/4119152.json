@@ -1,57 +1,73 @@
 {
-  "ibge": "4119152",
-  "nome": "Pinhais",
-  "uf": "PR",
-  "status": "nao_achou",
-  "nivel_busca": "profunda",
-  "falha_de_fonte": false,
-  "fontes_consultadas": [
+ "ibge": "4119152",
+ "nome": "Pinhais",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/4119152/2023-04-12/7f1a00ca5da5c410486f3b3e661f05da409055dd.pdf",
+   "resultado": "LIDO trecho (QD .txt, DO Pinhais ed. de 12/04/2023): Lei 2793, de 12/04/2023 (Política e Plano de Mobilidade Urbana), arts. 24-28 (Circulação e Operação de Cargas): diretrizes para \"definição de rotas e áreas com restrição à circulação de veículos pesados\" e critérios de C/D; sem perímetro, peso ou horário. Salvo em atos/4119152/lei_2793_2023_trecho.txt"
+  },
+  {
+   "url": "https://api.queridodiario.org.br (4119152; nível 1 mas com muitos diários)",
+   "resultado": "ABRIU. Buscas: VUC, restrição de circulação de veículos pesados, tráfego caminhões, carga e descarga: só licitações (VUC elétrico), servidões da SANEPAR, PMU e normas de pátio de carga e descarga em lotes (Lei de 2019: proibido usar área pública p/ C/D quando houver pátio no imóvel). Nenhum decreto/lei de restrição de circulação."
+  },
+  {
+   "url": "https://sapl.pinhais.pr.leg.br",
+   "resultado": "Sem resposta/zero normas (Pinhais não tem site de Câmara mapeado)."
+  },
+  {
+   "url": "https://pinhais.atende.net / https://www.pinhais.pr.gov.br/",
+   "resultado": "200, mas não extraíveis (atende JS); não lidos."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/pinhais/",
+   "resultado": "404."
+  },
+  {
+   "url": "legislacao.py buscar 4119152 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "atende@https://camarapinhais.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://pinhais.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4119152 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.pinhais.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Pinhais: Querido Diário abriu (diários desde 2017). Nenhum ato de restrição de circulação de caminhões; só a Lei 2793/2023 (PMU) prevendo definir rotas e áreas de restrição a veículos pesados e política de C/D. Pendência: ato posterior (decreto/portaria SMTrans) que defina as rotas; atende.net não acessível. | R3 2026-10-18: Só diretriz do PMU (Lei 2793/2023); nenhum decreto de rotas/restrição achado. atende.net não acessível. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: atende@https://camarapinhais.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://pinhais.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "pinhais_pmu_restricao_veiculos_pesados",
+   "tipo": "zona",
+   "regime": "Diretriz de restrição",
+   "nome": "Rotas/áreas com restrição à circulação de veículos pesados (diretriz do PMU, Lei 2793/2023)",
+   "status": "desativada",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
     {
-      "url": "https://data.queridodiario.ok.org.br/4119152/2023-04-12/7f1a00ca5da5c410486f3b3e661f05da409055dd.pdf",
-      "resultado": "LIDO trecho (QD .txt, DO Pinhais ed. de 12/04/2023): Lei 2793, de 12/04/2023 (Política e Plano de Mobilidade Urbana), arts. 24-28 (Circulação e Operação de Cargas): diretrizes para \"definição de rotas e áreas com restrição à circulação de veículos pesados\" e critérios de C/D; sem perímetro, peso ou horário. Salvo em atos/4119152/lei_2793_2023_trecho.txt"
-    },
-    {
-      "url": "https://api.queridodiario.org.br (4119152; nível 1 mas com muitos diários)",
-      "resultado": "ABRIU. Buscas: VUC, restrição de circulação de veículos pesados, tráfego caminhões, carga e descarga: só licitações (VUC elétrico), servidões da SANEPAR, PMU e normas de pátio de carga e descarga em lotes (Lei de 2019: proibido usar área pública p/ C/D quando houver pátio no imóvel). Nenhum decreto/lei de restrição de circulação."
-    },
-    {
-      "url": "https://sapl.pinhais.pr.leg.br",
-      "resultado": "Sem resposta/zero normas (Pinhais não tem site de Câmara mapeado)."
-    },
-    {
-      "url": "https://pinhais.atende.net / https://www.pinhais.pr.gov.br/",
-      "resultado": "200, mas não extraíveis (atende JS); não lidos."
-    },
-    {
-      "url": "https://www.penaestrada.com.br/restricoes/pinhais/",
-      "resultado": "404."
+     "ato": "Lei Municipal 2793, de 12/04/2023 (Pinhais) - Política e Plano de Mobilidade Urbana",
+     "artigo": "arts. 24-28 (Circulação e Operação de Cargas)",
+     "url": "https://data.queridodiario.ok.org.br/4119152/2023-04-12/7f1a00ca5da5c410486f3b3e661f05da409055dd.pdf",
+     "nota": "Apenas diretriz/programa; trecho lido."
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Pinhais: Querido Diário abriu (diários desde 2017). Nenhum ato de restrição de circulação de caminhões; só a Lei 2793/2023 (PMU) prevendo definir rotas e áreas de restrição a veículos pesados e política de C/D. Pendência: ato posterior (decreto/portaria SMTrans) que defina as rotas; atende.net não acessível. | R3 2026-10-18: Só diretriz do PMU (Lei 2793/2023); nenhum decreto de rotas/restrição achado. atende.net não acessível.",
-  "osm_divergencias": [],
-  "regras_rascunho": [
-    {
-      "id": "pinhais_pmu_restricao_veiculos_pesados",
-      "tipo": "zona",
-      "regime": "Diretriz de restrição",
-      "nome": "Rotas/áreas com restrição à circulação de veículos pesados (diretriz do PMU, Lei 2793/2023)",
-      "status": "desativada",
-      "confianca": "unverifiable",
-      "janelas": [],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true
-      },
-      "base_legal": [
-        {
-          "ato": "Lei Municipal 2793, de 12/04/2023 (Pinhais) - Política e Plano de Mobilidade Urbana",
-          "artigo": "arts. 24-28 (Circulação e Operação de Cargas)",
-          "url": "https://data.queridodiario.ok.org.br/4119152/2023-04-12/7f1a00ca5da5c410486f3b3e661f05da409055dd.pdf",
-          "nota": "Apenas diretriz/programa; trecho lido."
-        }
-      ],
-      "status_motivo": "Pista: lei de diretrizes; a definição das rotas/áreas e dos horários fica para ato posterior que não foi localizado."
-    }
-  ]
+   ],
+   "status_motivo": "Pista: lei de diretrizes; a definição das rotas/áreas e dos horários fica para ato posterior que não foi localizado."
+  }
+ ]
 }

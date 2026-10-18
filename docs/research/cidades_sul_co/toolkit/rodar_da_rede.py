@@ -497,33 +497,37 @@ def insumos(data_dir, meses=12):
     with open(pagina, 'wb') as f:
         f.write(body)
     txt = body.decode('utf-8', 'replace')
-    # o código só procura .../arquivos/pmqc/AAAA/....csv; a página hoje publica .../arquivos/pmqc/pmqc_AAAA_MM.zip
-    csvs = sorted(set(re.findall(r'https://www\.gov\.br/anp/[^"\s]*/arquivos/pmqc/\d{4}/[^"\s]+\.csv', txt)))
-    zips = sorted(set(re.findall(r'https://www\.gov\.br/anp/[^"\s]*/arquivos/pmqc/pmqc_\d{4}_\d{2}\.zip', txt)), reverse=True)[:meses]
-    print('  PMQC na pagina: %d csv (padrao que o importador procura) e %d zip mensais (usando os %d mais novos)'
-          % (len(csvs), len(zips), meses))
+    # mesma escolha de importers/sources/postos_anp.pmqc_urls(): zips mensais do ano corrente (pmqc_AAAA_MM.zip),
+    # zip por ano fechado (pmqc_AAAA.zip = 12 meses) e CSV mensais antigos (pmqc/AAAA/...MM.csv), até cobrir `meses`
+    def periodo(u):
+        m = (re.search(r'/pmqc/(\d{4})/[^/]*?(\d{1,2})\.csv$', u) or re.search(r'/pmqc/pmqc_(\d{4})_(\d{1,2})\.zip$', u))
+        if m:
+            return int(m.group(1)), int(m.group(2)), 1
+        m = re.search(r'/pmqc/pmqc_(\d{4})\.zip$', u)
+        return (int(m.group(1)), 12, 12) if m else None
+    urls = set(re.findall(r'https://www\.gov\.br/anp/[^"\s]*/arquivos/pmqc/[^"\s]+\.(?:csv|zip)', txt))
+    per = sorted(((p, u) for u in urls if (p := periodo(u))), key=lambda x: (x[0][0], x[0][1]), reverse=True)
+    escolhidos, cobertos = [], 0
+    for (_a, _m, n), u in per:
+        if cobertos >= meses:
+            break
+        escolhidos.append(u)
+        cobertos += n
+    print('  PMQC na pagina: %d arquivos; usando %d (cobrem %d meses)' % (len(per), len(escolhidos), cobertos))
     import zipfile
-    for u in csvs[:meses]:
-        n = u.rsplit('/', 2)[-2] + '_' + u.rsplit('/', 1)[-1]
-        ok &= baixar(u, os.path.join(cache, 'anp_pmqc', n))
-    for u in zips:
-        n = u.rsplit('/', 1)[-1]
-        z = os.path.join(cache, 'anp_pmqc_zip', n)
-        if baixar(u, z):
-            try:
-                with zipfile.ZipFile(z) as zf:
-                    for m in zf.namelist():
-                        if m.lower().endswith('.csv'):
-                            dest = os.path.join(cache, 'anp_pmqc', n[:-4] + '__' + os.path.basename(m))
-                            if not os.path.exists(dest):
-                                with open(dest, 'wb') as f:
-                                    f.write(zf.read(m))
-                            print('    extraido:', dest)
-            except Exception as e:  # noqa: BLE001
-                print('    zip ilegivel:', z, e)
-                ok = False
-        else:
+    for u in escolhidos:
+        # mesmo nome de cache do importador (anp_pmqc/<pasta>_<arquivo>), que lê o zip direto
+        dest = os.path.join(cache, 'anp_pmqc', u.rsplit('/', 2)[-2] + '_' + u.rsplit('/', 1)[-1])
+        if not baixar(u, dest):
             ok = False
+            continue
+        if dest.endswith('.zip'):
+            try:
+                with zipfile.ZipFile(dest) as zf:
+                    print('    csv no zip:', [m for m in zf.namelist() if m.lower().endswith('.csv')])
+            except Exception as e:  # noqa: BLE001
+                print('    zip ilegivel:', dest, e)
+                ok = False
     print('Pronto. Arquivos em', cache)
     return ok
 

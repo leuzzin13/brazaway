@@ -2,8 +2,8 @@
  "ibge": "4315305",
  "nome": "Quaraí",
  "uf": "RS",
- "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "status": "regra_com_ato",
+ "nivel_busca": "softcam_camara",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,11 +22,126 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4315305 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
+   "resultado": "(R5 2026-10-18) Fontes lidas: portal_proprio=0, portal_proprio=0. Nenhum ato de restrição a caminhões. Sem leitura (bloqueio/sem cliente): nenhuma."
+  },
+  {
+   "url": "toolkit/sigpub_texto.py varrer 4315305 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
+   "resultado": "(R5 2026-10-18) Prefeitura Municipal de Quaraí 3450 atos 2017-08-09..2026-10-16; 43 hits, 0 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+  },
+  {
+   "url": "https://www.camaraquarai.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camaraquarai.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R5 2026-10-18: acervo com 231 itens no teste 'orçamento' (mais antigo 04/03/1994, mais recente 18/05/2026); acervo real (>=20 itens, mais antigo antes de 2010 e mais recente de 2024+). Acertos por termo: {'caminhões': 20, 'caminhão': 2, 'veículos pesados': 0, 'trânsito pesado': 0, 'tráfego pesado': 0, 'toneladas': 3, 'eixos': 3, 'carretas': 0, 'veículos de carga': 2}. 26 itens únicos nos acertos; 14 plausíveis (filtro por ementa) com PDF baixado e grep de proibição/restrição; leitura dos que sobraram (OCR nos escaneados)."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (23995 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaraquarai.rs.gov.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (23995 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaraquarai.rs.gov.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. R5 2026-10-18: legislacao.py --texto: lidas portal_proprio=0, portal_proprio=0; sem leitura: nenhuma; SIGPub texto integral: Prefeitura Municipal de Quaraí 3450 atos 2017-08-09..2026-10-16. | R5 2026-10-18 (Softcam): Lei 1.044, de 02/06/1990 (Câmara Softcam, item 140; PDF escaneado, OCR + conferência visual): art. 1º proíbe tráfego de veículos de carga com capacidade útil >2.000 kg (rodado simples) / >4.000 kg (rodado duplo) e máquinas pesadas nas vias nomeadas (Av. Artigas, R. João Batista de Castilhos, R. Duque de Caxias, R. Félix da Cunha, 'além das previstas no art. 1º da Lei 761 de 19.05.81' - Lei 761/1981 NÃO localizada na Câmara). Lei 873/1985 (só R. Félix da Cunha, quadra J. B. de Castilhos-Baltazar Brum, >2.000 kg) é anterior e coberta pela 1044. Art. 2º remetia a lei regulamentadora/sanções (não localizada). Lei 2.893/2011 (art. 51 XI-XII do Código de Posturas: perímetro central, >2 eixos e >7,5 t; carga/descarga 06-09h e 17-22h) foi REVOGADA junto com o Código 1.782/2000 pela Lei 3.427/2016 (art. 218; OCR de 86 págs. sem dispositivo sobre caminhões) e o perímetro central dependia de decreto: sem regra. Vigência da 1044/1990 não comprovada (nenhuma revogação expressa no acervo); limites de 2 t/4 t equivalem a vedar quase todo caminhão: confiança média; verificador deve checar sinalização/regulamentação.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "quarai_vias_asfaltadas_carga_gt2_4t",
+   "tipo": "via",
+   "regime": "Proibição por capacidade de carga (vias pavimentadas)",
+   "nome": "Quaraí: Av. Artigas, R. J. B. de Castilhos, R. Duque de Caxias e R. Félix da Cunha, veículos de carga acima de 2 t/4 t (Lei 1.044/1990)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.044, de 02/06/1990 (Quaraí/RS)",
+     "artigo": "art. 1º, alíneas a-d",
+     "url": "https://www.camaraquarai.rs.gov.br/proposicoes/pesquisa/0/1/0/140",
+     "nota": "Texto lido (PDF https://www.cloudsoftcam.com.br/RS/QUARAI/upload/2021/05/202105031053331620050013c6abc0.pdf); cópia em atos/4315305/lei-1044-1990.txt. Limite 2.000 kg (rodado simples) ou 4.000 kg (rodado duplo) de capacidade útil: o perfil não informa o rodado; adotado o lado seguro payload_t > 2. Cita também as vias do art. 1º da Lei 761/1981 (não localizada)."
+    },
+    {
+     "ato": "Lei Municipal 873, de 13/05/1985 (Quaraí/RS)",
+     "artigo": "art. 1º",
+     "url": "https://www.camaraquarai.rs.gov.br/proposicoes/pesquisa/0/1/0/102",
+     "nota": "Antecedente (R. Félix da Cunha, quadra entre R. João Batista de Castilhos e R. Baltazar Brum, >2.000 kg); cópia em atos/4315305/lei-873-1985.txt."
+    }
+   ],
+   "nota": "Vias: (a) Av. Artigas, do cruzamento com a R. General Canabarro até a R. Baltazar Brum; (b) R. João Batista de Castilhos, da Av. Artigas até a R. Duque de Caxias; (c) R. Duque de Caxias, a partir do cruzamento com a R. Baltazar Brum (extensão final não definida no ato); (d) R. Félix da Cunha, da R. João Batista de Castilhos até a R. Baltazar Brum. Vias do art. 1º da Lei 761/1981 desconhecidas.",
+   "vigencia_inicio": "1990-06-02",
+   "trechos": [
+    {
+     "inciso": "art. 1º, a",
+     "via": [
+      "Avenida Artigas"
+     ],
+     "de": [
+      "Rua General Canabarro"
+     ],
+     "ate": [
+      "Rua Baltazar Brum"
+     ],
+     "descricao": "Da R. General Canabarro até a R. Baltazar Brum"
+    },
+    {
+     "inciso": "art. 1º, b",
+     "via": [
+      "Rua João Batista de Castilhos"
+     ],
+     "de": [
+      "Avenida Artigas"
+     ],
+     "ate": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Da Av. Artigas até a R. Duque de Caxias"
+    },
+    {
+     "inciso": "art. 1º, c",
+     "via": [
+      "Rua Duque de Caxias"
+     ],
+     "de": [
+      "Rua Baltazar Brum"
+     ],
+     "descricao": "A partir do cruzamento com a R. Baltazar Brum (extensão final não definida)",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 1º, d",
+     "via": [
+      "Rua Félix da Cunha"
+     ],
+     "de": [
+      "Rua João Batista de Castilhos"
+     ],
+     "ate": [
+      "Rua Baltazar Brum"
+     ],
+     "descricao": "Da R. João Batista de Castilhos até a R. Baltazar Brum"
+    }
+   ]
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

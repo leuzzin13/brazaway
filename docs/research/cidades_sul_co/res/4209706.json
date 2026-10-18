@@ -2,7 +2,7 @@
  "ibge": "4209706",
  "nome": "Lebon Régis",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,12 +21,61 @@
   {
    "url": "OSM (osm_hints_por_municipio.json)",
    "resultado": "maxweight só em rodovia SC; sem via municipal"
+  },
+  {
+   "url": "https://www.camaralebonregis.sc.gov.br/proposicoes/pesquisa (Softcam, toolkit/softcam.py)",
+   "resultado": "acervo 'orçamento': 626 itens, de 21/12/1959 a 10/06/2025; acervo real. Lei 24/1973 (Câmara, Softcam): proíbe caminhões com correntes nos pneus nas estradas municipais; sem vias nomeadas; desativada."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote DR (conferência barata): acerto da preparação re-pontuado como ruído e confirmado. Decreto 004/2026 (regulamento do SIM, área de lavagem de caminhões) e LC 129/2025 (definições do plano diretor: polos geradores de viagens, carga e descarga). Nenhum ato municipal de restrição de circulação de caminhões encontrado no DOM/SC (busca por \"trânsito de caminhões\" e \"circulação de veículos pesados\").",
+ "observacoes": "Lote DR (conferência barata): acerto da preparação re-pontuado como ruído e confirmado. Decreto 004/2026 (regulamento do SIM, área de lavagem de caminhões) e LC 129/2025 (definições do plano diretor: polos geradores de viagens, carga e descarga). Nenhum ato municipal de restrição de circulação de caminhões encontrado no DOM/SC (busca por \"trânsito de caminhões\" e \"circulação de veículos pesados\"). R5 2026-10-18 (Softcam): Lei 24/1973 (Câmara, Softcam): proíbe caminhões com correntes nos pneus nas estradas municipais; sem vias nomeadas; desativada.",
  "osm_divergencias": [
   "way 75756742 \"Rodovia Doutor Lourenço Faoro\" (SC-350) maxweight=36: via estadual (competência DER/SC), descartada; não gera regra municipal."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "lebon_regis_estradas_municipais_correntes_nos_pneus",
+   "tipo": "via",
+   "regime": "Proibição por equipamento (correntes nos pneus)",
+   "nome": "Estradas municipais: proibido tráfego de caminhões com correntes nos pneus (Lei 24/1973)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei nº 24/1973 (Lebon Régis), de 27/08/1973",
+     "artigo": "art. 1º",
+     "url": "https://www.camaralebonregis.sc.gov.br/ciga/proposicao_print_pdf.php?item=3649&assinatura=0"
+    }
+   ],
+   "status_motivo": "Proíbe apenas caminhões com correntes nos pneus (condição do veículo, não restrição de circulação por porte) e em todas as estradas municipais sem nomear vias; sem delimitação georreferenciável. Não aplicar na rota.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [],
+     "descricao": "todas as estradas municipais (não nomeadas)"
+    }
+   ],
+   "vigencia_inicio": "1973-08-27"
+  }
+ ]
 }

@@ -4,7 +4,7 @@
  "uf": "SC",
  "status": "nao_achou",
  "nivel_busca": "profunda",
- "falha_de_fonte": false,
+ "falha_de_fonte": true,
  "fontes_consultadas": [
   {
    "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 138 (Prefeitura, 2016+) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões, veículos de carga, peso bruto total, proibida a circulação, caçambas, restrição de tráfego",
@@ -29,10 +29,22 @@
   {
    "url": "https://diariomunicipal.sc.gov.br/ (toolkit domsc R3: circulação/tráfego/trânsito de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, zona de restrição, VUC, trânsito pesado, proibido o trânsito, restrição de tráfego, carretas, caminhões)",
    "resultado": "Nenhum ato de restrição de circulação de caminhões; acertos = ruído (compras, cargos, licenças, COVID)"
+  },
+  {
+   "url": "legislacao.py buscar 4208906 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "1doc@https://cmjaraguadosul.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmjaraguadosul."
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4208906 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma restrição de circulação de caminhões encontrada no DOM/SC (acervo da Prefeitura desde 22/01/2016). Fonte principal (portal da Prefeitura e Atende) não abriu e leismunicipais é bloqueado: resultado NÃO conclusivo. Leis 7.728/2018 e 8.680/2021 só tratam de rebaixo de meio-fio (veículos de carga >4 t) - não são restrição de circulação. Pendência: confirmar no órgão de trânsito (Diretoria de Trânsito / Secretaria) se há decreto de carga e descarga/zona de restrição no centro anterior a 2016 ou fora do DOM/SC. | R3 2026-10-18: Fonte alternativa: Legislador da Câmara (legislador.com.br ID=5) cobre as leis; DOM/SC os decretos desde 2016. Sem restrição -> nao_achou conclusivo.",
+ "observacoes": "Nenhuma restrição de circulação de caminhões encontrada no DOM/SC (acervo da Prefeitura desde 22/01/2016). Fonte principal (portal da Prefeitura e Atende) não abriu e leismunicipais é bloqueado: resultado NÃO conclusivo. Leis 7.728/2018 e 8.680/2021 só tratam de rebaixo de meio-fio (veículos de carga >4 t) - não são restrição de circulação. Pendência: confirmar no órgão de trânsito (Diretoria de Trânsito / Secretaria) se há decreto de carga e descarga/zona de restrição no centro anterior a 2016 ou fora do DOM/SC. | R3 2026-10-18: Fonte alternativa: Legislador da Câmara (legislador.com.br ID=5) cobre as leis; DOM/SC os decretos desde 2016. Sem restrição -> nao_achou conclusivo. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: 1doc@https://cmjaraguadosul.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmjaraguadosul.. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM não consultado."
  ],

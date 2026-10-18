@@ -49,10 +49,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente cangucu, cangucu-rs, cangucurs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4304507 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.cangucu.rs.leg.br: 0 atos; instar@https://www.cangucu.rs.gov.br: ERRO Instar: módulo leis_decretos não respondeu em https://www.cangucu.rs.g; cidade360@https://webapp1-cangucu.cidade360.cloud/TLNET/: ERRO sem cliente automático; consultar manualmente: https://webapp1-cangucu; 1doc@https://camaracangucu.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://camaracangucu.1; 1doc@https://cangucu.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cangucu.1doc.co"
+  },
+  {
+   "url": "legislacao.py buscar 4304507 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.cangucu.rs.leg.br: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4304507 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.cangucu.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Canguçu: só etiquetas OSM (hgv/maxweight/maxlength). Rua Professor André Puente (residential) e Rua Hipólito Ribeiro (tertiary) hgv=no (3 ways): sem ato achado (SAPL da Câmara vazio para qualquer termo; prefeitura em 1doc/cidade360 sem cliente). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, sem diário consolidado que cubra, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camaracangucu.1doc.com.br/b.php?pg=o/login&n=3; https://cangucu.1doc.com.br/b.php?pg=o/login&n=3; https://sapl.cangucu.rs.leg.br; https://webapp1-cangucu.cidade360.cloud/TLNET/; https://www.cangucu.rs.gov.br. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Canguçu: só etiquetas OSM (hgv/maxweight/maxlength). Rua Professor André Puente (residential) e Rua Hipólito Ribeiro (tertiary) hgv=no (3 ways): sem ato achado (SAPL da Câmara vazio para qualquer termo; prefeitura em 1doc/cidade360 sem cliente). Busca no diário consolidado por 'trânsito/circulação/tráfego de caminhões', 'veículos pesados toneladas', 'proibido caminhões', 'tonelagem ponte' e pelo nome das vias; e no portal/Câmara disponível por caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso. Nenhum ato de restrição municipal encontrado. falha_de_fonte=true: nenhum portal de legislação com busca utilizável (captcha/Cloudflare/sem cliente/instância vazia); o resultado é inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, sem diário consolidado que cubra, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camaracangucu.1doc.com.br/b.php?pg=o/login&n=3; https://cangucu.1doc.com.br/b.php?pg=o/login&n=3; https://sapl.cangucu.rs.leg.br; https://webapp1-cangucu.cidade360.cloud/TLNET/; https://www.cangucu.rs.gov.br. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.cangucu.rs.leg.br: 0 atos; bloqueadas/sem cliente: instar@https://www.cangucu.rs.gov.br: ERRO Instar: módulo leis_decretos não respondeu em https://www.cangucu.rs.g; cidade360@https://webapp1-cangucu.cidade360.cloud/TLNET/: ERRO sem cliente automático; consultar manualmente: https://webapp1-cangucu; 1doc@https://camaracangucu.1doc.com.br/b.php?pg=o/. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "Rua Professor André Puente (residential) e Rua Hipólito Ribeiro (tertiary) hgv=no (3 ways): sem ato achado (SAPL da Câmara vazio para qualquer termo; prefeitura em 1doc/cidade360 sem cliente)."
  ],

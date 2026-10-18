@@ -57,10 +57,30 @@
   {
    "url": "https://www.fazendariogrande.pr.leg.br:443",
    "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "legislacao.py buscar 4107652 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.fazendariogrande.pr.leg.br: 0 atos; leismunicipais@https://leismunicipais.com.br/prefeitura/pr/fazendariogrande: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; desconhecido@https://www.fazendariogrande.pr.gov.br/: ERRO sem cliente automático; consultar manualmente: https://www.fazendariog"
+  },
+  {
+   "url": "legislacao.py buscar 4107652 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.fazendariogrande.pr.leg.br: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4107652 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.fazendariogrande.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 403 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Fazenda Rio Grande (polo logístico na BR-116/Contorno Sul): fonte principal (site da prefeitura, leismunicipais) bloqueada por Cloudflare; SAPL da Câmara com base parcial sem ato relevante. Nenhuma pista. Ausência NÃO comprovada. Pendência: acesso manual ao portal de legislação/diário da prefeitura. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/prefeitura/pr/fazendariogrande (Cloudflare 403); https://www.fazendariogrande.pr.gov.br/ (HTTP 403); https://www.fazendariogrande.pr.gov.br/ (sem busca automática).",
+ "observacoes": "Fazenda Rio Grande (polo logístico na BR-116/Contorno Sul): fonte principal (site da prefeitura, leismunicipais) bloqueada por Cloudflare; SAPL da Câmara com base parcial sem ato relevante. Nenhuma pista. Ausência NÃO comprovada. Pendência: acesso manual ao portal de legislação/diário da prefeitura. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/prefeitura/pr/fazendariogrande (Cloudflare 403); https://www.fazendariogrande.pr.gov.br/ (HTTP 403); https://www.fazendariogrande.pr.gov.br/ (sem busca automática). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.fazendariogrande.pr.leg.br: 0 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/prefeitura/pr/fazendariogrande: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; desconhecido@https://www.fazendariogrande.pr.gov.br/: ERRO sem cliente automático; consultar manualmente: https://www.fazendariog. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [],
  "regras_rascunho": [
   {

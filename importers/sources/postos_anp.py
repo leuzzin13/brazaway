@@ -32,6 +32,7 @@ import os
 import re
 import statistics
 import unicodedata
+import zipfile
 from collections import defaultdict
 
 from common import http_get
@@ -183,13 +184,39 @@ def lpc() -> tuple[dict[str, dict], tuple[str | None, str | None]]:
     return out, (min(datas) if datas else None, max(datas) if datas else None)
 
 
+def _pmqc_periodo(u: str) -> tuple[int, int, int] | None:
+    """(ano, mês, meses cobertos) do arquivo: pmqc/AAAA/...MM.csv (formato antigo), pmqc_AAAA_MM.zip (mês do ano
+    corrente) ou pmqc_AAAA.zip (ano fechado, 12 meses)."""
+    if m := re.search(r'/pmqc/(\d{4})/[^/]*?(\d{1,2})\.csv$', u):
+        return int(m.group(1)), int(m.group(2)), 1
+    if m := re.search(r'/pmqc/pmqc_(\d{4})_(\d{1,2})\.zip$', u):
+        return int(m.group(1)), int(m.group(2)), 1
+    if m := re.search(r'/pmqc/pmqc_(\d{4})\.zip$', u):
+        return int(m.group(1)), 12, 12
+    return None
+
+
 def pmqc_urls() -> list[str]:
+    """Arquivos mais recentes até cobrir PMQC_MESES meses (a página hoje publica um zip por ano fechado e um por mês do
+    ano corrente; antes, um CSV por mês em pmqc/AAAA/)."""
     html = http_get(PMQC_PAGE, cache='anp_pmqc_page.html', max_age_h=24).decode('utf-8', 'replace')
-    urls = set(re.findall(r'https://www\.gov\.br/anp/[^"\s]*/arquivos/pmqc/\d{4}/[^"\s]+\.csv', html))
-    def ym(u):
-        m = re.search(r'/pmqc/(\d{4})/[^/]*?(\d{1,2})\.csv$', u)
-        return (int(m.group(1)), int(m.group(2))) if m else (0, 0)
-    return sorted(urls, key=ym, reverse=True)[:PMQC_MESES]
+    urls = set(re.findall(r'https://www\.gov\.br/anp/[^"\s]*/arquivos/pmqc/[^"\s]+\.(?:csv|zip)', html))
+    per = sorted(((p, u) for u in urls if (p := _pmqc_periodo(u))), key=lambda x: (x[0][0], x[0][1]), reverse=True)
+    out, meses = [], 0
+    for (_a, _m, n), u in per:
+        if meses >= PMQC_MESES:
+            break
+        out.append(u)
+        meses += n
+    return out
+
+
+def _pmqc_textos(raw: bytes, u: str) -> list[str]:
+    """Texto dos CSV do arquivo (o zip pode trazer um ou mais CSV)."""
+    if not u.endswith('.zip'):
+        return [raw.decode('utf-8-sig', 'replace')]
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
+        return [z.read(n).decode('utf-8-sig', 'replace') for n in z.namelist() if n.lower().endswith('.csv')]
 
 
 def _decimais(v: str | None) -> int:
@@ -246,9 +273,8 @@ def pmqc() -> tuple[dict[str, dict], dict[str, dict], dict[str, tuple[str, str]]
             print(f'  ! PMQC {u} falhou: {e}')
             continue
         usados.append(name)
-        txt = raw.decode('utf-8-sig', 'replace')
         seen_sample = set()
-        for r in csv.DictReader(io.StringIO(txt), delimiter=';'):
+        for r in (r for txt in _pmqc_textos(raw, u) for r in csv.DictReader(io.StringIO(txt), delimiter=';')):
             uf = (r.get('Uf') or '').strip().upper()
             if uf not in UFS:
                 continue

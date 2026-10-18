@@ -45,10 +45,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente sao-borja, saoborja, sao-borja-rs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4318002 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.saoborja.rs.leg.br: 0 atos; portal_proprio@https://portal.saoborja.rs.gov.br/legislacao: 0 atos"
+  },
+  {
+   "url": "legislacao.py buscar 4318002 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.saoborja.rs.leg.br: 0 atos; portal_proprio@https://portal.saoborja.rs.gov.br/legislacao: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4318002 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://portal.saoborja.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "São Borja: SAPL da Câmara responde 0 para qualquer termo (base provavelmente vazia/incompleta); portal novo da prefeitura sem busca automatizável (legislação em transparência/site antigo). Inconclusivo. Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: nenhuma fonte de legislação com cliente que passe controle positivo. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "São Borja: SAPL da Câmara responde 0 para qualquer termo (base provavelmente vazia/incompleta); portal novo da prefeitura sem busca automatizável (legislação em transparência/site antigo). Inconclusivo. Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: nenhuma fonte de legislação com cliente que passe controle positivo. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.saoborja.rs.leg.br: 0 atos; portal_proprio@https://portal.saoborja.rs.gov.br/legislacao: 0 atos. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

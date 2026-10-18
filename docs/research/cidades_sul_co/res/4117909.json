@@ -45,10 +45,30 @@
   {
    "url": "https://palotina.eloweb.net/portaltransparencia-api/api/leisatos",
    "resultado": "R4 Elotech (API pública, descricaoSumula por substring; termos caminh, pesad, tonel, eixo, carreta, betoneira, bitrem, carga, tráfego/trânsito, circula, trafegar, transitar): 17 ementa(s) devolvida(s) nas entidades município e câmara, nenhuma é regra de circulação de caminhões (ruído: cargos 'Divisão de Veículos Pesados', compras, férias, crédito, conselho de trânsito). 2 entidade(s) (CAMARA MUNICIPAL DE PALOTINA; MUNICIPIO DE PALOTINA); acervo de leis da prefeitura: 4000 lei(s), exercício mais antigo 2004."
+  },
+  {
+   "url": "legislacao.py buscar 4117909 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "elotech@https://palotina.eloweb.net: 6 atos; leismunicipais@https://leismunicipais.com.br/prefeitura/pr/palotina: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://palotina.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://palotina.1doc.c"
+  },
+  {
+   "url": "legislacao.py buscar 4117909 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "elotech@https://palotina.eloweb.net: 2 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "https://www.palotina.pr.leg.br/proposicoes/pesquisa (Softcam, texto integral; R5 toolkit/softcam.py)",
+   "resultado": "totais por termo: caminhões=0, carga e descarga=0, veículos pesados=0, toneladas=0, tráfego de veículos=0; ementas das leis/decretos conferidas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4117909 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.palotina.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 403 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Câmara (Elotech) pesquisada: 14 atos para caminh/carga/trânsito, todos ruído (diárias, carga horária, lei 2405/2009 cria Companhia de Trânsito). Prefeitura (1doc/palotina.pr.gov.br) bloqueada por Cloudflare/login; leismunicipais não acessível. WebSearch (1 uso) sem resultado. 25 ways maxweight, avenidas secondary com maxweight=4 t, valor suspeito (artéria principal de polo agroindustrial; possível erro de mapeamento ou limite de ponte/viaduto), sem ato. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/prefeitura/pr/palotina (Cloudflare 403); https://palotina.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática); https://www.palotina.pr.gov.br/ (HTTP 403). | R4 2026-10-18: varredura da Câmara em Softcam (www.palotina.pr.leg.br): acervo com 6 itens no teste 'orçamento' (mais antigo 03/08/2016, mais recente 06/10/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo nenhum. Nada concluído. | R4 2026-10-18: portal Elotech palotina.eloweb.net varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Lei 2405/2009 apenas cria a Companhia de Trânsito (sem regra de caminhão). Acervo de leis desde 2004 (4000 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem).",
+ "observacoes": "Câmara (Elotech) pesquisada: 14 atos para caminh/carga/trânsito, todos ruído (diárias, carga horária, lei 2405/2009 cria Companhia de Trânsito). Prefeitura (1doc/palotina.pr.gov.br) bloqueada por Cloudflare/login; leismunicipais não acessível. WebSearch (1 uso) sem resultado. 25 ways maxweight, avenidas secondary com maxweight=4 t, valor suspeito (artéria principal de polo agroindustrial; possível erro de mapeamento ou limite de ponte/viaduto), sem ato. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/prefeitura/pr/palotina (Cloudflare 403); https://palotina.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática); https://www.palotina.pr.gov.br/ (HTTP 403). | R4 2026-10-18: varredura da Câmara em Softcam (www.palotina.pr.leg.br): acervo com 6 itens no teste 'orçamento' (mais antigo 03/08/2016, mais recente 06/10/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo nenhum. Nada concluído. | R4 2026-10-18: portal Elotech palotina.eloweb.net varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Lei 2405/2009 apenas cria a Companhia de Trânsito (sem regra de caminhão). Acervo de leis desde 2004 (4000 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: elotech@https://palotina.eloweb.net: 6 atos; Softcam da Câmara (www.palotina.pr.leg.br) varrido; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/prefeitura/pr/palotina: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://palotina.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://palotina.1doc.c. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "25 ways maxweight; Avenidas Presidente Kennedy e Independência (secondary) com maxweight=4 sem ato, valor implausível para avenida arterial de polo agro (provável erro OSM)"
  ],

@@ -29,10 +29,30 @@
   {
    "url": "overpass-api.de ; overpass.kumi.systems ; overpass.private.coffee",
    "resultado": "connection reset / HTTP 500 em 18/10/2026; Overpass não reconsultado"
+  },
+  {
+   "url": "legislacao.py buscar 4119608 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.pitanga.pr.leg.br: 0 atos; elotech@https://pitanga.oxy.elotech.com.br: 5 atos; leismunicipais@https://leismunicipais.com.br/prefeitura/pr/pitanga: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://pitanga.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://pitanga.1doc.co"
+  },
+  {
+   "url": "legislacao.py buscar 4119608 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.pitanga.pr.leg.br: 0 atos; elotech@https://pitanga.oxy.elotech.com.br: 18 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4119608 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=2, peso..=2, tráfego..=0, circulação..=22; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.pitanga.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Os acertos do diário são servidões e emergência, não regra. A única etiqueta OSM (way 237277713) é de via sem nome, sem ato.",
+ "observacoes": "Os acertos do diário são servidões e emergência, não regra. A única etiqueta OSM (way 237277713) é de via sem nome, sem ato. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.pitanga.pr.leg.br: 0 atos; elotech@https://pitanga.oxy.elotech.com.br: 5 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/prefeitura/pr/pitanga: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://pitanga.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://pitanga.1doc.co. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "way 237277713 hgv=no unclassified sem nome, sem ato"
  ],

@@ -1,140 +1,145 @@
 {
-  "ibge": "5003702",
-  "nome": "Dourados",
-  "uf": "MS",
-  "status": "pista",
-  "nivel_busca": "profunda",
-  "falha_de_fonte": true,
-  "fontes_consultadas": [
+ "ibge": "5003702",
+ "nome": "Dourados",
+ "uf": "MS",
+ "status": "pista",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dourados.ms.gov.br/ ; https://dourados.ms.gov.br ; do./diario./diariooficial.dourados.ms.gov.br ; transparencia.dourados.ms.gov.br ; dourados.atende.net",
+   "resultado": "Connection reset / sem resposta (000) em todos; portal da prefeitura e diário oficial municipal inacessíveis daqui (falha de fonte). dourados.1doc.com.br: 404."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/ (ASSOMASUL, toolkit: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões)",
+   "resultado": "Dourados não está entre as 59 entidades do diário ASSOMASUL/ms; 0 resultados (algumas requisições com http 0)."
+  },
+  {
+   "url": "https://sapl.dourados.ms.leg.br/api/norma/normajuridica/ (ementa: caminh, pesad, carga e descarga, tráfego, trânsito)",
+   "resultado": "SAPL da Câmara responde mas base de normas jurídicas vazia (0 registros); matérias legislativas: só indicações de 2026 sem relação (busca 'caminh' pega 'caminhos')."
+  },
+  {
+   "url": "https://www.dourados.ms.leg.br/leis/legislacao-municipal ; https://www.camaradourados.ms.gov.br/",
+   "resultado": "Páginas abrem, mas sem acervo de normas (página vazia/link externo)."
+  },
+  {
+   "url": "WebSearch Dourados MS decreto circulação de caminhões...",
+   "resultado": "Pistas: Decreto 472/2011 (notícias Campo Grande News 29/11/2011, 2016, SETCESP 09/01/2012, Correio do Estado)."
+  },
+  {
+   "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
+   "resultado": "Notícia lida: Decreto 472/2011, quadrilátero proibido >18 t carga útil/4,40 m/articulados e 'Área A' com janelas por capacidade."
+  },
+  {
+   "url": "https://www.campograndenews.com.br/cidades/interior/restricao-a-caminhoes-e-ignorada-falta-fiscalizacao-e-acidentes-continuam",
+   "resultado": "Notícia de 19/02/2016: decreto 472 segue vigente (ignorado)."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/dourados/",
+   "resultado": "404 (leads/penaestrada.json)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/ (não tentado)",
+   "resultado": "403 Cloudflare conhecido; não tentado."
+  },
+  {
+   "url": "https://www.dourados.ms.gov.br/ ; https://diariooficial.dourados.ms.gov.br/ ; https://dourados.atende.net/ ; https://sapl.dourados.ms.leg.br/ ; web.archive.org (reentrada em 18/10/2026)",
+   "resultado": "Nova tentativa: curl com reset de conexão (000) em todos os hosts do município e no web.archive.org; WebFetch: ENOTFOUND (prefeitura) e bloqueado (archive.org); archive.org/wayback/available responde mas o snapshot não é acessível. Segunda WebSearch (texto integral do Decreto 472/2011) só devolveu as mesmas notícias; Querido Diário API redireciona (302 Cloudflare), e o lead querido_diario.json de Dourados tem 0 diários."
+  },
+  {
+   "url": "WebSearch 'Dourados Decreto 472 2011 trânsito caminhões quadrilátero'",
+   "resultado": "Só notícias (SETCESP, Campo Grande News, Correio do Estado); texto do decreto não publicado em fonte acessível"
+  },
+  {
+   "url": "https://www.dourados.ms.gov.br ; diariooficial.dourados.ms.gov.br ; www.camaradourados.ms.gov.br",
+   "resultado": "prefeitura/diário: conexão recusada (000); portal da Câmara abre mas sem acervo de legislação (/portal/legislacao 404); Querido Diário: 522"
+  },
+  {
+   "url": "WebSearch (1) 'Decreto 472 2011 Dourados': so noticias (SETCESP, Campo Grande News, Correio do Estado); camaradourados.ms.gov.br abre (200) sem acervo de normas; hosts dourados.ms.gov.br / do.dourados / diario sem resposta (000)",
+   "resultado": "Perimetros A (Melvin Jones/Aquidauana x Weimar Torres/Joaquim Teixeira Alves) e B (Coronel Ponciano/Eulalia Pires x Monte Alegre/Cuiaba) so por noticia da Guarda (SETCESP 01/2012). Texto do Decreto 472/2011 nao lido: segue pista, falha_de_fonte (portal e diario da Prefeitura inacessiveis).",
+   "rodada": "R5"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Há pista forte de restrição vigente (Decreto 472/2011, de 28/11/2011) mas o texto do ato não foi lido: portal da prefeitura e diário municipal não abrem; Câmara sem acervo de normas; Dourados fora do diário ASSOMASUL. Regras ficam desativadas (só notícia). Também citado: Decreto 126/1996 (carga/descarga e horários), anterior. Pendências: obter o texto do Decreto 472/2011 (e alterações posteriores) no diário oficial de Dourados ou no portal da prefeitura/SEMTRAN/DEPTRAN. Reentrada: nova tentativa de abrir a fonte primária (portal da prefeitura, diário oficial, Câmara, Wayback) falhou de novo, então a falha de fonte persiste e o 'não achei o texto' não é conclusivo. | R3 2026-10-18: reanálise dos atos já lidos e buscas adicionais (fontes acima); nenhum ato novo de restrição de circulação com vias nomeadas, vigente e não condicionado. Status mantido (pista). | R5 2026-10-18: Perimetros A (Melvin Jones/Aquidauana x Weimar Torres/Joaquim Teixeira Alves) e B (Coronel Ponciano/Eulalia Pires x Monte Alegre/Cuiaba) so por noticia da Guarda (SETCESP 01/2012). Texto do Decreto 472/2011 nao lido: segue pista, falha_de_fonte (portal e diario da Prefeitura inacessiveis).",
+ "osm_divergencias": [
+  "OSM não consultado."
+ ],
+ "vuc": null,
+ "regras_rascunho": [
+  {
+   "id": "dourados_d472_2011_quadrilatero",
+   "tipo": "zona",
+   "regime": "Quadrilátero central",
+   "nome": "Dourados: proibição de veículos acima de 18 t de carga útil, altura >4,40 m e articulados/combinações no quadrilátero Eulália Pires/Coronel Ponciano x Monte Alegre/Cuiabá (pista - Decreto 472/2011)",
+   "status": "desativada",
+   "status_motivo": "Pista: regra conhecida só por notícia (Campo Grande News 29/11/2011); texto do Decreto 472/2011 não lido e vigência atual não confirmada.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 18
+     },
+     {
+      "campo": "altura_m",
+      "acima": 4.4
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "Segundo a notícia: Corpo de Bombeiros, sistema de trânsito, iluminação pública, oxigênio, combustível, guincho e auto-fossa"
+   ],
+   "zona_texto": "quadrilátero das ruas Eulália Pires/Coronel Ponciano e Monte Alegre/Cuiabá (segundo a notícia)",
+   "base_legal": [
     {
-      "url": "https://www.dourados.ms.gov.br/ ; https://dourados.ms.gov.br ; do./diario./diariooficial.dourados.ms.gov.br ; transparencia.dourados.ms.gov.br ; dourados.atende.net",
-      "resultado": "Connection reset / sem resposta (000) em todos; portal da prefeitura e diário oficial municipal inacessíveis daqui (falha de fonte). dourados.1doc.com.br: 404."
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/ms/ (ASSOMASUL, toolkit: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões)",
-      "resultado": "Dourados não está entre as 59 entidades do diário ASSOMASUL/ms; 0 resultados (algumas requisições com http 0)."
-    },
-    {
-      "url": "https://sapl.dourados.ms.leg.br/api/norma/normajuridica/ (ementa: caminh, pesad, carga e descarga, tráfego, trânsito)",
-      "resultado": "SAPL da Câmara responde mas base de normas jurídicas vazia (0 registros); matérias legislativas: só indicações de 2026 sem relação (busca 'caminh' pega 'caminhos')."
-    },
-    {
-      "url": "https://www.dourados.ms.leg.br/leis/legislacao-municipal ; https://www.camaradourados.ms.gov.br/",
-      "resultado": "Páginas abrem, mas sem acervo de normas (página vazia/link externo)."
-    },
-    {
-      "url": "WebSearch Dourados MS decreto circulação de caminhões...",
-      "resultado": "Pistas: Decreto 472/2011 (notícias Campo Grande News 29/11/2011, 2016, SETCESP 09/01/2012, Correio do Estado)."
-    },
-    {
-      "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
-      "resultado": "Notícia lida: Decreto 472/2011, quadrilátero proibido >18 t carga útil/4,40 m/articulados e 'Área A' com janelas por capacidade."
-    },
-    {
-      "url": "https://www.campograndenews.com.br/cidades/interior/restricao-a-caminhoes-e-ignorada-falta-fiscalizacao-e-acidentes-continuam",
-      "resultado": "Notícia de 19/02/2016: decreto 472 segue vigente (ignorado)."
-    },
-    {
-      "url": "https://penaestrada.com.br/restricoes/dourados/",
-      "resultado": "404 (leads/penaestrada.json)."
-    },
-    {
-      "url": "https://leismunicipais.com.br/ (não tentado)",
-      "resultado": "403 Cloudflare conhecido; não tentado."
-    },
-    {
-      "url": "https://www.dourados.ms.gov.br/ ; https://diariooficial.dourados.ms.gov.br/ ; https://dourados.atende.net/ ; https://sapl.dourados.ms.leg.br/ ; web.archive.org (reentrada em 18/10/2026)",
-      "resultado": "Nova tentativa: curl com reset de conexão (000) em todos os hosts do município e no web.archive.org; WebFetch: ENOTFOUND (prefeitura) e bloqueado (archive.org); archive.org/wayback/available responde mas o snapshot não é acessível. Segunda WebSearch (texto integral do Decreto 472/2011) só devolveu as mesmas notícias; Querido Diário API redireciona (302 Cloudflare), e o lead querido_diario.json de Dourados tem 0 diários."
-    },
-    {
-      "url": "WebSearch 'Dourados Decreto 472 2011 trânsito caminhões quadrilátero'",
-      "resultado": "Só notícias (SETCESP, Campo Grande News, Correio do Estado); texto do decreto não publicado em fonte acessível"
-    },
-    {
-      "url": "https://www.dourados.ms.gov.br ; diariooficial.dourados.ms.gov.br ; www.camaradourados.ms.gov.br",
-      "resultado": "prefeitura/diário: conexão recusada (000); portal da Câmara abre mas sem acervo de legislação (/portal/legislacao 404); Querido Diário: 522"
+     "ato": "Decreto n. 472, de 28/11/2011 (Dourados) - conforme notícia",
+     "artigo": "sem artigo - descrição em notícia do Campo Grande News de 29/11/2011 (texto do decreto não lido)",
+     "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
+     "nota": "Fiscalização iniciada em 06/01/2012 (SETCESP/Agora MS: https://setcesp.org.br/noticias/guarda-comeca-a-autuar-caminhoes-na-area-central-de-dourados-ms/); Campo Grande News 19/02/2016 diz que o decreto continuava em vigor mas era ignorado."
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Há pista forte de restrição vigente (Decreto 472/2011, de 28/11/2011) mas o texto do ato não foi lido: portal da prefeitura e diário municipal não abrem; Câmara sem acervo de normas; Dourados fora do diário ASSOMASUL. Regras ficam desativadas (só notícia). Também citado: Decreto 126/1996 (carga/descarga e horários), anterior. Pendências: obter o texto do Decreto 472/2011 (e alterações posteriores) no diário oficial de Dourados ou no portal da prefeitura/SEMTRAN/DEPTRAN. Reentrada: nova tentativa de abrir a fonte primária (portal da prefeitura, diário oficial, Câmara, Wayback) falhou de novo, então a falha de fonte persiste e o 'não achei o texto' não é conclusivo. | R3 2026-10-18: reanálise dos atos já lidos e buscas adicionais (fontes acima); nenhum ato novo de restrição de circulação com vias nomeadas, vigente e não condicionado. Status mantido (pista).",
-  "osm_divergencias": [
-    "OSM não consultado."
-  ],
-  "vuc": null,
-  "regras_rascunho": [
+   ],
+   "vigencia_inicio": "2011-11-29",
+   "vigencia_fim": null
+  },
+  {
+   "id": "dourados_d472_2011_area_a",
+   "tipo": "zona",
+   "regime": "Área A",
+   "nome": "Dourados: Área A (Melvin Jones/Aquidauana x Weimar Torres/Joaquim Teixeira Alves) - janelas por capacidade de carga (pista - Decreto 472/2011)",
+   "status": "desativada",
+   "status_motivo": "Pista: regra conhecida só por notícia (Campo Grande News 29/11/2011); texto do Decreto 472/2011 não lido e vigência atual não confirmada.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Segundo a notícia (dias úteis): até 2 t livre; até 4 t e entrega de bebidas até 12 t: 20h-10h; veículo leve de carga até 12,5 t: 20h-7h; transportador de caçambas até 16 t: 20h-8h; pesado até 18 t: 20h-6h. Sábado livre após 14h e domingos/feriados livres para os restritos."
+   ],
+   "zona_texto": "quadrilátero das ruas Melvin Jones/Aquidauana e Weimar Torres/Joaquim Teixeira Alves, dentro do quadrilátero maior (segundo a notícia)",
+   "base_legal": [
     {
-      "id": "dourados_d472_2011_quadrilatero",
-      "tipo": "zona",
-      "regime": "Quadrilátero central",
-      "nome": "Dourados: proibição de veículos acima de 18 t de carga útil, altura >4,40 m e articulados/combinações no quadrilátero Eulália Pires/Coronel Ponciano x Monte Alegre/Cuiabá (pista - Decreto 472/2011)",
-      "status": "desativada",
-      "status_motivo": "Pista: regra conhecida só por notícia (Campo Grande News 29/11/2011); texto do Decreto 472/2011 não lido e vigência atual não confirmada.",
-      "confianca": "unverifiable",
-      "janelas": [],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true,
-        "qualquer": [
-          {
-            "campo": "payload_t",
-            "acima": 18
-          },
-          {
-            "campo": "altura_m",
-            "acima": 4.4
-          },
-          {
-            "campo": "tipo",
-            "em": [
-              "semitrailer",
-              "truck_trailer",
-              "cvc"
-            ]
-          }
-        ]
-      },
-      "excecoes": [
-        "Segundo a notícia: Corpo de Bombeiros, sistema de trânsito, iluminação pública, oxigênio, combustível, guincho e auto-fossa"
-      ],
-      "zona_texto": "quadrilátero das ruas Eulália Pires/Coronel Ponciano e Monte Alegre/Cuiabá (segundo a notícia)",
-      "base_legal": [
-        {
-          "ato": "Decreto n. 472, de 28/11/2011 (Dourados) - conforme notícia",
-          "artigo": "sem artigo - descrição em notícia do Campo Grande News de 29/11/2011 (texto do decreto não lido)",
-          "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
-          "nota": "Fiscalização iniciada em 06/01/2012 (SETCESP/Agora MS: https://setcesp.org.br/noticias/guarda-comeca-a-autuar-caminhoes-na-area-central-de-dourados-ms/); Campo Grande News 19/02/2016 diz que o decreto continuava em vigor mas era ignorado."
-        }
-      ],
-      "vigencia_inicio": "2011-11-29",
-      "vigencia_fim": null
-    },
-    {
-      "id": "dourados_d472_2011_area_a",
-      "tipo": "zona",
-      "regime": "Área A",
-      "nome": "Dourados: Área A (Melvin Jones/Aquidauana x Weimar Torres/Joaquim Teixeira Alves) - janelas por capacidade de carga (pista - Decreto 472/2011)",
-      "status": "desativada",
-      "status_motivo": "Pista: regra conhecida só por notícia (Campo Grande News 29/11/2011); texto do Decreto 472/2011 não lido e vigência atual não confirmada.",
-      "confianca": "unverifiable",
-      "janelas": [],
-      "feriados": "suspende",
-      "alvo": {
-        "caminhao": true
-      },
-      "excecoes": [
-        "Segundo a notícia (dias úteis): até 2 t livre; até 4 t e entrega de bebidas até 12 t: 20h-10h; veículo leve de carga até 12,5 t: 20h-7h; transportador de caçambas até 16 t: 20h-8h; pesado até 18 t: 20h-6h. Sábado livre após 14h e domingos/feriados livres para os restritos."
-      ],
-      "zona_texto": "quadrilátero das ruas Melvin Jones/Aquidauana e Weimar Torres/Joaquim Teixeira Alves, dentro do quadrilátero maior (segundo a notícia)",
-      "base_legal": [
-        {
-          "ato": "Decreto n. 472, de 28/11/2011 (Dourados) - conforme notícia",
-          "artigo": "sem artigo - descrição em notícia do Campo Grande News de 29/11/2011 (texto do decreto não lido)",
-          "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
-          "nota": "Fiscalização iniciada em 06/01/2012 (SETCESP/Agora MS: https://setcesp.org.br/noticias/guarda-comeca-a-autuar-caminhoes-na-area-central-de-dourados-ms/); Campo Grande News 19/02/2016 diz que o decreto continuava em vigor mas era ignorado."
-        }
-      ],
-      "vigencia_inicio": "2011-11-29",
-      "vigencia_fim": null
+     "ato": "Decreto n. 472, de 28/11/2011 (Dourados) - conforme notícia",
+     "artigo": "sem artigo - descrição em notícia do Campo Grande News de 29/11/2011 (texto do decreto não lido)",
+     "url": "https://www.campograndenews.com.br/cidades/interior/entra-em-vigor-regra-para-circulacao-de-caminhoes-nas-ruas-de-dourados",
+     "nota": "Fiscalização iniciada em 06/01/2012 (SETCESP/Agora MS: https://setcesp.org.br/noticias/guarda-comeca-a-autuar-caminhoes-na-area-central-de-dourados-ms/); Campo Grande News 19/02/2016 diz que o decreto continuava em vigor mas era ignorado."
     }
-  ]
+   ],
+   "vigencia_inicio": "2011-11-29",
+   "vigencia_fim": null
+  }
+ ]
 }

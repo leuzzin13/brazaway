@@ -3,7 +3,7 @@
  "nome": "Nova Hartz",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "softcam_camara",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,21 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 4313060 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
+   "resultado": "(R5 2026-10-18) Fontes lidas: portal_proprio=0, portal_proprio=0. Nenhum ato de restrição a caminhões. Sem leitura (bloqueio/sem cliente): nenhuma."
+  },
+  {
+   "url": "toolkit/sigpub_texto.py varrer 4313060 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
+   "resultado": "(R5 2026-10-18) Prefeitura Municipal de Nova Hartz 1550 atos 2021-09-23..2026-10-16; 18 hits, 0 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+  },
+  {
+   "url": "https://www.camaranovahartz.rs.gov.br/ (Câmara Municipal, plataforma Softcam; busca em texto integral https://www.camaranovahartz.rs.gov.br/proposicoes/pesquisa?definicao=legislacao&palavras_chave=<termo>&palavras_chave_opcao=expressao_exata&criterios=Pesquisar; termos: caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga)",
+   "resultado": "R5 2026-10-18: acervo com 1071 itens no teste 'orçamento' (mais antigo 23/07/0008, mais recente 02/09/2026); acervo real (>=20 itens, mais antigo antes de 2010 e mais recente de 2024+). Acertos por termo: {'caminhões': 4, 'caminhão': 6, 'veículos pesados': 2, 'trânsito pesado': 0, 'tráfego pesado': 4, 'toneladas': 0, 'eixos': 0, 'carretas': 0, 'veículos de carga': 8}. 17 itens únicos nos acertos; 7 plausíveis (filtro por ementa) com PDF baixado e grep de proibição/restrição; leitura dos que sobraram (OCR nos escaneados). Nada com restrição de circulação de caminhões."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (20559 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaranovahartz.rs.gov.br/sitemap) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (20559 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.camaranovahartz.rs.gov.br/sitemap) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. R5 2026-10-18: legislacao.py --texto: lidas portal_proprio=0, portal_proprio=0; sem leitura: nenhuma; SIGPub texto integral: Prefeitura Municipal de Nova Hartz 1550 atos 2021-09-23..2026-10-16. | R5 2026-10-18 (Softcam): Câmara em Softcam varrida; sem ato de restrição a caminhões. Acervo real: negativo conclusivo para a Câmara.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {

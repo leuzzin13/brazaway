@@ -2,7 +2,7 @@
  "ibge": "4209904",
  "nome": "Lontras",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,14 @@
   {
    "url": "https://aovivo.legislador.com.br/legislador_358.html",
    "resultado": "toolkit legislacao.py buscar (caminh|tonelad|veículos pesados|carga e descarga|tráfego|trânsito|peso): fonte principal (legislador) sem acerto/heurístico (0 atos, inclusive para 'trânsito' no cliente legislador: busca provavelmente não efetiva) ou bloqueada; alternativas: atende - Atende.net com captcha/SPA (sem busca automática); atende - Atende.net com captcha/SPA (sem busca automática)"
+  },
+  {
+   "url": "https://lontras.sc.leg.br/proposicoes/pesquisa (Softcam, toolkit/softcam.py)",
+   "resultado": "acervo 'orçamento': 543 itens, de 09/11/2015 a 19/08/2026; acervo insuficiente/parado (não conta como negativo). Lei 2458/2019 (Câmara, Softcam): veda tráfego de veículos com equipamentos para exploração de gás de xisto em todas as vias municipais; por tipo de carga, sem vias nomeadas; desativada."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote só OSM. Tags OSM (hgv=no/maxweight/maxlength) em via municipal sem ato localizado no DOM/SC (busca por nome da via e por termos de circulação/tonelagem) nem nos portais acessíveis; portal principal inacessível ou sem busca efetiva (legislador), então não é prova de inexistência (possível sinalização sem ato publicado ou ato só no portal). Nenhuma regra ativa; OSM registrado em osm_divergencias.",
+ "observacoes": "Lote só OSM. Tags OSM (hgv=no/maxweight/maxlength) em via municipal sem ato localizado no DOM/SC (busca por nome da via e por termos de circulação/tonelagem) nem nos portais acessíveis; portal principal inacessível ou sem busca efetiva (legislador), então não é prova de inexistência (possível sinalização sem ato publicado ou ato só no portal). Nenhuma regra ativa; OSM registrado em osm_divergencias. R5 2026-10-18 (Softcam): Lei 2458/2019 (Câmara, Softcam): veda tráfego de veículos com equipamentos para exploração de gás de xisto em todas as vias municipais; por tipo de carga, sem vias nomeadas; desativada.",
  "osm_divergencias": [
   {
    "way_id": 445478904,
@@ -36,5 +40,50 @@
    "nota": "tag OSM sem ato municipal localizado (DOM/SC por nome da via, termos de circulação/tonelagem e portais acessíveis); não vira regra"
   }
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "lontras_vias_municipais_transporte_equipamentos_xisto",
+   "tipo": "via",
+   "regime": "Proibição por tipo de carga",
+   "nome": "Vias municipais: proibido tráfego de veículos transportando equipamentos e produtos químicos/radioativos para exploração de gás de xisto (Lei 2458/2019)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei nº 2458/2019 (Lontras)",
+     "artigo": "art. 2º",
+     "url": "https://www.lontras.sc.leg.br/softcam/proposicao_print_pdf.php?item=7226&assinatura=0"
+    }
+   ],
+   "status_motivo": "Restrição por tipo de carga (equipamentos de exploração de gás não convencional), em todas as vias municipais sem nomeá-las; sem delimitação. Não aplicar na rota.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [],
+     "descricao": "todas as vias públicas municipais, urbanas, rurais e vicinais"
+    }
+   ],
+   "vigencia_inicio": "2019-06-24"
+  }
+ ]
 }

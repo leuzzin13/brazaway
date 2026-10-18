@@ -39,9 +39,29 @@
   {
    "url": "https://saojose.sc.gov.br/",
    "resultado": "403 (WAF)"
+  },
+  {
+   "url": "legislacao.py buscar 4216602 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.saojose.sc.leg.br: 0 atos; atende@https://camarasaojose.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://saojose.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc@https://cmsaojose.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmsaojose.1doc."
+  },
+  {
+   "url": "legislacao.py buscar 4216602 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.saojose.sc.leg.br: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4216602 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://saojose.sc.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
- "observacoes": "Sem regra de circulação de caminhões no DOM/SC (cobertura ampla). Portal da prefeitura e legislação (leismunicipais) inacessíveis, então 'nao_achou' não é conclusivo. Pendências: decretos de trânsito/Código de Posturas no portal Atende e eventual restrição nas vias da BR-101/Av. Lédio João Martins (não verificada). | R3 2026-10-18: Câmara (cmsj.sc.gov.br Softcam) + DOM/SC sem restrição de caminhões; estacionamento rotativo/carga e descarga apenas em vagas (não circulação).",
+ "observacoes": "Sem regra de circulação de caminhões no DOM/SC (cobertura ampla). Portal da prefeitura e legislação (leismunicipais) inacessíveis, então 'nao_achou' não é conclusivo. Pendências: decretos de trânsito/Código de Posturas no portal Atende e eventual restrição nas vias da BR-101/Av. Lédio João Martins (não verificada). | R3 2026-10-18: Câmara (cmsj.sc.gov.br Softcam) + DOM/SC sem restrição de caminhões; estacionamento rotativo/carga e descarga apenas em vagas (não circulação). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.saojose.sc.leg.br: 0 atos; bloqueadas/sem cliente: atende@https://camarasaojose.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://saojose.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc@https://cmsaojose.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem clie. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM não consultado."
  ],

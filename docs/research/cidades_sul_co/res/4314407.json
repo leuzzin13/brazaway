@@ -69,10 +69,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente pelotas, pelotas-rs, pelotasrs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4314407 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.pelotas.rs.leg.br: 12 atos; leisnaweb@https://leisnaweb.com.br/pesquisa-de-atos/?host=pelotas: 0 atos; portal_proprio@https://www.pelotas.rs.gov.br/: 0 atos; leismunicipais@https://leismunicipais.com.br/prefeitura/rs/pelotas: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec@https://cmpelotas.cittatec.com.br/portal-legislativo/proposicoes/consulta: ERRO sem cliente automático; consultar manualmente: https://cmpelotas.citta"
+  },
+  {
+   "url": "legislacao.py buscar 4314407 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.pelotas.rs.leg.br: 57 atos; leisnaweb@https://leisnaweb.com.br/pesquisa-de-atos/?host=pelotas: 0 atos; portal_proprio@https://www.pelotas.rs.gov.br/: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4314407 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=2, peso..=1, tráfego..=4, circulação..=32; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.pelotas.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma restrição municipal de circulação de caminhões encontrada, mas o resultado NÃO é conclusivo: a legislação anterior a 2019 (Câmara/portal de leis) e a base da Câmara não foram acessíveis, e o FAMURS indexa só a partir de 2019. Pista: Plano de Mobilidade Urbana Sustentável (Decreto 6.209/2019, art. 8º, II) tem como princípio reduzir a circulação de veículos de carga de grande porte na área central, sem regra operacional. Sem regra rascunho. | Rodada 2: SAPL da Câmara de Pelotas e FAMURS (desde 2019) varridos sem achar restrição. Falta o portal de decretos do Executivo e a legislação anterior a 2019. Porto Seco Municipal citado na Emenda 103/2026 pode indicar política de carga futura (sem ato operacional). R3 2026-10-18: fonte alternativa que cobre a legislação consultada: Câmara SAPL (sapl.pelotas.rs.leg.br), leisnaweb (camara) e portal da prefeitura responderam com a base de leis/decretos; só ruído (caminhada, caminho, frota). Nenhum ato de restrição de circulação de caminhões. falha_de_fonte=false. Decreto 6.209/2019 (Plano de Mobilidade, art. 8º) só traz diretriz ('reduzir a circulação de veículos de carga de grande porte na área central'), sem vias/horários: não é regra. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Nenhuma restrição municipal de circulação de caminhões encontrada, mas o resultado NÃO é conclusivo: a legislação anterior a 2019 (Câmara/portal de leis) e a base da Câmara não foram acessíveis, e o FAMURS indexa só a partir de 2019. Pista: Plano de Mobilidade Urbana Sustentável (Decreto 6.209/2019, art. 8º, II) tem como princípio reduzir a circulação de veículos de carga de grande porte na área central, sem regra operacional. Sem regra rascunho. | Rodada 2: SAPL da Câmara de Pelotas e FAMURS (desde 2019) varridos sem achar restrição. Falta o portal de decretos do Executivo e a legislação anterior a 2019. Porto Seco Municipal citado na Emenda 103/2026 pode indicar política de carga futura (sem ato operacional). R3 2026-10-18: fonte alternativa que cobre a legislação consultada: Câmara SAPL (sapl.pelotas.rs.leg.br), leisnaweb (camara) e portal da prefeitura responderam com a base de leis/decretos; só ruído (caminhada, caminho, frota). Nenhum ato de restrição de circulação de caminhões. falha_de_fonte=false. Decreto 6.209/2019 (Plano de Mobilidade, art. 8º) só traz diretriz ('reduzir a circulação de veículos de carga de grande porte na área central'), sem vias/horários: não é regra. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.pelotas.rs.leg.br: 12 atos; leisnaweb@https://leisnaweb.com.br/pesquisa-de-atos/?host=pelotas: 0 atos; portal_proprio@https://www.pelotas.rs.gov.br/: 0 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/prefeitura/rs/pelotas: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec@https://cmpelotas.cittatec.com.br/portal-legislativo/proposicoes/consulta: ERRO sem cliente automático; consultar manualmente: https://cmpelotas.c. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
  ],

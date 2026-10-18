@@ -4,7 +4,7 @@
  "uf": "GO",
  "status": "nao_achou",
  "nivel_busca": "profunda",
- "falha_de_fonte": false,
+ "falha_de_fonte": true,
  "fontes_consultadas": [
   {
    "url": "https://acessoainformacao.aguaslindasdegoias.go.gov.br (Portal do Cidadao NucleoGov: decretos, portarias, resolucoes e leis)",
@@ -37,10 +37,26 @@
   {
    "url": "penaestrada.com.br/restricoes/aguas-lindas-de-goias",
    "resultado": "Sem pagina (404)."
+  },
+  {
+   "url": "legislacao.py buscar 5200258 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "nucleogov@https://aguaslindasdegoias.go.gov.br/leis/: ERRO NucleoGov: listagem de atos em https://aguaslindasdegoias.go.gov.br/le; nucleogov@https://acessoainformacao.aguaslindasdegoias.go.gov.br/cidadao/legislacao/decretos: ERRO NucleoGov: listagem de atos em https://acessoainformacao.aguaslindasde"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5200258 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://aguaslindasdegoias.go.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 0 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Aguas Lindas de Goias: nao achado ato de restricao de caminhoes, zona, VUC ou carga e descarga. Fontes de legislacao (portal de transparencia, Camara) inacessiveis; AGM sem acertos no lead; busca nao conclusiva (falha_de_fonte). Municipio lindeiro a BR-070/DF; vias principais sao rodovias. Pendencias: ler decretos/portarias no portal de legislacao da prefeitura e verificar Camara. | REVISAO 2026-10-18 (2a passada, portais abertos): Portal de legislacao da Prefeitura (NucleoGov) agora lido via API: nenhum decreto, portaria ou lei de circulacao/carga e descarga de caminhoes. Limite: leis anteriores a ~2021 nao estao no portal e a busca e por ementa. Municipio de 250 mil hab. cortado pela BR-070; nenhuma regra municipal localizada.",
+ "observacoes": "Aguas Lindas de Goias: nao achado ato de restricao de caminhoes, zona, VUC ou carga e descarga. Fontes de legislacao (portal de transparencia, Camara) inacessiveis; AGM sem acertos no lead; busca nao conclusiva (falha_de_fonte). Municipio lindeiro a BR-070/DF; vias principais sao rodovias. Pendencias: ler decretos/portarias no portal de legislacao da prefeitura e verificar Camara. | REVISAO 2026-10-18 (2a passada, portais abertos): Portal de legislacao da Prefeitura (NucleoGov) agora lido via API: nenhum decreto, portaria ou lei de circulacao/carga e descarga de caminhoes. Limite: leis anteriores a ~2021 nao estao no portal e a busca e por ementa. Municipio de 250 mil hab. cortado pela BR-070; nenhuma regra municipal localizada. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: nucleogov@https://aguaslindasdegoias.go.gov.br/leis/: ERRO NucleoGov: listagem de atos em https://aguaslindasdegoias.go.gov.br/le; nucleogov@https://acessoainformacao.aguaslindasdegoias.go.gov.br/cidadao/legislacao/decretos: ERRO NucleoGov: listagem de atos em https://acessoainformacao.aguaslindasde. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
  ],

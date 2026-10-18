@@ -33,10 +33,30 @@
   {
    "url": "https://www.santoantoniodaplatina.pr.leg.br:443",
    "resultado": "R3 home camara: HTTP 200; links de legislação/diário: nenhum"
+  },
+  {
+   "url": "legislacao.py buscar 4124103 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.santoantoniodaplatina.pr.leg.br: 23 atos; atende@https://santoantoniodaplatina.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "legislacao.py buscar 4124103 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.santoantoniodaplatina.pr.leg.br: 28 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4124103 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.santoantoniodaplatina.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Atende bloqueado; Câmara sem ato. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://santoantoniodaplatina.atende.net (SPA/captcha).",
+ "observacoes": "Atende bloqueado; Câmara sem ato. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://santoantoniodaplatina.atende.net (SPA/captcha). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.santoantoniodaplatina.pr.leg.br: 23 atos; bloqueadas/sem cliente: atende@https://santoantoniodaplatina.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [],
  "regras_rascunho": []
 }
