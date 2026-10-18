@@ -1,96 +1,97 @@
 {
- "ibge": "4214300",
- "nome": "Rancho Queimado",
- "uf": "SC",
- "status": "regra_com_ato",
- "nivel_busca": "dirigida",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "leads/diarios_consolidados.json (preparacao, DOM/SC) https://diariomunicipal.sc.gov.br/atos/5425284",
-   "resultado": "pistas da preparacao re-pontuadas como ruido pelo orquestrador; trechos conferidos"
-  },
-  {
-   "url": "diarios_consolidados.py buscar 4214300 \"transito de caminhoes\" (DOM/SC)",
-   "resultado": "consulta feita; ver observacoes"
-  },
-  {
-   "url": "diarios_consolidados.py buscar 4214300 \"veiculos pesados\" (DOM/SC)",
-   "resultado": "consulta feita; resultados sem norma de circulacao de caminhao (ver observacoes)"
-  },
-  {
-   "url": "https://ranchoqueimado.1doc.com.br/b.php?pg=o/login&n=3",
-   "resultado": "legislacao.py buscar --principal: 1doc (sem cliente automatico); 0 atos"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=5425284 (X-Requested-With: XMLHttpRequest)",
-   "resultado": "texto integral da Lei 1.857/2023 lido"
-  },
-  {
-   "url": "diarios_consolidados.py buscar 4214300 \"Lei 1.857\" / \"1857/2023\" / \"Arlindo Francisco Philippi\"",
-   "resultado": "sem lei posterior; so atas CDI (atos/6542020, 6542006, 6542029) que citam a estrada"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "R1-SC-DR01 (DR; o lead da preparacao era real, nao ruido). Lei 1.857/2023 lida integralmente via DOM/SC getHtml (id 5425284): art. 1o proibe circulacao de veiculos pesados na Estrada Municipal Arlindo Francisco Philippi (Boa Vista); art. 2o define veiculo pesado como PBT > 51 t; excecoes de servico no paragrafo unico; art. 5o revoga a Lei 1.848/2023. Buscas no DOM/SC por \"Lei 1.857\", \"1857/2023\" e \"Arlindo Francisco Philippi\" sem alteracao ou revogacao (so atas do CDI citando a estrada). Portal 1doc nao pesquisavel. Texto em atos/4214300/lei_1857_2023.txt.",
- "osm_divergencias": [],
- "regras_rascunho": [
-  {
-   "id": "ranchoqueimado_lei1857_2023_arlindo_philippi",
-   "tipo": "via",
-   "regime": "Veiculos pesados (PBT > 51 t)",
-   "nome": "Rancho Queimado: Estrada Municipal Arlindo Francisco Philippi (Boa Vista), proibicao a veiculos com PBT acima de 51 t",
-   "status": "ativa",
-   "confianca": "media",
-   "janelas": [
+  "ibge": "4214300",
+  "nome": "Rancho Queimado",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true,
-    "qualquer": [
-     {
-      "campo": "pbt_t",
-      "acima": 51
-     }
-    ]
-   },
-   "excecoes": [
-    "Caminhoes de corpo de bombeiros; obras e servicos de emergencia; coleta e transporte de lixo; socorro mecanico (guincho); remocao de entulho com cacambas; obras e servicos de infraestrutura municipal (art. 1o, paragrafo unico, I a VI)"
-   ],
-   "base_legal": [
+      "url": "leads/diarios_consolidados.json (preparacao, DOM/SC) https://diariomunicipal.sc.gov.br/atos/5425284",
+      "resultado": "pistas da preparacao re-pontuadas como ruido pelo orquestrador; trechos conferidos"
+    },
     {
-     "ato": "Lei Municipal 1.857, de 13/12/2023 (revoga a Lei 1.848/2023)",
-     "artigo": "art. 1o (proibicao e excecoes), art. 2o (veiculo pesado = PBT superior a 51 t, 6 eixos), art. 3o (infracao CTB arts. 187 e 231), art. 5o (revoga Lei 1.848/2023)",
-     "url": "https://diariomunicipal.sc.gov.br/atos/5425284"
-    }
-   ],
-   "vigencia_inicio": "2023-12-13",
-   "vigencia_fim": null,
-   "trechos": [
+      "url": "diarios_consolidados.py buscar 4214300 \"transito de caminhoes\" (DOM/SC)",
+      "resultado": "consulta feita; ver observacoes"
+    },
     {
-     "inciso": "art. 1o",
-     "via": [
-      "Estrada Municipal Arlindo Francisco Philippi",
-      "Estrada Arlindo Francisco Philippi"
-     ],
-     "descricao": "Estrada Municipal Arlindo Francisco Philippi, localidade da Boa Vista, Rancho Queimado/SC (ato nao fixa extensao; via inteira)",
-     "aproximado": true
+      "url": "diarios_consolidados.py buscar 4214300 \"veiculos pesados\" (DOM/SC)",
+      "resultado": "consulta feita; resultados sem norma de circulacao de caminhao (ver observacoes)"
+    },
+    {
+      "url": "https://ranchoqueimado.1doc.com.br/b.php?pg=o/login&n=3",
+      "resultado": "legislacao.py buscar --principal: 1doc (sem cliente automatico); 0 atos"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=5425284 (X-Requested-With: XMLHttpRequest)",
+      "resultado": "texto integral da Lei 1.857/2023 lido"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4214300 \"Lei 1.857\" / \"1857/2023\" / \"Arlindo Francisco Philippi\"",
+      "resultado": "sem lei posterior; so atas CDI (atos/6542020, 6542006, 6542029) que citam a estrada"
     }
-   ],
-   "nota": "Ato sem janela horaria: vale 24 h. Sem vigencia_fim: busca no DOM/SC por Lei 1.857, 1857/2023 e pela estrada nao achou alteracao/revogacao ate 18/10/2026. Corte de 51 t quase nunca atinge caminhao comum (limite legal de PBTC 45 t, bitrem 57 t; 7+ eixos). Geometria a construir pelo nome da via no OSM."
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "R1-SC-DR01 (DR; o lead da preparacao era real, nao ruido). Lei 1.857/2023 lida integralmente via DOM/SC getHtml (id 5425284): art. 1o proibe circulacao de veiculos pesados na Estrada Municipal Arlindo Francisco Philippi (Boa Vista); art. 2o define veiculo pesado como PBT > 51 t; excecoes de servico no paragrafo unico; art. 5o revoga a Lei 1.848/2023. Buscas no DOM/SC por \"Lei 1.857\", \"1857/2023\" e \"Arlindo Francisco Philippi\" sem alteracao ou revogacao (so atas do CDI citando a estrada). Portal 1doc nao pesquisavel. Texto em atos/4214300/lei_1857_2023.txt. | verificado em 2026-10-18: Lei 1.857/2023 (DOM/SC 5425284) reaberta na integra: art. 1o (veda veiculos pesados na estrada, excecoes I-VI), art. 2o (pesado = PBT>51 t, 6 eixos simples x 8,5 t), art. 5o revoga a Lei 1.848/2023, art. 6o vigor na publicacao; conferem. REBAIXADA para desativada: via nao localizavel por nome no OSM e sem extensao.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "ranchoqueimado_lei1857_2023_arlindo_philippi",
+      "tipo": "via",
+      "regime": "Veiculos pesados (PBT > 51 t)",
+      "nome": "Rancho Queimado: Estrada Municipal Arlindo Francisco Philippi (Boa Vista), proibicao a veiculos com PBT acima de 51 t",
+      "status": "desativada",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 51
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhoes de corpo de bombeiros; obras e servicos de emergencia; coleta e transporte de lixo; socorro mecanico (guincho); remocao de entulho com cacambas; obras e servicos de infraestrutura municipal (art. 1o, paragrafo unico, I a VI)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.857, de 13/12/2023 (revoga a Lei 1.848/2023)",
+          "artigo": "art. 1o (proibicao e excecoes), art. 2o (veiculo pesado = PBT superior a 51 t, 6 eixos), art. 3o (infracao CTB arts. 187 e 231), art. 5o (revoga Lei 1.848/2023)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5425284"
+        }
+      ],
+      "vigencia_inicio": "2023-12-13",
+      "vigencia_fim": null,
+      "trechos": [
+        {
+          "inciso": "art. 1o",
+          "via": [
+            "Estrada Municipal Arlindo Francisco Philippi",
+            "Estrada Arlindo Francisco Philippi"
+          ],
+          "descricao": "Estrada Municipal Arlindo Francisco Philippi, localidade da Boa Vista, Rancho Queimado/SC (ato nao fixa extensao; via inteira)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Ato sem janela horaria: vale 24 h. Sem vigencia_fim: busca no DOM/SC por Lei 1.857, 1857/2023 e pela estrada nao achou alteracao/revogacao ate 18/10/2026. Corte de 51 t quase nunca atinge caminhao comum (limite legal de PBTC 45 t, bitrem 57 t; 7+ eixos). Geometria a construir pelo nome da via no OSM.",
+      "status_motivo": "Verificacao 18/10/2026: Lei 1.857/2023 reaberta; a estrada ('Estrada Municipal Arlindo Francisco Philippi, na localidade da Boa Vista') nao foi encontrada por nome no Nominatim/OSM e o ato nao fixa extensao nem pontos de referencia: geometria nao construivel. O corte de PBT>51 t (6 eixos simples a 8,5 t/eixo) acima do limite legal comum (45 t; bitrem 57 t so com AET) torna o efeito pratico quase nulo."
+    }
+  ]
 }

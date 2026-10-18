@@ -52,7 +52,7 @@
     }
   ],
   "data": "2026-10-18",
-  "observacoes": "Cadeia de decretos de PBT por via. Vigentes pelo que o DOM/SC mostra: 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026. Rod. Tranquilo Sartor (081/2020) ficou sem restrição porque o Decreto 155/2020 o revogou; Decreto 142/2019 (anterior) não foi achado. Possível decreto não captado pela busca por termos (hits cortados em ~10 por consulta).",
+  "observacoes": "Cadeia de decretos de PBT por via. Vigentes pelo que o DOM/SC mostra: 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026. Rod. Tranquilo Sartor (081/2020) ficou sem restrição porque o Decreto 155/2020 o revogou; Decreto 142/2019 (anterior) não foi achado. Possível decreto não captado pela busca por termos (hits cortados em ~10 por consulta). | verificado em 2026-10-18: Decretos 035/2018, 058/2020, 115/2018 (+120/2019), 195/2018, 046/2024 e 036/2026 reabertos no DOM/SC e conferem (ver verif). OMISSÃO CORRIGIDA: Decreto 097/2026 (17/06/2026, DOM/SC atos/8436683; vias centrais, PBT>15 t/altura>3 m/articulados/bitrem) não estava no res; acrescentado como regra desativada (trechos por bairro/landmark). Cadeia 155/182/195-2020 revogada pelo 036/2026 art. 4º lida.",
   "osm_divergencias": [],
   "regras_rascunho": [
     {
@@ -514,6 +514,100 @@
         }
       ],
       "geometria": []
+    },
+    {
+      "id": "morrodafumaca_dec097_2026_vias_centrais",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Vias centrais de Morro da Fumaça (8 vias, algumas em trechos por referência): proibidos combinações de carga, carretas, bitrem, articulados e caminhões com altura acima de 3 m e/ou PBT acima de 15 t",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "Acrescentada na verificação de 18/10/2026 (Decreto 097/2026 não constava do res). As vias são delimitadas por bairro ('Bairro Centro'), por 'trecho correspondente a via de mão única', 'trecho correspondente ao Parque Linear' e 'até a altura do Supermercado Giassi', sem perímetro nem extremos por vias transversais: não georreferenciável de forma confiável. Reativar quando as geometrias forem construídas. A Rua Prefeito Virgínio Maccari já está coberta (inteira, 7,7 t) pelo Decreto 035/2018, mais restritivo.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "altura_m",
+            "acima": 3
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões de serviços essenciais (Lei 7.783/89, art. 10), de emergência, guincho e obras/serviços de emergência (art. 2º)",
+        "Rua XV de Novembro: caminhões de manutenção da borracharia em frente ao Colégio Princesa Isabel (art. 1º, VII)",
+        "Casos não previstos: autorização da Secretaria de Obras (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 097/2026 (17/06/2026; DOM/SC 19/06/2026)",
+          "artigo": "art. 1º, I a VIII; art. 2º; art. 4º; art. 5º (estacionamento vedado, só parada para carga e descarga); art. 6º (vigor na publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/8436683"
+        }
+      ],
+      "vigencia_inicio": "2026-06-19",
+      "trechos": [
+        {
+          "via": "Rua Primo Ítalo Naspolini",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Prefeito Paulino Bif",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Prefeito Virgínio Maccari",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Rua Vinte de Maio",
+          "nota": "Bairro Centro, trecho de mão única"
+        },
+        {
+          "via": "Avenida Inocente Pagnan",
+          "nota": "Bairro Centro, trecho do Parque Linear"
+        },
+        {
+          "via": "Avenida Celeste Recco",
+          "nota": "Bairro Centro, trecho do Parque Linear"
+        },
+        {
+          "via": "Rua XV de Novembro",
+          "nota": "Bairro Centro"
+        },
+        {
+          "via": "Avenida Nicolau João de Souza",
+          "nota": "Bairro Esperança, até a altura do Supermercado Giassi"
+        }
+      ],
+      "geometria": [],
+      "nota": "Altura 'superior a 03 metros e/ou PBT superior a 15 t': lido como qualquer um dos critérios. Não revoga nem altera os decretos anteriores; onde coincide com o Decreto 035/2018 (Rua Prefeito Virgínio Maccari, Rua Vinte de Maio) prevalece o mais restritivo."
     }
   ]
 }
