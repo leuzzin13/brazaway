@@ -1,0 +1,101 @@
+{
+ "ibge": "4114203",
+ "nome": "Mandaguari",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/6C9D40E4",
+   "resultado": "LIDO integral. Salvo em atos/4114203/lei_3877_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/38174AC8",
+   "resultado": "LIDO integral. Salvo em atos/4114203/lei_3660_2021.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4114203 (Lei 3.877 altera revoga Área Central de Tráfego)",
+   "resultado": "sem alteração posterior"
+  },
+  {
+   "url": "https://sapl.mandaguari.pr.leg.br/materia/pesquisar-materia",
+   "resultado": "SAPL não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 3.877/2023 (25/04/2023; AMP 26/04/2023), lida integralmente: define a Área Central de Tráfego por 7 logradouros e proíbe circulação de veículos acima de 7,0 t e/ou 7,0 m no seu interior em dias úteis das 9h às 18h30 e sábados das 8h30 às 13h (domingo e feriados liberados), com regras de carga e descarga por porte e autorização especial. Lei 3.660/2021 (lida; art. 1º vetado, limite de 10,01 m para carga/descarga) é anterior; a 3.877 só revoga expressamente o Decreto 135/2004. Sem alteração posterior achada. Decreto 215/2026 (semáforos) e Lei 4.133/2024 (caixas estacionárias) são ruído. Pendência: anexo/mapa em link externo.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "mandaguari_area_central_trafego_7t",
+   "tipo": "zona",
+   "regime": "Área central (porte/horário)",
+   "nome": "Área Central de Tráfego: veículos > 7 t e/ou > 7 m proibidos 9h-18h30 úteis e sáb 8h30-13h (Lei 3.877/2023)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "09:00",
+     "to": "18:30"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:30",
+     "to": "13:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 7.0
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.0
+     }
+    ]
+   },
+   "excecoes": [
+    "autorização da Prefeitura para concreto, materiais de construção, mudanças e casos excepcionais (originais no para-brisa)",
+    "carga e descarga com horários próprios: 7-14 t em espaços demarcados dias úteis 18h-8h30 e fins de semana 13h30 sáb-8h30 seg; 1,8-7 t em espaços demarcados"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 3.877, de 25/04/2023 (Mandaguari), publ. AMP 26/04/2023",
+     "artigo": "artigo sobre circulação na Área Central de Tráfego (sem numeração no texto extraído; após o art. de horários de carga/descarga); definição da área no art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/6C9D40E4"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Rua Renê Táccola",
+      "Rua Oswaldo Cruz",
+      "Rua Gomercindo Bortolanza",
+      "Rua Senador Salgado Filho",
+      "Avenida dos Pioneiros",
+      "Rua Doutor Alcir Castelo Branco",
+      "Rua Zacarias de Vasconcelos"
+     ],
+     "descricao": "perímetro: de R. Zacarias de Vasconcelos esquina R. Renê Táccola, por esta até R. Oswaldo Cruz, até R. Gomercindo Bortolanza, até R. Senador Salgado Filho, até Av. dos Pioneiros, até R. Dr. Alcir Castelo Branco, até R. Zacarias de Vasconcelos, até R. Renê Táccola (anexo com mapa em link externo, não lido)"
+    }
+   ],
+   "vigencia_inicio": "2023-04-26",
+   "nota": "Carga útil = payload_t (o trecho de carga/descarga fala em \"capacidade de carga útil\"; a regra de circulação diz \"veículos acima de 7,0 toneladas\"). Feriados contam como fim de semana (liberado). A Prefeitura pode ajustar dimensões, capacidade e horários (artigo final). Lei 3.660/2021 (art. 1º vetado; limite 10,01 m) foi sucedida pela 3.877/2023, que revoga só o Decreto 135/2004."
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+{
+ "ibge": "5003207",
+ "nome": "Corumbá",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/5003207/2015-06-11/65fcbd667ad75bde0c8ecfe69fb75da086ef7672.txt",
+   "resultado": "Resolução AGETRAT 1/2015 lida integralmente (arts. 1º-17): circulação, estacionamento e carga/descarga de caminhões e carretas na área urbana, por carga útil; área tombada/entorno sem delimitação."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5003207/2015-09-10/96c01d52498afd1c136d1901e1aca0c64ed01bf0.txt",
+   "resultado": "Resolução AGETRAT 2/2015 lida: só altera o art. 17 (150 dias, educativo, retroage a 11/06/2015)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5003207/2014-05-12/82e861f3feeb03256fc1117655f178d69db05e6c.txt",
+   "resultado": "Decreto 1.364/2014: utilidade pública de área para Distrito Logístico, com considerandos sobre retirar o tráfego de caminhões do centro; não é regra."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5003207/2016-11-17/e0d730ba3cebe203ff76f4bfc3023e0a15ed1cef.txt",
+   "resultado": "Plano/diretrizes 2016 (I1.4 regulamentar circulação de veículos de carga); não aberto na íntegra; diretriz."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5003207 'trânsito de caminhões' / 'AGETRAT caminhões' / 'Decreto 570' / 'caminhão-trator' --fonte qd",
+   "resultado": "Só reencontra a Res. 1/2015; Decreto 570/2009 (cavalos mecânicos) não localizado; sem revogação achada. QD dá cobertura somente a partir de ~2013/2015."
+  },
+  {
+   "url": "https://leismunicipais.com.br/a1/ms/c/corumba/decreto/2009/57/570/decreto-n-570-2009",
+   "resultado": "403 Cloudflare; não contornado. Prefeitura (corumba.ms.gov.br) e Câmara respondem 200 mas sem busca automatizável."
+  },
+  {
+   "url": "OSM Overpass (4 instâncias)",
+   "resultado": "Fora do ar (reset/504). Usado só o exemplo da preparação: único hgv=no é trunk internacional F4 (RN4 Arroyo Concepción-Corumbá), fronteira."
+  }
+ ],
+ "observacoes": "Resolução AGETRAT 1/2015 (alterada pela 2/2015) disciplina o tráfego de caminhões na área urbana por carga útil, mas só restringe a circulação na 'área tombada e entorno' sem delimitá-la; estacionamento proibido em toda a cidade. Decreto 570/2009 (cavalos mecânicos) citado no art. 14 não foi localizado: possível regra de rota/horário para cavalos mecânicos. Pendente: obter o Decreto 570/2009 e o mapa da área tombada (IPHAN/FUNDAC) e checar revogação da Resolução.",
+ "osm_divergencias": [
+  "OSM hgv=no (way 884850788, RN4: Arroyo Concepción-Corumbá, ref F4, highway=trunk): rodovia/fronteira internacional, fora de competência municipal; descartado. Overpass indisponível para reconferir."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "corumba_agetrat_area_tombada",
+   "tipo": "zona",
+   "regime": "Restrição de circulação de caminhões na área tombada (Patrimônio Histórico) e entorno",
+   "nome": "Corumbá: caminhões/carretas com carga útil acima de 8,5 t não circulam na área tombada e seu entorno nem onde a sinalização proibir (Res. AGETRAT 1/2015)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 8.5
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 5º, I: VUC com capacidade até 8,5 t circula livremente",
+    "art. 12: autorização especial AGETRAT (2 dias úteis de antecedência)",
+    "art. 15: veículos oficiais e de serviços essenciais identificados",
+    "art. 6º: domingos e feriados a circulação segue as mesmas regras do art. 5º"
+   ],
+   "base_legal": [
+    {
+     "ato": "Resolução AGETRAT nº 1, de 21/05/2015 (Agência Municipal de Trânsito e Transportes de Corumbá), alterada pela Resolução AGETRAT nº 2, de 09/09/2015",
+     "artigo": "arts. 3º a 6º, 12, 13 e 15",
+     "url": "https://data.queridodiario.ok.org.br/5003207/2015-06-11/65fcbd667ad75bde0c8ecfe69fb75da086ef7672.txt",
+     "nota": "DIOCORUMBÁ ed. 714 (11/06/2015); Res. 2/2015 em ed. 778 (10/09/2015): https://data.queridodiario.ok.org.br/5003207/2015-09-10/96c01d52498afd1c136d1901e1aca0c64ed01bf0.txt (muda o art. 17: vigência 150 dias após a publicação, com efeito retroativo a 11/06/2015, período informativo/educativo)."
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "A Resolução não delimita a 'área tombada pelo Patrimônio Histórico, incluindo o entorno' nem lista as vias com 'proibição pela sinalização'; sem perímetro não há geometria. Também não foi localizado o Decreto 570/2009 (cavalos mecânicos) citado no art. 14. Vigência posterior (2016 em diante) não conferida em portal.",
+   "autorizacao": "AGETRAT (art. 12)",
+   "vigencia_inicio": "2015-11-08",
+   "nota": "Classificação pela capacidade máxima de carga útil (art. 4º), logo payload_t. Janelas ilustrativas: a redação não proíbe de forma explícita a circulação na área tombada, diz que a circulação é livre 'exceto na área tombada'. Carga e descarga: VUC até 14 t das 15h às 10h; pesados até 18 t das 18h às 9h; acima de 18 t com horário autorizado pela AGETRAT; estacionamento de caminhões/carretas proibido em toda a malha urbana (art. 3º). Início da vigência = 150 dias após 11/06/2015 (cálculo aproximado)."
+  }
+ ]
+}
