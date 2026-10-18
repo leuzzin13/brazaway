@@ -1,0 +1,50 @@
+{
+  "ibge": "4122008",
+  "nome": "Rio Azul",
+  "uf": "PR",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.rioazul.pr.leg.br/materia/pesquisar-materia",
+      "resultado": "legislacao.py buscar caminh|veículos pesados|veiculos pesados|carga e descarga|tonelad --principal (sapl): abriu; sapl https://sapl.rioazul.pr.leg.br total 0 erro None None"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4122008 --fonte amp (AMP/SIGPub, www.diariomunicipal.com.br/amp): \"trânsito de caminhões\" e \"veículos pesados\"",
+      "resultado": "13 e 100 resultados; só ruído (cargos/frota/licitação/ISS/servidão/plano diretor/LOM genérica); nenhum ato restringindo circulação de caminhão"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/2D8ADEB2",
+      "resultado": "pista da preparação (AMP 2024-10-31, \"LEI Nº 1.208/2024\"): re-pontuada como ruído; não é restrição"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/91D25194",
+      "resultado": "LIDO integralmente; texto em atos/4122008/lei_977_2019.txt"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Lei 977/2019 (AMP 91D25194, publicada 04/07/2019): autoriza o Executivo a limitar o tráfego de veículos pesados (PBT >= 45 t) nas ESTRADAS RURAIS por 24/36/48 h após chuva de 50/51-80/>81 mm e fixa limites de peso (45 t, 10 t/eixo) nas vias rurais, com multa em URM; exclui cargas perecíveis, rações e cargas vivas. Art. 4º previa decreto regulamentador em 60 dias, art. 5º vigência +90 dias; decreto não localizado no AMP e sem geometria/lista de estradas. Só vias rurais, depende de acionamento por chuva: não aplicável à rota urbana.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "rio_azul_estradas_rurais_chuva",
+      "tipo": "via",
+      "regime": "Estradas rurais - chuva",
+      "nome": "Limitação de veículos pesados (>=45 t) em estradas rurais após chuva",
+      "status": "desativada",
+      "status_motivo": "Lei autorizativa, acionada por precipitação, restrita a estradas rurais sem lista nem geometria; decreto regulamentador não localizado.",
+      "confianca": "baixa",
+      "vias_texto": "estradas rurais municipais (sem lista)",
+      "janelas_texto": "24 h (até 50 mm), 36 h (51-80 mm), 48 h (>81 mm) após a chuva",
+      "alvo_texto": "veículos com peso bruto >= 45 t; exceto cargas perecíveis, rações e cargas vivas",
+      "base_legal": [
+        {
+          "ato": "Lei nº 977/2019 de Rio Azul",
+          "artigo": "arts. 1º a 5º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/91D25194"
+        }
+      ]
+    }
+  ]
+}
