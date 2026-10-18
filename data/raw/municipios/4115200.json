@@ -1,0 +1,238 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4115200",
+  "municipio": "Maringá",
+  "uf": "PR",
+  "fonte_id": "maringa",
+  "fonte": {
+    "url": "https://sapl.cmm.pr.gov.br/norma/9478 (LC 660/2007) e https://data.queridodiario.ok.org.br/4115200/2014-07-30/f39a45daded9eb7135a883dafc2f65be51e4a26e.txt (Decreto 1674/2014, Órgão Oficial n. 2128)",
+    "licenca": "Ato oficial de Maringá: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM) e, se a rota o exigir, limites do IBGE.",
+    "notas": "Duas regras ativas de confiança média: (1) LC 660/2007, art. 1º, área central do Anexo I (mapa de baixa resolução; quadrilátero das Avenidas Prudente de Moraes, São Paulo, Tiradentes e Paraná, aproximado); (2) Decreto 1674/2014, Av. Morangueira. O portal da Prefeitura estava inacessível: decretos recentes da SEMOB podem existir fora do SAPL/Querido Diário. Decreto regulamentador do art. 2º da LC 660 (locais de carga e descarga) e Decreto 863/2003 (cargas perigosas) não localizados. Maringá não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Maringá não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "maringa_area_central_8t",
+      "tipo": "zona",
+      "regime": "Restrição a caminhões na área central",
+      "nome": "Maringá: área central (Anexo I da LC 660/2007), veículos de carga acima de 8 t de PBT, 10h-19h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "10:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2: os locais de carga e descarga na area central sao definidos e sinalizados pela Secretaria Municipal de Transportes (texto do artigo incompleto no OCR: nao se sabe a classe de veiculo que pode usa-los nem se ha janela propria)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 660, de 29/06/2007 (Maringá)",
+          "artigo": "art. 1 (proibição de tráfego e permanência acima de 8 t PBT, 10h às 19h); art. 3 (área central = mapa do Anexo I); art. 5 (revoga a LC 10/1993 e outras)",
+          "url": "https://sapl.cmm.pr.gov.br/media/sapl/public/normajuridica/2007/9478/9478_texto_integral.pdf",
+          "nota": "Ficha: https://sapl.cmm.pr.gov.br/norma/9478 (Camara de Maringa, SAPL). PDF escaneado lido por OCR e o Anexo I conferido na imagem. Sem lei posterior que altere ou revogue listada na ficha."
+        }
+      ],
+      "vigencia_inicio": "2007-06-29",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4115200_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Quadrilátero do Anexo I da LC 660/2007 (Av. Prudente de Moraes ao norte, Av. São Paulo a leste, Av. Tiradentes ao sul e Av. Paraná a oeste) montado sobre o eixo das avenidas no OSM; ver geo/4115200_area_central.geojson"
+        }
+      ],
+      "nota": "Confianca media: texto e horario lidos no ato; o perimetro vem de um mapa de baixa resolucao e a leitura das avenidas-limite e visual. 'Trafego e permanencia' sem excecao de passagem para destino local no texto lido (art. 2 trata de locais de carga e descarga com texto ilegivel no OCR).",
+      "verificado_em": "2026-10-18",
+      "fonte_geometria": "Anexo I da LC 660/2007 (imagem) lido visualmente; quadrilátero montado sobre as avenidas-limite do OSM (ODbL). Aproximado."
+    },
+    {
+      "id": "maringa_av_morangueira_23t",
+      "tipo": "via",
+      "regime": "Proibição de veículos de carga pesados em via",
+      "nome": "Maringá: Av. Morangueira entre Av. Colombo e Contorno Norte, veículos de carga acima de 23 t PBT, 6h-21h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "06:00",
+          "to": "21:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 23
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 3: fora do horario do art. 2 (21h-6h) a circulacao so pode ocorrer em execucao de procedimento de carga e descarga"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 1674, de 28/07/2014 (Maringá), publicado no Órgão Oficial do Município n. 2128 de 30/07/2014",
+          "artigo": "arts. 1 (23 t PBT, carregados ou não, Av. Morangueira entre Av. Colombo e Contorno Norte), 2 (6h às 21h) e 3 (só carga e descarga fora do horário)",
+          "url": "https://data.queridodiario.ok.org.br/4115200/2014-07-30/f39a45daded9eb7135a883dafc2f65be51e4a26e.txt",
+          "nota": "Texto do Querido Diario (pag. 24-25 da edicao). Base: art. 187 do CTB. Nenhuma alteracao/revogacao encontrada no Querido Diario; portal da Prefeitura inacessivel."
+        }
+      ],
+      "vigencia_inicio": "2014-07-30",
+      "trechos": [
+        {
+          "inciso": "art. 1",
+          "via": [
+            "Avenida Morangueira"
+          ],
+          "de": [
+            "Avenida Colombo"
+          ],
+          "ate": [
+            "Contorno Norte",
+            "Avenida Prefeito Sincler Sambatti"
+          ],
+          "descricao": "Av. Morangueira no trecho entre a Av. Colombo e o Contorno Norte",
+          "aproximado": false
+        }
+      ],
+      "nota": "O ato diz 'acima de 23 ton PBT'; o art. 3 permite circular fora do horario apenas para carga e descarga (o roteador nao modela essa condicao: a janela 21h-6h fica livre). Confianca media por falta de confirmacao de vigencia no portal da Prefeitura.",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4115200_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "maringa_lc10_1993_area_central_carga_descarga",
+      "tipo": "zona",
+      "regime": "Carga e descarga na área central (histórico)",
+      "nome": "Maringá: LC 10/1993, carga e descarga na área central por classe de tonelagem (revogada)",
+      "status": "revogada",
+      "status_motivo": "Revogada integralmente pelo art. 5 da Lei Complementar 660/2007 (confirmado na ficha do SAPL: 'Revoga integralmente o(a) Lei Complementar nº 10').",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "09:45",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 10, de 1993 (Maringá)",
+          "artigo": "arts. 2 e 3 (logradouros da área central; horários por classe de tonelagem)",
+          "url": "https://sapl.cmm.pr.gov.br/media/sapl/public/normajuridica/1993/267/267_texto_integral.pdf",
+          "nota": "Registro histórico; janelas simplificadas e nao usar na rota."
+        }
+      ],
+      "vigencia_fim": "2007-06-29",
+      "nota": "Registro historico (data de inicio nao lida; o numero da lei indica 1993). Janela 09h45-19h = faixa em que a carga e descarga de 1,1 a 4 t so era permitida com talao e em locais regulamentados (art. 3, II); nao usar na rota.",
+      "excecoes": [],
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "maringa_plano_2022_ampliacao_area_restrita",
+      "tipo": "zona",
+      "regime": "Ampliação proposta da restrição a caminhões",
+      "nome": "Maringá: ampliação da área de restrição a veículos de grande porte (Plano de Mobilidade, proposta)",
+      "status": "desativada",
+      "status_motivo": "Apenas acao programatica do Anexo VII da Lei 11.518/2022 (curto prazo 2025): nao e ato de restricao (sem horario, peso ou ato regulamentador localizado).",
+      "confianca": "unverifiable",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei 11.518, de 06/10/2022 (Política e Plano de Mobilidade Urbana de Maringá)",
+          "artigo": "arts. 31, III, 32, VIII e IX; Anexo VII (quadro Logística urbana)",
+          "url": "https://data.queridodiario.ok.org.br/4115200/2022-10-06/7ef02efa85e3db75d36645deec3aac75c65e9d4d.txt",
+          "nota": "Proposta: poligono Av. Colombo / Av. Tuiuti / Av. Mandacaru / Av. 19 de Dezembro / Av. Dr. Luiz Teixeira Mendes / Av. Euclides da Cunha / Av. Pres. Juscelino K. de Oliveira / Av. Laguna."
+        }
+      ],
+      "nota": "Nao ativar sem decreto que a implante.",
+      "excecoes": [],
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

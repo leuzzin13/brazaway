@@ -6,6 +6,7 @@ Lê data/osm/sse_co.osm.pbf (Sudeste + Sul + Centro-Oeste, ver scripts/build-til
 município (baixa para data/cache/municipios/ibge_malha_<ibge>.geojson se faltar). Grava
 data/cache/municipios/osm_named_<ibge>.json. Leva ~15 min por chamada (uma passada no PBF, para todos os municípios
 pedidos de uma vez). Generaliza osm_pbf_cache_sudeste.py (que só conhecia as UFs do Sudeste)."""
+import gzip
 import json
 import pathlib
 import re
@@ -28,7 +29,8 @@ def malha(ibge: str):
     p = OUT / f'ibge_malha_{ibge}.geojson'
     if not p.exists():
         OUT.mkdir(parents=True, exist_ok=True)
-        p.write_bytes(urllib.request.urlopen(MALHA.format(ibge), timeout=120).read())
+        raw = urllib.request.urlopen(urllib.request.Request(MALHA.format(ibge), headers={'Accept-Encoding': 'gzip'}), timeout=120).read()
+        p.write_bytes(gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw)   # a API do IBGE responde em gzip
     return shape(json.loads(p.read_text())['features'][0]['geometry'])
 
 

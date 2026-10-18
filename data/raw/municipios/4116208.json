@@ -1,0 +1,88 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4116208",
+  "municipio": "Morretes",
+  "uf": "PR",
+  "fonte_id": "morretes",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/66064380 (Decreto 426/2019, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Morretes: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 426/2019: proíbe veículos pesados (todos os caminhões exceto as classes 2C e 3C da Res. Contran 12/98) na Estrada de Barreiros. Risco residual: a base do decreto (art. 126 da LC 11/2011) foi revogada pela LC 64/2024, que não revogou o Decreto 426/2019 e mantém o poder de interditar ruas a caminhões (art. 102 §2º): confiança média. O alvo (eixos acima de 3 ou semirreboque/reboque/CVC) é aproximação das classes. Divergência do OSM registrada sem correção: maxweight 8,5 t na Estrada da Graciosa (PR-410, rodovia estadual, fora da competência municipal). Morretes não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Morretes não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "morretes_estrada_de_barreiros_pesados",
+      "tipo": "via",
+      "regime": "Proibição por classe (via)",
+      "nome": "Estrada de Barreiros: proibido trânsito de caminhões exceto classes 2C e 3C (Decreto 426/2019)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "transporte coletivo regular, coleta de lixo, serviços emergenciais de saúde, manutenção de emergência (residências, vias, redes elétrica/telefônica/pluvial/sanitária/água) e guincho (art. 2º)",
+        "casos não previstos analisados pela Administração (art. 4º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 426, de 05/09/2019 (Morretes)",
+          "artigo": "art. 1º e parágrafo único; exceções art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/66064380"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada de Barreiros"
+          ],
+          "descricao": "Estrada de Barreiros, estrada municipal inteira"
+        }
+      ],
+      "vigencia_inicio": "2019-09-06",
+      "nota": "\"Veículos pesados\" = todos os caminhões exceto classes 2C e 3C da Res. Contran 12/98 (caminhão de 2 ou 3 eixos). Alvo aproximado: eixos > 3 ou combinações (semirreboque/reboque/CVC). A base do decreto (art. 126 da LC 11/2011) foi revogada pela LC 64/2024 (novo Código de Posturas, art. 284), mas o Decreto 426/2019 não foi revogado expressamente e o art. 102 §2º da LC 64 admite interditar ruas a caminhões.",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4116208_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4114203",
+  "municipio": "Mandaguari",
+  "uf": "PR",
+  "fonte_id": "mandaguari",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/6C9D40E4 (Lei 3.877/2023, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Mandaguari: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Polígono aproximado, derivado do OSM.",
+    "notas": "O anexo com o mapa (link externo) não foi lido; o perímetro vem do texto da lei. O ato diz \"veículos acima de 7,0 toneladas\" sem dizer PBT ou capacidade: usado payload_t (a seção de carga e descarga fala em capacidade de carga útil), com ambiguidade registrada pelo verificador. A Av. dos Pioneiros não consta no OSM com nome. Mandaguari não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Mandaguari não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "mandaguari_area_central_trafego_7t",
+      "tipo": "zona",
+      "regime": "Área central (porte/horário)",
+      "nome": "Área Central de Tráfego: veículos > 7 t e/ou > 7 m proibidos 9h-18h30 úteis e sáb 8h30-13h (Lei 3.877/2023)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "18:30"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "08:30",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 7.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.0
+          }
+        ]
+      },
+      "excecoes": [
+        "autorização da Prefeitura para concreto, materiais de construção, mudanças e casos excepcionais (originais no para-brisa)",
+        "carga e descarga com horários próprios: 7-14 t em espaços demarcados dias úteis 18h-8h30 e fins de semana 13h30 sáb-8h30 seg; 1,8-7 t em espaços demarcados"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 3.877, de 25/04/2023 (Mandaguari), publ. AMP 26/04/2023",
+          "artigo": "artigo sobre circulação na Área Central de Tráfego (sem numeração no texto extraído; após o art. de horários de carga/descarga); definição da área no art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/6C9D40E4"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "-",
+          "via": [
+            "Rua Renê Táccola",
+            "Rua Oswaldo Cruz",
+            "Rua Gomercindo Bortolanza",
+            "Rua Senador Salgado Filho",
+            "Avenida dos Pioneiros",
+            "Rua Doutor Alcir Castelo Branco",
+            "Rua Zacarias de Vasconcelos"
+          ],
+          "descricao": "perímetro: de R. Zacarias de Vasconcelos esquina R. Renê Táccola, por esta até R. Oswaldo Cruz, até R. Gomercindo Bortolanza, até R. Senador Salgado Filho, até Av. dos Pioneiros, até R. Dr. Alcir Castelo Branco, até R. Zacarias de Vasconcelos, até R. Renê Táccola (anexo com mapa em link externo, não lido)"
+        }
+      ],
+      "vigencia_inicio": "2023-04-26",
+      "nota": "Carga útil = payload_t (o trecho de carga/descarga fala em \"capacidade de carga útil\"; a regra de circulação diz \"veículos acima de 7,0 toneladas\"). Feriados contam como fim de semana (liberado). A Prefeitura pode ajustar dimensões, capacidade e horários (artigo final). Lei 3.660/2021 (art. 1º vetado; limite 10,01 m) foi sucedida pela 3.877/2023, que revoga só o Decreto 135/2004.",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4114203_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro do art. 2º da Lei 3.877/2023 (R. Renê Táccola, Oswaldo Cruz, Gomercindo Bortolanza, Senador Salgado Filho, Av. dos Pioneiros, Dr. Alcir Castelo Branco e Zacarias de Vasconcelos) montado sobre as vias do OSM; Av. dos Pioneiros e a ligação final da Salgado Filho em linha reta entre pontas"
+        }
+      ],
+      "fonte_geometria": "Perímetro textual do art. 2º da Lei 3.877/2023 montado sobre as vias do OSM (ODbL). Aproximado.",
+      "vuc_nota": "Mandaguari não define VUC; a regra alcança também o VUC pela capacidade de carga ou comprimento."
+    }
+  ]
+}

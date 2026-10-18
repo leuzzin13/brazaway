@@ -1,0 +1,90 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4117701",
+  "municipio": "Palmeira",
+  "uf": "PR",
+  "fonte_id": "palmeira",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/1D19640E (Lei 3.773/2014, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Palmeira: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 3.773/2014: proíbe circulação, carga/descarga e estacionamento de veículos pesados (PBT acima de 10 t) nas duas ruas do Bairro Elias Farajala Bacila; art. 4º permite ao Departamento de Segurança e Trânsito alterar as delimitações (ato não localizado). Palmeira não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Palmeira não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "palmeira_bairro_elias_farajala_bacila_10t",
+      "tipo": "via",
+      "regime": "Proibição por PBT (via)",
+      "nome": "Ruas Eugênio Nogueira dos Santos e Gustavo Marcondes Zanardini (Bairro Elias Farajala Bacila): veículos > 10 t PBT (Lei 3.773/2014)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "socorro mecânico, incêndio e salvamento, polícia, fiscalização e urgência",
+        "prestadores de serviços de utilidade pública em atendimento",
+        "veículos cujos produtos transportados partam ou tenham como destino final as ruas referidas, sinalizados e com pedido ao Departamento de Segurança e Trânsito (art. 2º, III)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 3.773, de 21/10/2014 (Palmeira)",
+          "artigo": "art. 1º e parágrafo único; exceções art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/1D19640E"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "-",
+          "via": [
+            "Rua Eugênio Nogueira dos Santos",
+            "Rua Gustavo Marcondes Zanardini"
+          ],
+          "descricao": "na extensão entre a faixa de domínio da Rodovia João Chede (PR-151) e a Rua José Caetano de Oliveira",
+          "de": [
+            "PR-151"
+          ],
+          "ate": [
+            "Rua José Caetano de Oliveira"
+          ]
+        }
+      ],
+      "vigencia_inicio": "2014-10-22",
+      "nota": "Proíbe circulação, carga/descarga e estacionamento. Art. 4º: Departamento de Segurança e Trânsito pode alterar as delimitações das vias (ato não achado).",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4117701_vias.geojson",
+          "construir": "manual",
+          "como_gerar": "Eixos do OSM das Ruas Eugênio Nogueira dos Santos e Gustavo Marcondes Zanardini, da ponta junto à PR-151 até o cruzamento com a Rua José Caetano de Oliveira (cada rua é um único way no OSM; o encadeamento por nome não fecha em way único)"
+        }
+      ],
+      "fonte_geometria": "Eixos das duas ruas no OSM (ODbL) entre a PR-151 e a Rua José Caetano de Oliveira."
+    }
+  ]
+}

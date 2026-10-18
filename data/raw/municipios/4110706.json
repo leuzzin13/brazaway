@@ -1,0 +1,99 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4110706",
+  "municipio": "Irati",
+  "uf": "PR",
+  "fonte_id": "irati",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/D7991E9B (Lei 5.171/2024, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Irati: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Trecho montado pela malha de ruas (Valhalla/OSM) entre as coordenadas do ato.",
+    "notas": "Lei 5.171/2024: caminhões com 4 eixos ou mais (cavalo + carreta em conjunto), carregados ou não, em estrada vicinal de 2,28 km (BR-277 a Caratuva II); multa de 10 URM (art. 9º); em catástrofe natural o Executivo pode autorizar por decreto (art. 10). Irati não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Irati não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "irati_estrada_caratuva_4eixos",
+      "tipo": "via",
+      "regime": "Proibição por eixos (via)",
+      "nome": "Estrada vicinal BR-277 a Caratuva II (2,28 km): caminhões com 4 eixos ou mais (Lei 5.171/2024)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "caminhões de produtos agroavícolas produzidos ou para abastecimento das culturas do município",
+        "patrulha mecanizada municipal, estadual ou federal",
+        "serviços emergenciais, manutenção de vias/redes e guincho",
+        "em catástrofe natural o Executivo pode autorizar por decreto (art. 10)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 5.171, de 29/11/2024 (Irati)",
+          "artigo": "art. 1º e §2º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/D7991E9B"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada vicinal de Caratuva II"
+          ],
+          "descricao": "Estrada vicinal de 2,28 km entre 25°26'2,76\"S 50°43'12,71\"O (às margens da BR-277) e a Estrada Rural do Povoado Caratuva II, 25°25'12,86\"S 50°42'19,08\"O",
+          "de": {
+            "lonlat": [
+              -50.7202,
+              -25.4341
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -50.7053,
+              -25.42024
+            ]
+          },
+          "caminho": "valhalla",
+          "aproximado": true,
+          "corredor_m": 150,
+          "nota": "A estrada não tem nome no OSM: o trecho é o caminho da malha (Valhalla) entre as duas coordenadas do ato (2,3 km, coerente com os 2,28 km do ato)."
+        }
+      ],
+      "vigencia_inicio": "2024-11-29",
+      "nota": "\"4 eixos ou mais, considerados em conjunto a carreta e o cavalo mecânico\". Multa 10 URM por veículo (art. 9º).",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4110706_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "fonte_geometria": "Coordenadas do art. 1º da Lei 5.171/2024 (extremos) e malha viária do OSM (ODbL) entre elas. Aproximado."
+    }
+  ]
+}

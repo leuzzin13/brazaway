@@ -1,0 +1,98 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4102307",
+  "municipio": "Balsa Nova",
+  "uf": "PR",
+  "fonte_id": "balsa-nova",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/6C883C1E (Lei 1.411/2024, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Balsa Nova: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Trecho montado pela malha de ruas (Valhalla/OSM) entre as coordenadas UTM do ato.",
+    "notas": "Lei 1.411/2024: caminhões com 4 eixos ou mais (cavalo + carreta em conjunto), carregados ou não, na Estrada Municipal Atílio Ramos; coordenadas UTM do ato convertidas de SIRGAS 2000 / UTM 22S (EPSG:31982; o datum do ato não é dito). Sinalização (art. 4º) não confirmada. Divergência do OSM registrada sem correção: Av. Fritz Erwin Schmidt com maxweight=50 (way 383957149), sem ato municipal. Balsa Nova não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Balsa Nova não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "balsanova_estrada_atilio_ramos_4eixos",
+      "tipo": "via",
+      "regime": "Proibição por eixos (via)",
+      "nome": "Estrada Municipal Atílio Ramos: proibido caminhões com 4 eixos ou mais (Lei 1.411/2024)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "caminhões que transportem produtos agroavícolas produzidos no município ou destinados ao abastecimento das culturas locais",
+        "caminhões e máquinas da patrulha mecanizada municipal, estadual ou federal",
+        "serviços emergenciais, manutenção emergencial de vias/redes de energia, telefonia, água e guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 1.411, de 26/11/2024 (Balsa Nova)",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/6C883C1E"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Estrada Municipal Atílio Ramos"
+          ],
+          "descricao": "Estrada Municipal Atílio Ramos, da BR-277 km 138+800 (UTM 22S 628857,92 E / 7181697,43 N) até a Estrada do Tamanduá (UTM 629688,53 E / 7181392,18 N), São Luiz do Purunã",
+          "de": {
+            "lonlat": [
+              -49.71812,
+              -25.47624
+            ]
+          },
+          "ate": {
+            "lonlat": [
+              -49.70983,
+              -25.47892
+            ]
+          },
+          "caminho": "valhalla",
+          "aproximado": true,
+          "corredor_m": 150,
+          "nota": "A estrada não tem nome no OSM: o trecho é o caminho da malha (Valhalla) entre as duas coordenadas UTM do ato (convertidas de SIRGAS 2000 / UTM 22S). No OSM, a ponta oeste é uma via sem nome ligada à BR-277 e a ponta leste cai na Estrada do Tamanduá, que o caminho percorre por ~660 m."
+        }
+      ],
+      "vigencia_inicio": "2024-11-27",
+      "nota": "\"4 eixos ou mais, incluindo em conjunto a carreta e o cavalo mecânico\" - eixos do conjunto. Responsabilidade por danos (art. 6º). Município deve implantar sinalização (art. 4º).",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4102307_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "fonte_geometria": "Coordenadas UTM do art. 1º da Lei 1.411/2024 (extremos) e malha viária do OSM (ODbL) entre elas. Aproximado."
+    }
+  ]
+}

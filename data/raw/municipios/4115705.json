@@ -1,0 +1,172 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4115705",
+  "municipio": "Matinhos",
+  "uf": "PR",
+  "fonte_id": "matinhos",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B (Decreto 4.604/2025, Diário Oficial dos Municípios do Paraná)",
+    "licenca": "Ato oficial de Matinhos: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 4.604/2025, art. 5º: o ato diz quando a circulação é PERMITIDA (dias úteis 7h-19h; sáb, dom e feriados 8h-15h); as janelas da regra são o complemento (fora do permitido = restrito), inferência do texto confirmada pelo art. 6º. Feriado em dia útil: o decreto o trata como fim de semana (8h-15h), mais restritivo que a janela de dia útil usada aqui (limitação do formato). Art. 7º permite portarias do Departamento de Trânsito (não localizadas). Matinhos não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Matinhos não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "matinhos_av_atlantica_pesados",
+      "tipo": "via",
+      "regime": "Restrição de horário (via)",
+      "nome": "Av. Atlântica (Rua Ipiranga a Rua Itacolomi): veículos > 7 t PBT ou > 7 m só em janelas permitidas (Decreto 4604/2025)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "00:00",
+          "to": "07:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "19:00",
+          "to": "24:00"
+        },
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "08:00"
+        },
+        {
+          "days": [
+            6,
+            7
+          ],
+          "from": "15:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.0
+          }
+        ]
+      },
+      "excecoes": [
+        "Autorização Especial do Departamento Municipal de Trânsito para permanência em áreas de pedestres (art. 3º, parágrafo único)",
+        "Lei 2.743/2025, art. 40 (lida, AMP E136446E): dispensados das restrições de tráfego em vias urbanas caminhão de utilidade pública, serviço de urgência, obras/serviços de infraestrutura urbana e de urgência, socorro mecânico e caminhões de combustível para o Município"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 4604/2025 (Matinhos), de 30/12/2025, publ. DOM-PR/AMP 07/01/2026",
+          "artigo": "art. 5º (e art. 2º, I)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 2º, I",
+          "via": [
+            "Avenida Atlântica"
+          ],
+          "descricao": "Av. Atlântica entre a Rua Ipiranga (Balneário Caiobá) e a Rua Itacolomi (Balneário Matinhos)",
+          "de": [
+            "Rua Ipiranga"
+          ],
+          "ate": [
+            "Rua Itacolomi"
+          ],
+          "tolerancia_m": 120,
+          "nota": "No OSM a Av. Atlântica é um único eixo de mão única (sentido Caiobá → Matinhos) que começa a ~90 m da Rua Ipiranga: tolerância de 120 m nessa ponta; o outro sentido de tráfego não tem eixo de mesmo nome no OSM."
+        }
+      ],
+      "nota": "O art. 5º diz \"fica permitida a circulação ... nos seguintes períodos\" (dias úteis 7h-19h; sáb, dom e feriados 8h-15h); as janelas aqui são o complemento (fora do permitido = restrito) - inferência do texto. Feriado em dia útil: o decreto o trata como sábado/domingo (permitido só 8h-15h), o que é mais restritivo que a janela de dia útil; \"aplica\" é o lado seguro parcial. Art. 7º permite ao Departamento de Trânsito ajustar horários/capacidades por portaria (não pesquisadas).",
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4115705_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    },
+    {
+      "id": "matinhos_av_atlantica_datas_eventos",
+      "tipo": "via",
+      "regime": "Proibição por data",
+      "nome": "Av. Atlântica: proibição integral de pesados em dias de grandes eventos e 24/12, 30/12, 01/01 (Decreto 4604/2025)",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 7.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.0
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 4604/2025 (Matinhos)",
+          "artigo": "art. 6º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/16396E8B"
+        }
+      ],
+      "status_motivo": "Proibição por datas (Natal, Ano Novo, Carnaval, shows do Verão Maior Paraná - datas variáveis - e 24/12, 30/12, 01/01), não representável como janelas semanais; registrada como texto. Descarregamento de estruturas de grande porte nessas datas só 21h-05h com Autorização Especial.",
+      "trechos": [
+        {
+          "inciso": "art. 2º, I",
+          "via": [
+            "Avenida Atlântica"
+          ],
+          "descricao": "Av. Atlântica entre a Rua Ipiranga (Balneário Caiobá) e a Rua Itacolomi (Balneário Matinhos)",
+          "de": [
+            "Rua Ipiranga"
+          ],
+          "ate": [
+            "Rua Itacolomi"
+          ],
+          "tolerancia_m": 120,
+          "nota": "No OSM a Av. Atlântica é um único eixo de mão única (sentido Caiobá → Matinhos) que começa a ~90 m da Rua Ipiranga: tolerância de 120 m nessa ponta; o outro sentido de tráfego não tem eixo de mesmo nome no OSM."
+        }
+      ],
+      "verificado_em": "2026-10-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4115705_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}
