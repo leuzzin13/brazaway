@@ -11,8 +11,8 @@ o número **0206** reservado para esta frente ficou sem uso.
 | Importador | `importers/sources/hazmat_trechos_sudeste.py` (`LAYER_ID = 'perigosos'`, `SOURCE = 'sudeste'`) |
 | Decisão por classe ONU | `api/src/services/hazmat.ts`: `classRuleApplies`, `classesOutside`, `inTimeWindows`, `trechoRuleDecision` |
 | Aplicação na rota | `api/src/layers/perigosos.layer.ts` (`plan`, `mocangueInfo`, `trechoUse`, `sudesteTrechos`) |
-| Seed | `db/seed/layers/perigosos__sudeste.sql` (≈ 210 KB, 56 feições) |
-| Testes | `api/test/layers/perigosos_sudeste.test.ts`, `importers/tests/test_hazmat_trechos_sudeste.py` |
+| Seed | `db/seed/layers/perigosos__sudeste.sql` (≈ 1,6 MB, 472 feições: 57 do Sudeste + 415 do RS, seção 6) |
+| Testes | `api/test/layers/perigosos_sudeste.test.ts`, `api/test/layers/perigosos_sul_co.test.ts` (RS), `importers/tests/test_hazmat_trechos_sudeste.py` |
 
 Fonte das regras: pesquisas `docs/research/sudeste_perigosos_fora_sp` e `docs/research/sudeste_rio_capital`
 (com as correções dos `verify.json`). Conferido em 10/10/2026.
@@ -249,7 +249,52 @@ docker run --rm -v $(pwd)/importers:/app -v $(pwd)/data/raw:/data/raw:ro --entry
   -m unittest tests.test_hazmat_trechos_sudeste -v
 ```
 
-## 6. Limitações e pendências
+## 6. Sul e Centro-Oeste (PR, SC, RS, GO, MT, MS, DF)
+
+Expansão de 18/10/2026, da pesquisa `docs/research/estados_sul_co/<UF>.json` e `.md` (tema "perigosos", atos relidos nos PDFs
+guardados em `fontes/`). O importador não tem UF fixa: as regras novas entram no mesmo `trechos_sudeste_pp.json`, com o mesmo
+`SOURCE = sudeste` e o mesmo nome de arquivo (o seed `perigosos__sudeste.sql` não fica órfão). **Só o RS tem ato estadual vigente
+de trecho para produtos perigosos**; os outros seis estados não têm.
+
+### 6.1 Regras aplicadas (RS, DAER)
+
+| Regra (`regra_id`) | Ato e artigo | Publicação | Classes | Janela | Isenção (quantidade) | Situação |
+|---|---|---|---|---|---|---|
+| Rota do Sol: RSC-453 km 242,17–255,77 e ERS-486 km 0–38,66, Terra de Areia–Aratinga–São Francisco de Paula, 52,26 km (`RS-ROTA-DO-SOL`) | DN DAER 127/2019 (alterada pela DN 136/2021), arts. 1º, 2º e 6º | DOE 22/11/2019, pp. 121-122 (Res. CA 10.290/2019); vigora 30 dias depois (art. 11), isto é, desde 22/12/2019 | todas | 24h; **exceção** só para abastecer postos e estabelecimentos lindeiros, com nota fiscal/manifesto e licença ambiental, de segunda a quinta, 10h–15h (art. 2º §§ 2º-3º e art. 6º) | Não prevista | **Aplicada** |
+| Estrada do Mar: ERS-389, Osório–Torres, 90,3 km (`RS-ESTRADA-DO-MAR`) | DN DAER 152/2023, art. 8º, § 2º, c/c art. 3º, §§ 2º a 4º | DOE 25/04/2023 (Res. CA 13.414/2023); vigora na publicação (art. 17) | todas | 24h; **exceção** para prestadores de serviço público, abastecimento dos postos da própria rodovia e coleta de esgoto sanitário (até 23 t, 3 eixos, 16 m, com AEC) | Não prevista | **Aplicada** |
+
+- A DN 136/2021 só revogou o art. 4º e os incisos I e II do art. 5º da DN 127 (limites de peso/horário de carga comum): os arts. 2º e 6º, de produtos perigosos,
+  seguem. A DN 94/2015 (PP de 12h de sexta a 12h de segunda e 17h–8h) foi revogada pelo art. 10 da DN 127. A DN 135/2021, art. 1º, § 4º, remete à DN 127 para PP.
+- O texto "salvo lindeiros" não é modelado como exceção por rota: as duas regras são trechos de custo alto ("proibido salvo sem alternativa", como as demais),
+  então quem tem origem ou destino lindeiro ainda consegue entrar, com o aviso de origem junto ao trecho (`hazmat_trecho_lindeiro`).
+- Geometria: vias do OSM que o Valhalla nomeia `ERS-486`, `RSC-453` e `Rota do Sol Euclides Triches` (Rota do Sol, ~61 km no OSM contra 52,26 km do SRE; 161 pedaços,
+  124,8 km nos dois sentidos) e `Estrada do Mar`, `ERS-389` e `Rodovia Nelson Gonçalves` (254 pedaços, 167,4 km nos dois sentidos), sementes de várias paradas
+  para a rota seguir a rodovia e não a BR-101. Confiança "média" na extensão (o km do ato e o do OSM não coincidem).
+- Resultado na rota (2026-10-13, terça): ONU 1203 e ONU 3082 de Torres a São Francisco de Paula desviam da Rota do Sol (137,3 km sem PP, 144,1 km com PP, `avoided` com a DN 127/2019);
+  ONU 1203 entre dois pontos da Estrada do Mar desvia da ERS-389 (27,9 km contra 30,2 km).
+
+### 6.2 Registrada e não aplicada
+
+| Registro | Situação | Efeito |
+|---|---|---|
+| DN DAER 29/2002, art. 1º e §§ 1º-2º: caminhões com cargas da Portaria MT 204/1997 das 22h às 6h (das 15h às 6h em dias de tráfego excepcional) em RS-030 Gravataí–Osório km 0–82,47, RS-040 Viamão–Pinhal km 11,2–83,53 e RS-118 Gravataí–Viamão km 21,69–38,17 (`RS-DN-29-2002-ERS-030-040-118`, ponto em Gravataí) | `vigencia_incerta`, confiança baixa: a página do DAER ainda lista o ato, mas ele usa a nomenclatura RS-0xx e km antigos que não casam com o SRE atual, é anterior ao fim das concessões e não há prova de fiscalização do BPRv | Nenhum (só consta como `regra_registrada`); falta confirmar com o DAER e converter os km |
+
+### 6.3 Sem regra: pendências por UF
+
+| UF | O que a pesquisa achou | Por que não entrou |
+|---|---|---|
+| PR | Portaria DER/PR 702/2025, art. 2º: travessia isolada de PP no ferry de Guaratuba (janelas IMO da operadora: Guaratuba–Caiobá 09h e 13h, Caiobá–Guaratuba 08h e 12h, segunda a sexta); Portaria DER/PR 075/2023: Graciosa (PR-410) proíbe qualquer carga >= 16 t | A travessia é de balsa (a página da operadora a dava "fora de operação" em 10/10/2026) e as janelas são da operadora, não de ato; a Graciosa é limite de peso (tema de rodovias estaduais, não de PP). Nenhum ato do DER/PR ou do IAT por trecho, manancial, túnel ou ponte foi localizado ("não localizado", não "inexistente"); há só o polígono de interesse de manancial do geoserver, sem ato |
+| SC | IMA: licenciamento do transporte (LAC, IN IMA 77/2020) | É licença do transportador, não restrição de trecho. O Túnel Antonieta de Barros (Florianópolis) foi cenário de simulado em jun/2026, sem ato de proibição. Res. CONSEMA 250/2024 possivelmente mais nova, não confirmada |
+| GO | Lei GO 19.423/2016, art. 13 (agrotóxicos; regulamento Decreto 9.286/2018; alterada pela Lei 24.389/2026) | Remete à legislação federal de perigosos; nenhum ato por trecho |
+| MT | SEMA-MT: licença LAS do transporte de PP | Licença do transportador; nenhum ato por trecho |
+| MS | IMASUL: Res. SEMADE 9/2015 (alterada pela SEMADESC 118/2025); Res. AGESUL 001/2009, art. 12, § 3º (AET/CVC só de dia e sem neblina ou chuva forte) | A AGESUL vale para veículo com AET, não é regra de PP |
+| DF | DER-DF: IN 17, 19 e 21/2018 (horários 6h–9h e 17h30–19h15 e proibição perto da Barragem do Paranoá) **revogadas em cadeia** pela IN 1/2019 (DODF 240, p. 32, para a de 18/12/2018); IS DETRAN 576/1984 (carga perigosa a granel, exceto GLP, na W3, setores comerciais e bancários, avenidas comerciais de Taguatinga e quadras residenciais); IBRAM IN 82/2009 (licença do transportador) | Nenhuma restrição viária vigente: a 576/1984 se baseia no Decreto federal 88.821/1983 (substituído) e tem vigência prática duvidosa, sem eixo definido para o roteador. Registrar como `regra_registrada` quando houver trecho conferido |
+
+Para entrar ativa uma regra nova precisa de ato primário vigente conferido (como no restante da camada). Regra de estado novo: acrescentar
+em `data/raw/hazmat/trechos_sudeste_pp.json` (ato, artigo, publicação, URL, classes, isenção, situação, `ativa` e `selecao` com
+sementes nos dois sentidos) e rodar `hazmat_trechos_sudeste` (usa o Valhalla; no máximo 2 rotas simultâneas).
+
+## 7. Limitações e pendências
 
 - **Terceira Ponte:** a regra é aplicada; falta só confirmar a vigência da IS 021-N/2004 com o DER-ES/Ceturb
   (seção 1.1). Se ela tiver caído, desative no JSON e rode o importador.

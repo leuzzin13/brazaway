@@ -1,4 +1,4 @@
-# Feriados do Sudeste (calendário legal: RJ, MG, ES e municípios)
+# Feriados do Sudeste, Sul e Centro-Oeste (calendário legal: RJ, MG, ES, PR, SC, RS, GO, MT, MS, DF e municípios)
 
 Frente `feriados_sudeste`. Estende o calendário legal da camada `core_legal` (tabela `holidays`) com os feriados
 estaduais do RJ e do ES (MG só tem o 21/04, que já é nacional) e os municipais das capitais e dos polos pesquisados.
@@ -9,10 +9,10 @@ Não é camada nova: as regras com "exceto feriados" das outras camadas e o núc
 |---|---|
 | Regras curadas (fonte da carga) | `data/raw/feriados/regras.json` |
 | Importador | `importers/sources/feriados_sudeste.py` (`LAYER_ID = core_legal`, `SOURCE = feriados-sudeste`) |
-| Seed versionado | `db/seed/layers/core_legal__feriados-sudeste.sql` (274 linhas de 2026 a 2028, 122 KB: 227 aplicadas e 47 registradas sem aplicar, das quais 41 `a_confirmar` e 6 `inconstitucional`) |
+| Seed versionado | `db/seed/layers/core_legal__feriados-sudeste.sql` (912 linhas de 2026 a 2028, 0,4 MB: 802 aplicadas e 110 registradas sem aplicar, das quais 104 `a_confirmar` e 6 `inconstitucional`; Sudeste 274 + Sul e Centro-Oeste 638) |
 | Migration | `db/migrations/0202_feriados_sudeste.sql` |
 | API | `api/src/services/calendar.ts`, aviso `holiday_local` em `api/src/services/routing.ts` |
-| Testes | `api/test/layers/feriados_sudeste.test.ts`, `importers/tests/test_feriados_sudeste.py` |
+| Testes | `api/test/layers/feriados_sudeste.test.ts`, `api/test/layers/feriados_sul_co.test.ts`, `importers/tests/test_feriados_sudeste.py` |
 | Pesquisa | `research.json` e `verify.json` da pesquisa feriados_sudeste (10/10/2026); correções do verify aplicadas |
 
 ## Como a rota usa
@@ -286,6 +286,54 @@ fonte. O calendário do TJRJ é informativo (não substitui a publicação ofici
 `holidays.source_url` e em `regras.json` (`fontes`); registro da carga em `data_layer_runs` (`core_legal` /
 `feriados-sudeste`, `GET /api/sources`).
 
+## Sul e Centro-Oeste (PR, SC, RS, GO, MT, MS, DF)
+
+Expansão de 18/10/2026, a partir da pesquisa `docs/research/estados_sul_co/<UF>.json` e `.md` (tema "feriados", relido
+e verificado na mesma data). Mesmo arquivo de regras, mesmo importador e mesmo `SOURCE = feriados-sudeste` (o nome ficou
+para não orfanar o seed). `UF_BY_PREFIX` já tinha os prefixos 41, 42, 43, 50, 51, 52 e 53; o `calendar.ts` deriva a UF do
+IBGE para os 27 estados, então `legalDayInfo(at, ibge)` já devolve o estadual certo. Regra de datas igual à do Sudeste:
+data fixa tirada de ato de tribunal **sem lei municipal identificada** vale só em 2026 (`anos: [2026, 2026]`, `data:` avulsa);
+com lei citada pelo tribunal e leitura da lista (RS) a data é anual (`fixa:` ou `pascoa:+60`).
+
+### Estaduais
+
+| UF | O que entrou | Base legal | Estado da regra |
+|---|---|---|---|
+| PR | **Nenhum feriado estadual.** Registro negativo `pr_emancipacao_19dez` (19/12, status `revogada`, `vigencia_ate` impede linhas) | Lei PR 18.384/2014: art. 1º ("não se constituindo em feriado civil"), art. 2º (ponto facultativo por decreto), art. 3º (revoga a Lei 4.658/1962) | sem linha na tabela |
+| SC | 11/08 (Data Magna) e 25/11 (Santa Catarina de Alexandria), **transferidos para o domingo seguinte** quando caem em dia útil: 16/08/2026, 15/08/2027, 13/08/2028, 29/11/2026 e 28/11/2027 | Lei SC 18.531/2022 (consolidadora, Anexo/Calendário; as Leis 10.306/1996, 11.213/1999, 12.906/2004 e 13.408/2005 estão consolidadas e revogadas) | `a_confirmar`, **registrada e não aplicada**: domingo, sem efeito em dia útil, e não cria "véspera de feriado". 25/11/2028 é sábado (a lei só trata de dia útil): sem regra. PL 23/2026 (25/11 feriado de fato) parado na CCJ desde 05/02/2026: se virar lei, mudar |
+| RS | 20/09 Revolução Farroupilha (domingo em 2026, segunda em 2027, quarta em 2028) | Decreto estadual RS 36.180/1995 c/c Lei federal 9.093/1995, art. 1º, II, como citados pelo TRT4 (e o DAER, DN 127/2019, lista a data). O decreto não foi aberto no texto primário | `media`, aplicada |
+| GO | 26/07 Fundação da Cidade de Goiás (**20/07 em 2026**, Decreto GO 10.935/2026; 26/07 em 2027 e 2028), 24/10 pedra fundamental de Goiânia, 28/10 Dia do Servidor (**30/10 em 2026**, Decreto GO 10.987/2026; 28/10 em 2027 e 2028) | Lei GO 20.756/2020, art. 269, II e § 1º (o Governador pode transferir) | `media`, aplicada. Ressalva: o texto é "não haverá expediente em repartição ou serviço do Estado"; a pesquisa não confirmou que valha como feriado civil geral. Carnaval e Sexta-feira Santa ("sem expediente", art. 269 caput) não entram |
+| MS | 11/10 Criação do Estado | Decreto "E" MS 46/2025 (DOE 12.003, pp. 2-3), LC federal 31/1977 c/c Leis MS 3.945/2010 e 10/1979 (estas não lidas) | `media`, aplicada. O 28/10 (Dia do Servidor, transferido para 30/10 pelo Decreto "E" 69/2026) é ponto facultativo: fora |
+| MT | **Nenhum.** O Decreto 1.787/2025 só lista nacionais e pontos facultativos (Carnaval, Corpus Christi, 28/10, 24 e 31/12); 20/11 hoje é nacional | | sem regra |
+| DF | Corpus Christi (Páscoa + 60) e 30/11 Dia do Evangélico; 21/04 (Lei 72/1989, art. 1º, I) é `redundante` (Tiradentes) | Lei DF 72/1989 art. 1º, parágrafo único; Lei DF 963/1995 art. 1º (relidas no SINJ em 18/10/2026, sem revogação expressa); Decreto DF 48.117/2025 divulga os de 2026. O 12/10 e o 02/11 (Lei 1.701/1997) já são nacionais | `alta`, aplicada. Brasília é o único município (IBGE 5300108): o distrital vale como estadual e municipal |
+
+Os pontos facultativos dos decretos de 2026 (DF: 02/01, 16-17/02, 18/02 até 14h, 20/04, 02/04, 05/06, 29/06, 28/10, 24 e 31/12;
+MS e MT: parecidos) e as suspensões de expediente forense (PR: Quinta-feira Santa, véspera de Carnaval, 24 e 31/12) **não** são feriado.
+
+### Municipais
+
+| UF | Fonte e critério | Linhas | Estado |
+|---|---|---|---|
+| RS | Anexo "Feriados municipais" do TRT4 (Portaria 8/2025 compilada, atualizada em 11/05/2026), 65 cidades com a **lei municipal citada** para cada data; Corpus Christi por Páscoa + 60 e Ascensão (Novo Hamburgo, Estância Velha, Gramado) por Páscoa + 39; Cachoeira do Sul (Corpus Christi "facultativo") fica de fora | 165 regras (495 linhas em 3 anos): capitais e polos, entre eles Porto Alegre (Navegantes 02/02, Lei 3.033/1967), Caxias do Sul, Pelotas, Canoas, Santa Maria, Rio Grande, Passo Fundo, Novo Hamburgo, Uruguaiana | `media`, aplicadas. Porto Alegre: o TRT4 cita a Lei 3.033/1967 na Portaria e a Lei 4.453/78 no calendário (conferir). Só cidades com unidade da Justiça do Trabalho (65 de 497) |
+| MS | Anexo 1 da Portaria TRT/GP/SGJ 051/2025 do TRT-24 (DEJT 4317/2025; RA 92/2025), 44 linhas de 22 municípios conferidas contra o PDF em 18/10/2026, com a correção de Mundo Novo (aniversário em 11/05/2026, Lei Municipal 1.504/2026, Portaria TRT-24 30/2026) | 44 regras, **só 2026** (a lei citada não foi aberta) | `media`, aplicadas. Corumbá/São João (24/06): `baixa`, registrada sem aplicar. Corumbá: o TRT-24 anexa a Lei 985/1987 e a 2.084/2008, não a 2.985/2025 da Portaria |
+| PR | Decreto Judiciário TJPR 621/2025, art. 4º (feriados locais dos municípios sede de comarca em 2026; excluídas "Instalação da Comarca", datas transferidas, Dia da Justiça e Dia do Funcionário Público) e art. 1º (Padroeira de Curitiba, 08/09, só em Curitiba) | 13 regras de 8 polos (Curitiba, São José dos Pinhais, Londrina, Maringá, Ponta Grossa, Cascavel, Foz do Iguaçu, Paranaguá), **só 2026** | `media`, aplicadas. Maringá 10/05 vs 11/05 (texto do decreto ambíguo na extração): fora; o decreto de 2027 sai até 19/12/2026 |
+| GO | TJGO "Feriados 2026": 24/05 Nossa Senhora Auxiliadora, "feriado municipal" nas comarcas de Goiânia, Iporá, Leopoldo de Bulhões e Senador Canedo | Goiânia 24/05/2026 (aplicada, `media`); polos do TRT18 (calendário de feriados locais **de 2024**, sem lei: Anápolis, Aparecida de Goiânia, Rio Verde, Catalão, Jataí, Itumbiara, Luziânia, Valparaíso de Goiás, Formosa) | os do TRT18 entram `baixa`/`a_confirmar`: **registrados, não aplicados**, até haver ato de 2026 |
+| MT | Dois atos municipais conferidos no IOMAT: Marcelândia 31/10/2026 (DOE 28/09/2026 p. 151 e 02/10/2026 p. 183) e Araguaiana 08/09/2026 (DOE 03/09/2026 p. 154). Cuiabá 08/12 (Lei 5.576/2012) **não** confirmada | 3 regras | Marcelândia e Araguaiana `media`, aplicadas (só 2026; número do ato não anotado); Cuiabá `baixa`, registrada |
+| SC | **Nada municipal.** Não existe base estadual; o DOM/SC (CKAN do CIGA) rendeu 5 títulos em 3 dias de dezembro/2025 e exige ler o texto; TJSC/TRT12 não abriram | 0 | pendente |
+| DF | Não se aplica (município único) | | |
+
+### Pendências do Sul e Centro-Oeste
+
+- **SC, MT, PR e GO** não têm lista municipal em massa: PR (TJPR) e GO (TRT18) tem fonte, mas faltam a lei municipal e o parser
+  das ~350 datas do TJPR; para MT o melhor caminho é o Anexo II da Portaria 005/DPG da Defensoria (DOE 08/01/2026 p. 159+), que a
+  extração de texto embaralha em colunas; SC exige varrer o DOM/SC.
+- Datas fixas de 2026 sem lei (PR, MS, GO, MT) não valem em 2027 e 2028 até alguém conferir a lei municipal ou o ato de 2027.
+- Os decretos de transferência de GO (26/07 e 28/10) de 2027 e 2028 ainda não existem: as linhas usam a data legal.
+- A malha de municípios do IBGE (`geocoding__ibge-malhas`) só cobre o Sudeste; sem ela, o aviso `holiday_local` não localiza
+  origem e destino no Sul e no Centro-Oeste (as regras "exceto feriados" de municípios dessas regiões, que usam o IBGE da regra, não
+  dependem dela).
+- Reconferir o PL 23/2026 de SC e o decreto estadual RS 36.180/1995 no texto primário.
+
 ## Lacunas
 
 - Base municipal: não existe base oficial nacional estruturada. Os atos dos tribunais cobrem só sedes de comarca
@@ -307,6 +355,8 @@ fonte. O calendário do TJRJ é informativo (não substitui a publicação ofici
 
 ## Testes
 
+- `api/test/layers/feriados_sul_co.test.ts` (banco): um feriado estadual por UF (PR: 19/12 não é feriado; SC: Data Magna no domingo registrada e não aplicada; RS: 20/09 Farroupilha em 2026 e 2027; GO: 20/07/2026 pelo Decreto 10.935 e não 26/07, 30/10/2026 pelo Decreto 10.987; MS: 11/10; MT: sem estadual; DF: Corpus Christi e 30/11), municipais (Curitiba 08/09, Caxias 26/05, Porto Alegre Corpus Christi em 2027, Goiânia 24/05, Campo Grande 26/08, Marcelândia 31/10) e os registrados sem aplicar (Anápolis, Cuiabá).
+- `importers/tests/test_feriados_sudeste.py`, classe `SulCentroOeste`: as mesmas regras sem banco, mais a UF do IBGE de cada linha municipal.
 - `api/test/layers/feriados_sudeste.test.ts` (banco + API): São Jorge (23/04/2026) aparece para rota no Rio
   (`holiday_local` com a Lei RJ 5.198/2008, art. 1º) e não para rota em São Paulo; o 9/7 paulista não vale no Rio; Lei
   RJ 8.174/2018 registrada e nunca aplicada; o banco recusa feriado ativo inconstitucional ou de confiança baixa;
