@@ -1,0 +1,131 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5107909",
+  "municipio": "Sinop",
+  "uf": "MT",
+  "fonte_id": "sinop",
+  "fonte": {
+    "url": "https://amm.diariomunicipal.org/publicacao/99406/ (Lei 2.243/2015) e https://amm.diariomunicipal.org/publicacao/99403/ (Lei 2.241/2015), Jornal Oficial AMM-MT",
+    "licenca": "Atos oficiais do Município de Sinop: domínio público (Lei 9.610/1998 art. 8º IV).",
+    "notas": "Duas leis de 2015 (veículos de carga acima de 8 t, Av. Nelson Moggi e prolongamento da Av. das Figueiras) entram desativadas: sem geometria confiável das vias. Vigência posterior a 2017 não verificada (AMM-MT cobre Sinop só até 2017). Os atos não definem VUC."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Sinop não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "sinop_av_nelson_moggi_8t",
+      "tipo": "via",
+      "regime": "Proibido tráfego de veículos de carga acima de 8 t (24 h)",
+      "nome": "Sinop: Avenida Nelson Moggi, veículos de carga acima de 8 t",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: nenhuma via do OSM se chama 'Avenida Nelson Moggi' (nem nome alternativo; busca no cache do PBF em 18/10/2026). A Lei 2.111/2015 só traz memorial por azimutes a partir da 'Estrada Ruth' (extensão 23.180 m), sem georreferência. Regra ativável quando a via for localizada.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, §1º: veículos de carga que precisem carregar/descarregar produtos ou mercadorias no perímetro da avenida, fora do horário de pico (horário de pico não definido no ato)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.243, de 11/12/2015 (Sinop; publ. Jornal Oficial AMM-MT 16/12/2015)",
+          "artigo": "art. 1º e §1º; art. 2º (vigência na publicação)",
+          "url": "https://amm.diariomunicipal.org/publicacao/99406/"
+        },
+        {
+          "ato": "Lei municipal 2.111, de 06/04/2015 (cria a Av. Nelson Moggi, extensão 23.180 m, memorial descritivo)",
+          "artigo": "arts. 1º a 3º",
+          "url": "https://amm.diariomunicipal.org/publicacao/16478/"
+        }
+      ],
+      "vigencia_inicio": "2015-12-16",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "nota": "Ato lido integralmente. 'peso ou carga acima de 8 t' ambíguo (PBT x capacidade): adotado pbt_t > 8. Sem revogação achada no AMM-MT (cobre Sinop só 2015-2017). Confiança média. Quando houver geometria, ativar."
+    },
+    {
+      "id": "sinop_prolong_av_figueiras_8t",
+      "tipo": "via",
+      "regime": "Proibido tráfego de veículos de carga acima de 8 t (24 h)",
+      "nome": "Sinop: prolongamento da Avenida das Figueiras, veículos de carga acima de 8 t",
+      "status": "desativada",
+      "status_motivo": "Sem geometria confiável: os limites do 'prolongamento' estão na Lei 2.042/2014, não localizada no AMM-MT (buscas por número, tema e 'Figueiras' em 18/10/2026; só a Lei 2.341/2016 descreve uma área desafetada de 15.215 m² junto à Rua dos Jaborandis, sem ligar ao trecho). A Av. das Figueiras tem dezenas de ways no OSM (tertiary) em toda a cidade; restringir a avenida inteira estenderia o ato além do prolongamento.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 8
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, §1º: veículos de carga que precisem carregar/descarregar produtos ou mercadorias no perímetro da avenida, fora do horário de pico (horário de pico não definido no ato)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei municipal 2.241, de 11/12/2015 (Sinop; publ. Jornal Oficial AMM-MT 16/12/2015)",
+          "artigo": "art. 1º e §1º; art. 2º (vigência na publicação)",
+          "url": "https://amm.diariomunicipal.org/publicacao/99403/"
+        }
+      ],
+      "vigencia_inicio": "2015-12-16",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "nota": "Ato lido integralmente. Limites do prolongamento na Lei 2.042/2014 (alterada pela Lei 2.260/2015, que só muda o art. 2º, parágrafo único). 'peso ou carga' ambíguo: adotado pbt_t > 8."
+    }
+  ]
+}
