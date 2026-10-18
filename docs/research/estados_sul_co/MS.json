@@ -1,0 +1,1737 @@
+{
+ "uf": "MS",
+ "data": "2026-10-18",
+ "temas": {
+  "rodovias_estaduais": {
+   "resumo": "O orgao rodoviario estadual e a AGESUL (Agencia Estadual de Gestao de Empreendimentos, vinculada a SEILOG). NAO achei, no DOE-MS nem no site da AGESUL, nenhum ato VIGENTE de restricao de horario de caminhao em feriado, de limite de peso/altura/comprimento por trecho, de serra, travessia urbana ou safra nas rodovias estaduais. O unico ato estadual de restricao de horario que localizei sao duas resolucoes de 2010 (Carnaval e Semana Santa), sem repeticao anual publicada que o indice do DOE alcance (a busca textual cobre 2007 em diante). O regime geral que existe e a Resolucao 'N' SEOP/AGESUL/MS n. 001/2009 (AET para CVC; circulacao do nascer ao por do sol; produtos perigosos so de dia e sem neblina/chuva intensa; 70 km/h; 250 m de distancia), cuja vigencia atual nao confirmei. O que existe de fato vigente sao restricoes de OBRA em pontes: MS-345 (ponte sobre o Rio Miranda, 10 t, ate ~jan/2027), MS-040 km 205 e km 223 (caminhao proibido desde 05/09/2026, sem rota alternativa a nao ser a BR-267), MS-168 (ponte sobre o Rio Taquari caiu em 13/08/2026) e MS-455 (ponte de madeira caiu em 10/08/2026, interditada). No plano federal, a PRF so restringe CVC/excedentes em MS na Operacao Fim de Ano (Portaria DIOP/PRF 12/2026).",
+   "orgaos": {
+    "rodoviario": "AGESUL (SEILOG). Competencias de transito em rodovia estadual: Decreto 15.886/2022 (SET/MS), art. 9o: fiscalizar excesso de peso, dimensoes e lotacao (VIII); vistoriar e fixar requisitos para veiculos com AET (XIV); arrecadar escolta de carga superdimensionada ou perigosa (VII).",
+    "policiamento": "PMMS fiscaliza rodovias estaduais mediante convenio com a AGESUL (Decreto 15.886/2022, art. 10, II); no mapa da Way-306 aparece um posto da PMRv previsto no km 133+500.",
+    "regulacao_concessoes": "AGEMS (Agencia Estadual de Regulacao de Servicos Publicos de MS)."
+   },
+   "fontes": [
+    {
+     "url": "https://www.diariooficial.ms.gov.br/ (busca: GET /api/diarios/busca-diarios?tipo=Busca%20Exata&texto=%22frase%22&dataInicial=&dataFinal=&pagina=1&registrosPorPagina=30; PDF por edicao em https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/AAAA/MM/DD/DO<n>_DD_MM_AAAA.pdf)",
+     "formato": "busca JSON (trechos destacados, ate 10.000 hits) + PDF da edicao; indice de texto desde 2007",
+     "licenca": "ato oficial publicado; sem licenca declarada",
+     "atualizado_em": "diario; ultima edicao lida: n. 12.308 de 16/10/2026"
+    },
+    {
+     "url": "https://www.agesul.ms.gov.br/sre-ms/ (SRE-MS 2026: https://www.agesul.ms.gov.br/wp-content/uploads/2026/07/SRE_MS_2026_PE.pdf)",
+     "formato": "PDF de 202 paginas (inventario rodoviario, trechos, 1.005 OAEs com coordenada, quadro resumo); revisao 00 de 19/01/2026, dados de nov/2025, arquivo postado em 02/07/2026",
+     "licenca": "nao declarada (publicacao oficial)",
+     "atualizado_em": "2026-07-02"
+    },
+    {
+     "url": "https://www.agesul.ms.gov.br/ (WordPress; wp-json/wp/v2/search e /posts funcionam)",
+     "formato": "HTML/JSON",
+     "licenca": "nao declarada",
+     "atualizado_em": "paginas de 2026; ultima postagem lida 26/02/2026 (MS-345)"
+    },
+    {
+     "url": "https://caminhosdacelulose.com.br/ (wp-json/wp/v2/posts)",
+     "formato": "HTML/JSON (concessionaria Caminhos da Celulose)",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026-10-08 (boletins de obras semanais e diarios como imagem/PDF)"
+    },
+    {
+     "url": "https://www.campograndenews.com.br/brasil/cidades/ms-tera-restricao-de-trafego-de-caminhoes-apenas-no-fim-de-2026 ; https://correiodoestado.com.br/cidades/apos-restricoes-na-ms-040-ms-tem-agora-cinco-pontes-travadas/472328/ ; https://acritica.net/noticias/obra-ponte-rio-miranda-ms-345-restricoes/",
+     "formato": "noticia (HTML)",
+     "licenca": "nao declarada (uso so como indicio)",
+     "atualizado_em": "02/02/2026; 07/09/2026; 26/02/2026"
+    }
+   ],
+   "acesso_ambiente": "O site www.agesul.ms.gov.br e os demais *.ms.gov.br com WAF F5 (agesul, sejusp, imasul, agems, sefaz, pge, seilog, agenciadenoticias) devolvem 403 'The requested URL was rejected' a este ambiente por curl, inclusive com User-Agent de navegador; www.diariooficial.ms.gov.br, www.detran.ms.gov.br e *.imprensaoficial.ms.gov.br respondem. As paginas do WAF foram lidas por um leitor de terceiros (r.jina.ai) que repassa texto/JSON; os PDFs idem. Isso vale como pendencia para um importador automatico.",
+   "atos": [
+    {
+     "ato": "Resolucao 'N' SEOP/AGESUL/MS n. 001, de 11/11/2009 (AET e circulacao de CVC nas rodovias da AGESUL)",
+     "data": "2009-11-11",
+     "publicacao": "DOE-MS n. 7.590 de 25/11/2009, pp. 3-4 (republicado o Anexo I no DOE n. 7.593 de 30/11/2009, p. 36)",
+     "situacao": "vigencia atual NAO confirmada (ato de 2009; nao achei revogacao nem substituta no DOE; a AGESUL ainda e o orgao competente pelo Decreto 15.886/2022)",
+     "base_legal": "Lei 3.345/2006 art. 17, X; CTB arts. 21 e 23; Convenio 001/2009; Resolucoes CONTRAN 210/06, 211/06",
+     "artigos": {
+      "1": "disciplina a utilizacao das rodovias sob jurisdicao da AGESUL e os procedimentos de emissao de AET",
+      "2": "CVC so transita com AET previa",
+      "4": "AET valida por ate 1 ano, coincidente com o licenciamento do veiculo trator; para carga indivisivel a AET e por viagem, com percurso aprovado (par. 1o); par. 4o: nao ha limite de reboques/semirreboques desde que do mesmo padrao construtivo; par. 5o: protocolo no Nucleo de Transporte e Transito, 1a Residencia Regional, BR-262 km 05 (saida para Tres Lagoas), Campo Grande, emissao em ate 10 dias",
+      "6 a 8": "tarifa de emissao em UFERMS conforme Anexo I (fatores: finalidade, numero de unidades rebocadas, tipo de carga, PBT/PBTC, eixos)",
+      "10": "carga indivisivel que afete fluxo ou estruturas viarias: projeto de deslocamento com ART e plano de transposicao de estruturas antes da AET",
+      "11": "sinalizacao especial a expensas do interessado, em projeto aprovado pela AGESUL",
+      "12": "circulacao do nascer ao por do sol; par. 1o noturno so excepcional e a titulo precario; par. 2o a Administracao pode impor restricoes por seguranca/clima; par. 3o PRODUTOS PERIGOSOS so do nascer ao por do sol e em dias/locais sem neblina ou chuva intensa",
+      "13": "velocidade maxima 70 km/h para veiculo com AET",
+      "14": "distancia minima de 250 m entre combinacoes de comprimento >= 25 m no mesmo sentido",
+      "16": "suspensao da AET: 2 meses (infracao gravissima ou duas graves), 6 meses (reincidencia), cassacao na reincidencia continuada"
+     },
+     "trechos": "todas as rodovias sob jurisdicao da AGESUL (sem lista de trechos)",
+     "veiculos": "CVC (e carga indivisivel/excedente) com AET",
+     "horario": "nascer ao por do sol",
+     "copia_local": "fontes/MS/agesul_resolucao_N_001_2009_aet_cvc_doe7590.txt",
+     "url_fonte": "https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/2009/11/25/DO7590_25_11_2009.pdf"
+    },
+    {
+     "ato": "Resolucao 'N' SEOP/AGESUL n. 001, de 10/02/2010 (restricao de CVC no Carnaval 2010)",
+     "data": "2010-02-10",
+     "publicacao": "DOE-MS n. 7.643 de 12/02/2010, p. 7",
+     "situacao": "HISTORICO (venceu em 2010; sem repeticao anual achada)",
+     "artigos": {
+      "1": "impoe restricao de trafego a combinacoes de veiculos de carga e a combinacoes de transporte de veiculos, com ou sem AET, nas datas/horarios/locais do Anexo I",
+      "2": "nao se sujeitam: combinacoes de ate 2 veiculos (caminhao-trator + semirreboque) com comprimento <= 18,60 m",
+      "3": "vigencia na publicacao"
+     },
+     "trechos": [
+      "MS-060 Campo Grande/Sidrolandia",
+      "MS-156 Itapora/Dourados",
+      "MS-157 Maracaju/Itapora",
+      "MS-162 Sidrolandia/Maracaju"
+     ],
+     "dias_horarios": "12 a 16/02/2010, 16:00-22:00",
+     "veiculos": "CVC e transporte de veiculos (cegonha), exceto conjunto de ate 2 veiculos e <= 18,60 m",
+     "copia_local": "fontes/MS/agesul_resolucao_N_001_2010_carnaval_doe7643.txt"
+    },
+    {
+     "ato": "Ato da AGESUL (chamado 'Portaria' no art. 3o; numero nao capturado no texto extraido), Semana Santa 2010",
+     "data": "2010-03-30 (publicacao)",
+     "publicacao": "DOE-MS n. 7.674 de 30/03/2010, p. 26",
+     "situacao": "HISTORICO",
+     "artigos": {
+      "1": "mesma restricao a CVC e a transporte de veiculos do ato do Carnaval",
+      "2": "mesma excecao (ate 2 veiculos, <= 18,60 m)"
+     },
+     "trechos": [
+      "MS-060 Campo Grande-Sidrolandia-Nioaque",
+      "MS-134 Casa Verde-Nova Andradina-Bataypora",
+      "MS-156 Itapora-Dourados",
+      "MS-157 Maracaju-Itapora",
+      "MS-162 Sidrolandia-Maracaju",
+      "MS-164 Ent. BR-267-Ponta Pora",
+      "MS-240 Inocencia-Paranaiba",
+      "MS-276 Ent. BR-163-Nova Andradina-Ent. MS-480",
+      "MS-306 Div. MS/MT-Ent. BR-158",
+      "MS-377 Ent. BR-262-Inocencia",
+      "MS-384 Ent. MS-164-Ent. BR-267",
+      "MS-386 Sanga Puita-Amambai",
+      "MS-395 Tres Lagoas-Brasilandia-Bataguassu",
+      "MS-480 Ent. BR-163-Ponta Pora",
+      "MS-497 Paranaiba-Porto Alencastro"
+     ],
+     "dias_horarios": "02 a 04/04/2010, 16:00-22:00",
+     "copia_local": "fontes/MS/agesul_resolucao_N_2010_semana_santa_doe7674.txt"
+    },
+    {
+     "ato": "Decreto 15.886, de 07/03/2022 (Sistema Estadual de Transito, SET/MS), art. 9o (competencias da AGESUL)",
+     "data": "2022-03-07",
+     "publicacao": "DOE-MS n. 10.772 de 08/03/2022, a partir da p. 2",
+     "situacao": "vigente (no que consta no DOE)",
+     "artigos": {
+      "9 VII": "arrecadar escolta de veiculos de carga superdimensionada ou perigosa",
+      "9 VIII": "fiscalizar, autuar e aplicar penalidades por excesso de peso, dimensoes e lotacao",
+      "9 XIV": "vistoriar veiculos que precisem de AET e definir requisitos tecnicos",
+      "10 II": "PMMS fiscaliza rodovias estaduais por convenio com a AGESUL"
+     },
+     "copia_local": "fontes/MS/decreto_15886_2022_set_ms_art9_agesul.txt"
+    }
+   ],
+   "interdicoes_e_obras_vigentes": [
+    {
+     "local": "MS-345, ponte de concreto sobre o Rio Miranda (distrito de Aguas do Miranda, divisa Anastacio/Bonito, 'ponte-gangorra')",
+     "restricao": "desde 02/03/2026: so veiculos leves, caminhonetes e caminhoes pequenos de ate 10 t, um veiculo por vez; interdicoes de ~12 h para concretagem; rota alternativa para carga: MS-382 (Guia Lopes da Laguna) ate a MS-178",
+     "previsao": "fim da obra em janeiro/2027 (Correio do Estado 07/09/2026)",
+     "divergencia": "o Correio do Estado de 07/09/2026 diz 'restricao total para caminhoes'; o texto da AGESUL de 26/02/2026 diz ate 10 t. Vale o texto oficial ate haver ato novo.",
+     "fonte": "https://www.agesul.ms.gov.br/distrito-de-aguas-do-miranda-governo-da-inicio-a-recuperacao-da-ponte-na-ms-345/ (via leitor); obra R$ 3,31 milhoes (A Critica) ou 'ao menos R$ 4 milhoes' (Correio)"
+    },
+    {
+     "local": "MS-040 km 205 e km 223 (entre Campo Grande e Santa Rita do Pardo; concessao Caminhos da Celulose)",
+     "restricao": "caminhoes e veiculos pesados impedidos nas duas pontes desde 05/09/2026 (siga e pare para leves, um por vez); desvio indicado pela BR-267 (Campo Grande-BR-163-Nova Alvorada do Sul-BR-267)",
+     "previsao": "nao informada",
+     "fonte": "https://caminhosdacelulose.com.br/caminhos-da-celulose-inicia-obras-de-revitalizacao-em-duas-pontes-da-ms-040/ (04/09/2026)"
+    },
+    {
+     "local": "MS-168, ponte de concreto sobre o Rio Taquari (Pantanal de Corumba)",
+     "restricao": "ponte ruiu em 13/08/2026 com um caminhao (motorista morreu); reforma sem inicio em 07/09/2026",
+     "fonte": "Correio do Estado 07/09/2026 (fonte unica)"
+    },
+    {
+     "local": "MS-455 (Campo Grande-Sidrolandia, regiao da Gameleira), ponte de madeira",
+     "restricao": "ruiu sob uma carreta em 10/08/2026; trafego interditado (estrada sem asfalto)",
+     "fonte": "Correio do Estado 07/09/2026 (fonte unica)"
+    },
+    {
+     "local": "BR-262, ponte sobre o Rio Paraguai (Porto Esperanca, ~70 km de Corumba; federal, obra executada pela AGESUL)",
+     "restricao": "pare-siga 24 h; fechamento total de 19 h de 21/10/2026 17h a 22/10/2026 12h (concretagem); ~600 carretas/dia de minerio; obra de R$ 11,7 milhoes ate o fim do 1o trimestre de 2027; BO de 31/08/2026 de embarcacao que atingiu pilar, laudo nao divulgado",
+     "fonte": "Correio do Estado 07/09/2026 e 17/10/2026"
+    },
+    {
+     "local": "BR-163, ponte Ayrton Senna sobre o Rio Parana (Mundo Novo-Guaira/PR; federal)",
+     "restricao": "obras desde 13/07/2026; desde 27/07 so a noite: interdicao total 20h-04h (horario MS) com janela de liberacao 22h30-23h30",
+     "fonte": "Correio do Estado 07/09/2026"
+    },
+    {
+     "local": "MS-156 e MS-295 (Amambai-Tacuru-Iguatemi-Eldorado)",
+     "restricao": "restauracao integral do pavimento e terceiras faixas, R$ 236,8 milhoes, frentes iniciadas em 01/2026; sem restricao de peso publicada",
+     "fonte": "https://www.agesul.ms.gov.br/governo-de-ms-investe-r-2368-milhoes-na-restauracao-de-rodovias-que-ligam-tacuru-e-eldorado/ (23/01/2026)"
+    }
+   ],
+   "atos_federais_contexto": [
+    {
+     "ato": "Portaria DIOP/PRF n. 12, de 30/01/2026 (DOU de 02/02/2026)",
+     "efeito_em_MS": "so a Operacao Fim de Ano: 24/12/2026 16h-22h; 25/12 6h-12h; 27/12 16h-22h; 31/12 16h-22h; 01/01/2027 6h-12h; 03/01/2027 16h-22h; veiculos/combinacoes com largura > 2,60 m, altura > 4,40 m, comprimento > 19,80 m ou PBTC > 58,5 t, mesmo com AET (segundo o Campo Grande News de 02/02/2026; o texto do ato nao foi baixado)",
+     "obs": "federal (BRs); nao cobre rodovia estadual"
+    }
+   ],
+   "rede_estadual_sre_2026": {
+    "extensao_km": {
+     "pavimentada_PAV": 5484.2,
+     "duplicada_DUP": 57.5,
+     "pavimentada_total": 5541.7,
+     "implantada_sem_pavimento_IMP": 5653.9,
+     "leito_natural_LEN": 1568.6,
+     "em_obras_implantacao_EOI": 201.3,
+     "em_obras_pavimentacao_EOP": 493.3,
+     "planejada_PLA": 1576.8,
+     "total_rodovias_estaduais": 15035.5
+    },
+    "obs": "leitura do quadro 7.7 do SRE-MS 2026 (colunas conferidas por soma). Concessoes: Way-306 (MS-306, 218,6 km), Way-112 (MS-112, 200,9 km), Caminhos da Celulose (MS-040/338/395, 204 km). Municipal: 45.126 km de rede nao pavimentada."
+   },
+   "oae_estaduais": {
+    "resumo": "O SRE-MS 2026 (secao 7.6) cadastra 1.005 OAEs em rodovias estaduais: 697 pontes de madeira (12.885,84 m), 301 pontes de concreto armado (13.440,67 m), 7 viadutos (159,75 m). Colunas: item, rodovia, local (nome do curso d'agua), km, situacao fisica, tipo, extensao (m), largura (m), n. de vaos, municipio, latitude/longitude em graus-minutos-segundos. NAO ha capacidade de carga (classe/trem-tipo).",
+    "teste_parse": "parser por regex no texto extraido (via leitor): 964 de 1.005 linhas (690 madeira, 267 concreto, 7 viaduto), 0 fora do bbox de MS; faltam ~41 linhas com observacao/quebra. Amostra: fontes/MS/sre_ms_2026_oae_amostra60.csv",
+    "tipo_destaque": "690 pontes de madeira (em IMP/LEN, 'MS-xxx' nao pavimentadas) sao o ponto cego para caminhao pesado; duas cairam em 08/2026."
+   },
+   "sem_ato": [
+    "Portaria/resolucao vigente de horario de caminhao em feriado em rodovia estadual: nao achada (DOE, 2010 a 2026).",
+    "Limite de peso, altura ou comprimento por trecho estadual: nao achado (so as restricoes de obra acima).",
+    "Proibicao permanente em ponte (fora de obra): nao achada.",
+    "Serra, travessia urbana e regra de safra/rodotrem estaduais: nao achadas (MS e plano; o CVC rodoviario segue a AET da Res. 001/2009: sem limite de reboques desde que o mesmo padrao construtivo).",
+    "Lista de trechos liberados para CVC/AET por rodovia: nao achada; o requerimento de AET vai ao Nucleo de Transporte e Transito da 1a Residencia Regional da AGESUL (BR-262 km 5, Campo Grande, segundo a Res. 001/2009, endereco possivelmente defasado)."
+   ],
+   "duvidas": [
+    "A Res. 001/2009 continua em vigor? O DOE nao mostra revogacao, mas tambem nao mostra aplicacao recente.",
+    "Por que 2010 teve restricao de feriado e depois nada no DOE? Pode ter virado nota/comunicado sem publicacao; o site da AGESUL (WAF) nao foi lido por completo.",
+    "Quem e a concessionaria de BR-262/BR-267? O SRE-MS 2026 diz 'Caminhos do Pantanal'; DOE, edital e concessionaria dizem Caminhos da Celulose (e BR-163 e da Motiva Pantanal)."
+   ],
+   "pronto_para_importar": {
+    "restricao_horario_feriado": false,
+    "oae_estaduais": "parcial",
+    "obras_vigentes": false,
+    "detalhe": "Nenhum ato vigente de horario para virar regra. As interdicoes de obra mudam por semana e vem de noticia/boletim; nao ha fonte estruturada. As 964 OAEs com coordenada (SRE-MS 2026) podem virar camada de pontes estaduais (rodovia, km, tipo, extensao, largura), sem carga; teste feito em 18/10/2026 via leitor de terceiros porque o PDF direto da AGESUL responde 403 a este ambiente."
+   }
+  },
+  "pedagio": {
+   "resumo": "MS tem DUAS concessoes ESTADUAIS com pedagio em operacao, ambas reguladas pela AGEMS e do Grupo Way Brasil: Way-306 (MS-306 + BR-359; Costa Rica, Chapadao do Sul, Cassilandia; 3 pracas P1-P3) e Way-112 (MS-112 + BR-158 + BR-436; Tres Lagoas, Selviria, Paranaiba, Aparecida do Taboado, Cassilandia; 6 pracas P4-P9). Todas sao pracas fisicas (nao free flow). Uma TERCEIRA, a Rota da Celulose (MS-040/MS-338/MS-395 + BR-262/BR-267, 870 km, Consorcio Caminhos da Celulose, contrato assinado em jan/2026, delegacao federal-estadual), AINDA NAO COBRA: a cobranca so pode comecar apos o 12o mes (no minimo fev/2027) e sera em 12 porticos free flow; as tarifas finais nao foram publicadas (so valores de estudo). As 9 pracas de BR-163 no CSV da ANTT (concessao federal) nao sao estaduais. Tarifas por eixo de caminhao abaixo saem das Portarias AGEMS 333/2026 (Way-306, vigente desde 09/04/2026) e 326/2026 (Way-112, vigente desde 11/02/2026), lidas no DOE-MS.",
+   "fontes": [
+    {
+     "url": "https://www.diariooficial.ms.gov.br/ (busca: GET /api/diarios/busca-diarios?tipo=Busca%20Exata&texto=%22frase%22&dataInicial=&dataFinal=&pagina=1&registrosPorPagina=30; PDF por edicao em https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/AAAA/MM/DD/DO<n>_DD_MM_AAAA.pdf)",
+     "formato": "PDF do DOE; portarias AGEMS de tarifa (busca 'tarifa de pedagio')",
+     "licenca": "ato oficial; sem licenca declarada",
+     "atualizado_em": "2026-04-08 (Portaria 333) e 2026-02-10 (Portaria 326)"
+    },
+    {
+     "url": "https://way306.com.br/mapa/way-306-trecho-sob-concessao/ (PDF: https://way306.com.br/wp-content/uploads/2026/03/Mapa-Way-306-V8-2.pdf)",
+     "formato": "PDF/mapa com km das pracas, SAUs, postos",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026-03-27"
+    },
+    {
+     "url": "https://way112.com.br/mapa/way-112-trecho-sob-concessao/ (PDF: https://way112.com.br/wp-content/uploads/2024/01/Mapa-Way-112-Oficial-2024-3.pdf)",
+     "formato": "PDF/mapa",
+     "licenca": "nao declarada",
+     "atualizado_em": "2024-01-23"
+    },
+    {
+     "url": "https://way306.com.br/servicos/trafego-mensal-de-veiculos/ e https://way112.com.br/servicos/trafego-mensal-de-veiculos/",
+     "formato": "PDF mensal de trafego por praca (motocicleta, passeio, comercial)",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026-10-02 (setembro/2026)"
+    },
+    {
+     "url": "https://www.agesul.ms.gov.br/wp-content/uploads/2025/01/RODOVIAS-ESTADUAIS-CONCEDIDAS.pdf",
+     "formato": "PDF 1 pagina com codigos SRE e km dos trechos concedidos (MS-112 e MS-306), nov/2024",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-01-08"
+    },
+    {
+     "url": "https://www.gov.br/transportes/pt-br/assuntos/concessoes/copy_of_BriefingCGORRotaCeluloseR320.03.2025.pdf",
+     "formato": "PDF de 32 paginas (briefing do Ministerio dos Transportes, data-base out/2023): 12 pracas com km e tarifa de estudo",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-03-20"
+    },
+    {
+     "url": "https://dados.antt.gov.br/dataset/praca-de-pedagio (CSV https://dados.antt.gov.br/dataset/a7e1e12d-f8e8-40cd-bc1f-57973a4a4a6d/resource/9aa29243-c54c-4084-bc3d-c44a75c9bd7e/download/dados-dos-pracas-de-pedagio6_2026.csv)",
+     "formato": "CSV ';' ISO-8859-1, 277 linhas nacionais, 9 com uf=MS (todas BR-163, 'PANTANAL')",
+     "licenca": "CC-BY (license_id do CKAN)",
+     "atualizado_em": "2026-07-28 (CSV); pacote 2026-07-29"
+    }
+   ],
+   "concessoes_estaduais_vigentes": [
+    {
+     "concessionaria": "Concessionaria da Rodovia MS 306 S.A. ('Way-306', Grupo Way Brasil)",
+     "rodovias": [
+      "MS-306 (Placa de Mineiros ate Entr. BR-158 em Cassilandia, 218,6 km)",
+      "BR-359 (trecho coincidente/delegado)",
+      "Contorno de Chapadao do Sul"
+     ],
+     "contrato": "Contrato de Concessao n. 002/2020, de 19/03/2020, 30 anos, operacao desde 22/04/2020 (SRE-MS 2026); regulador AGEMS",
+     "pracas": [
+      {
+       "id": "P1",
+       "nome": "Costa Rica",
+       "rodovia": "MS-306",
+       "km_concessao": "40+400",
+       "municipio": "Costa Rica",
+       "lat": null,
+       "lon": null,
+       "free_flow": false,
+       "sentido": "bidirecional (pista dupla/simples sem dado)"
+      },
+      {
+       "id": "P2",
+       "nome": "Chapadao do Sul",
+       "rodovia": "MS-306",
+       "km_concessao": "100+600",
+       "municipio": "Chapadao do Sul",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      },
+      {
+       "id": "P3",
+       "nome": "Cassilandia",
+       "rodovia": "MS-306",
+       "km_concessao": "184+500",
+       "municipio": "Cassilandia",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      }
+     ],
+     "obs_km": "km da concessao (zero na divisa MS/MT, BR-359), NAO o km do SRE. SAUs: Costa Rica 38+266 (sul), Chapadao do Sul 110+320 (norte), Cassilandia 179+200 (sul). Sede km 117+000. Postos de fiscalizacao futuros: PMRv km 133+500 e AGEMS km 110+320.",
+     "tarifa_vigente": {
+      "portaria": "Portaria AGEMS n. 333, de 07/04/2026 (5a Revisao Ordinaria da TBP e 6o Reajuste Anual)",
+      "doe": "DOE-MS n. 12.121 de 08/04/2026, pp. 37-38",
+      "vigencia_a_partir_de": "2026-04-09",
+      "tarifa_quilometrica_rs": 0.1280594,
+      "reajuste_irt": "+3,81% (IPCA 12 meses; IRT 1,538772185 sobre a tarifa quilometrica)",
+      "categoria_1_rs": 14.4,
+      "pracas_abrangidas": "P1, P2 e P3 (mesma tabela)",
+      "tabela": [
+       {
+        "categoria": 1,
+        "classe": "automovel, caminhoneta, triciclo, furgao (2 eixos, rodagem simples)",
+        "eixos": 2,
+        "multiplicador": 1.0,
+        "tarifa_rs": 14.4
+       },
+       {
+        "categoria": 2,
+        "classe": "caminhao leve, micro-onibus, onibus, caminhao-trator e furgao (2 eixos, rodagem dupla)",
+        "eixos": 2,
+        "multiplicador": 2.0,
+        "tarifa_rs": 28.8
+       },
+       {
+        "categoria": 3,
+        "classe": "automovel/caminhonete com semirreboque (3 eixos, simples)",
+        "eixos": 3,
+        "multiplicador": 1.5,
+        "tarifa_rs": 21.6
+       },
+       {
+        "categoria": 4,
+        "classe": "caminhao, caminhao-trator, caminhao-trator com semirreboque e onibus (3 eixos, dupla)",
+        "eixos": 3,
+        "multiplicador": 3.0,
+        "tarifa_rs": 43.2
+       },
+       {
+        "categoria": 5,
+        "classe": "automovel/caminhonete com reboque (4 eixos, simples)",
+        "eixos": 4,
+        "multiplicador": 2.0,
+        "tarifa_rs": 28.8
+       },
+       {
+        "categoria": 6,
+        "classe": "caminhao com reboque, caminhao-trator com semirreboque (4 eixos, dupla)",
+        "eixos": 4,
+        "multiplicador": 4.0,
+        "tarifa_rs": 57.6
+       },
+       {
+        "categoria": 7,
+        "classe": "idem (5 eixos, dupla)",
+        "eixos": 5,
+        "multiplicador": 5.0,
+        "tarifa_rs": 72.0
+       },
+       {
+        "categoria": 8,
+        "classe": "idem (6 eixos, dupla)",
+        "eixos": 6,
+        "multiplicador": 6.0,
+        "tarifa_rs": 86.4
+       },
+       {
+        "categoria": 9,
+        "classe": "idem (7 eixos, dupla)",
+        "eixos": 7,
+        "multiplicador": 7.0,
+        "tarifa_rs": 100.8
+       },
+       {
+        "categoria": 10,
+        "classe": "idem (8 eixos, dupla)",
+        "eixos": 8,
+        "multiplicador": 8.0,
+        "tarifa_rs": 115.2
+       },
+       {
+        "categoria": 11,
+        "classe": "idem (9 eixos, dupla)",
+        "eixos": 9,
+        "multiplicador": 9.0,
+        "tarifa_rs": 129.6
+       },
+       {
+        "categoria": 12,
+        "classe": "motocicleta, motoneta, bicicleta a motor",
+        "eixos": 2,
+        "multiplicador": 0.5,
+        "tarifa_rs": 7.2
+       }
+      ],
+      "nota": "Categoria 13 (veiculos especiais ou com mais de 9 eixos): tarifa da categoria 9 mais a tarifa da categoria 1 multiplicada pelo numero de eixos acima de 9. Categoria 14: isentos (cadastro na concessionaria). Nota (1): rodagem traseira 'single' ou 'supersingle' equivale a dupla."
+     },
+     "historico_cat1": {
+      "2025-04": 13.9,
+      "2026-04": 14.4
+     },
+     "pdf_original": "fontes/MS/agems_portaria_333_2026_ms306_tarifas.txt",
+     "trafego_set2026": {
+      "P1": {
+       "moto": 874,
+       "passeio": 26745,
+       "comercial": 56954
+      },
+      "P2": {
+       "moto": 1165,
+       "passeio": 45430,
+       "comercial": 64825
+      },
+      "P3": {
+       "moto": 1010,
+       "passeio": 40107,
+       "comercial": 69010
+      },
+      "obs": "contagem mensal de veiculos (PDF de 02/10/2026), nao VDM"
+     }
+    },
+    {
+     "concessionaria": "Concessionaria das Rodovias do Leste MS S.A. ('Way-112', Grupo Way Brasil)",
+     "rodovias": [
+      "MS-112 (Entr. BR-158 em Tres Lagoas/Selviria ate Entr. BR-158 em Cassilandia, 200,9 km)",
+      "BR-158 (Entr. MS-306 a Entr. MS-444, Selviria; 194,9 km no SRE)",
+      "BR-436 (Aparecida do Taboado ate a ponte rodoferroviaria sobre o Rio Parana, 18,1 km)"
+     ],
+     "contrato": "Contrato de Concessao n. 02/2023, de 20/03/2023 (Portaria AGEMS 326/2026); o SRE-MS 2026 diz assinado em 25/03/2023 e operacao desde 27/03/2023; 30 anos; regulador AGEMS",
+     "pracas": [
+      {
+       "id": "P4",
+       "nome": "Paranaiba",
+       "rodovia": "BR-158",
+       "km_concessao": "78+100",
+       "municipio": "Paranaiba",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      },
+      {
+       "id": "P5",
+       "nome": "Aparecida do Taboado",
+       "rodovia": "BR-158",
+       "km_concessao": "118+100",
+       "municipio": "Aparecida do Taboado",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      },
+      {
+       "id": "P6",
+       "nome": "Aparecida do Taboado II",
+       "rodovia": "BR-436",
+       "km_concessao": "13+300",
+       "municipio": "Aparecida do Taboado",
+       "lat": null,
+       "lon": null,
+       "free_flow": false,
+       "obs": "tarifa propria, ~1/3 das demais"
+      },
+      {
+       "id": "P7",
+       "nome": "Aparecida do Taboado III",
+       "rodovia": "BR-158",
+       "km_concessao": "174+000",
+       "municipio": "Aparecida do Taboado",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      },
+      {
+       "id": "P8",
+       "nome": "Selviria",
+       "rodovia": "MS-112",
+       "km_concessao": "64+200",
+       "municipio": "Selviria",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      },
+      {
+       "id": "P9",
+       "nome": "Cassilandia II",
+       "rodovia": "MS-112",
+       "km_concessao": "193+300",
+       "municipio": "Cassilandia",
+       "lat": null,
+       "lon": null,
+       "free_flow": false
+      }
+     ],
+     "obs_km": "km da concessao, por rodovia, conforme o mapa oficial de 2024 e o PDF de trafego de set/2026 (os dois batem). SAUs/BSOs: 4 BR-158 km 26+000; 5 BR-158 km 100+200; 6 BR-158 km 171+500; 7 MS-112 km 36+500; 8 MS-112 km 107+400; 9 MS-112 km 184+000.",
+     "tarifa_vigente": {
+      "portaria": "Portaria AGEMS n. 326, de 09/02/2026 (2a Revisao Ordinaria da TBP e 3o Reajuste Anual; IRT 1,042643476)",
+      "doe": "DOE-MS n. 12.071 de 10/02/2026, pp. 60-62",
+      "vigencia_a_partir_de": "2026-02-11",
+      "categoria_1_rs": {
+       "P4,P5,P7,P8,P9": 14.0,
+       "P6": 4.6
+      },
+      "tabela_P4_P5_P7_P8_P9": [
+       {
+        "categoria": 1,
+        "classe": "automovel, caminhoneta, triciclo, furgao (2 eixos, rodagem simples)",
+        "eixos": 2,
+        "multiplicador": 1.0,
+        "tarifa_rs": 14.0
+       },
+       {
+        "categoria": 2,
+        "classe": "caminhao leve, micro-onibus, onibus, caminhao-trator e furgao (2 eixos, rodagem dupla)",
+        "eixos": 2,
+        "multiplicador": 2.0,
+        "tarifa_rs": 28.0
+       },
+       {
+        "categoria": 3,
+        "classe": "automovel/caminhonete com semirreboque (3 eixos, simples)",
+        "eixos": 3,
+        "multiplicador": 1.5,
+        "tarifa_rs": 21.0
+       },
+       {
+        "categoria": 4,
+        "classe": "caminhao, caminhao-trator, caminhao-trator com semirreboque e onibus (3 eixos, dupla)",
+        "eixos": 3,
+        "multiplicador": 3.0,
+        "tarifa_rs": 42.0
+       },
+       {
+        "categoria": 5,
+        "classe": "automovel/caminhonete com reboque (4 eixos, simples)",
+        "eixos": 4,
+        "multiplicador": 2.0,
+        "tarifa_rs": 28.0
+       },
+       {
+        "categoria": 6,
+        "classe": "caminhao com reboque, caminhao-trator com semirreboque (4 eixos, dupla)",
+        "eixos": 4,
+        "multiplicador": 4.0,
+        "tarifa_rs": 56.0
+       },
+       {
+        "categoria": 7,
+        "classe": "idem (5 eixos, dupla)",
+        "eixos": 5,
+        "multiplicador": 5.0,
+        "tarifa_rs": 70.0
+       },
+       {
+        "categoria": 8,
+        "classe": "idem (6 eixos, dupla)",
+        "eixos": 6,
+        "multiplicador": 6.0,
+        "tarifa_rs": 84.0
+       },
+       {
+        "categoria": 9,
+        "classe": "idem (7 eixos, dupla)",
+        "eixos": 7,
+        "multiplicador": 7.0,
+        "tarifa_rs": 98.0
+       },
+       {
+        "categoria": 10,
+        "classe": "idem (8 eixos, dupla)",
+        "eixos": 8,
+        "multiplicador": 8.0,
+        "tarifa_rs": 112.0
+       },
+       {
+        "categoria": 11,
+        "classe": "idem (9 eixos, dupla)",
+        "eixos": 9,
+        "multiplicador": 9.0,
+        "tarifa_rs": 126.0
+       },
+       {
+        "categoria": 12,
+        "classe": "motocicleta, motoneta, bicicleta a motor",
+        "eixos": 2,
+        "multiplicador": 0.5,
+        "tarifa_rs": 7.0
+       }
+      ],
+      "tabela_P6": [
+       {
+        "categoria": 1,
+        "classe": "automovel, caminhoneta, triciclo, furgao (2 eixos, rodagem simples)",
+        "eixos": 2,
+        "multiplicador": 1.0,
+        "tarifa_rs": 4.6
+       },
+       {
+        "categoria": 2,
+        "classe": "caminhao leve, micro-onibus, onibus, caminhao-trator e furgao (2 eixos, rodagem dupla)",
+        "eixos": 2,
+        "multiplicador": 2.0,
+        "tarifa_rs": 9.2
+       },
+       {
+        "categoria": 3,
+        "classe": "automovel/caminhonete com semirreboque (3 eixos, simples)",
+        "eixos": 3,
+        "multiplicador": 1.5,
+        "tarifa_rs": 6.9
+       },
+       {
+        "categoria": 4,
+        "classe": "caminhao, caminhao-trator, caminhao-trator com semirreboque e onibus (3 eixos, dupla)",
+        "eixos": 3,
+        "multiplicador": 3.0,
+        "tarifa_rs": 13.8
+       },
+       {
+        "categoria": 5,
+        "classe": "automovel/caminhonete com reboque (4 eixos, simples)",
+        "eixos": 4,
+        "multiplicador": 2.0,
+        "tarifa_rs": 9.2
+       },
+       {
+        "categoria": 6,
+        "classe": "caminhao com reboque, caminhao-trator com semirreboque (4 eixos, dupla)",
+        "eixos": 4,
+        "multiplicador": 4.0,
+        "tarifa_rs": 18.4
+       },
+       {
+        "categoria": 7,
+        "classe": "idem (5 eixos, dupla)",
+        "eixos": 5,
+        "multiplicador": 5.0,
+        "tarifa_rs": 23.0
+       },
+       {
+        "categoria": 8,
+        "classe": "idem (6 eixos, dupla)",
+        "eixos": 6,
+        "multiplicador": 6.0,
+        "tarifa_rs": 27.6
+       },
+       {
+        "categoria": 9,
+        "classe": "idem (7 eixos, dupla)",
+        "eixos": 7,
+        "multiplicador": 7.0,
+        "tarifa_rs": 32.2
+       },
+       {
+        "categoria": 10,
+        "classe": "idem (8 eixos, dupla)",
+        "eixos": 8,
+        "multiplicador": 8.0,
+        "tarifa_rs": 36.8
+       },
+       {
+        "categoria": 11,
+        "classe": "idem (9 eixos, dupla)",
+        "eixos": 9,
+        "multiplicador": 9.0,
+        "tarifa_rs": 41.4
+       },
+       {
+        "categoria": 12,
+        "classe": "motocicleta, motoneta, bicicleta a motor",
+        "eixos": 2,
+        "multiplicador": 0.5,
+        "tarifa_rs": 2.3
+       }
+      ],
+      "nota": "Categoria 13 (veiculos especiais ou com mais de 9 eixos): tarifa da categoria 9 mais a tarifa da categoria 1 multiplicada pelo numero de eixos acima de 9. Categoria 14: isentos (cadastro na concessionaria). Nota (1): rodagem traseira 'single' ou 'supersingle' equivale a dupla."
+     },
+     "historico_cat1": {
+      "2025-02 P4,P5,P7,P8,P9": 13.5,
+      "2025-02 P6": 4.4,
+      "2026-02 P4,P5,P7,P8,P9": 14.0,
+      "2026-02 P6": 4.6
+     },
+     "pdf_original": "fontes/MS/agems_portaria_326_2026_ms112_tarifas.txt",
+     "trafego_set2026": {
+      "P4": {
+       "moto": 1187,
+       "passeio": 56142,
+       "comercial": 86686
+      },
+      "P5": {
+       "moto": 1396,
+       "passeio": 71291,
+       "comercial": 86407
+      },
+      "P6": {
+       "moto": 5479,
+       "passeio": 123652,
+       "comercial": 79112
+      },
+      "P7": {
+       "moto": 686,
+       "passeio": 25107,
+       "comercial": 24817
+      },
+      "P8": {
+       "moto": 661,
+       "passeio": 43107,
+       "comercial": 30551
+      },
+      "P9": {
+       "moto": 2029,
+       "passeio": 24138,
+       "comercial": 9281
+      }
+     }
+    },
+    {
+     "concessionaria": "Consorcio Caminhos da Celulose ('Rota da Celulose'), SEM COBRANCA AINDA",
+     "rodovias": [
+      "MS-040 (Anel de Campo Grande a Entr. MS-338, 227,2 km)",
+      "MS-338 (59,1 km)",
+      "MS-395 (7,7 km)",
+      "BR-262 (Div. SP/MS a Entr. BR-163 em Campo Grande, 328,2 km)",
+      "BR-267 (Div. SP/MS a Entr. BR-163 em Nova Alvorada do Sul, 248,1 km)"
+     ],
+     "contrato": "Concorrencia 01/2024 (SEILOG): resultado de 25/09/2025, homologada e adjudicada com desconto de 8% (DOE n. 11.949 de 26/09/2025, pp. 215-216); contrato assinado em jan/2026 e operacao desde 02/02/2026; 30 anos; 870,3 km; convenio de delegacao Uniao-Estado; CAPEX R$ 6,91 bi (estudo)",
+     "cobranca": "12 porticos free flow (Ministerio dos Transportes: 'Porticos de free-flow' a implantar no ano 1). Cobranca so apos o 12o mes e se cumpridas as obrigacoes iniciais, i.e. no minimo fev/2027 (diretor-presidente, Campo Grande News 02/02/2026; estudo EPE-MS: 'instalados ate o fim do 12o mes e operam a partir do 13o'). Uma materia de 08/02/2026 (clickpetroleoegas) dizendo que ja se cobra foi descartada (contradiz as demais).",
+     "pracas_estudo": [
+      {
+       "id": "P1",
+       "municipio": "Tres Lagoas",
+       "rodovia": "BR-262",
+       "km": 39,
+       "tarifa_estudo_rs": 13.7
+      },
+      {
+       "id": "P2",
+       "municipio": "Agua Clara",
+       "rodovia": "BR-262",
+       "km": 105,
+       "tarifa_estudo_rs": 16.0
+      },
+      {
+       "id": "P3",
+       "municipio": "Ribas do Rio Pardo",
+       "rodovia": "BR-262",
+       "km": 207,
+       "tarifa_estudo_rs": 18.0
+      },
+      {
+       "id": "P4",
+       "municipio": "Campo Grande",
+       "rodovia": "BR-262",
+       "km": 292,
+       "tarifa_estudo_rs": 14.9
+      },
+      {
+       "id": "P5",
+       "municipio": "Campo Grande",
+       "rodovia": "MS-040",
+       "km": 47,
+       "tarifa_estudo_rs": 16.2
+      },
+      {
+       "id": "P6",
+       "municipio": "Santa Rita do Pardo",
+       "rodovia": "MS-040",
+       "km": 217,
+       "tarifa_estudo_rs": 12.3
+      },
+      {
+       "id": "P7",
+       "municipio": "Santa Rita do Pardo",
+       "rodovia": "MS-338",
+       "km": 313,
+       "tarifa_estudo_rs": 11.3,
+       "obs": "km 313 como no briefing (o ato diz MS-338 com 59,1 km; quilometragem provavelmente do PER, nao confere com o SRE)"
+      },
+      {
+       "id": "P8",
+       "municipio": "Bataguassu",
+       "rodovia": "BR-267",
+       "km": 21,
+       "tarifa_estudo_rs": 5.6
+      },
+      {
+       "id": "P9",
+       "municipio": "Nova Andradina",
+       "rodovia": "BR-267",
+       "km": 130,
+       "tarifa_estudo_rs": 10.9
+      },
+      {
+       "id": "P10",
+       "municipio": "Nova Alvorada do Sul",
+       "rodovia": "BR-267",
+       "km": 180,
+       "tarifa_estudo_rs": 17.8
+      },
+      {
+       "id": "P11",
+       "municipio": "Ribas do Rio Pardo",
+       "rodovia": "MS-040",
+       "km": 124,
+       "tarifa_estudo_rs": 16.2
+      },
+      {
+       "id": "P12",
+       "municipio": "Bataguassu",
+       "rodovia": "BR-267",
+       "km": 66,
+       "tarifa_estudo_rs": 13.1
+      }
+     ],
+     "tarifa_nota": "valores do briefing do Ministerio dos Transportes (data-base out/2023, 'tarifa no inicio da concessao', categoria de passeio, tarifa quilometrica R$ 0,1907 pista simples e R$ 0,2670 dupla); NAO incluem o desconto de 8% do leilao nem o reajuste. Outras publicacoes citam R$ 4,70 a R$ 15,20 (estudo EPE-MS 2024) e 'R$ 15 a R$ 15,50 por ponto, 5% de desconto com tag' (Campo Grande News 02/02/2026): bases diferentes. Multiplicadores por eixo estao no Anexo 11 (sistema tarifario) do contrato, que nao baixei.",
+     "postos_planejados": "8 postos de pesagem HSWIN, 1 posto fiscal SEFAZ novo na BR-262 e reforma na BR-267, 6 postos PRF reformados, 2 postos PMRv novos (MS-040 e MS-338), 13 bases SAU (briefing)"
+    }
+   ],
+   "pracas_antt_em_MS": [
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P1-Mundo Novo",
+     "rodovia": "BR-163",
+     "km": 28.2,
+     "free_flow": false,
+     "lat": -23.865169,
+     "lon": -54.329788
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P2-Itaquirai",
+     "rodovia": "BR-163",
+     "km": 113.0,
+     "free_flow": false,
+     "lat": -23.167432,
+     "lon": -54.19897
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P3-Caarapo",
+     "rodovia": "BR-163",
+     "km": 228.2,
+     "free_flow": false,
+     "lat": -22.476042,
+     "lon": -54.860799
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P4-Rio Brilhante",
+     "rodovia": "BR-163",
+     "km": 313.5,
+     "free_flow": false,
+     "lat": -21.865146,
+     "lon": -54.528504
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P5-Campo Grande",
+     "rodovia": "BR-163",
+     "km": 431.8,
+     "free_flow": false,
+     "lat": -20.882783,
+     "lon": -54.504644
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P6-Jaraguari",
+     "rodovia": "BR-163",
+     "km": 533.8,
+     "free_flow": false,
+     "lat": -20.04,
+     "lon": -54.41
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P7-Sao Gabriel",
+     "rodovia": "BR-163",
+     "km": 605.0,
+     "free_flow": false,
+     "lat": -19.473376,
+     "lon": -54.496991
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P8-Rio Verde",
+     "rodovia": "BR-163",
+     "km": 704.3,
+     "free_flow": false,
+     "lat": -18.722782,
+     "lon": -54.814951
+    },
+    {
+     "concessionaria": "PANTANAL",
+     "praca": "P9-Sonora",
+     "rodovia": "BR-163",
+     "km": 819.2,
+     "free_flow": false,
+     "lat": -17.766671,
+     "lon": -54.750815
+    }
+   ],
+   "armadilhas": [
+    "As concessoes estaduais NAO estao no CSV da ANTT (que so traz as 9 pracas de BR-163 em MS). Nao ha dataset aberto de pracas das concessoes estaduais: coordenadas so por OSM (barrier=toll_booth) ou por levantamento; Overpass nao alcancou deste ambiente.",
+    "km das pracas e da concessao (por rodovia, comecando na divisa), nao do SRE; BR-359 e BR-158/BR-436 sao rodovias federais sob convenio, mas a tarifa e a regulacao sao estaduais (AGEMS).",
+    "Duas tabelas distintas na Way-112: P6 (BR-436, 18 km) cobra ~1/3 das demais.",
+    "Reajustes anuais: Way-112 em fevereiro (vigencia 11/02/2026), Way-306 em abril (vigencia 09/04/2026); o proximo deve sair em 02/2027 e 04/2027 (inferencia pelo historico, nao por ato).",
+    "O site way306.com.br e way112.com.br tem injecao de links de spam (casino/apostas) no HTML: ler so o conteudo, nunca seguir links externos.",
+    "Datas conflitantes: Way-112 'contrato de 20/03/2023' (AGEMS) x 'assinado em 25/03/2023' (SRE-MS).",
+    "O vale-pedagio fisico deixa de ser aceito em todo o Brasil a partir de 31/12 (aviso no site da Way-112, Resolucao ANTT 6.024/2023)."
+   ],
+   "pronto_para_importar": {
+    "tarifas_concessoes_estaduais": true,
+    "pracas_antt": true,
+    "coordenadas_pracas_estaduais": false,
+    "rota_da_celulose": false,
+    "detalhe": "Tarifas por categoria (14 categorias, eixo e multiplicador) das 9 pracas estaduais (P1-P9) estao transcritas do DOE; PDF baixado e texto extraido em 18/10/2026. Faltam lat/lon das 9 pracas (so km da concessao): precisa do PBF do OSM de MS ou casamento por SRE+km. Pracas ANTT: CSV baixado, 9 linhas de MS, colunas concessionaria;praca_de_pedagio;ano_do_pnv_snv;rodovia;uf;km_m;municipal;tipo_de_pista;sentido;situacao;data_da_inativacao;latitude;longitude (amostra em fontes/MS/antt_pracas_pedagio_MS.csv; a coluna se chama 'municipal'). Rota da Celulose: nao importar tarifa ate a ANTT/AGEMS publicar o inicio da cobranca."
+   }
+  },
+  "balancas": {
+   "resumo": "Nao existe lista de balancas/postos de pesagem ESTADUAIS em MS. Os unicos postos de pesagem publicados em dado aberto sao 3 do CSV da ANTT, todos na BR-163 (concessao federal, operador 'PANTANAL'). Os postos previstos nas concessoes estaduais ainda nao existem: Way-306 (4 postos moveis, adiados do ano 5 para o ano 10 do PER pela Portaria AGEMS 268/2024) e Rota da Celulose (8 postos de pesagem HSWIN previstos). A fiscalizacao de excesso de peso em rodovia estadual e competencia da AGESUL (Decreto 15.886/2022, art. 9o, VIII), com a PMMS por convenio.",
+   "fontes": [
+    {
+     "url": "https://dados.antt.gov.br/dataset/ppv (CSV https://dados.antt.gov.br/dataset/3850ffa9-c26c-4d5f-9b41-6ec5bd47884f/resource/28011202-0256-4eae-a772-f47fe0843825/download/informacoes-sobre-os-ppvs.csv)",
+     "formato": "CSV ';' ISO-8859-1, 45 linhas nacionais, 3 em MS",
+     "licenca": "CC-BY (CKAN)",
+     "atualizado_em": "2026-08-28"
+    },
+    {
+     "url": "https://www.diariooficial.ms.gov.br/ (busca: GET /api/diarios/busca-diarios?tipo=Busca%20Exata&texto=%22frase%22&dataInicial=&dataFinal=&pagina=1&registrosPorPagina=30; PDF por edicao em https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/AAAA/MM/DD/DO<n>_DD_MM_AAAA.pdf) (Portaria AGEMS 268/2024: DOE n. 11.448 de 26/03/2024, pp. 134-136)",
+     "formato": "PDF",
+     "licenca": "ato oficial",
+     "atualizado_em": "2024-03-26"
+    },
+    {
+     "url": "https://www.gov.br/transportes/pt-br/assuntos/concessoes/copy_of_BriefingCGORRotaCeluloseR320.03.2025.pdf",
+     "formato": "PDF (briefing)",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-03-20"
+    }
+   ],
+   "itens": [
+    {
+     "nome": "Posto de Pesagem de Coxim",
+     "rodovia": "BR-163",
+     "km": 734.26,
+     "municipio": "Coxim",
+     "sentido": "Crescente",
+     "tipo": "Movel",
+     "lat": -18.47102,
+     "lon": -54.71693,
+     "operador": "PANTANAL",
+     "situacao": "Ativo",
+     "esfera": "federal (ANTT)"
+    },
+    {
+     "nome": "Balanca Fixa de Coxim",
+     "rodovia": "BR-163",
+     "km": 734.91,
+     "municipio": "Coxim",
+     "sentido": "Decrescente",
+     "tipo": "Fixo",
+     "lat": -18.46564,
+     "lon": -54.7143,
+     "operador": "PANTANAL",
+     "situacao": "Ativo",
+     "esfera": "federal (ANTT)"
+    },
+    {
+     "nome": "Posto de Pesagem Fixa",
+     "rodovia": "BR-163",
+     "km": 323.7,
+     "municipio": "Rio Brilhante",
+     "sentido": "Crescente",
+     "tipo": "Fixo",
+     "lat": -21.77886,
+     "lon": -54.52612,
+     "operador": "PANTANAL",
+     "situacao": "Ativo",
+     "esfera": "federal (ANTT)"
+    }
+   ],
+   "planejados_concessoes": [
+    {
+     "concessao": "Way-306 (MS-306)",
+     "itens": "4 postos de pesagem moveis: Costa Rica, Chapadao do Sul (2), Cassilandia",
+     "prazo": "ano 5 do PER, repactuado para o ano 10 (Portaria AGEMS 268/2024, Anexo unico, Fase 2); contrato de 2020, logo ~2030",
+     "status": "nao instalados"
+    },
+    {
+     "concessao": "Way-306 mapa 2026",
+     "itens": "Postos de Fiscalizacao (futuras instalacoes): PMRv km 133+500 e AGEMS km 110+320",
+     "status": "futuro"
+    },
+    {
+     "concessao": "Rota da Celulose",
+     "itens": "8 postos de pesagem HSWIN; posto fiscal SEFAZ novo na BR-262; reforma do posto fiscal da BR-267; reforma de 6 postos PRF; 2 postos PMRv novos (MS-040 e MS-338)",
+     "status": "previsto no PER (briefing do Ministerio)"
+    }
+   ],
+   "como_obter": "Para uma lista de pesagem estadual: LAI a AGESUL/PMMS (balancas moveis e pontos de fiscalizacao); os DOE n. 10.000 (03/10/2019) e 10.017 (29/10/2019) citam 'Posto de Pesagem Movel' em documento de concessao, sem local; nao confirmei se a Way-112 tem posto previsto.",
+   "pronto_para_importar": {
+    "balancas_estaduais": false,
+    "ppv_antt_MS": true,
+    "detalhe": "PPV ANTT: CSV baixado em 18/10/2026, 3 linhas de MS (amostra em fontes/MS/antt_ppv_MS.csv), colunas concessionaria;nome_do_ppv;ano_do_pnv_snv;rodovia;uf;km_m;municipio;tipo_de_pista;sentido;situacao;data_da_inativacao;latitude;longitude;tipo_ppv. Ja entra pela fonte ANTT nacional (weigh_antt_ppv)."
+   }
+  },
+  "feriados": {
+   "resumo": "ESTADUAL: so um feriado civil estadual: 11/10 (Divisao do Estado/Criacao do Estado de MS), data fixa; base: LC federal 31/1977 c/c Leis estaduais 3.945/2010 e 10/1979 (como cita o TRT-24, Portaria 051/2025) e listado como 'feriado estadual' no DOE (calendario do CES, DOE n. 12.049). Em 2026 cai em domingo. O Dia do Servidor (28/10, Lei 1.102/1990 art. 300) e so PONTO FACULTATIVO, transferido em 2026 para 30/10 (Decreto 'E' n. 69 de 05/10/2026, DOE n. 12.297); nao e feriado civil. MUNICIPAIS: nao ha base estadual em massa. A melhor fonte limpa que achei e o anexo da Portaria TRT/GP/SGJ 051/2025 (TRT-24, 26/09/2025): 44 linhas de feriados municipais de 2026 em 22 municipios, cada uma com a lei ou decreto. O PDF tem fonte quebrada (pdftotext devolve lixo); transcrevi a partir da imagem.",
+   "fontes": [
+    {
+     "url": "https://www.trt24.jus.br/documents/20182/3304070/Portaria-TRT-GP-SGJ-n-051.2025---feriados-2026---DEJT.pdf/438e63b9-b785-ebae-34c3-fdeff397e2ab?t=1759326031937",
+     "formato": "PDF de 3 paginas (anexo 1 da portaria); texto nao extraivel; transcricao em fontes/MS/trt24_portaria_051_2025_feriados_2026_transcricao.txt",
+     "licenca": "ato oficial (DEJT 4317/2025); sem licenca declarada",
+     "atualizado_em": "2025-09-26"
+    },
+    {
+     "url": "https://www.trt24.jus.br/web/guest/agendas-e-calendarios",
+     "formato": "HTML com lista de leis municipais em PDF (Corumba, Campo Grande, Dourados, Aquidauana, Bataguassu, Sidrolandia etc.) e atos 2026 (Portaria 30/2026 'ajusta feriados para atender Lei de Mundo Novo', RAs 79, 81 e 97/2026)",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026 (paginas com ?t=)"
+    },
+    {
+     "url": "https://www.diariooficial.ms.gov.br/ (busca: GET /api/diarios/busca-diarios?tipo=Busca%20Exata&texto=%22frase%22&dataInicial=&dataFinal=&pagina=1&registrosPorPagina=30; PDF por edicao em https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/AAAA/MM/DD/DO<n>_DD_MM_AAAA.pdf) (Decreto 'E' n. 69 de 05/10/2026: DOE n. 12.297, p. 4; calendario do CES: DOE n. 12.049 de 15/01/2026, p. 61)",
+     "formato": "PDF",
+     "licenca": "ato oficial",
+     "atualizado_em": "2026-10-06"
+    },
+    {
+     "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/MS/municipios",
+     "formato": "JSON (79 municipios com id IBGE)",
+     "licenca": "dado publico IBGE",
+     "atualizado_em": "2026-10-18 (consulta)"
+    },
+    {
+     "url": "TJMS Portaria n. 983, de 04/12/2025 (DJe n. 5.775 de 12/12/2025); tjms.jus.br nao respondeu a este ambiente",
+     "formato": "nao baixado; citado pela Resolucao DPGE 379/2025 (DOE n. 12.030, pp. 183-184)",
+     "licenca": "n/a",
+     "atualizado_em": "2025-12-12"
+    }
+   ],
+   "estadual": [
+    {
+     "nome": "Divisao do Estado de Mato Grosso do Sul (Criacao do Estado)",
+     "data_base": "10-11",
+     "regra": "fixa:10-11",
+     "transferivel": false,
+     "base_legal": "LC federal 31/1977 c/c Leis estaduais 3.945/2010 e 10/1979 (segundo TRT-24); a lei estadual que fixa a data magna nao foi lida",
+     "obs": "2026: domingo; 2027: segunda-feira. Lei 9.093/1995 art. 1o II: a data magna do Estado e feriado civil. Confianca media-alta (citada por TRT-24 e DOE)."
+    },
+    {
+     "nome": "Dia do Servidor Publico estadual",
+     "data_base": "10-28",
+     "tipo": "ponto facultativo (nao feriado)",
+     "base_legal": "Lei 1.102/1990 art. 300",
+     "transferencias": {
+      "2026": "30/10/2026 (Decreto 'E' 69/2026; revoga a linha do Decreto 'E' 46 de 24/11/2025)"
+     },
+     "obs": "nao deve entrar como feriado de regra de transito"
+    },
+    {
+     "nome": "Pontos facultativos 2026 do Executivo",
+     "base_legal": "Decreto 'E' n. 46, de 24/11/2025 (nao lido)",
+     "obs": "Carnaval 16-18/02, 02/04, 20/04, 04-05/06 (Corpus Christi), 24 e 31/12 (apos 14h) aparecem como ponto facultativo no calendario do CES (DOE 12.049); nao entram como feriado."
+    }
+   ],
+   "municipais": {
+    "base_estadual": "nao existe. O DOE-MS e so do Estado; o Querido Diario (api.queridodiario.ok.org.br) e diogrande.ms.gov.br nao responderam; tjms.jus.br nao respondeu; dados abertos MS (dadosabertos.ms.gov.br) nao resolve.",
+    "como_foi_no_sudeste": "regras 'fixa:MM-DD' por municipio com a lei ou decreto citados (data/raw/feriados/regras.json), extraidas de calendario de tribunal + lei municipal; confianca baixa vira ativo=false.",
+    "plano_MS": "1) importar as 44 linhas do TRT-24 2026 (abaixo); 2) baixar as leis municipais em PDF listadas na pagina de agendas do TRT-24 para confirmar cada data (a data fixa de aniversario/padroeiro costuma vir de lei antiga, valendo todo ano); 3) completar, via decreto/lei municipal, os polos de carga sem linha no TRT-24 (Rio Verde de Mato Grosso, Sonora, Costa Rica, Selviria, Inocencia, Aparecida do Taboado, Nova Alvorada do Sul, Eldorado, Iguatemi, Caarapo, Itaquirai, Santa Rita do Pardo, Anastacio, Bonito, Miranda, Terenos, Ladario); 4) o TJMS (Portaria 983/2025) deve trazer a lista por comarca, mas o site nao respondeu.",
+    "cobertura_trt24_2026": "22 municipios, 44 linhas. Nao cobre os 79 municipios de MS.",
+    "linhas_2026": [
+     {
+      "municipio": "Corumba",
+      "ibge": 5003207,
+      "regra": "fixa:02-02",
+      "evento": "Padroeira",
+      "base_legal": "Lei 2.985/2025",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Cassilandia",
+      "ibge": 5002902,
+      "regra": "fixa:03-19",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 56/1961",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Coxim",
+      "ibge": 5003306,
+      "regra": "fixa:03-19",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 712/1993",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Ponta Pora",
+      "ibge": 5006606,
+      "regra": "fixa:03-19",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 3.153/2000",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Coxim",
+      "ibge": 5003306,
+      "regra": "fixa:04-11",
+      "evento": "Aniversario",
+      "base_legal": "Lei 216/1997",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Nova Andradina",
+      "ibge": 5006200,
+      "regra": "fixa:04-30",
+      "evento": "Aniversario",
+      "base_legal": "Lei 670/2007",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Sao Gabriel do Oeste",
+      "ibge": 5007695,
+      "regra": "fixa:05-12",
+      "evento": "Aniversario",
+      "base_legal": "Lei 273/1994",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Mundo Novo",
+      "ibge": 5005681,
+      "regra": "fixa:05-13",
+      "evento": "Aniversario",
+      "base_legal": "Lei 1.236/2021",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Fatima do Sul",
+      "ibge": 5003801,
+      "regra": "fixa:05-13",
+      "evento": "Padroeira",
+      "base_legal": "Lei 53/1967",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Navirai",
+      "ibge": 5005707,
+      "regra": "fixa:05-13",
+      "evento": "Padroeira",
+      "base_legal": "Lei 713/1994",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Jardim",
+      "ibge": 5005004,
+      "regra": "fixa:05-14",
+      "evento": "Aniversario",
+      "base_legal": "Decreto 006/2021",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Amambai",
+      "ibge": 5000609,
+      "regra": "fixa:05-24",
+      "evento": "Padroeira",
+      "base_legal": "Lei 694/1973",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Nova Andradina",
+      "ibge": 5006200,
+      "regra": "fixa:05-31",
+      "evento": "Padroeira",
+      "base_legal": "Lei 670/2007",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Maracaju",
+      "ibge": 5005400,
+      "regra": "fixa:06-11",
+      "evento": "Aniversario",
+      "base_legal": "Lei 480/1974",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Jardim",
+      "ibge": 5005004,
+      "regra": "fixa:06-13",
+      "evento": "Padroeira",
+      "base_legal": "Decreto 006/2021",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Corumba",
+      "ibge": 5003207,
+      "regra": "fixa:06-13",
+      "evento": "Retomada da cidade",
+      "base_legal": "Lei 2.985/2025",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Campo Grande",
+      "ibge": 5002704,
+      "regra": "fixa:06-13",
+      "evento": "Padroeiro (Santo Antonio)",
+      "base_legal": "Lei 3.901/2001",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Tres Lagoas",
+      "ibge": 5008305,
+      "regra": "fixa:06-15",
+      "evento": "Aniversario",
+      "base_legal": "Lei 1.283/1996",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Corumba",
+      "ibge": 5003207,
+      "regra": "fixa:06-24",
+      "evento": "Sao Joao",
+      "base_legal": "Lei 2.985/2025",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Bataguassu",
+      "ibge": 5001904,
+      "regra": "fixa:06-29",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 25/1979",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Chapadao do Sul",
+      "ibge": 5002951,
+      "regra": "fixa:06-29",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 345/2000",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Paranaiba",
+      "ibge": 5006309,
+      "regra": "fixa:07-04",
+      "evento": "Aniversario",
+      "base_legal": "Lei Complementar 49/2011",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Fatima do Sul",
+      "ibge": 5003801,
+      "regra": "fixa:07-09",
+      "evento": "Aniversario",
+      "base_legal": "Lei 53/1967",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Ponta Pora",
+      "ibge": 5006606,
+      "regra": "fixa:07-18",
+      "evento": "Aniversario",
+      "base_legal": "Lei 2.563/1989",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Paranaiba",
+      "ibge": 5006309,
+      "regra": "fixa:07-26",
+      "evento": "Padroeiro",
+      "base_legal": "Lei Complementar 49/2011",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Cassilandia",
+      "ibge": 5002902,
+      "regra": "fixa:08-03",
+      "evento": "Aniversario",
+      "base_legal": "Lei 7/1955",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Aquidauana",
+      "ibge": 5001102,
+      "regra": "fixa:08-15",
+      "evento": "Aniversario",
+      "base_legal": "Lei 19/1944",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Bataguassu",
+      "ibge": 5001904,
+      "regra": "fixa:08-15",
+      "evento": "Padroeira",
+      "base_legal": "Lei 456/1979",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Sidrolandia",
+      "ibge": 5007901,
+      "regra": "fixa:08-15",
+      "evento": "Padroeira",
+      "base_legal": "Lei 1.114/2002",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Campo Grande",
+      "ibge": 5002704,
+      "regra": "fixa:08-26",
+      "evento": "Aniversario",
+      "base_legal": "Lei 1.019/1967",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Corumba",
+      "ibge": 5003207,
+      "regra": "fixa:09-21",
+      "evento": "Aniversario",
+      "base_legal": "Lei 2.985/2025",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Rio Brilhante",
+      "ibge": 5007208,
+      "regra": "fixa:09-26",
+      "evento": "Aniversario",
+      "base_legal": "Decreto 29.230/2021",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Amambai",
+      "ibge": 5000609,
+      "regra": "fixa:09-28",
+      "evento": "Aniversario",
+      "base_legal": "Lei 694/1973",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Sao Gabriel do Oeste",
+      "ibge": 5007695,
+      "regra": "fixa:09-29",
+      "evento": "Padroeiro",
+      "base_legal": "Lei 273/1994",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Chapadao do Sul",
+      "ibge": 5002951,
+      "regra": "fixa:10-23",
+      "evento": "Aniversario",
+      "base_legal": "Lei 768/1987",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Navirai",
+      "ibge": 5005707,
+      "regra": "fixa:11-11",
+      "evento": "Aniversario",
+      "base_legal": "Lei 31/1970",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Mundo Novo",
+      "ibge": 5005681,
+      "regra": "fixa:11-27",
+      "evento": "Padroeira",
+      "base_legal": "Lei 970/2014",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Ribas do Rio Pardo",
+      "ibge": 5007109,
+      "regra": "fixa:12-08",
+      "evento": "Padroeira",
+      "base_legal": "Lei Organica do Municipio",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Rio Brilhante",
+      "ibge": 5007208,
+      "regra": "fixa:12-08",
+      "evento": "Padroeira",
+      "base_legal": "Decreto 29.230/2021 (Lei 483/1983)",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Aquidauana",
+      "ibge": 5001102,
+      "regra": "fixa:12-08",
+      "evento": "Padroeira",
+      "base_legal": "Lei 19/1944",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Dourados",
+      "ibge": 5003702,
+      "regra": "fixa:12-08",
+      "evento": "Padroeira",
+      "base_legal": "Lei 662/1967",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Bataguassu",
+      "ibge": 5001904,
+      "regra": "fixa:12-11",
+      "evento": "Aniversario",
+      "base_legal": "Lei 18/1985",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Sidrolandia",
+      "ibge": 5007901,
+      "regra": "fixa:12-11",
+      "evento": "Aniversario",
+      "base_legal": "Lei 1.114/2002",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     },
+     {
+      "municipio": "Dourados",
+      "ibge": 5003702,
+      "regra": "fixa:12-20",
+      "evento": "Aniversario",
+      "base_legal": "Lei 662/1967",
+      "ano": 2026,
+      "obs": "transcrito da Portaria TRT/GP/SGJ 051/2025 (Anexo 1, art. 2o); a data vale em 2026; para anos seguintes e lei permanente so se confirmar a lei municipal (muitas sao datas fixas por lei antiga)"
+     }
+    ]
+   },
+   "pronto_para_importar": {
+    "feriado_estadual": true,
+    "feriados_municipais": "parcial",
+    "detalhe": "Estadual: 1 regra (fixa:10-11) com base legal citada por TRT-24. Municipais: 44 regras de 2026 com codigo IBGE (prefixo 50), transcritas a olho do PDF (conferir por amostragem antes de importar; leitura visual da imagem a 100 dpi). Aviso do auditor: feriados_sudeste.py so aceita prefixos 31/32/33/35 (UF_BY_PREFIX); para MS (50) e preciso ampliar."
+   }
+  },
+  "perigosos": {
+   "resumo": "Nao achei nenhum ato estadual de restricao de produtos perigosos por trecho, area (manancial), tunel ou ponte em MS. O que existe: (a) a Resolucao SEMADE n. 9/2015 de licenciamento ambiental, que inclui a atividade 'transporte de carga perigosa' (Anexo VII; isenta 'transporte de cargas em geral, desde que nao perigosas'), alterada pela Resolucao SEMADESC n. 118/2025; (b) a regra de circulacao diurna e sem neblina/chuva do art. 12 par. 3o da Resolucao 'N' SEOP/AGESUL 001/2009 (vigencia nao confirmada); (c) o orgao ambiental e o IMASUL (Instituto de Meio Ambiente de MS), na SEMADESC. Sem tunel; pontes: ver o tema 1.",
+   "fontes": [
+    {
+     "url": "https://www.diariooficial.ms.gov.br/ (busca: GET /api/diarios/busca-diarios?tipo=Busca%20Exata&texto=%22frase%22&dataInicial=&dataFinal=&pagina=1&registrosPorPagina=30; PDF por edicao em https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/AAAA/MM/DD/DO<n>_DD_MM_AAAA.pdf) (busca 'transporte de produtos perigosos', 'carga perigosa')",
+     "formato": "PDF/JSON",
+     "licenca": "ato oficial",
+     "atualizado_em": "2026-10-16 (ultimo hit lido 2026-07-16: cursos de condutores)"
+    }
+   ],
+   "orgao_ambiental": "IMASUL (licenciamento: LIO/LP/LI/LO de 'Transporte de Cargas Perigosas'); secretaria: SEMADESC (Meio Ambiente, Desenvolvimento, Ciencia, Tecnologia e Inovacao). Em MS a rota de produtos perigosos tambem passa por fiscalizacao ANTT/PRF nas BRs.",
+   "atos": [
+    {
+     "ato": "Resolucao SEMADE n. 9, de 13/05/2015 (republicada por erro; DOE n. 8.934 Suplemento de 08/06/2015, orig. DOE 9.819 de 14/05/2015)",
+     "assunto": "licenciamento ambiental estadual; Anexo VII: Setor de Saneamento, Residuos Solidos e Transporte de Carga Perigosa; isencao 7.6.0 para cargas nao perigosas",
+     "tipo": "licenciamento do transportador (nao e restricao de via)"
+    },
+    {
+     "ato": "Resolucao SEMADESC/MS n. 118, de 22/08/2025 (DOE n. 11.925 de 28/08/2025, pp. 227-228)",
+     "assunto": "altera a Resolucao SEMADE 9/2015 (codigos 7.30.x de estacoes elevatorias de esgoto na tabela do setor que inclui carga perigosa)",
+     "tipo": "licenciamento"
+    },
+    {
+     "ato": "Resolucao 'N' SEOP/AGESUL/MS n. 001/2009, art. 12, par. 3o",
+     "assunto": "veiculo ou combinacao com produtos perigosos so circula do nascer ao por do sol e em dias e locais sem neblina ou chuva intensa",
+     "tipo": "regra de circulacao (condicionada a AET/CVC)"
+    }
+   ],
+   "lacunas": [
+    "Sem lista de trechos/areas de restricao (mananciais, pontes, travessias urbanas) estaduais; sem ato de Campo Grande lido neste tema (municipal).",
+    "Sem aviso de 'rota de perigosos' estadual; usar a regra ANTT nacional ja presente no codigo.",
+    "Atos de emergencia ambiental (IMASUL) nao localizados no DOE."
+   ],
+   "pronto_para_importar": {
+    "restricao_perigosos_estadual": false,
+    "detalhe": "Nada a importar por trecho. O art. 12 par. 3o da Res. 001/2009 pode virar so aviso textual se a vigencia for confirmada."
+   }
+  },
+  "acidentes": {
+   "resumo": "A base estadual util e o RENAEST (Senatran, dominio publico), alimentado pelo DETRAN-MS. Diferente de GO, em MS a coluna de coordenada vem PREENCHIDA com um placeholder '-0000000000' em 70.285 dos 179.527 acidentes de 2018-2026 (coordenada valida em ~50% de 2025: 12.131 de 24.365). Acidente com caminhao (caminhao, caminhao-trator, semirreboque ou reboque) em 2025: so 610 em todo o Estado, 86 em rodovia ESTADUAL, e apenas 34 desses com coordenada valida; o tipo de veiculo e 'DESCONHECIDO' em 2.374 registros de veiculo de 2025. Em rodovia estadual o endereco traz 'MS-xxx' em ~95% e km_via_acidente > 0 em 68 de 86 (79%) em 2025, entao o casamento e por rodovia+km (SRE), nao por lat/lon. DETRAN-MS tem 'Detran em Numeros' (paineis.detran.ms.gov.br, Excel/PDF; veiculos, habilitacao, exames, infracoes) e SEJUSP tem 'Estatisticas Online' (estatistica.sigo.ms.gov.br), mas nenhum dos dois respondeu a este ambiente e nao ha indicio de microdado de acidente com coordenada. As concessoes Way-306/Way-112 publicam relatorios mensais de acidentes por km (PDF) sem lat/lon.",
+   "fontes": [
+    {
+     "url": "https://dados.transportes.gov.br/dataset/renaest",
+     "formato": "ZIP mensal acumulado (529 MB, recurso 05-2026, renaest_dabertos_20260912.zip) com Acidentes (2,7 GB), Localidade, TipoVeiculo, Vitimas, CSV ';' latin-1",
+     "licenca": "Outra (Dominio Publico) segundo o CKAN",
+     "atualizado_em": "dados ate 2026-05-31; recurso publicado em 2026-10-09"
+    },
+    {
+     "url": "https://way306.com.br/servicos/estatisticas-de-acidentes/",
+     "formato": "PDF mensal 'Relatorio demonstrativo de acidentes' (data, hora, tipo, km, sentido, causa, veiculos por tipo incl. caminhao, vitimas)",
+     "licenca": "nao declarada",
+     "atualizado_em": "2026-09-08 (agosto/2026)"
+    },
+    {
+     "url": "https://www.paineis.detran.ms.gov.br (Detran em Numeros)",
+     "formato": "paineis web com exportacao Excel/PDF",
+     "licenca": "dados abertos (segundo noticia do Detran, 06/06/2025)",
+     "atualizado_em": "diario; nao acessado (403 neste ambiente)"
+    },
+    {
+     "url": "http://estatistica.sigo.ms.gov.br/ (SEJUSP, 'Estatisticas Online')",
+     "formato": "paineis por tipo de ocorrencia desde 2012",
+     "licenca": "nao declarada",
+     "atualizado_em": "nao acessado (timeout)"
+    }
+   ],
+   "renaest_ms": {
+    "acidentes_por_ano": {
+     "2018": 13324,
+     "2019": 23678,
+     "2020": 20482,
+     "2021": 19845,
+     "2022": 22056,
+     "2023": 21747,
+     "2024": 23318,
+     "2025": 24365,
+     "2026_jan_mai": 10712
+    },
+    "coordenada_valida_por_ano": {
+     "2018": 2,
+     "2019": 4186,
+     "2020": 3890,
+     "2021": 6486,
+     "2022": 8709,
+     "2023": 9917,
+     "2024": 10968,
+     "2025": 12131,
+     "2026_jan_mai": 5240
+    },
+    "acidentes_com_caminhao_ou_cavalo_ou_reboque": {
+     "2019": {
+      "total": 903,
+      "com_coord_valida": 289,
+      "estadual": 84
+     },
+     "2020": {
+      "total": 1201,
+      "com_coord_valida": 273,
+      "estadual": 73
+     },
+     "2021": {
+      "total": 1653,
+      "com_coord_valida": 518,
+      "estadual": 205
+     },
+     "2022": {
+      "total": 1696,
+      "com_coord_valida": 639,
+      "estadual": 255
+     },
+     "2023": {
+      "total": 1178,
+      "com_coord_valida": 521,
+      "estadual": 207
+     },
+     "2024": {
+      "total": 119,
+      "com_coord_valida": 26,
+      "estadual": 11
+     },
+     "2025": {
+      "total": 610,
+      "com_coord_valida": 172,
+      "estadual": 86,
+      "estadual_com_coord_valida": 34,
+      "estadual_com_km_gt_0": 68,
+      "obitos_somados": 21
+     },
+     "2026_jan_mai": {
+      "total": 128,
+      "com_coord_valida": 23,
+      "estadual": 17,
+      "estadual_com_coord_valida": 7
+     }
+    },
+    "tp_rodovia_2025_todos": {
+     "MUNICIPAL": 20799,
+     "NAO INFORMADO": 2373,
+     "ESTADUAL": 1168,
+     "FEDERAL": 25
+    },
+    "veiculos_2025": {
+     "AUTOMOVEL": 4675,
+     "DESCONHECIDO": 2374,
+     "MOTOCICLETA": 1495,
+     "CAMINHONETE": 1071,
+     "BICICLETA": 851,
+     "CAMINHAO": 429,
+     "CAMINHAO-TRATOR": 187,
+     "SEMIRREBOQUE": 122,
+     "REBOQUE": 19,
+     "ONIBUS": 144
+    },
+    "qualidade": [
+     "Coordenada '-0000000000' (placeholder) em 70.285 acidentes; coordenada valida = dentro do bbox de MS (lat -24,2..-17,0; lon -58,2..-50,9). Nenhum valor valido ficou fora do bbox.",
+     "2018 praticamente sem coordenada (2); 2024 cai para 119 acidentes de caminhao no Estado inteiro (provavel mudanca de preenchimento do tipo de veiculo, nao queda de trafego).",
+     "Em 2024, 2025 e 2026 a maioria dos registros de caminhao em rodovia estadual nao tem coordenada; o campo 'end_acidente' traz 'MS-345', 'MS 382 - GUIA LOPES DA LAGUNA' etc. e 'km_via_acidente' (4 digitos, '0000' = sem km).",
+     "tp_rodovia FEDERAL quase nao existe (25 em 2025): as BRs nao aparecem aqui; a PRF segue sendo a fonte para BR.",
+     "tipo_acidente 'NAO INFORMADO' em boa parte; vitimas por acidente somam por acidente."
+    ],
+    "amostras": "fontes/MS/renaest_ms_caminhao_estadual_2025_26_amostra.csv (103 acidentes de caminhao em rodovia estadual de 2025-26, 41 com coordenada valida); resumo em fontes/MS/renaest_ms_resumo.json"
+   },
+   "concessoes_relatorios": "Way-306: PDF mensal por ocorrencia com km, sentido, tipo, causa e contagem de veiculos por tipo; ex. agosto/2026: 7 ocorrencias em MS-306/BR-359/contorno. Way-112 publica so a pagina vazia ('Estatisticas de acidentes'). Granularidade: ocorrencia por km da concessao, sem lat/lon, agregada por mes; licenca nao declarada.",
+   "pronto_para_importar": {
+    "renaest_ms": "parcial (nao recomendado como camada de pontos)",
+    "detalhe": "Testado em 18/10/2026: ZIP de 529 MB baixado em partes de 50 MB com verificacao de tamanho (o 'curl -C -' simples gerou um arquivo corrompido), lidos Acidentes e TipoVeiculo em streaming (179.527 acidentes de MS). Com so 34 acidentes de caminhao em rodovia estadual com coordenada valida em 2025 (e 7 em 2026), a camada de pontos teria massa critica baixa; melhor como agregado por rodovia+km (68 em 2025 com km) casado ao SRE, ou pedir a base completa de BO ao DETRAN-MS/SEJUSP por LAI. Para BRs usar PRF."
+   }
+  },
+  "roubo_carga": {
+   "resumo": "Nao achei dado aberto de roubo/furto de carga de MS com coordenada nem com municipio. O Sinesp VDE (MJSP) tem a categoria 'Roubo de carga' para MS, mas com total 0 (abrangencia Estadual) e vazio (Policia Federal) em todos os meses de 2025 e de jan a ago/2026, municipio 'NAO INFORMADO': ou nao ha casos, ou nao ha preenchimento. A SEJUSP-MS tem o portal 'Estatisticas Online' (estatistica.sigo.ms.gov.br, painel por tipo de ocorrencia desde 2012, inclui 'veiculos roubados e furtados'), mas nao respondeu a este ambiente e nao confirmei se tem 'roubo de carga' separado. Para agregado util, pedir por LAI a SEJUSP/PMMS (BOs com natureza roubo/furto de carga por municipio e rodovia).",
+   "fontes": [
+    {
+     "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file (e bancovde-2026.xlsx)",
+     "formato": "XLSX (26,6 MB em 2025; 18,0 MB em 2026), aba unica; colunas uf, municipio, evento, data_referencia, agente, arma, faixa_etaria, feminino, masculino, nao_informado, total_vitima, total, total_peso, abrangencia",
+     "licenca": "nao declarada no arquivo",
+     "atualizado_em": "2025 completo; 2026 ate agosto"
+    },
+    {
+     "url": "http://estatistica.sigo.ms.gov.br/ (SEJUSP-MS)",
+     "formato": "paineis web",
+     "licenca": "nao declarada",
+     "atualizado_em": "nao acessado"
+    }
+   ],
+   "sinesp_ms": {
+    "roubo_de_carga_2025": 0,
+    "roubo_de_carga_2026_jan_ago": 0,
+    "linhas_2025": 24,
+    "municipio": "NAO INFORMADO",
+    "abrangencias": [
+     "Estadual (total 0)",
+     "Policia Federal (vazio)"
+    ],
+    "amostra": "fontes/MS/sinesp_vde_2025_roubo_carga_MS.csv"
+   },
+   "pronto_para_importar": {
+    "roubo_carga": false,
+    "detalhe": "Zero e sem municipio: nada a importar. Baixei bancovde-2025.xlsx e bancovde-2026.xlsx e filtrei uf=MS, evento='Roubo de carga'."
+   }
+  },
+  "particularidades": {
+   "resumo": "Pontos de MS que mudam a rota de caminhao e que nao vem do OSM.",
+   "itens": [
+    {
+     "tema": "Tres concessoes que misturam BR e MS",
+     "texto": "Way-306 (MS-306 + BR-359), Way-112 (MS-112 + BR-158 + BR-436) e Rota da Celulose (MS-040/338/395 + BR-262/267). A jurisdicao de transito/pedagio e estadual (AGEMS) mesmo em trechos de BR; a PRF fiscaliza as BRs. Corredor MS-040/BR-262/BR-267 liga Campo Grande ao Estado de Sao Paulo (Tres Lagoas e Bataguassu)."
+    },
+    {
+     "tema": "Rota Campo Grande-SP em 09/2026",
+     "texto": "MS-040 km 205 e 223 fechados a caminhao por obra em pontes; desvio unico pela BR-267 via BR-163 (Campo Grande-Nova Alvorada do Sul). Ponte Ayrton Senna (BR-163, PR/MS) fechada a noite (20h-04h, janela 22h30-23h30). BR-262 Porto Esperanca (ponte Rio Paraguai) pare-siga 24 h e 19 h de bloqueio total em 21-22/10/2026."
+    },
+    {
+     "tema": "Pontes de madeira",
+     "texto": "690 pontes de madeira em rodovias estaduais nao pavimentadas (SRE-MS 2026, 697 no quadro-resumo), sem limite de carga publicado; duas cairam em agosto/2026 (MS-168 Rio Taquari, com morte, e MS-455). Para caminhao pesado fora de rodovia pavimentada, tratar como risco."
+    },
+    {
+     "tema": "Rede estadual",
+     "texto": "5.541,7 km pavimentados, 5.653,9 km implantados (revestimento primario), 1.568,6 km em leito natural, 694,6 km em obras. A maior parte da malha estadual para rotas de gado/graos/cana fora das concessoes e de pista simples, e partes de IMP/LEN ficam intransitaveis com chuva (sem ato)."
+    },
+    {
+     "tema": "Balsas e travessias",
+     "texto": "Nenhuma balsa estadual com limite de carga achada. Registro historico: em 2010 a AGESUL contratava balsa no Rio Miranda (Estrada-Parque do Pantanal) com capacidade de 1 caminhao + 1 carro por travessia, na epoca com a ponte de madeira interditada (Correio do Estado, 27/01/2010). Status atual nao verificado. Travessia fluvial rodoferroviaria Rio Parana (BR-262, BR-267, BR-436, BR-163) e feita por pontes federais."
+    },
+    {
+     "tema": "AET e CVC",
+     "texto": "Res. 001/2009 (AGESUL): AET para CVC por ate 1 ano, sem limite de reboques se mesmo padrao construtivo, circulacao do nascer ao por do sol, 70 km/h, 250 m entre combinacoes >= 25 m. Nao achei portal de AET estadual nem lista de rodovias liberadas para rodotrem; no plano federal ha o SIAET/DNIT (ja na camada federal_restricoes)."
+    },
+    {
+     "tema": "Restricao de feriado (federal)",
+     "texto": "PRF: em MS so no fim de ano (24, 25, 27 e 31/12/2026, 01 e 03/01/2027), CVC/excedentes; resto dos feriados 2026 fora de MS pela Portaria DIOP/PRF 12/2026."
+    },
+    {
+     "tema": "Obras em andamento com impacto em caminhao",
+     "texto": "MS-156 e MS-295 (Amambai-Tacuru-Iguatemi-Eldorado): restauracao + terceiras faixas, R$ 236,8 milhoes, desde jan/2026. Caminhos da Celulose: 402 km de reparos emergenciais, 65 frentes de servico em feriado (siga e pare), boletim semanal em https://caminhosdacelulose.com.br/boletins/."
+    },
+    {
+     "tema": "Rodovias com hgv no OSM sem ato",
+     "texto": "Nao testado (sem PBF de MS neste ambiente). Candidatos: MS-228, MS-325, MS-184, MS-458, MS-345, MS-339, MS-340, MS-142 (as com mais OAEs no SRE, em geral nao pavimentadas): conferir highway/surface/hgv e a existencia de pontes de madeira."
+    }
+   ]
+  }
+ },
+ "pendencias": [
+  "Confirmar se a Resolucao 'N' SEOP/AGESUL 001/2009 (AET/CVC, produtos perigosos diurnos) continua em vigor e se a AGESUL publica restricao de feriado (so ha 2 atos de 2010 no DOE); LAI a AGESUL.",
+  "Coordenadas das 9 pracas estaduais (Way-306 P1-P3, Way-112 P4-P9): precisa do PBF do OSM de MS (barrier=toll_booth) ou de levantamento; Overpass nao responde deste ambiente.",
+  "Tarifas da Rota da Celulose: aguardar Anexo 11 do contrato e o inicio da cobranca (>= fev/2027); nada importar antes.",
+  "Importador automatico: os PDFs e paginas da AGESUL (SRE-MS 2026, rodovias concedidas) respondem 403 (WAF F5) por curl; usei leitor de terceiros. Testar a partir do ambiente do projeto ou obter o SRE por LAI/DNIT.",
+  "OAEs do SRE-MS: 41 de 1.005 linhas nao parseadas (observacoes); refinar o parser; capacidade de carga nao existe.",
+  "Feriados municipais: validar as 46 linhas transcritas do TRT-24 (imagem a 100 dpi) e baixar as leis municipais; completar polos de carga sem Vara; ler Portaria TJMS 983/2025 e TRT-24 30/2026 (ajuste Mundo Novo).",
+  "Lei estadual que fixa 11/10 como data magna (citada: Leis 3.945/2010 e 10/1979 e LC federal 31/1977): ler o texto.",
+  "RENAEST de MS: pedir ao DETRAN-MS/SEJUSP a base de BO de acidentes com caminhao com coordenada e rodovia/km; checar o painel 'Detran em Numeros' (403 aqui) e 'Estatisticas Online' da SEJUSP (timeout).",
+  "Roubo/furto de carga: LAI a SEJUSP/PMMS por municipio e rodovia; Sinesp mostra zero.",
+  "Status atual: MS-345 ponte do Rio Miranda (10 t ou proibicao total?), MS-040 km 205/223, MS-168 e MS-455 (ponte caida); obter comunicado oficial ou boletim semanal em 'caminhosdacelulose.com.br/boletins'.",
+  "Concessionaria de BR-262/BR-267: SRE-MS 2026 diz 'Caminhos do Pantanal', demais fontes dizem Caminhos da Celulose.",
+  "Decreto 'E' 46 de 24/11/2025 (pontos facultativos 2026 do Executivo) e Lei 1.102/1990 art. 300 nao foram lidos no texto.",
+  "Cruzamento hgv do OSM com SRE: precisa do extrato do Valhalla/PBF de MS."
+ ]
+}
