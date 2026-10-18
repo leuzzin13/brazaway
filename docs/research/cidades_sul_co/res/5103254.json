@@ -1,0 +1,85 @@
+{
+ "ibge": "5103254",
+ "nome": "Colniza",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/materia/C8250299",
+   "resultado": "lead da preparação (LC 609/2014, ISS item 11.04): ruído"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5103254 \"trânsito de caminhões\" e \"disciplina circulação veículos de carga descarga\" (AMM-MT)",
+   "resultado": "só ruído (contrato de sistema, edital); acervo AMM-MT não traz a Lei 1.046/2022 na busca"
+  },
+  {
+   "url": "https://sapl.colniza.mt.leg.br/norma/1559",
+   "resultado": "Lei Ordinária 1.046/2022 (14/10/2022), 'Disciplina a circulação de veículos de carga e operação de carga e descarga'; publicada AMM-MT 14/10/2022; sem data_vigencia/revogação"
+  },
+  {
+   "url": "https://sapl.colniza.mt.leg.br/media/sapl/public/normajuridica/2022/1559/oficio_702_pmc_gab_2022.pdf",
+   "resultado": "PDF de imagem (8 págs), lido visualmente; texto transcrito em atos/5103254/lei_1046_2022.txt"
+  },
+  {
+   "url": "legislacao.py buscar 5103254 \"1.046|1046|veículos de carga|circulação de|tonelad|PBT\" (SAPL Câmara + portal da prefeitura)",
+   "resultado": "SAPL só devolve a própria lei; sem decreto regulamentador (art. 13) nem alteração/revogação; portal da prefeitura (SPA) sem resultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lead veio da DR (acerto re-pontuado como ruído; o ato real não era o trecho anotado). Lei 1.046/2022, art. 2º: na zona urbana e distritos, em ruas e avenidas pavimentadas, exceto vias do Setor Industrial, veículos de PBT até 24 t circulam em qualquer horário; PBT acima de 24 t só das 19h às 7h (proibido 7h-19h). Aplica-se também ao serviço de carga e descarga. A lei não diz nada sobre domingos/feriados (regra tratada como todos os dias, confiança média), nem lista exceções de serviço. Art. 13 prevê decreto regulamentador: não encontrado. Setor Industrial não delimitado no texto (sem lista de vias): fica em 'trechos'/texto. Não localizei lei posterior que altere ou revogue (SAPL e busca de diário sem resultado), mas o portal da prefeitura (SPA) não é pesquisável; conferir por Câmara/AMM-MT se surgir dúvida.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "colniza_lei1046_2022_pbt24",
+   "tipo": "zona",
+   "regime": "Veículos de PBT acima de 24 t só circulam das 19h às 7h na zona urbana (ruas pavimentadas), exceto Setor Industrial",
+   "nome": "Colniza: Lei 1.046/2022, circulação e carga/descarga de veículos acima de 24 t PBT restrita ao período 19h-7h",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "07:00",
+     "to": "19:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 24
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 2º: vias que se localizam no Setor Industrial (não listadas no texto)",
+    "art. 2º: só ruas e avenidas pavimentadas",
+    "art. 2º, I: veículos de PBT até 24 t, em qualquer horário"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária 1.046, de 14/10/2022 (Colniza/MT)",
+     "artigo": "art. 2º, I e II e parágrafo único (PBT = tara + lotação); art. 12 (penalidades); art. 13 (decreto regulamentador)",
+     "url": "https://sapl.colniza.mt.leg.br/norma/1559"
+    }
+   ],
+   "vigencia_inicio": "2022-10-14",
+   "vigencia_fim": null,
+   "trechos": "Zona Urbana do Município de Colniza e Distritos, em ruas e avenidas pavimentadas, excetuadas as vias do Setor Industrial (sem lista de vias no ato)",
+   "geometria": null,
+   "status_motivo": "Ato primário lido (PDF de imagem, leitura visual). Domingos/feriados não tratados pela lei; sem decreto regulamentador achado."
+  }
+ ]
+}
