@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""legislacao.py — busca de atos normativos municipais nos sistemas de legislação do Sudeste.
+"""legislacao.py — busca de atos normativos municipais nos sistemas de legislação (Sudeste e Sul/Centro-Oeste).
 
 Uso rápido:
   python3 legislacao.py buscar <ibge> <termo>[|<termo2>...] [--json] [--max N] [--texto] [--fonte camara|prefeitura] [--principal] [--sem-wp]
