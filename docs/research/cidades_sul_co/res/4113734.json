@@ -1,72 +1,76 @@
 {
- "ibge": "4113734",
- "nome": "Luiziana",
- "uf": "PR",
- "status": "nao_achou",
- "nivel_busca": "dirigida",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://sapl.luiziana.pr.leg.br/api/norma/normajuridica/",
-   "resultado": "API SAPL abre mas a base de normas está VAZIA (0 normas): a Câmara não publica legislação ali; busca por 'caminh|veículos pesados|carga e descarga|tonelad|tráfego|trânsito|carreta' = 0, inconclusiva"
-  },
-  {
-   "url": "https://camaraluiziana.pr.gov.br (webline)",
-   "resultado": "cliente rodou: 0 anos listados nos 4 tipos (base vazia ou não lida)"
-  },
-  {
-   "url": "diariomunicipal.com.br/amp (buscar 'trânsito de caminhões','veículos pesados')",
-   "resultado": "0 resultados"
-  },
-  {
-   "url": "https://www.luiziana.pr.gov.br/",
-   "resultado": "sem cliente automático; não aberto"
-  },
-  {
-   "url": "https://overpass-api.de/api/interpreter",
-   "resultado": "FORA DO AR (conexão derrompida pelo proxy; kumi.systems e private.coffee: 500). Usados só os exemplos já anotados em pistas.osm"
-  },
-  {
-   "url": "https://sapl.luiziana.pr.leg.br",
-   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
-  },
-  {
-   "url": "https://camaraluiziana.pr.gov.br",
-   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
-  },
-  {
-   "url": "https://leismunicipais.com.br/legislacao-municipal/3342/leis-de-luiziana",
-   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/legislacao-"
-  },
-  {
-   "url": "https://www.luiziana.pr.gov.br/",
-   "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: sem cliente automático; consultar manualmente: https://www.luiziana.pr.gov.br/"
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (diarios_consolidados.py buscar --fonte amp)",
-   "resultado": "R3: 5 consultas novas ('proibido trânsito de caminhões', 'proibida circulação veículos de carga', 'peso bruto total veículos vias', 'horário carga e descarga área central', 'restrição tráfego veículos pesados'); 5 concluídas, 0 matérias distintas; nenhuma é ato de restrição de circulação de caminhões (ruído: plano diretor/uso do solo, sísmica, feira, tributos, cargos)."
-  },
-  {
-   "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
-   "resultado": "base com 0 normas; 'trânsito' na ementa = ; decretos = n/d."
-  },
-  {
-   "url": "https://www.luiziana.pr.gov.br/",
-   "resultado": "R3 home prefeitura: HTTP 403 (bloqueio/erro)"
-  },
-  {
-   "url": "https://www.luiziana.pr.leg.br:443",
-   "resultado": "R3 home camara: HTTP 200; links de legislação/diário: ../processo-legislativo/@@mesa-diretora, http://diario.municipio.uf.gov.br, http://leis.al.uf.leg.br"
-  },
-  {
-   "url": "https://luiziana.eloweb.net/portaltransparencia-api/api/leisatos",
-   "resultado": "R4 Elotech (API pública, descricaoSumula por substring; termos caminh, pesad, tonel, eixo, carreta, betoneira, bitrem, carga, tráfego/trânsito, circula, trafegar, transitar): 7 ementa(s) devolvida(s) nas entidades município e câmara, nenhuma é regra de circulação de caminhões (ruído: cargos 'Divisão de Veículos Pesados', compras, férias, crédito, conselho de trânsito). 2 entidade(s) (PREFEITURA MUNICIPAL DE LUIZIANA; CAMARA MUNICIPAL DE LUIZIANA); acervo de leis da prefeitura: 764 lei(s), exercício mais antigo 1989."
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "AMP cobre o município e não trouxe nada; portais vazios. Não conclusivo para vias do OSM (1 way unclassified sem nome). | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/legislacao-municipal/3342/leis-de-luiziana (Cloudflare 403); https://www.luiziana.pr.gov.br/ (HTTP 403); https://www.luiziana.pr.gov.br/ (sem busca automática). | R4 2026-10-18: portal Elotech luiziana.eloweb.net varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1989 (764 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem).",
- "osm_divergencias": [
-  "OSM (pistas): 1 ways hgv=no em via sem ref de rodovia; way 577859843 unclassified. Sem ato municipal localizado: pista, não regra."
- ],
- "regras_rascunho": []
+  "ibge": "4113734",
+  "nome": "Luiziana",
+  "uf": "PR",
+  "status": "nao_achou",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://sapl.luiziana.pr.leg.br/api/norma/normajuridica/",
+      "resultado": "API SAPL abre mas a base de normas está VAZIA (0 normas): a Câmara não publica legislação ali; busca por 'caminh|veículos pesados|carga e descarga|tonelad|tráfego|trânsito|carreta' = 0, inconclusiva"
+    },
+    {
+      "url": "https://camaraluiziana.pr.gov.br (webline)",
+      "resultado": "cliente rodou: 0 anos listados nos 4 tipos (base vazia ou não lida)"
+    },
+    {
+      "url": "diariomunicipal.com.br/amp (buscar 'trânsito de caminhões','veículos pesados')",
+      "resultado": "0 resultados"
+    },
+    {
+      "url": "https://www.luiziana.pr.gov.br/",
+      "resultado": "sem cliente automático; não aberto"
+    },
+    {
+      "url": "https://overpass-api.de/api/interpreter",
+      "resultado": "FORA DO AR (conexão derrompida pelo proxy; kumi.systems e private.coffee: 500). Usados só os exemplos já anotados em pistas.osm"
+    },
+    {
+      "url": "https://sapl.luiziana.pr.leg.br",
+      "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
+    },
+    {
+      "url": "https://camaraluiziana.pr.gov.br",
+      "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s)"
+    },
+    {
+      "url": "https://leismunicipais.com.br/legislacao-municipal/3342/leis-de-luiziana",
+      "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e WebFetch): https://leismunicipais.com.br/legislacao-"
+    },
+    {
+      "url": "https://www.luiziana.pr.gov.br/",
+      "resultado": "legislacao.py buscar R3 (termos caminh|carga e descarga|veículos pesados|tráfego pesado|VUC|zona de restri|toneladas): 0 ato(s); erro: sem cliente automático; consultar manualmente: https://www.luiziana.pr.gov.br/"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/pesquisar (diarios_consolidados.py buscar --fonte amp)",
+      "resultado": "R3: 5 consultas novas ('proibido trânsito de caminhões', 'proibida circulação veículos de carga', 'peso bruto total veículos vias', 'horário carga e descarga área central', 'restrição tráfego veículos pesados'); 5 concluídas, 0 matérias distintas; nenhuma é ato de restrição de circulação de caminhões (ruído: plano diretor/uso do solo, sísmica, feira, tributos, cargos)."
+    },
+    {
+      "url": "SAPL /api/norma/normajuridica/ (contagem R3)",
+      "resultado": "base com 0 normas; 'trânsito' na ementa = ; decretos = n/d."
+    },
+    {
+      "url": "https://www.luiziana.pr.gov.br/",
+      "resultado": "R3 home prefeitura: HTTP 403 (bloqueio/erro)"
+    },
+    {
+      "url": "https://www.luiziana.pr.leg.br:443",
+      "resultado": "R3 home camara: HTTP 200; links de legislação/diário: ../processo-legislativo/@@mesa-diretora, http://diario.municipio.uf.gov.br, http://leis.al.uf.leg.br"
+    },
+    {
+      "url": "https://luiziana.eloweb.net/portaltransparencia-api/api/leisatos",
+      "resultado": "R4 Elotech (API pública, descricaoSumula por substring; termos caminh, pesad, tonel, eixo, carreta, betoneira, bitrem, carga, tráfego/trânsito, circula, trafegar, transitar): 7 ementa(s) devolvida(s) nas entidades município e câmara, nenhuma é regra de circulação de caminhões (ruído: cargos 'Divisão de Veículos Pesados', compras, férias, crédito, conselho de trânsito). 2 entidade(s) (PREFEITURA MUNICIPAL DE LUIZIANA; CAMARA MUNICIPAL DE LUIZIANA); acervo de leis da prefeitura: 764 lei(s), exercício mais antigo 1989."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/pesquisar (SIGPub AMP, filtro entidade)",
+      "resultado": "R6 varredura profunda por script: 10 combinações (caminhões toneladas|caminhões proibido|pesados proibido|veículos pesados|trânsito pesado|carga toneladas|caminhões eixos|caminhões circulação|tráfego caminhões|veículos carga), paginação até esgotar/25 págs; 0 matérias únicas, 0 com título lei/decreto/portaria/resolução e trecho peso+restrição, texto baixado e regex de restrição aplicada; nenhum ato com restrição de circulação de caminhão em vias nomeadas/perímetro (só frota, ISS, sísmica, lavagem de caminhões, diretrizes de plano)."
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "AMP cobre o município e não trouxe nada; portais vazios. Não conclusivo para vias do OSM (1 way unclassified sem nome). | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://leismunicipais.com.br/legislacao-municipal/3342/leis-de-luiziana (Cloudflare 403); https://www.luiziana.pr.gov.br/ (HTTP 403); https://www.luiziana.pr.gov.br/ (sem busca automática). | R4 2026-10-18: portal Elotech luiziana.eloweb.net varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1989 (764 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem). R6 2026-10-18 (AMP profunda): faixa do acervo: Prefeitura Municipal de Luiziana (id 19065): 2015-08-20 a 2025-07-11, 22 matérias. Resultado: sem regra nova; status mantido.",
+  "osm_divergencias": [
+    "OSM (pistas): 1 ways hgv=no em via sem ref de rodovia; way 577859843 unclassified. Sem ato municipal localizado: pista, não regra."
+  ],
+  "regras_rascunho": []
 }
