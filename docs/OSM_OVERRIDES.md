@@ -32,8 +32,9 @@ local do PBF antes do build dos tiles.
 | `riodosul-elevado-jose-thome-hgv-no` | pendente | Rio do Sul/SC: `hgv=no` no Elevado José Thomé, resíduo dos decretos emergenciais de 2015 (revogação não documentada). |
 | `maracaja-alcino-de-freitas-maxweight-10` | pendente | Maracajá/SC: `maxweight=10` na R. Alcino de Freitas; a Lei 1.537/2026 foi lida com confiança baixa. |
 
-As regras do Sul/Centro-Oeste valem no próximo build dos tiles (`scripts/build-tiles-regioes.sh --swap`); cada uma faz um
-`osmium extract` no PBF inteiro, então o build fica alguns minutos mais lento.
+As ativas do Sul/Centro-Oeste (São Jerônimo, Nova Veneza) já estão nos tiles em produção desde 18/10/2026: aplicadas sobre o
+mesmo PBF (`data/osm/sse_co.osm.pbf`, agora com as correções) e tiles reconstruídos sem novo download; suíte completa
+verde nos tiles novos. Cada regra faz um `osmium extract` no PBF inteiro, então o build fica alguns minutos mais lento.
 
 Para ativar uma pendente: anexar a evidência (ato, ofício ou foto da placa), mudar o status para `ativa`, rodar
 `scripts/build-tiles.sh --swap` e a suíte.

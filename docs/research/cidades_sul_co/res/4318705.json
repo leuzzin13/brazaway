@@ -3,8 +3,8 @@
  "nome": "São Leopoldo",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "nivel_busca": "varredura_profunda_diario",
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "api.queridodiario.org.br territory_ids=4318705",
@@ -68,10 +68,14 @@
   {
    "url": "diarios_consolidados.py buscar 4318705 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
    "resultado": "acertos: proibido..=0, peso..=0, tráfego..=25, circulação..=60; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/pesquisar (toolkit/sigpub_texto.py/diarios_consolidados.SIGPub; texto integral, filtro por entidade)",
+   "resultado": "Varredura profunda R6: 10 combinações de duas palavras (caminhões toneladas, caminhões proibido, pesados proibido, veículos pesados, trânsito pesado, carga toneladas, caminhões eixos, caminhões circulação, tráfego caminhões, veículos carga) até 25 páginas; 365 matérias únicas, 205 após descartar contrato/edital/licitação/extrato/cargo etc.; texto integral baixado e regex de restrição+via aplicada: nenhum ato com restrição a caminhões em vias nomeadas/perímetro. Faixa do acervo: Prefeitura Municipal de São Leopoldo: 10001 matérias, 2012-09-06 a 2026-10-16."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem restrição de circulação de caminhões achada. Nos diários oficiais (FAMURS, desde 2012) 20 termos não trazem ato de restrição; o Plano Diretor (Lei 9.041/2019) só trata de usos geradores de interferência no tráfego e remete a decreto de parâmetros (não localizado). Fontes principais de legislação (leismunicipais e Câmara) estão bloqueadas, e leis anteriores a 2012 não foram lidas: o 'não achou' não é conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camarasaoleopoldo.rs.gov.br/. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: desconhecido@https://camarasaoleopoldo.rs.gov.br/: ERRO sem cliente automático; consultar manualmente: https://camarasaoleopol. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
+ "observacoes": "Sem restrição de circulação de caminhões achada. Nos diários oficiais (FAMURS, desde 2012) 20 termos não trazem ato de restrição; o Plano Diretor (Lei 9.041/2019) só trata de usos geradores de interferência no tráfego e remete a decreto de parâmetros (não localizado). Fontes principais de legislação (leismunicipais e Câmara) estão bloqueadas, e leis anteriores a 2012 não foram lidas: o 'não achou' não é conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camarasaoleopoldo.rs.gov.br/. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: desconhecido@https://camarasaoleopoldo.rs.gov.br/: ERRO sem cliente automático; consultar manualmente: https://camarasaoleopol. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov). R6 2026-10-18 (FAMURS profunda): varredura profunda no SIGPub/FAMURS sem ato de restrição a caminhões (365 matérias, 205 lidas por regex). Acervo: Prefeitura Municipal de São Leopoldo: 10001 matérias, 2012-09-06 a 2026-10-16. Acervo só cobre o período indicado; 'não achou' não prova que não exista regra.",
  "osm_divergencias": [
   "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight nas vias."
  ],
