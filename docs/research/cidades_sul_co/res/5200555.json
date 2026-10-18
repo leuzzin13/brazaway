@@ -1,0 +1,96 @@
+{
+ "ibge": "5200555",
+ "nome": "Alto Horizonte",
+ "uf": "GO",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/agm/materia/28B70919",
+   "resultado": "Decreto 154/2022 lido na íntegra: proíbe carretas e veículos pesados (> 10 t) nas vias e logradouros do município; exceto carga/descarga dentro do município e 6 serviços."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/agm/materia/A9ECD427",
+   "resultado": "Decreto 730/2022 lido: acrescenta par. único ao art. 2º (rotas permitidas até borracharia, postos e lavadores)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 5200555 'Decreto 154/2022' | 'veículos pesados' | 'carretas caminhões pesados' (agm)",
+   "resultado": "Só os Decretos 154 e 730/2022 são normativos; Lei Complementar 79/2023 é diretriz do plano de mobilidade; Dec. 208/2025, 482/2026 e Portaria 33/2022 são ruído (cargos, sanidade, locação). Nenhuma revogação."
+  },
+  {
+   "url": "https://leismunicipais.com.br/legislacao-municipal/1087/leis-de-alto-horizonte",
+   "resultado": "HTTP 403 (Cloudflare), não contornado."
+  }
+ ],
+ "observacoes": "Regra ativa (media): decreto municipal vigente, sem revogação encontrada. Cobre todo o município (vias municipais); confiança média porque o decreto não esclarece PBT e a abrangência territorial inclui trechos de rodovia (GO-556) que o Dec. 730 trata como via de acesso. Possível ato posterior só no portal da Câmara (leismunicipais, bloqueado).",
+ "regras_rascunho": [
+  {
+   "id": "altohorizonte_veiculos_pesados_10t",
+   "tipo": "zona",
+   "regime": "Proibição de carretas e veículos pesados acima de 10 t nas vias do município",
+   "nome": "Alto Horizonte: proibida a circulação de carretas e veículos pesados (acima de 10 t) nas vias e logradouros do município, salvo carga/descarga dentro do município",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-18",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 1º, parágrafo único do Decreto 154/2022 (carga e descarga dentro do Município)",
+   "excecoes": [
+    "Art. 1º, par. único: circulação permitida para carga e descarga dentro do Município",
+    "Art. 2º: caminhão de utilidade pública; veículo em serviço de urgência; obras e serviços de infraestrutura urbana; obras e serviços de urgência; socorro mecânico de emergência; caminhões de combustível para postos do município",
+    "Dec. 730/2022 (par. único acrescido ao art. 2º): veículos pesados podem circular pela Av. Rio Preto via Trevo Norte (acesso à DGranel) exclusivamente até a borracharia, e pela GO-556, Rua Silva Fróis, Av. José Moreira Santos, Av. Contorno e Av. Tocantins exclusivamente para chegar a postos e lavadores"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 154, de 04/02/2022 (Prefeito de Alto Horizonte), publicado no Diário Municipal de Goiás (AGM) ed. 2541 de 08/02/2022",
+     "artigo": "arts. 1º (proibição, > 10 t) e par. único, 2º (exceções), 3º (vigência na publicação)",
+     "url": "https://www.diariomunicipal.com.br/agm/materia/28B70919",
+     "nota": "Texto lido na íntegra; atos/5200555/decreto-154-2022.txt. Não diz PBT nem capacidade: 'veículos pesados, assim considerados aqueles acima de 10 toneladas' (assumido PBT)."
+    },
+    {
+     "ato": "Decreto nº 730, de 29/08/2022 (publicado em 01/09/2022, AGM ed. 2685)",
+     "artigo": "art. 1º (acrescenta par. único ao art. 2º do Dec. 154/2022)",
+     "url": "https://www.diariomunicipal.com.br/agm/materia/A9ECD427",
+     "nota": "Texto lido; atos/5200555/decreto-730-2022.txt."
+    }
+   ],
+   "vigencia_inicio": "2022-02-08",
+   "vigencia_fim": null,
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/5200555_alto_horizonte_urbano.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano de Alto Horizonte (vias municipais). O decreto fala em 'vias e logradouros do Município'; rodovias estaduais (GO-) são competência do DER e não devem entrar na zona."
+    }
+   ],
+   "nota": "Alcance territorial = todo o município, mas só vale para vias municipais; geometria a definir (zona urbana sem rodovias GO). Sem horário: proibição integral. Não se localizou revogação/alteração posterior até out/2026 (AGM; leismunicipais da Câmara dá 403)."
+  }
+ ],
+ "data": "2026-10-18",
+ "osm_divergencias": []
+}

@@ -1,0 +1,114 @@
+{
+ "ibge": "5211800",
+ "nome": "Jaraguá",
+ "uf": "GO",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/fgm/materia/F6C55C9B",
+   "resultado": "Lei 1.522/2023 lida: autoriza restrição a caminhões/carretas em vias urbanas, seg-sex 9-19h, sáb 9-14h; sem lista de vias."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/fgm/materia/38C73689",
+   "resultado": "Decreto 149/2023 lido: PBT > 25 t, mesmos horários, exceções ampliadas, pedras/calcário sem horário; sem vias."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 5211800 (restrição trânsito veículos automotores pesados | Lei 1.522 | Decreto 149/2023 | caminhão carreta perímetro urbano | rota caminhões | calcário pedras | Superintendência de Trânsito) (fgm)",
+   "resultado": "Só Lei 1.522 e Decreto 149; Plano Diretor 1.547/2023 é diretriz; nenhum decreto de rotas, alteração ou revogação."
+  },
+  {
+   "url": "https://jaragua.go.leg.br/leis/",
+   "resultado": "HTTP 200 mas lista montada por JS (NucleoGov); sem cliente"
+  },
+  {
+   "url": "https://acessoainformacao.jaragua.go.leg.br/cidadao/legislacao/decretos",
+   "resultado": "HTTP 403"
+  },
+  {
+   "url": "https://jaragua.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1doc, sem busca automática; não consultado"
+  },
+  {
+   "url": "WebSearch: Jaraguá Goiás restrição trânsito caminhões carretas decreto vias horário 25 toneladas",
+   "resultado": "Só portarias estaduais de feriado em rodovias; nada municipal"
+  }
+ ],
+ "observacoes": "Restrição real e com ato primário, mas sem vias/áreas delimitadas e sem o decreto de rotas (art. 6º da lei). Por isso regra desativada, status regra_sem_ato. Pendente: obter pelo portal da Câmara/Prefeitura (NucleoGov 403, 1doc) um decreto posterior com rotas/sinalização, ou checar em campo a sinalização.",
+ "regras_rascunho": [
+  {
+   "id": "jaragua_veiculos_pesados_25t",
+   "tipo": "zona",
+   "regime": "Restrição de caminhões e carretas acima de 25 t em vias urbanas",
+   "nome": "Jaraguá: caminhões e carretas acima de 25 t em vias urbanas (seg-sex 9h-19h, sáb 9h-14h); pedras e calcário sem horário",
+   "status": "desativada",
+   "status_motivo": "Atos vigentes (Lei 1.522/2023 e Decreto 149/2023) não delimitam vias ou áreas ('vias urbanas'); o decreto de rotas/sinalização previsto no art. 6º da lei não foi localizado. Sem perímetro não há geometria confiável.",
+   "confianca": "media",
+   "verificado_em": "2026-10-18",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "09:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 25
+     }
+    ]
+   },
+   "excecoes": [
+    "Utilidade pública; urgência/emergência; obras e serviços de infraestrutura urbana; obras e serviços de urgência; socorro mecânico",
+    "Transporte de combustível para postos do perímetro urbano; serviço público essencial por concessionárias; transporte coletivo urbano; veículos de mudança; Forças Armadas, polícias e bombeiros",
+    "Dec. 149/2023 art. 2º X-XI: carga e descarga para mercados e indústrias do perímetro urbano; transporte de produtos lácteos",
+    "Art. 2º §4º: caminhões e carretas com placas de Jaraguá/GO não são atingidos",
+    "Dec. 149/2023 art. 3º: veículos que transportam pedras e calcário: restrição ininterrupta, sem horário liberado"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.522, de 17/01/2023 (promulgada pela Presidente da Câmara; publicada FGM ed. 3009 em 13/02/2023)",
+     "artigo": "arts. 1º (autoriza restrição em vias urbanas; seg-sex 9h-19h, sáb 9h-14h), 2º (exceções), 6º (regulamentação de rotas em 90 dias)",
+     "url": "https://www.diariomunicipal.com.br/fgm/materia/F6C55C9B",
+     "nota": "Lida na íntegra: atos/5211800/lei-1522-2023.txt. Lei apenas autoriza o Executivo; não lista vias."
+    },
+    {
+     "ato": "Decreto nº 149, de 11/04/2023 (publicado FGM ed. 3049 em 12/04/2023; efeitos retroativos a 01/05/2023 segundo o art. 6º)",
+     "artigo": "art. 1º (PBT acima de 25 t, caminhão e carreta, mesmos horários), arts. 2º-3º",
+     "url": "https://www.diariomunicipal.com.br/fgm/materia/38C73689",
+     "nota": "Lido na íntegra: atos/5211800/decreto-149-2023.txt. Título fala em 'áreas de implantação' mas o texto não traz nenhuma via/área."
+    }
+   ],
+   "vigencia_inicio": "2023-05-01",
+   "vigencia_fim": null,
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/5211800_jaragua_urbano.geojson",
+     "construir": "manual",
+     "como_gerar": "Perímetro urbano de Jaraguá, quando o decreto de rotas/áreas for localizado; a Lei 1.522/2023 e o Dec. 149/2023 só dizem 'vias urbanas'."
+    }
+   ],
+   "nota": "Domingos e feriados excluídos (par. único do art. 1º). A lei fala em 'veículos pesados' sem peso; o decreto fixa 25 t (assumido PBT). Placas do município isentas (difícil de modelar na rota)."
+  }
+ ],
+ "data": "2026-10-18",
+ "osm_divergencias": []
+}

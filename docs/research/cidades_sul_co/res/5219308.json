@@ -1,0 +1,113 @@
+{
+ "ibge": "5219308",
+ "nome": "Santa Helena de Goiás",
+ "uf": "GO",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/fgm/materia/F050206F",
+   "resultado": "Lei Municipal 3.504/2026 lida na íntegra (FGM, ed. 3870, 20/07/2026): proíbe veículos de carga com PBT > 12 t na Alameda Hildebrando Domingues da Silva entre o trevo do Anel Viário e o trevo da GO-162; 3 exceções; vigência na publicação."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/fgm/materia/7296EE7A",
+   "resultado": "Mesma lei republicada pela Prefeitura (idêntica)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 5219308 'Alameda Hildebrando' e 'veículos de carga toneladas' (agm, fgm)",
+   "resultado": "Só a Lei 3.504/2026 (2 publicações); nenhuma alteração ou revogação posterior; demais acertos são licitações da Câmara."
+  },
+  {
+   "url": "https://acessoainformacao.santahelena.go.gov.br/cidadao/legislacao/portarias",
+   "resultado": "NucleoGov, não consultado (JS/403 conhecido); ato lido no diário oficial."
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter",
+   "resultado": "Connection reset; OSM não reconferido, usados os exemplos da preparação."
+  }
+ ],
+ "observacoes": "Regra ativa com ato primário (lei promulgada pela Câmara e publicada no diário oficial). Lei de 16/07/2026, sem horário (proibição integral). Não há decreto regulamentador localizado. OSM: 4 maxweight na fila (GO-164 e GO-210 são rodovias estaduais, competência DER; 2 ways sem nome, unclassified/service, ids 712694780 e 712694783, não ligados a ato).",
+ "osm_divergencias": [
+  "maxweight em GO-164 (way 396467197) e GO-210 (way 725789410): rodovias estaduais, fora da camada municipal",
+  "ways 712694780 (unclassified) e 712694783 (service) sem nome com maxweight: sem ato municipal encontrado; verificar se coincidem com a Alameda Hildebrando/Anel Viário e se o valor bate com 12 t"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "santahelena_alameda_hildebrando_12t",
+   "tipo": "via",
+   "regime": "Proibição de veículos de carga acima de 12 t em via urbana",
+   "nome": "Santa Helena de Goiás: Alameda Hildebrando Domingues da Silva (entre o trevo do Anel Viário/Plataforma Multimodal e o trevo da GO-162), veículos de carga com PBT acima de 12 t",
+   "status": "ativa",
+   "confianca": "alta",
+   "verificado_em": "2026-10-18",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 12
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º I: veículos realizando carga ou descarga dentro do perímetro urbano delimitado",
+    "Art. 2º II: serviços essenciais ao Município, devidamente comprovados",
+    "Art. 2º III: missão de interesse público, caracterizada por órgão competente"
+   ],
+   "excecao_destino_local": true,
+   "excecao_destino_local_artigo": "art. 2º, I (carga/descarga dentro do trecho delimitado)",
+   "base_legal": [
+    {
+     "ato": "Lei Municipal nº 3.504, de 16/07/2026 (Câmara Municipal de Santa Helena de Goiás), publicada no Diário Oficial dos Municípios de Goiás (FGM) ed. 3870 de 20/07/2026",
+     "artigo": "arts. 1º (proibição, PBT > 12 t, trecho), 2º (exceções), 3º (sinalização), 5º (vigência na publicação)",
+     "url": "https://www.diariomunicipal.com.br/fgm/materia/F050206F",
+     "nota": "Texto lido na íntegra; cópia em atos/5219308/lei-3504-2026.txt. Mesma lei republicada em https://www.diariomunicipal.com.br/fgm/materia/7296EE7A. Sem horário: proibição permanente, sem excetuar feriados."
+    }
+   ],
+   "vigencia_inicio": "2026-07-20",
+   "vigencia_fim": null,
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Alameda Hildebrando Domingues da Silva"
+     ],
+     "de": [
+      "Anel Viário",
+      "Plataforma Multimodal"
+     ],
+     "ate": [
+      "GO-162"
+     ],
+     "descricao": "Perímetro urbano da Alameda Hildebrando Domingues da Silva entre o trevo do Anel Viário (rotatória da Plataforma Multimodal) e o trevo da GO-162 (próximo ao Armazém Sete Ilhas)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/5219308_santa_helena.geojson",
+     "construir": "trechos"
+    }
+   ],
+   "nota": "Lei muito recente (15 semanas antes da pesquisa); sinalização (art. 3º) pode não estar instalada. Pontas do trecho dependem do OSM (nome da via e trevos)."
+  }
+ ],
+ "data": "2026-10-18"
+}

@@ -1,0 +1,51 @@
+{
+ "ibge": "4215604",
+ "nome": "Santa Rosa de Lima",
+ "uf": "SC",
+ "status": "nao_achou",
+ "nivel_busca": "varredura_consolidada",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://penaestrada.com.br/restricoes-sitemap.xml + seletor de /restricoes/ e sondagem do slug https://penaestrada.com.br/restricoes/santa-rosa-de-lima/ (leads/penaestrada.json)",
+   "resultado": "penaestrada: sem página do município (índice de 53 páginas, só Florianópolis no Sul/CO; slug sondado: status 404, 2026-10-18)"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/cities (leads/querido_diario.json, _meta.cobertos_total=187)",
+   "resultado": "Município sem diário raspado no Querido Diário (fora dos 187 com spider no Sul/CO)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (busca: /?q=<termos>&entidade=<nome>&categoria=<cat>&dataInicial=dd/mm/aaaa) (toolkit/diarios_consolidados.py; leads/diarios_consolidados.json)",
+   "resultado": "Diário Oficial dos Municípios de Santa Catarina (DOM/SC, FECAM/CIGA): 1.040 entidades em 294 dos 295 municípios; Solr com busca por termos/f — 3 consultas (OR de frases: circulação/tráfego/trânsito de caminhões, veículos pesados, veículos de carga, VUC | carga e descarga, zona de restrição, trânsito/tráfego pesado, veículo urbano de carga | caminhões/caminhão/carretas/bitrem) x categorias Leis, Decretos, Portarias, Instrução Normativa, Resoluções da Prefeitura, desde 01/01/2000 (até 200 por consulta), + varredura global de 16 termos, em 2026-10-18. Resultado consolidado: 0 acerto(s), 1 indício(s)."
+  },
+  {
+   "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
+   "resultado": "Nenhuma etiqueta contada no município."
+  }
+ ],
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (2137 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (leismunicipais, https://leismunicipais.com.br/legislacao-municipal/4420/leis-de-santa-rosa-de-lima) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra.",
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "triagem": {
+  "rodada": "R1",
+  "decisao": "direto",
+  "populacao": 2137,
+  "caminhoes": 191,
+  "diarios_que_cobrem": [
+   "domsc"
+  ],
+  "no_querido_diario": false,
+  "cobertura_minima": false,
+  "n_indicios_diario": 1,
+  "osm_so_rodovia": false,
+  "portal_nao_consultado": {
+   "sistema": "leismunicipais",
+   "orgao": "camara",
+   "url_busca": "https://leismunicipais.com.br/legislacao-municipal/4420/leis-de-santa-rosa-de-lima",
+   "cliente": false,
+   "testado": false
+  },
+  "indicios_diario": []
+ }
+}
