@@ -209,3 +209,21 @@ Não cobertos por esta ferramenta (avaliados, sem busca automatizável por aqui)
 * `../leads/diarios_consolidados.json`: 1.187 municípios (cobertos por ≥ 1 diário), **647 com ao menos um acerto** (score ≥ limiar). Por UF (no arquivo / com acerto / só indício / cobertos sem achado): SC 294/234/44/16 · PR 218/171/17/30 · RS 297/66/39/192 · GO 174/38/23/113 · MT 141/99/23/19 · MS 62/38/4/20 · DF 1/1/0/0.
 * Sem nenhum diário consolidado (`_meta.sem_diario_consolidado`): PR 181 · RS 200 · GO 72 · MS 17 · MT 1 · SC 1 · DF 0.
 * Bruto por diário e progresso: `../leads/diarios_consolidados_raw/` (`hits_<fonte>.jsonl`, `progresso_<fonte>.jsonl`, `estado.json`, `cobertura.json`, `log.txt`).
+
+---
+
+## 6. `nucleogov.py` — API pública dos diários NucleoGov (GO) — R4 2026-10-18
+
+O portal `acessoainformacao.<m>.go.gov.br` dá 403, mas quando o município usa o **diário NucleoGov**, `https://dom.<dominio>/api/...` responde JSON sem login
+(Laravel, 150 req/min): `/api/diarios` (edições, ordem decrescente), `/api/materias?search=<termo>&per_page=50&page=P` (texto integral em `texto`, `titulo`, `tipo.descricao`, `diario.data`), `/api/orgaos`.
+`/api/legislacao|leis|atos|normas|tipos` devolvem o HTML da SPA (não existem como API). A busca ignora acento.
+
+```bash
+python3 nucleogov.py descobrir 5214606            # acha dom.* e mostra a faixa do acervo (primeiro/último diário, nº de matérias)
+python3 nucleogov.py buscar 5214606 --termos "caminhões,toneladas" --saida /tmp/x.json
+python3 nucleogov.py lote ../fila_r3/R4-NUCLEOGOV-GO.json /tmp/saida --workers 8
+```
+Como módulo: `descobrir(nome, sites)`, `acervo(host)`, `buscar(host, termo)`, `varrer(host)`, `relevante(m)` (pontua: ato normativo + veículo pesado + restrição; licitação/ata/extrato rebaixa).
+
+**Resultado da varredura (82 cidades GO com portal NucleoGov na lista):** só **2** têm `dom.*` — Niquelândia (acervo 2023-04 a 2026-10, 339 edições, só licitações/atas/portarias de pessoal, nenhum ato de trânsito) e Abadia de Goiás (1 edição, 2025-11-26, 0 matérias). Nos outros 80 o host `dom.<slug>.go.gov.br` não existe (o proxy responde 502 no CONNECT).
+Os municípios com acervo desde 2018 ou antes (critério para negativo conclusivo) não apareceram: o DOM NucleoGov é recente (2023+), então `falha_de_fonte` permanece como estava. Outros diários citados nas homes: Gameleira de Goiás e Trindade (`diariomunicipal.com.br/agm/`), Caldas Novas (`caldasnovas.integrame.app.br/app/#/site/diario-oficial`), Jataí (`intranet.jatai.go.gov.br/.../diario-site.php`), Vicentinópolis (Câmara `/diariooficial`).
