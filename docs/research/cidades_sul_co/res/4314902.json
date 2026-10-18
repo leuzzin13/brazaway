@@ -1,0 +1,150 @@
+{
+  "ibge": "4314902",
+  "nome": "Porto Alegre",
+  "uf": "RS",
+  "status": "regra_sem_ato",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
+    {
+      "url": "https://prefeitura.poa.br/eptc/uso-da-publica-autorizacoes",
+      "resultado": "LIDO: seção 'Restrição da circulação de caminhões no Centro Histórico' (PBT>10 t e/ou >7 m, seg-sex 7h-19h, sáb 7h-14h; >15 t proibido em todos os horários; vias liberadas; LCH; exceções) e AET. Não cita ato normativo. Texto em atos/4314902/eptc_pagina_restricao_caminhoes_centro_historico.txt"
+    },
+    {
+      "url": "https://prefeitura.poa.br/eptc/legislacao",
+      "resultado": "LIDO: lista só Lei 8.133/1998, CTB, Lei 12.482/2018, convênios Detran e Resolução 10/2025 (licitações); nenhum ato de circulação de caminhões"
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/4314902/2011-04-04/6d02137587b003c1b52bcb62c06e28de29f0e336.txt; .../2011-03-09/51a813e142bb7a0ee20cdd34860a51ec3dbac711.txt",
+      "resultado": "LIDO: notícias do DOPA 09/03 e 04/04/2011 anunciando as regras (definidas pela EPTC com os transportadores); sem número de ato"
+    },
+    {
+      "url": "https://dopa.portoalegre.rs.gov.br (API apigateway.procempa.com.br dopa/1.1 busca-avancada, desde 02/05/2011)",
+      "resultado": "busca por título (carga e descarga, veículos pesados, restrição de circulação, Centro Histórico, caminhões, LCH, Moinhos de Vento) sem ato de restrição; a busca só indexa títulos"
+    },
+    {
+      "url": "api.queridodiario.org.br territory 4314902 (2011-2025)",
+      "resultado": "vários termos: só notícias/licitações; nenhum decreto/resolução de restrição"
+    },
+    {
+      "url": "https://leismunicipais.com.br/a/rs/p/porto-alegre; http://leismunicipa.is/icndu",
+      "resultado": "falha: 403 Cloudflare"
+    },
+    {
+      "url": "https://www.legisweb.com.br/legislacao/?id=177006",
+      "resultado": "Decreto 17.172/2011 é de motofrete (irrelevante); LegisWeb bloqueou por 'acesso anormal' e a busca é de assinantes"
+    },
+    {
+      "url": "https://camarapoa.rs.gov.br; www.camarapoa.rs.gov.br; cespro.com.br",
+      "resultado": "falha: câmara inacessível pelo proxy; CESPRO exige reCAPTCHA"
+    },
+    {
+      "url": "https://www.transportabrasil.com.br/2014/11/mais-de-cem-municipios-do-brasil-ja-criaram-restricao-ao-transito-de-caminhoes/",
+      "resultado": "pista secundária (NTC): cita restrições adicionais em Moinhos de Vento e Cidade Baixa a partir de 2014 e carga e descarga noturna no centro; não confirmadas em fonte oficial"
+    },
+    {
+      "url": "leads/penaestrada.json 4314902",
+      "resultado": "sem página (404)"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "A regra do Centro Histórico existe e é divulgada pela EPTC (fonte oficial de serviço) e pelo DOPA de 2011, mas o ATO PRIMÁRIO (decreto/resolução/portaria com número e artigo) NÃO foi localizado: a regra foi definida pela EPTC com os transportadores (DOPA 09/03/2011), fiscalização desde 02/06/2011, provavelmente regulamentação de trânsito/sinalização do órgão. Por isso a regra fica desativada (sem artigo). Divergência a notar: o DOPA 2011 dizia 'peso entre 10 e 15 t ou >7 m' proibidos nos horários e '>15 t fora de vias/horários da EPTC'; a página atual da EPTC diz '>15 t proibido em todos os horários'. Vias liberadas nos horários restritos: Av. Loureiro da Silva, Av. Luiz Englert, Av. Sarmento Leite, Av. Paulo Gama, Av. Mauá, Av. Pres. João Goulart e Túnel da Conceição. Exceções: utilidade pública (bombeiros), guincho/socorro mecânico, transporte de valores; caminhões de mudança, concreto e cargas especiais precisam de autorização especial (DOPA 2011); necessária Licença de Circulação no Centro Histórico (LCH). A AET (altura >4,40 m, largura >2,60 m, comprimento 18,60 m ou PBT >45 t) é autorização de excesso, não proibição. Perímetro do 'Centro Histórico' não definido em texto (só sinalização). Outras pistas não confirmadas: carga e descarga no centro só 21h-6h e proibida no Centro Histórico (NTC 2014); restrições Moinhos de Vento/Cidade Baixa (NTC 2014); projeto de lei de vereador de 2011/2013 sobre veículos pesados (não consta aprovado). Pendência: localizar o ato no DOPA/Câmara/CESPRO.",
+  "osm_divergencias": [
+    "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "poa_centro_historico_caminhoes",
+      "tipo": "zona",
+      "regime": "Centro Histórico",
+      "nome": "Restrição de circulação de caminhões no Centro Histórico (EPTC)",
+      "status": "desativada",
+      "status_motivo": "Ato primário (número, artigo) não localizado: regra conhecida só pela página de serviço da EPTC e por notícias do DOPA 2011; perímetro não definido em texto.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "07:00",
+          "to": "14:00"
+        }
+      ],
+      "variantes": [
+        {
+          "classe": "PBT acima de 15 t",
+          "quando": {
+            "qualquer": [
+              {
+                "campo": "pbt_t",
+                "acima": 15
+              }
+            ]
+          },
+          "janelas": [
+            {
+              "days": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "from": "00:00",
+              "to": "24:00"
+            }
+          ]
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de utilidade pública (bombeiros), guincho/socorro mecânico, transporte de valores",
+        "Licença de Circulação no Centro Histórico (LCH) para circular nos horários restritos",
+        "Vias liberadas nos horários restritos: Av. Loureiro da Silva, Av. Luiz Englert, Av. Sarmento Leite, Av. Paulo Gama, Av. Mauá, Av. Pres. João Goulart, Túnel da Conceição"
+      ],
+      "autorizacao": "LCH (EPTC); mudança, concreto e cargas especiais: autorização especial da EPTC",
+      "base_legal": [
+        {
+          "ato": "Página de serviço EPTC 'Uso da Via Pública - Autorizações' (não é ato normativo)",
+          "artigo": "seção 'Restrição da circulação de caminhões no Centro Histórico' (sem artigo)",
+          "url": "https://prefeitura.poa.br/eptc/uso-da-publica-autorizacoes"
+        },
+        {
+          "ato": "Notícia DOPA ed. 3985, 04/04/2011 (não é ato normativo)",
+          "artigo": "matéria 'Caminhões terão circulação reduzida no Centro Histórico'",
+          "url": "https://data.queridodiario.ok.org.br/4314902/2011-04-04/6d02137587b003c1b52bcb62c06e28de29f0e336.txt"
+        }
+      ],
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "geometria": []
+    }
+  ]
+}

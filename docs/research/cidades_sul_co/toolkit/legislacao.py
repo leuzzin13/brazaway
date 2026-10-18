@@ -65,6 +65,11 @@ def http(url, data=None, headers=None, jar=None, timeout=45, metodo=None, tentat
             j = out.rfind(b'\n__META__')
             meta = out[j + 9:].decode('utf-8', 'ignore').split(' ', 1) if j >= 0 else ['0', url]
             ult = Resp(int(meta[0] or 0), meta[1] if len(meta) > 1 else url, out[:j] if j >= 0 else out)
+            # Sul/CO: várias câmaras (SoftCam etc.) servem uma página "Bot Verification" a navegadores e a página real ao
+            # curl puro. Se isso acontecer, repete UMA vez identificando-se como curl (não é desafio de captcha).
+            if ult.status == 200 and b'<title>Bot Verification' in ult.body[:3000] and '-A' in args:
+                k = args.index('-A'); args[k + 1] = 'curl/8.5.0'
+                continue
             if ult.status and ult.status < 500:
                 return ult
         except subprocess.TimeoutExpired:
@@ -768,6 +773,47 @@ def c_domino(base, termo, maxn=100, texto=False):
     return {'total': len(atos), 'atos': atos[:maxn], 'obs': 'visão Domino; tipo inferido da visão'}
 
 
+def c_elotech(base, termo, maxn=100, texto=False):
+    """Elotech Oxy / eloweb — Portal da Transparência (React) com API pública sem login:
+    {origem}/portaltransparencia-api/api/leisatos?entidade=<id>&exercicio=<ano>&subAbaLeiAtos=geral&descricaoSumula=<termo>&page=&size=
+    (descricaoSumula = substring da ementa, sem diferença de maiúscula/minúscula, SENSÍVEL a acento). Cobre todas as entidades do host."""
+    o = _origem(base)
+    api = o + '/portaltransparencia-api/api'
+    r = http(api + '/entidades', headers={'Accept': 'application/json'})
+    try:
+        ents = r.json()
+    except Exception:
+        raise Erro('Elotech: /portaltransparencia-api/api/entidades não respondeu JSON em %s (status %s)' % (o, r.status if r else '?'))
+    ano = time.localtime().tm_year
+    atos, total, vistos = [], 0, set()
+    for e in ents[:6]:
+        eid = e.get('id')
+        pag = 0
+        while len(atos) < maxn:
+            q = urlencode({'entidade': eid, 'exercicio': ano, 'subAbaLeiAtos': 'geral', 'descricaoSumula': termo, 'page': pag, 'size': 100})
+            rr = http(api + '/leisatos?' + q, headers={'Accept': 'application/json'})
+            try:
+                d = rr.json()
+            except Exception:
+                break
+            if not isinstance(d, dict) or 'content' not in d:
+                break
+            total += d.get('totalElements', 0) if pag == 0 else 0
+            for n in d['content']:
+                chave = (eid, n.get('id'))
+                if chave in vistos:
+                    continue
+                vistos.add(chave)
+                det = f"{api}/leisatos/detalhes/?" + urlencode({'entidade': eid, 'id': n.get('id'), 'exercicio': n.get('exercicio') or ano})
+                atos.append(ato(tipo=n.get('natureza') or n.get('tipoDocumentoLegal') or '', numero=n.get('numero'), ano=n.get('exercicio'),
+                                data=iso_br(n.get('data') or n.get('dataPublicacao')), ementa=n.get('sumula') or n.get('descricao'), url=det,
+                                entidade=e.get('nome'), arquivos=[a.get('nomeArquivo') for a in n.get('arquivos') or []][:3]))
+            if d.get('last', True) or not d['content']:
+                break
+            pag += 1
+    return {'total': total, 'atos': atos[:maxn]}
+
+
 def c_cespro(cd, termo, maxn=100, texto=False):
     raise Erro('CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=%s) passa por reCAPTCHA e devolve 0 '
                'via API; não automatizar. Use a lista por ano no navegador/WebFetch ou outra fonte (Câmara, Querido Diário).' % cd)
@@ -798,6 +844,7 @@ CLIENTES = {
     'docman': (c_docman, 'Joomla DOCman (listagem por categoria, search em título)'),
     'portal_proprio': (c_generico, 'Portal próprio: heurístico (formulário de busca da página + regex de Lei/Decreto nº)'),
     'generico': (c_generico, 'Heurístico genérico (igual a portal_proprio)'),
+    'elotech': (c_elotech, 'Elotech Oxy/eloweb — API pública do Portal da Transparência (/portaltransparencia-api/api/leisatos, ementa)'),
     'cespro': (c_cespro, 'CESPRO — sem cliente (reCAPTCHA)'),
     'leismunicipais': (c_bloqueado, 'Leis Municipais / leis.org — Cloudflare, sem cliente'),
     'legislacaodigital': (c_legislacaodigital, 'Legislação Digital (Sino): domínio próprio funciona; www.legislacaodigital.com.br dá Cloudflare (erro explícito)'),

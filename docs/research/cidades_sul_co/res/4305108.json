@@ -1,0 +1,118 @@
+{
+  "ibge": "4305108",
+  "nome": "Caxias do Sul",
+  "uf": "RS",
+  "status": "regra_com_ato",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
+    {
+      "url": "https://data.queridodiario.ok.org.br/4305108/2025-06-04/3426566701610aac80a4cfdee5300d0ffd7cdfb7.txt",
+      "resultado": "LIDO: Diário Oficial Eletrônico de Caxias do Sul ed. extra 5427 (04/06/2025), republicação do Decreto 23.582/2025 (texto integral, arts. 1-13). Texto em atos/4305108/decreto_23582_2025.txt"
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/4305108/2025-04-25/7c62d31289bac32319b5618eeb89fd60ec81a592.txt",
+      "resultado": "Publicação original (ed. 5329, 25/04/2025); corpo do decreto igual ao republicado"
+    },
+    {
+      "url": "https://data.queridodiario.ok.org.br/4305108/2025-10-20/3438c8c2c9c69925cc68019e40598122d466ee0c.txt",
+      "resultado": "LIDO: Decreto 23.905/2025 (ed. 5770, 20/10/2025) altera o art. 12 do 23.582: vigência passa a 395 dias da publicação. Texto em atos/4305108/decreto_23905_2025.txt"
+    },
+    {
+      "url": "api.queridodiario.org.br gazettes territory 4305108 \"23.582\" / \"Decreto nº 11.699\" / \"Área de Restrição de Circulação de Caminhões\"",
+      "resultado": "Só 3 diários citam o 23.582 (25/04, 04/06, 20/10/2025); nenhuma alteração/revogação posterior até 18/10/2026 na base do Querido Diário"
+    },
+    {
+      "url": "https://caxias.rs.gov.br; https://www.caxias.rs.gov.br; https://leis.caxias.rs.gov.br",
+      "resultado": "falha: host sem resposta/recusado pelo proxy"
+    },
+    {
+      "url": "https://camaracaxias.rs.gov.br",
+      "resultado": "falha: 403"
+    },
+    {
+      "url": "https://leismunicipais.com.br/a/rs/c/caxias-do-sul/...",
+      "resultado": "falha: 403 Cloudflare (não contornado)"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/famurs (toolkit buscar 4305108)",
+      "resultado": "0 resultados (Caxias não coberta pelo FAMURS)"
+    },
+    {
+      "url": "leads/penaestrada.json 4305108",
+      "resultado": "sem página (404); só pista"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 23.582/2025 (revoga o Decreto 11.699/2004) cria a Área de Restrição de Circulação de Caminhões (ARC) no centro, interior do perímetro Rua Os Dezoito do Forte (sul), Rua Coronel Flores (oeste), Rua Vinte de Setembro (norte) e Rua Vereador Mário Pezzi (leste), conforme mapa do Anexo I (NÃO lido: anexo-mapa não está no texto). Art. 2º §2º: proibida circulação de caminhões com PBT acima de 10 t na ARC, sem janela horária (interpretado como 24 h, todos os dias; o texto não fixa horário nem exceção de feriado). Art. 4º: isentos socorro, polícia, fiscalização/operação de trânsito, ambulâncias e, em serviço ou transporte localizado dentro da área, iluminação pública, redes de comunicação, limpeza urbana, manutenção de pavimentação/drenagem/água; guincho, limpa-fossa, oxigênio, combustível e gás a granel só com autorização da SMTTM (parágrafo único). Art. 5º: carga e descarga na área central: PBT até 3,5 t livre; 3,5-10 t em vagas/espaços regulamentados e horários; >10 t só com autorização SMTTM (carga indivisível/situação especial); Art. 6º: vagas de carga e descarga regulamentadas seg-sáb 00h-11h; Art. 8º: autorização especial (concreto, material de construção, mudança). VIGÊNCIA: o art. 12 original (180 dias) foi alterado pelo Decreto 23.905/2025 para 395 dias da publicação; contados de 25/04/2025 = 25/05/2026, da republicação de 04/06/2025 = 04/07/2026; ambas anteriores a 18/10/2026, regra em vigor (adotada a data mais tardia, 04/07/2026). Sinalização é prazo do órgão (parágrafo único do art. 12), não condição de eficácia no texto. Geometria precisa depender do Anexo I (mapa) e do OSM; área efetiva = interior do perímetro (art. 2º §1º). Confiança média por: horário não explícito, mapa não lido, texto lido via espelho do Diário Oficial (Querido Diário) e não no portal da Prefeitura (bloqueado). Decreto 13.557/2007 (vagas de carga e descarga) foi revogado em 2016 (hit QD 2016-10-20, não lido). Outras regras de Caxias (anel viário, trecho de via) não encontradas.",
+  "osm_divergencias": [
+    "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "caxias_arc_centro",
+      "tipo": "zona",
+      "regime": "ARC",
+      "nome": "Área de Restrição de Circulação de Caminhões (centro, interior do Primeiro Anel Viário)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Socorro de incêndio e salvamento, polícia, fiscalização e operação de trânsito, ambulâncias (art. 4º)",
+        "Em serviço ou transporte localizado dentro da área: iluminação pública, redes de comunicação, limpeza urbana, manutenção de pavimentação/drenagem/água (art. 4º)",
+        "Guincho, limpa-fossa, oxigênio, combustível e gás a granel: somente com autorização da SMTTM (art. 4º, parágrafo único)",
+        "PBT acima de 10 t: autorização de circulação da SMTTM só para carga indivisível/situação especial justificada (art. 5º, III); concreto, material de construção e mudanças: autorização especial (art. 8º)"
+      ],
+      "autorizacao": "Autorização de circulação da Secretaria Municipal de Trânsito, Transportes e Mobilidade (SMTTM)",
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal nº 23.582, de 17/04/2025 (republicado no DOE 04/06/2025)",
+          "artigo": "arts. 2º, §§1º-2º, 4º, 5º e 12",
+          "url": "https://data.queridodiario.ok.org.br/4305108/2025-06-04/3426566701610aac80a4cfdee5300d0ffd7cdfb7.txt",
+          "nota": "espelho do Diário Oficial Eletrônico de Caxias do Sul, ed. 5427"
+        },
+        {
+          "ato": "Decreto Municipal nº 23.905, de 16/10/2025",
+          "artigo": "art. 1º (nova redação do art. 12 do 23.582: vigência em 395 dias)",
+          "url": "https://data.queridodiario.ok.org.br/4305108/2025-10-20/3438c8c2c9c69925cc68019e40598122d466ee0c.txt"
+        }
+      ],
+      "vigencia_inicio": "2026-07-04",
+      "vigencia_fim": null,
+      "nota": "Horário não fixado no texto: tratado como 24 h. Início = republicação (04/06/2025) + 395 dias; contada da publicação original (25/04/2025) seria 25/05/2026. Mapa do Anexo I não lido.",
+      "limites_texto": {
+        "sul": "Rua Os Dezoito do Forte",
+        "oeste": "Rua Coronel Flores",
+        "norte": "Rua Vinte de Setembro",
+        "leste": "Rua Vereador Mário Pezzi",
+        "area_efetiva": "interior do perímetro (art. 2º §1º)"
+      },
+      "geometria": []
+    }
+  ]
+}
