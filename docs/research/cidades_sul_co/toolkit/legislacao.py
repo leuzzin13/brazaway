@@ -778,14 +778,18 @@ def c_elotech(base, termo, maxn=100, texto=False):
     {origem}/portaltransparencia-api/api/leisatos?entidade=<id>&exercicio=<ano>&subAbaLeiAtos=geral&descricaoSumula=<termo>&page=&size=
     (descricaoSumula = substring da ementa, sem diferença de maiúscula/minúscula, SENSÍVEL a acento). Cobre todas as entidades do host."""
     o = _origem(base)
-    api = o + '/portaltransparencia-api/api'
-    r = http(api + '/entidades', headers={'Accept': 'application/json'})
-    try:
-        ents = r.json()
-    except Exception:
-        raise Erro('Elotech: /portaltransparencia-api/api/entidades não respondeu JSON em %s (status %s)' % (o, r.status if r else '?'))
+    ents = None
+    for pref in ('/portaltransparencia-api/api', '/portaltransparencia/api'):   # as duas variantes de publicação do Oxy
+        api = o + pref
+        r = http(api + '/entidades', headers={'Accept': 'application/json'}, tentativas=1)
+        try:
+            ents = r.json()
+        except Exception:
+            ents = None
+        if isinstance(ents, list):
+            break
     if not isinstance(ents, list):
-        raise Erro('Elotech: /portaltransparencia-api/api/entidades devolveu %s em %s (host sem o Portal da Transparência Oxy?)' % (str(ents)[:80], o))
+        raise Erro('Elotech: /portaltransparencia(-api)/api/entidades não respondeu lista JSON em %s (status %s)' % (o, r.status if r else '?'))
     ano = time.localtime().tm_year
     atos, total, vistos = [], 0, set()
     for e in ents[:6]:
