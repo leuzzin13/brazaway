@@ -1,89 +1,93 @@
 {
- "ibge": "4200309",
- "nome": "Agronômica",
- "uf": "SC",
- "status": "pontual",
- "nivel_busca": "dirigida",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://diariomunicipal.sc.gov.br/atos/5670719",
-   "resultado": "Pista da preparação (s/d, DECRETO Nº 046/2024). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/atos/7808563",
-   "resultado": "Pista da preparação (s/d, LEI COMPLEMENTAR Nº 215/2025 - CONTRIBUIÇÃO DE MELHORIA RUA 26 DE MAIO). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br (diarios_consolidados.py buscar 4200309, fonte domsc)",
-   "resultado": "Busca ao vivo no DOM/SC: 27 consultas (frases \"circulação/tráfego/trânsito de caminhões\", \"veículos pesados\", \"tráfego pesado\", \"carretas\", \"toneladas\", \"veículos de carga\", \"peso bruto total\", \"limite de peso ponte\", \"rota de caminhões\", \"betoneira(s)\", \"tonelagem\", \"grande porte\", \"alta temporada\", \"vias rurais chuva\" e palavras soltas \"caminhões\", \"caminhão\", \"pesados\", entre outras): 176 atos distintos retornados; 36 textos integrais (excluídos editais, contratos, extratos, atas e licitações pelo título) obtidos via getHtml e varridos por regex de restrição (proibir/vedar/restringir/limitar + caminhão/veículo pesado/de carga/PBT/tonelada/carreta/betoneira)."
-  },
-  {
-   "url": "https://agronomica.1doc.com.br/b.php?pg=o/login&n=3",
-   "resultado": "legislacao.py (1doc, prefeitura): sem cliente automático; consultar manualmente: https://agronomica.1doc.com.br/b.php?pg=o/login&n=3"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Decreto 046/2024 (27/02/2024; DOM/SC atos/5670719, lido via getHtml): proíbe a partir de 28/02/2024 o tráfego de veículos com PBT igual ou superior a 40 t, com ou sem carga, nos bairros Centro e Mosquito, em razão da interdição total da BR-470 no km 143; exceção para veículos de empresas sediadas em Agronômica ou com entrega agendada em empresa local; PM fiscaliza; desvio pela BR-282. Medida emergencial ligada à interdição da BR-470: sem prazo no decreto e sem revogação localizada na busca no DOM/SC (busca por 'revoga decreto 046', 'BR 470', 'Decreto 046/2024'); não foi possível confirmar se a BR-470 reabriu e se o decreto segue em uso. Por isso pontual, regra desativada com possibilidade de reativação. [Onda R1 DX01, classe DW.]",
- "osm_divergencias": [],
- "regras_rascunho": [
-  {
-   "id": "agronomica_dec046_2024_br470",
-   "tipo": "zona",
-   "regime": "PBT igual ou superior a 40 t nos bairros Centro e Mosquito (interdição da BR-470)",
-   "nome": "Agronômica: Decreto 046/2024 - proibido tráfego de veículos com PBT >= 40 t nos bairros Centro e Mosquito",
-   "status": "desativada",
-   "status_motivo": "Medida emergencial motivada pela interdição da BR-470 km 143 (fev/2024); sem fim previsto no ato e sem revogação localizada, mas vigência atual não confirmada. Confirmar com a prefeitura antes de ativar.",
-   "confianca": "baixa",
-   "janelas": [
+  "ibge": "4200309",
+  "nome": "Agronômica",
+  "uf": "SC",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true,
-    "qualquer": [
-     {
-      "campo": "pbt_t",
-      "acima": 39.999
-     }
-    ]
-   },
-   "excecoes": [
-    "§ 1º: veículos de empresas com sede em Agronômica/SC",
-    "§ 1º: veículos com entrega agendada em empresa com sede em Agronômica/SC"
-   ],
-   "base_legal": [
+      "url": "https://diariomunicipal.sc.gov.br/atos/5670719",
+      "resultado": "Pista da preparação (s/d, DECRETO Nº 046/2024). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
+    },
     {
-     "ato": "Decreto municipal 046/2024, de 27/02/2024 (Agronômica/SC)",
-     "artigo": "art. 1º e § 1º (exceção local); art. 2º (rota alternativa pela BR-282)",
-     "url": "https://diariomunicipal.sc.gov.br/atos/5670719"
-    }
-   ],
-   "vigencia_inicio": "2024-02-28",
-   "trechos": [
+      "url": "https://diariomunicipal.sc.gov.br/atos/7808563",
+      "resultado": "Pista da preparação (s/d, LEI COMPLEMENTAR Nº 215/2025 - CONTRIBUIÇÃO DE MELHORIA RUA 26 DE MAIO). Texto integral obtido via DOM/SC getHtml e varrido (regex de restrição a caminhões/veículos pesados): ver observações para a conclusão."
+    },
     {
-     "inciso": "art. 1º",
-     "via": [
-      "bairro Centro",
-      "bairro Mosquito"
-     ],
-     "descricao": "Vias dos bairros Centro e Mosquito de Agronômica (sem lista de ruas).",
-     "aproximado": true
+      "url": "https://diariomunicipal.sc.gov.br (diarios_consolidados.py buscar 4200309, fonte domsc)",
+      "resultado": "Busca ao vivo no DOM/SC: 27 consultas (frases \"circulação/tráfego/trânsito de caminhões\", \"veículos pesados\", \"tráfego pesado\", \"carretas\", \"toneladas\", \"veículos de carga\", \"peso bruto total\", \"limite de peso ponte\", \"rota de caminhões\", \"betoneira(s)\", \"tonelagem\", \"grande porte\", \"alta temporada\", \"vias rurais chuva\" e palavras soltas \"caminhões\", \"caminhão\", \"pesados\", entre outras): 176 atos distintos retornados; 36 textos integrais (excluídos editais, contratos, extratos, atas e licitações pelo título) obtidos via getHtml e varridos por regex de restrição (proibir/vedar/restringir/limitar + caminhão/veículo pesado/de carga/PBT/tonelada/carreta/betoneira)."
+    },
+    {
+      "url": "https://agronomica.1doc.com.br/b.php?pg=o/login&n=3",
+      "resultado": "legislacao.py (1doc, prefeitura): sem cliente automático; consultar manualmente: https://agronomica.1doc.com.br/b.php?pg=o/login&n=3"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4200309 \"revoga decreto 046/2024\" / \"BR-470 liberada tráfego pesado\"",
+      "resultado": "0 e ruído de decretos orçamentários"
     }
-   ],
-   "nota": "\"igual ou superior a 40 t\" representado por acima de 39,999 t (o schema só tem operador \"acima\")."
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 046/2024 (27/02/2024; DOM/SC atos/5670719, lido via getHtml): proíbe a partir de 28/02/2024 o tráfego de veículos com PBT igual ou superior a 40 t, com ou sem carga, nos bairros Centro e Mosquito, em razão da interdição total da BR-470 no km 143; exceção para veículos de empresas sediadas em Agronômica ou com entrega agendada em empresa local; PM fiscaliza; desvio pela BR-282. Medida emergencial ligada à interdição da BR-470: sem prazo no decreto e sem revogação localizada na busca no DOM/SC (busca por 'revoga decreto 046', 'BR 470', 'Decreto 046/2024'); não foi possível confirmar se a BR-470 reabriu e se o decreto segue em uso. Por isso pontual, regra desativada com possibilidade de reativação. [Onda R1 DX01, classe DW.] | R3 2026-10-18: DOM/SC reconsultado (\"revoga decreto 046/2024\"; \"BR-470 liberada\"): sem revogação nem notícia de reabertura. Dec. 046/2024 é motivado pela interdição da BR-470 (condicionada/emergencial): permanece desativado.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "agronomica_dec046_2024_br470",
+      "tipo": "zona",
+      "regime": "PBT igual ou superior a 40 t nos bairros Centro e Mosquito (interdição da BR-470)",
+      "nome": "Agronômica: Decreto 046/2024 - proibido tráfego de veículos com PBT >= 40 t nos bairros Centro e Mosquito",
+      "status": "desativada",
+      "status_motivo": "Medida emergencial motivada pela interdição da BR-470 km 143 (fev/2024); sem fim previsto no ato e sem revogação localizada, mas vigência atual não confirmada. Confirmar com a prefeitura antes de ativar.",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 39.999
+          }
+        ]
+      },
+      "excecoes": [
+        "§ 1º: veículos de empresas com sede em Agronômica/SC",
+        "§ 1º: veículos com entrega agendada em empresa com sede em Agronômica/SC"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 046/2024, de 27/02/2024 (Agronômica/SC)",
+          "artigo": "art. 1º e § 1º (exceção local); art. 2º (rota alternativa pela BR-282)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5670719"
+        }
+      ],
+      "vigencia_inicio": "2024-02-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "bairro Centro",
+            "bairro Mosquito"
+          ],
+          "descricao": "Vias dos bairros Centro e Mosquito de Agronômica (sem lista de ruas).",
+          "aproximado": true
+        }
+      ],
+      "nota": "\"igual ou superior a 40 t\" representado por acima de 39,999 t (o schema só tem operador \"acima\")."
+    }
+  ]
 }
