@@ -1,0 +1,75 @@
+{
+ "ibge": "4306403",
+ "nome": "Dois Irmãos",
+ "uf": "RS",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.doisirmaos.rs.leg.br/api/norma/normajuridica/ (caminh|tráfego|trânsito|pesad|peso...)",
+   "resultado": "62 normas; só Leis 1.225/1994 e 1.228/1994 tratam de caminhões em via (estacionamento)"
+  },
+  {
+   "url": "https://sapl.doisirmaos.rs.leg.br/media/sapl/public/normajuridica/1994/1168/1168_texto_integral.pdf",
+   "resultado": "Lido (OCR)"
+  },
+  {
+   "url": "https://sapl.doisirmaos.rs.leg.br/media/sapl/public/normajuridica/1994/1176/1176_texto_integral.pdf",
+   "resultado": "Lido (OCR)"
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
+   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+  }
+ ],
+ "observacoes": "Só achado: Lei 1.225/1994 alterada pela Lei 1.228/1994, que proíbe ESTACIONAMENTO de caminhões e ônibus na Av. São Miguel (Av. Irineu Becker até R. Berlim), 14h-19h em dias úteis e 8h-19h sábados/domingos. É estacionamento, não circulação: não entra como regra de roteamento. Sem revogação vista no SAPL (ementa), mas não verificada. Os 2 ways OSM hgv=no são footway (irrelevante). Nenhum ato de circulação/peso encontrado nas 62 normas do SAPL que casaram os termos. QD nível 3 sem acertos.",
+ "osm_divergencias": [
+  "OSM hgv=no em 2 footways sem nome: sem relação com ato."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "4306403_lei1225_estac_av_sao_miguel",
+   "tipo": "via",
+   "regime": "Proibição de estacionamento de caminhões e ônibus",
+   "nome": "Dois Irmãos: estacionamento de caminhões e ônibus na Av. São Miguel (Leis 1.225/1994 e 1.228/1994)",
+   "status": "desativada",
+   "status_motivo": "Trata de estacionamento, não de circulação; não afeta roteamento",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "14:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6,
+      7
+     ],
+     "from": "08:00",
+     "to": "19:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.228, de 26/04/1994 (nova redação do art. 1º da Lei 1.225/1994)",
+     "artigo": "art. 1º",
+     "url": "https://sapl.doisirmaos.rs.leg.br/norma/1176"
+    }
+   ],
+   "trechos": "Av. São Miguel entre Av. Irineu Becker e Rua Berlim",
+   "geometria": null
+  }
+ ]
+}

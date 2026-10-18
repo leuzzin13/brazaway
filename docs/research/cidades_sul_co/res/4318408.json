@@ -1,0 +1,171 @@
+{
+ "ibge": "4318408",
+ "nome": "São Jerônimo",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.saojeronimo.rs.leg.br/api/norma/normajuridica/ (ementa peso|trânsito|caminh|4.274)",
+   "resultado": "Achou só o Decreto 4.274/2010; nenhum ato modificador"
+  },
+  {
+   "url": "https://sapl.saojeronimo.rs.leg.br/media/sapl/public/normajuridica/2010/244/244_texto_integral.pdf",
+   "resultado": "Lido (PDF imagem; OCR + conferência visual pág. 1)"
+  },
+  {
+   "url": "https://www.saojeronimo.rs.gov.br/",
+   "resultado": "HTTP 403"
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
+   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+  }
+ ],
+ "observacoes": "Decreto 4.274/2010 fixa limites de PBT nas vias urbanas (10 t vias locais/coletoras; 15 t e 30 t em vias listadas), peso por eixo 5 t, largura 2,60 m, altura 4,60 m, comprimento 14 m (não articulado) e 20 m (articulado). SAPL da Câmara só tem esse decreto sobre o tema; site da prefeitura (www.saojeronimo.rs.gov.br) dá 403 e não há diário consolidado, então alteração/revogação posterior não pôde ser descartada (confiança média). Os 261 ways OSM com maxweight (10/30) refletem este decreto. Limites de dimensão e peso por eixo não foram transcritos como regra por serem (em essência) os do CTB; o art. 1º III diz 5 t por eixo (conferido na imagem).",
+ "osm_divergencias": [
+  "OSM Rua General Osório maxweight=10, mas o Decreto 4.274 dá 30 t em toda a extensão.",
+  "OSM Rua Antônio de Carvalho maxweight=10, mas o decreto dá 15 t em toda a extensão.",
+  "OSM Rua Doutor José Athanásio/Barão do Rio Branco 30 t: coerente com o decreto (Av. Dr. José Athanásio e trecho da Av. Rio Branco).",
+  "Muitos ways OSM (261) em vias locais com 10 t: coerente com o inciso I do art. 2º; conferir se algum esteja em via fora do perímetro urbano."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "4318408_dec4274_pbt10_locais",
+   "tipo": "via",
+   "regime": "Limite de PBT 10 t",
+   "nome": "São Jerônimo: PBT máx. 10 t nas vias locais e coletoras (Dec. 4.274/2010, art. 2º, I)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
+     "artigo": "art. 2º",
+     "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+    }
+   ],
+   "trechos": "Vias locais e coletoras do município (exceto as listadas nos incisos II e III)",
+   "geometria": null,
+   "vigencia_inicio": "2010-09-15"
+  },
+  {
+   "id": "4318408_dec4274_pbt15_15t",
+   "tipo": "via",
+   "regime": "Limite de PBT 15 t",
+   "nome": "São Jerônimo: PBT máx. 15 t (Dec. 4.274/2010, art. 2º, II)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 15
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
+     "artigo": "art. 2º",
+     "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+    }
+   ],
+   "trechos": "Av. Ramiro Barcelos (toda); Av. Rio Branco entre R. Flores da Cunha e R. Marechal Floriano; R. Antônio de Carvalho (toda)",
+   "geometria": null,
+   "vigencia_inicio": "2010-09-15"
+  },
+  {
+   "id": "4318408_dec4274_pbt30_30t",
+   "tipo": "via",
+   "regime": "Limite de PBT 30 t",
+   "nome": "São Jerônimo: PBT máx. 30 t (Dec. 4.274/2010, art. 2º, III)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 30
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 4.274, de 15/09/2010 (São Jerônimo)",
+     "artigo": "art. 2º",
+     "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+     "nota": "Texto lido (PDF imagem; OCR conferido visualmente na pág. 1): atos/4318408/decreto-4274-2010.txt. Revoga o Decreto 4.270/2010."
+    }
+   ],
+   "trechos": "R. Flores da Cunha entre Av. Rio Branco e atracadouro da balsa (travessia São Jerônimo x Triunfo); Av. Rio Branco entre R. Flores da Cunha e Av. Dr. José Athanásio; Av. Dr. José Athanásio (toda); R. Gal. Osório (toda); R. Sen. Salgado Filho entre R. Gal. Osório e R. Rafael Athanásio; R. Rafael Athanásio entre R. Sen. Salgado Filho e R. Flores da Cunha; Av. Maurício Cardoso (toda); R. Dona Délia Drebes (toda); R. Marechal Floriano (toda)",
+   "geometria": null,
+   "vigencia_inicio": "2010-09-15"
+  }
+ ]
+}

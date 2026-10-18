@@ -1,0 +1,140 @@
+{
+ "ibge": "4319505",
+ "nome": "São Sebastião do Caí",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br/api/norma/normajuridica/ (ementa 'caminh|pesad|trânsito|eixos')",
+   "resultado": "Achou Lei 3.232/2010, 4.145/2019, 4.378/2021 e 3.844/2015"
+  },
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br/media/sapl/public/normajuridica/2010/613/613_texto_integral.pdf",
+   "resultado": "Lido (OCR). Art. 1º-7º"
+  },
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br/media/sapl/public/normajuridica/2021/4931/lei_4.378_-_2021.pm102.cm380.dig..pdf",
+   "resultado": "Lido (OCR)"
+  },
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br/media/sapl/public/normajuridica/2019/4684/lei_4.145_-_2019.pm043.cm107.dig.ok.pdf",
+   "resultado": "Lido (OCR)"
+  },
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br/media/sapl/public/normajuridica/2015/416/416_texto_integral.pdf",
+   "resultado": "Lido (OCR)"
+  },
+  {
+   "url": "diariomunicipal.com.br/famurs via diarios_consolidados.py buscar 4319505 [lead]",
+   "resultado": "lead sem acertos (famurs)"
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
+   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+  }
+ ],
+ "observacoes": "Lei 3.232/2010 proíbe veículos pesados na zona central; a Lei 4.378/2021 mudou o limite para mais de 4 eixos e redefiniu o quadrilátero. SAPL da Câmara não registra alteração/revogação posterior (busca por ementa '3.232': só 4.145/2019 e 4.378/2021); prefeitura (CESPRO, reCAPTCHA) não consultada, por isso confiança média. Textos em PDF-imagem, lidos por OCR (conferir números: '04 eixos', 'Av. Dr. Bruno Cassel'). A Lei 3.844/2015 (caminhões de mineração) fica desativada: depende do tipo de carga e de decreto de regulamentação não localizado. Exceção do art. 2º: coleta/descarregamento de mercadorias e serviços ao comércio local, comprovada por nota fiscal.",
+ "osm_divergencias": [
+  "OSM marca hgv=no em Rua 13 de Maio, Rua Pinheiro Machado e outras (5 vias) e maxweight em 1: a lei só restringe veículos com mais de 4 eixos na zona central e permite carga/descarga com nota fiscal; hgv=no total diverge do ato. Conferir se essas ruas estão no quadrilátero (Rio Caí, Av. Dr. Bruno Cassel, R. João Pereira, R. Cel. Guimarães, R. Tiradentes)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "4319505_lei3232_zona_central",
+   "tipo": "zona",
+   "regime": "Proibição de veículos pesados com mais de 4 eixos na zona central",
+   "nome": "São Sebastião do Caí: zona central, veículos com mais de 4 eixos (Lei 3.232/2010 c/ Lei 4.378/2021)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 2º: veículos que fazem coleta e descarregamento de mercadorias ou prestação de serviços ao comércio local, com necessidade comprovada por nota fiscal ou similar"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.232, de 24/08/2010 (São Sebastião do Caí)",
+     "artigo": "art. 1º (redação dada pelo art. 1º da Lei 4.378/2021); art. 2º (exceção)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/613",
+     "nota": "Texto lido (PDF imagem, OCR): atos/4319505/lei-3232-2010.txt"
+    },
+    {
+     "ato": "Lei municipal 4.378, de 08/12/2021",
+     "artigo": "art. 1º (nova redação do art. 1º da Lei 3.232/2010: mais de 4 eixos; quadrilátero com Av. Dr. Bruno Cassel e Rua Tiradentes); art. 2º (revoga o art. 3º, licença especial)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4931",
+     "nota": "atos/4319505/lei-4378-2021.txt (OCR)"
+    },
+    {
+     "ato": "Lei municipal 4.145, de 16/07/2019",
+     "artigo": "art. 1º (altera o art. 3º da Lei 3.232/2010; o art. 3º foi depois revogado pela Lei 4.378/2021)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4684",
+     "nota": "atos/4319505/lei-4145-2019.txt (OCR)"
+    }
+   ],
+   "trechos": "Todas as ruas dentro do quadrilátero formado pelo Rio Caí, Av. Dr. Bruno Cassel, Rua João Pereira, Rua Coronel Guimarães e Rua Tiradentes",
+   "geometria": null,
+   "vigencia_inicio": "2021-12-08"
+  },
+  {
+   "id": "4319505_lei3844_mineracao",
+   "tipo": "zona",
+   "regime": "Caminhões de mineração com mais de 2 rodados traseiros",
+   "nome": "São Sebastião do Caí: caminhões com mais de 2 rodados traseiros que transportam material de mineração extraído no município (Lei 3.844/2015)",
+   "status": "desativada",
+   "status_motivo": "Restrição vale só para carga de mineração do município (carga não modelável em alvo) e depende de decreto de regulamentação (art. 3º) não localizado; carga máx. 10 m3",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.844, de 10/11/2015",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/416"
+    }
+   ],
+   "trechos": "Vias públicas do município (todas)",
+   "geometria": null
+  }
+ ]
+}

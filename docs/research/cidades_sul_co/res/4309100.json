@@ -1,0 +1,52 @@
+{
+ "ibge": "4309100",
+ "nome": "Gramado",
+ "uf": "RS",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": true,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.gramado.rs.leg.br/api/norma/normajuridica/",
+   "resultado": "0 resultados para trânsito/caminhões (acervo SAPL quase vazio)"
+  },
+  {
+   "url": "diariomunicipal.com.br/famurs via diarios_consolidados.py buscar 4309100 [circulação de caminhões; trânsito de caminhões; veículos pesados; toneladas]",
+   "resultado": "0 resultados"
+  },
+  {
+   "url": "https://gramado.atende.net/ ; https://leismunicipais.com.br/camara/rs/gramado",
+   "resultado": "captcha / Cloudflare, não consultados"
+  },
+  {
+   "url": "WebSearch: Gramado decreto proíbe circulação de caminhões Av. Borges de Medeiros",
+   "resultado": "nenhum resultado de Gramado"
+  },
+  {
+   "url": "https://overpass-api.de/api/interpreter (e kumi.systems, private.coffee)",
+   "resultado": "falha: HTTP 500 / connection reset; usados os exemplos de osm_hints_por_municipio.json e das pistas do lote"
+  }
+ ],
+ "observacoes": "OSM marca hgv=no + goods=yes em ~22 ways e maxweight em 16 (Av. Borges de Medeiros, R. Pedro Benetti, Av. das Hortênsias, R. Fredolino Guilherme Bier, R. Emílio Sorgetz access=destination): sugere restrição de circulação de caminhões no centro, sem ato localizado. SAPL da Câmara tem poucas normas (API sem resultado para 'trânsito'), FAMURS sem acertos, prefeitura em Atende.net (captcha) e leismunicipais (Cloudflare). 1 WebSearch sem resultado de Gramado. Falha de fonte: não conclusivo.",
+ "osm_divergencias": [
+  "~22 ways hgv=no/goods=yes e 16 maxweight em Gramado sem ato primário localizado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "4309100_osm_centro",
+   "tipo": "via",
+   "regime": "hgv=no (OSM)",
+   "nome": "Gramado: Av. Borges de Medeiros, R. Pedro Benetti, Av. das Hortênsias, R. Fredolino Guilherme Bier (só OSM)",
+   "status": "desativada",
+   "status_motivo": "Apenas etiquetas OSM (hgv=no, goods=yes); sem ato primário",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [],
+   "trechos": "Conforme ways OSM 220917679, 312408398/399/403, 419486824, 493160746",
+   "geometria": null
+  }
+ ]
+}
