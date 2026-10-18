@@ -4,7 +4,7 @@ Rodar (na imagem do importador):
   docker run --rm -v $(pwd)/importers:/app --entrypoint python truck-router-importer -m unittest tests.test_descanso_postos -v
 """
 from __future__ import annotations
-import pathlib, sys, unittest
+import io, pathlib, sys, unittest, zipfile
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
@@ -67,6 +67,24 @@ class PmqcPositions(unittest.TestCase):
         self.assertEqual(postos_anp._decimais('-22,120'), 2)
         self.assertEqual(postos_anp._decimais('-18.54224638'), 8)
         self.assertEqual(postos_anp._decimais('-22'), 0)
+
+
+class PmqcArquivos(unittest.TestCase):
+    """A página do PMQC passou a publicar um zip por ano fechado e um por mês do ano corrente (antes: CSV mensal)."""
+
+    def test_periodo(self):
+        b = 'https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/pmqc/'
+        self.assertEqual(postos_anp._pmqc_periodo(b + 'pmqc_2026_08.zip'), (2026, 8, 1))
+        self.assertEqual(postos_anp._pmqc_periodo(b + 'pmqc_2025.zip'), (2025, 12, 12))
+        self.assertEqual(postos_anp._pmqc_periodo(b + '2024/pmqc_2024_03.csv'), (2024, 3, 1))
+        self.assertIsNone(postos_anp._pmqc_periodo(b + 'pmqc-metadados.pdf'))
+
+    def test_csv_dentro_do_zip(self):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, 'w') as z:
+            z.writestr('pmqc_2026_08.csv', '﻿Uf;CnpjPosto\nPR;1\n')
+            z.writestr('leiame.txt', 'x')
+        self.assertEqual(postos_anp._pmqc_textos(buf.getvalue(), 'pmqc/pmqc_2026_08.zip'), ['Uf;CnpjPosto\nPR;1\n'])
 
 
 class PpdValidade(unittest.TestCase):
