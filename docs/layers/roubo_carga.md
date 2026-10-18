@@ -132,3 +132,21 @@ condição, por isso **não há importador nem aviso** para esses estados.
   já convertido. A API precisa de um caminho sem `periodo`, com aviso pelo total e o texto "a fonte não informa o horário".
 - MG: importador `roubo_carga_sejusp_mg` com roubo **e** furto de carga por município (malha municipal do IBGE), aviso por
   faixa do dia (há hora) e texto "no município", não "na região". Conferir a soma anual contra o Sinesp.
+
+## Sul e Centro-Oeste (PR, SC, RS, GO, MT, MS, DF): sem fonte utilizável (não implementado)
+
+Pesquisa de 18/10/2026 (`docs/research/estados_sul_co/<UF>.json`, tema `roubo_carga`, verificada). **Nenhuma das 7 UFs publica
+roubo ou furto de carga com coordenada**, então nada entra na camada (a camada é de células de 1 km por faixa do dia: um
+agregado sem posição não serve para avisar na rota, e nenhum registro individual pode sair do importador).
+
+| UF | O que existe | Decisão |
+|---|---|---|
+| RS | SSP/RS publica, por força da Lei Estadual 15.610/2021, microdados mensais de BO (um por fato) com data, hora, município, tipo de local e bairro, **sem coordenada e sem rodovia**. Duas categorias de carga: "FURTO DE CARGA EM CAMINHAO" e "ROUBO A MOTORISTA DE CARGA DE CAMINHAO" (45 e 20 casos em jan-set/2026 no estado todo; 11 em Porto Alegre, 11 em Rio Grande, 6 em Canoas; o resto de roubo de veículo/outros pode conter carga) | **Pendente**: só daria um agregado por município e mês (~65 casos em 9 meses), sem posição. Mesmo padrão de MG/RJ: não implementado. Se for feito, usar o município como unidade (texto "no município") e conferir a categoria "roubo a motorista de carga" |
+| PR | Relatório anual da SESP/CAPE (PDF, fonte BOU) por município e tipo de ambiente/veículo, **sem categoria carga**; painel Qlik sem download | Sem fonte |
+| SC | SSP-SC só publica o boletim mensal agregado (roubo e furto totais, sem categoria carga) | Sem fonte |
+| GO | Procarga-Goiás (Decreto 8.251/2014) manda comunicar à DECAR, sem divulgação; nenhum painel de estatística | Sem fonte; pedir por LAI à SSP-GO/DECAR (BOs por município e rodovia) |
+| MT, MS, DF | Só o Sinesp VDE (MJSP) por UF e mês, município "NÃO INFORMADO": MT 50 casos em 2025, DF 5, MS 0 | Sem fonte (irrelevante para a rota) |
+
+O Sinesp VDE (federal) é o único agregado nacional, mas só por UF (RJ 3.777, SP 3.470 em 2025; SC 13; GO 10), sem local: não
+vira camada. Por isso o texto da camada diz que ela cobre só o estado de SP e que ausência de área fora de SP não significa
+ausência de risco.

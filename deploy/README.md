@@ -34,14 +34,16 @@ Nunca no Lovable e nunca no chat. No Lovable entram apenas a URL do Supabase e a
 
 ## 2. API + Valhalla (servidor)
 
-Máquina mínima: 4 vCPU, 8 GB de RAM, 40 GB de disco (PBF do Sudeste ~0,9 GB, tiles ~1,1 GB, mais o build). Use
-`./scripts/build-tiles.sh` em vez de só `docker compose up valhalla`: sem as correções locais do OSM, o Rio volta
-a desviar caminhão por uma regra suspensa.
+Máquina mínima: 4 vCPU, 16 GB de RAM, 40 GB de disco. Cobertura: Sudeste + Sul + Centro-Oeste (PBF fundido ~1,6 GB,
+tiles ~2,1 GB; o build usa ~8 GB temporários). Use `./scripts/build-tiles-regioes.sh --swap` em vez de só
+`docker compose up valhalla`: ele baixa os 3 extratos, aplica as correções locais do OSM (sem elas o Rio volta a
+desviar caminhão por uma regra suspensa) e gera um PBF único sem duplicatas de divisa (PBF regionais lidos juntos
+quebram o grafo na divisa entre estados).
 
 ```bash
 git clone https://github.com/leuzzin13/brazaway && cd brazaway
-./scripts/build-tiles.sh --swap       # 1ª vez: baixa o OSM do Sudeste, aplica as correções locais (data/osm-overrides)
-                                      # e gera os tiles (1–2 h com 4 vCPU); o --swap sobe o Valhalla com eles
+./scripts/build-tiles-regioes.sh --swap   # 1ª vez: baixa Sudeste+Sul+Centro-Oeste, correções locais, PBF único
+                                          # (~1 h de deduplicação) e tiles (~15 min); o --swap sobe o Valhalla com eles
 cd api && npm ci && npm run build
 ```
 

@@ -1,0 +1,68 @@
+{
+ "ibge": "4101804",
+ "nome": "Araucária",
+ "uf": "PR",
+ "status": "nao_achou",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4101804",
+   "resultado": "Município sem spider no QD (nível 1; 0 diários para 8 termos)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (toolkit, fonte amp)",
+   "resultado": "Araucária não é coberta pelo AMP (0 resultados em 6 termos: caminhões circulação proibido, carga e descarga, veículos pesados, restrição tráfego caminhões, zona de restrição toneladas, tráfego pesado)."
+  },
+  {
+   "url": "https://sapl.araucaria.pr.leg.br (API /api/norma/normajuridica/?ementa__icontains=)",
+   "resultado": "ABRIU. Buscas por caminhõ/caminhao/veículos pesados/carga e descarga/grande porte/tráfego/circulação/restrição: só Lei 4.228/2023 e 4.338/2023 (vagas de carga e descarga; sem restrição de circulação). Base SAPL parece incompleta (poucos atos)."
+  },
+  {
+   "url": "https://araucaria.atende.net/ (e /diariooficial)",
+   "resultado": "200, mas SPA em JS (IPM Atende): legislação e Diário Oficial não extraíveis por curl."
+  },
+  {
+   "url": "https://www.araucaria.pr.gov.br/",
+   "resultado": "Falha TLS: certificado não corresponde ao host (curl 60). Não contornado."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/pr/araucaria",
+   "resultado": "Cloudflare 403 (não contornado; padrão do lote)."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/araucaria/",
+   "resultado": "404 (sem página)."
+  },
+  {
+   "url": "WebSearch (1 de 2): \"Araucária PR proibido tráfego de caminhões decreto...\"",
+   "resultado": "Nada de Araucária."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Polo de carga (REPAR, CIC/BR-476/BR-116) mas sem restrição municipal encontrada. Fonte principal (Diário Oficial/legislação em atende.net, site da prefeitura com TLS inválido, leismunicipais 403) não abriu: ausência NÃO comprovada. Sem pista de Lei/Decreto sobre circulação de caminhões. Pendência: consultar manualmente araucaria.atende.net/diariooficial (decretos de trânsito/SETRAN) e o órgão de trânsito local.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "araucaria_sem_ato",
+   "tipo": "zona",
+   "regime": "Sem ato localizado (placeholder)",
+   "nome": "Sem ato localizado (placeholder)",
+   "status": "desativada",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "nenhum ato localizado",
+     "artigo": "n/a",
+     "url": "https://araucaria.atende.net/"
+    }
+   ],
+   "status_motivo": "Nenhuma regra localizada; fonte oficial inacessível."
+  }
+ ]
+}

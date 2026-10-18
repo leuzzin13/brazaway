@@ -26,7 +26,7 @@ Precisa do binário `osmium` (osmium-tool) só quando o cache OPL não existe ou
   docker compose --profile import run --rm --entrypoint sh importer -c \
      "apt-get update -qq && apt-get install -y -qq osmium-tool && python run.py ver_portaria137"
 (o PBF dos tiles fica em data/valhalla/, montado em /data/valhalla no container).
-Variáveis: OSM_PBF (default DATA_DIR/valhalla/sudeste-latest.osm.pbf), VALHALLA_URL (default http://valhalla:8002;
+Variáveis: OSM_PBF (default DATA_DIR/osm/sse_co.osm.pbf), VALHALLA_URL (default http://valhalla:8002;
 VALHALLA_URL=off pula a checagem), VER_DEBUG=1 imprime o casamento por inciso. Se o `texto` de algum inciso não estiver,
 letra por letra, no texto oficial guardado em data/raw/ver, a importação FALHA (VER_IGNORAR_TEXTO=1 importa mesmo assim).
 
@@ -61,7 +61,7 @@ NOTES = ('Art. 2º: 79 incisos dos §§1º–4º (vigentes desde 03/10/2018) + 2
          'Rodoanel Norte); 77+2 com geometria (Passagem Tom Jobim e Vd. Gazeta do Ipiranga sem via no OSM). Uma feição por '
          'inciso, cadeias dirigidas no sentido proibido, casadas por nome/limites sobre o OSM e conferidas com os My Maps da CET.')
 
-OSM_PBF = pathlib.Path(os.environ.get('OSM_PBF', str(DATA_DIR / 'valhalla' / 'sudeste-latest.osm.pbf')))
+OSM_PBF = pathlib.Path(os.environ.get('OSM_PBF') or str(DATA_DIR / 'osm' / 'sse_co.osm.pbf'))
 WORK = CACHE_DIR / 'ver'
 SP_BBOX = (-46.83, -24.01, -46.36, -23.35)
 DEBUG = os.environ.get('VER_DEBUG') == '1'

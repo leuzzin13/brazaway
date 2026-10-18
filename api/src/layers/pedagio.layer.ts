@@ -21,7 +21,7 @@ import { env } from '../config.js';
  *     são listadas como "possíveis", sem somar.
  *  5. Praça oficial com `cobranca_suspensa` (concessão encerrada ou caducada; o CKAN ainda a lista como ativa): listada
  *     como "cobrança suspensa", fora do total, sem usar o valor do OSM (que pode ser de antes da suspensão).
- *  6. Fontes estaduais/municipais (AGETRANSP, ARTEMIG, concessões municipais; ver docs/layers/pedagio_estaduais.md):
+ *  6. Fontes estaduais/municipais (AGETRANSP, ARTEMIG, EGR/Rota de Santa Maria no RS, AGEMS no MS, AGER/MT, concessões municipais; ver docs/layers/pedagio_estaduais.md):
  *     registro com `ativo: false` (confiança baixa, cobrança não iniciada) fica fora da conta e do mapa de cobrança;
  *     cabine do OSM ao lado dele = "situação incerta": listada com o valor do OSM só como referência, fora do total;
  *     `casar_ate_m` limita a distância de associação (a posição já vem casada com o nó do OSM ou é oficial);
@@ -414,7 +414,7 @@ const layer: RouteLayer = {
   meta: {
     id: ID,
     label: 'Pedágio',
-    description: 'Praças e pórticos de pedágio (federais, estaduais de SP, RJ e MG e municipais do Rio); custo estimado da rota para o veículo (eixos, rodagem, dia e horário de passagem) e comparação com a alternativa sem pedágio.',
+    description: 'Praças e pórticos de pedágio (federais, estaduais de SP, RJ, MG, RS, MS e MT e municipais do Rio); custo estimado da rota para o veículo (eixos, rodagem, dia e horário de passagem) e comparação com a alternativa sem pedágio.',
     group: 'custos',
     sources: [
       { name: 'ANTT: praças de pedágio (dados.antt.gov.br)', url: 'https://dados.antt.gov.br/dataset/praca-de-pedagio', license: 'CC-BY' },
@@ -424,6 +424,9 @@ const layer: RouteLayer = {
       { name: 'OpenStreetMap: barrier=toll_booth / highway=toll_gantry (charge)', url: 'https://www.openstreetmap.org/copyright', license: 'ODbL 1.0' },
       { name: 'AGETRANSP (RJ): tarifas da CCR Via Lagos (RJ-124) e da Rota 116 (RJ-116), Deliberações 1630 e 1631/2025', url: 'https://www.agetransp.rj.gov.br/operadoras/vialagos', license: 'Ato oficial (Lei 9.610/98, art. 8º, IV); página sem licença declarada' },
       { name: 'ARTEMIG (MG): tarifas e praças das concessões estaduais (tabelas em imagem transcritas em 10/10/2026)', url: 'https://artemig.mg.gov.br/artemig/', license: 'Valores de atos e tabelas oficiais (Lei 9.610/98, art. 8º, IV); portal: "todos os direitos reservados" (só os valores, sem as imagens)' },
+      { name: 'EGR e Rota de Santa Maria (RS): tarifas e praças das rodovias estaduais (tabelas das operadoras transcritas em 18/10/2026)', url: 'https://www.egr.rs.gov.br/tarifas-63da9a4171350', license: 'Tabelas publicadas pela EGR e pela concessionária (Lei 8.987/95, art. 9º, §5º; sites sem licença declarada): só os valores, sem as imagens' },
+      { name: 'AGEMS (MS): Portarias 333/2026 (Way-306) e 326/2026 (Way-112), DOE-MS', url: 'https://www.diariooficial.ms.gov.br/', license: 'Ato oficial (Lei 9.610/98, art. 8º, IV)' },
+      { name: 'AGER/MT: decisões de reajuste (DOE-MT) e tabelas das concessionárias (Morro da Mesa, Via Brasil MT-246, MT-320 e MT-100)', url: 'https://iomat.mt.gov.br/', license: 'Decisões oficiais (Lei 9.610/98, art. 8º, IV); tabelas das concessionárias (Lei 8.987/95, art. 9º, §5º), só os valores' },
       { name: 'Concessões municipais: Linha Amarela (LAMSA), Transolímpica (ViaRio) e MGC-393 Pirapetinga (CRP)', url: 'https://www.viario.com.br/tarifas-do-pedagio.php', license: 'Tabelas publicadas pelas concessionárias (Lei 8.987/95, art. 9º, §5º); sem licença aberta' },
     ],
     style: { kind: 'circle', color: '#d97706', radius: 6, minzoom: 7, icon: '💰' },

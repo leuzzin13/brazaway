@@ -1,0 +1,308 @@
+{
+ "ibge": "5300108",
+ "nome": "Brasília",
+ "uf": "DF",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.sinj.df.gov.br/sinj/ (ResultadoDePesquisaNormaDatatable.ashx, buscas: caminhoes, caminhao, veiculos pesados, veiculos de carga, carga e descarga, VUC, Plano Piloto, EPTG, EPIA, DF-463, Eixo Rodoviario, cargas perigosas, pontes)",
+   "resultado": "SINJ-DF consultado por completo (nos 2.191+ resultados de \"veiculos de carga\" so os de circulacao/carga e descarga foram abertos). Texto integral lido: Decretos 32.563/2010, 13.250/1991 (compilado), 38.571/2017, 46.226/2024, 40.877/2020, 46.287/2024, 47.208/2025; Instrucoes DER 148/2013, 1/2014, 14/2021, 3/2019, 17/2018; Instrucao DETRAN 98/2008. Achados: regra do Eixao, duas pontes, EPIA (desativada), carga/descarga SCLS/SCLN (desativada), DF-463 (revogada)."
+  },
+  {
+   "url": "https://www.sinj.df.gov.br/sinj/Norma/e19ec224fae74b9c981d07a23f35eca8/der_ins_17_2018.html",
+   "resultado": "DER Instrucoes 17, 19 e 21/2018 (cargas perigosas 6h-9h e 17h30-19h15 em EPCL, EPNB, EPTG, EPCT e EPIA; barragem do Paranoa total): todas Revogadas no SINJ; nao ha substituta localizada."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5300108 (Querido Diario, via leads/querido_diario.json e qd_raw/5300108__*.json)",
+   "resultado": "Leads sao de DODF 2021+: feira do P Norte, vagas de carga e descarga em projetos, instrucao DETRAN 937/2023 (nao e restricao de caminhoes); nenhuma restricao nova de caminhoes."
+  },
+  {
+   "url": "penaestrada.com.br/restricoes/brasilia (leads/penaestrada.json)",
+   "resultado": "Sem pagina (404); sem pista."
+  },
+  {
+   "url": "https://www.detran.df.gov.br ; https://www.dodf.df.gov.br ; https://www.semob.df.gov.br ; https://www.cl.df.gov.br",
+   "resultado": "Sem resposta (conexao recusada pelo proxy) nesta sessao; SINJ cobre os atos normativos e o DODF das publicacoes."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Brasilia (DF, regras distritais): nao ha lei/decreto distrital de zona de restricao de caminhoes no Plano Piloto, VUC distrital ou horarios de carga e descarga para caminhoes alem dos atos achados. Regras ativas: (1) Decreto 32.563/2010 art. 2, veiculos pesados vedados 24 h na DF-002 (Eixo Rodoviario Sul e Norte), salvo autorizacao do DER/DF; (2) DER Instrucao 14/2021, Ponte do Rio Melchior (DF-180), caminhoes com mais de 2 eixos; (3) DER Instrucao 3/2019, Barragem do Paranoa (DF-001/EPCT), idem. Desativadas: EPIA/BR-040 6-9h (Instrucao 148/2013; vigencia atual nao confirmada) e carga/descarga SCLS/SCLN (Instrucao DETRAN 98/2008; regula parada, nao circulacao). Revogada: DF-463 (Decreto 46.287/2024, revogado pelo 47.208/2025). Cargas perigosas (Instrucoes DER 17/19/21 de 2018): revogadas. Sem definicao distrital de VUC localizada (vuc=null). AET: DER Instrucao de 13/04/2005 mantem AET para CVC acima de 45 t nas vias sob circunscricao do DER (nao e proibicao; nao modelada). Pendencias: confirmar com DER-DF/DETRAN-DF a vigencia da Instrucao 148/2013 e se ha regras do DETRAN-DF sobre caminhoes nao indexadas no SINJ por palavra-chave; geometria no OSM. IMPLEMENTADO NA CAMADA rodovias_estaduais (frente ders_estaduais, 18/10/2026; source der-df, importador rodovias_estaduais_der_df, data/raw/ders_estaduais/regras.json): Decreto 32.563/2010 art. 2 (Eixao DF-002, veiculos pesados), Instrucao DER-DF 3/2019 (Barragem do Paranoa, DF-001) e Instrucao DER-DF 14/2021 (Ponte do Rio Melchior, DF-180, registrada DESATIVADA: nao se sabe qual estrutura o ato cobre nem se a ponte nova da Codevasf, prevista para 05/2026, ja abriu). Tambem la: Decreto 46.226/2024 art. 2 (Eixao do Lazer, domingos e feriados nacionais 6h-18h, todos os veiculos). Sao atos do DER-DF/GDF sobre rodovia distrital: NAO duplicar em data/raw/municipios/5300108.json nem na camada de restricoes municipais (os tres regras_rascunho de via/ponte acima ficam so como registro da pesquisa).",
+ "osm_divergencias": [
+  "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "brasilia_eixao_df002_veiculos_pesados",
+   "tipo": "via",
+   "regime": "Veiculos pesados vedados no Eixo Rodoviario (DF-002)",
+   "nome": "Brasilia: Decreto 32.563/2010, art. 2, vedacao de veiculos pesados no Eixo Rodoviario Sul e Norte (DF-002), todos os dias",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 2: veiculos autorizados pelo DER/DF em situacoes especiais"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto distrital 32.563, de 08/12/2010 (DODF 233, 09/12/2010, p. 5), que acrescentou o art. 2 ao Decreto 13.250/1991",
+     "artigo": "art. 2 (veda o trafego de veiculos pesados na DF-002, Eixo Rodoviario Sul e Norte, em todos os dias da semana, salvo autorizados pelo DER/DF em situacoes especiais)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/66779/exec_dec_32563_2010.html",
+     "nota": "Texto compilado lido no SINJ-DF; Decreto 38.571/2017 so acrescentou paragrafo unico ao art. 1 (horario de verao do fechamento dominical), sem tocar o art. 2. Decretos 40.877/2020 (revogado) e 46.226/2024 (Eixao do Lazer) regulam o fechamento para lazer e nao revogam o art. 2."
+    }
+   ],
+   "nota": "\"Veiculos pesados\" nao e definido no decreto; tratado como caminhao (PBT acima de 3,5 t). Sem horario: vale 24 h, todos os dias, feriados inclusive. SINJ marca o Decreto 32.563 como \"Alterado\" (pelo 38.571/2017, apenas art. 1) e nao registra revogacao do art. 2. Via a mapear no OSM: DF-002 / Eixo Rodoviario Sul e Eixo Rodoviario Norte (Eixao), pistas centrais; SINJ nao traz limites km, a extensao e a do Eixo Rodoviario nos trechos Sul e Norte (art. 1 do mesmo decreto).",
+   "vigencia_inicio": "2010-12-09",
+   "excecao_destino_local": false,
+   "trechos": [
+    {
+     "inciso": "art. 2",
+     "via": [
+      "Eixo Rodoviário",
+      "Eixo Rodoviário Sul",
+      "Eixo Rodoviário Norte",
+      "Eixão",
+      "DF-002"
+     ],
+     "descricao": "DF-002, Eixo Rodoviario Sul e Norte, em toda a extensao dos trechos Sul e Norte"
+    }
+   ]
+  },
+  {
+   "id": "brasilia_ponte_rio_melchior_df180",
+   "tipo": "ponte",
+   "regime": "Ponte/barragem: caminhao com mais de 2 eixos",
+   "nome": "Brasilia: DER-DF Instrucao 14/2021, Ponte do Rio Melchior (DF-180): caminhoes com mais de dois eixos simples proibidos",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Instrucao DER-DF 14, de 30/12/2021 (DODF 245, 31/12/2021, p. 17)",
+     "artigo": "art. 1 (proibe o trafego de caminhoes com configuracao superior a dois eixos simples sobre a Ponte do Rio Melchior, DF-180); art. 2 (vigencia na publicacao)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/3c630ef28923432f8044fd3166669d8b/der_ins_14_2021.html",
+     "nota": "Texto compilado lido no SINJ-DF; situacao \"Sem Revogacao Expressa\"; busca por termos da ponte/barragem nao achou ato posterior."
+    }
+   ],
+   "nota": "\"Configuracao superior a dois eixos simples\" interpretada como eixos acima de 2 (caminhao de 3+ eixos, carreta etc.); a leitura de eixo duplo/tandem nao e definida no ato. Ponte do Rio Melchior, DF-180 (Ceilandia/Brazlandia, regiao do rio Melchior); ponte a localizar no OSM.",
+   "vigencia_inicio": "2021-12-31"
+  },
+  {
+   "id": "brasilia_barragem_paranoa_df001",
+   "tipo": "ponte",
+   "regime": "Ponte/barragem: caminhao com mais de 2 eixos",
+   "nome": "Brasilia: DER-DF Instrucao 3/2019, Barragem do Paranoa (DF-001, EPCT): caminhoes com mais de dois eixos simples proibidos",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Instrucao DER-DF 3, de 13/02/2019, republicada (DODF 33, 15/02/2019, p. 5; DODF 34, 18/02/2019, p. 28)",
+     "artigo": "art. 1 (proibe o trafego de caminhoes com configuracao superior a dois eixos simples sobre a Barragem do Paranoa, trecho da DF-001, EPCT); art. 2 (vigencia em 01/03/2019)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/50ed4c175c444eff8bdf064e5a4683df/der_ins_3_2019.html",
+     "nota": "Texto compilado lido no SINJ-DF; situacao \"Sem Revogacao Expressa\"; busca por termos da ponte/barragem nao achou ato posterior."
+    }
+   ],
+   "nota": "\"Configuracao superior a dois eixos simples\" interpretada como eixos acima de 2 (caminhao de 3+ eixos, carreta etc.); a leitura de eixo duplo/tandem nao e definida no ato. Barragem do Paranoa, trecho da DF-001 (Estrada Parque Contorno, EPCT); a localizar no OSM.",
+   "vigencia_inicio": "2019-03-01"
+  },
+  {
+   "id": "brasilia_epia_br040_instrucao148_2013",
+   "tipo": "via",
+   "regime": "Caminhoes 6h-9h (Valparaiso -> Brasilia)",
+   "nome": "Brasilia: DER-DF Instrucao 148/2013, BR-040 km 7-0 e DF-003 (EPIA) km 36-24, sentido Valparaiso-GO/Brasilia, 6h-9h dias uteis",
+   "status": "desativada",
+   "confianca": "baixa",
+   "status_motivo": "Ato de 2013 vinculado as obras do BRT Sul/convenio de delegacao DER-DNIT, sem revogacao expressa no SINJ mas sem qualquer confirmacao de vigencia, sinalizacao ou fiscalizacao atual (nem em DODF, nem em notícias); suspenso em 23/12/2013 por 40 dias e sem ato posterior que o restabeleca. Mantida desativada por prudencia ate confirmar com o DER-DF.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 3: veiculos de servico publico ou de apoio as obras do BRT Sul, com autorizacao do DER/DF"
+   ],
+   "base_legal": [
+    {
+     "ato": "Instrucao DER-DF 148, de 13/09/2013 (DODF 192, 16/09/2013, p. 21), em vigor desde 19/09/2013",
+     "artigo": "art. 1 (proibe o transito de caminhoes na BR-040 km 7 ao 0 e DF-003/EPIA km 36 ao 24, 6:00-9:00, segunda a sexta, sentido Valparaiso-GO/Brasilia); art. 3 (DER pode autorizar servico publico/apoio as obras do BRT Sul)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/75049/der_ins_148_2013.html",
+     "nota": "Instrucao 1/2014 (https://www.sinj.df.gov.br/sinj/Norma/75846/der_ins_1_2014.html) suspendeu por 40 dias a partir de 23/12/2013; SINJ nao registra revogacao nem nova instrucao."
+    }
+   ],
+   "nota": "Sentido unico (de BR-040 para Brasilia). Trecho BR-040 e rodovia federal delegada ao DER/DF; EPIA km 36-24 (divisa GO ate proximidades de Santa Maria).",
+   "vigencia_inicio": "2013-09-19"
+  },
+  {
+   "id": "brasilia_carga_descarga_asa_sul_norte_instrucao98_2008",
+   "tipo": "via",
+   "regime": "Operacao de carga e descarga nas quadras comerciais (SCLS/SCLN)",
+   "nome": "Brasilia: DETRAN-DF Instrucao 98/2008, carga e descarga proibida nas quadras comerciais da Asa Sul e Asa Norte fora de janelas",
+   "status": "desativada",
+   "confianca": "media",
+   "status_motivo": "A regra proibe a OPERACAO de carga e descarga (parada/estacionamento) nas quadras comerciais, nao a circulacao; o roteador nao modela parada. As janelas acima sao o complemento das permitidas (proibido 07h-08h, 11h30-14h, 17h-20h, dias uteis). Registrada so como informacao; nao aplicar como exclusao de rota.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "11:30",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:00",
+     "to": "20:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 2: sabados, domingos e feriados a proibicao nao se aplica"
+   ],
+   "base_legal": [
+    {
+     "ato": "Instrucao DETRAN-DF 98, de 04/06/2008 (DODF 107, 05/06/2008, p. 14; retificada no DODF 114, 16/06/2008, p. 17)",
+     "artigo": "art. 1 (carga e descarga nas quadras comerciais SCLS e SCLN so permitidas em dias uteis 08h-11h30, 14h-17h e 20h-07h); art. 2 (sabados, domingos e feriados a proibicao nao se aplica)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/57820/detran_ins_98_2008.html",
+     "nota": "Sem Revogacao Expressa no SINJ."
+    }
+   ],
+   "nota": "Vale para qualquer veiculo de carga, nao so caminhao. Janelas proibidas derivadas do art. 1.",
+   "vigencia_inicio": "2008-06-05"
+  },
+  {
+   "id": "brasilia_df463_decreto46287_2024",
+   "tipo": "via",
+   "regime": "Caminhoes proibidos DF-463 sentido Sao Sebastiao (REVOGADA)",
+   "nome": "Brasilia: Decreto 46.287/2024, proibicao de caminhoes na DF-463 no sentido de Sao Sebastiao (revogado pelo Decreto 47.208/2025)",
+   "status": "revogada",
+   "confianca": "alta",
+   "status_motivo": "Revogada pelo Decreto 47.208, de 09/05/2025 (art. 1); registro historico.",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto distrital 46.287, de 23/09/2024 (DODF 69-A, Edicao Extra, 23/09/2024, p. 4)",
+     "artigo": "art. 1 e paragrafo unico (veda o transito de caminhoes na DF-463 no sentido de Sao Sebastiao; exclui veiculos de emergencia e servicos publicos essenciais)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/02b2c3f544ea49429c3b48c65809cc8e/exec_dec_46287_2024.html"
+    },
+    {
+     "ato": "Decreto distrital 47.208, de 09/05/2025",
+     "artigo": "art. 1 (revoga o Decreto 46.287/2024)",
+     "url": "https://www.sinj.df.gov.br/sinj/Norma/116d2b48bbe144dc8624fb5dad5ab330/exec_dec_47208_2025.html"
+    }
+   ],
+   "vigencia_inicio": "2024-09-23",
+   "vigencia_fim": "2025-05-09"
+  }
+ ]
+}

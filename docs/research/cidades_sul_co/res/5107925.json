@@ -1,0 +1,309 @@
+{
+ "ibge": "5107925",
+ "nome": "Sorriso",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://sorriso.siscam.com.br (Câmara; toolkit legislacao.py direto siscam: caminh, pesad, tráfego, trânsito, circula, carga e descarga)",
+   "resultado": "Respondeu. Achou LC 037/2005 (Sistema Viário, 'Em vigor') com as regras de caminhões, e suas alteradoras LC 407/2023 (art. 10, largura de vias), LC 467/2025 e LC 472/2025 (Mapa 03 Anel Viário). Texto da LC 037 lido por OCR (PDF escaneado). Nenhum decreto de horário de carga e descarga ou de rotas de carga localizado."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt (toolkit; Quadrilátero Central, anel viário caminhões, carga e descarga, veículos pesados...)",
+   "resultado": "Só 2011-2015 indexado para Sorriso: nada de restrição (decreto 035/2014 é regulamento de centro de eventos)."
+  },
+  {
+   "url": "https://sorriso.cespro.com.br/visualizarLeisPorAno.php?cdMunicipio=4430",
+   "resultado": "Abre mas lista vem por JS/CAPTCHA: não automatizável. Fonte principal da prefeitura (Cespro) não lida: falha_de_fonte."
+  },
+  {
+   "url": "https://api.queridodiario.org.br",
+   "resultado": "Sorriso sem cobertura no Querido Diário."
+  },
+  {
+   "url": "penaestrada.com.br/restricoes/sorriso/",
+   "resultado": "404."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Sorriso tem regime viário por classe de via (LC 037/2005) com classificação em anexos cartográficos (não geocodificáveis nesta rodada); só o Quadrilátero Central (centro) tem perímetro em texto. Vigência: marcada 'Em vigor' no Siscam; as alterações posteriores só mexem na largura de vias locais e no Mapa do Anel Viário. Pendências: obter o Mapa 1 (classificação funcional) e o Mapa 2 (Quadrilátero) da LC 037; ler LC 467/2025 e 472/2025 (mapa do Anel Viário; pode haver obrigação de desvio); procurar decreto de carga e descarga/AET na prefeitura (Cespro); confirmar sinalização/fiscalização no centro.",
+ "osm_divergencias": [
+  "OSM não consultado. Nomes do OCR a conferir: Av. Natalino João Brescansin, Av. Ademar Raiter, Av. Perimetral Sudeste, Rua Edgar Garcia de Siqueira."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "sorriso_lc37_2005_quadrilatero_central",
+   "tipo": "zona",
+   "regime": "Quadrilátero Central",
+   "nome": "Sorriso: LC 037/2005, Quadrilátero Central, restrição ao tráfego de veículos pesados e extra-pesados 6h-22h",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "06:00",
+     "to": "22:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 25: ônibus de turismo, carro-forte e veículos de serviços (rede elétrica etc.) sem restrição de horário",
+    "art. 26: dependem de autorização do órgão gestor de trânsito: cargas especiais, transporte coletivo interurbano, veículos com altura acima de 4,40 m",
+    "art. 23, parágrafo único: veículos médios, pesados e extra-pesados circulam sem restrição nas vias coletoras que integram as Zonas Industriais",
+    "art. 18, III: carga e descarga em horário a determinar pelo Executivo (regulamentação não localizada)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal 037, de 21/12/2005 (Sorriso/MT) - Regulação do Sistema Viário",
+     "artigo": "art. 17 (perímetro do Quadrilátero Central: 11 trechos de via), art. 18, I (restringir o tráfego de veículos pesados e extra-pesados entre 6h e 22h), art. 22 (classes por PBT: leve até 4 t, médio 4-8 t, pesado 8-14 t, extra-pesado acima de 14 t)",
+     "url": "https://sorriso.siscam.com.br/arquivo?Id=67163",
+     "nota": "Texto lido por OCR do PDF escaneado da Câmara (Siscam, Documento 18153, situação 'Em vigor'). Alterada por LC 407/2023 (art. 10, largura de vias locais) e LC 467/2025 e LC 472/2025 (só Mapa 03 - Anel Viário). Mapas/anexos (classificação funcional das vias, Quadrilátero Central) não lidos em detalhe."
+    }
+   ],
+   "nota": "Art. 18 enuncia a 'função' do Quadrilátero (restringir), sem dizer dias da semana nem sanção; o art. 23 diz que a circulação é permitida 'nos dias úteis e aos sábados e domingos' salvo as exceções, por isso a janela vale todos os dias. Não localizado decreto regulamentador, sinalização ou fiscalização; confiança media. Perímetro = laço de ruas do art. 17 (zona a montar pelos trechos).",
+   "vigencia_inicio": "2005-12-21",
+   "trechos": [
+    {
+     "inciso": "art. 17, I",
+     "via": [
+      "Avenida Curitiba"
+     ],
+     "descricao": "entre a Rua Ataulfo Alves e a Rua Santarém"
+    },
+    {
+     "inciso": "art. 17, II",
+     "via": [
+      "Rua Santarém"
+     ],
+     "descricao": "entre a Av. Curitiba e a Av. Marginal Esquerda"
+    },
+    {
+     "inciso": "art. 17, III",
+     "via": [
+      "Avenida Ademar Raiter"
+     ],
+     "descricao": "entre a Av. Marginal Esquerda e a Rua Edgar Garcia de Siqueira"
+    },
+    {
+     "inciso": "art. 17, IV",
+     "via": [
+      "Rua Edgar Garcia de Siqueira"
+     ],
+     "descricao": "entre a Av. Ademar Raiter e a Av. Florianópolis"
+    },
+    {
+     "inciso": "art. 17, V",
+     "via": [
+      "Avenida Florianópolis"
+     ],
+     "descricao": "entre a Rua Edgar Garcia de Siqueira e a Av. Perimetral Sudeste"
+    },
+    {
+     "inciso": "art. 17, VI",
+     "via": [
+      "Avenida Perimetral Sudeste"
+     ],
+     "descricao": "entre a Av. Florianópolis e a Rua Carazinho"
+    },
+    {
+     "inciso": "art. 17, VII",
+     "via": [
+      "Rua Carazinho"
+     ],
+     "descricao": "entre a Av. Perimetral Sudeste e a Av. Marginal Direita"
+    },
+    {
+     "inciso": "art. 17, VIII",
+     "via": [
+      "Avenida Marginal Direita"
+     ],
+     "descricao": "entre a Rua Carazinho e a Av. Tancredo Neves"
+    },
+    {
+     "inciso": "art. 17, IX",
+     "via": [
+      "Avenida Tancredo Neves"
+     ],
+     "descricao": "entre a Av. Marginal Direita e a Av. Marginal Esquerda"
+    },
+    {
+     "inciso": "art. 17, X",
+     "via": [
+      "Avenida Marginal Esquerda"
+     ],
+     "descricao": "entre a Av. Tancredo Neves e a Rua Ataulfo Alves"
+    },
+    {
+     "inciso": "art. 17, XI",
+     "via": [
+      "Rua Ataulfo Alves"
+     ],
+     "descricao": "entre a Av. Marginal Esquerda e a Av. Curitiba"
+    }
+   ]
+  },
+  {
+   "id": "sorriso_lc37_2005_vias_coletoras",
+   "tipo": "via",
+   "regime": "Vias coletoras",
+   "nome": "Sorriso: LC 037/2005, art. 23 II, vias coletoras, veículos acima de 4 t proibidos 6h-22h",
+   "status": "desativada",
+   "status_motivo": "As vias coletoras só constam do Anexo 'Classificação Funcional das Vias' (mapa não lido/ não geocodificável); sem lista de ruas no texto.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "06:00",
+     "to": "22:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 25: ônibus de turismo, carro-forte e veículos de serviços (rede elétrica etc.) sem restrição de horário",
+    "art. 26: dependem de autorização do órgão gestor de trânsito: cargas especiais, transporte coletivo interurbano, veículos com altura acima de 4,40 m",
+    "art. 23, parágrafo único: veículos médios, pesados e extra-pesados circulam sem restrição nas vias coletoras que integram as Zonas Industriais"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal 037, de 21/12/2005 (Sorriso/MT) - Regulação do Sistema Viário",
+     "artigo": "art. 4º, III e § 2º (classificação), art. 23, II e parágrafo único, art. 22",
+     "url": "https://sorriso.siscam.com.br/arquivo?Id=67163",
+     "nota": "Texto lido por OCR do PDF escaneado da Câmara (Siscam, Documento 18153, situação 'Em vigor'). Alterada por LC 407/2023 (art. 10, largura de vias locais) e LC 467/2025 e LC 472/2025 (só Mapa 03 - Anel Viário). Mapas/anexos (classificação funcional das vias, Quadrilátero Central) não lidos em detalhe."
+    }
+   ],
+   "vigencia_inicio": "2005-12-21"
+  },
+  {
+   "id": "sorriso_lc37_2005_arteriais_principais",
+   "tipo": "via",
+   "regime": "Vias arteriais e principais",
+   "nome": "Sorriso: LC 037/2005, arts. 23 III e 24, vias arteriais e principais, pesados (acima de 8 t) proibidos 6h-22h",
+   "status": "desativada",
+   "status_motivo": "Classificação das vias arteriais/principais está no Anexo/Mapa 1 (não geocodificável); a regra literal proibiria pesados de dia em toda a rede principal (inclui trecho urbano da BR-163), sem evidência de fiscalização; precisa de confirmação com a prefeitura.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "06:00",
+     "to": "22:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 25: ônibus de turismo, carro-forte e veículos de serviços (rede elétrica etc.) sem restrição de horário",
+    "art. 26: dependem de autorização do órgão gestor de trânsito: cargas especiais, transporte coletivo interurbano, veículos com altura acima de 4,40 m",
+    "art. 23, parágrafo único: veículos médios, pesados e extra-pesados circulam sem restrição nas vias coletoras que integram as Zonas Industriais"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal 037, de 21/12/2005 (Sorriso/MT) - Regulação do Sistema Viário",
+     "artigo": "art. 23, III (pesados e extra-pesados 6h-22h proibidos em vias principais e arteriais), art. 24 (extra-pesados, acima de 14 t, só nas arteriais e principais entre 22h e 6h)",
+     "url": "https://sorriso.siscam.com.br/arquivo?Id=67163",
+     "nota": "Texto lido por OCR do PDF escaneado da Câmara (Siscam, Documento 18153, situação 'Em vigor'). Alterada por LC 407/2023 (art. 10, largura de vias locais) e LC 467/2025 e LC 472/2025 (só Mapa 03 - Anel Viário). Mapas/anexos (classificação funcional das vias, Quadrilátero Central) não lidos em detalhe."
+    }
+   ],
+   "vigencia_inicio": "2005-12-21"
+  },
+  {
+   "id": "sorriso_lc37_2005_vias_locais",
+   "tipo": "via",
+   "regime": "Vias locais e especiais",
+   "nome": "Sorriso: LC 037/2005, art. 23 I, vias locais e especiais, veículos acima de 4 t sem horário permitido",
+   "status": "desativada",
+   "status_motivo": "Vias locais/especiais não listadas (qualquer rua não classificada); proibição literal em tempo integral inclui entrega local, sem exceção de carga e descarga no texto; inaplicável sem geometria e sem confirmação de fiscalização.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 25: ônibus de turismo, carro-forte e veículos de serviços (rede elétrica etc.) sem restrição de horário",
+    "art. 26: dependem de autorização do órgão gestor de trânsito: cargas especiais, transporte coletivo interurbano, veículos com altura acima de 4,40 m",
+    "art. 23, parágrafo único: veículos médios, pesados e extra-pesados circulam sem restrição nas vias coletoras que integram as Zonas Industriais"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal 037, de 21/12/2005 (Sorriso/MT) - Regulação do Sistema Viário",
+     "artigo": "art. 23, I",
+     "url": "https://sorriso.siscam.com.br/arquivo?Id=67163",
+     "nota": "Texto lido por OCR do PDF escaneado da Câmara (Siscam, Documento 18153, situação 'Em vigor'). Alterada por LC 407/2023 (art. 10, largura de vias locais) e LC 467/2025 e LC 472/2025 (só Mapa 03 - Anel Viário). Mapas/anexos (classificação funcional das vias, Quadrilátero Central) não lidos em detalhe."
+    }
+   ],
+   "vigencia_inicio": "2005-12-21"
+  }
+ ]
+}

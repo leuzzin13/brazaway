@@ -1,0 +1,109 @@
+{
+ "ibge": "4115200",
+ "nome": "Maringá",
+ "uf": "PR",
+ "status": "pista",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.maringa.pr.gov.br/, www2/venus/sei/maringa.pr.gov.br, transito.maringa.pr.gov.br",
+   "resultado": "Connection reset by peer / 502 em todas as tentativas (varias, com repeticao): dominio da Prefeitura inacessivel pelo proxy."
+  },
+  {
+   "url": "https://www.cmm.pr.gov.br (Camara)",
+   "resultado": "Falha de certificado TLS (cadeia incompleta); nao contornado. sapl.maringa.pr.leg.br e maringa.atende.net: 502."
+  },
+  {
+   "url": "https://leismunicipais.com.br/a/pr/m/maringa/...",
+   "resultado": "403 Cloudflare; nao contornado."
+  },
+  {
+   "url": "penaestrada.com.br/restricoes/maringa/",
+   "resultado": "sem pagina (404 na sondagem do lead)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4115200/2016-01-18/0b449122a58fc15ec98e2d3bd87d2b88c0c1bacb.pdf",
+   "resultado": "LIDO. Orgao Oficial do Municipio de Maringa n. 2428, 18/01/2016, Mensagem de Lei 003/2016 (veto total ao PL 10.142/2015): o Prefeito afirma que a materia ja esta regida pelo Decreto Municipal 863/2003 (circulacao e estacionamento de veiculos transportadores de cargas perigosas) e pela 'Lei Municipal nº 660/2007, que regulamenta o trafego de veiculos de carga e dispoe sobre o servico de carga e descarga na area central'. Texto desses atos NAO lido."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/4115200/2022-10-06/7ef02efa85e3db75d36645deec3aac75c65e9d4d.pdf",
+   "resultado": "LIDO. Lei 11.518, de 06/10/2022 (Politica e Plano de Mobilidade Urbana), arts. 30-32: programa de 'expansao da area com restricao de circulacao de caminhoes' (art. 31, III), medidas 'ampliar a area com restricao de veiculos de grande porte nas vias urbanas' (art. 32, VIII) e fiscalizacao eletronica nos acessos 'a area que tem restricao de transito de caminhoes' (art. 32, IX). Confirma que ha area com restricao de caminhoes, sem horario/via."
+  },
+  {
+   "url": "api.queridodiario.org.br (Maringa: '660/2007', 'Complementar nº 660', 'carga e descarga' 'área central', 'restrição de circulação' caminhões)",
+   "resultado": "Lei 660/2007 e Decreto 863/2003 nao aparecem como texto no acervo (cobertura QD de Maringa comeca em 2023 para o diario eletronico; edicoes antigas parciais). Nenhum decreto de horario/vias de caminhoes encontrado."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Existe restricao de circulacao/carga e descarga de caminhoes na area central de Maringa (Lei 660/2007 citada em ato oficial de 2016; area com restricao de caminhoes confirmada pela Lei 11.518/2022), mas o texto da Lei 660/2007 (e eventual decreto regulamentador, alteracoes ou revogacao) nao foi acessado: portal da Prefeitura e Camara inacessiveis neste ambiente. Sem horario, via, limite de peso nem perimetro, nenhuma regra pode ser ativada. Proxima acao: obter Lei 660/2007 (provavelmente Lei Complementar, pelo numero) e o decreto de regulamentacao no Orgao Oficial do Municipio / site da Camara / leismunicipais, e o Anexo V da Lei 11.518/2022 (mapa da logistica urbana). Nao se sabe se 'Lei 660/2007' e ordinaria ou complementar (nao afirmado).",
+ "osm_divergencias": [
+  "OSM nao consultado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "maringa_area_central_carga",
+   "tipo": "zona",
+   "regime": "Área central (tráfego de veículos de carga)",
+   "nome": "Maringá — área central: tráfego de veículos de carga e carga/descarga (Lei 660/2007, citada)",
+   "status": "desativada",
+   "status_motivo": "Pista: o ato foi apenas citado no veto 003/2016 e na Lei 11.518/2022; texto, horario, perimetro e limites nao lidos, entao nao ha como aplicar na rota.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 660/2007 (Maringa), citada no Veto Total - Mensagem de Lei 003/2016",
+     "artigo": "nao lido (citacao de ementa)",
+     "url": "https://data.queridodiario.ok.org.br/4115200/2016-01-18/0b449122a58fc15ec98e2d3bd87d2b88c0c1bacb.pdf",
+     "nota": "O ato citado e o texto de veto sao do Orgao Oficial do Municipio n. 2428, 18/01/2016."
+    },
+    {
+     "ato": "Lei 11.518/2022 (Plano de Mobilidade Urbana de Maringa)",
+     "artigo": "arts. 31, III; 32, VIII e IX (menciona a area com restricao de caminhoes)",
+     "url": "https://data.queridodiario.ok.org.br/4115200/2022-10-06/7ef02efa85e3db75d36645deec3aac75c65e9d4d.pdf"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "arquivo": "municipios/geo/4115200_area_central.geojson",
+     "como_gerar": "A gerar apos obter o texto do ato (perimetro da area central)"
+    }
+   ]
+  },
+  {
+   "id": "maringa_decreto_863_2003_cargas_perigosas",
+   "tipo": "zona",
+   "regime": "Cargas perigosas",
+   "nome": "Maringá — circulação e estacionamento de veículos de cargas perigosas (Decreto 863/2003, citado)",
+   "status": "desativada",
+   "status_motivo": "Pista: Decreto 863/2003 so citado no veto 003/2016; texto nao lido. Alvo (cargas perigosas) nao e filtravel pelo perfil de veiculo.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 863/2003 (Maringa), citado no Veto Total - Mensagem de Lei 003/2016",
+     "artigo": "nao lido",
+     "url": "https://data.queridodiario.ok.org.br/4115200/2016-01-18/0b449122a58fc15ec98e2d3bd87d2b88c0c1bacb.pdf"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "arquivo": "municipios/geo/4115200_cargas_perigosas.geojson",
+     "como_gerar": "A gerar apos obter o texto do ato (perimetro da area central)"
+    }
+   ]
+  }
+ ]
+}

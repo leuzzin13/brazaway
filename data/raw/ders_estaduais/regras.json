@@ -1,6 +1,6 @@
 {
- "_nota": "Curadoria da frente ders_estaduais (10/10/2026). Fonte das regras: pesquisa sudeste ders_estaduais (research/verify) e, para os atos do DER-ES de 2024–2026, a pesquisa vitoria_es (der_es_is_restricoes.csv e verify), com o texto conferido no DIO-ES. Cada regra cita ato e artigo. ativa=false: confiança baixa, sem verificação ou vigência não confirmada (motivo em motivo_inativa) — o app só informa. status=revogada: nunca aplicada. criterio: peso_acima_t (PBT > X t, estrito), eixos_acima (> N eixos), caminhoes (PBT > 3,5 t), todos. Importadores: rodovias_estaduais_der_es (trechos do ES), rodovias_estaduais_der_rj (trechos do RJ) e oae_der_es (pontes do ES, camada oae).",
- "verificado_em": "2026-10-10",
+ "_nota": "Curadoria da frente ders_estaduais (10/10/2026). Fonte das regras: pesquisa sudeste ders_estaduais (research/verify) e, para os atos do DER-ES de 2024–2026, a pesquisa vitoria_es (der_es_is_restricoes.csv e verify), com o texto conferido no DIO-ES. Cada regra cita ato e artigo. ativa=false: confiança baixa, sem verificação ou vigência não confirmada (motivo em motivo_inativa) — o app só informa. status=revogada: nunca aplicada. criterio: peso_acima_t (PBT > X t, estrito), eixos_acima (> N eixos), caminhoes (PBT > 3,5 t), todos. Importadores: rodovias_estaduais_der_es (trechos do ES), rodovias_estaduais_der_rj (trechos do RJ) e oae_der_es (pontes do ES, camada oae). | 18/10/2026: acrescentadas as regras do Sul e do Centro-Oeste (pesquisa docs/research/estados_sul_co; DER-PR, DAER-RS, GOINFRA, SINFRA-MT, DER-DF; SC e MS sem ato vigente de restrição de trecho). Geometria dos atos sem coordenada: OSM (ways com ref) entre âncoras do SRE do órgão ou de nós place=* (importers/sources/_ders_sulco.py). Campos novos: criterio.cumulativo/ou/peso_ate_t/eixos_ate/comprimento_*/isenta_carga e janelas (datas/dias da semana + horário de saída). Importadores: rodovias_estaduais_der_pr, _daer_rs, _goinfra, _sinfra_mt, _der_df.",
+ "verificado_em": "2026-10-18",
  "trechos": [
   {
    "regra_id": "es_060_km33_39_23t",
@@ -249,6 +249,2112 @@
     }
    },
    "fonte_geometria": "caminho de carro Paracambi → Mendes no grafo do Valhalla (OSM, RJ-093/RJ-127); aproximação do trecho da serra"
+  },
+  {
+   "regra_id": "pr_534_p481_2005_25t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-534",
+   "nome": "PR-534, Centenário do Sul – Miraselva (19,16 km)",
+   "resumo": "proibido veículo de carga com PBTC acima de 25 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 25
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 481/2005, item único (\"Fica proibida a circulação...\", DOE-PR de 06/12/2005, p. 21)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2005-12-06",
+   "texto": "Fica proibida a circulacao de veiculos de carga com PBTC superior a 25 t e pesos por eixo superiores aos limites da Resolucao CONTRAN 12/98 em PR-534, trecho Centenario do Sul - Miraselva, extensao 19,16 km.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto lido no PDF do DOE-PR guardado na página Restrição de Tráfego do DER/PR (extração por pdftotext, colunas intercaladas) em 18/10/2026; revogação posterior não localizada.",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-534"
+    ],
+    "de": {
+     "nome": "Centenário do Sul",
+     "lon": -51.59515,
+     "lat": -22.8215
+    },
+    "para": {
+     "nome": "Miraselva",
+     "lon": -51.48478,
+     "lat": -22.96758
+    },
+    "extensao_km": 19.16
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_421_2005_porto_camargo_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-489/PR-485/PR-182/PR-683",
+   "nome": "Porto Camargo – Alto Paraíso – Casa Branca – Xambrê – Umuarama (PR-489, PR-683, PR-485, PR-182)",
+   "resumo": "proibido veículo de carga com PBTC acima de 45 t, 24 h; carga de/para MS pela ponte de Porto Camargo segue por Icaraíma, Ivaté e Serra dos Dourados até Umuarama",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 421/2005, item 1 e item 2 (DOE-PR de 31/10/2005, data do DOE inferida do metadado do PDF)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2005-10-31",
+   "texto": "Fica proibida a circulacao de veiculos de carga com PBTC superior a 45 t ... PR-489 Porto Camargo - Porto Figueira (6,00 km); PR-489 Porto Figueira - Alto Paraiso (12,00 km); PR-485 Alto Paraiso - Casa Branca (31,00 km); PR-182 Casa Branca - Perola (12,00 km); PR-182 Casa Branca - Xambre (10,50 km); PR-489 Xambre - Umuarama (19,70 km).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto lido no PDF do DOE-PR guardado na página Restrição de Tráfego do DER/PR (extração por pdftotext, colunas intercaladas) em 18/10/2026; revogação posterior não localizada.",
+   "excecoes": "O item 2 do ato é um desvio obrigatório: carga com essas características de/para MS pela ponte de Porto Camargo segue por Icaraíma, Ivaté e Serra dos Dourados até Umuarama.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -53.7513,
+      -23.3657
+     ],
+     "via": [
+      [
+       -53.8094,
+       -23.4032
+      ],
+      [
+       -53.7285,
+       -23.5081
+      ],
+      [
+       -53.4882,
+       -23.7362
+      ]
+     ],
+     "para": [
+      -53.3116,
+      -23.7621
+     ]
+    }
+   },
+   "fonte_geometria": "rota de carro no Valhalla (OSM) por Porto Camargo, Porto Figueira, Alto Paraíso e Xambrê até Umuarama (o ato numera PR-489/PR-485/PR-182; no OSM o corredor é PR-489/PR-683/PR-485/PR-182, conferido contra os refs). Fica sem geometria o ramal Casa Branca – Pérola (PR-182, 12 km): a rota até Pérola dá 26 km."
+  },
+  {
+   "regra_id": "pr_518_p318_2009_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-518",
+   "nome": "PR-518, Entr. BR-369 – Porto Quebra Canoa",
+   "resumo": "PBTC limitado a 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 318/2009, item 1 (DOE-PR de 24/11/2009, data pelo metadado do PDF)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2009-11-24",
+   "texto": "Limitar em 45 t o PBTC na PR-518, trecho Entr. BR-369 - Porto Quebra Canoa (divisa PR/SP).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto lido no PDF do DOE-PR guardado na página Restrição de Tráfego do DER/PR (extração por pdftotext, colunas intercaladas) em 18/10/2026; revogação posterior não localizada.",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-518"
+    ],
+    "de": {
+     "nome": "Porto Canoa Quebrada",
+     "lon": -50.5897,
+     "lat": -22.91429
+    },
+    "para": {
+     "lon": -50.5218,
+     "lat": -23.142,
+     "nome": "Entr. BR-369 (Santa Mariana)"
+    }
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_160_p010_2010_25t_14m",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-160",
+   "nome": "PR-160, Distrito Paranagi – Entr. PR-323 (Mariporã)",
+   "resumo": "proibido veículo de carga com PBT acima de 25 t ou mais de 14 m de comprimento, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 25,
+    "comprimento_acima_m": 14
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 010/2010, item único (DOE 8160 de 12/02/2010)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2010-02-12",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 25 toneladas, comprimento superior a 14,0 metros e pesos por eixo superiores aos limites da Res. 210/06 do CONTRAN na Rodovia PR-160, trecho Distrito Paranagi - Entroncamento PR-323 (Mariporã).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "A Portaria 326/2026 (liberação de CVC canavieiro por AET, anexo com PR-160 km 0–16,90) é uma permissão por AET para essa composição; não revoga a 010/2010 para os demais veículos.",
+   "geometria": {
+    "osm_ref": [
+     "PR-160"
+    ],
+    "de": {
+     "nome": "Paranagi",
+     "lon": -50.87343,
+     "lat": -22.85053
+    },
+    "para": {
+     "cruza": "PR-323",
+     "perto": [
+      -50.8495,
+      -22.9505
+     ]
+    }
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_151_p095_2010_45t_16m",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-151",
+   "nome": "PR-151, Ribeirão Claro – divisa PR/SP (Porto Emigdio)",
+   "resumo": "PBTC limitado a 45 t e comprimento máximo de 16 m, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45,
+    "comprimento_acima_m": 16
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 095/2010, item 1 (DOE 8199 de 13/04/2010)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2010-04-13",
+   "texto": "Limitar em 45 toneladas o PBTC, comprimento maximo 16,00 metros na PR-151, trecho: Ribeirao Claro - Divisa de Estado PR/SP (Porto Emigdio).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-151"
+    ],
+    "de": {
+     "nome": "Ribeirão Claro",
+     "lon": -49.75683,
+     "lat": -23.19605
+    },
+    "para": {
+     "extremo": "N"
+    },
+    "lacuna_m": 2000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_281_433_p158_2010_45t_16m",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-281/PR-433",
+   "nome": "PR-281 (Entr. BR-476 – Rio Claro do Sul – Mallet) e PR-433 (Entr. PR-427 – Água Azul – Entr. BR-476)",
+   "resumo": "PBTC limitado a 45 t e comprimento máximo de 16 m, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45,
+    "comprimento_acima_m": 16
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 158/2010, item 1 (DOE 8232 de 31/05/2010)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2010-05-31",
+   "texto": "Limitar em 45 toneladas o PBTC, comprimento maximo 16,00 metros nas rodovias a seguir relacionadas: PR-281, trecho Entr. BR-476 - Rio Claro do Sul - Mallet; PR-433, trecho Entr. PR-427 - Agua Azul - Entr. BR-476.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": [
+    {
+     "osm_ref": [
+      "PR-281"
+     ],
+     "de": {
+      "cruza": "BR-476"
+     },
+     "para": {
+      "nome": "Mallet",
+      "lon": -50.82893,
+      "lat": -25.88295
+     }
+    },
+    {
+     "osm_ref": [
+      "PR-433"
+     ],
+     "de": {
+      "cruza": "BR-476"
+     },
+     "para": {
+      "cruza": "PR-427"
+     }
+    }
+   ],
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_092_p319_2010_45t_17m50",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-092",
+   "nome": "PR-092, Rio Branco do Sul – Cerro Azul",
+   "resumo": "PBTC limitado a 45 t e comprimento máximo de 17,50 m, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45,
+    "comprimento_acima_m": 17.5
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 319/2010, item 1 (DOE 8344 de 17/11/2010)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2010-11-17",
+   "texto": "Limitar em 45 toneladas o PBTC, comprimento maximo 17,50 metros na rodovia PR-092, trecho: Rio Branco do Sul - Cerro Azul.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "O site do DER/PR cita 16 m; vale o texto do ato (17,50 m).",
+   "geometria": {
+    "osm_ref": [
+     "PR-092"
+    ],
+    "de": {
+     "nome": "Rio Branco do Sul",
+     "lon": -49.31191,
+     "lat": -25.18854
+    },
+    "para": {
+     "nome": "Cerro Azul",
+     "lon": -49.26152,
+     "lat": -24.82451
+    }
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_680_p284_2011_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-680",
+   "nome": "PR-680, Entr. PR-482 (Maria Helena) – Vila Formosa (20 km)",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 284/2011, item 1 (DOE 8521 de 03/08/2011)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2011-08-03",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 45 toneladas e pesos por eixo superiores aos da Res. CONTRAN 210/06 na PR-680, trecho Entr. PR-482 (Maria Helena) - Vila Formosa, extensao de 20 km.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-680"
+    ],
+    "de": {
+     "nome": "Maria Helena",
+     "lon": -53.20614,
+     "lat": -23.61394
+    },
+    "para": {
+     "nome": "Vila Formosa",
+     "lon": -53.30399,
+     "lat": -23.47663
+    },
+    "extensao_km": 20,
+    "lacuna_m": 3000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_364_825_p299_2012_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-364/PR-825",
+   "nome": "PR-364 (Entr. BR-277 – Goioxim) e PR-825 (Entr. PR-364 – Campina do Simão)",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 299/2012, item 1 (DOE 8754 de 13/07/2012)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2012-07-13",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 45 toneladas ... na PR/364 trecho Entr. BR/277 - Goioxim e PR/825 trecho Entr. PR/364 - Campina do Simao.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": [
+    {
+     "osm_ref": [
+      "PR-364"
+     ],
+     "de": {
+      "cruza": "BR-277"
+     },
+     "para": {
+      "nome": "Goioxim",
+      "lon": -51.99242,
+      "lat": -25.19873
+     },
+     "lacuna_m": 1000
+    },
+    {
+     "osm_ref": [
+      "PR-825"
+     ],
+     "de": {
+      "cruza": "PR-364"
+     },
+     "para": {
+      "nome": "Campina do Simão",
+      "lon": -51.80767,
+      "lat": -25.10864
+     }
+    }
+   ],
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_683_p356_2012_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-683",
+   "nome": "PR-683, Entr. PR-489 (Porto Figueira) – Entr. BR-487 (Porto Camargo)",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 356/2012, item 1 (DOE 8777 de 15/08/2012)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2012-08-15",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 45 toneladas ... na rodovia PR/683 trecho: Entr. PR/489 (Porto Figueira) - Entr. BR/487 (Porto Camargo).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-683"
+    ]
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_482_p518_2012_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-482",
+   "nome": "PR-482, Entr. PR-082 (Cidade Gaúcha) – Tapira (15,07 km)",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 518/2012, item 1 (DOE 8853 de 06/12/2012)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2012-12-06",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 45 toneladas ... na rodovia PR/482 trecho: Entr. PR/082 Cidade Gaucha - Tapira - 15,07 km.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-482"
+    ],
+    "de": {
+     "nome": "Cidade Gaúcha",
+     "lon": -52.94441,
+     "lat": -23.38166,
+     "tol_m": 3500
+    },
+    "para": {
+     "nome": "Tapira",
+     "lon": -53.0712,
+     "lat": -23.32315
+    },
+    "extensao_km": 15.07
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_561_p519_2012_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-561",
+   "nome": "PR-561, Nova Aliança do Ivaí – Entr. PR-218 (Paranavaí) (14,3 km)",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 519/2012, item 1 (DOE 8853 de 06/12/2012)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2012-12-06",
+   "texto": "Proibir a circulacao de veiculos de carga com PBT superior a 45 toneladas ... na rodovia PR/561 trecho: Nova Alianca do Ivai - Entr. PR/218 Paranavai - 14,3 km.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-561"
+    ],
+    "extensao_km": 14.3
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_586_p094_2013_25t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-586",
+   "nome": "PR-586, Entr. BR-163 – Entr. BR-277",
+   "resumo": "proibido veículo de carga com PBT acima de 25 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 25
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 094/2013, item 1 (DOE 8903 de 22/02/2013)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2013-02-22",
+   "texto": "Proibir circulacao de veiculos de carga com PBT superior a 25 t e pesos por eixo superiores aos da Resolucao CONTRAN 210/06 na PR-586, trecho Entr. BR-163 - Entr. BR-277.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência). Trecho: a rodovia inteira (pontas do PR-586 no OSM).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-586"
+    ],
+    "de": {
+     "lon": -53.6204,
+     "lat": -25.0504,
+     "nome": "Entr. BR-277 (ponta do PR-586 no OSM)"
+    },
+    "para": {
+     "lon": -54.0314,
+     "lat": -24.8301,
+     "nome": "Entr. BR-163 (ponta do PR-586 no OSM)"
+    }
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato"
+  },
+  {
+   "regra_id": "pr_447_p280_2020_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-447",
+   "nome": "PR-447, Entr. BR-153 (União da Vitória) – Cruz Machado (SRE 447S0030EPR, km 3,73–49,34)",
+   "resumo": "PBTC limitado a 45 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 280/2020, item 1 (DOE 10735 de 24/07/2020; retificada na parte do cabeçalho pela Portaria 286/2020, DOE 10759 de 27/08/2020)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2020-07-24",
+   "texto": "Limitar em 45 toneladas o PBTC na rodovia PR-447, trecho PR447S003EPR Entr. BR-153 (B) (UNIAO DA VITORIA) - CRUZ MACHADO.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "PR-447"
+    ],
+    "de": {
+     "nome": "ENTR. BR-153 (B) (UNIÃO DA VITÓRIA)",
+     "lon": -51.1131,
+     "lat": -26.2026
+    },
+    "para": {
+     "nome": "CRUZ MACHADO",
+     "lon": -51.3496,
+     "lat": -26.0214
+    },
+    "extensao_km": 45.61
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre as pontas do trecho SRE citado no ato (geoserver.pr.gov.br, seil_der:sistema_rodoviario_lin_p31982); 447S0030EPR"
+  },
+  {
+   "regra_id": "pr_691_p365_2022_16t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-691",
+   "nome": "PR-691, Porto Rico – Porto São José (SRE 691S0010EPR, km 0–10,95)",
+   "resumo": "proibido veículo com PBTC acima de 16 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 16
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 365/2022, item 1 (DOE 11277 de 10/10/2022)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2022-10-10",
+   "texto": "Fica proibida a circulacao de veiculos com Peso Bruto Total Combinado (PBTC) superior a 16,0 toneladas no trecho 691S0010EPR da Rodovia PR-691, entre Porto Rico e Porto Sao Jose.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -53.2621,
+      -22.7757
+     ],
+     "para": [
+      -53.1767,
+      -22.7234
+     ]
+    }
+   },
+   "fonte_geometria": "rota de carro no Valhalla (OSM) entre as pontas do trecho SRE 691S0010EPR (a PR-691 não tem ref no OSM)"
+  },
+  {
+   "regra_id": "pr_476_p501_2022_25t_ponte_uvit",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PRC-476",
+   "nome": "PRC-476, ponte Manoel Ribas (União da Vitória, SRE 476S0160PRC, km 363,7–363,93)",
+   "resumo": "proibido veículo com PBTC acima de 25 t na ponte, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 25
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 501/2022, item 1 (DOE 11346 de 25/01/2023)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2023-01-25",
+   "texto": "Fica proibida a circulacao de veiculos com Peso Bruto Total Combinado (PBTC) superior a 25,0 toneladas no trecho 476S0160PRC (ponte Manoel Ribas, Uniao da Vitoria).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -51.0977,
+      -26.2163
+     ],
+     "para": [
+      -51.0964,
+      -26.218
+     ]
+    }
+   },
+   "fonte_geometria": "rota de carro no Valhalla (OSM) entre as pontas do trecho SRE 476S0160PRC (230 m)"
+  },
+  {
+   "regra_id": "pr_410_p075_2023_graciosa",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-410",
+   "nome": "PR-410 Estrada da Graciosa, km 3 – km 19,2 (Serra da Graciosa – São João da Graciosa)",
+   "resumo": "proibido veículo de carga (só passeio, vans e ônibus até 9 m), 24 h",
+   "criterio": {
+    "caminhoes": true
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 075/2023, arts. 1º e 2º (DOE 11390 de 30/03/2023)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2023-03-30",
+   "texto": "Art. 1º Proibir o trafego de veiculos de carga com capacidade igual ou superior a 16,0t na rodovia PR-410 ... da Serra da Graciosa (km 3) - ENTR. PR-411 (S. JOAO DA GRACIOSA) (km 19,2). Art. 2º Fica permitido o trafego, no referido trecho da PR-410, somente para veiculos de passeio, vans e onibus com ate 9 m de comprimento e 2,50 m de altura.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Linhas regulares de transporte coletivo podem usar veículos de até 14 m e 4,40 m (art. 2º, parágrafo único). O art. 2º só permite passeio, vans e ônibus: o app trata todo caminhão (PBT acima de 3,5 t) como alcançado.",
+   "geometria": {
+    "osm_ref": [
+     "PR-410"
+    ],
+    "de": {
+     "nome": "ENTR. BR-116",
+     "lon": -48.9463,
+     "lat": -25.3049
+    },
+    "para": {
+     "nome": "ENTR. PR-411 (S.JOÃO DA GRACIOSA)",
+     "lon": -48.8605,
+     "lat": -25.3885
+    },
+    "inicio_km": 3,
+    "extensao_km": 16.2
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre as pontas do trecho SRE citado no ato (geoserver.pr.gov.br, seil_der:sistema_rodoviario_lin_p31982); 410S0010EPR/410S0016EPR, a partir do km 3 (art. 1º; a súmula diz km 0)"
+  },
+  {
+   "regra_id": "pr_412_p239_2026_guaratuba_26t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-412/PR-807/PR-508",
+   "nome": "Guaratuba e Matinhos (PR-412, PR-807, PR-508): acesso à Ponte de Guaratuba e ao ferry",
+   "resumo": "só circula veículo de carga com PBT/PBTC até 26 t, até 18,60 m e até 4 eixos (simultâneos), 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 26,
+    "comprimento_acima_m": 18.6,
+    "eixos_acima": 4
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 239/2026, arts. 1º e 2º (DOE 12131 de 24/04/2026)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2026-04-24",
+   "texto": "Art. 1º Fica estabelecida restricao de trafego para veiculos de carga nos segmentos rodoviarios definidos nesta Portaria, sendo permitida apenas a circulacao de veiculos que atendam simultaneamente aos seguintes limites: I - PBT ou PBTC maximo de 26 toneladas; II - comprimento maximo de 18,60 metros; III - limite de ate 4 eixos.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência). Sobreposição com a Portaria 414/2012 (PBT acima de 26 t em PR-412, de Prainha ao ferry) não resolvida: mesma ordem de grandeza.",
+   "excecoes": "Nenhuma no ato. Dos 10 segmentos do art. 2º, 8 têm geometria (807S0010, 412S0025, 412S0027, 412S0018, 412S0030, 412S0032, 412S0033, 412S0034); 508S0020EPR e 508S0030EPR (1,52 km) ficam sem geometria.",
+   "geometria": [
+    {
+     "rota": {
+      "de": [
+       -48.5751,
+       -25.8724
+      ],
+      "para": [
+       -48.5694,
+       -25.8674
+      ]
+     }
+    },
+    {
+     "osm_ref": [
+      "PR-412"
+     ],
+     "de": {
+      "nome": "GUARATUBA (B) (CORPO DE BOMBEIROS)",
+      "lon": -48.568,
+      "lat": -25.8733
+     },
+     "para": {
+      "nome": "PORTO PASSAGEM GUARATUBA (F. BOAT)",
+      "lon": -48.5704,
+      "lat": -25.8659
+     },
+     "extensao_km": 0.88
+    },
+    {
+     "rota": {
+      "de": [
+       -48.5967,
+       -25.9472
+      ],
+      "para": [
+       -48.5763,
+       -25.8844
+      ]
+     }
+    },
+    {
+     "rota": {
+      "de": [
+       -48.5699,
+       -25.8548
+      ],
+      "para": [
+       -48.5383,
+       -25.8169
+      ]
+     }
+    }
+   ],
+   "fonte_geometria": "rota de carro no Valhalla (OSM) entre as pontas dos trechos SRE 807S0010EPR, 412S0025EPR+412S0027EPR, 412S0018EPR e 412S0030EPR (a camada do geoserver agrupa 412S0030+0032+0033+0034, 6,82 km, do porto do ferry em Caiobá ao entroncamento com a PR-508). Sem geometria: 508S0020EPR e 508S0030EPR (PR-508, 1,52 km no total)."
+  },
+  {
+   "regra_id": "pr_466_272_p451_2026_36t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PRC-466/PRC-272",
+   "nome": "PRC-466 (km 80,79–97,05) e PRC-272 (km 239,62–254,64), Cruzmaltina e Lidianópolis",
+   "resumo": "só circula veículo de carga com PBT/PBTC até 36 t, 24 h",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 36
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 451/2026, arts. 1º e 2º (DOE 12186 de 15/07/2026)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2026-07-15",
+   "texto": "Art. 1º Fica estabelecida restricao de trafego para veiculos de carga nos segmentos rodoviarios definidos nesta Portaria, sendo permitida apenas a circulacao de veiculos que atendam simultaneamente aos seguintes limites: I - PBT ou PBTC maximo de 36 toneladas.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato. A Portaria 029/2022 (CVC de 57–74 t por AET) lista os mesmos trechos no Anexo I: sobreposição não resolvida; o limite de 36 t vale para quem não tem a AET.",
+   "geometria": [
+    {
+     "osm_ref": [
+      "PRC-466",
+      "PR-466"
+     ],
+     "de": {
+      "nome": "ENTR. PRC-272 (PORTO UBÁ)",
+      "lon": -51.611,
+      "lat": -24.0386
+     },
+     "para": {
+      "nome": "ENTR. PR-082 (PLACA LUAR)",
+      "lon": -51.6978,
+      "lat": -24.142
+     },
+     "extensao_km": 16.26
+    },
+    {
+     "osm_ref": [
+      "PRC-272",
+      "PR-272"
+     ],
+     "de": {
+      "nome": "ENTR. PR-453 (P/ BORRAZÓPOLIS)",
+      "lon": -51.5032,
+      "lat": -23.9891
+     },
+     "para": {
+      "nome": "ENTR. PRC-466 (PORTO UBÁ)",
+      "lon": -51.611,
+      "lat": -24.0386
+     },
+     "extensao_km": 15.02
+    }
+   ],
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre as pontas do trecho SRE citado no ato (geoserver.pr.gov.br, seil_der:sistema_rodoviario_lin_p31982); 466S0600/0605/0610PRC e 272S0310/0320PRC"
+  },
+  {
+   "regra_id": "pr_151_p208_2010_45t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-151",
+   "nome": "PR-151, Entr. BR-476 – divisa PR/SC",
+   "resumo": "proibido veículo de carga com PBT acima de 45 t",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 208/2010, item 1 (DOE 8320 de 07/10/2010)",
+   "ato_url": "https://www.legislacao.pr.gov.br/legislacao/pesquisarAto.do?action=exibir&codAto=79616",
+   "publicacao": "2010-10-07",
+   "texto": "Proibe veiculos de carga com PBT superior a 45 t e eixo acima da Res. CONTRAN 210/06 na PR-151, trecho Entr. BR-476 - Divisa PR/SC (legislacao.pr.gov.br, codAto 79616).",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "baixa",
+   "verificacao": "Texto lido em legislacao.pr.gov.br (codAto 79616) na pesquisa estados_sul_co/PR.",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "A portaria não está na lista de Restrição de Tráfego do DER/PR em 18/10/2026 (a página lista a PR-151 só pela 095/2010); vigência desconhecida (pedir ao DER/PR por LAI)."
+  },
+  {
+   "regra_id": "pr_408_804_p095_2016_26t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-408/PR-804",
+   "nome": "PR-408, Entr. BR-277 (Passa Sete) – Entr. PR-804 (e PR-804 / PR-408 até Morretes e Antonina)",
+   "resumo": "proibido veículo de carga com PBTC acima de 26 t na alínea (a); nas demais, só os limites da Res. CONTRAN 210/06",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 26
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 095/2016, item (a) (DOE 9668 de 01/04/2016)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2016-04-01",
+   "texto": "Fica proibida a circulacao de veiculos de carga (caminhoes): a) com PBTC superior a 26 t e pesos por eixo superiores aos limites da Resolucao 210/2006 do CONTRAN na Rodovia PR-408 trecho: Entroncamento BR-277 (Passa Sete) - Entroncamento PR-804.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "media",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Trecho da alínea (a) sem como localizar no OSM com segurança (PR-408 e PR-804 se cruzam em Passa Sete e o ato não dá km); a restrição vale entre a BR-277 e o entroncamento com a PR-804, poucos quilômetros."
+  },
+  {
+   "regra_id": "pr_412_p414_2012_ferry_26t",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-412",
+   "nome": "PR-412, de Prainha aos atracadouros do ferry boat de Guaratuba e ramais",
+   "resumo": "proibido veículo de carga com PBT acima de 26 t",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 26
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 414/2012, item 1 (citada pela Portaria 702/2025; texto da 414 não relido)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2012-09-17",
+   "texto": "PBT acima de 26 t proibido na PR-412 de Prainha ate os atracadouros do ferry boat, inclusive ramais de acesso (segundo a pesquisa estados_sul_co/PR).",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "baixa",
+   "verificacao": "Citada pela Portaria 702/2025; não consta da página de Restrição de Tráfego do DER/PR.",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Sobreposição com a Portaria 239/2026 (mesmo trecho de Guaratuba, que já está ativa); não consta da lista de Restrição do DER/PR em 18/10/2026."
+  },
+  {
+   "regra_id": "pr_ferry_guaratuba_p702_2025",
+   "orgao": "DER-PR",
+   "uf": "PR",
+   "rodovia": "PR-412",
+   "nome": "Ferry boat de Guaratuba: mais de 3 eixos só em dia útil, 00h–06h (temporada 19/12/2025–22/02/2026)",
+   "resumo": "veículo com mais de 3 eixos só em dia útil, 00h–06h; carnaval proibido (vencida)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3
+   },
+   "horario": "permanente (24 h, todos os dias)",
+   "ato": "Portaria DER/PR 702/2025, arts. 1º a 3º (art. 4º revoga as disposições anteriores)",
+   "ato_url": "https://www.der.pr.gov.br/Pagina/Restricao-de-Trafego",
+   "publicacao": "2025-12-02",
+   "texto": "Veiculos com mais de 3 eixos: somente em dias uteis, das 00h00 as 06h00, de 19/12/2025 a 22/02/2026; produtos perigosos atravessam isolados.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "media",
+   "verificacao": "Texto do ato lido no portal da Casa Civil do PR (legislacao.pr.gov.br) e a portaria listada na página Restrição de Tráfego do DER/PR em 18/10/2026 (pesquisa estados_sul_co/PR); revogação posterior não localizada (a busca textual do portal é incompleta; \"vigente\" aqui = listada como vigente pelo DER/PR, não é certidão de vigência).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Vencida pelo próprio prazo (22/02/2026); o ferry está fora de operação em 10/2026 segundo a operadora. A regra se repete a cada temporada com portaria nova."
+  },
+  {
+   "regra_id": "go_139_p20_2026_cristianopolis_quinca_mariano",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-139/GO-020",
+   "nome": "GO-139, Cristianópolis – Caldas Novas – Corumbaíba – divisa GO/MG (Ponte Quinca Mariano)",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -48.70601,
+      -17.20109
+     ],
+     "via": [
+      [
+       -48.625,
+       -17.745
+      ],
+      [
+       -48.56422,
+       -18.1349
+      ]
+     ],
+     "para": [
+      -48.563916,
+      -18.324552
+     ]
+    }
+   },
+   "fonte_geometria": "rota de carro no Valhalla (OSM) por Cristianópolis, Caldas Novas e Corumbaíba até a ponta sul da GO-139 na divisa com MG (152,8 km; SRE: km 0–148); 75% do traçado sobre ways com ref GO-139/GO-020",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_217_p20_2026_piracanjuba_go139",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-217",
+   "nome": "GO-217, Entr. BR-153 (Piracanjuba) – Entr. GO-139",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "osm_ref": [
+     "GO-217"
+    ],
+    "de": {
+     "nome": "Piracanjuba",
+     "lon": -49.01701,
+     "lat": -17.30204,
+     "tol_m": 6000
+    },
+    "para": {
+     "cruza": "GO-139"
+    },
+    "lacuna_m": 3000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_338_p20_2026_abadiania_pirenopolis",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-338",
+   "nome": "GO-338, Entr. BR-060 (Abadiânia) – Planalmira – Pirenópolis",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "osm_ref": [
+     "GO-338"
+    ],
+    "de": {
+     "nome": "Abadiânia",
+     "lon": -48.70678,
+     "lat": -16.19409,
+     "tol_m": 6000
+    },
+    "via": [
+     {
+      "nome": "Planalmira",
+      "lon": -48.85415,
+      "lat": -16.05688,
+      "tol_m": 6000
+     }
+    ],
+    "para": {
+     "nome": "Pirenópolis",
+     "lon": -48.95732,
+     "lat": -15.85016,
+     "tol_m": 6000
+    },
+    "lacuna_m": 3000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_431_p20_2026_br153_pirenopolis",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-431",
+   "nome": "GO-431, Entr. BR-153 – Pirenópolis",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "osm_ref": [
+     "GO-431"
+    ]
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_507_p20_2026_go213_rio_quente",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-507",
+   "nome": "GO-507, Entr. GO-213 – Rio Quente",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "osm_ref": [
+     "GO-507"
+    ],
+    "de": {
+     "cruza": "GO-213"
+    },
+    "para": {
+     "nome": "Rio Quente",
+     "lon": -48.76482,
+     "lat": -17.80672,
+     "tol_m": 6000
+    },
+    "lacuna_m": 3000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_225_p20_2026_corumba_pirenopolis",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-225",
+   "nome": "GO-225, Entr. BR-414 (Corumbá de Goiás) – Pirenópolis",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "osm_ref": [
+     "GO-225"
+    ],
+    "de": {
+     "cruza": "GO-338"
+    },
+    "para": {
+     "cruza": "BR-414",
+     "perto": [
+      -48.8092,
+      -15.9183
+     ]
+    },
+    "lacuna_m": 3000
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_330_p20_2026_vianopolis_tres_ranchos",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-330",
+   "nome": "GO-330, Vianópolis – Pires do Rio – Catalão – Três Ranchos",
+   "resumo": "CVC e combinações de carga com mais de 3 eixos proibidos nos feriados prolongados (07h–20h nas datas da portaria)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3,
+    "isenta_carga": [
+     "perishable"
+    ]
+   },
+   "horario": "datas de feriado prolongado de 14/02/2026 a 03/01/2027, 07:00–20:00 (18/02/2026: 07:00–12:00)",
+   "ato": "Portaria GOINFRA 20/2026, arts. 1º a 4º (DOE-GO 24.713 de 04/02/2026)",
+   "ato_url": "https://diariooficial.abc.go.gov.br/portal/edicoes/download/7044",
+   "publicacao": "2026-02-04",
+   "texto": "Art. 1º RESTRINGIR a circulação das Combinações de Veículos de Carga (CVC) e das Combinações para Transportes de Veículos (CTV) que trafegam nas rodovias sob jurisdição estadual com trechos de pista simples com duplo sentido ... incluídos nas restrições veículos dos tipos: CVC acima de 03 (três) até 09 (nove) eixos, Veículos do tipo Romeu e Julieta, Guindastes, Cegonheiros, Linha de Eixos, ou qualquer combinação de veículos nos transportes de cargas superior a 3 (três) eixos, e veículos que exigem escolta ou batedores. Art. 2º ... 07:00 às 20:00 nas datas listadas (quarta-feira de cinzas, 18/02/2026, das 07:00 às 12:00).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria conferido no PDF da GOINFRA e no DOE-GO 24.713 de 04/02/2026 (pesquisa estados_sul_co/GO, 18/10/2026); retificação não localizada nas edições 24.714–24.721; a base legal citada (Decreto 10.213/2023) foi revogada em 09/03/2026 pelo Decreto 10.868/2026, mas a portaria segue na listagem de portarias vigentes da GOINFRA. Portaria anual: vale só para as datas de 2026/2027 listadas; confira se a GOINFRA reeditou o ato.",
+   "excecoes": "Art. 4º: ficam excluídos os transportes de cargas perecíveis, de leite e derivados, de frutas e verduras e de cargas vivas ou frigoríficas (o app isenta cargo_type \"perishable\"). A portaria vale só para trechos de pista simples com duplo sentido; o ato não diz quais segmentos duplicados ficam de fora.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -48.51317,
+      -16.74759
+     ],
+     "via": [
+      [
+       -48.27932,
+       -17.30057
+      ],
+      [
+       -47.94471,
+       -18.17025
+      ]
+     ],
+     "para": [
+      -47.78107,
+      -18.35675
+     ]
+    }
+   },
+   "fonte_geometria": "rota de carro no Valhalla (OSM) por Vianópolis, Pires do Rio, Catalão e Três Ranchos (225 km; 86% sobre ways com ref GO-330/BR-352/GO-020)",
+   "janelas": [
+    {
+     "datas": [
+      "2026-02-14",
+      "2026-02-17",
+      "2026-04-03",
+      "2026-04-05",
+      "2026-04-18",
+      "2026-04-21",
+      "2026-05-01",
+      "2026-05-03",
+      "2026-06-04",
+      "2026-06-07",
+      "2026-09-05",
+      "2026-09-07",
+      "2026-10-10",
+      "2026-10-12",
+      "2026-10-31",
+      "2026-11-02",
+      "2026-11-20",
+      "2026-11-22",
+      "2026-12-24",
+      "2026-12-25",
+      "2026-12-27",
+      "2026-12-31",
+      "2027-01-01",
+      "2027-01-03"
+     ],
+     "inicio": "07:00",
+     "fim": "20:00"
+    },
+    {
+     "datas": [
+      "2026-02-18"
+     ],
+     "inicio": "07:00",
+     "fim": "12:00"
+    }
+   ]
+  },
+  {
+   "regra_id": "go_139_ponte_quinca_mariano_interdicao_2026",
+   "orgao": "GOINFRA",
+   "uf": "GO",
+   "rodovia": "GO-139",
+   "nome": "GO-139, Ponte Quinca Mariano sobre o Rio Paranaíba (divisa GO/MG)",
+   "resumo": "ponte interditada a todos os veículos desde 03/08/2026, por cerca de 12 meses (anúncio da GOINFRA)",
+   "criterio": {
+    "todos": true
+   },
+   "horario": "interdição total desde 03/08/2026 (cerca de 12 meses)",
+   "ato": "Não há ato normativo: anúncio da GOINFRA (matéria no site goias.gov.br, publicada em 05/08/2026, atualizada em 07/10/2026)",
+   "ato_url": "https://goias.gov.br/goinfra/ponte-quinca-mariano-entre-goias-e-minas-gerais-sera-interditada-a-partir-de-segunda-3-8/",
+   "publicacao": "2026-08-05",
+   "texto": "A GOINFRA informou interdição total da ponte a partir das 6h de 03/08/2026, por cerca de 12 meses, para apoios, juntas, protensão complementar, drenagem e pavimento.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "baixa",
+   "verificacao": "Página oficial relida em 18/10/2026 (pesquisa estados_sul_co/GO); reabertura não noticiada.",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Não há ato normativo (portaria/decreto): só a notícia da GOINFRA sobre a interdição; a vigência em 18/10/2026 não foi reconfirmada em fonte independente. O app só informa. Desvios citados pela GOINFRA: Corumbaíba – Nova Aurora – Cumari – Araguari; Corumbaíba – Buriti Alegre – Itumbiara – Tupaciguara – Araguari.",
+   "geometria": {
+    "osm_ref": [
+     "GO-139"
+    ],
+    "de": {
+     "nome": "Corumbaíba",
+     "lon": -48.56422,
+     "lat": -18.1349,
+     "tol_m": 6000
+    },
+    "para": {
+     "extremo": "S"
+    },
+    "lacuna_m": 3000,
+    "ultimos_km": 3
+   },
+   "fonte_geometria": "últimos 3 km da GO-139 até a ponta sul na divisa com MG (Ponte Quinca Mariano, SRE 139EGO0005/0010)"
+  },
+  {
+   "regra_id": "mt_040_361_p010_2023_estrada_parque_45t",
+   "orgao": "SINFRA-MT",
+   "uf": "MT",
+   "rodovia": "MT-040/MT-361",
+   "nome": "MT-040 e MT-361 (Estrada-Parque Santo Antônio de Leverger – Porto de Fora – Barão de Melgaço – divisa Cuiabá/Juscimeira), 175,7 km",
+   "resumo": "restrito (só com AET, dia útil, de dia) veículo com PBT acima de 45 t, mais de 6 eixos e mais de 16 m de comprimento",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 45,
+    "eixos_acima": 6,
+    "comprimento_acima_m": 16,
+    "cumulativo": true
+   },
+   "horario": "AET: do amanhecer ao pôr do sol (cargas vivas: qualquer horário), dias úteis; proibido sáb/dom/feriado mesmo com AET",
+   "ato": "Portaria SINFRA 010/2023/GS/SINFRA-MT, arts. 1º a 3º (DOE-MT 28.451 de 07/03/2023, p. 16)",
+   "ato_url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Fica+restrito+o+tr%C3%A2nsito%22",
+   "publicacao": "2023-03-07",
+   "texto": "Art. 1º - Fica restrito o trânsito de Veículos de Carga, Combinações de Veículos de Carga - CVC, Combinações de Transportes de Veículos CTV e de cargas indivisíveis com Peso Bruto Total - PBT, cheio ou vazio, superior a 45 (quarenta e cinco) toneladas, com mais de 6(seis) eixos e comprimento acima de 16,00 (dezesseis) metros, nas rodovias e trechos mencionados a seguir: I. Rodovias MT 040 e MT 361, trecho compreendido entre o limite do perímetro urbano do Município de Santo Antônio de Leverger - Porto de Fora - Barão de Melgaço - Divisa entre Cuiabá e Juscimeira ... extensão total de 175,7 Km. Art. 2º ... deverão portar Autorizações Especiais de Trânsito - AET ... Art. 3º ... I. Horário permitido para tráfego: do amanhecer ao pôr do sol, exceto para transporte de cargas vivas ... II. trânsito permitido nos dias úteis e proibido, mesmo com AET, aos sábados, aos domingos e feriados.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria lido na página 16 do DOE-MT 28.451 (IOMAT) e conferido contra os códigos SRE do GeoDados em 18/10/2026 (pesquisa estados_sul_co/MT; extensão total 175,7 km bate com o SRE). Nenhuma revogação ou alteração localizada na busca do IOMAT (SINFRA inacessível: vigência \"provável\"). O ato une os três limites com \"e\": o app lê como cumulativo (PBT > 45 t E mais de 6 eixos E mais de 16 m), por exemplo rodotrem/bitrenzão de 9 eixos e 74 t.",
+   "excecoes": "Passa quem tem AET (art. 2º: operação de carga/descarga às margens, domicílio no trecho ou obra de manutenção), em dia útil e de dia; sábado, domingo e feriado é proibido mesmo com AET. A Portaria SINFRA de 25/01/2021 dispensa AET de rodotrem/bitrenzão de 9 eixos/74 t em geral, mas a AET continua exigida nos trechos com restrição.",
+   "geometria": [
+    {
+     "osm_ref": [
+      "MT-040",
+      "MT-361"
+     ],
+     "de": {
+      "lon": -56.0663,
+      "lat": -15.8651,
+      "tol_m": 1500,
+      "nome": "Fim do PU de Santo Antônio do Leverger"
+     },
+     "para": {
+      "lon": -55.8069,
+      "lat": -16.0898,
+      "tol_m": 1500,
+      "nome": "Entr. MT-361(A) (Porto de Fora)"
+     },
+     "extensao_km": 51.0,
+     "lacuna_m": 1500
+    },
+    {
+     "osm_ref": [
+      "MT-361",
+      "MT-040"
+     ],
+     "de": {
+      "lon": -55.8069,
+      "lat": -16.0898,
+      "tol_m": 1500,
+      "nome": "Porto de Fora"
+     },
+     "para": {
+      "lon": -55.9592,
+      "lat": -16.1975,
+      "tol_m": 1500,
+      "nome": "Barão de Melgaço (entr. MT-270)"
+     },
+     "extensao_km": 22.3,
+     "lacuna_m": 1500
+    },
+    {
+     "osm_ref": [
+      "MT-040"
+     ],
+     "de": {
+      "lon": -55.8047,
+      "lat": -16.094,
+      "tol_m": 1500,
+      "nome": "Entr. MT-361(B)"
+     },
+     "para": {
+      "lon": -55.2148,
+      "lat": -16.3787,
+      "tol_m": 1500,
+      "nome": "Divisa Cuiabá/Juscimeira"
+     },
+     "extensao_km": 102.4,
+     "lacuna_m": 1500
+    }
+   ],
+   "fonte_geometria": "trecho localizado no OSM (ways com ref MT-040/MT-361) entre as pontas dos segmentos SRE 040EEMT0040+0050, 361EEMT0040+0043 e 040EEMT0053..0073 (GeoDados-MT, geodados.mt.gov.br); extensão pelo OSM 177,3 km x 175,7 km do ato"
+  },
+  {
+   "regra_id": "mt_010_246_p061_2021_rosario_oeste_acorizal_26t",
+   "orgao": "SINFRA-MT",
+   "uf": "MT",
+   "rodovia": "MT-010/MT-246",
+   "nome": "MT-010 (Rosário Oeste – Entr. MT-246, Acorizal) e MT-246 (Entr. BR-163/364 – Entr. MT-010), incisos I e III",
+   "resumo": "restrito (só com AET, dia útil) veículo com PBT a partir de 26 t, mais de 3 eixos e mais de 14 m de comprimento",
+   "criterio": {
+    "caminhoes": true,
+    "peso_igual_ou_acima_t": 26,
+    "eixos_acima": 3,
+    "comprimento_acima_m": 14,
+    "cumulativo": true
+   },
+   "horario": "AET; sem horário fixo, dias úteis; proibido sábado a partir das 13h, domingo e feriado mesmo com AET",
+   "ato": "Portaria SINFRA 061/2021/GS/SINFRA-MT, arts. 1º (I e III), 2º e 3º (I) (DOE-MT 28.107 de 20/10/2021, p. 28)",
+   "ato_url": "https://www.normasbrasil.com.br/norma/portaria-61-2021-mt_421943.html",
+   "publicacao": "2021-10-20",
+   "texto": "Art. 1º Fica restrito o trânsito de Veículos de Carga, CVC, CTV e de cargas indivisíveis com Peso Bruto Total - PBT, cheio ou vazio, igual ou superior a 26.000 (vinte e seis mil) kg, com mais de 3 (três) eixos e comprimento acima de 14,00 (quatorze) metros, nas rodovias e trechos mencionados a seguir: I - Rodovia MT 010, trecho compreendido entre o limite do perímetro urbano do Município de Rosário Oeste e o entroncamento com a Rodovia MT 246 - Acorizal; ... III - Rodovia MT 246, trecho compreendido entre o entroncamento com a BR 163/364 e o entroncamento com a Rodovia MT 010. Art. 3º I - para as Rodovias MT 010 e MT 246, não haverá restrição de horário, sendo, todavia, o trânsito permitido nos dias úteis e proibido, mesmo com AET, aos sábados, a partir de 13 horas, aos domingos e feriados.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto da portaria (DOE-MT de 20/10/2021, lido no IOMAT e no Normas Brasil) conferido em 18/10/2026; revoga a Portaria 041/2021 (art. 5º); nenhuma revogação/alteração posterior localizada (a Portaria 010/2023 não a cita). Os limites unidos por vírgula e \"e\" são lidos como cumulativos. Geometria: segmentos SRE 010EEMT0100/0095/0090 e 246EEMT0070/0065/0063/0062 (GeoDados-MT) casados com o OSM, extensões batem com o SRE (40,9 e 20,4 km).",
+   "excecoes": "Passa quem tem AET (art. 2º: carga/descarga às margens, domicílio no trecho ou obra de manutenção), em dia útil; sábado a partir das 13h, domingo e feriado é proibido mesmo com AET. O inciso II (MT-010 do entroncamento com a MT-246 ao km 4+600, Rodoanel/BR-163) e o inciso IV (MT-251, Estrada-Parque) ficam sem geometria.",
+   "geometria": [
+    {
+     "osm_ref": [
+      "MT-010"
+     ],
+     "de": {
+      "lon": -56.42125,
+      "lat": -14.82908,
+      "tol_m": 1500,
+      "nome": "Início do PU de Rosário Oeste"
+     },
+     "para": {
+      "lon": -56.33608,
+      "lat": -15.14281,
+      "tol_m": 1500,
+      "nome": "Entr. MT-246(B) (acesso a Acorizal)"
+     },
+     "extensao_km": 40.9,
+     "lacuna_m": 1500
+    },
+    {
+     "osm_ref": [
+      "MT-246"
+     ],
+     "de": {
+      "lon": -56.4641,
+      "lat": -15.25498,
+      "tol_m": 1500,
+      "nome": "Entr. BR-163/364"
+     },
+     "para": {
+      "lon": -56.33608,
+      "lat": -15.14281,
+      "tol_m": 1500,
+      "nome": "Entr. MT-010(B)"
+     },
+     "extensao_km": 20.4,
+     "lacuna_m": 1500
+    }
+   ],
+   "fonte_geometria": "trecho localizado no OSM (ways com ref MT-010 e MT-246) entre as pontas dos segmentos SRE do GeoDados-MT"
+  },
+  {
+   "regra_id": "mt_251_p061_2021_estrada_parque_26t_noturno",
+   "orgao": "SINFRA-MT",
+   "uf": "MT",
+   "rodovia": "MT-251",
+   "nome": "MT-251 Estrada-Parque (Entr. MT-351 km 16+650 – km 69+430), inciso IV",
+   "resumo": "restrito (só com AET, dia útil, 20h–05h) veículo com PBT a partir de 26 t, mais de 3 eixos e mais de 14 m",
+   "criterio": {
+    "caminhoes": true,
+    "peso_igual_ou_acima_t": 26,
+    "eixos_acima": 3,
+    "comprimento_acima_m": 14,
+    "cumulativo": true
+   },
+   "horario": "AET: dias úteis, 20:00 às 05:00; proibido fim de semana e feriado mesmo com AET (decisão judicial, Autos 1193-83.2009.811.0024)",
+   "ato": "Portaria SINFRA 061/2021/GS/SINFRA-MT, arts. 1º (IV) e 3º (II) (DOE-MT 28.107 de 20/10/2021, p. 28)",
+   "ato_url": "https://www.normasbrasil.com.br/norma/portaria-61-2021-mt_421943.html",
+   "publicacao": "2021-10-20",
+   "texto": "Art. 1º ... IV - Rodovia MT 251, trecho compreendido pela denominada Estrada-Parque, do entroncamento com a Rodovia MT 351 - KM 16+650 metros até o KM 69+430 metros.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "media",
+   "verificacao": "Texto conferido em 18/10/2026 (pesquisa estados_sul_co/MT).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Sem geometria: o km do ato (16+650 a 69+430) não casa com o SRE (a MT-251 começa em Nova Xavantina, km 0 na BR-158, e a Chapada fica nos km 381–428)."
+  },
+  {
+   "regra_id": "rs_389_dn152_2023_estrada_do_mar_23t",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "ERS-389",
+   "nome": "ERS-389 Estrada do Mar (Osório, Entr. ERS-030 – Torres, Entr. RSC-453), 90,3 km",
+   "resumo": "vedada a circulação de veículo com PBT acima de 23 t, ou mais de 3 eixos, ou mais de 16 m de comprimento",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 23,
+    "eixos_acima": 3,
+    "comprimento_acima_m": 16
+   },
+   "horario": "permanente (365 dias); 12 t < PBT ≤ 23 t só com AEC e em janelas semanais (art. 7º)",
+   "ato": "Decisão Normativa DAER 152/2023, art. 8º, § 1º (DOE-RS de 25/04/2023)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/202305/16091724-dn-152-2023-estrada-do-mar-doe.pdf",
+   "publicacao": "2023-04-25",
+   "texto": "Art. 8º Fica vedada a circulação na ERS-389 – Estrada do Mar, dos veículos: § 1º com Peso Bruto Total – PBT superior a 23 (vinte e três) toneladas e/ou com mais de 03 (três) eixos e/ou com mais de 16 (dezesseis) metros de comprimento, salvo quando autorizados, na forma do Art. 14 desta Decisão Normativa.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto conferido artigo a artigo no PDF oficial linkado na página de restrições do DAER (DAER lista a DN 152/2023 como vigente em 18/10/2026; pesquisa estados_sul_co/RS); DOE de 25/04/2023 pelo nome do arquivo escaneado.",
+   "excecoes": "Art. 14: o DAER pode autorizar, em caráter excepcional, veículos acima de 23 t (ofício) ou com AET. Veículo de 12 t < PBT ≤ 23 t (até 3 eixos e 16 m) só circula com AEC e nas janelas do art. 7º (baixa temporada: segunda 10h a sexta 16h e sábado 10h–16h; alta: segunda 12h a sexta 12h; feriados vedados); essa regra de janela não é modelada. Produtos perigosos são vedados (art. 8º, § 2º), salvo as exceções do art. 3º; não modelado aqui.",
+   "geometria": {
+    "osm_ref": [
+     "ERS-389",
+     "RS-389"
+    ],
+    "de": {
+     "lon": -50.26979,
+     "lat": -29.91264,
+     "tol_m": 1500,
+     "nome": "Entr. ERS-030 (Osório)"
+    },
+    "para": {
+     "lon": -49.75833,
+     "lat": -29.32415,
+     "tol_m": 1500,
+     "nome": "Entr. RSC-453 (Torres)"
+    },
+    "extensao_km": 90.3,
+    "lacuna_m": 800
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com ref ERS-389) entre as pontas dos segmentos SRE 389ERS0010..0040 + 389MRS0050 (SRE 08/2026 do DAER); 90,1 km pelo OSM"
+  },
+  {
+   "regra_id": "rs_453_486_dn135_2021_rota_do_sol_cvc",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "RSC-453/ERS-486",
+   "nome": "Rota do Sol (RSC-453 km 147,89–255,77 e ERS-486 km 0–38,66), de BRS-116/São Marcos a Terra de Areia",
+   "resumo": "proibido CVC ou veículo de passageiros com mais de 19,80 m, mais de 7 eixos e PBTC acima de 57 t",
+   "criterio": {
+    "caminhoes": true,
+    "peso_acima_t": 57,
+    "eixos_acima": 7,
+    "comprimento_acima_m": 19.8,
+    "cumulativo": true
+   },
+   "horario": "permanente nos subtrechos II e III (de BRS-116/São Marcos a Terra de Areia)",
+   "ato": "Decisão Normativa DAER 135/2021, art. 2º (subtrechos II e III do art. 1º, § 1º)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/202108/18172748-dn-135-21-rota-do-sol-alta-e-baixa-temporadas.pdf",
+   "publicacao": "2021-07-26",
+   "texto": "Art. 2º Fica proibida a circulação de veículos ou combinações de veículos de carga (CVC) e de passageiros, com comprimento superior a 19,80m, acima de 7 eixos e peso bruto total combinado PBTC superior a 57 toneladas, e que não esteja enquadrado nas condicionantes estabelecidas nesta normativa, nos segmentos indicados no Art. 1º §1º Subtrechos II e III, ou seja, do Entr. BRS-116 (P/São Marcos até o Entr. BRS-101 (Terra de Areia).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto conferido artigo a artigo no PDF oficial (DN 135/2021, que revoga a DN 126/2019), listada como vigente na página do DAER em 18/10/2026 (pesquisa estados_sul_co/RS). A data de publicação no DOE não foi obtida (a norma vale 30 dias após a publicação, art. 9º); a data de 26/07/2021 é a da sessão do Conselho. Os três limites do art. 2º são ligados por \"e\": lidos como cumulativos.",
+   "excecoes": "O art. 2º se aplica ao que \"não esteja enquadrado nas condicionantes\" da norma. As janelas diárias de 23–57 t e 14–19,80 m (art. 3º, alta e baixa temporada, Anexo I) e as datas festivas não são modeladas. Produtos perigosos: DN 127/2019 e 136/2021 (perigosos).",
+   "geometria": {
+    "osm_ref": [
+     "RSC-453",
+     "BR-453",
+     "ERS-486",
+     "RS-486"
+    ],
+    "de": {
+     "lon": -51.12916,
+     "lat": -29.13249,
+     "tol_m": 1500,
+     "nome": "Entr. BRS-116 (São Marcos)"
+    },
+    "via": [
+     {
+      "lon": -50.63275,
+      "lat": -29.10098,
+      "tol_m": 1500,
+      "nome": "Entr. ERS-476 (Lajeado Grande)"
+     },
+     {
+      "lon": -50.30175,
+      "lat": -29.26738,
+      "tol_m": 1500,
+      "nome": "Entr. ERS-020(B)"
+     },
+     {
+      "lon": -50.19125,
+      "lat": -29.33148,
+      "tol_m": 1500,
+      "nome": "Entr. ERS-486 (Aratinga)"
+     }
+    ],
+    "para": {
+     "lon": -50.05117,
+     "lat": -29.56579,
+     "tol_m": 1500,
+     "nome": "Entr. BRS-101 (Terra de Areia)"
+    },
+    "extensao_km": 146.54,
+    "lacuna_m": 1500
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com ref RSC-453, BR-453 e ERS-486) entre as pontas dos subtrechos SRE 453RSC0250 a 486ERS0030 (SRE 08/2026 do DAER); 146,4 km pelo OSM"
+  },
+  {
+   "regra_id": "rs_dn148_2022_cr6_cts11_obras_de_arte",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "ERS/RSC/BRS/VRS (165 trechos)",
+   "nome": "Trechos com obras de arte do Anexo I da DN 148/2022 (DAER-RS; 122 dos 165 trechos têm geometria)",
+   "resumo": "proibido CVC de até 7 eixos com PBTC de 45 a 57 t e até 19,80 m (CR6) ou de 48,5 a 58,5 t e até 18,60 m (CTS11)",
+   "criterio": {
+    "caminhoes": true,
+    "ou": [
+     {
+      "peso_acima_t": 45,
+      "peso_ate_t": 57,
+      "comprimento_ate_m": 19.8,
+      "eixos_ate": 7
+     },
+     {
+      "peso_acima_t": 48.5,
+      "peso_ate_t": 58.5,
+      "comprimento_ate_m": 18.6,
+      "eixos_ate": 7
+     }
+    ]
+   },
+   "horario": "permanente (24 h)",
+   "ato": "Decisão Normativa DAER 148/2022, arts. 1º e 2º, Anexo I (Conselho de Administração, 19/10/2022; revoga a DN 145/2022)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/202211/30153039-dec-normat-148-alteracao.pdf",
+   "publicacao": "2022-10-19",
+   "texto": "Art. 1º É proibida a circulação dos veículos do tipo CVC – Combinação de Veículo de Carga com Peso Bruto Total Combinado – PBTC superior a 45 toneladas e até 57 toneladas, com comprimento máximo de até 19,80 metros e superior a 48,5 e até 58,5 toneladas, com comprimento máximo de 18,60 metros, dotados de até 7 (sete) eixos, nos trechos de rodovias sob jurisdição do DAER, listadas no Anexo I da presente Decisão Normativa. Art. 2º As Combinações de Veículos de Carga descritas no artigo 1º constam do anexo da Portaria nº 268 de 14 de março de 2022, do SENATRAN, com as descrições CR6 – Caminhão e Reboque e CTS11 – Caminhão e Semirreboque respectivamente.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "alta",
+   "verificacao": "Texto e Anexo I (165 linhas, 2.455,6 km) conferidos no PDF oficial; a página de restrições do DAER lista a DN como vigente em 18/10/2026 (pesquisa estados_sul_co/RS). Geometria: 122 dos 165 trechos casados pelo código SRE (SRE 08/2026) e extensão (±8%) com o OSM; os outros 43 ficam documentados em data/raw/ders_estaduais/rs_dn148_trechos.json sem geometria (km do SRE mudou desde 2022, código ausente ou traçado sem ref no OSM).",
+   "excecoes": "Nenhuma no ato (o art. 3º responsabiliza por danos nas obras de arte). Combinação fora dessas faixas (por exemplo, carreta de 45 t ou menos, ou rodotrem/bitrem acima de 19,80 m) não é alcançada por esta DN.",
+   "geometria": {
+    "specs_arquivo": "rs_dn148_trechos.json"
+   },
+   "fonte_geometria": "122 trechos do Anexo I localizados no OSM (ways com o ref da rodovia) entre as pontas do trecho SRE correspondente (SRE 08/2026 do DAER)"
+  },
+  {
+   "regra_id": "rs_030_dn059_2007_mais_de_3_eixos",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "ERS-030",
+   "nome": "ERS-030 (RS-030), Santo Antônio da Patrulha – Osório",
+   "resumo": "proibido veículo de carga com mais de 3 eixos (exceto licenciados nos dois municípios, com nota fiscal de/para o trecho ou motorista residente)",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 3
+   },
+   "horario": "permanente (24 h)",
+   "ato": "Decisão Normativa DAER 59/2007, art. 1º (DOE-RS de 19/03/2007)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/201607/26134642-decisao-normativa-n-59-07-restricao-para-veiculos-com-mais-de-3-eixos-em-trecho-da-ers-030.pdf",
+   "publicacao": "2007-03-19",
+   "texto": "Art. 1º) Proibir a circulação dos veículos de carga, com configuração mecânica superior a 03 (três) eixos, na rodovia RS/030, trecho compreendido entre os municípios de Santo Antonio da Patrulha e Osório, com exceção: a) licenciados em Santo Antonio da Patrulha e Osório; b) com nota fiscal da carga com destino ou origem no trecho; c) motoristas residentes no trecho.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "baixa",
+   "verificacao": "Texto conferido em 18/10/2026; a página do DAER ainda lista a DN como vigente, mas ela cita a concessionária Metrovias (contrato antigo).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Vigência real não confirmada (norma de 2007, concessionária Metrovias, alteração de 28/06/2007 que o PDF não mostra); sem km atual confiável no SRE de hoje para localizar o trecho. O app só informa."
+  },
+  {
+   "regra_id": "rs_dn090_2014_cvc_74t_toda_a_malha",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "ERS/RSC/BRS (toda a malha do DAER)",
+   "nome": "Toda a malha sob jurisdição do DAER",
+   "resumo": "proibida a CVC de 19,80 m, 9 eixos e 74 t de PBTC",
+   "criterio": {
+    "caminhoes": true,
+    "comprimento_ate_m": 19.8,
+    "eixos_acima": 8,
+    "peso_acima_t": 73.9,
+    "cumulativo": true
+   },
+   "horario": "permanente (24 h)",
+   "ato": "Decisão Normativa DAER 90/2014, art. 3º (Conselho de Administração, 07/11/2014)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/201608/04163426-decisao-normativa-n-90-14-proibe-a-circulacao-de-cvcs-com-19-8m-de-comp-e-74ton.pdf",
+   "publicacao": "2014-11-07",
+   "texto": "Art. 3º – Proibir a circulação das Combinações de Veículos de Carga – CVCs, de 19,80m de comprimento, distribuídos em 9(nove) eixos de carga, e com capacidade de Peso Bruto Total Combinado – PBTC de 74(setenta e quatro) toneladas, em rodovias sob jurisdição do DAER.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "media",
+   "verificacao": "Texto conferido em 18/10/2026; listada na página do DAER.",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Regra geral sem trecho (vale para toda a malha estadual, que o app não tem como delimitar só com a camada de trechos); a DN 143/2022, art. 12, concede AET para CVC de até 74 t e menos de 25 m e a convivência com a DN 90 não está esclarecida em nenhum ato lido."
+  },
+  {
+   "regra_id": "rs_dn158_2026_feriados_excedentes",
+   "orgao": "DAER-RS",
+   "uf": "RS",
+   "rodovia": "ERS/RSC/BRS (pista simples)",
+   "nome": "Rodovias estaduais de pista simples nos feriados de 2026 (DN 158/2026)",
+   "resumo": "veículo que excede 2,60 m de largura, 4,40 m de altura, 19,80 m de comprimento ou 58,5 t não circula em pista simples nos feriados da DN",
+   "criterio": {
+    "todos": true
+   },
+   "horario": "calendário de 26 datas de 2026 (Anexo I)",
+   "ato": "Decisão Normativa DAER 158/2026, arts. 1º a 3º e Anexo I (DOE-RS de 13/02/2026, p. 43)",
+   "ato_url": "https://www.daer.rs.gov.br/upload/arquivos/202604/01162129-dn-1582026.pdf",
+   "publicacao": "2026-02-13",
+   "texto": "Só veículos ou combinações que excedam qualquer destes limites (passíveis ou não de AET/AE): largura 2,60 m, altura 4,40 m, comprimento 19,80 m, PBTC 58,5 t; abrange CVC, CTV e CTVP mesmo com AET (art. 1º, § 1º). Caminhão dentro dos limites não é restringido.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "media",
+   "verificacao": "PDF relido em 18/10/2026 (pesquisa estados_sul_co/RS).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "A DN não lista trechos (diz \"trechos de pista simples\"), só vale para veículos com excesso de dimensão/peso (a camada não modela o excesso) e traz calendário só de 2026. Feriados prolongados: frente de feriados."
+  },
+  {
+   "regra_id": "df_002_eixao_decreto32563_pesados",
+   "orgao": "DER-DF",
+   "uf": "DF",
+   "rodovia": "DF-002",
+   "nome": "DF-002 Eixo Rodoviário Sul e Norte (Eixão), Brasília",
+   "resumo": "vedado o tráfego de veículos pesados, todos os dias da semana",
+   "criterio": {
+    "caminhoes": true
+   },
+   "horario": "permanente (24 h, todos os dias, inclusive feriados)",
+   "ato": "Decreto distrital 32.563/2010, art. 2º (DODF 233 de 09/12/2010, p. 5)",
+   "ato_url": "https://www.sinj.df.gov.br/sinj/Norma/66779/exec_dec_32563_2010.html",
+   "publicacao": "2010-12-09",
+   "texto": "Art. 2º Fica vedado o tráfego de veículos pesados na DF-002 (Eixo Rodoviário Sul e Norte) em todos os dias da semana, exceto aos veículos autorizados pelo Departamento de Estradas de Rodagem do DF, em situações especiais;",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto conferido no SINJ-DF em 18/10/2026 (pesquisa estados_sul_co/DF e cidades_sul_co/res/5300108.json): o SINJ marca o Decreto 32.563 como \"Alterado\" (pelo 38.571/2017, só o art. 1º) e não registra revogação do art. 2º; o Decreto 46.226/2024 (Eixão do Lazer) não o revoga. \"Veículos pesados\" não é definido no decreto: o app trata como caminhão (PBT acima de 3,5 t). Regra registrada aqui (camada rodovias_estaduais) e não duplicada na pesquisa de cidades.",
+   "excecoes": "Veículos autorizados pelo DER-DF em situações especiais (art. 2º). Transporte coletivo expresso circula pela faixa da direita (art. 3º).",
+   "geometria": {
+    "osm_ref": [
+     "DF-002"
+    ],
+    "de": {
+     "lon": -47.8956,
+     "lat": -15.8127,
+     "tol_m": 1500,
+     "nome": "Eixo Rodoviário Sul"
+    },
+    "para": {
+     "lon": -47.8816,
+     "lat": -15.7904,
+     "tol_m": 1500,
+     "nome": "Eixo Rodoviário Norte"
+    },
+    "lacuna_m": 500
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com ref DF-002) entre as pontas do Eixo Sul e do Eixo Norte; 16,8 km"
+  },
+  {
+   "regra_id": "df_001_barragem_paranoa_ins3_2019_mais_2_eixos",
+   "orgao": "DER-DF",
+   "uf": "DF",
+   "rodovia": "DF-001",
+   "nome": "Barragem do Paranoá (DF-001, Estrada Parque Contorno – EPCT, km 17,0–17,9; barragem em ~km 17,35–17,86)",
+   "resumo": "proibido caminhão com configuração superior a dois eixos simples sobre a barragem",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 2
+   },
+   "horario": "permanente (24 h)",
+   "ato": "Instrução DER-DF 3/2019, art. 1º (DODF 33 de 15/02/2019, p. 5; republicada no DODF 34 de 18/02/2019)",
+   "ato_url": "https://www.sinj.df.gov.br/sinj/Norma/50ed4c175c444eff8bdf064e5a4683df/der_ins_3_2019.html",
+   "publicacao": "2019-02-15",
+   "texto": "Art. 1° Proibir o tráfego de caminhões, com configuração superior a dois eixos simples, sobre a Barragem do Paranoá, trecho integrante da rodovia DF-001 - Estrada Parque do Contorno (EPCT).",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto conferido no SINJ-DF em 18/10/2026; sem revogação registrada. \"Configuração superior a dois eixos simples\" é lida como mais de 2 eixos (caminhão de 3 ou mais eixos, carreta); o ato não define eixo duplo/tandem. Localização: via OSM \"Barragem do Paranoá\" (ref DF-001, bridge=yes) e OAE 001EDF0070 do IDE/DF (km 17,0–17,9). Regra registrada aqui, não na pesquisa de cidades.",
+   "excecoes": "Nenhuma no ato.",
+   "geometria": {
+    "osm_ref": [
+     "DF-001"
+    ],
+    "de": {
+     "lon": -47.78582,
+     "lat": -15.80216,
+     "tol_m": 200,
+     "nome": "Barragem do Paranoá (cabeceira sul)"
+    },
+    "para": {
+     "lon": -47.78386,
+     "lat": -15.7977,
+     "tol_m": 200,
+     "nome": "Barragem do Paranoá (cabeceira norte)"
+    }
+   },
+   "fonte_geometria": "via OSM \"Barragem do Paranoá\" (ref DF-001, bridge=yes), 0,5 km; conferida com o segmento 001EDF0070 do IDE/DF"
+  },
+  {
+   "regra_id": "df_180_ponte_rio_melchior_ins14_2021_mais_2_eixos",
+   "orgao": "DER-DF",
+   "uf": "DF",
+   "rodovia": "DF-180",
+   "nome": "Ponte do Rio Melchior (DF-180, km ~19,5, entre Ceilândia/Samambaia e Goiás)",
+   "resumo": "proibido caminhão com configuração superior a dois eixos simples sobre a ponte",
+   "criterio": {
+    "caminhoes": true,
+    "eixos_acima": 2
+   },
+   "horario": "permanente (24 h)",
+   "ato": "Instrução DER-DF 14/2021, art. 1º (DODF 245 de 31/12/2021, p. 17)",
+   "ato_url": "https://www.sinj.df.gov.br/sinj/Norma/3c630ef28923432f8044fd3166669d8b/der_ins_14_2021.html",
+   "publicacao": "2021-12-31",
+   "texto": "Art. 1° Proibir o tráfego de caminhões, com configuração superior a dois eixos simples, sobre a Ponte do Rio Melchior, localizada na rodovia DF-180.",
+   "status": "desativada",
+   "ativa": false,
+   "confianca": "baixa",
+   "verificacao": "Texto conferido no SINJ-DF em 18/10/2026; sem revogação registrada. O ato não traz km: a candidata é a ponte da DF-180 no km ~19,5 (-15,85753; -48,17701; OAE 180EDF0290 do IDE/DF). A Codevasf contratou em 09/2025 uma ponte nova no mesmo local (conclusão prevista para 05/2026, sem confirmação da entrega).",
+   "excecoes": "Nenhuma no ato.",
+   "motivo_inativa": "Não se sabe qual estrutura a Instrução 14/2021 cobre nem se a ponte nova (Codevasf, prevista para 05/2026) já abriu sem a restrição; aplicar a regra pode desviar caminhões à toa. Confirmar com o DER-DF. O app só informa.",
+   "geometria": {
+    "rota": {
+     "de": [
+      -48.1749,
+      -15.8591
+     ],
+     "via": [
+      [
+       -48.17711,
+       -15.85777
+      ]
+     ],
+     "para": [
+      -48.1795,
+      -15.8563
+     ]
+    }
+   },
+   "fonte_geometria": "rota curta (~0,6 km) no Valhalla (OSM) em torno da ponte candidata da DF-180 (way com bridge=yes, ref DF-180, a 27 m)"
+  },
+  {
+   "regra_id": "df_002_eixao_do_lazer_domingos_feriados",
+   "orgao": "DER-DF",
+   "uf": "DF",
+   "rodovia": "DF-002",
+   "nome": "DF-002 Eixo Rodoviário Sul e Norte (Eixão do Lazer)",
+   "resumo": "trânsito de veículos automotores proibido aos domingos e feriados, das 6h às 18h",
+   "criterio": {
+    "todos": true
+   },
+   "horario": "domingos e feriados, 06:00–18:00",
+   "ato": "Decreto distrital 46.226/2024, art. 2º (DODF 169 de 03/09/2024); Instrução Normativa DER-DF 3/2024, art. 3º (DODF 203 de 22/10/2024)",
+   "ato_url": "https://www.sinj.df.gov.br/sinj/",
+   "publicacao": "2024-09-03",
+   "texto": "Art. 2º O Eixão do Lazer abrange o Eixo Rodoviário (DF-002), aos domingos e feriados, no período das 6h às 18h, ficando o trânsito de veículos proibido, e as vias destinadas para as atividades de lazer da população do Distrito Federal.",
+   "status": "vigente",
+   "ativa": true,
+   "confianca": "media",
+   "verificacao": "Texto do Decreto 46.226/2024 (que revoga o Decreto 40.877/2020) e da IN DER-DF 3/2024 (alterada pela IN 1/2025) conferidos no SINJ-DF em 18/10/2026. \"Feriados\": o app usa os feriados nacionais (Decreto 32.563/2010, art. 1º) até 2027; feriados só distritais não entram (a pesquisa não resolveu se o fechamento vale neles). O horário de verão (7h–19h, Decreto 38.571/2017) não existe mais.",
+   "excecoes": "Veículos autorizados pela autoridade de trânsito em casos excepcionais (Decreto 32.563/2010, art. 1º). A regra vale para todos os veículos automotores, não só caminhões.",
+   "geometria": {
+    "osm_ref": [
+     "DF-002"
+    ],
+    "de": {
+     "lon": -47.8956,
+     "lat": -15.8127,
+     "tol_m": 1500,
+     "nome": "Eixo Rodoviário Sul"
+    },
+    "para": {
+     "lon": -47.8816,
+     "lat": -15.7904,
+     "tol_m": 1500,
+     "nome": "Eixo Rodoviário Norte"
+    },
+    "lacuna_m": 500
+   },
+   "fonte_geometria": "trecho localizado no OSM (ways com o ref da rodovia) entre os pontos citados no ato",
+   "janelas": [
+    {
+     "dias_semana": [
+      7
+     ],
+     "inicio": "06:00",
+     "fim": "18:00"
+    },
+    {
+     "datas": [
+      "2026-11-02",
+      "2026-11-20",
+      "2026-12-25",
+      "2027-01-01",
+      "2027-03-26",
+      "2027-04-21",
+      "2027-05-01",
+      "2027-09-07",
+      "2027-10-12",
+      "2027-11-02",
+      "2027-11-15",
+      "2027-11-20",
+      "2027-12-25"
+     ],
+     "inicio": "06:00",
+     "fim": "18:00"
+    }
+   ]
   }
  ],
  "pontes": [

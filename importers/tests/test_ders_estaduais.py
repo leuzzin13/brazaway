@@ -182,7 +182,8 @@ class RecorteKm(unittest.TestCase):
 class Curadoria(unittest.TestCase):
     def test_regras_versionadas_sao_validas(self):
         d = _ders.carrega_regras()
-        ativas = {r['regra_id'] for r in d['trechos'] if r['ativa']}
+        # ES e RJ (as regras do Sul e do Centro-Oeste têm o teste próprio em tests/test_ders_sulco.py)
+        ativas = {r['regra_id'] for r in d['trechos'] if r['ativa'] and r['uf'] in ('ES', 'RJ', 'MG')}
         self.assertEqual(ativas, {'es_060_km33_39_23t', 'es_060_acesso_9020_23t'})
         self.assertEqual(next(r for r in d['trechos'] if r['regra_id'] == 'es_060_darly_jones_23t_2023')['status'], 'revogada')
         self.assertFalse(next(r for r in d['trechos'] if r['regra_id'] == 'rj_127_serra_paracambi')['ativa'])

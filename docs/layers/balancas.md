@@ -35,6 +35,26 @@ Não usados: OSM `amenity=weighbridge` (59 nós no Sudeste, quase sem atributos 
 fora das concessões (não há lista aberta com coordenadas: as páginas do PNP/DNIT só trazem texto e o GeoServer
 DNITGeo não tem camada de pesagem).
 
+## Balanças estaduais do Sul e do Centro-Oeste (pesquisa de 18/10/2026): nenhuma fonte confiável
+
+Pesquisa: `docs/research/estados_sul_co/<UF>.json`, tema `balancas`. **Nada foi importado nem inventado**: nenhum órgão estadual de
+PR, SC, RS, GO, MT, MS ou DF publica lista de postos de pesagem com coordenada (ou rodovia + km no SRE) e sentido, então não
+há `weigh_*` novo. As balanças federais concedidas dessas UFs já entram pela ANTT (`weigh_antt_ppv`: PR 6, SC 3, RS 6, GO 4, MT 1,
+MS 3 e DF 0 em 08/2026; o PPV 01 e 02 da Ecovias Minas Goiás ficam na BR-050 em Ipameri-GO).
+
+| UF | Órgão | O que existe | Por que não entra |
+|---|---|---|---|
+| PR | DER/PR | Duas balanças na PR-412 em Guaratuba (km 8+000) e Matinhos, confirmadas pela AEN em 02/06/2026; em 2023, cinco estáticas deslocáveis no Oeste (PRC-467, PR-180, PRC-280, PR-317, PR-488) e duas na PR-151 em Piraí do Sul | Sem coordenada, sem sentido e, nas deslocáveis, sem km; o km 8+000 fica antes do trecho urbano de Guaratuba (o SRE 412S0018 começa no km 12,4) e a posição exata não foi confirmada. A lista oficial depende de LAI. Os 60 postos fiscais agropecuários do geoserver (SEAB/ADAPAR) não são balanças |
+| SC | SIE/PMRv | Nada: o GeoSIE traz 25 postos da PMRv (endereço textual) sem campo de pesagem | Sem balança estadual publicada |
+| RS | DAER/EGR/CRBM | Nada: a busca do DAER por "balança" só devolve páginas gerais; o WFS do mapa do DAER não abre (cadeia TLS incompleta); concessionárias migrando para HS-WIM sem lista de locais | Sem dado |
+| GO | GOINFRA | A página "Controle de Pesagem de Cargas" descreve atribuições (balanças fixas e móveis) e não nomeia nenhum posto; o relatório de equipamentos (711 equipamentos) é só de velocidade | Sem posto, sem km |
+| MT | SINFRA/concessões | O PER da concessão MT-130 (Morro da Mesa) prevê duas balanças fixas nos km 10+700 e 107+600 do esquema linear da concessão; o OSM tem balanças na BR-163 km 109 (federais) e uma privada | O km do PER é da concessão, não do SRE, sem coordenada nem sentido; as da BR-163 já estão na ANTT |
+| MS | AGESUL/PMMS | Nada em operação: a Way-306 prevê 4 postos móveis (adiados para o ano 10 do contrato) e a Rota da Celulose 8 postos HS-WIM | Nenhum instalado |
+| DF | DER-DF/PMDF | Competência de fiscalizar excesso de peso (Decreto 48.239/2026); sem lista | Sem dado; o recorte do OSM do DF não tem `amenity=weighbridge` |
+
+Quando um órgão publicar a lista (ou responder à LAI), seguir o padrão do `weigh_dermg.py`: rodovia + km casados no SRE ou
+coordenada da fonte, `precisao: 'aprox'` e sentido "não confirmado" quando a fonte não trouxer o lado da pista.
+
 ## Sentido da rota
 
 Para cada ponto a até 300 m da rota (pontos com posição aproximada só até 120 m), `directionVerdict()`:

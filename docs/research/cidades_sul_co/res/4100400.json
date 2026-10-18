@@ -1,0 +1,95 @@
+{
+ "ibge": "4100400",
+ "nome": "Almirante Tamandaré",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/3E0A21A0",
+   "resultado": "LIDO integral (AMP, ed. 707, 13/03/2015): Decreto 968, de 02/03/2015, REPUBLICADO POR INCORREÇÕES (versão final: art. 1º proíbe caminhões > 10 t na Av. Emílio Johnson; parágrafo único: carga e descarga 19h-8h inclusive finais de semana). Salvo em atos/4100400/decreto_968_2015_republicado_por_incorrecoes.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/7F942EDB",
+   "resultado": "LIDO integral (AMP, ed. 703, 09/03/2015): versão original do Decreto 968/2015 (mesmo conteúdo, artigos numerados diferentemente; art. 2º = permissão de C/D 19h-8h). Salvo em atos/4100400/decreto_968_2015_original.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (toolkit, 8 termos)",
+   "resultado": "AMP cobre Almirante Tamandaré. Buscas \"revoga decreto 968/2015\", \"Avenida Emílio Johnson caminhões\", Código de Posturas: nenhuma alteração/revogação do Decreto 968/2015 (publicações de 2015 a 2026 pesquisadas)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/(Lei Complementar 039/2015)",
+   "resultado": "Trecho lido via busca: LC 039/2015 (Plano de Mobilidade) tem diretriz \"limitar a circulação de veículos pesados de carga na região central\" - diretriz, sem regra."
+  },
+  {
+   "url": "https://sapl.almirantetamandare.pr.leg.br",
+   "resultado": "Consulta SAPL (API) iniciada; sem ato de circulação (o decreto é do Executivo)."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/almirante-tamandare/",
+   "resultado": "404."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Almirante Tamandaré: AMP/Diário Oficial dos Municípios abriu e deu o texto integral do Decreto 968/2015 (republicado em 13/03/2015): proibido o trânsito de caminhões com capacidade acima de 10 t na Av. Emílio Johnson (Centro); C/D permitida 19h-8h, inclusive fins de semana. 1 regra ativa (confiança média; sem alteração/revogação achada, sem confirmação em campo). PMU (LC 039/2015) traz só diretriz de limitar pesados na região central. Pendências: limites do trecho da avenida, sinalização.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "almirantetamandare_av_emilio_johnson_10t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Avenida Emílio Johnson (Centro): caminhões acima de 10 t (Decreto 968/2015)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 10.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 968, de 02/03/2015, republicado por incorreções em 13/03/2015 (Almirante Tamandaré)",
+     "artigo": "art. 1º e parágrafo único (versão republicada); art. 2º (versão original)",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/3E0A21A0",
+     "nota": "Texto integral lido; fundamentado no art. 86 da LC 013/2009 (Código de Posturas). Fiscalização pela PM-PR."
+    }
+   ],
+   "excecoes": [
+    "Parágrafo único (versão republicada) / art. 2º (original): permitida a circulação de veículos para carga e descarga entre 19h e 8h, \"inclusive aos finais de semana\" (redação ambígua: pode significar também o dia inteiro nos fins de semana)"
+   ],
+   "nota": "Decreto proíbe \"caminhões com capacidade acima de 10 toneladas\" (capacidade, não PBT: usado payload_t, lado seguro). Janela 24 h porque a exceção é só para carga e descarga (19h-8h) e a rota não distingue o propósito. Confiança média: decreto de 2015 sem alteração/revogação encontrada mas sem confirmação de sinalização; trecho exato \"Avenida Emílio Johnson, Centro\" sem limites (toda a extensão no centro).",
+   "vigencia_inicio": "2015-03-13",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Emílio Johnson"
+     ],
+     "descricao": "Avenida Emílio Johnson, Centro (sem delimitar trecho no decreto).",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}

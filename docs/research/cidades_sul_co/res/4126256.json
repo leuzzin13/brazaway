@@ -1,0 +1,148 @@
+{
+ "ibge": "4126256",
+ "nome": "Sarandi",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/7D00F943",
+   "resultado": "LIDO integral (AMP, ed. 2256, 05/05/2021): Decreto 307, de 03/05/2021 - trânsito de caminhões no perímetro urbano. Salvo em atos/4126256/decreto_307_2021.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/70FF500D",
+   "resultado": "LIDO integral (AMP, ed. 2771, 16/05/2023): Portaria SEMUTRANS 2618/2023 - AET para veículos pesados nas vias com restrição e na Av. Castelo Branco; cita o Decreto 307/2021 como vigente (confirma vigência em 05/2023)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/7F913293",
+   "resultado": "LIDO parcial: Decreto 1502/2020 (toque de recolher/uso do sistema viário 06h-22h; ato de pandemia, sem relação com caminhões; não guardado)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/pesquisar (toolkit, 8 termos)",
+   "resultado": "AMP cobre Sarandi. Busca por \"revoga decreto 307/2021\", Av. Castelo Branco, AET, Av. Maringá: nenhum ato posterior revogando/alterando o 307/2021. Leis Complementares 409-412/2022 (Código de Posturas/Plano) citam rotas especiais de carga como diretriz."
+  },
+  {
+   "url": "https://sapl.sarandi.pr.leg.br",
+   "resultado": "Consulta SAPL iniciada (API); sem ato de circulação (decretos do Executivo não estão na base da Câmara)."
+  },
+  {
+   "url": "https://www.penaestrada.com.br/restricoes/sarandi/",
+   "resultado": "404."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Sarandi: AMP/Diário Oficial dos Municípios abriu e deu o texto integral do Decreto 307/2021: proibido o trânsito de veículos com PBT > 22 t (carga, tração, reboque) em 8 vias (Rua José Galindo, Pedro Galindo Garcia, Ângelo Perini, Av. Maringá, Av. Castelo Branco, Av. Londrina, Rua Francisco de Almeida entre Av. Maringá e Rua José Galindo Garcia, Rua José Senhorini), 24 h; exceções: serviços públicos/à Prefeitura; entrega ao comércio local com autorização da SEMUTRANS. Portaria 2618/2023 regulamenta a AET (carga/descarga no município) e confirma a vigência. Nenhuma alteração/revogação encontrada. Pendência: conferir nomes das vias no OSM (grafia do decreto).",
+ "osm_divergencias": [
+  "Verificar \"Rua José Galindo\" x \"Rua José Galindo Garcia\" e \"Rua Ângelo Perini\" no OSM (texto do DOM com OCR: \"ngelo Perini\")."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "sarandi_decreto_307_pbt_22t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Vias com proibição a veículos acima de 22 t PBT (Decreto 307/2021)",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 22.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 307, de 03/05/2021 (Sarandi)",
+     "artigo": "art. 1º, I-VIII; art. 2º; art. 3º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/7D00F943",
+     "nota": "Texto integral lido (DOM-PR ed. 2256). Portaria 2618/2023 (AET) o trata como vigente."
+    }
+   ],
+   "excecoes": [
+    "Art. 2º: veículos oficiais, que prestam serviço à Prefeitura e prestadores de serviço de utilidade pública em atendimento na via",
+    "Art. 3º: veículos de entrega e serviços ao comércio local com autorização da SEMUTRANS (informar local e horário com 24 h de antecedência)",
+    "Portaria 2618/2023: AET para veículos que comprovem carga/descarga em Sarandi (viagem específica), PF/PJ emplacados em Sarandi até 6 meses; inflamáveis só com descarga comprovada"
+   ],
+   "autorizacao": "AET/Autorização Especial da SEMUTRANS (Decreto 307/2021 art. 3º; Portaria 2618/2023)",
+   "nota": "Proíbe \"trânsito de veículos\" com PBT > 22 t \"da espécie carga, tração ou reboque\": sem janela horária (24 h, todos os dias). Feriados: não mencionados (aplica). Rua Francisco de Almeida: entre Av. Maringá e Rua José Galindo Garcia (o decreto grafa \"José Galindo Garcia\" no inciso VII e \"José Galindo\" no I; confirmar o nome no OSM).",
+   "vigencia_inicio": "2021-05-05",
+   "trechos": [
+    {
+     "inciso": "art. 1º, I",
+     "via": [
+      "Rua José Galindo"
+     ],
+     "descricao": "em toda sua extensão"
+    },
+    {
+     "inciso": "art. 1º, II",
+     "via": [
+      "Rua Pedro Galindo Garcia"
+     ],
+     "descricao": "em toda sua extensão"
+    },
+    {
+     "inciso": "art. 1º, III",
+     "via": [
+      "Rua Ângelo Perini"
+     ],
+     "descricao": "em toda sua extensão (texto do DOM: \"ngelo Perini\")"
+    },
+    {
+     "inciso": "art. 1º, IV",
+     "via": [
+      "Avenida Maringá"
+     ],
+     "descricao": "em toda sua extensão"
+    },
+    {
+     "inciso": "art. 1º, V",
+     "via": [
+      "Avenida Castelo Branco"
+     ],
+     "descricao": "em toda sua extensão"
+    },
+    {
+     "inciso": "art. 1º, VI",
+     "via": [
+      "Avenida Londrina"
+     ],
+     "descricao": "em toda sua extensão"
+    },
+    {
+     "inciso": "art. 1º, VII",
+     "via": [
+      "Rua Francisco de Almeida"
+     ],
+     "descricao": "entre a Avenida Maringá e a Rua José Galindo Garcia (grafia do ato)"
+    },
+    {
+     "inciso": "art. 1º, VIII",
+     "via": [
+      "Rua José Senhorini"
+     ],
+     "descricao": "em toda sua extensão"
+    }
+   ]
+  }
+ ]
+}

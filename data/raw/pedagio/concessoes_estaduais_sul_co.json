@@ -1,0 +1,1785 @@
+{
+  "_doc": [
+    "Concessões rodoviárias ESTADUAIS do Rio Grande do Sul (EGR, Rota de Santa Maria), Mato Grosso do Sul (AGEMS: Way-306 e Way-112) e Mato Grosso (AGER/MT) com cobrança de pedágio. Mesmo esquema de concessoes_estaduais.json (somado a ele por importers/sources/_toll_estaduais.py:load).",
+    "Lido pelos importadores toll_rs_estadual.py (fonte rs-estadual), toll_agems.py (agems) e toll_agermt.py (agermt). Pesquisa de origem: docs/research/estados_sul_co/{RS,MS,MT}.json (verificação de 18/10/2026), com releitura das páginas das concessionárias em 18/10/2026.",
+    "Posição das praças: casamento com os nós barrier=toll_booth do OSM do MESMO operador a até raio_m da âncora (nenhum destes estados publica coordenada oficial das praças, exceto o KML da EGR, que confere com os nós do OSM a menos de 130 m). A âncora é o centro do grupo de nós identificado em 18/10/2026.",
+    "NÃO entram (pendentes, ver docs/layers/pedagio_estaduais.md): CSG Bloco 3 (tabela de 2024 vencida; só a categoria I de 29/04/2026 publicada), Rota dos Grãos (MT-130; tarifa 11,27 condicionada a ato e pórticos free flow sem coordenada), Via Norte Sul MT-220, Intervias, APASI, SPS e Rodovia da Mudança (sem tabela por categoria oficial atual), Fase 1 e Fase 2 de MT (sem cobrança confirmada), Rota da Celulose MS (cobrança só a partir de 02/2027)."
+  ],
+  "transcrito_em": "2026-10-18",
+  "janelas": {},
+  "concessoes": [
+    {
+      "id": "rs_egr_a",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "EGR - Empresa Gaúcha de Rodovias S.A. (estatal; não é concessão)",
+      "operador": "EGR",
+      "operador_osm": "^egr$",
+      "contrato": "Operação direta pela estatal EGR",
+      "ato": "Tabela de tarifas da página \"Tarifas\" da EGR (grupo A); a página não cita ato nem vigência",
+      "ato_url": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "pagina_tarifa": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "confianca": "media",
+      "ativo": true,
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "tabela publicada pela EGR (imagens carregadas em 05/2022; a página não informa a vigência, conferida em 18/10/2026)",
+      "vigencia_obs": "As imagens são de 05/2022 e são a única tabela que a EGR publica; reajustes posteriores não verificados. Só tarifas comerciais de 2 a 6 eixos (rodagem dupla) e eixo adicional foram transcritas.",
+      "cobranca": "cobrança bidirecional nas cabines (2 a 4 nós por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 6.3,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 6.3,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 12.6
+          },
+          {
+            "cat": 2,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 18.9
+          },
+          {
+            "cat": 3,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 25.2
+          },
+          {
+            "cat": 4,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 31.5
+          },
+          {
+            "cat": 5,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 37.8
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P-boa-vista-do-sul",
+          "nome": "Praça de pedágio Boa Vista do Sul (EGR)",
+          "rodovia": "RSC-453",
+          "municipio": "Boa Vista do Sul",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.6501,
+              -29.33489
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P-cruzeiro-do-sul",
+          "nome": "Praça de pedágio Cruzeiro do Sul (EGR)",
+          "rodovia": "RSC-453",
+          "municipio": "Cruzeiro do Sul",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.074,
+              -29.51895
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P-santo-antonio-da-patrulha",
+          "nome": "Praça de pedágio Santo Antônio da Patrulha (EGR)",
+          "rodovia": "ERS-474",
+          "municipio": "Santo Antônio da Patrulha",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -50.59204,
+              -29.73221
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P-viamao",
+          "nome": "Praça de pedágio Viamão (EGR)",
+          "rodovia": "ERS-040",
+          "municipio": "Viamão",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -50.94205,
+              -30.11078
+            ],
+            "raio_m": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "rs_egr_b",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "EGR - Empresa Gaúcha de Rodovias S.A. (estatal; não é concessão)",
+      "operador": "EGR",
+      "operador_osm": "^egr$",
+      "contrato": "Operação direta pela estatal EGR",
+      "ato": "Tabela de tarifas da página \"Tarifas\" da EGR (grupo B); a página não cita ato nem vigência",
+      "ato_url": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "pagina_tarifa": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "confianca": "media",
+      "ativo": true,
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "tabela publicada pela EGR (imagens carregadas em 05/2022; a página não informa a vigência, conferida em 18/10/2026)",
+      "vigencia_obs": "As imagens são de 05/2022 e são a única tabela que a EGR publica; reajustes posteriores não verificados. Só tarifas comerciais de 2 a 6 eixos (rodagem dupla) e eixo adicional foram transcritas.",
+      "cobranca": "cobrança bidirecional nas cabines (2 a 4 nós por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 7.1,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 7.1,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 14.2
+          },
+          {
+            "cat": 2,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 21.3
+          },
+          {
+            "cat": 3,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 28.4
+          },
+          {
+            "cat": 4,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 35.5
+          },
+          {
+            "cat": 5,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 42.6
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P-gramado",
+          "nome": "Praça de pedágio Gramado (EGR)",
+          "rodovia": "ERS-235",
+          "municipio": "Gramado",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -50.9369,
+              -29.39059
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P-tres-coroas",
+          "nome": "Praça de pedágio Três Coroas (EGR)",
+          "rodovia": "ERS-115",
+          "municipio": "Três Coroas",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -50.80227,
+              -29.48521
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P-sao-francisco-de-paula",
+          "nome": "Praça de pedágio São Francisco de Paula (EGR)",
+          "rodovia": "ERS-235",
+          "municipio": "São Francisco de Paula",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -50.73288,
+              -29.3236
+            ],
+            "raio_m": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "rs_egr_c",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "EGR - Empresa Gaúcha de Rodovias S.A. (estatal; não é concessão)",
+      "operador": "EGR",
+      "operador_osm": "^egr$",
+      "contrato": "Operação direta pela estatal EGR",
+      "ato": "Tabela de tarifas da página \"Tarifas\" da EGR (grupo C); a página não cita ato nem vigência",
+      "ato_url": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "pagina_tarifa": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "confianca": "media",
+      "ativo": true,
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "tabela publicada pela EGR (imagens carregadas em 05/2022; a página não informa a vigência, conferida em 18/10/2026)",
+      "vigencia_obs": "As imagens são de 05/2022 e são a única tabela que a EGR publica; reajustes posteriores não verificados. Só tarifas comerciais de 2 a 6 eixos (rodagem dupla) e eixo adicional foram transcritas.",
+      "cobranca": "cobrança bidirecional nas cabines (2 a 4 nós por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 3.25,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 3.25,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 6.5
+          },
+          {
+            "cat": 2,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 9.75
+          },
+          {
+            "cat": 3,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 13.0
+          },
+          {
+            "cat": 4,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 16.25
+          },
+          {
+            "cat": 5,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 19.5
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P-campo-bom",
+          "nome": "Praça de pedágio Campo Bom (EGR)",
+          "rodovia": "ERS-239",
+          "municipio": "Campo Bom",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.07852,
+              -29.6565
+            ],
+            "raio_m": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "rs_egr_d",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "EGR - Empresa Gaúcha de Rodovias S.A. (estatal; não é concessão)",
+      "operador": "EGR",
+      "operador_osm": "^egr$",
+      "contrato": "Operação direta pela estatal EGR",
+      "ato": "Tabela de tarifas da página \"Tarifas\" da EGR (grupo D); a página não cita ato nem vigência",
+      "ato_url": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "pagina_tarifa": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "confianca": "media",
+      "ativo": true,
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "tabela publicada pela EGR (imagens carregadas em 05/2022; a página não informa a vigência, conferida em 18/10/2026)",
+      "vigencia_obs": "As imagens são de 05/2022 e são a única tabela que a EGR publica; reajustes posteriores não verificados. Só tarifas comerciais de 2 a 6 eixos (rodagem dupla) e eixo adicional foram transcritas.",
+      "cobranca": "cobrança bidirecional nas cabines (2 a 4 nós por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 4.9,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 4.9,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 9.8
+          },
+          {
+            "cat": 2,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 14.7
+          },
+          {
+            "cat": 3,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 19.6
+          },
+          {
+            "cat": 4,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 24.5
+          },
+          {
+            "cat": 5,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 29.4
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P-coxilha",
+          "nome": "Praça de pedágio Coxilha (EGR)",
+          "rodovia": "ERS-135",
+          "municipio": "Coxilha",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.30701,
+              -28.16225
+            ],
+            "raio_m": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "rs_egr_e",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "EGR - Empresa Gaúcha de Rodovias S.A. (estatal; não é concessão)",
+      "operador": "EGR",
+      "operador_osm": "^egr$",
+      "contrato": "Operação direta pela estatal EGR",
+      "ato": "Tabela de tarifas da página \"Tarifas\" da EGR (grupo E); a página não cita ato nem vigência",
+      "ato_url": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "pagina_tarifa": "https://www.egr.rs.gov.br/tarifas-63da9a4171350",
+      "confianca": "media",
+      "ativo": true,
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "tabela publicada pela EGR (imagens carregadas em 05/2022; a página não informa a vigência, conferida em 18/10/2026)",
+      "vigencia_obs": "As imagens são de 05/2022 e são a única tabela que a EGR publica; reajustes posteriores não verificados. Só tarifas comerciais de 2 a 6 eixos (rodagem dupla) e eixo adicional foram transcritas.",
+      "cobranca": "cobrança bidirecional nas cabines (2 a 4 nós por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 6.3,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 6.3,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 12.6
+          },
+          {
+            "cat": 2,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 18.9
+          },
+          {
+            "cat": 3,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 25.2
+          },
+          {
+            "cat": 4,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 31.5
+          },
+          {
+            "cat": 5,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 37.8
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P-encantado",
+          "nome": "Praça de pedágio Encantado (EGR)",
+          "rodovia": "ERS-129/ERS-130",
+          "municipio": "Encantado",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.89972,
+              -29.28497
+            ],
+            "raio_m": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "rs_rota_de_santa_maria",
+      "importador": "rs_estadual",
+      "uf": "RS",
+      "esfera": "estadual",
+      "regulador": "AGERGS",
+      "poder_concedente": "Estado do Rio Grande do Sul (SELT)",
+      "concessionaria": "Rota de Santa Maria S.A. (grupo Sacyr)",
+      "operador": "Rota de Santa Maria",
+      "operador_osm": "rota de santa maria",
+      "contrato": "Contrato de Concessão nº 20/2021 (SELT), RSC-287 km 28,03 a 232,54",
+      "ato": "Tarifa 2026 publicada pela concessionária; categoria I R$ 5,40 desde 29/01/2026 (planilha de evolução tarifária da AGERGS, 05/2026). Categorias VI, VII e VIII pela descrição da AGERGS (4, 5 e 6 eixos), não pelo rótulo do site",
+      "ato_url": "https://rotadesantamaria.com.br/pracas-de-pedagio",
+      "pagina_tarifa": "https://rotadesantamaria.com.br/pracas-de-pedagio",
+      "confianca": "alta",
+      "ativo": true,
+      "vigencia_inicio": "2026-01-29",
+      "vigencia_fim": null,
+      "vigencia_obs": "AGERGS abriu em 14/10/2026 audiência pública sobre reequilíbrio da concessão; reajuste anual em janeiro (inferência pelo histórico, não por ato). Pix e BANRI não são aceitos nas praças.",
+      "cobranca": "cobrança bidirecional (2 cabines por praça no OSM)",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 5.4,
+        "max_eixos_tabela": 6,
+        "eixo_adicional": 5.4,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 5.4
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 10.8
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 8.1
+          },
+          {
+            "cat": 4,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 16.2
+          },
+          {
+            "cat": 5,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 10.8
+          },
+          {
+            "cat": 6,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 21.6
+          },
+          {
+            "cat": 7,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 27.0
+          },
+          {
+            "cat": 8,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 32.4
+          },
+          {
+            "cat": 9,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 2.7,
+            "desc": "motocicletas, motonetas e bicicletas-moto"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P01",
+          "nome": "P01 Taquari (Rota de Santa Maria)",
+          "rodovia": "RSC-287",
+          "km": 47,
+          "municipio": "Taquari",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.90105,
+              -29.70505
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P02",
+          "nome": "P02 Venâncio Aires (Rota de Santa Maria)",
+          "rodovia": "RSC-287",
+          "km": 86,
+          "municipio": "Venâncio Aires",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.27781,
+              -29.66779
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P03",
+          "nome": "P03 Candelária (Rota de Santa Maria)",
+          "rodovia": "RSC-287",
+          "km": 131,
+          "municipio": "Candelária",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.71505,
+              -29.68068
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P04",
+          "nome": "P04 Paraíso do Sul (Rota de Santa Maria)",
+          "rodovia": "RSC-287",
+          "km": 168,
+          "municipio": "Paraíso do Sul",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -53.06757,
+              -29.74871
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P05",
+          "nome": "P05 Santa Maria (Rota de Santa Maria)",
+          "rodovia": "RSC-287",
+          "km": 220,
+          "municipio": "Santa Maria",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -53.58909,
+              -29.72402
+            ],
+            "raio_m": 500,
+            "obs": "o OSM chama esta praça de \"Pedágio da Palma\" (Santa Maria, km 220)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ms_way306",
+      "importador": "agems",
+      "uf": "MS",
+      "esfera": "estadual",
+      "regulador": "AGEMS",
+      "poder_concedente": "Estado de Mato Grosso do Sul",
+      "concessionaria": "Concessionária da Rodovia MS 306 S.A. (Way-306, Grupo Way Brasil)",
+      "operador": "Way-306",
+      "operador_osm": "way-?306",
+      "contrato": "Contrato de Concessão nº 002/2020, de 19/03/2020 (30 anos; MS-306 e BR-359)",
+      "ato": "Portaria AGEMS nº 333, de 07/04/2026 (5ª Revisão Ordinária da TBP e 6º Reajuste Anual; categoria 1 R$ 14,40; vigência a zero hora de 09/04/2026), arts. 1º a 5º e anexo",
+      "ato_url": "https://www.diariooficial.ms.gov.br/ (DOE-MS nº 12.121, de 08/04/2026, pp. 37-38)",
+      "confianca": "alta",
+      "ativo": true,
+      "vigencia_inicio": "2026-04-09",
+      "vigencia_fim": null,
+      "vigencia_obs": "Sem ato posterior no DOE-MS até 18/10/2026; reajuste anual esperado em 04/2027 (inferência pelo histórico, não por ato).",
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 14.4,
+        "max_eixos_tabela": 9,
+        "eixo_adicional": 14.4,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 14.4
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 28.8
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 21.6
+          },
+          {
+            "cat": 4,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 43.2
+          },
+          {
+            "cat": 5,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 28.8
+          },
+          {
+            "cat": 6,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 57.6
+          },
+          {
+            "cat": 7,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 72.0
+          },
+          {
+            "cat": 8,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 86.4
+          },
+          {
+            "cat": 9,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 100.8
+          },
+          {
+            "cat": 10,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 115.2
+          },
+          {
+            "cat": 11,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 129.6
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 7.2,
+            "desc": "motocicleta, motoneta e bicicleta a motor"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P1",
+          "nome": "P1 Costa Rica",
+          "rodovia": "MS-306",
+          "km": 40.4,
+          "municipio": "Costa Rica",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -53.08417,
+              -18.38224
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P2",
+          "nome": "P2 Chapadão do Sul",
+          "rodovia": "MS-306",
+          "km": 100.6,
+          "municipio": "Chapadão do Sul",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.76859,
+              -18.72621
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P3",
+          "nome": "P3 Cassilândia",
+          "rodovia": "MS-306",
+          "km": 184.5,
+          "municipio": "Cassilândia",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -52.0438,
+              -19.03248
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        }
+      ]
+    },
+    {
+      "id": "ms_way112",
+      "importador": "agems",
+      "uf": "MS",
+      "esfera": "estadual",
+      "regulador": "AGEMS",
+      "poder_concedente": "Estado de Mato Grosso do Sul",
+      "concessionaria": "Concessionária das Rodovias do Leste MS S.A. (Way-112, Grupo Way Brasil)",
+      "operador": "Way-112",
+      "operador_osm": "way-?112",
+      "contrato": "Contrato de Concessão nº 02/2023, de 20/03/2023 (30 anos; MS-112, BR-158 e BR-436)",
+      "ato": "Portaria AGEMS nº 326, de 09/02/2026 (2ª Revisão Ordinária da TBP e 3º Reajuste Anual; categoria 1 R$ 14,00 em P4, P5, P7, P8 e P9; vigência a zero hora de 11/02/2026), arts. 1º a 6º e Anexo I",
+      "ato_url": "https://www.diariooficial.ms.gov.br/ (DOE-MS nº 12.071, de 10/02/2026, pp. 60-62)",
+      "confianca": "alta",
+      "ativo": true,
+      "vigencia_inicio": "2026-02-11",
+      "vigencia_fim": null,
+      "vigencia_obs": "Sem ato posterior no DOE-MS até 18/10/2026; reajuste anual esperado em 02/2027 (inferência pelo histórico, não por ato).",
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 14.0,
+        "max_eixos_tabela": 9,
+        "eixo_adicional": 14.0,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 14.0
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 28.0
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 21.0
+          },
+          {
+            "cat": 4,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 42.0
+          },
+          {
+            "cat": 5,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 28.0
+          },
+          {
+            "cat": 6,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 56.0
+          },
+          {
+            "cat": 7,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 70.0
+          },
+          {
+            "cat": 8,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 84.0
+          },
+          {
+            "cat": 9,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 98.0
+          },
+          {
+            "cat": 10,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 112.0
+          },
+          {
+            "cat": 11,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 126.0
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 7.0,
+            "desc": "motocicleta, motoneta e bicicleta a motor"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P4",
+          "nome": "P4 Paranaíba",
+          "rodovia": "BR-158",
+          "km": 78.1,
+          "municipio": "Paranaíba",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.25648,
+              -19.54697
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P5",
+          "nome": "P5 Aparecida do Taboado",
+          "rodovia": "BR-158",
+          "km": 118.1,
+          "municipio": "Aparecida do Taboado",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.11827,
+              -19.8516
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P7",
+          "nome": "P7 Aparecida do Taboado III",
+          "rodovia": "BR-158",
+          "km": 174.0,
+          "municipio": "Aparecida do Taboado",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.3243,
+              -20.21526
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P8",
+          "nome": "P8 Selvíria",
+          "rodovia": "MS-112",
+          "km": 64.2,
+          "municipio": "Selvíria",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.85695,
+              -20.07556
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        },
+        {
+          "id": "P9",
+          "nome": "P9 Cassilândia II",
+          "rodovia": "MS-112",
+          "km": 193.3,
+          "municipio": "Cassilândia",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.72785,
+              -19.1775
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        }
+      ]
+    },
+    {
+      "id": "ms_way112_p6",
+      "importador": "agems",
+      "uf": "MS",
+      "esfera": "estadual",
+      "regulador": "AGEMS",
+      "poder_concedente": "Estado de Mato Grosso do Sul",
+      "concessionaria": "Concessionária das Rodovias do Leste MS S.A. (Way-112), praça P6 (BR-436)",
+      "operador": "Way-112",
+      "operador_osm": "way-?112",
+      "contrato": "Contrato de Concessão nº 02/2023, de 20/03/2023 (30 anos; MS-112, BR-158 e BR-436)",
+      "ato": "Portaria AGEMS nº 326, de 09/02/2026 (categoria 1 R$ 4,60 na praça P6; vigência a zero hora de 11/02/2026), art. 4º e Anexo II",
+      "ato_url": "https://www.diariooficial.ms.gov.br/ (DOE-MS nº 12.071, de 10/02/2026, pp. 60-62)",
+      "confianca": "alta",
+      "ativo": true,
+      "vigencia_inicio": "2026-02-11",
+      "vigencia_fim": null,
+      "vigencia_obs": "Sem ato posterior no DOE-MS até 18/10/2026; reajuste anual esperado em 02/2027 (inferência pelo histórico, não por ato).",
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 4.6,
+        "max_eixos_tabela": 9,
+        "eixo_adicional": 4.6,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 4.6
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 9.2
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 6.9
+          },
+          {
+            "cat": 4,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 13.8
+          },
+          {
+            "cat": 5,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 9.2
+          },
+          {
+            "cat": 6,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 18.4
+          },
+          {
+            "cat": 7,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 23.0
+          },
+          {
+            "cat": 8,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 27.6
+          },
+          {
+            "cat": 9,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 32.2
+          },
+          {
+            "cat": 10,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 36.8
+          },
+          {
+            "cat": 11,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 41.4
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 2.3,
+            "desc": "motocicleta, motoneta e bicicleta a motor"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P6",
+          "nome": "P6 Aparecida do Taboado II",
+          "rodovia": "BR-436",
+          "km": 13.3,
+          "municipio": "Aparecida do Taboado",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -51.03274,
+              -20.0948
+            ],
+            "raio_m": 500
+          },
+          "obs": "km da concessão (zero na divisa), não o km do SRE; 2 nó(s) do OSM"
+        }
+      ]
+    },
+    {
+      "id": "mt_morro_da_mesa",
+      "importador": "agermt",
+      "uf": "MT",
+      "esfera": "estadual",
+      "regulador": "AGER/MT",
+      "poder_concedente": "Estado de Mato Grosso (SINFRA)",
+      "concessionaria": "Morro da Mesa Concessionária S.A.",
+      "operador": "Morro da Mesa",
+      "operador_osm": "morro da mesa",
+      "contrato": "Contrato 001/2011/00/00/SINFRA (MT-130 Rondonópolis - Primavera do Leste)",
+      "ato": "Decisão da AGER/MT de reajuste anual 2025/2026 (IPCA fev/2026): TBP R$ 11,70, DOE nº 29.194 de 17/03/2026, p. 177; vigência 01/04/2026 pela tabela do site da concessionária (o DOE não declara a data)",
+      "ato_url": "https://morrodamesa.com.br/tarifas-e-pedagio/",
+      "confianca": "alta",
+      "ativo": true,
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 11.7,
+        "max_eixos_tabela": 9,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 11.7
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 23.4
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 35.1
+          },
+          {
+            "cat": 4,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 46.8
+          },
+          {
+            "cat": 5,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 58.5
+          },
+          {
+            "cat": 6,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 70.2
+          },
+          {
+            "cat": 7,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 17.55,
+            "desc": "automóvel com semirreboque"
+          },
+          {
+            "cat": 8,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 23.4,
+            "desc": "automóvel com reboque"
+          },
+          {
+            "cat": 9,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 5.85,
+            "desc": "motocicleta"
+          },
+          {
+            "cat": 10,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 81.9,
+            "desc": "bitrem 7 eixos"
+          },
+          {
+            "cat": 11,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 93.6,
+            "desc": "bitrem 8 eixos"
+          },
+          {
+            "cat": 12,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 105.3,
+            "desc": "rodotrem 9 eixos"
+          }
+        ],
+        "eixo_adicional": 11.7
+      },
+      "pracas": [
+        {
+          "id": "P-01",
+          "nome": "Praça P-01 Rondonópolis (Morro da Mesa)",
+          "rodovia": "MT-130",
+          "municipio": "Rondonópolis",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -54.58134,
+              -16.34988
+            ],
+            "raio_m": 500
+          },
+          "km": "9+454 (PER) / 9+150 (site)"
+        },
+        {
+          "id": "P-02",
+          "nome": "Praça P-02 Primavera do Leste (Morro da Mesa)",
+          "rodovia": "MT-130",
+          "municipio": "Primavera do Leste",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -54.39206,
+              -15.58414
+            ],
+            "raio_m": 500
+          },
+          "km": "110+856 (PER) / 110+315 (site)"
+        }
+      ],
+      "vigencia_inicio": "2026-04-01",
+      "vigencia_fim": null,
+      "vigencia_obs": "Reajuste anual pelo IPCA de fevereiro (próximo esperado em 03-04/2027, inferência). Acima de 9 eixos: tarifa básica x nº de eixos (site)."
+    },
+    {
+      "id": "mt_via_brasil_mt246",
+      "importador": "agermt",
+      "uf": "MT",
+      "esfera": "estadual",
+      "regulador": "AGER/MT",
+      "poder_concedente": "Estado de Mato Grosso (SINFRA)",
+      "concessionaria": "Via Brasil MT-246 Concessionária de Rodovias S.A.",
+      "operador": "Via Brasil",
+      "operador_osm": "^via brasil$",
+      "contrato": "Contrato 007/2021/00/00-SINFRA (MT-246, MT-343/344 e MT-358)",
+      "ato": "Decisão da AGER/MT: 5º reajuste, TBP R$ 11,40 (+4,59%, IPCA jul/2026, IQD 0,886), DOE nº 29.335 de 31/08/2026, p. 92 (processo AGER-PRO-2026/02367); tabela por categoria conferida na imagem do site da concessionária (08/2026)",
+      "ato_url": "https://mt246.com.br/tarifas",
+      "confianca": "media",
+      "ativo": true,
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 11.4,
+        "max_eixos_tabela": 9,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 11.4
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 22.8
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 34.2
+          },
+          {
+            "cat": 4,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 45.6
+          },
+          {
+            "cat": 5,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 57.0
+          },
+          {
+            "cat": 6,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 68.4
+          },
+          {
+            "cat": 7,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 79.8,
+            "desc": "veículo especial de 7 eixos (bitrem)"
+          },
+          {
+            "cat": 8,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 91.2,
+            "desc": "veículo especial de 8 eixos"
+          },
+          {
+            "cat": 9,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 102.6,
+            "desc": "veículo especial de 9 eixos (rodotrem)"
+          },
+          {
+            "cat": 10,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 17.1,
+            "desc": "automóvel/caminhonete com semirreboque"
+          },
+          {
+            "cat": 11,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 22.8,
+            "desc": "automóvel/caminhonete com reboque"
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 5.7,
+            "desc": "motocicleta"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P1",
+          "nome": "Praça Rosário Oeste (Via Brasil MT-246)",
+          "rodovia": "MT-246",
+          "municipio": "Rosário Oeste",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -56.58545,
+              -15.14736
+            ],
+            "raio_m": 500
+          },
+          "km": "119 (fonte secundária)"
+        },
+        {
+          "id": "P2",
+          "nome": "Praça Barra do Bugres (Via Brasil MT-246)",
+          "rodovia": "MT-344",
+          "municipio": "Barra do Bugres",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -57.18097,
+              -15.0209
+            ],
+            "raio_m": 500
+          },
+          "km": "231 (fonte secundária, duvidoso)"
+        },
+        {
+          "id": "P3",
+          "nome": "Praça Tangará da Serra 1 (Via Brasil MT-246)",
+          "rodovia": "MT-358",
+          "municipio": "Tangará da Serra",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -57.32354,
+              -14.66418
+            ],
+            "raio_m": 500
+          },
+          "km": "35 ou 107 (fonte secundária)",
+          "obs": "o OSM tem dois grupos \"Tangará da Serra\" do operador; a lista de praças vem de fonte secundária (emsampa)"
+        },
+        {
+          "id": "P4",
+          "nome": "Praça Tangará da Serra 2 (Via Brasil MT-246)",
+          "rodovia": "MT-358",
+          "municipio": "Tangará da Serra",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -57.91781,
+              -14.50203
+            ],
+            "raio_m": 500
+          },
+          "km": "35 ou 107 (fonte secundária)"
+        }
+      ],
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "decisão da AGER no DOE de 31/08/2026 (o ato não declara a data de vigência); anterior R$ 10,90 desde 27/08/2025",
+      "vigencia_obs": "A lista e o km das praças vêm de fonte secundária (emsampa) e do mapa OSM; a tarifa é oficial. Nos nós do OSM, o grupo \"Tangará da Serra -1\" (MT-358, a leste) e \"Tangará da Serra 1/2\" (a oeste) são as duas praças de Tangará."
+    },
+    {
+      "id": "mt_via_brasil_mt320",
+      "importador": "agermt",
+      "uf": "MT",
+      "esfera": "estadual",
+      "regulador": "AGER/MT",
+      "poder_concedente": "Estado de Mato Grosso (SINFRA)",
+      "concessionaria": "Via Brasil MT-320 Concessionária de Rodovias S.A.",
+      "operador": "Via Brasil MT-320",
+      "operador_osm": "^via brasil mt(320|208)$",
+      "contrato": "Contrato 001/2019/00/00-SINFRA (MT-320 e MT-208)",
+      "ato": "Decisão da AGER/MT: 6º reajuste, TBP R$ 11,70 (+5,41%, IPCA; processo AGER-PRO-2025/02438), DOE nº 29.101 de 22/10/2025, p. 75; efeitos em 29/10/2025; tabela por categoria conferida na imagem do site (04/2026)",
+      "ato_url": "https://mt320.com.br/",
+      "confianca": "alta",
+      "ativo": true,
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 11.7,
+        "max_eixos_tabela": 9,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 11.7
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 23.4
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 35.1
+          },
+          {
+            "cat": 4,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 46.8
+          },
+          {
+            "cat": 5,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 58.5
+          },
+          {
+            "cat": 6,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 70.2
+          },
+          {
+            "cat": 7,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 81.9,
+            "desc": "veículo especial de 7 eixos (bitrem)"
+          },
+          {
+            "cat": 8,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 93.6,
+            "desc": "veículo especial de 8 eixos"
+          },
+          {
+            "cat": 9,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 105.3,
+            "desc": "veículo especial de 9 eixos (rodotrem)"
+          },
+          {
+            "cat": 10,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 17.55,
+            "desc": "automóvel/caminhonete com semirreboque"
+          },
+          {
+            "cat": 11,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 23.4,
+            "desc": "automóvel/caminhonete com reboque"
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 5.85,
+            "desc": "motocicleta"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P1",
+          "nome": "Praça P1 Colíder (Via Brasil MT-320)",
+          "rodovia": "MT-320",
+          "municipio": "Colíder",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -55.32486,
+              -10.80509
+            ],
+            "raio_m": 500
+          },
+          "km": "15 (fonte secundária)"
+        },
+        {
+          "id": "P2",
+          "nome": "Praça P2 Nova Canaã do Norte (Via Brasil MT-320)",
+          "rodovia": "MT-320",
+          "municipio": "Nova Canaã do Norte",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -55.73137,
+              -10.44967
+            ],
+            "raio_m": 500
+          },
+          "km": "60 (fonte secundária)"
+        },
+        {
+          "id": "P3",
+          "nome": "Praça P3 Alta Floresta (Via Brasil MT-208)",
+          "rodovia": "MT-208",
+          "municipio": "Alta Floresta",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -55.97084,
+              -9.9232
+            ],
+            "raio_m": 500
+          },
+          "km": "23 (fonte secundária)"
+        }
+      ],
+      "vigencia_inicio": "2025-10-29",
+      "vigencia_fim": "2026-10-28",
+      "vigencia_obs": "7º reajuste em tramitação na AGER (AGER-PRO-2026/03089, relator sorteado no DOE de 15/10/2026): a partir de ~29/10/2026 o valor muda; a tabela passa a sair como estimada."
+    },
+    {
+      "id": "mt_via_brasil_mt100",
+      "importador": "agermt",
+      "uf": "MT",
+      "esfera": "estadual",
+      "regulador": "AGER/MT",
+      "poder_concedente": "Estado de Mato Grosso (SINFRA)",
+      "concessionaria": "Via Brasil MT-100 Concessionária de Rodovias S.A.",
+      "operador": "Via Brasil MT100",
+      "operador_osm": "via brasil mt ?100",
+      "contrato": "Contrato 001/2018/00/00-SINFRA, Lote 1 Alto Araguaia (MT-100)",
+      "ato": "Decisão da AGER/MT: reajuste anual do interstício 2024/2025 (+4,46%), TBP R$ 11,70, DOE de 11/12/2025, p. 55; tabela por categoria da imagem do site da concessionária (04/2026), idêntica em valores à da MT-320",
+      "ato_url": "https://mt100.com.br/tarifas-e-formas-de-pagamento/",
+      "confianca": "alta",
+      "ativo": true,
+      "cobranca": "bidirecional (2 nós por praça no OSM); praças físicas, sem free flow",
+      "tarifa": {
+        "modelo": "categorias",
+        "base": 11.7,
+        "max_eixos_tabela": 9,
+        "categorias": [
+          {
+            "cat": 1,
+            "eixos": 2,
+            "rodagem": "simples",
+            "mult": 1,
+            "valor": 11.7
+          },
+          {
+            "cat": 2,
+            "eixos": 2,
+            "rodagem": "dupla",
+            "mult": 2,
+            "valor": 23.4
+          },
+          {
+            "cat": 3,
+            "eixos": 3,
+            "rodagem": "dupla",
+            "mult": 3,
+            "valor": 35.1
+          },
+          {
+            "cat": 4,
+            "eixos": 4,
+            "rodagem": "dupla",
+            "mult": 4,
+            "valor": 46.8
+          },
+          {
+            "cat": 5,
+            "eixos": 5,
+            "rodagem": "dupla",
+            "mult": 5,
+            "valor": 58.5
+          },
+          {
+            "cat": 6,
+            "eixos": 6,
+            "rodagem": "dupla",
+            "mult": 6,
+            "valor": 70.2
+          },
+          {
+            "cat": 7,
+            "eixos": 7,
+            "rodagem": "dupla",
+            "mult": 7,
+            "valor": 81.9,
+            "desc": "veículo especial de 7 eixos (bitrem)"
+          },
+          {
+            "cat": 8,
+            "eixos": 8,
+            "rodagem": "dupla",
+            "mult": 8,
+            "valor": 93.6,
+            "desc": "veículo especial de 8 eixos"
+          },
+          {
+            "cat": 9,
+            "eixos": 9,
+            "rodagem": "dupla",
+            "mult": 9,
+            "valor": 105.3,
+            "desc": "veículo especial de 9 eixos (rodotrem)"
+          },
+          {
+            "cat": 10,
+            "eixos": 3,
+            "rodagem": "simples",
+            "mult": 1.5,
+            "valor": 17.55,
+            "desc": "automóvel/caminhonete com semirreboque"
+          },
+          {
+            "cat": 11,
+            "eixos": 4,
+            "rodagem": "simples",
+            "mult": 2,
+            "valor": 23.4,
+            "desc": "automóvel/caminhonete com reboque"
+          },
+          {
+            "cat": 12,
+            "eixos": 2,
+            "rodagem": null,
+            "mult": 0.5,
+            "valor": 5.85,
+            "desc": "motocicleta"
+          }
+        ]
+      },
+      "pracas": [
+        {
+          "id": "P1",
+          "nome": "Praça P1 Alto Taquari (Via Brasil MT-100)",
+          "rodovia": "MT-100",
+          "municipio": "Alto Taquari",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -53.21388,
+              -17.95872
+            ],
+            "raio_m": 500
+          }
+        },
+        {
+          "id": "P2",
+          "nome": "Praça P2 Alto Araguaia (Via Brasil MT-100)",
+          "rodovia": "MT-100",
+          "municipio": "Alto Araguaia",
+          "posicao": {
+            "metodo": "osm",
+            "ancora": [
+              -53.23805,
+              -17.37999
+            ],
+            "raio_m": 500
+          }
+        }
+      ],
+      "vigencia_inicio": null,
+      "vigencia_fim": null,
+      "data_desc": "AGER, DOE de 11/12/2025 (interstício 2024/2025); tabela do site da concessionária (04/2026)",
+      "vigencia_obs": "Reajuste do interstício 2025/2026 ainda não publicado em 18/10/2026 (esperado ~12/2026): o valor pode mudar. Pleito de mudança da metodologia do IQD em análise (AGER-PRO-2026/00600)."
+    }
+  ]
+}

@@ -51,7 +51,7 @@ SEED_SQL = None       # seed próprio (holidays); o runner grava este texto no l
 SCOPES = ('state', 'municipal')
 CONFIDENCES = ('alta', 'media', 'baixa', 'unverifiable')
 STATUSES = ('vigente', 'a_confirmar', 'inconstitucional', 'revogada', 'suspensa')
-UF_BY_PREFIX = {'31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP'}
+UF_BY_PREFIX = {'31': 'MG', '32': 'ES', '33': 'RJ', '35': 'SP', '41': 'PR', '42': 'SC', '43': 'RS', '50': 'MS', '51': 'MT', '52': 'GO', '53': 'DF'}
 MESES = ['', 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro',
          'novembro', 'dezembro']
 TJSP_URL = 'https://www.tjsp.jus.br/CanaisComunicacao/Feriados/PesquisarFeriados'

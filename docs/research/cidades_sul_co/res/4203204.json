@@ -1,0 +1,120 @@
+{
+ "ibge": "4203204",
+ "nome": "Camboriú",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 56 (Prefeitura) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões (Decretos/Leis), '3.255'",
+   "resultado": "Achado Decreto 3.255/2017 (lido). Demais acertos: Decreto 4.793/2025 (ponte Cobra Fria, lido), Decreto 4.970/2026 (tarifas de guincho), Lei 3.651/2025, LC 160/2025 sem restrição de circulação."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1321489",
+   "resultado": "Decreto 3.255/2017 lido na íntegra (arts. 1º a 10)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/7852644",
+   "resultado": "Decreto 4.793/2025 (emergência na ponte Cobra Fria): considerando diz que a passagem de veículos pesados 'já se encontra interditada'; sem artigo de interdição/peso."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) busca '\"3.255\"' desde 2017",
+   "resultado": "Nenhum decreto posterior que altere ou revogue o 3.255/2017 localizado."
+  },
+  {
+   "url": "https://camboriu.atende.net/ ; https://camboriu.sc.gov.br ; https://www.camaracamboriu.sc.gov.br/",
+   "resultado": "atende.net abre (portal do cidadão em JS, módulo de legislação não automatizado); camboriu.sc.gov.br sem resposta; Câmara com Bot Verification."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/camboriu/",
+   "resultado": "404 (leads)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 3.255/2017 (12/07/2017, DEMUTRAN) 'disciplina o tráfego de caminhões e o serviço de carga e descarga na área urbana', mas só restringe o ESTACIONAMENTO de caminhões em operação de carga e descarga (art. 1º): na área urbana, veículos de 1,8 a 14 t de carga útil e até 14 m de comprimento só em espaços demarcados para carga/descarga, seg-sex das 22h às 12h (art. 3º, I, b); sábado liberado a partir das 14h; domingos e feriados livres; tolerância 30 min; autorização especial do DEMUTRAN (art. 7º) com 48 h. Não restringe circulação. Sem alteração posterior localizada no DOM/SC. Ponte Cobra Fria (interior): veículos pesados já interditados segundo o considerando do Decreto 4.793/2025, sem ato de interdição lido - pista. Pendência: confirmar no DEMUTRAN se há restrição de circulação (centro/Av. Santa Catarina) e se a ponte Cobra Fria reabriu.",
+ "osm_divergencias": [
+  "OSM não consultado."
+ ],
+ "vuc": null,
+ "regras_rascunho": [
+  {
+   "id": "camboriu_d3255_2017_carga_descarga",
+   "tipo": "zona",
+   "regime": "Carga e descarga",
+   "nome": "Camboriú: estacionamento de caminhões em operação de carga e descarga só em vagas demarcadas, seg-sex 22h-12h (Decreto 3.255/2017)",
+   "status": "desativada",
+   "status_motivo": "O ato restringe estacionamento em operação de carga e descarga (não a circulação); aplicação na rota não faz sentido. Mantida como registro.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "12:00",
+     "to": "22:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 1.8
+     },
+     {
+      "campo": "payload_t",
+      "ate": 14
+     }
+    ]
+   },
+   "excecoes": [
+    "Livre: veículos até 1,8 t em vagas de automóvel; sábado a partir das 14h; domingos e feriados; tolerância de 30 min para descarga em andamento (art. 3º §1º)",
+    "art. 7º: autorização especial do DEMUTRAN (concreto, materiais de construção, mudanças e outros) com 48 h de antecedência",
+    "art. 5º: calçadões e praças só com autorização do DEMUTRAN"
+   ],
+   "autorizacao": "DEMUTRAN (arts. 5º, 7º e 8º)",
+   "zona_texto": "área urbana do município (art. 3º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 3.255, de 12/07/2017",
+     "artigo": "arts. 1º, 2º, 3º (I, b; II; III), 7º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/1321489"
+    }
+   ],
+   "vigencia_inicio": "2017-07-14",
+   "vigencia_fim": null,
+   "nota": "A janela acima é a PROIBIDA para operação em vaga de carga/descarga: dias úteis das 12h às 22h (complemento do permitido 22h-12h)."
+  },
+  {
+   "id": "camboriu_ponte_cobra_fria",
+   "tipo": "ponte",
+   "regime": "Ponte",
+   "nome": "Camboriú: ponte da localidade Cobra Fria com passagem de veículos pesados interditada (Decreto 4.793/2025 - considerando)",
+   "status": "desativada",
+   "status_motivo": "Pista: o decreto declara emergência e cita (em considerando) a interdição de veículos pesados, sem artigo, peso limite, localização exata ou data de reabertura.",
+   "confianca": "unverifiable",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "zona_texto": "localidade Cobra Fria, interior de Camboriú",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 4.793/2025",
+     "artigo": "considerandos (sem artigo operativo de interdição)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/7852644"
+    }
+   ],
+   "vigencia_inicio": "2025-12-18",
+   "vigencia_fim": null
+  }
+ ]
+}

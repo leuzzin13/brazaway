@@ -1,0 +1,89 @@
+{
+ "ibge": "5205109",
+ "nome": "Catalão",
+ "uf": "GO",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.catalao.go.leg.br/api/norma/normajuridica/ (ementa__icontains: caminh, carga, pesad, carreta, tonelada, tráfego, trânsito, circulação, veículos, estacionamento, VUC, transporte, SMTC; alguns termos com 'connection reset', repetidos)",
+   "resultado": "Respondeu. Achou a Lei 3.829/2020 (carga e descarga) e nenhuma lei de zona/via de restrição ou VUC; Lei 3.565/2018 e 3.679/2019 são táxi/remoção."
+  },
+  {
+   "url": "https://sapl.catalao.go.leg.br/media/sapl/public/normajuridica/2020/96/lei_3829_de_2020.pdf",
+   "resultado": "Lei 3.829/2020 lida na íntegra (8 artigos)."
+  },
+  {
+   "url": "https://catalao.go.gov.br/transparencia/legislacao/leis/2474",
+   "resultado": "Abre (portal de transparência) mas busca interna não funcionou; decretos/portarias da SMTC não indexados."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/agm",
+   "resultado": "Catalão não é coberta pelo AGM/FGM (lead diarios_consolidados vazio)."
+  },
+  {
+   "url": "Querido Diário / penaestrada.com.br/restricoes/catalao/",
+   "resultado": "Sem cobertura / 404."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Única norma localizada é de operação de carga e descarga (Lei 3.829/2020, vigente por ausência de revogação no SAPL). Não há zona/via de proibição de trânsito localizada. Pendências: decretos/portarias da SMTC (art. 7º) e do Executivo no portal da prefeitura/diário (não pesquisáveis aqui); eventual restrição em avenidas centrais por sinalização.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "catalao_lei3829_2020_carga_descarga",
+   "tipo": "zona",
+   "regime": "Carga e descarga (área urbana)",
+   "nome": "Catalão: Lei 3.829/2020, operação de carga e descarga de caminhões com carga útil acima de 7 t proibida em horário comercial na área urbana",
+   "status": "desativada",
+   "status_motivo": "A lei restringe a OPERAÇÃO de carga e descarga (imobilização na via), não o trânsito; a camada só modela passagem por zona/via. Sem perímetro (área urbana inteira) e a classificação é por carga útil (CRLV), não PBT.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "18:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 3º, § 1º: aos domingos e feriados, horário livre para qualquer capacidade",
+    "art. 3º, § 2º: tolerância de 30 min após o fim do horário para veículos já em operação, a critério da autoridade",
+    "art. 5º: autorização especial da SMTC (pedido com 3 dias úteis de antecedência)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.829, de 09/12/2020 (Catalão/GO) - normas para operação de carga e descarga",
+     "artigo": "arts. 2º (carga útil máxima do fabricante/CRLV), 3º, I e II (seg-sex 8h-18h; sáb 8h-14h), §§ 1º e 2º, 5º, 7º",
+     "url": "https://sapl.catalao.go.leg.br/media/sapl/public/normajuridica/2020/96/lei_3829_de_2020.pdf",
+     "nota": "Lida no SAPL da Câmara; sem norma relacionada (alteração/revogação) no SAPL; art. 7º-A prevê audiência pública."
+    }
+   ],
+   "nota": "Não restringe a circulação em trânsito. Normas complementares da SMTC (art. 7º) não localizadas.",
+   "vigencia_inicio": "2020-12-09"
+  }
+ ]
+}

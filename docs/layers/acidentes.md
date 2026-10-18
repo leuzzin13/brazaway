@@ -5,10 +5,10 @@ resultado da rota, um resumo com a contagem e até 5 avisos `warn` dos trechos c
 
 | Peça | Arquivo |
 |---|---|
-| Importadores | `importers/sources/acidentes_infosiga.py` (também guarda os utilitários comuns), `acidentes_artesp.py`, `acidentes_prf.py`, `acidentes_reds_mg.py` (MG, ver [seguranca_mg.md](seguranca_mg.md)) |
-| Seeds | `db/seed/layers/acidentes__infosiga.sql`, `acidentes__artesp.sql`, `acidentes__prf.sql`, `acidentes__sejusp-mg.sql` (0,2 / 1,9 / 2,5 / 5,0 MB) |
+| Importadores | `importers/sources/acidentes_infosiga.py` (também guarda os utilitários comuns), `acidentes_artesp.py`, `acidentes_prf.py`, `acidentes_reds_mg.py` (MG, ver [seguranca_mg.md](seguranca_mg.md)), `acidentes_renaest.py` (GO e DF) e `acidentes_geosie_sc.py` (SC) |
+| Seeds | `db/seed/layers/acidentes__infosiga.sql`, `acidentes__artesp.sql`, `acidentes__prf.sql`, `acidentes__sejusp-mg.sql` (0,2 / 1,9 / 2,5 / 5,0 MB), `acidentes__renaest-go.sql` (0,6 MB), `acidentes__renaest-df.sql` (0,2 MB), `acidentes__geosie-sc.sql` (0,1 MB) |
 | API | `api/src/layers/acidentes.layer.ts` |
-| Testes | `api/test/layers/seguranca.test.ts`, `api/test/layers/seguranca_mg.test.ts` |
+| Testes | `api/test/layers/seguranca.test.ts`, `api/test/layers/seguranca_mg.test.ts`, `api/test/layers/seguranca_sul_co.test.ts`, `importers/tests/test_acidentes_sul_co.py` |
 
 ## Fontes e licenças
 
@@ -18,6 +18,8 @@ resultado da rota, um resumo com a contagem e até 5 avisos `warn` dos trechos c
 | **ARTESP** — `https://dadosabertos.artesp.sp.gov.br/dataset/acidentes` | Rodovias estaduais **concedidas** de SP; inclui acidentes **sem vítima** | CC-BY (Creative Commons Attribution), conforme o CKAN da ARTESP | CSV anual, atualizado ao longo do ano |
 | **PRF** — `https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf` | Rodovias **federais** de todo o país; inclui acidentes sem vítima | Registrada (igual na API, no importador e aqui): "Dados abertos PRF — livre utilização (Decreto federal 8.777/2016, art. 4º, caput e § 1º, red. Decreto 9.903/2019); o rodapé do gov.br cita CC BY-ND 3.0 para o conteúdo do site, interpretado como não aplicável aos dados; confirmar via Fala.BR". Ver nota abaixo. | Mensal (CSV "agrupado por pessoa", Google Drive) |
 | **SEJUSP-MG (REDS)**, Painel de Sinistro de Trânsito — `https://drive.google.com/drive/folders/1W_4SsAW8u5bvsaBoHhwInpUr72vES8yw` | Estado de MG, todas as vias exceto as BRs (que ficam com a PRF); inclui acidentes **sem vítima** | Sem licença nomeada; Decreto MG 48.383/2022, art. 22 (livre utilização, observados o art. 6º da LGPD e a Lei 14.129/2021). Redação completa e incerteza em [seguranca_mg.md](seguranca_mg.md) | CSV anual no Google Drive (ano corrente atualizado mais ou menos todo mês) |
+| **RENAEST** (Senatran/Ministério dos Transportes) — `https://dados.transportes.gov.br/dataset/renaest` | **Goiás** (coordenada em ~98% dos acidentes desde 2021) e **Distrito Federal** (coordenada só em 2025 e 2026), todas as vias exceto BR; tipo de veículo por acidente | "Outra (Domínio Público)" no CKAN. Redação registrada (igual na API e no importador): "RENAEST (Senatran/Ministério dos Transportes) — "Outra (Domínio Público)" no CKAN dados.transportes.gov.br; dados dos DETRANs, atribuir Senatran/RENAEST" | ZIP acumulado mensal de ~530 MB (dados até 05/2026 na carga de 18/10/2026) |
+| **GeoSIE/SIE-SC** (boletins da PMRv) — `https://geo.sie.sc.gov.br/api/geo_acidente.php` | **Rodovias estaduais de SC**, com coordenada, **sem tipo de veículo** (só nº de veículos) | **Licença NÃO declarada.** Dado público de órgão estadual de acesso aberto (Lei 12.527/2011; Lei 14.129/2021). Publicado só agregado (células de 250 m, mínimo 5 sinistros); **pedido de confirmação de uso comercial à SIE/SC por LAI fica pendente** | Vivo; só o ano corrente (o importador acumula um acervo local) |
 | API de localidades do IBGE (`servicodados.ibge.gov.br`) | Só para grafar o nome oficial do município ("SAO PAULO" → "São Paulo") | Dado público do IBGE | Cache de 90 dias |
 
 Os dados ficam em `data_features` (`layer_id = 'acidentes'`), separados do OSM, e **nunca** vão para o OSM.
@@ -97,6 +99,48 @@ Conferido em 09/10/2026 com os acidentes com caminhão de 2025:
 - casar registro a registro não funciona: só 39% dos acidentes com caminhão "CONCESSIONÁRIA" do Infosiga têm um acidente
   com caminhão da ARTESP no mesmo dia a até 1 km (33% para os "DER"). Por isso a divisão é por malha, não por registro.
 
+### Sul e Centro-Oeste (carga de 18/10/2026)
+
+Pesquisa verificada em `docs/research/estados_sul_co/<UF>.json` (tema `acidentes`). Resultado por UF:
+
+| UF | Fonte | Entra? | Motivo |
+|---|---|---|---|
+| GO | RENAEST (DETRAN-GO) | **sim** (`renaest-go`, 906 células; 5 "alto", 0 "muito alto") | coordenada em 98% desde 2021 e tipo de veículo; 11.128 acidentes com caminhão na janela 06/2023–05/2026 |
+| DF | RENAEST (DETRAN-DF) | **sim** (`renaest-df`, 300 células, todas "moderado") | coordenada só em 2025 e 2026 (2020–2024 vêm com `-0000000000`); janela real 01/2025–05/2026; `tp_rodovia` "não informado" em 98%, então a rodovia só é reconhecida pelo endereço |
+| SC | GeoSIE/PMRv (rodovias estaduais) | **sim, com ressalva** (`geosie-sc`, 141 células; 10 "alto") | tem coordenada mas **não tem tipo de veículo**: as células são de **todos os veículos** (`props.escopo = 'todos_veiculos'`, `caminhao = 0`), mínimo de 5 sinistros, e a API as descreve à parte ("sinistros de todos os veículos; a fonte não informa o tipo de veículo"), sem somá-las aos acidentes com caminhão; licença não declarada (acima) |
+| PR | BATEU (PMPR/DER) | não | sem dado aberto; RENAEST-PR tem 0% de coordenada; só a PRF nas BRs |
+| RS | DETRAN-RS / SSP | não | só tabelas mensais por município (sem coordenada nem rodovia); RENAEST-RS: 0% de coordenada e amostra parcial (~1,2 mil/ano) |
+| MT | — | não | RENAEST-MT sem coordenada (0 de 36,2 mil) e `tp_rodovia` 100% "não informado"; SESP/DETRAN/SINFRA sem base aberta |
+| MS | RENAEST (DETRAN-MS) | não | coordenada válida em ~50% e só 34 acidentes de caminhão em rodovia estadual com coordenada em 2025: massa crítica insuficiente para células de 3+; as concessões Way-306/112 só publicam relatório por km (PDF) |
+
+**RENAEST (GO e DF)** — `acidentes_renaest.py`, uma carga por UF (`run.py acidentes_renaest[:GO|:DF]`, fontes `renaest-go` e
+`renaest-df`). O ZIP de 530 MB é lido por HTTP Range direto do CKAN, em streaming (Acidentes 2,7 GB descompactado,
+TipoVeiculo 340 MB), e só um extrato compacto das duas UFs (sem pessoas; 14 MB gzip) fica em `data/cache/renaest/` (a primeira
+leitura levou ~11 min; depois, segundos). Mesmo método do Infosiga (`Hotspots`): grade de 250 m, janela de 3 anos terminando
+no mês do dado mais recente, mínimo de 3 acidentes **com caminhão** (CAMINHAO, CAMINHAO-TRATOR, SEMIRREBOQUE, REBOQUE, os
+mesmos tipos da PRF) por célula; nenhum registro individual sai do importador.
+- **Jurisdição, sem contar duas vezes**: `tp_rodovia = FEDERAL` ou endereço com código `BR-xxx` → PRF, descartado
+  (GO 24.995, DF 195); acidente em rodovia (`ESTADUAL`/`FEDERAL` ou código GO-/DF-/BR- no endereço) numa célula (±1) onde a
+  PRF tem acidentes (`acidentes_prf.covered_cells(bbox da UF)`) → descartado (GO 2.000, DF 99); o resto (rodovias estaduais e
+  distritais e vias urbanas) fica.
+- **Coordenada repetida** (≥ 5 acidentes com caminhão na mesma coordenada exata, centro de bairro/município quando falta o
+  endereço) é descartada, como no REDS-MG (GO 1.879, DF 989).
+- **Limites da fonte**: tipo de veículo "NAO INFORMADO" em ~35% dos veículos de GO (a contagem de caminhão é um **piso**); o
+  RENAEST só traz óbitos por acidente (não separa ferido de ileso e a gravidade das vítimas no arquivo de vítimas é pouco
+  confiável em GO), então "com vítima" = com óbito e os demais acidentes pesam **0,5** no score (`peso_sem_vitima` da subclasse
+  `HotspotsRenaest`; Infosiga 1, PRF/ARTESP 0,2); `tp_rodovia` tem erros (BR marcada como estadual, avenidas urbanas), por isso
+  o endereço também é lido; o município do registro nem sempre é o do local em rodovia (acidente na GO-020 perto de Catalão
+  registrado em Goiânia), então acidente de rodovia sai **sem município**; o km só existe no texto do endereço.
+- **Atualizar**: o importador pega o recurso mais recente do CKAN (`package_show`); ao sair um ZIP novo, rodar de novo.
+
+**GeoSIE de SC** — `acidentes_geosie_sc.py` (fonte `geosie-sc`). O endpoint devolve só o **ano corrente** (o parâmetro de ano é
+ignorado): cada carga soma o que veio a `data/cache/geosie_sc/acervo.jsonl.gz` (chave ano+boletim+posto), então o histórico
+cresce a cada execução (na carga de 18/10/2026, 5.546 boletins de 01/2026 a 10/2026; `props.janela` traz o período real, em
+mês e ano). Gravidade (`CDGRAVIDADE`: 1 = com morte, 2 = com feridos, 3 = sem vítima) é mapa inferido pelos totais, não documentado
+pela fonte. BR (`SGRODOVIA` BR…) e células cobertas pela PRF ficam com a PRF (331 + 3 descartados). Score
+`vitima + 2 × morte + 0,2 × sem vítima`, mesmos limiares (alto ≥ 8, muito alto ≥ 15). **Rodar periodicamente** (pelo menos
+mensal; antes da virada do ano) para não perder histórico.
+
 ## Na rota (API)
 
 - `annotate`: pontos críticos a até **80 m** da linha da rota (`featuresNearRoute`). Pontos consecutivos a até 1 km
@@ -111,6 +155,11 @@ Conferido em 09/10/2026 com os acidentes com caminhão de 2025:
   só tira moderados. Propriedades legíveis, no máximo 12 exibíveis (o popup genérico do mapa corta em 12):
   nível, acidentes com caminhão/com vítima/com morte, óbitos, `por_faixa_do_dia` ("madrugada 0 · manhã 2 · ..."),
   período dos dados, fonte, acidentes com todos os veículos e score.
+- **Células de SC** (`escopo: 'todos_veiculos'`): ficam à parte nas contagens. O resumo diz "N ponto(s) crítico(s) de sinistros
+  em rodovia estadual de SC (todos os veículos; a fonte não informa o tipo de veículo)"; o aviso diz "Trecho crítico de
+  sinistros em rodovia estadual: … N sinistros de todos os veículos entre MM/AAAA e MM/AAAA"; `data.todos_veiculos` traz
+  `{pontos, sinistros, fatais}` e `data.caminhao`, `por_nivel` e `obitos` só contam as fontes com tipo de veículo. No mapa, o
+  campo `acidentes_caminhao` é "não informado (a fonte não traz o tipo de veículo)".
 - Severidade nunca é `danger`: não há restrição legal, só risco.
 
 ## Como atualizar
@@ -134,5 +183,10 @@ Drive da PRF são lidos da página; se ela mudar de formato, o importador usa os
 - **Viadutos e cruzamentos**: com raio de 80 m, um ponto crítico de uma via que passa por baixo/por cima da rota pode
   entrar na conta. O agrupamento por trecho e o top 5 reduzem o ruído, mas não eliminam.
 - **Hora de passagem** estimada proporcionalmente à distância (sem trânsito real nem paradas obrigatórias).
-- Cobertura: estados de SP (Infosiga + ARTESP) e MG (SEJUSP-MG/REDS) e BRs do país (PRF). Nos outros estados, só as BRs
-  (RJ e ES não publicam acidentes com coordenada e tipo de veículo; ver a pesquisa `seguranca_rj_mg_es`).
+- Cobertura: SP (Infosiga + ARTESP), MG (SEJUSP-MG/REDS), GO e DF (RENAEST), rodovias estaduais de SC (GeoSIE, todos os
+  veículos) e BRs do país (PRF). Nos outros estados (RJ, ES, PR, RS, MT, MS), só as BRs (RJ e ES não publicam acidentes com
+  coordenada e tipo de veículo; ver a pesquisa `seguranca_rj_mg_es`; PR, RS, MT e MS: ver a tabela do Sul e Centro-Oeste acima).
+- **RENAEST em GO/DF**: GO tem muitas células urbanas de Goiânia (a maior parte dos acidentes com caminhão é em via municipal);
+  contagem de caminhão é piso (35% "não informado"); DF só 17 meses de dado com coordenada.
+- **SC**: sem tipo de veículo, o "ponto crítico" é de qualquer veículo e não mede risco específico para caminhão; só 2026 até
+  o acervo crescer; licença não declarada (confirmar com a SIE/SC).

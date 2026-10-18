@@ -3,8 +3,10 @@ import { featuresInBbox, featuresNearRoute, type DataFeatureRow, type NearRouteR
 import type { LayerWarning, RouteLayer } from './types.js';
 
 /**
- * Pontos críticos de acidentes com caminhão (Infosiga SP, ARTESP, PRF e SEJUSP-MG/REDS), agregados pelos importadores numa grade de 250 m
- * com janela de 3 anos e mínimo de 3 acidentes com caminhão por célula. Nenhum registro individual chega à API.
+ * Pontos críticos de acidentes com caminhão (Infosiga SP, ARTESP, PRF, SEJUSP-MG/REDS e RENAEST de GO e DF), agregados pelos importadores
+ * numa grade de 250 m com janela de 3 anos e mínimo de 3 acidentes com caminhão por célula. Exceção: SC (GeoSIE/PMRv) não informa o
+ * tipo de veículo; as células de SC têm `escopo: 'todos_veiculos'` (sinistros de qualquer veículo, mínimo de 5) e a API as trata e
+ * as descreve à parte, sem somá-las aos acidentes com caminhão. Nenhum registro individual chega à API.
  * A camada é INFORMATIVA: não muda a rota; avisa dos trechos críticos que a rota atravessa (top N) e resume a contagem.
  * Ver docs/layers/acidentes.md.
  */
@@ -43,6 +45,9 @@ interface HotspotProps {
   obitos: number;
   caminhao_moto?: number;
   caminhao_pedestre?: number;
+  /** 'todos_veiculos' = fonte sem tipo de veículo (SC): `total`/`fatais`/`vitima` valem para qualquer veículo e `caminhao` é 0 */
+  escopo?: 'caminhao' | 'todos_veiculos';
+  vitima?: number;
   periodo: Record<Faixa, number>;
   pico: Faixa | null;
   score: number;
@@ -51,6 +56,7 @@ interface HotspotProps {
 }
 
 const props = (r: DataFeatureRow) => r.props as unknown as HotspotProps;
+const todosVeic = (r: DataFeatureRow) => props(r).escopo === 'todos_veiculos';
 const nivelOf = (r: DataFeatureRow): Nivel => (props(r).nivel ?? r.kind ?? 'moderado') as Nivel;
 const faixaOf = (hour: number): Faixa => FAIXAS[Math.floor(hour / 6)];
 const fmtKm = (km: number) => (km < 10 ? km.toFixed(1) : Math.round(km).toString()).replace('.', ',');
@@ -77,6 +83,13 @@ interface Trecho {
   caminhao_vitima: number;
   caminhao_fatais: number;
   obitos: number;
+  /** trecho só com pontos de fonte sem tipo de veículo (SC): contagens abaixo são de TODOS os veículos */
+  todos_veiculos: boolean;
+  sinistros: number;
+  sinistros_fatais: number;
+  /** período real dos dados (a fonte de SC só publica o ano corrente) */
+  de: string | null;
+  ate: string | null;
   periodo: Record<Faixa, number>;
   pico: Faixa | null;
   km_inicio: number;
@@ -113,6 +126,11 @@ function cluster(rows: NearRouteRow[], distanceKm: number, eta: (fraction: numbe
       caminhao_vitima: sum('caminhao_vitima'),
       caminhao_fatais: sum('caminhao_fatais'),
       obitos: sum('obitos'),
+      todos_veiculos: rs.every(todosVeic),
+      sinistros: rs.filter(todosVeic).reduce((s, r) => s + (props(r).total ?? 0), 0),
+      sinistros_fatais: rs.filter(todosVeic).reduce((s, r) => s + (props(r).fatais ?? 0), 0),
+      de: rs.map((r) => props(r).janela?.de).filter(Boolean).sort()[0] ?? null,
+      ate: rs.map((r) => props(r).janela?.ate).filter(Boolean).sort().at(-1) ?? null,
       periodo,
       pico,
       km_inicio: Math.round(rs[0].fraction * distanceKm * 10) / 10,
@@ -140,7 +158,7 @@ const layer: RouteLayer = {
   meta: {
     id: LAYER,
     label: 'Acidentes com caminhão',
-    description: 'Pontos críticos de acidentes com caminhão nos últimos 3 anos (grade de 250 m; SP, MG e rodovias federais).',
+    description: 'Pontos críticos de acidentes com caminhão nos últimos 3 anos (grade de 250 m; SP, MG, GO, DF e rodovias federais) e, em rodovias estaduais de SC, pontos críticos de sinistros de todos os veículos (a fonte não informa o tipo de veículo).',
     group: 'seguranca',
     sources: [
       { name: 'Infosiga SP (Detran-SP)', url: 'https://infosiga.detran.sp.gov.br/', license: 'Dados abertos Detran-SP (uso e redistribuição livres com atribuição e mesmos termos de abertura)' },
@@ -161,6 +179,23 @@ const layer: RouteLayer = {
           'SEJUSP-MG/REDS (Painel de Sinistro de Trânsito) — sem licença nomeada nos arquivos nem no CKAN; dados de ' +
           'transparência ativa "de livre utilização pela sociedade" (Decreto MG 48.383/2022, art. 22, observados o art. 6º ' +
           'da LGPD e a Lei 14.129/2021); atribuir SEJUSP-MG/REDS; confirmar uso comercial por pedido de acesso à informação',
+      },
+      {
+        name: 'RENAEST (Senatran) — acidentes de Goiás e do Distrito Federal (DETRANs)',
+        url: 'https://dados.transportes.gov.br/dataset/renaest',
+        // mesma redação do LICENSE de importers/sources/acidentes_renaest.py e de docs/layers/acidentes.md
+        license:
+          'RENAEST (Senatran/Ministério dos Transportes) — "Outra (Domínio Público)" no CKAN dados.transportes.gov.br; ' +
+          'dados dos DETRANs, atribuir Senatran/RENAEST',
+      },
+      {
+        name: 'GeoSIE/SIE-SC — boletins da PMRv em rodovias estaduais de Santa Catarina (todos os veículos)',
+        url: 'https://geo.sie.sc.gov.br/api/geo_acidente.php',
+        // mesma redação do LICENSE de importers/sources/acidentes_geosie_sc.py e de docs/layers/acidentes.md
+        license:
+          'GeoSIE/SIE-SC (boletins da PMRv em rodovias estaduais) — licença NÃO declarada pela fonte; dado público de órgão ' +
+          'estadual de acesso aberto (Lei federal 12.527/2011 e Lei 14.129/2021), publicado só agregado em células de 250 m ' +
+          '(mínimo de 5 sinistros), sem registro individual; atribuir SIE-SC/PMRv; confirmar uso comercial por pedido de acesso à informação',
       },
     ],
     style: { kind: 'heatmap', color: '#dc2626', radius: 16, opacity: 0.65, icon: '⚠️' },
@@ -185,6 +220,7 @@ const layer: RouteLayer = {
       // até 12 propriedades exibíveis (o popup genérico do mapa mostra 12; id e weight ficam de fora)
       features: rows.map((r) => {
         const p = props(r);
+        const todos = todosVeic(r);
         return {
           type: 'Feature',
           id: r.id,
@@ -193,11 +229,11 @@ const layer: RouteLayer = {
             id: r.id,
             name: label(p, r.name),
             nivel: NIVEL_LABEL[nivelOf(r)],
-            acidentes_caminhao: p.caminhao,
-            com_vitima: p.caminhao_vitima,
-            com_morte: p.caminhao_fatais,
+            acidentes_caminhao: todos ? 'não informado (a fonte não traz o tipo de veículo)' : p.caminhao,
+            com_vitima: todos ? (p.vitima ?? 0) : p.caminhao_vitima,
+            com_morte: todos ? p.fatais : p.caminhao_fatais,
             obitos: p.obitos,
-            por_faixa_do_dia: FAIXAS.map((f) => `${FAIXA_CURTA[f]} ${p.periodo?.[f] ?? 0}`).join(' · '),
+            por_faixa_do_dia: todos ? 'horário não informado' : FAIXAS.map((f) => `${FAIXA_CURTA[f]} ${p.periodo?.[f] ?? 0}`).join(' · '),
             periodo_dados: `${fmtDate(p.janela?.de)} a ${fmtDate(p.janela?.ate)}`,
             fonte: p.fonte ?? r.source,
             acidentes_todos_veiculos: p.total,
@@ -213,7 +249,7 @@ const layer: RouteLayer = {
     const rows = await featuresNearRoute(LAYER, route.line.geometry, NEAR_M, { limit: 3000 });
     if (!rows.length) {
       return {
-        summary: ['Nenhum ponto crítico de acidente com caminhão na rota (3 anos; cobre os estados de SP e MG e as rodovias federais).'],
+        summary: ['Nenhum ponto crítico de acidente na rota (3 anos; cobre SP, MG, GO, DF, rodovias estaduais de SC e as rodovias federais; nos demais estados só as rodovias federais).'],
         data: { pontos: 0, trechos: [] },
       };
     }
@@ -221,11 +257,16 @@ const layer: RouteLayer = {
     const eta = (fraction: number) => start.plus({ seconds: Math.round(fraction * route.duration_s) });
     const trechos = cluster(rows, route.distance_km, eta);
 
+    // SC (GeoSIE) não informa o tipo de veículo: esses pontos ficam à parte e nunca entram na contagem "com caminhão"
+    const todos = rows.filter(todosVeic);
+    const camRows = rows.filter((r) => !todosVeic(r));
     const porNivel: Record<Nivel, number> = { muito_alto: 0, alto: 0, moderado: 0 };
-    for (const r of rows) porNivel[nivelOf(r)]++;
-    const caminhao = rows.reduce((s, r) => s + (props(r).caminhao ?? 0), 0);
-    const fatais = rows.reduce((s, r) => s + (props(r).caminhao_fatais ?? 0), 0);
-    const obitos = rows.reduce((s, r) => s + (props(r).obitos ?? 0), 0);
+    for (const r of camRows) porNivel[nivelOf(r)]++;
+    const caminhao = camRows.reduce((s, r) => s + (props(r).caminhao ?? 0), 0);
+    const fatais = camRows.reduce((s, r) => s + (props(r).caminhao_fatais ?? 0), 0);
+    const obitos = camRows.reduce((s, r) => s + (props(r).obitos ?? 0), 0);
+    const sinistros = todos.reduce((s, r) => s + (props(r).total ?? 0), 0);
+    const sinistrosFatais = todos.reduce((s, r) => s + (props(r).fatais ?? 0), 0);
     const janelas = rows.map((r) => props(r).janela).filter(Boolean);
     const de = janelas.map((j) => j.de).sort()[0];
     const ate = janelas.map((j) => j.ate).sort().at(-1);
@@ -242,17 +283,30 @@ const layer: RouteLayer = {
       id: t.id,
       lat: t.lat,
       lon: t.lon,
-      message:
-        `Trecho crítico de acidentes com caminhão: ${t.name} (km ${fmtRange(t.km_inicio, t.km_fim)} da rota, ~${t.passagem}). ` +
-        `${t.caminhao} acidentes com caminhão em 3 anos${t.caminhao_fatais ? `, ${t.caminhao_fatais} com morte` : ''}` +
-        `${t.pico ? `; mais ${FAIXA_LABEL[t.pico]}` : ''}. Reduza a velocidade e mantenha distância.`,
+      message: t.todos_veiculos
+        ? `Trecho crítico de sinistros em rodovia estadual: ${t.name} (km ${fmtRange(t.km_inicio, t.km_fim)} da rota, ~${t.passagem}). ` +
+          `${t.sinistros} sinistros de todos os veículos entre ${fmtDate(t.de ?? undefined)} e ${fmtDate(t.ate ?? undefined)}${t.sinistros_fatais ? `, ${t.sinistros_fatais} com morte` : ''} ` +
+          `(a fonte, PMRv de SC, não informa o tipo de veículo). Reduza a velocidade e mantenha distância.`
+        : `Trecho crítico de acidentes com caminhão: ${t.name} (km ${fmtRange(t.km_inicio, t.km_fim)} da rota, ~${t.passagem}). ` +
+          `${t.caminhao} acidentes com caminhão em 3 anos${t.caminhao_fatais ? `, ${t.caminhao_fatais} com morte` : ''}` +
+          `${t.pico ? `; mais ${FAIXA_LABEL[t.pico]}` : ''}. Reduza a velocidade e mantenha distância.`,
     }));
 
-    const summary = [
-      `${rows.length} ponto(s) crítico(s) de acidente com caminhão na rota, em ${trechos.length} trecho(s) ` +
-        `(${porNivel.muito_alto} muito alto, ${porNivel.alto} alto, ${porNivel.moderado} moderado).`,
-      `Nesses pontos: ${caminhao} acidentes com caminhão de ${fmtDate(de)} a ${fmtDate(ate)}, ${fatais} com morte (${obitos} óbito(s)).`,
-    ];
+    const trechosCam = trechos.filter((t) => !t.todos_veiculos).length;
+    const summary: string[] = [];
+    if (camRows.length) {
+      summary.push(
+        `${camRows.length} ponto(s) crítico(s) de acidente com caminhão na rota, em ${trechosCam} trecho(s) ` +
+          `(${porNivel.muito_alto} muito alto, ${porNivel.alto} alto, ${porNivel.moderado} moderado).`,
+        `Nesses pontos: ${caminhao} acidentes com caminhão de ${fmtDate(de)} a ${fmtDate(ate)}, ${fatais} com morte (${obitos} óbito(s)).`,
+      );
+    }
+    if (todos.length) {
+      summary.push(
+        `${todos.length} ponto(s) crítico(s) de sinistros em rodovia estadual de SC (todos os veículos; a fonte não informa o tipo de veículo): ` +
+          `${sinistros} sinistros, ${sinistrosFatais} com morte.`,
+      );
+    }
     if (criticos.length < trechos.filter((t) => t.nivel !== 'moderado').length) {
       summary.push(`Avisos mostram os ${criticos.length} trechos mais graves; os demais estão em "dados" e no mapa.`);
     }
@@ -269,6 +323,7 @@ const layer: RouteLayer = {
         caminhao,
         caminhao_fatais: fatais,
         obitos,
+        ...(todos.length ? { todos_veiculos: { pontos: todos.length, sinistros, fatais: sinistrosFatais } } : {}),
         janela: { de, ate },
         trechos: trechos.slice(0, 50),
       },

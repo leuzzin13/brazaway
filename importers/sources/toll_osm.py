@@ -27,10 +27,11 @@ BBOX = os.environ.get('OSM_TOLL_BBOX', '-25.4,-53.2,-14.2,-39.6')
 
 
 def _pbf_path() -> str | None:
-    p = os.environ.get('OSM_PBF')
-    if p and os.path.exists(p):
+    from common import osm_pbf
+    p = osm_pbf()
+    if p:
         return p
-    for pat in ('/data/valhalla/*.osm.pbf', '/data/*.osm.pbf', '/data/raw/*.osm.pbf'):
+    for pat in ('/data/*.osm.pbf', '/data/raw/*.osm.pbf'):
         c = sorted(glob.glob(pat))
         if c:
             return c[0]

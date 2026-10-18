@@ -102,6 +102,47 @@ class RegrasConferidas(unittest.TestCase):
         self.assertTrue(ok('ES-TERCEIRA-PONTE', 'Ponte Deputado Darcy Castello de Mendonça'))
 
 
+    def test_rs_rota_do_sol_e_estrada_do_mar_dn_daer(self):
+        # pesquisa docs/research/estados_sul_co (RS, 18/10/2026): DN DAER 127/2019 (+136/2021) e 152/2023, todas as classes
+        rs = RULES['RS-ROTA-DO-SOL']
+        self.assertTrue(rs['ativa'])
+        self.assertEqual((rs['situacao'], rs['uf'], rs['jurisdicao']), ('vigente', 'RS', 'estadual'))
+        self.assertEqual(rs['norma'], 'Decisão Normativa DAER nº 127/2019 (alterada pela DN 136/2021)')
+        self.assertEqual(rs['artigo'], 'arts. 1º, 2º e 6º')
+        self.assertIsNone(rs['classes_proibidas'])
+        self.assertFalse(rs['isencao_qtd_limitada'])
+        self.assertRegex(rs['excecoes'], r'lindeiros.*segunda a quinta, das 10h às 15h')
+        self.assertEqual(rs['valid_from'], '2019-12-22T00:00:00-03:00')      # 30 dias após o DOE de 22/11/2019 (art. 11)
+        mar = RULES['RS-ESTRADA-DO-MAR']
+        self.assertTrue(mar['ativa'])
+        self.assertEqual((mar['norma'], mar['artigo']), ('Decisão Normativa DAER nº 152/2023', 'art. 8º, § 2º, c/c art. 3º, §§ 2º a 4º'))
+        self.assertIsNone(mar['classes_proibidas'])
+        self.assertFalse(mar['isencao_qtd_limitada'])
+
+    def test_rs_dn_29_2002_registrada_e_nao_aplicada(self):
+        r = REG['RS-DN-29-2002-ERS-030-040-118']
+        self.assertEqual((r['situacao'], r['confianca']), ('vigencia_incerta', 'baixa'))
+        self.assertRegex(r['motivo_inativa'], r'não aplicada')
+        self.assertRegex(r['regra'], r'22h às 6h')
+        self.assertEqual(len(r['ponto']), 2)
+
+    def test_nomes_da_selecao_rs(self):
+        def ok(rule_id, nome):
+            rx = re.compile(RULES[rule_id]['selecao']['nome'])
+            return bool(rx.fullmatch(re.sub(r'\s+', ' ', imp.strip_accents(nome)).strip()))
+        for n in ('ERS-486', 'RSC-453', 'Rota do Sol Euclides Triches'):
+            self.assertTrue(ok('RS-ROTA-DO-SOL', n), n)
+        self.assertFalse(ok('RS-ROTA-DO-SOL', 'ERS-020'))
+        for n in ('Estrada do Mar', 'ERS-389', 'Rodovia Nelson Gonçalves'):
+            self.assertTrue(ok('RS-ESTRADA-DO-MAR', n), n)
+        self.assertFalse(ok('RS-ESTRADA-DO-MAR', 'Avenida Beira Mar'))
+
+    def test_nenhuma_regra_ativa_sem_semente_nos_dois_sentidos(self):
+        for r in CFG['regras']:
+            self.assertEqual(len(r['selecao']['sementes']), 2, r['id'])
+            self.assertEqual(r['selecao']['sementes'][0], r['selecao']['sementes'][1][::-1], r['id'])
+
+
 class Recasamento(unittest.TestCase):
     def test_props_osm_guarda_o_costing_da_selecao(self):
         # a API recasa com este costing quando o tileset muda; com 'truck' a Linha Vermelha (hgv=no) não casa

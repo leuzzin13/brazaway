@@ -66,7 +66,7 @@ class Estaduais(unittest.TestCase):
         # MG 21/04 e RJ 20/11 já são nacionais: não geram linha
         self.assertFalse([r for r in ROWS if r['scope'] == 'state' and r['uf'] == 'MG'])
         self.assertIsNone(find(D(2026, 11, 20), 'state', 'RJ'))
-        self.assertEqual(STATS['redundantes'], 2)
+        self.assertEqual(STATS['redundantes'], 3)   # + DF 21/04 (Tiradentes)
 
 
 class Municipais(unittest.TestCase):
@@ -98,6 +98,70 @@ class Municipais(unittest.TestCase):
     def test_datas_fixas_de_edital_so_no_ano_do_ato(self):
         for key in ('cajamar_municipio', 'sbc_aniversario', 'santos_fundacao', 'extrema_aniversario', 'guarulhos_fundacao'):
             self.assertEqual({r['day'].year for r in ROWS if r['rule_key'] == key}, {2026}, key)
+
+
+class SulCentroOeste(unittest.TestCase):
+    """Expansão para PR, SC, RS, GO, MT, MS e DF (pesquisa docs/research/estados_sul_co, verificada em 18/10/2026)."""
+
+    def test_pr_sem_feriado_estadual(self):
+        # Lei PR 18.384/2014: 19/12 "não se constituindo em feriado civil" (revoga a Lei 4.658/1962)
+        self.assertFalse([r for r in ROWS if r['scope'] == 'state' and r['uf'] == 'PR'])
+        self.assertTrue(any(r['id'] == 'pr_emancipacao_19dez' and r['status'] == 'revogada' for r in CFG['regras']))
+        self.assertTrue(find(D(2026, 9, 8), 'municipal', 'PR', '4106902')['active'])   # Padroeira de Curitiba (TJPR 621/2025)
+
+    def test_sc_data_magna_transferida_para_domingo_nao_aplica(self):
+        for dia in (D(2026, 8, 16), D(2027, 8, 15), D(2028, 8, 13), D(2026, 11, 29), D(2027, 11, 28)):
+            r = find(dia, 'state', 'SC')
+            self.assertEqual(dia.weekday(), 6)
+            self.assertTrue(r and not r['active'] and 'Lei estadual SC 18.531/2022' in r['legal_basis'], dia)
+        self.assertIsNone(find(D(2026, 8, 11), 'state', 'SC'))
+        self.assertIsNone(find(D(2028, 11, 25), 'state', 'SC'))
+
+    def test_rs_farroupilha_e_municipais_trt4(self):
+        for y in (2026, 2027, 2028):
+            self.assertTrue(find(D(y, 9, 20), 'state', 'RS')['active'], y)
+        self.assertEqual(find(D(2026, 6, 4), 'municipal', 'RS', '4314902')['name'], 'Corpus Christi')
+        self.assertTrue(find(D(2027, 5, 27), 'municipal', 'RS', '4314902')['active'])       # Páscoa + 60
+        self.assertTrue(find(D(2026, 5, 26), 'municipal', 'RS', '4305108')['active'])       # Caxias, Caravaggio
+        self.assertIn('Lei nº 3.130/1987', find(D(2026, 5, 26), 'municipal', 'RS', '4305108')['legal_basis'])
+        self.assertIsNone(find(D(2026, 6, 4), 'municipal', 'RS', '4303004'))               # Cachoeira do Sul: facultativo
+
+    def test_go_decretos_de_transferencia(self):
+        self.assertTrue(find(D(2026, 7, 20), 'state', 'GO')['active'])
+        self.assertIsNone(find(D(2026, 7, 26), 'state', 'GO'))                              # Decreto 10.935/2026
+        self.assertTrue(find(D(2026, 10, 30), 'state', 'GO')['active'])
+        self.assertIsNone(find(D(2026, 10, 28), 'state', 'GO'))                             # Decreto 10.987/2026
+        self.assertTrue(find(D(2027, 7, 26), 'state', 'GO')['active'])
+        self.assertTrue(find(D(2026, 10, 24), 'state', 'GO')['active'])
+        # municipais só do TRT18/2024: registrados sem aplicar
+        r = find(D(2026, 7, 31), 'municipal', 'GO', '5201108')
+        self.assertTrue(r and not r['active'] and r['confidence'] == 'baixa')
+
+    def test_ms_criacao_do_estado(self):
+        for y, d in ((2026, D(2026, 10, 11)), (2027, D(2027, 10, 11)), (2028, D(2028, 10, 11))):
+            self.assertTrue(find(d, 'state', 'MS')['active'], y)
+        self.assertIsNone(find(D(2026, 10, 28), 'state', 'MS'))                              # ponto facultativo
+        self.assertTrue(find(D(2026, 5, 11), 'municipal', 'MS', '5005681')['active'])        # Mundo Novo (Lei 1.504/2026)
+        self.assertIsNone(find(D(2026, 5, 13), 'municipal', 'MS', '5005681'))
+        self.assertFalse(find(D(2026, 6, 24), 'municipal', 'MS', '5003207')['active'])       # São João de Corumbá: baixa
+        self.assertEqual({r['day'].year for r in ROWS if r['rule_key'].startswith('ms_') and r['scope'] == 'municipal'}, {2026})
+
+    def test_mt_sem_estadual_e_municipais_conferidos_no_doe(self):
+        self.assertFalse([r for r in ROWS if r['scope'] == 'state' and r['uf'] == 'MT'])
+        self.assertTrue(find(D(2026, 10, 31), 'municipal', 'MT', '5105580')['active'])      # Marcelândia
+        self.assertTrue(find(D(2026, 9, 8), 'municipal', 'MT', '5101001')['active'])        # Araguaiana
+        self.assertFalse(find(D(2026, 12, 8), 'municipal', 'MT', '5103403')['active'])      # Cuiabá: lei não achada
+
+    def test_df_distrital(self):
+        self.assertEqual([r['day'] for r in ROWS if r['rule_key'] == 'df_corpus_christi'], [D(2026, 6, 4), D(2027, 5, 27), D(2028, 6, 15)])
+        self.assertEqual([r['day'] for r in ROWS if r['rule_key'] == 'df_dia_evangelico'], [D(2026, 11, 30), D(2027, 11, 30), D(2028, 11, 30)])
+        self.assertIsNone(find(D(2026, 4, 21), 'state', 'DF'))                               # Tiradentes já é nacional
+        self.assertIn('Lei distrital DF 963/1995', find(D(2026, 11, 30), 'state', 'DF')['legal_basis'])
+
+    def test_codigos_ibge_dos_novos_estados_batem_com_a_uf(self):
+        for r in ROWS:
+            if r['scope'] == 'municipal' and r['uf'] in ('PR', 'SC', 'RS', 'GO', 'MT', 'MS', 'DF'):
+                self.assertEqual(fs.UF_BY_PREFIX[r['ibge_code'][:2]], r['uf'], r['rule_key'])
 
 
 class Consistencia(unittest.TestCase):

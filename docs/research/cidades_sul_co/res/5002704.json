@@ -1,0 +1,613 @@
+{
+ "ibge": "5002704",
+ "nome": "Campo Grande",
+ "uf": "MS",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://data.queridodiario.ok.org.br/5002704/2024-07-17/fe67ebe720ad7a15b2eb24c47000397a57c51935.txt",
+   "resultado": "PDTMU (anexo II no Diogrande 7.578): cita Decreto 11.178/2010 e sua tabela de horários (pista; depois confirmado e revogado)."
+  },
+  {
+   "url": "WebSearch 'Campo Grande MS Decreto 11.178 2010 restrição caminhões...'",
+   "resultado": "Pista: notícia A Crítica de 01/07/2026 sobre Decreto 16.664/2026; Campo Grande News sobre Decreto 472/2011 de Dourados."
+  },
+  {
+   "url": "https://acritica.net/cidades/campo-grande-define-novas-regras-para-circulacao-de-caminhoes-na-regiao-central/",
+   "resultado": "Notícia (pista): Decreto 16.664/2026, AR/ARM, período educativo antes da fiscalização."
+  },
+  {
+   "url": "https://www.campogrande.ms.gov.br/agetran/sec-downloads/decreto-no-16-664/",
+   "resultado": "Página da Agetran com o PDF do decreto; PDF (DIOGRANDE 8.374 de 1/7/2026) baixado e lido na íntegra."
+  },
+  {
+   "url": "https://www.campogrande.ms.gov.br/agetran/sec-downloads/mapa-das-areas-de-restricao-do-decreto-n-16-664-2026/",
+   "resultado": "Mapa oficial AR/ARM lido (texto): ARM = Av. Mato Grosso, Av. Pres. Ernesto Geisel, Av. Fernando Corrêa da Costa, Rua Bahia."
+  },
+  {
+   "url": "https://www.campogrande.ms.gov.br/agetran/sec-downloads/decreto-no-11-178/",
+   "resultado": "Decreto 11.178/2010 lido (revogado pelo art. 11 do 16.664/2026)."
+  },
+  {
+   "url": "https://www.campogrande.ms.gov.br/agetran/wp-json/wp/v2/sec-downloads (busca decreto/16.664/restrição, até 18/10/2026)",
+   "resultado": "Nenhum decreto posterior que altere/suspenda/revogue o 16.664 listado pela Agetran; não consegui varrer o DIOGRANDE posterior (API do Querido Diário com falha de handshake; diogrande.campogrande.ms.gov.br sem busca textual automatizada)."
+  },
+  {
+   "url": "https://diogrande.campogrande.ms.gov.br/",
+   "resultado": "Abriu (200); ato lido via PDF da Agetran com a mesma edição 8.374."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/campo-grande/",
+   "resultado": "404 (leads/penaestrada.json)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Regra vigente: Decreto 16.664/2026 (17/06/2026, DIOGRANDE 8.374 de 1/7/2026), restrição a veículos de carga na AR e ARM do centro; VUC até 10 t (2,20 x 7,20 m) e leves até 3,5 t livres; toco 10,1-16 t, truck 16,1-24 t e articulado >16 t com janelas por zona; Rua 14 de Julho proibida >3,5 t; exceções cadastradas (art. 7º) e AET/AEE (art. 8º). Revoga o Decreto 11.178/2010. Confiança media: não confirmei data de início da fiscalização (período educativo anunciado) nem ausência de alteração posterior no DIOGRANDE; 'veículos extrapesados' sem definição/janela (proibidos salvo autorização) não modelados; classes 'truck' modeladas como tipo rigid 16-24 t e 'articulado' como semitrailer/truck_trailer/cvc >16 t; rígido >24 t não tem regra expressa além de 'extrapesado'. Feriados: o decreto libera domingos e feriados (feriado cai em 'suspende').",
+ "osm_divergencias": [
+  "OSM/Overpass não consultado nesta rodada; nenhuma divergência verificada."
+ ],
+ "vuc": {
+  "largura_max_m": 2.2,
+  "comprimento_max_m": 7.2,
+  "pbt_max_t": 10,
+  "exige_cadastro": false,
+  "orgao": "Agetran",
+  "artigo": "art. 4º, I (VUC: caminhão até 2,20 m de largura, 7,20 m de comprimento e PBT até 10 t); art. 5º, §1º, II e §2º, II (permitido em qualquer horário)"
+ },
+ "regras_rascunho": [
+  {
+   "id": "cg_ar_toco",
+   "tipo": "zona",
+   "regime": "AR - toco",
+   "nome": "Campo Grande AR: caminhão simples (toco) PBT 10,1 a 16 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:30",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     },
+     {
+      "campo": "pbt_t",
+      "ate": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §1º, III",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada.",
+   "zona_texto": "art. 2º: a partir do cruzamento Av. Salgado Filho x Av. Pres. Ernesto Geisel, pela Ernesto Geisel até Av. Mascarenhas de Moraes; esta até Av. Coronel Antonino (sentido NO-SO) até R. São Borja; R. Ceará; R. Joaquim Murtinho; Av. Eduardo Elias Zahran; Av. Salgado Filho até o ponto de partida (a ARM fica dentro/dividindo o centro; vale a regra mais restritiva da ARM dentro dela)"
+  },
+  {
+   "id": "cg_ar_truck",
+   "tipo": "zona",
+   "regime": "AR - truck",
+   "nome": "Campo Grande AR: caminhão truck (eixo duplo/tandem) PBT 16,1 a 24 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "11:00",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:30",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     },
+     {
+      "campo": "pbt_t",
+      "ate": 24
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "rigid"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §1º, IV",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada.",
+   "zona_texto": "art. 2º: a partir do cruzamento Av. Salgado Filho x Av. Pres. Ernesto Geisel, pela Ernesto Geisel até Av. Mascarenhas de Moraes; esta até Av. Coronel Antonino (sentido NO-SO) até R. São Borja; R. Ceará; R. Joaquim Murtinho; Av. Eduardo Elias Zahran; Av. Salgado Filho até o ponto de partida (a ARM fica dentro/dividindo o centro; vale a regra mais restritiva da ARM dentro dela)"
+  },
+  {
+   "id": "cg_ar_articulado",
+   "tipo": "zona",
+   "regime": "AR - articulado",
+   "nome": "Campo Grande AR: veículo pesado articulado PBT acima de 16 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "15:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §1º, V",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada.",
+   "zona_texto": "art. 2º: a partir do cruzamento Av. Salgado Filho x Av. Pres. Ernesto Geisel, pela Ernesto Geisel até Av. Mascarenhas de Moraes; esta até Av. Coronel Antonino (sentido NO-SO) até R. São Borja; R. Ceará; R. Joaquim Murtinho; Av. Eduardo Elias Zahran; Av. Salgado Filho até o ponto de partida (a ARM fica dentro/dividindo o centro; vale a regra mais restritiva da ARM dentro dela)"
+  },
+  {
+   "id": "cg_arm_toco",
+   "tipo": "zona",
+   "regime": "ARM - toco",
+   "nome": "Campo Grande ARM: caminhão simples (toco) PBT 10,1 a 16 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "15:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     },
+     {
+      "campo": "pbt_t",
+      "ate": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §2º, III",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada. ARM: carga e descarga só em vagas sinalizadas (art. 6º, parágrafo único).",
+   "zona_texto": "art. 3º e mapa: Av. Mato Grosso; Av. Pres. Ernesto Geisel; Av. Fernando Corrêa da Costa; Rua Bahia"
+  },
+  {
+   "id": "cg_arm_truck",
+   "tipo": "zona",
+   "regime": "ARM - truck",
+   "nome": "Campo Grande ARM: caminhão truck (eixo duplo) PBT 16,1 a 24 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "09:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "11:00",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:30",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "15:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     },
+     {
+      "campo": "pbt_t",
+      "ate": 24
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "rigid"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §2º, IV",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada. ARM: carga e descarga só em vagas sinalizadas (art. 6º, parágrafo único).",
+   "zona_texto": "art. 3º e mapa: Av. Mato Grosso; Av. Pres. Ernesto Geisel; Av. Fernando Corrêa da Costa; Rua Bahia"
+  },
+  {
+   "id": "cg_arm_articulado",
+   "tipo": "zona",
+   "regime": "ARM - articulado",
+   "nome": "Campo Grande ARM: veículo pesado articulado PBT acima de 16 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "05:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "05:00",
+     "to": "15:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 7º (mediante cadastro prévio, qualquer horário): transporte coletivo; guinchos; transporte de valores; serviços essenciais de utilidade pública em emergência (dispensa cadastro prévio, §1º); oxigênio, insumos hospitalares e medicamentos; perecíveis (carnes, hortifrúti, laticínios) caracterizados; betoneiras/concretagem em horários de operação viária",
+    "art. 8º: AET/AEE por solicitação ao órgão de trânsito (3 dias úteis de antecedência; AET até 7 dias, AEE até 15)",
+    "VUC (PBT até 10 t, até 2,20 x 7,20 m) e leves até 3.500 kg livres (art. 5º)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 5º, §2º, V",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Confianca media: (1) notícia de 01/07/2026 (A Crítica) fala em período educativo antes da fiscalização - data de início da autuação não localizada; (2) 'domingos e feriados livres' em todas as categorias; (3) art. 9º parágrafo único chama as restrições de 'experimentais'; (4) 'Veículos Extrapesados' e 'Pesado Articulado' não têm definição própria no decreto (sem conferência de PBT/dimensão além do texto); geometria: perímetros em texto no art. 2º/3º e mapa anexo - sem geometria desenhada. ARM: carga e descarga só em vagas sinalizadas (art. 6º, parágrafo único).",
+   "zona_texto": "art. 3º e mapa: Av. Mato Grosso; Av. Pres. Ernesto Geisel; Av. Fernando Corrêa da Costa; Rua Bahia"
+  },
+  {
+   "id": "cg_rua14julho",
+   "tipo": "via",
+   "regime": "Via - Rua 14 de Julho",
+   "nome": "Campo Grande: Rua 14 de Julho (Av. Fernando Corrêa da Costa a Av. Mato Grosso) proibida a PBT acima de 3.500 kg",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 3.5
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 6º: salvo autorização expressa emitida pelo órgão executivo municipal de trânsito",
+    "art. 7º aplica-se 'às restrições previstas neste Decreto' (exceções cadastradas)"
+   ],
+   "autorizacao": "Agetran: cadastro prévio (art. 7º) e AET/AEE (art. 8º)",
+   "base_legal": [
+    {
+     "ato": "Decreto n. 16.664, de 17/06/2026 (DIOGRANDE n. 8.374, 1/7/2026)",
+     "artigo": "art. 6º",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/2026-DECRETO-n.-16.664-17-06-2026.pdf",
+     "nota": "Texto lido no DIOGRANDE; revoga o Decreto 11.178/2010 (art. 11); vigência na publicação (art. 12). Mapa: https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2026/07/Mapa-das-Areas-de-Restricao-do-Decreto-n.16.664-2026.pdf"
+    }
+   ],
+   "vigencia_inicio": "2026-07-01",
+   "vigencia_fim": null,
+   "nota": "Proibição permanente (sem janela no texto), exceto com autorização expressa. Confiança média pelas mesmas razões das demais (início da fiscalização).",
+   "zona_texto": "Rua 14 de Julho, da Av. Fernando Corrêa da Costa até a Av. Mato Grosso"
+  },
+  {
+   "id": "cg_decreto_11178_2010",
+   "tipo": "zona",
+   "regime": "Área central (revogado)",
+   "nome": "Campo Grande: Decreto 11.178/2010 - tráfego/estacionamento/carga e descarga de caminhões na área central por capacidade de carga útil",
+   "status": "revogada",
+   "status_motivo": "Revogado expressamente pelo art. 11 do Decreto 16.664/2026 (publicado em 1/7/2026).",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "20:00",
+     "to": "24:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "00:00",
+     "to": "06:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 1
+     }
+    ]
+   },
+   "excecoes": [
+    "Aos sábados liberados a partir das 14h os VUC/bebidas/VLC/caçamba; domingos e feriados livres (art. 4º, II e III)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto n. 11.178, de 20/04/2010",
+     "artigo": "art. 2º (área central) e art. 4º (horários por carga útil: até 1 t livre; VUC até 5,1 t 20h-10h; bebidas até 12 t 20h-9h; VLC até 12,5 t 20h-7h; caçamba até 16 t 20h-6h30; pesado até 18 t 20h-6h; tolerância 30 min, §1º)",
+     "url": "https://cdn.campogrande.ms.gov.br/portal/prod/uploads/sites/74/2021/06/decreto-no-11-178-1623257044.pdf"
+    }
+   ],
+   "vigencia_inicio": "2010-04-20",
+   "vigencia_fim": "2026-07-01",
+   "nota": "Registro histórico; janelas acima são só placeholder (horários variam por classe, ver base_legal)."
+  }
+ ]
+}

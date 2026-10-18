@@ -1,7 +1,9 @@
-"""Biblioteca dos importadores de pedágio das concessões ESTADUAIS (RJ e MG) e MUNICIPAIS (Rio de Janeiro, Pirapetinga).
+"""Biblioteca dos importadores de pedágio das concessões ESTADUAIS (RJ, MG, RS, MS e MT) e MUNICIPAIS (Rio de Janeiro, Pirapetinga).
 
 Lê o arquivo curado data/raw/pedagio/concessoes_estaduais.json (tarifas transcritas com fonte, ato e data; posição das
-praças) e devolve as feições da camada `pedagio`. Usado por toll_agetransp.py, toll_artemig.py e toll_municipais.py.
+praças) e, somado a ele, data/raw/pedagio/concessoes_estaduais_sul_co.json (RS, MS, MT; mesmo esquema) e devolve as
+feições da camada `pedagio`. Usado por toll_agetransp.py, toll_artemig.py, toll_municipais.py, toll_rs_estadual.py,
+toll_agems.py e toll_agermt.py.
 
 Posição de cada praça (props.posicao_metodo, sempre registrado):
   - 'oficial': coordenada publicada em ato ou contrato (UTM SIRGAS 2000 23S quando houver, senão graus/minutos/segundos);
@@ -17,6 +19,7 @@ import json, math, os, pathlib, re, unicodedata
 from common import DATA_DIR, stable_id
 
 CURATED = pathlib.Path(os.environ.get('PEDAGIO_ESTADUAIS_JSON', str(DATA_DIR / 'raw' / 'pedagio' / 'concessoes_estaduais.json')))
+CURATED_SUL_CO = pathlib.Path(os.environ.get('PEDAGIO_ESTADUAIS_SUL_CO_JSON', str(DATA_DIR / 'raw' / 'pedagio' / 'concessoes_estaduais_sul_co.json')))
 CLUSTER_M = 700
 # distância máxima para a API associar um nó de pedágio do OSM a estas praças (a posição já é a do nó ou a oficial)
 CASAR_ATE_M = 400
@@ -32,7 +35,13 @@ def norm(s: str | None) -> str:
 def load() -> dict:
     if not CURATED.exists():
         raise RuntimeError(f'{CURATED} ausente (arquivo curado versionado em data/raw/pedagio/)')
-    return json.loads(CURATED.read_text(encoding='utf-8'))
+    d = json.loads(CURATED.read_text(encoding='utf-8'))
+    if CURATED_SUL_CO.exists():
+        extra = json.loads(CURATED_SUL_CO.read_text(encoding='utf-8'))
+        d['concessoes'] = d['concessoes'] + extra['concessoes']
+        d['janelas'] = {**d.get('janelas', {}), **extra.get('janelas', {})}
+        d['transcrito_em_sul_co'] = extra.get('transcrito_em')
+    return d
 
 
 def concessoes(importador: str) -> tuple[dict, list[dict]]:
@@ -238,3 +247,25 @@ def features(conc: dict, d: dict, tarifa: dict | None, nodes: list[dict], sre=No
             'props': props,
         })
     return out
+
+
+def run_simple(importador: str, fonte_de, source_label: str) -> tuple[list[dict], str]:
+    """Carga padrão dos importadores sem leitura de página (tabela transcrita no JSON): uma feição por praça das
+    concessões do `importador`. `fonte_de(conc)` = rótulo da fonte da tarifa. Devolve (feições, NOTES)."""
+    d, concs = concessoes(importador)
+    nodes = osm_toll_nodes()
+    out, log, resumo = [], [], []
+    for conc in concs:
+        tarifa = build_tariff(conc, d, fonte_de(conc), conc.get('ato_url')) if conc.get('tarifa') else None
+        feats = features(conc, d, tarifa, nodes, log=log)
+        out += feats
+        metodos: dict[str, int] = {}
+        for f in feats:
+            metodos[f['props']['precisao']] = metodos.get(f['props']['precisao'], 0) + 1
+        resumo.append(f'{conc["id"]}: {len(feats)} praça(s) ({sum(1 for f in feats if f["props"]["ativo"])} ativas; posição {metodos})')
+        print(f'  {resumo[-1]}')
+    for line in log:
+        print('  !', line)
+    notes = (f'{source_label}: tabelas transcritas em {d.get("transcrito_em_sul_co") or d.get("transcrito_em")}. ' + '; '.join(resumo)
+             + (' Avisos: ' + ' '.join(log) if log else ''))
+    return out, notes

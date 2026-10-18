@@ -30,7 +30,7 @@ LICENSE = ('Dados abertos do Poder Executivo federal — DNIT/SNV, livre utiliza
            'Redistribuído simplificado (seed e mapa da camada); ver docs/layers/rodovias_horario.md')
 NOTES = 'Trechos de jurisdição federal (pista simples = PAV/IMP/LEN; pista dupla = DUP). SIRGAS 2000 tratado como WGS 84.'
 
-UFS_DEFAULT = 'ES,MG,RJ,SP'
+UFS_DEFAULT = 'ES,MG,RJ,SP,PR,SC,RS,GO,MT,MS,DF'  # as UFs dos tiles do Valhalla (Sudeste, Sul, Centro-Oeste)
 SIMPLES = {'PAV', 'IMP', 'LEN'}
 DUPLA = {'DUP'}
 SIMPLIFY_DEG = 0.00003   # ~3 m

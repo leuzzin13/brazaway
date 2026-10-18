@@ -1,0 +1,161 @@
+{
+ "ibge": "4322400",
+ "nome": "Uruguaiana",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "api.queridodiario.org.br territory_ids=4322400",
+   "resultado": "termos 'carga e descarga' etc.: 0 diários (município sem cobertura no QD, nível 1)"
+  },
+  {
+   "url": "leads/penaestrada.json",
+   "resultado": "sem página (404): sem pista"
+  },
+  {
+   "url": "https://www.uruguaiana.rs.gov.br/portal/leis_decretos (Instar, via legislacao.py direto instar)",
+   "resultado": "LIDO: busca por ementa (caminh, carga pesada, transbordo, cavalos, betoneira, caçamba, perímetro, AET, 713, trânsito...). Achados: Decretos 713/2017, 386/2006 e 387/2006 (CTC)."
+  },
+  {
+   "url": "https://www.uruguaiana.rs.gov.br/portal/leis_decretos/5158/ e /4389/ (+PDFs em /publicos/)",
+   "resultado": "LIDO texto integral do Decreto 713/2017 e do 386/2006; portal marca 'Em vigor' (713) ; 386 revogado pelo art. 8º do 713"
+  },
+  {
+   "url": "https://sapl.uruguaiana.rs.leg.br (API normajuridica)",
+   "resultado": "LIDO: ementas caminh/carga/trânsito/transbordo/perímetro/vias públicas; Lei 3.087/2001 (carga e descarga) lida; Leis 2.273/1992 e 2.461/1994 (proíbem transbordo de mercadorias em via pública) só ementa; nenhuma alteração do Decreto 713 achada"
+  },
+  {
+   "url": "https://www.uruguaiana.rs.gov.br/portal/leis_decretos/5149/",
+   "resultado": "Lei Complementar 15/2017 (art. 78 Código Administrativo, taxa/multas) lida: só penalidades em URM, sem texto dos incisos"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs",
+   "resultado": "Uruguaiana não consta como entidade no FAMURS; diário oficial em diariooficial.rs.gov.br não consultado"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Achado principal: Decreto 713/2017 proíbe veículos de carga >6 t, cavalos mecânicos, caçambas e betoneiras no perímetro urbano delimitado pelas BR-290 e BR-472 e anéis de contorno, com AET. Ponte/porto seco: a ponte internacional e o porto seco são federais; sem ato municipal próprio achado. Pendências: confirmar publicação em diário oficial e inexistência de alteração posterior; obter mapa/sinalização do perímetro e dos anéis; confirmar o critério de 6 t (PBT x capacidade); ver Lei 2.273/1992 (transbordo em via pública).",
+ "osm_divergencias": [
+  "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "uruguaiana_carga_pesada_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Proibição de carga pesada",
+   "nome": "Proibição do trânsito de veículos de carga acima de 6 t, cavalos mecânicos, caçambas e betoneiras no perímetro urbano (BR-290 / BR-472 e anéis de contorno)",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-18",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 6
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "vuc": null,
+   "excecoes": [
+    "Ingresso só com AET (Autorização Especial de Trânsito) da SEGTRAM quando a carga, por norma/parecer técnico de órgão competente, não puder ser fracionada (arts. 3º e 5º); a AET fixa horário de ingresso e itinerário obrigatório (art. 5º, par. único)",
+    "Transbordo/fracionamento para peso abaixo de 6 t em local apropriado (art. 2º)"
+   ],
+   "autorizacao": "AET da SEGTRAM (Secretaria Municipal de Trânsito, Segurança, Transportes e Mobilidade Urbana) com guia da taxa de manutenção de vias (Código Administrativo, art. 78), documentos do motorista e da empresa, nota fiscal e parecer técnico de indivisibilidade (art. 5º)",
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 713, de 31/10/2017 (Uruguaiana)",
+     "artigo": "arts. 1º a 5º (proibição art. 1º; transbordo art. 2º; AET arts. 3º-5º); art. 8º revoga Decretos 386 e 387/2006",
+     "url": "https://www.uruguaiana.rs.gov.br/portal/leis_decretos/5158/",
+     "nota": "Texto lido do PDF original (https://www.uruguaiana.rs.gov.br/publicos/2180bfa2995d4711dccb9533f257722d.pdf). O portal Instar mostra a data 23/04/2019 (importação); a data do ato é 31/10/2017. Portal indica 'Em vigor' (atualizado 12/05/2022)."
+    }
+   ],
+   "nota": "Perímetro: 'limitado pelas rodovias BR 290 (Av. Assis Brasil) e BR 472 (Av. Silveira Martins) e anéis de contornos de acesso à cidade, conforme sinalizado pela SEGTRAM' (art. 1º). O decreto não traz mapa nem lista de vias; os anéis de contorno dependem da sinalização. Não fixa horário (proibição sem janela, tratada como 24 h). 'mais de 06 toneladas' não diz se PBT ou capacidade: adotado PBT (lado seguro). Cavalos mecânicos (cabine e chassi de caminhões de carga) proibidos independentemente do peso; sujeitos a AET também caçambas e betoneiras com excesso de peso (art. 4º). Geometria a desenhar (polígono do perímetro urbano) e conferir sinalização em campo. Sem ato posterior de alteração/revogação achado nas buscas Instar (ementa) e SAPL da Câmara.",
+   "vigencia_inicio": "2017-10-31",
+   "vigencia_fim": null,
+   "trechos": [],
+   "geometria": []
+  },
+  {
+   "id": "uruguaiana_decreto_386_2006",
+   "tipo": "zona",
+   "regime": "Proibição de carga pesada",
+   "nome": "Decreto 386/2006 (carga pesada acima de 6 t e cavalos mecânicos no perímetro urbano)",
+   "status": "revogada",
+   "status_motivo": "Revogado expressamente pelo art. 8º do Decreto 713/2017 (junto com o Decreto 387/2006, Central de Transbordo de Cargas).",
+   "confianca": "alta",
+   "verificado_em": "2026-10-18",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal nº 386, de 23/11/2006 (Uruguaiana)",
+     "artigo": "art. 1º (proibição); art. 2º revoga o Decreto 092/95",
+     "url": "https://www.uruguaiana.rs.gov.br/portal/leis_decretos/4389/"
+    }
+   ],
+   "vigencia_inicio": "2007-01-22",
+   "vigencia_fim": "2017-10-31",
+   "trechos": [],
+   "geometria": []
+  },
+  {
+   "id": "uruguaiana_carga_descarga_centro_lei_3087",
+   "tipo": "via",
+   "regime": "Carga e descarga",
+   "nome": "Faixa amarela de carga e descarga no centro (Lei 3.087/2001): 8h-21h dias úteis",
+   "status": "desativada",
+   "status_motivo": "É norma de sinalização/estacionamento de carga e descarga (15 min veículos pequenos/médios, 40 min grandes; art. 4º), não restrição de circulação; depende de regulamentação (art. 5º) e de a sinalização existir; vigência da lei e regulamento não confirmados.",
+   "confianca": "baixa",
+   "verificado_em": "2026-10-18",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal nº 3.087, de 28/08/2001 (Uruguaiana, SAPL da Câmara)",
+     "artigo": "arts. 1º a 4º (14 quadras do centro; horário 8h-21h dias úteis; tempo máximo)",
+     "url": "https://sapl.uruguaiana.rs.leg.br/norma/1835"
+    }
+   ],
+   "vigencia_inicio": null,
+   "vigencia_fim": null,
+   "trechos": [],
+   "geometria": []
+  }
+ ]
+}
