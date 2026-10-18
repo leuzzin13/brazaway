@@ -1,0 +1,72 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4205902",
+  "municipio": "Gaspar",
+  "uf": "SC",
+  "fonte_id": "gaspar",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/1349250 ; https://diariomunicipal.sc.gov.br/atos/432947",
+    "licenca": "Atos oficiais de Gaspar: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Decreto 7.588/2017 relido no DOM/SC em 2026-10-18; sem ato posterior localizado (portal da prefeitura bloqueado). Divergência com o OSM: a way 112322733 (Ponte Hercílio Decke) tem hgv=no + maxweight=10, mais restritivo que o decreto, que só limita a 10 t de PBT. Ruas Cel. Aristiliano Ramos (hgv=no, maxweight=4) e Barão do Rio Branco (hgv=no/maxweight=25) têm restrição no OSM sem ato localizado: não modeladas."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O Decreto 7.588/2017 não define VUC: o VUC é tratado como caminhão (o limite é por PBT > 10 t).",
+  "regras": [
+    {
+      "id": "gaspar_dec7588_2017_ponte_hercilio_deeke",
+      "tipo": "ponte",
+      "regime": "Limite de PBT na Ponte Hercílio Deeke",
+      "nome": "Gaspar: Decreto 7.588/2017, travessia da Ponte Hercílio Deeke limitada a 10 t de PBT",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "transporte coletivo do município",
+        "caminhões de Bombeiros em emergência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto municipal 7.588, de 20/07/2017 (Gaspar/SC), que altera o art. 1º do Decreto 5.699/2013",
+          "artigo": "art. 1º (nova redação do art. 1º do Decreto 5.699/2013: limite de 10 t de PBT para veículo automotor na travessia)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1349250",
+          "nota": "Decreto 5.699/2013 (atos/432947) fixava 25 t ou caminhões até 3 eixos; substituído."
+        }
+      ],
+      "vigencia_inicio": "2017-07-20",
+      "nota": "O decreto motiva a restrição pela rotatória de acesso e pelo tráfego de estudantes. Sem ato posterior localizado. Ponte no OSM: way 112322733 'Ponte Hercílio Decke' (grafia divergente), com hgv=no + maxweight=10: o roteador já evita a ponte por conta do OSM (hgv=no, mais restritivo que o ato, que permite caminhões até 10 t de PBT); por isso não há caso de rota 'evita' que prove a camada.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4205902_ponte_hercilio_deeke.geojson",
+          "construir": "manual",
+          "como_gerar": "Way 112322733 do OSM (bridge=yes, 'Ponte Hercílio Decke', (-48.95825,-26.92749)->(-48.95786,-26.92887)), sobre o Rio Itajaí-Açu no centro de Gaspar."
+        }
+      ]
+    }
+  ]
+}

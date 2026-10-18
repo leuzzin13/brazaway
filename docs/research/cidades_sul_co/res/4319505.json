@@ -1,0 +1,148 @@
+{
+ "ibge": "4319505",
+ "nome": "São Sebastião do Caí",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4319505 (diário: FAMURS (SIGPub) - diariomunicipal.com.br/famurs); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; Rua 13 de Maio caminhões; Rua Pinheiro Machado caminhões; Rua 13 de Maio; Pinheiro Machado caminhões; veículos de carga",
+   "resultado": "sem resultado"
+  },
+  {
+   "url": "https://sapl.saosebastiaodocai.rs.leg.br",
+   "resultado": "sapl (camara): 19 atos para os termos caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso; nenhum de circulação de caminhões"
+  },
+  {
+   "url": "http://saosebastiaodocai.cespro.com.br",
+   "resultado": "cespro (camara): falha: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=http://saosebastiaodocai.cespro.com.br) passa por reCAPTCHA e devolve 0 via API; "
+  },
+  {
+   "url": "https://saosebastiaodocai.cespro.com.br/",
+   "resultado": "cespro (prefeitura): falha: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://saosebastiaodocai.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "São Sebastião do Caí: hgv=no em ruas (Rua 13 de Maio, Rua Pinheiro Machado e vias sem nome) corresponde a uma zona central regulada pela Lei 3.232/2010 (SAPL da Câmara), lida por OCR/visual: art. 1º (redação da Lei 4.378/2021) proíbe veículos pesados com mais de 4 eixos no quadrilátero formado pelo Rio Caí, Av. Dr. Bruno Cassel, Rua João Pereira, Cel. Guimarães e Tiradentes; art. 2º exceciona coleta/descarregamento de mercadorias e serviços ao comércio com nota fiscal; o art. 3º (licença especial) foi revogado pela Lei 4.378/2021. Redação original: mais de um eixo traseiro; Lei 4.145/2019 só mudou o art. 3º. Lei 3.844/2015 proíbe caminhões com mais de 2 rodados traseiros/eixo adicional carregando material de mineração extraído no município (condicionada à natureza da carga; art. 3º prevê regulamentação por decreto, que não achei). Textos em atos/4319505/. Não confirmei que Rua 13 de Maio/Pinheiro Machado estejam dentro do quadrilátero; a lei restringe só >4 eixos, enquanto OSM tem hgv=no (todos). Verificado em 2026-10-18: SAPL (API) confirma que a Lei 3.232/2010 só foi alterada pelas Leis 4.145/2019 e 4.378/2021 (sem lei posterior por ementa); zona central delimitada por vias nomeadas + Rio Caí; regra ativa mantida (confiança média). Textos em atos/4319505/ duplicados (tesseract 'lei-*.txt' e rapidocr 'lei_*.txt') são coerentes entre si e com o res.",
+ "osm_divergencias": [
+  "hgv=no em Rua 13 de Maio e Rua Pinheiro Machado (highway=tertiary) e vias sem nome: não confirmei relação com a zona da Lei 3.232/2010 (que restringe >4 eixos, não todos os caminhões)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "saosebastiaodocai_zona_central_veiculos_pesados",
+   "tipo": "zona",
+   "regime": "Zona central - veículos pesados",
+   "nome": "Zona central de São Sebastião do Caí - proibido trânsito de veículos pesados com mais de 4 eixos",
+   "status": "ativa",
+   "status_motivo": null,
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 4
+     }
+    ]
+   },
+   "excecoes": [
+    "Veículos de coleta e descarregamento de mercadorias ou prestação de serviços para o comércio local, com necessidade comprovada por nota fiscal ou similar (art. 2º da Lei 3.232/2010)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 3.232, de 24/08/2010",
+     "artigo": "art. 1º (nova redação dada pelo art. 1º da Lei 4.378/2021); art. 2º (exceção); art. 5º (penalidades CTB)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/613",
+     "nota": "Lido por OCR + conferência visual do PDF"
+    },
+    {
+     "ato": "Lei Municipal 4.378, de 08/12/2021",
+     "artigo": "art. 1º (nova redação do art. 1º da Lei 3.232) e art. 2º (revoga o art. 3º)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4931"
+    },
+    {
+     "ato": "Lei Municipal 4.145, de 16/07/2019",
+     "artigo": "art. 1º (altera o art. 3º; depois revogado)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4684"
+    }
+   ],
+   "geometria": null,
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Avenida Doutor Bruno Cassel",
+      "Rua João Pereira",
+      "Rua Coronel Guimarães",
+      "Rua Tiradentes"
+     ],
+     "descricao": "quadrilátero formado pelo Rio Caí, Av. Dr. Bruno Cassel, Rua João Pereira, Cel. Guimarães e Tiradentes (todas as ruas inseridas)"
+    }
+   ],
+   "vigencia_inicio": "2021-12-08"
+  },
+  {
+   "id": "saosebastiaodocai_mineracao_caminhoes",
+   "tipo": "via",
+   "regime": "Caminhões de mineração",
+   "nome": "Vias públicas - proibidos caminhões com mais de 2 rodados traseiros/eixo adicional com material de mineração extraído no município",
+   "status": "desativada",
+   "status_motivo": "Restrição condicionada ao tipo de carga (material de mineração do município), que o roteador não modela; regulamentação por decreto não localizada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "Carga até 10 m³ (parágrafo único)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 3.844, de 10/11/2015",
+     "artigo": "art. 1º e parágrafo único; art. 3º (regulamentação por decreto)",
+     "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/416",
+     "nota": "OCR"
+    }
+   ],
+   "geometria": null
+  }
+ ]
+}

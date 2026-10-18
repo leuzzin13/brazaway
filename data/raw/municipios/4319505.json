@@ -1,0 +1,136 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4319505",
+  "municipio": "São Sebastião do Caí",
+  "uf": "RS",
+  "fonte_id": "sao-sebastiao-do-cai",
+  "fonte": {
+    "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/613 (Lei 3.232/2010); https://sapl.saosebastiaodocai.rs.leg.br/norma/4931 (Lei 4.378/2021)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Zona central desenhada sobre as ruas-limite do OpenStreetMap e a margem do Rio Caí: derivada do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Lei 3.232/2010 (art. 1º com a redação da Lei 4.378/2021): veículos pesados com mais de 4 eixos no quadrilátero Rio Caí, Av. Dr. Bruno Cassel, Rua João Pereira, Cel. Guimarães e Tiradentes. Alterações verificadas no SAPL (Leis 4.145/2019 e 4.378/2021); nenhuma posterior. 'Veículos pesados' não é definido: modelado como caminhão com mais de 4 eixos. O OSM já tem hgv=no em parte das ruas do centro (mais restritivo que a lei); divergência apenas registrada."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Os atos não definem VUC: o VUC é tratado como caminhão (a regra só atinge mais de 4 eixos, o que já exclui o VUC).",
+  "regras": [
+    {
+      "id": "saosebastiaodocai_zona_central_veiculos_pesados",
+      "tipo": "zona",
+      "regime": "Zona central - veículos pesados",
+      "nome": "Zona central de São Sebastião do Caí - proibido trânsito de veículos pesados com mais de 4 eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de coleta e descarregamento de mercadorias ou prestação de serviços para o comércio local, com necessidade comprovada por nota fiscal ou similar (art. 2º da Lei 3.232/2010)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.232, de 24/08/2010",
+          "artigo": "art. 1º (nova redação dada pelo art. 1º da Lei 4.378/2021); art. 2º (exceção); art. 5º (penalidades CTB)",
+          "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/613",
+          "nota": "Lido por OCR + conferência visual do PDF"
+        },
+        {
+          "ato": "Lei Municipal 4.378, de 08/12/2021",
+          "artigo": "art. 1º (nova redação do art. 1º da Lei 3.232) e art. 2º (revoga o art. 3º)",
+          "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4931"
+        },
+        {
+          "ato": "Lei Municipal 4.145, de 16/07/2019",
+          "artigo": "art. 1º (altera o art. 3º; depois revogado)",
+          "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/4684"
+        }
+      ],
+      "vigencia_inicio": "2021-12-08",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4319505_zona_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono sobre as ruas-limite do art. 1º no OSM: a leste a Av. Dr. Bruno Cassel (antigo traçado da RS-122, entre a R. João Pereira e a R. Cel. Guimarães), ao norte a R. João Pereira (prolongada em linha reta até o oeste), ao sul a R. Cel. Guimarães/Tiradentes e a oeste uma linha em torno de 51,3845 O, perto do Rio Caí e do fim das ruas do centro (o rio não está nos dados nomeados). Aproximado."
+        }
+      ],
+      "fonte_geometria": "Quadrilátero do art. 1º desenhado sobre as ruas-limite do OSM (ODbL); aproximado",
+      "nota": "Confiança média: o ato delimita a zona por vias nomeadas e pelo Rio Caí, sem mapa; polígono aproximado das ruas-limite. 'Veículos pesados' não é definido na lei (modelado como caminhão com mais de 4 eixos). O hgv=no do OSM em ruas do centro (Rua 13 de Maio, Rua Pinheiro Machado) é mais restritivo que a lei e não é reproduzido."
+    },
+    {
+      "id": "saosebastiaodocai_mineracao_caminhoes",
+      "tipo": "via",
+      "regime": "Caminhões de mineração",
+      "nome": "Vias públicas - proibidos caminhões com mais de 2 rodados traseiros/eixo adicional com material de mineração extraído no município",
+      "status": "desativada",
+      "status_motivo": "Restrição condicionada ao tipo de carga (material de mineração do município), que o roteador não modela; regulamentação por decreto não localizada.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          }
+        ]
+      },
+      "excecoes": [
+        "Carga até 10 m³ (parágrafo único)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.844, de 10/11/2015",
+          "artigo": "art. 1º e parágrafo único; art. 3º (regulamentação por decreto)",
+          "url": "https://sapl.saosebastiaodocai.rs.leg.br/norma/416",
+          "nota": "OCR"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

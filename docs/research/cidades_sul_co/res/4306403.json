@@ -1,0 +1,71 @@
+{
+ "ibge": "4306403",
+ "nome": "Dois Irmãos",
+ "uf": "RS",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4306403 (diário: Querido Diário); consultas: trânsito de caminhões; circulação de caminhões; tráfego de caminhões; veículos pesados toneladas; proibido caminhões; tonelagem ponte; veículos de carga; carretas; São Miguel caminhões",
+   "resultado": "sem resultado"
+  },
+  {
+   "url": "https://sapl.doisirmaos.rs.leg.br",
+   "resultado": "sapl (camara): 48 atos para os termos caminh/veículos pesados/tonelad/carga e descarga/tráfego/peso; nenhum de circulação de caminhões"
+  },
+  {
+   "url": "https://camaradoisirmaos.atende.net",
+   "resultado": "atende (camara): falha: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://camaradoisirmaos.atende.net/autoatendi"
+  },
+  {
+   "url": "https://doisirmaos.atende.net",
+   "resultado": "atende (prefeitura): falha: Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://doisirmaos.atende.net/autoatendimento/"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Dois Irmãos: os 2 hgv=no do OSM são footway (sem relevância). No SAPL da Câmara: Lei 1.225/1994 (SAPL norma 1168, lida por OCR) proíbe o ESTACIONAMENTO de caminhões e ônibus em trecho da Av. São Miguel até a Rua Berlim, das 14h às 19h; Lei 1.228/1994 a modifica (não lida). Só estacionamento, antiga; sem restrição de circulação. Demais acertos 'caminh' do SAPL: denominação de 'caminhos de pedestres', aquisição de caminhões e Conselho de Trânsito (ruído).",
+ "osm_divergencias": [
+  "hgv=no em dois footways (sem nome): irrelevante para caminhões."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "doisirmaos_estacionamento_av_sao_miguel",
+   "tipo": "via",
+   "regime": "Proibição de estacionamento",
+   "nome": "Av. São Miguel (trecho até a Rua Berlim) - proibido estacionar caminhões e ônibus, 14h-19h",
+   "status": "desativada",
+   "status_motivo": "Estacionamento, não circulação; texto modificado por lei posterior não lida; perímetro 'até a Rua Berlim' truncado no OCR.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "14:00",
+     "to": "19:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.225, de 20/04/1994",
+     "artigo": "art. 1º",
+     "url": "https://sapl.doisirmaos.rs.leg.br/norma/1168",
+     "nota": "modificada pela Lei 1.228/1994 (https://sapl.doisirmaos.rs.leg.br/norma/1176, não lida)"
+    }
+   ],
+   "geometria": null
+  }
+ ]
+}

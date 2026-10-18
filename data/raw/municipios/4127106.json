@@ -1,0 +1,137 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4127106",
+  "municipio": "Telêmaco Borba",
+  "uf": "PR",
+  "fonte_id": "telemaco-borba",
+  "fonte": {
+    "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf ; https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf",
+    "licenca": "Atos oficiais de Telêmaco Borba: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "LC 137/2023 relida no SAPL em 2026-10-18. Decretos do Executivo e ajustes do Conselho de Mobilidade (art. 8º) não verificáveis (Atende.net com captcha). A janela de carga e descarga por porte (art. 3º) não é modelada. O polígono da Área Central de Tráfego é aproximado: montado sobre as vias-limite do art. 2º no OSM."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "A LC 137/2023 não define VUC: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "telemacoborba_area_central_lc137_2023",
+      "tipo": "zona",
+      "regime": "Área Central de Tráfego",
+      "nome": "Área Central de Tráfego: circulação de veículos acima de 7 t e/ou 7 m (LC 137/2023, art. 6º)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "13:30"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 7
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 5º: autorização especial do DMSPT/TBTran para concreto, materiais de construção, mudanças e casos excepcionais (carga e descarga)."
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 137/2023 (28/07/2023; Boletim Oficial 2195)",
+          "artigo": "arts. 2º (perímetro), 6º (limite e horários) e 7º (fins de semana e feriados liberados)",
+          "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf"
+        }
+      ],
+      "vigencia_inicio": "2023-07-28",
+      "nota": "O art. 6º diz 'acima de 7,0 toneladas e/ou comprimento acima de 7,0 metros' sem dizer se é PBT ou capacidade de carga (o art. 3º usa capacidade útil): modelado como payload_t, a confirmar. Na prática o limite de 7 m de comprimento domina. O art. 8º permite ao Conselho Municipal ajustar áreas, dimensões e horários (ajuste não localizado). Perímetro aproximado: Rua Manoel Simeão de Souza esq. R. José Augusto Nocera, por esta até a Av. das Nações Unidas Leste, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin até a R. Manoel Simeão de Souza; a PR-160 fica fora.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4127106_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro do art. 2º da LC 137/2023 montado sobre os eixos das vias-limite do OSM (R. José Augusto Nocera, Av. das Nações Unidas, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin, R. Manoel Simeão de Souza): vértices nas esquinas; aproximado."
+        }
+      ]
+    },
+    {
+      "id": "telemacoborba_lei_1623_2007",
+      "tipo": "zona",
+      "regime": "Perímetro urbano",
+      "nome": "Proibição de carretas, romeu e julieta e trucados carregados no perímetro urbano (Lei 1.623/2007, exceto PR-160)",
+      "status": "revogada",
+      "status_motivo": "Revogada expressamente pelo art. 9º da LC 137/2023.",
+      "confianca": "alta",
+      "base_legal": [
+        {
+          "ato": "Lei 1.623/2007 (05/09/2007)",
+          "artigo": "art. 1º",
+          "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf"
+        }
+      ],
+      "vigencia_inicio": "2007-09-14",
+      "vigencia_fim": "2023-07-28",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "PR-160 (Rodovia do Papel) fora da proibição"
+      ]
+    }
+  ]
+}

@@ -3,20 +3,28 @@
  "nome": "Candelária",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "media",
+ "nivel_busca": "dirigida",
  "falha_de_fonte": true,
  "fontes_consultadas": [
   {
    "url": "https://candelaria.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7333",
-   "resultado": "portal (cespro) sem busca automatica: ERRO: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://candelaria.cespro.com.br/visualizarLegislacao.php?cdMunicipio=7333)"
+   "resultado": "Portal principal (cespro) sem busca automática utilizável (reCAPTCHA/Cloudflare/captcha/sem cliente); não contornado."
   },
   {
-   "url": "https://api.queridodiario.org.br/gazettes",
-   "resultado": "HTTP 522 em todas as tentativas (termos \"transito de caminhoes\" e \"veiculos pesados\"); busca do toolkit no FAMURS (que nao cobre o municipio) sem resultado relevante; pistas da preparacao (Querido Diario) lidas: ruido (codigo de posturas/lavagem de betoneira, frota, orcamento)"
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4304200",
+   "resultado": "HTTP 522 (API fora do ar) em várias tentativas; busca \"trânsito de caminhões\"/\"veículos pesados\" no Querido Diário não executada. Resta só a pista da preparação."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/ (toolkit diarios_consolidados.py buscar 4304200)",
+   "resultado": "FAMURS não cobre o município (lead vem do QD); buscas devolvem 0 resultado, sem valor conclusivo."
+  },
+  {
+   "url": "leads/diarios_consolidados.json (pista da preparação)",
+   "resultado": "Trecho do QD de 2022-08-04: código de posturas/obras (art. 49-50: serviço mecânico em via e lavagem de betoneiras em via pública), sem restrição de circulação."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Conferencia barata: pistas da preparacao e buscas ao vivo reconferidas; nenhum ato de restricao de circulacao de caminhoes/veiculos pesados encontrado.",
+ "observacoes": "Conferência barata (lote R1-RS-DR01): Trecho do QD de 2022-08-04: código de posturas/obras (art. 49-50: serviço mecânico em via e lavagem de betoneiras em via pública), sem restrição de circulação. Nenhum ato de restrição de circulação de caminhões encontrado. Portal de legislação (cespro) não pesquisável e Querido Diário fora do ar (522): não conclusivo.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

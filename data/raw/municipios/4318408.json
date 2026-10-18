@@ -1,0 +1,308 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4318408",
+  "municipio": "São Jerônimo",
+  "uf": "RS",
+  "fonte_id": "sao-jeronimo",
+  "fonte": {
+    "url": "https://sapl.saojeronimo.rs.leg.br/norma/244 (Decreto 4.274/2010)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Decreto 4.274/2010 (PDF em imagem; OCR + conferência visual em 2026-10-18); sem revogação ou alteração achada no SAPL (confiança média: a situação atual não foi confirmada no portal da prefeitura). Só as vias nomeadas do art. 2º, II (15 t) e III (30 t) entram ativas; o inciso I (10 t em 'vias locais e coletoras', sem lista) fica desativado. Não modelados: largura 2,60 m, altura 4,60 m, comprimento 14/20 m e 5 t por eixo (art. 1º)."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "O decreto não define VUC: o VUC é tratado como caminhão (só é atingido se o PBT passar do limite).",
+  "regras": [
+    {
+      "id": "saojeronimo_pbt_10t_vias_locais_coletoras",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Vias locais e coletoras de São Jerônimo - PBT máximo 10 t",
+      "status": "desativada",
+      "status_motivo": "Art. 2º, I do Decreto 4.274/2010 refere-se a 'vias locais e coletoras' sem lista nem mapa de hierarquia viária; sem delimitação georreferenciável (verificação 2026-10-18).",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 4.274, de 15/09/2010",
+          "artigo": "art. 2º, inciso I",
+          "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+          "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
+        }
+      ],
+      "vigencia_inicio": "2010-09-15",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "saojeronimo_pbt_15t",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Av. Ramiro Barcelos, Av. Rio Branco (Rua Flores da Cunha a Rua Marechal Floriano) e Rua Antônio de Carvalho - PBT máximo 15 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 4.274, de 15/09/2010",
+          "artigo": "art. 2º, inciso II (a-c)",
+          "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+          "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
+        }
+      ],
+      "vigencia_inicio": "2010-09-15",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4318408_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "II-a",
+          "via": [
+            "Rua Senador Ramiro Barcellos",
+            "Rua Ramiro Barcelos",
+            "Avenida Ramiro Barcelos"
+          ],
+          "descricao": "Av. Ramiro Barcelos, em toda a extensão (no OSM: Rua Senador Ramiro Barcellos e Rua Ramiro Barcelos)"
+        },
+        {
+          "inciso": "II-b",
+          "via": [
+            "Rua Barão do Rio Branco",
+            "Avenida Rio Branco"
+          ],
+          "descricao": "Av. Rio Branco entre Rua Flores da Cunha e Rua Marechal Floriano (no OSM: Rua Barão do Rio Branco)",
+          "de": [
+            "Rua José Antônio Flores da Cunha",
+            "Rua Flores da Cunha"
+          ],
+          "ate": [
+            "Rua Marechal Floriano"
+          ]
+        },
+        {
+          "inciso": "II-c",
+          "via": [
+            "Rua Antônio de Carvalho"
+          ],
+          "descricao": "em toda a extensão"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "nota": "Confiança média: situação atual do decreto não confirmada no portal da prefeitura."
+    },
+    {
+      "id": "saojeronimo_pbt_30t",
+      "tipo": "via",
+      "regime": "Limite de PBT",
+      "nome": "Vias arteriais de São Jerônimo (Av. Dr. José Athanásio, Rua Gal. Osório etc.) - PBT máximo 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 4.274, de 15/09/2010",
+          "artigo": "art. 2º, inciso III (a-i)",
+          "url": "https://sapl.saojeronimo.rs.leg.br/norma/244",
+          "nota": "PDF em imagem; OCR + conferência visual; sem revogação/alteração localizada no SAPL"
+        }
+      ],
+      "vigencia_inicio": "2010-09-15",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4318408_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "III-a",
+          "via": [
+            "Rua José Antônio Flores da Cunha",
+            "Rua Flores da Cunha"
+          ],
+          "descricao": "Rua Flores da Cunha entre a Av. Rio Branco e o atracadouro da balsa (ponta norte da via no OSM, junto ao rio)",
+          "de": [
+            "Rua Barão do Rio Branco",
+            "Avenida Rio Branco"
+          ],
+          "ate": {
+            "lonlat": [
+              -51.7097566,
+              -29.9519542
+            ]
+          }
+        },
+        {
+          "inciso": "III-b",
+          "via": [
+            "Rua Barão do Rio Branco",
+            "Avenida Rio Branco"
+          ],
+          "descricao": "Av. Rio Branco entre Rua Flores da Cunha e Av. Dr. José Athanásio",
+          "de": [
+            "Rua José Antônio Flores da Cunha",
+            "Rua Flores da Cunha"
+          ],
+          "ate": [
+            "Rua Doutor José Athanásio",
+            "Avenida Doutor José Athanásio"
+          ]
+        },
+        {
+          "inciso": "III-c",
+          "via": [
+            "Rua Doutor José Athanásio",
+            "Avenida Doutor José Athanásio"
+          ],
+          "descricao": "Av. Dr. José Athanásio, em toda a extensão (no OSM: Rua Doutor José Athanásio)"
+        },
+        {
+          "inciso": "III-d",
+          "via": [
+            "Rua General Osório"
+          ],
+          "descricao": "em toda a extensão"
+        },
+        {
+          "inciso": "III-e",
+          "via": [
+            "Rua Senador Salgado Filho"
+          ],
+          "descricao": "entre Rua Gal. Osório e Rua Rafael Athanásio",
+          "de": [
+            "Rua General Osório"
+          ],
+          "ate": [
+            "Rua Rafael Athanásio Sobrinho"
+          ]
+        },
+        {
+          "inciso": "III-f",
+          "via": [
+            "Rua Rafael Athanásio Sobrinho"
+          ],
+          "descricao": "entre Rua Sen. Salgado Filho e Rua Flores da Cunha",
+          "de": [
+            "Rua Senador Salgado Filho"
+          ],
+          "ate": [
+            "Rua José Antônio Flores da Cunha",
+            "Rua Flores da Cunha"
+          ]
+        },
+        {
+          "inciso": "III-g",
+          "via": [
+            "Avenida Maurício Cardoso",
+            "Avenida Doutor Maurício Cardoso"
+          ],
+          "descricao": "em toda a extensão"
+        },
+        {
+          "inciso": "III-h",
+          "via": [
+            "Rua Dona Délia Drebes"
+          ],
+          "descricao": "em toda a extensão"
+        },
+        {
+          "inciso": "III-i",
+          "via": [
+            "Rua Marechal Floriano"
+          ],
+          "descricao": "em toda a extensão"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "nota": "Confiança média: situação atual do decreto não confirmada no portal da prefeitura."
+    }
+  ]
+}

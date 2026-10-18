@@ -1,0 +1,200 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4318200",
+  "municipio": "São Francisco de Paula",
+  "uf": "RS",
+  "fonte_id": "sao-francisco-de-paula",
+  "fonte": {
+    "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/ (Decreto 2.308/2022); https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/8932/ (Decreto 2.410/2023)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Decreto 2.308/2022 lido por OCR do PDF original (portal Instar da prefeitura, situação 'Em vigor'); nenhum decreto posterior de alteração ou revogação achado. O estacionamento de carretas no perímetro urbano (art. 1º) e os horários de carga e descarga (Dec. 2.410/2023) não são circulação e entram desativados."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Os atos não definem VUC: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "sfpaula_av_julio_castilhos_veda_caminhao",
+      "tipo": "via",
+      "regime": "Vedação de circulação de caminhões",
+      "nome": "Av. Júlio de Castilhos (Rua Cel. Serrano a Rua Benjamin Constant) - vedada a circulação de caminhões",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Manutenção do logradouro público e carga/descarga em pontos sinalizados nesta via (art. 2º); casos de necessidade de tráfego ou estacionamento no trecho: pedido de autorização por escrito (parágrafo único do art. 2º)"
+      ],
+      "autorizacao": "Autorização excepcional por escrito (parágrafo único do art. 2º)",
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 2.308, de 01/08/2022 (publicado em 04/08/2022)",
+          "artigo": "art. 2º (vedação), art. 4º (revoga o Decreto 309/2007), art. 5º (vigência 45 dias após a publicação)",
+          "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/",
+          "nota": "PDF em imagem lido por OCR e reconferido em 2026-10-18"
+        }
+      ],
+      "vigencia_inicio": "2022-09-18",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4318200_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 2º",
+          "via": [
+            "Avenida Júlio de Castilhos"
+          ],
+          "de": [
+            "Rua Coronel Serrano"
+          ],
+          "ate": [
+            "Avenida Benjamin Constant"
+          ],
+          "descricao": "Av. Júlio de Castilhos entre as Ruas Cel. Serrano e Benjamin Constant"
+        }
+      ],
+      "fonte_geometria": "OSM (ODbL) casado por nome e trecho",
+      "nota": "Vedação a qualquer caminhão (PBT acima de 3,5 t); 24 h, todos os dias, sem exceção de feriado."
+    },
+    {
+      "id": "sfpaula_estacionamento_carretas_perimetro",
+      "tipo": "zona",
+      "regime": "Proibição de estacionamento",
+      "nome": "Perímetro urbano da sede - proibido estacionar carretas, bitrens, tritrens e similares",
+      "status": "desativada",
+      "status_motivo": "Restringe estacionamento, não circulação; registrada só como informação (sem geometria).",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Estacionamento (não circulação): fora do escopo do roteamento"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 2.308/2022",
+          "artigo": "art. 1º e art. 3º (anexo 1: perímetro urbano da sede)",
+          "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/7264/"
+        }
+      ],
+      "vigencia_inicio": "2022-09-18",
+      "vigencia_fim": null,
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "sfpaula_cd_horarios_av_julio_castilhos",
+      "tipo": "via",
+      "regime": "Horário de carga e descarga",
+      "nome": "Carga e descarga na área central (Av. Júlio de Castilhos entre Rua Cel. Serrano e Rua Bento Gonçalves)",
+      "status": "desativada",
+      "status_motivo": "Janela de carga/descarga (parada), não de circulação; horário do sábado incerto no OCR.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "06:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "18:00",
+          "to": "22:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "06:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "13:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Veículos até 1.000 kg de capacidade; materiais de construção/entulho/concretagem com autorização prévia (24 h); bancos, saúde e emergências (art. 8º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 2.410, de 14/06/2023",
+          "artigo": "arts. 1º, 2º e 8º",
+          "url": "https://www.saofranciscodepaula.rs.gov.br/portal/leis_decretos/8932/",
+          "nota": "OCR; sábado 'a partir das 13h' lido do OCR (fim da janela não consta)"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
