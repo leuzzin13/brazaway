@@ -41,10 +41,30 @@
   {
    "url": "penaestrada.com.br/restricoes/aparecida-de-goiania",
    "resultado": "Sem pagina (404)."
+  },
+  {
+   "url": "legislacao.py buscar 5201405 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "portal_proprio@https://aparecida.go.gov.br/: 0 atos; nucleogov@https://acessoainformacao.aparecidadegoiania.go.leg.br/cidadao/legislacao/leis: ERRO NucleoGov: listagem de atos em https://acessoainformacao.aparecidadego"
+  },
+  {
+   "url": "legislacao.py buscar 5201405 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "portal_proprio@https://aparecida.go.gov.br/: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5201405 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://aparecida.go.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Aparecida de Goiania: nao achado ato de circulacao de caminhoes (lei, decreto ou portaria) nem de carga e descarga viaria. As buscas no Querido Diario (diario desde 2022) so trouxeram ruido; o portal de legislacao da prefeitura/Camara responde 403 e o AGM falhou, entao a busca NAO e conclusiva (falha_de_fonte). Pendencias: conferir decretos/portarias da Secretaria de Transito e o Plano Diretor/Lei de Mobilidade no portal de legislacao e no diario oficial anterior a 2022; dispositivos de trecho urbano da BR-153/Anel Viario. | REVISAO 2026-10-18 (2a passada, portais abertos): Camara (leis completas) e Prefeitura (NucleoGov) lidas via API: nenhuma lei, decreto ou portaria de circulacao de caminhoes, VUC ou carga e descarga viaria. Limites: busca por ementa (textos nao indexados), decretos do Executivo anteriores a 2025 fora do portal da Prefeitura, DOE sem busca textual antes de 2022. Municipio cortado pela BR-153 e pelo Anel Viario (rodovias/federais).",
+ "observacoes": "Aparecida de Goiania: nao achado ato de circulacao de caminhoes (lei, decreto ou portaria) nem de carga e descarga viaria. As buscas no Querido Diario (diario desde 2022) so trouxeram ruido; o portal de legislacao da prefeitura/Camara responde 403 e o AGM falhou, entao a busca NAO e conclusiva (falha_de_fonte). Pendencias: conferir decretos/portarias da Secretaria de Transito e o Plano Diretor/Lei de Mobilidade no portal de legislacao e no diario oficial anterior a 2022; dispositivos de trecho urbano da BR-153/Anel Viario. | REVISAO 2026-10-18 (2a passada, portais abertos): Camara (leis completas) e Prefeitura (NucleoGov) lidas via API: nenhuma lei, decreto ou portaria de circulacao de caminhoes, VUC ou carga e descarga viaria. Limites: busca por ementa (textos nao indexados), decretos do Executivo anteriores a 2025 fora do portal da Prefeitura, DOE sem busca textual antes de 2022. Municipio cortado pela BR-153 e pelo Anel Viario (rodovias/federais). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://aparecida.go.gov.br/: 0 atos; bloqueadas/sem cliente: nucleogov@https://acessoainformacao.aparecidadegoiania.go.leg.br/cidadao/legislacao/leis: ERRO NucleoGov: listagem de atos em https://acessoainformacao.aparecidadego. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
  ],

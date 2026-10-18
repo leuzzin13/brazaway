@@ -29,10 +29,30 @@
   {
    "url": "penaestrada.com.br/restricoes/formosa/ (leads/penaestrada.json)",
    "resultado": "404, sem página."
+  },
+  {
+   "url": "legislacao.py buscar 5208004 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.formosa.go.leg.br: ERRO SAPL/SAGL sem resposta reconhecível em https://sapl.formosa.go.leg.br; portal_proprio@https://formosa.go.gov.br/: 0 atos"
+  },
+  {
+   "url": "legislacao.py buscar 5208004 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.formosa.go.leg.br: 65 atos; portal_proprio@https://formosa.go.gov.br/: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5208004 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://formosa.go.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nada localizado; a Câmara (SAPL) não indexa decretos do Executivo e a Lei 162/2014 só cria pontos de estacionamento de caminhões de frete. Pendência: decretos da Superintendência de Trânsito e eventual restrição na BR-020/centro.",
+ "observacoes": "Nada localizado; a Câmara (SAPL) não indexa decretos do Executivo e a Lei 162/2014 só cria pontos de estacionamento de caminhões de frete. Pendência: decretos da Superintendência de Trânsito e eventual restrição na BR-020/centro. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://formosa.go.gov.br/: 0 atos; bloqueadas/sem cliente: sapl@https://sapl.formosa.go.leg.br: ERRO SAPL/SAGL sem resposta reconhecível em https://sapl.formosa.go.leg.br. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

@@ -33,10 +33,30 @@
   {
    "url": "overpass-api.de ; overpass.kumi.systems ; overpass.private.coffee",
    "resultado": "connection reset / HTTP 500 em 18/10/2026; Overpass não reconsultado"
+  },
+  {
+   "url": "legislacao.py buscar 4104006 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.campinagrandedosul.pr.leg.br: 4 atos; portal_proprio@https://campinagrandedosul.pr.gov.br/consulta-legislacao-municipal: 0 atos"
+  },
+  {
+   "url": "legislacao.py buscar 4104006 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.campinagrandedosul.pr.leg.br: 49 atos; portal_proprio@https://campinagrandedosul.pr.gov.br/consulta-legislacao-municipal: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4104006 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=2, peso..=1, tráfego..=2, circulação..=37; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://campinagrandedosul.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "maxweight 8,5 t na Estrada da Graciosa (PR-410), via estadual sob DER/PR; os 10 way_ids listados em osm_hints são todos PR-410 (as 19 ways não foram listadas integralmente; Overpass fora do ar). Nenhum ato municipal de circulação de caminhões.",
+ "observacoes": "maxweight 8,5 t na Estrada da Graciosa (PR-410), via estadual sob DER/PR; os 10 way_ids listados em osm_hints são todos PR-410 (as 19 ways não foram listadas integralmente; Overpass fora do ar). Nenhum ato municipal de circulação de caminhões. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.campinagrandedosul.pr.leg.br: 4 atos; portal_proprio@https://campinagrandedosul.pr.gov.br/consulta-legislacao-municipal: 0 atos. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada.",
  "osm_divergencias": [
   "maxweight=8.5 em Estrada da Graciosa (PR-410): rodovia estadual, descartado; restrição pertence ao DER/PR",
   "Overpass indisponível: 9 das 19 ways maxweight não verificadas individualmente"

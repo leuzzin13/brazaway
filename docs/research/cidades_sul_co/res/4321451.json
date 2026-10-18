@@ -41,10 +41,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente teutonia, teutonia-rs, teutoniars); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4321451 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "portal_proprio@https://www.teutonia.rs.leg.br/leis/legislacao-municipal: 0 atos; desconhecido@https://www.teutonia.rs.gov.br/: ERRO sem cliente automático; consultar manualmente: https://www.teutonia.rs"
+  },
+  {
+   "url": "legislacao.py buscar 4321451 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "portal_proprio@https://www.teutonia.rs.leg.br/leis/legislacao-municipal: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4321451 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.teutonia.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 403 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Teutônia: site da prefeitura 403; Câmara (teutonia.rs.leg.br) lista legislação sem achar termos; sem diário consolidado. Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, sem diário consolidado que cubra, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://www.teutonia.rs.gov.br/; https://www.teutonia.rs.leg.br/leis/legislacao-municipal. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Teutônia: site da prefeitura 403; Câmara (teutonia.rs.leg.br) lista legislação sem achar termos; sem diário consolidado. Lote R1-RS-M02 (segunda passada manual, 18/10/2026). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, sem diário consolidado que cubra, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://www.teutonia.rs.gov.br/; https://www.teutonia.rs.leg.br/leis/legislacao-municipal. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://www.teutonia.rs.leg.br/leis/legislacao-municipal: 0 atos; bloqueadas/sem cliente: desconhecido@https://www.teutonia.rs.gov.br/: ERRO sem cliente automático; consultar manualmente: https://www.teutonia.rs. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada.",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

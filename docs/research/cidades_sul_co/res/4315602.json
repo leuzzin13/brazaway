@@ -69,10 +69,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente rio-grande, riogrande, rio-grande-rs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4315602 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.riogrande.rs.leg.br: 1 atos; leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4191/leis-de-rio-grande: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec@https://cmriogrande.cittatec.com.br/legislativo/pagina-inicial: ERRO sem cliente automático; consultar manualmente: https://cmriogrande.cit; atende@https://camarariogrande.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; desconhecido@https://www2.riogrande.rs.gov.br/: ERRO sem cliente automático; consultar manualmente: https://www2.riogrande."
+  },
+  {
+   "url": "legislacao.py buscar 4315602 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.riogrande.rs.leg.br: 4 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4315602 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=1; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www2.riogrande.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 403 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem achado. O portal da Prefeitura (www2.riogrande.rs.gov.br) está atrás de WAF (403) e o acervo de leis (leismunicipais, Câmara cittatec/atende) não é automatizável; o diário oficial consolidado só cobre 2023/2024 em diante. Há órgão de trânsito (Secretaria de Município de Mobilidade, Acessibilidade e Segurança) e Conselho Consultivo de Transporte e Trânsito, mas nenhum ato de restrição de caminhões foi localizado. Pendência: acesso ao Superporto/Porto Novo e regras de caminhões no Centro e na Av. Rheingantz não verificadas na fonte primária. 'Não achou' NÃO é conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camarariogrande.atende.net; https://cmriogrande.cittatec.com.br/legislativo/pagina-inicial; https://leismunicipais.com.br/legislacao-municipal/4191/leis-de-rio-grande; https://www2.riogrande.rs.gov.br/. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Sem achado. O portal da Prefeitura (www2.riogrande.rs.gov.br) está atrás de WAF (403) e o acervo de leis (leismunicipais, Câmara cittatec/atende) não é automatizável; o diário oficial consolidado só cobre 2023/2024 em diante. Há órgão de trânsito (Secretaria de Município de Mobilidade, Acessibilidade e Segurança) e Conselho Consultivo de Transporte e Trânsito, mas nenhum ato de restrição de caminhões foi localizado. Pendência: acesso ao Superporto/Porto Novo e regras de caminhões no Centro e na Av. Rheingantz não verificadas na fonte primária. 'Não achou' NÃO é conclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://camarariogrande.atende.net; https://cmriogrande.cittatec.com.br/legislativo/pagina-inicial; https://leismunicipais.com.br/legislacao-municipal/4191/leis-de-rio-grande; https://www2.riogrande.rs.gov.br/. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.riogrande.rs.leg.br: 1 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4191/leis-de-rio-grande: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; cittatec@https://cmriogrande.cittatec.com.br/legislativo/pagina-inicial: ERRO sem cliente automático; consultar manualmente: https:/. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight nas vias."
  ],

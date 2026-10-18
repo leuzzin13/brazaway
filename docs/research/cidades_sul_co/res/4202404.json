@@ -39,9 +39,29 @@
   {
    "url": "https://leismunicipais.com.br/a1/sc/b/blumenau/",
    "resultado": "403 Cloudflare (legislação do site da prefeitura aponta para lá)"
+  },
+  {
+   "url": "legislacao.py buscar 4202404 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "portal_proprio@https://www.blumenau.sc.gov.br/: 0 atos; atende@https://camarablumenau.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "legislacao.py buscar 4202404 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "portal_proprio@https://www.blumenau.sc.gov.br/: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4202404 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.blumenau.sc.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
- "observacoes": "Nenhuma regra de circulação de caminhões encontrada no DOM/SC (cobertura ampla, 99 mil atos da Prefeitura) nem na carta de serviços. O portal de legislação (leismunicipais/Câmara) ficou inacessível, por isso o resultado não é conclusivo ('nao_achou', não 'confirmou_que_nao_tem'). Único dado: estacionamento rotativo (Área Amarela = carga e descarga, 3 h, seg-sex 8h-19h, sáb 8h-12h; Portaria SMTT 24/2025, Lei 9.762/2025), que não restringe circulação. Pendências: abrir a legislação de trânsito de Blumenau (Código de Posturas, decretos da SETERB/SMTT) por outro caminho. | R3 2026-10-18: Sem restrição encontrada nas fontes alternativas abaixo, mas continua INCONCLUSIVO. Bloqueio específico: digital.camarablu.sc.gov.br (desafio JS) e leismunicipais.com.br (403).",
+ "observacoes": "Nenhuma regra de circulação de caminhões encontrada no DOM/SC (cobertura ampla, 99 mil atos da Prefeitura) nem na carta de serviços. O portal de legislação (leismunicipais/Câmara) ficou inacessível, por isso o resultado não é conclusivo ('nao_achou', não 'confirmou_que_nao_tem'). Único dado: estacionamento rotativo (Área Amarela = carga e descarga, 3 h, seg-sex 8h-19h, sáb 8h-12h; Portaria SMTT 24/2025, Lei 9.762/2025), que não restringe circulação. Pendências: abrir a legislação de trânsito de Blumenau (Código de Posturas, decretos da SETERB/SMTT) por outro caminho. | R3 2026-10-18: Sem restrição encontrada nas fontes alternativas abaixo, mas continua INCONCLUSIVO. Bloqueio específico: digital.camarablu.sc.gov.br (desafio JS) e leismunicipais.com.br (403). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://www.blumenau.sc.gov.br/: 0 atos; bloqueadas/sem cliente: atende@https://camarablumenau.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM não consultado."
  ],

@@ -4,7 +4,7 @@
  "uf": "SC",
  "status": "nao_achou",
  "nivel_busca": "media",
- "falha_de_fonte": false,
+ "falha_de_fonte": true,
  "fontes_consultadas": [
   {
    "url": "https://diariomunicipal.sc.gov.br (diarios_consolidados.py buscar 4201406, fonte domsc)",
@@ -17,10 +17,26 @@
   {
    "url": "https://ararangua.atende.net",
    "resultado": "legislacao.py (atende, prefeitura): Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-robô (não automatizada). Módulo presente em: https://ararangua.atende.n"
+  },
+  {
+   "url": "legislacao.py buscar 4201406 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "atende@https://camaraararangua.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://ararangua.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4201406 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://ararangua.sc.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "home HTTP 403 (bloqueio/WAF)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Araranguá: LC 504/2024 (art. de diretrizes do Sistema Municipal de Viação: 'restringir o trânsito de veículos pesados, estabelecendo os anéis viários de restrição, regulamentando horários, tipos de veículos, locais') é diretriz; não foi localizado o decreto/lei que estabeleça os anéis. OSM: Rodovia Vereador José Jovelino Costa (ref ARA-250, rodovia municipal, maxweight=10, way 237059093) sem ato localizado - lead para conferir (possível ponte/trecho com limite de 10 t). Busca no DOM/SC (fonte principal, acervo completo do município) e nos portais de legislação acessíveis sem resultado; portais com Cloudflare/captcha/sem cliente não foram abertos (ver fontes_consultadas): nao_achou é indicativo, não prova de ausência. [Onda R1 DX02, classe M.]",
+ "observacoes": "Araranguá: LC 504/2024 (art. de diretrizes do Sistema Municipal de Viação: 'restringir o trânsito de veículos pesados, estabelecendo os anéis viários de restrição, regulamentando horários, tipos de veículos, locais') é diretriz; não foi localizado o decreto/lei que estabeleça os anéis. OSM: Rodovia Vereador José Jovelino Costa (ref ARA-250, rodovia municipal, maxweight=10, way 237059093) sem ato localizado - lead para conferir (possível ponte/trecho com limite de 10 t). Busca no DOM/SC (fonte principal, acervo completo do município) e nos portais de legislação acessíveis sem resultado; portais com Cloudflare/captcha/sem cliente não foram abertos (ver fontes_consultadas): nao_achou é indicativo, não prova de ausência. [Onda R1 DX02, classe M.] | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: atende@https://camaraararangua.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://ararangua.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "Preparação (Overpass): Rodovia Vereador José Jovelino Costa (way 237059093, secondary, maxweight=10, ref=ARA-250). Não reconsultado nesta onda; sem ato municipal que corresponda."
  ],

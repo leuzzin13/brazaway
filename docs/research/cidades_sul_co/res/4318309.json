@@ -45,10 +45,30 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente sao-gabriel, saogabriel, sao-gabriel-rs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "legislacao.py buscar 4318309 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "portal_proprio@https://www.camarasg.rs.gov.br/imprensa/institucional/Escola-do-Legislativo/1/2023: 0 atos; leismunicipais@https://leismunicipais.com.br/leis/rs/saogabriel/?o-tcers: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We"
+  },
+  {
+   "url": "legislacao.py buscar 4318309 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "portal_proprio@https://www.camarasg.rs.gov.br/imprensa/institucional/Escola-do-Legislativo/1/2023: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "https://www.camarasg.rs.gov.br/proposicoes/pesquisa (Softcam, texto integral; R5 toolkit/softcam.py)",
+   "resultado": "totais por termo: caminhões=10, carga e descarga=3, veículos pesados=2, toneladas=0, tráfego de veículos=2; ementas das leis/decretos conferidas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4318309 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=8; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.saogabriel.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Só decretos COVID com 'carga e descarga' como setor econômico. Nenhum ato de circulação de caminhões localizado em município de 60 mil hab.; portal da prefeitura (leismunicipais) bloqueado (falha_de_fonte=true). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://leismunicipais.com.br/leis/rs/saogabriel/?o-tcers. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarasg.rs.gov.br): acervo com 301 itens no teste 'orçamento' (mais antigo 25/10/1949, mais recente 13/10/2026); acertos por termo {'caminhões': 10, 'caminhão': 9, 'veículos pesados': 2, 'eixos': 2, 'carretas': 6, 'veículos de carga': 3}. Itens lidos/triados pela ementa e pelo texto do PDF: sem ato de restrição de circulação de caminhões (ruído: compras, orçamento, plano diretor/mobilidade só com diretriz, códigos de obras/posturas). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Só decretos COVID com 'carga e descarga' como setor econômico. Nenhum ato de circulação de caminhões localizado em município de 60 mil hab.; portal da prefeitura (leismunicipais) bloqueado (falha_de_fonte=true). R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: https://leismunicipais.com.br/leis/rs/saogabriel/?o-tcers. | R4 2026-10-18: varredura da Câmara em Softcam (www.camarasg.rs.gov.br): acervo com 301 itens no teste 'orçamento' (mais antigo 25/10/1949, mais recente 13/10/2026); acertos por termo {'caminhões': 10, 'caminhão': 9, 'veículos pesados': 2, 'eixos': 2, 'carretas': 6, 'veículos de carga': 3}. Itens lidos/triados pela ementa e pelo texto do PDF: sem ato de restrição de circulação de caminhões (ruído: compras, orçamento, plano diretor/mobilidade só com diretriz, códigos de obras/posturas). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://www.camarasg.rs.gov.br/imprensa/institucional/Escola-do-Legislativo/1/2023: 0 atos; Softcam da Câmara (www.camarasg.rs.gov.br) varrido; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/leis/rs/saogabriel/?o-tcers: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [],
  "regras_rascunho": []
 }

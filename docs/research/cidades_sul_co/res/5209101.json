@@ -4,7 +4,7 @@
  "uf": "GO",
  "status": "nao_achou",
  "nivel_busca": "media",
- "falha_de_fonte": false,
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,25 @@
   {
    "url": "https://acessoainformacao.goiatuba.go.gov.br/legislacao/leis ; https://acessoainformacao.goiatuba.go.leg.br/cidadao/legislacao/decretos",
    "resultado": "403 Forbidden (NucleoGov). Decretos do Executivo não lidos: o NucleoLeg da Câmara só traz leis."
+  },
+  {
+   "url": "legislacao.py buscar 5209101 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "nucleogov@https://goiatuba.go.leg.br/leis/: ERRO NucleoGov: listagem de atos em https://goiatuba.go.leg.br/leis/ é mont; nucleogov@https://acessoainformacao.goiatuba.go.leg.br/cidadao/legislacao/decretos: ERRO NucleoGov: listagem de atos em https://acessoainformacao.goiatuba.go.l; nucleogov@https://acessoainformacao.goiatuba.go.gov.br/legislacao/leis: ERRO NucleoGov: listagem de atos em https://acessoainformacao.goiatuba.go.g"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5209101 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=4, peso..=4, tráfego..=4, circulação..=21; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://goiatuba.go.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
- "observacoes": "Nenhuma lei municipal de restrição a caminhões em 2.704 atos do banco NucleoLeg da Câmara (texto integral filtrado). Lacuna: decretos do Executivo (portal NucleoGov da prefeitura, 403) e leis não consolidadas. OSM só BR-452 (federal): descartado. Lei 3.221/22 é zoneamento de uso.",
+ "observacoes": "Nenhuma lei municipal de restrição a caminhões em 2.704 atos do banco NucleoLeg da Câmara (texto integral filtrado). Lacuna: decretos do Executivo (portal NucleoGov da prefeitura, 403) e leis não consolidadas. OSM só BR-452 (federal): descartado. Lei 3.221/22 é zoneamento de uso. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: nucleogov@https://goiatuba.go.leg.br/leis/: ERRO NucleoGov: listagem de atos em https://goiatuba.go.leg.br/leis/ é mont; nucleogov@https://acessoainformacao.goiatuba.go.leg.br/cidadao/legislacao/decretos: ERRO NucleoGov: listagem de atos em https://acessoainformacao.goiatuba.go.l; nucleogov@https://. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "maxweight em 3 ways da BR-452 (trunk, rodovia federal): competência DNIT, descartado; nenhuma via municipal com etiqueta."
  ],

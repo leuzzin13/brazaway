@@ -41,10 +41,30 @@
    "url": "api.queridodiario.org.br gazettes territory_ids=4314100... (idem 4323002)",
    "resultado": "Viamão sem diário consolidado (QD 0).",
    "rodada": "R2"
+  },
+  {
+   "url": "legislacao.py buscar 4323002 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "instar@https://www.viamao.rs.gov.br: 32 atos; cittatec@https://cmviamao.cittatec.com.br/portal-legislativo/proposicoes/texto-original/170005: ERRO sem cliente automático; consultar manualmente: https://cmviamao.cittat; 1doc@https://camaraviamao.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://camaraviamao.1d; 1doc@https://viamao.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://viamao.1doc.com"
+  },
+  {
+   "url": "legislacao.py buscar 4323002 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "instar@https://www.viamao.rs.gov.br: 37 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4323002 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.viamao.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Sem restrição de circulação de caminhões achada no portal de legislação da Prefeitura (Instar), com busca em ementa e texto integral. O portal só traz parte do acervo (66 páginas, em geral de 2013 em diante); atos antigos (Código de Posturas, leis anteriores a 2013) e a Câmara (1doc/cittatec) não foram lidos. A EPTV foi extinta (Lei 5.478/2025) e a Lei 4.481/2016 (lida) só dá à EPTV a competência genérica de controlar o transporte de cargas, sem regra. Resultado conclusivo para o portal da Prefeitura, não para legislação antiga.",
+ "observacoes": "Sem restrição de circulação de caminhões achada no portal de legislação da Prefeitura (Instar), com busca em ementa e texto integral. O portal só traz parte do acervo (66 páginas, em geral de 2013 em diante); atos antigos (Código de Posturas, leis anteriores a 2013) e a Câmara (1doc/cittatec) não foram lidos. A EPTV foi extinta (Lei 5.478/2025) e a Lei 4.481/2016 (lida) só dá à EPTV a competência genérica de controlar o transporte de cargas, sem regra. Resultado conclusivo para o portal da Prefeitura, não para legislação antiga. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: instar@https://www.viamao.rs.gov.br: 32 atos; bloqueadas/sem cliente: cittatec@https://cmviamao.cittatec.com.br/portal-legislativo/proposicoes/texto-original/170005: ERRO sem cliente automático; consultar manualmente: https://cmviamao.cittat; 1doc@https://camaraviamao.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://camarav. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "OSM/Overpass não consultado: overpass-api.de (connection reset), overpass.kumi.systems e overpass.private.coffee (HTTP 500) e maps.mail.ru (504 Gateway Time-out) indisponíveis em 18/10/2026; sem checagem de hgv=no/maxweight nas vias."
  ],

@@ -4,7 +4,7 @@
  "uf": "PR",
  "status": "nao_achou",
  "nivel_busca": "dirigida",
- "falha_de_fonte": false,
+ "falha_de_fonte": true,
  "fontes_consultadas": [
   {
    "url": "/home/user/brazaway/docs/research/cidades_sul_co/fila/R1-PR-DO01.json",
@@ -29,10 +29,26 @@
   {
    "url": "https://marialva.oxy.elotech.com.br/portaltransparencia-api/api/leisatos",
    "resultado": "R4 Elotech (API pública, descricaoSumula por substring; termos caminh, pesad, tonel, eixo, carreta, betoneira, bitrem, carga, tráfego/trânsito, circula, trafegar, transitar): 121 ementa(s) devolvida(s) nas entidades município e câmara, nenhuma é regra de circulação de caminhões (ruído: cargos 'Divisão de Veículos Pesados', compras, férias, crédito, conselho de trânsito). 2 entidade(s) (MUNICIPIO DE MARIALVA; MARIALVA CAMARA MUNICIPAL); acervo de leis da prefeitura: 2415 lei(s), exercício mais antigo 1998."
+  },
+  {
+   "url": "legislacao.py buscar 4114807 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "1doc@https://marialva.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://marialva.1doc.c"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4114807 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://marialva.1doc.com.br/b.php?pg=o/login&n=3 (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Portal 1doc (marialva.1doc.com.br) devolve só tela de login/JS (592 bytes), sem busca de legislação; sem site de prefeitura/câmara acessível; AMP não cobre o município. 19 vias OSM com hgv=no (maioria terciárias sem nome, provavelmente estradas rurais), nenhuma com ato achado. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://marialva.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática). | R4 2026-10-18: portal Elotech marialva.oxy.elotech.com.br varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1998 (2415 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem).",
+ "observacoes": "Portal 1doc (marialva.1doc.com.br) devolve só tela de login/JS (592 bytes), sem busca de legislação; sem site de prefeitura/câmara acessível; AMP não cobre o município. 19 vias OSM com hgv=no (maioria terciárias sem nome, provavelmente estradas rurais), nenhuma com ato achado. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://marialva.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática). | R4 2026-10-18: portal Elotech marialva.oxy.elotech.com.br varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1998 (2415 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; bloqueadas/sem cliente: 1doc@https://marialva.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://marialva.1doc.c. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [
   "19 ways hgv=no (3 sem nome visíveis tertiary; Estrada Uba, Estrada Jacanã, Estrada Bom Sucesso unclassified/tertiary); sem ato que as sustente"
  ],

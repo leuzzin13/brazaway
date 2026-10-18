@@ -41,10 +41,30 @@
   {
    "url": "https://medianeira.oxy.elotech.com.br/portaltransparencia-api/api/leisatos",
    "resultado": "R4 Elotech (API pública, descricaoSumula por substring; termos caminh, pesad, tonel, eixo, carreta, betoneira, bitrem, carga, tráfego/trânsito, circula, trafegar, transitar): 1 ementa(s) devolvida(s) nas entidades município e câmara, nenhuma é regra de circulação de caminhões (ruído: cargos 'Divisão de Veículos Pesados', compras, férias, crédito, conselho de trânsito). 2 entidade(s) (MUNICIPIO DE MEDIANEIRA; CAMARA MUNICIPAL DE MEDIANEIRA); acervo de leis da prefeitura: 173 lei(s), exercício mais antigo 1."
+  },
+  {
+   "url": "legislacao.py buscar 4115804 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+   "resultado": "sapl@https://sapl.medianeira.pr.leg.br: 0 atos; 1doc@https://medianeira.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://medianeira.1doc"
+  },
+  {
+   "url": "legislacao.py buscar 4115804 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+   "resultado": "sapl@https://sapl.medianeira.pr.leg.br: 0 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+  },
+  {
+   "url": "toolkit/softcam.py descobrir (Câmara)",
+   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4115804 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=0; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+  },
+  {
+   "url": "https://www.medianeira.pr.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Inconclusivo. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://medianeira.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática). | R4 2026-10-18: portal Elotech medianeira.oxy.elotech.com.br varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1 (173 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem).",
+ "observacoes": "Inconclusivo. Fonte principal fora do ar/bloqueada: não conclusivo. | R3 2026-10-18: Fonte principal continua inacessível/sem busca; negativo NÃO conclusivo. Rodar da rede do usuário: https://medianeira.1doc.com.br/b.php?pg=o/login&n=3 (sem busca automática). | R4 2026-10-18: portal Elotech medianeira.oxy.elotech.com.br varrido por ementa; nenhum ato sobre circulação/restrição de caminhões. Acervo de leis desde 1 (173 leis): negativo conclusivo na busca por ementa (atos sem ementa indexada não aparecem). | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.medianeira.pr.leg.br: 0 atos; bloqueadas/sem cliente: 1doc@https://medianeira.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://medianeira.1doc. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
  "osm_divergencias": [],
  "regras_rascunho": []
 }
