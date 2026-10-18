@@ -1,0 +1,89 @@
+{
+ "ibge": "4315701",
+ "nome": "Rio Pardo",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.riopardo.rs.gov.br",
+   "resultado": "instar: busca com termos 'caminh|veículos pesados|veiculos pesados|veículos de carga|veiculos de carga|carga e descarga|tonelad|eixos|carreta|betoneira|zona de restrição|zona de restricao' — 7 ato(s); nenhum de restrição de caminhões"
+  },
+  {
+   "url": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7822",
+   "resultado": "cespro: sem busca automática/bloqueado — CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7822) passa por reCAPT"
+  },
+  {
+   "url": "https://riopardo.cespro.com.br/",
+   "resultado": "cespro: sem busca automática/bloqueado — CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://riopardo.cespro.com.br/) passa por reCAPTCHA e devolve 0 via API; não aut"
+  },
+  {
+   "url": "https://riopardo.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "1doc: sem busca automática/bloqueado — sem cliente automático; consultar manualmente: https://riopardo.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4315701 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
+   "resultado": "sem diário consolidado/QD para o município"
+  },
+  {
+   "url": "https://www.riopardo.rs.gov.br/portal/leis_decretos/3951/",
+   "resultado": "Decreto 50/2024 'Em vigor'; PDF baixado e lido"
+  },
+  {
+   "url": "https://www.riopardo.rs.gov.br/publicos/decreto_n_050-24_-_dispOe_sobre_a_restriCAo_de_circulaCAo_d_04042845.pdf",
+   "resultado": "texto integral lido (1 página)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lote R1-RS-M01 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal consultada com resposta. Achado: Decreto 050/2024 (ponte Rio Pardo–Vera Cruz, Albardão, PBTC > 20 t), 'Em vigor' no portal Instar; texto lido do PDF oficial. Editado no contexto de estado de calamidade (enchentes mai/2024) mas sem prazo no texto. Não se confirmou se a ponte está em via municipal (não é rodovia estadual declarada no decreto) nem se houve revogação (busca 'ponte|Albard|restrição' no portal só devolveu este decreto). Texto: atos/4315701/decreto_050_2024.txt.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "riopardo_dec050_2024_ponte_albardao",
+   "tipo": "ponte",
+   "regime": "Proibição de veículos de carga com PBTC > 20 t na ponte Rio Pardo–Vera Cruz (Albardão)",
+   "nome": "Rio Pardo: Decreto 050/2024, ponte do distrito de Albardão",
+   "status": "ativa",
+   "status_motivo": "Portal Instar marca 'Em vigor'; sem ato posterior achado; origem em decreto de calamidade, sem prazo no texto — conferir",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 050, de 04/06/2024 (Rio Pardo/RS)",
+     "artigo": "art. 1º (proíbe), art. 2º (autuação CTB), art. 4º (sinalização)",
+     "url": "https://www.riopardo.rs.gov.br/portal/leis_decretos/3951/"
+    }
+   ],
+   "vigencia_inicio": "2024-06-04",
+   "vigencia_fim": null,
+   "trechos": "Ponte que interliga Rio Pardo e Vera Cruz, distrito de Albardão (sem nome de via/coordenadas no ato)",
+   "geometria": null
+  }
+ ]
+}

@@ -1,0 +1,74 @@
+{
+ "ibge": "5100201",
+ "nome": "Água Boa",
+ "uf": "MT",
+ "status": "pontual",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.aguaboa.mt.leg.br (toolkit legislacao.py buscar, 15 termos: caminh, veículos pesados, veículo de carga, carga e descarga, tráfego, tonelad, eixos, carreta, betoneira, bitrem, zona de restrição, com/sem acento)",
+   "resultado": "14 atos: Lei 764/2004 (estacionamento de veículos pesados) e Decreto 4.411/2024 (sistema binário); resto resoluções de bens móveis em desuso."
+  },
+  {
+   "url": "https://sapl.aguaboa.mt.leg.br/media/sapl/public/normajuridica/2004/761/761_texto_integral.pdf",
+   "resultado": "LIDO integral (3 arts. úteis). Salvo em atos/5100201/lei_764_2004.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/ (diarios_consolidados.py buscar (AMM-MT/SIGPub): 'circulação de caminhões', 'veículos pesados tráfego', 'caminhões trânsito') ibge 5100201",
+   "resultado": "0 resultado"
+  },
+  {
+   "url": "leads/osm_hints_por_municipio.json (pista osm)",
+   "resultado": "1 maxweight em BR-158 (primary, ref de rodovia): competência DNIT, descartado."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Água Boa: Lei 764/2004 (lida, SAPL) proíbe estacionamento de veículos pesados nas ruas Sete, Oito, Nove e Dez entre as Avenidas Júlio José de Campos, Planalto, Norberto Schwantes e Araguaia, exceto carga/descarga com nota fiscal. É só estacionamento (não circulação); vigência não confirmada. Decreto 4.411/2024 (sistema binário e sentido de circulação) não trata de caminhões (só ementa lida). OSM: só maxweight na BR-158 (rodovia federal, DNIT), descartado.",
+ "osm_divergencias": [
+  "maxweight em BR-158 (rodovia federal): descartado, sem divergência de regra municipal"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "aguaboa_estac_pesados_lei_764_2004",
+   "tipo": "via",
+   "regime": "Proibição de estacionamento de veículos pesados",
+   "nome": "Água Boa - estacionamento de veículos pesados proibido nas Ruas 7, 8, 9 e 10 (Lei 764/2004)",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento (não circulação), horário não aplicável e vigência/revogação não confirmadas; não restringe o roteamento.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Estacionamento permitido para carga ou descarga de mercadorias mediante nota fiscal (art. 1º parágrafo único)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 764, de 29/06/2004 (Água Boa)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://sapl.aguaboa.mt.leg.br/media/sapl/public/normajuridica/2004/761/761_texto_integral.pdf"
+    }
+   ],
+   "trechos": [
+    "Ruas Sete, Oito, Nove e Dez, entre as Avenidas Júlio José de Campos, Planalto, Norberto Schwantes e Araguaia"
+   ]
+  }
+ ]
+}

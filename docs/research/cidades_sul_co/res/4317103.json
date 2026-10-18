@@ -1,0 +1,144 @@
+{
+ "ibge": "4317103",
+ "nome": "Sant'Ana do Livramento",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "media",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br",
+   "resultado": "sapl: busca com termos 'caminh|veículos pesados|veiculos pesados|veículos de carga|veiculos de carga|carga e descarga|tonelad|eixos|carreta|betoneira|zona de restrição|zona de restricao' — 10 ato(s); nenhum de restrição de caminhões"
+  },
+  {
+   "url": "https://www.sdolivramento.com.br/prefeitura/index.php",
+   "resultado": "desconhecido: sem busca automática/bloqueado — sem cliente automático; consultar manualmente: https://www.sdolivramento.com.br/prefeitura/index.php"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4317103 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
+   "resultado": "diário(s) ['famurs']: resultados por termo ['1', '2', '66']; só ruído (licitação, RH, frota, ISS)"
+  },
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br/norma/3188",
+   "resultado": "Lei 965/1972 — PDF escaneado lido (imagem)"
+  },
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br/norma/4884",
+   "resultado": "Lei 2.757/1990 (nova redação do art. 1º da 965) — lida"
+  },
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br/norma/3568",
+   "resultado": "Lei 1.365/1978 (estacionamento) — lida"
+  },
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br/norma/4151",
+   "resultado": "Lei 2.006/1985 (altera art. 1º da 1.365) — lida"
+  },
+  {
+   "url": "https://sapl.santanadolivramento.rs.leg.br/norma/3711",
+   "resultado": "Lei 1.512/1980 (altera art. 2º da 965) — só ementa"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lote R1-RS-M02 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal consultada com resposta. Achados na SAPL da Câmara: Lei 965/1972 (trânsito de veículos com tara+carga > 8.000 kg proibido no perímetro central; art. 1º com redação da Lei 2.757/1990 — perímetro por artérias; exceções: transporte coletivo e combustível; art. 3º distribuição de mercadorias só com veículos <= 8 t e horário a fixar pelo Executivo) e Lei 1.365/1978 (proíbe ESTACIONAMENTO de caminhões na Zona Urbana 1; redação do art. 1º pela Lei 2.006/1985). PDFs escaneados lidos visualmente (sem OCR). Não se achou lei posterior revogando (busca SAPL com texto: '965','1365','oito mil'); Lei 1.512/1980 alterou o art. 2º da 965 (não lida); decreto com horário/trajeto do Executivo não localizado. Textos: atos/4317103/. Perímetro é descrito por ruas, sem geometria. Confiança média: leis antigas, vigência presumida por ausência de revogação.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santanalivramento_lei965_1972_perimetro_central",
+   "tipo": "zona",
+   "regime": "Proibição de trânsito de veículos com tara+carga > 8.000 kg no perímetro central",
+   "nome": "Sant'Ana do Livramento: Lei 965/1972 (art. 1º red. Lei 2.757/1990)",
+   "status": "ativa",
+   "status_motivo": "Sem lei revogadora encontrada na SAPL; leis antigas, sem confirmação de aplicação atual",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 8
+     }
+    ]
+   },
+   "excecoes": [
+    "§ 1º: veículos de transporte coletivo e de transporte de combustível (devem seguir trajeto fixado pelo Executivo)",
+    "art. 3º: distribuição de mercadorias no perímetro só com veículos <= 8.000 kg e em horário a ser fixado pelo Executivo (decreto não localizado)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 965, de 29/12/1972, com art. 1º dado pela Lei 2.757, de 19/12/1990",
+     "artigo": "art. 1º, §§ 1º-2º, art. 3º",
+     "url": "https://sapl.santanadolivramento.rs.leg.br/norma/3188"
+    },
+    {
+     "ato": "Lei 2.757/1990",
+     "artigo": "art. 1º",
+     "url": "https://sapl.santanadolivramento.rs.leg.br/norma/4884"
+    }
+   ],
+   "vigencia_inicio": "1972-12-29",
+   "vigencia_fim": null,
+   "trechos": "Perímetro: Av. João Pessoa (esq. Av. 24 de Maio) > Av. 24 de Maio > R. Thomaz Albornoz > R. Salgado Filho > R. Antonio Fernandes da Cunha > R. Conde de Porto Alegre > R. Thomaz Albornoz > R. Prefeito Hugolino Andrade > Av. Tamandaré > R. dos Andradas > Av. João Pessoa > Av. 24 de Maio (texto da lei; 'tara e carga' = PBT aproximado)",
+   "geometria": null,
+   "nota_alvo": "tara+carga > 8.000 kg aproximado como pbt_t > 8"
+  },
+  {
+   "id": "santanalivramento_lei1365_1978_estacionamento",
+   "tipo": "zona",
+   "regime": "Proibição de ESTACIONAMENTO de caminhões de transporte na Zona Urbana 1",
+   "nome": "Sant'Ana do Livramento: Lei 1.365/1978 (red. Lei 2.006/1985), estacionamento",
+   "status": "desativada",
+   "status_motivo": "Regra de estacionamento, não de circulação; fora do escopo da camada de circulação; exceção de espera de carga/descarga 6h–10h (art. 3º)",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 3º: caminhões aguardando vaga de carga e descarga, 6h–10h"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 1.365, de 27/07/1978; art. 1º red. Lei 2.006/1985",
+     "artigo": "art. 1º, art. 3º",
+     "url": "https://sapl.santanadolivramento.rs.leg.br/norma/3568"
+    }
+   ],
+   "vigencia_inicio": "1978-08-26",
+   "vigencia_fim": null,
+   "trechos": "Perímetro por artérias (Lei 2.006/1985) e acesso à BR-158 entre R. General Câmara e R. Thomaz Albornoz",
+   "geometria": null
+  }
+ ]
+}
