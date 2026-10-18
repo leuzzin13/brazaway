@@ -1,0 +1,391 @@
+{
+ "ibge": "4210407",
+ "nome": "Maracajá",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8176419",
+   "resultado": "LIDO integral (docx do DOM/SC): Lei 1.537, 27/03/2026 - regulamenta trânsito de veículos pesados nas estradas pavimentadas; art. 21 revoga a Lei 1.451/2024. atos/4210407/lei_1537_2026.txt"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6494384",
+   "resultado": "LIDO integral: Lei 1.451, 04/10/2024 (iniciativa popular, promulgada pela Câmara) - PBT>10 t nas Rodovias José Jovelino Costa, Angelino Acordi e Alcino de Freitas. REVOGADA expressamente pela Lei 1.537/2026."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2232269",
+   "resultado": "LIDO integral: Decreto 106, 19/11/2019 - mesma proibição (PBT>10 t, 3 rodovias). Sem revogação expressa; conflita/foi substituído pela Lei 1.451/2024 e Lei 1.537/2026."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/3208199",
+   "resultado": "LIDO integral: Decreto 148, 09/08/2021 - PBT>24 t na Rua Manoel Pedroso (Guarajuva), rota alternativa ao pedágio de Araranguá."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/3511331",
+   "resultado": "LIDO integral: Decreto 238, 28/12/2021 - PBT>24 t, tráfego e estacionamento, em 5 ruas do bairro São Cristóvão."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/1976279",
+   "resultado": "LIDO integral: Decreto 22, 05/04/2019 - proíbe ESTACIONAMENTO de veículos de grande porte (PBT>10 t) em 10 vias; não restringe circulação."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2112941",
+   "resultado": "LIDO integral: Decreto 50, 01/08/2019 - inclui a Rua José Marques no Dec. 22/2019 (estacionamento)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4210407 ('veículos de grande porte', 'revoga decreto 106/2019', 'tráfego de caminhões PBT', 'Guarajuva caminhões')",
+   "resultado": "DOM/SC abriu; achou os 7 atos acima; nenhum decreto revoga os de 2021 (148 e 238) nem o 106/2019 de forma expressa."
+  },
+  {
+   "url": "OSM way 1391271274 'Rodovia Municipal Alcino de Freitas' maxweight=10",
+   "resultado": "Coincide com a regra revogada (10 t); a Lei 1.537/2026 troca o regime."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Município com 5 camadas: (1) Lei 1.537/2026 (vigente): veículos de carga com até 6 eixos podem trafegar nas rodovias Alcino de Freitas e José Elizandro dos Santos só entre 06h e 18h (art. 3º §1º); multa art. 16 para PBT>10 t; AEC com EIIV (arts. 5-12). O texto é ambíguo: o art. 3º §1º cita José Elizandro dos Santos, mas o Anexo Único (cortado após 'Rodovia Angelino Acordi - toda a extensão') lista Alcino de Freitas e Angelino Acordi; e 'permitido até 6 eixos' foi lido como proibido acima de 6 eixos e fora de 06-18h para veículos > 10 t PBT. Confiança baixa. (2) Lei 1.451/2024 e (3) Dec. 106/2019 (PBT>10 t nas rodovias José Jovelino Costa, Angelino Acordi e Alcino de Freitas): a Lei 1.451 foi revogada expressamente; o Dec. 106 fica desativado por substituição (possível resíduo em José Jovelino Costa, que não consta da Lei 1.537). (4) Dec. 148/2021 e (5) Dec. 238/2021: PBT>24 t em ruas específicas, sem revogação localizada, ativos. Decretos 22 e 50/2019 só tratam de estacionamento (não viram regra). Sinalização não verificada. Recomendo conferência humana do Anexo Único completo e do alcance da Lei 1.537 (estradas pavimentadas).",
+ "osm_divergencias": [
+  "Rodovia Municipal Alcino de Freitas (way 1391271274) tem maxweight=10: reflete o regime revogado (Lei 1.451/2024/Dec. 106/2019); a Lei 1.537/2026 substitui por limite de eixos e horário 06-18h."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "maracaja_lei_1537_2026_noite",
+   "tipo": "via",
+   "regime": "Restrição horária (rodovias municipais) - Lei 1.537/2026",
+   "nome": "Rodovias Alcino de Freitas e Angelino Acordi (Anexo) / José Elizandro dos Santos (art. 3º §1º): veículos de carga > 10 t PBT só 06h-18h",
+   "status": "ativa",
+   "status_motivo": "Lei vigente (27/03/2026, publicada 31/03/2026); redação ambígua quanto às rodovias e ao limiar; ver observações.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "06:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "18:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.537, de 27/03/2026 (Maracajá)",
+     "artigo": "art. 3º, §1º; art. 4º (exceções); art. 16 (multa PBT>10 t); Anexo Único",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8176419",
+     "nota": "Texto integral lido. Art. 21 revoga a Lei 1.451/2024."
+    }
+   ],
+   "excecoes": [
+    "Transporte coletivo regular",
+    "Carga/descarga de bens e valores bancários",
+    "Coleta de lixo e serviços emergenciais de saúde",
+    "Entrega de materiais para obras, residências ou estabelecimentos situados na via (comprovada por nota fiscal)",
+    "Escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados na via",
+    "Manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água)",
+    "Guincho",
+    "Veículos de utilidade pública em atendimento, veículos oficiais e veículos com AEC (art. 4º I-III)"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 3º §1º / Anexo Único",
+     "via": [
+      "Rodovia Alcino de Freitas",
+      "Rodovia Angelino Acordi",
+      "Rodovia José Elizandro dos Santos"
+     ],
+     "descricao": "Alcino de Freitas e Angelino Acordi: 'toda sua extensão' (Anexo); José Elizandro dos Santos citada só no art. 3º §1º.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2026-03-31",
+   "nota": "Proibição fora de 06:00-18:00 (descanso/Lei do Silêncio); janelas 00-06 e 18-24 todos os dias. Feriados: lei silente (aplica por padrão)."
+  },
+  {
+   "id": "maracaja_lei_1537_2026_eixos",
+   "tipo": "via",
+   "regime": "Limite de eixos (rodovias municipais) - Lei 1.537/2026",
+   "nome": "Rodovias Alcino de Freitas, Angelino Acordi e José Elizandro dos Santos: veículos de carga com mais de 6 eixos não permitidos",
+   "status": "ativa",
+   "status_motivo": "Lei vigente; o texto só diz 'permitido até 06 eixos' - proibição acima de 6 lida por interpretação.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "eixos",
+      "acima": 6
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.537, de 27/03/2026 (Maracajá)",
+     "artigo": "art. 3º, caput",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8176419"
+    }
+   ],
+   "excecoes": [
+    "Transporte coletivo regular",
+    "Carga/descarga de bens e valores bancários",
+    "Coleta de lixo e serviços emergenciais de saúde",
+    "Entrega de materiais para obras, residências ou estabelecimentos situados na via (comprovada por nota fiscal)",
+    "Escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados na via",
+    "Manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água)",
+    "Guincho"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 3º §1º / Anexo Único",
+     "via": [
+      "Rodovia Alcino de Freitas",
+      "Rodovia Angelino Acordi",
+      "Rodovia José Elizandro dos Santos"
+     ],
+     "descricao": "Ver regra de horário.",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2026-03-31"
+  },
+  {
+   "id": "maracaja_dec_106_2019_rodovias_10t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Rodovias José Jovelino Costa, Angelino Acordi e Alcino de Freitas: PBT > 10 t (Dec. 106/2019; reproduzido na Lei 1.451/2024)",
+   "status": "desativada",
+   "status_motivo": "Lei 1.451/2024 (mesmo conteúdo) revogada expressamente pela Lei 1.537/2026, que muda o regime nas rodovias Alcino de Freitas/Angelino Acordi; Dec. 106 sem revogação expressa - pode restar eficácia em José Jovelino Costa. Conferir.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 106, de 19/11/2019 (Maracajá)",
+     "artigo": "art. 1º; art. 2º (exceções)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/2232269"
+    },
+    {
+     "ato": "Lei Municipal 1.451, de 04/10/2024 (REVOGADA pela Lei 1.537/2026, art. 21)",
+     "artigo": "art. 1º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6494384"
+    }
+   ],
+   "excecoes": [
+    "Transporte coletivo regular",
+    "Carga/descarga de bens e valores bancários",
+    "Coleta de lixo e serviços emergenciais de saúde",
+    "Entrega de materiais para obras, residências ou estabelecimentos situados na via (comprovada por nota fiscal)",
+    "Escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados na via",
+    "Manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água)",
+    "Guincho"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rodovia José Jovelino Costa",
+      "Rodovia Angelino Acordi",
+      "Rodovia Alcino de Freitas (antiga MR-370)"
+     ],
+     "descricao": "Vias nomeadas, sem trechos.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2019-11-19"
+  },
+  {
+   "id": "maracaja_dec_148_2021_manoel_pedroso",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Rua Manoel Pedroso (Guarajuva): PBT > 24 t (Dec. 148/2021)",
+   "status": "ativa",
+   "status_motivo": "Decreto sem revogação localizada no DOM/SC; sinalização não verificada. A Lei 1.537/2026 trata de estradas pavimentadas e não cita a rua.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 24.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 148, de 09/08/2021 (Maracajá)",
+     "artigo": "art. 1º; art. 2º (exceções)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/3208199",
+     "nota": "Texto lido. Motivo: rota alternativa ao pedágio de Araranguá (km 404,5)."
+    }
+   ],
+   "excecoes": [
+    "Transporte coletivo regular",
+    "Carga/descarga de bens e valores bancários",
+    "Coleta de lixo e serviços emergenciais de saúde",
+    "Entrega de materiais para obras, residências ou estabelecimentos situados na via (comprovada por nota fiscal)",
+    "Escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados na via",
+    "Manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água)",
+    "Guincho"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua Manoel Pedroso"
+     ],
+     "descricao": "Localidade de Guarajuva.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2021-08-10"
+  },
+  {
+   "id": "maracaja_dec_238_2021_sao_cristovao",
+   "tipo": "via",
+   "regime": "Proibição por peso (vias) e estacionamento",
+   "nome": "Bairro São Cristóvão: Ruas Antônio Alípio Gabriel, Santino Manoel da Silva, Pedro Samuel, Bernardino e Avelina Henrique Felisberto - PBT > 24 t (Dec. 238/2021)",
+   "status": "ativa",
+   "status_motivo": "Decreto sem revogação localizada; sinalização não verificada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 24.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 238, de 28/12/2021 (Maracajá)",
+     "artigo": "art. 1º; art. 2º (exceções)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/3511331",
+     "nota": "Texto lido. Também proíbe estacionamento. O inciso IV/V das exceções refere 'Rodovias mencionadas no art. 1º' (cópia do 106/2019)."
+    }
+   ],
+   "excecoes": [
+    "Transporte coletivo regular",
+    "Carga/descarga de bens e valores bancários",
+    "Coleta de lixo e serviços emergenciais de saúde",
+    "Entrega de materiais para obras, residências ou estabelecimentos situados na via (comprovada por nota fiscal)",
+    "Escoamento de produção agrícola, pecuária ou agroindustrial de imóveis situados na via",
+    "Manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água)",
+    "Guincho"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua Antônio Alípio Gabriel",
+      "Rua Santino Manoel da Silva",
+      "Rua Pedro Samuel",
+      "Rua Bernardino",
+      "Rua Avelina Henrique Felisberto"
+     ],
+     "descricao": "Bairro São Cristóvão, sede.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2021-12-29"
+  }
+ ]
+}

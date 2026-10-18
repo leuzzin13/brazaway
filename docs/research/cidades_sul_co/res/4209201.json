@@ -1,0 +1,89 @@
+{
+  "ibge": "4209201",
+  "nome": "Lacerdópolis",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1600709",
+      "resultado": "Lei 2.135/2018 aberta e lida (texto integral)."
+    },
+    {
+      "url": "DOM/SC buscar 4209201 'restrição de tráfego de veículos pesados', 'estradas asfaltadas do interior', 'Lei 2135'",
+      "resultado": "Só esta lei; nenhuma alteração, decreto de liberação ou revogação."
+    }
+  ],
+  "observacoes": "Lei de 2018 vigente (sem revogação achada).",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "lacerdopolis_lei2135_2018_estradas_asfaltadas",
+      "tipo": "via",
+      "regime": "Estradas vicinais asfaltadas: combinações e pesados",
+      "nome": "Lacerdópolis: Lei 2.135/2018, proibido tráfego de caminhões e carretas (Romeu e Julieta, bitrem, tritrem, rodotrem etc.) nas estradas vicinais asfaltadas de seis comunidades",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões com até o quarto eixo e PBT carregado <= 30 t (art. 1º, parágrafo único)",
+        "Liberação excepcional por decreto em catástrofe natural que impeça a rodovia principal (art. 5º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal nº 2.135, de 23/04/2018",
+          "artigo": "art. 1º e parágrafo único (exclui caminhões até o 4º eixo e PBT <= 30 t), art. 5º (decreto pode liberar em catástrofe), art. 6º (sinalização)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1600709",
+          "nota": "DOM/SC 24/04/2018"
+        }
+      ],
+      "vigencia_inicio": "2018-04-24",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Linha São Paulo",
+            "Linha São Brás",
+            "Linha Encruzilhada",
+            "Linha São Roque",
+            "Linha São Pedro",
+            "Linha Santo Antônio"
+          ],
+          "descricao": "estradas vicinais ASFALTADAS dessas seis comunidades; a lei não delimita trechos",
+          "aproximado": true
+        }
+      ],
+      "nota": "A proibição vale para 'carregados ou não'. O alvo (mais de 4 eixos OU PBT > 30 t) inverte a exceção do parágrafo único. Estradas vicinais sem nome oficial, descritas por comunidade.",
+      "geometria": []
+    }
+  ]
+}

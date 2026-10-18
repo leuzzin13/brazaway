@@ -1,0 +1,88 @@
+{
+ "ibge": "4218004",
+ "nome": "Tijucas",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8701432",
+   "resultado": "LIDO integral (.doc do DOM/SC): Decreto 3.162/2026 - proíbe PBT > 12 t ou > 2 eixos na ponte sobre o Rio Santa Luzia (divisa Tijucas/Porto Belo). Metadados do DOM/SC: epígrafe e publicação 11/09/2026; o corpo do documento traz data 18/10/2026 (inconsistência). atos/4218004/decreto_3162_2026.txt"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4218004 ('ponte rio Santa Luzia','veículos pesados','circulação de caminhões','carga e descarga')",
+   "resultado": "DOM/SC abriu; só o Dec. 3.162/2026 restringe circulação. Lei 2968/2023 (definição de veículos pesados em lei de trânsito/taxas), LC 104/2024 (código de posturas) e LC 113/2025 (plano diretor) aparecem como ruído; não lidos integralmente."
+  },
+  {
+   "url": "OSM hgv=no em Rua Lila Bastos, Rua Otávio Melim, Rua Marechal Deodoro da Fonseca e outros",
+   "resultado": "Sem ato municipal localizado no DOM/SC; não vira regra."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 3.162/2026 (Tijucas) proíbe, por laudo técnico (ponte em 'Nível 1 - Estado Crítico'), o tráfego de veículos com PBT > 12 t OU mais de 2 eixos sobre a Ponte sobre o Rio Santa Luzia, na divisa com Porto Belo (que editou o Decreto 4.564/2026 sobre a mesma ponte - fora do meu lote). Sem prazo final (art. 2º: revisão por nova avaliação técnica). Sem horário: 24 h todos os dias. Sem exceções. ATENÇÃO: a ponte pode ser de via municipal compartilhada com Porto Belo; não confirmei se faz parte de rodovia estadual (ex.: SC-412/SC-410) - se for, DER/SC seria o competente; o decreto municipal é, porém, o ato lido. Data: DOM/SC indica 11/09/2026 e o corpo do texto 18/10/2026. Sinalização/efetividade não verificadas.",
+ "osm_divergencias": [
+  "Ruas Lila Bastos, Otávio Melim e Marechal Deodoro da Fonseca (e outras) têm hgv=no no OSM sem ato municipal localizado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "tijucas_dec_3162_2026_ponte_santa_luzia",
+   "tipo": "ponte",
+   "regime": "Restrição por peso e eixos (ponte)",
+   "nome": "Ponte sobre o Rio Santa Luzia (divisa Tijucas/Porto Belo): PBT > 12 t ou mais de 2 eixos proibidos (Decreto 3.162/2026)",
+   "status": "ativa",
+   "status_motivo": "Decreto em vigor desde a publicação (DOM/SC: 11/09/2026); revisão prevista por nova avaliação técnica (art. 2º). Inconsistência de data no corpo do ato.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 12.0
+     },
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 3.162, de 11/09/2026 (Tijucas)",
+     "artigo": "art. 1º; art. 2º (revisão)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8701432",
+     "nota": "Texto integral lido; corpo do documento datado 18/10/2026, DOM/SC publicado em 11/09/2026."
+    }
+   ],
+   "excecoes": [],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Ponte sobre o Rio Santa Luzia"
+     ],
+     "descricao": "Ponte na divisa Tijucas/Porto Belo; geometria a identificar no OSM.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2026-09-11",
+   "nota": "Condição OU: PBT > 12 t OU > 2 eixos (um caminhão de 3 eixos leve também é barrado)."
+  }
+ ]
+}

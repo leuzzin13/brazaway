@@ -1,0 +1,170 @@
+{
+  "ibge": "4211603",
+  "nome": "Nova Veneza",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1846579",
+      "resultado": "Lei 2.663/2018 aberta e lida (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2526303",
+      "resultado": "Decreto 187/2020 lido."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2165515",
+      "resultado": "Decreto 457/2019 lido."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2183405 ; /7082491",
+      "resultado": "Decretos 479/2019 e GP 018/2025 lidos: só nomeação da Comissão Especial de Análise (art. 10 da lei)."
+    },
+    {
+      "url": "DOM/SC entidade da prefeitura: consultas 'PROÍBE O TRÂNSITO DE VEÍCULOS COM PESO BRUTO TOTAL', 'Lei Municipal n.º 2.663', 'Autorização Especial de Circulação'",
+      "resultado": "Só estes atos: nenhum outro decreto por via; nenhum revoga os 187/2020 e 457/2019."
+    }
+  ],
+  "observacoes": "A Lei 2.663/2018 delega a lista de vias a decretos (3 vias hoje: Natal Coral, dos Imigrantes, Ângelo Gava, todas PBT > 15 t). Os mapas dos projetos anexos não foram lidos. Pode haver outros decretos fora do DOM/SC.",
+  "osm_divergencias": [
+    "OSM hgv=no e maxweight=12 na Rua dos Imigrantes, Rua Cônego Miguel Giacca e um way secondary sem nome: a Rua dos Imigrantes consta do Dec. 187/2020 (15 t); a Rua Cônego Miguel Giacca NÃO consta de decreto achado; o valor 12 t não bate com o decreto (15 t)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "novaveneza_dec187_2020_imigrantes_gava",
+      "tipo": "via",
+      "regime": "Vias do Bairro Elisa: PBT > 15 t",
+      "nome": "Nova Veneza: Dec. 187/2020, proibido o trânsito de veículos com PBT > 15 t na Rua dos Imigrantes e na Rua Ângelo Gava (Bairro Elisa)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Prestadores de serviços de utilidade pública em atendimento, identificados (Lei 2.663/2018, art. 4º, I)",
+        "Veículos oficiais a serviço, identificados (art. 4º, II)",
+        "Veículos com Autorização Especial de Circulação (AEC) (art. 4º, III; arts. 5º a 12)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 187, de 16/06/2020",
+          "artigo": "art. 1º e parágrafo único (exceções do art. 4º da Lei 2.663/2018)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2526303"
+        },
+        {
+          "ato": "Lei nº 2.663, de 18/12/2018 (Nova Veneza)",
+          "artigo": "art. 3º (PBT > 12 t em vias determinadas por ato do Executivo), art. 4º (exceções), arts. 5º a 12 (AEC/EIIV)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1846579",
+          "nota": "DOM/SC 21/12/2018"
+        }
+      ],
+      "vigencia_inicio": "2020-06-16",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua dos Imigrantes"
+          ],
+          "descricao": "Bairro Elisa (a extensão exata consta do projeto anexo ao decreto, não lido)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Ângelo Gava"
+          ],
+          "descricao": "Bairro Elisa (idem)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Os trechos exatos estão em 'justificativa técnica e projeto anexos' ao decreto (não vieram no texto do DOM/SC). O OSM marca hgv=no e maxweight=12 na Rua dos Imigrantes (way 319719139, 1087538842) e na Rua Cônego Miguel Giacca, e maxweight=15 em outro trecho: 12 t é o limite padrão do art. 3º da Lei, mas o decreto fixa 15 t.",
+      "geometria": []
+    },
+    {
+      "id": "novaveneza_dec457_2019_natal_coral",
+      "tipo": "via",
+      "regime": "Rua Natal Coral: PBT > 15 t",
+      "nome": "Nova Veneza: Dec. 457/2019, proibido o trânsito de veículos com PBT > 15 t na Rua Natal Coral (Bairro Elisa)",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 15
+          }
+        ]
+      },
+      "excecoes": [
+        "Prestadores de serviços de utilidade pública em atendimento, identificados (Lei 2.663/2018, art. 4º, I)",
+        "Veículos oficiais a serviço, identificados (art. 4º, II)",
+        "Veículos com Autorização Especial de Circulação (AEC) (art. 4º, III; arts. 5º a 12)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 457, de 02/09/2019",
+          "artigo": "art. 1º e parágrafo único",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2165515"
+        },
+        {
+          "ato": "Lei nº 2.663, de 18/12/2018 (Nova Veneza)",
+          "artigo": "art. 3º (PBT > 12 t em vias determinadas por ato do Executivo), art. 4º (exceções), arts. 5º a 12 (AEC/EIIV)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1846579",
+          "nota": "DOM/SC 21/12/2018"
+        }
+      ],
+      "vigencia_inicio": "2019-09-02",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rua Natal Coral"
+          ],
+          "descricao": "Bairro Elisa (extensão no projeto anexo ao decreto)",
+          "aproximado": true
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

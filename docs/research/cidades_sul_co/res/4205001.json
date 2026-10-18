@@ -1,0 +1,112 @@
+{
+  "ibge": "4205001",
+  "nome": "Dionísio Cerqueira",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7620112",
+      "resultado": "Decreto 9.092/2025 aberto e lido (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/8553003",
+      "resultado": "Decreto 9.348/2026 lido: empilhadeiras e carga e descarga em frente a estabelecimentos (07-11h e 14-18h); não é restrição a caminhões."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7552742",
+      "resultado": "Lei 5.047/2025 (trecho da preparação): definições de transporte urbano de cargas; Lei 5.057/2025 (citada pelo decreto) não localizada no DOM/SC."
+    },
+    {
+      "url": "DOM/SC buscar 4205001 'trânsito de caminhões perímetro urbano', 'Lei 5057', 'veículos pesados 7 metros', 'altura 3,40'",
+      "resultado": "Nenhuma alteração do Dec. 9.092/2025."
+    }
+  ],
+  "observacoes": "Regra recente e clara; Lei 5.057/2025 (base) não foi lida.",
+  "osm_divergencias": [
+    "OSM hgv=no em Rua República Argentina, Rua Presidente Vargas, Av. Paraná (secondary): o Dec. 9.092/2025 só restringe caminhões > 7 m e > 3,40 m, não todo hgv; sem ato que prove hgv=no."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "dionisiocerqueira_dec9092_2025_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "Caminhões > 7 m e > 3,40 m no perímetro urbano",
+      "nome": "Dionísio Cerqueira: Dec. 9.092/2025, proibido o trânsito de caminhões acima de 7 m de comprimento e 3,40 m de altura nas vias do perímetro urbano",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "comprimento_m",
+            "acima": 7
+          },
+          {
+            "campo": "altura_m",
+            "acima": 3.4
+          }
+        ]
+      },
+      "excecoes": [
+        "Bombeiros, transportadores de combustíveis, guinchos e ônibus (art. 2º, V)",
+        "Autorização especial da Prefeitura (art. 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 9.092, de 29/09/2025 (Lei 5.057/2025)",
+          "artigo": "art. 1º (proibição), art. 2º (vias liberadas e exceções), art. 3º (autorização), art. 6º (vigência em 60 dias da publicação)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7620112"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 2º, I",
+          "via": [
+            "BR-280 e BR-163"
+          ],
+          "descricao": "vias LIBERADAS da proibição (rodovias federais)"
+        },
+        {
+          "inciso": "art. 2º, II",
+          "via": [
+            "Estrada de acesso ao Aeroporto Municipal"
+          ],
+          "descricao": "via LIBERADA"
+        },
+        {
+          "inciso": "art. 2º, III",
+          "via": [
+            "(BR-163 sentido Bairro São Silvestre)"
+          ],
+          "descricao": "via LIBERADA"
+        },
+        {
+          "inciso": "art. 2º, IV",
+          "via": [
+            "(BR-163 a 400 m sentido norte da Rua Vereador João Verona)"
+          ],
+          "descricao": "via LIBERADA"
+        }
+      ],
+      "nota": "Redação: 'acima de 7 m de comprimento E acima de 3,40 m de altura' — adotei o E literal (todas as condições); se a intenção for OU, a regra é mais ampla. 'Perímetro urbano' não está delimitado em mapa. Vigência 60 dias após a publicação (cerca de 30/11/2025; data exata da publicação não conferida). OSM tem hgv=no na Rua República Argentina (secondary), Rua Presidente Vargas e Av. Paraná.",
+      "geometria": []
+    }
+  ]
+}

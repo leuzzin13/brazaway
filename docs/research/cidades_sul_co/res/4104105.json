@@ -1,0 +1,155 @@
+{
+  "ibge": "4104105",
+  "nome": "Campo do Tenente",
+  "uf": "PR",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/2E0C4AAF",
+      "resultado": "Decreto 108/2019 (AMP, 03/10/2019) aberto e lido. Texto em atos/4104105/dec108_2019.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/BE8A97E9",
+      "resultado": "Lei 971/2019 (AMP, 12/07/2019; também no SAPL norma/224) aberta e lida. Texto em atos/4104105/lei971_2019.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/C79427D2",
+      "resultado": "Decreto 237/2013 (AMP, 25/10/2013) aberto e lido. Texto em atos/4104105/dec237_2013.txt"
+    },
+    {
+      "url": "https://sapl.campodotenente.pr.leg.br/norma/224",
+      "resultado": "Lei 971/2019 confirmada no SAPL; busca caminh|pesad|trânsito|tráfego: nada mais relevante"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4104105 'trânsito de caminhões', 'Serrinha toneladas', 'caminhões chuva estradas rurais', 'Olívio Belich' (amp)",
+      "resultado": "nenhuma alteração/revogação dos três atos; Lei 1105/2022 (frota) e Decreto 014/2023 (inspeção sanitária) são ruído"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Três atos próprios vigentes (sem revogação encontrada): Decreto 108/2019 (duas ruas, PBT>30 t), Decreto 237/2013 (estrada de Serrinha, >7 t) e Lei 971/2019 (estradas rurais em dia de chuva; regra desativada por depender de clima). Geometria por nome pendente.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "campodotenente_vias_olivio_augustinho_30t",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Ruas Olívio Belich e Augustinho Tiburski: proibido caminhões com PBT acima de 30 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 108/2019 (02/10/2019)",
+          "artigo": "art. 1º, I e II (vias); art. 2º (sinalização); art. 3º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/2E0C4AAF"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "Rua Olívio Belich",
+          "nota": "via inteira (vedação total)"
+        },
+        {
+          "via": "Rua Augustinho Tiburski",
+          "nota": "via inteira (vedação total)"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "campodotenente_serrinha_7t",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Estrada geral da localidade de Serrinha (acesso pela BR-116): proibido veículos acima de 7 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 237/2013 (22/10/2013)",
+          "artigo": "art. 1º; art. 2º (vigência na publicação)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/C79427D2"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "Estrada geral da localidade de Serrinha",
+          "de": "BR-116 (acesso direto)",
+          "nota": "extensão não definida no decreto; 'acima de 7 toneladas' sem dizer PBT ou capacidade"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "campodotenente_estradas_rurais_chuva",
+      "tipo": "via",
+      "regime": "Estradas rurais em dia de chuva",
+      "nome": "Estradas rurais com revestimento primário: proibido tráfego de caminhões/carretas em dia de chuva e nos 2 dias seguintes",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Regra condicionada ao clima (dia de chuva + 2 dias) e a todas as estradas rurais com revestimento primário, sem lista de vias: não modelável como via/janela fixa. A ementa fala em 'mais de três eixos', mas o art. 1º proíbe 'caminhões/carretas' sem limite de eixos.",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero (art. 1º, parágrafo único)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 971/2019 (11/07/2019)",
+          "artigo": "art. 1º (proibição) e parágrafo único (exceção); art. 2º (fiscalização/multa); art. 3º (vigência)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/BE8A97E9"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

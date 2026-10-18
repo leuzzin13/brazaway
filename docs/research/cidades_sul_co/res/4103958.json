@@ -1,0 +1,137 @@
+{
+  "ibge": "4103958",
+  "nome": "Campina do Simão",
+  "uf": "PR",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/568CC512",
+      "resultado": "Lei 698/2020 (AMP ed. 2160, 16/12/2020) aberta e lida na íntegra. Texto em atos/4103958/lei698_2020.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/03B3978C",
+      "resultado": "LC 18/2024 (Código de Posturas, AMP 17/05/2024) aberta; só o item 'Trafegar na Zona Central...' é relevante. Texto em atos/4103958/lc18_2024_posturas.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/1C14C7A9",
+      "resultado": "LC 13/2024 (plano diretor/sistema viário): só diretrizes (disciplinar tráfego de cargas); não é regra"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4103958 'circulação de caminhões carregados', 'Lei 698', 'Autorização Especial de Trânsito caminhões' (amp)",
+      "resultado": "nenhuma alteração/revogação da Lei 698/2020 nem decreto regulamentador das exceções do art. 1º, § 3º"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Lei 698/2020 vigente (limites de PBTC 55 t, 18 m, 7 eixos em todo o viário municipal) e item 'Zona Central' no Código de Posturas de 2024 (sem perímetro, desativado). Decreto do art. 1º, § 3º (exceções por serviço) não localizado.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "campinadosimao_caminhoes_carregados",
+      "tipo": "zona",
+      "regime": "Limite de PBT/comprimento/eixos",
+      "nome": "Vias urbanas e estradas rurais de Campina do Simão: proibidos caminhões carregados com PBTC acima de 55 t, comprimento acima de 18 m ou 7 ou mais eixos",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 55
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 18
+          },
+          {
+            "campo": "eixos",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Circulação eventual sem carga para acesso a residência ou socorro mecânico (art. 1º, § 1º)",
+        "Autorização Especial de Trânsito da Secretaria de Obras (art. 1º, § 2º; art. 8º)",
+        "Serviços de obras de infraestrutura, concretagem, mudanças, alimentos e perecíveis, perigosos de consumo local, entulho/caçambas, nos termos de decreto a expedir (art. 1º, § 3º)",
+        "Urgência, socorro, obras de emergência, correios, sinalização, forças armadas, jornalismo, acesso a estacionamento próprio, valores, coleta de lixo, manutenção de emergência, serviços essenciais (art. 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 698/2020 (15/12/2020)",
+          "artigo": "art. 1º, I a III e §§ 1º a 4º (extensão: área urbana e todas as estradas rurais, 'conforme Anexo I'); art. 2º (exceções permanentes); art. 8º (Autorização Especial de Trânsito); art. 12 (vigência 15 dias após a publicação)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/568CC512"
+        }
+      ],
+      "vigencia_inicio": "2020-12-31",
+      "geometria": [],
+      "nota": "Anexo I (mapa) não aparece no texto do diário; a abrangência é a área urbana e todas as extensões das estradas rurais (= todo o município viário). Só valem carregados. O texto cita 'Área de Restrição Máxima' (art. 1º, § 4º) sem defini-la."
+    },
+    {
+      "id": "campinadosimao_zona_central_posturas",
+      "tipo": "zona",
+      "regime": "Zona Central",
+      "nome": "Zona Central de Campina do Simão: proibido trafegar com caminhões com mais de 5 m e 7 t",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "O perímetro da 'Zona Central' não é definido no Código de Posturas; número do artigo não legível no HTML do diário. Mesmo modelo textual do Código de Posturas de Terra Roxa (LC 2139/2024).",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "20:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "14:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "comprimento_m",
+            "acima": 5
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 7
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Complementar 18/2024 (Código de Posturas, 14/05/2024)",
+          "artigo": "Capítulo XI (Das estradas municipais), rol 'Fica proibido', 11º inciso (numeração dos artigos não aparece no HTML do diário)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/03B3978C"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

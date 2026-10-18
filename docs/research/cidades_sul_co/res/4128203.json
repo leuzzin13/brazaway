@@ -1,0 +1,131 @@
+{
+ "ibge": "4128203",
+ "nome": "União da Vitória",
+ "uf": "PR",
+ "status": "pontual",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/8FDD0330",
+   "resultado": "LIDO integral. Salvo em atos/4128203/decreto_443_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/F1E620E0",
+   "resultado": "LIDO por trechos (LC 40/2024). Salvo em atos/4128203/lc_40_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/F1ADF9DE",
+   "resultado": "LIDO por trechos (LC 41/2024). Salvo em atos/4128203/lc_41_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/881D992E",
+   "resultado": "LIDO por trechos (Lei 4.526/2015). Salvo em atos/4128203/lei_4526_2015.txt"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4128203 (trânsito de caminhões; carga e descarga caminhões pesados centro; proíbe tráfego de caminhões)",
+   "resultado": "sem decreto de zona/horário"
+  },
+  {
+   "url": "https://sapl.uniaodavitoria.pr.leg.br/materia/pesquisar-materia",
+   "resultado": "SAPL não consultado; Lei 4.553/2015 não lida"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Atos lidos: (1) Decreto 443/2023 (17/10/2023): proibição de caminhões em todo o município por 15 dias por causa da cheia do Iguaçu - vencido (revogada). (2) LC 40/2024 (Sistema Viário; AMP 27/11/2024): proíbe veículos de carga nas estradas municipais em dias chuvosos/leito úmido, multa de R$ 5.000 (condição meteorológica -> desativada); também diretriz de limitar horários de carga e descarga de caminhões pesados em vias locais do centro (sem horário fixado; carga e descarga na Zona Azul pela Lei 4.553/2015, não lida). (3) LC 41/2024 (Posturas): infração de \"trafegar em ruas de perímetro central com veículos com mais de seis toneladas, dificultando a circulação\" (condicionada a causar dificuldade, perímetro central não definido) e de carregar/descarregar na zona central fora do horário previsto: sem regra aplicável. (4) Lei 4.526/2015 (Plano de Mobilidade): prevê \"zonas de restrição à circulação de caminhões\" sem defini-las. Não achada lei de zona de restrição; Lei 4.553/2015 e eventual decreto da Secretaria de Transportes pendentes.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "uniaodavitoria_estradas_municipais_chuva",
+   "tipo": "via",
+   "regime": "Chuva (estradas rurais)",
+   "nome": "Estradas municipais: veículos de carga proibidos em dias chuvosos ou com leito úmido (LC 40/2024)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar nº 40, de 18/11/2024 (União da Vitória) - Sistema Viário",
+     "artigo": "artigo sobre tráfego em estradas municipais em dias chuvosos (número não identificado no texto extraído)",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/F1E620E0"
+    }
+   ],
+   "status_motivo": "Condição meteorológica (\"dias chuvosos ou leito úmido que possam acarretar danos\"), sem limiar de chuva nem de peso; multa R$ 5.000; Secretaria de Transportes pode regulamentar períodos por ato (não achado). Número do artigo não identificado no texto sem numeração.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas municipais"
+     ],
+     "descricao": "todas as estradas municipais rurais"
+    }
+   ]
+  },
+  {
+   "id": "uniaodavitoria_decreto_443_2023_emergencia",
+   "tipo": "zona",
+   "regime": "Emergência (enchente)",
+   "nome": "Município: tráfego de caminhões proibido por 15 dias (Decreto 443/2023, enchente)",
+   "status": "revogada",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 443, de 17/10/2023 (União da Vitória)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/8FDD0330"
+    }
+   ],
+   "status_motivo": "Medida de emergência por 15 dias (chuvas e cheia do Rio Iguaçu, Decretos 436/438); prazo encerrado em ~01/11/2023.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "município inteiro"
+     ],
+     "descricao": "todo o município"
+    }
+   ],
+   "vigencia_inicio": "2023-10-17",
+   "vigencia_fim": "2023-11-01"
+  }
+ ]
+}

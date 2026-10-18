@@ -1,0 +1,83 @@
+{
+ "ibge": "4117503",
+ "nome": "Paiçandu",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/9BB99114",
+   "resultado": "LIDO integral. Salvo em atos/4117503/lei_3385_2025.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/611ED054",
+   "resultado": "trecho via busca: Dec. 292/2024, obra de retificação de curva"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4117503 (Lei 3385 decreto; Avenida Ivaí; Estrada Patu)",
+   "resultado": "sem decreto regulamentador; Estrada Patu sem ato"
+  },
+  {
+   "url": "OSM (pistas do lote)",
+   "resultado": "5 ways hgv=no unclassified"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 3.385/2025 (AMP 15/05/2025), lida integralmente: proíbe tráfego, circulação, permanência, parada e estacionamento de \"caminhões de grande porte\" em 15 bairros/loteamentos (Jardim Canadá, João Gerotto, João de Queiroz, Dona Marcelina, Polo, Gramado, Santa Mônica, Santa Paula, Cidade Jardim, Parque São Jorge, Ouro Verde, Madri, Novo Horizonte, Laranjeiras, Petrópolis), com exceções amplas; caminhões de grande porte só pela Av. Ivaí e Rua Marechal Castelo Branco para acessar depósitos. Porte não definido -> regra DESATIVADA (confiança média). Sem decreto regulamentador achado (art. 6º). Decreto 292/2024 (retificação de curva em estrada rural) é obra. OSM: 5 ways hgv=no (110107738, 206401329/340 \"Estrada Patu\", 206401344, 910684711) em estradas unclassified, sem ato municipal correspondente.",
+ "osm_divergencias": [
+  "5 ways hgv=no (Estrada Patu e outras, highway=unclassified) sem ato municipal achado"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "paicandu_bairros_caminhoes_grande_porte",
+   "tipo": "zona",
+   "regime": "Zona residencial (grande porte)",
+   "nome": "15 bairros residenciais: caminhões de grande porte proibidos (Lei 3.385/2025)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "serviços públicos essenciais e de emergência",
+    "coleta de lixo; manutenção de emergência de redes; mudanças; socorro médico e incêndio; entregadores de móveis, eletrodomésticos e mercadorias nos bairros (preferencialmente em horário comercial)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 3.385/2025 (Paiçandu), AMP 15/05/2025",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/9BB99114"
+    }
+   ],
+   "status_motivo": "\"Caminhões de grande porte\" não é definido na lei nem em decreto achado (sem PBT/eixos/comprimento), os polígonos dos loteamentos não constam do ato e as exceções (entregas nos bairros) são amplas; aplicável só após definir o porte e desenhar os bairros.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Avenida Ivaí",
+      "Rua Marechal Castelo Branco"
+     ],
+     "descricao": "bairros: Jardim Canadá 1ª, 2ª e 3ª Partes; Jardim João Gerotto; Jardim João de Queiroz; Jardim Dona Marcelina I e II; Jardim Polo; Jardim Gramado I e II; Jardim Santa Mônica; Jardim Santa Paula; Jardim Cidade Jardim; Parque São Jorge; Jardim Ouro Verde; Jardim Madri; Jardim Novo Horizonte; Jardim Laranjeiras; Jardim Petrópolis. Acesso de caminhões de grande porte a depósitos/centros de distribuição próximos deve ser apenas pela Avenida Ivaí e Rua Marechal Castelo Branco"
+    }
+   ],
+   "vigencia_inicio": "2025-05-15"
+  }
+ ]
+}

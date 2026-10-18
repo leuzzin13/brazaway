@@ -1,0 +1,107 @@
+{
+ "ibge": "5000609",
+ "nome": "Amambai",
+ "uf": "MS",
+ "status": "pista",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "data": "2026-10-18",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/C33ECBEB",
+   "resultado": "Decreto 347/2013 lido integralmente: ZMRC na área central, sentido obrigatório Av. Pedro Manvailler e Av. Nicolau Otaño para caminhões >= trucado; perímetro da ZMRC não descrito."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/A7B7CCF3",
+   "resultado": "Decreto 270/2015 lido: proíbe ESTACIONAR veículos pesados na Av. Pedro Manvailler (nº 1.210-4.557) e Av. Nicolau Otaño (nº 1.516-5.419); só carga/descarga e embarque (pontual; estacionamento)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/ms/materia/624DBC97",
+   "resultado": "Lei 2.313/2012 (LDO): 12.29 estudos para desviar o trânsito de caminhões do centro; diretriz, não regra."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5000609 '347/13' / 'Zona Máxima de Restrições' / 'veículos carga pesada' (ms)",
+   "resultado": "Nenhum ato posterior alterando/revogando o 347/2013 nem delimitando a ZMRC."
+  },
+  {
+   "url": "legislacao.py buscar 5000609 (sapl câmara; portal_proprio prefeitura amambai.ms.gov.br/legislacao)",
+   "resultado": "0 resultados nas duas fontes (heurístico; site da prefeitura respondeu nesta rodada)."
+  }
+ ],
+ "observacoes": "Decreto 347/2013 existe e é vigente até onde se viu, mas não delimita a ZMRC; regra registrada como desativada. Dec. 270/2015 só proíbe estacionamento de pesados nas duas avenidas (pontual). Verificar no Código de Posturas (Lei 1.078/84) e junto à prefeitura se há mapa da ZMRC.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "amambai_zmrc_caminhoes",
+   "tipo": "zona",
+   "regime": "ZMRC - Zona Máxima de Restrições de Circulação",
+   "nome": "Amambai: na ZMRC (área central) caminhões a partir de 'trucado com eixo traseiro misto' só podem circular nas Avenidas Pedro Manvailler e Nicolau Otaño",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 2
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 2º, parágrafo único: carga/descarga em local da ZMRC com nota fiscal, reparo em oficina situada na ZMRC e pernoite em local apropriado",
+    "Avenidas Pedro Manvailler e Nicolau Otaño (travessias ligadas a rodovias estaduais) permanecem liberadas"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto municipal nº 347, de 19/08/2013 (Amambai/MS)",
+     "artigo": "arts. 1º e 2º e parágrafo único",
+     "url": "https://www.diariomunicipal.com.br/ms/materia/C33ECBEB"
+    }
+   ],
+   "geometria": [
+    {
+     "construir": "manual",
+     "como_gerar": "Montar no OSM pelas vias do ato (trechos); sem geometria no rascunho."
+    }
+   ],
+   "status_motivo": "O decreto institui a ZMRC 'abrangendo toda a área central' e diz que será delimitada 'pelas vias descritas neste Decreto', mas não descreve nenhuma via/perímetro; sem polígono não há como modelar (também não se sabe se as duas avenidas atravessam a zona inteira). Sem ato complementar encontrado.",
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Pedro Manvailler"
+     ],
+     "descricao": "Via permitida (rota obrigatória) dentro da ZMRC",
+     "aproximado": true
+    },
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Nicolau Otaño",
+      "Avenida Nicolau Otano"
+     ],
+     "descricao": "Via permitida (rota obrigatória) dentro da ZMRC",
+     "aproximado": true
+    }
+   ],
+   "vigencia_inicio": "2013-09-06",
+   "nota": "Alvo: 'configurações iguais ou superiores a caminhão trucado com eixo traseiro misto' interpretado como 3 ou mais eixos (eixos acima de 2) -- interpretação nossa, conferir. Sem horário: todos os dias, todos os horários (art. 2º)."
+  }
+ ]
+}

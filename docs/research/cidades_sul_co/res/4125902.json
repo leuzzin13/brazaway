@@ -1,0 +1,158 @@
+{
+ "ibge": "4125902",
+ "nome": "São Pedro do Paraná",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/CB8442A7",
+   "resultado": "LIDO integral (Lei 48/2026). Salvo em atos/4125902/lei_48_2026.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/CB48C45B",
+   "resultado": "LIDO integral (Decreto 405/2025). Salvo em atos/4125902/decreto_405_2025.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/71F912B9",
+   "resultado": "trecho lido via busca: Lei 040/2025 Posturas, veículos pesados que danifiquem pavimentação"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4125902 (veículos pesados zona rural; revoga decreto 405/2025)",
+   "resultado": "sem ato posterior à Lei 48/2026"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Dois atos lidos integralmente: Decreto 405/2025 (15/08/2025; proibe trânsito, parada e estacionamento nas vias rurais pavimentadas/em obras de caminhões acima de 3 eixos ou 20 t PBT, bitrens e treminhões) e Lei 48/2026 (19/08/2026; mesmo objeto com limites maiores: > 5 eixos, PBT > 40 t, bitrens/treminhões/rodotrens; exceções do art. 2º; art. 8º IV prevê horários). A lei, mais nova, prevalece (revoga disposições em contrário) -> regra ativa pela lei, decreto como desativado. Vias rurais não são nomeadas (sem geometria). Lei 040/2025 (Posturas) só veda veículos pesados que danifiquem pavimento. Nenhuma alteração posterior achada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saopedrodoparana_vias_rurais_pavimentadas_pesados",
+   "tipo": "via",
+   "regime": "Proibição por porte (vias rurais)",
+   "nome": "Vias rurais pavimentadas ou em obras de pavimentação: trânsito/parada de veículos pesados proibido (Lei 48/2026)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 5
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 40
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [
+    "serviços públicos essenciais; urgência e emergência; obras e serviços de infraestrutura pública; transporte de combustível; socorro mecânico",
+    "escoamento da produção agrícola e pecuária de pequenos produtores rurais",
+    "demais situações previamente autorizadas pelo Poder Executivo (art. 2º, VII)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 48/2026 (São Pedro do Paraná), de 19/08/2026, publ. 20/08/2026",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/CB8442A7"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "vias rurais pavimentadas"
+     ],
+     "descricao": "todas as vias rurais pavimentadas ou em obras de pavimentação do município; o ato não as nomeia (distritos, vilas, estradas e pontes rurais)"
+    }
+   ],
+   "vigencia_inicio": "2026-08-20",
+   "nota": "Lei: \"caminhões com mais de 05 eixos\", PBT > 40 t, bitrens/treminhões/rodotrens (cvc). Art. 8º, IV prevê fixar horários por ato do Executivo (não achado). Lista de vias não nomeada: geometria depende de identificar as estradas rurais pavimentadas."
+  },
+  {
+   "id": "saopedrodoparana_decreto_405_2025_vias_rurais",
+   "tipo": "via",
+   "regime": "Proibição por porte (vias rurais)",
+   "nome": "Vias rurais pavimentadas: caminhões > 3 eixos ou > 20 t PBT, bitrens e treminhões (Decreto 405/2025)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 405/2025 (São Pedro do Paraná), de 15/08/2025",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/CB48C45B"
+    }
+   ],
+   "status_motivo": "Lei 48/2026 (posterior, mesmo objeto, art. 11 revoga disposições em contrário) fixa limites diferentes (> 5 eixos / > 40 t); o decreto não foi revogado expressamente. Conservado como registro; a regra ativa é a da lei.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "vias rurais pavimentadas"
+     ],
+     "descricao": "vias rurais pavimentadas ou em obras de pavimentação; não nomeadas"
+    }
+   ]
+  }
+ ]
+}

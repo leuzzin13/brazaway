@@ -1,0 +1,159 @@
+{
+ "ibge": "4113908",
+ "nome": "Mallet",
+ "uf": "PR",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/E571C5EA",
+   "resultado": "LIDO integral (texto sem Anexo I). Salvo em atos/4113908/lei_1206_2014.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/72C92374",
+   "resultado": "LIDO integral. Salvo em atos/4113908/decreto_395_2026.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/F8697751",
+   "resultado": "LIDO integral (Dec. 827/2023). Salvo em atos/4113908/decreto_827_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/2FBC0BDF",
+   "resultado": "LIDO (Dec. 388/2014). Salvo em atos/4113908/decreto_388_2014.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/88C81498",
+   "resultado": "lido por trecho: Dec. 793/2025 lista a Lei 1.206/2014 como vigente"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4113908 (Perímetro Central de Tráfego; revoga/altera Lei 1206)",
+   "resultado": "sem anexo, sem decreto de criação do perímetro, sem revogação"
+  },
+  {
+   "url": "https://www.cmmallet.pr.gov.br/legislacao-publicacoes-legais/",
+   "resultado": "não consultado (anexo pode estar lá)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "(1) Lei 1.206/2014 (AMP 27/10/2014; lida): proíbe circulação de veículos com carga útil > 7 t e/ou comprimento > 7 m no Perímetro Central de Tráfego (Anexo I; permitido C/D com nota fiscal, moradores cadastrados, feriados cívico-religiosos); o Anexo I e o ato de criação do perímetro não foram achados nem lidos -> regra desativada. Lei citada como vigente no Decreto 793/2025 (consolidação tributária). (2) Decreto 395/2026 (10/09/2026; lido): estradas rurais, caminhões carregados proibidos com chuva acumulada > 20 mm e até 48 h depois; isentos < 10 t PBT, cargas vivas/ração/leite, oficiais; sucede decretos 827/2023 (10 mm; < 7 t) e 388/2014 (chuvas torrenciais; multa 100 URM) -> condição meteorológica, regra desativada. OSM: 2 ways hgv=no sem nome (highway=unclassified, 374434102 e 475031308), sem ato correspondente.",
+ "osm_divergencias": [
+  "2 ways hgv=no (374434102, 475031308) highway=unclassified sem nome em Mallet: sem ato achado"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "mallet_perimetro_central_trafego",
+   "tipo": "zona",
+   "regime": "Perímetro central (carga útil / comprimento)",
+   "nome": "Perímetro Central de Tráfego de Mallet: veículos > 7 t de carga útil ou > 7 m (Lei 1.206/2014)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 7.0
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 7.0
+     }
+    ]
+   },
+   "excecoes": [
+    "circulação para operação de carga/descarga comprovada com nota fiscal (art. 4º)",
+    "caminhoneiros residentes na área para estacionar perto da residência, com cadastro prévio (art. 4º, §1º)",
+    "dias de comemoração cívica e religiosa (art. 4º, §2º)",
+    "veículos públicos em serviço, emergência, salvamento e serviços de utilidade pública (art. 6º)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.206, de 21/10/2014 (Mallet)",
+     "artigo": "arts. 3º, 4º, 5º e 8º (Anexo I)",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/E571C5EA"
+    }
+   ],
+   "status_motivo": "O perímetro é definido pelo Anexo I (vias) e a lei só autoriza o Executivo a \"criar\" o Perímetro Central; o anexo e eventual decreto de criação não foram localizados. Capacidade de carga útil = payload_t. Lei citada como vigente no Decreto 793/2025 (consolidação, item de taxa de polícia).",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Perímetro Central de Tráfego"
+     ],
+     "descricao": "vias do Anexo I (não publicado no texto do diário; não lido)"
+    }
+   ]
+  },
+  {
+   "id": "mallet_estradas_rurais_chuva",
+   "tipo": "via",
+   "regime": "Chuva (estradas rurais)",
+   "nome": "Estradas rurais: caminhões carregados proibidos com chuva > 20 mm e até 48 h depois (Decreto 395/2026)",
+   "status": "desativada",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "cargas vivas, ração e leite",
+    "veículos oficiais ou a serviço de órgãos públicos"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 395, de 10/09/2026 (Mallet)",
+     "artigo": "art. 1º e §2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/72C92374"
+    }
+   ],
+   "status_motivo": "Restrição condicionada a chuva acumulada (> 20 mm, SIMEPAR/pluviômetros) + 48 h: não representável em janelas fixas. Decreto 395/2026 sucede o 827/2023 (10 mm, < 7 t isentos, decreto de emergência) e o 388/2014.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "estradas rurais"
+     ],
+     "descricao": "todas as estradas rurais municipais"
+    }
+   ]
+  }
+ ]
+}

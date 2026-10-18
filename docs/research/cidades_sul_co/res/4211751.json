@@ -1,0 +1,125 @@
+{
+  "ibge": "4211751",
+  "nome": "Otacílio Costa",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/3500737",
+      "resultado": "Lei 2.902/2021 aberta e lida (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2092320",
+      "resultado": "Lei 2.670/2019 lida: redação anterior do art. 1º da Lei 1.827/2009."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/5208663 ; /5638455",
+      "resultado": "Decretos 3.645/2023 e 3.759/2024 lidos: estradas rurais em período chuvoso."
+    },
+    {
+      "url": "DOM/SC buscar 4211751 'Lei 1827', 'produtos florestais in natura'",
+      "resultado": "Nenhuma alteração posterior à Lei 2.902/2021. Lei 1.827/2009 original (texto integral) não está no DOM/SC (anterior ao acervo)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/4852782",
+      "resultado": "LC 309/2023 (trecho da preparação, hierarquia viária e SC-114): sem regra de caminhões."
+    }
+  ],
+  "observacoes": "Duas regras reais e vigentes, nenhuma aplicável como PBT/zona simples: restrição por carga florestal no centro e restrição por chuva no interior. Lei 1.827/2009 (art. 8º etc.) não lida na íntegra.",
+  "osm_divergencias": [
+    "OSM tem restrições condicionais (hgv/maxweight conditional, 9 ways) em Av. Olinkraft, Rua Vidal Ramos Júnior; coerente com a Lei 2.902/2021 (cargas florestais), mas o OSM não distingue por carga; maxweight em 2 ways (não detalhado)."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "otaciliocosta_lei1827_2009_toras_centro",
+      "tipo": "via",
+      "regime": "Veículos com produtos florestais in natura (centro)",
+      "nome": "Otacílio Costa: Lei 1.827/2009 (art. 1º, redação da Lei 2.902/2021), proibida a circulação de veículos carregados com produtos florestais in natura nas principais vias do centro",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Ato vigente e claro (a qualquer dia e hora), mas o alvo é a CARGA ('veículos carregados com produtos florestais in natura', toras/cavacos), e o schema só enquadra o veículo por PBT/eixos/tipo. Aplicar a todo caminhão seria excessivo; fica desativada até haver campo de carga. O OSM tem condicionais (outros_cond) em Av. Olinkraft e R. Vidal Ramos Júnior, compatíveis.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Lei nº 2.902, de 22/12/2021 (nova redação do art. 1º da Lei 1.827/2009 e da Lei 2.670/2019)",
+          "artigo": "art. 1º e parágrafo único (vias)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/3500737"
+        },
+        {
+          "ato": "Lei nº 2.670, de 02/07/2019 (redação anterior do art. 1º da Lei 1.827/2009)",
+          "artigo": "art. 1º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2092320"
+        }
+      ],
+      "vigencia_inicio": "2021-12-23",
+      "trechos": [
+        {
+          "inciso": "parágrafo único",
+          "via": [
+            "Avenida Olinkraft",
+            "Avenida Vidal Ramos Júnior",
+            "Avenida do Trabalhador",
+            "Rua Dom Daniel Hostin",
+            "Avenida Beira Rio",
+            "Rua Theobaldo Prestes Valim"
+          ],
+          "descricao": "principais ruas e avenidas do centro da cidade; a lei não delimita trechos"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "otaciliocosta_dec3645_3759_estradas_chuva",
+      "tipo": "zona",
+      "regime": "Estradas do interior em período chuvoso",
+      "nome": "Otacílio Costa: Dec. 3.645/2023 com redação do Dec. 3.759/2024, veículos > 5 t proibidos nas estradas gerais e vicinais do interior em período chuvoso (>= 50 mm em 7 dias)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Vigente e claro, mas condicionado à chuva (gatilho de 50 mm acumulados em 7 dias) e a 'estradas do interior' sem lista de vias; o roteador não modela clima. Pontual.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 3.759, de 16/02/2024 (nova redação do art. 1º do Decreto 3.645/2023)",
+          "artigo": "art. 1º (>= 50 mm em 7 dias), art. 2º (multa CTB art. 231)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5638455"
+        },
+        {
+          "ato": "Decreto nº 3.645, de 16/10/2023 (regulamenta a Lei 1.827/2009, art. 8º)",
+          "artigo": "art. 1º (>= 100 mm em 7 dias, substituído), art. 2º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/5208663"
+        }
+      ],
+      "vigencia_inicio": "2024-02-16",
+      "nota": "O ato diz 'veículos com mais de cinco toneladas' (não diz PBT ou capacidade).",
+      "geometria": []
+    }
+  ]
+}

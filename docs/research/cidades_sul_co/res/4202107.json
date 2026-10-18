@@ -1,0 +1,162 @@
+{
+  "ibge": "4202107",
+  "nome": "Barra Velha",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/604428",
+      "resultado": "Decreto 997/2014 aberto e lido (texto integral extraído)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7802696 ; /7724705 ; /6694706",
+      "resultado": "Decretos 2.304/2025, 2.285/2025 e 2.131/2024 lidos: normas temporárias de concretagem/carga e descarga na alta temporada."
+    },
+    {
+      "url": "DOM/SC buscar 4202107 'Decreto 997', 'Estrada Geral do Escalvado', 'Decreto 939', 'estacionamento de ônibus e caminhões', 'trânsito de caminhões', 'veículos pesados'",
+      "resultado": "Nenhuma alteração do Dec. 997/2014; Dec. 939/2014 (referido no art. 4º) não encontrado; Dec. 2.371/2026 é sobre EIV (impacto de vizinhança, cita fluxo de veículos pesados); não lido."
+    }
+  ],
+  "observacoes": "Dec. 997/2014 (vigência não confirmada) com a regra do Escalvado; lista das vias centrais ausente no texto. Alta temporada só afeta operação de obra.",
+  "osm_divergencias": [
+    "OSM hgv=no em Rua Eurides Francisco Tomazoni e Rua Ormélio Gonçalves (residential, 3 ways): nenhum ato achado; a Estrada Geral do Escalvado do Dec. 997/2014 não aparece no OSM como hgv=no."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "barravelha_dec997_2014_escalvado",
+      "tipo": "via",
+      "regime": "Estrada Geral do Escalvado: caminhões de grande porte",
+      "nome": "Barra Velha: Dec. 997/2014 art. 1º, I, proibido o trânsito de caminhões de grande porte (carreta, duplo direcional trucado), mesmo descarregados, na Estrada Geral do Escalvado (Rua 1884)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos do poder público, manutenção de água/esgoto/energia/vias/obras/limpeza e veículos de moradores da via (parágrafo único, referido ao art. 1º, IV 'caput': a exceção está redigida no inciso IV; sua aplicação ao inciso I não é clara)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 997, de 10/11/2014 (Barra Velha)",
+          "artigo": "art. 1º, I (a)  Estrada Geral do Escalvado; II (> 25 t em vias centrais); III e IV (estacionamento); art. 4º (revoga itens do Dec. 939/2014)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/604428",
+          "nota": "DOM/SC 14/11/2014"
+        }
+      ],
+      "vigencia_inicio": "2014-11-10",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I, a",
+          "via": [
+            "Estrada Geral do Escalvado"
+          ],
+          "descricao": "Rua 1884, desde a BR-101, sentido Porto do Itaperiú, até a Rua Valdir Rosa, nos limites com São João do Itaperiú"
+        }
+      ],
+      "nota": "'Caminhões de grande porte, especialmente Duplo Direcional Trucado (tipo Carreta)': alvo aproximado por carreta/reboque/CVC. Decreto de 2014, sem alteração achada no DOM/SC; vigência atual não confirmada em portal.",
+      "geometria": []
+    },
+    {
+      "id": "barravelha_dec997_2014_vias_centrais_25t",
+      "tipo": "zona",
+      "regime": "Vias centrais: > 25 t",
+      "nome": "Barra Velha: Dec. 997/2014 art. 1º, II, proibido o trânsito de caminhões acima de 25 t nas vias centrais (lista não consta do texto extraído)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "O inciso II termina em dois pontos ('nas vias centrais do Município:') e a lista de vias/anexo não aparece no texto extraído do DOM/SC; sem a lista (nem sei se é PBT ou capacidade) não há como aplicar.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 997, de 10/11/2014 (Barra Velha)",
+          "artigo": "art. 1º, I (a)  Estrada Geral do Escalvado; II (> 25 t em vias centrais); III e IV (estacionamento); art. 4º (revoga itens do Dec. 939/2014)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/604428",
+          "nota": "DOM/SC 14/11/2014"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "barravelha_dec2304_2025_concretagem",
+      "tipo": "zona",
+      "regime": "Alta temporada: operação de concretagem e materiais",
+      "nome": "Barra Velha: Dec. 2.304/2025, proibição temporária de operações de concretagem e carga/descarga de materiais que bloqueiem a via (20/12/2025 a 04/01/2026)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Restrição de OPERAÇÃO/parada (concretagem, carga e descarga que bloqueiem a via, caçambas), não de circulação; vigência 20/12/2025 a 04/01/2026, encerrada. Recorrente (2024, 2025) mas por decreto anual.",
+      "alvo": {
+        "caminhao": true
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 2.304, de 03/12/2025 (revoga o Decreto 2.285/2025)",
+          "artigo": "arts. 1º, 2º (período), 3º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7802696"
+        },
+        {
+          "ato": "Decreto nº 2.131, de 10/12/2024",
+          "artigo": "série 2024/25",
+          "url": "https://diariomunicipal.sc.gov.br/atos/6694706"
+        },
+        {
+          "ato": "Decreto nº 2.285, de 03/11/2025 (revogado)",
+          "artigo": "idem",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7724705"
+        }
+      ],
+      "vigencia_inicio": "2025-12-20",
+      "vigencia_fim": "2026-01-04",
+      "geometria": []
+    }
+  ]
+}

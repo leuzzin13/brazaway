@@ -1,0 +1,174 @@
+{
+  "ibge": "4207908",
+  "nome": "Irineópolis",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/878661",
+      "resultado": "Lei 1.885/2015 aberta e lida (texto integral)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1210026",
+      "resultado": "Decreto 3.177/2017 lido."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1416153",
+      "resultado": "Decreto 3.314/2017 lido."
+    },
+    {
+      "url": "DOM/SC buscar 4207908 'tráfego pesado em vias municipais', 'Peso Bruto Total acima de 30 toneladas', 'Lei 1885', 'tráfego pesado'",
+      "resultado": "Só estes três atos; nenhuma alteração ou revogação posterior."
+    }
+  ],
+  "observacoes": "Três atos sobre PBT > 30 t em estradas e vias rurais municipais; revogação não achada até 18/10/2026. Estradas sem nome; precisa de mapa local para a geometria.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "irineopolis_lei1885_2015_estradas",
+      "tipo": "via",
+      "regime": "Estradas rurais: PBT > 30 t",
+      "nome": "Irineópolis: Lei 1.885/2015 (e Dec. 3.177/2017), proibido tráfego de caminhões com PBT > 30 t em cinco estradas municipais",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei nº 1.885, de 16/12/2015",
+          "artigo": "art. 1º, I a V (estradas) e parágrafo único (prefeito pode estender por decreto)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/878661",
+          "nota": "DOM/SC 17/12/2015"
+        },
+        {
+          "ato": "Decreto nº 3.177, de 15/03/2017 (regulamenta a Lei 1.885/2015, repete as cinco estradas)",
+          "artigo": "art. 1º, I a V, art. 2º (fiscalização)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1210026"
+        }
+      ],
+      "vigencia_inicio": "2015-12-16",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "Estrada vicinal Pé da Serra - Boa Vista"
+          ],
+          "descricao": "da localidade de Pé da Serra até Boa Vista, no entroncamento com a SC-120 (acesso a Timbó Grande)",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, II",
+          "via": [
+            "Estrada municipal Rio Branco - Boa Vista"
+          ],
+          "descricao": "de Rio Branco até Boa Vista, no entroncamento com a SC-120",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, III",
+          "via": [
+            "Estrada municipal Boa Vista - Bom Sossego I e II"
+          ],
+          "descricao": "de Boa Vista até Bom Sossego I e II, que desemboca no entroncamento com a SC-120",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, IV",
+          "via": [
+            "Estrada municipal São Sebastião do Tokarski - Pé da Serra"
+          ],
+          "descricao": "até a divisa com Canoinhas",
+          "aproximado": true
+        },
+        {
+          "inciso": "art. 1º, V",
+          "via": [
+            "Estrada municipal Km 20 - Aparecida dos Pardos"
+          ],
+          "descricao": "da divisa com Canoinhas (Km 20) até o entroncamento com a estrada de Aparecida dos Pardos",
+          "aproximado": true
+        }
+      ],
+      "nota": "Estradas sem nome oficial, descritas por localidades; geometria não montada (precisa de mapa local).",
+      "geometria": []
+    },
+    {
+      "id": "irineopolis_dec3314_2017_esquerda_br280",
+      "tipo": "zona",
+      "regime": "Todas as vias à esquerda da BR-280: PBT > 30 t",
+      "nome": "Irineópolis: Dec. 3.314/2017, proibido tráfego de caminhões com PBT > 30 t em todas as vias do município à esquerda da BR-280 (sentido Canoinhas - Porto União)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 30
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto nº 3.314, de 30/10/2017",
+          "artigo": "art. 1º, I (área), art. 2º (fiscalização), art. 3º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1416153",
+          "nota": "DOM/SC 01/11/2017"
+        }
+      ],
+      "vigencia_inicio": "2017-10-30",
+      "trechos": [
+        {
+          "inciso": "art. 1º, I",
+          "via": [
+            "(todas as vias públicas)"
+          ],
+          "descricao": "todas as vias do município posicionadas à esquerda da BR-280, no sentido Canoinhas a Porto União (a BR-280 em si fica fora)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Zona = parte do território à esquerda da BR-280 (definição por referência à rodovia, sem polígono). Vias da União/estaduais (BR-280, SC-120) ficam fora da competência municipal.",
+      "geometria": []
+    }
+  ]
+}

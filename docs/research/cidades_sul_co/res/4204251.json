@@ -1,0 +1,108 @@
+{
+  "ibge": "4204251",
+  "nome": "Cocal do Sul",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/2034020",
+      "resultado": "Decreto SAF 322/2019 aberto e lido (texto integral)."
+    },
+    {
+      "url": "DOM/SC buscar 4204251 'tráfego de veículos de cargas', 'Decreto 322', 'Edson Gaidzinski', 'veículos pesados', 'Voluntários da Pátria'",
+      "resultado": "Nenhuma alteração ou revogação do Decreto 322/2019; resultados posteriores são tributos/assistência."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/832424 ; /5441512",
+      "resultado": "LC 62/2015 (modificação do trajeto da SC-108) e LC 146/2023 (plano diretor): sem regra de caminhões."
+    }
+  ],
+  "observacoes": "Regra clara e vigente (sem revogação achada). OSM marca hgv=no/maxweight=25 em SC-108 (rodovia estadual) e na Rua Voluntários da Pátria.",
+  "osm_divergencias": [
+    "OSM hgv=no + maxweight=25 em 21 ways, a maioria da SC-108 (Av. Antônio Nunes de Souza, Rod. Maximiliano Gaidzinski; rodovia estadual, fora da competência municipal) e na Rua Voluntários da Pátria (primary, sem ref), esta última coberta pelo Decreto 322/2019; a Av. Dr. Polidoro Santiago e a Rua Guy Marcos Nunes de Souza (decreto) não foram vistas como hgv=no."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "cocaldosul_dec322_2019_vias_centrais",
+      "tipo": "via",
+      "regime": "PBT > 25 t ou comprimento > 14 m",
+      "nome": "Cocal do Sul: Decreto SAF 322/2019, proibida a entrada, parada, estacionamento e circulação de veículos com PBT > 25 t ou comprimento > 14 m em quatro vias centrais",
+      "status": "ativa",
+      "confianca": "alta",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 25
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          }
+        ]
+      },
+      "excecoes": [
+        "Manutenção e reparo de redes (energia, água, esgoto, gás, telecom), coleta de lixo, cobertura jornalística, transporte de valores",
+        "Transporte coletivo de passageiros",
+        "Manutenção, conservação e sinalização viária a serviço do órgão de trânsito",
+        "Socorro médico, incêndio, policiamento, fiscalização",
+        "Socorro mecânico de emergência",
+        "Cargas e descargas nas empresas localizadas nas vias citadas (art. 2º, VI)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto SAF nº 322, de 24/05/2019 (Cocal do Sul)",
+          "artigo": "art. 1º (a, b, c), art. 2º (exceções), art. 3º (sinalização)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2034020",
+          "nota": "DOM/SC 28/05/2019"
+        }
+      ],
+      "vigencia_inicio": "2019-05-28",
+      "trechos": [
+        {
+          "inciso": "art. 1º, a",
+          "via": [
+            "Avenida Doutor Polidoro Santiago"
+          ],
+          "descricao": "trecho do cruzamento com a Rua Anita Garibaldi até o cruzamento com a Rua Guy Marcos Nunes de Souza"
+        },
+        {
+          "inciso": "art. 1º, b",
+          "via": [
+            "Rua Guy Marcos Nunes de Souza"
+          ],
+          "descricao": "trecho do cruzamento com a Av. Dr. Polidoro Santiago até o cruzamento com a Rua Dr. Edson Gaidzinski"
+        },
+        {
+          "inciso": "art. 1º, c",
+          "via": [
+            "Rua Doutor Edson Gaidzinski",
+            "Rua Voluntários da Pátria"
+          ],
+          "descricao": "em toda a extensão"
+        }
+      ],
+      "nota": "Sem alteração achada no DOM/SC (2019-2026). A Rua Voluntários da Pátria tem no OSM hgv=no e maxweight=25 (compatível). Estas vias são urbanas; as rodovias SC-108 (OSM hgv=no/maxweight 25, 21 ways) são estaduais e não fazem parte do decreto.",
+      "geometria": []
+    }
+  ]
+}

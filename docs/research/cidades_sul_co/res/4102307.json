@@ -1,0 +1,95 @@
+{
+ "ibge": "4102307",
+ "nome": "Balsa Nova",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/6C883C1E",
+   "resultado": "LIDO integral. Salvo em atos/4102307/lei_1411_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/24BCB717",
+   "resultado": "lido por trechos: Lei 1.419/2025, diretriz de rotas/vias proibidas para pesados"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4102307 (Estrada Atílio Ramos; altera Lei 1411; tráfego de caminhões)",
+   "resultado": "sem alteração/revogação"
+  },
+  {
+   "url": "https://leismunicipais.com.br/legislacao-municipal/3178/leis-de-balsa-nova",
+   "resultado": "não aberto (Cloudflare)"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 1.411/2024 (26/11/2024; AMP 27/11/2024) lida integralmente: proibido o tráfego de caminhões com 4 eixos ou mais (conjunto cavalo+carreta), carregados ou não, na Estrada Municipal Atílio Ramos (BR-277 km 138+800 até a Estrada do Tamanduá, São Luiz do Purunã), com exceções agroavícolas/patrulha/emergência. Sem alteração/revogação achada (buscas AMP). Lei 1.419/2025 (plano de mobilidade) lida por trechos: só diretriz de definir rotas e vias proibidas a pesados. OSM: maxweight=50 na Av. Fritz Erwin Schmidt (tertiary, way 383957149), sem ato municipal achado (valor 50 t sugere dado de ponte/OSM não confirmado).",
+ "osm_divergencias": [
+  "Avenida Fritz Erwin Schmidt maxweight=50 (way 383957149): sem ato municipal; valor de 50 t incomum, não conferido"
+ ],
+ "regras_rascunho": [
+  {
+   "id": "balsanova_estrada_atilio_ramos_4eixos",
+   "tipo": "via",
+   "regime": "Proibição por eixos (via)",
+   "nome": "Estrada Municipal Atílio Ramos: proibido caminhões com 4 eixos ou mais (Lei 1.411/2024)",
+   "status": "ativa",
+   "confianca": "alta",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     }
+    ]
+   },
+   "excecoes": [
+    "caminhões que transportem produtos agroavícolas produzidos no município ou destinados ao abastecimento das culturas locais",
+    "caminhões e máquinas da patrulha mecanizada municipal, estadual ou federal",
+    "serviços emergenciais, manutenção emergencial de vias/redes de energia, telefonia, água e guincho"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 1.411, de 26/11/2024 (Balsa Nova)",
+     "artigo": "art. 1º e parágrafo único",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/6C883C1E"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Estrada Municipal Atílio Ramos"
+     ],
+     "descricao": "da BR-277 km 138+800 (sentido Curitiba; UTM 628857.92 E / 7181697.43 S) até a Estrada do Tamanduá (UTM 629688.53 E / 7181392.18 S), distrito de São Luiz do Purunã",
+     "de": [
+      "BR-277"
+     ],
+     "ate": [
+      "Estrada do Tamanduá"
+     ]
+    }
+   ],
+   "vigencia_inicio": "2024-11-27",
+   "nota": "\"4 eixos ou mais, incluindo em conjunto a carreta e o cavalo mecânico\" - eixos do conjunto. Responsabilidade por danos (art. 6º). Município deve implantar sinalização (art. 4º)."
+  }
+ ]
+}

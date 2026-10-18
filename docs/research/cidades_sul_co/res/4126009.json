@@ -1,0 +1,143 @@
+{
+ "ibge": "4126009",
+ "nome": "São Sebastião da Amoreira",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/3CC4C534",
+   "resultado": "LIDO integral. Salvo em atos/4126009/decreto_44_2026.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/08CF893B",
+   "resultado": "LIDO (LC 2.049/2024, art. 209 XI). Salvo em atos/4126009/lc_2049_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/94A4C654",
+   "resultado": "lido: zoneamento sem \"Zona Central\""
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/EDFAAFED",
+   "resultado": "lido: plano diretor, art. de diretriz de tráfego de cargas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4126009 (Zona Central; perímetro urbano; ponte Água do Pavão)",
+   "resultado": "nenhuma lei que defina a Zona Central; sem revogação do Dec. 44/2026"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "(1) Decreto 44/2026 (AMP 20/02/2026), lido: ponte sobre o Córrego Água do Pavão na Estrada Vicinal do Araujo, interdição de meia pista e proibido o trânsito de veículos pesados (caminhões, ônibus, máquinas) enquanto durar o risco estrutural: regra ativa (confiança média; pode ter sido encerrada). (2) LC 2.049/2024 (Código de Posturas), lida: art. 209, XI proíbe trafegar na \"Zona Central\" com caminhões > 5 m e 7 t, seg-sex 7h-20h e sáb 9h-14h; \"Zona Central\" não é definida (LC 2.045/2024 zoneamento lida, sem ela) -> regra desativada. LC 2.043/2024 (plano diretor) só diretriz de disciplinar o tráfego de cargas.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saosebastiaodaamoreira_ponte_agua_do_pavao",
+   "tipo": "ponte",
+   "regime": "Ponte (risco estrutural)",
+   "nome": "Ponte sobre o Córrego Água do Pavão (Estrada Vicinal do Araujo): proibido veículos pesados (Decreto 44/2026)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "meia pista liberada só para veículos leves"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 44, de 19/02/2026 (São Sebastião da Amoreira)",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/3CC4C534"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Estrada Vicinal do Araujo"
+     ],
+     "descricao": "ponte sobre o Córrego Água do Pavão, Secção Amoreira, zona rural (meia pista interditada)"
+    }
+   ],
+   "vigencia_inicio": "2026-02-19",
+   "nota": "Vale \"enquanto perdurar a situação de risco estrutural\" (por tempo indeterminado); conferir se a ponte já foi recuperada/reaberta. Coordenadas da ponte não informadas no ato."
+  },
+  {
+   "id": "saosebastiaodaamoreira_zona_central_pesados",
+   "tipo": "zona",
+   "regime": "Zona (posturas)",
+   "nome": "Zona Central: caminhões > 5 m e 7 t (Código de Posturas, LC 2.049/2024)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "comprimento_m",
+      "acima": 5
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 7
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar nº 2.049, de 26/06/2024 (Código de Posturas)",
+     "artigo": "art. 209, XI",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/08CF893B"
+    }
+   ],
+   "status_motivo": "Art. 209, XI proíbe \"trafegar na Zona Central com caminhões com mais de 5 metros e 7 toneladas\" seg-sex 7h-20h e sáb 9h-14h, mas a Zona Central não é delimitada em nenhum ato achado; redação ambígua (5 m E 7 t, e se 7 t é PBT ou capacidade); está no capítulo das estradas municipais.",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Zona Central"
+     ],
+     "descricao": "perímetro da \"Zona Central\" não definido no ato nem na LC 2.045/2024 (zoneamento: ZH1-3, ZEU, ZCS, ZI1...)"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,142 @@
+{
+ "ibge": "4124707",
+ "nome": "São Jerônimo da Serra",
+ "uf": "PR",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/DA327BAE",
+   "resultado": "LIDO integral. Salvo em atos/4124707/decreto_049_2023.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/3108BDCA",
+   "resultado": "LIDO integral. Salvo em atos/4124707/lei_300_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/7D337197",
+   "resultado": "trecho via busca: LC 169/2025 (plano), diretrizes apenas"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4124707 (revoga decreto 049/2023; veículos pesados 5 eixos vias urbanas)",
+   "resultado": "1ª consulta com http 0 (retentativa); 2ª retornou os dois atos; sem revogação"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Dois atos lidos integralmente: Decreto 049/2023 (05/05/2023; AMP 08/05/2023): proibido por tempo indeterminado o trânsito, parada e estacionamento de caminhões/veículos pesados acima de 5 eixos em vias urbanas e rurais, com exceções amplas (cargas vivas, ração, produtos agrícolas, materiais de construção, coletivo etc.); Lei 300/2024 (24/05/2024; AMP 28/05/2024): mesma regra nas vias rurais, multa de R$ 25.000, exceção de pequenos produtores. Sem revogação/alteração achada (busca AMP indisponível em parte por falha de rede; resultados do AMP trouxeram os dois atos e a LC 175/2025, apenas plano). Duas regras ativas (confiança média: exceções amplas e sem lista de vias).",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "saojeronimodaserra_decreto_049_2023_urbanas_rurais",
+   "tipo": "via",
+   "regime": "Proibição por eixos",
+   "nome": "Vias urbanas e rurais: caminhões e veículos pesados acima de 5 eixos (Decreto 049/2023)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "caminhão de utilidade pública; serviços de urgência; obras e serviços de infraestrutura e de urgência; socorro mecânico; caminhões de combustível",
+    "transporte coletivo urbano/rural de passageiros ou estudantes",
+    "caminhões com cargas vivas, ração, produtos agrícolas ou materiais de construção, ou mediante autorização específica do Executivo (art. 2º, VIII)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 049/2023 (São Jerônimo da Serra), de 05/05/2023",
+     "artigo": "art. 1º e art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/DA327BAE"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "todas as vias urbanas e rurais"
+     ],
+     "descricao": "trânsito, parada e estacionamento, por tempo indeterminado, em todo o município"
+    }
+   ],
+   "vigencia_inicio": "2023-05-05",
+   "nota": "Exceção VIII (produtos agrícolas e materiais de construção) é ampla. Dispositivos de infração só pelo CTB."
+  },
+  {
+   "id": "saojeronimodaserra_lei_300_2024_rurais",
+   "tipo": "via",
+   "regime": "Proibição por eixos (rural)",
+   "nome": "Vias rurais: caminhões e veículos pesados acima de 5 eixos (Lei 300/2024)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "caminhão de utilidade pública; serviços de urgência; obras e serviços de infraestrutura e de urgência; socorro mecânico; caminhões de combustível",
+    "escoamento da produção agrícola e pecuária de pequenos produtores rurais (Lei 8.629/1993, art. 4º, II)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal nº 300/2024 (São Jerônimo da Serra), de 24/05/2024",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/3108BDCA"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "vias rurais"
+     ],
+     "descricao": "trânsito, parada e estacionamento em todas as vias rurais (distritos, vilas, estradas e pontes rurais)"
+    }
+   ],
+   "vigencia_inicio": "2024-05-28",
+   "nota": "Multa R$ 25.000 por veículo ou reparo da via (art. 4º); art. 9º permite ao Executivo fixar horários de tráfego de pesados (ato não achado). Não revoga expressamente o Decreto 049/2023."
+  }
+ ]
+}

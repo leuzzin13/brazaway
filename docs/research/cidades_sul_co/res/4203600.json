@@ -1,0 +1,156 @@
+{
+  "ibge": "4203600",
+  "nome": "Campos Novos",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1037229",
+      "resultado": "Decreto 7.560/2016 aberto e lido (texto integral via DOM/SC getHtml): arts. 2º a 6º; revoga o Dec. 6.238/2011."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/112123",
+      "resultado": "Decreto 6.238/2011 lido: proibia >= 6 t nas mesmas vias; revogado pelo 7.560/2016 (art. 6º)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/52959",
+      "resultado": "Decreto 5.996/2010 (3,5 t): pista antiga, revogada pelo 6.238/2011 (ver trecho da preparação)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/6658758",
+      "resultado": "LC 09/2024 (Plano de Mobilidade) lida: só diretrizes e rebaixo de meio-fio para veículos de carga > 4 t; não altera nem revoga o Dec. 7.560/2016."
+    },
+    {
+      "url": "DOM/SC buscar 4203600 'trânsito de caminhões' / 'veículos de carga' / '7560'",
+      "resultado": "Nenhum decreto posterior sobre o tema; só atas de registro de preços e leis de edificações/mobilidade. Portal leismunicipais/legislador não abertos (Cloudflare/sem cliente útil)."
+    }
+  ],
+  "observacoes": "Dec. 7.560/2016 é o ato vigente mais recente achado no DOM/SC; sem alteração ou revogação posterior encontrada (a LC 09/2024 tem cláusula genérica de revogação). Portal da Câmara/prefeitura não consultado para confirmar vigência — confiança média.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "campos_novos_dec7560_2016_vias",
+      "tipo": "via",
+      "regime": "Veículos de carga ≥ 6 t em vias centrais",
+      "nome": "Campos Novos: Decreto 7.560/2016, proibição de trânsito de veículos com capacidade de carga ≥ 6 t em vias do centro",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 6
+          }
+        ]
+      },
+      "excecoes": [
+        "Transporte coletivo urbano e veículos de prestação de serviços em período de serviço (art. 2º, § 1º)",
+        "Transporte escolar em serviço no horário escolar, junto aos estabelecimentos de ensino (§ 2º)",
+        "Carga e descarga com comprovação perante o órgão fiscalizador: 06:00-09:30 e 18:00-21:00 (§ 4º; o texto fala em 'estacionarem' para carga e descarga nesses horários)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 7.560/2016 (19/07/2016)",
+          "artigo": "art. 2º (incisos I a IX: vias), §§ 1º, 2º e 4º (exceções e janelas de carga e descarga), art. 3º (estacionamento); art. 6º revoga o Decreto 6.238/2011",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1037229",
+          "nota": "DOM/SC 21/07/2016"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "I",
+          "via": [
+            "Rua Coronel Farrapo",
+            "Rua Coronel Lucidoro"
+          ],
+          "descricao": "trecho entre as ruas Tancredo Neves e Caetano Carlos"
+        },
+        {
+          "inciso": "II",
+          "via": [
+            "Rua São João Batista"
+          ],
+          "descricao": "trecho entre as ruas Marechal Deodoro e Caetano Carlos"
+        },
+        {
+          "inciso": "III",
+          "via": [
+            "Rua Duque de Caxias"
+          ],
+          "descricao": "trecho entre as ruas Marechal Deodoro e Dom Daniel Hostin"
+        },
+        {
+          "inciso": "IV",
+          "via": [
+            "Rua Caetano Carlos",
+            "Rua Danúsia Bess",
+            "Rua Expedicionário João Batista de Almeida",
+            "Rua Benjamin Constant",
+            "Rua Marechal Floriano Peixoto",
+            "Rua Marechal Deodoro",
+            "Rua Frei Rogério",
+            "Rua Dom Daniel Hostin"
+          ],
+          "descricao": "trechos entre a Rua Nereu Ramos e a Rua Coronel Pedro Carlos"
+        },
+        {
+          "inciso": "V",
+          "via": [
+            "Rua João Cordeiro dos Santos"
+          ],
+          "descricao": "trecho entre as ruas Nereu Ramos e Henrique Rupp"
+        },
+        {
+          "inciso": "VI",
+          "via": [
+            "Rua Ney S. Almeida",
+            "Rua Vergílio Stefanes"
+          ],
+          "descricao": "em toda a extensão"
+        },
+        {
+          "inciso": "VII",
+          "via": [
+            "Rua Tiradentes"
+          ],
+          "descricao": "trecho entre as ruas Coronel Lucidoro e Nereu Ramos"
+        },
+        {
+          "inciso": "VIII",
+          "via": [
+            "Rua Leônidas Rupp"
+          ],
+          "descricao": "trecho entre as ruas Coronel Lucidoro e Henrique Rupp"
+        },
+        {
+          "inciso": "IX",
+          "via": [
+            "Rua Juvelino Fernandes da Silva"
+          ],
+          "descricao": "em toda a extensão"
+        }
+      ],
+      "nota": "Ato: 'capacidade de carga total igual ou superior a 6,0 t' (payload_t; schema só tem 'acima', diferença só em exatamente 6 t). A janela de § 4º está escrita como permissão de ESTACIONAR para carga/descarga; não está claro se libera trânsito (o Decreto 6.238/2011 revogado liberava 'trânsito e estacionamento' 18h30-10h). Janelas 24 h = proibição geral, com exceção de carga e descarga nos horários do § 4º. Art. 3º proíbe também estacionar > 6 t em todo o perímetro urbano. Geometria não montada.",
+      "geometria": []
+    }
+  ]
+}

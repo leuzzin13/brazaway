@@ -1,0 +1,423 @@
+{
+  "ibge": "4115002",
+  "nome": "Marilena",
+  "uf": "PR",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA",
+      "resultado": "Lei 2438/2026 (DOM-PR ed. 3579, 23/07/2026) aberta e lida na íntegra: arts. 1º a 15 e Anexo I (só títulos dos mapas). Texto em atos/4115002/lei2438_2026.txt"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF",
+      "resultado": "Decreto 243/2026 (08/07/2026) aberto e lido: mesmo conteúdo, anterior à lei (a lei o substitui na prática; revogação expressa não vista). Texto em atos/4115002/dec243_2026.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4115002 'veículos pesados blocos sextavados' (amp)",
+      "resultado": "só o decreto e a lei; nenhuma alteração/revogação"
+    },
+    {
+      "url": "https://sapl.marilena.pr.leg.br (legislacao.py buscar, caminh|pesad|sextavad|tráfego|trânsito|1.678)",
+      "resultado": "5 atos irrelevantes (PPA/LDO, cargos); Lei 1.678/2018 não localizada nesta busca por ementa"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Lei 2438/2026 (vigente desde 23/07/2026; sanções só após a sinalização) com 2 grupos: Grupo I (JB-170, JB-120, JB-140) e Grupo II (Av. Maringá, Av. Beira Rio, Estrada Antônia Madalena). Regras ativas só onde há extensão definida (JB-170 e Av. Maringá); as demais ficam desativadas porque as extensões dependem dos mapas do Anexo I. Decreto 243/2026 anterior de mesmo teor.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "marilena_jb170_grupo1",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo I)",
+      "nome": "Estrada Rural XV de Novembro (JB-170), do prolongamento da Rua São Paulo à PR-577: vedados articulados/combinações, 5+ eixos e PBT acima de 31,5 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 31.5
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 2º, I; art. 3º, I, § 1º e § 2º; art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Estrada Rural XV de Novembro (JB-170)",
+          "de": "Prolongamento da Rua São Paulo",
+          "ate": "Rodovia PR-577",
+          "nota": "mais outros trechos da via a identificar e sinalizar pela Secretaria de Obras"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "marilena_jb120_grupo1",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo I)",
+      "nome": "Estrada Farinheira (JB-120), trechos com blocos sextavados/poliédricos: Grupo I",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Só os trechos pavimentados com blocos sextavados/pedras poliédricas 'devidamente sinalizados' (extensão não dada no texto; mapas do Anexo I não estão no texto do diário)",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 31.5
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 3º, II, § 1º e § 2º; art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Estrada Farinheira (JB-120)",
+          "nota": "trechos com blocos sextavados"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "marilena_jb140_grupo1",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo I)",
+      "nome": "Estrada Água da Marilena (JB-140), trechos com blocos sextavados/poliédricos: Grupo I",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Só os trechos pavimentados com blocos sextavados/pedras poliédricas 'devidamente sinalizados' (extensão não dada no texto; mapas do Anexo I não estão no texto do diário)",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          },
+          {
+            "campo": "eixos",
+            "acima": 4
+          },
+          {
+            "campo": "pbt_t",
+            "acima": 31.5
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 3º, III, § 1º e § 2º; art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Estrada Água da Marilena (JB-140)",
+          "nota": "trechos com blocos sextavados"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "marilena_antonia_madalena_grupo2",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo II)",
+      "nome": "Estrada Antônia Madalena da Conceição, trechos com blocos sextavados: vedados mais de 2 eixos ou carga acima de 7 t",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Só os trechos com blocos sextavados 'devidamente sinalizados' (extensão não dada no texto; mapa 1 do Anexo I fora do texto)",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "payload_t",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 2º, II; art. 4º, I e § 1º; art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Estrada Antônia Madalena da Conceição",
+          "nota": "trechos com blocos sextavados"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "marilena_av_maringa_grupo2",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo II)",
+      "nome": "Avenida Maringá (Distrito de Ipanema), 660 m a partir da JB-080 entre Loteamento do Keno e Loteamento Pesca Brasil: vedados mais de 2 eixos ou carga acima de 7 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "payload_t",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 4º, II e § 1º (remete à Lei 1.678/2018); art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Avenida Maringá",
+          "de": "JB-080 (entre Loteamento do Keno e Loteamento Pesca Brasil)",
+          "ate": "660 m adiante",
+          "nota": "Distrito de Ipanema; Lei 1.678/2018 citada, não lida"
+        }
+      ],
+      "geometria": []
+    },
+    {
+      "id": "marilena_av_beira_rio_grupo2",
+      "tipo": "via",
+      "regime": "Restrição de pavimento (Grupo II)",
+      "nome": "Avenida Beira Rio, calçamento da Prainha (Complexo Turístico Ipanema): vedados mais de 2 eixos ou carga acima de 7 t",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Trecho descrito só como 'calçamento da Prainha' (sem extensão); mapa 5 do Anexo I fora do texto",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "eixos",
+            "acima": 2
+          },
+          {
+            "campo": "payload_t",
+            "acima": 7
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de emergência, obras/manutenção da via, do Município ou a serviço da Administração, calamidade (art. 6º, I a IV)",
+        "Autorização prévia da Secretaria de Obras, Viação e Serviços Urbanos quando não houver rota alternativa (art. 6º, V; art. 4º, § 3º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei 2438/2026 (20/07/2026; DOM-PR 23/07/2026)",
+          "artigo": "art. 4º, III e § 1º (remete à Lei 1.678/2018); art. 5º (fiscalização visual); art. 6º (exceções); art. 15 (vigência; efeitos sancionatórios após a sinalização do art. 7º)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/734979AA"
+        },
+        {
+          "ato": "Decreto 243/2026 (08/07/2026), de conteúdo equivalente e anterior à lei",
+          "artigo": "arts. 1º a 4º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/DC9794EF"
+        }
+      ],
+      "vigencia_inicio": "2026-07-23",
+      "trechos": [
+        {
+          "via": "Avenida Beira Rio",
+          "nota": "calçamento da Prainha, Distrito de Ipanema"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

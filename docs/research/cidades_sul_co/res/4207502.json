@@ -1,0 +1,149 @@
+{
+  "ibge": "4207502",
+  "nome": "Indaial",
+  "uf": "SC",
+  "status": "pontual",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/1470119",
+      "resultado": "LC 211/2017 aberta e lida (texto integral, 68 mil caracteres): arts. 101-110 (transporte de cargas), 105-107 (carga e descarga > 10 t, vias e horários)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/4855417 ; /4285975 ; /2128513 ; /2053798 ; /8757947",
+      "resultado": "LCs 282/2023, 274/2022, 226/2019 e Decretos 1154/2019 e 2792/2026 lidos: não alteram os arts. 103-107 (tratam de hierarquia viária/plano diretor)."
+    },
+    {
+      "url": "DOM/SC buscar 4207502 'trânsito de caminhões', 'tráfego de caminhões', 'circulação de caminhões', 'veículos de carga', 'Ponte Pênsil', 'carretas'",
+      "resultado": "Sem ato próprio de proibição de caminhões; só licitações, Dec. 2125/2020 (fechamento de pontes pênsil e coberta por pandemia), Lei 5294/2016 (irrigação de vias)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/998806",
+      "resultado": "Lei 5294/2016 (trecho): obrigação de irrigar vias por caminhões de entulho; não é restrição de circulação."
+    }
+  ],
+  "observacoes": "A LC 211/2017 (Plano de Mobilidade) tem regra concreta e operante: carga e descarga > 10 t proibida na área central em horários fixos (arts. 105-107) e diretriz de vias SED/SEC com limites de carga sem mapa. Nada proíbe circulação. As pistas de OSM hgv=no (Rua Lauro Müller etc.) coincidem em parte com as vias do art. 105.",
+  "osm_divergencias": [
+    "OSM hgv=no na Rua Lauro Müller (secondary), que consta do art. 105, I da LC 211/2017 (proibição de CARGA E DESCARGA > 10 t, não de trânsito); Rua Áustria (hgv=no, maxweight=10), Rua Antônio Dickmann, Ponte Eng. Emílio Baumgart e Ponte Pênsil do Warnow (hgv=no, maxweight 1.5): sem ato achado."
+  ],
+  "regras_rascunho": [
+    {
+      "id": "indaial_lc211_2017_carga_descarga_central",
+      "tipo": "via",
+      "regime": "Carga e descarga > 10 t (área central)",
+      "nome": "Indaial: LC 211/2017 art. 105, proibida a operação de carga e descarga com veículos acima de 10 t na área central (seg-sex 7-20 h, sáb 7-13 h)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "O ato proíbe a OPERAÇÃO de carga e descarga com veículo acima de 10 t (não diz PBT ou capacidade: 'veículos acima de 10 toneladas'; art. 109-110 falam em 'carga máxima'), não a circulação. Tratado como pontual: o roteador não modela parada de entrega; sem decisão de promover a zona.",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "20:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "07:00",
+          "to": "13:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Veículos de socorro e emergência (CTB art. 29, VII)",
+        "Transporte de valores",
+        "Mudança residencial",
+        "Serviços essenciais de utilidade pública autorizados previamente pelo Departamento Municipal de Transporte (art. 107)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Complementar nº 211, de 20/12/2017 (Plano Diretor de Transportes e Mobilidade de Indaial)",
+          "artigo": "arts. 105 (vias), 106 (dias e horários), 107 (exceções), 108 (penalidades)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1470119",
+          "nota": "DOM/SC 22/12/2017; sem alteração dos arts. 103-107 nas LCs 226/2019, 274/2022 e 282/2023 (lidas)"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 105, I",
+          "via": [
+            "Rua Lauro Müller",
+            "Rua Carlos Blaese",
+            "Rua Amadeu Felipe da Luz",
+            "Rua Tiradentes",
+            "Rua Getúlio Vargas",
+            "Rua Guanabara",
+            "Rua Frederico Struwe",
+            "Rua Juscelino Kubitschek",
+            "Rua Castelo Branco",
+            "Rua Prefeito Frederico Hardt",
+            "Rua Henrique Hardt",
+            "Rua Alves Pedroso",
+            "Rua São Francisco",
+            "Rua Osvaldo Cruz"
+          ],
+          "descricao": "em toda a extensão"
+        },
+        {
+          "inciso": "art. 105, II",
+          "via": [
+            "Rua Marechal Floriano Peixoto"
+          ],
+          "descricao": "do início até o encontro com a Rua São Francisco"
+        },
+        {
+          "inciso": "art. 105, III",
+          "via": [
+            "Avenida Marechal Deodoro da Fonseca"
+          ],
+          "descricao": "trecho entre a Rua Comandante Henrique Wanke e a Av. Getúlio Vargas"
+        }
+      ],
+      "nota": "Se promovida, usar excecao de destino local (a regra afeta justamente quem entrega nas vias).",
+      "geometria": []
+    },
+    {
+      "id": "indaial_lc211_2017_sed_sec_limites",
+      "tipo": "via",
+      "regime": "Limites de carga bruta por tipo de via (SED/SEC)",
+      "nome": "Indaial: LC 211/2017 art. 103, III e IV, vias SED até 25 t e SEC até 14 t de carga bruta (mapa temático não obtido)",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "As vias SED (até 25 t) e SEC (até 14 t) constam de mapa temático/anexo que não está no texto lido; o art. 104 fala em 'implantação gradativa' do sistema. Sem lista de vias, não há como aplicar. Diretriz/planejamento.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 14
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Complementar nº 211/2017",
+          "artigo": "art. 103, III e IV (e art. 104)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/1470119"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}

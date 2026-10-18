@@ -1,0 +1,122 @@
+{
+  "ibge": "4114005",
+  "nome": "Mamborê",
+  "uf": "PR",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://data.queridodiario.ok.org.br/4114005/2025-07-30/bb3056a48cb972e7056f7b10e2da67e3d87bbc1a.txt",
+      "resultado": "Querido Diário, edição 1215 de 30/07/2025 (Diário Oficial Eletrônico de Mamborê) lida: Decreto 79/2025, arts. 1º a 6º. Texto em atos/4114005/qd_2025-07-30_ed1215.txt"
+    },
+    {
+      "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4114005 (querystrings 'caminhões maquinários agrícolas tráfego' e '79/2025', desde 31/07/2025)",
+      "resultado": "27 e 8 edições, todas ruído (licitações, frota, contratos); nenhuma alteração/revogação do Decreto 79/2025"
+    },
+    {
+      "url": "https://sapl.mambore.pr.leg.br (legislacao.py buscar, caminh|pesad|restrição de tráfego|79/2025|trânsito)",
+      "resultado": "0 resultados (SAPL sem acervo)"
+    },
+    {
+      "url": "Querido Diário 2024-12-17 ed. 1064 (Lei 70/2024, Sistema Viário)",
+      "resultado": "só diretrizes de disciplinamento (art. 17); o próprio decreto cita a Lei 70/2024 e o Parecer CCM 02/2025"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 79/2025 lido na íntegra (edição de 30/07/2025): proíbe caminhões e maquinário agrícola em 8 trechos viários centrais; vias não são fixadas em horário. Vigência na publicação; sem revogação encontrada no QD até 05/10/2026. Geometria por nome de via (trechos) ainda por construir.",
+  "osm_divergencias": [
+    "OSM tem 6 ways com hgv=no (tertiary sem nome, PR-471, PR-472...): as vias do decreto não foram cruzadas com o OSM (sem Overpass); PR-471/PR-472 são rodovias estaduais, fora da competência municipal"
+  ],
+  "regras_rascunho": [
+    {
+      "id": "mambore_vias_centrais_caminhoes",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Vias centrais de Mamborê: proibido o tráfego de caminhões (e maquinário agrícola)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Veículos de carga e descarga no horário comercial (art. 1º, § 1º; horário comercial não definido no decreto)",
+        "Veículos de obras e serviços públicos essenciais identificados e em serviço (art. 1º, § 2º)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto 79/2025 (30/07/2025)",
+          "artigo": "art. 1º, I a VII (vias); § 1º e § 2º (exceções); art. 2º (trechos permitidos); art. 6º (vigência na publicação)",
+          "url": "https://data.queridodiario.ok.org.br/4114005/2025-07-30/bb3056a48cb972e7056f7b10e2da67e3d87bbc1a.txt"
+        }
+      ],
+      "trechos": [
+        {
+          "via": "Rua São Josafat",
+          "de": "Avenida Interventor Manoel Ribas",
+          "ate": "Rua Manoel Moreira Alves",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Paulino Ferreira Messias",
+          "de": "Avenida Interventor Manoel Ribas",
+          "ate": "Praça Marechal Rondon",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Antonio Chiminácio",
+          "de": "Avenida Interventor Manoel Ribas",
+          "ate": "Rua Manoel Moreira Alves",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Manoel Francisco da Silva",
+          "de": "Avenida Interventor Manoel Ribas",
+          "ate": "Rua Manoel Moreira Alves",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Augusto Mendes dos Santos",
+          "de": "Avenida Interventor Manoel Ribas",
+          "ate": "Rua João Mendes de Oliveira",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Augusto Mendes dos Santos",
+          "de": "Rua Manoel Moreira Alves",
+          "ate": "Rua Nelson Camargo Alves",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Avenida Abel Desidério de Araújo",
+          "de": "Rua João Mendes de Oliveira",
+          "ate": "Rua Manoel Moreira Alves",
+          "nota": "art. 1º, incisos I a VII"
+        },
+        {
+          "via": "Rua Nelson Camargo Alves",
+          "de": "Rua Vereador Lázaro Correia",
+          "ate": "Avenida Abel Desidério de Araújo",
+          "nota": "art. 1º, incisos I a VII"
+        }
+      ],
+      "geometria": [],
+      "nota": "Sem limite de peso/tipo: 'caminhões'. Trechos permitidos (art. 2º): entrada pela PR-553 e Av. Paulino F. Messias até Av. Interventor Manoel Ribas; Av. Interventor Manoel Ribas até o prolongamento; Contorno Caminhos do Agro Negócio; R. Manoel Moreira Alves; R. Vereador Lázaro Correia; R. Nelson Camargo Alves (Lázaro Correia a Angelo Gaio); R. Angelo Gaio; R. José Mendes Cruz; Av. Manoel Francisco da Silva (Moreira Alves a saída Pranchinha); Av. Paulino F. Messias (Praça Marechal Rondon a Moreira Alves); entrada pela PR-471 e Av. Abel Desidério de Araújo até R. João Mendes de Oliveira; R. João Mendes de Oliveira; Av. Augusto Mendes dos Santos (R. João Mendes de Oliveira a R. Manoel Moreira Alves). Inciso VI aparece repetido na numeração do decreto (duas alíneas VI). Fiscalização pela PM (art. 3º)."
+    }
+  ]
+}

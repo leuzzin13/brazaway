@@ -1,0 +1,158 @@
+{
+ "ibge": "4120101",
+ "nome": "Porto Amazonas",
+ "uf": "PR",
+ "status": "regra_sem_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/B0AAAFAD",
+   "resultado": "LIDO integral (Lei 1.043/2016). Salvo em atos/4120101/lei_1043_2016.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/C80336C6",
+   "resultado": "LIDO integral (Lei 1.046/2016). Salvo em atos/4120101/lei_1046_2016.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/0A9B94D8",
+   "resultado": "LIDO integral (Dec. 37/2024, estacionamento). Salvo em atos/4120101/decreto_37_2024.txt"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/F0EF3F79",
+   "resultado": "trecho via busca: Dec. 118/2022, avenida de contorno"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amp/materia/486E14E3",
+   "resultado": "trecho via busca: Dec. 123/2021"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 4120101 (Lei 843/2009; Lei 838 vias principal secundária; restringe tráfego perímetro urbano; safra veículos pesados)",
+   "resultado": "Lei 843/2009 e 838/2009 originais fora do AMP; sem regulamentação"
+  },
+  {
+   "url": "https://www.cmportoamazonas.pr.gov.br/imprensa/destaques/Cronologia-da-Legislacao-Municipal/1/2025/674",
+   "resultado": "aberto com curl puro (página \"Cronologia da Legislação Municipal\"): 200, mas sem lista de atos/links para as Leis 843 e 838/2009; não permitiu achar o texto original"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Lei 843/2009 (Regulamenta estacionamento na Rua XV de Novembro e restringe o tráfego de veículo pesado nas ruas do perímetro urbano), na redação da Lei 1.043/2016 (AMP 22/03/2016, lida) e Lei 1.046/2016 (AMP 27/05/2016, lida): proibida a circulação (trânsito, parada, estacionamento) de veículos pesados (peso máximo total > 20 t, após a Lei 1.046) nas ruas do perímetro urbano que não sejam vias principais/secundárias da Lei 838/2009, e na Rua Lothário Boutin (Três Encruzilhadas até a Agropecuária Boutin); estacionamento de caminhões carregados nos recuos da Rua XV de Novembro (lado direito). A Lei 843/2009 original e a Lei 838/2009 (hierarquia viária) não foram localizadas -> regra de zona desativada; regra da Rua Lothário Boutin ativa (média). Decreto 37/2024 (lido): proíbe estacionamento de pesados na Rua XV de Novembro (carga e descarga 15 min) - estacionamento, pontual. Decretos 118/2022 e 123/2021 só justificam avenida de contorno para desviar pesados do centro. Sem regulamentação de safra/casos especiais achada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "portoamazonas_rua_lothario_boutin_20t",
+   "tipo": "via",
+   "regime": "Restrição por PBT (via)",
+   "nome": "Rua Lothário Boutin (Três Encruzilhadas à Agropecuária Boutin): veículos pesados > 20 t (Lei 843/2009 alt.)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "excecoes": [
+    "casos especiais, emergência e calamidade mediante pedido prévio (§9º, regulamentação do Executivo não achada)",
+    "período de safra: Executivo deve fixar horários (§10)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei nº 843/2009 (Porto Amazonas), art. 2º, na redação da Lei nº 1.043/2016",
+     "artigo": "art. 2º, caput e §5º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/B0AAAFAD"
+    },
+    {
+     "ato": "Lei nº 1.046/2016 (altera §6º e §9º do art. 2º da Lei 843/2009)",
+     "artigo": "art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/C80336C6"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "Rua Lothário Boutin"
+     ],
+     "descricao": "entre as Três Encruzilhadas e a Agropecuária Boutin (divisa dos lotes da Agropecuária Boutin e do terreno à direita), ambos os sentidos"
+    }
+   ],
+   "nota": "\"Circulação\" = trânsito, parada e estacionamento (§7º). Veículo pesado = peso máximo total > 20 t (Lei 1.046/2016; a Lei 1.043/2016 dizia 10 t). Sinalização R-6 e R-14 prevista (§8º)."
+  },
+  {
+   "id": "portoamazonas_perimetro_urbano_exceto_vias_principais",
+   "tipo": "zona",
+   "regime": "Restrição por PBT (zona)",
+   "nome": "Perímetro urbano, exceto vias principais e secundárias: veículos pesados > 20 t proibidos (Lei 843/2009 alt. 1.043/2016)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 20
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei nº 843/2009 (Porto Amazonas), art. 2º, na redação da Lei nº 1.043/2016",
+     "artigo": "art. 2º, caput e §5º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/B0AAAFAD"
+    },
+    {
+     "ato": "Lei nº 1.046/2016 (altera §6º e §9º do art. 2º da Lei 843/2009)",
+     "artigo": "art. 2º",
+     "url": "https://www.diariomunicipal.com.br/amp/materia/C80336C6"
+    }
+   ],
+   "status_motivo": "A classificação em vias principais/secundárias está na Lei Municipal 838/2009 (não localizada: anterior à cobertura útil do AMP), então não há como saber quais ruas ficam liberadas; também aguarda regulamentação (casos especiais e safra).",
+   "trechos": [
+    {
+     "inciso": "-",
+     "via": [
+      "ruas do perímetro urbano"
+     ],
+     "descricao": "todas as ruas do perímetro urbano que NÃO sejam vias de circulação principal e secundária da Lei 838/2009 (texto/mapa não localizado)"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,118 @@
+{
+ "ibge": "4212304",
+ "nome": "Paulo Lopes",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/453589",
+   "resultado": "LIDO integral (.doc do DOM/SC convertido): Decreto 03/2014 (07/02/2014) disciplina circulação de caminhões e carga/descarga em 5 ruas. atos/4212304/decreto_03_2014.txt"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4212304 'caminhões' / 'veículos pesados' / 'decreto 03/2014 circulação de caminhões'",
+   "resultado": "DOM/SC abriu; nenhum decreto posterior que altere/revogue o 03/2014. Demais acertos: Lei 1727/2017 (pátio de remoção), licitações, Dec. 18/2025 (diagnóstico/plano com diretriz de tráfego pesado - sem regra), Dec. 49/2026 (PMGIRS)."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/7223467",
+   "resultado": "Trecho do Decreto 18/2025 (DOM/SC): documento de plano/diagnóstico com diretrizes de tráfego pesado na BR-101; não é regra."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 03/2014 proíbe trânsito de caminhões e estacionamento em operação de carga/descarga nas ruas listadas (art. 3º): José Joaquim da Silveira (Sorocaba), Sebastião Francisco Cabral (Sorocaba), Maria Teodora Marcos (Morro do Freitas), Amadeu Antônio Moises (Areias) e Geral Tigela (Tigela) - percurso total. Veículos 'acima de 10,0 toneladas' (parágrafo único do art. 1º); o decreto não diz se PBT ou capacidade (art. 9º fala em 'capacidade de carga útil'); sem horário (proibição integral). Exceções art. 7º. Infração art. 187, I do CTB. Não encontrei alteração/revogação nem decreto de novas áreas (art. 9º) no DOM/SC; sinalização não verificada. Ruas rurais/localidades - geometria precisa de OSM por nome.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "paulolopes_dec_03_2014_caminhoes",
+   "tipo": "via",
+   "regime": "Proibição de caminhões acima de 10 t (vias)",
+   "nome": "Cinco logradouros de Sorocaba, Morro do Freitas, Areias e Tigela: caminhões acima de 10 t proibidos (Decreto 03/2014)",
+   "status": "ativa",
+   "status_motivo": "Decreto sem revogação/alteração localizada no DOM/SC (busca 18/10/2026); sinalização não verificada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 10.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 03/2014, de 07/02/2014 (Paulo Lopes)",
+     "artigo": "art. 1º e parágrafo único; art. 3º, I (vias); art. 7º (exceções)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/453589",
+     "nota": "Texto integral lido."
+    }
+   ],
+   "excecoes": [
+    "Ônibus e caminhões que prestem serviços essenciais",
+    "Caminhões de emergência, guincho de socorro, cobertura jornalística, obras/serviços de emergência, Correios, sinalização de trânsito (art. 7º)",
+    "Autorização especial da Secretaria de Transporte, Obras e Serviços Urbanos para carga/descarga excepcional (art. 5º)"
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 3º, I, a",
+     "via": [
+      "Rua José Joaquim da Silveira"
+     ],
+     "descricao": "Percurso total; localidade Sorocaba.",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 3º, I, b",
+     "via": [
+      "Rua Sebastião Francisco Cabral"
+     ],
+     "descricao": "Percurso total; localidade Sorocaba.",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 3º, I, c",
+     "via": [
+      "Rua Maria Teodora Marcos"
+     ],
+     "descricao": "Percurso total; Morro do Freitas.",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 3º, I, d",
+     "via": [
+      "Rua Amadeu Antônio Moises"
+     ],
+     "descricao": "Percurso total; Areias.",
+     "aproximado": false
+    },
+    {
+     "inciso": "art. 3º, I, e",
+     "via": [
+      "Rua Geral Tigela"
+     ],
+     "descricao": "Percurso total; Tigela.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2014-02-07",
+   "nota": "Decreto diz 'veículos acima de 10,0 toneladas' sem especificar PBT ou capacidade; adotado payload_t (lado seguro, mesmo critério de Almirante Tamandaré). Também veda estacionamento em operação de carga/descarga nas mesmas vias. Sem horário: janela 24h. Art. 11 (fiscalização educativa nos 90 primeiros dias) já exaurido."
+  }
+ ]
+}

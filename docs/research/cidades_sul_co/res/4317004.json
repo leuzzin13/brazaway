@@ -1,0 +1,82 @@
+{
+ "ibge": "4317004",
+ "nome": "Santana da Boa Vista",
+ "uf": "RS",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs/materia/034E6B2F",
+   "resultado": "LIDO integral (FAMURS, Ed. 3626): Decreto 3.616, 01/08/2023 - proíbe caminhões e outros veículos pesados acima de 24 t na ponte do Passo da Capela. atos/4317004/decreto_3616_2023.txt"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4317004 ('ponte Passo da Capela','veículos pesados ponte','limitação de peso toneladas')",
+   "resultado": "FAMURS abriu; sem alteração/revogação do Dec. 3.616/2023; Decretos 3.134/3.146/3.174 de 2020 apareceram por score baixo (COVID/outros, não lidos); Lei 3.389/2022 score 3 (não lida)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/camara/rs/santanadaboavista",
+   "resultado": "Não aberto (Cloudflare 403 conhecido)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Decreto 3.616/2023: ponte do Passo da Capela, na estrada de acesso entre a sede e as localidades Passo da Capela, Serra dos Pereiras, Campina e Serra dos Vargas, com limite máximo de 24 t para o tráfego sobre a ponte (art. 1º), por danos na estrutura. Sem horário, sem exceções; sem prazo. Não localizei a reabertura/reforma da ponte nem revogação. Via de acesso municipal (não confirmei jurisdição pelo nome). Sinalização não verificada.",
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "santanadaboavista_dec_3616_2023_ponte_passo_capela",
+   "tipo": "ponte",
+   "regime": "Limite de peso (ponte)",
+   "nome": "Ponte do Passo da Capela: limite de 24 t (Decreto 3.616/2023)",
+   "status": "ativa",
+   "status_motivo": "Decreto sem revogação localizada; não verifiquei se a ponte foi reformada.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 24.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 3.616, de 01/08/2023 (Santana da Boa Vista)",
+     "artigo": "art. 1º",
+     "url": "https://www.diariomunicipal.com.br/famurs/materia/034E6B2F",
+     "nota": "Texto integral lido."
+    }
+   ],
+   "excecoes": [],
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Ponte no Passo da Capela (estrada de acesso Sede - Passo da Capela, Serra dos Pereiras, Campina, Serra dos Vargas)"
+     ],
+     "descricao": "Ponte única.",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2023-08-02",
+   "nota": "'Limitação máxima de peso de 24 t de tráfego sobre a ponte': interpretado como PBT."
+  }
+ ]
+}

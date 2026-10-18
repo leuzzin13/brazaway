@@ -198,3 +198,7 @@ nesta região, mais que os portais.
 tudo ISS/frota): a re-pontuação mandou 306 cidades para conferência barata (DR) em vez de pesquisa cara.
 
 (Próximas rodadas: acrescentar aqui o que funcionou e o que falhou em cada lote.)
+
+## Aprendizado das ondas (18/10/2026)
+- **DOM/SC — texto integral do ato:** a página do ato não traz o texto, mas `https://diariomunicipal.sc.gov.br/?r=ato/getHtml&id=<id>` com o header `X-Requested-With: XMLHttpRequest` devolve o texto completo. Rendeu 17 cidades com regra ativa em 2 lotes de SC. Confira alteração/revogação buscando no DOM/SC pela entidade.
+- **Querido Diário:** use `api.queridodiario.org.br` via curl (o domínio `...ok.org.br` falha no TLS daqui; pelo Python dá 403).

@@ -1,0 +1,57 @@
+{
+  "ibge": "4118600",
+  "nome": "Paula Freitas",
+  "uf": "PR",
+  "status": "pista",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/407B3958",
+      "resultado": "Lei 1425/2017 (AMP, 06/10/2017) aberta e lida: art. 14 proíbe caminhões >10 t em dias de condições climáticas danosas 'na forma do Decreto a ser expedido'. Texto em atos/4118600/lei1425_2017.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4118600 'tráfego de caminhões estradas rurais chuva', 'caminhões 10 toneladas', 'Lei 1425' (amp)",
+      "resultado": "nenhum decreto regulamentador; só a Lei 1425 e ruído"
+    },
+    {
+      "url": "https://sapl.paulafreitas.pr.leg.br (legislacao.py buscar caminh|pesad|estradas rurais|chuva|tráfego|trânsito|1425)",
+      "resultado": "0 resultados (SAPL sem acervo)"
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/amp/materia/252BC1AC",
+      "resultado": "Lei 1.651/2024: edificações (altura livre de garagem p/ caminhões); ruído"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Regra condicional em lei sem decreto regulamentador localizado: fica como pista/desativada. Prefeitura (portal) não consultada por falta de cliente, mas o decreto seria publicado no AMP.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "paulafreitas_estradas_rurais_10t_clima",
+      "tipo": "zona",
+      "regime": "Estradas rurais em dia de dano climático",
+      "nome": "Estradas municipais rurais: proibido tráfego de caminhões com peso acima de 10 t nos dias em que o clima possa danificar as estradas, na forma de decreto",
+      "status": "desativada",
+      "confianca": "baixa",
+      "status_motivo": "O art. 14 delega a um decreto do Executivo a definição dos dias de restrição; o decreto não foi encontrado (diário AMP, SAPL). Sem lista de vias (estradas rurais em geral), condição climática e 'peso' ambíguo (PBT x capacidade)",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei 1425/2017 (programa de estradas rurais)",
+          "artigo": "art. 14",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/407B3958"
+        }
+      ],
+      "geometria": []
+    }
+  ]
+}
