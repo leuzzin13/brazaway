@@ -30,6 +30,24 @@ SEED_DIR = pathlib.Path(os.environ.get('SEED_DIR', '/seed/layers'))
 CACHE_DIR = DATA_DIR / 'cache'
 
 
+def osm_pbf() -> str | None:
+    """Extrato OSM para os importadores: $OSM_PBF; senão data/osm/sse_co.osm.pbf (Sudeste + Sul + Centro-Oeste fundidos e
+    sem duplicatas de divisa, ver docs/layers/regioes.md); senão o único PBF de data/valhalla. Com vários PBF regionais em
+    data/valhalla (o Valhalla lê todos) e sem o fundido, recusa: pegar o primeiro em ordem alfabética cobriria uma região só."""
+    import glob
+    p = os.environ.get('OSM_PBF')
+    if p and os.path.exists(p):
+        return p
+    fundido = DATA_DIR / 'osm' / 'sse_co.osm.pbf'
+    if fundido.exists():
+        return str(fundido)
+    c = sorted(glob.glob(str(DATA_DIR / 'valhalla' / '*.osm.pbf')))
+    if len(c) > 1:
+        raise FileNotFoundError(f'vários PBF em data/valhalla ({", ".join(os.path.basename(x) for x in c)}): '
+                                'gere data/osm/sse_co.osm.pbf (scripts/build-tiles-regioes.sh) ou defina OSM_PBF')
+    return c[0] if c else None
+
+
 def http_get(url: str, *, cache: str | None = None, max_age_h: float = 24, timeout: int = 180, **kw) -> bytes:
     """GET com cache em data/cache (evita martelar os portais públicos)."""
     if cache:

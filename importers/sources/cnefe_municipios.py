@@ -24,7 +24,7 @@ NOMES = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/{uf}/munici
 
 
 def ufs() -> list[int]:
-    raw = os.environ.get('GEO_UFS', '35,33,31,32')
+    raw = os.environ.get('GEO_UFS', '35,33,31,32,41,42,43,50,51,52,53')
     out = []
     for t in raw.split(','):
         t = t.strip().upper()

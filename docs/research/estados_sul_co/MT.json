@@ -1,0 +1,1111 @@
+{
+ "uf": "MT",
+ "data": "2026-10-18",
+ "nota_metodo": "Pesquisa de 18/10/2026 por curl e pela API de busca do IOMAT. A maioria dos hosts .mt.gov.br (SINFRA, SESP, DETRAN, SEMA, AGER, SEPLAG, transparencia) nao resolve/aceita conexao pelo proxy do ambiente e TRT23 devolve 'Acesso Negado'; leisestaduais/legislacao.mt.gov.br respondem 403. Funcionaram: geodados.mt.gov.br (ArcGIS Server), dadosabertos.mt.gov.br (CKAN), iomat.mt.gov.br (Diario Oficial, com API JSON de busca por frase entre aspas), sites das concessionarias (morrodamesa.com.br, rotadosgraos130.com.br, mt246.com.br, mt320.com.br), dados.transportes.gov.br, gov.br/mj (Sinesp VDE), al.mt.gov.br (PDFs de projetos de lei), normasbrasil.com.br e Overpass (kumi.systems). Usei 3 WebSearch (SINFRA/feriado; tarifas; praças). A API do IOMAT e a fonte primaria que substituiu os sites do orgao: o texto de cada pagina do DOE vem no campo 'conteudo' do indice (colunas misturadas; conferi cada trecho citado). Nada foi inventado: onde so ha fonte secundaria ou o texto nao ficou legivel, esta dito no item.",
+ "temas": {
+  "rodovias_estaduais": {
+   "orgao": "SINFRA-MT (Secretaria de Estado de Infraestrutura e Logistica), orgao executivo rodoviario do Estado pelo Decreto estadual 284/2015 (citado nas portarias); regula as concessoes a AGER/MT (Agencia Estadual de Regulacao dos Servicos Publicos Delegados). Conselho de transito: CETRAN-MT.",
+   "resumo": "Mato Grosso NAO tem portaria geral de horario de caminhao por feriado prolongado nem por serra: o PL 774/2021 (regulava restricao de trafego de carga em rodovias estaduais e proibia fim de semana/feriado) foi VETADO integralmente (Mensagem 164, DOE 07/10/2021). As restricoes que existem sao por TRECHO, em duas portarias da SINFRA ainda sem revogacao localizada: Portaria 061/2021 (MT-010, MT-246 e MT-251 Estrada-Parque) e Portaria 010/2023 (MT-040/MT-361 Estrada-Parque Santo Antonio de Leverger - Barao de Melgaco). Todas pedem AET (sistema SINFRALOG) e proibem trafego, mesmo com AET, em fins de semana/feriados (com horarios proprios). Rodotrem/bitrenzao (9 eixos, 74 t) estao DISPENSADOS de AET nas rodovias estaduais desde 25/01/2021, exceto nos trechos com restricao. Nao achei limite de altura, ponte com restricao de peso, nem AET por rota (tipo SC) nas estaduais. O limite de peso da malha concedida e fiscalizado por balancas das concessionarias (ver balancas).",
+   "fontes": [
+    {
+     "nome": "IOMAT - Portaria 061/2021/GS/SINFRA-MT (texto do DOE)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22061%2F2021%2FGS%2FSINFRA%22",
+     "formato": "JSON da busca com texto da pagina 28 do DOE 20/10/2021 (n 28.107; pdf_id 886448). O PDF baixado pelo link /legislacao/diario_oficial/download/<pdf_id> traz so a capa; use o campo conteudo.",
+     "licenca": "ato oficial (dominio publico, Lei 9.610/1998 art. 8 IV)",
+     "atualizado_em": "2021-10-20"
+    },
+    {
+     "nome": "IOMAT - Portaria 010/2023/GS/SINFRA-MT",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Fica+restrito+o+tr%C3%A2nsito%22",
+     "formato": "JSON (DOE 07/03/2023 n 28.451, pag 15-16; pdf_id 951731 e 951771)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2023-03-07"
+    },
+    {
+     "nome": "IOMAT - Portaria SINFRA de 25/01/2021 (suspende AET de rodotrem/bitrenzao)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Suspender+por+tempo+indeterminado+a+exig%C3%AAncia+de+porte+de+Autoriza%C3%A7%C3%A3o+Especial%22",
+     "formato": "JSON (DOE 27/01/2021 n 27.924 pag 17, pdf_id 852343)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2021-01-27"
+    },
+    {
+     "nome": "IOMAT - Portaria 34/2022/CGAB/SINFRA (AET so pelo SINFRALOG)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22sinfralog.sinfra.mt.gov.br%2Fportalaet%22",
+     "formato": "JSON (DOE 18/07/2022 n 28.288 pag 23, pdf_id 925034)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2022-07-18"
+    },
+    {
+     "nome": "IOMAT - Mensagem 164/2021 (veto ao PL 774/2021)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Projeto+de+Lei+n%C2%BA+774%2F2021%22",
+     "formato": "JSON (DOE 07/10/2021 n 28.100 pag 3, pdf_id 884939)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2021-10-07"
+    },
+    {
+     "nome": "Normas Brasil - Portarias SINFRA 41/2021 (revogada) e 61/2021",
+     "url": "https://www.normasbrasil.com.br/norma/portaria-61-2021-mt_421943.html",
+     "formato": "HTML (agregador que reproduz o DOE; usado so para o Art. 3 II com o numero dos autos judiciais)",
+     "licenca": "nao declarada (texto de ato oficial)",
+     "atualizado_em": "lida em 2026-10-18"
+    },
+    {
+     "nome": "GeoDados MT - Rodovias_Estaduais (SRE com km, tipo, material, concessao, balsa)",
+     "url": "https://geodados.mt.gov.br/server/rest/services/Hosted/Rodovias_Estaduais/FeatureServer/0",
+     "formato": "ArcGIS FeatureServer, consulta anonima, f=json/geojson, maxRecordCount 2000, 2.346 trechos, campos sre/rodovia/inicio/fim/ext_inicia/ext_final/extensao_k/lat_inicio/long_inici/lat_fim/long_fim/tipo/material/ident_trec/responsa/jurisdicao/pedagiadas/tipo_concessao/lote_concessao/em_obras/municipio",
+     "licenca": "nao declarada (item publico do portal; licenseInfo vazio)",
+     "atualizado_em": "2025-05-05 (lastEditDate 1746467381685)"
+    },
+    {
+     "nome": "Mesma camada, copia em shapefile (Web Mercator)",
+     "url": "https://geodados.mt.gov.br/server/rest/services/Hosted/Rodovias_Estaduais_SHP/FeatureServer/0",
+     "formato": "ArcGIS FeatureServer, 2.345 trechos",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-05-06"
+    }
+   ],
+   "atos": [
+    {
+     "ato": "Portaria SINFRA 061/2021/GS/SINFRA-MT",
+     "data": "2021-10-18 (DOE 20/10/2021 n 28.107 pag 28)",
+     "status": "vigente provavel: nenhuma revogacao/alteracao localizada na busca do IOMAT ate 18/10/2026 (a busca por '061/2021/GS/SINFRA' so acha o proprio ato; a Portaria 010/2023 nao a cita). Revogou a Portaria 041/2021 (art. 5) e esta revogara a 027/2020.",
+     "veiculos": "veiculos de carga, CVC, CTV e cargas indivisiveis com PBT, cheio ou vazio, igual ou superior a 26.000 kg, com mais de 3 eixos e comprimento acima de 14,00 m (o texto liga os tres criterios com virgula e 'e'; li como cumulativos, a confirmar)",
+     "artigos": {
+      "art_1": "restringe o transito nos trechos abaixo",
+      "art_2": "so passam com AET, comprovando carga/descarga na margem, domicilio nos trechos ou servico de manutencao; AET por viagem, validade maxima 180 dias",
+      "art_3": "I MT-010 e MT-246: sem restricao de horario, transito permitido em dias uteis e proibido, mesmo com AET, aos sabados a partir de 13 h, domingos e feriados; II MT-251: levando em conta decisao judicial (Autos 1193-83.2009.811.0024, cod. 31788) transito so em dias uteis de 20:00 a 05:00 do dia seguinte, proibido fim de semana e feriado mesmo com AET",
+      "art_4": "infracao do art. 187 I do CTB",
+      "art_5": "revoga a Portaria 041/2021",
+      "art_6": "vigencia na publicacao"
+     },
+     "trechos": [
+      {
+       "inciso": "I",
+       "rodovia": "MT-010",
+       "descricao": "limite do perimetro urbano de Rosario Oeste ate o entroncamento com a MT-246 (Acorizal)",
+       "km_ini": null,
+       "km_fim": null,
+       "obs": "o ato nao da km; no SRE, MT-010 entre o entroncamento MT-246(B) (SRE km 69,34) e o inicio do PU de Rosario Oeste (SRE km 110,22): SRE 010EEMT0090, 010EEMT0095, 010EEMT0100 (casamento por entroncamentos, a confirmar)"
+      },
+      {
+       "inciso": "II",
+       "rodovia": "MT-010",
+       "descricao": "do entroncamento com a MT-246 ate o KM 4+600 no entroncamento com a BR-163 (Rodoanel)",
+       "km_ini": null,
+       "km_fim": 4.6,
+       "obs": "o km 4+600 do ato nao e o km acumulado do SRE: o SRE da MT-010 comeca no entroncamento BR-070/163/364 em Cuiaba e o PU de Cuiaba (Anel Viario) termina no SRE km 7,39; casamento pendente"
+      },
+      {
+       "inciso": "III",
+       "rodovia": "MT-246",
+       "descricao": "do entroncamento com a BR-163/364 ate o entroncamento com a MT-010",
+       "km_ini": null,
+       "km_fim": null,
+       "obs": "no SRE: 246EEMT0062, 0063, 0065 e 0070 (Acorizal-Jangada; a MT-246 coincide com a MT-010 entre os entroncamentos A e B). A MT-246 de Jangada a Barra do Bugres e a concessao Via Brasil MT-246 e nao entra neste ato"
+      },
+      {
+       "inciso": "IV",
+       "rodovia": "MT-251",
+       "descricao": "Estrada-Parque: do entroncamento com a MT-351, KM 16+650 ate o KM 69+430",
+       "km_ini": 16.65,
+       "km_fim": 69.43,
+       "obs": "o km do ato parte de Cuiaba; a MT-251 do GeoDados tem outro marco (comeca em Nova Xavantina, Chapada dos Guimaraes em SRE km 381-428). Casamento pendente"
+      }
+     ],
+     "teste": "texto conferido no DOE (IOMAT) e no Normas Brasil; fontes/MT/iomat_sinfra_portaria_061_2021_pag28.txt e sinfra_portaria_61_2021.txt"
+    },
+    {
+     "ato": "Portaria SINFRA 041/2021/GS/SINFRA-MT",
+     "data": "2021-07-06 (DOE 08/07/2021 pag 35)",
+     "status": "REVOGADA pela Portaria 061/2021 (art. 5)",
+     "veiculos": "mesmo criterio (26 t, 3 eixos, 14 m)",
+     "artigos": {
+      "art_2_par2": "AET so em dias uteis, 20:00 a 05:00, proibido fim de semana e feriado em todos os trechos"
+     },
+     "trechos": [
+      {
+       "rodovia": "MT-010 / MT-246 / MT-251",
+       "descricao": "mesmos trechos da 061/2021 (redacao diferente: MT-010 ate o 'entroncamento com a MT-246 - Cuiaba' e MT-251 a partir de 'MT-351')"
+      }
+     ],
+     "teste": "fontes/MT/sinfra_portaria_41_2021_revogada.txt"
+    },
+    {
+     "ato": "Portaria SINFRA 010/2023/GS/SINFRA-MT",
+     "data": "2023-03-03 (DOE 07/03/2023 n 28.451 pag 15-16)",
+     "status": "vigente provavel (sem revogacao localizada)",
+     "veiculos": "veiculos de carga, CVC, CTV e cargas indivisiveis com PBT, cheio ou vazio, superior a 45 t, com mais de 6 eixos e comprimento acima de 16,00 m (criterios cumulativos como na 061/2021, a confirmar)",
+     "artigos": {
+      "art_1": "restringe MT-040 e MT-361, do limite do perimetro urbano de Santo Antonio de Leverger - Porto de Fora - Barao de Melgaco - divisa Cuiaba/Juscimeira, SRE 040EMT0040/0050/0053/0054/0055/0057/0060/0070/0073 e 361EMT0040/0043, extensao total 175,7 km (Estrada-Parque, Decreto 1.474/2000)",
+      "art_2": "AET (SINFRALOG) com comprovacao de carga/descarga, domicilio ou obra; por viagem, validade maxima 180 dias",
+      "art_3": "I horario do amanhecer ao por do sol, exceto cargas vivas (qualquer horario); II transito em dias uteis, proibido sabados, domingos e feriados mesmo com AET",
+      "art_4": "infracao do art. 187 I do CTB",
+      "art_5": "vigencia na publicacao"
+     },
+     "trechos": [
+      {
+       "rodovia": "MT-040 e MT-361",
+       "descricao": "Santo Antonio de Leverger (limite do PU) - Porto de Fora - Barao de Melgaco - divisa Cuiaba/Juscimeira",
+       "km_ini": null,
+       "km_fim": null,
+       "sre": [
+        "040EEMT0040",
+        "040EEMT0050",
+        "040EEMT0053",
+        "040EEMT0054",
+        "040EEMT0055",
+        "040EEMT0060",
+        "040EEMT0070",
+        "040EEMT0073",
+        "361EEMT0040",
+        "361EEMT0043"
+       ],
+       "obs": "TESTE: os codigos do ato (grafia 'EMT') casam com o GeoDados (grafia 'EEMT'); 10 dos 11 existem (040EMT0057 nao existe no GeoDados) e a soma das extensoes e exatamente 175,7 km, igual ao do ato"
+      }
+     ],
+     "teste": "fontes/MT/iomat_sinfra_portaria_010_2023_pag15.txt e _pag16.txt; soma de extensao_k conferida no GeoDados"
+    },
+    {
+     "ato": "Portaria SINFRA (numero nao legivel no texto extraido), assinada em 25/01/2021",
+     "data": "DOE 27/01/2021 n 27.924 pag 17",
+     "status": "vigente provavel (sem revogacao localizada)",
+     "veiculos": "CVC de 9 eixos e PBTC 74 t (rodotrem e bitrenzao)",
+     "artigos": {
+      "art_1": "suspende por tempo indeterminado a exigencia de porte de AET para essas combinacoes; o par. unico mantem a AET para situacoes especificas e para trafego por rodovias estaduais COM restricao",
+      "art_2": "as demais combinacoes do Anexo II da Portaria DENATRAN 63/2009, cargas superdimensionadas, veiculos com mecanismo operacional e excesso de largura continuam com AET",
+      "art_3": "revoga a Portaria 621/2013/SETPU"
+     },
+     "trechos": [
+      {
+       "rodovia": "todas as estaduais",
+       "descricao": "dispensa de AET para rodotrem/bitrenzao 9 eixos 74 t, salvo trechos restritos"
+      }
+     ],
+     "teste": "fontes/MT/iomat_sinfra_portaria_rodotrem_sem_AET_2021-01-27_pag17.txt"
+    },
+    {
+     "ato": "Portaria 34/2022/CGAB/SINFRA",
+     "data": "2022-07-15 (DOE 18/07/2022 n 28.288 pag 23)",
+     "status": "vigente provavel",
+     "veiculos": "AET de veiculos de carga e CVC em rodovias estaduais",
+     "artigos": {
+      "art_1": "requerimento so pelo Sistema de Gestao de AET do SINFRALOG (https://sinfralog.sinfra.mt.gov.br/portalaet/), analise pela SUOR",
+      "art_4": "a partir de 18/07/2022 nao se aceita outro meio de protocolo"
+     },
+     "trechos": [],
+     "teste": "fontes/MT/iomat_sinfra_portaria_34_2022_AET_sinfralog.txt"
+    },
+    {
+     "ato": "Mensagem 164/2021 (veto integral ao PL 774/2021)",
+     "data": "2021-10-07 (DOE n 28.100 pag 3)",
+     "status": "VETO (o projeto nao virou lei)",
+     "veiculos": "o PL previa restricao so acima de 18,60 m, 45 t ou 6 eixos e proibicao de fim de semana/feriado em qualquer restricao",
+     "artigos": {
+      "fundamento_do_veto": "inconstitucionalidade formal: competencia privativa da Uniao para legislar sobre transito (CF art. 22 XI)"
+     },
+     "trechos": [],
+     "teste": "fontes/MT/iomat_veto_PL_774_2021_mensagem_164.txt e al_mt_pl_774_2021_substitutivo.txt (texto do substitutivo)"
+    },
+    {
+     "ato": "Resolucao CONSEMA (fev/2009, numero nao distinguivel) e Resolucao CETRAN-MT 08/2008",
+     "data": "DOE 27/02/2009 pag 46",
+     "status": "historico/de base; a Portaria 061/2021 art. 1 IV e art. 3 II cobre o mesmo trecho; nao verifiquei se a resolucao segue em vigor",
+     "veiculos": "PBT acima de 26.000 kg, mais de 3 eixos e comprimento acima de 14 m",
+     "artigos": {
+      "art_1": "proibe o trafego na Estrada-Parque MT-251, trecho Cuiaba - Chapada dos Guimaraes - Mirante (km 15), citando o Decreto 1.473/2000 (estrada-parque)"
+     },
+     "trechos": [
+      {
+       "rodovia": "MT-251",
+       "descricao": "Cuiaba - Chapada dos Guimaraes - Mirante, km 15"
+      }
+     ],
+     "teste": "fontes/MT/iomat_consema_2009_mt251_estrada_parque.txt"
+    }
+   ],
+   "regras_estruturadas": [
+    {
+     "regra_id": "mt_040_361_estrada_parque_45t",
+     "orgao": "SINFRA-MT",
+     "uf": "MT",
+     "rodovia": "MT-040/MT-361",
+     "criterio": {
+      "caminhoes": true,
+      "peso_acima_t": 45,
+      "eixos_acima": 6,
+      "comprimento_acima_m": 16,
+      "cumulativo": true
+     },
+     "horario": "AET: amanhecer ao por do sol (cargas vivas: qualquer horario), dias uteis; proibido sab/dom/feriado mesmo com AET",
+     "ato": "Portaria SINFRA 010/2023, art. 1 a 3",
+     "geometria": {
+      "sre": [
+       "040EEMT0040",
+       "040EEMT0050",
+       "040EEMT0053",
+       "040EEMT0054",
+       "040EEMT0055",
+       "040EEMT0060",
+       "040EEMT0070",
+       "040EEMT0073",
+       "361EEMT0040",
+       "361EEMT0043"
+      ]
+     },
+     "fonte_geometria": "GeoDados Rodovias_Estaduais (175,7 km conferido)",
+     "status": "vigente",
+     "ativa": true,
+     "confianca": "alta no texto, media na vigencia (sem revogacao localizada)"
+    },
+    {
+     "regra_id": "mt_010_246_acorizal_rosario_26t",
+     "orgao": "SINFRA-MT",
+     "uf": "MT",
+     "rodovia": "MT-010/MT-246",
+     "criterio": {
+      "caminhoes": true,
+      "peso_igual_ou_acima_t": 26,
+      "eixos_acima": 3,
+      "comprimento_acima_m": 14,
+      "cumulativo": true
+     },
+     "horario": "AET; sem horario fixo, dias uteis; proibido sab a partir de 13h, domingo e feriado mesmo com AET",
+     "ato": "Portaria SINFRA 061/2021, art. 1 I-III e art. 3 I",
+     "geometria": {
+      "sre": [
+       "010EEMT0090",
+       "010EEMT0095",
+       "010EEMT0100",
+       "246EEMT0062",
+       "246EEMT0063",
+       "246EEMT0065",
+       "246EEMT0070"
+      ]
+     },
+     "fonte_geometria": "casamento por entroncamentos (a confirmar); incisos II (MT-010 ate km 4+600) sem geometria",
+     "status": "vigente",
+     "ativa": false,
+     "motivo_inativa": "geometria dos incisos I-III ainda nao confirmada e inciso II sem casamento de km",
+     "confianca": "media"
+    },
+    {
+     "regra_id": "mt_251_estrada_parque_26t_noturno",
+     "orgao": "SINFRA-MT",
+     "uf": "MT",
+     "rodovia": "MT-251",
+     "criterio": {
+      "caminhoes": true,
+      "peso_igual_ou_acima_t": 26,
+      "eixos_acima": 3,
+      "comprimento_acima_m": 14,
+      "cumulativo": true
+     },
+     "horario": "AET: dias uteis 20:00 a 05:00; proibido fim de semana e feriado mesmo com AET (decisao judicial Autos 1193-83.2009.811.0024)",
+     "ato": "Portaria SINFRA 061/2021, art. 1 IV e art. 3 II; base historica CONSEMA/CETRAN 2009",
+     "geometria": {
+      "km_ato_ini": 16.65,
+      "km_ato_fim": 69.43
+     },
+     "fonte_geometria": "nenhuma ainda: km do ato nao coincide com o acumulado do SRE",
+     "status": "vigente",
+     "ativa": false,
+     "motivo_inativa": "sem geometria",
+     "confianca": "media"
+    }
+   ],
+   "limites_peso_altura_comprimento": "Fora os criterios acima, nao achei limite de peso, altura ou comprimento por trecho, nem proibicao em ponte, em ato estadual (SINFRA/AGER). Cadastro de OAE estadual nao localizado (SINFRA inacessivel). Limites gerais: Resolucao CONTRAN 882/2021 (citada pela SINFRA e pela Rota dos Graos).",
+   "restricoes_feriado_prolongado_serra_travessia_urbana": "Nao localizei portaria estadual (tipo GOINFRA/DER) que proiba caminhao em feriado prolongado, em serra ou em travessia urbana. As travessias urbanas existem no SRE (ident_trec='TRAVESSIA URBANA'), mas sem ato de horario.",
+   "teste_download": "GeoDados: query anonima OK (HTTP 200); 2.346 registros baixados em 2 paginas de 2.000; campos conferidos; GeoJSON com geometria (outSR 4326) baixado para MT-130, MT-100, MT-220, MT-320, MT-208, MT-246, MT-358, MT-343, MT-235 (LineString). IOMAT: 8 consultas de busca e leitura do conteudo das paginas OK. Amostra: fontes/MT/sre_mt_balsas_pedagiadas_concessoes.csv (547 trechos de balsa, pedagiados ou em lote de concessao, 124 KB).",
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "SIM para: (a) malha SRE do GeoDados (tipo, material, balsa, pedagiadas, concessao) e (b) regra MT-040/MT-361 (Portaria 010/2023) com geometria conferida em 175,7 km. PARCIAL para as regras da Portaria 061/2021 (texto certo, mas casamento de km/entroncamentos com o SRE pendente; importar com ativa=false ate casar). Precisa de curadoria: confirmar no DOE de 2024-2026 se ha portaria nova de restricao (a busca por frases exatas achou so as duas) e se 'cumulativo' esta certo."
+  },
+  "pedagio": {
+   "resumo": "MT tem o maior programa de pedagio ESTADUAL entre os estados pesquisados: ~10 concessoes em operacao (SRE marca 157 trechos 'pedagiadas=SIM', cerca de 1.414 km em 'Concedido') e a Fase 2 do Programa de Concessoes 2023-2026 (11 lotes, 2.300 km, todos com cobranca free flow). O regulador e a AGER/MT (tarifa-teto por decisao da Diretoria Executiva, publicada no DOE). Tarifa por eixo: multiplicador de eixos sobre a tarifa basica (cat. 2 = 2x ... cat. 12/9 eixos = 9x). Coordenada oficial das pracas: nao achei; so km. Nova Rota do Oeste (BR-163/BR-364) e federal delegada (MTpar) e nao entra aqui.",
+   "fontes": [
+    {
+     "nome": "AGER/MT - decisoes de reajuste de tarifa-teto, publicadas no DOE (IOMAT)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Tarifa+B%C3%A1sica+de+Ped%C3%A1gio%22",
+     "formato": "JSON da busca; texto no campo conteudo (ex.: DOE 13/10/2026 pag 71)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2026-10-15 (ultima pauta lida)"
+    },
+    {
+     "nome": "Morro da Mesa - tarifas 2026 (HTML, tabela por categoria)",
+     "url": "https://morrodamesa.com.br/tarifas-e-pedagio/",
+     "formato": "HTML",
+     "licenca": "nao declarada (informacao publica da concessionaria)",
+     "atualizado_em": "vigente desde 2026-04-01"
+    },
+    {
+     "nome": "Rota dos Graos - tarifas e free flow (HTML)",
+     "url": "https://rotadosgraos130.com.br/tarifas/",
+     "formato": "HTML (tarifa por n de eixos e por portico)",
+     "licenca": "nao declarada",
+     "atualizado_em": "pagina com tarifa de 15/10/2025 e porticos 'a partir de 14/10/2026'"
+    },
+    {
+     "nome": "Via Brasil MT-246 - tabela (imagem JPG)",
+     "url": "https://mt246.com.br/wp-content/uploads/2026/08/TABELA_MT246-3.jpg",
+     "formato": "JPG lido e transcrito (copia em fontes/MT/img/t246.jpg)",
+     "licenca": "nao declarada",
+     "atualizado_em": "upload 2026-08"
+    },
+    {
+     "nome": "Via Brasil MT-320 - tabela (imagem JPG)",
+     "url": "https://mt320.com.br/wp-content/uploads/2026/04/tarifa320-ok.jpg",
+     "formato": "JPG lido e transcrito (copia em fontes/MT/img/t320.jpg)",
+     "licenca": "nao declarada",
+     "atualizado_em": "upload 2026-04"
+    },
+    {
+     "nome": "GeoDados MT - Rodovias_Estaduais (campos pedagiadas, tipo_concessao, lote_concessao, responsa)",
+     "url": "https://geodados.mt.gov.br/server/rest/services/Hosted/Rodovias_Estaduais/FeatureServer/0",
+     "formato": "ArcGIS FeatureServer",
+     "licenca": "nao declarada",
+     "atualizado_em": "2025-05-05"
+    },
+    {
+     "nome": "IOMAT - PER do contrato MT-130 (praças e balanças em km)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Localiza%C3%A7%C3%A3o+Referencial+das+Pra%C3%A7as%22",
+     "formato": "JSON (DOE 01/09/2022 pag 88, pdf_id 929053)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2022-09-01"
+    },
+    {
+     "nome": "Sao Paulo Sem Segredos - Pedagios em MT (FONTE SECUNDARIA, NAO OFICIAL)",
+     "url": "https://www.emsampa.com.br/pedmt.htm",
+     "formato": "HTML; km das pracas e tarifa/eixo com datas de 2024-2025 (defasadas em varios casos)",
+     "licenca": "cite a fonte (texto da propria pagina)",
+     "atualizado_em": "datas da tabela: 2024-10 a 2025-09"
+    }
+   ],
+   "concessoes_estaduais": [
+    {
+     "concessionaria": "Morro da Mesa Concessionaria S.A.",
+     "contrato": "001/2011/00/00/SINFRA",
+     "rodovias": "MT-130 Rondonopolis - Primavera do Leste (BR-070)",
+     "extensao_km": "~111,6 (km 0 a 111+600 do PER)",
+     "pracas": [
+      {
+       "id": "P-01",
+       "rodovia": "MT-130",
+       "km": "9+454 (PER, referencial) / 9+150 (site)",
+       "local": "Rondonopolis",
+       "coord": null
+      },
+      {
+       "id": "P-02",
+       "rodovia": "MT-130",
+       "km": "110+856 (PER) / 110+315 (site)",
+       "local": "Primavera do Leste",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,70 (reajuste anual 2025/2026 por IPCA fev/2026; AGER, DOE 17/03/2026 pag 177); em vigor desde 01/04/2026 segundo o site",
+     "fonte_tarifa": "https://morrodamesa.com.br/tarifas-e-pedagio/ + DOE 17/03/2026",
+     "tarifa_por_categoria_2026": {
+      "CAT01 auto 2 eixos simples": 11.7,
+      "CAT02 caminhao leve/2 eixos duplos": 23.4,
+      "CAT03 3 eixos": 35.1,
+      "CAT04 4 eixos": 46.8,
+      "CAT05 5 eixos": 58.5,
+      "CAT06 6 eixos": 70.2,
+      "CAT07 auto c/semirreboque (3 simples)": 17.55,
+      "CAT08 auto c/reboque (4 simples)": 23.4,
+      "CAT09 moto": 5.85,
+      "CAT10 bitrem 7 eixos": 81.9,
+      "CAT11 bitrem 8 eixos": 93.6,
+      "CAT12 rodotrem 9 eixos": 105.3,
+      "VE acima de 9 eixos": "tarifa basica x n de eixos"
+     },
+     "free_flow": false,
+     "observacoes": "o PER preve 2 balancas fixas (ver balancas)"
+    },
+    {
+     "concessionaria": "Concessionaria de Rodovias Rota dos Graos S.A.",
+     "contrato": "008/2021/00/00-SINFRA (30 anos, desde junho/2021)",
+     "rodovias": "MT-130 entroncamento BR-070 (Primavera do Leste) - entroncamento MT-020 (Paranatinga), 140,6 km",
+     "pracas": [
+      {
+       "id": "praca convencional 1",
+       "rodovia": "MT-130",
+       "km": "167 (so fonte secundaria emsampa, 10,40 em 14/10/2024)",
+       "coord": null
+      },
+      {
+       "id": "praca convencional 2",
+       "rodovia": "MT-130",
+       "km": "243 (idem)",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,27 por eixo e por praca, quinto reajuste (+3,40% sobre 10,90; AGER, DOE 13/10/2026 pag 71), vigencia 14/10/2026 condicionada a publicacao do ato autorizativo; ate la R$ 10,90 (a partir de 14/10/2025)",
+     "fonte_tarifa": "DOE 13/10/2026 + https://rotadosgraos130.com.br/tarifas/",
+     "tarifa_por_eixo_site_2025_2026": {
+      "moto": 5.45,
+      "passeio": 10.9,
+      "eixo comercial": 10.9,
+      "2 eixos": 21.8,
+      "3 eixos": 32.7,
+      "4 eixos": 43.6,
+      "5 eixos": 54.5,
+      "6 eixos": 65.4,
+      "7 eixos": 76.3,
+      "8 eixos": 87.2,
+      "9 eixos": 98.1
+     },
+     "free_flow": true,
+     "free_flow_detalhe": {
+      "tarifa_global_ref_por_eixo": 22.54,
+      "vigencia": "14/10/2026",
+      "porticos": [
+       {
+        "id": "PFF-01",
+        "km_concessao": 10.0,
+        "km_rodovia": 133.6,
+        "por_eixo": 2.64
+       },
+       {
+        "id": "PFF-02",
+        "km_concessao": 22.0,
+        "km_rodovia": 145.6,
+        "por_eixo": 3.98
+       },
+       {
+        "id": "PFF-03",
+        "km_concessao": 47.5,
+        "km_rodovia": 171.1,
+        "por_eixo": 3.98
+       },
+       {
+        "id": "PFF-04",
+        "km_concessao": 72.3,
+        "km_rodovia": 195.9,
+        "por_eixo": 3.98
+       },
+       {
+        "id": "PFF-05",
+        "km_concessao": 102.245,
+        "km_rodovia": 225.845,
+        "por_eixo": 3.98
+       },
+       {
+        "id": "PFF-06",
+        "km_concessao": 124.1,
+        "km_rodovia": 247.7,
+        "por_eixo": 3.98
+       }
+      ],
+      "multiplicador": "tarifa por pórtico x n de eixos (tabela no site, ate 9 eixos, ex.: PFF-02 9 eixos R$ 35,82)"
+     },
+     "observacoes": "a decisao AGER nao diz se as pracas convencionais deixam de existir; o site publica as duas coisas. Base operacional no km 195. Servico gratuito de 'cargas especiais' com agendamento de 2 semanas."
+    },
+    {
+     "concessionaria": "Via Brasil MT-246 Concessionaria de Rodovias S.A.",
+     "contrato": "007/2021/00/00-SINFRA",
+     "rodovias": "MT-246 (Jangada - Barra do Bugres) e, segundo o SRE (lote 'Via Brasil MT-246', 237 km pedagiados), MT-160, MT-170, MT-339, MT-343 e MT-358",
+     "pracas": [
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-246",
+       "km": "119 Rosario Oeste",
+       "coord": null
+      },
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-343",
+       "km": "231 Barra do Bugres (km duvidoso)",
+       "coord": null
+      },
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-358",
+       "km": "35 e 107 Tangara da Serra",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,40 (5o reajuste, +4,59%, IPCA jul/2026, IQD 0,886; AGER, DOE 31/08/2026 pag 92); antes R$ 10,90 desde 27/08/2025",
+     "fonte_tarifa": "DOE 31/08/2026 + imagem https://mt246.com.br/wp-content/uploads/2026/08/TABELA_MT246-3.jpg",
+     "tarifa_por_categoria_2026": {
+      "CAT01 auto 2S": 11.4,
+      "CAT02 2D": 22.8,
+      "CAT03 3D": 34.2,
+      "CAT04 4D": 45.6,
+      "CAT05 5D": 57.0,
+      "CAT06 6D": 68.4,
+      "CAT07 7D especial": 79.8,
+      "CAT08 8D especial": 91.2,
+      "CAT09 9D especial": 102.6,
+      "CAT10 auto+semirreboque 3S": 17.1,
+      "CAT11 auto+reboque 4S": 22.8,
+      "CAT12 moto": 5.7
+     },
+     "free_flow": false,
+     "observacoes": "o site da concessionaria so mostra a tabela em imagem"
+    },
+    {
+     "concessionaria": "Via Brasil MT-320 Concessionaria de Rodovias S.A.",
+     "contrato": "numero nao lido (DOE 18/09/2020 pag 91 cita a SPE; AGER calculou o 6o reajuste em out/2025)",
+     "rodovias": "MT-320 (Nova Santa Helena - Carlinda) e MT-208 (Carlinda - Alta Floresta)",
+     "pracas": [
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-320",
+       "km": "15 Colider e 60 Nova Canaa do Norte",
+       "coord": null
+      },
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-208",
+       "km": "23 Alta Floresta",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,70 segundo a imagem do site (upload 04/2026); decisao AGER nao lida",
+     "fonte_tarifa": "https://mt320.com.br/wp-content/uploads/2026/04/tarifa320-ok.jpg",
+     "tarifa_por_categoria_2026": {
+      "CAT01 auto 2S": 11.7,
+      "CAT02 2D": 23.4,
+      "CAT03 3D": 35.1,
+      "CAT04 4D": 46.8,
+      "CAT05 5D": 58.5,
+      "CAT06 6D": 70.2,
+      "CAT07 7D especial": 81.9,
+      "CAT08 8D especial": 93.6,
+      "CAT09 9D especial": 105.3,
+      "CAT10 3S": 17.55,
+      "CAT11 4S": 23.4,
+      "CAT12 moto": 5.85
+     },
+     "free_flow": false,
+     "observacoes": ""
+    },
+    {
+     "concessionaria": "Via Brasil MT-100 Concessionaria de Rodovias S.A.",
+     "contrato": "001/2018/00/00-SINFRA, Lote 1 Alto Araguaia",
+     "rodovias": "MT-100 Alto Taquari - Alto Araguaia",
+     "pracas": [
+      {
+       "id": "fonte secundaria",
+       "rodovia": "MT-100",
+       "km": "11 (Alto Araguaia) e 83 (Alto Taquari); o SRE conta km a partir de Alto Taquari, entao o km 83 cai em Alto Araguaia: km duvidoso",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,70 (7o reajuste, +4,46%; AGER, DOE 11/12/2025 pag 55)",
+     "fonte_tarifa": "DOE 11/12/2025",
+     "tarifa_por_categoria_2026": "nao publicada nas fontes lidas (usar multiplicador de eixos sobre 11,70, a confirmar)",
+     "free_flow": false,
+     "observacoes": "pleito de mudanca da metodologia do IQD em analise (AGER-PRO-2026/00600, DOE 23/03/2026)"
+    },
+    {
+     "concessionaria": "Via Norte Sul Rodovias S.A. (Consorcio Via Norte Sul)",
+     "contrato": "006/2021/00/00-SINFRA (Lote I Tabapora)",
+     "rodovias": "MT-220 entroncamento BR-163 (Sinop) - entroncamento MT-410 (Tabapora), 138,4 km",
+     "pracas": [
+      {
+       "id": "P1",
+       "rodovia": "MT-220",
+       "km": "23 Sinop (secundaria)",
+       "coord": null
+      },
+      {
+       "id": "P2",
+       "rodovia": "MT-220",
+       "km": "73 Tabapora (secundaria)",
+       "coord": null
+      },
+      {
+       "id": "P3",
+       "rodovia": "MT-220",
+       "km": "136 Porto dos Gauchos (secundaria)",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "R$ 11,40 (AGER, DOE 22/01/2026 pag 152, vigente 27/01/2026); R$ 10,80 desde 27/01/2025; cobranca autorizada em 25/01/2023 (DOE, pdf_id 42826)",
+     "fonte_tarifa": "DOE 22/01/2026",
+     "tarifa_por_categoria_2026": "nao publicada nas fontes lidas (multiplicador de eixos sobre 11,40, a confirmar)",
+     "free_flow": false,
+     "observacoes": ""
+    },
+    {
+     "concessionaria": "Intervias Concessionaria Ltda.",
+     "contrato": "numero lido so em parte (ata AGER de 12/04/2016, processo 59214/2016, cita o Contrato de Concessao 002/2011/00-...)",
+     "rodovias": "MT-242/MT-493/MT-140 Sorriso - Nova Ubiratã - Boa Esperanca do Norte, 141,6 km",
+     "pracas": [
+      {
+       "id": "praca",
+       "rodovia": "MT-242",
+       "km": "11, zona rural de Sorriso (DOE abr-mai/2026, convocacao de assembleia)",
+       "coord": null
+      }
+     ],
+     "tarifa_base_teto": "nao achei valor oficial atual (2016: R$ 8,50; secundaria: R$ 14,70 'auto/eixo')",
+     "fonte_tarifa": "https://www.mt242.com.br (SPA, tarifa nao legivel por curl)",
+     "free_flow": false,
+     "observacoes": "site tem 'Tarifa de pedagio' carregada por JavaScript"
+    },
+    {
+     "concessionaria": "APASI Concessionaria da Exploracao de Rodovia MT",
+     "contrato": "003/2010/00/00 (259 meses; 1o aditivo no DOE, pdf_id 328663)",
+     "rodovias": "MT-242 BR-163 (Sorriso) - entroncamento MT-491 (Ipiranga do Norte), 71,478 km + MT-491 ate o km 17,8 = 89,278 km",
+     "pracas": [],
+     "tarifa_base_teto": "nao achei valor oficial atual (secundaria: R$ 14,00)",
+     "free_flow": false,
+     "observacoes": ""
+    },
+    {
+     "concessionaria": "SPS Concessionaria",
+     "contrato": "nao lido",
+     "rodovias": "MT-235 (Nova Mutum - Santa Rita do Trivelato) e trecho da MT-140, ~113 km pedagiados no SRE",
+     "pracas": [],
+     "tarifa_base_teto": "nao achei valor oficial (secundaria: R$ 9,00)",
+     "free_flow": false,
+     "observacoes": ""
+    },
+    {
+     "concessionaria": "Administradora de Pedagios Rodovia da Mudanca Ltda.",
+     "contrato": "nao lido (AGER decidiu reajuste 2024 em sessao de 21/02/2025, DOE 24/02/2025 pag 108, valor nao lido)",
+     "rodovias": "MT-449, MT-484, MT-338 e trecho da MT-010 (Lucas do Rio Verde - Tapurah - Ana Terra), ~149 km",
+     "pracas": [],
+     "tarifa_base_teto": "nao achei valor oficial atual (secundaria: R$ 11,50)",
+     "free_flow": false,
+     "observacoes": "site rodoviadamudanca.com.br e SPA sem tarifa legivel"
+    }
+   ],
+   "programa_fase_2": {
+    "descricao": "Programa de Concessoes Rodoviarias 2023-2026, Fase 2: 11 lotes (A a K), ~2.300 km; free flow previsto em todos os lotes. SRE marca 'Estudo Fase 02' lotes A a G (ex.: A = MT-320/422/423/429, 287,3 km).",
+    "lote_A": "287,33 km, concessao 'light', 7 porticos free flow, tarifa maxima de referencia R$ 12,71 (contra R$ 14,49 com pracas)",
+    "fonte": "DOE 27/05/2026 pag 63-64 (audiencia publica); fontes/MT/iomat_ager_audiencia_fase2_loteA_2026-05-27.txt",
+    "status": "estudos/audiencia, sem cobranca"
+   },
+   "base_legal": "Lei estadual 8.264/2004 (institui a cobranca de pedagio nas rodovias estaduais; citada no PL 258/2026). PLs na ALMT (sem desfecho confirmado): 749/2026 (isenta motos), 130/2026 (isenta maquinas agricolas), 258/2026 (publicidade da arrecadacao).",
+   "isencoes": "Contrato Rota dos Graos 008/2021: veiculos oficiais, corpo diplomatico, emergencia (bombeiros/ambulancias), transporte escolar cadastrado e viatura descaracterizada. Caminhao nao tem isencao.",
+   "coordenadas_das_pracas": "Sem fonte oficial. Opcoes: (1) OSM barrier=toll_booth/highway=toll_gantry (a consulta Overpass para MT falhou com HTTP 500 neste ambiente; testar de novo); (2) interpolar o SRE por km, mas o km das pracas nem sempre segue a mesma referencia do SRE (ex.: MT-100); (3) pedir ao SINFRA/AGER o georreferenciamento dos PER.",
+   "teste_download": "Todas as paginas de tarifa baixadas e lidas em 18/10/2026; imagens JPG lidas e transcritas; decisoes da AGER lidas no texto do DOE. Fontes/MT/morrodamesa_tarifas_2026.txt, rotadosgraos130_tarifas.txt, img/t246.jpg, img/t320.jpg, iomat_ager_*.txt.",
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "PARCIAL: tarifas verificadas em fonte oficial (AGER) para 6 concessoes: Morro da Mesa 11,70; Rota dos Graos 11,27 (teto de 14/10/2026) + free flow; MT-246 11,40; MT-100 11,70; MT-220 11,40; MT-320 11,70 (imagem do site). Importar tarifas e trechos concedidos (SRE) ja da; praças SEM coordenada oficial, entao nao da para criar nos de cobranca no mapa sem curadoria (OSM/coordenada). Intervias, APASI, SPS e Rodovia da Mudanca: so fonte secundaria, nao importar o valor."
+  },
+  "balancas": {
+   "resumo": "Nao achei base estadual publica de balancas/postos de pesagem. O que existe: (a) o PER da concessao MT-130 (Morro da Mesa) preve 2 balancas fixas, km 10+700 e 110+856 do trecho; (b) a Rota dos Graos e as demais concessionarias tem 'Postos de Pesagem' nos contratos (nao localizados); (c) no OSM ha 4 nos amenity=weighbridge em MT (3 'BR-163 KM 109', federal); (d) a SEFAZ-MT leiloou em 2024 equipamento ocioso de 'Balanca de Pesagem em Movimento' (DOE 08/05/2024 pag 294), sem localizacao. ANTT ja cobre os postos federais (importada).",
+   "fontes": [
+    {
+     "nome": "IOMAT - PER MT-130 (esquema linear com Balanca Fixa 01 e 02)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Localiza%C3%A7%C3%A3o+Referencial+das+Pra%C3%A7as%22",
+     "formato": "JSON/texto do DOE 01/09/2022 pag 88",
+     "licenca": "ato oficial",
+     "atualizado_em": "2022-09-01"
+    },
+    {
+     "nome": "Morro da Mesa - Balanca de pesagem",
+     "url": "https://morrodamesa.com.br/balanca-de-pesagem/",
+     "formato": "HTML (sem localizacao)",
+     "licenca": "nao declarada",
+     "atualizado_em": "lida em 2026-10-18"
+    },
+    {
+     "nome": "OSM (Overpass kumi.systems) amenity=weighbridge em BR-MT",
+     "url": "https://overpass.kumi.systems/api/interpreter",
+     "formato": "JSON (fontes/MT/osm_mt_ferry_weighbridge.json)",
+     "licenca": "ODbL",
+     "atualizado_em": "2026-10-18"
+    }
+   ],
+   "itens": [
+    {
+     "nome": "Balanca Fixa 01 (Morro da Mesa)",
+     "rodovia": "MT-130",
+     "km": "10+700 do esquema linear (apos a Praca 01 em 9+454)",
+     "sentido": "nao informado",
+     "operacao": "prevista no PER (2 postos fixos, CFTV obrigatorio); o site diz que a balanca esta disponivel para verificacao de peso de veiculos de carga e coletivos",
+     "coord": null
+    },
+    {
+     "nome": "Balanca Fixa 02 (Morro da Mesa)",
+     "rodovia": "MT-130",
+     "km": "110+856 (junto a Praca 02)",
+     "sentido": "nao informado",
+     "operacao": "idem",
+     "coord": null
+    },
+    {
+     "nome": "OSM BR-163 KM 109 (x3)",
+     "rodovia": "BR-163",
+     "km": "109",
+     "coord": [
+      -16.582,
+      -54.689
+     ],
+     "obs": "federal, ja coberto pela ANTT"
+    }
+   ],
+   "teste_download": "Overpass baixou 4 nos weighbridge; DOE lido. Nenhuma lista estadual.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao: so km no PER; sem coordenada nem lista oficial. Se as concessionarias fornecerem coordenadas das 2+ balancas, entram como 'balancas' estaduais."
+  },
+  "feriados": {
+   "estaduais": {
+    "resumo": "MT NAO tem feriado estadual proprio em lei: o Decreto 1.787/2025 (DOE 18/12/2025) lista para 2026 so feriados nacionais e pontos facultativos (Carnaval 16-17/02 e Cinzas ate 14h, Corpus Christi 04/06 e 05/06, Dia do Servidor 28/10, 02/01, 24/12, 31/12). Corpus Christi, Carnaval e 24/12 sao so 'ponto facultativo' no calendario estadual. 20/11 (Consciencia Negra) era 'feriado estadual' no decreto de 2024 e hoje e nacional (Lei 14.759/2023, citada pelo TRT4 e usada pelo DAER-RS). O art. 2 do decreto manda observar os feriados municipais (Lei federal 9.093/1995). A Wikipedia (Feriados no Brasil) tambem nao lista nenhuma data estadual de MT (fonte secundaria).",
+    "datas_2026": [
+     "01/01",
+     "02/01 (ponto facultativo)",
+     "16-17/02 Carnaval (ponto facultativo)",
+     "18/02 Cinzas ate 14h (ponto facultativo)",
+     "03/04 Sexta-feira Santa",
+     "21/04",
+     "01/05",
+     "04/06 Corpus Christi (ponto facultativo)",
+     "05/06 (ponto facultativo)",
+     "07/09",
+     "12/10",
+     "28/10 Dia do Servidor (ponto facultativo)",
+     "02/11",
+     "15/11",
+     "20/11 (nacional)",
+     "24/12 (ponto facultativo)",
+     "25/12",
+     "31/12 (ponto facultativo)"
+    ],
+    "fonte": "https://www.iomat.mt.gov.br (DOE 18/12/2025, Decreto 1.787 de 17/12/2025); fontes/MT/iomat_decreto_1787_2025_feriados_2026.txt e iomat_decreto_2023_feriados_2024.txt"
+   },
+   "conclusao_transito": "Para regra de transito, o estado de MT nao acrescenta feriado alem dos nacionais; Carnaval/Corpus Christi/24/12/31/12 so valem se a regra for da PRF/ato que os cite. Nao existe regra de caminhao estadual por feriado prolongado (ver rodovias_estaduais).",
+   "municipais": {
+    "base_estadual": "Nao existe base estadual de feriados municipais de MT (nem no IBGE/ALMT/SEPLAG, pelo que achei). 142 municipios.",
+    "como_obter": [
+     "Calendarios de tribunais com anexo de feriados locais, o mesmo metodo do Sudeste (TRT3/TJMG), do RS (TRT4) e de GO (TRT18/TJGO): TRT23 (portal bloqueado neste ambiente: 'Acesso Negado'), TJMT (SPA sem URL de calendario achada), TRF1/SJMT, Defensoria Publica (Portaria 005/DPG de 07/01/2026, DOE 08/01/2026 pag 158, 'calendario oficial', traz feriados municipais por nucleo - texto nao lido por inteiro).",
+     "Diario Oficial (IOMAT) via API de busca: municipios publicam 'Decreto - divulga os dias de feriados e pontos facultativos' (ex.: Porto Alegre do Norte, Decreto 2014/2026; Porto Esperidiao) e leis municipais citadas (ex.: Cuiaba, Lei 5.576/2012 declara 8/12 Imaculada Conceicao). A busca por 'feriado municipal' acha so citacoes avulsas; precisa de varredura por municipio (ha varredor 'diarios_consolidados' rodando nesta maquina).",
+     "Lei organica/lei de cada municipio (Querido Diario nao testado: api.queridodiario.ok.org.br nao resolveu)."
+    ],
+    "exemplos_achados": [
+     "Cuiaba: 8/12 (Lei municipal 5.576/2012) - o aniversario de Cuiaba (8/04) e outras datas nao confirmados",
+     "Marcelandia: Dia do Evangelico (31/10, DOE 02/10/2026)",
+     "Araguaiana: 08/09 Nossa Senhora da Piedade (DOE 03/09/2026)",
+     "Agua Boa: feriado municipal em 13/07/2026 (Decreto Municipal 4599/2026, citado em portaria da DPE)"
+    ]
+   },
+   "fontes": [
+    {
+     "nome": "IOMAT - Decreto 1.787/2025 (feriados e pontos facultativos 2026)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Divulga+os+dias+de+feriados+e+pontos+facultativos%22",
+     "formato": "JSON/texto DOE 18/12/2025 pag 1",
+     "licenca": "ato oficial",
+     "atualizado_em": "2025-12-18"
+    },
+    {
+     "nome": "IOMAT - busca de decretos e leis municipais",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22feriado+municipal%22",
+     "formato": "JSON (API de busca; filtro de data di:AAAA-MM-DD/df:AAAA-MM-DD no caminho)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2026-10-16 (ultima edicao indexada)"
+    },
+    {
+     "nome": "Wikipedia - Feriados no Brasil (secao estadual, sem MT)",
+     "url": "https://pt.wikipedia.org/wiki/Feriados_no_Brasil",
+     "formato": "HTML",
+     "licenca": "CC BY-SA",
+     "atualizado_em": "2026-10-18"
+    }
+   ],
+   "teste_download": "Decreto 2026 e 2024 lidos; API do IOMAT testada com filtro de data e paginacao (query/<pagina>/di:/df:).",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Estaduais: nada a importar (so nacionais ja existentes). Municipais: nao ha base pronta; precisa varredura do IOMAT e/ou anexo do TRT23. Registrar so feriado (Lei 9.093/1995), nao ponto facultativo."
+  },
+  "perigosos": {
+   "orgao_ambiental": "SEMA-MT (Secretaria de Estado de Meio Ambiente): licencia 'Transporte Rodoviario de Produtos Perigosos' por Licenca Ambiental Simplificada (LAS); publicacoes no DOE (409 ocorrencias da frase exata). CONSEMA: normas ambientais (Lei Complementar 38/1995).",
+   "resumo": "Nao localizei ato estadual de MT que proiba ou restrinja produtos perigosos em trechos, mananciais, pontes ou tuneis (busca no IOMAT por 'produtos perigosos' + rodovias estaduais/manancial: 0 resultado; sem tuneis em estradas estaduais conhecidos). O que existe e o licenciamento da transportadora pela SEMA-MT (ex.: DOE 15/10/2026 pag 14, lista de LAS com 'Transporte Rodoviario de Produtos Perigosos'). Valem as regras nacionais (ANTT/Resolucao 5.998/2022 e Decreto 96.044/1988, nao relidos aqui). O site da SEMA e o da AGER nao abrem pelo proxy; confirmar la.",
+   "fontes": [
+    {
+     "nome": "IOMAT - busca '\"Transporte Rodoviário de Produtos Perigosos\"'",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Transporte+Rodovi%C3%A1rio+de+Produtos+Perigosos%22",
+     "formato": "JSON (409 paginas do DOE)",
+     "licenca": "ato oficial",
+     "atualizado_em": "2026-10-16"
+    }
+   ],
+   "atos": [],
+   "pendencias_verificar": [
+    "Portaria/Instrucao Normativa da SEMA-MT sobre transporte de produtos perigosos (site inacessivel)",
+    "Restricoes do DNIT/ANTT nas BRs em MT (fora do escopo estadual)",
+    "Zonas de manancial de Cuiaba/Varzea Grande (leis municipais)"
+   ],
+   "teste_download": "IOMAT testado; sem ato de trecho.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao: nao ha trecho/area estadual para importar."
+  },
+  "acidentes": {
+   "resumo": "Nao ha base estadual aberta com coordenada e tipo de veiculo. SESP-MT, DETRAN-MT e SINFRA nao abrem pelo proxy; o CKAN do estado (sesp-mt) so tem conjuntos de violencia contra a mulher (feminicidio, homicidios, tentativas, ocorrencias). O RENAEST federal (Senatran) traz MT com tipo de veiculo, mas SEM coordenada: 0 de 36,2 mil acidentes de 2018 a 2026 tem latitude/longitude, e a coluna tp_rodovia e 'NAO INFORMADO' em 100% dos registros (nao separa estadual/federal/municipal). Para BRs vale a PRF (ja integrada).",
+   "fontes": [
+    {
+     "nome": "RENAEST (Senatran) - zip mensal acumulado",
+     "url": "https://dados.transportes.gov.br/dataset/42e2320b-ea67-4fdc-896f-71363e043fc6/resource/675d49a4-91bf-44a8-82da-faa19a62c53f/download/renaest_dabertos_20260912.zip",
+     "formato": "ZIP 529 MB (Acidentes 2,7 GB, TipoVeiculo, Vitimas, Localidade), CSV ';' latin-1; lido por HTTP Range sem salvar o zip",
+     "licenca": "Outra (Dominio Publico) segundo o CKAN",
+     "atualizado_em": "2026-10-09 (resource 05-2026)"
+    },
+    {
+     "nome": "Dados Abertos MT (CKAN) - organizacao sesp-mt",
+     "url": "https://dadosabertos.mt.gov.br/api/3/action/package_search?fq=organization:sesp-mt",
+     "formato": "CKAN; XLSX de violencia contra a mulher",
+     "licenca": "varia",
+     "atualizado_em": "2026"
+    }
+   ],
+   "estatisticas_renaest_mt": {
+    "acidentes_por_ano": {
+     "2018": 4833,
+     "2019": 5431,
+     "2020": 3777,
+     "2021": 4821,
+     "2022": 5333,
+     "2023": 1604,
+     "2024": 4570,
+     "2025": 4236,
+     "2026_ate_mai": 1632
+    },
+    "com_coordenada": 0,
+    "com_km": "8 registros (2021)",
+    "tp_rodovia": "100% NAO INFORMADO",
+    "veiculos_2025": {
+     "MOTOCICLETA": 2859,
+     "AUTOMOVEL": 1929,
+     "CAMINHONETE": 668,
+     "CAMINHAO": 332,
+     "BICICLETA": 205,
+     "ONIBUS": 100,
+     "TRATOR": 90,
+     "NAO INFORMADO": 195
+    },
+    "observacao": "2023 tem so 1.604 acidentes (queda de cobertura); coluna end_acidente traz rua/rodovia em texto livre, sem coordenada. TipoVeiculo nao tem UF: o cruzamento usou num_acidente dos acidentes de MT."
+   },
+   "teste_download": "Streaming do zip por Range: 4 membros listados; Acidentes e TipoVeiculo lidos por inteiro, filtrados em uf_acidente='MT' (fontes/MT/renaest_mt_resumo.json). Nenhum registro com coordenada, entao nao ha amostra com coordenadas.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao: 0% com coordenada e sem tipo de via. Util so como agregado por municipio (codigo_ibge) e proporcao de caminhao (~5% dos veiculos em 2025)."
+  },
+  "roubo_carga": {
+   "resumo": "Nao achei dado de roubo/furto de carga com coordenada em MT (SESP-MT inacessivel; CKAN do estado sem o tema). O Sinesp VDE (MJSP) traz 'Roubo de carga' por UF e mes: MT teve 50 casos em 2025 (Estadual; municipio 'NAO INFORMADO'; nao ha furto de carga).",
+   "fontes": [
+    {
+     "nome": "Sinesp VDE 2025 (MJSP)",
+     "url": "https://www.gov.br/mj/pt-br/assuntos/sua-seguranca/seguranca-publica/estatistica/download/dnsp-base-de-dados/bancovde-2025.xlsx/@@download/file",
+     "formato": "XLSX 26,6 MB; campos uf, municipio, evento, data_referencia, total, abrangencia",
+     "licenca": "nao declarada no arquivo",
+     "atualizado_em": "2025"
+    }
+   ],
+   "sinesp_mt_2025_mensal": {
+    "2025-01": 0,
+    "2025-02": 5,
+    "2025-03": 4,
+    "2025-04": 3,
+    "2025-05": 5,
+    "2025-06": 6,
+    "2025-07": 4,
+    "2025-08": 5,
+    "2025-09": 3,
+    "2025-10": 6,
+    "2025-11": 5,
+    "2025-12": 4,
+    "total": 50
+   },
+   "teste_download": "XLSX baixado, linhas de MT extraidas (24 linhas, fontes/MT/sinesp_vde_2025_roubo_carga_MT.csv), bruto apagado.",
+   "pronto_para_importar": false,
+   "pronto_para_importar_detalhe": "Nao: 50 casos/ano por UF, sem local. Irrelevante para rota."
+  },
+  "particularidades": {
+   "balsas_travessias": {
+    "resumo": "MT tem 16 trechos 'BALSA' na malha estadual (SRE material=BALSA). As travessias sao operadas por empresas privadas sob 'Termo de Autorizacao Precaria SINFRA (Travessia em Balsa)' (Doerner & Cia Ltda e Centro Oeste Navegacoes Ltda; DOE 2020-2021) e a tarifa e regulada pela AGER (reajuste de 4,66% para a Centro Oeste Navegacoes, DOE 18/09/2025 pag 60). Nao achei limite de peso/eixos por balsa em ato; a capacidade esta no cadastro da Marinha de cada embarcacao.",
+    "segmentos_SRE": [
+     {
+      "rodovia": "MT-206",
+      "rio": "Roosevelt",
+      "municipio": "Colniza",
+      "coord_inicio": [
+       -9.1715,
+       -60.7388
+      ]
+     },
+     {
+      "rodovia": "MT-322",
+      "rio": "das Mortes",
+      "municipio": "Novo Santo Antonio",
+      "coord_inicio": [
+       -12.2934,
+       -50.9609
+      ]
+     },
+     {
+      "rodovia": "MT-020",
+      "rio": "da Casca",
+      "municipio": "Chapada dos Guimaraes",
+      "coord_inicio": [
+       -15.0286,
+       -55.5608
+      ]
+     },
+     {
+      "rodovia": "MT-322",
+      "rio": "Braco Norte",
+      "municipio": "Novo Mundo",
+      "coord_inicio": [
+       -10.0634,
+       -55.1562
+      ]
+     },
+     {
+      "rodovia": "MT-322",
+      "rio": "Cristalino",
+      "municipio": "Cocalinho",
+      "coord_inicio": [
+       -12.8966,
+       -50.8429
+      ]
+     },
+     {
+      "rodovia": "MT-020",
+      "rio": "Lago Manso/Quilombo",
+      "municipio": "Chapada dos Guimaraes",
+      "coord_inicio": [
+       -15.1165,
+       -55.6797
+      ]
+     },
+     {
+      "rodovia": "MT-479",
+      "rio": "Teles Pires",
+      "municipio": "Itauba",
+      "coord_inicio": [
+       -11.1245,
+       -55.3381
+      ]
+     },
+     {
+      "rodovia": "MT-448",
+      "rio": "(div. Barra do Garcas/Novo Sao Joaquim)",
+      "municipio": "Novo Sao Joaquim",
+      "coord_inicio": [
+       -15.2221,
+       -53.2182
+      ]
+     },
+     {
+      "rodovia": "MT-419",
+      "rio": "Teles Pires (Carlinda-Novo Mundo)",
+      "municipio": "Carlinda",
+      "coord_inicio": [
+       -10.0539,
+       -55.5562
+      ]
+     },
+     {
+      "rodovia": "MT-416",
+      "rio": "Teles Pires",
+      "municipio": "Paranaita",
+      "coord_inicio": [
+       -9.4533,
+       -56.4918
+      ]
+     },
+     {
+      "rodovia": "MT-242",
+      "rio": "Arinos",
+      "municipio": "Itanhanga",
+      "coord_inicio": [
+       -12.1352,
+       -57.0788
+      ]
+     },
+     {
+      "rodovia": "MT-325",
+      "rio": "Teles Pires",
+      "municipio": "Alta Floresta",
+      "coord_inicio": [
+       -9.6399,
+       -56.0154
+      ]
+     },
+     {
+      "rodovia": "MT-322",
+      "rio": "(Sao Jose do Xingu-Marcelandia)",
+      "municipio": "Marcelandia",
+      "coord_inicio": [
+       -10.7778,
+       -53.0971
+      ]
+     },
+     {
+      "rodovia": "MT-208",
+      "rio": "Juruena (Cotriguacu/Nova Bandeirantes)",
+      "municipio": "Cotriguacu",
+      "coord_inicio": [
+       -9.914,
+       -58.2167
+      ],
+      "extensao_km": 4.59
+     },
+     {
+      "rodovia": "MT-338",
+      "rio": "Juruena",
+      "municipio": "Nova Bandeirantes",
+      "coord_inicio": [
+       -10.3962,
+       -58.333
+      ],
+      "extensao_km": 1.2
+     },
+     {
+      "rodovia": "MT-208",
+      "rio": "Teles Pires (Carlinda/Nova Guarita)",
+      "municipio": "Carlinda",
+      "coord_inicio": [
+       -10.115,
+       -55.5672
+      ]
+     }
+    ],
+    "operadores_e_trechos_por_termo": "Termos 2020/2021 (SINFRA): Rio Verde (Rodovia dos Pioneiros, Ipiranga do Norte), Rio Arinos (MT-242, Itanhanga), Rio Juruena (MT-338, Juruena), Rio Teles Pires (MT-419, Novo Mundo), Rio Arinos (Tapurah-Brianorte), Rio Apiacas (MT-206), Rio Roosevelt (MT-206), Rio Juruena (MT-208), Rio Teles Pires (Itauba), Rio Teles Pires (MT-325, Alta Floresta - Porto Sao Jose). Lista dos termos parcialmente lida.",
+    "osm": "Overpass: 59 nos amenity=ferry_terminal e 33 vias route=ferry em MT (muitas sem nome); fontes/MT/osm_mt_ferry_weighbridge.json"
+   },
+   "serras": {
+    "resumo": "Nao achei serra com ato de restricao. As restricoes por trecho sao as Estradas-Parque (MT-251 Cuiaba-Chapada dos Guimaraes, com a subida da Serra de Chapada, e MT-040/MT-361 Santo Antonio de Leverger-Barao de Melgaco) e a MT-010/MT-246 perto de Rosario Oeste/Acorizal."
+   },
+   "rodotrem_cvc": "Rodotrem e bitrenzao (9 eixos, 74 t PBTC) dispensados de AET em todas as estaduais desde 25/01/2021, salvo nos trechos restritos. Nas concessoes, a tarifa tem categorias de 7, 8 e 9 eixos (bitrem, rodotrem). O servico 'cargas especiais' da Rota dos Graos e gratuito e pede agendamento de 2 semanas. AET estadual: SINFRALOG (https://sinfralog.sinfra.mt.gov.br/portalaet/), por viagem, validade maxima 180 dias; AET federal (SIAET) nao alterada.",
+   "safra": "Nao achei regra estadual especifica de safra (horario/peso) para caminhao. MT-130 (Rota dos Graos) e descrita como rota de escoamento de safra ate o porto seco de Rondonopolis.",
+   "malha_estadual": "SRE: 2.346 trechos, ~34.426 km (inclui 145 trechos federais coincidentes, jurisdicao I, responsa DNIT); material: TERRA 1.090, TSD 1.038, CBUQ 185, BALSA 16. Pavimentada (PAV) 1.115, NPAV 930, planejada (PLA) 139.",
+   "osm_hgv_sem_ato": {
+    "resumo": "Overpass (kumi.systems; a consulta direta por hgv e por toll_booth falhou com HTTP 500, so a de maxweight e a de ferry/weighbridge passaram).",
+    "achados": [
+     "MT-010 (Rodovia Deputado Ary Leite de Campos) perto de Rosario Oeste (~-14,83, -56,42): 4 vias com hgv=no e maxweight=20 t (+1 so com maxweight=20): nao bate com o ato (26 t/3 eixos/14 m, com AET).",
+     "MT-020 e MT-251;MT-020 em Chapada dos Guimaraes (-15,34 a -15,43; -55,79 a -56,00): ~21 vias com maxweight=3,5 t, sem ato conhecido (o ato da MT-251 fala em 26 t).",
+     "Avenida Miguel Sutil (BR-163/BR-364/MT-351, Cuiaba) e outras avenidas de Cuiaba com maxweight=24 t (urbano)."
+    ],
+    "arquivo": "fontes/MT/osm_mt_maxweight.json"
+   },
+   "fontes": [
+    {
+     "nome": "IOMAT - Termos de Autorizacao Precaria SINFRA (Travessia em Balsa)",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22travessia+por+balsa%22",
+     "formato": "JSON/DOE 03/04/2020 pag 9 e 28/04/2021 pag 16",
+     "licenca": "ato oficial",
+     "atualizado_em": "2021-04-28"
+    },
+    {
+     "nome": "IOMAT - AGER reajuste Centro Oeste Navegacoes",
+     "url": "https://www.iomat.mt.gov.br/busca/busca/buscar/query/0/?1=1&q=%22Centro+Oeste+Navega%C3%A7%C3%B5es%22",
+     "formato": "DOE 18/09/2025 pag 60",
+     "licenca": "ato oficial",
+     "atualizado_em": "2025-09-18"
+    }
+   ],
+   "pronto_para_importar": true,
+   "pronto_para_importar_detalhe": "Balsas: SIM como camada de travessias (SRE material=BALSA com coordenada de inicio/fim, 16 segmentos; testado). Sem limite de peso. OSM maxweight/hgv: so como lacuna a investigar."
+  }
+ },
+ "decisoes_para_o_projeto": [
+  "Importar a malha SRE do GeoDados MT (tipo, material, balsas, trechos concedidos) como base das camadas estaduais; coordenada das pracas vem de curadoria.",
+  "Importar a regra MT-040/MT-361 (Portaria 010/2023) ja com geometria; manter as regras da Portaria 061/2021 como informativas (ativa=false) ate casar o km com o SRE.",
+  "Registrar tarifa-teto 2026 por concessao com decisao da AGER; marcar Intervias, APASI, SPS e Rodovia da Mudanca como 'sem valor oficial'.",
+  "Nao ha feriado estadual proprio, nem base de feriados municipais: usar varredura do IOMAT e/ou calendario do TRT23.",
+  "Nao ha acidente, roubo de carga ou balanca estadual com coordenada: manter PRF/ANTT.",
+  "Pendencias: confirmar vigencia das portarias 061/2021 e 010/2023 no site da SINFRA; coordenadas das pracas e balancas; AET por rota; texto do calendario da Defensoria Publica; valores das tarifas de MT-100/MT-220 por categoria."
+ ]
+}

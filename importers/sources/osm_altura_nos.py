@@ -15,7 +15,7 @@ Precisa do pacote Python `osmium` (pyosmium, em importers/requirements.txt).
 """
 from __future__ import annotations
 import glob, math, os, re, time
-from common import DATA_DIR
+from common import DATA_DIR, osm_pbf
 
 LAYER_ID = 'altura_osm'
 SOURCE = 'osm'
@@ -37,13 +37,10 @@ NOT_TRAFFIC = ('amenity', 'aeroway', 'ferry', 'public_transport', 'man_made')
 
 
 def pbf_path() -> str:
-    p = os.environ.get('OSM_PBF')
-    if p:
-        return p
-    cands = sorted(glob.glob(str(DATA_DIR / 'valhalla' / '*.osm.pbf')))
-    if not cands:
-        raise FileNotFoundError('PBF não encontrado: defina OSM_PBF ou coloque o extrato em data/valhalla/*.osm.pbf')
-    return cands[0]
+    p = osm_pbf()
+    if not p:
+        raise FileNotFoundError('PBF não encontrado: defina OSM_PBF ou gere data/osm/sse_co.osm.pbf')
+    return p
 
 
 # ---------- leitura de valores (corrige os casos que o Valhalla lê errado) ----------

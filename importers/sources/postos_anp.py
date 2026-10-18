@@ -22,7 +22,7 @@ Posição (props.coord_fonte):
   Sem posição confiável o posto fica de fora (não chutamos centroide de CEP).
 Vende diesel? O cadastro não diz. Entra só posto com evidência: preço de diesel no LPC, amostra de diesel no PMQC ou
 fuel:diesel/fuel:HGV_diesel=yes no OSM ligado. A evidência fica em props.diesel_evidencia.
-Alcance: UFs em POSTOS_UFS (padrão SP, RJ, MG, ES — o mesmo extrato do Valhalla). Ver docs/layers/postos_diesel.md.
+Alcance: UFs em POSTOS_UFS (padrão: as 11 UFs do Sudeste, Sul e Centro-Oeste — as dos tiles do Valhalla). Ver docs/layers/postos_diesel.md.
 """
 from __future__ import annotations
 import csv
@@ -49,7 +49,7 @@ LICENSE = ('CC-BY — Fonte: ANP (cadastro de revendedores, Levantamento de Pre�
            '"cnefe+osm"/"osm_endereco" e props.osm (id, nome, marca, hgv, fuel:diesel, horário) dos postos ligados ao OSM')
 NOTES = ''
 
-UFS = [u.strip().upper() for u in os.environ.get('POSTOS_UFS', 'SP,RJ,MG,ES').split(',') if u.strip()]
+UFS = [u.strip().upper() for u in os.environ.get('POSTOS_UFS', 'SP,RJ,MG,ES,PR,SC,RS,GO,MT,MS,DF').split(',') if u.strip()]
 PMQC_MESES = int(os.environ.get('PMQC_MESES', '12'))
 OSM_MAX_M = 100.0
 PMQC_MAX_DISP_M = 500.0      # dispersão máxima das coletas do mesmo CNPJ
