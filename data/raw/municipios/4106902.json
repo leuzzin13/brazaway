@@ -1,0 +1,314 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4106902",
+  "municipio": "Curitiba",
+  "uf": "PR",
+  "fonte_id": "curitiba",
+  "fonte": {
+    "url": "https://mid.curitiba.pr.gov.br/2022/00357892.pdf (Decreto 934/1997); https://data.queridodiario.ok.org.br/4106902/2022-02-18/385608a04080cb66cfb1f18232b20c914586afbf.pdf (Portaria SMDT 11/2022, DO Curitiba 35, 18/02/2022)",
+    "licenca": "Ato oficial de Curitiba: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Textos obtidos no espelho do Diário Oficial (Querido Diário, ODbL/CC) e no PDF oficial hospedado em mid.curitiba.pr.gov.br.",
+    "notas": "Portal de legislação de Curitiba e leismunicipais inacessíveis (403) na pesquisa: alteração/revogação posterior do Decreto 934/1997 (art. 11 permite ajuste por portaria do IPPUC) e renovação do ACT PRF 1/2021 não confirmadas. Curitiba não define VUC nos atos lidos. O perímetro da ZCT (art. 2º) é aproximado: a Praça do Japão e o viaduto Capanema não estão modelados."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Curitiba não define VUC em nenhum ato lido: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "curitiba_zct_circulacao",
+      "tipo": "zona",
+      "regime": "Zona Central de Tráfego",
+      "nome": "Zona Central de Tráfego de Curitiba (Decreto 934/1997)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "09:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "09:00",
+          "to": "13:30"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 7.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.0
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "IPPUC-CTA (Decreto 934/1997, arts. 7 e 9)",
+      "excecoes": [
+        "Art. 7 e 9: autorizacao especial do IPPUC-CTA para concreto, materiais de construcao, mudancas e casos excepcionais, com endereco e horarios",
+        "Art. 10: sabados (apos 13h30), domingos e feriados livres"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 934, de 11/09/1997 (Curitiba)",
+          "artigo": "art. 2 (perimetro da ZCT); art. 8 (proibicao >7,0 t e/ou >7,0 m, dias uteis 9h-19h, sabado 9h-13h30); art. 10 (fim de semana inclui sabado, domingo e feriados); art. 11 (IPPUC pode criar areas e ajustar por portaria)",
+          "url": "https://mid.curitiba.pr.gov.br/2022/00357892.pdf",
+          "nota": "Texto lido em PDF hospedado em mid.curitiba.pr.gov.br. Art. 8 diz 'acima de 7,0 toneladas e/ou comprimento acima de 7,0 metros' sem dizer se e capacidade de carga ou PBT: usado payload_t (arts. 3 e 4 falam em 'capacidade de carga util'). Texto de 2017 (DO 29/11/2017) cita o decreto como vigente."
+        }
+      ],
+      "nota": "Confianca media: nao localizada alteracao nem revogacao, mas sem acesso ao portal oficial de legislacao. Art. 11 permite ajuste por portaria do IPPUC (nao localizada). Art. 10 so cita feriados para o sabado/domingo: interpretado como feriado livre. Perímetro: Rua Augusto Stellfeld esq. Rua Francisco Rocha, Praça do Japão, Av. República Argentina, Av. Silva Jardim, Rua Mariano Torres, Av. Presidente Affonso Camargo, Rua Ubaldino do Amaral, Rua Conselheiro Araújo, Rua Luiz Leão, Av. João Gualberto, Rua Ivo Leão, Rua Lysimaco Ferreira da Costa, Rua Nilo Peçanha, Rua Trajano Reis, Rua Jaime Reis, Rua Dr. Muricy, Rua Augusto Stellfeld, Rua Fernando Moreira, Rua Desembargador Motta; o ato diz \"no interior\" da zona e o recuo de 20 m da camada deixa as vias-limite livres.",
+      "fonte_geometria": "Perímetro textual do art. 2º do Decreto 934/1997 desenhado sobre os eixos do OSM (ODbL); aproximado (sem mapa oficial).",
+      "vigencia_inicio": "1997-09-11",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4106902_zct.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro do art. 2º do Decreto 934/1997 montado sobre os eixos das vias-limite do OSM: vértices nas esquinas, trechos pelo eixo de cada via (ver nota do GeoJSON)"
+        }
+      ]
+    },
+    {
+      "id": "curitiba_zct_carga_descarga",
+      "tipo": "zona",
+      "regime": "ZCT carga e descarga",
+      "nome": "Zona Central de Tráfego — operação de carga e descarga (Decreto 934/1997 arts. 3 a 5)",
+      "status": "desativada",
+      "status_motivo": "Regra de operacao em vagas demarcadas (utilitarios ate 1,8 t livres; 1,8-7 t das 19h30 as 8h30; 7-14 t das 19h30 as 7h30; calcadoes 20h-7h; canaletas 20h-6h) e nao proibicao de passagem; a camada nao modela vaga/parada.",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Art. 7: autorizacao IPPUC-CTA para casos excepcionais"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 934, de 11/09/1997 (Curitiba)",
+          "artigo": "arts. 3, 4 e 5",
+          "url": "https://mid.curitiba.pr.gov.br/2022/00357892.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4106902_zct.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro do art. 2º do Decreto 934/1997 montado sobre os eixos das vias-limite do OSM: vértices nas esquinas, trechos pelo eixo de cada via (ver nota do GeoJSON)"
+        }
+      ]
+    },
+    {
+      "id": "curitiba_br476_linha_verde",
+      "tipo": "via",
+      "regime": "Linha Verde (BR-476)",
+      "nome": "BR-476 (Linha Verde) km 120,9 a 142,8 — veículos de carga acima de 10 t PBT",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 2: veiculos oficiais, prestadores de servicos publicos, socorro (incendio, policia, fiscalizacao, ambulancias), utilidade publica (CTB art. 29) e socorro mecanico, quando em atendimento a ocorrencia no trecho",
+        "Art. 2 par. 4: autorizacao da SMDT para veiculos em manutencao do trecho a pedido do Municipio"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria SMDT 11, de 18/02/2022 (Curitiba)",
+          "artigo": "art. 1 (proibicao PBT > 10 t, km 120,9-142,8, dias uteis 7h-9h e 17h-19h); art. 2 (excecoes); art. 4 (revoga a Portaria 71/2016)",
+          "url": "https://data.queridodiario.ok.org.br/4106902/2022-02-18/385608a04080cb66cfb1f18232b20c914586afbf.pdf",
+          "nota": "DO Curitiba n. 35, 18/02/2022, pags. 75-77. Competencia: Convenio DNIT 003/2004 (25 anos) e Acordo de Cooperacao Tecnica PRF 1/2021 (12 meses, de 27/08/2021)."
+        }
+      ],
+      "nota": "Pendencia: renovacao do ACT PRF 1/2021 nao verificada; portaria nao tem prazo proprio. 'Dias uteis' interpretado como seg-sex sem feriados. Trecho entre rua Nicola Pelanda/Estrada da Graciosa e Estrada da Ribeira/Rua Joao Chede segundo a Portaria 16/2012 (nao repetido na 11/2022, que usa so km).",
+      "fonte_geometria": "OSM (ODbL): pistas principais da 'Linha Verde' (BR-476) em Curitiba (~22 km, igual ao trecho km 120,9–142,8 da portaria); marginais e ramais ficam livres.",
+      "vigencia_inicio": "2022-02-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4106902_br476_linha_verde.geojson",
+          "construir": "manual",
+          "como_gerar": "Pistas principais (trunk/primary/motorway) das duas pistas da Linha Verde (BR-476, name='Linha Verde') no OSM, dentro de Curitiba"
+        }
+      ]
+    },
+    {
+      "id": "curitiba_br476_portaria_71_2016",
+      "tipo": "via",
+      "regime": "Linha Verde (BR-476)",
+      "nome": "BR-476 (Linha Verde) km 120,7 a 142,8 — Portaria SETRAN 71/2016 (> 10 t)",
+      "status": "revogada",
+      "status_motivo": "Revogada expressamente pelo art. 4 da Portaria SMDT 11/2022 (18/02/2022).",
+      "confianca": "alta",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "excecoes": [
+        "Oficiais, servicos publicos e socorro mecanico (art. 2)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria SETRAN 71, de 14/07/2016",
+          "artigo": "arts. 1, 2 e 4",
+          "url": "https://data.queridodiario.ok.org.br/4106902/2016-07-15/0092983ea80e6c38d3e76a2395f8489eadb3be0a.pdf",
+          "nota": "DO Curitiba n. 133, 15/07/2016; fiscalizacao a partir de 18/07/2016; revogou a Portaria 100/2015 (7 t)."
+        }
+      ],
+      "vigencia_inicio": "2016-07-18",
+      "vigencia_fim": "2022-02-18",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4106902_br476_linha_verde.geojson",
+          "construir": "manual",
+          "como_gerar": "Pistas principais (trunk/primary/motorway) das duas pistas da Linha Verde (BR-476, name='Linha Verde') no OSM, dentro de Curitiba"
+        }
+      ]
+    },
+    {
+      "id": "curitiba_ztc_linha_verde_2012",
+      "tipo": "via",
+      "regime": "Zona de Tráfego de Cargas da Linha Verde (ZTC/LV)",
+      "nome": "Linha Verde — ZTC/LV (Portaria SETRAN 16/2012)",
+      "status": "desativada",
+      "status_motivo": "Sem revogacao expressa localizada, mas a Linha Verde passou a ser regulada pela serie de portarias 100/2015, 71/2016 e SMDT 11/2022 (o Plano de Mobilidade 2023 cita so a 71/2016); regra provavelmente superada, sem confirmacao por texto.",
+      "confianca": "baixa",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "10:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:00",
+          "to": "20:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "payload_t",
+            "acima": 7.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 7.0
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 5: veiculos de utilidade publica; art. 4: eventos especiais com autorizacao SETRAN"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria SETRAN 16, de 24/05/2012",
+          "artigo": "arts. 2, 3 (II) e par. unico (faixa da direita)",
+          "url": "https://data.queridodiario.ok.org.br/4106902/2012-06-05/1686bdb58b798d5b9cc25de7adec9ba63664e746.pdf",
+          "nota": "DO Curitiba n. 42, 05/06/2012. Circulacao permitida dias uteis 10h-17h e 20h-7h para >7 t e >7 m (logo, restrita 7h-10h e 17h-20h)."
+        }
+      ],
+      "nota": "Janelas derivadas por complemento do art. 3, II (permitido 10h-17h e 20h-7h); a portaria nao diz 'proibido'. Fins de semana nao tratados no art. 3.",
+      "vigencia_inicio": "2012-06-05",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4106902_br476_linha_verde.geojson",
+          "construir": "manual",
+          "como_gerar": "Pistas principais (trunk/primary/motorway) das duas pistas da Linha Verde (BR-476, name='Linha Verde') no OSM, dentro de Curitiba"
+        }
+      ]
+    }
+  ]
+}

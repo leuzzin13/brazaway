@@ -1,0 +1,94 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4209102",
+  "municipio": "Joinville",
+  "uf": "SC",
+  "fonte_id": "joinville",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/3737444 (Decreto 10.251/2001); https://diariomunicipal.sc.gov.br/atos/3738958 (Decreto 12.512/2005)",
+    "licenca": "Ato oficial de Joinville: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Cópia dos decretos no DOM/SC é de acervo (não publicação oficial), por isso confiança média. Vigência real e sinalização no terreno não confirmadas (órgão CONURB citado no ato; hoje o trânsito é do DETRANS). O perímetro ampliado em 2005 inclui a Rua Marechal Deodoro e a Rua Tijucas, que não constam da lista de vias liberadas (art. 6º, §1º): o recuo de 20 m da camada as deixa livres. Joinville não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Joinville não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "joinville_area_central_5t",
+      "tipo": "zona",
+      "regime": "Área Central (carga e descarga)",
+      "nome": "Joinville: Área Central, circulação de veículos com capacidade de carga acima de 5,0 t (Decreto 10.251/2001, redação do Decreto 12.512/2005)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "19:00"
+        },
+        {
+          "days": [
+            6
+          ],
+          "from": "07:00",
+          "to": "13:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5.0
+          }
+        ]
+      },
+      "origem_destino_dentro": "avisa",
+      "autorizacao": "Autorização especial (art. 5º, I e II): carga e descarga de concreto usinado, materiais de construção, mudanças e casos excepcionais; pedido com 3 dias úteis de antecedência; expedida pela CONURB (nome no ato de 2001; órgão atual não confirmado).",
+      "excecoes": [
+        "Art. 6º, § 1º: circulação liberada, sem limite de horário, nas vias do perímetro: Rua Duque de Caxias, Rua Senador Felipe Schmidt, Rua Pedro Lobo, Rua Visconde de Taunay, Rua Henrique Meyer, Rua Blumenau, Rua Max Colin, Av. Dr. Albano Schulz, Rua Itajaí, Rua Abdon Batista, Av. Procópio Gomes e Rua Ministro Calógeras (lista do ato de 2001; o Decreto 12.512/2005 ampliou o perímetro com a Rua Marechal Deodoro e a Rua Tijucas, que não constam da lista de vias liberadas)",
+        "Art. 6º, § 2º: liberados em serviço, sem limite de capacidade nem horário: veículos oficiais (federal, estadual, municipal), Corpo Diplomático/Consular, militares, PM/Bombeiros/ambulâncias, e de empresas públicas, concessionárias e permissionárias de serviços urbanos públicos ou emergenciais autorizadas",
+        "Art. 14: limitações de horário não se aplicam aos domingos e feriados",
+        "Art. 3º, I: veículos de 1,0 t até 5,0 t de carga útil: carga e descarga nos locais e horários do estacionamento rotativo (fora da regra, até 8,4 m de comprimento e 2,4 m de largura)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto nº 10.251, de 13/09/2001 (Joinville)",
+          "artigo": "art. 6º, caput e §§ 1º e 2º (proibição para capacidade de carga acima de 5,0 t, carregados ou não: 07h-19h seg-sex, 07h-13h sáb); art. 3º (horários de carga e descarga por classe); art. 5º (autorizações); art. 14 (domingos e feriados)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/3737444",
+          "nota": "Texto lido (cópia do acervo do DOM/SC, 'Acervo Público', não publicação oficial do DOM/SC): atos/4209102/decreto_10251_2001.txt"
+        },
+        {
+          "ato": "Decreto nº 12.512, de 13/07/2005 (Joinville)",
+          "artigo": "art. 1º (nova redação do art. 2º, perímetro da Área Central, com Rua Marechal Deodoro e Rua Tijucas); art. 3º (revoga disposições em contrário dos Decretos 10.251/01 e 10.517/02)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/3738958",
+          "nota": "Não altera o art. 6º. Texto: atos/4209102/decreto_12512_2005.txt"
+        },
+        {
+          "ato": "Decreto nº 10.517, de 21/03/2002 (Joinville)",
+          "artigo": "arts. 1º e 2º (só caçambas de entulho, art. 10 do Decreto 10.251/01); sem efeito sobre o art. 6º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/3765134"
+        }
+      ],
+      "nota": "Regra de CIRCULAÇÃO (art. 6º), não só de estacionamento: capacidade de carga acima de 5,0 t, carregado ou não, não circula no interior da Área Central nos horários acima; as vias do perímetro (art. 6º § 1º) ficam livres, logo a zona exclui as vias-limite. Capacidade de carga (lotação), não PBT; Joinville não define VUC nos atos lidos. Decreto de 2001 sem revogação localizada (busca no DOM/SC por '10.251', 'carga e descarga', 'área central', 'veículos de carga', 'capacidade de carga' só retorna os decretos de 2001/2002/2005 e normas de estacionamento rotativo; o Decreto 72.203/2026, que regulamenta a Zona Azul Digital, não o revoga). Vigência real e sinalização no terreno não confirmadas (órgão CONURB citado no ato; hoje o trânsito é do DETRANS Joinville). Limite: o ato é antigo e a cópia no DOM/SC é de acervo.",
+      "fonte_geometria": "Perímetro textual do art. 2º (redação do Decreto 12.512/2005) desenhado sobre os eixos do OSM (ODbL); aproximado.",
+      "vigencia_inicio": "2001-09-13",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4209102_area_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Perímetro do art. 2º do Decreto 10.251/2001 (redação do Decreto 12.512/2005) montado sobre os eixos do OSM; as vias-limite liberadas (art. 6º, §1º) ficam fora pelo recuo de 20 m da camada"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4100400",
+  "municipio": "Almirante Tamandaré",
+  "uf": "PR",
+  "fonte_id": "almirante-tamandare",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/3E0A21A0 (Decreto 968/2015 republicado por incorreções, Diário Oficial dos Municípios do Paraná ed. 707)",
+    "licenca": "Ato oficial de Almirante Tamandaré: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Sem alteração ou revogação localizada de 2015 a 2026; sinalização não confirmada; Querido Diário sem cobertura da cidade. O decreto não delimita o trecho da avenida. Almirante Tamandaré não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Almirante Tamandaré não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "almirantetamandare_av_emilio_johnson_10t",
+      "tipo": "via",
+      "regime": "Proibição por peso (via)",
+      "nome": "Avenida Emílio Johnson (Centro): caminhões acima de 10 t (Decreto 968/2015)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "payload_t",
+            "acima": 10.0
+          }
+        ]
+      },
+      "excecoes": [
+        "Parágrafo único (versão republicada) / art. 2º (original): permitida a circulação de veículos para carga e descarga entre 19h e 8h, \"inclusive aos finais de semana\" (redação ambígua: pode significar também o dia inteiro nos fins de semana)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 968, de 02/03/2015, republicado por incorreções em 13/03/2015 (Almirante Tamandaré)",
+          "artigo": "art. 1º e parágrafo único (versão republicada); art. 2º (versão original)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/3E0A21A0",
+          "nota": "Texto integral lido; fundamentado no art. 86 da LC 013/2009 (Código de Posturas). Fiscalização pela PM-PR."
+        }
+      ],
+      "nota": "Decreto proíbe \"caminhões com capacidade acima de 10 toneladas\" (capacidade, não PBT: usado payload_t, lado seguro). Janela 24 h porque a exceção é só para carga e descarga (19h-8h) e a rota não distingue o propósito. Confiança média: decreto de 2015 sem alteração/revogação encontrada mas sem confirmação de sinalização; trecho exato \"Avenida Emílio Johnson, Centro\" sem limites (toda a extensão no centro).",
+      "fonte_geometria": "OSM (ODbL) casado pelo nome da avenida",
+      "vigencia_inicio": "2015-03-13",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Emílio Johnson"
+          ],
+          "aproximado": true,
+          "descricao": "Avenida Emílio Johnson, Centro (o decreto não delimita o trecho): aplicada em toda a extensão no OSM",
+          "nota": "Decreto sem limites do trecho; toda a Av. Emílio Johnson do OSM (~1,2 km, pistas de sentido único e de mão dupla)."
+        }
+      ],
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4100400_vias.geojson",
+          "construir": "trechos"
+        }
+      ]
+    }
+  ]
+}

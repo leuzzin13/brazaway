@@ -1,0 +1,158 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4104303",
+  "municipio": "Campo Mourão",
+  "uf": "PR",
+  "fonte_id": "campo-mourao",
+  "fonte": {
+    "url": "https://data.queridodiario.ok.org.br/4104303/2026-04-28/d4a68ffdba1bc379b439588b413e229e1e67bf15.pdf (Lei 5.019/2026, Órgão Oficial Eletrônico ed. 3356)",
+    "licenca": "Ato oficial de Campo Mourão: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM). Texto obtido no espelho do Diário Oficial (Querido Diário).",
+    "notas": "Fiscalização só educativa por 30 dias após a sinalização definitiva (art. 20); sinalização não confirmada em campo. O parágrafo único do art. 2º permite ao DIRETRAN estender a proibição a outras vias do perímetro urbano por sinalização (não listadas). Campo Mourão não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Campo Mourão não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "campomourao_perimetro_zona_central",
+      "tipo": "zona",
+      "regime": "Zona de peso e dimensões",
+      "nome": "Perímetro da Zona Central – veículos de carga > 16 t PBT ou > 8 m (Lei 5.019/2026)",
+      "status": "ativa",
+      "confianca": "alta",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 16.0
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 8.0
+          },
+          {
+            "campo": "largura_m",
+            "acima": 2.5
+          },
+          {
+            "campo": "altura_m",
+            "acima": 4.4
+          }
+        ]
+      },
+      "autorizacao": "Autorização Especial da DIRETRAN (art. 7º; Decreto art. 12)",
+      "excecoes": [
+        "Art. 6º: urgência/emergência (bombeiros, polícia, socorro médico, guincho), coleta de lixo, manutenção emergencial de redes, transporte de combustíveis, coletivo urbano e escolar, valores bancários",
+        "Art. 3º/Dec. art. 8º: com Autorização Especial, o veículo só opera de seg a sex 18h-10h e sáb a partir de 13h (e só enquanto durar a carga/descarga), estacionamento 2 h/dia",
+        "Dec. 12.775 art. 3º: acesso às vagas regulamentadas da Zona Especial de Carga é permitido"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 5.019, de 28/04/2026 (Campo Mourão)",
+          "artigo": "arts. 1º, 2º, 3º, 6º, 7º, 22",
+          "url": "https://data.queridodiario.ok.org.br/4104303/2026-04-28/d4a68ffdba1bc379b439588b413e229e1e67bf15.pdf",
+          "nota": "Texto integral lido. Publicada no Órgão Oficial Eletrônico ed. 3356 de 28/04/2026."
+        },
+        {
+          "ato": "Decreto Municipal 12.775, de 09/06/2026 (Campo Mourão)",
+          "artigo": "arts. 2º § 2º, 3º, 8º, 11, 12",
+          "url": "https://data.queridodiario.ok.org.br/4104303/2026-06-09/43512f81deea479e0eba0021235cf821ec06eb96.pdf"
+        }
+      ],
+      "nota": "Proibição vale sem janela horária (tráfego, circulação, permanência, parada e estacionamento); só a autorização especial tem horário. Art. 1º §1º: \"implementada e fiscalizada por sinalização específica\"; art. 20: 30 dias educativos após a sinalização definitiva - sinalização não conferida em campo. Parágrafo único do art. 2º permite ao DIRETRAN estender a proibição a outras vias por sinalização (não listadas). Limites: PBT > 16 t OU comprimento > 8 m OU largura > 2,50 m OU altura > 4,40 m (\"veículos de carga\").",
+      "fonte_geometria": "Perímetro do art. 2º desenhado sobre os eixos do OSM (ODbL); as vias-limite ficam livres pelo recuo de 20 m da camada.",
+      "vigencia_inicio": "2026-04-28",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4104303_zona_central.geojson",
+          "construir": "manual",
+          "como_gerar": "Quadrilátero das Ruas Guarapuava e Santos Dumont e das Avenidas Jorge Walter e João Bento (art. 2º da Lei 5.019/2026) montado sobre os eixos do OSM"
+        }
+      ]
+    },
+    {
+      "id": "campomourao_zec_carga_descarga",
+      "tipo": "zona",
+      "regime": "Zona de carga e descarga",
+      "nome": "Zona Especial de Carga (Decreto 12.775/2026) – vagas de carga e descarga",
+      "status": "desativada",
+      "status_motivo": "Zona de implantação de vagas exclusivas e sinalização de carga e descarga (Ruas São Josafat e Rocha Pombo, Avs. Goioerê e José Custódio de Oliveira, Av. Armelindo Trombini e Rua Ney Braga); não fixa restrição de circulação própria além do PZC - sem janela/limite que a camada possa aplicar. Art. 5º: no mês de dezembro (e datas de horário comercial estendido) a carga e descarga é proibida 18h00-22h30.",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 12.775, de 09/06/2026 (Campo Mourão)",
+          "artigo": "art. 2º, 7º, 9º",
+          "url": "https://data.queridodiario.ok.org.br/4104303/2026-06-09/43512f81deea479e0eba0021235cf821ec06eb96.pdf"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "campomourao_lei_2882_revogada",
+      "tipo": "zona",
+      "regime": "Lei 2.882/2012 e Lei 4.230/2021 – restrição de caminhões no perímetro central (REVOGADAS)",
+      "nome": "Lei 2.882/2012 e Lei 4.230/2021 – restrição de caminhões no perímetro central (REVOGADAS)",
+      "status": "revogada",
+      "status_motivo": "Revogadas expressamente pela Lei 5.019/2026.",
+      "confianca": "alta",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei 5.019/2026, art. 22 (revoga as Leis 2.882/2012 e 4.230/2021 e alterações)",
+          "artigo": "art. 22",
+          "url": "https://data.queridodiario.ok.org.br/4104303/2026-04-28/d4a68ffdba1bc379b439588b413e229e1e67bf15.pdf",
+          "nota": "Leis anteriores: 2.882/2012 e alteração de 2017 (16 t, perímetro Ruas Araruna e Interventor Manoel Ribas e Avs. Jorge Walter e João Bento), Lei 4.230/2021 (5,9 t aos domingos/feriados)."
+        }
+      ],
+      "vigencia_inicio": "2012-03-01",
+      "vigencia_fim": "2026-04-28",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

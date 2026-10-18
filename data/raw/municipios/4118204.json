@@ -1,0 +1,176 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4118204",
+  "municipio": "Paranaguá",
+  "uf": "PR",
+  "fonte_id": "paranagua",
+  "fonte": {
+    "url": "https://www.diariomunicipal.com.br/amp/materia/ACE1F251 (Decreto 5.562/2024, Diário Oficial dos Municípios do Paraná ed. 3115)",
+    "licenca": "Ato oficial de Paranaguá: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: limite administrativo da Ilha dos Valadares do OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Portal de legislação (leismunicipais 403; Elotech em JavaScript) inacessível: textos das Leis 1.913/1995 (ZRU) e 3.039/2009 (12 t PBT em áreas residenciais) não obtidos, ficam desativadas como pista. Nenhuma regra municipal de acesso ao porto encontrada (Pátio de Triagem é da APPA/Portos do Paraná). Paranaguá não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Paranaguá não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "paranagua_ilha_valadares_pesados",
+      "tipo": "zona",
+      "regime": "Zona de veículos pesados",
+      "nome": "Zona de tráfego de veículos pesados da Ilha dos Valadares (Decreto 5.562/2024)",
+      "status": "ativa",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 6.0
+          }
+        ]
+      },
+      "autorizacao": "Autorização expressa da Secretaria Municipal de Segurança Pública (art. 2º), com placa, motorista, carga e motivo",
+      "excecoes": [
+        "Art. 1º §1º: carga e descarga ao comércio estabelecido na Ilha só em dias úteis 19:00-09:00 (do dia seguinte), sábados a partir de 15:00, domingos e feriados o dia todo",
+        "Art. 1º §2º: veículos de órgãos governamentais"
+      ],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 5.562, de 19/09/2024 (Paranaguá)",
+          "artigo": "art. 1º, caput e §§ 1º-2º; art. 2º",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/ACE1F251",
+          "nota": "Texto integral lido no AMP (ed. 3115, publ. 20/09/2024)."
+        }
+      ],
+      "nota": "Art. 1º proíbe tráfego e estacionamento de caminhões \"com capacidade de carga superior a 6.000 kg de Peso Bruto Total, classe 2C/E1\": redação ambígua entre capacidade de carga e PBT; usado payload_t (lado seguro na camada). Janela 24h porque a única exceção é a entrega ao comércio local nos horários do §1º (não modelável como janela de passagem). Geometria: Ilha dos Valadares inteira (polígono do OSM/limite da ilha), sem vias citadas no ato. Não encontrado decreto posterior alterando ou revogando. [verificado em 2026-10-18: o ato diz 'Peso Bruto Total' e 'PBT' (arts. 1 e 2); alvo corrigido de payload_t para pbt_t.]",
+      "fonte_geometria": "Limite 'Ilha dos Valadares' do OSM (boundary=administrative, ODbL), ilha inteira.",
+      "vigencia_inicio": "2024-09-20",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4118204_ilha_valadares.geojson",
+          "construir": "manual",
+          "como_gerar": "Limite administrativo 'Ilha dos Valadares' do OSM (boundary=administrative, ODbL); o ato não traz vias nem mapa"
+        }
+      ]
+    },
+    {
+      "id": "paranagua_zru_lei_1913",
+      "tipo": "zona",
+      "regime": "Zona de veículos pesados",
+      "nome": "ZRU – Zona de Requalificação Urbana: veículos pesados (Lei 1.913/1995, redação da Lei 4.097/2021)",
+      "status": "desativada",
+      "status_motivo": "Pista: o ato lido (Lei 4.097/2021) só reescreve o perímetro da ZRU (Av. Roque Vernalha, Rio Itiberê, Rua João Eugênio, Ermelino de Leão, Manoel Corrêa, Manoel Bonifácio, Barão do Rio Branco, Comendador Corrêa Júnior, Manoel Pereira, Nestor Vitor, Conselheiro Corrêa). Ementa diz \"limitando a capacidade de carga\", mas o valor e horários estão na Lei 1.913/1995, que não abriu (leismunicipais 403).",
+      "confianca": "unverifiable",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 4.097, de 16/12/2021 (Paranaguá) - altera a Lei 1.913/1995",
+          "artigo": "art. 1º (nova redação do art. 2º, I da Lei 1.913/1995: polígono da ZRU)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/71709207",
+          "nota": "Só o polígono foi lido; o limite de capacidade de carga e os horários estão no corpo da Lei 1.913/1995, NÃO obtido."
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "paranagua_lei_3039_residencial",
+      "tipo": "zona",
+      "regime": "Veículos pesados em área residencial",
+      "nome": "Veículos de grande porte em áreas residenciais (Lei 3.039/2009)",
+      "status": "desativada",
+      "status_motivo": "Pista: texto da Lei 3.039/2009 não obtido; áreas residenciais sem delimitação e limite de 12 t PBT só citado em considerando de ato revogado. SUMTRAN ainda usa a lei para a Autorização Especial de Trânsito.",
+      "confianca": "unverifiable",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 12.0
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 3.039, de 18/12/2009 (Paranaguá) - citada pela Determinação de Circulação 002/2019 e 001/2019 (AMP) e pelo requerimento SUMTRAN",
+          "artigo": "não lido (texto da lei não obtido)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/C36AF491",
+          "nota": "Fonte secundária: considerandos citam \"caminhões acima de 12 toneladas por peso bruto total\" proibidos em áreas residenciais."
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "paranagua_valadares_atilio_fontana_2880",
+      "tipo": "via",
+      "regime": "Itinerário de caminhões",
+      "nome": "Av. Senador Atílio Fontana / Rua dos Terminais – caminhões e altura 3,6 m (Decreto 2.880/2015)",
+      "status": "desativada",
+      "status_motivo": "Decreto de 2015 sobre sentido único; a regra de caminhões é uma orientação de itinerário sem horário e a proibição de altura > 3,6 m cita \"viadutos da região\" sem listá-los; vigência atual não conferida.",
+      "confianca": "media",
+      "verificado_em": "2026-10-18",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 2.880, de 27/07/2015 (Paranaguá)",
+          "artigo": "art. 1º, § 1º (caminhões pela Rua dos Terminais para acessar a BR-277) e § 4º (altura > 3,6 m nos viadutos da região)",
+          "url": "https://www.diariomunicipal.com.br/amp/materia/AD79D938"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}
