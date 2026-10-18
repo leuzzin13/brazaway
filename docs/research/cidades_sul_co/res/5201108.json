@@ -1,0 +1,91 @@
+{
+ "ibge": "5201108",
+ "nome": "Anápolis",
+ "uf": "GO",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.anapolis.go.leg.br (API /api/norma/normajuridica/?ementa__icontains= : caminh, carga e descarga, pesad, trafego, transito, circulacao, veiculos, carga, descarga, Avenida Goias, Benvindo, Vila Fabril, horario, estacionamento, Mobilidade; toolkit legislacao.py direto sapl nao reconheceu anapolis.go.leg.br mas o SAPL respondeu)",
+   "resultado": "Camara de Anapolis: achada so a Lei Promulgada 21/1983. Sem lei de carga e descarga, zona, VUC ou horario para caminhoes. A Lei 3.012/2003 (Sistema de Circulacao Orientada) e so de sinalizacao de orientacao, lida na integra: nao restringe veiculos."
+  },
+  {
+   "url": "https://sapl.anapolis.go.leg.br/media/sapl/public/normajuridica/1983/5850/5850_texto_integral.pdf",
+   "resultado": "Lei Promulgada 21/1983 lida na integra."
+  },
+  {
+   "url": "https://www.anapolis.go.gov.br (wp-json/wp/v2/search: caminhoes, carga e descarga, trafego de veiculos pesados, proibicao caminhoes, restricao de transito, decreto transito veiculos pesados)",
+   "resultado": "Portal da prefeitura: so noticias sem relacao (hidrojato, SINE, obras); nenhuma pagina de servico de restricao de caminhoes ou carga e descarga; legislacao do Executivo (decretos) nao pesquisavel por esse canal."
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes (territory 5201108; \"veiculos pesados\", \"caminhoes trafego proibido\")",
+   "resultado": "0 diarios (cobertura QD nivel 1 sem acertos); lead querido_diario.json sem acertos relevantes."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 5201108 \"caminhoes\" --fonte agm,fgm",
+   "resultado": "0 resultado(s), mas o log mostra falhas HTTP (http 0) nas buscas do diariomunicipal.com.br: nao conclusivo."
+  },
+  {
+   "url": "penaestrada.com.br/restricoes/anapolis (leads/penaestrada.json)",
+   "resultado": "Sem pagina (404); sem pista."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Anapolis: unica restricao localizada e a Lei Promulgada 21/1983 (veiculos pesados de carga proibidos na Av. Goias, sentido Vila Fabril-Centro). Sem zona central, horario de carga e descarga ou VUC em lei da Camara. Decretos/portarias do Executivo (Agencia/Secretaria de Transito) nao foram achados: o portal da prefeitura e o AGM nao responderam de forma conclusiva. Pendencias: confirmar vigencia/sinalizacao da Lei 21/1983 e eventuais decretos de carga e descarga do Centro/DAIA junto a SMT Anapolis; geometria.",
+ "osm_divergencias": [
+  "Overpass/OSM nao consultado nesta rodada (geometria fora do escopo; sem Valhalla/API)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "anapolis_lei21_1983_av_goias",
+   "tipo": "via",
+   "regime": "Veiculos pesados vedados na Av. Goias (sentido Vila Fabril-Centro)",
+   "nome": "Anapolis: Lei Promulgada 21/1983, veiculos pesados (de carga) proibidos na Avenida Goias, sentido Vila Fabril-Centro",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Lei Promulgada (Camara Municipal de Anapolis) 21, de 25/11/1983",
+     "artigo": "art. 1 (proibe o trafego de veiculos pesados (de carga) pela Avenida Goias, no sentido Vila Fabril-Centro); paragrafo unico (devem usar a Avenida Professor Benvindo Machado); art. 2 (vigencia na publicacao)",
+     "url": "https://sapl.anapolis.go.leg.br/media/sapl/public/normajuridica/1983/5850/5850_texto_integral.pdf",
+     "nota": "Texto lido do PDF do SAPL (atos/5201108/lei_promulgada_21_1983.txt). Buscas por trafego, veiculos pesados, circulacao, carga, Avenida Goias, Vila Fabril, Benvindo, transito nao acharam lei posterior que a altere ou revogue."
+    }
+   ],
+   "nota": "Lei de 1983, sem horario (24 h) e SO NO SENTIDO Vila Fabril -> Centro (alvo=sentido unico: o desenho deve ser orientado). \"Veiculos pesados (de carga)\" sem definicao de PBT: tratado como caminhao (PBT acima de 3,5 t). Alternativa legal: Av. Prof. Benvindo Machado. Lei muito antiga, sinalizacao atual e fiscalizacao nao confirmadas (a avenida pode ter mudado de caracteristica): confianca media. Vias no OSM: Avenida Goias (Anapolis) e Av. Professor Benvindo Machado.",
+   "vigencia_inicio": "1983-11-25",
+   "excecao_destino_local": false,
+   "trechos": [
+    {
+     "inciso": "art. 1",
+     "via": [
+      "Avenida Goiás"
+     ],
+     "sentido": true,
+     "descricao": "Av. Goias, sentido Vila Fabril para o Centro; extremos nao fixados na lei",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
+}
