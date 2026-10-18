@@ -4,7 +4,7 @@
  "uf": "GO",
  "status": "pista",
  "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.diariomunicipal.com.br/agm (toolkit diarios_consolidados: caminhões, carga e descarga, veículos pesados, zona de restrição, semirreboques Zona Central, etc.)",
@@ -12,7 +12,7 @@
   },
   {
    "url": "https://diario.senadorcanedo.go.gov.br/",
-   "resultado": "Diário próprio desde 09/09/2024: abre mas é aplicativo JS sem API de busca descoberta; publicações após set/2024 não pesquisadas."
+   "resultado": "Reprocessado em 18/10/2026: o diário tem API pública (/api/articles/search?keyword=...), usada com 30+ termos (caminhões, carga e descarga, veículos pesados, reboques, semirreboque, toneladas, tráfego pesado, grande porte, trânsito, SMTAC, triagem, anel viário, contorno, Jorge Amador, Zona Central, PlanMob, 2.813 etc.; 09/2024 a 16/10/2026). Achou a Lei 3.049/2026 (triagem e agendamento de caminhões), LC 2.997/2025 (Plano Diretor, arts. 131 III e 132 I), LC 2.999/2025 (uso do solo, arts. 17 e 22) e LC 3.064/2026 (só tabela de carga e descarga de edificações). Nenhum decreto/portaria de zona, via, horário ou VUC; nenhuma alteração/revogação da LC 2.813/2024; nada sobre a Rua Jorge Amador."
   },
   {
    "url": "https://acessoainformacao.senadorcanedo.go.gov.br/legislacao/lei/id=27 (anexos do PlanMob) e portal de legislação",
@@ -33,10 +33,14 @@
   {
    "url": "https://senadorcanedo.go.gov.br/senador-canedo-instala-placas-de-sinalizacao-na-rua-jorge-amador-para-aumentar-a-seguranca/",
    "resultado": "Notícia 09/06/2025: SMT sinaliza proibição de veículos acima de 15 t na Rua Jorge Amador; ato não citado."
+  },
+  {
+   "url": "https://diario.senadorcanedo.go.gov.br/api/articles/search?keyword=SMTAC (matéria 14920, ed. 406, 14/05/2026)",
+   "resultado": "Lei 3.049/2026 lida na íntegra (20 artigos): instituiu o Sistema Municipal de Triagem e Acesso de Caminhões (pátio com 1.000 vagas, agendamento prévio obrigatório para caminhão com destino a gerador de carga no município, art. 9º; vedada parada/fila em vias públicas nas imediações, art. 9º §2º). Obrigatoriedade escalonada por regulamento (90 dias, art. 17) e só após 180 dias da publicação (art. 18); nenhum regulamento publicado até 16/10/2026."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Pista: o PlanMob 2024 declara ações (impedir reboques/semirreboques na Zona Central; restringir carga e descarga em 6h30-7h30, 11h-14h e 16h-18h; liberar fins de semana para até 3 eixos) e define VUC (largura 2,20 m, comprimento 6,30 m). Nenhum ato primário de execução localizado. Também citadas Leis 412/1996 e 1.596/2011 (estacionamento de cargas perigosas), não lidas. Pendências: legislação específica de carga/descarga e Zona Central; diário próprio pós-09/2024; anexos do PlanMob. Pista adicional: Rua Jorge Amador, acima de 15 t (sinalização SMT, 06/2025).",
+ "observacoes": "Pista: o PlanMob 2024 (LC 2.813/2024, art. 21) declara ações (impedir reboques/semirreboques na Zona Central; restringir carga e descarga em 6h30-7h30, 11h-14h e 16h-18h; liberar fins de semana para até 3 eixos) e define VUC (largura 2,20 m, comprimento 6,30 m); nenhum ato primário de execução localizado, mesmo com o diário próprio (09/2024 a 10/2026) varrido por API. O Plano Diretor (LC 2.997/2025, art. 131 III e art. 132 I) ainda prevê 'definir vias específicas para o transporte de cargas' e 'elaboração de legislação específica para o transporte de cargas': confirma que a restrição de circulação não foi regulamentada. Fato novo: Lei 3.049/2026 (vigente desde 14/05/2026) cria triagem/agendamento obrigatório de caminhões com destino a geradores de carga (não é restrição de via nem de horário; regulamento e cronograma pendentes; operação plena só depois de ~10/11/2026). LC 2.999/2025 art. 22 exige estacionamento próprio para atividade que gere tráfego de veículos pesados acima de 2 eixos (obrigação do empreendimento, não do tráfego). Também citadas Leis 412/1996 e 1.596/2011 (estacionamento de cargas perigosas), não lidas. Pistas restantes: Rua Jorge Amador, acima de 15 t (sinalização SMT, notícia de 06/2025, sem ato); portal acessoainformacao.* e leismunicipais seguem 403, então decretos anteriores a 09/2024 só pelo AGM.",
  "osm_divergencias": [],
  "vuc": {
   "largura_max_m": 2.2,
@@ -207,6 +211,33 @@
      "descricao": "trecho entre os bairros Flor do Ipê e Jardim das Oliveiras (inclui a ponte sobre o córrego)"
     }
    ]
+  },
+  {
+   "id": "senadorcanedo_lei3049_2026_triagem_agendamento",
+   "tipo": "zona",
+   "regime": "Triagem e agendamento",
+   "nome": "Senador Canedo: Lei 3.049/2026, agendamento prévio e triagem obrigatórios para caminhões com destino a estabelecimento gerador de carga",
+   "status": "desativada",
+   "status_motivo": "Obrigação de agendamento/triagem do transportador e do gerador de carga, não restrição de circulação por via, zona ou horário; depende de regulamento e cronograma ainda não publicados (arts. 9º §1º, 17 e 18), sem pátio implantado nem perímetro.",
+   "confianca": "media",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 10: veículos de emergência, serviços públicos essenciais, obras públicas municipais, cargas de projeto ou indivisíveis, órgãos públicos e veículos sem carga"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 3.049, de 13/05/2026 (Senador Canedo/GO) - Sistema Municipal de Triagem e Acesso de Caminhões (SMTAC)",
+     "artigo": "arts. 1º, 9º (caput, §§ 1º e 2º), 10, 17 e 18",
+     "url": "https://diario.senadorcanedo.go.gov.br/materias",
+     "nota": "Diário Oficial de Senador Canedo ed. 406 (14/05/2026), matéria 14920, encontrada pela busca da API do diário; texto em atos/5220454/lei_3049_2026_triagem_acesso_caminhoes.txt. Entra em vigor na publicação (art. 20); obrigatoriedade só após regulamento e mínimo de 180 dias (art. 18)."
+    }
+   ],
+   "vigencia_inicio": "2026-05-14",
+   "nota": "Para aviso ao roteirizador: caminhão com destino a indústria/centro logístico em Senador Canedo pode precisar de agendamento prévio quando o regulamento entrar em vigor. Não modelável como geometria."
   }
  ]
 }
