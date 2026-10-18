@@ -1,0 +1,138 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4209409",
+  "municipio": "Laguna",
+  "uf": "SC",
+  "fonte_id": "laguna",
+  "fonte": {
+    "url": "https://diariomunicipal.sc.gov.br/atos/2029588; https://diariomunicipal.sc.gov.br/atos/4099593",
+    "licenca": "Ato oficial de Laguna: domínio público (Lei 9.610/1998 art. 8º IV). Geometria: OpenStreetMap (ODbL 1.0, © colaboradores do OSM).",
+    "notas": "Lei 2.073/2019 lida integralmente no DOM/SC; sem alteração localizada (a Lei 2.537/2024 só denomina rua). A Lei 2.303/2022 (Zona Azul) só regula estacionamento: registro desativado sem geometria. Divergência do OSM: 5 ways secondary_link sem nome com hgv=no, sem ato localizado. Laguna não define VUC nos atos lidos."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Laguna não define VUC nos atos lidos: o VUC é tratado como caminhão.",
+  "regras": [
+    {
+      "id": "laguna_lei2073_2019_ribeirao_pequeno",
+      "tipo": "via",
+      "regime": "Rodovia municipal: PBT > 20 t",
+      "nome": "Laguna: Lei 2.073/2019, proibido o tráfego de caminhões e combinações com PBT > 20 t na Rodovia Municipal João Batista Wendhausen Moraes (Bananal a Madre, Ribeirão Pequeno)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 20
+          }
+        ]
+      },
+      "excecoes": [
+        "Ônibus de transporte coletivo de passageiros, públicos ou particulares",
+        "Caminhões que transportam cargas vivas, ração e produtos agrícolas de todo gênero",
+        "Caminhões e máquinas pesadas da patrulha mecanizada municipal, estadual ou federal",
+        "Coleta de lixo, emergências de saúde, manutenção de emergência (rede elétrica, telefônica, pluvial, sanitária, água) e guincho"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária nº 2.073, de 17/05/2019 (Laguna)",
+          "artigo": "art. 1º e parágrafo único (exceções), art. 2º (penalidades CTB 187 e 231)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/2029588",
+          "nota": "DOM/SC 23/05/2019"
+        }
+      ],
+      "vigencia_inicio": "2019-05-17",
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Rodovia Municipal João Batista Wendhausen Moraes"
+          ],
+          "descricao": "Rodovia Municipal João Batista Wendhausen Moraes, Distrito de Ribeirão Pequeno (entre as localidades de Bananal e Madre)",
+          "aproximado": true
+        }
+      ],
+      "nota": "Ato diz: proíbe 'todos os tipos de caminhões ... carregados ou não ... cujo PBT seja superior a 20 t' (o PBT qualifica todas as categorias). Lei de 2019, sem alteração achada no DOM/SC. Exceção por tipo de carga (cargas vivas, ração e produtos agrícolas) não é representável: a regra é aplicada de forma conservadora a todo caminhão acima de 20 t (verificador, 18/10/2026).",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4209409_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "verificado_em": "2026-10-18",
+      "feriados": "aplica",
+      "fonte_geometria": "OSM (ODbL) casado por nome; a via inteira no OSM (o ato fala do trecho Bananal–Madre)"
+    },
+    {
+      "id": "laguna_lei2303_2022_zona_azul_cd",
+      "tipo": "zona",
+      "regime": "Zona Azul: vagas e carga e descarga",
+      "nome": "Laguna: Lei 2.303/2022, rotativo; carga e descarga com 1 a 5 t no rotativo, acima disso só fora do horário (art. 11)",
+      "status": "desativada",
+      "confianca": "media",
+      "status_motivo": "Regula estacionamento e carga e descarga no rotativo (Zona Azul), não circulação; sem área definida no ato: registro sem geometria. Regula estacionamento/parada no rotativo, não circulação. Pontual.",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Ordinária nº 2.303, de 2022 (Zona Azul)",
+          "artigo": "incisos sobre carga e descarga (1 a 5 t) e art. 19 (vagas regulares não são para caminhão)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/4099593"
+        }
+      ],
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "verificado_em": "2026-10-18",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "excecoes": [
+        "Sem janela definida no ato lido: regra de estacionamento e de carga e descarga no rotativo (1 a 5 t; acima disso só fora do horário, art. 11), não de circulação"
+      ]
+    }
+  ]
+}
