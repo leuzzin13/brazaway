@@ -6,6 +6,7 @@ Português do Brasil. Portais mapeados em 18/10/2026 (1.659 municípios de `../m
 | arquivo | para quê |
 |---|---|
 | `legislacao.py` | busca de **atos normativos** (leis, decretos, portarias) nos sistemas de legislação da prefeitura/câmara de cada município |
+| `plenus_1dom.py` | busca por termo nos diários **DIOENET/Plenus** (texto integral) e **1dom** (por título/fuzzy), descoberta de plataforma e faixa do acervo. Ver seção 7 |
 | `../leads/portais.json` | mapa dos 1.659 municípios → sistema de legislação da prefeitura e da câmara, URL de busca, se o cliente foi testado e todas as fontes achadas |
 | `diarios_consolidados.py` | busca em **diários oficiais consolidados**. Ver o docstring no topo do próprio arquivo; lead pronto em `../leads/diarios_consolidados.json` |
 | `../portais_work/` | scripts e caches que geraram o `portais.json` (ver seção 5) |
@@ -256,3 +257,15 @@ Cliente de `/proposicoes/pesquisa` (busca em texto integral das leis). Usa `curl
 `buscar <host> "<termo>"` (expressão exata; 25 itens/página, páginas seguintes em `/proposicoes/pesquisa/0/<pg>/0?<mesma query>`).
 Cada item tem página `/proposicoes/pesquisa/0/1/0/<id>` com o PDF em `cloudsoftcam.com.br` (às vezes escaneado: OCR; às vezes .doc).
 Throttle interno de 1 s por host. No lote R4-SOFTCAM (522 cidades), 75 tinham Câmara Softcam (RS 46, PR 21, SC 8, MS 1).
+
+## 7. `plenus_1dom.py` (R4, 18/10/2026)
+```bash
+python3 plenus_1dom.py descobrir <ibge>...                      # acha a plataforma/slug (links na home + slug provável)
+python3 plenus_1dom.py buscar plenus barra-do-ribeiro "caminhões" --paginas 2
+python3 plenus_1dom.py buscar 1dom imigrante "caminhões"
+python3 plenus_1dom.py acervo plenus barra-do-ribeiro           # (mais antiga, mais recente)
+python3 plenus_1dom.py lote ../fila_r3/<LOTE>.json saida.json   # retomável
+```
+* **DIOENET/Plenus** (`plenussistemas.dioenet.com.br/list/<slug>?pesquisa=`): GET sem captcha, texto integral com trechos destacados; `?pagina=N` pagina; a última página da lista sem termo dá a edição mais antiga (acervo). Slug inválido = 307 para a home. O cadastro da plataforma é público: `POST home/getCitiesByUf` (com cookie/CSRF da home, `uf=23` = RS) devolve `[{nome, slug}]`. **No RS só Barra do Ribeiro** (`barra-do-ribeiro`, acervo 28/07/2022–hoje) usa Plenus; AP, MS, MG, PB, PR, RJ, SP também têm UF no seletor.
+* **1dom** (`<slug>.1dom.com.br/search/?search=&type=0&location=0&order=2&date=all`): slug inexistente = 404 (DNS curinga). A busca é **fuzzy e por título do ato** (ruído alto: "veículos pesados" devolve portarias), então só o acerto no título vale como pista. Cuidado com **homônimos**: `santarosa.1dom.com.br` é Santa Rosa do Viterbo/SP. Muitos sites 1dom existem sem edição indexada (busca "lei" = 0). A home não mostra a UF (exceto alguns, ex.: "Torres/RS").
+* Lote R4-PLENUS-RS (233 cidades RS): nenhuma usa Plenus; 8 têm site 1dom (Brochier, Caiçara, Caraá, Encantado, Imigrante, São José do Norte, Torres e o homônimo falso de Santa Rosa), só Imigrante tem acervo (2026). Nenhuma home continha link dioenet/plenus/1dom.

@@ -1,69 +1,73 @@
 {
-  "ibge": "4307005",
-  "nome": "Erechim",
-  "uf": "RS",
-  "status": "pontual",
-  "nivel_busca": "profunda",
-  "falha_de_fonte": true,
-  "fontes_consultadas": [
+ "ibge": "4307005",
+ "nome": "Erechim",
+ "uf": "RS",
+ "status": "pontual",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "api.queridodiario.org.br territory_ids=4307005",
+   "resultado": "termos 'carga e descarga' etc.: 0 diários (município sem cobertura no QD, nível 1)"
+  },
+  {
+   "url": "leads/penaestrada.json",
+   "resultado": "sem página (404): sem pista"
+  },
+  {
+   "url": "https://sapl.erechim.rs.leg.br (API normajuridica)",
+   "resultado": "LIDO: acervo só até ~2021; ementas carga e descarga, caminh, veículos, zona, trânsito; achado Decreto 2.457/1998 (PDF escaneado lido por pdftotext, OCR ruidoso)"
+  },
+  {
+   "url": "https://erechim.cespro.com.br/ (legislação da prefeitura)",
+   "resultado": "falha: CESPRO com reCAPTCHA"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (entidade 1120455) via diarios_consolidados.py",
+   "resultado": "13 termos (carga e descarga, veículos pesados, circulação/tráfego/trânsito de caminhões, restrição, zona, peso bruto, etc.): só compras e leis de pessoal; nenhum ato de restrição desde 2009"
+  },
+  {
+   "url": "https://www.pmerechim.rs.gov.br/pagina/1724/legislao-municipal",
+   "resultado": "LIDO: aponta para CESPRO e FAMURS; sem página de carga/descarga ou restrição"
+  },
+  {
+   "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente erechim, erechim-rs, erechimrs); homes da prefeitura/câmara",
+   "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Só achado o Decreto 2.457/1998 (carga e descarga das 18h30 às 9h30 na Av. Maurício Cardoso, entre a Praça da Bandeira e as ruas Argentina/J. B. Cabral; OCR duvidoso no nome das ruas). É janela de carga e descarga, não proibição de circulação; vigência atual não confirmada (CESPRO bloqueado, SAPL sem 2022+). Pendência: abrir CESPRO manualmente para alterações posteriores. | R3 2026-10-18: Sem consulta nova em R3 além da revisão do res: decisão mantida (restrição de estacionamento/carga e descarga/chuva/temporária ou sem perímetro, não roteável). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "osm_divergencias": [
+  "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "erechim_carga_descarga_av_mauricio_cardoso",
+   "tipo": "via",
+   "regime": "Carga e descarga",
+   "nome": "Horário de carga e descarga na Av. Maurício Cardoso (Decreto 2.457/1998)",
+   "status": "desativada",
+   "status_motivo": "Decreto de 1998 que fixa janela de carga e descarga (não restrição de circulação); texto com OCR ruim, vigência e alterações não confirmadas.",
+   "confianca": "baixa",
+   "verificado_em": "2026-10-18",
+   "janelas": [],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "base_legal": [
     {
-      "url": "api.queridodiario.org.br territory_ids=4307005",
-      "resultado": "termos 'carga e descarga' etc.: 0 diários (município sem cobertura no QD, nível 1)"
-    },
-    {
-      "url": "leads/penaestrada.json",
-      "resultado": "sem página (404): sem pista"
-    },
-    {
-      "url": "https://sapl.erechim.rs.leg.br (API normajuridica)",
-      "resultado": "LIDO: acervo só até ~2021; ementas carga e descarga, caminh, veículos, zona, trânsito; achado Decreto 2.457/1998 (PDF escaneado lido por pdftotext, OCR ruidoso)"
-    },
-    {
-      "url": "https://erechim.cespro.com.br/ (legislação da prefeitura)",
-      "resultado": "falha: CESPRO com reCAPTCHA"
-    },
-    {
-      "url": "https://www.diariomunicipal.com.br/famurs (entidade 1120455) via diarios_consolidados.py",
-      "resultado": "13 termos (carga e descarga, veículos pesados, circulação/tráfego/trânsito de caminhões, restrição, zona, peso bruto, etc.): só compras e leis de pessoal; nenhum ato de restrição desde 2009"
-    },
-    {
-      "url": "https://www.pmerechim.rs.gov.br/pagina/1724/legislao-municipal",
-      "resultado": "LIDO: aponta para CESPRO e FAMURS; sem página de carga/descarga ou restrição"
+     "ato": "Decreto Municipal nº 2.457, de 23/06/1998 (Erechim)",
+     "artigo": "art. 1º e parágrafo único (18h30-9h30; atividades no início das quadras)",
+     "url": "https://sapl.erechim.rs.leg.br/norma/13105"
     }
-  ],
-  "data": "2026-10-18",
-  "observacoes": "Só achado o Decreto 2.457/1998 (carga e descarga das 18h30 às 9h30 na Av. Maurício Cardoso, entre a Praça da Bandeira e as ruas Argentina/J. B. Cabral; OCR duvidoso no nome das ruas). É janela de carga e descarga, não proibição de circulação; vigência atual não confirmada (CESPRO bloqueado, SAPL sem 2022+). Pendência: abrir CESPRO manualmente para alterações posteriores. | R3 2026-10-18: Sem consulta nova em R3 além da revisão do res: decisão mantida (restrição de estacionamento/carga e descarga/chuva/temporária ou sem perímetro, não roteável).",
-  "osm_divergencias": [
-    "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
-  ],
-  "regras_rascunho": [
-    {
-      "id": "erechim_carga_descarga_av_mauricio_cardoso",
-      "tipo": "via",
-      "regime": "Carga e descarga",
-      "nome": "Horário de carga e descarga na Av. Maurício Cardoso (Decreto 2.457/1998)",
-      "status": "desativada",
-      "status_motivo": "Decreto de 1998 que fixa janela de carga e descarga (não restrição de circulação); texto com OCR ruim, vigência e alterações não confirmadas.",
-      "confianca": "baixa",
-      "verificado_em": "2026-10-18",
-      "janelas": [],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true
-      },
-      "vuc": null,
-      "excecoes": [],
-      "base_legal": [
-        {
-          "ato": "Decreto Municipal nº 2.457, de 23/06/1998 (Erechim)",
-          "artigo": "art. 1º e parágrafo único (18h30-9h30; atividades no início das quadras)",
-          "url": "https://sapl.erechim.rs.leg.br/norma/13105"
-        }
-      ],
-      "vigencia_inicio": "1998-06-23",
-      "vigencia_fim": null,
-      "trechos": [],
-      "geometria": []
-    }
-  ]
+   ],
+   "vigencia_inicio": "1998-06-23",
+   "vigencia_fim": null,
+   "trechos": [],
+   "geometria": []
+  }
+ ]
 }

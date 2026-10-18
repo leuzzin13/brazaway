@@ -33,11 +33,29 @@ def faixa(fonte, ent_id):
             "total_truncado_em_10000": t >= 10001}
 
 
-# entidades com nome truncado no seletor (ibge nulo em diarios_consolidados) - o SIGPub/AGM so lista municipios goianos
-ALIAS = {("agm", "12489"): "5200050", ("agm", "13828"): "5204607", ("agm", "11491"): "5205802", ("agm", "111990"): "5208152",
-         ("agm", "12277"): "5209408", ("agm", "74458"): "5210158", ("agm", "16304"): "5213707", ("agm", "823821"): "5214879",
-         ("agm", "9298"): "5215702", ("agm", "47634"): "5216809", ("agm", "2180585"): "5216908", ("agm", "142282"): "5219902",
-         ("fgm", "1858194"): "5221080", ("fgm", "7759"): "5221080"}
+# Mapa completo das entidades de TODOS os seletores SIGPub (famurs, amp, agm, fgm, amm-mt, ms): sigpub_entidades_mapa.json (R4 2026-10-18).
+# Contem os nomes truncados do AGM ("Municipio de Abadia", "Municipal de Sao Francisco"...), Teresina (FGM), Rio Verde de MT (MS) e a
+# correcao "Municipio de Divinopolis" (resolve_entidade dava Davinopolis; e Divinopolis de Goias 5208301).
+MAPA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sigpub_entidades_mapa.json")
+try:
+    MAPA = json.load(open(MAPA_PATH, encoding="utf-8"))["fontes"]
+except Exception:
+    MAPA = {}
+ALIAS = {(f, i): e["ibge"] for f, d in MAPA.items() for i, e in d.items() if e.get("origem") in ("alias", "corrigido")}
+
+
+def aplicar_mapa():
+    """Sobrescreve em memoria o ibge das entidades do cache do SIGPub (D.FONTES[f].entidades()) com o mapa; afeta tambem hit['ibge']."""
+    for f, d in MAPA.items():
+        if f not in D.FONTES:
+            continue
+        for e in D.FONTES[f].entidades():
+            m = d.get(e["id"])
+            if m and m.get("ibge"):
+                e["ibge"] = m["ibge"]
+
+
+aplicar_mapa()
 
 
 def entidades(ibge, fontes=("agm", "fgm")):
