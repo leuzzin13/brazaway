@@ -7,35 +7,31 @@
  "falha_de_fonte": false,
  "fontes_consultadas": [
   {
-   "url": "https://sapl.telemacoborba.pr.leg.br/norma/2623",
-   "resultado": "LIDO integral (PDF SAPL, Boletim Oficial 2195, 28/07/2023): Lei Complementar 137/2023, 9 artigos; art. 6 restringe circulação de veículos > 7 t e/ou > 7 m na Área Central 9h-19h dias úteis e 9h-13h30 sábado; art. 3 janelas de carga/descarga; art. 9 revoga a Lei 1623/2007. Texto em atos/4127106/lc_137_2023.txt"
+   "url": "toolkit/legislacao.py buscar 4127106 (SAPL da Câmara)",
+   "resultado": "Achou Lei 1623/2007 e LC 137/2023; buscas 'carga e descarga', 'área central', 'veículos pesados' sem outra norma posterior."
   },
   {
-   "url": "https://sapl.telemacoborba.pr.leg.br/norma/847",
-   "resultado": "LIDO (PDF escaneado, lido na imagem): Lei 1623/2007 proibia carretas/romeu e julieta/trucadas carregadas no perímetro urbano exceto PR-160; REVOGADA pelo art. 9 da LC 137/2023."
+   "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf",
+   "resultado": "LIDO integral (texto): LC 137/2023, 9 arts. Salvo em atos/4127106/lc_137_2023.txt"
   },
   {
-   "url": "https://sapl.telemacoborba.pr.leg.br/api/norma/normajuridica/ (ementa: 137, carga e descarga, Área Central de Tráfego, mobilidade)",
-   "resultado": "ABRIU; sem alteração/revogação posterior da LC 137/2023 encontrada. Existe LC 131/2023 (Plano de Mobilidade), não lida."
-  },
-  {
-   "url": "diarios_consolidados.py buscar 4127106 \"carga e descarga\"",
-   "resultado": "AMP não cobre o município: 0 resultados."
+   "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf",
+   "resultado": "LIDO (PDF escaneado, visualmente): Lei 1.623/2007, revogada. Salvo resumo em atos/4127106/lei_1623_2007.txt"
   },
   {
    "url": "https://telemacoborba.atende.net",
-   "resultado": "Atende.net (captcha) - não acessado."
+   "resultado": "captcha; decretos do Executivo/alterações da LC 137 não consultados."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "LC 137/2023 (28/07/2023): art. 2 define a Área Central de Tráfego por logradouros (Rua Manoel Simeão de Souza esq. Rua José Augusto Nocera, Av. das Nações Unidas Leste, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin); art. 6 proíbe circulação de veículos acima de 7,0 t e/ou 7,0 m 9h-19h dias úteis e 9h-13h30 sábado; art. 3 limita carga/descarga por classe (1,8-7 t e 7-14 t) a espaços demarcados em janelas noturnas/fim de semana; art. 5 autorização especial DMSPT/TBTran; art. 8 permite ao Conselho de Mobilidade ampliar áreas. Dúvidas: art. 6 diz \"toneladas\" sem distinguir PBT/capacidade (modelado como payload_t, coerente com o art. 3, confiança média); domingo/feriado não restritos pelo art. 6 (art. 7 trata liberações de fim de semana). Perímetro é um polígono definido em texto (sem geometria).",
+ "observacoes": "LC 137/2023 art. 6º: proíbe circulação de veículos >7 t e/ou >7 m na Área Central de Tráfego, seg-sex 9h-19h e sáb 9h-13h30. Art. 3º: janelas de carga/descarga por porte (até 1,8 t livre; 1,8-7 t e 7-14 t só em espaços demarcados fora do horário comercial) - não modelado como regra separada. Pendência: alterações por decreto/lei posterior (art. 8º) e esclarecer se 7 t é PBT ou capacidade (art. 3º usa capacidade útil).",
  "osm_divergencias": [],
  "regras_rascunho": [
   {
-   "id": "tb_area_central_circulacao",
+   "id": "telemacoborba_area_central_lc137_2023",
    "tipo": "zona",
-   "regime": "restricao_circulacao",
-   "nome": "Área Central de Tráfego - circulação > 7 t / > 7 m",
+   "regime": "Área Central de Tráfego",
+   "nome": "Área Central de Tráfego - circulação de veículos acima de 7 t e/ou 7 m (LC 137/2023, art. 6º)",
    "status": "ativa",
    "confianca": "media",
    "janelas": [
@@ -58,7 +54,7 @@
      "to": "13:30"
     }
    ],
-   "feriados": "suspende",
+   "feriados": "não detalhado para o art. 6º (art. 7º trata sábado, domingo e feriados apenas para carga/descarga do art. 3º)",
    "alvo": {
     "caminhao": true,
     "qualquer": [
@@ -72,44 +68,38 @@
      }
     ]
    },
-   "excecoes": "Autorização especial DMSPT/TBTran para carga/descarga excepcional (art. 5); carga/descarga nos espaços e janelas do art. 3.",
+   "excecoes": "Art. 5º: autorização especial do DMSPT/TBTran para concreto, materiais de construção, mudanças e casos excepcionais (carga/descarga).",
    "base_legal": [
     {
-     "ato": "Lei Complementar 137/2023 (28/07/2023)",
-     "artigo": "art. 6 (área: art. 2)",
-     "url": "https://sapl.telemacoborba.pr.leg.br/norma/2623"
+     "ato": "Lei Complementar 137/2023 (28/07/2023; Boletim Oficial 2195)",
+     "artigo": "arts. 2º e 6º",
+     "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2023/2623/lei_c_137-2023_-_servico_de_carga_e_descarga_de_bens_mercadorias_e_servicos.pdf"
     }
    ],
    "vigencia_inicio": "2023-07-28",
-   "trechos": [
-    "Perímetro: Rua Manoel Simeão de Souza (esq. Rua José Augusto Nocera) -> Rua José Augusto Nocera -> Av. das Nações Unidas Leste -> Av. Euclides Bonifácio Londres -> Av. Chanceler Horácio Lafer -> Av. Paraná -> Av. Samuel Klabin -> Rua Manoel Simeão de Souza"
-   ],
-   "geometria": []
+   "vigencia_fim": null,
+   "trechos": "Perímetro da 'Área Central de Tráfego' (art. 2º): Rua Manoel Simeão de Souza esq. Rua José Augusto Nocera, por esta até Av. das Nações Unidas Leste, Av. Euclides Bonifácio Londres, Av. Chanceler Horácio Lafer, Av. Paraná, Av. Samuel Klabin, até a Rua Manoel Simeão de Souza.",
+   "geometria": null,
+   "status_motivo": "Art. 6º diz 'veículos acima de 7,0 toneladas e/ou comprimento acima de 7,0 metros' sem dizer se é PBT ou capacidade de carga (o art. 3º usa capacidade de carga útil); modelado como payload_t, a confirmar. Art. 8º permite ao Conselho Municipal de Mobilidade/Trânsito ajustar áreas, dimensões e horários (não localizado ajuste)."
   },
   {
-   "id": "tb_lei_1623_2007",
+   "id": "telemacoborba_lei_1623_2007",
    "tipo": "zona",
-   "regime": "proibicao_circulacao",
-   "nome": "Perímetro urbano - carretas, romeu e julieta e trucadas carregadas",
+   "regime": "Perímetro urbano",
+   "nome": "Proibição de carretas, romeu e julieta e trucados carregados no perímetro urbano (Lei 1.623/2007, exceto PR-160)",
    "status": "revogada",
-   "status_motivo": "Revogada pelo art. 9 da LC 137/2023.",
+   "status_motivo": "Revogada expressamente pelo art. 9º da LC 137/2023.",
    "confianca": "alta",
-   "alvo": {
-    "caminhao": true
-   },
    "base_legal": [
     {
      "ato": "Lei 1.623/2007 (05/09/2007)",
-     "artigo": "art. 1",
-     "url": "https://sapl.telemacoborba.pr.leg.br/norma/847"
+     "artigo": "art. 1º",
+     "url": "https://sapl.telemacoborba.pr.leg.br/media/sapl/public/normajuridica/2007/847/847_texto_integral.pdf"
     }
    ],
    "vigencia_inicio": "2007-09-14",
    "vigencia_fim": "2023-07-28",
-   "trechos": [
-    "Ruas e avenidas do perímetro urbano, exceto Rodovia do Papel (PR-160)"
-   ],
-   "geometria": []
+   "geometria": null
   }
  ]
 }
