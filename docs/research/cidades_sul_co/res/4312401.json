@@ -2,7 +2,7 @@
  "ibge": "4312401",
  "nome": "Montenegro",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "media",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -25,10 +25,39 @@
   {
    "url": "toolkit/diarios_consolidados.py buscar 4312401 \"circulação de caminhões\" | \"trânsito de caminhões\" | \"veículos pesados\"",
    "resultado": "sem diário consolidado/QD para o município; 1 falha(s) de rede (http 0) com retentativa"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 4312401 (famurs/qd) termos adicionais 'tonelagem', 'proíbe trânsito caminhões', 'veículos de carga', 'carga e descarga', 'tráfego de caminhões'",
+   "resultado": "sem ato de restrição; só ruído (licitação, RH, ISS, contratos)"
+  },
+  {
+   "url": "https://sapl.montenegro.rs.leg.br/media/sapl/public/normajuridica/1987/3540/l_2493-87.pdf",
+   "resultado": "LIDO: Lei 2.493/1987, art. 1º; texto em atos/4312401/lei_2493_1987.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-RS-M02 (média, sem pista): busca de portal com termos-chave (legislacao.py, todas as fontes) + diário consolidado (3 termos). Fonte principal consultada com resposta. Algumas consultas ao diário falharam por rede (http 0). ",
+ "observacoes": "Montenegro: SAPL lido. Única restrição viária achada é a Lei 2.493/1987 (Rua Ramiro Barcelos entre Olavo Bilac e São João; proibido trânsito de veículos de qualquer espécie de 15/12 a 01/03, 20h-05h, com mesas e cadeiras na rua): pontual/sazonal, não específica de caminhões, vigência atual não conferida. OSM maxweight em RSC-470 (rodovia estadual), descartado. Demais resultados: aquisição de caminhões, estacionamento rotativo, tração animal. Lote R1-RS-M02 (segunda passada manual, 18/10/2026).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "montenegro_lei_2493_1987_ramiro_barcelos",
+   "tipo": "via",
+   "regime": "proibicao_sazonal_noturna",
+   "nome": "Rua Ramiro Barcelos (entre Olavo Bilac e São João) - trânsito de veículos proibido 15/12 a 01/03, 20h-05h",
+   "status": "desativada",
+   "status_motivo": "Não específica de caminhões (todos os veículos), sazonal/pontual, vigência atual não conferida",
+   "confianca": "baixa",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei 2.493/1987 (Montenegro)",
+     "artigo": "art. 1º",
+     "url": "https://sapl.montenegro.rs.leg.br/norma/3540"
+    }
+   ],
+   "trechos": "Rua Ramiro Barcelos, quarteirão entre Rua Olavo Bilac e Rua São João"
+  }
+ ]
 }
