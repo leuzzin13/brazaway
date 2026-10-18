@@ -1,0 +1,84 @@
+{
+  "ibge": "4200101",
+  "nome": "Abelardo Luz",
+  "uf": "SC",
+  "status": "regra_com_ato",
+  "nivel_busca": "dirigida",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7903072",
+      "resultado": "Decreto 044/2026 (DOM/SC 16/01/2026) aberto e lido na íntegra. Texto em atos/4200101/dec044_2026.txt"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/7899329",
+      "resultado": "Decreto 032/2026 (DOM/SC) lido; mesmo conteúdo, substituído pelo 044/2026. Texto em atos/4200101/dec032_2026.txt"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4200101 'veículos de carga', 'Avenida Getúlio Vargas veículos de carga', 'tráfego de veículos de carga grande porte' (domsc)",
+      "resultado": "só os decretos 032 e 044/2026 (3 resultados); nenhuma alteração posterior"
+    },
+    {
+      "url": "https://abelardoluz.1doc.com.br/",
+      "resultado": "1doc sem cliente automático; não consultado"
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Decreto 044/2026 vigente (publicado 16/01/2026): Av. Getúlio Vargas fechada a veículos de carga com PBT > 10 t, com rotas pela SC-155/SC-350. Sem alteração posterior no DOM/SC até 18/10/2026.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "abelardoluz_av_getulio_vargas_10t",
+      "tipo": "via",
+      "regime": "Proibição de tráfego",
+      "nome": "Avenida Getúlio Vargas (perímetro urbano): proibido tráfego de veículos de carga e de grande porte com PBT acima de 10 t",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 10
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Decreto 044/2026 (16/01/2026)",
+          "artigo": "art. 1º (proibição); art. 2º (rotas alternativas); art. 3º (fiscalização); art. 4º (CTB); art. 5º (vigência na publicação; revoga o decreto anterior)",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7903072"
+        },
+        {
+          "ato": "Decreto 032/2026 (14/01/2026), anterior, de mesmo conteúdo, revogado",
+          "artigo": "arts. 1º a 5º",
+          "url": "https://diariomunicipal.sc.gov.br/atos/7899329"
+        }
+      ],
+      "vigencia_inicio": "2026-01-16",
+      "trechos": [
+        {
+          "via": "Avenida Getúlio Vargas",
+          "nota": "perímetro urbano de Abelardo Luz, extensão inteira"
+        }
+      ],
+      "geometria": [],
+      "nota": "Rotas alternativas (art. 2º): SC-155 pela Av. São Roque, Rua José Santin e Rua Professor José de Andrade até a SC-155; ou SC-155 pela Rua Professor José de Andrade até a SC-350 (lado leste); ou SC-350 (leste) até a Rua José Santin, saindo pela Rua São Roque ou Rua Professor José de Andrade. O Anexo I (mapa) é só ilustrativo. O art. 5º cita 'Decreto n.º 032/2025', provável erro de digitação do Decreto 032/2026. Sem exceções no texto."
+    }
+  ]
+}
