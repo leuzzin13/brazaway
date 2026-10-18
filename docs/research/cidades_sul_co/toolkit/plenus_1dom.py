@@ -186,21 +186,45 @@ def dom1_acervo(slug):
 _PAD = re.compile(r"https?://[^\s\"'<>]*(?:plenussistemas\.dioenet\.com\.br|dioenet\.com\.br|\.1dom\.com\.br)[^\s\"'<>]*", re.I)
 
 
-def links_home(sites):
-    achados = set()
-    for u in sites:
-        if not u:
-            continue
+def links_home(sites, nome=None):
+    """Procura links dioenet/plenus/1dom nas homes (sites dados + <nome>.rs.gov.br) e, um nível abaixo,
+    nas páginas cujo link menciona 'diario'. -> (links_plataforma, outros_diarios)."""
+    cand = [u for u in sites if u]
+    if nome:
+        j = "".join(re.sub(r"[^a-z0-9 ]", " ", norm(nome)).split())
+        for u in (f"https://www.{j}.rs.gov.br/", f"https://{j}.rs.gov.br/", f"https://www.{j}.rs.leg.br/", f"https://camara{j}.rs.gov.br/"):
+            if u not in cand:
+                cand.append(u)
+    achados = set(); outros = set(); vistos = set()
+    for u in cand:
         st, b, _ = get(u, timeout=20, tries=1)
-        if st == 200:
-            for m in _PAD.findall(b):
-                achados.add(m.rstrip(".,;)"))
-    return sorted(achados)
+        if st != 200:
+            continue
+        for m in _PAD.findall(b):
+            achados.add(m.rstrip(".,;)"))
+        subs = []
+        for m in re.finditer(r'<a\s[^>]*href="([^"#]+)"[^>]*>(.*?)</a>', b, flags=re.S | re.I):
+            href, tx = m.group(1), txt(m.group(2))
+            if re.search(r"di[aá]rio|dom\b|publica", norm(href + " " + tx)):
+                if href.startswith("/"):
+                    href = "/".join(u.split("/")[:3]) + href
+                if href.startswith("http") and href not in vistos:
+                    vistos.add(href); subs.append(href)
+        for h in subs[:4]:
+            if _PAD.search(h):
+                achados.add(h); continue
+            outros.add(h)
+            st2, b2, _ = get(h, timeout=20, tries=1)
+            if st2 == 200:
+                for m in _PAD.findall(b2):
+                    achados.add(m.rstrip(".,;)"))
+    return sorted(achados), sorted(outros)[:6]
 
 
 def descobrir(ibge, nome, uf="RS", sites=()):
     """-> dict(plataforma: 'plenus'|'1dom'|None, slug, links_home, tentados)."""
-    r = {"ibge": ibge, "nome": nome, "plataforma": None, "slug": None, "links_home": links_home(sites), "tentados": []}
+    lh, outros = links_home(sites, nome)
+    r = {"ibge": ibge, "nome": nome, "plataforma": None, "slug": None, "links_home": lh, "outros_diarios": outros, "tentados": []}
     # 1) links achados na home
     for l in r["links_home"]:
         m = re.search(r"dioenet\.com\.br/(?:list|diario)/([a-z0-9\-]+)", l)

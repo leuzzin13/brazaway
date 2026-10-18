@@ -33,11 +33,18 @@ def faixa(fonte, ent_id):
             "total_truncado_em_10000": t >= 10001}
 
 
+# entidades com nome truncado no seletor (ibge nulo em diarios_consolidados) - o SIGPub/AGM so lista municipios goianos
+ALIAS = {("agm", "12489"): "5200050", ("agm", "13828"): "5204607", ("agm", "11491"): "5205802", ("agm", "111990"): "5208152",
+         ("agm", "12277"): "5209408", ("agm", "74458"): "5210158", ("agm", "16304"): "5213707", ("agm", "823821"): "5214879",
+         ("agm", "9298"): "5215702", ("agm", "47634"): "5216809", ("agm", "2180585"): "5216908", ("agm", "142282"): "5219902",
+         ("fgm", "1858194"): "5221080", ("fgm", "7759"): "5221080"}
+
+
 def entidades(ibge, fontes=("agm", "fgm")):
     out = []
     for f in fontes:
         for e in D.FONTES[f].entidades():
-            if e["ibge"] == ibge:
+            if (e["ibge"] or ALIAS.get((f, e["id"]))) == ibge:
                 out.append((f, e))
     return out
 
