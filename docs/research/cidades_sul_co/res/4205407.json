@@ -1,0 +1,282 @@
+{
+ "ibge": "4205407",
+ "nome": "Florianópolis",
+ "uf": "SC",
+ "status": "pista",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (entidade Prefeitura municipal de Florianópolis, cod. 92; termos: 12.374, 23.465, circulação de caminhões, carga e descarga, veículos pesados, ponte+toneladas, VUC)",
+   "resultado": "Só Decretos 21.354 e 21.569/2020 (suspensão do Decreto 12.374/2013). O DOM/SC não tem o Decreto 23.465/2022 (jan/2022 quase vazio para a Prefeitura). Decretos 29.233/2026 (estacionamento rotativo, define veículo de carga PBT>3,5 t e <10 m) e 27.311/2024 (Plano Setorial de Mobilidade, aponta 'restrições de circulação de caminhões regulamentadas por decreto específico' a revisar) lidos: sem nova regra de circulação."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/2421340 ; /atos/2484197",
+   "resultado": "Decretos 21.354 e 21.569/2020 lidos: suspendem os efeitos do Decreto 12.374/2013 (art. 34 do 21.569); sem prazo no texto."
+  },
+  {
+   "url": "https://www.normasbrasil.com.br/norma/decreto-23465-2022-florianopolis_425972.html ; .../decreto-12374-2013-florianopolis_262415.html ; legisweb.com.br/legislacao/?id=262415",
+   "resultado": "Transcrições de terceiros: Decreto 23.465 de 06/01/2022 revoga o 12.374/2013 (art. 1º). Fonte não oficial."
+  },
+  {
+   "url": "https://www.pmf.sc.gov.br (e /entidades/transito/)",
+   "resultado": "Conexão resetada (curl) e DNS inexistente no WebFetch: falha de fonte. Portal de serviços (servicos.floripa.sc.gov.br) responde 302 sem conteúdo útil."
+  },
+  {
+   "url": "https://leismunicipais.com.br (Florianópolis)",
+   "resultado": "403 Cloudflare conhecido; não contornado."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/florianopolis/",
+   "resultado": "Página existe: acima de 7 t, seg-sex 6h-9h e 17h-20h, 3 mapas de vias. Pista desatualizada (corresponde às vias do Decreto 12.374/2013 revogado)."
+  },
+  {
+   "url": "WebSearch: Florianópolis Decreto 12.374/2013 ... ; Decreto 23.465 ... (2 buscas)",
+   "resultado": "Apontou legisweb/normasbrasil; nenhuma página oficial da Prefeitura."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Florianópolis tinha restrição (Decreto 12.374/2013), suspensa em 18/03/2020 (DOM/SC) e revogada em 06/01/2022 pelo Decreto 23.465 (só transcrição de terceiro; ato primário no DOM de Florianópolis/PMF não obtido, pmf.sc.gov.br inacessível daqui). Nenhuma regra vigente de circulação de caminhões encontrada no DOM/SC. Pendências: confirmar no site da PMF/DOM-Floripa o Decreto 23.465/2022 e se algum decreto posterior (2022-2026, não indexado no DOM/SC) recriou a restrição; mapas do Anexo I; eventual restrição em pontes (Pedro Ivo Campos, Colombo Salles): o ato de 2013 só as liberava/incluía, sem limite de peso. Zona Azul (Decreto 29.233/2026) define veículo de carga PBT>3,5 t e <10 m: não é restrição de circulação. Por isso status 'pista' e nenhuma regra ativa.",
+ "osm_divergencias": [
+  "OSM não consultado."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "florianopolis_dec12374_2013_caminhoes_pico",
+   "tipo": "via",
+   "regime": "Restrição de pico a caminhões (revogada)",
+   "nome": "Florianópolis: Decreto 12.374/2013, restrição de trânsito de caminhões e carga/descarga (REVOGADO pelo Decreto 23.465/2022)",
+   "status": "revogada",
+   "status_motivo": "Revogado expressamente pelo Decreto n. 23.465, de 06/01/2022, art. 1º (texto só em transcrição de terceiro, normasbrasil.com.br; ato primário do DOM de Florianópolis não localizado). Já estava com efeitos suspensos desde 18/03/2020 (Decretos 21.354/2020 e 21.569/2020, art. 34, lidos no DOM/SC).",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:30",
+     "to": "08:30"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "18:00",
+     "to": "20:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "comprimento_m",
+      "acima": 10.01
+     }
+    ]
+   },
+   "excecoes": [
+    "Registro histórico (art. 1º, §§ 2º e 3º da transcrição): veículos acima de 10,01 m liberados para a Ponte Pedro Ivo Campos e as avenidas troncais rumo ao Norte, Leste e Sul da Ilha; contrafluxo de pico autorizado para caminhões em avenidas listadas"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto n. 12.374, de 28/11/2013 (Florianópolis), transcrição de terceiro",
+     "artigo": "arts. 1º (horários 2ª a 6ª, 6h30-8h30 e 18h-20h; comprimento acima de 10,01 m), 2º (áreas e vias), 3º (carga e descarga por comprimento)",
+     "url": "https://www.normasbrasil.com.br/norma/decreto-12374-2013-florianopolis_262415.html",
+     "nota": "Transcrição não oficial; mapas do Anexo I não lidos"
+    },
+    {
+     "ato": "Decreto n. 23.465, de 06/01/2022 (Florianópolis), transcrição de terceiro",
+     "artigo": "art. 1º (revoga o Decreto 12.374/2013)",
+     "url": "https://www.normasbrasil.com.br/norma/decreto-23465-2022-florianopolis_425972.html"
+    },
+    {
+     "ato": "Decreto n. 21.569, de 14/05/2020 (Florianópolis)",
+     "artigo": "art. 34 (suspende os efeitos do Decreto 12.374/2013); art. 36 revoga decretos anteriores de COVID",
+     "url": "https://diariomunicipal.sc.gov.br/atos/2484197",
+     "nota": "Lido na íntegra (DOM/SC); suspensão inicial no Decreto 21.354/2020 (https://diariomunicipal.sc.gov.br/atos/2421340)"
+    }
+   ],
+   "nota": "Registro histórico. O penaestrada.com.br ainda lista 'acima de 7 toneladas, 6h-9h e 17h-20h' com os mesmos logradouros: dado desatualizado/divergente (o decreto falava em comprimento acima de 10,01 m e 6h30-8h30/18h-20h). Não aplicar.",
+   "vigencia_inicio": "2013-12-03",
+   "vigencia_fim": "2022-01-06",
+   "trechos": [
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Rua Frei Caneca"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Rua Rui Barbosa"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Rua Delminda da Silveira"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Rua Lauro Linhares"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Rua Dep. Antonio Edu Vieira"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. Osvaldo Rodrigues Cabral"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. Jornalista Rubens de Arruda Ramos"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. Gov. Irineu Bornhausen"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. Prof. Henrique da Silva Fontes"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. da Saudade"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, III",
+     "via": [
+      "Av. Gustavo Richard"
+     ],
+     "descricao": "percurso total da área insular"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Fúlvio Aducci"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Pedro Demoro"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Gaspar Dutra"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Liberato Bittencourt"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Av. Max Schramm"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Santos Saraiva"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Av. Max de Souza"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua Desembargador Pedro Silva"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Rua João Meireles"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, IV",
+     "via": [
+      "Av. Ivo Silveira"
+     ],
+     "descricao": "percurso total da área continental"
+    },
+    {
+     "inciso": "art. 2º, II",
+     "via": [
+      "Ponte Pedro Ivo Campos"
+     ],
+     "descricao": "percurso total"
+    },
+    {
+     "inciso": "art. 2º, II",
+     "via": [
+      "Ponte Colombo Machado Salles"
+     ],
+     "descricao": "percurso total"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/4205407_dec12374_vias.geojson",
+     "construir": "trechos"
+    }
+   ]
+  }
+ ]
+}
