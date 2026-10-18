@@ -1,0 +1,449 @@
+{
+ "ibge": "5103403",
+ "nome": "Cuiabá",
+ "uf": "MT",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": true,
+ "fontes_consultadas": [
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5103403 (Gazeta Municipal de Cuiabá, 1993-2026; buscas: \"5.463\", \"Lei nº 5.463\", \"Zona de Restrição Máxima\", \"carga e descarga\", \"circulação de veículos de carga\", \"Decreto 5.207\", etc.)",
+   "resultado": "Respondeu. Achados e lidos em texto integral: Lei 5.463/2011 (Gazeta 30/09/2011), Decreto 5.207/2012 (Gazeta 17/07/2012), LC de 30/12/2009 (histórico), Resolução SMTU 11/11/2011 e Portaria SMTU 09/04/2014 (AET), Portaria SEMOB 020/2024 (22/08/2024). Nenhuma lei/decreto posterior que altere ou revogue a Lei 5.463 até a edição de 02/06/2026."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5103403/2011-09-30/8d625a0b494a62722ee5bcd6c633fefbb25df9d3.txt",
+   "resultado": "Lei 5.463/2011 lida na íntegra (OCR da Gazeta)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5103403/2012-07-17/c74ee6323a31ab8965b92b59b0cfaaf70162b215.txt",
+   "resultado": "Decreto 5.207/2012 lido (arts. 1º-23)."
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/5103403/2024-08-22/3b05573e87bbabbfe0bbf5e7ec3f9cf4652421c4.txt",
+   "resultado": "Portaria SEMOB 020/2024: comissão para atualizar a Lei 5.463/2011 (prova de que segue em vigor em ago/2024)."
+  },
+  {
+   "url": "https://leismunicipais.com.br/a/mt/c/cuiaba/lei-ordinaria/2011/547/5463",
+   "resultado": "403 (Cloudflare)."
+  },
+  {
+   "url": "https://www.camaracuiaba.mt.gov.br",
+   "resultado": "'Request Rejected' (WAF); SAPL sapl.cuiaba.mt.leg.br / sapl.camaracuiaba.mt.gov.br sem DNS/túnel."
+  },
+  {
+   "url": "https://gazetamunicipal.cuiaba.mt.gov.br",
+   "resultado": "Abre (SPA); endpoints de API testados responderam 404; consulta feita pelo Querido Diário (mesma Gazeta)."
+  },
+  {
+   "url": "https://www.cuiaba.mt.gov.br ; http://sistemas.cuiaba.mt.gov.br/portaldoservidor/portal/legislacao.html",
+   "resultado": "Home abre; portal de legislação falha (SSL protocol unsupported)."
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mt/pesquisar",
+   "resultado": "Abre a página de pesquisa (formulário JS), não explorado: o QD cobre a mesma Gazeta."
+  },
+  {
+   "url": "penaestrada.com.br/restricoes/cuiaba/",
+   "resultado": "404 (sem página)."
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Regime vigente: Lei 5.463/2011 + Decreto 5.207/2012. falha_de_fonte=true porque os portais oficiais de legislação (Câmara, leismunicipais, portal da prefeitura) não abriram; texto lido do mesmo diário oficial (Gazeta Municipal) via Querido Diário, com OCR imperfeito (número da lei confirmado por 3 citações posteriores). Estrutura: ZRM (centro histórico, perímetro no art. 4º) 10-24 t só 20h-6h e acima de 24 t proibido sempre; ZAC (exceto ZRM) janelas 8-12/14-17h30/20-6h para 16-24 t; carretas só 20h-6h; corredores/demais áreas urbanas: só carretas (acima de 24 t) restritas 6h-20h (dias úteis) e sáb até 14h; vias livres do art. 7º. Não há definição de VUC; 'caminhões compactos' até 10 t são livres. Pendências: (1) perímetro da ZAC e da Macrozona Urbana (zoneamento/Plano Diretor); (2) conferir no portal oficial se a minuta de alteração (Portaria SEMOB 020/2024) virou lei; (3) lacuna 10-16 t; (4) sinalização em campo.",
+ "osm_divergencias": [
+  "OSM não consultado (sem Overpass/Valhalla nesta rodada). Nomes do OCR a conferir no OSM: 'Felinto Müller' (OCR 'Pelinto Muller'), 'Thogo da Silva Pereira', 'Tufik Affi'."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "cuiaba_lei5463_2011_zrm",
+   "tipo": "zona",
+   "regime": "ZRM",
+   "nome": "Cuiabá: Lei 5.463/2011, Zona de Restrição Máxima (ZRM), caminhões acima de 10 t",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    }
+   ],
+   "variantes": [
+    {
+     "classe": "PBT acima de 24 t (carretas)",
+     "quando": {
+      "todas": [
+       {
+        "campo": "pbt_t",
+        "acima": 24
+       }
+      ]
+     },
+     "janelas": [
+      {
+       "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "from": "00:00",
+       "to": "24:00"
+      }
+     ]
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 8º da Lei: circulação em horários/áreas não permitidos depende de AET (SMTU, hoje SEMOB), regulamentada pelo Decreto 5.207/2012",
+    "Decreto 5.207/2012, art. 3º: AET para cargas especiais, produtos perigosos, jardinagem, reportagem, obras da construção civil, remoção de terra/entulho e caçambas, concretagem, acesso a estacionamento próprio, feiras livres, mudanças/frete, perecíveis, máquinas/equipamentos/materiais de construção, ônibus de turismo; arts. 4º a 12 fixam horários próprios (p.ex. art. 7º mudança/frete na ZAC 8h30-11h30, 14h30-17h e 20h-6h; art. 11 materiais de construção na ZRM 20h-6h)",
+    "art. 7º da Lei: livre em qualquer dia/horário (respeitada a sinalização) na Zona de Alto Impacto, Rod. Emanuel Pinheiro, Rod. Palmiro Paes de Barros (Rod. dos Imigrantes até divisa com Santo Antônio de Leverger), Rod. Arq. Helder Cândia, Av. Miguel Sutil (R. Barão de Melgaço até Ponte Nova), Av. Sebastião de Oliveira, Rod. dos Imigrantes, BR-364 (Rod. dos Imigrantes até o perímetro urbano) e Av. Ciríaco Cândia"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 5.463, de 27/09/2011 (Cuiabá/MT) - Disciplina a circulação de veículos de carga e operação de carga e descarga no Município",
+     "artigo": "art. 3º (cria a ZRM), art. 4º (perímetro), art. 5º (I: até 10 t qualquer horário; II: 16 a 24 t somente 20h-6h; III: acima de 24 t proibido em qualquer dia e horário; IV: carroceiros 20h-6h), art. 8º (AET)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2011-09-30/8d625a0b494a62722ee5bcd6c633fefbb25df9d3.pdf",
+     "nota": "Publicada na Gazeta Municipal ed. 1078, 30/09/2011; texto em atos/5103403/lei_5463_2011_circulacao_veiculos_carga.txt (OCR; cabeçalho com número ilegível, número/data confirmados no Decreto 5.207/2012 e na Portaria SEMOB 020/2024)."
+    },
+    {
+     "ato": "Decreto municipal 5.207, de 13/07/2012 (Cuiabá/MT) - regulamenta a Lei 5.463/2011 (AET e cadastro)",
+     "artigo": "arts. 1º a 12 (AET e horários de exceção)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2012-07-17/c74ee6323a31ab8965b92b59b0cfaaf70162b215.pdf"
+    }
+   ],
+   "nota": "Janelas calculadas como o complemento do permitido: 10-24 t proibido 06h-20h todos os dias; acima de 24 t proibido sempre. O texto fala em 'até 10 t' (compactos) e 'de 16 t (toco) até 24 t (truck)': PBT entre 10 t e 16 t não tem inciso próprio; adotou-se o lado seguro (restringir acima de 10 t). Sem excecao_destino_local: a lei não exclui entrega local, só AET. Confiança media: texto lido por OCR do Querido Diário (não do portal oficial da Câmara/Prefeitura, ilegível/bloqueado) e Lei em revisão (Portaria SEMOB 020/2024 criou comissão para atualizá-la; nenhuma lei alteradora localizada até jun/2026).",
+   "vigencia_inicio": "2011-09-30",
+   "trechos": [
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida 8 de Abril"
+     ],
+     "descricao": "Perímetro da ZRM (art. 4º), em sentido horário a partir da interseção Av. Manoel José de Arruda x Av. 8 de Abril: Av. 8 de Abril até a Rua Comandante Costa."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Rua Comandante Costa"
+     ],
+     "descricao": "Rua Comandante Costa até a Rua Ten. Cel. Thogo da Silva Pereira."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Rua Tenente Coronel Thogo da Silva Pereira"
+     ],
+     "descricao": "Até a Rua Marechal Deodoro."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Rua Marechal Deodoro"
+     ],
+     "descricao": "Até a Av. Dom Bosco."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Dom Bosco"
+     ],
+     "descricao": "Até a Av. Felinto Müller (grafado 'Pelinto Muller' no OCR)."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Presidente Marques",
+      "Rua Presidente Marques",
+      "Rua João Bento",
+      "Avenida Felinto Müller"
+     ],
+     "descricao": "Av. Felinto Müller até a Rua João Bento; Rua João Bento até a Av. Presidente Marques; Rua Presidente Marques até a Av. Mato Grosso."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Mato Grosso",
+      "Avenida Tenente Coronel Duarte",
+      "Rua Américo Salgado",
+      "Rua Antônio Batista Belém"
+     ],
+     "descricao": "Av. Mato Grosso até a Av. Ten. Cel. Duarte; Av. Ten. Cel. Duarte até a Rua Américo Salgado; Rua Américo Salgado até a Rua Antônio Batista Belém; Rua Batista Belém até a Av. Prof. João Gomes Sobrinho."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Professor João Gomes Sobrinho",
+      "Avenida Eugênio Gonçalves Pinheiro",
+      "Avenida Fernando Corrêa"
+     ],
+     "descricao": "Av. João Gomes Sobrinho até a Av. Eugênio Gonçalves Pinheiro; esta até a Av. Fernando Corrêa."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Fernando Corrêa",
+      "Avenida General Valle",
+      "Avenida General Melo",
+      "Rua São Cristóvão"
+     ],
+     "descricao": "Av. Fernando Corrêa até a Av. General Valle; Av. General Valle até a Av. General Melo; Av. General Melo até a Rua São Cristóvão; Rua São Cristóvão até a Av. Manoel José de Arruda."
+    },
+    {
+     "inciso": "art. 4º",
+     "via": [
+      "Avenida Manoel José de Arruda",
+      "Travessa Tufik Affi",
+      "Praça Luís de Albuquerque"
+     ],
+     "descricao": "Av. Manoel José de Arruda até a Travessa Tufik Affi; esta até a Praça Luís de Albuquerque; contorna a praça até a Av. Manoel José de Arruda; segue até a Av. 8 de Abril (ponto de início). Inclui o Conjunto Arquitetônico, Urbanístico e Paisagístico tombado e o entorno (ZIH 1 e 2)."
+    }
+   ],
+   "fonte_geometria": "perímetro em texto no art. 4º da Lei 5.463/2011 (a montar no OSM por nome de via)"
+  },
+  {
+   "id": "cuiaba_lei5463_2011_zac",
+   "tipo": "zona",
+   "regime": "ZAC",
+   "nome": "Cuiabá: Lei 5.463/2011, Zona da Área Central (ZAC) exceto ZRM, caminhões acima de 10 t",
+   "status": "desativada",
+   "status_motivo": "Perímetro da ZAC não consta da Lei 5.463/2011 (vem do zoneamento/Plano Diretor, não lido); sem geometria não há como aplicar. Horários lidos e conferidos no art. 2º.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "12:00",
+     "to": "14:00"
+    },
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:30",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "08:00"
+    },
+    {
+     "days": [
+      7
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    }
+   ],
+   "variantes": [
+    {
+     "classe": "PBT acima de 24 t (carretas)",
+     "quando": {
+      "todas": [
+       {
+        "campo": "pbt_t",
+        "acima": 24
+       }
+      ]
+     },
+     "janelas": [
+      {
+       "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+       ],
+       "from": "06:00",
+       "to": "20:00"
+      }
+     ]
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 10
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 8º da Lei: circulação em horários/áreas não permitidos depende de AET (SMTU, hoje SEMOB), regulamentada pelo Decreto 5.207/2012",
+    "Decreto 5.207/2012, art. 3º: AET para cargas especiais, produtos perigosos, jardinagem, reportagem, obras da construção civil, remoção de terra/entulho e caçambas, concretagem, acesso a estacionamento próprio, feiras livres, mudanças/frete, perecíveis, máquinas/equipamentos/materiais de construção, ônibus de turismo; arts. 4º a 12 fixam horários próprios (p.ex. art. 7º mudança/frete na ZAC 8h30-11h30, 14h30-17h e 20h-6h; art. 11 materiais de construção na ZRM 20h-6h)",
+    "art. 7º da Lei: livre em qualquer dia/horário (respeitada a sinalização) na Zona de Alto Impacto, Rod. Emanuel Pinheiro, Rod. Palmiro Paes de Barros (Rod. dos Imigrantes até divisa com Santo Antônio de Leverger), Rod. Arq. Helder Cândia, Av. Miguel Sutil (R. Barão de Melgaço até Ponte Nova), Av. Sebastião de Oliveira, Rod. dos Imigrantes, BR-364 (Rod. dos Imigrantes até o perímetro urbano) e Av. Ciríaco Cândia"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 5.463, de 27/09/2011 (Cuiabá/MT) - Disciplina a circulação de veículos de carga e operação de carga e descarga no Município",
+     "artigo": "art. 2º (I: até 10 t qualquer horário; II: 16 a 24 t somente 8h-12h, 14h-17h30, 20h-6h e sábados a partir das 8h; III: acima de 24 t somente 20h-6h)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2011-09-30/8d625a0b494a62722ee5bcd6c633fefbb25df9d3.pdf",
+     "nota": "Publicada na Gazeta Municipal ed. 1078, 30/09/2011; texto em atos/5103403/lei_5463_2011_circulacao_veiculos_carga.txt (OCR; cabeçalho com número ilegível, número/data confirmados no Decreto 5.207/2012 e na Portaria SEMOB 020/2024)."
+    },
+    {
+     "ato": "Decreto municipal 5.207, de 13/07/2012 (Cuiabá/MT) - regulamenta a Lei 5.463/2011 (AET e cadastro)",
+     "artigo": "arts. 1º a 12 (AET e horários de exceção)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2012-07-17/c74ee6323a31ab8965b92b59b0cfaaf70162b215.pdf"
+    }
+   ],
+   "nota": "Domingo não é citado no art. 2º II (permitido só 20h-6h por exclusão); janela de domingo é interpretação conservadora. Mesmo gap 10-16 t do art. 2º."
+  },
+  {
+   "id": "cuiaba_lei5463_2011_demais_zonas",
+   "tipo": "zona",
+   "regime": "Corredores 1-3 e demais áreas urbanas",
+   "nome": "Cuiabá: Lei 5.463/2011, corredores 1, 2 e 3, bairros e demais áreas urbanas, carretas acima de 24 t",
+   "status": "desativada",
+   "status_motivo": "Abrange a Macrozona Urbana inteira (perímetro do Plano Diretor, não lido) menos as vias livres do art. 7º; sem geometria viável. Horários lidos no art. 6º.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 24
+     }
+    ]
+   },
+   "excecoes": [
+    "art. 8º da Lei: circulação em horários/áreas não permitidos depende de AET (SMTU, hoje SEMOB), regulamentada pelo Decreto 5.207/2012",
+    "Decreto 5.207/2012, art. 3º: AET para cargas especiais, produtos perigosos, jardinagem, reportagem, obras da construção civil, remoção de terra/entulho e caçambas, concretagem, acesso a estacionamento próprio, feiras livres, mudanças/frete, perecíveis, máquinas/equipamentos/materiais de construção, ônibus de turismo; arts. 4º a 12 fixam horários próprios (p.ex. art. 7º mudança/frete na ZAC 8h30-11h30, 14h30-17h e 20h-6h; art. 11 materiais de construção na ZRM 20h-6h)",
+    "art. 7º da Lei: livre em qualquer dia/horário (respeitada a sinalização) na Zona de Alto Impacto, Rod. Emanuel Pinheiro, Rod. Palmiro Paes de Barros (Rod. dos Imigrantes até divisa com Santo Antônio de Leverger), Rod. Arq. Helder Cândia, Av. Miguel Sutil (R. Barão de Melgaço até Ponte Nova), Av. Sebastião de Oliveira, Rod. dos Imigrantes, BR-364 (Rod. dos Imigrantes até o perímetro urbano) e Av. Ciríaco Cândia"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 5.463, de 27/09/2011 (Cuiabá/MT) - Disciplina a circulação de veículos de carga e operação de carga e descarga no Município",
+     "artigo": "art. 6º (I: até 10 t qualquer horário; II: 16 a 24 t qualquer horário; III: qualquer PBT das 20h às 6h nos dias úteis e aos sábados a partir das 14h) e art. 7º (vias livres)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2011-09-30/8d625a0b494a62722ee5bcd6c633fefbb25df9d3.pdf",
+     "nota": "Publicada na Gazeta Municipal ed. 1078, 30/09/2011; texto em atos/5103403/lei_5463_2011_circulacao_veiculos_carga.txt (OCR; cabeçalho com número ilegível, número/data confirmados no Decreto 5.207/2012 e na Portaria SEMOB 020/2024)."
+    },
+    {
+     "ato": "Decreto municipal 5.207, de 13/07/2012 (Cuiabá/MT) - regulamenta a Lei 5.463/2011 (AET e cadastro)",
+     "artigo": "arts. 1º a 12 (AET e horários de exceção)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2012-07-17/c74ee6323a31ab8965b92b59b0cfaaf70162b215.pdf"
+    }
+   ],
+   "nota": "Só carretas (acima de 24 t) têm restrição de horário aqui. Domingo não é citado no art. 6º III: não restringido na janela (lacuna do texto)."
+  },
+  {
+   "id": "cuiaba_lc2009_arts63_64_lc103",
+   "tipo": "zona",
+   "regime": "ZAC (regime anterior)",
+   "nome": "Cuiabá: LC de 30/12/2009 (arts. 63 e 64 da LC 103/2003), regime anterior de PBT acima de 16 t",
+   "status": "revogada",
+   "status_motivo": "Substituído pela Lei 5.463/2011 (vigência 30/09/2011), que disciplina inteiramente a matéria; revogação tácita (a Lei 5.463 não traz cláusula revogatória expressa; LC 231/2011, art. 195, remete a 'lei específica').",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "06:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 16
+     }
+    ]
+   },
+   "excecoes": [
+    "AET (art. 67)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Complementar municipal de 30/12/2009 (Cuiabá/MT; número ilegível no OCR) - altera arts. 63 a 68 da LC 103/2003",
+     "artigo": "arts. 2º e 3º (novos arts. 63 e 64 da LC 103/2003)",
+     "url": "https://data.queridodiario.ok.org.br/5103403/2009-12-30/0179fb54a67a69d3bc31b1679050cc527901c04b.pdf"
+    }
+   ],
+   "vigencia_inicio": "2009-12-30",
+   "vigencia_fim": "2011-09-30",
+   "nota": "Registro histórico; não aplicar."
+  }
+ ]
+}
