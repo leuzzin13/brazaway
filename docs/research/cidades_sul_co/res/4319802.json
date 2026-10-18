@@ -3,8 +3,8 @@
  "nome": "São Vicente do Sul",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7945",
+   "resultado": "R3: cespro (prefeitura) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=79"
+  },
+  {
+   "url": "https://saovicentedosul.cespro.com.br/",
+   "resultado": "R3: cespro (prefeitura) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://saovicentedosul.cespro.com.br/) passa por reCAPTCHA e"
+  },
+  {
+   "url": "https://camarasaovicentedosul.rs.gov.br/",
+   "resultado": "R3: desconhecido (camara) NAO consultavel por curl: sem cliente automático; consultar manualmente: https://camarasaovicentedosul.rs.gov.br/"
+  },
+  {
+   "url": "https://camarasaovicentedosul.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 403; busca do site http 200; wp-json search: 0 itens, nenhum relevante"
+  },
+  {
+   "url": "https://saovicentedosul.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4319802",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (8257 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7945) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (8257 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7945) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: cespro https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7945: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://ces; cespro https://saovicentedosul.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://sao; desconhecido https://camarasaovicentedosul.rs.gov.br/: sem cliente automático; consultar manualmente: https://camarasaovicentedosul.rs.gov.br/. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +71,7 @@
    "url_busca": "https://cespro.com.br/visualizarLegislacao.php?cdMunicipio=7945",
    "cliente": false,
    "testado": false
-  }
+  },
+  "cobertura_minima_fechada_r3": false
  }
 }

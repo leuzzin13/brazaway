@@ -3,7 +3,7 @@
  "nome": "Ronda Alta",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,45 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://sapl.rondaalta.rs.leg.br",
+   "resultado": "R3: legislacao.py sapl (camara) termos(ementa) {\"caminh\": 0, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 0 ato(s); 0 resultado"
+  },
+  {
+   "url": "https://www.rondaalta.cespro.com.br/",
+   "resultado": "R3: cespro (camara) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.rondaalta.cespro.com.br/) passa por reCAPTCHA e d"
+  },
+  {
+   "url": "https://rondaalta.cespro.com.br/",
+   "resultado": "R3: cespro (prefeitura) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://rondaalta.cespro.com.br/) passa por reCAPTCHA e devol"
+  },
+  {
+   "url": "https://rondaalta.1doc.com.br/b.php?pg=o/login&n=3",
+   "resultado": "R3: 1doc (prefeitura) NAO consultavel por curl: sem cliente automático; consultar manualmente: https://rondaalta.1doc.com.br/b.php?pg=o/login&n=3"
+  },
+  {
+   "url": "https://sapl.rondaalta.rs.leg.br/api/norma/normajuridica/?ementa__icontains=",
+   "resultado": "R3: API SAPL ok; totais por termo {\"caminh\": 0, \"carga e descarga\": 0, \"pesado\": 0, \"tonelada\": 0, \"trânsito\": 0, \"transito\": 0, \"zona de restri\": 0, \"veículo\": 0, \"veiculo\": 0}; ementas conferidas: nenhuma restringe circulacao de caminhoes"
+  },
+  {
+   "url": "https://www.rondaalta.rs.leg.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://rondaalta.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 403; busca do site http 403"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4316105",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (9969 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.rondaalta.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (9969 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.rondaalta.rs.leg.br) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: cobertura minima fechada. Fonte municipal pesquisavel (https://sapl.rondaalta.rs.leg.br) varrida com caminh/carga e descarga/veiculos pesados/transito pesado/tonelada(+transito/veiculo/zona de restricao em SAPL): nada sobre restricao de caminhoes. nao_achou com fonte coberta (busca por ementa; texto integral nao varrido). Fontes nao consultaveis: cespro https://www.rondaalta.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www; cespro https://rondaalta.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://ron; 1doc https://rondaalta.1doc.com.br/b.php?pg=o/login&n=3: sem cliente automático; consultar manualmente: https://rondaalta.1doc.com.",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +79,7 @@
    "url_busca": "https://sapl.rondaalta.rs.leg.br",
    "cliente": true,
    "testado": true
-  }
+  },
+  "cobertura_minima_fechada_r3": true
  }
 }

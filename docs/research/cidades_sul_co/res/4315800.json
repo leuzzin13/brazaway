@@ -3,7 +3,7 @@
  "nome": "Roca Sales",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
+ "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://www.rocasales.rs.gov.br/legislacao",
+   "resultado": "R3: legislacao.py portal_proprio (prefeitura) termos(ementa) {\"caminh\": 0, \"carga e descarga\": 4, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 7}; 11 ato(s); nenhum sobre restricao de caminhoes (ementas irrelevantes: Lei 1.819/2019; Lei Municipal 356/; Lei 1.738/2018; Lei 490/2003)"
+  },
+  {
+   "url": "https://rocasales.rs.leg.br/legislacao",
+   "resultado": "R3: legislacao.py portal_proprio (camara) termos(ementa) {\"caminh\": 7, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 7 ato(s); nenhum sobre restricao de caminhoes (ementas irrelevantes: Resolução 52/2026; Resolução 48/2026; Resolução 5/2026; Resolução 3/2026)"
+  },
+  {
+   "url": "https://sapl.rocasales.rs.leg.br",
+   "resultado": "R3: sapl.<cidade>.rs.leg.br sondado, sem API (http 0)"
+  },
+  {
+   "url": "https://rocasales.rs.leg.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://www.rocasales.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4315800",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (10646 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.rocasales.rs.gov.br/legislacao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (10646 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.rocasales.rs.gov.br/legislacao) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: cobertura minima fechada. Fonte municipal pesquisavel (https://rocasales.rs.leg.br/legislacao, https://www.rocasales.rs.gov.br/legislacao) varrida com caminh/carga e descarga/veiculos pesados/transito pesado/tonelada(+transito/veiculo/zona de restricao em SAPL): nada sobre restricao de caminhoes. nao_achou com fonte coberta (busca por ementa; texto integral nao varrido).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +71,7 @@
    "url_busca": "https://www.rocasales.rs.gov.br/legislacao",
    "cliente": true,
    "testado": true
-  }
+  },
+  "cobertura_minima_fechada_r3": true
  }
 }

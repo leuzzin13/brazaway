@@ -3,8 +3,8 @@
  "nome": "Sananduva",
  "uf": "RS",
  "status": "nao_achou",
- "nivel_busca": "varredura_consolidada",
- "falha_de_fonte": false,
+ "nivel_busca": "r3_fonte_municipal",
+ "falha_de_fonte": true,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -22,9 +22,37 @@
   {
    "url": "osm_hints_por_municipio.json (contagem de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada no município."
+  },
+  {
+   "url": "https://sistema.sinsoft.com.br/portal.camara.sananduva-rs/Legislativo.aspx",
+   "resultado": "R3: legislacao.py sinsoft (camara) termos(ementa) {\"caminh\": 0, \"carga e descarga\": 0, \"veículos pesados\": 0, \"veiculos pesados\": 0, \"trânsito pesado\": 0, \"transito pesado\": 0, \"tonelada\": 0}; 0 ato(s); 0 resultado [busca heuristica/sem cobertura comprovada: nao conclusivo]"
+  },
+  {
+   "url": "https://www.sananduva.cespro.com.br",
+   "resultado": "R3: cespro (camara) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www.sananduva.cespro.com.br) passa por reCAPTCHA e de"
+  },
+  {
+   "url": "https://sananduva.cespro.com.br/",
+   "resultado": "R3: cespro (prefeitura) NAO consultavel por curl: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://sananduva.cespro.com.br/) passa por reCAPTCHA e devol"
+  },
+  {
+   "url": "https://camarasananduva.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 0"
+  },
+  {
+   "url": "https://www.sananduva.rs.gov.br/?s=caminhões",
+   "resultado": "R3: home http 200; busca do site http 200"
+  },
+  {
+   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=4316600",
+   "resultado": "R3: API respondeu 522/timeout em 2026-10-18 (1 tentativa global); municipio ja constava sem diario raspado"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/famurs (toolkit diarios_consolidados.py buscar)",
+   "resultado": "R3: municipio sem cobertura no FAMURS (triagem R1: diarios_que_cobrem=[]); busca devolveu 0 resultados/erro de conexao; nao conclusiva"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (16770 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sinsoft, https://sistema.sinsoft.com.br/portal.camara.sananduva-rs/Legislativo.aspx) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (16770 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sinsoft, https://sistema.sinsoft.com.br/portal.camara.sananduva-rs/Legislativo.aspx) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: cespro https://www.sananduva.cespro.com.br: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://www; cespro https://sananduva.cespro.com.br/: CESPRO: a pesquisa do portal (cespro.com.br/pesquisaLegislacao.php?cdMunicipio=https://san. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas).",
  "osm_divergencias": [],
  "regras_rascunho": [],
  "triagem": {
@@ -43,6 +71,7 @@
    "url_busca": "https://sistema.sinsoft.com.br/portal.camara.sananduva-rs/Legislativo.aspx",
    "cliente": true,
    "testado": true
-  }
+  },
+  "cobertura_minima_fechada_r3": false
  }
 }

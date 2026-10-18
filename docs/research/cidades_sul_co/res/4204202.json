@@ -2,7 +2,7 @@
  "ibge": "4204202",
  "nome": "Chapecó",
  "uf": "SC",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://diariomunicipal.sc.gov.br/ (busca Solr, entidade Prefeitura municipal de Chapecó (cod. 71; 35 mil atos); termos: circulação de caminhões, tráfego de caminhões, carga e descarga + horário, veículos pesados, proibido o trânsito, restrição + caminhões + avenida, tonelada + proibido)",
@@ -23,14 +23,90 @@
   {
    "url": "https://penaestrada.com.br/restricoes/chapeco/",
    "resultado": "404, sem página (leads/penaestrada.json)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/6610850 (DOM/SC getHtml)",
+   "resultado": "Decreto 48.634/2024 lido: só carga e descarga >5 t PBT no centro (19h30-07h30); revoga Dec. 40.533/2021. Busca \"48.634\" no DOM/SC: sem alteração/revogação posterior."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (busca Solr, termos caminhões, veículos pesados, carga e descarga, toneladas, zona de restrição, VUC, carretas, trânsito pesado; via toolkit)",
+   "resultado": "Sem outra restrição de circulação; Decretos 49.052/2024 e 43.480/2022 (estacionamento) já lidos na R2; Portaria DSP 02/2023 = procedimento de AET."
+  },
+  {
+   "url": "https://cmc.sc.gov.br/ ; https://chapeco.leisnaweb.com.br/",
+   "resultado": "cmc.sc.gov.br 403 ao nosso IP; leisnaweb pesquisado pelo toolkit (ver observações)"
   }
  ],
- "observacoes": "Chapecó: só regras de estacionamento rotativo/carga e descarga em vagas (Decreto 49.052/2024, em vigor, art. 2º e 9º) e diretriz de contorno no Plano Diretor (LC 847/2024, sem proibição de circulação). Não há restrição de caminhões em via ou zona nos atos do DOM/SC. Legislação no leismunicipais está bloqueada: resultado não conclusivo. Pendências: confirmar com a Secretaria de Segurança Pública/trânsito se existe decreto de circulação no centro (Av. Getúlio Vargas, Av. Porto Alegre/Sen. Atílio Fontana) e o Contorno Viário Extremo Oeste (BR/SC) como rota obrigatória.",
+ "observacoes": "Chapecó: só regras de estacionamento rotativo/carga e descarga em vagas (Decreto 49.052/2024, em vigor, art. 2º e 9º) e diretriz de contorno no Plano Diretor (LC 847/2024, sem proibição de circulação). Não há restrição de caminhões em via ou zona nos atos do DOM/SC. Legislação no leismunicipais está bloqueada: resultado não conclusivo. Pendências: confirmar com a Secretaria de Segurança Pública/trânsito se existe decreto de circulação no centro (Av. Getúlio Vargas, Av. Porto Alegre/Sen. Atílio Fontana) e o Contorno Viário Extremo Oeste (BR/SC) como rota obrigatória. | R3 2026-10-18: Decreto 48.634/2024 (DOM/SC atos/6610850) restringe SÓ carga e descarga >5 t PBT na área Rui Barbosa/Gen. Osório entre Lauro Muller e São Pedro (19h30-07h30). Regra gravada como desativada (só carga e descarga) e status pontual por política da coordenação. Sem restrição de circulação.",
  "osm_divergencias": [
   "OSM não consultado."
  ],
  "nivel_busca": "profunda",
  "data": "2026-10-18",
- "regras_rascunho": [],
- "status": "nao_achou"
+ "regras_rascunho": [
+  {
+   "id": "chapeco_dec48634_2024_carga_descarga_centro",
+   "tipo": "zona",
+   "regime": "Carga e descarga de veículos acima de 5 t de PBT só entre 19h30 e 07h30 na área das Ruas Rui Barbosa e General Osório (entre Lauro Muller e São Pedro)",
+   "nome": "Chapecó: Decreto 48.634/2024 - carga e descarga no centro",
+   "status": "desativada",
+   "status_motivo": "só carga e descarga: o decreto limita o horário das operações de carga e descarga, não a circulação/passagem (política da coordenação R3 - pontual).",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "07:30",
+     "to": "19:30"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 2º: veículos de 3 a 5 t PBT: carga/descarga também das 07h30 às 10h00 e das 16h40 às 20h00 em locais definidos",
+    "Art. 3º: veículos até 3 t liberados em qualquer horário"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 48.634, de 12/11/2024 (Chapecó/SC), efeitos desde 01/12/2024; revogou o Decreto 40.533/2021",
+     "artigo": "arts. 1º a 3º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/6610850"
+    }
+   ],
+   "vigencia_inicio": "2024-12-01",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Rua Rui Barbosa",
+      "Rua General Osório"
+     ],
+     "de": [
+      "Rua Lauro Muller"
+     ],
+     "ate": [
+      "Rua São Pedro"
+     ],
+     "descricao": "área compreendida e inscrita pelas Ruas Rui Barbosa e General Osório, entre as Ruas Lauro Muller e São Pedro",
+     "aproximado": true
+    }
+   ]
+  }
+ ],
+ "status": "pontual"
 }
