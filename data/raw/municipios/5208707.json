@@ -1,0 +1,190 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5208707",
+  "municipio": "Goiânia",
+  "uf": "GO",
+  "fonte_id": "goiania",
+  "fonte": {
+    "url": "https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2011/do_20111021_000005214.pdf (Portaria 224/2011-AMT, DOM 5.214); https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2013/do_20131014_000005697.pdf (Portaria 70/2013-SMT); https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2015/do_20150318_000006045.pdf (Portaria 21/2015-SMT); Lei 9.028/2011",
+    "licenca": "Atos oficiais de Goiânia: domínio público (Lei 9.610/1998, art. 8º, IV). Polígono da ZRT-1 montado sobre as vias do OpenStreetMap (PBF local): derivado do OSM, ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Lei 9.028/2011 (art. 1) regulamentada pela Portaria 224/2011-AMT, com nova redação do art. 3 pela Portaria 70/2013-SMT (vigência 12/04/2014) e item 14 do Anexo I pela Portaria 21/2015-SMT. Vigência confirmada por citação nos DOM de 15/07/2025 e 18/12/2025; sem portaria posterior. Confiança média: a tabela da Portaria 70/2013 não traz conectivo (lida como OU), o Anexo II é mapa sem coordenadas (zona aproximada) e o ato não diz se vale em feriado. A regra da cegonha (art. 4) fica desativada: o perfil de veículo não tem a classe CTV."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "Não há definição local de VUC; o Veículo Urbano de Carga até 7,0 t e 8,0 m é isento da ZRT-1 (art. 7), e o alvo (acima de 8,3 t ou 8,0 m) já o deixa de fora.",
+  "regras": [
+    {
+      "id": "goiania_zrt1_portaria224_2011",
+      "tipo": "zona",
+      "regime": "Zona de Restricao de Trafego 1 (ZRT-1)",
+      "nome": "Goiania: Portaria 224/2011-AMT (arts. 2, 3 e 7; art. 3 com redacao da Portaria 70/2013-SMT; Anexo I com item 14 da Portaria 21/2015-SMT), caminhoes acima de 8,30 t ou acima de 8,0 m na Zona de Restricao de Trafego 1 (area central e Setor Leste Universitario), seg-sex 7h-19h",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "pbt_t",
+            "acima": 8.3
+          },
+          {
+            "campo": "comprimento_m",
+            "acima": 8.0
+          }
+        ]
+      },
+      "excecoes": [
+        "Portaria 224 art. 3 (red. Portaria 70/2013): so atinge caminhao acima de 8,30 t (PBT) / acima de 8,0 m; art. 7: Veiculo Urbano de Carga ate 7,0 t e ate 8,0 m circula em periodo integral",
+        "Portaria 224 art. 7, em periodo integral: caminhoes de urgencia, obras e servicos de infraestrutura urbana, socorro mecanico de emergencia, guincho, cobertura jornalistica, obras e servicos de emergencia, Correios, sinalizacao de transito, coleta de lixo, transporte de valores",
+        "Portaria 224 art. 7, das 8h as 16h: concretagem e concretagem-bomba, caminhao guindaste, remocao de terra em obras civis, mudanca, transporte de produtos alimenticios pereciveis; remocao de entulho/cacambas segue o regulamento da AMT (Decreto 286/04)",
+        "Portaria 224 art. 6: prestadores de servico de utilidade publica em servico, caracterizados (CTB art. 29, VIII)",
+        "Lei 9.028/2011 art. 3: onibus e veiculos das Forcas Armadas, policias e bombeiros em servico",
+        "Portaria 224 art. 5: a AMT pode fixar condicoes especificas e emitir autorizacao especial em situacoes extraordinarias"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria 224/2011-AMT, de 18/10/2011 (Agencia Municipal de Transito, Transportes e Mobilidade; DOM Goiania no 5.214, 21/10/2011, p. 9-11), regulamenta a Lei 9.028/2011",
+          "artigo": "art. 1 (trafego de veiculos pesados e caminhoes na Zona de Restricao de Trafego sujeito as normas da Portaria); art. 2 (zona = area limitada pelos logradouros do Anexo I e configurada no mapa do Anexo II); art. 7 (excecoes); art. 6, 5; art. 10 (vigencia 20/10/2011)",
+          "url": "https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2011/do_20111021_000005214.pdf",
+          "nota": "Texto integral lido no PDF oficial do DOM (atos/5208707/portaria_224_2011_amt.txt). Anexo II e mapa raster; Anexo I lista 13 logradouros limitadores."
+        },
+        {
+          "ato": "Portaria 70/2013-SMT, de 10/10/2013 (DOM Goiania no 5.697, 14/10/2013, p. 106-107)",
+          "artigo": "art. 1 (nova redacao do art. 3 da Portaria 224/2011: Zona de Restricao de Trafego 1; caminhoes acima de 8,30 toneladas / acima de 8,0 metros; 7h as 19h, 2a a 6a feira); art. 3 (vigencia 180 dias apos a publicacao = 12/04/2014)",
+          "url": "https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2013/do_20131014_000005697.pdf",
+          "nota": "Lida no PDF oficial do DOM e no texto do Querido Diario (atos/5208707/portaria_70_2013_smt.txt). A tabela traz uma unica linha (colunas Caminhoes / Comprimento / Horario) sem conectivo e/ou: lida como restricao se exceder QUALQUER dos dois limites, coerente com a isencao do art. 7 (ate 7,0 t E ate 8,0 m)."
+        },
+        {
+          "ato": "Portaria 21/2015-SMT, de 13/03/2015 (DOM Goiania no 6.045, 18/03/2015)",
+          "artigo": "art. 1 (acrescenta o item 14, Av. E, Jardim Goias, ao Anexo I da Portaria 224/2011); art. 2 (vigencia na data da assinatura)",
+          "url": "https://www.goiania.go.gov.br/Download/legislacao/diariooficial/2015/do_20150318_000006045.pdf",
+          "nota": "atos/5208707/portaria_21_2015_smt.txt"
+        },
+        {
+          "ato": "Lei municipal 9.028, de 20/04/2011 (DOM Goiania 5.091, 25/04/2011)",
+          "artigo": "art. 1 (veda veiculos pesados e caminhoes seg-sex, exceto feriados, nos horarios de intenso transito conforme regulamentacao); art. 3 (excecoes); art. 5 (sinalizacao)",
+          "url": "https://data.queridodiario.ok.org.br/5208707/2011-04-25/46e84d8199afe8764cdc8f072a31091bd78b8582.txt",
+          "nota": "Citada como vigente em 15/07/2025 e 18/12/2025 (pareceres de veto no DOM), junto com as Portarias 224/2011, 70/2013 e 21/2015."
+        }
+      ],
+      "nota": "Portaria 224/2011 lida na integra no PDF oficial do DOM (21/10/2011). Zona = area central de Goiania (Setor Central, Sul e arredores) com prolongamento leste pelo corredor da Av. Universitaria (Anexo II, mapa raster; a geometria precisa ser georreferenciada do mapa e conferida com os 14 logradouros limitadores do Anexo I; os limitadores sao da propria zona: o ato restringe \"nos logradouros da Zona\"). Confianca media por: (1) tabela da Portaria 70/2013 sem conectivo (adotado OU, lado seguro e coerente com a isencao do art. 7); (2) geometria so em mapa; (3) a portaria nao diz se se aplica em feriado (Lei 9.028 art. 1 exclui feriados). Vigencia confirmada por citacao no DOM de 15/07/2025 e 18/12/2025; nenhuma portaria posterior a 2015 achada (QD: busca \"Zona de Restricao de Trafego\" so devolve Portarias 70/2013 e 21/2015). O PlanMobGyn (2024) preve ampliar zonas de restricao, sem ato novo. Geometria (implementação): polígono APROXIMADO sobre as vias-limite do OSM (Av. Independência, Rua 74/Av. Alfredo Nasser, Rua 68, Av. Paranaíba, Alameda Botafogo, Rua 10, Rua 94, Av. Assis Chateaubriand, Alameda dos Buritis), mais o corredor da Av. Universitária, Praça Universitária e Rua 261; a Av. E (Jardim Goiás, item 14 da Portaria 21/2015) é um ponto isolado sem área definida e ficou fora do polígono. Sem rodovia federal/estadual dentro.",
+      "vigencia_inicio": "2014-04-12",
+      "autorizacao": "Autorizacao especial da Secretaria Municipal de Engenharia de Transito (ex-AMT/SMT), Portaria 224/2011 art. 5",
+      "fonte_geometria": "Anexo I da Portaria 224/2011 (logradouros limitadores; Anexo II é mapa raster sem coordenadas) georreferenciado à mão sobre as vias do OSM (cache do PBF sse_co); aproximado.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5208707_zrt1.geojson",
+          "construir": "manual",
+          "como_gerar": "Polígono da ZRT-1 montado com as vias-limite do Anexo I da Portaria 224/2011 no cache OSM (data/cache/municipios/osm_named_5208707.json, gerado do PBF sse_co): Av. Independência (Rua 74 a Rua 68), Rua 74/Av. Alfredo Nasser, Rua 68, Av. Paranaíba, Alameda Botafogo, Rua 10, Rua 94, Av. Assis Chateaubriand e Alameda dos Buritis, mais o corredor de 60 m da Av. Universitária, Praça Universitária e Rua 261, ampliado 25 m (ver docs/layers/municipios/mun_sul_co/IMPSC15.md)"
+        }
+      ],
+      "origem_destino_dentro": "avisa"
+    },
+    {
+      "id": "goiania_ctv_portaria70_2013_perimetro_urbano",
+      "tipo": "zona",
+      "regime": "CTV/cegonha acima de 14 m no perimetro urbano",
+      "nome": "Goiania: Portaria 70/2013-SMT (art. 4 da Portaria 224/2011-AMT), Combinacoes para Transporte de Veiculos (cegonha) acima de 14 m proibidas no perimetro urbano",
+      "status": "desativada",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "07:00",
+          "to": "09:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "11:00",
+          "to": "14:00"
+        },
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from": "17:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "suspende",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "comprimento_m",
+            "acima": 14
+          },
+          {
+            "campo": "tipo",
+            "em": [
+              "semitrailer",
+              "truck_trailer",
+              "cvc"
+            ]
+          }
+        ]
+      },
+      "excecoes": [
+        "Lei 9.028 art. 3: onibus e veiculos das Forcas Armadas, Policias Civil e Militar e Bombeiros em servico",
+        "Portaria 70/2013 art. 2: fora do perimetro de restricao as rodovias estaduais e federais que cortam o municipio"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria 70/2013-SMT (Secretaria Municipal de Transito, Transportes e Mobilidade), de 10/10/2013 (DOM Goiania 14/10/2013), que da nova redacao aos arts. 3 e 4 da Portaria 224/2011-AMT, de 18/10/2011; regulamenta a Lei 9.028/2011",
+          "artigo": "art. 2 (nova redacao do art. 4 da Portaria 224/2011: circulacao de Veiculos Pesados tipo CTV, Caminhoes Cegonha, acima de 14 m, proibida no Perimetro Urbano de Goiania, seg-sex 7h-9h, 11h-14h e 17h-19h, exceto nas rodovias estaduais e federais que cortam o municipio); art. 3 (vigencia 180 dias apos a publicacao)",
+          "url": "https://data.queridodiario.ok.org.br/5208707/2013-10-14/22397b974c08461a9a46e390b5659596c11b6abf.txt",
+          "nota": "Texto lido (atos/5208707/portaria_70_2013_smt.txt). Vigencia citada em 15/07/2025 (Portarias 224/2011, 70/2013 e 21/2015 como vigentes). Fonte secundaria (PlanMobGyn 2024) resume a regra como 7h-19h continuo, divergindo da portaria; prevalece o texto da portaria."
+        },
+        {
+          "ato": "Lei municipal 9.028, de 20/04/2011 (Diario Oficial do Municipio de Goiania 5.091, 25/04/2011, p. 1-2)",
+          "artigo": "art. 1 (veda o trafego de veiculos pesados e caminhoes em Goiania, seg-sex exceto feriados, nos horarios de intenso transito conforme regulamentacao da AMT; paragrafo unico: trajetos especiais); art. 2 (conceito CONTRAN); art. 3 (nao se aplica a onibus e veiculos das Forcas Armadas, policias e bombeiros em servico); art. 5 (sinalizacao)",
+          "url": "https://data.queridodiario.ok.org.br/5208707/2011-04-25/46e84d8199afe8764cdc8f072a31091bd78b8582.txt",
+          "nota": "Texto integral lido (atos/5208707/lei_9028_2011.txt). Citada como vigente em 15/07/2025 e 18/12/2025 (pareceres/vetos no DOM)."
+        }
+      ],
+      "nota": "Alvo: cegonha nao e classe do perfil de veiculo; o alvo aproxima por comprimento acima de 14 m e combinacao (semirreboque, caminhao com reboque, CVC) e e MAIS AMPLO que a regra (outros conjuntos longos nao sao CTV). Decidir na camada se aplica ou usa tipo especifico. Geometria: perimetro urbano de Goiania menos rodovias federais/estaduais (BR-153, BR-060, BR-020, GO-020 etc., lista a conferir). Feriado: a Lei 9.028 exclui feriados; a portaria e omissa. O PlanMobGyn (fonte secundaria) lista como eixos viarios/rodoviarios de excecao: Av. Vera Cruz, Perimetral Norte, Av. Neropolis (Balneario Meia Ponte), Av. Inhumas, Av. Padre Feijo (Ipiranga), Av. Santa Maria (Sao Francisco), Av. Frei Miguelino (Goia), Av. das Magnolias, Av. Pedro Ludovico, Av. Gen. Couto Magalhaes (Vila Maua), Av. JK, Av. Rio Verde, Av. Sao Paulo, Av. Ruda, Av. G, Av. Bela Vista, Anel Viario, Rua Tapajos: NAO confirmado em ato primario lido (pode vir de portaria nao localizada).",
+      "vigencia_inicio": "2014-04-12",
+      "excecao_destino_local": false,
+      "status_motivo": "Verificação 2026-10-18: o alvo modelado (comprimento >14 m E tipo semirreboque/caminhão+reboque/CVC) é muito mais amplo que a norma, que proíbe só 'Veículos Pesados Tipo CTV - Combinações para Transporte de Veículos, Caminhões Cegonha, acima de 14 m' (Portaria 70/2013-SMT, art. 2, nova redação do art. 4 da Portaria 224/2011). Quase toda carreta (>14 m) cairia na regra e seria bloqueada em 3 janelas diárias no perímetro urbano inteiro, o que o ato não diz. O perfil de veículo não tem a classe cegonha/CTV, então a regra não é representável sem falso positivo; desativada até existir tipo cegonha no perfil.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ]
+    }
+  ]
+}

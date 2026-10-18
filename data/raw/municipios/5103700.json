@@ -1,0 +1,141 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "5103700",
+  "municipio": "Feliz Natal",
+  "uf": "MT",
+  "fonte_id": "feliz-natal",
+  "fonte": {
+    "url": "https://amm.diariomunicipal.org/publicacao/1742330/ (Lei 1.042/2025)",
+    "licenca": "Atos oficiais municipais: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Lei Municipal 1.042, de 10/12/2025 (AMM-MT 11/12/2025), nova redação do art. 1º da Lei 230/2007. Sem alteração ou revogação posterior no diário (acervo até 10/2026). 'Veículos pesados acima de 5 toneladas' lido como PBT. Exceção de carga e descarga para o comércio local (06h–18h, com autorização) não modelada; sinalização não confirmada."
+  },
+  "verificado_em": "2026-10-18",
+  "vuc": null,
+  "vuc_nota": "A lei não define VUC: o VUC é tratado como caminhão (o corte é PBT acima de 5 t, então um VUC de até 5 t fica fora da regra).",
+  "regras": [
+    {
+      "id": "feliz_natal_av_maravilha_pesados_5t",
+      "tipo": "via",
+      "regime": "Proibição por peso (via)",
+      "nome": "Avenida Maravilha: trânsito e estacionamento de veículos pesados > 5 t (Lei 1.042/2025, art. 1º, §6º, I)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "excecoes": [
+        "Art. 1º, §6º, I: carga e descarga para o comércio local (nota fiscal), 06h-18h, com autorização da Secretaria de Infraestrutura e Obras",
+        "Art. 1º, §1º e §3º: ônibus de transporte coletivo, frota pública, coleta de lixo, emergências, guincho, concretagem, remoção de terra/entulho, transporte de valores, eventos e mudanças",
+        "Art. 2º: veículo pesado de residente com garagem própria, sem carga (cartão de permissão)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.042, de 10/12/2025 (Feliz Natal; AMM-MT 11/12/2025), nova redação do art. 1º da Lei 230/2007",
+          "artigo": "art. 1º, §6º, I (Avenida Maravilha); multa art. 3º (20 URM)",
+          "url": "https://amm.diariomunicipal.org/publicacao/1742330/"
+        }
+      ],
+      "vigencia_inicio": "2025-12-01",
+      "vigencia_fim": null,
+      "nota": "A lei diz 'veículos pesados acima de 5 toneladas', carregados ou não, sem definir PBT ou capacidade; assumido PBT (o art. 1º-A, §2º fala em 'veículos médios com peso não superior a 5 toneladas'). Retroage a 01/12/2025. Toda a extensão da Avenida Maravilha (2 ways no OSM, via municipal sem ref). A exceção de carga e descarga local (06h–18h, com autorização) não é modelada: a regra vale 24 h para todo caminhão acima de 5 t. Sinalização não confirmada.",
+      "fonte_geometria": "OSM (ODbL) casado por nome",
+      "autorizacao": "Carga e descarga para o comércio local (nota fiscal), 06h–18h, com autorização da Secretaria de Infraestrutura e Obras (art. 1º, §6º, I): não modelada, só nos avisos.",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/5103700_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º, §6º, I",
+          "via": [
+            "Avenida Maravilha"
+          ],
+          "descricao": "toda a extensão da Avenida Maravilha",
+          "aproximado": false
+        }
+      ]
+    },
+    {
+      "id": "feliz_natal_perimetro_urbano_pesados_5t",
+      "tipo": "zona",
+      "regime": "Proibição por peso (zona)",
+      "nome": "Perímetro urbano: trânsito e estacionamento de veículos pesados > 5 t (Lei 1.042/2025, art. 1º)",
+      "status": "desativada",
+      "status_motivo": "Perímetro urbano sem delimitação no ato; exceções amplas (carga e descarga 06h–18h, residentes com garagem, serviços) e vias liberadas nomeadas (Rua Uruguai, MT-225, perimetrais, Rua Industrial, Av. das Itaúbas); a MT-225 é rodovia estadual. Sem geometria confiável.",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 5
+          }
+        ]
+      },
+      "base_legal": [
+        {
+          "ato": "Lei Municipal 1.042/2025 (Feliz Natal)",
+          "artigo": "art. 1º, caput e §4º (vias liberadas)",
+          "url": "https://amm.diariomunicipal.org/publicacao/1742330/"
+        }
+      ],
+      "vigencia_inicio": "2025-12-01",
+      "vigencia_fim": null,
+      "nota": "Vale o mesmo critério de peso da regra da Av. Maravilha.",
+      "geometria": [
+        {
+          "geojson": {
+            "type": "FeatureCollection",
+            "features": []
+          }
+        }
+      ],
+      "excecoes": [
+        "Art. 1º, §6º, I: carga e descarga para o comércio local (nota fiscal), 06h-18h, com autorização da Secretaria de Infraestrutura e Obras",
+        "Art. 1º, §1º e §3º: ônibus de transporte coletivo, frota pública, coleta de lixo, emergências, guincho, concretagem, remoção de terra/entulho, transporte de valores, eventos e mudanças",
+        "Art. 2º: veículo pesado de residente com garagem própria, sem carga (cartão de permissão)"
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
  "ibge": "5108907",
  "nome": "Nova Maringá",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,67 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/9C3A9735",
    "resultado": "pista da preparação (2013-10-08, LEI COMPLEMENTAR Nº 01/2013 / 01 DE OUTUBRO DE 2013): trecho conferido, ruído"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=393 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 461 acertos nos termos, 118 nas combinações; 30 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 393) de 05/03/15 a 16/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL: só Lei 999/2019 (cargo de Chefe do Departamento de Trânsito); AMM-MT: Dec. 002/2014 (emergência por chuvas, menciona caminhões que não transitam) e norma interna de frota: ruído.",
+ "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL: só Lei 999/2019 (cargo de Chefe do Departamento de Trânsito); AMM-MT: Dec. 002/2014 (emergência por chuvas, menciona caminhões que não transitam) e norma interna de frota: ruído. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 393) de 05/03/15 a 16/10/26. Decreto 010/2015/GABPRE (23/02/2015; AMM 04/05/2015, duas publicações): veda o tráfego de caminhões, bitrens, carretas, trucks, tocos e demais veículos de carga na Avenida Central (Av. Amos Bernardino Zanchet, da Rua Arinos até a Rua José da Silva Marques), em qualquer horário. Alteração/revogação não localizada (buscas por 'Zanchet' no diário). O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram). | verificado em 2026-10-18: Decreto 010/2015/GABPRE (AMM-MT publicacao/25230, 04/05/2015) reaberto; texto igual ao salvo (art. 2o: caminhoes, bitrem, carretas, trucks, toco etc. na Av. Amos Bernardino Zanchet da esquina com a R. Arinos ate a R. Jose da Silva Marques; sem peso, sem horario). Buscas no diario (Zanchet, 010/2015, caminhoes, Avenida Central, trafego de caminhoes; 2015-2026): nenhuma alteracao/revogacao posterior (Decretos 006/2018 e 007/2018 sao emergencia por chuvas, Leis 835/2015, 890/2016 e 892/2016 sao parcelamento do solo). PORem a avenida e a MT-160 no OSM: regra rebaixada para desativada (jurisdicao). R. Arinos existe no OSM (way 416582450); R. Jose da Silva Marques nao localizada.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "novamaringa_av_amos_zanchet_caminhoes",
+   "tipo": "via",
+   "regime": "Proibição de caminhões (via)",
+   "nome": "Avenida Amos Bernardino Zanchet (Av. Central): tráfego de caminhões vedado (Decreto 010/2015)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 2º, §2º: veículos de prioridade (CTB art. 29, VII)",
+    "Art. 4º: autorização especial excepcional (eventos/festividades), pedido com 3 dias úteis"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 010/2015/GABPRE (Nova Maringá; AMM-MT 04/05/2015)",
+     "artigo": "art. 2º e §1º (ruas liberadas: Arinos, Itaúba, Santa Rosa, Travessa Um, Pres. Getúlio Vargas, José da Silva Marques)",
+     "url": "https://amm.diariomunicipal.org/publicacao/25230/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 2º",
+     "via": [
+      "Avenida Amos Bernardino Zanchet"
+     ],
+     "descricao": "da esquina com a Rua Arinos até a Rua José da Silva Marques",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2015-05-04",
+   "vigencia_fim": null,
+   "nota": "O decreto não fixa peso: vale para qualquer caminhão/veículo de transporte de carga. Art. 6º cita Código de Polícia Administrativa de Campo Grande/MS (cópia de texto de outro município), sem efeito na regra. Mapa em anexo não lido (anexo não consta do texto do diário). Data do ato 23/02/2015; vigência adotada = publicação no AMM-MT.",
+   "status_motivo": "Jurisdicao duvidosa: no OSM a Av. Amos Bernardino Zanchet (grafada Amos Bernadino Zanchet/Amos Bernadinho Zancher) e a MT-160 (ref=MT-160 em todas as ways, ex. 31553084, 416582433, 801975426), rodovia estadual que atravessa a cidade; o Decreto 010/2015 e municipal, sem anuencia/convenio da SINFRA-MT/DNIT no texto e sem delimitacao em mapa (anexo ausente). Alem disso o art. 6o cita o Codigo de Policia Administrativa de Campo Grande/MS (texto copiado de outro municipio), indicio de ato mal fundamentado."
+  }
+ ]
 }

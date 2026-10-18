@@ -2,7 +2,7 @@
  "ibge": "5103700",
  "nome": "Feliz Natal",
  "uf": "MT",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -17,10 +17,120 @@
   {
    "url": "https://www.diariomunicipal.com.br/amm-mt/materia/5A6B0356",
    "resultado": "pista da preparação (2013-03-22, LEI ORGANICA): trecho conferido, ruído"
+  },
+  {
+   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=427 (Jornal Oficial AMM-MT, busca em texto integral, entidade Prefeitura)",
+   "resultado": "R3: 6 termos (caminhões, veículos pesados, veículo de carga, trânsito pesado, toneladas, eixos; até 25 páginas por termo) + 9 combinações (caminhões proibido/circulação/tráfego/toneladas/eixos/trânsito, pesados circulação/proibido, carga restrição); 401 acertos nos termos, 59 nas combinações; 14 publicações com título de lei/decreto/portaria (sem contrato/edital/licitação etc.) lidas por regex de restrição de circulação; acervo da entidade Pref. (id 427) de 05/03/15 a 01/10/26."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL: 6 atos com 'caminh' (Leis 852/2022, 454/2013 serviços de caminhões da prefeitura a particulares; 712/2020, 164/2005, 125/2003 identificação de veículos a serviço da prefeitura; 531/2015 pista de caminhada), nenhum regula circulação. Lei Orgânica (AMM-MT 2013) só competência genérica.",
+ "observacoes": "Lote R1-MT-DR04 (conferência barata DR). SAPL: 6 atos com 'caminh' (Leis 852/2022, 454/2013 serviços de caminhões da prefeitura a particulares; 712/2020, 164/2005, 125/2003 identificação de veículos a serviço da prefeitura; 531/2015 pista de caminhada), nenhum regula circulação. Lei Orgânica (AMM-MT 2013) só competência genérica. | R3 2026-10-18: AMM-MT texto integral, acervo da entidade Pref. (id 427) de 05/03/15 a 01/10/26. Lei 1.042/2025 (10/12/2025; AMM 11/12/2025), que altera a Lei 230/2007 (não lida; não localizada no diário, anterior a 2015): proíbe trânsito e estacionamento de veículos pesados (> 5 t) nas vias do perímetro urbano (zona, desativada: perímetro sem delimitação) e, em toda a extensão da Avenida Maravilha, com exceção só de carga e descarga do comércio local autorizada pela Secretaria de Infraestrutura (regra via, ativa). Sem alteração/revogação posterior localizada nas buscas do diário (acervo até 16/10/2026). O negativo vale só para esse período e para atos publicados no AMM-MT (atos só em papel/outro portal não entram). | verificado em 2026-10-18: Lei 1.042/2025 (AMM-MT publicacao/1742330) relida; texto igual ao salvo. Art. 1o caput diz 'veiculos pesados acima de 5 toneladas, articulados ou nao, CARREGADOS OU NAO' e o art. 1o-A par.2o isenta 'veiculos medios com peso nao superior a 5 toneladas': criterio e peso do veiculo (PBT), nao capacidade de carga, logo pbt_t>5 correto. Av. Maravilha: 'em toda a extensao' (sem trecho), via municipal no OSM (ways 242363497 tertiary e 371797928 residential, oneway, sem ref de rodovia). Busca no diario (Maravilha, Lei 230/2007, veiculos pesados, toneladas; ate 11/2025-10/2026): nenhuma alteracao/revogacao posterior; unica lei sobre o tema e a 1.042. Excecao de C&D do comercio local 06h-18h exige autorizacao da Secretaria (nao modelada). Mantida ativa, confianca media (sinalizacao nao confirmada).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "feliznatal_av_maravilha_pesados_5t",
+   "tipo": "via",
+   "regime": "Proibição por peso (via)",
+   "nome": "Avenida Maravilha: trânsito e estacionamento de veículos pesados > 5 t (Lei 1.042/2025, art. 1º, §6º, I)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 5
+     }
+    ]
+   },
+   "excecoes": [
+    "Art. 1º, §6º, I: carga e descarga para o comércio local (nota fiscal), 06h-18h, com autorização da Secretaria de Infraestrutura e Obras",
+    "Art. 1º, §1º e §3º: ônibus de transporte coletivo, frota pública, coleta de lixo, emergências, guincho, concretagem, remoção de terra/entulho, transporte de valores, eventos e mudanças",
+    "Art. 2º: veículo pesado de residente com garagem própria, sem carga (cartão de permissão)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.042, de 10/12/2025 (Feliz Natal; AMM-MT 11/12/2025), nova redação do art. 1º da Lei 230/2007",
+     "artigo": "art. 1º, §6º, I (Avenida Maravilha); multa art. 3º (20 URM)",
+     "url": "https://amm.diariomunicipal.org/publicacao/1742330/"
+    }
+   ],
+   "trechos": [
+    {
+     "inciso": "art. 1º, §6º, I",
+     "via": [
+      "Avenida Maravilha"
+     ],
+     "descricao": "toda a extensão da Avenida Maravilha",
+     "aproximado": false
+    }
+   ],
+   "vigencia_inicio": "2025-12-01",
+   "vigencia_fim": null,
+   "nota": "A lei diz 'veículos pesados acima de 5 toneladas' sem definir PBT ou capacidade; assumido PBT (o §2º do art. 1º-A fala em 'veículos médios com peso não superior a 5 toneladas'). Retroage a 01/12/2025. Sinalização não confirmada."
+  },
+  {
+   "id": "feliznatal_perimetro_urbano_pesados_5t",
+   "tipo": "zona",
+   "regime": "Proibição por peso (zona)",
+   "nome": "Perímetro urbano: trânsito e estacionamento de veículos pesados > 5 t (Lei 1.042/2025, art. 1º)",
+   "status": "desativada",
+   "status_motivo": "Perímetro urbano sem delimitação no ato; exceções amplas (C&D 06h-18h, residentes com garagem, serviços) e vias liberadas nomeadas (Rua Uruguai, MT-225, perimetrais, Rua Industrial, Av. das Itaúbas); a MT-225 é rodovia estadual.",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 5
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 1.042/2025 (Feliz Natal)",
+     "artigo": "art. 1º, caput e §4º (vias liberadas)",
+     "url": "https://amm.diariomunicipal.org/publicacao/1742330/"
+    }
+   ],
+   "trechos": [
+    "vias públicas do perímetro urbano (não delimitado)"
+   ],
+   "vigencia_inicio": "2025-12-01",
+   "vigencia_fim": null,
+   "nota": "Vale o mesmo critério de peso da regra da Av. Maravilha."
+  }
+ ]
 }
