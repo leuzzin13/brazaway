@@ -1,0 +1,130 @@
+{
+ "ibge": "4209102",
+ "nome": "Joinville",
+ "uf": "SC",
+ "status": "regra_com_ato",
+ "nivel_busca": "profunda",
+ "falha_de_fonte": false,
+ "fontes_consultadas": [
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (busca Solr por entidade 'Prefeitura Municipal de Joinville', cod. 141; termos: carga e descarga, caminhões, veículos pesados, veículos de carga, capacidade de carga, 10.251, proibida a circulação, restrição de circulação, VUC, peso bruto, trânsito de caminhões, rota)",
+   "resultado": "DOM/SC responde. Atos relevantes: Decretos 10.251/2001, 10.517/2002, 12.512/2005 (carga e descarga e circulação na Área Central); Decreto 72.203/2026 (Zona Azul Digital, art. 2º, II: veículo de carga 1 a 5 t em área de carga e descarga). Demais acertos são aposentadoria, resíduos, estacionamento e urbanismo."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/3737444",
+   "resultado": "Decreto 10.251/2001 lido na íntegra (docx do acervo). Art. 6º fixa a proibição; art. 14 exceta domingo e feriado. Sem artigo revogador posterior achado."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/3738958 ; /atos/3765134",
+   "resultado": "Decretos 12.512/2005 e 10.517/2002 lidos; alteram art. 2º (perímetro) e art. 10 (caçambas); não mexem no art. 6º."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8321207",
+   "resultado": "Decreto 72.203/2026 lido: regulamenta estacionamento rotativo; revoga só o Decreto 33.825/2019; não revoga o 10.251/2001."
+  },
+  {
+   "url": "https://www.joinville.sc.gov.br/?s=carga+e+descarga (e 'caminhões circulação', 'restrição de caminhões'); /institucional/detrans/",
+   "resultado": "Portal da prefeitura sem página de serviço 'carga e descarga'/'restrição de caminhões'; busca devolve só notícias e serviços não relacionados."
+  },
+  {
+   "url": "https://camara.joinville.br/ ; https://leismunicipais.com.br/a/sc/j/joinville",
+   "resultado": "Câmara atrás de captcha e leismunicipais com 403 (Cloudflare); não contornado. Falha de fonte secundária; fonte primária (DOM/SC) respondeu."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/joinville/",
+   "resultado": "404 (sem página), segundo leads/penaestrada.json"
+  }
+ ],
+ "data": "2026-10-18",
+ "observacoes": "Joinville tem regra de circulação vigente por ato primário: Decreto 10.251/2001 (art. 6º), alterado pelo 12.512/2005. Área Central: capacidade de carga acima de 5,0 t, carregados ou não, não circula 07h-19h seg-sex e 07h-13h sáb, exceto nas vias-limite (art. 6º, § 1º) e para os serviços do § 2º; domingo e feriado livres (art. 14). Autorização especial (art. 5º). Carga e descarga de 5-12 t: 19h-07h seg-sex e sáb até 07h e após 13h (art. 3º, II); acima de 12 t segue o art. 6º (art. 3º, III); 1-5 t nos locais/horários do rotativo (art. 3º, I). Pendências: confirmar vigência/sinalização com o DETRANS, desenhar o polígono, e a inconsistência entre as vias liberadas (lista de 2001) e o perímetro ampliado em 2005 (Marechal Deodoro e Tijucas). Não há anel ou contorno obrigatório, nem VUC, nem regra de pontes achada nos atos do DOM/SC. A cópia dos decretos no DOM/SC é de 'acervo', não publicação oficial: por isso confiança média.",
+ "osm_divergencias": [
+  "Overpass/OSM não consultado nesta rodada (somente leitura, sem Valhalla); sem checagem de hgv=no nas vias da Área Central."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "joinville_area_central_5t",
+   "tipo": "zona",
+   "regime": "Área Central (carga e descarga)",
+   "nome": "Joinville: Área Central, circulação de veículos com capacidade de carga acima de 5,0 t (Decreto 10.251/2001, redação do Decreto 12.512/2005)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:00",
+     "to": "19:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "07:00",
+     "to": "13:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "payload_t",
+      "acima": 5.0
+     }
+    ]
+   },
+   "origem_destino_dentro": "avisa",
+   "autorizacao": "Autorização especial (art. 5º, I e II): carga e descarga de concreto usinado, materiais de construção, mudanças e casos excepcionais; pedido com 3 dias úteis de antecedência; expedida pela CONURB (nome no ato de 2001; órgão atual não confirmado).",
+   "excecoes": [
+    "Art. 6º, § 1º: circulação liberada, sem limite de horário, nas vias do perímetro: Rua Duque de Caxias, Rua Senador Felipe Schmidt, Rua Pedro Lobo, Rua Visconde de Taunay, Rua Henrique Meyer, Rua Blumenau, Rua Max Colin, Av. Dr. Albano Schulz, Rua Itajaí, Rua Abdon Batista, Av. Procópio Gomes e Rua Ministro Calógeras (lista do ato de 2001; o Decreto 12.512/2005 ampliou o perímetro com a Rua Marechal Deodoro e a Rua Tijucas, que não constam da lista de vias liberadas)",
+    "Art. 6º, § 2º: liberados em serviço, sem limite de capacidade nem horário: veículos oficiais (federal, estadual, municipal), Corpo Diplomático/Consular, militares, PM/Bombeiros/ambulâncias, e de empresas públicas, concessionárias e permissionárias de serviços urbanos públicos ou emergenciais autorizadas",
+    "Art. 14: limitações de horário não se aplicam aos domingos e feriados",
+    "Art. 3º, I: veículos de 1,0 t até 5,0 t de carga útil: carga e descarga nos locais e horários do estacionamento rotativo (fora da regra, até 8,4 m de comprimento e 2,4 m de largura)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto nº 10.251, de 13/09/2001 (Joinville)",
+     "artigo": "art. 6º, caput e §§ 1º e 2º (proibição para capacidade de carga acima de 5,0 t, carregados ou não: 07h-19h seg-sex, 07h-13h sáb); art. 3º (horários de carga e descarga por classe); art. 5º (autorizações); art. 14 (domingos e feriados)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/3737444",
+     "nota": "Texto lido (cópia do acervo do DOM/SC, 'Acervo Público', não publicação oficial do DOM/SC): atos/4209102/decreto_10251_2001.txt"
+    },
+    {
+     "ato": "Decreto nº 12.512, de 13/07/2005 (Joinville)",
+     "artigo": "art. 1º (nova redação do art. 2º, perímetro da Área Central, com Rua Marechal Deodoro e Rua Tijucas); art. 3º (revoga disposições em contrário dos Decretos 10.251/01 e 10.517/02)",
+     "url": "https://diariomunicipal.sc.gov.br/atos/3738958",
+     "nota": "Não altera o art. 6º. Texto: atos/4209102/decreto_12512_2005.txt"
+    },
+    {
+     "ato": "Decreto nº 10.517, de 21/03/2002 (Joinville)",
+     "artigo": "arts. 1º e 2º (só caçambas de entulho, art. 10 do Decreto 10.251/01); sem efeito sobre o art. 6º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/3765134"
+    }
+   ],
+   "nota": "Regra de CIRCULAÇÃO (art. 6º), não só de estacionamento: capacidade de carga acima de 5,0 t, carregado ou não, não circula no interior da Área Central nos horários acima; as vias do perímetro (art. 6º § 1º) ficam livres, logo a zona exclui as vias-limite. Capacidade de carga (lotação), não PBT; Joinville não define VUC nos atos lidos. Decreto de 2001 sem revogação localizada (busca no DOM/SC por '10.251', 'carga e descarga', 'área central', 'veículos de carga', 'capacidade de carga' só retorna os decretos de 2001/2002/2005 e normas de estacionamento rotativo; o Decreto 72.203/2026, que regulamenta a Zona Azul Digital, não o revoga). Vigência real e sinalização no terreno não confirmadas (órgão CONURB citado no ato; hoje o trânsito é do DETRANS Joinville). Limite: o ato é antigo e a cópia no DOM/SC é de acervo.",
+   "fonte_geometria": "Perímetro textual do art. 2º (redação do Decreto 12.512/2005) a ser desenhado sobre as vias do OSM",
+   "vigencia_inicio": "2001-09-13",
+   "trechos": [
+    {
+     "inciso": "art. 2º (Decreto 12.512/2005)",
+     "via": [
+      "Rua Duque de Caxias"
+     ],
+     "descricao": "Perímetro (sentido do ato): entroncamento da Rua Duque de Caxias com a Rua Ministro Calógeras; Rua Duque de Caxias até a Rua Senador Felipe Schmidt; Rua Senador Felipe Schmidt até a Rua Pedro Lobo; Rua Pedro Lobo até a Rua Visconde de Taunay; Rua Visconde de Taunay até a Rua Henrique Meyer; Rua Henrique Meyer até a Rua Blumenau; Rua Blumenau até a Rua Marechal Deodoro; Rua Marechal Deodoro até a Rua Tijucas; Rua Tijucas até o entroncamento com a Av. Dr. Albano Schulz; Av. Dr. Albano Schulz até a Rua Itajaí; Rua Itajaí até a Rua Abdon Batista; Rua Abdon Batista até a Av. Cel. Procópio Gomes e Rua Ministro Calógeras; até o ponto inicial",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/4209102_area_central.geojson",
+     "construir": "manual",
+     "como_gerar": "Polígono do perímetro do art. 2º do Decreto 10.251/2001 (redação do Decreto 12.512/2005) sobre as quadras do OSM; remover as vias-limite liberadas pelo art. 6º, § 1º."
+    }
+   ]
+  }
+ ]
+}

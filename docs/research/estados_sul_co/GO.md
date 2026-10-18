@@ -2,11 +2,25 @@
 
 Somente leitura no repositório. Textos e amostras em `fontes/GO/` (cerca de 270 KB); os brutos grandes foram baixados fora do repositório e apagados. Detalhe completo em `GO.json`. Órgão rodoviário estadual: GOINFRA (Agência Goiana de Infraestrutura e Transportes).
 
+## Verificado em 2026-10-18 (auditoria cética)
+
+Fontes oficiais reabertas e conferidas uma a uma; resultado por tema (detalhe em `verificado_em` de cada tema no `GO.json`; novos arquivos em `fontes/GO/`).
+
+- **Rodovias estaduais**: Portaria GOINFRA 20/2026 reconfirmada (PDF idêntico ao texto local; 25 datas, 23 linhas, art. 4º e 5º). **Publicação conferida**: DOE-GO nº 24.713, de 04/02/2026 (vigência desde essa data). Listagem da GOINFRA tem **143** portarias (não 157), 20/2026 EM VIGOR, sem ato posterior que a altere. **Correção de base legal**: o Decreto 10.213/2023, citado na portaria, foi **revogado pelo Decreto 10.868, de 09/03/2026**; não achei ato que invalide a portaria. SRE/KMZ reproduzidos sem diferença. **Ponte Quinca Mariano rebaixada**: a página oficial é um anúncio (interdição total a partir das 6h de 03/08/2026, ~12 meses); reabertura não noticiada, mas a vigência em 18/10 não foi reconfirmada.
+- **Pedágio**: confirmado (CSV ANTT com 26 praças em GO, todas ativas e em BRs, licença CC-BY; Lei 21.549/2022 revogou a Lei 19.999/2018).
+- **Balanças**: confirmado que não há dado. **Correção**: no relatório de equipamentos, 698 e 226 são *faixas* (531 lombadas e 180 radares = 711 equipamentos).
+- **Feriados**: Lei 20.756/2020 art. 269 e decretos 2023-2026 (incl. 10.935 e 10.987/2026) conferidos; 24/10 segue duvidosa como feriado estadual geral (TRT18 e TJGO a tratam como aniversário de Goiânia).
+- **Perigosos**: Lei 19.423/2016 art. 13 confere; sem ato por trecho. A Semad tem site acessível (`goias.gov.br/meioambiente/`), sem regra de transporte achada.
+- **Acidentes (RENAEST)**: todos os números da tabela abaixo foram **reproduzidos** por leitura do ZIP (licença: domínio público no CKAN).
+- **Roubo de carga**: 10 ocorrências em 2025 reproduzidas no XLSX do Sinesp.
+- **Particularidades**: balsas, pontes e Romaria 2026 conferidas; GO-020 e GO-330 agora lidas por inteiro (obras temporárias).
+- `pronto_para_importar`: nada foi elevado. Mantidos: feriados 2026 "parcial", feriados estaduais "parcial", pedágio ANTT e RENAEST "sim"; Quinca Mariano segue "manual" com vigência a reconfirmar.
+
 ## Resumo em uma tela
 
 | Tema | O que existe | Pronto para importar? |
 |---|---|---|
-| 1. Restrições em rodovias estaduais | Uma portaria anual de feriados prolongados (Portaria GOINFRA 20/2026): 23 linhas de rodovia, 25 datas de 14/02/2026 a 03/01/2027, 07h-20h. Sem portaria de peso/altura/comprimento por trecho, AET por trecho, ponte, serra ou safra. Ponte Quinca Mariano (GO-139) fechada desde 03/08/2026 por ~12 meses | Parcial: datas, horários, veículos e exceções sim; os trechos são descritivos (sem km), geometria por rodovia via SRE (XLSX e KMZ testados) |
+| 1. Restrições em rodovias estaduais | Uma portaria anual de feriados prolongados (Portaria GOINFRA 20/2026): 23 linhas de rodovia, 25 datas de 14/02/2026 a 03/01/2027, 07h-20h. Sem portaria de peso/altura/comprimento por trecho, AET por trecho, ponte, serra ou safra. Ponte Quinca Mariano (GO-139): fechamento total anunciado para 03/08/2026, ~12 meses (vigência atual não reconfirmada) | Parcial: datas, horários, veículos e exceções sim; os trechos são descritivos (sem km), geometria por rodovia via SRE (XLSX e KMZ testados) |
 | 2. Pedágio estadual | Nenhum. Lei 19.999/2018 (6 trechos) revogada pela Lei 21.549/2022. As 26 praças de GO no CSV da ANTT são todas em BRs | Estadual: nada a importar. Praças ANTT: sim (CSV testado) |
 | 3. Balanças | Sem lista nem dataset. A GOINFRA só descreve atribuições de pesagem | Não |
 | 4. Feriados | Estaduais: 26/07, 24/10 e 28/10 (Lei 20.756/2020, art. 269), com transferência anual por decreto. Municipais: sem base estadual | Estadual: parcial. Municipal: não |
@@ -19,7 +33,7 @@ Somente leitura no repositório. Textos e amostras em `fontes/GO/` (cerca de 270
 
 ### Portaria GOINFRA 20/2026 (03/02/2026)
 
-PDF: `https://goias.gov.br/goinfra/wp-content/uploads/sites/77/2026/08/Portaria_020_2026_PR.pdf` (5 páginas, texto extraível; cópia em `fontes/GO/goinfra_portaria_020_2026_restricao_feriados.txt`). Listada em `https://goias.gov.br/goinfra/portarias/` como EM VIGOR. Base: Lei 21.792/2023 art. 76 e Decreto 10.213/2023 art. 4º, XII. O DOE de publicação não foi conferido.
+PDF: `https://goias.gov.br/goinfra/wp-content/uploads/sites/77/2026/08/Portaria_020_2026_PR.pdf` (5 páginas, texto extraível; cópia em `fontes/GO/goinfra_portaria_020_2026_restricao_feriados.txt`). Listada em `https://goias.gov.br/goinfra/portarias/` como EM VIGOR. Base citada: Lei 21.792/2023 art. 76 e Decreto 10.213/2023 art. 4º, XII (**este decreto foi revogado pelo Decreto 10.868/2026, de 09/03/2026, posterior à portaria**; o novo regulamento mantém segurança viária, operação rodoviária e AET na Diretoria de Segurança Viária). Publicada no **DOE-GO nº 24.713, de 04/02/2026** (conferido em 18/10/2026; trecho em `fontes/GO/doe_24713_2026-02-04_portaria_goinfra_020_trecho.txt`); sem retificação nas edições de 05 a 18/02/2026.
 
 - **Art. 1º**: restringe CVC e CTV nas rodovias estaduais, nos trechos de pista simples com duplo sentido: CVC acima de 3 e até 9 eixos, Romeu e Julieta, guindastes, cegonheiros, linha de eixos, qualquer combinação de carga com mais de 3 eixos e veículos que exigem escolta ou batedores.
 - **Art. 2º**: 07:00-20:00 em todas as datas, menos 18/02 (07:00-12:00). Datas: Carnaval 14, 17 e 18/02; Paixão 03 e 05/04; Tiradentes 18 e 21/04; Trabalho 01 e 03/05; Corpus Christi 04 e 07/06; Independência 05 e 07/09; N. Sra. Aparecida 10 e 12/10; Finados 31/10 e 02/11; Consciência Negra 20 e 22/11; Natal 24, 25 e 27/12; Ano Novo 31/12, 01 e 03/01/2027.
@@ -27,21 +41,21 @@ PDF: `https://goias.gov.br/goinfra/wp-content/uploads/sites/77/2026/08/Portaria_
 - **Art. 4º**: excluídos perecíveis, leite e derivados, frutas e verduras, cargas vivas ou frigoríficas.
 - **Art. 5º**: infração do "artigo 187-I" do CTB (grafia do ato).
 
-Atos anteriores (vencidos): Portaria 20/2025 (23/01/2025, mesmas 23 linhas) e Portaria 21/2024 (17/01/2024), esta com 140 códigos SRE de 23 rodovias. A notícia da GOINFRA de 09/10/2026 resume a regra como "três ou mais eixos que necessitem de escolta"; o texto do ato é mais largo, vale o ato.
+Atos anteriores (vencidos): Portaria 20/2025 (23/01/2025, mesmas 23 linhas) e Portaria 21/2024 (17/01/2024), esta com 140 códigos SRE de 23 rodovias. As notícias da GOINFRA de 17/04/2026 ("três eixos ou mais") e de 09/10/2026 ("três ou mais eixos que necessitem de escolta") divergem do texto do ato ("acima de 3 eixos"; CVC de 3 a 9 eixos); vale o ato. Restam 10 datas a partir de 18/10/2026: 31/10, 02/11, 20/11, 22/11, 24/12, 25/12, 27/12, 31/12, 01/01/2027 e 03/01/2027.
 
 ### Geometria (SRE)
 
-`https://goias.gov.br/goinfra/mapa-rodoviario-setembro-2026/`: `SRE_09_2026.xlsx` (539 KB, 2.689 trechos: sre, go, inicio, fim, km_inicial, km_final, situacao, jurisdicao, revest, VMD) e `KMZ_09_2026.kmz` (19,8 MB, 2.689 LineStrings com o código SRE). Para o ato de 2026, juntar por número da rodovia e filtrar `situacao=PAV`; `DUP` (duplicada) fica fora do ato. O extrato `fontes/GO/sre_set2026_trechos_das_portarias_goinfra.csv` tem 751 linhas. Cinco códigos da Portaria 21/2024 não existem mais no SRE de 09/2026 (139EGO0090, 184EGO0110, 225EGO0035, 239EGO0185, 239EGO0190).
+`https://goias.gov.br/goinfra/mapa-rodoviario-setembro-2026/`: `SRE_09_2026.xlsx` (539 KB, 2.689 trechos: sre, go, inicio, fim, km_inicial, km_final, situacao, jurisdicao, revest, VMD) e `KMZ_09_2026.kmz` (19,8 MB, 2.689 LineStrings com o código SRE). Para o ato de 2026, juntar por número da rodovia (coluna `go`, texto como `010`, sem prefixo `GO-`) e filtrar `situacao=PAV`; `DUP` (duplicada) fica fora do ato. O extrato `fontes/GO/sre_set2026_trechos_das_portarias_goinfra.csv` tem 751 linhas. Cinco códigos da Portaria 21/2024 não existem mais no SRE de 09/2026 (139EGO0090, 184EGO0110, 225EGO0035, 239EGO0185, 239EGO0190).
 
 ### Interdições e obras vigentes
 
-- **Ponte Quinca Mariano, GO-139, Rio Paranaíba (divisa GO/MG)**: interdição total desde as 06h de 03/08/2026, previsão de 12 meses. Desvios citados: via Catalão/Araguari ou via Itumbiara/Tupaciguara.
-- GO-020 (RMG, desvio no sentido Bela Vista desde 22/09/2026) e GO-330 (desvio de ~1 km perto de Goiandira, 18/09/2026): li só o resumo.
+- **Ponte Quinca Mariano, GO-139, Rio Paranaíba (divisa GO/MG)**: a GOINFRA anunciou interdição total a partir das 6h de 03/08/2026, por cerca de 12 meses (página publicada em 05/08 e atualizada em 07/10/2026, em tempo futuro, sem informar reabertura). Vigência em 18/10/2026 não reconfirmada em fonte independente; um veículo de imprensa citou início em 01/08. Desvios citados: via Catalão/Araguari ou via Itumbiara/Tupaciguara.
+- GO-020 (RMG, restauração de 30 km desde junho; desvio pela Av. Nossa Senhora de Fátima no sentido Bela Vista desde 22/09/2026) e GO-330 (desvio provisório de ~1 km a partir do trevo de Goiandira, 18/09/2026, por causa da duplicação): páginas oficiais lidas por inteiro em 18/10/2026; obras temporárias, não são restrição de carga.
 - Portarias de emergência de pontes (15/2025 GO-465 km 36,14; 18/2025 Guarinos; 134/2024 GO-341 km 191; 99/2024, 003/2024, 002/2024) são contratação emergencial, não restrição. A ponte da GO-341 foi substituída por ponte de concreto de 60 m, entregue em 24/07/2025. O ato 18/2025 diz GO-439 no corpo e a listagem diz GO-349.
 
 ### O que não existe (nas fontes lidas)
 
-Portaria de peso, altura ou comprimento por trecho; lista de trechos liberados para CVC; horário de serra, travessia urbana ou safra; proibição em ponte. A listagem de portarias tem 157 linhas (2019-2026) e a busca por ementa no `legisla.casacivil.go.gov.br` ("caminh", "veículos de carga", "excesso de peso", "balança", "pesagem") deu 0. A AET é pedida em `portalaet.goinfra.go.gov.br`, que não resolve neste ambiente.
+Portaria de peso, altura ou comprimento por trecho; lista de trechos liberados para CVC; horário de serra, travessia urbana ou safra; proibição em ponte. A listagem de portarias tem 143 portarias numeradas (2019-2026; verificado em 18/10/2026) e a busca por ementa no `legisla.casacivil.go.gov.br` ("caminh", "veículos de carga", "excesso de peso", "balança", "pesagem") deu 0 (reproduzido em 18/10/2026; o legisla cobre leis e decretos, não as portarias da GOINFRA). A AET é pedida em `portalaet.goinfra.go.gov.br`, que não resolve neste ambiente.
 
 ## 2. Pedágio
 
@@ -51,7 +65,7 @@ CSV da ANTT (`dados.antt.gov.br`, pacote `praca-de-pedagio`, CC-BY, atualizado e
 
 ## 3. Balanças
 
-Sem lista pública. A página `https://goias.gov.br/goinfra/operacao-rodoviaria/controle-de-pesagem-de-cargas-postos-de-pesagens/` descreve postos "com balanças fixas e móveis", CCOF, estudos de locais de PPV e emissão de AET, mas não nomeia nenhum posto. O relatório de equipamentos de 11/09/2025 (PDF, 711 equipamentos, 698 lombadas eletrônicas e 226 radares fixos em 924 faixas) é só de velocidade, com km, sentido, SRE e lat/lon. A lista de PPVs precisa de LAI à GOINFRA.
+Sem lista pública. A página `https://goias.gov.br/goinfra/operacao-rodoviaria/controle-de-pesagem-de-cargas-postos-de-pesagens/` descreve postos "com balanças fixas e móveis", CCOF, estudos de locais de PPV e emissão de AET, mas não nomeia nenhum posto. O relatório de equipamentos de 11/09/2025 (PDF, 711 equipamentos em 924 faixas: 698 faixas de lombada eletrônica e 226 de radar fixo, ou seja, 531 lombadas e 180 radares) é só de velocidade, com km, sentido, SRE e lat/lon. A lista de PPVs precisa de LAI à GOINFRA.
 
 ## 4. Feriados
 
@@ -61,7 +75,7 @@ Sem lista pública. A página `https://goias.gov.br/goinfra/operacao-rodoviaria/
 
 ## 5. Produtos perigosos
 
-Nenhum ato estadual por trecho, manancial, túnel ou ponte. Lei 19.423/2016, art. 13: o transporte interno de agrotóxicos segue a legislação de cargas perigosas (regulamento Decreto 9.286/2018; alterada pela Lei 24.389 de 29/06/2026). O órgão ambiental estadual não foi alcançado (site não resolve); não afirmo nome nem ato.
+Nenhum ato estadual por trecho, manancial, túnel ou ponte. Lei 19.423/2016, art. 13: o transporte interno de agrotóxicos segue a legislação de cargas perigosas (regulamento Decreto 9.286/2018; alterada pela Lei 24.389 de 29/06/2026). O site `goias.gov.br/meioambiente/` (título "Semad") responde e não traz regra de transporte de perigosos na busca; `sema.go.gov.br` não resolve. Nome por extenso e eventual ato da Semad não verificados.
 
 ## 6. Acidentes
 
@@ -86,11 +100,11 @@ Sinesp VDE 2025 (xlsx nacional, licença não declarada): GO tem 10 ocorrências
 
 - **Balsas** (GOINFRA mantém 10, gratuitas, em rodovias não pavimentadas): GO-239 Rio Crixás-Açu, GO-464 Rio São Félix (Cana Brava, 324 m², 12 carros de passeio e 47 passageiros), GO-080 Rio Maranhão em Barro Alto (Balsa Darlene), GO-112 Rio Paranã, GO-338 Rio das Almas (Balsa Júlia), GO-324 Lago dos Tigres, GO-188 Rio Caiapó, GO-118 Rio Paranaíba, GO-330 Rio São Marcos e GO-210 Rio Paranaíba. Nenhum limite de peso publicado. Pontes em obra: GO-080 Barro Alto (178 m, entrega até 07/2027) e GO-338 (previsão 2026).
 - **Malha**: SRE 09/2026 tem 405 trechos de leito natural (LEN), 50 em obras de pavimentação, 49 planejados. Mais LEN: GO-239 (15 de 44), GO-241 (13 de 53), GO-108, GO-116.
-- **Romaria de Trindade** (27/06 a 06/07 em 2025; GO-050, GO-060, GO-469): só apoio operacional; nenhuma restrição de caminhão achada. Edição 2026 não pesquisada.
+- **Romaria de Trindade** (27/06 a 06/07 em 2025; GO-050, GO-060, GO-469): só apoio operacional; nenhuma restrição de caminhão achada. Edição 2026 (verificado em 18/10/2026): início em 26/06, 4,5 milhões previstos, obras da GO-060 suspensas durante a festa; nenhuma restrição de caminhão achada.
 - **AET**: exemplo de 79,4 t, 4,50 m x 5,06 m (sino Vox Patris) por rodovias estaduais em 06/2025; sem tabela de trechos.
 - **Radares e lombadas** estaduais com coordenada: camada nova possível (PDF).
 - Cruzar `hgv` do OSM com o SRE: não feito (exige o extrato do Valhalla).
 
 ## Pendências
 
-Ver lista no fim de `GO.json`. Principais: lista de balanças (LAI), curadoria dos 23 trechos de feriado, feriados municipais em massa, status atual das pontes das portarias de emergência, portal AET e órgão ambiental não alcançados.
+Ver lista no fim de `GO.json`. Principais: varrer o DOE de 19/02/2026 em diante por retificação da Portaria 20/2026 e checar se a GOINFRA a reeditou após a revogação do Decreto 10.213/2023; reconfirmar a interdição da Ponte Quinca Mariano; lista de balanças (LAI), curadoria dos 23 trechos de feriado, feriados municipais em massa, status atual das pontes das portarias de emergência, portal AET e órgão ambiental não alcançados.
