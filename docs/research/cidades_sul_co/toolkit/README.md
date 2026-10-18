@@ -244,3 +244,15 @@ python3 sigpub_texto.py lote ../fila_r3/R4-AGM-GO.json /tmp/saida
 * Faixa do acervo (primeira matéria): 2011 Diorama, Mineiros; 2013 Iporá, Lagoa Santa, Palmeiras; 2014 Abadia, Campestre, Guarani; 2015 Montes Claros; 2017 Ipiranga, Petrolina (só até 03/2021); 2018 Trindade (01), Posse (04), Gameleira (06); 2020 Planaltina; 2021 Goianira, Porangatu, Nova Iguaçu, São Francisco, Teresina; 2022 Cristalina; 2024 Pilar (só até 05/2025).
 * Resultado: nenhum ato de restrição de circulação de caminhões novo. Em Trindade, os acertos plausíveis eram os já tratados (Decretos 606/2019, 505/2023, 737/2024, 2.960/2026 da Romaria), Portaria 009/2021 (acesso de caminhões ao aterro: só pesagem), Decreto 3.012/2026 (caminhão-pipa no Parque Lara Guimarães) e Lei 2.406/2025 art. 34 (carga e descarga x estacionamento rotativo). Negativo conclusivo (acervo ≤ 2018 e ≥ 500 matérias): Abadia de Goiás, Diorama, Gameleira de Goiás, Guarani de Goiás, Ipiranga de Goiás, Iporá, Lagoa Santa, Mineiros, Montes Claros de Goiás, Palmeiras de Goiás, Posse, Trindade → `falha_de_fonte=false` (a entidade pode não publicar tudo no AGM; relevância limita a ~50 matérias por consulta).
 * Diários próprios: Vicentinópolis (Câmara) `/diariooficial` → 302 para `/ops/404` (inexistente); a "Legislação" da Câmara tem ~20 documentos e a busca (POST `/legislacao/filter`) para caminh/pesad/tonel dá 0. Jataí e Caldas Novas já tinham sido varridos (R3). SAPL das Câmaras .go.leg.br: só Cristalina, Porangatu e Uruaçu têm API (vazias ou 77 normas); o resto sem SAPL.
+
+
+---
+
+## 6. `softcam.py` — Câmaras em plataforma Softcam (R4, 18/10/2026)
+
+Cliente de `/proposicoes/pesquisa` (busca em texto integral das leis). Usa `curl` puro (UA de navegador cai em 'Bot Verification').
+`python3 softcam.py descobrir <cidade> <uf> [url_camara]` acha o host (camara<slug>, cm<slug>, camaramunicipal<slug>, <slug>.<uf>.leg.br...);
+`acervo <host>` testa o acervo com 'orçamento' (total, item mais antigo e mais recente: **acervo vazio ou parado não conta como negativo**);
+`buscar <host> "<termo>"` (expressão exata; 25 itens/página, páginas seguintes em `/proposicoes/pesquisa/0/<pg>/0?<mesma query>`).
+Cada item tem página `/proposicoes/pesquisa/0/1/0/<id>` com o PDF em `cloudsoftcam.com.br` (às vezes escaneado: OCR; às vezes .doc).
+Throttle interno de 1 s por host. No lote R4-SOFTCAM (522 cidades), 75 tinham Câmara Softcam (RS 46, PR 21, SC 8, MS 1).
