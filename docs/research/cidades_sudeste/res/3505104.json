@@ -2,7 +2,7 @@
  "ibge": "3505104",
  "nome": "Barbosa",
  "uf": "SP",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "varredura_consolidada",
  "data": "2026-10-11",
  "fontes_consultadas": [
@@ -25,11 +25,56 @@
   {
    "url": "osm_hints_por_municipio.json (contagem, por município, de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada: o município não está entre os 367 com indício no OSM."
+  },
+  {
+   "url": "https://www.barbosa.sp.gov.br/portal/leis_decretos/1520/",
+   "resultado": "Lei 2.209/2020 lida"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (153 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.barbosa.sp.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (153 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.barbosa.sp.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra. || R7 2026-10-19: Portal da Prefeitura (Instar): Lei 2.209/2020 lida: proíbe caminhões canavieiros e máquinas agrícolas no perímetro urbano, salvo Anel Viário. Regra DESATIVADA: por tipo de carga/veículo.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "barbosa_canavieiros_perimetro",
+   "tipo": "zona",
+   "regime": "Restrição por tipo de carga",
+   "nome": "Barbosa: caminhões canavieiros e máquinas agrícolas proibidos no perímetro urbano",
+   "status": "desativada",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "autorizacao": null,
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.209, de 18/08/2020",
+     "artigo": "art. 1º",
+     "url": "https://www.barbosa.sp.gov.br/portal/leis_decretos/1520/",
+     "nota": ""
+    }
+   ],
+   "motivo_desativada": "Por tipo de carga (cana) e sem vias nomeadas."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
@@ -48,5 +93,6 @@
    "cliente": true,
    "testado": true
   }
- }
+ },
+ "falha_de_fonte": false
 }

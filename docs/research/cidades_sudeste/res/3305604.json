@@ -2,7 +2,7 @@
  "ibge": "3305604",
  "nome": "Silva Jardim",
  "uf": "RJ",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "varredura_consolidada",
  "data": "2026-10-11",
  "fontes_consultadas": [
@@ -21,11 +21,56 @@
   {
    "url": "osm_hints_por_municipio.json (contagem, por município, de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada: o município não está entre os 367 com indício no OSM."
+  },
+  {
+   "url": "https://www.silvajardim.rj.gov.br/index.php/download/203/2012/7540/decreto-no-1406-12-proibido-o-trafego-de-caminhoes.pdf",
+   "resultado": "Decreto 1.406/2012 lido"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (415 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.silvajardim.rj.gov.br/index.php/leis/) NÃO foi consultado com termos de caminhão. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). 'Não achou' não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (415 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.silvajardim.rj.gov.br/index.php/leis/) NÃO foi consultado com termos de caminhão. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). 'Não achou' não prova que não exista regra. || R7 2026-10-19: Portal da Prefeitura (WordPress/wpfd): Decreto 1.406/2012 lido (PDF): proíbe caminhões e carretas no perímetro urbano (exceto VUC 2,20x6,30 m/3 t e serviços essenciais), \"até que seja adequada a malha viária\". Regra DESATIVADA: perímetro urbano sem vias nomeadas e vigência condicionada a obras viárias.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "silvajardim_caminhoes_perimetro_urbano",
+   "tipo": "zona",
+   "regime": "Proibição geral no perímetro urbano",
+   "nome": "Silva Jardim: caminhões e carretas proibidos no perímetro urbano (exceto VUC)",
+   "status": "desativada",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "autorizacao": null,
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 1.406, de 06/03/2012 (Silva Jardim/RJ)",
+     "artigo": "arts. 1º-2º",
+     "url": "https://www.silvajardim.rj.gov.br/index.php/download/203/2012/7540/decreto-no-1406-12-proibido-o-trafego-de-caminhoes.pdf",
+     "nota": ""
+    }
+   ],
+   "motivo_desativada": "Perímetro urbano sem vias nomeadas; vigência \"até que seja adequada a malha viária\"."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
@@ -41,5 +86,6 @@
    "cliente": true,
    "testado": false
   }
- }
+ },
+ "falha_de_fonte": false
 }
