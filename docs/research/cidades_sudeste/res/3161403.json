@@ -1,43 +1,47 @@
 {
-  "ibge": "3161403",
-  "nome": "São Francisco do Glória",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://saofranciscodogloria.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3161403, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
-      "resultado": "endpoint ajaxpro leg_lis não encontrado."
-    },
-    {
-      "url": "https://www.saofranciscodogloria.mg.gov.br/legislacao (toolkit legislacao.py buscar 3161403, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
-      "resultado": "busca heurística: 0."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3161403 'circulação de caminhões' (amm-mg, qd)",
-      "resultado": "amm-mg 3: Lei 1.276/2020 (cargos de coleta de lixo, https://www.diariomunicipal.com.br/amm-mg/materia/86139A6F) e editais de concurso de 2015 (conteúdo programático CTB) = ruído. qd 0."
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3161403)",
-      "resultado": "3 ways: 342793661 AMG-2915/MG-900 (secondary) hgv=yes (estadual); 486469743 e 486469744 (unclassified, sem nome) hgv=discouraged. Nenhum hgv=no (a preparação indicava hgv_no=1; hoje não aparece)."
-    },
-    {
-      "url": "https://saofranciscodogloria.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
-      "resultado": "Resultados: Decreto 49/2022 (altera trânsito de via pública em razão de evento: pontual), Lei 1.121/2014 (veículos oficiais), Lei 1.242/2018 (SIM): sem restrição a caminhões. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3161403 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "AMM: Lei 1.276/2020 (cargos de coleta de lixo), editais: ruído; \"trânsito de caminhões\" 6, \"veículos pesados\" 100 (ruído).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Sem ato. hgv=discouraged em duas estradas sem nome não é proibição. Divergência com o flag da preparação (hgv_no=1): o Overpass atual não traz hgv=no. || R2: Portal Fácil lido: sem ato de restrição a caminhões. Decreto 49/2022 é evento (pontual, não lido por ser evento). hgv=discouraged do OSM não é proibição.",
-  "falha_de_fonte": false,
-  "osm_divergencias": [
-    "Preparação marcava hgv_no=1; Overpass de 11/10/2026 mostra só hgv=discouraged (ways 486469743 e 486469744) e hgv=yes na MG-900 (342793661, estadual). Divergência de contagem, sem ato."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3161403",
+ "nome": "São Francisco do Glória",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://saofranciscodogloria.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3161403, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
+   "resultado": "endpoint ajaxpro leg_lis não encontrado."
+  },
+  {
+   "url": "https://www.saofranciscodogloria.mg.gov.br/legislacao (toolkit legislacao.py buscar 3161403, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
+   "resultado": "busca heurística: 0."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3161403 'circulação de caminhões' (amm-mg, qd)",
+   "resultado": "amm-mg 3: Lei 1.276/2020 (cargos de coleta de lixo, https://www.diariomunicipal.com.br/amm-mg/materia/86139A6F) e editais de concurso de 2015 (conteúdo programático CTB) = ruído. qd 0."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3161403)",
+   "resultado": "3 ways: 342793661 AMG-2915/MG-900 (secondary) hgv=yes (estadual); 486469743 e 486469744 (unclassified, sem nome) hgv=discouraged. Nenhum hgv=no (a preparação indicava hgv_no=1; hoje não aparece)."
+  },
+  {
+   "url": "https://saofranciscodogloria.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+   "resultado": "Resultados: Decreto 49/2022 (altera trânsito de via pública em razão de evento: pontual), Lei 1.121/2014 (veículos oficiais), Lei 1.242/2018 (SIM): sem restrição a caminhões. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3161403 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "AMM: Lei 1.276/2020 (cargos de coleta de lixo), editais: ruído; \"trânsito de caminhões\" 6, \"veículos pesados\" 100 (ruído).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (busca_avancada[texto] x busca_avancada[entidade], texto integral; R7 varredura profunda)",
+   "resultado": "Prefeitura de São Francisco do Glória: 8832 matérias, a mais antiga de 2013-02-15. 8 combinações de duas palavras; nenhum ato de restrição a caminhões."
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem ato. hgv=discouraged em duas estradas sem nome não é proibição. Divergência com o flag da preparação (hgv_no=1): o Overpass atual não traz hgv=no. || R2: Portal Fácil lido: sem ato de restrição a caminhões. Decreto 49/2022 é evento (pontual, não lido por ser evento). hgv=discouraged do OSM não é proibição. | R7 2026-10-19: varredura profunda no SIGPub AMM-MG (texto integral, filtro de entidade Prefeitura de São Francisco do Glória). Acervo: Prefeitura de São Francisco do Glória: 8832 matérias, a mais antiga de 2013-02-15. Combinações consultadas (total de matérias): \"caminhões circulação\" (3); \"caminhões eixos\" (1); \"caminhões proibido\" (2); \"caminhões toneladas\" (0); \"carga toneladas\" (0); \"tráfego caminhões\" (4); \"trânsito pesado\" (11); \"veículos pesados\" (200). Ruído descartado por título (contrato/edital/licitação/extrato/ata/ISS/cargo/compra de caminhão) e demais lidos por trecho: nenhuma restrição à circulação de caminhões. Cobertura PARCIAL (8 de 10 combinações): não conclusivo.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "Preparação marcava hgv_no=1; Overpass de 11/10/2026 mostra só hgv=discouraged (ways 486469743 e 486469744) e hgv=yes na MG-900 (342793661, estadual). Divergência de contagem, sem ato."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }
