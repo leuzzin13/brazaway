@@ -8,17 +8,17 @@ Status: `regra_com_ato` = ato primário achado (a regra só entra no app se `ati
 
 | Status | Cidades |
 |---|---|
-| nao_achou | 1370 |
-| regra_com_ato | 143 |
-| pontual | 89 |
+| nao_achou | 1367 |
+| regra_com_ato | 147 |
+| pontual | 88 |
 | pista | 40 |
-| regra_sem_ato | 13 |
-| sem_restricao_declarada | 4 |
+| regra_sem_ato | 12 |
+| sem_restricao_declarada | 5 |
 | **total** | **1659** |
 
 Por nível de busca: dirigida: 605, r3_fonte_municipal: 368, varredura_profunda_diario: 250, r6_sigpub_profunda: 211, profunda: 74, media: 74, varredura_consolidada: 68, softcam_camara: 6, profundo: 3
 
-Cidades com pelo menos uma regra **ativa**: **68** (89 regras ativas). Cidades sem regra ativa (em `varredura_final.json`): **1591**. Com `falha_de_fonte` (negativo não conclusivo): **420**.
+Cidades com pelo menos uma regra **ativa**: **70** (92 regras ativas). Cidades sem regra ativa (em `varredura_final.json`): **1589**. Com `falha_de_fonte` (negativo não conclusivo): **410**.
 
 ## Por UF
 
@@ -29,12 +29,12 @@ Cidades com pelo menos uma regra **ativa**: **68** (89 regras ativas). Cidades s
 | MS | 57 | 12 | 2 | 8 | 0 | 0 | 79 | 6 | 21 |
 | MT | 101 | 22 | 15 | 3 | 1 | 0 | 142 | 8 | 15 |
 | PR | 321 | 44 | 19 | 5 | 8 | 2 | 399 | 21 | 112 |
-| RS | 465 | 14 | 13 | 3 | 2 | 0 | 497 | 7 | 174 |
-| SC | 195 | 45 | 37 | 18 | 0 | 0 | 295 | 22 | 22 |
+| RS | 462 | 18 | 12 | 4 | 1 | 0 | 497 | 9 | 165 |
+| SC | 195 | 45 | 37 | 17 | 0 | 1 | 295 | 22 | 21 |
 
 ## Verificação
 
-Arquivos em `verif/`: 148. Vereditos por cidade: corrigido: 74, confirmado: 70, rebaixada: 3, inverificavel: 1. Vereditos por regra: confirmado: 184, corrigido: 86, rebaixada: 5, inverificavel: 2, refutado: 1. Cidades com regra ativa ainda sem verificação: **0**. As correções do verificador já estão aplicadas nos `res/` (regras rebaixadas ficaram `desativada`).
+Arquivos em `verif/`: 150. Vereditos por cidade: corrigido: 74, confirmado: 72, rebaixada: 3, inverificavel: 1. Vereditos por regra: confirmado: 187, corrigido: 86, rebaixada: 5, inverificavel: 2, refutado: 1. Cidades com regra ativa ainda sem verificação: **0**. As correções do verificador já estão aplicadas nos `res/` (regras rebaixadas ficaram `desativada`).
 
 ## Cidades com regra ativa verificada
 
@@ -81,9 +81,11 @@ Arquivos em `verif/`: 148. Vereditos por cidade: corrigido: 74, confirmado: 70, 
 | PR | Ventania | 4128534 | regra_com_ato | 1 | confirmado | Restrição a caminhões >=16 t, bitrens e treminhões em vias urbanas da  |
 | RS | Caxias do Sul | 4305108 | regra_com_ato | 1 | confirmado | Área de Restrição de Circulação de Caminhões (centro, interior do Prim |
 | RS | Chuí | 4305439 | regra_com_ato | 1 | corrigido | Avenida Samuel Prilliac: caminhões e veículos pesados proibidos em tod |
+| RS | Passo Fundo | 4314100 | regra_com_ato | 2 | confirmado | Area central de Passo Fundo: caminhoes > 7 t PBT proibidos das 10h as ; Av. Brasil, Av. Presidente Vargas e Av. Moacir da Motta Fortes: caminh |
 | RS | Sant'Ana do Livramento | 4317103 | regra_com_ato | 1 | confirmado | Sant'Ana do Livramento: Lei 965/1972 (art. 1º red. Lei 2.757/1990) |
 | RS | São Francisco de Paula | 4318200 | regra_com_ato | 1 | confirmado | Av. Júlio de Castilhos (Rua Cel. Serrano a Rua Benjamin Constant) - ve |
 | RS | São Jerônimo | 4318408 | regra_com_ato | 2 | confirmado | Av. Ramiro Barcelos, Av. Rio Branco (Rua Flores da Cunha a Rua Marecha; Vias arteriais de São Jerônimo (Av. Dr. José Athanásio, Rua Gal. Osóri |
+| RS | São José dos Ausentes | 4318622 | regra_com_ato | 1 | confirmado | Av. Ismenia Batista Ribeiro Velho (toda a extensao): caminhoes acima d |
 | RS | São Sebastião do Caí | 4319505 | regra_com_ato | 1 | confirmado | Zona central de São Sebastião do Caí - proibido trânsito de veículos p |
 | RS | Vacaria | 4322509 | regra_com_ato | 1 | corrigido | Vacaria: circulação de caminhões acima de 9 t (PBT) das 10h às 15h em  |
 | SC | Abelardo Luz | 4200101 | regra_com_ato | 1 | confirmado | Avenida Getúlio Vargas (perímetro urbano): proibido tráfego de veículo |
@@ -111,18 +113,18 @@ Arquivos em `verif/`: 148. Vereditos por cidade: corrigido: 74, confirmado: 70, 
 
 ## Cidades onde a fonte falhou
 
-420 cidades com `falha_de_fonte=true` (lista completa com motivo em `falhas_de_fonte.json`).
+410 cidades com `falha_de_fonte=true` (lista completa com motivo em `falhas_de_fonte.json`).
 
 | Motivo (classificação aproximada) | Cidades |
 |---|---|
-| portal bloqueado ao IP da nuvem (403/Cloudflare/Akamai) | 264 |
+| portal bloqueado ao IP da nuvem (403/Cloudflare/Akamai) | 256 |
 | sem legislação municipal pesquisável online | 72 |
-| outras (diário/API instável, portal próprio não varrido) | 44 |
+| outras (diário/API instável, portal próprio não varrido) | 42 |
 | portal sem cliente automático (JS, login, reCAPTCHA) | 40 |
 
-Por UF: GO 76, MS 21, MT 15, PR 112, RS 174, SC 22
+Por UF: GO 76, MS 21, MT 15, PR 112, RS 165, SC 21
 
-Por sistema de legislação (triagem): não mapeado 161, portal_proprio 66, cespro 47, nucleogov 45, leismunicipais 37, nao_encontrado 18, webline 11, sapl 10, desconhecido 9, atende 5, 1doc 5, leisnaweb 3, cittatec 1, sinsoft 1, instar 1
+Por sistema de legislação (triagem): não mapeado 156, portal_proprio 64, cespro 46, nucleogov 45, leismunicipais 37, nao_encontrado 18, webline 11, sapl 10, desconhecido 9, atende 5, 1doc 5, cittatec 1, sinsoft 1, leisnaweb 1, instar 1
 
 Com achado parcial e fonte falha (prioridade para refazer):
 
@@ -138,15 +140,12 @@ Com achado parcial e fonte falha (prioridade para refazer):
 - Ponta Grossa (PR, 4119905): pontual
 - Umuarama (PR, 4128104): pontual
 - Araranguá (SC, 4201406): pista
-- Florianópolis (SC, 4205407): pista
 - Forquilhinha (SC, 4205456): pista
 - Pomerode (SC, 4213203): pista
 - Rio Rufino (SC, 4215059): pontual
 - Alvorada (RS, 4300604): regra_com_ato
-- Caxias do Sul (RS, 4305108): regra_com_ato
-- Erechim (RS, 4307005): pontual
+- Catuípe (RS, 4305009): pista
 - Garibaldi (RS, 4308607): pontual
-- Passo Fundo (RS, 4314100): regra_sem_ato
 - Porto Alegre (RS, 4314902): regra_sem_ato
 - Santo Ângelo (RS, 4317509): pontual
 - Sapucaia do Sul (RS, 4320008): pontual
@@ -170,7 +169,7 @@ Com achado parcial e fonte falha (prioridade para refazer):
 
 Bloqueio de IP e portais com JS/reCAPTCHA se resolvem consultando da rede do usuário ou no navegador; não precisam de LAI. Precisam de pedido de acesso à informação (Lei 12.527/2011, e-SIC da prefeitura):
 
-**A. Restrição conhecida sem ato primário lido (13)**: pedir número, texto e mapa/anexo do ato (decreto/portaria/resolução) que fundamenta a restrição divulgada.
+**A. Restrição conhecida sem ato primário lido (12)**: pedir número, texto e mapa/anexo do ato (decreto/portaria/resolução) que fundamenta a restrição divulgada.
 
 - Jaraguá (GO, 5211800): Restrição real e com ato primário, mas sem vias/áreas delimitadas e sem o decreto de rotas (art. 6º da lei). Por isso regra desativada, status regra_sem_ato. Pendente: obter pelo p…
 - Jataí (GO, 5211909): Restrição existe e é divulgada pela SMT, mas o ato primário (provável decreto/portaria da Superintendência Municipal de Trânsito) não foi achado: regra desativada. Pendências: núme…
@@ -183,7 +182,6 @@ Bloqueio de IP e portais com JS/reCAPTCHA se resolvem consultando da rede do usu
 - Porto Amazonas (PR, 4120101): Lei 843/2009 (Regulamenta estacionamento na Rua XV de Novembro e restringe o tráfego de veículo pesado nas ruas do perímetro urbano), na redação da Lei 1.043/2016 (AMP 22/03/2016, …
 - Santo Antônio do Sudoeste (PR, 4124400): PISTA RELEVANTE. Lei 3506/2026, art. 31: "A circulação de caminhões com peso bruto total superior a 10 (dez) toneladas será integralmente proibida na Avenida Brasil e em, no mínimo…
 - Turvo (PR, 4127965): [Lote R1-PR-DR03] Achado real vindo da DR: a LC 06/2022 institui 'rota permitida' para veículos de carga na sede e em Faxinal da Boa Vista, mas não traz proibição expressa fora da …
-- Passo Fundo (RS, 4314100): Passo Fundo TEM regra: Decreto Municipal nº 78/2021 (que revogou o Decreto nº 22/2021) regulamenta o tráfego de caminhões e cargas e o serviço de carga e descarga na ÁREA CENTRAL, …
 - Porto Alegre (RS, 4314902): A regra do Centro Histórico existe e é divulgada pela EPTC (fonte oficial de serviço) e pelo DOPA de 2011, mas o ATO PRIMÁRIO (decreto/resolução/portaria com número e artigo) NÃO f…
 
 **B. Sem legislação municipal pesquisável online e sem diário varrido (63)**: pedir a lista de leis/decretos vigentes sobre circulação, peso ou horário de veículos de carga.
