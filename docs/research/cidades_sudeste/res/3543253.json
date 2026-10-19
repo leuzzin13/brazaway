@@ -1,56 +1,76 @@
 {
-  "ibge": "3543253",
-  "nome": "Ribeirão Grande",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://leismunicipais.com.br/prefeitura/sp/ribeirao-grande",
-      "resultado": "403 Cloudflare ('Just a moment'); não contornado."
-    },
-    {
-      "url": "https://ribeiraogrande.sp.gov.br/?s=caminh",
-      "resultado": "Só links de transparência; sem ato."
-    },
-    {
-      "url": "http://transparenciaprefeitura.ribeiraogrande.sp.gov.br/ (decretos, leis)",
-      "resultado": "Heurístico da toolkit sem resposta; lista de arquivos de leis/decretos existe mas não foi varrida."
-    },
-    {
-      "url": "https://www.ribeiraogrande.sp.leg.br/leis",
-      "resultado": "Heurístico: só leis federais (LRF, LAI)."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3543253",
-      "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026."
-    },
-    {
-      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3543253; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
-      "resultado": "1 elemento: helipad C.B.E. maxweight=6. O hint 'maxweight=2' não reproduziu."
-    },
-    {
-      "url": "https://www.ribeiraogrande.sp.leg.br/@@search?SearchableText=caminhões|veículos pesados|carga e descarga",
-      "resultado": "Câmara (Plone/Interlegis) respondeu: 0/0/2 resultados (resolução e Lei Orgânica, sem relação); a busca só indexa títulos; acervo de leis municipais em subpágina que devolveu 429/sem resposta.",
-      "rodada": "R2"
-    },
-    {
-      "url": "http://transparenciaprefeitura.ribeiraogrande.sp.gov.br/leis/ ; http://transparencia.ribeiraogrande.sp.gov.br",
-      "resultado": "DNS inexistente: host da transparência com as pastas de leis/decretos não resolve.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://ribeiraogrande.sp.gov.br/ (wp-json search)",
-      "resultado": "Sem resultado utilizável.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Sem ato; portais com busca inacessível: NÃO conclusivo (cidade de 123 caminhões, risco baixo). R2: acervo de leis (transparenciaprefeitura) fora do ar; não conclusivo (cidade de 123 caminhões, risco baixo).",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "maxweight do OSM é de heliponto: ignorar."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3543253",
+ "nome": "Ribeirão Grande",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/ribeirao-grande",
+   "resultado": "403 Cloudflare ('Just a moment'); não contornado."
+  },
+  {
+   "url": "https://ribeiraogrande.sp.gov.br/?s=caminh",
+   "resultado": "Só links de transparência; sem ato."
+  },
+  {
+   "url": "http://transparenciaprefeitura.ribeiraogrande.sp.gov.br/ (decretos, leis)",
+   "resultado": "Heurístico da toolkit sem resposta; lista de arquivos de leis/decretos existe mas não foi varrida."
+  },
+  {
+   "url": "https://www.ribeiraogrande.sp.leg.br/leis",
+   "resultado": "Heurístico: só leis federais (LRF, LAI)."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3543253",
+   "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026."
+  },
+  {
+   "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3543253; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+   "resultado": "1 elemento: helipad C.B.E. maxweight=6. O hint 'maxweight=2' não reproduziu."
+  },
+  {
+   "url": "https://www.ribeiraogrande.sp.leg.br/@@search?SearchableText=caminhões|veículos pesados|carga e descarga",
+   "resultado": "Câmara (Plone/Interlegis) respondeu: 0/0/2 resultados (resolução e Lei Orgânica, sem relação); a busca só indexa títulos; acervo de leis municipais em subpágina que devolveu 429/sem resposta.",
+   "rodada": "R2"
+  },
+  {
+   "url": "http://transparenciaprefeitura.ribeiraogrande.sp.gov.br/leis/ ; http://transparencia.ribeiraogrande.sp.gov.br",
+   "resultado": "DNS inexistente: host da transparência com as pastas de leis/decretos não resolve.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://ribeiraogrande.sp.gov.br/ (wp-json search)",
+   "resultado": "Sem resultado utilizável.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://www.ribeiraogrande.sp.leg.br:443/ -> HTTP 200; prefeitura https://ribeiraogrande.sp.gov.br/ -> HTTP 0",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://transparencia.ribeiraogrande.sp.gov.br/Legislacao/Leis/ -> 302",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 90 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem ato; portais com busca inacessível: NÃO conclusivo (cidade de 123 caminhões, risco baixo). R2: acervo de leis (transparenciaprefeitura) fora do ar; não conclusivo (cidade de 123 caminhões, risco baixo). | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight do OSM é de heliponto: ignorar."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

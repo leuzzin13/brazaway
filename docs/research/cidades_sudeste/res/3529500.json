@@ -20,10 +20,25 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3529500)",
    "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://camaramendonca.sp.gov.br/ -> HTTP 501; prefeitura https://mendonca.sp.gov.br/index -> HTTP 403 (WAF/403)",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://www.imprensaoficialmunicipal.com.br/mendonca -> 200",
+   "rodada": "R7"
   }
  ],
  "data": "2026-10-11",
- "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://camaramendonca.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1 (000/000), https://mendonca.sp.gov.br/paginas/portal/legislacao/consulta (403/desafio), https://camaramendonca.sp.gov.br/ (000/000), https://mendonca.sp.gov.br/index (403/desafio); Querido Diário API sem resposta. Sem nova pesquisa.",
+ "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://camaramendonca.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1 (000/000), https://mendonca.sp.gov.br/paginas/portal/legislacao/consulta (403/desafio), https://camaramendonca.sp.gov.br/ (000/000), https://mendonca.sp.gov.br/index (403/desafio); Querido Diário API sem resposta. Sem nova pesquisa. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
  "falha_de_fonte": true,
  "osm_divergencias": [
   "OSM (contagem da preparação): hgv_no=1. Vias e etiquetas não puderam ser conferidas (Overpass fora do ar); verificar se são heliponto, ponte de rodovia estadual/federal ou rua municipal e buscar ato pelo nome da via. Divergência vira pendência, sem regra ativa."

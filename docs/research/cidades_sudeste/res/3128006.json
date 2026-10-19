@@ -1,45 +1,60 @@
 {
-  "ibge": "3128006",
-  "nome": "Guanhães",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.guanhaes.mg.gov.br/portal/leis_decretos",
-      "resultado": "200 com meta-refresh para https://guanhaes-mg.portaltp.com.br/consultas/legislativo.aspx; este responde HTTP 403 ao proxy. legislacao.py direto instar: módulo leis_decretos não respondeu."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "0 resultados nos três termos (nenhum diário consolidado cobre o município além do QD sem coleta)."
-    },
-    {
-      "url": "https://www.guanhaes.mg.gov.br/portal/diario-oficial/1/0/0/<termo>/0/ (Instar, diário próprio, 174 edições)",
-      "resultado": "Busca por texto funciona. 'caminhões', 'caminhão', 'veículos pesados', 'carga e descarga', 'tráfego', 'toneladas', 'peso bruto', 'circulação', 'restrição de trânsito': 0 edições. 'trânsito': 11 edições (1, 14, 47, 57, 72, 89, 95, 96, 142, 163, 167), baixadas e lidas por pdftotext: nenhuma menciona caminhão, pesado ou carga e descarga.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://guanhaes-mg.portaltp.com.br/consultas/legislativo.aspx",
-      "resultado": "200 agora, mas é Portal da Transparência (DevExpress/ASP.NET com viewstate); busca de legislação exige postback, não automatizada. www.guanhaes.mg.gov.br/portal/leis_decretos só faz meta-refresh para ele.",
-      "rodada": "R2"
-    },
-    {
-      "url": "www.guanhaes.mg.leg.br ; camaraguanhaes.mg.gov.br ; sapl.guanhaes.mg.leg.br",
-      "resultado": "403 / sem conexão.",
-      "rodada": "R2"
-    },
-    {
-      "url": "AMM-MG refeito (HOJE corrigido)",
-      "resultado": "0 resultados nos cinco termos; sem entidade no AMM.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Base de legislação (Portal da Transparência portaltp) bloqueada e nenhum diário consolidado cobre o município: não conclusivo. Existe Secretaria Municipal de Transporte e Trânsito (site da prefeitura), o que justifica nova tentativa por outra rota. R2: diário oficial próprio pesquisado em texto integral sem ato de restrição; a base de legislação (portaltp) continua sem busca automática, por isso falha_de_fonte permanece true. Existe Secretaria Municipal de Transporte e Trânsito.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "Não consultado nesta etapa (lote M sem pista de OSM)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3128006",
+ "nome": "Guanhães",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.guanhaes.mg.gov.br/portal/leis_decretos",
+   "resultado": "200 com meta-refresh para https://guanhaes-mg.portaltp.com.br/consultas/legislativo.aspx; este responde HTTP 403 ao proxy. legislacao.py direto instar: módulo leis_decretos não respondeu."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "0 resultados nos três termos (nenhum diário consolidado cobre o município além do QD sem coleta)."
+  },
+  {
+   "url": "https://www.guanhaes.mg.gov.br/portal/diario-oficial/1/0/0/<termo>/0/ (Instar, diário próprio, 174 edições)",
+   "resultado": "Busca por texto funciona. 'caminhões', 'caminhão', 'veículos pesados', 'carga e descarga', 'tráfego', 'toneladas', 'peso bruto', 'circulação', 'restrição de trânsito': 0 edições. 'trânsito': 11 edições (1, 14, 47, 57, 72, 89, 95, 96, 142, 163, 167), baixadas e lidas por pdftotext: nenhuma menciona caminhão, pesado ou carga e descarga.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://guanhaes-mg.portaltp.com.br/consultas/legislativo.aspx",
+   "resultado": "200 agora, mas é Portal da Transparência (DevExpress/ASP.NET com viewstate); busca de legislação exige postback, não automatizada. www.guanhaes.mg.gov.br/portal/leis_decretos só faz meta-refresh para ele.",
+   "rodada": "R2"
+  },
+  {
+   "url": "www.guanhaes.mg.leg.br ; camaraguanhaes.mg.gov.br ; sapl.guanhaes.mg.leg.br",
+   "resultado": "403 / sem conexão.",
+   "rodada": "R2"
+  },
+  {
+   "url": "AMM-MG refeito (HOJE corrigido)",
+   "resultado": "0 resultados nos cinco termos; sem entidade no AMM.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (seletor de entidades, 750 entradas)",
+   "resultado": "Nenhuma entidade 'Prefeitura/Câmara de Guanhães' no seletor do AMM-MG: município não publica no diário da AMM; sem texto integral por esse caminho.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda guanhaes (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Base de legislação (Portal da Transparência portaltp) bloqueada e nenhum diário consolidado cobre o município: não conclusivo. Existe Secretaria Municipal de Transporte e Trânsito (site da prefeitura), o que justifica nova tentativa por outra rota. R2: diário oficial próprio pesquisado em texto integral sem ato de restrição; a base de legislação (portaltp) continua sem busca automática, por isso falha_de_fonte permanece true. Existe Secretaria Municipal de Transporte e Trânsito. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "Não consultado nesta etapa (lote M sem pista de OSM)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

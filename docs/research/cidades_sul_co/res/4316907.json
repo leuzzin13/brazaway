@@ -2,9 +2,9 @@
  "ibge": "4316907",
  "nome": "Santa Maria",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "https://www.santamaria.rs.gov.br/1528-legislacao-municipal",
@@ -93,12 +93,89 @@
   {
    "url": "https://www.santamaria.rs.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
    "resultado": "sem página/ato útil (a busca só ecoa o termo)"
+  },
+  {
+   "url": "R7-FF-RS: https://www.santamaria.rs.gov.br/noticias/8791-decreto-restringe-transito-de-caminhoes-de-carga-e-descarga-com-mais-de-75-toneladas-no-centro, https://www.santamaria.rs.gov.br/arquivos/baixar-arquivo/noticias/D07-721.pdf, https://www.santamaria.rs.gov.br/arquivos/baixar-arquivo/documentos/doc_20150515-1507.pdf",
+   "resultado": "LIDO (OCR): Decreto Executivo 082/2014, de 30/07/2014 (noticia oficial da prefeitura com o PDF do decreto): ZRCD no perimetro central delimitada pelas vias dos Anexos I e II (NAO constam do PDF de 3 paginas), art. 3: caminhoes > 7,5 t PBT e > 9 m proibidos 8h-20h seg-sex e 8h-14h sab; art. 5 excecoes; art. 8 mantem restricoes do Centro Historico. Tambem Lei 092/2012 (Codigo de Posturas), art. 81, I: proibe trafegar e estacionar nas ruas do perimetro central com veiculo > 7,5 t PBT e 9 m. Textos em atos/4316907/."
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Nenhuma restrição de caminhões encontrada. Não conclusivo: Sistema Liz bloqueado, iplan (Plano de Mobilidade) e diário oficial não consultáveis. Pendência: Plano Diretor de Mobilidade Urbana de Santa Maria e decretos de trânsito central. | Rodada 2: portal da prefeitura lido, sem restrição publicada, mas o Plano Diretor de Mobilidade (iplan), o repositório de leis e o diário oficial não foram consultáveis. Inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: nenhuma fonte de legislação com cliente que passe controle positivo. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://www.santamaria.rs.gov.br/1528-legislacao-municipal: 0 atos. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada.",
+ "observacoes": "Nenhuma restrição de caminhões encontrada. Não conclusivo: Sistema Liz bloqueado, iplan (Plano de Mobilidade) e diário oficial não consultáveis. Pendência: Plano Diretor de Mobilidade Urbana de Santa Maria e decretos de trânsito central. | Rodada 2: portal da prefeitura lido, sem restrição publicada, mas o Plano Diretor de Mobilidade (iplan), o repositório de leis e o diário oficial não foram consultáveis. Inconclusivo. R3 2026-10-18: caminhos alternativos testados (Câmara, home da prefeitura, legislacao.py, FAMURS 7 termos, Querido Diário 522): nada concreto. Mantido nao_achou com falha_de_fonte=true. Fontes sem busca utilizável: nenhuma fonte de legislação com cliente que passe controle positivo. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: portal_proprio@https://www.santamaria.rs.gov.br/1528-legislacao-municipal: 0 atos. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada. | R7 2026-10-19: ALTERADO na R7 (era nao_achou): achada a regra pela busca web restrita ao dominio da prefeitura (notícia 8791). Decreto 082/2014 lido (OCR). Regra mantida DESATIVADA: o perimetro (ZRCD) e definido nos Anexos I e II do decreto, ausentes do PDF divulgado; sem as vias nao ha delimitacao georreferenciavel. Pendencia: obter os anexos na Secretaria de Mobilidade Urbana/Procuradoria; verificar alteracao/revogacao posterior (Sistema Liz e diario em Livewire bloqueados). Nao confundir com o Decreto Executivo de 2014 sobre o Centro Historico (restricoes anteriores mantidas).",
  "osm_divergencias": [
   "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
  ],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "santamaria_zrcd_7_5t",
+   "tipo": "zona",
+   "regime": "ZRCD - Zona de Restricao de Operacao de Carga e Descarga",
+   "nome": "Perimetro central de Santa Maria (ZRCD): caminhoes > 7,5 t PBT e > 9 m proibidos 8h-20h (sab 8h-14h)",
+   "status": "desativada",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "status_motivo": "Ato primario lido (Decreto Executivo 082/2014, arts. 3 e 4) mas o perimetro esta nos Anexos I e II, que nao constam do PDF divulgado; sem vias nomeadas nao ha delimitacao georreferenciavel. Vigencia atual nao verificada.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "08:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 7.5
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 9
+     }
+    ]
+   },
+   "excecoes": [
+    "Urgencia (bombeiros, policia, fiscalizacao e operacao de transito)",
+    "Saneamento, agua, energia, telecomunicacoes, coleta de lixo",
+    "Distribuicao de gas e combustiveis",
+    "Transporte de valores",
+    "Guincho/socorro mecanico",
+    "Obras e servicos de emergencia",
+    "Insumos da construcao civil",
+    "Feriados nacionais",
+    "AET da Secretaria de Mobilidade Urbana com 48 h de antecedencia (art. 7)"
+   ],
+   "base_legal": [
+    {
+     "ato": "Decreto Executivo 082/2014, de 30/07/2014 (vigor 60 dias apos a publicacao)",
+     "artigo": "arts. 2, III, 3, 4, 5, 7 e 8",
+     "url": "https://www.santamaria.rs.gov.br/arquivos/baixar-arquivo/noticias/D07-721.pdf"
+    },
+    {
+     "ato": "Lei 092/2012 (Codigo de Posturas)",
+     "artigo": "art. 81, I",
+     "url": "https://www.santamaria.rs.gov.br/arquivos/baixar-arquivo/documentos/doc_20150515-1507.pdf"
+    }
+   ],
+   "vigencia_inicio": "2014-09-28",
+   "vigencia_fim": null,
+   "nota": "Art. 3 e 4 tambem restringem carga e descarga de comercio na ZRCD. Decreto assinado 30/07/2014 (noticia diz 7/8). Vigencia = 60 dias da publicacao (aprox.).",
+   "trechos": [],
+   "geometria": []
+  }
+ ]
 }

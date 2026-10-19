@@ -2,7 +2,7 @@
  "ibge": "3539905",
  "nome": "Poloni",
  "uf": "SP",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "varredura_consolidada",
  "data": "2026-10-11",
  "fontes_consultadas": [
@@ -29,11 +29,64 @@
   {
    "url": "osm_hints_por_municipio.json (contagem, por município, de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada: o município não está entre os 367 com indício no OSM."
+  },
+  {
+   "url": "https://www.poloni.sp.gov.br/portal/leis_decretos/94474/",
+   "resultado": "Decreto 272/1988 lido"
+  },
+  {
+   "url": "https://www.poloni.sp.gov.br/portal/leis_decretos/94793/",
+   "resultado": "Decreto 14/1981: scan ilegível"
+  },
+  {
+   "url": "https://www.poloni.sp.gov.br/portal/leis_decretos/157640/",
+   "resultado": "Decreto 1.707/2019 lido (pontual, vencido)"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (259 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.poloni.sp.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (259 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (instar, https://www.poloni.sp.gov.br/portal/leis_decretos/) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra. || R7 2026-10-19: Portal da Prefeitura (Instar): Decreto 272/1988 lido: proíbe caminhões canavieiros nas vias urbanas (regra por tipo de carga, desativada). Decreto 1.707/2019 (COMPEC GALASSO, até 05/02/2020, placas listadas) é pontual vencido. Decreto 14/1981 (veículos pesados no perímetro urbano) é manuscrito/ilegível no OCR: pista.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "poloni_canavieiros_vias_urbanas",
+   "tipo": "zona",
+   "regime": "Restrição por tipo de carga (cana)",
+   "nome": "Poloni: caminhões canavieiros proibidos nas vias urbanas",
+   "status": "desativada",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "vuc": null,
+   "excecoes": [],
+   "autorizacao": null,
+   "base_legal": [
+    {
+     "ato": "Decreto municipal 272, de 20/06/1988",
+     "artigo": "arts. 1º-4º",
+     "url": "https://www.poloni.sp.gov.br/portal/leis_decretos/94474/",
+     "nota": ""
+    }
+   ],
+   "motivo_desativada": "Restrição por tipo de carga (cana-de-açúcar) e sem vias nomeadas."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
@@ -53,5 +106,6 @@
    "cliente": true,
    "testado": true
   }
- }
+ },
+ "falha_de_fonte": false
 }

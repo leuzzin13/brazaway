@@ -1,49 +1,69 @@
 {
-  "ibge": "3547700",
-  "nome": "Santo Anastácio",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.santoanastacio.sp.gov.br/portal/leis_decretos/ (Instar, toolkit legislacao.py buscar, ementa; 9 normas na base)",
-      "resultado": "Termos caminh|veículos pesados|veiculos pesados|veículo de carga|carga e descarga|tráfego|trafego|trânsito|transito|tonelad|eixos|carreta: nenhuma lei/decreto/portaria de restrição a caminhões. Base Instar com apenas 9 normas (busca 'lei' retorna 0): praticamente vazia."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "Sem acerto relevante. "
-    },
-    {
-      "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
-      "resultado": "500: não conferido"
-    },
-    {
-      "url": "https://www.imprensaoficialmunicipal.com.br/santo_anastacio (POST pesquisar.php, 'caminhões' = 4 edições, 'veículos pesados' = 1)",
-      "resultado": "Edições lidas por texto: sem ato de circulação de caminhões.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.santoanastacio.sp.gov.br/portal/diario-oficial/1/0/0/caminhões/0/",
-      "resultado": "Meta-refresh para o DOSP.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://camarasantoanastacio.sp.gov.br/",
-      "resultado": "Connection reset.",
-      "rodada": "R2"
-    },
-    {
-      "url": "overpass (area IBGE:GEOCODIGO=3547700)",
-      "resultado": "4 ways com hgv=no: ver osm_divergencias.",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "R2: nenhum ato de circulação de caminhões. Diário (DOSP, https://www.imprensaoficialmunicipal.com.br/santo_anastacio, desde 2022; o do Instar redireciona para lá): 'caminhões' = 4 edições (290A de 21/01/2022, 452, 578, 585 de 2023), todas lidas em texto, sem ato de restrição; 'veículos pesados' = 1 edição. Portal Instar da Prefeitura tem só 9 normas; Câmara (camarasantoanastacio.sp.gov.br) responde com reset/verificação de bot. OSM: 4 ways com hgv=no (way 202114363 tertiary sem nome em -21.987,-51.604 — o mesmo way aparece em Presidente Bernardes —, e 3 unclassified sem nome em -21.875,-51.659, -21.886,-51.685 e -21.884,-51.646): rurais, sem ato; pendência. Legislação pré-2022 não verificada.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "hgv=no em 4 ways sem ato: way 202114363 (tertiary, sem nome, -21.987,-51.604; fica na divisa com Presidente Bernardes), 742622831 (-21.875,-51.659), 742622833 (-21.886,-51.685), 742628635 (-21.884,-51.646), todos unclassified/tertiary sem nome e rurais. Nenhum ato achado: pendência para a frente de OSM."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3547700",
+ "nome": "Santo Anastácio",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.santoanastacio.sp.gov.br/portal/leis_decretos/ (Instar, toolkit legislacao.py buscar, ementa; 9 normas na base)",
+   "resultado": "Termos caminh|veículos pesados|veiculos pesados|veículo de carga|carga e descarga|tráfego|trafego|trânsito|transito|tonelad|eixos|carreta: nenhuma lei/decreto/portaria de restrição a caminhões. Base Instar com apenas 9 normas (busca 'lei' retorna 0): praticamente vazia."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "Sem acerto relevante. "
+  },
+  {
+   "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
+   "resultado": "500: não conferido"
+  },
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/santo_anastacio (POST pesquisar.php, 'caminhões' = 4 edições, 'veículos pesados' = 1)",
+   "resultado": "Edições lidas por texto: sem ato de circulação de caminhões.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.santoanastacio.sp.gov.br/portal/diario-oficial/1/0/0/caminhões/0/",
+   "resultado": "Meta-refresh para o DOSP.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camarasantoanastacio.sp.gov.br/",
+   "resultado": "Connection reset.",
+   "rodada": "R2"
+  },
+  {
+   "url": "overpass (area IBGE:GEOCODIGO=3547700)",
+   "resultado": "4 ways com hgv=no: ver osm_divergencias.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://camarasantoanastacio.sp.gov.br/ -> HTTP 200; prefeitura https://www.santoanastacio.sp.gov.br/ -> HTTP 0",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://santoanastacio.sp.gov.br/portal/leis_decretos/ -> 200; https://www.santoanastacio.sp.gov.br/portal/leis_decretos/ -> 200; https://camarasantoanastacio.sp.gov.br/portal/leis_decretos/ -> 200; https://santoanastacio.sp.gov.br/diario-oficial -> 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 0 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "R2: nenhum ato de circulação de caminhões. Diário (DOSP, https://www.imprensaoficialmunicipal.com.br/santo_anastacio, desde 2022; o do Instar redireciona para lá): 'caminhões' = 4 edições (290A de 21/01/2022, 452, 578, 585 de 2023), todas lidas em texto, sem ato de restrição; 'veículos pesados' = 1 edição. Portal Instar da Prefeitura tem só 9 normas; Câmara (camarasantoanastacio.sp.gov.br) responde com reset/verificação de bot. OSM: 4 ways com hgv=no (way 202114363 tertiary sem nome em -21.987,-51.604 — o mesmo way aparece em Presidente Bernardes —, e 3 unclassified sem nome em -21.875,-51.659, -21.886,-51.685 e -21.884,-51.646): rurais, sem ato; pendência. Legislação pré-2022 não verificada. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "hgv=no em 4 ways sem ato: way 202114363 (tertiary, sem nome, -21.987,-51.604; fica na divisa com Presidente Bernardes), 742622831 (-21.875,-51.659), 742622833 (-21.886,-51.685), 742628635 (-21.884,-51.646), todos unclassified/tertiary sem nome e rurais. Nenhum ato achado: pendência para a frente de OSM."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

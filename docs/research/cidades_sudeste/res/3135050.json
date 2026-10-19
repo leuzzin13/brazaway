@@ -1,52 +1,67 @@
 {
-  "ibge": "3135050",
-  "nome": "Jaíba",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://jaiba.mg.gov.br/",
-      "resultado": "Home carregou; só links de leis federais (Aldir Blanc/Paulo Gustavo) e 'Leis e Atos'."
-    },
-    {
-      "url": "https://www.portalcr2.com.br/leis-e-atos/leis-jaiba",
-      "resultado": "Portal de leis é app Bubble (JavaScript puro): sem busca automatizável; página estática sem listagem."
-    },
-    {
-      "url": "https://jaiba.mg.gov.br/wp-json/wp/v2/search",
-      "resultado": "Sem API WordPress."
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3135050)",
-      "resultado": "1 way com maxweight: helipad 'Fly Green' (way 563180790, maxweight=3.0). Helipontos (aeroway=helipad) com maxweight são limite do pouso, não restrição viária."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py lead 3135050",
-      "resultado": "Sem cobertura em diário consolidado."
-    },
-    {
-      "url": "https://jaiba.mg.gov.br/ ; https://jaiba.mg.leg.br/",
-      "resultado": "Home da prefeitura e da Câmara respondem 200 (Câmara com 1,8 KB, sem links de legislação); portal de leis continua o app Bubble (portalcr2.com.br), sem busca automatizável.",
-      "rodada": "R2"
-    },
-    {
-      "url": "AMM-MG refeito (HOJE corrigido)",
-      "resultado": "0 resultados nos cinco termos; sem entidade no AMM.",
-      "rodada": "R2"
-    },
-    {
-      "url": "Overpass (R1)",
-      "resultado": "Só heliponto com maxweight; mantido.",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Nenhum ato achado; portal de legislação (Bubble) não é pesquisável por robô e não há diário consolidado: busca não conclusiva. OSM: apenas heliponto. R2: nada novo; o portal de leis (Bubble) segue inacessível a robô e não há diário consolidado.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "maxweight=3.0 em heliponto 'Fly Green' (way 563180790): descartado."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3135050",
+ "nome": "Jaíba",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://jaiba.mg.gov.br/",
+   "resultado": "Home carregou; só links de leis federais (Aldir Blanc/Paulo Gustavo) e 'Leis e Atos'."
+  },
+  {
+   "url": "https://www.portalcr2.com.br/leis-e-atos/leis-jaiba",
+   "resultado": "Portal de leis é app Bubble (JavaScript puro): sem busca automatizável; página estática sem listagem."
+  },
+  {
+   "url": "https://jaiba.mg.gov.br/wp-json/wp/v2/search",
+   "resultado": "Sem API WordPress."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3135050)",
+   "resultado": "1 way com maxweight: helipad 'Fly Green' (way 563180790, maxweight=3.0). Helipontos (aeroway=helipad) com maxweight são limite do pouso, não restrição viária."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py lead 3135050",
+   "resultado": "Sem cobertura em diário consolidado."
+  },
+  {
+   "url": "https://jaiba.mg.gov.br/ ; https://jaiba.mg.leg.br/",
+   "resultado": "Home da prefeitura e da Câmara respondem 200 (Câmara com 1,8 KB, sem links de legislação); portal de leis continua o app Bubble (portalcr2.com.br), sem busca automatizável.",
+   "rodada": "R2"
+  },
+  {
+   "url": "AMM-MG refeito (HOJE corrigido)",
+   "resultado": "0 resultados nos cinco termos; sem entidade no AMM.",
+   "rodada": "R2"
+  },
+  {
+   "url": "Overpass (R1)",
+   "resultado": "Só heliponto com maxweight; mantido.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (seletor de entidades, 750 entradas)",
+   "resultado": "Nenhuma entidade 'Prefeitura/Câmara de Jaíba' no seletor do AMM-MG: município não publica no diário da AMM; sem texto integral por esse caminho.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda jaiba (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Nenhum ato achado; portal de legislação (Bubble) não é pesquisável por robô e não há diário consolidado: busca não conclusiva. OSM: apenas heliponto. R2: nada novo; o portal de leis (Bubble) segue inacessível a robô e não há diário consolidado. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight=3.0 em heliponto 'Fly Green' (way 563180790): descartado."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

@@ -2,9 +2,9 @@
  "ibge": "4307005",
  "nome": "Erechim",
  "uf": "RS",
- "status": "pontual",
+ "status": "regra_com_ato",
  "nivel_busca": "profunda",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "fontes_consultadas": [
   {
    "url": "api.queridodiario.org.br territory_ids=4307005",
@@ -33,10 +33,14 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente erechim, erechim-rs, erechimrs); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "R7-FF-RS: https://www.pmerechim.rs.gov.br/legislacao (POST palavras=caminh|pesad|carga e descarga|tonelad|transito|trafego; decretos, leis executivas e municipais), https://pmerechim.rs.gov.br/uploads/legislacao/259694_plano_diretor_do_sistema_virioconsolidado.pdf, https://sapl.erechim.rs.leg.br/api/norma/normajuridica/ (caminh, transito, trafego, carga e descarga, pesados, tonelad)",
+   "resultado": "LIDO: Lei 2.596/1994 (Plano Diretor do Sistema Viario Urbano, consolidada no portal da prefeitura), art. 13: trafego de caminhoes pesados limitado as vias perimetrais, vedado o acesso a area central; art. 14: na area circundada pelas perimetrais so veiculos com ate 4 t de carga; art. 15: horarios de carga e descarga por regulamento. Perimetrais e area central na planta anexa (nao trazida pelo PDF). Portal proprio da prefeitura varrido por palavras-chave: nenhum decreto de restricao alem do 2.457/1998 (carga e descarga). Texto em atos/4307005/lei_2596_1994_plano_diretor_sistema_viario.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Só achado o Decreto 2.457/1998 (carga e descarga das 18h30 às 9h30 na Av. Maurício Cardoso, entre a Praça da Bandeira e as ruas Argentina/J. B. Cabral; OCR duvidoso no nome das ruas). É janela de carga e descarga, não proibição de circulação; vigência atual não confirmada (CESPRO bloqueado, SAPL sem 2022+). Pendência: abrir CESPRO manualmente para alterações posteriores. | R3 2026-10-18: Sem consulta nova em R3 além da revisão do res: decisão mantida (restrição de estacionamento/carga e descarga/chuva/temporária ou sem perímetro, não roteável). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Só achado o Decreto 2.457/1998 (carga e descarga das 18h30 às 9h30 na Av. Maurício Cardoso, entre a Praça da Bandeira e as ruas Argentina/J. B. Cabral; OCR duvidoso no nome das ruas). É janela de carga e descarga, não proibição de circulação; vigência atual não confirmada (CESPRO bloqueado, SAPL sem 2022+). Pendência: abrir CESPRO manualmente para alterações posteriores. | R3 2026-10-18: Sem consulta nova em R3 além da revisão do res: decisão mantida (restrição de estacionamento/carga e descarga/chuva/temporária ou sem perímetro, não roteável). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R7 2026-10-19: ALTERADO na R7 (era pontual): o portal proprio de legislacao da prefeitura (pmerechim.rs.gov.br/legislacao, busca POST) e o SAPL da Camara foram varridos; achada a Lei 2.596/1994, arts. 13-14 (caminhoes pesados fora da area central; so ate 4 t de carga dentro do anel perimetral). Regra DESATIVADA: sem peso definido para \"caminhoes pesados\", e as vias perimetrais/area central estao na planta anexa (nao lida), sem vias nomeadas no texto. Pendencia: planta anexa e eventual decreto regulamentador (art. 15; Dec. 2.457/1998 so cuida de horario de carga e descarga na Av. Mauricio Cardoso).",
  "osm_divergencias": [
   "OSM/Overpass não consultado nesta rodada (sem geometria no rascunho)."
  ],
@@ -66,6 +70,51 @@
    ],
    "vigencia_inicio": "1998-06-23",
    "vigencia_fim": null,
+   "trechos": [],
+   "geometria": []
+  },
+  {
+   "id": "erechim_lei2596_caminhoes_pesados_area_central",
+   "tipo": "zona",
+   "regime": "Plano Diretor do Sistema Viario",
+   "nome": "Erechim: caminhoes pesados limitados as vias perimetrais; area central so ate 4 t de carga",
+   "status": "desativada",
+   "confianca": "baixa",
+   "verificado_em": "2026-10-19",
+   "status_motivo": "Ato primario vigente lido (Lei 2.596/1994, arts. 13 e 14), mas sem delimitacao georreferenciavel: perimetral e area central estao so na planta anexa; \"caminhoes pesados\" sem peso; sem horario.",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "payload_t",
+      "acima": 4
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 2.596, de 04/01/1994",
+     "artigo": "arts. 7, 13 e 14",
+     "url": "https://pmerechim.rs.gov.br/uploads/legislacao/259694_plano_diretor_do_sistema_virioconsolidado.pdf"
+    }
+   ],
+   "nota": "Art. 14: dentro da area circundada pelas vias perimetrais somente veiculos com ate 4 t de carga. Planta anexa nao disponivel.",
    "trechos": [],
    "geometria": []
   }

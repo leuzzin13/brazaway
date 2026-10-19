@@ -1,115 +1,130 @@
 {
-  "ibge": "3302858",
-  "nome": "Mesquita",
-  "uf": "RJ",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
+ "ibge": "3302858",
+ "nome": "Mesquita",
+ "uf": "RJ",
+ "status": "nao_achou",
+ "nivel_busca": "media",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://mesquita.rj.leg.br/",
+   "resultado": "Home da Câmara responde 200 (2,8 KB); sem cliente de legislação (sistema desconhecido); prefeitura www.mesquita.rj.gov.br 403."
+  },
+  {
+   "url": "diarios_consolidados.py buscar (\"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\")",
+   "resultado": "aemerj: 'veículos pesados' trouxe o Decreto 1232/2013 (https://www.diariomunicipal.com.br/aemerj/materia/7133FC73), lido: regulamento das feiras livres (proíbe veículo de carga/descarga na feira das 6h às 14h). Pontual/ruído, não é restrição de circulação. Demais termos: 0."
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3302858 'veículos de carga' (qd + aemerj)",
+   "resultado": "Achou o Decreto 2432/2019 (14/01/2019): proibia entrada e circulação de veículos de carga e operação de carga e descarga em todo o município, seg-sex em dias úteis, 6h-10h e 17h-19h. Diário ed. 671: https://data.queridodiario.ok.org.br/3302858/2019-01-14/1d72ca38443abb68326476db35528f347532b0b7.pdf (texto lido, copiado em atos/3302858/qd_2019-01-14_ed671.txt).",
+   "rodada": "R2"
+  },
+  {
+   "url": "diarios_consolidados.py buscar 3302858 'Decreto nº 2432' (qd)",
+   "resultado": "Achou o Decreto 2447, de 12/02/2019 (diário ed. 692, https://data.queridodiario.ok.org.br/3302858/2019-02-12/b41b2055c4663190b18999f7cb8c68e8bb464819.pdf): art. 1º ANULA, por vício de procedimento, o Decreto 2.432/2019; art. 2º: efeitos retroagem à vigência da norma anulada. Texto lido (atos/3302858/qd_2019-02-12_ed692.txt). Buscas posteriores ('veículos de carga', 'circulação de caminhões', 'carga e descarga') não acharam decreto que restabeleça a regra.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://data.queridodiario.ok.org.br/3302858/2022-06-10/7fb9bf0ffab1b2aabe66923c1b7cef56269d70d3.txt",
+   "resultado": "Lei 1.200/2022 (PlanMob Mesquita), art. 21, I: apenas diretriz ('regulamentação de circulação de veículos de carga ... estabelecimento de locais e horários de restrição'). Não é regra.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://mesquita.rj.gov.br/ e https://www.mesquita.rj.gov.br/ (portal da prefeitura)",
+   "resultado": "Página de erro 'Hospedagem Locaweb' (site fora do ar); Wayback sem captura (archive.org/wayback/available vazio).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://mesquita.rj.leg.br/",
+   "resultado": "200, mas é SPA genérico 'Portais Institucionais' (NPI Brasil, supabase) sem lista de legislação acessível por curl.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/aemerj/pesquisar (SIGPub RJ, 14 entidades)",
+   "resultado": "Município consta, ver observação.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .rj.gov.br e .rj.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda mesquita (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.rj.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Sem achado de restrição geral. Fontes primárias de legislação (Câmara/prefeitura) não consultáveis por automação; ausência fraca. OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar. | R2: achado e descartado o Decreto 2.432/2019 (horário de circulação de veículos de carga, 6h-10h e 17h-19h, dias úteis, todo o município), ANULADO pelo Decreto 2.447/2019 (12/02/2019, efeitos retroativos). Nenhuma regra vigente localizada. Lei 1.200/2022 (PlanMob) traz só diretriz (art. 21). Portal da prefeitura continua fora do ar e Câmara sem busca: a cobertura é só do diário (QD/AEMERJ), então a ausência é fraca e falha_de_fonte permanece true. Obs.: o Dec. 1232/2013 (feira livre) já descartado na R1. OSM (R2): 0 ways com restrição de peso/hgv. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida. AEMERJ (SIGPub) cobre a Prefeitura de Mesquita só em 2009-08 a 2013-04 (7.282 matérias); achado lateral Decreto 1.232/2013 é regulamento de feiras livres (fora de escopo). Diário próprio de 2013 em diante não consultado: mantém falha_de_fonte.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [
+  {
+   "id": "mesquita_dec2432_horario_veiculos_carga_2019",
+   "tipo": "zona",
+   "regime": "Proibição de circulação de veículos de carga em horário de pico (município inteiro)",
+   "nome": "Mesquita: veículos de carga proibidos seg-sex 6h-10h e 17h-19h (Dec. 2.432/2019), ANULADO pelo Dec. 2.447/2019",
+   "status": "revogada",
+   "status_motivo": "Decreto 2.432, de 14/01/2019, foi anulado por vício de procedimento pelo Decreto 2.447, de 12/02/2019 (art. 1º), com efeitos retroativos à vigência da norma anulada (art. 2º). Nenhum ato posterior restabelece a regra nas buscas feitas.",
+   "confianca": "alta",
+   "janelas": [
     {
-      "url": "https://mesquita.rj.leg.br/",
-      "resultado": "Home da Câmara responde 200 (2,8 KB); sem cliente de legislação (sistema desconhecido); prefeitura www.mesquita.rj.gov.br 403."
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "06:00",
+     "to": "10:00"
     },
     {
-      "url": "diarios_consolidados.py buscar (\"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\")",
-      "resultado": "aemerj: 'veículos pesados' trouxe o Decreto 1232/2013 (https://www.diariomunicipal.com.br/aemerj/materia/7133FC73), lido: regulamento das feiras livres (proíbe veículo de carga/descarga na feira das 6h às 14h). Pontual/ruído, não é restrição de circulação. Demais termos: 0."
-    },
-    {
-      "url": "diarios_consolidados.py buscar 3302858 'veículos de carga' (qd + aemerj)",
-      "resultado": "Achou o Decreto 2432/2019 (14/01/2019): proibia entrada e circulação de veículos de carga e operação de carga e descarga em todo o município, seg-sex em dias úteis, 6h-10h e 17h-19h. Diário ed. 671: https://data.queridodiario.ok.org.br/3302858/2019-01-14/1d72ca38443abb68326476db35528f347532b0b7.pdf (texto lido, copiado em atos/3302858/qd_2019-01-14_ed671.txt).",
-      "rodada": "R2"
-    },
-    {
-      "url": "diarios_consolidados.py buscar 3302858 'Decreto nº 2432' (qd)",
-      "resultado": "Achou o Decreto 2447, de 12/02/2019 (diário ed. 692, https://data.queridodiario.ok.org.br/3302858/2019-02-12/b41b2055c4663190b18999f7cb8c68e8bb464819.pdf): art. 1º ANULA, por vício de procedimento, o Decreto 2.432/2019; art. 2º: efeitos retroagem à vigência da norma anulada. Texto lido (atos/3302858/qd_2019-02-12_ed692.txt). Buscas posteriores ('veículos de carga', 'circulação de caminhões', 'carga e descarga') não acharam decreto que restabeleça a regra.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://data.queridodiario.ok.org.br/3302858/2022-06-10/7fb9bf0ffab1b2aabe66923c1b7cef56269d70d3.txt",
-      "resultado": "Lei 1.200/2022 (PlanMob Mesquita), art. 21, I: apenas diretriz ('regulamentação de circulação de veículos de carga ... estabelecimento de locais e horários de restrição'). Não é regra.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://mesquita.rj.gov.br/ e https://www.mesquita.rj.gov.br/ (portal da prefeitura)",
-      "resultado": "Página de erro 'Hospedagem Locaweb' (site fora do ar); Wayback sem captura (archive.org/wayback/available vazio).",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://mesquita.rj.leg.br/",
-      "resultado": "200, mas é SPA genérico 'Portais Institucionais' (NPI Brasil, supabase) sem lista de legislação acessível por curl.",
-      "rodada": "R2"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "17:00",
+     "to": "19:00"
     }
-  ],
-  "observacoes": "Sem achado de restrição geral. Fontes primárias de legislação (Câmara/prefeitura) não consultáveis por automação; ausência fraca. OSM/Overpass não consultado neste lote (nível médio); sem divergências a registrar. | R2: achado e descartado o Decreto 2.432/2019 (horário de circulação de veículos de carga, 6h-10h e 17h-19h, dias úteis, todo o município), ANULADO pelo Decreto 2.447/2019 (12/02/2019, efeitos retroativos). Nenhuma regra vigente localizada. Lei 1.200/2022 (PlanMob) traz só diretriz (art. 21). Portal da prefeitura continua fora do ar e Câmara sem busca: a cobertura é só do diário (QD/AEMERJ), então a ausência é fraca e falha_de_fonte permanece true. Obs.: o Dec. 1232/2013 (feira livre) já descartado na R1. OSM (R2): 0 ways com restrição de peso/hgv.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [
+   ],
+   "feriados": "suspende",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "Art. 2º: veículos de socorro e emergência (art. 29, VII, CTB); transporte de valores; mudança residencial; serviços essenciais de utilidade pública autorizados previamente pela Secretaria Municipal de Transporte e Trânsito"
+   ],
+   "base_legal": [
     {
-      "id": "mesquita_dec2432_horario_veiculos_carga_2019",
-      "tipo": "zona",
-      "regime": "Proibição de circulação de veículos de carga em horário de pico (município inteiro)",
-      "nome": "Mesquita: veículos de carga proibidos seg-sex 6h-10h e 17h-19h (Dec. 2.432/2019), ANULADO pelo Dec. 2.447/2019",
-      "status": "revogada",
-      "status_motivo": "Decreto 2.432, de 14/01/2019, foi anulado por vício de procedimento pelo Decreto 2.447, de 12/02/2019 (art. 1º), com efeitos retroativos à vigência da norma anulada (art. 2º). Nenhum ato posterior restabelece a regra nas buscas feitas.",
-      "confianca": "alta",
-      "janelas": [
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "from": "06:00",
-          "to": "10:00"
-        },
-        {
-          "days": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "from": "17:00",
-          "to": "19:00"
-        }
-      ],
-      "feriados": "suspende",
-      "alvo": {
-        "caminhao": true
-      },
-      "excecoes": [
-        "Art. 2º: veículos de socorro e emergência (art. 29, VII, CTB); transporte de valores; mudança residencial; serviços essenciais de utilidade pública autorizados previamente pela Secretaria Municipal de Transporte e Trânsito"
-      ],
-      "base_legal": [
-        {
-          "ato": "Decreto municipal 2.432, de 14/01/2019 (Diário Oficial de Mesquita ed. 671, republicado)",
-          "artigo": "art. 1º (proibição), art. 2º (exceções)",
-          "url": "https://data.queridodiario.ok.org.br/3302858/2019-01-14/1d72ca38443abb68326476db35528f347532b0b7.pdf"
-        },
-        {
-          "ato": "Decreto municipal 2.447, de 12/02/2019 (Diário Oficial de Mesquita ed. 692) - anula o Dec. 2.432/2019",
-          "artigo": "arts. 1º e 2º",
-          "url": "https://data.queridodiario.ok.org.br/3302858/2019-02-12/b41b2055c4663190b18999f7cb8c68e8bb464819.pdf"
-        }
-      ],
-      "vigencia_inicio": "2019-01-14",
-      "vigencia_fim": "2019-02-12",
-      "source_id": "mesquita_dec2432_2019_anulado",
-      "trechos": [
-        {
-          "via": "Todo o município (sem lista de vias)"
-        }
-      ],
-      "geometria": [
-        {
-          "arquivo": "municipios/geo/3302858_mesquita.geojson",
-          "construir": "manual"
-        }
-      ]
+     "ato": "Decreto municipal 2.432, de 14/01/2019 (Diário Oficial de Mesquita ed. 671, republicado)",
+     "artigo": "art. 1º (proibição), art. 2º (exceções)",
+     "url": "https://data.queridodiario.ok.org.br/3302858/2019-01-14/1d72ca38443abb68326476db35528f347532b0b7.pdf"
+    },
+    {
+     "ato": "Decreto municipal 2.447, de 12/02/2019 (Diário Oficial de Mesquita ed. 692) - anula o Dec. 2.432/2019",
+     "artigo": "arts. 1º e 2º",
+     "url": "https://data.queridodiario.ok.org.br/3302858/2019-02-12/b41b2055c4663190b18999f7cb8c68e8bb464819.pdf"
     }
-  ],
-  "rodada": "R2"
+   ],
+   "vigencia_inicio": "2019-01-14",
+   "vigencia_fim": "2019-02-12",
+   "source_id": "mesquita_dec2432_2019_anulado",
+   "trechos": [
+    {
+     "via": "Todo o município (sem lista de vias)"
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3302858_mesquita.geojson",
+     "construir": "manual"
+    }
+   ]
+  }
+ ],
+ "rodada": "R7"
 }

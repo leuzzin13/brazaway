@@ -33,9 +33,29 @@
   {
    "url": "https://overpass.kumi.systems/api/interpreter e overpass.private.coffee (hgv=no na área IBGE 3548708)",
    "resultado": "HTTP 500 repetido; overpass-api.de reset. Divergência do OSM não detalhada."
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://www.camarasbc.sp.gov.br/ -> HTTP 200; prefeitura https://www.saobernardo.sp.gov.br/ -> HTTP 0",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 0 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
   }
  ],
- "observacoes": "Maior cidade do lote (20.702 caminhões), mas nada de restrição de circulação encontrado: só o regulamento interno do Parque Estoril (Resolução SU 001/2026), plano de mobilidade e um pedido de sinalização numa rua do Jd. Canaã. A restrição regional do ABC de 2012 já está registrada como revogada em 3547809.json. O portal de legislação (leismunicipais) está bloqueado e a busca em diário foi só de termos-chave: não é prova de ausência, principalmente porque o OSM tem 42 vias com hgv=no, 13 com maxweight e 5 com maxlength. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://leismunicipais.com.br/camara/sp/saobernardodocampo (403/desafio), https://leismunicipais.com.br/prefeitura/sp/saobernardodocampo (403/desafio), https://www.camarasbc.sp.gov.br/ (200/desafio), https://www.saobernardo.sp.gov.br/ (000/000); Querido Diário API sem resposta. Sem nova pesquisa.",
+ "observacoes": "Maior cidade do lote (20.702 caminhões), mas nada de restrição de circulação encontrado: só o regulamento interno do Parque Estoril (Resolução SU 001/2026), plano de mobilidade e um pedido de sinalização numa rua do Jd. Canaã. A restrição regional do ABC de 2012 já está registrada como revogada em 3547809.json. O portal de legislação (leismunicipais) está bloqueado e a busca em diário foi só de termos-chave: não é prova de ausência, principalmente porque o OSM tem 42 vias com hgv=no, 13 com maxweight e 5 com maxlength. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://leismunicipais.com.br/camara/sp/saobernardodocampo (403/desafio), https://leismunicipais.com.br/prefeitura/sp/saobernardodocampo (403/desafio), https://www.camarasbc.sp.gov.br/ (200/desafio), https://www.saobernardo.sp.gov.br/ (000/000); Querido Diário API sem resposta. Sem nova pesquisa. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
  "falha_de_fonte": true,
  "osm_divergencias": [
   "OSM (hint da triagem): hgv=no em 42 vias, maxweight em 13, maxlength em 5, 14 outras condicionais; não detalhadas (Overpass indisponível). Sem ato municipal: não ativar. Verificar casos de pontes/rodovias estaduais (Rodoanel, Anchieta) e limitadores de altura 4,3 m na Av. Humberto de Campos (docs/layers/altura_osm.md)."

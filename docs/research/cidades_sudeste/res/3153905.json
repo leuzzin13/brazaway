@@ -1,49 +1,64 @@
 {
-  "ibge": "3153905",
-  "nome": "Raposos",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.camararaposos.mg.gov.br/legislacao (Portal Fácil, Câmara)",
-      "resultado": "302 para google.com pelo proxy; ajaxpro não achado. Host redireciona para google.com (302) pelo proxy desta máquina; portal inacessível. Cliente do toolkit devolveu 0 resultados/erro, não conclusivo."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3153905",
-      "resultado": "0 em amm-mg e qd."
-    },
-    {
-      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3153905)",
-      "resultado": "1 way: ponte 'Ponte de Raposos' (secondary, -19.9665/-43.806) maxweight=12."
-    },
-    {
-      "url": "https://www.camararaposos.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
-      "resultado": "0 normas relevantes na Câmara. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3153905 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "0 resultados.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Nenhuma fonte de ato acessível (proxy). Ponte com maxweight=12 no OSM: limite de carga da ponte, sem ato; possível via estadual/municipal, conferir. || R2: Prefeitura de Raposos não identificada no portais.json (só a Câmara, Portal Fácil www.camararaposos.mg.gov.br, lida agora pelo corpo do 302): 0 normas com os termos. Decretos do Executivo ficam sem cobertura, por isso falha_de_fonte=true. OSM: ponte de Raposos maxweight=12 t sem ato (pista). AMM refeito: 0.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "way 28061141 'Ponte de Raposos' maxweight=12 t (secondary): limite estrutural sem ato; em caminhão com PBT>12 t seria relevante, conferir competência (DER-MG?)."
-  ],
-  "regras_rascunho": [
-    {
-      "id": "raposos_ponte_osm",
-      "tipo": "ponte",
-      "regime": "Ponte (indício OSM)",
-      "nome": "Raposos: Ponte de Raposos com maxweight=12 no OSM",
-      "status": "desativada",
-      "status_motivo": "Indício só do OSM (way 28061141), sem ato nem confirmação de competência municipal.",
-      "confianca": "baixa"
-    }
-  ],
-  "rodada": "R2"
+ "ibge": "3153905",
+ "nome": "Raposos",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.camararaposos.mg.gov.br/legislacao (Portal Fácil, Câmara)",
+   "resultado": "302 para google.com pelo proxy; ajaxpro não achado. Host redireciona para google.com (302) pelo proxy desta máquina; portal inacessível. Cliente do toolkit devolveu 0 resultados/erro, não conclusivo."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3153905",
+   "resultado": "0 em amm-mg e qd."
+  },
+  {
+   "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3153905)",
+   "resultado": "1 way: ponte 'Ponte de Raposos' (secondary, -19.9665/-43.806) maxweight=12."
+  },
+  {
+   "url": "https://www.camararaposos.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+   "resultado": "0 normas relevantes na Câmara. Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3153905 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "0 resultados.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (seletor de entidades, 750 entradas)",
+   "resultado": "Nenhuma entidade 'Prefeitura/Câmara de Raposos' no seletor do AMM-MG: município não publica no diário da AMM; sem texto integral por esse caminho.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda raposos (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Nenhuma fonte de ato acessível (proxy). Ponte com maxweight=12 no OSM: limite de carga da ponte, sem ato; possível via estadual/municipal, conferir. || R2: Prefeitura de Raposos não identificada no portais.json (só a Câmara, Portal Fácil www.camararaposos.mg.gov.br, lida agora pelo corpo do 302): 0 normas com os termos. Decretos do Executivo ficam sem cobertura, por isso falha_de_fonte=true. OSM: ponte de Raposos maxweight=12 t sem ato (pista). AMM refeito: 0. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "way 28061141 'Ponte de Raposos' maxweight=12 t (secondary): limite estrutural sem ato; em caminhão com PBT>12 t seria relevante, conferir competência (DER-MG?)."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "raposos_ponte_osm",
+   "tipo": "ponte",
+   "regime": "Ponte (indício OSM)",
+   "nome": "Raposos: Ponte de Raposos com maxweight=12 no OSM",
+   "status": "desativada",
+   "status_motivo": "Indício só do OSM (way 28061141), sem ato nem confirmação de competência municipal.",
+   "confianca": "baixa"
+  }
+ ],
+ "rodada": "R7"
 }

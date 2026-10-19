@@ -1,35 +1,50 @@
 {
-  "ibge": "3157708",
-  "nome": "Santa Juliana",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.santajuliana.mg.gov.br/ (home)",
-      "resultado": "200; site tem só módulo 'diário' (/web/diario/); /web/legislacao/, /web/leis/ e /web/transparencia/ dão 404; sem base de normas acessível."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "AMM-MG: 0 para 'circulação de caminhões' e 'trânsito de caminhões'; 14 para 'veículos pesados', todos ruído (licitação/ata de registro de preços/manutenção de frota, E lógico sem frase exata); nenhum ato de trânsito. QD: 0."
-    },
-    {
-      "url": "https://www.santajuliana.mg.gov.br/web/diario/",
-      "resultado": "Só filtro por tipo (decreto, edital etc.); sem busca textual nem base de leis.",
-      "rodada": "R2"
-    },
-    {
-      "url": "AMM-MG refeito (HOJE corrigido)",
-      "resultado": "'veículos pesados' 14 resultados, todos licitação/registro de preços/frota (score negativo); demais termos 0.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Sem portal de legislação acessível; AMM-MG varrido sem ato de trânsito (apenas pregões de manutenção de veículos pesados). R2: sem portal de legislação pesquisável; AMM sem ato de circulação.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "Não consultado nesta etapa (lote M sem pista de OSM)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3157708",
+ "nome": "Santa Juliana",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.santajuliana.mg.gov.br/ (home)",
+   "resultado": "200; site tem só módulo 'diário' (/web/diario/); /web/legislacao/, /web/leis/ e /web/transparencia/ dão 404; sem base de normas acessível."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "AMM-MG: 0 para 'circulação de caminhões' e 'trânsito de caminhões'; 14 para 'veículos pesados', todos ruído (licitação/ata de registro de preços/manutenção de frota, E lógico sem frase exata); nenhum ato de trânsito. QD: 0."
+  },
+  {
+   "url": "https://www.santajuliana.mg.gov.br/web/diario/",
+   "resultado": "Só filtro por tipo (decreto, edital etc.); sem busca textual nem base de leis.",
+   "rodada": "R2"
+  },
+  {
+   "url": "AMM-MG refeito (HOJE corrigido)",
+   "resultado": "'veículos pesados' 14 resultados, todos licitação/registro de preços/frota (score negativo); demais termos 0.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (busca_avancada[entidade], texto integral; 6 termos x título todos/decreto/lei, pág. 1)",
+   "resultado": "Câmara Municipal de Santa Juliana id 3858959: 31 matérias, 2026-06-11 a 2026-10-15; Prefeitura Municipal de Santa Juliana id 799103: 4284 matérias, 2021-03-03 a 2026-10-16. 34 matérias recuperadas, 0 'plausíveis' lidas por trecho; sem ato novo de restrição a caminhões além do já registrado.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda santajuliana (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem portal de legislação acessível; AMM-MG varrido sem ato de trânsito (apenas pregões de manutenção de veículos pesados). R2: sem portal de legislação pesquisável; AMM sem ato de circulação. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "Não consultado nesta etapa (lote M sem pista de OSM)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

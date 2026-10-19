@@ -1,54 +1,58 @@
 {
-  "ibge": "3535408",
-  "nome": "Panorama",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "http://camarapanorama.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
-      "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
-    },
-    {
-      "url": "toolkit/legislacao.py buscar 3535408 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
-      "resultado": "Webline panorama.sp.gov.br: 8 Leis Ordinárias de 1958-1980 sobre compra/venda de caminhão da prefeitura (ruído); Decretos e Leis Complementares: 0."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar 3535408 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
-      "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3535408)",
-      "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
-    },
-    {
-      "url": "https://panorama.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=N&ano=AAAA (Webline da prefeitura; listagem por ano de Leis 1955–2026, Decretos e LC lidos localmente)",
-      "resultado": "Respondeu: leis de 68 anos (3.350 itens), LC 65 itens; decretos só de 6 anos (615 itens: o portal não tem todos). Achados: compras/vendas de caminhão da prefeitura, Zona Azul na Rua Quintino Maudonnet (estacionamento), serviços com máquinas e caminhões. Nenhuma restrição a caminhões.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://camarapanorama.sp.gov.br/ (Busca Avançada Webline)",
-      "resultado": "Responde, mas a base de leis da Câmara não devolve itens (0 para \"municipal\"): sem uso.",
-      "rodada": "R2"
-    },
-    {
-      "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=panorama (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
-      "resultado": "DiOE/DOSP panorama: termos caminhões, tráfego, proibido; 4 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://overpass.private.coffee/api/interpreter (IBGE:GEOCODIGO=3535408)",
-      "resultado": "Respondeu: 4 ways: 2 viadutos Av. Rodion Podolsky maxweight=100, ponte Av. Antônio Domingues Bordin maxweight=120 (secondary) e Rua Quintino Maldonet hgv=no (tertiary).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1, maxweight=3. || R2: Fonte principal (Webline da prefeitura) respondeu; leis cobertas, decretos só em parte dos anos (vazio não prova ausência). Sem ato de restrição. Pendência OSM: hgv=no na Rua Quintino Maldonet sem ato (a Zona Azul da mesma rua é estacionamento); maxweight=100/120 nas pontes (valores em toneladas, provável erro de unidade).",
-  "falha_de_fonte": false,
-  "osm_divergencias": [
-    "way 1319601542 Rua Quintino Maldonet (tertiary) hgv=no: sem ato municipal localizado (a lei que cria a Zona Azul nessa rua trata de estacionamento): pendência. Não corrigir a camada.",
-    "ways 370366913/370366915 (viaduto Av. Rodion Podolsky) maxweight=100 e 1332410463 (ponte Av. Antônio Domingues Bordin) maxweight=120: valores incompatíveis com limite de ponte (provável erro de unidade ou de tag), sem ato: pendência para a outra sessão."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3535408",
+ "nome": "Panorama",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "http://camarapanorama.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
+   "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 3535408 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
+   "resultado": "Webline panorama.sp.gov.br: 8 Leis Ordinárias de 1958-1980 sobre compra/venda de caminhão da prefeitura (ruído); Decretos e Leis Complementares: 0."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 3535408 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3535408)",
+   "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+  },
+  {
+   "url": "https://panorama.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=N&ano=AAAA (Webline da prefeitura; listagem por ano de Leis 1955–2026, Decretos e LC lidos localmente)",
+   "resultado": "Respondeu: leis de 68 anos (3.350 itens), LC 65 itens; decretos só de 6 anos (615 itens: o portal não tem todos). Achados: compras/vendas de caminhão da prefeitura, Zona Azul na Rua Quintino Maudonnet (estacionamento), serviços com máquinas e caminhões. Nenhuma restrição a caminhões.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camarapanorama.sp.gov.br/ (Busca Avançada Webline)",
+   "resultado": "Responde, mas a base de leis da Câmara não devolve itens (0 para \"municipal\"): sem uso.",
+   "rodada": "R2"
+  },
+  {
+   "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=panorama (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
+   "resultado": "DiOE/DOSP panorama: termos caminhões, tráfego, proibido; 4 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.private.coffee/api/interpreter (IBGE:GEOCODIGO=3535408)",
+   "resultado": "Respondeu: 4 ways: 2 viadutos Av. Rodion Podolsky maxweight=100, ponte Av. Antônio Domingues Bordin maxweight=120 (secondary) e Rua Quintino Maldonet hgv=no (tertiary).",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 3535408",
+   "resultado": "webline@camarapanorama.sp.gov.br(camara): erro/sem cliente: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==; webline@www.panorama.sp.gov.br(prefeitura): erro/sem cliente: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==; webline@panorama.sp.gov.br(prefeitura): 13 atos na ementa"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=1, maxweight=3. || R2: Fonte principal (Webline da prefeitura) respondeu; leis cobertas, decretos só em parte dos anos (vazio não prova ausência). Sem ato de restrição. Pendência OSM: hgv=no na Rua Quintino Maldonet sem ato (a Zona Azul da mesma rua é estacionamento); maxweight=100/120 nas pontes (valores em toneladas, provável erro de unidade). || R7 2026-10-19: Varredura Câmaras/portais de legislação por script (toolkit legislacao.py, termos de ementa: caminh|pesado|tonelad|carreta|veículos de carga, máx. 40/termo): nenhum ato com restrição de caminhões identificado nas fontes que responderam. Acervo não testado com \"orçamento\".",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "way 1319601542 Rua Quintino Maldonet (tertiary) hgv=no: sem ato municipal localizado (a lei que cria a Zona Azul nessa rua trata de estacionamento): pendência. Não corrigir a camada.",
+  "ways 370366913/370366915 (viaduto Av. Rodion Podolsky) maxweight=100 e 1332410463 (ponte Av. Antônio Domingues Bordin) maxweight=120: valores incompatíveis com limite de ponte (provável erro de unidade ou de tag), sem ato: pendência para a outra sessão."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

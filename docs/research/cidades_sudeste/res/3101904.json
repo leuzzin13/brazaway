@@ -1,53 +1,68 @@
 {
-  "ibge": "3101904",
-  "nome": "Alpinópolis",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://sapl.alpinopolis.mg.leg.br (API /api/norma/normajuridica/ via legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|zona de restrição|zona de restricao|tonelad)",
-      "resultado": "0 normas"
-    },
-    {
-      "url": "https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=2602",
-      "resultado": "reCAPTCHA; não automatizado."
-    },
-    {
-      "url": "https://www.alpinopolis.mg.leg.br/leis e https://alpinopolis.mg.gov.br/legislacao-e-resolucoes",
-      "resultado": "portal_proprio: só LC 088/2011; busca geral do WordPress (11 posts) só pregões de caminhão."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "0 resultados nos três termos (nenhum diário consolidado cobre o município além do QD sem coleta)."
-    },
-    {
-      "url": "https://sapl.alpinopolis.mg.leg.br/api/norma/normajuridica/?page_size=1",
-      "resultado": "Base com 147 normas; nenhuma com os termos de trânsito/carga.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://alpinopolisportaltransparencia.portalfacil.com.br/legislacao",
-      "resultado": "Desafio Cloudflare (Just a moment); não contornado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://alpinopolis.mg.gov.br/?s= e wp-json",
-      "resultado": "302 para google.com (bloqueio).",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3101904 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "0 resultados.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "SAPL sem normas com os termos; legislação principal da prefeitura (CESPRO) exige reCAPTCHA, por isso a ausência não é conclusiva; nenhum diário consolidado cobre o município. || R2: SAPL da Câmara tem 147 normas (sem acerto), AMM refeito: 0. Site da Prefeitura redireciona (302) para o Google no curl; portal de transparência/legislação (alpinopolisportaltransparencia.portalfacil.com.br) e o CESPRO atrás de Cloudflare/reCAPTCHA. Fonte principal do Executivo continua inacessível: busca inconclusiva.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "Não consultado nesta etapa (lote M sem pista de OSM)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3101904",
+ "nome": "Alpinópolis",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.alpinopolis.mg.leg.br (API /api/norma/normajuridica/ via legislacao.py buscar, termos: caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|zona de restrição|zona de restricao|tonelad)",
+   "resultado": "0 normas"
+  },
+  {
+   "url": "https://www.cespro.com.br/visualizarLegislacao.php?cdMunicipio=2602",
+   "resultado": "reCAPTCHA; não automatizado."
+  },
+  {
+   "url": "https://www.alpinopolis.mg.leg.br/leis e https://alpinopolis.mg.gov.br/legislacao-e-resolucoes",
+   "resultado": "portal_proprio: só LC 088/2011; busca geral do WordPress (11 posts) só pregões de caminhão."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (amm-mg, qd) termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "0 resultados nos três termos (nenhum diário consolidado cobre o município além do QD sem coleta)."
+  },
+  {
+   "url": "https://sapl.alpinopolis.mg.leg.br/api/norma/normajuridica/?page_size=1",
+   "resultado": "Base com 147 normas; nenhuma com os termos de trânsito/carga.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://alpinopolisportaltransparencia.portalfacil.com.br/legislacao",
+   "resultado": "Desafio Cloudflare (Just a moment); não contornado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://alpinopolis.mg.gov.br/?s= e wp-json",
+   "resultado": "302 para google.com (bloqueio).",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3101904 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "0 resultados.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (seletor de entidades, 750 entradas)",
+   "resultado": "Nenhuma entidade 'Prefeitura/Câmara de Alpinópolis' no seletor do AMM-MG: município não publica no diário da AMM; sem texto integral por esse caminho.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda alpinopolis (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "SAPL sem normas com os termos; legislação principal da prefeitura (CESPRO) exige reCAPTCHA, por isso a ausência não é conclusiva; nenhum diário consolidado cobre o município. || R2: SAPL da Câmara tem 147 normas (sem acerto), AMM refeito: 0. Site da Prefeitura redireciona (302) para o Google no curl; portal de transparência/legislação (alpinopolisportaltransparencia.portalfacil.com.br) e o CESPRO atrás de Cloudflare/reCAPTCHA. Fonte principal do Executivo continua inacessível: busca inconclusiva. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "Não consultado nesta etapa (lote M sem pista de OSM)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

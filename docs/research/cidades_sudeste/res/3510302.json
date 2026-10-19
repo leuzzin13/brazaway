@@ -1,37 +1,57 @@
 {
-  "ibge": "3510302",
-  "nome": "Capela do Alto",
-  "uf": "SP",
-  "status": "nao_achou",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.dosp.com.br/exibe_do.php?i=NTY4NzU3",
-      "resultado": "DOSP Capela do Alto ed. 1400 (08/11/2024): trecho do lead é diretriz do Plano Diretor/mobilidade ('construir anel viário ... para evitar o tráfego de caminhões pesados na área central'): não é regra."
-    },
-    {
-      "url": "DOSP pesquisar.php?c=capela_do_alto ('trânsito de caminhões','tráfego de caminhões','circulação de caminhões','veículos pesados','carga e descarga')",
-      "resultado": "'tráfego de caminhões' e 'veículos pesados' só a ed. 1400; 'carga e descarga' 29 edições (as 2 mais recentes conferidas: licitação e edital de concurso: ruído)"
-    },
-    {
-      "url": "http://camaracapeladoalto.sp.gov.br (webline) e https://capeladoalto.sp.gov.br/pagina/leis-municipais-31",
-      "resultado": "webline não respondeu; portal próprio 0 atos (heurístico)"
-    },
-    {
-      "url": "https://capeladoalto.sp.gov.br/lei/ordinaria?page=1..N e /lei/complementar",
-      "resultado": "333 normas listadas e lidas por ementa; sem restrição a caminhões.",
-      "rodada": "R2"
-    },
-    {
-      "url": "http://camaracapeladoalto.sp.gov.br/?pag=...busca avançada",
-      "resultado": "0 resultados em todos os termos.",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Só diretriz de anel viário no plano diretor. Nenhum ato de restrição encontrado; portal de legislação sem resposta útil. | R2: portal da prefeitura (capeladoalto.sp.gov.br/lei/ordinaria e /lei/complementar) varrido por página (333 leis, só 2023-2026 publicadas; a busca do site não funciona): nenhuma de circulação de caminhões (acertos: denominação de vias, equipamentos pesados da frota municipal). Decretos (~4.000) e leis anteriores a 2023 não verificados; Webline da Câmara devolve 0 em qualquer termo. DOSP da R1: só diretriz de anel viário.",
-  "falha_de_fonte": true,
-  "data": "2026-10-14",
-  "nivel_busca": "dirigida",
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3510302",
+ "nome": "Capela do Alto",
+ "uf": "SP",
+ "status": "nao_achou",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NTY4NzU3",
+   "resultado": "DOSP Capela do Alto ed. 1400 (08/11/2024): trecho do lead é diretriz do Plano Diretor/mobilidade ('construir anel viário ... para evitar o tráfego de caminhões pesados na área central'): não é regra."
+  },
+  {
+   "url": "DOSP pesquisar.php?c=capela_do_alto ('trânsito de caminhões','tráfego de caminhões','circulação de caminhões','veículos pesados','carga e descarga')",
+   "resultado": "'tráfego de caminhões' e 'veículos pesados' só a ed. 1400; 'carga e descarga' 29 edições (as 2 mais recentes conferidas: licitação e edital de concurso: ruído)"
+  },
+  {
+   "url": "http://camaracapeladoalto.sp.gov.br (webline) e https://capeladoalto.sp.gov.br/pagina/leis-municipais-31",
+   "resultado": "webline não respondeu; portal próprio 0 atos (heurístico)"
+  },
+  {
+   "url": "https://capeladoalto.sp.gov.br/lei/ordinaria?page=1..N e /lei/complementar",
+   "resultado": "333 normas listadas e lidas por ementa; sem restrição a caminhões.",
+   "rodada": "R2"
+  },
+  {
+   "url": "http://camaracapeladoalto.sp.gov.br/?pag=...busca avançada",
+   "resultado": "0 resultados em todos os termos.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara http://camaracapeladoalto.sp.gov.br/ -> HTTP 0; prefeitura https://capeladoalto.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "14 páginas, 2963 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Só diretriz de anel viário no plano diretor. Nenhum ato de restrição encontrado; portal de legislação sem resposta útil. | R2: portal da prefeitura (capeladoalto.sp.gov.br/lei/ordinaria e /lei/complementar) varrido por página (333 leis, só 2023-2026 publicadas; a busca do site não funciona): nenhuma de circulação de caminhões (acertos: denominação de vias, equipamentos pesados da frota municipal). Decretos (~4.000) e leis anteriores a 2023 não verificados; Webline da Câmara devolve 0 em qualquer termo. DOSP da R1: só diretriz de anel viário. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "data": "2026-10-14",
+ "nivel_busca": "dirigida",
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

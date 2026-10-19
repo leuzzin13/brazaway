@@ -21,9 +21,29 @@
   {
    "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
    "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 resultados de restrição; carga e descarga: edital de locação de imóvel e galpão"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://anchieta.es.gov.br/ -> HTTP 403 (WAF/403); camara https://camaraanchieta.es.gov.br/ -> HTTP 403 (WAF/403)",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (candidatos *.es.gov.br/*.es.leg.br)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca Elasticsearch em texto integral, 14 expressões x até 6 páginas)",
+   "resultado": "DOM-ES (2021+): expressões \"tráfego/circulação/trânsito de caminhões\", \"restrição de circulação\", \"proibido o trânsito/tráfego\", \"veículos de carga/pesados\", \"tonelagem\", \"peso bruto total\", \"carga e descarga\", \"caminhões\" filtradas para este município: só licitações, contratos, cargos e trechos de plano/EIV; nenhum ato de restrição. Cobre só 2021+ e só quem publica no DOM-ES.",
+   "rodada": "R7"
   }
  ],
- "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte principal bloqueada (Cloudflare): busca restrita ao DOM-ES e portal heurístico. Indício OSM não verificado. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://anchieta.legislacaocompilada.com.br/legislacao/ (403/desafio), https://anchieta.splonline.com.br/legislacao/ (403/desafio), https://anchieta.camarasempapel.com.br/legislacao/ (000/000), https://legislacao.anchieta.es.gov.br/ (403/403), https://camaraanchieta.es.gov.br/legislacao/ (403/desafio), https://anchieta.es.gov.br/ (403/desafio), https://camaraanchieta.es.gov.br/ (403/desafio); Querido Diário API sem resposta. Sem nova pesquisa.",
+ "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte principal bloqueada (Cloudflare): busca restrita ao DOM-ES e portal heurístico. Indício OSM não verificado. | R2 (2026-10-14): fontes ainda inacessíveis a partir desta rede: https://anchieta.legislacaocompilada.com.br/legislacao/ (403/desafio), https://anchieta.splonline.com.br/legislacao/ (403/desafio), https://anchieta.camarasempapel.com.br/legislacao/ (000/000), https://legislacao.anchieta.es.gov.br/ (403/403), https://camaraanchieta.es.gov.br/legislacao/ (403/desafio), https://anchieta.es.gov.br/ (403/desafio), https://camaraanchieta.es.gov.br/ (403/desafio); Querido Diário API sem resposta. Sem nova pesquisa. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
  "falha_de_fonte": true,
  "osm_divergencias": [
   "Preparo: OSM com maxweight=11 em 1 via; Overpass (kumi.systems/overpass-api.de) devolveu erro 500/timeout em várias tentativas: contagem do preparo (maxweight) não reconferida neste lote. Nenhum ato municipal achado que o explique."

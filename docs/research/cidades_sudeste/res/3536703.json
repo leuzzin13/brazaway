@@ -1,60 +1,129 @@
 {
-  "ibge": "3536703",
-  "nome": "Pederneiras",
-  "uf": "SP",
-  "status": "nao_achou",
-  "fontes_consultadas": [
+ "ibge": "3536703",
+ "nome": "Pederneiras",
+ "uf": "SP",
+ "status": "pontual",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NzM3NDEx",
+   "resultado": "DOSP Pederneiras ed. 1896 (12/11/2025): Parecer 605/2025 da Secretaria de Trânsito lido: proíbe ESTACIONAMENTO (R-6a) na R. Antônio S. Cintra com Av. Brasil por causa do tráfego de caminhões da pedreira: não é restrição de circulação (acerto do lead = ruído)."
+  },
+  {
+   "url": "DOSP pesquisar.php?c=pederneiras ('trânsito de caminhões','tráfego de caminhões','circulação de caminhões','veículos pesados','carga e descarga')",
+   "resultado": "'veículos pesados' = 3 edições (2 pregões de manutenção de veículos pesados em 2025 e uma lei de servidão de 2023: ruído); 'tráfego de caminhões' só a ed. 1896; 'carga e descarga' 100+ edições (não abertas, termo genérico)"
+  },
+  {
+   "url": "https://www.pederneiras.sp.gov.br/portal/leis_decretos/ (instar, 'caminh|pesad|carga|tráfego|trânsito|circula')",
+   "resultado": "0 atos (inclusive para 'trânsito': cliente pode não estar lendo este portal)"
+  },
+  {
+   "url": "http://atos.pederneiras.sp.gov.br",
+   "resultado": "não respondeu"
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/pederneiras",
+   "resultado": "403 Cloudflare, não contornado"
+  },
+  {
+   "url": "/home/user/brazaway/docs/research/cidades_sudeste/osm_hints_por_municipio.json",
+   "resultado": "contagem da preparação: hgv=no = 1 (way não identificado)"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (área IBGE:GEOCODIGO=3536703)",
+   "resultado": "HTTP 500 / conexão reiniciada: way com hgv=no não listado"
+  },
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/pederneiras (POST pesquisar.php, 'caminhões' = 50 edições; 29 lidas por texto)",
+   "resultado": "Só o Parecer 605/2025 (estacionamento proibido na R. Antônio S. Cintra por tráfego de caminhões de pedreira). Demais: licitações, contratos, relatórios.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.pederneiras.sp.gov.br/portal/diario-oficial/1/0/0/<termo>/0/",
+   "resultado": "Redireciona para o DOSP; sem busca própria.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.camarapederneiras.sp.gov.br/",
+   "resultado": "Página 'Bot Verification' (reCAPTCHA): bloqueado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://www.pederneiras.sp.gov.br/ -> HTTP 200; camara https://www.camarapederneiras.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.camarapederneiras.sp.gov.br/proposicoes/pesquisa?definicao=legislacao",
+   "resultado": "Softcam www.camarapederneiras.sp.gov.br (/proposicoes/pesquisa, texto integral, acervo 22/12/2020 a 22/09/2026, 1297 itens com 'orçamento'). Totais por expressão exata: {'caminhões': 14, 'caminhão': 21, 'veículos pesados': 1, 'tráfego de veículos': 1, 'circulação de veículos': 8, 'carga e descarga': 6, 'trânsito de veículos': 8, 'toneladas': 4, 'tonelada': 4, 'peso bruto': 1}. Itens abertos pela ementa: só leis de crédito/cargos/aquisição/orçamento/código sem restrição de circulação de caminhões. A base da Câmara tem leis e decretos legislativos, NÃO decretos do Executivo.",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://www.imprensaoficialmunicipal.com.br/pederneiras -> 200; https://www.pederneiras.sp.gov.br/portal/leis_decretos/ -> 200; https://transparencia.pederneiras.sp.gov.br/Legislacao/Leis/ -> 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "12 páginas, 1478 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: [['https://www.camarapederneiras.sp.gov.br/proposicoes/0/0/1/0/37964', '29/04/2009 00:00 - Alterada por: EMENDA À LEI ORGÂNICA Nº 0023/2009 Que fixa data para remessa da Lei de Diretrizes Orçamentárias. Observações: ENCAMINHADO CÓPI']]",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.camarapederneiras.sp.gov.br/proposicoes/pesquisa/0/1/0/41139",
+   "resultado": "Lei 2.904/2011 lida (print PDF do projeto + OCR da sanção): fixa horários de carga e descarga em áreas delimitadas das vias (art. 1º, 08h-18h seg-sex), regulamentação por comissão em 30 dias (art. 4º). Só carga e descarga em estacionamento, sem proibição de circulação de caminhões. Texto em atos/3536703/lei_2904_2011.txt.",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam Pederneiras: Lei 2.173/2000 (Código de Posturas), Lei 2.523/2006 (Plano Diretor), LC 3.541/2018 (Plano de Mobilidade)",
+   "resultado": "acertos para \"caminhão/caminhões/trânsito/carga e descarga\" listados por ementa, textos de plano/código não lidos nesta rodada; sem ementa de restrição de circulação.",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "R2: nenhum ato de restrição de circulação de caminhões. DOSP de Pederneiras (desde 2019): 'caminhões' = 50 edições; li em texto as 29 mais recentes (de 12/2025 a 11/2019): o único achado é o Parecer 605/2025 da Secretaria de Trânsito (DO 12/11/2025, ed. 1896; já visto na R1) — proíbe ESTACIONAMENTO (R-6a) na R. Antônio S. Cintra com a Av. Brasil e vias vizinhas por causa do tráfego de caminhões da Pedreira Nova Fortaleza; é estacionamento, não circulação (não roteável). Portal de legislação (Instar, 3 normas na base; atos.pederneiras.sp.gov.br sem resposta), Câmara (bloqueio 'Bot Verification') e leismunicipais (403) seguem inacessíveis: busca não conclusiva. OSM hgv=no (1 way da preparação) não identificado (Overpass instável). | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; Softcam achado em www.camarapederneiras.sp.gov.br; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance). Mudança: Lei 2.904/2011 (carga e descarga) lida, status pontual.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "1 way com hgv=no no município (contagem da preparação); não identificado por falha do Overpass. Sem ato: pendência para a outra sessão (não corrigir OSM)."
+ ],
+ "data": "2026-10-14",
+ "nivel_busca": "dirigida",
+ "regras_rascunho": [
+  {
+   "id": "pederneiras_carga_descarga_lei2904_2011",
+   "tipo": "zona",
+   "regime": "Operações de carga e descarga nas vias públicas só em áreas delimitadas e horário fixado (08h-18h seg-sex)",
+   "nome": "Pederneiras: horários de carga e descarga em vias públicas (Lei 2.904/2011)",
+   "status": "desativada",
+   "status_motivo": "Regra só de carga e descarga/estacionamento; áreas delimitadas dependem de regulamentação não localizada; sem delimitação georreferenciável nem restrição de circulação.",
+   "confianca": "baixa",
+   "janelas": [
     {
-      "url": "https://www.dosp.com.br/exibe_do.php?i=NzM3NDEx",
-      "resultado": "DOSP Pederneiras ed. 1896 (12/11/2025): Parecer 605/2025 da Secretaria de Trânsito lido: proíbe ESTACIONAMENTO (R-6a) na R. Antônio S. Cintra com Av. Brasil por causa do tráfego de caminhões da pedreira: não é restrição de circulação (acerto do lead = ruído)."
-    },
-    {
-      "url": "DOSP pesquisar.php?c=pederneiras ('trânsito de caminhões','tráfego de caminhões','circulação de caminhões','veículos pesados','carga e descarga')",
-      "resultado": "'veículos pesados' = 3 edições (2 pregões de manutenção de veículos pesados em 2025 e uma lei de servidão de 2023: ruído); 'tráfego de caminhões' só a ed. 1896; 'carga e descarga' 100+ edições (não abertas, termo genérico)"
-    },
-    {
-      "url": "https://www.pederneiras.sp.gov.br/portal/leis_decretos/ (instar, 'caminh|pesad|carga|tráfego|trânsito|circula')",
-      "resultado": "0 atos (inclusive para 'trânsito': cliente pode não estar lendo este portal)"
-    },
-    {
-      "url": "http://atos.pederneiras.sp.gov.br",
-      "resultado": "não respondeu"
-    },
-    {
-      "url": "https://leismunicipais.com.br/prefeitura/sp/pederneiras",
-      "resultado": "403 Cloudflare, não contornado"
-    },
-    {
-      "url": "/home/user/brazaway/docs/research/cidades_sudeste/osm_hints_por_municipio.json",
-      "resultado": "contagem da preparação: hgv=no = 1 (way não identificado)"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter e https://overpass-api.de/api/interpreter (área IBGE:GEOCODIGO=3536703)",
-      "resultado": "HTTP 500 / conexão reiniciada: way com hgv=no não listado"
-    },
-    {
-      "url": "https://www.imprensaoficialmunicipal.com.br/pederneiras (POST pesquisar.php, 'caminhões' = 50 edições; 29 lidas por texto)",
-      "resultado": "Só o Parecer 605/2025 (estacionamento proibido na R. Antônio S. Cintra por tráfego de caminhões de pedreira). Demais: licitações, contratos, relatórios.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.pederneiras.sp.gov.br/portal/diario-oficial/1/0/0/<termo>/0/",
-      "resultado": "Redireciona para o DOSP; sem busca própria.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.camarapederneiras.sp.gov.br/",
-      "resultado": "Página 'Bot Verification' (reCAPTCHA): bloqueado.",
-      "rodada": "R2"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "08:00",
+     "to": "18:00"
     }
-  ],
-  "observacoes": "R2: nenhum ato de restrição de circulação de caminhões. DOSP de Pederneiras (desde 2019): 'caminhões' = 50 edições; li em texto as 29 mais recentes (de 12/2025 a 11/2019): o único achado é o Parecer 605/2025 da Secretaria de Trânsito (DO 12/11/2025, ed. 1896; já visto na R1) — proíbe ESTACIONAMENTO (R-6a) na R. Antônio S. Cintra com a Av. Brasil e vias vizinhas por causa do tráfego de caminhões da Pedreira Nova Fortaleza; é estacionamento, não circulação (não roteável). Portal de legislação (Instar, 3 normas na base; atos.pederneiras.sp.gov.br sem resposta), Câmara (bloqueio 'Bot Verification') e leismunicipais (403) seguem inacessíveis: busca não conclusiva. OSM hgv=no (1 way da preparação) não identificado (Overpass instável).",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "1 way com hgv=no no município (contagem da preparação); não identificado por falha do Overpass. Sem ato: pendência para a outra sessão (não corrigir OSM)."
-  ],
-  "data": "2026-10-14",
-  "nivel_busca": "dirigida",
-  "regras_rascunho": [],
-  "rodada": "R2"
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "excecoes": [
+    "art. 2º: não se aplica a veículos de emergência e de entidades públicas/concessionárias"
+   ],
+   "base_legal": [
+    {
+     "ato": "Lei municipal 2.904, de 07/07/2011",
+     "artigo": "art. 1º, I; art. 4º",
+     "url": "https://www.camarapederneiras.sp.gov.br/proposicoes/pesquisa/0/1/0/41139"
+    }
+   ],
+   "vigencia_inicio": "2011-07-07",
+   "trechos": []
+  }
+ ],
+ "rodada": "R2"
 }

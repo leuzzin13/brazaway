@@ -1,55 +1,70 @@
 {
-  "ibge": "3556354",
-  "nome": "Vargem",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://vargem.sp.gov.br/legislacao",
-      "resultado": "403 do proxy."
-    },
-    {
-      "url": "https://camaravargem.sp.gov.br/",
-      "resultado": "Home abriu; base de leis é leis.org (403 Cloudflare), não consultada."
-    },
-    {
-      "url": "toolkit legislacao.py buscar 3556354 (camara + prefeitura) termos caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|tonelad|zona de restri",
-      "resultado": "0 atos."
-    },
-    {
-      "url": "https://penaestrada.com.br/restricoes/ (preparação)",
-      "resultado": "Pé na Estrada (2018-19): 'Não possui restrições' (fonte fraca)."
-    },
-    {
-      "url": "Overpass IBGE:GEOCODIGO=3556354",
-      "resultado": "Falhou (504/erro); contagem da preparação: hgv=no 1."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3556354 'circulação de caminhões' (doesp, apm, dosp, qd)",
-      "resultado": "0 resultados nas 4 fontes."
-    },
-    {
-      "url": "https://penaestrada.com.br/restricoes/",
-      "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
-    },
-    {
-      "url": "https://vargem.sp.gov.br/legislacao/lista/<ano>/categoria/5/",
-      "resultado": "Hoje respondeu: 72 decretos municipais varridos, nenhum de circulação de caminhões. Leis municipais não estão no site (só decretos e decretos COVID).",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://camaravargem.sp.gov.br/ (Legislativo http://45.164.35.134:8080/SGL/, leis.org)",
-      "resultado": "SGL sem conexão (timeout), leis.org 403, página 'Legislação' com conexão resetada: leis não lidas.",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Pé na Estrada diz que não possui restrições e nada foi achado, mas as fontes oficiais estavam bloqueadas; registrado como nao_achou (não conclusivo). | R2: decretos da prefeitura varridos (nada); base de leis da Câmara continua inacessível. Pé na Estrada: 'não possui'. Overpass indisponível.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "1 way hgv=no no OSM não conferido; sem ato."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3556354",
+ "nome": "Vargem",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://vargem.sp.gov.br/legislacao",
+   "resultado": "403 do proxy."
+  },
+  {
+   "url": "https://camaravargem.sp.gov.br/",
+   "resultado": "Home abriu; base de leis é leis.org (403 Cloudflare), não consultada."
+  },
+  {
+   "url": "toolkit legislacao.py buscar 3556354 (camara + prefeitura) termos caminh|carga e descarga|veículos pesados|veiculos pesados|tráfego|trafego|trânsito|transito|tonelad|zona de restri",
+   "resultado": "0 atos."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/ (preparação)",
+   "resultado": "Pé na Estrada (2018-19): 'Não possui restrições' (fonte fraca)."
+  },
+  {
+   "url": "Overpass IBGE:GEOCODIGO=3556354",
+   "resultado": "Falhou (504/erro); contagem da preparação: hgv=no 1."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3556354 'circulação de caminhões' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nas 4 fontes."
+  },
+  {
+   "url": "https://penaestrada.com.br/restricoes/",
+   "resultado": "Não consultado de novo nesta rodada (pista da preparação: sem página do município)."
+  },
+  {
+   "url": "https://vargem.sp.gov.br/legislacao/lista/<ano>/categoria/5/",
+   "resultado": "Hoje respondeu: 72 decretos municipais varridos, nenhum de circulação de caminhões. Leis municipais não estão no site (só decretos e decretos COVID).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camaravargem.sp.gov.br/ (Legislativo http://45.164.35.134:8080/SGL/, leis.org)",
+   "resultado": "SGL sem conexão (timeout), leis.org 403, página 'Legislação' com conexão resetada: leis não lidas.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://vargem.sp.gov.br/ -> HTTP 403 (WAF/403); camara https://www.vargem.sp.leg.br/ -> HTTP 0",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://www.imprensaoficialmunicipal.com.br/vargem -> 200; https://camaravargem.sp.gov.br/portal/leis_decretos/ -> 200",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Pé na Estrada diz que não possui restrições e nada foi achado, mas as fontes oficiais estavam bloqueadas; registrado como nao_achou (não conclusivo). | R2: decretos da prefeitura varridos (nada); base de leis da Câmara continua inacessível. Pé na Estrada: 'não possui'. Overpass indisponível. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "1 way hgv=no no OSM não conferido; sem ato."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

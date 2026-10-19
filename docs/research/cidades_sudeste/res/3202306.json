@@ -1,46 +1,71 @@
 {
-  "ibge": "3202306",
-  "nome": "Guaçuí",
-  "uf": "ES",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/8468/123",
-      "resultado": "DOM/ES Ed. 2.372, 16/10/2023, p. 123 (trecho do lead): lei de zoneamento (Zona de Ocupação Restrita etc.); 'zona restrita' é uso do solo, não circulação; trecho lido pelo lead, não relido"
-    },
-    {
-      "url": "http://spl.cmguacui.es.gov.br/legislacao/",
-      "resultado": "legislacao.py: formulário SPL não encontrado"
-    },
-    {
-      "url": "https://guacui-es.portaltp.com.br/consultas/documentos.aspx?id=282",
-      "resultado": "portal da prefeitura, busca heurística: 0 atos para caminh/carga e descarga/veículos pesados/tráfego"
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
-      "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': veículos pesados: 2 licitações de frota; demais termos 0"
-    },
-    {
-      "url": "https://guacui.es.gov.br/legislacao (sistema da Prefeitura)",
-      "rodada": "R2",
-      "resultado": "200, mas acervo digital novo e pequeno (decretos/leis de 2024-2026, ex. Decreto 14449/2026 feriados); sem ato de circulação; busca não automatizável."
-    },
-    {
-      "url": "https://spl.cmguacui.es.gov.br/ e guacui-es.portaltp.com.br",
-      "rodada": "R2",
-      "resultado": "SPL 403 Cloudflare (Wayback guarda só a página inicial da busca); portaltp é app JS sem conteúdo útil."
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (diarios_consolidados.py buscar, fonte domes)",
-      "rodada": "R2",
-      "resultado": "Termos novos 'trânsito de veículos', 'estacionamento de caminhões', 'caminhões', 'tonelagem': nenhum ato de circulação (acertos de 'caminhões' são só licitações/contratos de manutenção de frota)."
-    }
-  ],
-  "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência.  R2 (14/10/2026): nenhum ato de restrição a caminhão encontrado nas fontes que responderam hoje. Portais principais (SPL/camarasempapel/legislacaocompilada) seguem com 403 Cloudflare ou reset de conexão pelo proxy; resultado NÃO conclusivo.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3202306",
+ "nome": "Guaçuí",
+ "uf": "ES",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/8468/123",
+   "resultado": "DOM/ES Ed. 2.372, 16/10/2023, p. 123 (trecho do lead): lei de zoneamento (Zona de Ocupação Restrita etc.); 'zona restrita' é uso do solo, não circulação; trecho lido pelo lead, não relido"
+  },
+  {
+   "url": "http://spl.cmguacui.es.gov.br/legislacao/",
+   "resultado": "legislacao.py: formulário SPL não encontrado"
+  },
+  {
+   "url": "https://guacui-es.portaltp.com.br/consultas/documentos.aspx?id=282",
+   "resultado": "portal da prefeitura, busca heurística: 0 atos para caminh/carga e descarga/veículos pesados/tráfego"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': veículos pesados: 2 licitações de frota; demais termos 0"
+  },
+  {
+   "url": "https://guacui.es.gov.br/legislacao (sistema da Prefeitura)",
+   "rodada": "R2",
+   "resultado": "200, mas acervo digital novo e pequeno (decretos/leis de 2024-2026, ex. Decreto 14449/2026 feriados); sem ato de circulação; busca não automatizável."
+  },
+  {
+   "url": "https://spl.cmguacui.es.gov.br/ e guacui-es.portaltp.com.br",
+   "rodada": "R2",
+   "resultado": "SPL 403 Cloudflare (Wayback guarda só a página inicial da busca); portaltp é app JS sem conteúdo útil."
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (diarios_consolidados.py buscar, fonte domes)",
+   "rodada": "R2",
+   "resultado": "Termos novos 'trânsito de veículos', 'estacionamento de caminhões', 'caminhões', 'tonelagem': nenhum ato de circulação (acertos de 'caminhões' são só licitações/contratos de manutenção de frota)."
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://www.cmguacui.es.gov.br/ -> HTTP 403 (WAF/403); prefeitura https://guacui.es.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (candidatos *.es.gov.br/*.es.leg.br)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://guacui.es.gov.br/portal/leis_decretos/ -> 200; https://www.guacui.es.gov.br/portal/leis_decretos/ -> 200; https://guacui.es.gov.br/diario-oficial -> 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca Elasticsearch em texto integral, 14 expressões x até 6 páginas)",
+   "resultado": "DOM-ES (2021+): expressões \"tráfego/circulação/trânsito de caminhões\", \"restrição de circulação\", \"proibido o trânsito/tráfego\", \"veículos de carga/pesados\", \"tonelagem\", \"peso bruto total\", \"carga e descarga\", \"caminhões\" filtradas para este município: só licitações, contratos, cargos e trechos de plano/EIV; nenhum ato de restrição. Cobre só 2021+ e só quem publica no DOM-ES.",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "9 páginas, 764 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência.  R2 (14/10/2026): nenhum ato de restrição a caminhão encontrado nas fontes que responderam hoje. Portais principais (SPL/camarasempapel/legislacaocompilada) seguem com 403 Cloudflare ou reset de conexão pelo proxy; resultado NÃO conclusivo. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

@@ -1,33 +1,37 @@
 {
-  "ibge": "3163607",
-  "nome": "São José do Mantimento",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.pmsjmantimento.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3163607, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
-      "resultado": "endpoint ajaxpro leg_lis não encontrado; sem resultado."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3163607 'circulação de caminhões' (amm-mg, qd)",
-      "resultado": "amm-mg 0; qd 0. Pista (Lei 516/2023, lotação de transporte, https://www.diariomunicipal.com.br/amm-mg/materia/9E97D61A) = ruído de transporte de passageiros."
-    },
-    {
-      "url": "https://www.pmsjmantimento.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
-      "resultado": "Nenhuma norma com os termos (só 1 acerto de \"caminh\", ruído). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3163607 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "AMM: \"veículos pesados\" 3 (pregão de máquinas): ruído; demais 0.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Nenhuma fonte de legislação funcionou, só AMM (0). Cidade de 65 caminhões; nao_achou não conclusivo. || R2: Portal Fácil lido: nenhuma restrição a caminhões.",
-  "falha_de_fonte": false,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3163607",
+ "nome": "São José do Mantimento",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.pmsjmantimento.mg.gov.br/legislacao (Portal Fácil) (toolkit legislacao.py buscar 3163607, termos caminh|veículos pesados|veículo(s) de carga|carga e descarga|tráfego|trânsito|tonelad|eixos|carreta)",
+   "resultado": "endpoint ajaxpro leg_lis não encontrado; sem resultado."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3163607 'circulação de caminhões' (amm-mg, qd)",
+   "resultado": "amm-mg 0; qd 0. Pista (Lei 516/2023, lotação de transporte, https://www.diariomunicipal.com.br/amm-mg/materia/9E97D61A) = ruído de transporte de passageiros."
+  },
+  {
+   "url": "https://www.pmsjmantimento.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+   "resultado": "Nenhuma norma com os termos (só 1 acerto de \"caminh\", ruído). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3163607 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "AMM: \"veículos pesados\" 3 (pregão de máquinas): ruído; demais 0.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (busca_avancada[texto] x busca_avancada[entidade], texto integral; R7 varredura profunda)",
+   "resultado": "Prefeitura Municipal de São José do Mantimento: 451 matérias, a mais antiga de 2019-12-13. 8 combinações de duas palavras; nenhum ato de restrição a caminhões."
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Nenhuma fonte de legislação funcionou, só AMM (0). Cidade de 65 caminhões; nao_achou não conclusivo. || R2: Portal Fácil lido: nenhuma restrição a caminhões. | R7 2026-10-19: varredura profunda no SIGPub AMM-MG (texto integral, filtro de entidade Prefeitura Municipal de São José do Mantimento). Acervo: Prefeitura Municipal de São José do Mantimento: 451 matérias, a mais antiga de 2019-12-13. Combinações consultadas (total de matérias): \"caminhões circulação\" (0); \"caminhões eixos\" (0); \"caminhões proibido\" (0); \"caminhões toneladas\" (0); \"carga toneladas\" (0); \"tráfego caminhões\" (0); \"trânsito pesado\" (0); \"veículos pesados\" (3). Ruído descartado por título (contrato/edital/licitação/extrato/ata/ISS/cargo/compra de caminhão) e demais lidos por trecho: nenhuma restrição à circulação de caminhões. Cobertura PARCIAL (8 de 10 combinações; acervo começa em 2019-12-13): não conclusivo.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

@@ -1,53 +1,57 @@
 {
-  "ibge": "3537909",
-  "nome": "Pilar do Sul",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://camarapilardosul.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
-      "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
-    },
-    {
-      "url": "toolkit/legislacao.py buscar 3537909 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
-      "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar 3537909 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
-      "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3537909)",
-      "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
-    },
-    {
-      "url": "https://www.pilardosul.sp.gov.br/legislacao/index/categoria/page/1/busca?descricao=<termo> (Portal Fácil v2)",
-      "resultado": "Respondeu. caminh 3 (caminhada, associação, consórcio de caminhão), tráfego 2, trânsito 36, carga 6, pesad 0, circula 0. Abertos: Lei 2.221/2006 e Lei 2.204/2006 (autorizam limitar o tráfego de VEÍCULOS, de qualquer tipo, na Rua Otavio Barbosa dos Santos e na Rua José Martins Perches — arborização/urbanização), Lei 2.330/2008 (restrição de trânsito em áreas escolares). Nenhuma é restrição a caminhões.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.pilardosul.sp.gov.br/legislacao/download-lei/2511/ ; /2494/ ; /2248/",
-      "resultado": "PDFs lidos e guardados em atos/3537909/. Todos limitam veículos em geral em ruas específicas ou áreas escolares: pontual, não roteável.",
-      "rodada": "R2"
-    },
-    {
-      "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=pilardosul (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
-      "resultado": "DiOE/DOSP pilardosul: termos caminhões, pesados, tráfego, carga e descarga, circulação de veículos, proibido; 88 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (IBGE:GEOCODIGO=3537909)",
-      "resultado": "Respondeu: 5 ways hgv=no, todos \"Rodovia José de Carvalho\" (SP-250, primary).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=5. || R2: Portal de legislação da prefeitura respondeu e a busca textual não achou restrição a caminhões; DOSP também não (só uma indicação de vereador pedindo placas \"Proibido Estacionar Caminhões e Caçambas\" na Rua Francisco Válio: pedido, não ato). Os 5 hgv=no do OSM são da SP-250 (rodovia estadual, competência do DER): descartados.",
-  "falha_de_fonte": false,
-  "osm_divergencias": [
-    "5 ways hgv=no em \"Rodovia José de Carvalho\" (SP-250, rodovia estadual): fora da competência municipal; sem ato municipal. Pendência de OSM para a outra sessão (não é regra municipal)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3537909",
+ "nome": "Pilar do Sul",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://camarapilardosul.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=1",
+   "resultado": "Webline (legislação camara): módulo não respondeu a partir desta máquina (proxy: tunnel closed/DNS/501/403); busca por ementa não executada."
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 3537909 (termos: caminh|carga e descarga|veículos pesados|trânsito|tráfego|tonelad)",
+   "resultado": "todas as fontes do município sem resposta ou com 0 atos (leismunicipais.com.br = 403 Cloudflare; Webline/portais próprios fora do ar ou bloqueados pelo proxy)"
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar 3537909 'circulação de caminhões' | 'trânsito de caminhões' | 'tráfego de veículos pesados' | 'veículos pesados' (doesp, apm, dosp, qd)",
+   "resultado": "0 resultados nos 4 termos; Querido Diário inacessível (api bloqueada pelo proxy), logo cobertura parcial."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (área IBGE:GEOCODIGO=3537909)",
+   "resultado": "HTTP 500 em todas as tentativas (e overpass-api.de/openstreetmap.fr/mail.ru bloqueados); não foi possível listar as vias com hgv/maxweight."
+  },
+  {
+   "url": "https://www.pilardosul.sp.gov.br/legislacao/index/categoria/page/1/busca?descricao=<termo> (Portal Fácil v2)",
+   "resultado": "Respondeu. caminh 3 (caminhada, associação, consórcio de caminhão), tráfego 2, trânsito 36, carga 6, pesad 0, circula 0. Abertos: Lei 2.221/2006 e Lei 2.204/2006 (autorizam limitar o tráfego de VEÍCULOS, de qualquer tipo, na Rua Otavio Barbosa dos Santos e na Rua José Martins Perches — arborização/urbanização), Lei 2.330/2008 (restrição de trânsito em áreas escolares). Nenhuma é restrição a caminhões.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.pilardosul.sp.gov.br/legislacao/download-lei/2511/ ; /2494/ ; /2248/",
+   "resultado": "PDFs lidos e guardados em atos/3537909/. Todos limitam veículos em geral em ruas específicas ou áreas escolares: pontual, não roteável.",
+   "rodada": "R2"
+  },
+  {
+   "url": "POST https://www.imprensaoficialmunicipal.com.br/pesquisar.php?c=pilardosul (campo termo) + PDFs em dosp.com.br/exibe_do.php?i=<base64 do iddo>",
+   "resultado": "DiOE/DOSP pilardosul: termos caminhões, pesados, tráfego, carga e descarga, circulação de veículos, proibido; 88 edições distintas baixadas e lidas com pdftotext (regex caminhão/pesado/carga + proibição/tráfego/circulação, descartando licitação/contrato/manutenção). Nenhum ato de restrição a caminhões: só ruído (cargos de motorista, licitações, plano diretor, indicações).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (IBGE:GEOCODIGO=3537909)",
+   "resultado": "Respondeu: 5 ways hgv=no, todos \"Rodovia José de Carvalho\" (SP-250, primary).",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 3537909",
+   "resultado": "webline@camarapilardosul.sp.gov.br(camara): 0 atos na ementa; leismunicipais@leismunicipais.com.br/camara/sp/pilardosul(camara): erro/sem cliente: Portal atrás de desafio Cloudflare (403 \"Just a moment\" para; portal_proprio@www.pilardosul.sp.gov.br/legislacao/detalhe/9877/p(prefeitura): 0 atos na ementa"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Nenhum ato localizado, mas as fontes principais (Webline) estavam fora do ar/bloqueadas desta máquina e o Overpass retornou 500: busca NÃO conclusiva. Indício OSM da preparação: hgv_no=5. || R2: Portal de legislação da prefeitura respondeu e a busca textual não achou restrição a caminhões; DOSP também não (só uma indicação de vereador pedindo placas \"Proibido Estacionar Caminhões e Caçambas\" na Rua Francisco Válio: pedido, não ato). Os 5 hgv=no do OSM são da SP-250 (rodovia estadual, competência do DER): descartados. || R7 2026-10-19: Varredura Câmaras/portais de legislação por script (toolkit legislacao.py, termos de ementa: caminh|pesado|tonelad|carreta|veículos de carga, máx. 40/termo): nenhum ato com restrição de caminhões identificado nas fontes que responderam. Acervo não testado com \"orçamento\".",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "5 ways hgv=no em \"Rodovia José de Carvalho\" (SP-250, rodovia estadual): fora da competência municipal; sem ato municipal. Pendência de OSM para a outra sessão (não é regra municipal)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

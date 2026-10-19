@@ -1,45 +1,70 @@
 {
-  "ibge": "3202801",
-  "nome": "Itapemirim",
-  "uf": "ES",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://camaraitapemirim.nopapercloud.com.br/legislacao/",
-      "resultado": "legislacao.py: formulário SPL não encontrado; portalfacil da prefeitura (www.itapemirim.es.gov.br/legislacao): endpoint ajaxpro não achado"
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
-      "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 resultados com todos os termos"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3202801)",
-      "resultado": "8 ways com maxweight: Ponte Delegado Orialdo Meirelles (ES-487, bridge, maxweight=9); Estrada do Penedo (tertiary, 5 ways incl. 2 pontes, maxweight=10); 2 ways sem nome (tertiary, maxweight=10). Nenhum hgv=no"
-    },
-    {
-      "url": "https://www.itapemirim.es.gov.br/legislacao (Portal Fácil; resposta 302 -> google.com com corpo real; AjaxPro leg_lis via curl sem -L)",
-      "resultado": "Respondeu: 268 itens de \"lei\", 180 de \"dispõe\"; apenas Decretos (municipais, administrativos, gerais), Portarias, Regulamentação, Código Tributário e 2 LC. Nenhum ato de circulação/restrição a caminhões; Decreto 21.909/2026 só nomeia núcleo gestor do Plano de Mobilidade (em elaboração)",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://camaraitapemirim.nopapercloud.com.br, camaraitapemirim.splonline.com.br, camaraitapemirim.es.gov.br/legislacao/",
-      "resultado": "403 Cloudflare em 14/10/2026 (Leis Ordinárias, ponto cego); não lidas",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
-      "resultado": "\"caminhões\", \"toneladas\", \"tráfego de veículos\", \"veículos de carga\", \"trânsito pesado\", \"caminhão\", \"carretas\", \"rota de caminhões\", \"zona de restrição\", \"circulação de veículos\", \"estacionamento de caminhões\", \"fica proibido o trânsito\", \"proíbe o tráfego\", \"tráfego pesado\", \"Código de Posturas\", \"Plano de Mobilidade\": 0 acerto",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fontes de legislação inacessíveis pela ferramenta. As limitações de peso do OSM são de ponte e de estrada de acesso (Estrada do Penedo), provavelmente sinalização de capacidade da obra, sem ato. || R2: DESCOBERTA de método: www.itapemirim.es.gov.br (portal de legislação Portal Fácil, /legislacao) e camarapiuma.es.gov.br respondem com HTTP 302 para https://www.google.com, mas o CORPO da resposta é a página real; o cliente do toolkit seguia o redirecionamento e falhava com \"endpoint ajaxpro não achado\". Sem seguir o redirecionamento (curl sem -L), o AjaxPro leg_lis responde. Busca em Itapemirim por caminh, trânsito, tráfego, pesad, carga, tonel, veículos, circula, rodovia, ponte, estacionamento, mão única, interdi, sinaliza, ônibus, carreta, zona, posturas: só decretos de nomeação (cargos de frota de máquinas pesadas), carga horária, 3 portarias de poderes junto ao DETRAN-ES e o Decreto 21.909/2026 (núcleo gestor para ELABORAR o Plano Municipal de Mobilidade Urbana: o plano ainda não existe). Esse portal só tem Decretos, Portarias, Regulamentações, Código Tributário e 2 Leis Complementares: as Leis Ordinárias estão no SPL da Câmara (camaraitapemirim.nopapercloud.com.br / splonline / camaraitapemirim.es.gov.br), todos em 403 Cloudflare. Por isso falha_de_fonte continua true: Leis Ordinárias não lidas. DOM-ES (2021+) com 15 termos novos: 0 acerto. OSM mantido: maxweight em ponte da ES-487 e Estrada do Penedo, sem ato.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "maxweight=9 na ponte da ES-487 (via estadual: competência DER-ES, não municipal)",
-    "maxweight=10 em Estrada do Penedo (pontes e trechos), sem ato municipal achado: pista de sinalização de capacidade"
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3202801",
+ "nome": "Itapemirim",
+ "uf": "ES",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://camaraitapemirim.nopapercloud.com.br/legislacao/",
+   "resultado": "legislacao.py: formulário SPL não encontrado; portalfacil da prefeitura (www.itapemirim.es.gov.br/legislacao): endpoint ajaxpro não achado"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 resultados com todos os termos"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (area IBGE:GEOCODIGO=3202801)",
+   "resultado": "8 ways com maxweight: Ponte Delegado Orialdo Meirelles (ES-487, bridge, maxweight=9); Estrada do Penedo (tertiary, 5 ways incl. 2 pontes, maxweight=10); 2 ways sem nome (tertiary, maxweight=10). Nenhum hgv=no"
+  },
+  {
+   "url": "https://www.itapemirim.es.gov.br/legislacao (Portal Fácil; resposta 302 -> google.com com corpo real; AjaxPro leg_lis via curl sem -L)",
+   "resultado": "Respondeu: 268 itens de \"lei\", 180 de \"dispõe\"; apenas Decretos (municipais, administrativos, gerais), Portarias, Regulamentação, Código Tributário e 2 LC. Nenhum ato de circulação/restrição a caminhões; Decreto 21.909/2026 só nomeia núcleo gestor do Plano de Mobilidade (em elaboração)",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://camaraitapemirim.nopapercloud.com.br, camaraitapemirim.splonline.com.br, camaraitapemirim.es.gov.br/legislacao/",
+   "resultado": "403 Cloudflare em 14/10/2026 (Leis Ordinárias, ponto cego); não lidas",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (toolkit/diarios_consolidados.py buscar --fonte domes) termos novos R2",
+   "resultado": "\"caminhões\", \"toneladas\", \"tráfego de veículos\", \"veículos de carga\", \"trânsito pesado\", \"caminhão\", \"carretas\", \"rota de caminhões\", \"zona de restrição\", \"circulação de veículos\", \"estacionamento de caminhões\", \"fica proibido o trânsito\", \"proíbe o tráfego\", \"tráfego pesado\", \"Código de Posturas\", \"Plano de Mobilidade\": 0 acerto",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://www.itapemirim.es.gov.br/ -> HTTP 200; camara https://camaraitapemirim.es.gov.br/ -> HTTP 403 (WAF/403)",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (candidatos *.es.gov.br/*.es.leg.br)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca Elasticsearch em texto integral, 14 expressões x até 6 páginas)",
+   "resultado": "DOM-ES (2021+): expressões \"tráfego/circulação/trânsito de caminhões\", \"restrição de circulação\", \"proibido o trânsito/tráfego\", \"veículos de carga/pesados\", \"tonelagem\", \"peso bruto total\", \"carga e descarga\", \"caminhões\" filtradas para este município: só licitações, contratos, cargos e trechos de plano/EIV; nenhum ato de restrição. Cobre só 2021+ e só quem publica no DOM-ES.",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 10 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fontes de legislação inacessíveis pela ferramenta. As limitações de peso do OSM são de ponte e de estrada de acesso (Estrada do Penedo), provavelmente sinalização de capacidade da obra, sem ato. || R2: DESCOBERTA de método: www.itapemirim.es.gov.br (portal de legislação Portal Fácil, /legislacao) e camarapiuma.es.gov.br respondem com HTTP 302 para https://www.google.com, mas o CORPO da resposta é a página real; o cliente do toolkit seguia o redirecionamento e falhava com \"endpoint ajaxpro não achado\". Sem seguir o redirecionamento (curl sem -L), o AjaxPro leg_lis responde. Busca em Itapemirim por caminh, trânsito, tráfego, pesad, carga, tonel, veículos, circula, rodovia, ponte, estacionamento, mão única, interdi, sinaliza, ônibus, carreta, zona, posturas: só decretos de nomeação (cargos de frota de máquinas pesadas), carga horária, 3 portarias de poderes junto ao DETRAN-ES e o Decreto 21.909/2026 (núcleo gestor para ELABORAR o Plano Municipal de Mobilidade Urbana: o plano ainda não existe). Esse portal só tem Decretos, Portarias, Regulamentações, Código Tributário e 2 Leis Complementares: as Leis Ordinárias estão no SPL da Câmara (camaraitapemirim.nopapercloud.com.br / splonline / camaraitapemirim.es.gov.br), todos em 403 Cloudflare. Por isso falha_de_fonte continua true: Leis Ordinárias não lidas. DOM-ES (2021+) com 15 termos novos: 0 acerto. OSM mantido: maxweight em ponte da ES-487 e Estrada do Penedo, sem ato. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight=9 na ponte da ES-487 (via estadual: competência DER-ES, não municipal)",
+  "maxweight=10 em Estrada do Penedo (pontes e trechos), sem ato municipal achado: pista de sinalização de capacidade"
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

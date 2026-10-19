@@ -1,34 +1,38 @@
 {
-  "ibge": "3544301",
-  "nome": "Roseira",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.roseira.sp.gov.br/legislacao (portal próprio, busca heurística GET)",
-      "resultado": "3 resultados idênticos para todos os termos (Dec. 1804/2022 regularização fundiária; Lei 1.859/2024 fundo de saneamento; Portaria 34/2026): o filtro devolve a página, não o termo; nenhum ato de trânsito"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "Sem acerto relevante. "
-    },
-    {
-      "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
-      "resultado": "500: não conferido"
-    },
-    {
-      "url": "https://www.roseira.sp.gov.br/legislacao/lista/<ano>/categoria/{5,6,12,14}/",
-      "resultado": "Varredura de 891 atos (21 decretos, 2 LC, 865 leis, outros): nenhum de circulação de caminhões. Lei 640/1992 'proíbe utilização de via pública' lida (PDF escaneado): só preparo de argamassa em vias.",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Nada achado; cliente heurístico não filtra. OSM hgv_no=2, maxweight=1 não conferidos: pendência (Roseira fica na Via Dutra). | R2: base completa de leis e decretos da prefeitura varrida por ementa; nada. Portarias (60) não varridas (não normativas para circulação). Overpass indisponível (OSM hgv_no=2/maxweight=1 não conferidos; Roseira fica na Via Dutra).",
-  "falha_de_fonte": false,
-  "osm_divergencias": [
-    "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: hgv_no=2, maxweight=1)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3544301",
+ "nome": "Roseira",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.roseira.sp.gov.br/legislacao (portal próprio, busca heurística GET)",
+   "resultado": "3 resultados idênticos para todos os termos (Dec. 1804/2022 regularização fundiária; Lei 1.859/2024 fundo de saneamento; Portaria 34/2026): o filtro devolve a página, não o termo; nenhum ato de trânsito"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "Sem acerto relevante. "
+  },
+  {
+   "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
+   "resultado": "500: não conferido"
+  },
+  {
+   "url": "https://www.roseira.sp.gov.br/legislacao/lista/<ano>/categoria/{5,6,12,14}/",
+   "resultado": "Varredura de 891 atos (21 decretos, 2 LC, 865 leis, outros): nenhum de circulação de caminhões. Lei 640/1992 'proíbe utilização de via pública' lida (PDF escaneado): só preparo de argamassa em vias.",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit/legislacao.py buscar 3544301",
+   "resultado": "portal_proprio@www.roseira.sp.gov.br/legislacao(prefeitura): 3 atos na ementa"
+  }
+ ],
+ "observacoes": "Nada achado; cliente heurístico não filtra. OSM hgv_no=2, maxweight=1 não conferidos: pendência (Roseira fica na Via Dutra). | R2: base completa de leis e decretos da prefeitura varrida por ementa; nada. Portarias (60) não varridas (não normativas para circulação). Overpass indisponível (OSM hgv_no=2/maxweight=1 não conferidos; Roseira fica na Via Dutra). || R7 2026-10-19: Varredura Câmaras/portais de legislação por script (toolkit legislacao.py, termos de ementa: caminh|pesado|tonelad|carreta|veículos de carga, máx. 40/termo): nenhum ato com restrição de caminhões identificado nas fontes que responderam. Acervo não testado com \"orçamento\".",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: hgv_no=2, maxweight=1)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

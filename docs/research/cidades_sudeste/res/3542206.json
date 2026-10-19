@@ -1,38 +1,63 @@
 {
-  "ibge": "3542206",
-  "nome": "Rancharia",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "fontes_consultadas": [
-    {
-      "url": "http://camararancharia.sp.gov.br",
-      "resultado": "webline: falha: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==) não respondeu em http://camararancharia.sp.gov.br"
-    },
-    {
-      "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
-      "resultado": "sem resultado"
-    },
-    {
-      "url": "https://www.camararancharia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=N&ano=AAAA (Webline da Câmara: Leis 1964–2026 e LC, ementas lidas localmente)",
-      "resultado": "Respondeu: 61 anos de leis (4.029 itens) e 17 de LC. Só compras de caminhão, Programa Caminho da Escola, pista de caminhada, doação de carreta: sem restrição a caminhões. Decretos do Executivo não estão neste portal.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.rancharia.sp.gov.br/portal/leis_decretos/",
-      "resultado": "Redireciona para leismunicipais.com.br/legislacao-municipal/5209 (403 Cloudflare): não contornado. Diário oficial próprio (/portal/diario-oficial, desde 2025, 337 edições) não reaberto.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter (IBGE:GEOCODIGO=3542206)",
-      "resultado": "Respondeu: 0 ways com hgv/maxweight/maxlength/maxaxleload.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Verificação rápida: busca no portal de legislação (termos caminh|carga e descarga|veículos pesados|tráfego|trânsito|VUC) e no lead/diários consolidados (sem acerto). Fontes principais fora do ar, bloqueadas (Cloudflare) ou só heurísticas: o nao_achou NÃO é conclusivo. Overpass fora do ar (HTTP 500/reset) em 11/10/2026: OSM não consultado. || R2: Leis da Câmara pesquisadas por ementa sem achado; decretos (onde costuma estar a restrição) só no leismunicipais (403), então continua falha_de_fonte. OSM sem etiquetas de restrição.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3542206",
+ "nome": "Rancharia",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "http://camararancharia.sp.gov.br",
+   "resultado": "webline: falha: Webline: módulo de legislação (?pag=T0dRPU9EZz1PR009T1RnPQ==) não respondeu em http://camararancharia.sp.gov.br"
+  },
+  {
+   "url": "diarios_consolidados.py buscar (doesp/dosp/apm/qd) \"tráfego de caminhões\"",
+   "resultado": "sem resultado"
+  },
+  {
+   "url": "https://www.camararancharia.sp.gov.br/?pag=T0dRPU9EZz1PR009T1RnPQ==&idtipolei=N&ano=AAAA (Webline da Câmara: Leis 1964–2026 e LC, ementas lidas localmente)",
+   "resultado": "Respondeu: 61 anos de leis (4.029 itens) e 17 de LC. Só compras de caminhão, Programa Caminho da Escola, pista de caminhada, doação de carreta: sem restrição a caminhões. Decretos do Executivo não estão neste portal.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.rancharia.sp.gov.br/portal/leis_decretos/",
+   "resultado": "Redireciona para leismunicipais.com.br/legislacao-municipal/5209 (403 Cloudflare): não contornado. Diário oficial próprio (/portal/diario-oficial, desde 2025, 337 edições) não reaberto.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter (IBGE:GEOCODIGO=3542206)",
+   "resultado": "Respondeu: 0 ways com hgv/maxweight/maxlength/maxaxleload.",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://camararancharia.sp.gov.br/ -> HTTP 0; prefeitura https://www.rancharia.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://rancharia.sp.gov.br/portal/leis_decretos/ -> 200; https://www.rancharia.sp.gov.br/portal/leis_decretos/ -> 200; https://rancharia.sp.gov.br/diario-oficial -> 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 76 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.rancharia.sp.gov.br/portal/diario-oficial (busca por termo, 340 edições)",
+   "resultado": "\"caminhões\": 3 edições; \"caminhão\": 6; demais expressões 0; edições 169/161/129/72/46 baixadas e lidas por pdftotext: sem ato de circulação.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Verificação rápida: busca no portal de legislação (termos caminh|carga e descarga|veículos pesados|tráfego|trânsito|VUC) e no lead/diários consolidados (sem acerto). Fontes principais fora do ar, bloqueadas (Cloudflare) ou só heurísticas: o nao_achou NÃO é conclusivo. Overpass fora do ar (HTTP 500/reset) em 11/10/2026: OSM não consultado. || R2: Leis da Câmara pesquisadas por ementa sem achado; decretos (onde costuma estar a restrição) só no leismunicipais (403), então continua falha_de_fonte. OSM sem etiquetas de restrição. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

@@ -1,40 +1,55 @@
 {
-  "ibge": "3301157",
-  "nome": "Cardoso Moreira",
-  "uf": "RJ",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://cardosomoreira.rj.gov.br/",
-      "resultado": "Home abre; sem módulo de legislação pesquisável"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301157)",
-      "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
-    },
-    {
-      "url": "https://cardosomoreira.rj.gov.br/controllers/legislacao/class_legislacao.php (POST func=7&param=1; portal Angular 'portalgov', com Origin/Referer)",
-      "resultado": "Respondeu: 1.018 atos (287 leis, 74 decretos, 622 portarias, 29 tributária, 3 LC, 2 resoluções), de 1990 a 06/2026, com ementa/texto. Filtro por caminh|pesad|carga|trânsito|tráfego|circula|vicina|tonelad|veículo|carreta|estaciona|transporte: só Lei 1063/2026 (art. 6º e 7º da Lei 533/2015, ementa sem relação), Lei 757/2022 (crédito para veículo de transporte) e Portaria 002/2021 (carga horária). Nenhuma restrição de circulação.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://cardosomoreira.rj.gov.br/scripts/controllers_rotas_app/control_rota_legislacao.js",
-      "resultado": "Lido para descobrir o endpoint; o POST sem Origin/Referer devolve 'Access denied: Unauthorized origin'.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301157)",
-      "resultado": "R2: várias tentativas com timeout/connection reset; OSM (maxweight=2) segue NÃO conferido.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Sem portal de legislação identificado (home da prefeitura sem cliente automático) e sem diário consolidado. OSM maxweight=2 não conferido (Overpass fora do ar). | R2: o portal da prefeitura (Angular 'portalgov') passou a responder via POST com Origin/Referer de navegador: 1.018 atos listados, nenhum de restrição a caminhões. Lacuna: só 74 decretos publicados no portal (37 em 2021, 3 em 2017, 1 em 2019, nenhum antes de 2017), então decretos de trânsito podem estar só no diário oficial (portal tem class_diario.php, sem busca por texto). OSM maxweight=2 não conferido (Overpass indisponível).",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "OSM maxweight=2 não conferido: pendência."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3301157",
+ "nome": "Cardoso Moreira",
+ "uf": "RJ",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://cardosomoreira.rj.gov.br/",
+   "resultado": "Home abre; sem módulo de legislação pesquisável"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301157)",
+   "resultado": "HTTP 500/timeout em várias tentativas: etiquetas do OSM NÃO conferidas nesta rodada (pendência)."
+  },
+  {
+   "url": "https://cardosomoreira.rj.gov.br/controllers/legislacao/class_legislacao.php (POST func=7&param=1; portal Angular 'portalgov', com Origin/Referer)",
+   "resultado": "Respondeu: 1.018 atos (287 leis, 74 decretos, 622 portarias, 29 tributária, 3 LC, 2 resoluções), de 1990 a 06/2026, com ementa/texto. Filtro por caminh|pesad|carga|trânsito|tráfego|circula|vicina|tonelad|veículo|carreta|estaciona|transporte: só Lei 1063/2026 (art. 6º e 7º da Lei 533/2015, ementa sem relação), Lei 757/2022 (crédito para veículo de transporte) e Portaria 002/2021 (carga horária). Nenhuma restrição de circulação.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://cardosomoreira.rj.gov.br/scripts/controllers_rotas_app/control_rota_legislacao.js",
+   "resultado": "Lido para descobrir o endpoint; o POST sem Origin/Referer devolve 'Access denied: Unauthorized origin'.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO=3301157)",
+   "resultado": "R2: várias tentativas com timeout/connection reset; OSM (maxweight=2) segue NÃO conferido.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/aemerj/pesquisar (SIGPub RJ, 14 entidades)",
+   "resultado": "Município não consta entre as entidades do AEMERJ.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .rj.gov.br e .rj.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda cardosomoreira (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.rj.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem portal de legislação identificado (home da prefeitura sem cliente automático) e sem diário consolidado. OSM maxweight=2 não conferido (Overpass fora do ar). | R2: o portal da prefeitura (Angular 'portalgov') passou a responder via POST com Origin/Referer de navegador: 1.018 atos listados, nenhum de restrição a caminhões. Lacuna: só 74 decretos publicados no portal (37 em 2021, 3 em 2017, 1 em 2019, nenhum antes de 2017), então decretos de trânsito podem estar só no diário oficial (portal tem class_diario.php, sem busca por texto). OSM maxweight=2 não conferido (Overpass indisponível). | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "OSM maxweight=2 não conferido: pendência."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

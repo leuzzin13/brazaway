@@ -1,48 +1,63 @@
 {
-  "ibge": "3105103",
-  "nome": "Bambuí",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://sapl.bambui.mg.leg.br/norma/pesquisar (API /api/norma/normajuridica/)",
-      "resultado": "0 atos."
-    },
-    {
-      "url": "https://www.bambui.mg.leg.br/leis (portal_proprio)",
-      "resultado": "0 em todos os termos."
-    },
-    {
-      "url": "https://bambui.1doc.com.br",
-      "resultado": "sem cliente; não consultado."
-    },
-    {
-      "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO)",
-      "resultado": "HTTP 500 / 504 / conexão resetada em todas as tentativas (kumi, overpass-api.de, z., mail.ru; openstreetmap.fr 403 lista branca): ways etiquetados NÃO puderam ser listados nesta sessão; só as contagens da preparação (osm_hints_por_municipio.json)."
-    },
-    {
-      "url": "https://sapl.bambui.mg.leg.br/api/norma/normajuridica/?page_size=1",
-      "resultado": "total_entries=0 (base vazia).",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://bambui.mg.gov.br/transparencia",
-      "resultado": "Links de legislação: ilai.memory.com.br (SPA, sem acesso automatizável), leismunicipais.com.br e leis.org (403).",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3105103 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "0 resultados.",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Sem ato localizado; fontes fracas (SAPL vazio, sem diário consolidado). || R2: SAPL da Câmara está VAZIO (0 normas no total, API total_entries=0): ausência não prova nada. Prefeitura (bambui.mg.gov.br) responde, mas a legislação está em ilai.memory.com.br (SPA Angular) e leismunicipais (403); sem cliente. AMM refeito: 0.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "Preparação: maxweight=2, maxlength=2 (ways não identificados nesta sessão por falha do Overpass); sem ato municipal localizado: pendência para conferir no OSM (helipad? ponte de rodovia? rua municipal?) antes de qualquer uso. Não corrigir a camada."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3105103",
+ "nome": "Bambuí",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://sapl.bambui.mg.leg.br/norma/pesquisar (API /api/norma/normajuridica/)",
+   "resultado": "0 atos."
+  },
+  {
+   "url": "https://www.bambui.mg.leg.br/leis (portal_proprio)",
+   "resultado": "0 em todos os termos."
+  },
+  {
+   "url": "https://bambui.1doc.com.br",
+   "resultado": "sem cliente; não consultado."
+  },
+  {
+   "url": "https://overpass.kumi.systems/api/interpreter e overpass-api.de (area IBGE:GEOCODIGO)",
+   "resultado": "HTTP 500 / 504 / conexão resetada em todas as tentativas (kumi, overpass-api.de, z., mail.ru; openstreetmap.fr 403 lista branca): ways etiquetados NÃO puderam ser listados nesta sessão; só as contagens da preparação (osm_hints_por_municipio.json)."
+  },
+  {
+   "url": "https://sapl.bambui.mg.leg.br/api/norma/normajuridica/?page_size=1",
+   "resultado": "total_entries=0 (base vazia).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://bambui.mg.gov.br/transparencia",
+   "resultado": "Links de legislação: ilai.memory.com.br (SPA, sem acesso automatizável), leismunicipais.com.br e leis.org (403).",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3105103 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "0 resultados.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (seletor de entidades, 750 entradas)",
+   "resultado": "Nenhuma entidade 'Prefeitura/Câmara de Bambuí' no seletor do AMM-MG: município não publica no diário da AMM; sem texto integral por esse caminho.",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda bambui (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Sem ato localizado; fontes fracas (SAPL vazio, sem diário consolidado). || R2: SAPL da Câmara está VAZIO (0 normas no total, API total_entries=0): ausência não prova nada. Prefeitura (bambui.mg.gov.br) responde, mas a legislação está em ilai.memory.com.br (SPA Angular) e leismunicipais (403); sem cliente. AMM refeito: 0. | R7 2026-10-19: fontes novas tentadas sem cobrir a legislação do Executivo desde ~2015; falha_de_fonte mantida.",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "Preparação: maxweight=2, maxlength=2 (ways não identificados nesta sessão por falha do Overpass); sem ato municipal localizado: pendência para conferir no OSM (helipad? ponte de rodovia? rua municipal?) antes de qualquer uso. Não corrigir a camada."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }

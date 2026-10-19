@@ -1,0 +1,80 @@
+{
+  "$schema": "./schema.json",
+  "formato": 1,
+  "ibge": "4318622",
+  "municipio": "São José dos Ausentes",
+  "uf": "RS",
+  "fonte_id": "sao-jose-dos-ausentes",
+  "fonte": {
+    "url": "https://www.saojosedosausentes.rs.gov.br/publicacaolegal/decreto-no-11-de-24-de-fevereiro-de-2021-proibe-trafego-de-caminhoes-acima-de-10dez-toneladas-e-pbt-de-18dezoitotoneladas-em-toda-a-extensao-da-avenida-ismenia-batista-ribeiro-velho/ (Decreto 11/2021)",
+    "licenca": "Ato oficial do Município de São José dos Ausentes: domínio público (Lei 9.610/1998, art. 8º, IV). Geometria derivada do OpenStreetMap: ODbL 1.0 (© colaboradores do OpenStreetMap), base derivada separada do OSM.",
+    "notas": "Uma regra ativa (confiança média): Decreto 11/2021 proíbe o tráfego de caminhões em toda a extensão da Av. Ismênia Batista Ribeiro Velho, 24 h. A redação ('acima de 10 toneladas e PBT 18 toneladas') é ambígua entre carga útil (10 t) e PBT (18 t): modelado PBT acima de 18 t, o piso seguro (proibido em qualquer leitura). PDF escaneado, lido na imagem da página. Sem ato posterior na busca do site da Prefeitura. Jurisdição tratada como municipal (via urbana sem ref de rodovia no OSM; a BR-285 é outra via, ~1,2 km a leste), mas houve ação do DNIT na avenida em 2023."
+  },
+  "verificado_em": "2026-10-19",
+  "vuc": null,
+  "vuc_nota": "O Decreto 11/2021 não define VUC: o VUC é tratado como caminhão (o corte é PBT acima de 18 t, então um VUC de até 18 t fica fora da regra).",
+  "regras": [
+    {
+      "id": "saojosedosausentes_av_ismenia_18t",
+      "tipo": "via",
+      "regime": "Proibição por peso (via)",
+      "nome": "Av. Ismênia Batista Ribeiro Velho (toda a extensão): caminhões acima de 10 t / PBT 18 t proibidos (Decreto 11/2021)",
+      "status": "ativa",
+      "confianca": "media",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "pbt_t",
+            "acima": 18
+          }
+        ]
+      },
+      "excecoes": [],
+      "base_legal": [
+        {
+          "ato": "Decreto Municipal 11, de 24/02/2021 (São José dos Ausentes/RS)",
+          "artigo": "art. 1º (proibição); art. 2º (vigência na publicação)",
+          "url": "https://www.saojosedosausentes.rs.gov.br/wp-content/uploads/2021/02/Decreto-11.pdf",
+          "nota": "Texto: 'Fica proibido o tráfego de caminhões acima de 10 (dez) toneladas e PBT (peso bruto total) 18 toneladas, em toda extensão da Avenida Ismênia Batista Ribeiro Velho.' PDF escaneado relido visualmente pelo verificador (carimbo 'Publicado no Mural' em 24/02/2021). Cópia do texto em docs/research/cidades_sul_co/atos/4318622/."
+        }
+      ],
+      "vigencia_inicio": "2021-02-24",
+      "vigencia_fim": null,
+      "nota": "Ambiguidade 10 t x 18 t: o decreto diz 'caminhões acima de 10 toneladas e PBT 18 toneladas'. Modelado PBT acima de 18 t (carga útil acima de 10 t), a leitura menos restritiva compatível com todas as outras: qualquer caminhão com PBT acima de 18 t está proibido em qualquer interpretação; veículos de 10 a 18 t de PBT podem estar proibidos na leitura alternativa (não modelado). Sem horário no ato: 24 h, 7 dias. Via municipal no OSM (way 347787751, tertiary, mão única, ~0,6 km, sem ref de rodovia), mas houve ação do DNIT na avenida em mai/2023 (jurisdição não 100% provada). Sinalização não verificada (não é condição no texto).",
+      "fonte_geometria": "OSM (ODbL) casado por nome",
+      "geometria": [
+        {
+          "arquivo": "municipios/geo/4318622_vias.geojson",
+          "construir": "trechos"
+        }
+      ],
+      "trechos": [
+        {
+          "inciso": "art. 1º",
+          "via": [
+            "Avenida Ismênia B. Ribeiro Velho"
+          ],
+          "descricao": "Toda a extensão da Av. Ismênia Batista Ribeiro Velho, São José dos Ausentes (way OSM 347787751)",
+          "aproximado": false
+        }
+      ]
+    }
+  ]
+}

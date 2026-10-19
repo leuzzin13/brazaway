@@ -1,98 +1,102 @@
 {
- "ibge": "4209300",
- "nome": "Lages",
- "uf": "SC",
- "status": "pista",
- "nivel_busca": "profunda",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 145 (Prefeitura, 2010+) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões, veículos de carga, peso bruto total, proibida a circulação, caçambas, transporte de carga",
-   "resultado": "Sem ato de restrição. Acertos: decretos de preço público de estacionamento (23275/2026, 22132/2024, 20665/2023, 23268/2026 com vagas de carga e descarga), Decreto 18.067/2020 (Mercado Público; lido, irrelevante), LC 523/2018 (Plano Diretor: classificação de atratividade de veículos de carga para polos geradores)."
-  },
-  {
-   "url": "https://www.lages.sc.gov.br/ ; https://lages.atende.net/ ; https://www.camaralages.sc.gov.br/",
-   "resultado": "Prefeitura HTTP 503; Atende sem resposta; Câmara em 'Bot Verification' (reCAPTCHA)."
-  },
-  {
-   "url": "https://penaestrada.com.br/restricoes/lages/",
-   "resultado": "404 (leads)."
-  },
-  {
-   "url": "https://www.camaralages.sc.gov.br/proposicoes/pesquisa (Softcam, texto integral: caminhões, caminhão, veículos pesados, veículos de carga, carga e descarga, toneladas, circulação de veículos, tráfego de veículos, carretas, área central, 3509/2008)",
-   "resultado": "Achou Lei 3509/2008 (id 48861) e as anteriores 2166/1996, 2326/1997, 2354/1997, 2373/1997 (todas sobre circulação de veículos pesados na área central, revogadas em cadeia pela 3509). Outros acertos = ruído (cargos, créditos, leilões, área azul)."
-  },
-  {
-   "url": "https://www.cloudsoftcam.com.br/SC/LAGES/importacao/anexos/Lei-006767-0001.jpg ; RedFin06767.doc",
-   "resultado": "Imagem da lei (OCR) e redação final: texto lido; delimitação da área central delegada ao órgão de trânsito"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (domsc: \"3.509\", \"3509/2008\", \"área central circulação de veículos\", \"delimita a área central\")",
-   "resultado": "Nenhum decreto regulamentador/delimitação localizado"
-  },
-  {
-   "url": "https://www.lages.sc.gov.br/",
-   "resultado": "503 novamente"
-  },
-  {
-   "url": "camaralages.sc.gov.br via softcam.py ('area central', 'carga e descarga', 'veiculos de carga', '3.509', 'altera a Lei 3509', 'orgao executivo de transito'); DOM/SC (domsc: Lei 3509, capacidade de carga superior a 5, DIRETRAN area central, perimetro area central transito): 0; lages.sc.gov.br 503",
-   "resultado": "Achados so as leis antigas 2166/1996, 2326/1997, 2354/1997, 2373/1997 (revogadas) e Lei Compl. 362/2011 (cria gerencias da DIRETRAN, sem perimetro) e PDDT 523/2018 (sem perimetro). Decreto de delimitacao nao localizado; segue pista.",
-   "rodada": "R5"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Nenhuma restrição de circulação de caminhões encontrada no DOM/SC (Prefeitura desde 27/12/2010; poucos acertos). Portal da Prefeitura (503), Atende e Câmara (captcha) inacessíveis; leismunicipais bloqueado: resultado NÃO conclusivo. Os decretos de 'carga e descarga' achados são tarifas de estacionamento rotativo (vagas de carga e descarga pagas), não restrição de circulação. Pendência: consultar o órgão de trânsito (DIRETRAN) sobre decreto de restrição no centro/Av. Presidente Vargas. | R3 2026-10-18: ACHADA via Câmara (Softcam): Lei 3509/2008 proíbe, 07h-19h, na \"área central\" de Lages, circulação de veículos com capacidade de carga > 5 t (exceções oficiais/ônibus; carga e descarga até 5 t). Perímetro da área central delegado ao órgão executivo de trânsito; decreto de delimitação NÃO localizado -> regra desativada, status pista. Pendente: DIRETRAN/Prefeitura (lages.sc.gov.br 503) para o decreto/mapa da área central e para confirmar vigência. | R5 2026-10-18: Achados so as leis antigas 2166/1996, 2326/1997, 2354/1997, 2373/1997 (revogadas) e Lei Compl. 362/2011 (cria gerencias da DIRETRAN, sem perimetro) e PDDT 523/2018 (sem perimetro). Decreto de delimitacao nao localizado; segue pista.",
- "osm_divergencias": [
-  "OSM não consultado."
- ],
- "vuc": null,
- "regras_rascunho": [
-  {
-   "id": "lages_lei3509_2008_area_central",
-   "tipo": "zona",
-   "regime": "Proibida a circulação de veículos com capacidade de carga acima de 5 t, 07h-19h, na 'área central'; carga/descarga de até 5 t 07h-19h em locais pré-definidos",
-   "nome": "Lages: Lei 3509/2008 - área central (veículos > 5 t de capacidade de carga)",
-   "status": "desativada",
-   "status_motivo": "Sem delimitação: art. 1º, § 1º remete a abrangência da 'área central' ao Órgão Executivo de Trânsito e o decreto regulamentador (art. 4º do projeto, 60 dias) não foi localizado (DOM/SC e Câmara).",
-   "confianca": "baixa",
-   "janelas": [
+  "ibge": "4209300",
+  "nome": "Lages",
+  "uf": "SC",
+  "status": "pista",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "07:00",
-     "to": "19:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true,
-    "qualquer": [
-     {
-      "campo": "payload_t",
-      "acima": 5
-     }
-    ]
-   },
-   "excecoes": [
-    "I veículos oficiais; II Exército, PM, Bombeiros, ambulâncias; III empresas públicas/concessionárias em serviço; IV escolares; V ônibus de turismo e coletivo urbano",
-    "art. 3º: casos excepcionais decididos pelo órgão de trânsito com 48 h de antecedência"
-   ],
-   "base_legal": [
+      "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 145 (Prefeitura, 2010+) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões, veículos de carga, peso bruto total, proibida a circulação, caçambas, transporte de carga",
+      "resultado": "Sem ato de restrição. Acertos: decretos de preço público de estacionamento (23275/2026, 22132/2024, 20665/2023, 23268/2026 com vagas de carga e descarga), Decreto 18.067/2020 (Mercado Público; lido, irrelevante), LC 523/2018 (Plano Diretor: classificação de atratividade de veículos de carga para polos geradores)."
+    },
     {
-     "ato": "Lei nº 3509, de 26/11/2008 (Lages/SC); revogou a Lei 2373/1997",
-     "artigo": "art. 1º e § 1º; art. 2º",
-     "url": "https://www.camaralages.sc.gov.br/proposicoes/pesquisa/0/1/0/48861"
+      "url": "https://www.lages.sc.gov.br/ ; https://lages.atende.net/ ; https://www.camaralages.sc.gov.br/",
+      "resultado": "Prefeitura HTTP 503; Atende sem resposta; Câmara em 'Bot Verification' (reCAPTCHA)."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/lages/",
+      "resultado": "404 (leads)."
+    },
+    {
+      "url": "https://www.camaralages.sc.gov.br/proposicoes/pesquisa (Softcam, texto integral: caminhões, caminhão, veículos pesados, veículos de carga, carga e descarga, toneladas, circulação de veículos, tráfego de veículos, carretas, área central, 3509/2008)",
+      "resultado": "Achou Lei 3509/2008 (id 48861) e as anteriores 2166/1996, 2326/1997, 2354/1997, 2373/1997 (todas sobre circulação de veículos pesados na área central, revogadas em cadeia pela 3509). Outros acertos = ruído (cargos, créditos, leilões, área azul)."
+    },
+    {
+      "url": "https://www.cloudsoftcam.com.br/SC/LAGES/importacao/anexos/Lei-006767-0001.jpg ; RedFin06767.doc",
+      "resultado": "Imagem da lei (OCR) e redação final: texto lido; delimitação da área central delegada ao órgão de trânsito"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/ (domsc: \"3.509\", \"3509/2008\", \"área central circulação de veículos\", \"delimita a área central\")",
+      "resultado": "Nenhum decreto regulamentador/delimitação localizado"
+    },
+    {
+      "url": "https://www.lages.sc.gov.br/",
+      "resultado": "503 novamente"
+    },
+    {
+      "url": "camaralages.sc.gov.br via softcam.py ('area central', 'carga e descarga', 'veiculos de carga', '3.509', 'altera a Lei 3509', 'orgao executivo de transito'); DOM/SC (domsc: Lei 3509, capacidade de carga superior a 5, DIRETRAN area central, perimetro area central transito): 0; lages.sc.gov.br 503",
+      "resultado": "Achados so as leis antigas 2166/1996, 2326/1997, 2354/1997, 2373/1997 (revogadas) e Lei Compl. 362/2011 (cria gerencias da DIRETRAN, sem perimetro) e PDDT 523/2018 (sem perimetro). Decreto de delimitacao nao localizado; segue pista.",
+      "rodada": "R5"
+    },
+    {
+      "url": "WebSearch: Lages Lei 3509/2008 decreto area central",
+      "resultado": "Nada novo; so resultados de outros municipios/noticias."
     }
-   ],
-   "vigencia_inicio": "2008-11-26",
-   "trechos": []
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Nenhuma restrição de circulação de caminhões encontrada no DOM/SC (Prefeitura desde 27/12/2010; poucos acertos). Portal da Prefeitura (503), Atende e Câmara (captcha) inacessíveis; leismunicipais bloqueado: resultado NÃO conclusivo. Os decretos de 'carga e descarga' achados são tarifas de estacionamento rotativo (vagas de carga e descarga pagas), não restrição de circulação. Pendência: consultar o órgão de trânsito (DIRETRAN) sobre decreto de restrição no centro/Av. Presidente Vargas. | R3 2026-10-18: ACHADA via Câmara (Softcam): Lei 3509/2008 proíbe, 07h-19h, na \"área central\" de Lages, circulação de veículos com capacidade de carga > 5 t (exceções oficiais/ônibus; carga e descarga até 5 t). Perímetro da área central delegado ao órgão executivo de trânsito; decreto de delimitação NÃO localizado -> regra desativada, status pista. Pendente: DIRETRAN/Prefeitura (lages.sc.gov.br 503) para o decreto/mapa da área central e para confirmar vigência. | R5 2026-10-18: Achados so as leis antigas 2166/1996, 2326/1997, 2354/1997, 2373/1997 (revogadas) e Lei Compl. 362/2011 (cria gerencias da DIRETRAN, sem perimetro) e PDDT 523/2018 (sem perimetro). Decreto de delimitacao nao localizado; segue pista. | R7 2026-10-19: WebSearch (numero do ato e tema) sem texto do ato: Nada novo; so resultados de outros municipios/noticias. Nenhuma transcricao de terceiro localizada.",
+  "osm_divergencias": [
+    "OSM não consultado."
+  ],
+  "vuc": null,
+  "regras_rascunho": [
+    {
+      "id": "lages_lei3509_2008_area_central",
+      "tipo": "zona",
+      "regime": "Proibida a circulação de veículos com capacidade de carga acima de 5 t, 07h-19h, na 'área central'; carga/descarga de até 5 t 07h-19h em locais pré-definidos",
+      "nome": "Lages: Lei 3509/2008 - área central (veículos > 5 t de capacidade de carga)",
+      "status": "desativada",
+      "status_motivo": "Sem delimitação: art. 1º, § 1º remete a abrangência da 'área central' ao Órgão Executivo de Trânsito e o decreto regulamentador (art. 4º do projeto, 60 dias) não foi localizado (DOM/SC e Câmara).",
+      "confianca": "baixa",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "07:00",
+          "to": "19:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "qualquer": [
+          {
+            "campo": "payload_t",
+            "acima": 5
+          }
+        ]
+      },
+      "excecoes": [
+        "I veículos oficiais; II Exército, PM, Bombeiros, ambulâncias; III empresas públicas/concessionárias em serviço; IV escolares; V ônibus de turismo e coletivo urbano",
+        "art. 3º: casos excepcionais decididos pelo órgão de trânsito com 48 h de antecedência"
+      ],
+      "base_legal": [
+        {
+          "ato": "Lei nº 3509, de 26/11/2008 (Lages/SC); revogou a Lei 2373/1997",
+          "artigo": "art. 1º e § 1º; art. 2º",
+          "url": "https://www.camaralages.sc.gov.br/proposicoes/pesquisa/0/1/0/48861"
+        }
+      ],
+      "vigencia_inicio": "2008-11-26",
+      "trechos": []
+    }
+  ]
 }
