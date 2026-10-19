@@ -1,41 +1,61 @@
 {
-  "ibge": "3529203",
-  "nome": "Martinópolis",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://www.dosp.com.br/exibe_do.php?i=NjYxNTEz",
-      "resultado": "DOSP ed. 1635, 04/06/2025: Indicação 365/2025 do vereador pedindo ao Prefeito que 'analise a viabilidade de determinar a proibição do tráfego de veículos pesados' na Rua Emílio Falkembach. Pedido, não ato; indica que a regra não existia."
-    },
-    {
-      "url": "https://www.imprensaoficialmunicipal.com.br/martinopolis (pesquisar.php: 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados')",
-      "resultado": "Edições abertas: 2026-09-23 ed. 1948 (Indicação 286/2026: segurança na R. Tenente Cassimiro Dias com atenção a caminhões de grande porte de um depósito), 2020-02-06 ed. 366 (Indicação 007/2020: problema de tráfego de caminhões na MTO-010) e 2026-05-15 (projeto de barragem). Todas pedidos/ruído, nenhum ato."
-    },
-    {
-      "url": "https://leismunicipais.com.br/prefeitura/sp/martinopolis",
-      "resultado": "403 Cloudflare (não contornado)."
-    },
-    {
-      "url": "https://martinopolis.1doc.com.br e https://martinopolis.sp.leg.br",
-      "resultado": "1doc sem cliente; site da Câmara não consultado por cliente. Sem acesso utilizável a legislação."
-    },
-    {
-      "url": "https://www.camaramartinopolis.sp.gov.br/ (Webline)",
-      "resultado": "Sem conexão/página de desafio ('Carregando...'): não consultado; cliente Webline da toolkit: módulo não respondeu.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.martinopolis.sp.gov.br/",
-      "resultado": "Site da Prefeitura abre, sem legislação própria (links para leismunicipais 403, 1Doc login e DiOE).",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Só indicações de vereador (2020, 2025, 2026) pedindo providências sobre tráfego de caminhões/veículos pesados em vias específicas: reforçam que não há regra geral. Portal de legislação bloqueado (leismunicipais): ausência não conclusiva. R2: nenhum portal de legislação acessível; só indicações de vereador (R1); não conclusivo.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3529203",
+ "nome": "Martinópolis",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://www.dosp.com.br/exibe_do.php?i=NjYxNTEz",
+   "resultado": "DOSP ed. 1635, 04/06/2025: Indicação 365/2025 do vereador pedindo ao Prefeito que 'analise a viabilidade de determinar a proibição do tráfego de veículos pesados' na Rua Emílio Falkembach. Pedido, não ato; indica que a regra não existia."
+  },
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/martinopolis (pesquisar.php: 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados')",
+   "resultado": "Edições abertas: 2026-09-23 ed. 1948 (Indicação 286/2026: segurança na R. Tenente Cassimiro Dias com atenção a caminhões de grande porte de um depósito), 2020-02-06 ed. 366 (Indicação 007/2020: problema de tráfego de caminhões na MTO-010) e 2026-05-15 (projeto de barragem). Todas pedidos/ruído, nenhum ato."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/martinopolis",
+   "resultado": "403 Cloudflare (não contornado)."
+  },
+  {
+   "url": "https://martinopolis.1doc.com.br e https://martinopolis.sp.leg.br",
+   "resultado": "1doc sem cliente; site da Câmara não consultado por cliente. Sem acesso utilizável a legislação."
+  },
+  {
+   "url": "https://www.camaramartinopolis.sp.gov.br/ (Webline)",
+   "resultado": "Sem conexão/página de desafio ('Carregando...'): não consultado; cliente Webline da toolkit: módulo não respondeu.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.martinopolis.sp.gov.br/",
+   "resultado": "Site da Prefeitura abre, sem legislação própria (links para leismunicipais 403, 1Doc login e DiOE).",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "camara https://martinopolis.sp.leg.br/ -> HTTP 200; prefeitura https://www.martinopolis.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "responderam: https://www.imprensaoficialmunicipal.com.br/martinopolis -> 200; https://martinopolis.sp.gov.br/portal/leis_decretos/ -> 200; https://www.martinopolis.sp.gov.br/portal/leis_decretos/ -> 200; https://camaramartinopolis.sp.gov.br/portal/leis_decretos/ -> 200; https://martinopolis.sp.gov.br/diario-oficial -> 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "5 páginas, 581 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Só indicações de vereador (2020, 2025, 2026) pedindo providências sobre tráfego de caminhões/veículos pesados em vias específicas: reforçam que não há regra geral. Portal de legislação bloqueado (leismunicipais): ausência não conclusiva. R2: nenhum portal de legislação acessível; só indicações de vereador (R1); não conclusivo. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

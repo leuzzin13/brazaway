@@ -1,47 +1,72 @@
 {
-  "ibge": "3202108",
-  "nome": "Ecoporanga",
-  "uf": "ES",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/8449/184",
-      "resultado": "DOM/ES Ed. 2.367, 05/10/2023, p. 184 (trecho do lead): Decreto 9.252/2023, evento no Parque de Exposição (barracas); decretos 9.050/2023 idem; sem restrição a caminhão"
-    },
-    {
-      "url": "http://spl.camaraecoporanga.es.gov.br/legislacao/",
-      "resultado": "legislacao.py: formulário SPL não encontrado; wordpress da prefeitura (busca geral): só notícias"
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
-      "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 resultados com todos os termos"
-    },
-    {
-      "url": "https://ecoporanga.es.gov.br/wp-json/wp/v2/search",
-      "rodada": "R2",
-      "resultado": "Busca WordPress ('caminhões', 'trânsito decreto', 'carga e descarga'): 0 resultados."
-    },
-    {
-      "url": "https://www.portalcr2.com.br/leis-e-atos/leis-ecoporanga",
-      "rodada": "R2",
-      "resultado": "Página 200 mas app Bubble.io renderizado por JS: sem conteúdo legível por curl."
-    },
-    {
-      "url": "http://spl.camaraecoporanga.es.gov.br/legislacao/",
-      "rodada": "R2",
-      "resultado": "403 Cloudflare."
-    },
-    {
-      "url": "https://ioes.dio.es.gov.br/dom (diarios_consolidados.py buscar, fonte domes)",
-      "rodada": "R2",
-      "resultado": "Termos novos 'trânsito de veículos', 'estacionamento de caminhões', 'caminhões', 'tonelagem': nenhum ato de circulação (acertos de 'caminhões' são só licitações/contratos de manutenção de frota)."
-    }
-  ],
-  "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte principal indisponível. R2 (14/10/2026): nenhum ato de restrição a caminhão encontrado nas fontes que responderam hoje. Portais principais (SPL/camarasempapel/legislacaocompilada) seguem com 403 Cloudflare ou reset de conexão pelo proxy; resultado NÃO conclusivo.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3202108",
+ "nome": "Ecoporanga",
+ "uf": "ES",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://ioes.dio.es.gov.br/dom/portal/edicoes/download/8449/184",
+   "resultado": "DOM/ES Ed. 2.367, 05/10/2023, p. 184 (trecho do lead): Decreto 9.252/2023, evento no Parque de Exposição (barracas); decretos 9.050/2023 idem; sem restrição a caminhão"
+  },
+  {
+   "url": "http://spl.camaraecoporanga.es.gov.br/legislacao/",
+   "resultado": "legislacao.py: formulário SPL não encontrado; wordpress da prefeitura (busca geral): só notícias"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca DOM-ES via diarios_consolidados.py buscar)",
+   "resultado": "Termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'restrição de tráfego', 'peso bruto total', 'carga e descarga', 'proibido o trânsito': 0 resultados com todos os termos"
+  },
+  {
+   "url": "https://ecoporanga.es.gov.br/wp-json/wp/v2/search",
+   "rodada": "R2",
+   "resultado": "Busca WordPress ('caminhões', 'trânsito decreto', 'carga e descarga'): 0 resultados."
+  },
+  {
+   "url": "https://www.portalcr2.com.br/leis-e-atos/leis-ecoporanga",
+   "rodada": "R2",
+   "resultado": "Página 200 mas app Bubble.io renderizado por JS: sem conteúdo legível por curl."
+  },
+  {
+   "url": "http://spl.camaraecoporanga.es.gov.br/legislacao/",
+   "rodada": "R2",
+   "resultado": "403 Cloudflare."
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (diarios_consolidados.py buscar, fonte domes)",
+   "rodada": "R2",
+   "resultado": "Termos novos 'trânsito de veículos', 'estacionamento de caminhões', 'caminhões', 'tonelagem': nenhum ato de circulação (acertos de 'caminhões' são só licitações/contratos de manutenção de frota)."
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://ecoporanga.es.gov.br/ -> HTTP 200; camara https://www.camaraecoporanga.es.gov.br/ -> HTTP 403 (WAF/403)",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (candidatos *.es.gov.br/*.es.leg.br)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://ioes.dio.es.gov.br/dom (busca Elasticsearch em texto integral, 14 expressões x até 6 páginas)",
+   "resultado": "DOM-ES (2021+): expressões \"tráfego/circulação/trânsito de caminhões\", \"restrição de circulação\", \"proibido o trânsito/tráfego\", \"veículos de carga/pesados\", \"tonelagem\", \"peso bruto total\", \"carga e descarga\", \"caminhões\" filtradas para este município: só licitações, contratos, cargos e trechos de plano/EIV; nenhum ato de restrição. Cobre só 2021+ e só quem publica no DOM-ES.",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "1 páginas, 163 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Sem ato municipal de restrição a caminhão encontrado nas fontes consultadas; não prova ausência. Fonte principal indisponível. R2 (14/10/2026): nenhum ato de restrição a caminhão encontrado nas fontes que responderam hoje. Portais principais (SPL/camarasempapel/legislacaocompilada) seguem com 403 Cloudflare ou reset de conexão pelo proxy; resultado NÃO conclusivo. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

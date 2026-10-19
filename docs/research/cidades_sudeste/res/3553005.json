@@ -2,7 +2,7 @@
  "ibge": "3553005",
  "nome": "Taguaí",
  "uf": "SP",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "varredura_consolidada",
  "data": "2026-10-11",
  "fontes_consultadas": [
@@ -21,11 +21,79 @@
   {
    "url": "osm_hints_por_municipio.json (contagem, por município, de vias com hgv=no, hgv:conditional, maxweight, maxlength e outras condicionais)",
    "resultado": "Nenhuma etiqueta contada: o município não está entre os 367 com indício no OSM."
+  },
+  {
+   "url": "https://sapl.taguai.sp.leg.br/norma/1266",
+   "resultado": "Lei 1282/2025 lida"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (373 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.taguai.sp.leg.br/norma/pesquisar) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (373 caminhões) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (sapl, https://sapl.taguai.sp.leg.br/norma/pesquisar) NÃO foi consultado com termos de caminhão. 'Não achou' não prova que não exista regra. || R7 2026-10-19: SAPL Taguaí (ementa caminh|pesado|tonelad): Lei 1.282/2025 lida (OCR), proíbe veículos > 30 t na Estrada Vicinal Clóvis Rodrigues da Fonseca; regra ativa (confiança média).",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "taguai_vicinal_clovis_fonseca_30t",
+   "tipo": "via",
+   "regime": "Veículos de carga com peso total > 30 t (estrada vicinal)",
+   "nome": "Taguaí: Estrada Vicinal Clóvis Rodrigues da Fonseca, veículos de carga ou transporte com peso total (com carga) superior a 30 t",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "pbt_t",
+      "acima": 30
+     }
+    ]
+   },
+   "vuc": null,
+   "excecoes": [],
+   "autorizacao": null,
+   "base_legal": [
+    {
+     "ato": "Lei Ordinária municipal 1.282, de 12/11/2025 (Taguaí/SP)",
+     "artigo": "art. 1º (proibição > 30 t na Estrada Vicinal Clóvis Rodrigues da Fonseca); art. 2º (caminhões, carretas, bitrens, tritrens e veículos de grande porte acima do limite); art. 3º (sinalização); art. 5º (vigência na publicação)",
+     "url": "https://sapl.taguai.sp.leg.br/norma/1266",
+     "nota": "texto_integral do SAPL da Câmara."
+    }
+   ],
+   "vigencia_inicio": "2025-11-12",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [
+      "Estrada Vicinal Clóvis Rodrigues da Fonseca"
+     ],
+     "descricao": "Estrada vicinal municipal inteira (extremos não informados na lei)",
+     "aproximado": true
+    }
+   ],
+   "geometria": [
+    {
+     "arquivo": "municipios/geo/3553005_taguai.geojson",
+     "construir": "manual"
+    }
+   ],
+   "nota": "Confiança média: a lei não define extremos da via, e não se verificou sinalização. Peso 'total, incluindo carga' = PBT."
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",
@@ -43,5 +111,6 @@
    "cliente": true,
    "testado": true
   }
- }
+ },
+ "falha_de_fonte": false
 }

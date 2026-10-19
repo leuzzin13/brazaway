@@ -2,9 +2,9 @@
  "ibge": "4318622",
  "nome": "São José dos Ausentes",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "r3_fonte_municipal",
- "falha_de_fonte": true,
+ "falha_de_fonte": false,
  "data": "2026-10-18",
  "fontes_consultadas": [
   {
@@ -54,11 +54,72 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente sao-jose-dos-ausentes, saojosedosausentes, sao-jose-ausentes); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "R7-FF-RS: https://www.saojosedosausentes.rs.gov.br/?s=caminhoes (busca do WordPress), https://www.saojosedosausentes.rs.gov.br/wp-content/uploads/2021/02/Decreto-11.pdf",
+   "resultado": "LIDO (OCR): Decreto 11/2021, de 24/02/2021: art. 1 proibe o trafego de caminhoes acima de 10 t e PBT 18 t em toda a extensao da Av. Ismenia Batista Ribeiro Velho; art. 2 vigencia na publicacao. Buscas no site por Ismenia/toneladas/trafego de caminhoes: nenhum ato posterior. Texto em atos/4318622/decreto_11_2021.txt"
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4295 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.cmsaojosedosausentes.rs.gov.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: portal proprio heuristico sem resultado. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas). | R4 2026-10-18: varredura da Câmara em Softcam (www.cmsaojosedosausentes.rs.gov.br): acervo com 31 itens no teste 'orçamento' (mais antigo 01/07/2021, mais recente 24/09/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo {'caminhão': 6, 'veículos pesados': 1, 'toneladas': 2, 'eixos': 4}. Itens lidos/triados pela ementa e pelo texto do PDF: sem ato de restrição de circulação de caminhões (ruído: compras, orçamento, plano diretor/mobilidade só com diretriz, códigos de obras/posturas). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (4295 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (portal_proprio, https://www.cmsaojosedosausentes.rs.gov.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário).\nR3 2026-10-18: NENHUMA fonte de legislacao pesquisavel daqui. Bloqueios: portal proprio heuristico sem resultado. Querido Diario API 522; FAMURS sem cobertura. nao_achou NAO conclusivo (falha_de_fonte=true): rodar da rede do usuario nas URLs acima (termos: caminhoes, veiculos pesados, carga e descarga, transito pesado, toneladas). | R4 2026-10-18: varredura da Câmara em Softcam (www.cmsaojosedosausentes.rs.gov.br): acervo com 31 itens no teste 'orçamento' (mais antigo 01/07/2021, mais recente 24/09/2026); acervo raso, recente ou sem atualização recente: negativo NÃO conclusivo; acertos por termo {'caminhão': 6, 'veículos pesados': 1, 'toneladas': 2, 'eixos': 4}. Itens lidos/triados pela ementa e pelo texto do PDF: sem ato de restrição de circulação de caminhões (ruído: compras, orçamento, plano diretor/mobilidade só com diretriz, códigos de obras/posturas). | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R7 2026-10-19: ALTERADO na R7 (era nao_achou): achado pela busca WordPress do site da prefeitura (?s=caminhoes) o Decreto 11/2021, publicado em publicacaolegal; PDF escaneado lido por OCR. Via nomeada (Av. Ismenia Batista Ribeiro Velho, toda a extensao), sem janela horaria. A redacao (\"caminhoes acima de 10 toneladas e PBT 18 toneladas\") e ambigua: interpretado como PBT acima de 18 t (carga util acima de 10 t); confianca media. Nao confirmado que a avenida seja integralmente municipal (nao e rodovia pelo texto); sinalizacao nao verificada.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "saojosedosausentes_av_ismenia_18t",
+   "tipo": "via",
+   "regime": "Proibicao de trafego de caminhoes pesados",
+   "nome": "Av. Ismenia Batista Ribeiro Velho (toda a extensao): caminhoes acima de 10 t / PBT 18 t proibidos",
+   "status": "ativa",
+   "confianca": "media",
+   "verificado_em": "2026-10-19",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "pbt_t",
+      "acima": 18
+     }
+    ]
+   },
+   "excecoes": [],
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 11/2021, de 24/02/2021",
+     "artigo": "art. 1",
+     "url": "https://www.saojosedosausentes.rs.gov.br/wp-content/uploads/2021/02/Decreto-11.pdf"
+    }
+   ],
+   "vigencia_inicio": "2021-02-24",
+   "vigencia_fim": null,
+   "nota": "Texto: \"caminhoes acima de 10 (dez) toneladas e PBT (peso bruto total) 18 toneladas\". Ambiguidade entre carga util (10 t) e PBT (18 t); modelado com PBT > 18 t (criterio menos restritivo). Sem horario: 24 h.",
+   "trechos": [
+    {
+     "inciso": "art. 1",
+     "via": [
+      "Avenida Ismenia Batista Ribeiro Velho"
+     ],
+     "descricao": "Toda a extensao da Av. Ismenia Batista Ribeiro Velho, Sao Jose dos Ausentes",
+     "aproximado": false
+    }
+   ],
+   "geometria": []
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

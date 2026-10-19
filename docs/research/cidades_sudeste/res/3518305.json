@@ -1,51 +1,71 @@
 {
-  "ibge": "3518305",
-  "nome": "Guararema",
-  "uf": "SP",
-  "status": "sem_restricao_declarada",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://penaestrada.com.br/restricoes/",
-      "resultado": "Página de Guararema (2018-19): 'Não possui restrições'."
-    },
-    {
-      "url": "docs/layers/municipios/mun_rmsp_restante.md (pesquisa anterior)",
-      "resultado": "A prefeitura declarou à imprensa não ter restrição."
-    },
-    {
-      "url": "https://guararema.camarasempapel.com.br/legislacao/ e https://cmguararema.sp.gov.br",
-      "resultado": "camarasempapel bloqueado pelo proxy; formulário SPL não encontrado."
-    },
-    {
-      "url": "https://leismunicipais.com.br/prefeitura/sp/guararema",
-      "resultado": "403 Cloudflare ('Just a moment'); não contornado."
-    },
-    {
-      "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3518305",
-      "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026."
-    },
-    {
-      "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3518305; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
-      "resultado": "3 elementos, todos helipads com maxweight 4 a 6 (os hints 'maxweight=6' = heliponto)."
-    },
-    {
-      "url": "https://guararema.sp.gov.br/diariooficial ; https://www.guararema.sp.gov.br/ ; http://www.arquivaleis.com.br/publico/cmguararema",
-      "resultado": "Conexão reiniciada (ws_closed_mid_exchange) e arquivaleis sem DNS: sem resposta.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://cmguararema.sp.gov.br/ (home e wp-json/wp/v2/search: caminhões, veículos pesados, carga e descarga)",
-      "resultado": "Site da Câmara responde: nenhuma norma de circulação de caminhões; só notícias e projetos. As leis ficam no camarasempapel (conexão reiniciada) e no arquivaleis (sem DNS).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Pé na Estrada + prefeitura declarou não ter restrição; sem ato. Fonte de legislação indisponível, então a ausência é fraca. R2: a fonte de leis (camarasempapel/arquivaleis) e o diário da Prefeitura seguem inacessíveis. Mantém sem_restricao_declarada apenas por declaração à imprensa (Pé na Estrada e mun_rmsp_restante); sem ato lido. Ausência fraca.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "maxweight do OSM é de heliponto: ignorar."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3518305",
+ "nome": "Guararema",
+ "uf": "SP",
+ "status": "sem_restricao_declarada",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://penaestrada.com.br/restricoes/",
+   "resultado": "Página de Guararema (2018-19): 'Não possui restrições'."
+  },
+  {
+   "url": "docs/layers/municipios/mun_rmsp_restante.md (pesquisa anterior)",
+   "resultado": "A prefeitura declarou à imprensa não ter restrição."
+  },
+  {
+   "url": "https://guararema.camarasempapel.com.br/legislacao/ e https://cmguararema.sp.gov.br",
+   "resultado": "camarasempapel bloqueado pelo proxy; formulário SPL não encontrado."
+  },
+  {
+   "url": "https://leismunicipais.com.br/prefeitura/sp/guararema",
+   "resultado": "403 Cloudflare ('Just a moment'); não contornado."
+  },
+  {
+   "url": "toolkit/diarios_consolidados.py buscar (doesp/apm/dosp/qd; termos 'circulação de caminhões', 'tráfego de veículos pesados', 'trânsito de caminhões') 3518305",
+   "resultado": "Diários consolidados (doesp): 0 resultado nos 3 termos em 11/10/2026."
+  },
+  {
+   "url": "Overpass (maps.mail.ru / overpass.private.coffee; area IBGE:GEOCODIGO=3518305; hgv, maxweight, maxlength, hgv:conditional, maxweight:conditional)",
+   "resultado": "3 elementos, todos helipads com maxweight 4 a 6 (os hints 'maxweight=6' = heliponto)."
+  },
+  {
+   "url": "https://guararema.sp.gov.br/diariooficial ; https://www.guararema.sp.gov.br/ ; http://www.arquivaleis.com.br/publico/cmguararema",
+   "resultado": "Conexão reiniciada (ws_closed_mid_exchange) e arquivaleis sem DNS: sem resposta.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://cmguararema.sp.gov.br/ (home e wp-json/wp/v2/search: caminhões, veículos pesados, carga e descarga)",
+   "resultado": "Site da Câmara responde: nenhuma norma de circulação de caminhões; só notícias e projetos. As leis ficam no camarasempapel (conexão reiniciada) e no arquivaleis (sem DNS).",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura http://www.guararema.sp.gov.br/ -> HTTP 0; camara https://cmguararema.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "Softcam (descobrir: camara<m>/cm<m>/camaramunicipal<m> em .sp.gov.br/.leg.br e host conhecido)",
+   "resultado": "nenhum host Softcam respondeu com a página de pesquisa",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "8 páginas, 630 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Pé na Estrada + prefeitura declarou não ter restrição; sem ato. Fonte de legislação indisponível, então a ausência é fraca. R2: a fonte de leis (camarasempapel/arquivaleis) e o diário da Prefeitura seguem inacessíveis. Mantém sem_restricao_declarada apenas por declaração à imprensa (Pé na Estrada e mun_rmsp_restante); sem ato lido. Ausência fraca. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; sem Softcam/SAPL; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "maxweight do OSM é de heliponto: ignorar."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

@@ -38,10 +38,30 @@
    "url": "https://aguasdelindoia.sp.gov.br/ e https://transparencia.cmaguasdelindoia.sp.gov.br/tramitacao/",
    "resultado": "Home responde (200); sem portal de legislação próprio (aponta para leismunicipais). Câmara redireciona (302) para host com certificado inválido; www.cmaguasdelindoia.sp.gov.br devolve só página de verificação de bot.",
    "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://aguasdelindoia.sp.gov.br/ -> HTTP 403 (WAF/403); camara https://www.cmaguasdelindoia.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.cmaguasdelindoia.sp.gov.br/proposicoes/pesquisa?definicao=legislacao",
+   "resultado": "Softcam www.cmaguasdelindoia.sp.gov.br (/proposicoes/pesquisa, texto integral, acervo 18/09/1947 a 26/06/2026, 63 itens com 'orçamento'). Totais por expressão exata: {'caminhão': 3, 'veículos de carga': 1, 'circulação de veículos': 3, 'carga e descarga': 1, 'trânsito de veículos': 1}. Itens abertos pela ementa: só leis de crédito/cargos/aquisição/orçamento/código sem restrição de circulação de caminhões. A base da Câmara tem leis e decretos legislativos, NÃO decretos do Executivo.",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "2 páginas, 138 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
   }
  ],
  "data": "2026-10-14",
- "observacoes": "Sem ato; portal da prefeitura (403) e leismunicipais bloqueados: NÃO conclusivo. R2: sem portal de legislação acessível (leismunicipais 403; Câmara atrás de verificação de bot). OSM: hgv=no só em rodovia SP-360/BR-146 (competência estadual). Busca NÃO conclusiva.",
+ "observacoes": "Sem ato; portal da prefeitura (403) e leismunicipais bloqueados: NÃO conclusivo. R2: sem portal de legislação acessível (leismunicipais 403; Câmara atrás de verificação de bot). OSM: hgv=no só em rodovia SP-360/BR-146 (competência estadual). Busca NÃO conclusiva. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; Softcam achado em www.cmaguasdelindoia.sp.gov.br; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
  "falha_de_fonte": true,
  "osm_divergencias": [
   "hgv=no em trecho da SP-360/BR-146 (rodovia), fora da competência municipal."

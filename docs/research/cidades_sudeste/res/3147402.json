@@ -1,86 +1,134 @@
 {
-  "ibge": "3147402",
-  "nome": "Paraopeba",
-  "uf": "MG",
-  "status": "pista",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
+ "ibge": "3147402",
+ "nome": "Paraopeba",
+ "uf": "MG",
+ "status": "regra_com_ato",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://paraopeba.mg.gov.br/legislacao (Portal Fácil)",
+   "resultado": "302 para google.com; endpoint ajaxpro não achado. Host redireciona para google.com (302) pelo proxy desta máquina; portal inacessível. Cliente do toolkit devolveu 0 resultados/erro, não conclusivo."
+  },
+  {
+   "url": "https://sapl.paraopeba.mg.leg.br (SAPL, ementa)",
+   "resultado": "0 resultados para 'caminh|pesad|tráfego|trafego|carga'."
+  },
+  {
+   "url": "https://paraopeba.1doc.com.br",
+   "resultado": "Sem cliente automático; não consultado."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3147402",
+   "resultado": "0 em amm-mg e qd."
+  },
+  {
+   "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3147402)",
+   "resultado": "Só 2 helipads com maxweight (Agéo Fazenda Paraopeba, Fazenda Retiro da Lagoa)."
+  },
+  {
+   "url": "https://paraopeba.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
+   "resultado": "Achou Decreto 42/2015 e Decreto 6/2016 (ementas); outros resultados são ruído (vendedores ambulantes, SIM). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=1..10&arquivo={CEA70EEC-...}.pdf",
+   "resultado": "Sem acesso ao PDF do Decreto 42/2015 (arquivo não entregue; redirect google.com).",
+   "rodada": "R2"
+  },
+  {
+   "url": "WebSearch \"Paraopeba MG Decreto 042/2015 tráfego de veículos de carga na área urbana\"",
+   "resultado": "Sem resultado de Paraopeba.",
+   "rodada": "R2"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3147402 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
+   "resultado": "0 resultados.",
+   "rodada": "R2"
+  },
+  {
+   "url": "R7-PISTAS-SE 2026-10-19",
+   "resultado": "R7 2026-10-19: ATO LIDO. O Portal Fácil entrega o PDF por /arquivo/legislacao/decreto_<n>_<ano>_<id> (o redirect de abrir_arquivo.aspx aponta para ele; PDFs escaneados, lidos por OCR). Decreto 042/2015 (18/08/2015) e Decreto 006/2016 (15/01/2016, vigor 30 dias após a publicação; art. 1º novo vale desde 16/02/2016) estão em atos/3147402/. Regra vigente pela redação do Dec. 006/2016, art. 1º: veículos de carga acima de 3 eixos, 23 t ou 8 m, carretas em geral e bitrens ficam proibidos de trafegar e/ou estacionar nas vias e logradouros da ÁREA URBANA do Município, exceto Av. Paraná, Av. Dr. Júlio César e Av. Presidente Juscelino Kubitschek até o nº 407 (sentido bairro-centro); carga e descarga (baú) só com tara < 12 t, PBT até 23 t e até 12 m, das 8h às 18h todos os dias (§§ 1º-2º); autorização excepcional da Prefeitura com nota fiscal (Dec. 042/2015, art. 4º); lona para minério/areia/argila/cascalho/tijolo (art. 5º). O Anexo Único de 24 logradouros do Dec. 042/2015 foi esvaziado na prática pelo novo caput (que passou a valer para toda a área urbana). Por que fica DESATIVADA: o ato não delimita a área urbana (sem polígono nem lista de vias; só as exceções são nomeadas), então não há ge"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Pista OSM era só maxweight de helipontos. Portal da prefeitura inacessível (proxy), só SAPL da Câmara consultado: busca não conclusiva. || R2: Portal Fácil da Prefeitura lido (corpo do 302). ACHADO FORTE (pista): Decreto 42/2015 'Dispõe sobre tráfego de veículos de carga na área urbana' e Decreto 6/2016 que altera seus arts. 1º e 5º. Texto NÃO lido: abrir_arquivo.aspx devolve erro 'Buffer cannot be null'/redirect para qualquer cdLocal (1-10), AMM 0, SAPL da Câmara 0, 2ª WebSearch sem resultado. PRÓXIMO PASSO: abrir os PDFs em navegador real ou pedir à Prefeitura; páginas de detalhe existem em paraopeba.mg.gov.br/detalhe-da-legislacao/info/decreto-42-2015/<id> (id desconhecido; listagem por tipo não acessível). Pista OSM anterior era só helipontos. || R7 2026-10-19: ATO LIDO. O Portal Fácil entrega o PDF por /arquivo/legislacao/decreto_<n>_<ano>_<id> (o redirect de abrir_arquivo.aspx aponta para ele; PDFs escaneados, lidos por OCR). Decreto 042/2015 (18/08/2015) e Decreto 006/2016 (15/01/2016, vigor 30 dias após a publicação; art. 1º novo vale desde 16/02/2016) estão em atos/3147402/. Regra vigente pela redação do Dec. 006/2016, art. 1º: veículos de carga acima de 3 eixos, 23 t ou 8 m, carretas em geral e bitrens ficam proibidos de trafegar e/ou estacionar nas vias e logradouros da ÁREA URBANA do Município, exceto Av. Paraná, Av. Dr. Júlio César e Av. Presidente Juscelino Kubitschek até o nº 407 (sentido bairro-centro); carga e descarga (baú) só com tara < 12 t, PBT até 23 t e até 12 m, das 8h às 18h todos os dias (§§ 1º-2º); autorização excepcional da Prefeitura com nota fiscal (Dec. 042/2015, art. 4º); lona para minério/areia/argila/cascalho/tijolo (art. 5º). O Anexo Único de 24 logradouros do Dec. 042/2015 foi esvaziado na prática pelo novo caput (que passou a valer para toda a área urbana). Por que fica DESATIVADA: o ato não delimita a área urbana (sem polígono nem lista de vias; só as exceções são nomeadas), então não há geometria confiável sem o perímetro urbano oficial (Plano Diretor/lei do perímetro); 24h todos os dias é a leitura do texto (sem janela). Não achei decreto revogador no portal (busca por veículos de carga só traz os dois), mas a vigência atual não foi provada. Próximo passo: obter o perímetro urbano da sede (lei do perímetro/Plano Diretor) e, se desejado, modelar como zona com as 3 avenidas excluídas; confirmar a sinalização.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "maxweight em 2 helipads: não é restrição viária."
+ ],
+ "regras_rascunho": [
+  {
+   "id": "paraopeba_area_urbana_veiculos_de_carga",
+   "tipo": "zona",
+   "regime": "Veículos de carga > 3 eixos, > 23 t ou > 8 m, carretas e bitrens: proibidos na área urbana (exceto 3 avenidas)",
+   "nome": "Paraopeba: proibido veículo de carga acima de 3 eixos, 23 t ou 8 m (carretas e bitrens) na área urbana (Decreto 042/2015, art. 1º na redação do Decreto 006/2016)",
+   "status": "desativada",
+   "status_motivo": "Ato primário lido e sem revogação achada, mas a \"área urbana\" não é delimitada no decreto (sem polígono nem lista de vias; só as exceções são nomeadas) e a vigência atual/sinalização não foram confirmadas: sem delimitação georreferenciável não pode ser ativa.",
+   "confianca": "media",
+   "janelas": [
     {
-      "url": "https://paraopeba.mg.gov.br/legislacao (Portal Fácil)",
-      "resultado": "302 para google.com; endpoint ajaxpro não achado. Host redireciona para google.com (302) pelo proxy desta máquina; portal inacessível. Cliente do toolkit devolveu 0 resultados/erro, não conclusivo."
-    },
-    {
-      "url": "https://sapl.paraopeba.mg.leg.br (SAPL, ementa)",
-      "resultado": "0 resultados para 'caminh|pesad|tráfego|trafego|carga'."
-    },
-    {
-      "url": "https://paraopeba.1doc.com.br",
-      "resultado": "Sem cliente automático; não consultado."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3147402",
-      "resultado": "0 em amm-mg e qd."
-    },
-    {
-      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3147402)",
-      "resultado": "Só 2 helipads com maxweight (Agéo Fazenda Paraopeba, Fazenda Retiro da Lagoa)."
-    },
-    {
-      "url": "https://paraopeba.mg.gov.br/legislacao (Portal Fácil, AjaxPro GetLegLis, ementa e texto integral)",
-      "resultado": "Achou Decreto 42/2015 e Decreto 6/2016 (ementas); outros resultados são ruído (vendedores ambulantes, SIM). Termos: circulação/trânsito/tráfego de caminhões, veículos pesados, veículos de carga, carga e descarga, toneladas, carretas, caminh, pesad, eixo, trânsito, tráfego. Portal Fácil: o host responde 302 para google.com (BotDeTect) MAS o corpo da resposta traz a página real; lendo o corpo sem seguir o redirect acha-se o endpoint ajaxpro leg_lis e o GetLegLis funciona (cliente do toolkit falha porque segue o redirect). Busca por ementa e por texto integral (isBuscaHtml/Pdf). Os PDFs (abrir_arquivo.aspx) não abrem por curl (redirect/arquivo ausente), mas o campo DSRESUMO traz o texto indexado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=1..10&arquivo={CEA70EEC-...}.pdf",
-      "resultado": "Sem acesso ao PDF do Decreto 42/2015 (arquivo não entregue; redirect google.com).",
-      "rodada": "R2"
-    },
-    {
-      "url": "WebSearch \"Paraopeba MG Decreto 042/2015 tráfego de veículos de carga na área urbana\"",
-      "resultado": "Sem resultado de Paraopeba.",
-      "rodada": "R2"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3147402 (amm-mg + qd), termos \"circulação de caminhões\", \"trânsito de caminhões\", \"veículos pesados\" (refeito após correção do bug de data do toolkit)",
-      "resultado": "0 resultados.",
-      "rodada": "R2"
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
     }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Pista OSM era só maxweight de helipontos. Portal da prefeitura inacessível (proxy), só SAPL da Câmara consultado: busca não conclusiva. || R2: Portal Fácil da Prefeitura lido (corpo do 302). ACHADO FORTE (pista): Decreto 42/2015 'Dispõe sobre tráfego de veículos de carga na área urbana' e Decreto 6/2016 que altera seus arts. 1º e 5º. Texto NÃO lido: abrir_arquivo.aspx devolve erro 'Buffer cannot be null'/redirect para qualquer cdLocal (1-10), AMM 0, SAPL da Câmara 0, 2ª WebSearch sem resultado. PRÓXIMO PASSO: abrir os PDFs em navegador real ou pedir à Prefeitura; páginas de detalhe existem em paraopeba.mg.gov.br/detalhe-da-legislacao/info/decreto-42-2015/<id> (id desconhecido; listagem por tipo não acessível). Pista OSM anterior era só helipontos.",
-  "falha_de_fonte": false,
-  "osm_divergencias": [
-    "maxweight em 2 helipads: não é restrição viária."
-  ],
-  "regras_rascunho": [
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "qualquer": [
+     {
+      "campo": "eixos",
+      "acima": 3
+     },
+     {
+      "campo": "pbt_t",
+      "acima": 23
+     },
+     {
+      "campo": "comprimento_m",
+      "acima": 8
+     },
+     {
+      "campo": "tipo",
+      "em": [
+       "semitrailer",
+       "truck_trailer",
+       "cvc"
+      ]
+     }
+    ]
+   },
+   "base_legal": [
     {
-      "id": "paraopeba_area_urbana_veiculos_de_carga",
-      "tipo": "zona",
-      "regime": "Tráfego de veículos de carga na área urbana (conteúdo não lido)",
-      "nome": "Paraopeba: tráfego de veículos de carga na área urbana (Decreto 042/2015, alterado pelo Decreto 006/2016)",
-      "status": "desativada",
-      "status_motivo": "Ato existe no portal oficial (ementas: Decreto 42/2015 \"Dispõe sobre o tráfego de veículos de carga na área urbana do Município de Paraopeba\"; Decreto 6/2016 \"Altera os artigos 1º e 5º do Decreto Municipal 042/2015\"), mas o texto não pôde ser lido: o PDF do Portal Fácil não abre por curl (arquivo ausente/redirect) e o DSRESUMO traz só a ementa; sem artigos, dias, horários, vias e veículos afetados. Ativar só após ler os PDFs.",
-      "confianca": "baixa",
-      "janelas": [],
-      "feriados": "aplica",
-      "alvo": {
-        "caminhao": true
-      },
-      "base_legal": [
-        {
-          "ato": "Decreto municipal 042/2015 (Paraopeba), 18/08/2015 conforme índice do portal",
-          "artigo": "não lido (art. 1º e 5º alterados pelo Decreto 006/2016)",
-          "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={CEA70EEC-343C-C7B2-2D5D-25ECBECACEAC}.pdf"
-        },
-        {
-          "ato": "Decreto municipal 006/2016 (Paraopeba), 15/01/2016 (mês +1 do índice do portal)",
-          "artigo": "não lido",
-          "url": "https://paraopeba.mg.gov.br/abrir_arquivo.aspx?cdLocal=5&arquivo={B0ADCC5B-B6E4-D6CE-D8CA-588A76D5A7CA}.pdf"
-        }
-      ],
-      "trechos": [],
-      "geometria": []
+     "ato": "Decreto municipal 042/2015 (Paraopeba), de 18/08/2015",
+     "artigo": "art. 1º (proibição; vigor 30 dias após a publicação, art. 10), art. 4º (autorização excepcional), art. 5º (lona), art. 6º (penalidades)",
+     "url": "https://paraopeba.mg.gov.br/arquivo/legislacao/decreto_42_2015_37",
+     "nota": "texto OCR em atos/3147402/Decreto_042_2015.txt"
+    },
+    {
+     "ato": "Decreto municipal 006/2016 (Paraopeba), de 15/01/2016",
+     "artigo": "art. 1º (nova redação do art. 1º do Dec. 042/2015: >3 eixos, >23 t ou >8 m, carretas e bitrens, trafegar e/ou estacionar em toda a área urbana, exceto Av. Paraná, Av. Dr. Júlio César e Av. JK até o nº 407; vale desde 16/02/2016); art. 2º (art. 5º); art. 4º (vigor 30 dias após a publicação)",
+     "url": "https://paraopeba.mg.gov.br/arquivo/legislacao/decreto_6_2016_38",
+     "nota": "texto OCR em atos/3147402/Decreto_006_2016.txt"
     }
-  ],
-  "rodada": "R2"
+   ],
+   "trechos": [],
+   "geometria": [],
+   "excecoes": [
+    "Dec. 006/2016, art. 1º: exceto Av. Paraná, Av. Dr. Júlio César e Av. Presidente Juscelino Kubitschek até o nº 407 (sentido bairro-centro)",
+    "art. 1º § 1º-2º: carga e descarga de veículo baú com tara < 12 t, PBT até 23 t e até 12 m, das 8h às 18h, todos os dias",
+    "Dec. 042/2015, art. 4º: autorização excepcional da Prefeitura mediante nota fiscal"
+   ],
+   "vigencia_inicio": "2016-02-16"
+  }
+ ],
+ "rodada": "R2"
 }

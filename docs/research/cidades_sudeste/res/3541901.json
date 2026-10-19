@@ -1,34 +1,54 @@
 {
-  "ibge": "3541901",
-  "nome": "Queluz",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "data": "2026-10-14",
-  "fontes_consultadas": [
-    {
-      "url": "https://queluz.sp.gov.br/new/leis (portal próprio, busca heurística)",
-      "resultado": "termos de caminhões/trânsito sem resultado; cliente heurístico, pouco confiável"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
-      "resultado": "Sem acerto relevante. "
-    },
-    {
-      "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
-      "resultado": "500: não conferido"
-    },
-    {
-      "url": "https://queluz.sp.gov.br/new/leis/index.php?busca=<termo>",
-      "resultado": "Busca funciona. 'caminh', 'trânsito', 'pesad', 'carga', 'circulação', 'tráfego': 0 resultados; 'veículo': só portarias de condutor e crédito para trator. Base parcial (só ~273 atos; anos 1999, 2015, 2017, 2018, 2021-2026).",
-      "rodada": "R2"
-    }
-  ],
-  "observacoes": "Nada achado; busca heurística em portal próprio. OSM maxweight=2 não conferido. | R2: portal respondeu e a busca não achou nada, mas a base cobre só parte dos anos (2019-2020, 2016 e anteriores ausentes). Não conclusivo. Overpass indisponível.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: maxweight=2)."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3541901",
+ "nome": "Queluz",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "data": "2026-10-14",
+ "fontes_consultadas": [
+  {
+   "url": "https://queluz.sp.gov.br/new/leis (portal próprio, busca heurística)",
+   "resultado": "termos de caminhões/trânsito sem resultado; cliente heurístico, pouco confiável"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar (doesp, apm, dosp, qd) com 'circulação de caminhões', 'tráfego de caminhões', 'trânsito de caminhões', 'veículos pesados'",
+   "resultado": "Sem acerto relevante. "
+  },
+  {
+   "url": "Overpass (overpass.private.coffee, kumi.systems, overpass-api.de; area IBGE:GEOCODIGO)",
+   "resultado": "500: não conferido"
+  },
+  {
+   "url": "https://queluz.sp.gov.br/new/leis/index.php?busca=<termo>",
+   "resultado": "Busca funciona. 'caminh', 'trânsito', 'pesad', 'carga', 'circulação', 'tráfego': 0 resultados; 'veículo': só portarias de condutor e crédito para trator. Base parcial (só ~273 atos; anos 1999, 2015, 2017, 2018, 2021-2026).",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://queluz.sp.gov.br/new/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.camaraqueluz.sp.gov.br/proposicoes/pesquisa?definicao=legislacao",
+   "resultado": "Softcam www.camaraqueluz.sp.gov.br (/proposicoes/pesquisa, texto integral, acervo 13/03/1982 a 25/09/2026, 37 itens com 'orçamento'). Totais por expressão exata: {'caminhões': 1, 'caminhão': 2}. Itens abertos pela ementa: só leis de crédito/cargos/aquisição/orçamento/código sem restrição de circulação de caminhões. A base da Câmara tem leis e decretos legislativos, NÃO decretos do Executivo.",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "12 páginas, 527 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "observacoes": "Nada achado; busca heurística em portal próprio. OSM maxweight=2 não conferido. | R2: portal respondeu e a busca não achou nada, mas a base cobre só parte dos anos (2019-2020, 2016 e anteriores ausentes). Não conclusivo. Overpass indisponível. | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; Softcam achado em www.camaraqueluz.sp.gov.br; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [
+  "500/reset em todas as tentativas (servidor Overpass fora do ar pelo proxy): vias etiquetadas do OSM NÃO conferidas; indício do preparo mantido como pista (OSM: maxweight=2)."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

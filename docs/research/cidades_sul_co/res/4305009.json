@@ -2,7 +2,7 @@
  "ibge": "4305009",
  "nome": "Catuípe",
  "uf": "RS",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "r3_fonte_municipal",
  "falha_de_fonte": true,
  "data": "2026-10-18",
@@ -38,11 +38,39 @@
   {
    "url": "plenussistemas.dioenet.com.br/list/<slug> e <slug>.1dom.com.br (slugs provavelmente catuipe, catuipe-rs, catuipers); homes da prefeitura/câmara",
    "resultado": "R4 2026-10-18 (toolkit/plenus_1dom.py): município NÃO usa DIOENET/Plenus (RS tem só Barra do Ribeiro no cadastro da plataforma) nem 1dom (slugs 404/307; nenhum link dioenet/plenus/1dom nas homes). Nada a pesquisar nessas plataformas."
+  },
+  {
+   "url": "R7-FF-RS: https://www.publicacoeseventos.unijui.edu.br/index.php/salaoconhecimento/article/view/10440/9103 (artigo da Unijui: Trafego de caminhoes na cidade de Catuipe-RS), WebSearch: Catuipe Codigo de Posturas Lei 854/91 art. 34",
+   "resultado": "PISTA (secundaria): artigo academico da Unijui cita a Lei Municipal 854/91 (Codigo de Posturas), art. 34, par. unico: \"Caminhoes de carga, tratores e demais veiculos pesados somente poderao transitar nas vias asfaltadas determinadas\" e relata a decisao da prefeitura de proibir a passagem de veiculos pesados nas principais vias. Texto da lei nao encontrado em fonte aberta."
   }
  ],
- "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (8834 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://catuipe.cespro.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: cespro prefeitura https://catuipe.cespro.com.br/ ; cittatec camara https://cmcatuipe.cittatec.com.br/portal-legislativo/proposicoes/consulta?ANO=1947,2040&amp;CLASSIFICACAO=22. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados.",
+ "observacoes": "Resolvido na triagem R1 (orquestrador), sem pesquisa dirigida: município pequeno (8834 hab.) sem nenhuma pista nas fontes da preparação (índice do Pé na Estrada, Querido Diário, diários consolidados e OSM). O portal de legislação mapeado (cespro, https://catuipe.cespro.com.br/) NÃO foi consultado com termos de caminhão. \"Não achou\" não prova que não exista regra. Cobertura mínima: nenhum diário oficial do município foi varrido (fora dos diários consolidados e do Querido Diário). R3 2026-10-18: lote CM-RS1 (cobertura mínima). FAMURS não cobre o município (confirmado no seletor); Querido Diário respondeu 522 (1 tentativa). Fonte(s) inacessível(is)/sem busca automatizável: cespro prefeitura https://catuipe.cespro.com.br/ ; cittatec camara https://cmcatuipe.cittatec.com.br/portal-legislativo/proposicoes/consulta?ANO=1947,2040&amp;CLASSIFICACAO=22. Onde havia cliente heurístico (portal_proprio) a busca rodou ok mas é só por ementa/página e não conclusiva. | R4 2026-10-18 (plataforma DIOENET/Plenus e 1dom): município não usa Plenus (RS: só Barra do Ribeiro) nem 1dom; status e falha_de_fonte inalterados. | R7 2026-10-19: Pista nova: Lei 854/91 (Codigo de Posturas), art. 34, par. unico, via artigo da Unijui (PDF, 5 pag.): caminhoes e veiculos pesados so nas vias asfaltadas \"determinadas\". Ato nao lido (CESPRO/Cittatec bloqueados; Camara em Cittatec). Sem vias nem pesos no que foi lido: nao vira regra. Pendencia: obter o Codigo de Posturas e o decreto/sinalizacao das vias liberadas.",
  "osm_divergencias": [],
- "regras_rascunho": [],
+ "regras_rascunho": [
+  {
+   "id": "catuipe_posturas_854_91_art34",
+   "tipo": "zona",
+   "regime": "Codigo de Posturas",
+   "nome": "Catuipe: veiculos pesados so nas vias asfaltadas determinadas (Lei 854/91, art. 34, p.u.)",
+   "status": "desativada",
+   "confianca": "baixa",
+   "verificado_em": "2026-10-19",
+   "status_motivo": "Ato nao lido (so citado em artigo academico); sem vias nomeadas, sem peso, sem horario; confianca baixa nunca e ativa.",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Municipal 854/91 (Codigo de Posturas), citada em artigo da Unijui",
+     "artigo": "art. 34, par. unico",
+     "url": "https://www.publicacoeseventos.unijui.edu.br/index.php/salaoconhecimento/article/view/10440/9103"
+    }
+   ],
+   "trechos": [],
+   "geometria": [],
+   "janelas": []
+  }
+ ],
  "triagem": {
   "rodada": "R1",
   "decisao": "direto",

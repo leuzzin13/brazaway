@@ -1,38 +1,58 @@
 {
-  "ibge": "3552700",
-  "nome": "Tabatinga",
-  "uf": "SP",
-  "status": "nao_achou",
-  "nivel_busca": "media",
-  "fontes_consultadas": [
-    {
-      "url": "https://tabatinga.sp.gov.br",
-      "resultado": "portal_proprio (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {'caminh': 0, 'veículos pesados': 0, 'veiculos pesados': 0, 'veículo de carga': 0, 'carga e descarga': 0, 'tráfego': 0, 'trafego': 0, 'trânsito': 0, 'transito':"
-    },
-    {
-      "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
-      "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
-    },
-    {
-      "url": "https://tabatinga.sp.gov.br/paginas/portal/legislacao/consulta ; https://tabatinga.sp.gov.br/diariooficial ; https://www.tabatinga.sp.gov.br/",
-      "resultado": "403 (desafio Cloudflare) com cabeçalhos de navegador e Referer/Origin; não contornado.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.camaratabatinga.sp.gov.br/ (e wp-json/wp/v2/search)",
-      "resultado": "Página 'Bot Verification' (reCAPTCHA), resposta 200 de 1 KB sem conteúdo; não automatizável.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://www.imprensaoficialmunicipal.com.br/tabatinga ; https://tabatinga.siscam.com.br/ ; https://sapl.tabatinga.sp.leg.br/",
-      "resultado": "DOSP: sem diário da cidade (redireciona à home); Siscam 400; SAPL sem conexão (502 no túnel).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Busca rápida (nível médio) por ementa nos portais de legislação e nos diários consolidados: nenhum ato de circulação de caminhões. 'Não achou' não prova ausência. Fontes principais bloqueadas (Cloudflare/reCAPTCHA) ou inoperantes (heurístico/sem resposta): busca não conclusiva. R2: todas as fontes de Tabatinga (Prefeitura, Câmara, DOSP, Siscam, SAPL) seguem bloqueadas ou inexistentes nesta rede. nao_achou NÃO conclusivo; revisitar via navegador (o portal da Prefeitura é o mesmo sistema 'paginas/portal/legislacao/consulta' de São Joaquim da Barra, cujo formulário aceita busca por palavra-chave).",
-  "falha_de_fonte": true,
-  "osm_divergencias": [],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3552700",
+ "nome": "Tabatinga",
+ "uf": "SP",
+ "status": "nao_achou",
+ "nivel_busca": "media",
+ "fontes_consultadas": [
+  {
+   "url": "https://tabatinga.sp.gov.br",
+   "resultado": "portal_proprio (prefeitura) buscas por ementa (caminh, veículos pesados, carga e descarga, tráfego, trânsito, tonelad, carreta, zona de restrição): 0 atos listados; contagens {'caminh': 0, 'veículos pesados': 0, 'veiculos pesados': 0, 'veículo de carga': 0, 'carga e descarga': 0, 'tráfego': 0, 'trafego': 0, 'trânsito': 0, 'transito':"
+  },
+  {
+   "url": "toolkit diarios_consolidados.py (doesp, apm, dosp, qd)",
+   "resultado": "termos \"circulação de caminhões\", \"trânsito de caminhões\", \"tráfego de veículos pesados\", \"veículos pesados\": sem ato normativo de circulação de caminhões (acertos de \"veículos pesados\" são licitações/manutenção de frota/contratos); QD retornou HTTP 520 em algumas tentativas"
+  },
+  {
+   "url": "https://tabatinga.sp.gov.br/paginas/portal/legislacao/consulta ; https://tabatinga.sp.gov.br/diariooficial ; https://www.tabatinga.sp.gov.br/",
+   "resultado": "403 (desafio Cloudflare) com cabeçalhos de navegador e Referer/Origin; não contornado.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.camaratabatinga.sp.gov.br/ (e wp-json/wp/v2/search)",
+   "resultado": "Página 'Bot Verification' (reCAPTCHA), resposta 200 de 1 KB sem conteúdo; não automatizável.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.imprensaoficialmunicipal.com.br/tabatinga ; https://tabatinga.siscam.com.br/ ; https://sapl.tabatinga.sp.leg.br/",
+   "resultado": "DOSP: sem diário da cidade (redireciona à home); Siscam 400; SAPL sem conexão (502 no túnel).",
+   "rodada": "R2"
+  },
+  {
+   "url": "homes de prefeitura/câmara (curl puro)",
+   "resultado": "prefeitura https://tabatinga.sp.gov.br/index -> HTTP 403 (WAF/403); camara https://www.camaratabatinga.sp.gov.br/ -> HTTP 200",
+   "rodada": "R7"
+  },
+  {
+   "url": "https://www.camaratabatinga.sp.gov.br/proposicoes/pesquisa?definicao=legislacao",
+   "resultado": "Softcam www.camaratabatinga.sp.gov.br (/proposicoes/pesquisa, texto integral, acervo 17/02/2009 a 14/09/2026, 39 itens com 'orçamento'). Totais por expressão exata: {'caminhões': 1, 'carga e descarga': 1}. Itens abertos pela ementa: só leis de crédito/cargos/aquisição/orçamento/código sem restrição de circulação de caminhões. A base da Câmara tem leis e decretos legislativos, NÃO decretos do Executivo.",
+   "rodada": "R7"
+  },
+  {
+   "url": "sondas de plataforma (eloweb/oxy Elotech, Siscam, legislacaocompilada, nopapercloud, camarasempapel, portaltp, DOSP <slug>, Instar /portal/leis_decretos, MPX /Legislacao/Leis, /diario-oficial)",
+   "resultado": "nenhuma respondeu como sistema da cidade (DNS inexistente/404/403 ou página genérica)",
+   "rodada": "R7"
+  },
+  {
+   "url": "varredura de links de legislação/decretos dos sites (títulos de anexos e âncoras)",
+   "resultado": "7 páginas, 469 âncoras; título com caminhão/trânsito/tráfego/carga/eixos: nenhum (exceto ruído)",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Busca rápida (nível médio) por ementa nos portais de legislação e nos diários consolidados: nenhum ato de circulação de caminhões. 'Não achou' não prova ausência. Fontes principais bloqueadas (Cloudflare/reCAPTCHA) ou inoperantes (heurístico/sem resposta): busca não conclusiva. R2: todas as fontes de Tabatinga (Prefeitura, Câmara, DOSP, Siscam, SAPL) seguem bloqueadas ou inexistentes nesta rede. nao_achou NÃO conclusivo; revisitar via navegador (o portal da Prefeitura é o mesmo sistema 'paginas/portal/legislacao/consulta' de São Joaquim da Barra, cujo formulário aceita busca por palavra-chave). | R7 2026-10-19: tentei Softcam/SAPL/Elotech/Siscam/SPL/Instar/DOSP por script e os sites de prefeitura/câmara; Softcam achado em www.camaratabatinga.sp.gov.br; nenhum ato de restrição a caminhões novo. falha_de_fonte mantida (decretos do Executivo e/ou acervo antigo seguem fora de alcance).",
+ "falha_de_fonte": true,
+ "osm_divergencias": [],
+ "regras_rascunho": [],
+ "rodada": "R2"
 }

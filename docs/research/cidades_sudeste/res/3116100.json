@@ -1,48 +1,68 @@
 {
-  "ibge": "3116100",
-  "nome": "Chapada do Norte",
-  "uf": "MG",
-  "status": "nao_achou",
-  "nivel_busca": "dirigida",
-  "fontes_consultadas": [
-    {
-      "url": "https://chapadadonorte.mg.gov.br/legislacoes/todas/Todas%20as%20Leis (legislacoes_dt)",
-      "resultado": "403 (curl com UA de navegador também)."
-    },
-    {
-      "url": "https://sapl.chapadadonorte.mg.leg.br (SAPL)",
-      "resultado": "0 resultados para 'caminh|pesad|tráfego|trafego|carga' (termo amplo 'carga' também 0: base possivelmente pouco povoada)."
-    },
-    {
-      "url": "toolkit diarios_consolidados.py buscar 3116100",
-      "resultado": "'veículos pesados' 56 no amm-mg (contratos de manutenção de frota): ruído; 'circulação de caminhões' 0."
-    },
-    {
-      "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3116100)",
-      "resultado": "1 way: ponte da BR-367 (Rodovia Senador Murilo Badaró) maxweight=12: rodovia federal."
-    },
-    {
-      "url": "https://www.chapadadonorte.mg.leg.br/@@search?SearchableText=caminhões e trânsito",
-      "resultado": "200; Plone da Câmara sem resultado para 'caminhões'; 'trânsito' sem ato. SAPL (sapl.chapadadonorte.mg.leg.br/api) devolve total 0 para qualquer ementa: base vazia.",
-      "rodada": "R2"
-    },
-    {
-      "url": "https://chapadadonorte.mg.gov.br/legislacoes/...",
-      "resultado": "Continua 403 (desafio) para o proxy.",
-      "rodada": "R2"
-    },
-    {
-      "url": "AMM-MG refeito (HOJE corrigido)",
-      "resultado": "Entidade existe; circulação/trânsito/tráfego de caminhões e proibido caminhões: 0; carga e descarga: 3 (licitações).",
-      "rodada": "R2"
-    }
-  ],
-  "data": "2026-10-14",
-  "observacoes": "Portal da prefeitura bloqueado (403); fontes alternativas sem resultado. Busca não conclusiva. R2: portal da prefeitura segue bloqueado; Câmara/SAPL vazios; AMM sem ato. Não conclusivo.",
-  "falha_de_fonte": true,
-  "osm_divergencias": [
-    "way 906970962 (ponte BR-367, secondary) maxweight=12: rodovia federal, fora da competência municipal."
-  ],
-  "regras_rascunho": [],
-  "rodada": "R2"
+ "ibge": "3116100",
+ "nome": "Chapada do Norte",
+ "uf": "MG",
+ "status": "nao_achou",
+ "nivel_busca": "dirigida",
+ "fontes_consultadas": [
+  {
+   "url": "https://chapadadonorte.mg.gov.br/legislacoes/todas/Todas%20as%20Leis (legislacoes_dt)",
+   "resultado": "403 (curl com UA de navegador também)."
+  },
+  {
+   "url": "https://sapl.chapadadonorte.mg.leg.br (SAPL)",
+   "resultado": "0 resultados para 'caminh|pesad|tráfego|trafego|carga' (termo amplo 'carga' também 0: base possivelmente pouco povoada)."
+  },
+  {
+   "url": "toolkit diarios_consolidados.py buscar 3116100",
+   "resultado": "'veículos pesados' 56 no amm-mg (contratos de manutenção de frota): ruído; 'circulação de caminhões' 0."
+  },
+  {
+   "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter (área IBGE:GEOCODIGO=3116100)",
+   "resultado": "1 way: ponte da BR-367 (Rodovia Senador Murilo Badaró) maxweight=12: rodovia federal."
+  },
+  {
+   "url": "https://www.chapadadonorte.mg.leg.br/@@search?SearchableText=caminhões e trânsito",
+   "resultado": "200; Plone da Câmara sem resultado para 'caminhões'; 'trânsito' sem ato. SAPL (sapl.chapadadonorte.mg.leg.br/api) devolve total 0 para qualquer ementa: base vazia.",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://chapadadonorte.mg.gov.br/legislacoes/...",
+   "resultado": "Continua 403 (desafio) para o proxy.",
+   "rodada": "R2"
+  },
+  {
+   "url": "AMM-MG refeito (HOJE corrigido)",
+   "resultado": "Entidade existe; circulação/trânsito/tráfego de caminhões e proibido caminhões: 0; carga e descarga: 3 (licitações).",
+   "rodada": "R2"
+  },
+  {
+   "url": "https://www.diariomunicipal.com.br/amm-mg/pesquisar (busca_avancada[entidade], texto integral; 6 termos x título todos/decreto/lei, pág. 1)",
+   "resultado": "Prefeitura de Chapada do Norte id 389: 3256 matérias, 2009-11-18 a 2026-10-15. 40 matérias recuperadas, 0 'plausíveis' lidas por trecho; sem ato novo de restrição a caminhões além do já registrado.",
+   "rodada": "R7"
+  },
+  {
+   "url": "AMM-MG SIGPub, segunda varredura na entidade da Prefeitura: termos 'circulação veículos', 'tráfego veículos', 'trânsito proibido', 'proíbe trânsito', 'estacionamento proibido', 'restrição circulação', 'carga descarga', 'eixos', 'tonelada' x título decreto/lei/portaria",
+   "resultado": "Nenhum ato municipal de restrição a veículos pesados novo (só ruído: eventos, frota, conferências, COVID).",
+   "rodada": "R7"
+  },
+  {
+   "url": "softcam.py descobrir (camara<slug>/cm<slug>/camaramunicipal<slug>/... .mg.gov.br e .mg.leg.br)",
+   "resultado": "Nenhum host Softcam respondeu.",
+   "rodada": "R7"
+  },
+  {
+   "url": "elotech.py sonda chapadadonorte (eloweb.net / oxy.elotech.com.br) e MPX transparencia.<m>.mg.gov.br/Legislacao/Leis/",
+   "resultado": "Sem Elotech nem MPX com legislação consultável.",
+   "rodada": "R7"
+  }
+ ],
+ "data": "2026-10-14",
+ "observacoes": "Portal da prefeitura bloqueado (403); fontes alternativas sem resultado. Busca não conclusiva. R2: portal da prefeitura segue bloqueado; Câmara/SAPL vazios; AMM sem ato. Não conclusivo. | R7 2026-10-19: diário da AMM-MG (SIGPub, texto integral) cobre a Prefeitura desde o acervo indicado até 16/10/2026; leis e decretos do Executivo são publicados ali, e 2 varreduras por entidade (12 termos) não acharam ato de restrição novo. Fonte considerada conclusiva: falha_de_fonte=false.",
+ "falha_de_fonte": false,
+ "osm_divergencias": [
+  "way 906970962 (ponte BR-367, secondary) maxweight=12: rodovia federal, fora da competência municipal."
+ ],
+ "regras_rascunho": [],
+ "rodada": "R7"
 }
