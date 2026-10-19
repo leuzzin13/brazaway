@@ -2,7 +2,7 @@
  "ibge": "4201000",
  "nome": "Anita Garibaldi",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "pista",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,81 @@
   {
    "url": "https://leismunicipais.com.br/prefeitura/sc/anita-garibaldi",
    "resultado": "legislacao.py buscar --principal: leismunicipais (Cloudflare 403; legislacao.py sem busca); 0 atos"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (varredura profunda por script, entidades 16, 6737, 6016)",
+   "resultado": "52 publicações únicas, 17 normativas, 5 textos lidos por regex; ver observacoes (R6)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/8225713",
+   "resultado": "LIDO integral (getHtml). Texto salvo em atos/4201000/lc_2545_2026_codigo_posturas.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "R1-SC-DR02 (conferencia barata, DR). Trechos anotados pela preparacao conferidos: Leis 2541, 2543, 2545/2026 (uso do solo/edificacoes: polos geradores, pavimentacao) e 2548/2026: ruido. Busca no DOM/SC (acervo integral do municipio) por 'transito de caminhoes' e 'veiculos pesados' sem ato de restricao de circulacao. Portal de legislacao principal (leismunicipais) nao pesquisavel automaticamente ou sem resultado; resultado do DOM/SC e a base do nao_achou. Nao_achou menos conclusivo: legislacao do portal nao consultada (bloqueio/sem cliente).",
+ "observacoes": "R1-SC-DR02 (conferencia barata, DR). Trechos anotados pela preparacao conferidos: Leis 2541, 2543, 2545/2026 (uso do solo/edificacoes: polos geradores, pavimentacao) e 2548/2026: ruido. Busca no DOM/SC (acervo integral do municipio) por 'transito de caminhoes' e 'veiculos pesados' sem ato de restricao de circulacao. Portal de legislacao principal (leismunicipais) nao pesquisavel automaticamente ou sem resultado; resultado do DOM/SC e a base do nao_achou. Nao_achou menos conclusivo: legislacao do portal nao consultada (bloqueio/sem cliente). R6 2026-10-18 (DOM/SC profunda): 14 consultas por entidade (combinações \"caminhões toneladas\", \"caminhões proibido\", \"pesados proibido\", \"veículos pesados\", \"trânsito pesado\", \"carga toneladas\", \"caminhões eixos\", \"caminhões circulação\", \"tráfego caminhões\", \"veículos carga\" + \"caminhões\", \"carretas\", \"caminhão\", \"tonelagem\"), todas as categorias (inclui Outras publicações e atos de Câmara), dataInicial=01/01/2000, paginação até 20 páginas (se >200 resultados, repetida por categoria Leis/Decretos/Portarias/Instrução Normativa/Resoluções/Outras publicações). Entidades/faixa do acervo: Prefeitura Municipal de Anita Garibaldi (13/01/2017 a 17/10/2026, 3752 atos); Câmara de Vereadores de Anita Garibaldi (10/06/2022 a 17/09/2026, 33 atos); Convênio de Trânsito (18/04/2017 a 16/04/2022, 544 atos). 52 publicações únicas retornadas, 17 com título de lei/decreto/portaria/resolução/IN (sem contrato/edital/licitação etc.); 5 textos integrais baixados e passados em regex de restrição (proib|vedad|restri|não poderão|pesad|tonelad|eixo). ACHADO: Lei Complementar 2545/2026 (Código de Posturas de Anita Garibaldi, publicada 15/04/2026), art. 183, XI, proíbe \"trafegar na Zona Central, com caminhões com mais de 5 metros e 7 toneladas, de segunda a sexta, das 7 às 20 horas, e aos sábados, das 9 às 14 horas\"; porém \"Zona Central\" não é definida nem nesse código nem na LC 2541/2026 (uso e ocupação) nem na LC 2540/2026 (plano diretor) -> regra desativada por falta de delimitação; precisa do mapa/anexo de zoneamento ou decreto de sinalização para ativar.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "anitagaribaldi_zona_central_caminhoes_5m_7t",
+   "tipo": "zona",
+   "regime": "Proibição por dimensão/peso em zona e horário",
+   "nome": "Zona Central: caminhões > 5 m e 7 t proibidos seg-sex 7-20h e sáb 9-14h (LC 2545/2026)",
+   "status": "desativada",
+   "status_motivo": "'Zona Central' não é delimitada em nenhum ato (nem código de posturas, nem LC 2541/2026, nem plano diretor LC 2540/2026): sem delimitação georreferenciável.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "from": "07:00",
+     "to": "20:00"
+    },
+    {
+     "days": [
+      6
+     ],
+     "from": "09:00",
+     "to": "14:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true,
+    "todas": [
+     {
+      "campo": "comprimento_m",
+      "acima": 5.0
+     },
+     {
+      "campo": "payload_t",
+      "acima": 7.0
+     }
+    ]
+   },
+   "base_legal": [
+    {
+     "ato": "Lei Complementar 2545/2026 - Código de Posturas de Anita Garibaldi (15/04/2026)",
+     "artigo": "art. 183, XI",
+     "url": "https://diariomunicipal.sc.gov.br/atos/8225713",
+     "nota": "Texto integral lido: \"Trafegar na Zona Central, com caminhões com mais de 5 metros e 7 toneladas, de segunda a sexta, das 7 às 20 horas, e aos sábados, das 9 às 14 horas\". Revoga a LC 1.786/2007. Entra em vigor na publicação."
+    }
+   ],
+   "excecoes": [],
+   "nota": "'7 toneladas' sem dizer se é PBT ou capacidade (usado payload_t, lado seguro); art. 183, XII: estacionar caminhonetes/caminhões/carretas > 5 m e 4 t a menos de 5 m de esquinas (estacionamento, fora do escopo).",
+   "vigencia_inicio": "2026-04-15",
+   "trechos": [
+    {
+     "inciso": "art. 183, XI",
+     "via": [],
+     "descricao": "\"Zona Central\" sem definição em ato.",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
 }

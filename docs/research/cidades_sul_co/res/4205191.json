@@ -2,7 +2,7 @@
  "ibge": "4205191",
  "nome": "Ermo",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "regra_com_ato",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -21,10 +21,67 @@
   {
    "url": "https://www.camaraermo.sc.gov.br/proposicoes/pesquisa (Softcam, toolkit/softcam.py)",
    "resultado": "acervo 'orçamento': 1 itens, de 02/02/2015 a 02/02/2015; acervo insuficiente/parado (não conta como negativo). Expressões exatas (caminhões, caminhão, veículos pesados, trânsito pesado, tráfego pesado, toneladas, eixos, carretas, veículos de carga): 0 itens únicos, ementas filtradas; nenhum ato de restrição de circulação de caminhões"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (varredura profunda por script, entidades 88, 6523, 6088)",
+   "resultado": "119 publicações únicas, 53 normativas, 6 textos lidos por regex; ver observacoes (R6)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/129215",
+   "resultado": "LIDO integral (getHtml). Texto salvo em atos/4205191/decreto_022_2011.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "Lote R1-SC-DR04 (conferência de acerto re-pontuado como ruído). LC 051/2023 (descrição do cargo de motorista de caminhão), LC 045/2021 (tarifa de remoção de veículos pesados): ruído; busca no portal da Câmara só devolveu Lei 12.527 (LAI). Nenhum ato municipal com restrição de circulação de caminhões encontrado no DOM/SC nem no portal da Câmara (cliente heurístico, cobertura limitada; prefeitura em sistema sem busca automática quando leismunicipais). R5 2026-10-18 (Softcam): Câmara em Softcam; acervo 'orçamento': 1 itens, de 02/02/2015 a 02/02/2015; acervo insuficiente/parado (não conta como negativo); 0 itens nas 9 expressões, nenhum ato de restrição de circulação de caminhões (leis de aquisição/cessão, parcelamento e plano diretor genéricos).",
+ "observacoes": "Lote R1-SC-DR04 (conferência de acerto re-pontuado como ruído). LC 051/2023 (descrição do cargo de motorista de caminhão), LC 045/2021 (tarifa de remoção de veículos pesados): ruído; busca no portal da Câmara só devolveu Lei 12.527 (LAI). Nenhum ato municipal com restrição de circulação de caminhões encontrado no DOM/SC nem no portal da Câmara (cliente heurístico, cobertura limitada; prefeitura em sistema sem busca automática quando leismunicipais). R5 2026-10-18 (Softcam): Câmara em Softcam; acervo 'orçamento': 1 itens, de 02/02/2015 a 02/02/2015; acervo insuficiente/parado (não conta como negativo); 0 itens nas 9 expressões, nenhum ato de restrição de circulação de caminhões (leis de aquisição/cessão, parcelamento e plano diretor genéricos). R6 2026-10-18 (DOM/SC profunda): 14 consultas por entidade (combinações \"caminhões toneladas\", \"caminhões proibido\", \"pesados proibido\", \"veículos pesados\", \"trânsito pesado\", \"carga toneladas\", \"caminhões eixos\", \"caminhões circulação\", \"tráfego caminhões\", \"veículos carga\" + \"caminhões\", \"carretas\", \"caminhão\", \"tonelagem\"), todas as categorias (inclui Outras publicações e atos de Câmara), dataInicial=01/01/2000, paginação até 20 páginas (se >200 resultados, repetida por categoria Leis/Decretos/Portarias/Instrução Normativa/Resoluções/Outras publicações). Entidades/faixa do acervo: Prefeitura municipal de Ermo (20/01/2010 a 16/10/2026, 8650 atos); Câmara de Vereadores de Ermo (08/07/2016 a 01/10/2026, 346 atos); Convênio de Trânsito (20/12/2014 a 16/04/2022, 647 atos). 119 publicações únicas retornadas, 53 com título de lei/decreto/portaria/resolução/IN (sem contrato/edital/licitação etc.); 6 textos integrais baixados e passados em regex de restrição (proib|vedad|restri|não poderão|pesad|tonelad|eixo). ACHADO: Decreto 022/2011 (art. 1º, III) proíbe o trânsito de veículos pesados na Rua Catarina Neto (Ermo) -> regra ativa no rascunho (confirmado pelo pesquisador; verificador independente pendente); nenhuma revogação encontrada no DOM/SC (busca \"Catarina Neto\" em todas as entidades: só o decreto e a LC 015/2011, que não trata do tema).",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "ermo_rua_catarina_neto_veic_pesados",
+   "tipo": "via",
+   "regime": "Proibição de veículos pesados (via)",
+   "nome": "Rua Catarina Neto: trânsito de veículos pesados proibido (Decreto 022/2011)",
+   "status": "ativa",
+   "confianca": "media",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto Municipal 022, de 02/05/2011 (Ermo)",
+     "artigo": "art. 1º, III",
+     "url": "https://diariomunicipal.sc.gov.br/atos/129215",
+     "nota": "Texto integral lido no DOM/SC. Altera o trânsito na Rua Catarina Neto (perímetro urbano): pista esquerda para veículos de passeio, direita para transporte escolar, 40 km/h e \"proibido o trânsito de veículos pesados\". Fundamento: Lei 274/2010."
+    }
+   ],
+   "excecoes": [],
+   "nota": "Decreto sem restrição por peso nem horário (\"veículos pesados\" interpretado como caminhão). Sem revogação encontrada no DOM/SC, mas sem confirmação de sinalização; via citada sem limites (toda a extensão no perímetro urbano). Confiança média.",
+   "vigencia_inicio": "2011-05-02",
+   "trechos": [
+    {
+     "inciso": "art. 1º, III",
+     "via": [
+      "Rua Catarina Neto"
+     ],
+     "descricao": "Rua Catarina Neto, perímetro urbano de Ermo (sem delimitar trecho no decreto; sentido Av. Pedro Simon - Rua Inácio Modesto Machado).",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
 }
