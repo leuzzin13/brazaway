@@ -1,74 +1,78 @@
 {
- "ibge": "5214606",
- "nome": "Niquelândia",
- "uf": "GO",
- "status": "nao_achou",
- "nivel_busca": "r6_sigpub_profunda",
- "falha_de_fonte": true,
- "data": "2026-10-18",
- "fontes_consultadas": [
-  {
-   "url": "https://acessoainformacao.niquelandia.go.gov.br/cidadao/legislacao/leis",
-   "resultado": "HTTP 403 Forbidden ao IP da nuvem (curl); toolkit: stub NucleoGov, lista montada por JS. Não consultado."
-  },
-  {
-   "url": "https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/leis",
-   "resultado": "HTTP 403 Forbidden ao IP da nuvem (curl); toolkit: stub NucleoGov, lista montada por JS. Não consultado."
-  },
-  {
-   "url": "https://leis.niquelandia.go.gov.br/api/leis (NucleoLeg)",
-   "resultado": "Instância existe (200) mas lista vazia (0 atos)."
-  },
-  {
-   "url": "toolkit/diarios_consolidados.py buscar 5214606 (AGM/FGM, SIGPub)",
-   "resultado": "termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'tráfego de caminhões', 'carga e descarga caminhões', 'veículos de carga' em agm,fgm. AGM e FGM: 0 resultados em todos os termos."
-  },
-  {
-   "url": "https://niquelandia.go.gov.br/wp-json/wp/v2/search?search=caminhões (e 'veículos pesados', 'decreto trânsito', 'carretas', 'tonelada')",
-   "resultado": "0 resultados (caminhões, veículos pesados, decreto trânsito, circulação, carretas, tonelada)."
-  },
-  {
-   "url": "home prefeitura: https://niquelandia.go.gov.br/",
-   "resultado": "HTTP 200; links de legislação/diário: https://dom.niquelandia.go.gov.br/"
-  },
-  {
-   "url": "home camara: https://niquelandia.go.leg.br/",
-   "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/apr; https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/ati; https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/dec"
-  },
-  {
-   "url": "toolkit/legislacao.py buscar 5214606 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
-   "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
-  },
-  {
-   "url": "https://dom.niquelandia.go.gov.br/api/materias?search=<termo> (Diário Oficial NucleoGov, API pública JSON)",
-   "resultado": "R3: 8 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos, VUC, zona de restrição) sem ato de restrição; o acervo só começa em 2023-04"
-  },
-  {
-   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5214606",
-   "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
-  },
-  {
-   "url": "https://dom.niquelandia.go.gov.br/api/materias (6+ termos; toolkit/nucleogov.py)",
-   "resultado": "R4 2026-10-18: API acessível; acervo 2023-04-05 a 2026-10-15 (339 edições, 1253 matérias); contagem por termo {\"caminhões\": 7, \"caminhoes\": 7, \"veículos pesados\": 4, \"veiculos pesados\": 4, \"trânsito pesado\": 0, \"transito pesado\": 0, \"toneladas\": 0, \"eixos\": 0, \"carga e descarga\": 1, \"tráfego de caminhões\": 0}; nenhuma matéria normativa de trânsito/caminhão (só licitação/ata/extrato)."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/agm/pesquisar (busca_avancada[entidade]=47381)",
-   "resultado": "R4 2026-10-18: toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 0 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Nenhum ato de restrição de circulação de caminhões. Entidade listada mas SEM matérias (vazia)."
-  },
-  {
-   "url": "toolkit/legislacao.py buscar 5214606 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
-   "resultado": "(R5 2026-10-18) Fontes lidas: nenhuma. Nenhum ato de restrição a caminhões. Sem leitura (bloqueio/sem cliente): NucleoGov (JS/403)."
-  },
-  {
-   "url": "toolkit/sigpub_texto.py varrer 5214606 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
-   "resultado": "(R5 2026-10-18) Município de Niquelandia 0 atos None..None; 0 hits, 0 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
-  },
-  {
-   "url": "https://www.diariomunicipal.com.br/agm/pesquisar (entidade 47381)",
-   "resultado": "R6 varredura profunda: 10 combinações x até 25 págs; 0 matérias, 0 lei/decreto/portaria lidas; nenhuma restrição a caminhões. Faixa: AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None"
-  }
- ],
- "observacoes": "Sem nenhuma pista; fontes NucleoGov bloqueadas e consolidação vazia: não conclusivo. Cidade de mineração (níquel) com tráfego pesado, vale reabrir com outro IP. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, DOM NucleoGov, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados'). | R4 2026-10-18: API NucleoGov dom.* acessível, acervo 2023-04-05 a 2026-10-15 (339 edições); 10 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga e descarga) = só ruído de licitação/ata; o diário não publica leis/decretos de trânsito. Acervo desde 2023 (posterior a 2018): negativo NÃO conclusivo, falha_de_fonte mantida como estava. | R4 2026-10-18 (AGM/FGM texto integral): toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 0 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Nenhum ato de restrição de circulação de caminhões. Entidade listada mas SEM matérias (vazia). Acervo curto/vazio ou volume baixo: negativo NÃO conclusivo; falha_de_fonte mantido. R5 2026-10-18: legislacao.py --texto: lidas nenhuma; sem leitura: NucleoGov (JS/403); SIGPub texto integral: Município de Niquelandia 0 atos None..None. | R6 2026-10-18 (SIGPub profunda): 10 combinações de duas palavras (caminhões toneladas, caminhões proibido, pesados proibido, veículos pesados, trânsito pesado, carga toneladas, caminhões eixos, caminhões circulação, tráfego caminhões, veículos carga) x até 25 págs por entidade; 0 matérias únicas, 0 com título de lei/decreto/portaria/resolução (descartados contrato/edital/extrato/ata/cargo etc.), texto lido e regex de restrição (proib|vedad|restri|não poderão|caminh|pesad|tonelad|eixo) com vias/zonas: nenhum ato de restrição de circulação de caminhões (só caçamba/estacionamento, buzina/ruído, posturas gerais, patrulha agrícola). Entidade: AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Entidade sem matérias no acervo: negativo não conclusivo para o diário.",
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "5214606",
+  "nome": "Niquelândia",
+  "uf": "GO",
+  "status": "nao_achou",
+  "nivel_busca": "r6_sigpub_profunda",
+  "falha_de_fonte": true,
+  "data": "2026-10-18",
+  "fontes_consultadas": [
+    {
+      "url": "https://acessoainformacao.niquelandia.go.gov.br/cidadao/legislacao/leis",
+      "resultado": "HTTP 403 Forbidden ao IP da nuvem (curl); toolkit: stub NucleoGov, lista montada por JS. Não consultado."
+    },
+    {
+      "url": "https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/leis",
+      "resultado": "HTTP 403 Forbidden ao IP da nuvem (curl); toolkit: stub NucleoGov, lista montada por JS. Não consultado."
+    },
+    {
+      "url": "https://leis.niquelandia.go.gov.br/api/leis (NucleoLeg)",
+      "resultado": "Instância existe (200) mas lista vazia (0 atos)."
+    },
+    {
+      "url": "toolkit/diarios_consolidados.py buscar 5214606 (AGM/FGM, SIGPub)",
+      "resultado": "termos 'circulação de caminhões', 'trânsito de caminhões', 'veículos pesados', 'tráfego de caminhões', 'carga e descarga caminhões', 'veículos de carga' em agm,fgm. AGM e FGM: 0 resultados em todos os termos."
+    },
+    {
+      "url": "https://niquelandia.go.gov.br/wp-json/wp/v2/search?search=caminhões (e 'veículos pesados', 'decreto trânsito', 'carretas', 'tonelada')",
+      "resultado": "0 resultados (caminhões, veículos pesados, decreto trânsito, circulação, carretas, tonelada)."
+    },
+    {
+      "url": "home prefeitura: https://niquelandia.go.gov.br/",
+      "resultado": "HTTP 200; links de legislação/diário: https://dom.niquelandia.go.gov.br/"
+    },
+    {
+      "url": "home camara: https://niquelandia.go.leg.br/",
+      "resultado": "HTTP 200; links de legislação/diário: https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/apr; https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/ati; https://acessoainformacao.niquelandia.go.leg.br/cidadao/legislacao/dec"
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 5214606 (caminh|carga e descarga|veículos pesados|tráfego|tonelada|zona de restrição|VUC) --json",
+      "resultado": "R3: todas as fontes com erro explícito (NucleoGov acessoainformacao.* 403/JS, CESPRO reCAPTCHA, leismunicipais Cloudflare, 1doc sem cliente) ou SAPL sem acervo; total 0"
+    },
+    {
+      "url": "https://dom.niquelandia.go.gov.br/api/materias?search=<termo> (Diário Oficial NucleoGov, API pública JSON)",
+      "resultado": "R3: 8 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos, VUC, zona de restrição) sem ato de restrição; o acervo só começa em 2023-04"
+    },
+    {
+      "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5214606",
+      "resultado": "R3: HTTP 522 (uma tentativa em 2026-10-18, API fora do ar)"
+    },
+    {
+      "url": "https://dom.niquelandia.go.gov.br/api/materias (6+ termos; toolkit/nucleogov.py)",
+      "resultado": "R4 2026-10-18: API acessível; acervo 2023-04-05 a 2026-10-15 (339 edições, 1253 matérias); contagem por termo {\"caminhões\": 7, \"caminhoes\": 7, \"veículos pesados\": 4, \"veiculos pesados\": 4, \"trânsito pesado\": 0, \"transito pesado\": 0, \"toneladas\": 0, \"eixos\": 0, \"carga e descarga\": 1, \"tráfego de caminhões\": 0}; nenhuma matéria normativa de trânsito/caminhão (só licitação/ata/extrato)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/agm/pesquisar (busca_avancada[entidade]=47381)",
+      "resultado": "R4 2026-10-18: toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 0 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Nenhum ato de restrição de circulação de caminhões. Entidade listada mas SEM matérias (vazia)."
+    },
+    {
+      "url": "toolkit/legislacao.py buscar 5214606 caminh|veículos pesados|tonelad|carga e descarga|trânsito pesado|eixos|carreta --texto (todas as fontes com cliente, ementa + texto onde o sistema permite)",
+      "resultado": "(R5 2026-10-18) Fontes lidas: nenhuma. Nenhum ato de restrição a caminhões. Sem leitura (bloqueio/sem cliente): NucleoGov (JS/403)."
+    },
+    {
+      "url": "toolkit/sigpub_texto.py varrer 5214606 (texto integral por entidade; caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga x título todos/decreto/lei/portaria, 2 págs)",
+      "resultado": "(R5 2026-10-18) Município de Niquelandia 0 atos None..None; 0 hits, 0 marcados plausíveis (lidos/filtrados: ruído de frota/licitação/ISS/servidão/diretriz de plano diretor)."
+    },
+    {
+      "url": "https://www.diariomunicipal.com.br/agm/pesquisar (entidade 47381)",
+      "resultado": "R6 varredura profunda: 10 combinações x até 25 págs; 0 matérias, 0 lei/decreto/portaria lidas; nenhuma restrição a caminhões. Faixa: AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None"
+    },
+    {
+      "url": "https://dom.niquelandia.go.gov.br/api/materias_legacy?search=<termo> (diario oficial proprio NucleoGov, texto integral)",
+      "resultado": "Busca de texto integral (termos: caminhões, veículos pesados, carga e descarga, tráfego, toneladas, trânsito; acervo 2023 a 10/2026 (377 materias no termo decreto)): nenhum decreto/lei/portaria de restrição de circulação de caminhões; só ruído (frota, empenhos, créditos, plano diretor, resíduos)."
+    }
+  ],
+  "observacoes": "Sem nenhuma pista; fontes NucleoGov bloqueadas e consolidação vazia: não conclusivo. Cidade de mineração (níquel) com tráfego pesado, vale reabrir com outro IP. | R3 2026-10-18: fontes alternativas testadas (home da prefeitura/Câmara, WP REST, DOM NucleoGov, toolkit); a legislação continua só em NucleoGov/CESPRO/leismunicipais, bloqueados daqui. Segue inconclusivo: rodar da rede do usuário (acessoainformacao.* da prefeitura e da Câmara, filtro 'caminh' e 'veículos pesados'). | R4 2026-10-18: API NucleoGov dom.* acessível, acervo 2023-04-05 a 2026-10-15 (339 edições); 10 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga e descarga) = só ruído de licitação/ata; o diário não publica leis/decretos de trânsito. Acervo desde 2023 (posterior a 2018): negativo NÃO conclusivo, falha_de_fonte mantida como estava. | R4 2026-10-18 (AGM/FGM texto integral): toolkit/sigpub_texto.py varrer: 6 termos (caminhões, veículos pesados, trânsito pesado, toneladas, eixos, carga descarga) x título (todos/decreto/lei/portaria) x 2 págs; 0 matérias únicas, 0 plausíveis lidas. Entidade(s): AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Nenhum ato de restrição de circulação de caminhões. Entidade listada mas SEM matérias (vazia). Acervo curto/vazio ou volume baixo: negativo NÃO conclusivo; falha_de_fonte mantido. R5 2026-10-18: legislacao.py --texto: lidas nenhuma; sem leitura: NucleoGov (JS/403); SIGPub texto integral: Município de Niquelandia 0 atos None..None. | R6 2026-10-18 (SIGPub profunda): 10 combinações de duas palavras (caminhões toneladas, caminhões proibido, pesados proibido, veículos pesados, trânsito pesado, carga toneladas, caminhões eixos, caminhões circulação, tráfego caminhões, veículos carga) x até 25 págs por entidade; 0 matérias únicas, 0 com título de lei/decreto/portaria/resolução (descartados contrato/edital/extrato/ata/cargo etc.), texto lido e regex de restrição (proib|vedad|restri|não poderão|caminh|pesad|tonelad|eixo) com vias/zonas: nenhum ato de restrição de circulação de caminhões (só caçamba/estacionamento, buzina/ruído, posturas gerais, patrulha agrícola). Entidade: AGM 'Município de Niquelandia' (id 47381): 0 matérias, None a None. Entidade sem matérias no acervo: negativo não conclusivo para o diário. | R7 2026-10-19: diário próprio NucleoGov (dom.niquelandia.go.gov.br, API aberta /api/materias_legacy) varrido em texto integral; sem ato de restrição. Acervo só desde 2023, então negativo NÃO cobre atos anteriores; falha_de_fonte mantida.",
+  "osm_divergencias": [],
+  "regras_rascunho": []
 }

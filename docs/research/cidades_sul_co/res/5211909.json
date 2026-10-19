@@ -1,106 +1,110 @@
 {
- "ibge": "5211909",
- "nome": "Jataí",
- "uf": "GO",
- "status": "regra_sem_ato",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
- "fontes_consultadas": [
-  {
-   "url": "https://www.jatai.go.gov.br (wp-json search + 3 notícias lidas) e mapa em imagem (2 JPEG lidos)",
-   "resultado": "Achou comunicados da SMT (2022, 08/2023, 02/2024, 02/2025) confirmando proibição de caminhões acima de 3 eixos no centro e desvio pelo anel viário, com cadastramento na SMT; sem número de ato."
-  },
-  {
-   "url": "https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php (POST classes/controleDiarioOficial.php)",
-   "resultado": "Busca funciona mas lenta e limitada (≈65 edições por consulta, 'caminhões' 2013-2025 só licitações; frases 'tráfego de caminhões', 'veículos de grande porte', 'três eixos' 2021-2026 sem resultado; 'anel viário caminhões' timeout). Ato não achado."
-  },
-  {
-   "url": "https://www.jatai.go.leg.br (SAPL, 7.904 normas; ementa: caminh, carga, pesad, carreta, tonelada, tráfego, circulação, restrição, zona, veículos...)",
-   "resultado": "Respondeu (instável; alguns termos falharam e foram repetidos). Nenhuma lei de restrição de caminhões; decretos do Executivo não estão no SAPL."
-  },
-  {
-   "url": "https://www.jatai.go.gov.br/smt/ e portal de legislação da prefeitura",
-   "resultado": "Página da SMT abre (só estrutura); legislação executiva não localizada."
-  },
-  {
-   "url": "Querido Diário / diarios_consolidados (AGM/FGM) / penaestrada.com.br/restricoes/jatai/",
-   "resultado": "Jataí sem cobertura / 404."
-  },
-  {
-   "url": "https://jatai.go.gov.br/smt/ (R3)",
-   "resultado": "200, sem normas"
-  },
-  {
-   "url": "https://dom.jatai.go.gov.br/api/diarios (+ variantes .go.leg.br e domínio do site; toolkit/nucleogov.py)",
-   "resultado": "R4 2026-10-18: API NucleoGov (dom.<dominio>/api) inexistente para este município (conexão recusada/DNS); links de diário na home da prefeitura/Câmara: ['http://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php', 'https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php']"
-  },
-  {
-   "url": "varredura '?s=caminhões|veículos pesados' nos sites da prefeitura e da Câmara (WP) e toolkit R4 já aplicados",
-   "resultado": "R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos."
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Restrição existe e é divulgada pela SMT, mas o ato primário (provável decreto/portaria da Superintendência Municipal de Trânsito) não foi achado: regra desativada. Pendências: número do decreto/portaria da SMT, lista de vias em vermelho do mapa, regime de cadastramento (prazo, custo), e se a discussão de 02/2025 virou nova norma. R3 2026-10-18: TAREFA (b): nenhuma fonte nova acessível; portal da SMT abre só com estrutura; Querido Diário fora do ar (522) e Jataí fora da cobertura; ato (decreto/portaria da SMT) não achado. Mantém regra_sem_ato; falha_de_fonte true (portal de legislação do Executivo sem busca). | R4 2026-10-18: varredura NucleoGov (dom.<dominio>/api/materias): este município NÃO tem diário NucleoGov (domínio dom.* não existe); sem novidade, status mantido. Diário em outro sistema (pista de fonte): http://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php; https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php. | R4 2026-10-18 (AGM/FGM texto integral): município não é entidade do AGM nem do FGM no SIGPub (seletor de entidades, 128+78, relido em 18/10/2026); busca de texto integral por SIGPub inviável. Sem mudança. Diário próprio (intranet.jatai.go.gov.br/.../diario-site.php) já consultado em R3: busca lenta, sem ato. | R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos.",
- "osm_divergencias": [],
- "regras_rascunho": [
-  {
-   "id": "jatai_smt_trafego_pesados_centro",
-   "tipo": "zona",
-   "regime": "Centro (anel viário)",
-   "nome": "Jataí: proibição de caminhões carregados acima de 3 eixos no centro/vias sinalizadas (SMT), desvio pelo Anel Viário",
-   "status": "desativada",
-   "status_motivo": "Ato normativo (decreto/portaria da SMT) não localizado; só notícias da prefeitura e mapa sem nomes de ruas (vias em vermelho). Sem perímetro nem lista de vias.",
-   "confianca": "unverifiable",
-   "janelas": [
+  "ibge": "5211909",
+  "nome": "Jataí",
+  "uf": "GO",
+  "status": "regra_sem_ato",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
     {
-     "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7
-     ],
-     "from": "00:00",
-     "to": "24:00"
-    }
-   ],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true,
-    "todas": [
-     {
-      "campo": "eixos",
-      "acima": 3
-     }
-    ]
-   },
-   "excecoes": [
-    "Caminhões acima de 3 eixos com destino à carga/descarga, entrega ou manutenção na cidade: autorizados (notícias 2022 e 08/2023); em 02/2024: liberados mediante cadastramento na SMT, nos pontos de carga e descarga do mapa",
-    "Caminhões acima de 3 eixos descarregados (eixos levantados): liberados",
-    "Caminhões carregados até 3 eixos: liberados",
-    "Vias em verde no mapa (liberadas sem cadastro): Anel Viário/BR-364 e acessos; vias em vermelho: proibido (eixo N-S do centro e trecho próximo à UFJ/Estrela D'Alva), sem nomes no mapa"
-   ],
-   "base_legal": [
-    {
-     "ato": "Comunicado da SMT de Jataí em notícia da Prefeitura (28/02/2024), com mapa 'Trânsito de Caminhões no Centro da Cidade'",
-     "artigo": "legenda do mapa (sem artigo)",
-     "url": "https://www.jatai.go.gov.br/confira-como-fica-o-transito-de-caminhoes-no-centro-da-cidade/",
-     "nota": "Não é ato normativo."
+      "url": "https://www.jatai.go.gov.br (wp-json search + 3 notícias lidas) e mapa em imagem (2 JPEG lidos)",
+      "resultado": "Achou comunicados da SMT (2022, 08/2023, 02/2024, 02/2025) confirmando proibição de caminhões acima de 3 eixos no centro e desvio pelo anel viário, com cadastramento na SMT; sem número de ato."
     },
     {
-     "ato": "Notícia da Prefeitura, 25/02/2022: SMT inicia sinalização de proibição de veículos de grande porte acima de 3 eixos (art. 187 CTB)",
-     "artigo": "notícia (sem artigo)",
-     "url": "https://www.jatai.go.gov.br/prefeitura-inicia-implantacao-de-sinalizacoes-para-proibicao-de-trafego-de-caminhoes/"
+      "url": "https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php (POST classes/controleDiarioOficial.php)",
+      "resultado": "Busca funciona mas lenta e limitada (≈65 edições por consulta, 'caminhões' 2013-2025 só licitações; frases 'tráfego de caminhões', 'veículos de grande porte', 'três eixos' 2021-2026 sem resultado; 'anel viário caminhões' timeout). Ato não achado."
     },
     {
-     "ato": "Comunicado da SMT, 16/08/2023: com a liberação do anel viário, veículos de grande porte devem usá-lo; centro só para carga, descarga, entregas e manutenção",
-     "artigo": "notícia (sem artigo)",
-     "url": "https://www.jatai.go.gov.br/comunicado-mudancas-no-trafego-de-veiculos-pesados-dentro-da-cidade/"
+      "url": "https://www.jatai.go.leg.br (SAPL, 7.904 normas; ementa: caminh, carga, pesad, carreta, tonelada, tráfego, circulação, restrição, zona, veículos...)",
+      "resultado": "Respondeu (instável; alguns termos falharam e foram repetidos). Nenhuma lei de restrição de caminhões; decretos do Executivo não estão no SAPL."
+    },
+    {
+      "url": "https://www.jatai.go.gov.br/smt/ e portal de legislação da prefeitura",
+      "resultado": "Página da SMT abre (só estrutura); legislação executiva não localizada."
+    },
+    {
+      "url": "Querido Diário / diarios_consolidados (AGM/FGM) / penaestrada.com.br/restricoes/jatai/",
+      "resultado": "Jataí sem cobertura / 404."
+    },
+    {
+      "url": "https://jatai.go.gov.br/smt/ (R3)",
+      "resultado": "200, sem normas"
+    },
+    {
+      "url": "https://dom.jatai.go.gov.br/api/diarios (+ variantes .go.leg.br e domínio do site; toolkit/nucleogov.py)",
+      "resultado": "R4 2026-10-18: API NucleoGov (dom.<dominio>/api) inexistente para este município (conexão recusada/DNS); links de diário na home da prefeitura/Câmara: ['http://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php', 'https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php']"
+    },
+    {
+      "url": "varredura '?s=caminhões|veículos pesados' nos sites da prefeitura e da Câmara (WP) e toolkit R4 já aplicados",
+      "resultado": "R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos."
+    },
+    {
+      "url": "WebSearch: Jatai decreto caminhoes centro",
+      "resultado": "Nada novo; so resultados de outros municipios/noticias."
     }
-   ],
-   "nota": "Em 26/02/2025 SMT, Câmara e COOPERCAJA discutiram o trânsito de caminhões no centro (possível revisão). O 'art. 187 do CTB' citado é a competência de sinalização."
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Restrição existe e é divulgada pela SMT, mas o ato primário (provável decreto/portaria da Superintendência Municipal de Trânsito) não foi achado: regra desativada. Pendências: número do decreto/portaria da SMT, lista de vias em vermelho do mapa, regime de cadastramento (prazo, custo), e se a discussão de 02/2025 virou nova norma. R3 2026-10-18: TAREFA (b): nenhuma fonte nova acessível; portal da SMT abre só com estrutura; Querido Diário fora do ar (522) e Jataí fora da cobertura; ato (decreto/portaria da SMT) não achado. Mantém regra_sem_ato; falha_de_fonte true (portal de legislação do Executivo sem busca). | R4 2026-10-18: varredura NucleoGov (dom.<dominio>/api/materias): este município NÃO tem diário NucleoGov (domínio dom.* não existe); sem novidade, status mantido. Diário em outro sistema (pista de fonte): http://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php; https://intranet.jatai.go.gov.br/intranet/sistemas/diario-oficial/diario-site.php. | R4 2026-10-18 (AGM/FGM texto integral): município não é entidade do AGM nem do FGM no SIGPub (seletor de entidades, 128+78, relido em 18/10/2026); busca de texto integral por SIGPub inviável. Sem mudança. Diário próprio (intranet.jatai.go.gov.br/.../diario-site.php) já consultado em R3: busca lenta, sem ato. | R5 2026-10-18: Caminhos novos do toolkit tentados sem achado de ato primário novo (vias/perímetro/decreto regulamentador); status e regras mantidos. | R7 2026-10-19: WebSearch (numero do ato e tema) sem texto do ato: Nada novo; so resultados de outros municipios/noticias. Nenhuma transcricao de terceiro localizada.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "jatai_smt_trafego_pesados_centro",
+      "tipo": "zona",
+      "regime": "Centro (anel viário)",
+      "nome": "Jataí: proibição de caminhões carregados acima de 3 eixos no centro/vias sinalizadas (SMT), desvio pelo Anel Viário",
+      "status": "desativada",
+      "status_motivo": "Ato normativo (decreto/portaria da SMT) não localizado; só notícias da prefeitura e mapa sem nomes de ruas (vias em vermelho). Sem perímetro nem lista de vias.",
+      "confianca": "unverifiable",
+      "janelas": [
+        {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "from": "00:00",
+          "to": "24:00"
+        }
+      ],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true,
+        "todas": [
+          {
+            "campo": "eixos",
+            "acima": 3
+          }
+        ]
+      },
+      "excecoes": [
+        "Caminhões acima de 3 eixos com destino à carga/descarga, entrega ou manutenção na cidade: autorizados (notícias 2022 e 08/2023); em 02/2024: liberados mediante cadastramento na SMT, nos pontos de carga e descarga do mapa",
+        "Caminhões acima de 3 eixos descarregados (eixos levantados): liberados",
+        "Caminhões carregados até 3 eixos: liberados",
+        "Vias em verde no mapa (liberadas sem cadastro): Anel Viário/BR-364 e acessos; vias em vermelho: proibido (eixo N-S do centro e trecho próximo à UFJ/Estrela D'Alva), sem nomes no mapa"
+      ],
+      "base_legal": [
+        {
+          "ato": "Comunicado da SMT de Jataí em notícia da Prefeitura (28/02/2024), com mapa 'Trânsito de Caminhões no Centro da Cidade'",
+          "artigo": "legenda do mapa (sem artigo)",
+          "url": "https://www.jatai.go.gov.br/confira-como-fica-o-transito-de-caminhoes-no-centro-da-cidade/",
+          "nota": "Não é ato normativo."
+        },
+        {
+          "ato": "Notícia da Prefeitura, 25/02/2022: SMT inicia sinalização de proibição de veículos de grande porte acima de 3 eixos (art. 187 CTB)",
+          "artigo": "notícia (sem artigo)",
+          "url": "https://www.jatai.go.gov.br/prefeitura-inicia-implantacao-de-sinalizacoes-para-proibicao-de-trafego-de-caminhoes/"
+        },
+        {
+          "ato": "Comunicado da SMT, 16/08/2023: com a liberação do anel viário, veículos de grande porte devem usá-lo; centro só para carga, descarga, entregas e manutenção",
+          "artigo": "notícia (sem artigo)",
+          "url": "https://www.jatai.go.gov.br/comunicado-mudancas-no-trafego-de-veiculos-pesados-dentro-da-cidade/"
+        }
+      ],
+      "nota": "Em 26/02/2025 SMT, Câmara e COOPERCAJA discutiram o trânsito de caminhões no centro (possível revisão). O 'art. 187 do CTB' citado é a competência de sinalização."
+    }
+  ]
 }

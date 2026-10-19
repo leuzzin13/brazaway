@@ -1,82 +1,86 @@
 {
- "ibge": "5107958",
- "nome": "Tangará da Serra",
- "uf": "MT",
- "status": "nao_achou",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
- "fontes_consultadas": [
-  {
-   "url": "https://www.diariomunicipal.com.br/amm-mt (toolkit diarios_consolidados.py buscar 5107958: circulação de caminhões, carga e descarga, veículos pesados, tráfego de caminhões, restrição de tráfego, caminhões proibido, zona de restrição, veículos de carga, toneladas caminhões, VUC)",
-   "resultado": "Respondeu; só publicações de 2011-2015 do município. Só Lei Orgânica/Código Ambiental (2010) e editais; nada de restrição."
-  },
-  {
-   "url": "https://sapl.tangaradaserra.mt.leg.br/api/norma/normajuridica/ (ementa: caminh, carga e descarga, pesad, carreta, tonelada, tráfego, trânsito, circulação, VUC...)",
-   "resultado": "Respondeu, mas só tem normas recentes (1.211, de 2025-2026): nada de restrição de caminhões."
-  },
-  {
-   "url": "https://tangaradaserra.mt.gov.br (home, notícias, página do Plano de Mobilidade em elaboração 2026)",
-   "resultado": "Abre; PlanMob em consulta (rascunho, PDF não lido), sem decreto de restrição."
-  },
-  {
-   "url": "https://www.tangaradaserra.mt.leg.br/leis (Plone) e leismunicipais",
-   "resultado": "Leis municipais históricas apontam para leismunicipais (403)."
-  },
-  {
-   "url": "Querido Diário (nível 1)",
-   "resultado": "0 resultados."
-  },
-  {
-   "url": "penaestrada.com.br/restricoes/tangara-da-serra/ (leads/penaestrada.json)",
-   "resultado": "404, sem página."
-  },
-  {
-   "url": "home prefeitura: https://tangaradaserra.mt.gov.br/",
-   "resultado": "HTTP 200; links de legislação/diário: https://dom.tangaradaserra.mt.gov.br"
-  },
-  {
-   "url": "home camara: https://www.tangaradaserra.mt.leg.br:443/",
-   "resultado": "HTTP 200; links de legislação/diário: http://www.planalto.gov.br/legislacao; https://diariomunicipal.org/mt/amm/; https://www.tangaradaserra.mt.leg.br/processo-legislativo"
-  },
-  {
-   "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=341 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
-   "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 10 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2022-2026"
-  },
-  {
-   "url": "https://dom.tangaradaserra.mt.gov.br/api/materias?search=<termo> (Diário Oficial NucleoGov)",
-   "resultado": "R3: 8 termos; só atos de frota/crédito/plano diretor (LC 317/2024 art.: 'disciplinamento dos caminhões de carga e descarga na área central' como diretriz); acervo desde 2023"
-  },
-  {
-   "url": "https://sapl.tangaradaserra.mt.leg.br/api/norma/normajuridica/?ementa__icontains=caminh|tr%C3%A2nsito|carga|pesad|tonelad|posturas|zona",
-   "resultado": "R3: 1.211 normas desde 1977, nenhuma de restrição (ementas); acervo parcial"
-  },
-  {
-   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5107958",
-   "resultado": "R3: HTTP 522 (uma tentativa, API fora do ar)"
-  },
-  {
-   "url": "legislacao.py buscar 5107958 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
-   "resultado": "sapl@https://sapl.tangaradaserra.mt.leg.br: 2 atos; leismunicipais@https://leismunicipais.com.br/camara/mt/tangara-da-serra: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://cmtangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmtangaradaserr; 1doc@https://tangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://tangaradaserra."
-  },
-  {
-   "url": "legislacao.py buscar 5107958 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
-   "resultado": "sapl@https://sapl.tangaradaserra.mt.leg.br: 6 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
-  },
-  {
-   "url": "toolkit/softcam.py descobrir (Câmara)",
-   "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
-  },
-  {
-   "url": "diarios_consolidados.py buscar 5107958 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
-   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=9; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
-  },
-  {
-   "url": "https://tangaradaserra.mt.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
-   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Nenhuma restrição localizada. Legislação histórica (zoneamento, posturas) só no leismunicipais (403). Pendências: Plano de Mobilidade 2026 (rascunho) e Código de Posturas. | R3 2026-10-18: tentado o Jornal Oficial AMM-MT (texto integral); datas vistas 2022-2026 — sem restrição a caminhões, mas o acervo é parcial/recente ou termina antes de hoje, então segue inconclusivo. Bloqueios: leismunicipais.com.br (Cloudflare), CESPRO (reCAPTCHA), 1doc, NucleoGov. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.tangaradaserra.mt.leg.br: 2 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/camara/mt/tangara-da-serra: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://cmtangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmtangaradaserr; 1doc@http. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov).",
- "osm_divergencias": [],
- "regras_rascunho": []
+  "ibge": "5107958",
+  "nome": "Tangará da Serra",
+  "uf": "MT",
+  "status": "nao_achou",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
+    {
+      "url": "https://www.diariomunicipal.com.br/amm-mt (toolkit diarios_consolidados.py buscar 5107958: circulação de caminhões, carga e descarga, veículos pesados, tráfego de caminhões, restrição de tráfego, caminhões proibido, zona de restrição, veículos de carga, toneladas caminhões, VUC)",
+      "resultado": "Respondeu; só publicações de 2011-2015 do município. Só Lei Orgânica/Código Ambiental (2010) e editais; nada de restrição."
+    },
+    {
+      "url": "https://sapl.tangaradaserra.mt.leg.br/api/norma/normajuridica/ (ementa: caminh, carga e descarga, pesad, carreta, tonelada, tráfego, trânsito, circulação, VUC...)",
+      "resultado": "Respondeu, mas só tem normas recentes (1.211, de 2025-2026): nada de restrição de caminhões."
+    },
+    {
+      "url": "https://tangaradaserra.mt.gov.br (home, notícias, página do Plano de Mobilidade em elaboração 2026)",
+      "resultado": "Abre; PlanMob em consulta (rascunho, PDF não lido), sem decreto de restrição."
+    },
+    {
+      "url": "https://www.tangaradaserra.mt.leg.br/leis (Plone) e leismunicipais",
+      "resultado": "Leis municipais históricas apontam para leismunicipais (403)."
+    },
+    {
+      "url": "Querido Diário (nível 1)",
+      "resultado": "0 resultados."
+    },
+    {
+      "url": "penaestrada.com.br/restricoes/tangara-da-serra/ (leads/penaestrada.json)",
+      "resultado": "404, sem página."
+    },
+    {
+      "url": "home prefeitura: https://tangaradaserra.mt.gov.br/",
+      "resultado": "HTTP 200; links de legislação/diário: https://dom.tangaradaserra.mt.gov.br"
+    },
+    {
+      "url": "home camara: https://www.tangaradaserra.mt.leg.br:443/",
+      "resultado": "HTTP 200; links de legislação/diário: http://www.planalto.gov.br/legislacao; https://diariomunicipal.org/mt/amm/; https://www.tangaradaserra.mt.leg.br/processo-legislativo"
+    },
+    {
+      "url": "https://amm.diariomunicipal.org/publicacoes/?q=<termo>&e=341 (Jornal Oficial AMM-MT, busca em texto integral, entidade Pref.)",
+      "resultado": "R3: 6 termos (caminhões, veículos pesados, carga e descarga, tonelada, trânsito pesado, circulação de veículos); 10 atos normativos (decreto/lei/portaria/código) lidos e varridos por regex de restrição; datas vistas 2022-2026"
+    },
+    {
+      "url": "https://dom.tangaradaserra.mt.gov.br/api/materias?search=<termo> (Diário Oficial NucleoGov)",
+      "resultado": "R3: 8 termos; só atos de frota/crédito/plano diretor (LC 317/2024 art.: 'disciplinamento dos caminhões de carga e descarga na área central' como diretriz); acervo desde 2023"
+    },
+    {
+      "url": "https://sapl.tangaradaserra.mt.leg.br/api/norma/normajuridica/?ementa__icontains=caminh|tr%C3%A2nsito|carga|pesad|tonelad|posturas|zona",
+      "resultado": "R3: 1.211 normas desde 1977, nenhuma de restrição (ementas); acervo parcial"
+    },
+    {
+      "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5107958",
+      "resultado": "R3: HTTP 522 (uma tentativa, API fora do ar)"
+    },
+    {
+      "url": "legislacao.py buscar 5107958 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+      "resultado": "sapl@https://sapl.tangaradaserra.mt.leg.br: 2 atos; leismunicipais@https://leismunicipais.com.br/camara/mt/tangara-da-serra: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://cmtangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmtangaradaserr; 1doc@https://tangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://tangaradaserra."
+    },
+    {
+      "url": "legislacao.py buscar 5107958 \"trânsito|tráfego|circulação|vias públicas|estacionamento|código de posturas|mobilidade\" (--max 300; ementas varridas por regex de restrição a caminhões/carga)",
+      "resultado": "sapl@https://sapl.tangaradaserra.mt.leg.br: 6 atos -> nenhuma ementa de restrição de circulação de caminhões/veículos pesados (só ruído: compra de caminhão, estacionamento, sentido de via, bicicleta etc.)"
+    },
+    {
+      "url": "toolkit/softcam.py descobrir (Câmara)",
+      "resultado": "Câmara não está em Softcam (14 hosts candidatos testados)"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 5107958 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+      "resultado": "acertos: proibido..=0, peso..=0, tráfego..=0, circulação..=9; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+    },
+    {
+      "url": "https://tangaradaserra.mt.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+      "resultado": "sem página/ato útil (a busca só ecoa o termo)"
+    },
+    {
+      "url": "https://dom.tangaradaserra.mt.gov.br/api/materias_legacy?search=<termo> (diario oficial proprio NucleoGov, texto integral)",
+      "resultado": "Busca de texto integral (termos: caminhões, veículos pesados, carga e descarga, tráfego, toneladas, trânsito; acervo 08/2023 a 10/2026 (~9.600 materias com decreto/lei no termo)): nenhum decreto/lei/portaria de restrição de circulação de caminhões; só ruído (frota, empenhos, créditos, plano diretor, resíduos)."
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Nenhuma restrição localizada. Legislação histórica (zoneamento, posturas) só no leismunicipais (403). Pendências: Plano de Mobilidade 2026 (rascunho) e Código de Posturas. | R3 2026-10-18: tentado o Jornal Oficial AMM-MT (texto integral); datas vistas 2022-2026 — sem restrição a caminhões, mas o acervo é parcial/recente ou termina antes de hoje, então segue inconclusivo. Bloqueios: leismunicipais.com.br (Cloudflare), CESPRO (reCAPTCHA), 1doc, NucleoGov. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: fontes que responderam: sapl@https://sapl.tangaradaserra.mt.leg.br: 2 atos; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/camara/mt/tangara-da-serra: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; 1doc@https://cmtangaradaserra.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://cmtangaradaserr; 1doc@http. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov). | R7 2026-10-19: diário próprio NucleoGov (dom.tangaradaserra.mt.gov.br, API aberta /api/materias_legacy) varrido em texto integral; sem ato de restrição. Acervo só desde 2023, então negativo NÃO cobre atos anteriores; falha_de_fonte mantida.",
+  "osm_divergencias": [],
+  "regras_rascunho": []
 }

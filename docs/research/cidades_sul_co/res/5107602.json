@@ -1,88 +1,92 @@
 {
- "ibge": "5107602",
- "nome": "Rondonópolis",
- "uf": "MT",
- "status": "regra_sem_ato",
- "nivel_busca": "profunda",
- "falha_de_fonte": true,
- "fontes_consultadas": [
-  {
-   "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5107602 (DIORONDON 2009-2026; termos: 6.595, ZRMC, Zona de Restrição Máxima, Portaria 074, anel viário, carga e descarga, veículos pesados...)",
-   "resultado": "Respondeu. Só achou Portarias SETRAT 146/2015 e 020/2017 (leram-se na íntegra) que excluem ruas da ZRMC e citam a Lei 6.595/2011 e a Portaria 074/2013; os textos dessas duas não estão no índice. Nada sobre anel viário ou outras restrições. Sem ato posterior que altere/revogue."
-  },
-  {
-   "url": "https://rondonopolis.processolegislativo.com.br + API https://api.sicam.app/pesquisar_leis (Câmara, Database=rondonopolis)",
-   "resultado": "Responde; só indexa normas de origem legislativa/algumas; Lei 6.595/2011 não indexada (nº 6595 = decreto de crédito de 2012). Achou a Lei 1.827/1991 (horário de carga e descarga de caminhões pesados no quadrilátero central) e Lei 2.138/1994 (estacionamento de veículos de carga pesada no quadrilátero central), ambas antigas, texto não disponível e provável supersessão pela Lei 6.595; não lidas."
-  },
-  {
-   "url": "https://leismunicipais.com.br/a/mt/r/rondonopolis/lei-ordinaria/2011/660/6595/...",
-   "resultado": "403 Cloudflare."
-  },
-  {
-   "url": "https://www.rondonopolis.mt.gov.br (home, /diario-oficial, busca WP)",
-   "resultado": "Home abre; busca por API WP não retorna JSON; sem página de legislação própria (aponta para leismunicipais)."
-  },
-  {
-   "url": "WebSearch Lei 6.595 Rondonópolis ZRMC",
-   "resultado": "Nada relevante."
-  },
-  {
-   "url": "penaestrada.com.br/restricoes/rondonopolis/",
-   "resultado": "404."
-  },
-  {
-   "url": "https://www.rondonopolis.mt.leg.br/principal e WebSearch (Lei 6.595/2011 ZRMC)",
-   "resultado": "Câmara abre mas só leva a leismunicipais (403) e ao Sicam já consultado; busca web sem resultado sobre Rondonópolis."
-  },
-  {
-   "url": "https://www.rondonopolis.mt.gov.br e https://rondonopolis.mt.leg.br/principal (R3)",
-   "resultado": "só apontam para leismunicipais (403) e processolegislativo (sem a lei)"
-  },
-  {
-   "url": "https://api.queridodiario.org.br/gazettes (retentativas R3)",
-   "resultado": "HTTP 522 (Cloudflare, origem fora do ar) em todas as tentativas desta rodada; consulta não refeita"
-  },
-  {
-   "url": "https://rondonopolis.mt.gov.br/diario-oficial/?q=<termo>&page=N (Diorondon, busca por texto, edicoes a partir de 2016; PDFs em /media/docs/edicoes/...): varridos ~80 PDFs para ZRMC, 'zona de restricao', 6.595, 074/2013, 'veiculos pesados', 'carga e descarga', 'caminhoes', 'quadrilatero', 'transito de caminhoes' com filtro SETRAT/proibe+caminhao; amm-mt (SIGPub) 0",
-   "resultado": "So reaparecem as Portaria SETRAT 020/2017 (ed. 3969, 31/05/2017; a 146/2015 nao apareceu na busca) ja conhecidas; Lei 6.595/2011 e Portaria 074/2013 nao estao no acervo (nasceram antes de 2016 ou nao foram publicadas la). Nenhum ato posterior. Segue regra_sem_ato. Rota util registrada: o diario do proprio site tem busca de texto integral (WordPress/Django) que o toolkit nao listava.",
-   "rodada": "R5"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Há restrição municipal (ZRMC) mas o ato primário não pôde ser lido: status regra_sem_ato. Pendências: obter Lei 6.595/2011 e Portaria 074/2013 (leismunicipais via navegador, Diorondon 2011/2013, Câmara) para perímetro, horários e PBT; checar Leis 1.827/1991 e 2.138/1994; verificar se há norma para o Anel Viário Conrado Sales Brito. R3 2026-10-18: TAREFA (b): nova tentativa sem achar a Lei 6.595/2011 nem a Portaria 074/2013: home da Prefeitura (links só para leismunicipais e /diario-oficial), Câmara (processolegislativo/Sicam, já consultado), Querido Diário fora do ar (522). Mantém regra_sem_ato; falha_de_fonte true (leismunicipais 403). | R5 2026-10-18: So reaparecem as Portaria SETRAT 020/2017 (ed. 3969, 31/05/2017; a 146/2015 nao apareceu na busca) ja conhecidas; Lei 6.595/2011 e Portaria 074/2013 nao estao no acervo (nasceram antes de 2016 ou nao foram publicadas la). Nenhum ato posterior. Segue regra_sem_ato. Rota util registrada: o diario do proprio site tem busca de texto integral (WordPress/Django) que o toolkit nao listava.",
- "osm_divergencias": [],
- "regras_rascunho": [
-  {
-   "id": "rondonopolis_lei6595_2011_zrmc",
-   "tipo": "zona",
-   "regime": "ZRMC",
-   "nome": "Rondonópolis: Zona de Restrição Máxima de Circulação (Lei 6.595/2011; Portaria 074/2013)",
-   "status": "desativada",
-   "status_motivo": "Texto da Lei 6.595/2011 e da Portaria 074/2013 não localizado em fonte lida (leismunicipais 403; Câmara/Prefeitura/QD não indexam): perímetro, classes de veículo e horários desconhecidos. Existência confirmada só por citação em Portarias SETRAT 146/2015 e 020/2017.",
-   "confianca": "unverifiable",
-   "janelas": [],
-   "feriados": "aplica",
-   "alvo": {
-    "caminhao": true
-   },
-   "excecoes": [
-    "Portaria 146/SETRAT/2015, art. 1º: excluídas da ZRMC (Vila Goulart) Rua Francisco Goulart (BR-163 até Rua Padre Anchieta), Rua Tamandaré (R. Presidente Prudente até Padre Anchieta), Rua D. Pedro I (R. Presidente Prudente até Padre Anchieta), Rua Timbiras (BR-364 até Padre Anchieta)",
-    "Portaria 020/SETRAT/2017, art. 1º: excluídas da ZRMC (Jd. Belo Horizonte) Rua Dez de Outubro e Rua Primeiro de Abril (BR-364 até R. General Mascarenhas de Morais)"
-   ],
-   "base_legal": [
+  "ibge": "5107602",
+  "nome": "Rondonópolis",
+  "uf": "MT",
+  "status": "regra_sem_ato",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": true,
+  "fontes_consultadas": [
     {
-     "ato": "Portaria 146/SETRAT, de 14/12/2015 (cita Lei 6.595/2011, art. 2º, e Portaria 074/2013)",
-     "artigo": "considerandos e art. 1º (não é o ato primário)",
-     "url": "https://data.queridodiario.ok.org.br/5107602/2015-12-15/e742d8ad53b58ab44334f19b3d82ba7d078fd912.pdf",
-     "nota": "Lei 6.595 citada como 'de 11/02/2011'; a numeração do Sicam da Câmara sugere Lei Ordinária de fev/2011 mas não a indexa."
+      "url": "https://api.queridodiario.org.br/gazettes?territory_ids=5107602 (DIORONDON 2009-2026; termos: 6.595, ZRMC, Zona de Restrição Máxima, Portaria 074, anel viário, carga e descarga, veículos pesados...)",
+      "resultado": "Respondeu. Só achou Portarias SETRAT 146/2015 e 020/2017 (leram-se na íntegra) que excluem ruas da ZRMC e citam a Lei 6.595/2011 e a Portaria 074/2013; os textos dessas duas não estão no índice. Nada sobre anel viário ou outras restrições. Sem ato posterior que altere/revogue."
     },
     {
-     "ato": "Portaria 020/SETRAT, de 16/05/2017",
-     "artigo": "art. 1º",
-     "url": "https://data.queridodiario.ok.org.br/5107602/2017-08-04/0a5ed48ce43129d2ec7d7a51c949c959da200b31.pdf"
+      "url": "https://rondonopolis.processolegislativo.com.br + API https://api.sicam.app/pesquisar_leis (Câmara, Database=rondonopolis)",
+      "resultado": "Responde; só indexa normas de origem legislativa/algumas; Lei 6.595/2011 não indexada (nº 6595 = decreto de crédito de 2012). Achou a Lei 1.827/1991 (horário de carga e descarga de caminhões pesados no quadrilátero central) e Lei 2.138/1994 (estacionamento de veículos de carga pesada no quadrilátero central), ambas antigas, texto não disponível e provável supersessão pela Lei 6.595; não lidas."
+    },
+    {
+      "url": "https://leismunicipais.com.br/a/mt/r/rondonopolis/lei-ordinaria/2011/660/6595/...",
+      "resultado": "403 Cloudflare."
+    },
+    {
+      "url": "https://www.rondonopolis.mt.gov.br (home, /diario-oficial, busca WP)",
+      "resultado": "Home abre; busca por API WP não retorna JSON; sem página de legislação própria (aponta para leismunicipais)."
+    },
+    {
+      "url": "WebSearch Lei 6.595 Rondonópolis ZRMC",
+      "resultado": "Nada relevante."
+    },
+    {
+      "url": "penaestrada.com.br/restricoes/rondonopolis/",
+      "resultado": "404."
+    },
+    {
+      "url": "https://www.rondonopolis.mt.leg.br/principal e WebSearch (Lei 6.595/2011 ZRMC)",
+      "resultado": "Câmara abre mas só leva a leismunicipais (403) e ao Sicam já consultado; busca web sem resultado sobre Rondonópolis."
+    },
+    {
+      "url": "https://www.rondonopolis.mt.gov.br e https://rondonopolis.mt.leg.br/principal (R3)",
+      "resultado": "só apontam para leismunicipais (403) e processolegislativo (sem a lei)"
+    },
+    {
+      "url": "https://api.queridodiario.org.br/gazettes (retentativas R3)",
+      "resultado": "HTTP 522 (Cloudflare, origem fora do ar) em todas as tentativas desta rodada; consulta não refeita"
+    },
+    {
+      "url": "https://rondonopolis.mt.gov.br/diario-oficial/?q=<termo>&page=N (Diorondon, busca por texto, edicoes a partir de 2016; PDFs em /media/docs/edicoes/...): varridos ~80 PDFs para ZRMC, 'zona de restricao', 6.595, 074/2013, 'veiculos pesados', 'carga e descarga', 'caminhoes', 'quadrilatero', 'transito de caminhoes' com filtro SETRAT/proibe+caminhao; amm-mt (SIGPub) 0",
+      "resultado": "So reaparecem as Portaria SETRAT 020/2017 (ed. 3969, 31/05/2017; a 146/2015 nao apareceu na busca) ja conhecidas; Lei 6.595/2011 e Portaria 074/2013 nao estao no acervo (nasceram antes de 2016 ou nao foram publicadas la). Nenhum ato posterior. Segue regra_sem_ato. Rota util registrada: o diario do proprio site tem busca de texto integral (WordPress/Django) que o toolkit nao listava.",
+      "rodada": "R5"
+    },
+    {
+      "url": "WebSearch: Rondonopolis Lei 6.595/2011 Portaria 074/2013 (+normasbrasil/legisweb)",
+      "resultado": "Nada novo; so resultados de outros municipios/noticias."
     }
-   ],
-   "nota": "Pista: a ZRMC existe e a autoridade de trânsito pode alterar seus limites (art. 2º da Lei 6.595). Nada sobre horários ou PBT."
-  }
- ]
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Há restrição municipal (ZRMC) mas o ato primário não pôde ser lido: status regra_sem_ato. Pendências: obter Lei 6.595/2011 e Portaria 074/2013 (leismunicipais via navegador, Diorondon 2011/2013, Câmara) para perímetro, horários e PBT; checar Leis 1.827/1991 e 2.138/1994; verificar se há norma para o Anel Viário Conrado Sales Brito. R3 2026-10-18: TAREFA (b): nova tentativa sem achar a Lei 6.595/2011 nem a Portaria 074/2013: home da Prefeitura (links só para leismunicipais e /diario-oficial), Câmara (processolegislativo/Sicam, já consultado), Querido Diário fora do ar (522). Mantém regra_sem_ato; falha_de_fonte true (leismunicipais 403). | R5 2026-10-18: So reaparecem as Portaria SETRAT 020/2017 (ed. 3969, 31/05/2017; a 146/2015 nao apareceu na busca) ja conhecidas; Lei 6.595/2011 e Portaria 074/2013 nao estao no acervo (nasceram antes de 2016 ou nao foram publicadas la). Nenhum ato posterior. Segue regra_sem_ato. Rota util registrada: o diario do proprio site tem busca de texto integral (WordPress/Django) que o toolkit nao listava. | R7 2026-10-19: WebSearch (numero do ato e tema) sem texto do ato: Nada novo; so resultados de outros municipios/noticias. Nenhuma transcricao de terceiro localizada.",
+  "osm_divergencias": [],
+  "regras_rascunho": [
+    {
+      "id": "rondonopolis_lei6595_2011_zrmc",
+      "tipo": "zona",
+      "regime": "ZRMC",
+      "nome": "Rondonópolis: Zona de Restrição Máxima de Circulação (Lei 6.595/2011; Portaria 074/2013)",
+      "status": "desativada",
+      "status_motivo": "Texto da Lei 6.595/2011 e da Portaria 074/2013 não localizado em fonte lida (leismunicipais 403; Câmara/Prefeitura/QD não indexam): perímetro, classes de veículo e horários desconhecidos. Existência confirmada só por citação em Portarias SETRAT 146/2015 e 020/2017.",
+      "confianca": "unverifiable",
+      "janelas": [],
+      "feriados": "aplica",
+      "alvo": {
+        "caminhao": true
+      },
+      "excecoes": [
+        "Portaria 146/SETRAT/2015, art. 1º: excluídas da ZRMC (Vila Goulart) Rua Francisco Goulart (BR-163 até Rua Padre Anchieta), Rua Tamandaré (R. Presidente Prudente até Padre Anchieta), Rua D. Pedro I (R. Presidente Prudente até Padre Anchieta), Rua Timbiras (BR-364 até Padre Anchieta)",
+        "Portaria 020/SETRAT/2017, art. 1º: excluídas da ZRMC (Jd. Belo Horizonte) Rua Dez de Outubro e Rua Primeiro de Abril (BR-364 até R. General Mascarenhas de Morais)"
+      ],
+      "base_legal": [
+        {
+          "ato": "Portaria 146/SETRAT, de 14/12/2015 (cita Lei 6.595/2011, art. 2º, e Portaria 074/2013)",
+          "artigo": "considerandos e art. 1º (não é o ato primário)",
+          "url": "https://data.queridodiario.ok.org.br/5107602/2015-12-15/e742d8ad53b58ab44334f19b3d82ba7d078fd912.pdf",
+          "nota": "Lei 6.595 citada como 'de 11/02/2011'; a numeração do Sicam da Câmara sugere Lei Ordinária de fev/2011 mas não a indexa."
+        },
+        {
+          "ato": "Portaria 020/SETRAT, de 16/05/2017",
+          "artigo": "art. 1º",
+          "url": "https://data.queridodiario.ok.org.br/5107602/2017-08-04/0a5ed48ce43129d2ec7d7a51c949c959da200b31.pdf"
+        }
+      ],
+      "nota": "Pista: a ZRMC existe e a autoridade de trânsito pode alterar seus limites (art. 2º da Lei 6.595). Nada sobre horários ou PBT."
+    }
+  ]
 }

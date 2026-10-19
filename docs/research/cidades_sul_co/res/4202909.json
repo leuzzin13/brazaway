@@ -1,57 +1,61 @@
 {
- "ibge": "4202909",
- "nome": "Brusque",
- "uf": "SC",
- "status": "pista",
- "nivel_busca": "profunda",
- "falha_de_fonte": false,
- "fontes_consultadas": [
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 52 (Prefeitura, 2014+) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões, veículos de carga, peso bruto total, proibida a circulação, restrição de tráfego (Decretos/Leis/LC/Portarias)",
-   "resultado": "Sem ato de restrição de circulação. Acertos: Decretos 8.266/2018, 9.065/2021, 9.158/2022, 10.062/2025 e Lei 4.138/2018 (estacionamento rotativo, veículos até 2.000 kg); LC 417/419/420 2024 (EIV, vagas de carga e descarga em edificações); Decreto 8.159/2018 (Pavilhão de Eventos)."
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/atos/4782821",
-   "resultado": "Lei 4.577/2023 (Plano de Mobilidade Urbana) lida: diretrizes e proposta de zonas de restrição para caminhões acima de 10 t (Av. Beira-Rio, R. Sete de Setembro, R. Santos Dumont, Centro I) - PROPOSTA do plano (cap. 11.2.2), sem horários nem artigo operativo; 'atualizar as restrições de circulação ... de carga e descarga no centro' indica restrições anteriores não identificadas."
-  },
-  {
-   "url": "https://www.brusque.sc.gov.br/ ; https://brusque.atende.net/ ; https://www.camarabrusque.sc.gov.br/",
-   "resultado": "Prefeitura e Atende abrem (Atende cai em login); Câmara em 'Bot Verification' (reCAPTCHA) - não contornado. Sem módulo de legislação acessível."
-  },
-  {
-   "url": "https://penaestrada.com.br/restricoes/brusque/",
-   "resultado": "404 (leads)."
-  },
-  {
-   "url": "legislacao.py buscar 4202909 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
-   "resultado": "leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4531/leis-de-brusque: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende@https://camarabrusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://brusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc@https://brusque.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://brusque.1doc.co"
-  },
-  {
-   "url": "https://www.camarabrusque.sc.gov.br/proposicoes/pesquisa (Softcam, texto integral; R5 toolkit/softcam.py)",
-   "resultado": "totais por termo: caminhões=23, carga e descarga=16, veículos pesados=17, toneladas=6, tráfego de veículos=5; ementas das leis/decretos conferidas"
-  },
-  {
-   "url": "diarios_consolidados.py buscar 4202909 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
-   "resultado": "acertos: proibido..=0, peso..=0, tráfego..=2, circulação..=1; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
-  },
-  {
-   "url": "https://www.brusque.sc.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
-   "resultado": "sem página/ato útil (a busca só ecoa o termo)"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/ (varredura profunda por script, entidades 52, 6718, 6052)",
-   "resultado": "1342 publicações únicas, 483 normativas, 39 textos lidos por regex; ver observacoes (R6)"
-  },
-  {
-   "url": "https://diariomunicipal.sc.gov.br/",
-   "resultado": "plano/lei lido (trecho); sem regra operativa"
-  }
- ],
- "data": "2026-10-18",
- "observacoes": "Nenhum ato municipal de restrição de circulação ou horário de caminhões encontrado no DOM/SC (acervo da Prefeitura desde 17/01/2014). O Plano de Mobilidade (Lei 4.577/2023, texto salvo) apenas PROPÕE restringir caminhões acima de 10 t em vias do Centro I/Beira-Rio e fixar horários de carga e descarga; não é regra. Resultado não conclusivo: atos anteriores a 2014 e a Câmara (captcha) não pesquisados; leismunicipais bloqueado. Pendência: confirmar com a Secretaria de Trânsito e Mobilidade (SETRAM) se há decreto de carga e descarga no centro. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; Softcam da Câmara (www.camarabrusque.sc.gov.br) varrido; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4531/leis-de-brusque: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende@https://camarabrusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://br. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov). R6 2026-10-18 (DOM/SC profunda): 14 consultas por entidade (combinações \"caminhões toneladas\", \"caminhões proibido\", \"pesados proibido\", \"veículos pesados\", \"trânsito pesado\", \"carga toneladas\", \"caminhões eixos\", \"caminhões circulação\", \"tráfego caminhões\", \"veículos carga\" + \"caminhões\", \"carretas\", \"caminhão\", \"tonelagem\"), todas as categorias (inclui Outras publicações e atos de Câmara), dataInicial=01/01/2000, paginação até 20 páginas (se >200 resultados, repetida por categoria Leis/Decretos/Portarias/Instrução Normativa/Resoluções/Outras publicações). Entidades/faixa do acervo: Prefeitura Municipal de Brusque (17/01/2014 a 16/10/2026, 84330 atos); Câmara de Vereadores de Brusque (17/08/2021 a 15/10/2026, 387 atos); Convênio de Trânsito (16/12/2014 a 18/10/2026, 1958 atos). 1342 publicações únicas retornadas, 483 com título de lei/decreto/portaria/resolução/IN (sem contrato/edital/licitação etc.); 39 textos integrais baixados e passados em regex de restrição (proib|vedad|restri|não poderão|pesad|tonelad|eixo). PISTA: Lei 4.577/2023 (Brusque, PlanMob), cap. 11.2.2: proposta de \"Zonas de Restrição de Circulação para Veículos Pesados\" (caminhões > 10 t em vias não estruturais, mapa da Fig. 167); é plano com propostas, sem vias nomeadas no texto legal nem regra operativa; sem regra.",
- "osm_divergencias": [
-  "OSM não consultado."
- ],
- "vuc": null,
- "regras_rascunho": []
+  "ibge": "4202909",
+  "nome": "Brusque",
+  "uf": "SC",
+  "status": "pista",
+  "nivel_busca": "profunda",
+  "falha_de_fonte": false,
+  "fontes_consultadas": [
+    {
+      "url": "https://diariomunicipal.sc.gov.br/ (DOM/SC, busca Solr por entidade; lead diarios_consolidados + domq) entidade 52 (Prefeitura, 2014+) - termos: circulação de caminhões, veículos pesados, carga e descarga, tráfego de caminhões, caminhões, veículos de carga, peso bruto total, proibida a circulação, restrição de tráfego (Decretos/Leis/LC/Portarias)",
+      "resultado": "Sem ato de restrição de circulação. Acertos: Decretos 8.266/2018, 9.065/2021, 9.158/2022, 10.062/2025 e Lei 4.138/2018 (estacionamento rotativo, veículos até 2.000 kg); LC 417/419/420 2024 (EIV, vagas de carga e descarga em edificações); Decreto 8.159/2018 (Pavilhão de Eventos)."
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/atos/4782821",
+      "resultado": "Lei 4.577/2023 (Plano de Mobilidade Urbana) lida: diretrizes e proposta de zonas de restrição para caminhões acima de 10 t (Av. Beira-Rio, R. Sete de Setembro, R. Santos Dumont, Centro I) - PROPOSTA do plano (cap. 11.2.2), sem horários nem artigo operativo; 'atualizar as restrições de circulação ... de carga e descarga no centro' indica restrições anteriores não identificadas."
+    },
+    {
+      "url": "https://www.brusque.sc.gov.br/ ; https://brusque.atende.net/ ; https://www.camarabrusque.sc.gov.br/",
+      "resultado": "Prefeitura e Atende abrem (Atende cai em login); Câmara em 'Bot Verification' (reCAPTCHA) - não contornado. Sem módulo de legislação acessível."
+    },
+    {
+      "url": "https://penaestrada.com.br/restricoes/brusque/",
+      "resultado": "404 (leads)."
+    },
+    {
+      "url": "legislacao.py buscar 4202909 \"caminh|carga e descarga|veículos pesados|toneladas|zona de restrição|tráfego pesado|VUC|rodízio|veículos de carga\" (todas as fontes do portais.json)",
+      "resultado": "leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4531/leis-de-brusque: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende@https://camarabrusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://brusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; 1doc@https://brusque.1doc.com.br/b.php?pg=o/login&n=3: ERRO sem cliente automático; consultar manualmente: https://brusque.1doc.co"
+    },
+    {
+      "url": "https://www.camarabrusque.sc.gov.br/proposicoes/pesquisa (Softcam, texto integral; R5 toolkit/softcam.py)",
+      "resultado": "totais por termo: caminhões=23, carga e descarga=16, veículos pesados=17, toneladas=6, tráfego de veículos=5; ementas das leis/decretos conferidas"
+    },
+    {
+      "url": "diarios_consolidados.py buscar 4202909 (R5: 'proibido o trânsito de caminhões', 'peso bruto total caminhões', 'tráfego de caminhões', 'circulação de veículos de carga')",
+      "resultado": "acertos: proibido..=0, peso..=0, tráfego..=2, circulação..=1; lidos os títulos/trechos: só ruído (cargos, licitação, compra de veículo, concurso, posturas genéricas); sem ato de restrição"
+    },
+    {
+      "url": "https://www.brusque.sc.gov.br/ (busca do site: /?s=, /busca?q=, /pesquisa?q=, /search?q= 'restrição de caminhões')",
+      "resultado": "sem página/ato útil (a busca só ecoa o termo)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/ (varredura profunda por script, entidades 52, 6718, 6052)",
+      "resultado": "1342 publicações únicas, 483 normativas, 39 textos lidos por regex; ver observacoes (R6)"
+    },
+    {
+      "url": "https://diariomunicipal.sc.gov.br/",
+      "resultado": "plano/lei lido (trecho); sem regra operativa"
+    },
+    {
+      "url": "WebSearch: Brusque decreto caminhoes centro",
+      "resultado": "Nada novo; so resultados de outros municipios/noticias."
+    }
+  ],
+  "data": "2026-10-18",
+  "observacoes": "Nenhum ato municipal de restrição de circulação ou horário de caminhões encontrado no DOM/SC (acervo da Prefeitura desde 17/01/2014). O Plano de Mobilidade (Lei 4.577/2023, texto salvo) apenas PROPÕE restringir caminhões acima de 10 t em vias do Centro I/Beira-Rio e fixar horários de carga e descarga; não é regra. Resultado não conclusivo: atos anteriores a 2014 e a Câmara (captcha) não pesquisados; leismunicipais bloqueado. Pendência: confirmar com a Secretaria de Trânsito e Mobilidade (SETRAM) se há decreto de carga e descarga no centro. | R5 2026-10-18: varredura de leis antigas/decretos fora do diário consolidado: nenhuma fonte de legislação respondeu à busca automática; Softcam da Câmara (www.camarabrusque.sc.gov.br) varrido; bloqueadas/sem cliente: leismunicipais@https://leismunicipais.com.br/legislacao-municipal/4531/leis-de-brusque: ERRO Portal atrás de desafio Cloudflare (403 \"Just a moment\" para curl e We; atende@https://camarabrusque.atende.net: ERRO Atende.net: pesquisa de legislação em SPA protegida por captcha/anti-r; atende@https://br. Nenhum ato (lei/decreto) de restrição de circulação de caminhões encontrado nesta rodada; resultado NÃO conclusivo (portal principal de legislação inacessível: leismunicipais/atende/1doc/cespro/nucleogov). R6 2026-10-18 (DOM/SC profunda): 14 consultas por entidade (combinações \"caminhões toneladas\", \"caminhões proibido\", \"pesados proibido\", \"veículos pesados\", \"trânsito pesado\", \"carga toneladas\", \"caminhões eixos\", \"caminhões circulação\", \"tráfego caminhões\", \"veículos carga\" + \"caminhões\", \"carretas\", \"caminhão\", \"tonelagem\"), todas as categorias (inclui Outras publicações e atos de Câmara), dataInicial=01/01/2000, paginação até 20 páginas (se >200 resultados, repetida por categoria Leis/Decretos/Portarias/Instrução Normativa/Resoluções/Outras publicações). Entidades/faixa do acervo: Prefeitura Municipal de Brusque (17/01/2014 a 16/10/2026, 84330 atos); Câmara de Vereadores de Brusque (17/08/2021 a 15/10/2026, 387 atos); Convênio de Trânsito (16/12/2014 a 18/10/2026, 1958 atos). 1342 publicações únicas retornadas, 483 com título de lei/decreto/portaria/resolução/IN (sem contrato/edital/licitação etc.); 39 textos integrais baixados e passados em regex de restrição (proib|vedad|restri|não poderão|pesad|tonelad|eixo). PISTA: Lei 4.577/2023 (Brusque, PlanMob), cap. 11.2.2: proposta de \"Zonas de Restrição de Circulação para Veículos Pesados\" (caminhões > 10 t em vias não estruturais, mapa da Fig. 167); é plano com propostas, sem vias nomeadas no texto legal nem regra operativa; sem regra. | R7 2026-10-19: WebSearch (numero do ato e tema) sem texto do ato: Nada novo; so resultados de outros municipios/noticias. Nenhuma transcricao de terceiro localizada.",
+  "osm_divergencias": [
+    "OSM não consultado."
+  ],
+  "vuc": null,
+  "regras_rascunho": []
 }
