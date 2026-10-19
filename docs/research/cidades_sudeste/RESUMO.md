@@ -1,35 +1,35 @@
 # Resumo da pesquisa municipal — Sudeste
 
-Gerado por `workflow/consolidar.py`. Municípios: 1667; já no app: 167; com resultado em `res/`: **1633**; sem resultado: **0**.
+Gerado por `workflow/consolidar.py`. Municípios: 1667; já no app: 259; com resultado em `res/`: **1633**; sem resultado: **0**.
 
 ## Por status
 
 | Status | Cidades |
 |---|---|
-| nao_achou | 1287 |
-| regra_com_ato | 181 |
-| pontual | 70 |
-| pista | 40 |
+| nao_achou | 1265 |
+| regra_com_ato | 194 |
+| pontual | 71 |
+| pista | 48 |
 | sem_restricao_declarada | 35 |
 | regra_sem_ato | 19 |
 | confirmou_que_nao_tem | 1 |
 
-Por nível de busca: varredura_consolidada: 850, dirigida: 391, media: 246, profundo: 146
+Por nível de busca: varredura_consolidada: 772, dirigida: 361, media: 222, profundo: 145, profunda_ammmg: 133
 
-Com `falha_de_fonte` (resultado não conclusivo, refazer quando a fonte voltar): **175**.
+Com `falha_de_fonte` (resultado não conclusivo, refazer quando a fonte voltar): **232**.
 
 ## Por UF
 
 | UF | nao_achou | regra_com_ato | pontual | pista | sem_restricao_declarada | regra_sem_ato | confirmou_que_nao_tem | total |
 |---|---|---|---|---|---|---|---|---|
 | ES | 57 | 6 | 5 | 3 | 4 | 0 | 0 | 75 |
-| MG | 741 | 54 | 32 | 14 | 8 | 3 | 0 | 852 |
-| RJ | 56 | 16 | 11 | 4 | 3 | 1 | 0 | 91 |
-| SP | 433 | 105 | 22 | 19 | 20 | 15 | 1 | 615 |
+| MG | 741 | 55 | 32 | 13 | 8 | 3 | 0 | 852 |
+| RJ | 55 | 17 | 11 | 4 | 3 | 1 | 0 | 91 |
+| SP | 412 | 116 | 23 | 28 | 20 | 15 | 1 | 615 |
 
 ## Verificação
 
-Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverificavel: 3. Cidades com regra ativa ainda sem verificação: 0.
+Arquivos em `verif/`: 162. Vereditos: confirmado: 115, corrigido: 44, inverificavel: 3. Cidades com regra ativa ainda sem verificação: 0.
 
 ## Cidades com regra (rascunho)
 
@@ -79,6 +79,7 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | MG | Ouro Branco | 3145901 | regra_com_ato | 1 | confirmado |
 | MG | Ouro Fino | 3146008 | regra_com_ato | 0 | corrigido |
 | MG | Ouro Preto | 3146107 | regra_com_ato | 1 | confirmado |
+| MG | Paraopeba | 3147402 | regra_com_ato | 0 | não |
 | MG | Perdões | 3149903 | regra_com_ato | 2 | confirmado |
 | MG | Piranga | 3150802 | regra_com_ato | 0 | corrigido |
 | MG | Pirapetinga | 3151107 | regra_com_ato | 1 | confirmado |
@@ -107,6 +108,7 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | RJ | Nova Friburgo | 3303401 | regra_com_ato | 0 | não |
 | RJ | Piraí | 3304003 | regra_com_ato | 1 | confirmado |
 | RJ | Resende | 3304201 | regra_com_ato | 2 | corrigido |
+| RJ | Silva Jardim | 3305604 | regra_com_ato | 0 | não |
 | RJ | São Gonçalo | 3304904 | regra_com_ato | 3 | corrigido |
 | RJ | São João de Meriti | 3305109 | regra_com_ato | 0 | corrigido |
 | RJ | Tanguá | 3305752 | regra_com_ato | 2 | confirmado |
@@ -121,12 +123,14 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | Artur Nogueira | 3503802 | regra_com_ato | 0 | não |
 | SP | Atibaia | 3504107 | regra_com_ato | 1 | corrigido |
 | SP | Avaré | 3504503 | regra_com_ato | 1 | confirmado |
+| SP | Barbosa | 3505104 | regra_com_ato | 0 | não |
 | SP | Barretos | 3505500 | regra_com_ato | 1 | confirmado |
 | SP | Bastos | 3505807 | regra_com_ato | 1 | confirmado |
 | SP | Bauru | 3506003 | regra_com_ato | 2 | confirmado |
 | SP | Bebedouro | 3506102 | regra_com_ato | 1 | confirmado |
 | SP | Bernardino de Campos | 3506300 | regra_com_ato | 1 | confirmado |
 | SP | Bertioga | 3506359 | regra_com_ato | 1 | confirmado |
+| SP | Boracéia | 3507308 | regra_com_ato | 0 | não |
 | SP | Botucatu | 3507506 | regra_com_ato | 3 | confirmado |
 | SP | Bragança Paulista | 3507605 | regra_com_ato | 3 | confirmado |
 | SP | Buritama | 3508108 | regra_com_ato | 1 | corrigido |
@@ -146,10 +150,12 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | Dobrada | 3514007 | regra_com_ato | 2 | confirmado |
 | SP | Dumont | 3514601 | regra_com_ato | 0 | confirmado |
 | SP | Estrela d'Oeste | 3515202 | regra_com_ato | 0 | não |
+| SP | Floreal | 3515905 | regra_com_ato | 0 | não |
 | SP | Garça | 3516705 | regra_com_ato | 1 | confirmado |
 | SP | Getulina | 3517000 | regra_com_ato | 1 | confirmado |
 | SP | Guareí | 3518503 | regra_com_ato | 4 | confirmado |
 | SP | Guariba | 3518602 | regra_com_ato | 1 | confirmado |
+| SP | Guatapará | 3518859 | regra_com_ato | 0 | não |
 | SP | Holambra | 3519055 | regra_com_ato | 0 | não |
 | SP | Iaras | 3519253 | regra_com_ato | 0 | não |
 | SP | Ibitinga | 3519600 | regra_com_ato | 1 | confirmado |
@@ -170,6 +176,7 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | Limeira | 3526902 | regra_com_ato | 1 | corrigido |
 | SP | Lins | 3527108 | regra_com_ato | 1 | confirmado |
 | SP | Lourdes | 3527256 | regra_com_ato | 1 | corrigido |
+| SP | Macaubal | 3528106 | regra_com_ato | 1 | confirmado |
 | SP | Maracaí | 3528809 | regra_com_ato | 1 | confirmado |
 | SP | Marília | 3529005 | regra_com_ato | 2 | confirmado |
 | SP | Matão | 3529302 | regra_com_ato | 1 | confirmado |
@@ -188,7 +195,10 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | Piedade | 3537800 | regra_com_ato | 1 | confirmado |
 | SP | Pindamonhangaba | 3538006 | regra_com_ato | 2 | confirmado |
 | SP | Pirangi | 3539004 | regra_com_ato | 1 | confirmado |
+| SP | Planalto | 3539608 | regra_com_ato | 1 | confirmado |
+| SP | Poloni | 3539905 | regra_com_ato | 0 | não |
 | SP | Pontal | 3540200 | regra_com_ato | 1 | confirmado |
+| SP | Pontes Gestal | 3540309 | regra_com_ato | 0 | não |
 | SP | Praia Grande | 3541000 | regra_com_ato | 2 | confirmado |
 | SP | Presidente Prudente | 3541406 | regra_com_ato | 1 | confirmado |
 | SP | Rio Claro | 3543907 | regra_com_ato | 1 | confirmado |
@@ -197,6 +207,7 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | Santa Branca | 3546009 | regra_com_ato | 1 | confirmado |
 | SP | Santa Bárbara d'Oeste | 3545803 | regra_com_ato | 0 | não |
 | SP | Santo Expedito | 3548302 | regra_com_ato | 1 | confirmado |
+| SP | Sebastianópolis do Sul | 3551306 | regra_com_ato | 0 | não |
 | SP | Serrana | 3551504 | regra_com_ato | 0 | não |
 | SP | São Bento do Sapucaí | 3548609 | regra_com_ato | 1 | corrigido |
 | SP | São Caetano do Sul | 3548807 | regra_com_ato | 0 | não |
@@ -206,9 +217,11 @@ Arquivos em `verif/`: 159. Vereditos: confirmado: 113, corrigido: 43, inverifica
 | SP | São Pedro | 3550407 | regra_com_ato | 1 | confirmado |
 | SP | São Roque | 3550605 | regra_com_ato | 1 | confirmado |
 | SP | São Simão | 3550902 | regra_com_ato | 1 | confirmado |
+| SP | Taguaí | 3553005 | regra_com_ato | 1 | corrigido |
 | SP | Tanabi | 3553401 | regra_com_ato | 1 | corrigido |
 | SP | Tatuí | 3554003 | regra_com_ato | 1 | confirmado |
 | SP | Taubaté | 3554102 | regra_com_ato | 1 | corrigido |
+| SP | Tupi Paulista | 3555109 | regra_com_ato | 0 | não |
 | SP | Valinhos | 3556206 | regra_com_ato | 2 | corrigido |
 | SP | Vinhedo | 3556701 | regra_com_ato | 1 | confirmado |
 | SP | Vista Alegre do Alto | 3556909 | regra_com_ato | 1 | corrigido |
