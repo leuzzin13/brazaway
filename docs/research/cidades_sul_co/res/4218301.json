@@ -2,7 +2,7 @@
  "ibge": "4218301",
  "nome": "Três Barras",
  "uf": "SC",
- "status": "nao_achou",
+ "status": "pontual",
  "nivel_busca": "dirigida",
  "falha_de_fonte": false,
  "fontes_consultadas": [
@@ -29,10 +29,66 @@
   {
    "url": "https://www.camaratresbarras.sc.gov.br/proposicoes/pesquisa (Softcam, texto integral; caminhões, veículos pesados, carga e descarga, toneladas, trânsito pesado, caminhão)",
    "resultado": "(R5 2026-10-18) acervo [500, '30/11/1961', '31/08/2026'] (total, mais antigo, mais recente); totais por termo {'caminhões': 18, 'veículos pesados': 1, 'carga e descarga': 4, 'toneladas': 1, 'trânsito pesado': 0, 'caminhão': 13}; itens filtrados por contexto de trânsito/circulação."
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/ (varredura profunda por script, entidades 274, 6761, 485, 6274)",
+   "resultado": "447 publicações únicas, 284 normativas, 14 textos lidos por regex; ver observacoes (R6)"
+  },
+  {
+   "url": "https://diariomunicipal.sc.gov.br/atos/366697",
+   "resultado": "LIDO integral (getHtml). Texto salvo em atos/4218301/decreto_4254_2013.txt"
   }
  ],
  "data": "2026-10-18",
- "observacoes": "R1-SC-DR02 (conferencia barata, DR). Trechos anotados pela preparacao conferidos: Lei Organica 1990 (competencia de disciplinar carga e descarga) e Proc. Adm. 33/2019 (decisao de licitacao que cita desvio rodoviario para retirar o transito de caminhoes do centro, ao justificar obra; nao e norma): ruido. Busca no DOM/SC (acervo integral do municipio) por 'transito de caminhoes' e 'veiculos pesados' sem ato de restricao de circulacao. Portal de legislacao principal (leismunicipais) nao pesquisavel automaticamente ou sem resultado; resultado do DOM/SC e a base do nao_achou. Nao_achou menos conclusivo: legislacao do portal nao consultada (bloqueio/sem cliente). R5 2026-10-18: legislacao.py --texto: lidas nenhuma; sem leitura: atende.net (captcha), leismunicipais (Cloudflare); Softcam www.camaratresbarras.sc.gov.br.",
+ "observacoes": "R1-SC-DR02 (conferencia barata, DR). Trechos anotados pela preparacao conferidos: Lei Organica 1990 (competencia de disciplinar carga e descarga) e Proc. Adm. 33/2019 (decisao de licitacao que cita desvio rodoviario para retirar o transito de caminhoes do centro, ao justificar obra; nao e norma): ruido. Busca no DOM/SC (acervo integral do municipio) por 'transito de caminhoes' e 'veiculos pesados' sem ato de restricao de circulacao. Portal de legislacao principal (leismunicipais) nao pesquisavel automaticamente ou sem resultado; resultado do DOM/SC e a base do nao_achou. Nao_achou menos conclusivo: legislacao do portal nao consultada (bloqueio/sem cliente). R5 2026-10-18: legislacao.py --texto: lidas nenhuma; sem leitura: atende.net (captcha), leismunicipais (Cloudflare); Softcam www.camaratresbarras.sc.gov.br. R6 2026-10-18 (DOM/SC profunda): 14 consultas por entidade (combinações \"caminhões toneladas\", \"caminhões proibido\", \"pesados proibido\", \"veículos pesados\", \"trânsito pesado\", \"carga toneladas\", \"caminhões eixos\", \"caminhões circulação\", \"tráfego caminhões\", \"veículos carga\" + \"caminhões\", \"carretas\", \"caminhão\", \"tonelagem\"), todas as categorias (inclui Outras publicações e atos de Câmara), dataInicial=01/01/2000, paginação até 20 páginas (se >200 resultados, repetida por categoria Leis/Decretos/Portarias/Instrução Normativa/Resoluções/Outras publicações). Entidades/faixa do acervo: Prefeitura municipal de Três Barras (24/07/2009 a 16/10/2026, 22617 atos); SAMASA - Serviço Autônomo Municipal de Água e Saneamento Ambiental de Três Barras (27/07/2023 a 26/08/2026, 58 atos); Câmara de Vereadores de Três Barras (08/10/2014 a 15/10/2026, 1032 atos); Convênio de Trânsito (13/01/2015 a 16/04/2022, 685 atos). 447 publicações únicas retornadas, 284 com título de lei/decreto/portaria/resolução/IN (sem contrato/edital/licitação etc.); 14 textos integrais baixados e passados em regex de restrição (proib|vedad|restri|não poderão|pesad|tonelad|eixo). ACHADO: Decreto 4.254/2013 (Três Barras) proíbe veículos pesados nas vias urbanas \"enquanto perdurar a situação de emergência\" (chuvas) -> condicionado/temporário, regra desativada.",
  "osm_divergencias": [],
- "regras_rascunho": []
+ "regras_rascunho": [
+  {
+   "id": "tresbarras_vias_urbanas_emergencia_2013",
+   "tipo": "zona",
+   "regime": "Proibição temporária (emergência/chuva)",
+   "nome": "Vias urbanas: veículos pesados proibidos durante emergência (Decreto 4.254/2013)",
+   "status": "desativada",
+   "status_motivo": "Condicionada a situação de emergência por chuvas ('enquanto perdurar'); ato de 2013 exaurido; sem delimitação.",
+   "confianca": "baixa",
+   "janelas": [
+    {
+     "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "from": "00:00",
+     "to": "24:00"
+    }
+   ],
+   "feriados": "aplica",
+   "alvo": {
+    "caminhao": true
+   },
+   "base_legal": [
+    {
+     "ato": "Decreto 4.254, de 22/06/2013 (Três Barras)",
+     "artigo": "art. 1º",
+     "url": "https://diariomunicipal.sc.gov.br/atos/366697",
+     "nota": "Texto integral lido."
+    }
+   ],
+   "excecoes": [],
+   "nota": "Temporário.",
+   "vigencia_inicio": "2013-06-22",
+   "trechos": [
+    {
+     "inciso": "art. 1º",
+     "via": [],
+     "descricao": "Vias urbanas do município.",
+     "aproximado": true
+    }
+   ]
+  }
+ ]
 }
