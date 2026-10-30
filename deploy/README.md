@@ -23,6 +23,15 @@ O banco fica todo no Supabase: Frota, camadas, cidades e reportes. A API e o Val
    ```
    O script aplica as migrations (menos a `0300`, que só existe para o Postgres local), todos os seeds, a blindagem
    (`9000`) e o bucket de comprovantes (`9100`). Pode rodar de novo a cada atualização.
+
+   **Sem psql ou sem acesso à porta 5432** (rede só HTTPS, como numa sessão do Claude na nuvem): o
+   `deploy/supabase/aplicar_api.py` aplica os mesmos arquivos pela API de gerenciamento do Supabase, em lotes de até
+   900 kB. Precisa de um token pessoal (supabase.com/dashboard/account/tokens, dá acesso à conta toda: só em variável
+   de ambiente) e do ref do projeto:
+   ```bash
+   SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=<ref> deploy/supabase/aplicar_api.py   # --simular mostra os lotes
+   ```
+   Se cair no meio, rode de novo com `--desde <arquivo>` (o erro mostra qual).
 3. Authentication → URL Configuration: em Site URL coloque o domínio do Lovable e adicione o mesmo domínio em
    Redirect URLs.
 4. Authentication → Providers → Email: ligado. Para o piloto, desligue "Confirm email" se for usar senha.
