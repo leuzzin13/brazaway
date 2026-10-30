@@ -7,6 +7,7 @@ import { LatLon, VehicleInput } from '../schemas.js';
 import { computeRoute, RouteBlockedError } from '../services/routing.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
+import { pool } from '../db.js';
 
 /**
  * API da Frota (/api/frota/*). Toda rota exige `Authorization: Bearer <jwt do Supabase>` e roda numa transação com RLS
@@ -108,7 +109,27 @@ const MessagesQuery = z.object({
   before: IsoDateTime.optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
 });
-const NewMessage = z.object({ recipient_id: Uuid, body: Text(4000), trip_id: Uuid.optional() });
+/**
+ * "Falar com a central" sem destinatário: o motorista não enxerga a equipe (RLS), então a API escolhe quem recebe, só
+ * dentro da empresa de quem envia: quem criou a viagem (se for da equipe e estiver ativo); senão o gestor, admin ou
+ * owner ativo mais antigo, nessa ordem.
+ */
+async function centralDe(userId: string, tripId?: string): Promise<string> {
+  const r = await pool.query<{ rid: string | null }>(
+    `select coalesce(
+       (select t.created_by from trips t join company_members m on m.user_id = t.created_by
+         where t.id = $2 and t.company_id = me.company_id and m.company_id = me.company_id and m.status = 'active'
+           and m.role in ('owner', 'admin', 'gestor')),
+       (select m.user_id from company_members m
+         where m.company_id = me.company_id and m.status = 'active' and m.role in ('owner', 'admin', 'gestor')
+         order by case m.role when 'gestor' then 1 when 'admin' then 2 else 3 end, m.created_at limit 1)) as rid
+       from company_members me where me.user_id = $1 and me.status = 'active'`, [userId, tripId ?? null]);
+  const rid = r.rows[0]?.rid;
+  if (!rid) throw httpError(403, 'nenhum gestor ativo na empresa para receber a mensagem');
+  return rid;
+}
+
+const NewMessage = z.object({ recipient_id: Uuid.optional(), body: Text(4000), trip_id: Uuid.optional() });
 
 const NewInvite = z.object({
   role: z.enum(['motorista', 'gestor']).default('motorista'),
@@ -412,10 +433,11 @@ export async function frotaRoutes(app: FastifyInstance) {
       const msg = await asUser(req, async (c, claims) => {
         const b = parse(NewMessage, req.body);
         if (b.trip_id) await one(c, 'select 1 from trips where id = $1', [b.trip_id], 'viagem não encontrada');
+        const recipient = b.recipient_id ?? (await centralDe(claims.sub!, b.trip_id));
         // a política de INSERT (can_message) recusa destinatário de outra empresa e motorista → motorista
         const r = await c.query(
           `insert into messages (company_id, trip_id, sender_id, recipient_id, body) values (app.company_id(), $1, $2, $3, $4)
-           returning id, trip_id, sender_id, recipient_id, body, read_at, created_at`, [b.trip_id ?? null, claims.sub, b.recipient_id, b.body]);
+           returning id, trip_id, sender_id, recipient_id, body, read_at, created_at`, [b.trip_id ?? null, claims.sub, recipient, b.body]);
         return r.rows[0];
       });
       return reply.code(201).send(msg);

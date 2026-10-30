@@ -315,6 +315,15 @@ describe('fluxo completo: convite → aceite → viagem → pings → parada →
     expect(reply.status).toBe(201);
     expect((await call('GET', '/messages?box=sent', T.motA)).body.items).toHaveLength(1);
     expect((await call('GET', `/messages?peer=${MOT_A}`, T.ownerA)).body.items).toHaveLength(2);
+    // "falar com a central" sem destinatário: quem criou a viagem; sem viagem, alguém da equipe ativa da empresa
+    const central = await call('POST', '/messages', T.motA, { body: 'Chegando no cliente', trip_id: S.tripId });
+    expect(central.status, JSON.stringify(central.body)).toBe(201);
+    expect(central.body.recipient_id).toBe(OWNER_A);
+    const semViagem = await call('POST', '/messages', T.motA, { body: 'Pneu furado' });
+    expect(semViagem.status).toBe(201);
+    expect([OWNER_A, GESTOR_A]).toContain(semViagem.body.recipient_id);
+    expect((await call('POST', '/messages', T.outsider, { body: 'oi' })).status).toBe(403);       // sem empresa
+    await pool.query('delete from messages where id = any($1)', [[central.body.id, semViagem.body.id]]);
     // motorista → outro motorista da mesma empresa: bloqueado (precisa de um segundo motorista)
     await pool.query(`insert into company_members (company_id, user_id, role, display_name) values ($1, $2, 'motorista', 'Colega')`, [CO_A, OUTSIDER]);
     expect((await call('POST', '/messages', T.motA, { recipient_id: OUTSIDER, body: 'oi colega' })).status).toBe(403);
