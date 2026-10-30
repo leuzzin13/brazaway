@@ -63,6 +63,7 @@ Variáveis de ambiente da API (no `EnvironmentFile` do systemd ou no `ecosystem`
 | `DATABASE_URL` | connection string do Supabase (Session pooler, 5432) |
 | `SUPABASE_URL` | `https://<ref>.supabase.co`. Valida os tokens ES256 dos projetos novos pelo JWKS |
 | `SUPABASE_JWT_SECRET` | só se o projeto ainda usar o "Legacy JWT secret" (HS256) |
+| `FROTA_USUARIOS_EXTERNOS` | `1` só quando o login é num Supabase e o banco da Frota fica no Postgres da API (ex.: Lovable Cloud, ver abaixo). Cria o usuário do token no `auth.users` local no primeiro acesso. Nunca com o banco dentro do Supabase |
 | `VALHALLA_URL`, `VALHALLA_ELEV_URL` | `http://localhost:8002` |
 | `CONFIG_DIR` | caminho de `config/` no repositório |
 | `TZ` | `America/Sao_Paulo` |
@@ -76,6 +77,22 @@ Rode com `pm2`/systemd: `node dist/server.js`. Na frente, coloque HTTPS:
 - **Mac:** `cloudflared tunnel --url http://localhost:3000` (ou um túnel nomeado com domínio fixo).
 
 Teste: `curl https://api.../api/health` deve responder com db e valhalla ok.
+
+### Variante: login no Lovable Cloud, banco com a API
+
+O projeto do Lovable já tem um Supabase gerenciado (Lovable Cloud), sem acesso direto ao Postgres. Nesse caso o Supabase
+fica só com o login, e frota, camadas e cidades ficam no Postgres do servidor da API (o `docker compose` de sempre,
+com `0300` e os seeds):
+
+| Variável | Valor |
+|---|---|
+| `DATABASE_URL` | `postgres://truck:truck@localhost:5432/truck_router` (o Postgres do compose) |
+| `SUPABASE_URL` | URL do Supabase do Lovable (`VITE_SUPABASE_URL` do `.env` do projeto): a API valida os tokens ES256 pelo JWKS |
+| `FROTA_USUARIOS_EXTERNOS` | `1` |
+
+Sem Realtime nem Storage do lado do banco: o painel recarrega `/api/frota/live` e `/messages` por tempo, e a foto do
+comprovante fica para depois. A primeira empresa e o owner: o owner faz login uma vez no app (a API cria o usuário),
+ou já antes, com o `id` dele no Supabase do Lovable, rode `deploy/onboarding_empresa.sql` (instruções no arquivo).
 
 ## 3. Lovable
 

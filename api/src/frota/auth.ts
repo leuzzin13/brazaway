@@ -93,12 +93,32 @@ export async function claimsOf(req: FastifyRequest): Promise<Claims> {
 }
 
 /**
+ * Login num Supabase de fora (ex.: o Lovable Cloud) com o banco da Frota no Postgres da API: o usuário do token não
+ * existe no `auth.users` local (o da 0300), e as FKs de `company_members`/`invites` apontam para ele. Com
+ * FROTA_USUARIOS_EXTERNOS=1 a API cria a linha no primeiro acesso (id e e-mail do token). Nunca ligue isso com o banco
+ * dentro do próprio Supabase: lá o `auth.users` é do Supabase Auth.
+ */
+const USUARIOS_EXTERNOS = process.env.FROTA_USUARIOS_EXTERNOS === '1';
+const usuariosConhecidos = new Set<string>();
+
+async function garantirUsuario(c: pg.PoolClient, claims: Claims) {
+  if (!USUARIOS_EXTERNOS || claims.role !== 'authenticated' || !claims.sub || usuariosConhecidos.has(claims.sub)) return;
+  const email = typeof claims.email === 'string' && claims.email ? claims.email.toLowerCase() : null;
+  const phone = typeof claims.phone === 'string' && claims.phone ? claims.phone : null;
+  await c.query('insert into auth.users (id, email, phone) values ($1, $2, $3) on conflict do nothing', [claims.sub, email, phone]);
+  const r = await c.query('select 1 from auth.users where id = $1', [claims.sub]);
+  if (!r.rowCount) throw httpError(409, 'e-mail ou telefone já usado por outro usuário');
+  usuariosConhecidos.add(claims.sub);
+}
+
+/**
  * Roda `fn` numa transação com o papel e as claims do token (RLS ativa para authenticated).
  * Erros de permissão do banco (42501, RLS) viram 403; violação de regra de negócio das RPC (42501 com mensagem) também.
  */
 export async function withRls<T>(claims: Claims, fn: (c: pg.PoolClient) => Promise<T>): Promise<T> {
   const c = await pool.connect();
   try {
+    await garantirUsuario(c, claims); // fora da transação: a linha fica mesmo se a requisição falhar
     await c.query('begin');
     await c.query(`select set_config('request.jwt.claims', $1, true)`, [JSON.stringify(claims)]);
     await c.query(claims.role === 'service_role' ? 'set local role service_role' : 'set local role authenticated');
