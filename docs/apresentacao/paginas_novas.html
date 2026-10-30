@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>BrasaWay — páginas novas</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #00843D;
+    --verde-esc: #006F33;
+    --amarelo: #FFE000;
+    --tinta: #0F1A14;
+    --texto: #4A514D;
+    --fundo: #F4F4F2;
+    --branco: #FFFFFF;
+    --borda: #E4E6E2;
+  }
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--fundo); }
+  body { font-family: 'Figtree', sans-serif; color: var(--tinta); -webkit-font-smoothing: antialiased; }
+  .pg { width: 1280px; height: 720px; padding: 92px 86px 0; position: relative; overflow: hidden; page-break-after: always; background: var(--fundo); }
+  .pg.branco { background: #FDFDFC; }
+  .pg.verde { background: var(--verde); color: #fff; }
+  .eyebrow { font-size: 17px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--verde); }
+  .verde .eyebrow { color: var(--amarelo); }
+  h1 { font-size: 46px; font-weight: 800; letter-spacing: -.02em; line-height: 1.12; margin-top: 30px; }
+  .verde h1 { color: #fff; }
+  p.lead { font-size: 20px; line-height: 1.55; color: var(--texto); }
+  .nota { position: absolute; left: 86px; right: 86px; font-size: 17px; line-height: 1.6; color: var(--texto); }
+  .verde .nota { color: rgba(255,255,255,.92); }
+
+  /* cards */
+  .linha4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 40px; }
+  .card { background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 34px 28px 30px; }
+  .card .n { font-size: 34px; font-weight: 800; color: var(--verde); }
+  .card h3 { font-size: 22px; font-weight: 700; margin: 22px 0 12px; }
+  .card p { font-size: 16.5px; line-height: 1.55; color: var(--texto); }
+  .card.cheio { background: var(--verde); border-color: var(--verde); color: #fff; }
+  .card.cheio .n { color: var(--amarelo); }
+  .card.cheio p { color: rgba(255,255,255,.92); }
+
+  .stat { background: rgba(0,0,0,.14); border-radius: 18px; padding: 40px 28px 34px; min-height: 256px; }
+  .stat .v { font-size: 58px; font-weight: 800; color: var(--amarelo); letter-spacing: -.02em; }
+  .stat p { font-size: 17px; line-height: 1.5; margin-top: 22px; color: #fff; }
+
+  /* tabelas */
+  table { border-collapse: collapse; width: 100%; }
+  .tab-verde { margin-top: 36px; }
+  .tab-verde th, .tab-verde td { border: 1px solid rgba(255,255,255,.2); padding: 9px 12px; font-size: 17px; text-align: left; vertical-align: top; line-height: 1.35; }
+  .tab-verde th { color: var(--amarelo); background: rgba(255,255,255,.07); font-weight: 700; }
+  .tab-verde td { color: #fff; }
+
+  .tab-uf { margin-top: 30px; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--borda); }
+  .tab-uf th { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--texto); font-weight: 700; text-align: right; padding: 12px 18px; border-bottom: 1px solid var(--borda); }
+  .tab-uf th:first-child, .tab-uf td:first-child, .tab-uf th:nth-child(2), .tab-uf td:nth-child(2) { text-align: left; }
+  .tab-uf td { font-size: 16.5px; padding: 6.5px 18px; text-align: right; border-bottom: 1px solid #F0F1EE; font-variant-numeric: tabular-nums; }
+  .tab-uf td.reg { color: var(--texto); font-size: 15px; }
+  .tab-uf td.uf { font-weight: 700; }
+  .tab-uf td.ativa { font-weight: 800; color: var(--verde); }
+  .tab-uf tr.sep td { border-top: 2px solid var(--borda); }
+  .tab-uf tr.total td { background: var(--verde); color: #fff; font-weight: 800; border: 0; }
+  .tab-uf tr.total td.ativa { color: var(--amarelo); }
+
+  /* camadas */
+  .grade3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .cam { background: #fff; border: 1px solid var(--borda); border-radius: 18px; padding: 20px 24px 14px; }
+  .cam h3 { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+  .cam ul { list-style: none; }
+  .cam li { font-size: 15px; line-height: 1.36; color: var(--texto); padding-left: 14px; position: relative; margin-bottom: 6px; }
+  .cam li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 2px; background: var(--verde); transform: rotate(45deg); }
+  .cam b { color: var(--tinta); font-weight: 800; }
+
+  /* tudo numa página */
+  .col4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 34px; }
+  .bloco { background: #fff; border: 1px solid var(--borda); border-radius: 18px; padding: 24px 22px; min-height: 418px; }
+  .bloco.esc { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+  .bloco .tag { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--verde); }
+  .bloco.esc .tag { color: var(--amarelo); }
+  .bloco h3 { font-size: 21px; font-weight: 800; margin: 8px 0 16px; line-height: 1.2; }
+  .bloco ul { list-style: none; }
+  .bloco li { font-size: 15px; line-height: 1.38; color: var(--texto); padding: 7px 0; border-top: 1px solid #EEF0EC; }
+  .bloco.esc li { color: rgba(255,255,255,.86); border-top-color: rgba(255,255,255,.12); }
+
+  /* qualidade */
+  .q { display: grid; grid-template-columns: 1fr 486px; gap: 70px; align-items: center; height: 720px; padding: 0 86px; }
+  .q h1 { margin-top: 26px; }
+  .q p.lead { margin-top: 30px; }
+  .big { background: var(--verde); color: #fff; border-radius: 18px; padding: 34px 30px 30px; }
+  .big .v { font-size: 84px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .big p { font-size: 19px; margin-top: 16px; }
+  .peq2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .peq { background: var(--fundo); border-radius: 18px; padding: 28px 24px 24px; }
+  .peq .v { font-size: 42px; font-weight: 800; color: var(--verde-esc); }
+  .peq p { font-size: 16.5px; line-height: 1.5; color: var(--texto); margin-top: 10px; }
+
+  /* próximos passos */
+  .passos { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 18px; margin-top: 40px; }
+  .passo { background: var(--fundo); border-radius: 18px; height: 104px; display: flex; align-items: center; gap: 18px; padding: 0 26px; font-size: 19px; }
+  .passo .n { font-size: 38px; font-weight: 800; color: var(--verde); width: 26px; }
+  .passo.am { background: var(--amarelo); }
+  .passo.am .n { color: var(--tinta); }
+  .passo small { display: block; font-size: 15px; color: var(--texto); margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<!-- p4: como a rota é calculada (atualiza "OpenStreetMap do Sudeste") -->
+<section class="pg">
+  <div class="eyebrow">Como a rota é calculada</div>
+  <h1>Cada rota sabe o que este caminhão não pode<br>passar.</h1>
+  <div class="linha4" style="margin-top:38px">
+    <div class="card"><div class="n">1</div><h3>O veículo</h3><p>Altura, largura, comprimento, peso total, peso por eixo, eixos, carga perigosa e VUC.</p></div>
+    <div class="card"><div class="n">2</div><h3>O mapa</h3><p>Motor de rota de caminhão (Valhalla) sobre o OpenStreetMap do Sudeste, Sul e Centro-Oeste, com correções conferidas em lei.</p></div>
+    <div class="card"><div class="n">3</div><h3>As regras</h3><p>Restrições municipais, estaduais e federais e os reportes dos motoristas, aplicados na hora.</p></div>
+    <div class="card cheio"><div class="n">=</div><h3>Rota segura</h3><p>Com a lista do que foi evitado e o aviso do que está perto.</p></div>
+  </div>
+</section>
+
+<!-- p5: o que está mapeado (substitui "Regras municipais no Sudeste") -->
+<section class="pg verde">
+  <div class="eyebrow">Regras municipais · Sudeste, Sul e Centro-Oeste</div>
+  <h1>Lemos a lei de cada cidade. Uma por uma.</h1>
+  <div class="linha4" style="gap:20px">
+    <div class="stat"><div class="v">3.327</div><p>municípios pesquisados em 11 estados: ES, MG, RJ, SP, PR, SC, RS, GO, MT, MS e DF</p></div>
+    <div class="stat"><div class="v">226</div><p>cidades com regra de caminhão já no roteador, com rota real testada</p></div>
+    <div class="stat"><div class="v">341</div><p>cidades onde achamos o ato (lei, decreto ou portaria) com número e artigo</p></div>
+    <div class="stat"><div class="v">80,7%</div><p>com resposta conclusiva: achamos a regra ou confirmamos que a cidade não tem</p></div>
+  </div>
+  <p class="nota" style="top:604px">Regra só entra ativa com lei ou decreto vigente, com número, artigo e link lidos, e conferida por um verificador independente. Pista sem ato entra como aviso, nunca como bloqueio.</p>
+</section>
+
+<!-- p6: cobertura por estado (nova) -->
+<section class="pg branco">
+  <div class="eyebrow">O que está mapeado, estado por estado</div>
+  <h1 style="margin-top:22px">Onze estados, três regiões, uma régua só.</h1>
+  <table class="tab-uf">
+    <thead><tr><th>Região</th><th>UF</th><th>Municípios</th><th>Resposta conclusiva</th><th>Com ato achado</th><th>Regra no roteador</th></tr></thead>
+    <tbody>
+      <tr><td class="reg">Sudeste</td><td class="uf">SP</td><td>645</td><td>79,8%</td><td>116</td><td class="ativa">106</td></tr>
+      <tr><td class="reg"></td><td class="uf">MG</td><td>853</td><td>93,8%</td><td>55</td><td class="ativa">38</td></tr>
+      <tr><td class="reg"></td><td class="uf">RJ</td><td>92</td><td>79,3%</td><td>17</td><td class="ativa">13</td></tr>
+      <tr><td class="reg"></td><td class="uf">ES</td><td>78</td><td>61,5%</td><td>6</td><td class="ativa">4</td></tr>
+      <tr class="sep"><td class="reg">Sul</td><td class="uf">PR</td><td>399</td><td>71,9%</td><td>44</td><td class="ativa">21</td></tr>
+      <tr><td class="reg"></td><td class="uf">SC</td><td>295</td><td>92,9%</td><td>45</td><td class="ativa">21</td></tr>
+      <tr><td class="reg"></td><td class="uf">RS</td><td>497</td><td>66,8%</td><td>18</td><td class="ativa">9</td></tr>
+      <tr class="sep"><td class="reg">Centro-Oeste</td><td class="uf">GO</td><td>246</td><td>69,1%</td><td>5</td><td class="ativa">2</td></tr>
+      <tr><td class="reg"></td><td class="uf">MT</td><td>142</td><td>89,4%</td><td>22</td><td class="ativa">5</td></tr>
+      <tr><td class="reg"></td><td class="uf">MS</td><td>79</td><td>73,4%</td><td>12</td><td class="ativa">6</td></tr>
+      <tr><td class="reg"></td><td class="uf">DF</td><td>1</td><td>100%</td><td>1</td><td class="ativa">1</td></tr>
+      <tr class="total"><td>Total</td><td></td><td>3.327</td><td>80,7%</td><td>341</td><td class="ativa">226</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- p7: camadas com números (substitui "Mais de quinze camadas") -->
+<section class="pg" style="padding-top:70px">
+  <div class="eyebrow">O que entra na conta</div>
+  <h1 style="margin-top:22px">Vinte e duas camadas de regra e de risco.</h1>
+  <div class="grade3">
+    <div class="cam"><h3>Restrição de circulação</h3><ul>
+      <li><b>226 cidades</b> com regra municipal, mais ZMRC e VER de São Paulo</li>
+      <li><b>855 trechos</b> de rodovia federal e estadual com horário, e DERs de 9 estados</li>
+      <li>Feriados de <b>11 estados</b> e das cidades-polo · faixas de ônibus e Zona Azul Caminhão em SP</li>
+    </ul></div>
+    <div class="cam"><h3>Gabarito e peso</h3><ul>
+      <li><b>4.891 trechos</b> federais com limite de altura, largura, peso ou comprimento (DNIT)</li>
+      <li><b>26 mil</b> pontes, viadutos e túneis cadastrados</li>
+      <li><b>16 mil</b> viadutos sem altura no mapa, avisados na rota · rampas fortes pelo relevo</li>
+    </ul></div>
+    <div class="cam"><h3>Carga e custo</h3><ul>
+      <li><b>3.076 trechos</b> proibidos para produto perigoso</li>
+      <li>Pedágio por eixo das concessões federais e estaduais, com a opção sem pedágio</li>
+      <li><b>372 balanças</b>, avisadas no sentido da rota · autorização especial de trânsito</li>
+    </ul></div>
+    <div class="cam"><h3>Segurança</h3><ul>
+      <li><b>16 mil</b> pontos críticos de acidente com caminhão (PRF, SP, MG, SC, GO e DF)</li>
+      <li>Roubo de carga em SP, avisado pela hora em que o caminhão passa</li>
+      <li><b>8.274 radares</b>, mais blitz e radar móvel reportados</li>
+    </ul></div>
+    <div class="cam"><h3>Descanso e abastecimento</h3><ul>
+      <li><b>1.643 pontos</b> de parada e descanso, com plano de paradas da Lei 13.103</li>
+      <li><b>5.594 postos</b> com diesel e preço da ANP</li>
+    </ul></div>
+    <div class="cam"><h3>Comunidade e empresa</h3><ul>
+      <li>Reportes dos motoristas com voto: confirmado entra na rota, negado sai</li>
+      <li>Interdição expira em 24 h</li>
+      <li>Restrições privadas da empresa: doca baixa, portão só para VUC</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- p10: para o motorista (nova) -->
+<section class="pg verde">
+  <div class="eyebrow">Onde entregamos valor · para o motorista</div>
+  <h1 style="margin-top:22px">Menos susto na estrada, menos multa no nome dele.</h1>
+  <table class="tab-verde" style="margin-top:30px">
+    <thead><tr><th style="width:21%">Onde dói</th><th style="width:50%">O que o BrasaWay faz</th><th>O que muda no dia</th></tr></thead>
+    <tbody>
+      <tr><td>Multa e ponto na carteira</td><td>Desvia de zona, horário e via proibida (226 cidades, ZMRC, rodovias com horário)</td><td>Menos autuação no nome dele</td></tr>
+      <tr><td>Viaduto baixo e ponte fraca</td><td>Rota pela altura, peso e eixos do caminhão dele; avisa onde o mapa não sabe a altura</td><td>Sem ré, sem retorno, sem avaria</td></tr>
+      <tr><td>Jornada e descanso</td><td>Plano de paradas da Lei 13.103 com pontos de descanso na rota</td><td>Para no lugar certo, na hora certa</td></tr>
+      <tr><td>Diesel e pedágio</td><td>Postos com diesel e preço da ANP; pedágio por eixo e opção sem pedágio</td><td>Sabe o custo antes de sair</td></tr>
+      <tr><td>Segurança</td><td>Avisa trecho de acidente e de roubo de carga no horário em que ele passa</td><td>Atenção onde precisa</td></tr>
+      <tr><td>A estrada mudou</td><td>Avisa e confirma com um toque; interdição some sozinha em 24 h</td><td>Quem vai na frente ajuda quem vem atrás</td></tr>
+      <tr><td>Dia de entrega</td><td>Viagem do dia com paradas, hora de chegada e comprovante com foto ou assinatura</td><td>Menos ligação do escritório</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- p16: para a transportadora (substitui p13, 166 → 226) -->
+<section class="pg verde">
+  <div class="eyebrow">Onde entregamos valor · para a transportadora</div>
+  <h1 style="margin-top:22px">Cada real economizado vira um evento.</h1>
+  <table class="tab-verde">
+    <thead><tr><th style="width:24%">Onde</th><th style="width:46%">O que o BrasaWay faz</th><th>Como medimos</th></tr></thead>
+    <tbody>
+      <tr><td>Multas de circulação</td><td>Desvia de zona e horário proibidos (ZMRC e 226 cidades)</td><td>Restrições evitadas × valor da multa</td></tr>
+      <tr><td>Retorno e avaria</td><td>Desvia de viaduto baixo e ponte com limite de peso</td><td>Pontos evitados por altura e peso</td></tr>
+      <tr><td>Tempo parado</td><td>Mede a doca de cada cliente e as paradas</td><td>Horas de doca por cliente e semana</td></tr>
+      <tr><td>Planejamento</td><td>Distribui entregas e cria rota respeitando o veículo</td><td>Horas do roteirista por dia</td></tr>
+      <tr><td>Atrasos</td><td>Alerta antes: entrega que cai na zona, jornada no limite</td><td>Entregas fora da janela no mês</td></tr>
+      <tr><td>Risco</td><td>Avisa trechos de acidente e roubo de carga</td><td>Trechos de risco na rota</td></tr>
+      <tr><td>Custo da viagem</td><td>Pedágio por eixo, diesel com preço da ANP e opção sem pedágio</td><td>Custo previsto contra o feito</td></tr>
+    </tbody>
+  </table>
+  <p class="nota" style="top:616px">O Relatório mostra a soma contra a mensalidade, e também o custo das rotas seguras em km a mais: transparência que sustenta a renovação.</p>
+</section>
+
+<!-- tudo numa página (nova) -->
+<section class="pg">
+  <div class="eyebrow">Todas as funcionalidades</div>
+  <h1 style="margin-top:22px">Tudo o que o BrasaWay faz, numa página.</h1>
+  <div class="col4">
+    <div class="bloco esc"><div class="tag">Motor de rota</div><h3>Rota de caminhão</h3><ul>
+      <li>Altura, largura, comprimento, peso por eixo, eixos, perigoso e VUC</li>
+      <li>Regras municipais, estaduais e federais com horário e feriado</li>
+      <li>Lista do que foi evitado e alternativa quando não há rota</li>
+      <li>Pedágio por eixo, sem pedágio, rampa e balanças</li>
+      <li>Chegada prevista pela hora em que passa em cada trecho</li>
+    </ul></div>
+    <div class="bloco"><div class="tag">App</div><h3>Motorista</h3><ul>
+      <li>Viagem do dia com várias entregas e paradas</li>
+      <li>Navegação com avisos do que vem à frente</li>
+      <li>Avisar e confirmar restrição com um toque</li>
+      <li>Descanso, diesel e chegada na entrega</li>
+      <li>Comprovante com foto ou assinatura · acesso por convite</li>
+    </ul></div>
+    <div class="bloco"><div class="tag">Painel</div><h3>Transportadora</h3><ul>
+      <li>Hoje: resumo às 6:40, mapa ao vivo e alertas</li>
+      <li>Viagens: importar, distribuir e ver conflitos antes da saída</li>
+      <li>Frota e motoristas, com medidas e convite por QR</li>
+      <li>Restrições oficiais, da comunidade e privadas</li>
+      <li>Relatório: economia contra a mensalidade, doca por cliente</li>
+    </ul></div>
+    <div class="bloco"><div class="tag">Assistente e dados</div><h3>Mentor e segurança</h3><ul>
+      <li>Pergunta em português, resposta com a fonte</li>
+      <li>Cria rota, atribui viagem e avisa o motorista, só com confirmação</li>
+      <li>Cada empresa vê só o que é dela</li>
+      <li>Papéis por função e auditoria de cada ação</li>
+      <li>Fonte, link e licença de cada dado</li>
+    </ul></div>
+  </div>
+</section>
+
+<!-- qualidade (substitui p16) -->
+<section class="pg branco" style="padding:0">
+  <div class="q">
+    <div>
+      <div class="eyebrow">Qualidade</div>
+      <h1>Testado com rota de verdade, não só no papel.</h1>
+      <p class="lead">Cada regra nova tem um teste que pede uma rota real ao motor e confere que ela desvia no horário da regra e passa fora dele.</p>
+    </div>
+    <div>
+      <div class="big"><div class="v">1.124</div><p>testes automáticos de rota, camadas, cidades e frota, zero falhas</p></div>
+      <div class="peq2">
+        <div class="peq"><div class="v">219</div><p>cidades com caso de rota próprio</p></div>
+        <div class="peq"><div class="v">197</div><p>testes dos importadores de dados públicos</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- próximos passos (substitui p19) -->
+<section class="pg branco">
+  <div class="eyebrow">Próximos passos</div>
+  <h1>Do protótipo testado ao caminhão rodando.</h1>
+  <div class="passos">
+    <div class="passo"><span class="n">1</span>Banco, login e mapa ao vivo no Supabase</div>
+    <div class="passo"><span class="n">2</span>Roteador e API num servidor dedicado</div>
+    <div class="passo"><span class="n">3</span>Painel e app construídos a partir destas telas</div>
+    <div class="passo"><span class="n">4</span>App nativo, com GPS em segundo plano</div>
+    <div class="passo"><span class="n">5</span><span>Pedido de acesso nas 642 cidades com portal fechado<small>o resto das 3.327 já tem resposta</small></span></div>
+    <div class="passo am"><span class="n">6</span>Piloto com a transportadora</div>
+  </div>
+</section>
+
+</body>
+</html>
