@@ -46,7 +46,7 @@ done
 # 3) PBF único sem duplicatas (com as correções): ~1 h de Python para Sudeste+Sul+CO
 log "PBF fundido"
 osmium merge "$W"/*-latest.osm.pbf -o "$W/fundido_tmp.osm.pbf" --overwrite; rm -f "$W"/*-latest.osm.pbf
-python3 -I "$ROOT/scripts/osm/dedup_pbf.py" "$W/fundido_tmp.osm.pbf" "$SRC/sse_co.osm.pbf"; rm -f "$W/fundido_tmp.osm.pbf"
+python3 "$ROOT/scripts/osm/dedup_pbf.py" "$W/fundido_tmp.osm.pbf" "$SRC/sse_co.osm.pbf"; rm -f "$W/fundido_tmp.osm.pbf"
 ln -f "$SRC/sse_co.osm.pbf" "$B/sse_co.osm.pbf"
 
 # 4) tiles. Fusos horários e velocidades vêm do conjunto atual quando existe (o contêiner pode não ter internet);
