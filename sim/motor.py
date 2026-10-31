@@ -123,18 +123,18 @@ CACHE = load(CACHE_P, {})
 cache_lock = threading.Lock()
 
 
-def chave(o, d, preset, hazmat, data, hora):
+def chave(o, d, preset, hazmat, data, hora, aetc=False):
     dia = 'F' if data in FERIADOS else str(data.isoweekday())
-    return f'{o}|{d}|{preset}|{int(bool(hazmat))}|{dia}|{hora:02d}'
+    return f'{o}|{d}|{preset}|{int(bool(hazmat))}|{dia}|{hora:02d}' + ('|aetc' if aetc else '')
 
 
-def rota_legal(o, d, preset, hazmat, data, hora):
-    k = 'L|' + chave(o, d, preset, hazmat, data, hora)
+def rota_legal(o, d, preset, hazmat, data, hora, aetc=False):
+    k = 'L|' + chave(o, d, preset, hazmat, data, hora, aetc)
     with cache_lock:
         if k in CACHE: return CACHE[k]
     a, b = LOCAIS[o], LOCAIS[d]
     body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
-            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {})},
+            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
             'departure_at': f'{data.isoformat()}T{hora:02d}:00'}
     st, r = post(API + '/api/route', body)
     if st == 200:
@@ -156,8 +156,8 @@ def rota_legal(o, d, preset, hazmat, data, hora):
     return res
 
 
-def rota_gps_carro(o, d, preset, hazmat, data, hora):
-    k = 'G|' + chave(o, d, preset, hazmat, data, hora)
+def rota_gps_carro(o, d, preset, hazmat, data, hora, aetc=False):
+    k = 'G|' + chave(o, d, preset, hazmat, data, hora, aetc)
     with cache_lock:
         if k in CACHE: return CACHE[k]
     a, b = LOCAIS[o], LOCAIS[d]
@@ -166,7 +166,7 @@ def rota_gps_carro(o, d, preset, hazmat, data, hora):
     if st != 200: raise RuntimeError(f'valhalla auto {st}: {str(v)[:200]}')
     shape = decode6(v['trip']['legs'][0]['shape'])
     body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
-            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {})},
+            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
             'departure_at': f'{data.isoformat()}T{hora:02d}:00', 'coordinates': shape}
     st, e = post(API + '/api/sim/avaliar', body)
     if st != 200: raise RuntimeError(f'/api/sim/avaliar {st}: {str(e)[:200]}')
@@ -240,8 +240,9 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
     o, d = linha['origem'], linha['destino']
     uf = LOCAIS[d]['uf']
     preset, hz = m['veiculo'], m['hazmat']
-    legal = rota_legal(o, d, preset, hz, data, hora)
-    gps = rota_gps_carro(o, d, preset, hz, data, hora)
+    aetc = bool(m.get('aetc'))
+    legal = rota_legal(o, d, preset, hz, data, hora, aetc)
+    gps = rota_gps_carro(o, d, preset, hz, data, hora, aetc)
     ev = {'grupo': g, 'motorista': pid, 'data': data.isoformat(), 'hora': hora, 'origem': o, 'destino': d, 'veiculo': preset,
           'multas': [], 'retornos': 0, 'colisoes': 0, 'evitadas_app': 0, 'evitadas_conhecimento': 0, 'violacoes': []}
     segue_app = g == 'com' and legal.get('ok') and rng.random() < m['adesao']
@@ -395,6 +396,9 @@ def aplicar_decisoes(st, semana, frota):
                 m = M[a['motorista']]
                 m['fator_viagens'] = PARAMS['carga_t'][m['veiculo']] / PARAMS['carga_t'][a['preset']] * m.get('fator_viagens', 1.0)
                 m['veiculo'] = a['preset']
+            elif t == 'cadastrar_aetc' and a.get('motorista') in M:
+                M[a['motorista']]['aetc'] = True          # autorização de VUC em SP (vale para VUC; nos outros não muda nada)
+                G['custos_extra'].append({'semana': semana, 'tipo': 'aetc', 'valor': 0})
             elif t == 'advertir' and a.get('motorista') in M:
                 M[a['motorista']]['risco'] *= 0.6
             elif t == 'exigir_app' and g == 'com' and a.get('motorista') in M:
@@ -466,7 +470,7 @@ def rodar_semana(n):
     uniq = {}
     for g, pid, i, data, hora in tarefas:
         m = st['grupos'][g]['motoristas'][pid]; l = m['linhas'][i]
-        uniq[(l['origem'], l['destino'], m['veiculo'], m['hazmat'], 'F' if data in FERIADOS else data.isoweekday(), hora)] = (l['origem'], l['destino'], m['veiculo'], m['hazmat'], data, hora)
+        uniq[(l['origem'], l['destino'], m['veiculo'], m['hazmat'], 'F' if data in FERIADOS else data.isoweekday(), hora, bool(m.get('aetc')))] = (l['origem'], l['destino'], m['veiculo'], m['hazmat'], data, hora, bool(m.get('aetc')))
     falhas = []
     def aquece(args):
         try: rota_legal(*args); rota_gps_carro(*args)

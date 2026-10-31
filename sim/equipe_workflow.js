@@ -13,6 +13,7 @@ const ACOES = `Ações possíveis (use só estas, com os campos indicados; motor
 - {"acao":"orientar","motoristas":["m07"] ou ["todos"],"itens":["<item de problemas_conhecidos>"]}  (avisar sobre uma restrição específica)
 - {"acao":"mudar_horario","motorista":"m07","linha":0,"hora":10}
 - {"acao":"trocar_veiculo","motorista":"m07","preset":"vuc"}  (presets: utilitario, vuc, toco, truck, carreta_5e, carreta_6e, romeu_julieta, bitrem, rodotrem; veículo menor = mais viagens para a mesma carga)
+- {"acao":"cadastrar_aetc","motorista":"m07"}  (Autorização Especial de Trânsito de Caminhão da Prefeitura de SP: só vale para VUC, que com ela fica liberado da ZMRC e do rodízio; sem ela VUC é tratado como caminhão comum. Leva a semana para sair.)
 - {"acao":"advertir","motorista":"m07"}
 - {"acao":"exigir_app","motorista":"m07"}  (só na Transportadora A)
 - {"acao":"treinamento","motoristas":["m07"] ou ["todos"]}  (R$ 250 por motorista)
