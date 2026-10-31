@@ -294,6 +294,7 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
     ev['km'] = round(km, 1); ev['horas'] = round(seg / 3600, 2)
     chegada = hora + seg / 3600
     jan = linha.get('janela_entrega_ate')
+    if jan is not None and jan <= hora: jan += 24          # entrega na madrugada do dia seguinte
     ev['atraso'] = bool(jan is not None and chegada > jan + PARAMS['atraso_tolerancia_min'] / 60)
     ev['custo_diesel'] = round(km / PARAMS['km_por_litro'][preset] * PARAMS['diesel_rs_l'], 2)
     ev['custo_motorista'] = round(seg / 3600 * PARAMS['custo_hora_motorista'], 2)
