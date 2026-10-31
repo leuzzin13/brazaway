@@ -182,7 +182,8 @@ function minDistanceM(line: GeoJSON.Feature<GeoJSON.LineString>, g: GeoJSON.Poin
   return Math.min(...pts.map((p) => turf.pointToLineDistance(turf.point(p), line, { units: 'meters' })));
 }
 
-export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
+/** Passos 1–3 da rota: veículo, horário, zonas, reportes que bloqueiam e restrições das camadas. */
+async function prepareRestrictions(req: RouteRequest) {
   const vehicle = resolveVehicle(req.vehicle);
   const dep = req.departure_at
     ? DateTime.fromISO(req.departure_at, { zone: env.tz })
@@ -241,6 +242,11 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     }
   }));
 
+  return { vehicle, dep, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings };
+}
+
+export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
+  const { vehicle, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings } = await prepareRestrictions(req);
   const excludePolygons = exclusions.flatMap((e) => e.rings);
   const base = { origin: req.origin, destination: req.destination, vehicle, departureLocal };
   // Trechos penalizados que o Valhalla não consegue casar com o grafo ("Failed to edge walk line feature") derrubariam a
@@ -555,3 +561,19 @@ function closeRing(r: [number, number][]): [number, number][] {
   return a[0] === b[0] && a[1] === b[1] ? r : [...r, a];
 }
 export type { LayerItem };
+
+/**
+ * Confere uma rota que NÃO veio do BrasaWay (ex.: a de um GPS de carro) contra as mesmas restrições que a rota legal
+ * evitaria para este veículo e horário: zonas, reportes que bloqueiam e camadas (exclusões e trechos restritos).
+ * Usado pela simulação comparativa (rota /api/sim, só com SIM_ENDPOINTS=1).
+ */
+export async function evaluateLine(req: RouteRequest, coordinates: [number, number][]) {
+  const { vehicle, departureLocal, exclusions, costLines, warnings } = await prepareRestrictions(req);
+  const line = turf.lineString(coordinates);
+  const crossed: AvoidedItem[] = [];
+  for (const ex of exclusions) if (intersects(line, ex)) crossed.push(ex.item);
+  for (const cl of costLines) if (usesCostLine(line, cl)) crossed.push(cl.item);
+  const seen = new Set<string>();
+  const items = crossed.filter((a) => { const k = `${a.kind}:${a.layer ?? ''}:${a.id}`; if (seen.has(k)) return false; seen.add(k); return true; });
+  return { departure_at: departureLocal, vehicle, crossed: items, endpoint_warnings: warnings.filter((w) => /zone/.test(w.code)) };
+}
