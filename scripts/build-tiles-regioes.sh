@@ -49,12 +49,18 @@ osmium merge "$W"/*-latest.osm.pbf -o "$W/fundido_tmp.osm.pbf" --overwrite; rm -
 python3 -I "$ROOT/scripts/osm/dedup_pbf.py" "$W/fundido_tmp.osm.pbf" "$SRC/sse_co.osm.pbf"; rm -f "$W/fundido_tmp.osm.pbf"
 ln -f "$SRC/sse_co.osm.pbf" "$B/sse_co.osm.pbf"
 
-# 4) tiles (o contêiner não tem internet: fusos horários e velocidades vêm do conjunto atual)
-cp "$ROOT/data/valhalla/valhalla.json" "$ROOT/data/valhalla/default_speeds.json" "$ROOT/data/valhalla/timezones.sqlite" "$B/"
+# 4) tiles. Fusos horários e velocidades vêm do conjunto atual quando existe (o contêiner pode não ter internet);
+#    numa máquina nova (clone limpo) o Valhalla gera a config e baixa os fusos sozinho.
+TZ_BUILD=True
+for f in valhalla.json default_speeds.json timezones.sqlite; do
+  [ -f "$ROOT/data/valhalla/$f" ] && cp "$ROOT/data/valhalla/$f" "$B/"
+done
+[ -f "$B/timezones.sqlite" ] && TZ_BUILD=False
+docker image inspect truck-router-valhalla:latest >/dev/null 2>&1 || { log "construindo a imagem do Valhalla"; docker compose build valhalla; }
 log "construindo tiles"
 docker rm -f valhalla-build >/dev/null 2>&1 || true
 docker run -d --name valhalla-build -p 8004:8002 -v "$B:/custom_files" \
-  -e server_threads="${BUILD_THREADS:-3}" -e build_admins=True -e build_time_zones=False -e build_elevation=False \
+  -e server_threads="${BUILD_THREADS:-3}" -e build_admins=True -e build_time_zones="$TZ_BUILD" -e build_elevation=False \
   -e force_rebuild=True -e use_tiles_ignore_pbf=True -e tile_urls= truck-router-valhalla:latest
 until curl -sf localhost:8004/status >/dev/null; do sleep 30; docker ps -q -f name=valhalla-build | grep -q . || { docker logs --tail 50 valhalla-build; exit 1; }; done
 log "valhalla-build respondendo em 8004"
