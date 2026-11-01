@@ -25,7 +25,13 @@ export interface AvoidedItem {
   lon?: number;
   note?: string | null;
 }
-export interface Warning { code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string }
+export interface Warning {
+  code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string;
+  /** zona na origem/destino: primeiro horário (local, YYYY-MM-DDTHH:mm) em que ESTE veículo pode estar lá, nas próximas 36 h */
+  liberado_em?: string | null;
+  /** zona na origem/destino: um VUC com AETC poderia entrar no horário pedido */
+  vuc_aetc_entra?: boolean;
+}
 
 export interface RouteResponse {
   geometry: GeoJSON.LineString;
@@ -149,14 +155,21 @@ function nearestOnRoute(route: GeoJSON.Feature<GeoJSON.LineString>, p: [number, 
  * a rota que passa pela pista contrária não "usa" o trecho). Amostra pontos da linha que ficam perto da rota e
  * compara o rumo local da linha com o rumo da rota no ponto mais próximo (diferença < 90°).
  */
-function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostLine): boolean {
+export function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: Pick<LayerCostLine, 'coordinates'>): boolean {
   const coords = cl.coordinates;
   if (coords.length < 2) return overlapRatio(route, coords) >= 0.5;
-  const step = Math.max(1, Math.ceil((coords.length - 1) / 30));
-  let near = 0, same = 0, total = 0;
-  for (let i = 0; i < coords.length - 1; i += step) {
-    total++;
-    const a = coords[i], b = coords[i + 1];
+  // Mede o COMPRIMENTO percorrido sobre o trecho, não só os vértices: amostra a linha a cada ~20 m (até 60 pontos) e
+  // conta os pontos a até 15 m da rota com o mesmo rumo. Antes, um trecho curto de 2 ou 3 vértices cruzado num viaduto
+  // ou num trevo (30 m de contato) contava como "usa a via" e virava aviso falso de "trecho restrito sem alternativa"
+  // (achado da simulação: Linha Vermelha a partir de Duque de Caxias).
+  const line = turf.lineString(coords);
+  const lenM = turf.length(line, { units: 'meters' });
+  const n = Math.min(60, Math.max(4, Math.ceil(lenM / 20)));
+  let near = 0, same = 0;
+  for (let i = 0; i < n; i++) {
+    const d0 = (lenM * i) / n, d1 = Math.min(lenM, (lenM * (i + 1)) / n);
+    const a = turf.along(line, d0, { units: 'meters' }).geometry.coordinates as [number, number];
+    const b = turf.along(line, d1, { units: 'meters' }).geometry.coordinates as [number, number];
     const mid: [number, number] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
     const np = nearestOnRoute(route, mid);
     if (np.dist > 15) continue;
@@ -165,11 +178,11 @@ function usesCostLine(route: GeoJSON.Feature<GeoJSON.LineString>, cl: LayerCostL
     const r0 = route.geometry.coordinates[idx], r1 = route.geometry.coordinates[idx + 1];
     const bl = turf.bearing(turf.point(a), turf.point(b));
     const br = turf.bearing(turf.point(r0 as [number, number]), turf.point(r1 as [number, number]));
-    const diff = Math.abs(((bl - br + 540) % 360) - 180);
-    if (diff < 90) same++;
+    if (Math.abs(((bl - br + 540) % 360) - 180) < 90) same++;
   }
-  if (!total || near / total < 0.5) return false;
-  return same / near >= 0.5;
+  const sobreM = (same / n) * lenM;
+  // usa o trecho: metade dele, ou 300 m seguidos de via restrita (trecho longo usado em parte também é infração)
+  return near > 0 && same / near >= 0.5 && (same / n >= 0.5 || sobreM >= 300);
 }
 function itemLabel(b: AvoidedItem): string {
   if (b.kind === 'zone') return b.name ?? 'zona';
@@ -206,10 +219,20 @@ async function prepareRestrictions(req: RouteRequest) {
     const oIn = pointInZone(z, req.origin);
     const dIn = pointInZone(z, req.destination);
     if (oIn || dIn) {
+      // O que fazer, e não só o aviso: próximo horário em que este veículo pode estar lá, e se um VUC com AETC entraria
+      // agora (achado da simulação de 60 dias: 44 entregas em zona proibida seguindo o app, sem dizer como resolver).
+      const liberado = await nextAllowedTime(z, vehicle, at).catch(() => null);
+      const vucEntra = !vehicle.is_vuc && !zoneApplies(z.rules, resolveVehicle({ preset: 'vuc', has_aetc: true }), at, dayInfo);
+      const dica = [
+        liberado ? `Horário liberado para este veículo: ${describeLocal(liberado, at)}.` : null,
+        vucEntra ? 'Um VUC com AETC pode entrar no horário pedido.' : null,
+      ].filter(Boolean).join(' ');
       warnings.push({
         code: oIn && dIn ? 'origin_and_destination_in_zone' : oIn ? 'origin_in_zone' : 'destination_in_zone',
         zone_id: z.id,
-        message: `${oIn && dIn ? 'Origem e destino estão' : oIn ? 'Origem está' : 'Destino está'} dentro de "${z.name}" (${describeWindows(z.rules)}); a zona NÃO foi excluída da rota. Verifique autorização/exceção.`,
+        message: `${oIn && dIn ? 'Origem e destino estão' : oIn ? 'Origem está' : 'Destino está'} dentro de "${z.name}" (${describeWindows(z.rules)}); a zona NÃO foi excluída da rota. Verifique autorização/exceção.${dica ? ` ${dica}` : ''}`,
+        liberado_em: liberado ? DateTime.fromJSDate(liberado).setZone(env.tz).toFormat("yyyy-LL-dd'T'HH:mm") : null,
+        vuc_aetc_entra: vucEntra,
       });
       continue;
     }
@@ -243,6 +266,26 @@ async function prepareRestrictions(req: RouteRequest) {
   }));
 
   return { vehicle, dep, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings };
+}
+
+/** Primeiro instante (passos de 15 min, até 36 h) em que a zona não se aplica a este veículo. null = não libera nesse prazo. */
+async function nextAllowedTime(z: ZoneRow, vehicle: Vehicle, from: Date): Promise<Date | null> {
+  const days = new Map<string, Awaited<ReturnType<typeof legalDayInfo>>>();
+  const step = 15 * 60_000;
+  const start = Math.ceil(from.getTime() / step) * step;
+  for (let t = start; t <= from.getTime() + 36 * 3600_000; t += step) {
+    const at = new Date(t);
+    const key = DateTime.fromJSDate(at).setZone(env.tz).toISODate()!;
+    if (!days.has(key)) days.set(key, await legalDayInfo(at));
+    if (!zoneApplies(z.rules, vehicle, at, days.get(key))) return t === start && t - from.getTime() < step ? from : at;
+  }
+  return null;
+}
+
+function describeLocal(d: Date, ref: Date): string {
+  const l = DateTime.fromJSDate(d).setZone(env.tz), r = DateTime.fromJSDate(ref).setZone(env.tz);
+  const dia = l.hasSame(r, 'day') ? 'hoje' : l.hasSame(r.plus({ days: 1 }), 'day') ? 'amanhã' : l.toFormat('dd/LL');
+  return `${dia} às ${l.toFormat('HH:mm')}`;
 }
 
 export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {

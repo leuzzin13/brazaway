@@ -484,3 +484,59 @@ describe('referências entre empresas e início de viagem (regressão)', () => {
     });
   });
 });
+
+describe('veículo com AETC (VUC liberado na ZMRC de SP)', () => {
+  // achado da simulação de 60 dias: sem o campo no cadastro, todo VUC da frota era tratado como caminhão comum na ZMRC
+  const SE = { lat: -23.5455, lon: -46.6360, label: 'Sé' };
+  const viagem = (vehicle_id: string) => call('POST', '/trips', T.ownerA, {
+    title: 'Barueri → Sé', vehicle_id, origin: { lat: -23.5010, lon: -46.8720, label: 'Barueri' }, destination: SE,
+    departure_planned_at: '2026-11-03T08:00:00-03:00', plan_route: true,
+  });
+  const zonaNoDestino = (t: any) => (t.route_response?.warnings ?? []).some((w: any) => w.code === 'destination_in_zone' && /ZMRC/.test(w.message));
+  let vuc = '';
+
+  it('cadastro guarda has_aetc (padrão false) e o PATCH muda', async () => {
+    const r = await call('POST', '/vehicles', T.ownerA, { plate: 'VUC1A21', preset: 'vuc', is_vuc: true });
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    expect(r.body.has_aetc).toBe(false);
+    vuc = r.body.id;
+  });
+
+  it('sem AETC: entrega na Sé às 8h cai na ZMRC; com AETC, não', async () => {
+    const sem = await viagem(vuc);
+    expect(sem.status, JSON.stringify(sem.body)).toBe(201);
+    expect(zonaNoDestino(sem.body)).toBe(true);
+    const p = await call('PATCH', `/vehicles/${vuc}`, T.ownerA, { has_aetc: true });
+    expect(p.body.has_aetc).toBe(true);
+    const com = await viagem(vuc);
+    expect(com.status, JSON.stringify(com.body)).toBe(201);
+    expect(zonaNoDestino(com.body)).toBe(false);
+    await pool.query('delete from trips where vehicle_id = $1', [vuc]);
+  });
+});
+
+describe('janela do cliente que não cabe na viagem', () => {
+  // achado da simulação de 60 dias: os mesmos atrasos toda semana vinham de janela impossível; agora o planejamento avisa
+  const CAMPINAS = { lat: -22.9050, lon: -47.0600, label: 'Campinas' };
+  const plano = (window_end: string) => call('POST', '/trips', T.ownerA, {
+    title: 'CEAGESP → Campinas', origin: SP.origin, destination: CAMPINAS, departure_planned_at: '2026-11-03T08:00:00-03:00', plan_route: true,
+    deliveries: [{ customer_name: 'Cliente Campinas', address: 'Centro de Campinas', window_end }],
+  });
+  const aviso = (t: any) => (t.route_response?.warnings ?? []).find((w: any) => w.code === 'janela_inviavel');
+
+  it('janela até 8h30 para uma viagem de ~1h30: avisa com o horário-limite de saída', async () => {
+    const r = await plano('2026-11-03T08:30:00-03:00');
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    const w = aviso(r.body);
+    expect(w?.severity).toBe('danger');
+    expect(w?.message).toMatch(/janela do cliente, que vai até 08:30\. Para chegar a tempo, a saída precisa ser até \d\d:\d\d/);
+    await pool.query('delete from trips where id = $1', [r.body.id]);
+  });
+
+  it('janela até 14h: sem aviso', async () => {
+    const r = await plano('2026-11-03T14:00:00-03:00');
+    expect(r.status).toBe(201);
+    expect(aviso(r.body)).toBeUndefined();
+    await pool.query('delete from trips where id = $1', [r.body.id]);
+  });
+});

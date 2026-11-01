@@ -6,6 +6,7 @@ import * as valhalla from '../services/valhalla.js';
 import type { Vehicle } from '../services/vehicle.js';
 import { onlyIfMissingColumn } from '../services/calendar.js';
 import { featuresInBbox } from './data.js';
+import { usesCostLine } from '../services/routing.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer } from './types.js';
 
 /**
@@ -678,32 +679,13 @@ async function prepare(ctx: RouteCtx): Promise<Stash> {
 
 /**
  * O routing.ts já emite 'uses_restricted_way' (danger) para cada costLine que a rota final usa. Serve para não repetir
- * o mesmo danger: a camada então só complementa com o horário e a norma. O critério é cópia do usesCostLine do
- * routing.ts (que não é exportado), sensível ao sentido: ≥ 50% das amostras da linha a até 15 m da rota e, delas,
- * ≥ 50% com rumo a menos de 90° do rumo da rota; só quando a rota livre foi calculada. Se o routing.ts mudar o
- * critério, mude aqui também.
+ * o mesmo danger: a camada então só complementa com o horário e a norma. Usa o próprio critério do routing.ts
+ * (usesCostLine, exportado), só quando a rota livre foi calculada; antes era uma cópia, que divergiu quando o critério
+ * passou a medir o comprimento percorrido sobre o trecho.
  */
 function usesCostLineLikeRouting(route: GeoJSON.Feature<GeoJSON.LineString>, coords: Coord[]): boolean {
-  if (coords.length < 2) {
-    if (!coords.length) return false;
-    return turf.pointToLineDistance(turf.point(coords[0]), route, { units: 'meters' }) <= 15;
-  }
-  const rc = route.geometry.coordinates;
-  const step = Math.max(1, Math.ceil((coords.length - 1) / 30));
-  let near = 0, same = 0, total = 0;
-  for (let i = 0; i < coords.length - 1; i += step) {
-    total++;
-    const a = coords[i], b = coords[i + 1];
-    const np = turf.nearestPointOnLine(route, turf.point([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]), { units: 'meters' });
-    if ((np.properties.dist ?? Infinity) > 15) continue;
-    near++;
-    const idx = Math.min(np.properties.index ?? 0, rc.length - 2);
-    const bl = turf.bearing(turf.point(a), turf.point(b));
-    const br = turf.bearing(turf.point(rc[idx] as Coord), turf.point(rc[idx + 1] as Coord));
-    if (Math.abs(((bl - br + 540) % 360) - 180) < 90) same++;
-  }
-  if (!total || near / total < 0.5) return false;
-  return same / near >= 0.5;
+  if (!coords.length) return false;
+  return usesCostLine(route, { coordinates: coords });
 }
 
 function routingWarns(route: RouteGeom, lines: LayerCostLine[], h: Hit): boolean {

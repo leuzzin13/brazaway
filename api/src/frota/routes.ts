@@ -154,6 +154,7 @@ const VehicleFields = {
   axle_count: z.number().int().min(2).max(12).nullable().optional(),
   hazmat: z.boolean().optional(),
   is_vuc: z.boolean().optional(),
+  has_aetc: z.boolean().optional(),               // AETC de SP: VUC liberado na ZMRC e no rodízio
   status: z.enum(['active', 'inactive']).optional(),
 };
 const NewVehicle = z.object({ plate: Plate, ...VehicleFields });
@@ -164,7 +165,7 @@ type Db = pg.PoolClient;
 
 const VEHICLE_COLS = `v.id, v.plate, v.label, v.preset, v.height_m::float8 as height_m, v.width_m::float8 as width_m,
   v.length_m::float8 as length_m, v.weight_t::float8 as weight_t, v.payload_t::float8 as payload_t,
-  v.axle_load_t::float8 as axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.status, v.created_at, v.updated_at`;
+  v.axle_load_t::float8 as axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.has_aetc, v.status, v.created_at, v.updated_at`;
 
 const TRIP_COLS = `t.id, t.company_id, t.driver_id, m.display_name as driver_name, t.vehicle_id, v.plate as vehicle_plate, t.status, t.title,
   ST_AsGeoJSON(t.origin)::jsonb as origin, t.origin_label, ST_AsGeoJSON(t.destination)::jsonb as destination, t.destination_label,
@@ -219,6 +220,7 @@ function vehicleToApi(v: Record<string, any>): z.infer<typeof VehicleInput> {
   }
   o.hazmat = !!v.hazmat;
   o.is_vuc = !!v.is_vuc;
+  if (v.has_aetc) o.has_aetc = true;
   const last = Number(String(v.plate).slice(-1));
   if (Number.isInteger(last)) o.plate_last_digit = last;
   return o as z.infer<typeof VehicleInput>;
@@ -275,7 +277,7 @@ export async function frotaRoutes(app: FastifyInstance) {
         await requireStaff(c);
         let veh: Record<string, any> | null = null;
         if (b.vehicle_id) veh = await one(c, `select v.id, v.plate, v.preset, v.height_m, v.width_m, v.length_m, v.weight_t, v.payload_t,
-                                                      v.axle_load_t, v.axle_count, v.hazmat, v.is_vuc from vehicles v where v.id = $1`,
+                                                      v.axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.has_aetc from vehicles v where v.id = $1`,
                                            [b.vehicle_id], 'veículo não encontrado');
         if (b.driver_id) await one(c, `select 1 from company_members where user_id = $1 and role = 'motorista'`, [b.driver_id], 'motorista não encontrado');
         return { veh };
@@ -291,6 +293,21 @@ export async function frotaRoutes(app: FastifyInstance) {
         } catch (e) {
           if (e instanceof RouteBlockedError) return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by, limited_by: e.limited_by });
           throw e;
+        }
+        // Janela do cliente que não cabe na viagem (direção + pausas e descansos da Lei 13.103): avisa no planejamento,
+        // não na entrega atrasada (achado da simulação de 60 dias: os mesmos 22 atrasos por semana, todos de janela impossível).
+        const saida = b.departure_planned_at ? DateTime.fromISO(b.departure_planned_at, { setZone: true }) : DateTime.now();
+        const totalS = plan.driving_plan?.total_with_breaks_s ?? plan.duration_s;
+        const chegada = saida.plus({ seconds: totalS }).setZone(env.tz);
+        const fim = (b.deliveries ?? []).map((d) => d.window_end).filter((x): x is string => !!x)
+          .map((x) => DateTime.fromISO(x, { setZone: true }).setZone(env.tz)).sort((a, c) => c.toMillis() - a.toMillis())[0];
+        if (fim && chegada > fim) {
+          const sairAte = fim.minus({ seconds: totalS });
+          const fmt = (d: DateTime) => d.toFormat(d.hasSame(saida.setZone(env.tz), 'day') ? 'HH:mm' : "dd/LL 'às' HH:mm");
+          plan.warnings.unshift({
+            code: 'janela_inviavel', severity: 'danger',
+            message: `Chegada prevista ${fmt(chegada)} (direção ${Math.round(plan.duration_s / 3600 * 10) / 10} h + pausas e descansos da Lei 13.103), depois da janela do cliente, que vai até ${fmt(fim)}. Para chegar a tempo, a saída precisa ser até ${fmt(sairAte)}; ou combine outra janela.`,
+          });
         }
       }
 
@@ -526,11 +543,11 @@ export async function frotaRoutes(app: FastifyInstance) {
         const pick = <T>(x: T | null | undefined, d: T | undefined) => (x === undefined || x === null ? d ?? null : x);
         const r = await c.query(
           `insert into vehicles (company_id, plate, label, preset, height_m, width_m, length_m, weight_t, payload_t, axle_load_t, axle_count,
-                                 hazmat, is_vuc, status)
-           values (app.company_id(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::app.vehicle_status) returning id`,
+                                 hazmat, is_vuc, has_aetc, status)
+           values (app.company_id(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::app.vehicle_status) returning id`,
           [b.plate, b.label ?? null, pr?.id ?? b.preset ?? null, pick(b.height_m, pr?.height_m), pick(b.width_m, pr?.width_m), pick(b.length_m, pr?.length_m),
            pick(b.weight_t, pr?.weight_t), pick(b.payload_t, pr?.payload_t), pick(b.axle_load_t, pr?.axle_load_t), pick(b.axle_count, pr?.axle_count),
-           b.hazmat ?? pr?.hazmat ?? false, b.is_vuc ?? pr?.is_vuc ?? false, b.status ?? 'active']);
+           b.hazmat ?? pr?.hazmat ?? false, b.is_vuc ?? pr?.is_vuc ?? false, b.has_aetc ?? false, b.status ?? 'active']);
         return one(c, `select ${VEHICLE_COLS} from vehicles v where v.id = $1`, [r.rows[0].id], 'veículo não encontrado');
       });
       return reply.code(201).send(v);
