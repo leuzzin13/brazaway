@@ -186,24 +186,32 @@ def rota_gps_carro(o, d, preset, hazmat, data, hora, aetc=False):
     return res
 
 
+CONVENIOS = {'com': []}       # postos com desconto no PIX fechados pela empresa com o app (preenchido pelo estado)
+
+
 def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
     """Plano de abastecimento do BrasaWay para a linha, saindo com nivel_pct (em faixas de 10%). Também traz o preço médio
     dos postos com preço a até 2 km da rota, que é o que paga quem abastece em qualquer posto do caminho."""
     faixa = max(5, min(95, int(round(nivel_pct / 10.0)) * 10 or 5))
     # preço de posto não muda com a hora: o plano vale por linha, caminhão e faixa de nível (bem menos cálculo)
     data, hora = dt.date(2026, 11, 3), 10
-    k = f'P|{o}|{d}|{preset}|{int(bool(hazmat))}|{int(bool(aetc))}|{faixa}'
+    conv = CONVENIOS['com']
+    cv = hashlib.md5(json.dumps(sorted((c['cnpj'], c['desconto_rs_l']) for c in conv)).encode()).hexdigest()[:8] if conv else '0'
+    k = f'P2|{o}|{d}|{preset}|{int(bool(hazmat))}|{int(bool(aetc))}|{faixa}|{cv}'
     with cache_lock:
         if k in CACHE: return CACHE[k]
     a, b = LOCAIS[o], LOCAIS[d]
     body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
             'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
             'departure_at': f'{data.isoformat()}T{hora:02d}:00',
-            'abastecimento': {'nivel_pct': faixa, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset]}}
+            'abastecimento': {'nivel_pct': faixa, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset],
+                              'conveniados': [{'cnpj': c['cnpj'], 'desconto_rs_l': c['desconto_rs_l'], 'pagamento': 'PIX'} for c in conv]}}
     st, r = post(API + '/api/route', body)
     pl = (r or {}).get('plano_abastecimento') if st == 200 else None
     res = {'litros': pl['litros'], 'custo': pl['custo_rs'], 'media': pl['preco_medio_rota_rs_l'], 'paradas': len(pl['paradas']),
-           'chega_com_l': pl['chega_com_l']} if pl else {'litros': 0, 'custo': 0, 'media': None, 'paradas': 0, 'chega_com_l': None}
+           'chega_com_l': pl['chega_com_l'],
+           'postos': [[x['cnpj'], x['posto'][:60], x['litros'], x['preco_rs_l'], x['origem_preco']] for x in pl['paradas']]} if pl else \
+          {'litros': 0, 'custo': 0, 'media': None, 'paradas': 0, 'chega_com_l': None, 'postos': []}
     with cache_lock: CACHE[k] = res
     return res
 
@@ -222,6 +230,9 @@ def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
     if g == 'com' and segue_app and pl['litros']:
         comprado = pl['litros']; gasto = pl['custo']
         nivel = min(tanque, nivel + comprado) - usa
+        uso = m.setdefault('_uso_postos', {})
+        for cnpj, nome, litros, preco, origem in pl.get('postos') or []:
+            u = uso.setdefault(cnpj, [nome, 0.0, 0.0]); u[1] += litros; u[2] += litros * preco
     else:
         nivel -= usa
     # quem segue o app abastece pelo plano da próxima viagem; só cai no posto de costume numa emergência (abaixo de 10%)
@@ -538,6 +549,24 @@ def aplicar_decisoes(st, semana, frota):
                     ls[i]['janela_entrega_ate'] = float(a['ate'])
                 else:
                     aplicada = False                 # cliente não aceitou (ou linha errada)
+            elif t == 'convenio_pix' and g == 'com':
+                # negocia desconto no PIX com os postos onde a frota mais abastece (pelo plano do app)
+                desc = float(a.get('desconto_rs_l', 0.2)); n = int(a.get('quantos', 15))
+                uso = {}
+                for mm in M.values():
+                    for cnpj, (nome, litros, _) in (mm.get('_uso_postos') or {}).items():
+                        u = uso.setdefault(cnpj, [nome, 0.0]); u[1] += litros
+                ja = {c['cnpj'] for c in G.setdefault('conveniados', [])}
+                alvo = [c for c, _ in sorted(uso.items(), key=lambda x: -x[1][1]) if c not in ja][:n]
+                p_aceita = 0.7 if desc <= 0.2 else 0.5 if desc <= 0.3 else 0.25
+                rng_c = random.Random(f'conv|{semana}|{desc}')
+                fechados = []
+                for cnpj in alvo:
+                    if rng_c.random() < p_aceita:
+                        G['conveniados'].append({'cnpj': cnpj, 'nome': uso[cnpj][0], 'desconto_rs_l': desc, 'semana': semana}); fechados.append(cnpj)
+                        if frota: call('POST', '/api/frota/postos-conveniados', frota.gestor, {'cnpj': cnpj, 'nome': uso[cnpj][0], 'desconto_rs_l': desc, 'pagamento': 'PIX'})
+                CONVENIOS['com'] = G['conveniados']
+                a['_resultado'] = f'{len(fechados)} de {len(alvo)} postos aceitaram R$ {desc:.2f}/L no PIX'
             elif t == 'nenhuma':
                 pass
             else:
@@ -570,6 +599,7 @@ def agenda(m, data):
 def rodar_semana(n):
     st = load(OUT / 'estado.json'); personas = {p['id']: p for p in load(OUT / 'personas.json')}
     info = load(OUT / 'frota_info.json'); frota = Frota(info) if info else None
+    CONVENIOS['com'] = st['grupos']['com'].get('conveniados', [])
     if n > 1: aplicar_decisoes(st, n - 1, frota)
     d0 = 7 * (n - 1); d1 = min(DIAS, 7 * n)
     tarefas = []
@@ -696,6 +726,14 @@ def relatorio(st, g, n, evs, personas):
                                            'presencial': mu.get('presencial', False)}
                                           for e in G['eventos'] for mu in e['multas'] if mu['aviso_em'] <= hoje and not mu.get('feedback')][:40]
             rel['semana']['alertas_ao_vivo_que_evitaram'] = sum(e.get('evitadas_alerta', 0) for e in evs)
+            uso = {}
+            for mm in G['motoristas'].values():
+                for cnpj, (nome, litros, gasto) in (mm.get('_uso_postos') or {}).items():
+                    u = uso.setdefault(cnpj, [nome, 0.0, 0.0]); u[1] += litros; u[2] += gasto
+            conv = {c['cnpj']: c['desconto_rs_l'] for c in G.get('conveniados', [])}
+            rel['postos_mais_usados'] = [{'cnpj': c, 'nome': u[0], 'litros_acumulados': round(u[1]), 'preco_medio_pago': round(u[2] / u[1], 3) if u[1] else None,
+                                          'desconto_pix': conv.get(c)} for c, u in sorted(uso.items(), key=lambda x: -x[1][1])[:15]]
+            rel['postos_conveniados'] = len(conv)
             rel['semana']['diesel_preco_medio_das_rotas'] = round(sum(e.get('preco_medio_rota', 0) * e.get('diesel_consumido_l', 0) for e in evs) /
                                                                   max(1, sum(e.get('diesel_consumido_l', 0) for e in evs)), 3)
             # o planejamento avisa janela que não cabe na viagem (rota legal + pausas)

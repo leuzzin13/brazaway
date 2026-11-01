@@ -36,6 +36,7 @@ export interface PlanoAbastecimento {
   litros: number; custo_rs: number;
   preco_medio_rota_rs_l: number | null;     // média dos postos com preço a até 2 km da rota
   economia_vs_media_rs: number | null;      // mesmos litros comprados pelo preço médio da rota
+  sobra_no_tanque_l: number;                // acima da reserva, ao chegar: comprado barato para as próximas viagens
   chega_com_l: number;
   avisos: string[];
 }
@@ -108,8 +109,13 @@ export function planejar(postos: PostoOnRoute[], distanciaKm: number, preset: st
     }
   }
   const fim = nos.length - 1;
+  // "Encher no barato": o diesel que sobra no tanque ao chegar vale o que custaria comprá-lo depois num posto comum
+  // (preço médio da rota). Assim, num posto bem abaixo da média o plano completa o tanque pensando nas próximas viagens;
+  // num posto na média ou acima, põe só o necessário. Sem preço médio (rota sem postos com preço), não valoriza.
+  const valorSobra = input.encher_no_barato && media !== null ? media : 0;
+  const final = (f: number) => tab[fim][f] - Math.max(0, f - minPassos) * passo * valorSobra;
   let melhor = -1;
-  for (let f = 0; f <= N; f++) if (tab[fim][f] < INF && (melhor < 0 || tab[fim][f] < tab[fim][melhor] - 1e-9)) melhor = f;
+  for (let f = 0; f <= N; f++) if (tab[fim][f] < INF && (melhor < 0 || final(f) < final(melhor) - 1e-9)) melhor = f;
   const paradas: ParadaAbastecimento[] = [];
   let comb = melhor >= 0 ? melhor * passo : 0;
   for (let i = fim, f = melhor; i > 0 && f >= 0; i--) {
@@ -137,7 +143,7 @@ export function planejar(postos: PostoOnRoute[], distanciaKm: number, preset: st
     combustivel: prod === 'diesel_s10' ? 'S10' : 'S500', tanque_l: tanque, consumo_km_l: cons, nivel_saida_l: Math.round(nivel0), reserva_l: Math.round(reserva),
     estimado, paradas, litros, custo_rs: custo, preco_medio_rota_rs_l: media,
     economia_vs_media_rs: media !== null && litros ? r2(litros * media - custo) : null,
-    chega_com_l: Math.max(0, Math.round(comb)), avisos,
+    chega_com_l: Math.max(0, Math.round(comb)), sobra_no_tanque_l: Math.max(0, Math.round(comb - reserva)), avisos,
   };
 }
 

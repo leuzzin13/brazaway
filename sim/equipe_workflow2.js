@@ -22,6 +22,7 @@ const ACOES = `Ações possíveis (use só estas, com os campos indicados; motor
 - {"acao":"suspender_linha","motorista":"m07","linha":1,"motivo":"..."} / {"acao":"reativar_linha","motorista":"m07","linha":1}
 - {"acao":"feedback","multas":["<mid de multas_sem_feedback>"],"nota":"..."} ou {"acao":"feedback","motorista":"m07","nota":"..."}  (conversa com o motorista sobre a multa: ele passa a conhecer o trecho e arrisca menos)
 - {"acao":"renegociar_janela","motorista":"m07","linha":1,"ate":12}  (pede ao cliente para receber até outra hora; cerca de 60% aceitam)
+- {"acao":"convenio_pix","desconto_rs_l":0.25,"quantos":15}  (só Transportadora A: negocia desconto por litro pago no PIX com os postos mais usados pelo plano do app, listados em postos_mais_usados; até R$ 0,20 ~70% aceitam, até R$ 0,30 ~50%, acima ~25%; o plano passa a preferir esses postos)
 - {"acao":"nenhuma"}`
 const PAPEIS = {
   roteirista: 'Você é a Patrícia, roteirista/programadora de tráfego há 12 anos. Monta a programação diária, conhece as dores dos motoristas e odeia retrabalho.',

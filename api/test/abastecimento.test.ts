@@ -13,7 +13,7 @@ const entrada = (x: Record<string, unknown>) => AbastecimentoInput.parse(x);
 describe('planejar (menor custo, contando o custo de cada parada)', () => {
   it('no posto caro põe só o necessário; no barato completa o que falta para chegar com a reserva', () => {
     // truck: tanque 300 L, 3,5 km/L, reserva 15% (45 L); sai com 150 L; 600 km
-    const p = planejar([posto(100, 7.0), posto(300, 6.5)], 600, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 150 }));
+    const p = planejar([posto(100, 7.0), posto(300, 6.5)], 600, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 150, encher_no_barato: false }));
     expect(p.paradas.map((x) => x.km_rota)).toEqual([300]);
     // 600−300 km = 85,7 L + 45 L de reserva − 64,3 L no tanque ≈ 66 L (em passos de 5 L, arredondando o consumo para cima)
     expect(p.paradas[0].litros).toBeGreaterThanOrEqual(66);
@@ -37,6 +37,22 @@ describe('planejar (menor custo, contando o custo de cada parada)', () => {
     const p = planejar(lista, 500, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 120 }));
     expect(p.paradas.length).toBe(1);
     expect(p.paradas[0].litros).toBeGreaterThan(30);
+  });
+
+  it('encher no barato: num posto bem abaixo da média completa o tanque para as próximas viagens', () => {
+    const lista = [posto(100, 6.5), posto(300, 7.2), posto(400, 7.3)];       // média 7,00
+    const com = planejar(lista, 500, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 100 }));
+    const sem = planejar(lista, 500, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 100, encher_no_barato: false }));
+    expect(com.paradas[0]).toMatchObject({ km_rota: 100, preco_rs_l: 6.5 });
+    expect(com.paradas[0].litros).toBeGreaterThan(sem.paradas[0].litros + 100);
+    expect(com.sobra_no_tanque_l).toBeGreaterThan(100);
+    expect(sem.sobra_no_tanque_l).toBeLessThan(15);
+  });
+
+  it('não enche em posto acima da média só por encher', () => {
+    const lista = [posto(100, 7.4), posto(300, 6.9)];
+    const p = planejar(lista, 400, 'truck', entrada({ tanque_l: 300, consumo_km_l: 3.5, nivel_l: 150 }));
+    expect(p.paradas.every((x) => x.preco_rs_l < 7.4)).toBe(true);
   });
 
   it('sem posto com preço na rota: plano vazio com aviso; estimativas do tipo de caminhão declaradas', () => {

@@ -53,6 +53,8 @@ export const AbastecimentoInput = z.object({
   reserva_pct: z.number().min(5).max(50).default(15),
   combustivel: z.enum(['s10', 's500']).default('s10'),
   compra_minima_l: z.number().positive().max(1000).optional(),
+  // completa o tanque em posto abaixo da média da rota, pensando nas próximas viagens (padrão: sim)
+  encher_no_barato: z.boolean().default(true),
   conveniados: z.array(Conveniado).max(500).default([]),
 });
 export type AbastecimentoInput = z.input<typeof AbastecimentoInput>;
