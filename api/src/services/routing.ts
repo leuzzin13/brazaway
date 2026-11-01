@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { env } from '../config.js';
 import type { RouteRequest } from '../schemas.js';
 import { resolveVehicle, type Vehicle } from './vehicle.js';
+import { priorizarAvisos, type ResumoAvisos } from './alertas.js';
 import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, crowdAlertsInBbox, reportToRing, type ReportRow } from './restrictions.js';
@@ -47,6 +48,9 @@ export interface RouteResponse {
   eta_horario: EtaHorario | null;
   /** resultado de cada camada de dados (resumo + dados próprios) */
   layers: Record<string, { label: string; group: string; summary?: string[]; data?: unknown }>;
+  /** para a tela do motorista: até 3 avisos que pedem ação, e o resto resumido (ver services/alertas.ts) */
+  alertas_motorista: Warning[];
+  resumo_avisos: ResumoAvisos;
   valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number; timings_ms?: Record<string, number> };
 }
 
@@ -471,6 +475,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     rest_stops: restStops,
     driving_plan: plan,
     layers: layerOut,
+    ...priorizarAvisos(warnings),
     valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length, ...(timings ? { timings_ms: timings } : {}) },
   };
 }

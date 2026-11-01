@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { env } from '../config.js';
 import { LatLon, VehicleInput } from '../schemas.js';
 import { computeRoute, RouteBlockedError } from '../services/routing.js';
+import { priorizarAvisos } from '../services/alertas.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
 import { pool } from '../db.js';
@@ -309,12 +310,14 @@ export async function frotaRoutes(app: FastifyInstance) {
             message: `Chegada prevista ${fmt(chegada)} (direção ${Math.round(plan.duration_s / 3600 * 10) / 10} h + pausas e descansos da Lei 13.103), depois da janela do cliente, que vai até ${fmt(fim)}. Para chegar a tempo, a saída precisa ser até ${fmt(sairAte)}; ou combine outra janela.`,
           });
         }
+        Object.assign(plan, priorizarAvisos(plan.warnings));
       }
 
       const trip = await asUser(req, async (c) => {
         const route = plan
           ? { geojson: JSON.stringify(plan.geometry), dist: Math.round(plan.distance_km * 1000), dur: Math.round(plan.duration_s),
-              resp: JSON.stringify({ avoided: plan.avoided, warnings: plan.warnings, rest_stops: plan.rest_stops, driving_plan: plan.driving_plan,
+              resp: JSON.stringify({ avoided: plan.avoided, warnings: plan.warnings, alertas_motorista: plan.alertas_motorista, resumo_avisos: plan.resumo_avisos,
+                                     rest_stops: plan.rest_stops, driving_plan: plan.driving_plan,
                                      eta_horario: plan.eta_horario, departure_at: plan.departure_at, vehicle: plan.vehicle }) }
           : null;
         const ins = await c.query(

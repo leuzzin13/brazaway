@@ -500,7 +500,7 @@ export async function executeAction(ctx: Pick<ToolCtx, 'claims' | 'userId' | 'co
                    ST_SetSRID(ST_GeomFromGeoJSON($10), 4326), $11, $12, $13::jsonb, auth.uid()) returning id`,
           [a.veiculo_id, a.titulo, a.origem.lon, a.origem.lat, a.origem.rotulo ?? null, a.destino.lon, a.destino.lat, a.destino.rotulo ?? null, dep,
            JSON.stringify(r.geometry), Math.round(r.distance_km * 1000), Math.round(r.duration_s),
-           JSON.stringify({ avoided: r.avoided, warnings: r.warnings, vehicle: r.vehicle, departure_at: r.departure_at })])).rows[0];
+           JSON.stringify({ avoided: r.avoided, warnings: r.warnings, alertas_motorista: r.alertas_motorista, resumo_avisos: r.resumo_avisos, vehicle: r.vehicle, departure_at: r.departure_at })])).rows[0];
         let seq = 0;
         for (const d of a.entregas ?? []) {
           await c.query(
