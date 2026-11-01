@@ -731,6 +731,7 @@ def simular(st, n, personas, frota, tarefas, falhas, d1):
     save(OUT / 'estado.json', st)
     rel = {g: relatorio(st, g, n, eventos_semana[g], personas) for g in GRUPOS}
     for g in GRUPOS: save(OUT / 'relatorios' / f'semana_{n}_{g}.json', rel[g])
+    with cache_lock: save(CACHE_P, CACHE)      # guarda também as rotas da conferência de janelas
     resumo = {g: {k: rel[g]['semana'][k] for k in ('viagens', 'km', 'multas_cometidas', 'retornos', 'colisoes', 'atrasos')} for g in GRUPOS}
     print(json.dumps({'semana': n, 'dias': [str(INICIO + dt.timedelta(days=d0)), str(INICIO + dt.timedelta(days=d1 - 1))],
                       'resumo': resumo, 'falhas_rota': len(falhas), 'frota_erros': frota.erros if frota else None}, ensure_ascii=False))
@@ -800,6 +801,15 @@ def relatorio(st, g, n, evs, personas):
                                                                   max(1, sum(e.get('diesel_consumido_l', 0) for e in evs)), 3)
             # o planejamento avisa janela que não cabe na viagem (rota legal + pausas)
             jan = []
+            # calcula em paralelo as rotas da conferência (antes: uma a uma, dezenas de minutos no fim da semana)
+            dia_jan = INICIO + dt.timedelta(days=st['dia_atual'])
+            args_jan = [(l['origem'], l['destino'], G['motoristas'][pid]['veiculo'], G['motoristas'][pid]['hazmat'], dia_jan, int(l['hora_saida']),
+                         bool(G['motoristas'][pid].get('aetc'))) for pid, ls in linhas.items() for l in ls
+                        if l['janela_entrega_ate'] is not None and l['ativa']]
+            def _pre(a):
+                try: rota_legal(*a)
+                except Exception: pass
+            with ThreadPoolExecutor(int(os.environ.get('SIM_THREADS', '4'))) as ex: list(ex.map(_pre, args_jan))
             for pid, ls in linhas.items():
                 for l in ls:
                     if l['janela_entrega_ate'] is None or not l['ativa']: continue
