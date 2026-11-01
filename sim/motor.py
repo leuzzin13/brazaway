@@ -743,6 +743,9 @@ def relatorio(st, g, n, evs, personas):
                     if g == 'com' else 'Sem sistema: a empresa só sabe das multas quando a notificação chega (~3 semanas), dos retornos e batidas que o motorista conta e dos atrasos que o cliente reclama.')}
     if V2:
         compr = sum(e.get('diesel_comprado_l', 0) for e in evs); gasto = sum(e.get('diesel_gasto_rs', 0) for e in evs)
+        # na 2.0 o diesel é o comprado e o consumido de verdade; a estimativa fixa da 1.0 (diesel_rs) confundia a equipe
+        rel['semana'].pop('diesel_rs', None)
+        rel['semana']['diesel_litros_consumidos'] = round(sum(e.get('diesel_consumido_l', 0) for e in evs))
         rel['semana']['diesel_litros_comprados'] = round(compr); rel['semana']['diesel_gasto_rs'] = round(gasto, 2)
         rel['semana']['diesel_preco_medio_pago'] = round(gasto / compr, 3) if compr else None
         rel['semana']['multas_presenciais'] = sum(1 for e in evs for mu in e['multas'] if mu.get('presencial'))
