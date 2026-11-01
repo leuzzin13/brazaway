@@ -190,7 +190,9 @@ def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
     """Plano de abastecimento do BrasaWay para a linha, saindo com nivel_pct (em faixas de 10%). Também traz o preço médio
     dos postos com preço a até 2 km da rota, que é o que paga quem abastece em qualquer posto do caminho."""
     faixa = max(5, min(95, int(round(nivel_pct / 10.0)) * 10 or 5))
-    k = 'P|' + chave(o, d, preset, hazmat, data, hora, aetc) + f'|{faixa}'
+    # preço de posto não muda com a hora: o plano vale por linha, caminhão e faixa de nível (bem menos cálculo)
+    data, hora = dt.date(2026, 11, 3), 10
+    k = f'P|{o}|{d}|{preset}|{int(bool(hazmat))}|{int(bool(aetc))}|{faixa}'
     with cache_lock:
         if k in CACHE: return CACHE[k]
     a, b = LOCAIS[o], LOCAIS[d]
