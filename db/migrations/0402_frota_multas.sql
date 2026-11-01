@@ -48,16 +48,22 @@ create unique index if not exists multas_ait_uk on multas (company_id, ait) wher
 -- liga a viagem pelo horário (motorista ou veículo em viagem naquele instante) e registra quem deu o feedback
 create or replace function app.multas_before_write() returns trigger
 language plpgsql security definer set search_path = public, pg_temp as $$
+declare v_trip uuid; v_vehicle uuid; v_driver uuid;
 begin
   if new.trip_id is null and (new.driver_id is not null or new.vehicle_id is not null) then
-    select t.id, coalesce(new.vehicle_id, t.vehicle_id), coalesce(new.driver_id, t.driver_id)
-      into new.trip_id, new.vehicle_id, new.driver_id
+    -- SELECT INTO sem linha zera os alvos: lê em variáveis e só copia se achou a viagem
+    select t.id, t.vehicle_id, t.driver_id into v_trip, v_vehicle, v_driver
       from trips t
      where t.company_id = new.company_id
        and ((new.driver_id is not null and t.driver_id = new.driver_id) or (new.driver_id is null and t.vehicle_id = new.vehicle_id))
        and t.started_at is not null and t.started_at <= new.ocorrida_em
        and coalesce(t.ended_at, now()) >= new.ocorrida_em
      order by t.started_at desc limit 1;
+    if v_trip is not null then
+      new.trip_id := v_trip;
+      new.vehicle_id := coalesce(new.vehicle_id, v_vehicle);
+      new.driver_id := coalesce(new.driver_id, v_driver);
+    end if;
   end if;
   if new.feedback_enviado and (tg_op = 'INSERT' or not old.feedback_enviado) then
     new.feedback_em := coalesce(new.feedback_em, now());

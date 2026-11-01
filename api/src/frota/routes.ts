@@ -4,8 +4,10 @@ import { DateTime } from 'luxon';
 import { z } from 'zod';
 import { env } from '../config.js';
 import { LatLon, VehicleInput } from '../schemas.js';
-import { computeRoute, RouteBlockedError } from '../services/routing.js';
+import { computeRoute, RouteBlockedError, withTimeout } from '../services/routing.js';
 import { priorizarAvisos } from '../services/alertas.js';
+import { planoAbastecimento } from '../services/abastecimento.js';
+import { alertasAoVivo } from './alertas_vivo.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
 import { pool } from '../db.js';
@@ -156,6 +158,8 @@ const VehicleFields = {
   hazmat: z.boolean().optional(),
   is_vuc: z.boolean().optional(),
   has_aetc: z.boolean().optional(),               // AETC de SP: VUC liberado na ZMRC e no rodízio
+  tanque_l: z.number().positive().max(3000).nullable().optional(),
+  consumo_km_l: z.number().positive().max(30).nullable().optional(),   // consumo de referência do cadastro
   status: z.enum(['active', 'inactive']).optional(),
 };
 const NewVehicle = z.object({ plate: Plate, ...VehicleFields });
@@ -207,12 +211,14 @@ type Db = pg.PoolClient;
 
 const VEHICLE_COLS = `v.id, v.plate, v.label, v.preset, v.height_m::float8 as height_m, v.width_m::float8 as width_m,
   v.length_m::float8 as length_m, v.weight_t::float8 as weight_t, v.payload_t::float8 as payload_t,
-  v.axle_load_t::float8 as axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.has_aetc, v.status, v.created_at, v.updated_at`;
+  v.axle_load_t::float8 as axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.has_aetc, v.tanque_l::float8 as tanque_l,
+  v.consumo_km_l::float8 as consumo_km_l, v.status, v.created_at, v.updated_at`;
 
 const TRIP_COLS = `t.id, t.company_id, t.driver_id, m.display_name as driver_name, t.vehicle_id, v.plate as vehicle_plate, t.status, t.title,
   ST_AsGeoJSON(t.origin)::jsonb as origin, t.origin_label, ST_AsGeoJSON(t.destination)::jsonb as destination, t.destination_label,
   t.departure_planned_at, t.planned_distance_m, t.planned_duration_s, t.started_at, t.ended_at, t.distance_m, t.duration_s,
-  t.deviation_max_m, t.summary, t.created_by, t.created_at, t.updated_at`;
+  t.deviation_max_m, t.summary, t.combustivel_saida_l::float8 as combustivel_saida_l, t.combustivel_saida_pct::float8 as combustivel_saida_pct,
+  t.odometro_saida_km::float8 as odometro_saida_km, t.plano_abastecimento, t.created_by, t.created_at, t.updated_at`;
 const TRIP_FROM = `from trips t left join company_members m on m.user_id = t.driver_id left join vehicles v on v.id = t.vehicle_id`;
 
 const STOP_COLS = `s.id, s.trip_id, s.driver_id, s.type, s.source, ST_Y(s.geom) as lat, ST_X(s.geom) as lon, s.address, s.arrived_at,
@@ -268,6 +274,46 @@ function vehicleToApi(v: Record<string, any>): z.infer<typeof VehicleInput> {
   return o as z.infer<typeof VehicleInput>;
 }
 
+
+// ------------------------------------------------------------------ abastecimento e consumo
+/**
+ * Consumo médio medido (km/L) nos últimos `dias`: km das viagens concluídas ÷ litros abastecidos (sem ARLA) no
+ * período, por veículo ou por motorista. Só vale com volume mínimo (300 km e 100 L); abaixo disso, null.
+ */
+async function consumoMedio(c: Db, filtro: { vehicle_id?: string | null; driver_id?: string | null }, dias = 60) {
+  const col = filtro.vehicle_id ? 'vehicle_id' : 'driver_id';
+  const val = filtro.vehicle_id ?? filtro.driver_id;
+  if (!val) return { km: 0, litros: 0, km_por_litro: null as number | null };
+  const r = (await c.query(
+    `select (select coalesce(sum(distance_m), 0) / 1000.0 from trips where ${col} = $1 and status = 'concluida' and ended_at > now() - make_interval(days => $2)) as km,
+            (select coalesce(sum(litros), 0) from abastecimentos where ${col} = $1 and combustivel <> 'arla32' and ocorrido_em > now() - make_interval(days => $2)) as litros`,
+    [val, dias])).rows[0];
+  const km = Number(r.km), litros = Number(r.litros);
+  return { km: Math.round(km), litros: Math.round(litros), km_por_litro: km >= 300 && litros >= 100 ? Math.round((km / litros) * 100) / 100 : null };
+}
+
+async function conveniadosDa(c: Db) {
+  const r = await c.query(`select cnpj, nome, preco_rs_l::float8 as preco_rs_l, desconto_rs_l::float8 as desconto_rs_l, pagamento
+                             from postos_conveniados where company_id = app.company_id() and ativo`);
+  return r.rows.map((x) => Object.fromEntries(Object.entries(x).filter(([, v]) => v !== null)));
+}
+
+/** Plano de abastecimento da viagem com o nível informado ao iniciar. */
+async function planoDaViagem(c: Db, tripId: string, litros?: number, pct?: number) {
+  const t = (await c.query(
+    `select ST_AsGeoJSON(ST_Force2D(t.planned_route))::jsonb as rota, t.planned_distance_m, t.vehicle_id, t.driver_id,
+            v.preset, v.tanque_l::float8 as tanque_l, v.consumo_km_l::float8 as consumo_km_l
+       from trips t left join vehicles v on v.id = t.vehicle_id where t.id = $1`, [tripId])).rows[0];
+  if (!t?.rota || !t.planned_distance_m) return null;
+  const medido = await consumoMedio(c, { vehicle_id: t.vehicle_id });
+  const consumo = medido.km_por_litro ?? t.consumo_km_l ?? undefined;
+  const plano = await planoAbastecimento(t.rota, t.planned_distance_m / 1000, t.preset ?? undefined, {
+    tanque_l: t.tanque_l ?? undefined, consumo_km_l: consumo, nivel_l: litros, nivel_pct: litros === undefined ? pct : undefined,
+    conveniados: (await conveniadosDa(c)) as any,
+  });
+  return { ...plano, consumo_fonte: medido.km_por_litro ? 'medido (últimos 60 dias)' : t.consumo_km_l ? 'cadastro do veículo' : 'estimativa do tipo de caminhão' };
+}
+
 // ------------------------------------------------------------------ rotas
 export async function frotaRoutes(app: FastifyInstance) {
   app.register(async (api) => {
@@ -285,8 +331,28 @@ export async function frotaRoutes(app: FastifyInstance) {
       const b = parse(PingsBody, req.body);
       const r = await c.query('select app.send_pings($1::jsonb, $2::uuid) as r', [JSON.stringify(b.pings), b.vehicle_id ?? null]);
       const x = r.rows[0].r;
-      return { accepted: x.accepted, received: b.pings.length, trip_id: x.trip_id, interval_moving_s: x.interval_moving_s, interval_stopped_s: x.interval_stopped_s };
+      // fora da rota e indo para via ou zona proibida agora? o app apita com `alertas` (ver frota/alertas_vivo.ts)
+      const alertas = await withTimeout(alertasAoVivo(x.trip_id ?? null, b.pings, vehicleToApi), 8000, 'alerta ao vivo').catch(() => []);
+      return { accepted: x.accepted, received: b.pings.length, trip_id: x.trip_id, interval_moving_s: x.interval_moving_s, interval_stopped_s: x.interval_stopped_s, alertas };
     }));
+
+    // alertas ao vivo: equipe vê todos da empresa; motorista, os dele. "visto" marca que alguém leu.
+    api.get('/alertas', (req) => asUser(req, async (c) => {
+      const q = parse(z.object({ trip_id: Uuid.optional(), desde: IsoDateTime.optional(), nao_vistos: z.enum(['true', 'false']).optional(),
+                                 limit: z.coerce.number().int().min(1).max(500).default(100) }), req.query);
+      const w = ['true']; const p: unknown[] = [];
+      if (q.trip_id) { p.push(q.trip_id); w.push(`a.trip_id = $${p.length}`); }
+      if (q.desde) { p.push(q.desde); w.push(`a.criado_em >= $${p.length}`); }
+      if (q.nao_vistos === 'true') w.push('a.visto_em is null');
+      const r = await c.query(
+        `select a.id, a.trip_id, a.driver_id, m.display_name as driver_name, a.vehicle_id, v.plate as vehicle_plate, a.tipo, a.item_id, a.item_nome,
+                a.mensagem, ST_Y(a.geom) as lat, ST_X(a.geom) as lon, a.fora_rota_m, a.criado_em, a.visto_em
+           from alertas_viagem a left join company_members m on m.user_id = a.driver_id left join vehicles v on v.id = a.vehicle_id
+          where ${w.join(' and ')} order by a.criado_em desc limit ${q.limit}`, p);
+      return { items: r.rows };
+    }));
+    api.post('/alertas/:id/visto', (req) => asUser(req, async (c) =>
+      one(c, `update alertas_viagem set visto_em = coalesce(visto_em, now()) where id = $1 returning id, visto_em`, [idParam(req)], 'alerta não encontrado')));
 
     // ---------------------------------------------------------- viagens
     api.get('/trips', (req) => asUser(req, async (c) => {
@@ -398,12 +464,28 @@ export async function frotaRoutes(app: FastifyInstance) {
       return tripById(c, id, false);
     }));
 
-    api.post('/trips/:id/start', (req) => asUser(req, async (c) => {
+    // Ao iniciar, o app pergunta quanto tem no tanque (litros ou %) e o hodômetro; com isso a API monta o plano de
+    // abastecimento da viagem (tanque e consumo: médio medido do veículo > cadastro > tipo de caminhão) e guarda.
+    api.post('/trips/:id/start', async (req) => {
       const id = idParam(req);
-      const b = parse(z.object({ vehicle_id: Uuid.optional() }), req.body ?? {});
-      await c.query('select app.start_trip($1, null, $2)', [id, b.vehicle_id ?? null]);
-      return tripById(c, id, false);
-    }));
+      const b = parse(z.object({
+        vehicle_id: Uuid.optional(),
+        combustivel_l: z.number().nonnegative().max(3000).optional(),
+        combustivel_pct: z.number().min(0).max(100).optional(),
+        odometro_km: z.number().nonnegative().max(9_999_999).optional(),
+      }), req.body ?? {});
+      // 1) inicia (RLS: só o motorista da viagem), em transação própria, para a linha da viagem não ficar presa
+      await asUser(req, (c) => c.query('select app.start_trip($1, null, $2)', [id, b.vehicle_id ?? null]));
+      if (b.combustivel_l !== undefined || b.combustivel_pct !== undefined || b.odometro_km !== undefined) {
+        // 2) plano com o nível informado (leitura com RLS); 3) grava os dados de saída (a viagem já foi conferida no passo 1)
+        const plano = b.combustivel_l !== undefined || b.combustivel_pct !== undefined
+          ? await asUser(req, (c) => planoDaViagem(c, id, b.combustivel_l, b.combustivel_pct)).catch(() => null) : null;
+        await pool.query(`update trips set combustivel_saida_l = $2, combustivel_saida_pct = $3, odometro_saida_km = $4,
+                                           plano_abastecimento = coalesce($5::jsonb, plano_abastecimento) where id = $1`,
+          [id, b.combustivel_l ?? (plano ? plano.nivel_saida_l : null), b.combustivel_pct ?? null, b.odometro_km ?? null, plano ? JSON.stringify(plano) : null]);
+      }
+      return asUser(req, (c) => tripById(c, id, false));
+    });
 
     api.post('/trips/:id/end', (req) => asUser(req, async (c) => {
       const id = idParam(req);
@@ -510,6 +592,104 @@ export async function frotaRoutes(app: FastifyInstance) {
       return { marked: r.rows[0].n };
     }));
 
+
+
+    // ---------------------------------------------------------- abastecimentos, consumo e postos conveniados
+    const NovoAbastecimento = z.object({
+      litros: z.number().positive().max(3000), valor_cents: z.number().int().nonnegative().max(10_000_000).optional(),
+      combustivel: z.enum(['s10', 's500', 'arla32']).optional(), posto_nome: z.string().trim().max(160).optional(),
+      posto_cnpj: z.string().regex(/^\d{14}$/).optional(), lat: z.number().min(-90).max(90).optional(), lon: z.number().min(-180).max(180).optional(),
+      odometro_km: z.number().nonnegative().max(9_999_999).optional(), tanque_cheio: z.boolean().optional(),
+      pagamento: z.enum(['pix', 'cartao_frota', 'cartao', 'dinheiro', 'outro']).optional(), foto_path: z.string().max(500).optional(),
+      ocorrido_em: IsoDateTime.optional(), vehicle_id: Uuid.optional(), trip_id: Uuid.optional(), driver_id: Uuid.optional(),
+    });
+    api.post('/abastecimentos', async (req, reply) => {
+      const out = await asUser(req, async (c, claims) => {
+        const b = parse(NovoAbastecimento, req.body ?? {});
+        const staff = (await c.query('select app.is_staff() as ok')).rows[0].ok as boolean;
+        if ((b.lat === undefined) !== (b.lon === undefined)) throw httpError(422, 'informe lat e lon juntos');
+        const r = await c.query(
+          `insert into abastecimentos (company_id, driver_id, vehicle_id, trip_id, ocorrido_em, litros, valor_cents, combustivel, posto_nome, posto_cnpj,
+                                       geom, odometro_km, tanque_cheio, pagamento, foto_path, origem, created_by)
+           values (app.company_id(), $1, $2, $3, coalesce($4::timestamptz, now()), $5, $6, coalesce($7, 's10'), $8, $9,
+                   case when $10::float8 is null then null else ST_SetSRID(ST_MakePoint($11::float8, $10::float8), 4326) end,
+                   $12, coalesce($13, false), $14, $15, $16, auth.uid()) returning id`,
+          [staff ? (b.driver_id ?? null) : claims.sub, b.vehicle_id ?? null, b.trip_id ?? null, b.ocorrido_em ?? null, b.litros, b.valor_cents ?? null,
+           b.combustivel ?? null, b.posto_nome ?? null, b.posto_cnpj ?? null, b.lat ?? null, b.lon ?? null, b.odometro_km ?? null, b.tanque_cheio ?? null,
+           b.pagamento ?? null, b.foto_path ?? null, staff ? 'gestor' : 'motorista']);
+        return one(c, `select id, driver_id, vehicle_id, trip_id, ocorrido_em, litros::float8 as litros, valor_cents, combustivel, posto_nome, posto_cnpj,
+                              odometro_km::float8 as odometro_km, tanque_cheio, pagamento, origem,
+                              case when valor_cents is null then null else round(valor_cents / 100.0 / litros, 3)::float8 end as preco_rs_l
+                         from abastecimentos where id = $1`, [r.rows[0].id], 'abastecimento não encontrado');
+      });
+      return reply.code(201).send(out);
+    });
+
+    api.get('/abastecimentos', (req) => asUser(req, async (c) => {
+      const q = parse(z.object({ from: IsoDateTime.optional(), to: IsoDateTime.optional(), driver_id: Uuid.optional(), vehicle_id: Uuid.optional(),
+                                 limit: z.coerce.number().int().min(1).max(500).default(100) }), req.query);
+      const w = ['true']; const p: unknown[] = [];
+      if (q.from) { p.push(q.from); w.push(`a.ocorrido_em >= $${p.length}`); }
+      if (q.to) { p.push(q.to); w.push(`a.ocorrido_em < $${p.length}`); }
+      if (q.driver_id) { p.push(q.driver_id); w.push(`a.driver_id = $${p.length}`); }
+      if (q.vehicle_id) { p.push(q.vehicle_id); w.push(`a.vehicle_id = $${p.length}`); }
+      const where = w.join(' and ');
+      const items = (await c.query(
+        `select a.id, a.driver_id, m.display_name as driver_name, a.vehicle_id, v.plate as vehicle_plate, a.trip_id, a.ocorrido_em, a.litros::float8 as litros,
+                a.valor_cents, a.combustivel, a.posto_nome, a.posto_cnpj, a.odometro_km::float8 as odometro_km, a.tanque_cheio, a.pagamento, a.origem,
+                case when a.valor_cents is null then null else round(a.valor_cents / 100.0 / a.litros, 3)::float8 end as preco_rs_l
+           from abastecimentos a left join company_members m on m.user_id = a.driver_id left join vehicles v on v.id = a.vehicle_id
+          where ${where} order by a.ocorrido_em desc limit ${q.limit}`, p)).rows;
+      const resumo = (await c.query(
+        `select coalesce(sum(litros), 0)::float8 as litros, coalesce(sum(valor_cents), 0)::bigint as valor_cents,
+                case when sum(litros) filter (where valor_cents is not null) > 0
+                     then round(sum(valor_cents) / 100.0 / sum(litros) filter (where valor_cents is not null), 3)::float8 end as preco_medio_pago,
+                count(*)::int as abastecimentos
+           from abastecimentos a where ${where} and a.combustivel <> 'arla32'`, p)).rows[0];
+      return { items, resumo };
+    }));
+
+    // consumo médio medido: por veículo e por motorista (equipe vê todos; motorista vê o próprio)
+    api.get('/consumo', (req) => asUser(req, async (c, claims) => {
+      const q = parse(z.object({ dias: z.coerce.number().int().min(7).max(365).default(60) }), req.query);
+      const staff = (await c.query('select app.is_staff() as ok')).rows[0].ok as boolean;
+      const veics = staff ? (await c.query(`select id, plate, preset, consumo_km_l::float8 as consumo_km_l from vehicles order by plate`)).rows : [];
+      const mots = staff ? (await c.query(`select user_id, display_name from company_members where role = 'motorista' order by display_name`)).rows
+                         : [{ user_id: claims.sub, display_name: null }];
+      const por_veiculo = await Promise.all(veics.map(async (v) => ({ vehicle_id: v.id, plate: v.plate, preset: v.preset, referencia_km_l: v.consumo_km_l,
+        ...(await consumoMedio(c, { vehicle_id: v.id }, q.dias)) })));
+      const por_motorista = await Promise.all(mots.map(async (m) => ({ driver_id: m.user_id, nome: m.display_name, ...(await consumoMedio(c, { driver_id: m.user_id }, q.dias)) })));
+      return { dias: q.dias, por_veiculo, por_motorista };
+    }));
+
+    const Conv = z.object({ cnpj: z.string().regex(/^\d{14}$/, 'CNPJ com 14 dígitos'), nome: z.string().trim().max(160).nullable().optional(),
+      preco_rs_l: z.number().positive().max(30).nullable().optional(), desconto_rs_l: z.number().nonnegative().max(10).nullable().optional(),
+      pagamento: z.string().trim().max(60).nullable().optional(), ativo: z.boolean().optional() });
+    const CONV_COLS = `id, cnpj, nome, preco_rs_l::float8 as preco_rs_l, desconto_rs_l::float8 as desconto_rs_l, pagamento, ativo, created_at, updated_at`;
+    api.get('/postos-conveniados', (req) => asUser(req, async (c) => ({ items: (await c.query(`select ${CONV_COLS} from postos_conveniados order by nome nulls last, cnpj`)).rows })));
+    api.post('/postos-conveniados', async (req, reply) => {
+      const out = await asUser(req, async (c) => {
+        await requireStaff(c);
+        const b = parse(Conv, req.body ?? {});
+        if (b.preco_rs_l == null && b.desconto_rs_l == null) throw httpError(422, 'informe preco_rs_l ou desconto_rs_l');
+        const r = await c.query(`insert into postos_conveniados (company_id, cnpj, nome, preco_rs_l, desconto_rs_l, pagamento, ativo)
+                                 values (app.company_id(), $1, $2, $3, $4, $5, coalesce($6, true)) returning ${CONV_COLS}`,
+          [b.cnpj, b.nome ?? null, b.preco_rs_l ?? null, b.desconto_rs_l ?? null, b.pagamento ?? null, b.ativo ?? null]);
+        return r.rows[0];
+      });
+      return reply.code(201).send(out);
+    });
+    api.patch('/postos-conveniados/:id', (req) => asUser(req, async (c) => {
+      await requireStaff(c);
+      const b = parse(Conv.partial().refine((v) => Object.keys(v).length > 0, { message: 'nada para alterar' }), req.body ?? {});
+      const s = setClause({ ...b, updated_at: new Date().toISOString() }, 2);
+      return one(c, `update postos_conveniados set ${s.sql} where id = $1 returning ${CONV_COLS}`, [idParam(req), ...s.params], 'posto conveniado não encontrado');
+    }));
+    api.delete('/postos-conveniados/:id', (req) => asUser(req, async (c) => {
+      await requireStaff(c);
+      await one(c, 'delete from postos_conveniados where id = $1 returning id', [idParam(req)], 'posto conveniado não encontrado');
+      return { ok: true };
+    }));
 
     // ---------------------------------------------------------- multas
     // motorista: registra a própria ("tomei uma multa") e vê as suas; equipe: completa, muda status, marca o feedback
@@ -648,11 +828,11 @@ export async function frotaRoutes(app: FastifyInstance) {
         const pick = <T>(x: T | null | undefined, d: T | undefined) => (x === undefined || x === null ? d ?? null : x);
         const r = await c.query(
           `insert into vehicles (company_id, plate, label, preset, height_m, width_m, length_m, weight_t, payload_t, axle_load_t, axle_count,
-                                 hazmat, is_vuc, has_aetc, status)
-           values (app.company_id(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::app.vehicle_status) returning id`,
+                                 hazmat, is_vuc, has_aetc, tanque_l, consumo_km_l, status)
+           values (app.company_id(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16::app.vehicle_status) returning id`,
           [b.plate, b.label ?? null, pr?.id ?? b.preset ?? null, pick(b.height_m, pr?.height_m), pick(b.width_m, pr?.width_m), pick(b.length_m, pr?.length_m),
            pick(b.weight_t, pr?.weight_t), pick(b.payload_t, pr?.payload_t), pick(b.axle_load_t, pr?.axle_load_t), pick(b.axle_count, pr?.axle_count),
-           b.hazmat ?? pr?.hazmat ?? false, b.is_vuc ?? pr?.is_vuc ?? false, b.has_aetc ?? false, b.status ?? 'active']);
+           b.hazmat ?? pr?.hazmat ?? false, b.is_vuc ?? pr?.is_vuc ?? false, b.has_aetc ?? false, b.tanque_l ?? null, b.consumo_km_l ?? null, b.status ?? 'active']);
         return one(c, `select ${VEHICLE_COLS} from vehicles v where v.id = $1`, [r.rows[0].id], 'veículo não encontrado');
       });
       return reply.code(201).send(v);

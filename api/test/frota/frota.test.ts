@@ -593,3 +593,97 @@ describe('multas: o motorista registra, a equipe completa e marca o feedback', (
     await pool.query('delete from multas where company_id = $1', [CO_A]);
   });
 });
+
+describe('abastecimento: combustível na saída, plano, registro e consumo', () => {
+  let tripId = '';
+  it('cadastro do veículo guarda tanque e consumo de referência', async () => {
+    const r = await call('PATCH', `/vehicles/${S.vehicleId}`, T.ownerA, { tanque_l: 400, consumo_km_l: 3.2 });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body).toMatchObject({ tanque_l: 400, consumo_km_l: 3.2 });
+  });
+
+  it('motorista informa o combustível ao iniciar: a viagem guarda e traz o plano de abastecimento', async () => {
+    const t = await call('POST', '/trips', T.ownerA, {
+      title: 'CEAGESP → Campinas', vehicle_id: S.vehicleId, driver_id: MOT_A, plan_route: true,
+      origin: SP.origin, destination: { lat: -22.905, lon: -47.06, label: 'Campinas' }, departure_planned_at: '2026-11-03T05:00:00-03:00',
+    });
+    expect(t.status, JSON.stringify(t.body)).toBe(201);
+    tripId = t.body.id;
+    const s = await call('POST', `/trips/${tripId}/start`, T.motA, { combustivel_pct: 20, odometro_km: 152340 });
+    expect(s.status, JSON.stringify(s.body)).toBe(200);
+    expect(s.body).toMatchObject({ combustivel_saida_pct: 20, combustivel_saida_l: 80, odometro_saida_km: 152340 });
+    expect(s.body.plano_abastecimento).toMatchObject({ tanque_l: 400, consumo_km_l: 3.2, nivel_saida_l: 80, consumo_fonte: 'cadastro do veículo' });
+  });
+
+  it('motorista registra o abastecimento: ligado à viagem, com preço por litro; equipe vê o resumo', async () => {
+    const a = await call('POST', '/abastecimentos', T.motA, { litros: 150, valor_cents: 103350, posto_nome: 'Posto Teste', pagamento: 'pix', odometro_km: 152400 });
+    expect(a.status, JSON.stringify(a.body)).toBe(201);
+    expect(a.body).toMatchObject({ trip_id: tripId, driver_id: MOT_A, preco_rs_l: 6.89, origem: 'motorista' });
+    const l = await call('GET', '/abastecimentos', T.ownerA);
+    expect(l.body.resumo).toMatchObject({ litros: 150, preco_medio_pago: 6.89, abastecimentos: 1 });
+    expect((await call('GET', '/abastecimentos', T.ownerB)).body.items).toHaveLength(0);
+  });
+
+  it('postos conveniados: só a equipe cadastra; o motorista lê', async () => {
+    expect((await call('POST', '/postos-conveniados', T.motA, { cnpj: '12345678000199', desconto_rs_l: 0.3 })).status).toBe(403);
+    const c = await call('POST', '/postos-conveniados', T.ownerA, { cnpj: '12345678000199', nome: 'Rede Teste', desconto_rs_l: 0.3, pagamento: 'PIX' });
+    expect(c.status, JSON.stringify(c.body)).toBe(201);
+    expect((await call('GET', '/postos-conveniados', T.motA)).body.items.map((x: any) => x.cnpj)).toEqual(['12345678000199']);
+    expect((await call('POST', '/postos-conveniados', T.ownerA, { cnpj: '123' , desconto_rs_l: 0.1 })).status).toBe(422);
+  });
+
+  it('consumo médio: com pouco volume ainda não há média (null); equipe vê por veículo e por motorista', async () => {
+    const r = await call('GET', '/consumo', T.ownerA);
+    expect(r.status).toBe(200);
+    const v = r.body.por_veiculo.find((x: any) => x.vehicle_id === S.vehicleId);
+    expect(v).toMatchObject({ referencia_km_l: 3.2, litros: 150, km_por_litro: null });
+    expect(r.body.por_motorista.some((x: any) => x.driver_id === MOT_A)).toBe(true);
+    await call('POST', `/trips/${tripId}/end`, T.motA, {});
+    await pool.query('delete from abastecimentos where company_id = $1', [CO_A]);
+    await pool.query('delete from postos_conveniados where company_id = $1', [CO_A]);
+  });
+});
+
+describe('alerta ao vivo: fora da rota e indo para via proibida', () => {
+  it('ping na Linha Vermelha (proibida a caminhão 24 h) longe da rota planejada → alerta na resposta e no painel', async () => {
+    // um trecho real da Linha Vermelha na base: o ping fica no começo dele, com o rumo do trecho
+    const f = (await pool.query(`select ST_AsGeoJSON(geom)::json as g from data_features
+                                  where layer_id = 'restricoes_rmsp' and props::text ilike '%linha vermelha%'
+                                  order by ST_Length(geom::geography) desc limit 1`)).rows[0];
+    expect(f, 'Linha Vermelha carregada na base').toBeTruthy();
+    const [a, b] = f.g.coordinates as [number, number][];
+    const rumo = (Math.atan2(Math.sin((b[0] - a[0]) * Math.PI / 180) * Math.cos(b[1] * Math.PI / 180),
+      Math.cos(a[1] * Math.PI / 180) * Math.sin(b[1] * Math.PI / 180) - Math.sin(a[1] * Math.PI / 180) * Math.cos(b[1] * Math.PI / 180) * Math.cos((b[0] - a[0]) * Math.PI / 180)) * 180 / Math.PI + 360) % 360;
+    const t = await call('POST', '/trips', T.ownerA, {
+      title: 'Teste alerta', vehicle_id: S.vehicleId, driver_id: MOT_A, plan_route: true,
+      origin: { lat: -22.83, lon: -43.333, label: 'CEASA Irajá' }, destination: { lat: -22.794, lon: -43.172, label: 'Ilha do Governador' },
+    });
+    expect(t.status, JSON.stringify(t.body)).toBe(201);
+    expect((await call('POST', `/trips/${t.body.id}/start`, T.motA, {})).status).toBe(200);
+    const agora = new Date().toISOString();
+    const r = await call('POST', '/pings', T.motA, { pings: [{ lat: a[1], lon: a[0], heading_deg: rumo, speed_kmh: 50, recorded_at: agora }], trip_id: t.body.id });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body.alertas.length, JSON.stringify(r.body)).toBeGreaterThan(0);
+    expect(r.body.alertas[0].mensagem).toMatch(/Linha Vermelha.*proibido para este caminhão agora/);
+    // logo em seguida: não confere de novo (intervalo) e não repete
+    const r2 = await call('POST', '/pings', T.motA, { pings: [{ lat: a[1], lon: a[0], heading_deg: rumo, recorded_at: new Date(Date.now() + 1000).toISOString() }], trip_id: t.body.id });
+    expect(r2.body.alertas).toEqual([]);
+    const l = await call('GET', `/alertas?trip_id=${t.body.id}`, T.ownerA);
+    expect(l.body.items.length).toBeGreaterThan(0);
+    expect((await call('GET', '/alertas', T.ownerB)).body.items).toHaveLength(0);
+    expect((await call('POST', `/alertas/${l.body.items[0].id}/visto`, T.ownerA, {})).body.visto_em).toBeTruthy();
+    await call('POST', `/trips/${t.body.id}/end`, T.motA, {});
+  });
+});
+
+describe('multa sem viagem naquele horário (achado da simulação 2.0)', () => {
+  it('motorista e equipe registram; o motorista e o veículo não se perdem quando não há viagem para ligar', async () => {
+    const m = await call('POST', '/multas', T.motA, { ocorrida_em: '2025-01-15T08:30:00-03:00', descricao: 'Fui parado na rodovia' });
+    expect(m.status, JSON.stringify(m.body)).toBe(201);
+    expect(m.body).toMatchObject({ driver_id: MOT_A, trip_id: null });
+    const e = await call('POST', '/multas', T.ownerA, { ocorrida_em: '2025-01-16T09:00:00-03:00', driver_id: MOT_A, vehicle_id: S.vehicleId, valor_cents: 13016 });
+    expect(e.status, JSON.stringify(e.body)).toBe(201);
+    expect(e.body).toMatchObject({ driver_id: MOT_A, vehicle_id: S.vehicleId, trip_id: null });
+    await pool.query('delete from multas where company_id = $1', [CO_A]);
+  });
+});

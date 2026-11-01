@@ -35,11 +35,34 @@ export const VehicleInput = z.object({
   employment: z.enum(['employee', 'autonomous']).optional(), // CLT (empregado) x TAC (autônomo): limites de jornada
 });
 
+// plano de abastecimento (services/abastecimento.ts)
+export const Conveniado = z.object({
+  cnpj: z.string().regex(/^\d{14}$/, 'CNPJ com 14 dígitos'),
+  preco_rs_l: z.number().positive().max(30).optional(),           // preço fechado no contrato
+  desconto_rs_l: z.number().nonnegative().max(10).optional(),     // desconto sobre o preço da ANP (ex.: PIX)
+  pagamento: z.string().max(60).optional(),                       // "PIX", "cartão frota"...
+  nome: z.string().max(120).optional(),
+});
+export type Conveniado = z.infer<typeof Conveniado>;
+
+export const AbastecimentoInput = z.object({
+  tanque_l: z.number().positive().max(3000).optional(),
+  nivel_l: z.number().nonnegative().max(3000).optional(),
+  nivel_pct: z.number().min(0).max(100).optional(),
+  consumo_km_l: z.number().positive().max(30).optional(),
+  reserva_pct: z.number().min(5).max(50).default(15),
+  combustivel: z.enum(['s10', 's500']).default('s10'),
+  compra_minima_l: z.number().positive().max(1000).optional(),
+  conveniados: z.array(Conveniado).max(500).default([]),
+});
+export type AbastecimentoInput = z.input<typeof AbastecimentoInput>;
+
 export const RouteRequest = z.object({
   origin: LatLon,
   destination: LatLon,
   departure_at: z.string().optional(), // ISO local "YYYY-MM-DDTHH:mm" no fuso TZ
   vehicle: VehicleInput.default({}),
+  abastecimento: AbastecimentoInput.optional(),   // pede o plano de abastecimento (onde parar e quantos litros)
 });
 export type RouteRequest = z.infer<typeof RouteRequest>;
 

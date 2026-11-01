@@ -4,6 +4,7 @@ import { env } from '../config.js';
 import type { RouteRequest } from '../schemas.js';
 import { resolveVehicle, type Vehicle } from './vehicle.js';
 import { priorizarAvisos, type ResumoAvisos } from './alertas.js';
+import { planoAbastecimento, type PlanoAbastecimento } from './abastecimento.js';
 import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, crowdAlertsInBbox, reportToRing, type ReportRow } from './restrictions.js';
@@ -12,7 +13,7 @@ import { endpointHolidays, legalDayInfo, municipiosAt, SAO_PAULO_IBGE, type Endp
 import { etaPorHorario, type EtaHorario } from './etaHorario.js';
 import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
 import { loadLayers } from '../layers/index.js';
-import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLine } from '../layers/types.js';
+import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer, RouteLine } from '../layers/types.js';
 
 export interface AvoidedItem {
   kind: 'report' | 'zone' | 'layer';
@@ -51,6 +52,8 @@ export interface RouteResponse {
   /** para a tela do motorista: até 3 avisos que pedem ação, e o resto resumido (ver services/alertas.ts) */
   alertas_motorista: Warning[];
   resumo_avisos: ResumoAvisos;
+  /** só quando o pedido traz `abastecimento`: onde parar e quantos litros (ver services/abastecimento.ts) */
+  plano_abastecimento?: PlanoAbastecimento | null;
   valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number; timings_ms?: Record<string, number> };
 }
 
@@ -292,6 +295,31 @@ function describeLocal(d: Date, ref: Date): string {
   return `${dia} às ${l.toFormat('HH:mm')}`;
 }
 
+/**
+ * Próximo instante (até 24 h, de hora em hora e depois refinado em 15 min) em que a camada não restringe mais o trecho
+ * `itemId` para este veículo. Usa a própria regra da camada (costLines no horário testado). undefined = não deu para
+ * calcular; null = não libera em 24 h. O horário é o de saída, como nas camadas (limitação documentada).
+ */
+async function nextLayerFreeTime(layers: RouteLayer[], ctx: RouteCtx, layerId: string, itemId: string): Promise<Date | null | undefined> {
+  const l = layers.find((x) => x.meta.id === layerId);
+  if (!l?.costLines) return undefined;
+  const ainda = async (t: Date) => {
+    const local = DateTime.fromJSDate(t).setZone(env.tz).toFormat("yyyy-LL-dd'T'HH:mm");
+    const cls = await l.costLines!({ ...ctx, at: t, departureLocal: local });
+    return cls.some((c) => c.item.id === itemId);
+  };
+  for (let h = 1; h <= 24; h++) {
+    const t = new Date(ctx.at.getTime() + h * 3600_000);
+    if (await ainda(t)) continue;
+    for (const q of [45, 30, 15]) {
+      const tq = new Date(t.getTime() - q * 60_000);
+      if (!(await ainda(tq))) return tq;
+    }
+    return t;
+  }
+  return null;
+}
+
 export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
   const { vehicle, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings } = await prepareRestrictions(req);
   const excludePolygons = exclusions.flatMap((e) => e.rings);
@@ -374,6 +402,16 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       }
     }
   }
+
+  // 4b) Trecho restrito sem alternativa: a que horas ele libera para este veículo (achado da simulação de 60 dias: em
+  //     Mairiporã e na ZRCC de Guarulhos o app avisava, mas não dizia que saindo um pouco mais tarde passava legalmente).
+  const restritos = warnings.filter((w) => w.code === 'uses_restricted_way' && w.layer && w.id).slice(0, 3);
+  await Promise.all(restritos.map(async (w) => {
+    const t = await withTimeout(nextLayerFreeTime(layers, ctx, w.layer!, w.id!), 8000, 'horário de liberação').catch(() => undefined);
+    if (t === undefined) return;
+    w.liberado_em = t ? DateTime.fromJSDate(t).setZone(env.tz).toFormat("yyyy-LL-dd'T'HH:mm") : null;
+    w.message += t ? ` O trecho libera para este veículo ${describeLocal(t, at)}: saindo nesse horário, a passagem é legal.` : ' O trecho não libera nas próximas 24 h para este veículo.';
+  }));
 
   // 5) Avisos: rota passa perto de reporte não confirmado (score <= 0), de qualquer tipo
   const [minX, minY, maxX, maxY] = turf.bbox(line);
@@ -476,6 +514,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     driving_plan: plan,
     layers: layerOut,
     ...priorizarAvisos(warnings),
+    ...(req.abastecimento ? { plano_abastecimento: await withTimeout(planoAbastecimento(line.geometry, restricted.distance_km, vehicle.preset_id ?? req.vehicle.preset, req.abastecimento), LAYER_POST_TIMEOUT_MS, 'plano de abastecimento').catch(() => null) } : {}),
     valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length, ...(timings ? { timings_ms: timings } : {}) },
   };
 }
@@ -555,7 +594,7 @@ const TIMINGS = process.env.ROUTE_TIMINGS === '1';
 /** Tempo máximo de cada camada por etapa (ms). Uma camada que não termina vira aviso, e a rota sai sem ela. */
 const LAYER_PRE_TIMEOUT_MS = Number(process.env.LAYER_PRE_TIMEOUT_MS ?? 20_000);
 const LAYER_POST_TIMEOUT_MS = Number(process.env.LAYER_POST_TIMEOUT_MS ?? 25_000);
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+export function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: NodeJS.Timeout | undefined;
   const t = new Promise<never>((_, rej) => { timer = setTimeout(() => {
     console.warn(`[rota] ${label} passou de ${ms} ms e foi ignorada nesta rota`);
