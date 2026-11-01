@@ -224,7 +224,9 @@ def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
         nivel = min(tanque, nivel + comprado) - usa
     else:
         nivel -= usa
-    if nivel < tanque * PARAMS['abastece_abaixo_pct']:
+    # quem segue o app abastece pelo plano da próxima viagem; só cai no posto de costume numa emergência (abaixo de 10%)
+    limite = 0.10 if (g == 'com' and segue_app and pl['media'] is not None) else PARAMS['abastece_abaixo_pct']
+    if nivel < tanque * limite:
         litros = tanque * PARAMS['enche_ate_pct'] - max(nivel, 0)
         preco = media * (1 + PARAMS['habito_preco'].get(m.get('habito', 'posto_de_costume'), 0.0))
         comprado += litros; gasto += litros * preco
