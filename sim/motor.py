@@ -254,11 +254,13 @@ def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
     media = pl['media'] or PARAMS['preco_diesel_padrao']
     comprado = 0.0; gasto = 0.0
     if g == 'com' and segue_app and pl['litros']:
-        comprado = pl['litros']; gasto = pl['custo']
-        nivel = min(tanque, nivel + comprado) - usa
+        # o plano é da faixa de nível mais próxima: compra só o que cabe no tanque ao longo da viagem (o consumo libera espaço)
+        comprado = min(pl['litros'], max(0.0, tanque - nivel + usa)); gasto = pl['custo'] * comprado / pl['litros']
+        nivel = min(tanque, nivel + comprado - usa)
         uso = m.setdefault('_uso_postos', {})
         for cnpj, nome, litros, preco, origem in pl.get('postos') or []:
-            u = uso.setdefault(cnpj, [nome, 0.0, 0.0]); u[1] += litros; u[2] += litros * preco
+            f_ = comprado / pl['litros'] if pl['litros'] else 0
+            u = uso.setdefault(cnpj, [nome, 0.0, 0.0]); u[1] += litros * f_; u[2] += litros * f_ * preco
     else:
         nivel -= usa
     # quem segue o app abastece pelo plano da próxima viagem; só cai no posto de costume numa emergência (abaixo de 10%)
