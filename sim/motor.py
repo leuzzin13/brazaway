@@ -595,6 +595,14 @@ def rodar_semana(n):
         try: rota_legal(*args); rota_gps_carro(*args)
         except Exception as e: falhas.append((args[:2], str(e)[:120]))
     with ThreadPoolExecutor(int(os.environ.get('SIM_THREADS', '4'))) as ex: list(ex.map(aquece, uniq.values()))
+    if V2:   # planos de abastecimento de todas as faixas de nível das linhas da semana, em paralelo (antes: um a um no meio da simulação)
+        planos = {(a[0], a[1], a[2], a[3], a[6]) for a in uniq.values()}
+        def aquece_plano(x):
+            o, d, preset, hz, aetc = x
+            for faixa in range(10, 100, 10):
+                try: plano_abast(o, d, preset, hz, None, None, aetc, faixa)
+                except Exception as e: falhas.append(((o, d), 'plano: ' + str(e)[:100]))
+        with ThreadPoolExecutor(int(os.environ.get('SIM_THREADS', '4'))) as ex: list(ex.map(aquece_plano, planos))
     save(CACHE_P, CACHE)
     # simula na ordem do calendário
     eventos_semana = {g: [] for g in GRUPOS}
