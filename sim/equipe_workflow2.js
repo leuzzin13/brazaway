@@ -41,16 +41,16 @@ const DEC = {
 }
 const contexto = (e) => `Simulação de operação real, semana ${N} de ${TOTAL} (setembro a novembro de 2026). Você trabalha na ${e.nome}.
 Leia o relatório desta semana em ${BASE}/relatorios/semana_${N}_${e.g}.json (totais, diesel comprado e preço pago, multas notificadas e as sem feedback com o mid, por motorista, pontos de CNH, problemas conhecidos com o id do item, as linhas de cada motorista com horário e janela de entrega e, quando houver, janelas que não cabem na viagem).
-${N > 1 ? `As decisões das semanas anteriores estão em ${BASE}/decisoes/semana_<n>_${e.g}.json (n = 1 a ${N - 1}); veja o que já foi feito antes de repetir.` : ''}
-As personas dos motoristas estão em ${BASE}/personas.json (perfil e como cada um reage). Trabalhe só com o que a sua empresa enxerga no relatório.`
+${N > 1 ? `As decisões das semanas anteriores estão em ${BASE}/decisoes/semana_<n>_${e.g}.json; leia só as das últimas 2 semanas (n = ${Math.max(1, N - 2)} a ${N - 1}), cada uma com o resultado (_resultado) do que foi aplicado, e só volte mais se precisar de um fato específico.` : ''}
+As personas dos motoristas estão em ${BASE}/personas.json (perfil e como cada um reage). Trabalhe só com o que a sua empresa enxerga no relatório. Seja objetivo: leia as partes que importam com jq ou python (não imprima o arquivo inteiro) e não repita a mesma leitura.`
 
 const res = await parallel(EMPRESAS.map((e) => async () => {
   const [rot, fin] = await parallel(['roteirista', 'financeiro'].map((p) => () => agent(
     `${PAPEIS[p]}\n\n${contexto(e)}\n\nFaça a sua leitura da semana em 3 a 5 frases e dê até 5 sugestões concretas ao gerente (quem, o quê, por quê, quanto custa). Seja realista: nada de solução mágica.`,
-    { label: `${p}:${e.g}:s${N}`, phase: 'Análise', schema: SUG })))
+    { label: `${p}:${e.g}:s${N}`, phase: 'Análise', schema: SUG, effort: 'medium' })))
   const dec = await agent(
-    `${PAPEIS.gerente}\n\n${contexto(e)}\n\nSugestões da equipe:\nPatrícia (roteirista): ${JSON.stringify(rot)}\nRicardo (financeiro/SSMA): ${JSON.stringify(fin)}\n\nDecida o que muda a partir de segunda. ${ACOES}\nDepois escreva a mensagem que vai para todos os motoristas (curta, no tom de um gerente de transportadora) e uma justificativa de 2 a 4 frases. Não exagere: mudar demais desorganiza a operação.`,
-    { label: `gerente:${e.g}:s${N}`, phase: 'Decisão', schema: DEC })
+    `${PAPEIS.gerente}\n\n${contexto(e)}\n\nSugestões da equipe:\nPatrícia (roteirista): ${JSON.stringify(rot)}\nRicardo (financeiro/SSMA): ${JSON.stringify(fin)}\n\nA equipe já leu o relatório: parta das sugestões e abra os arquivos só para conferir ids, linhas e horários das ações que vai tomar. Decida o que muda a partir de segunda. ${ACOES}\nDepois escreva a mensagem que vai para todos os motoristas (curta, no tom de um gerente de transportadora) e uma justificativa de 2 a 4 frases. Não exagere: mudar demais desorganiza a operação.`,
+    { label: `gerente:${e.g}:s${N}`, phase: 'Decisão', schema: DEC, effort: 'medium' })
   return { g: e.g, semana: N, roteirista: rot, financeiro: fin, ...(dec || { acoes: [], mensagem_aos_motoristas: '', justificativa: 'sem resposta' }) }
 }))
 return res.filter(Boolean)
