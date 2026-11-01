@@ -26,8 +26,9 @@ API = os.environ.get('SIM_API', 'http://localhost:3000')
 VALHALLA = os.environ.get('SIM_VALHALLA', 'http://localhost:8002')
 JWT_SECRET = os.environ.get('FROTA_DEV_JWT_SECRET', 'dev-secret-troque')
 INICIO = dt.date(2026, 9, 1)          # terça-feira
-DIAS = 60
-FERIADOS = {dt.date(2026, 9, 7), dt.date(2026, 10, 12)}
+DIAS = int(os.environ.get('SIM_DIAS', '60'))
+FERIADOS = {dt.date(2026, 9, 7), dt.date(2026, 10, 12), dt.date(2026, 11, 2), dt.date(2026, 11, 15), dt.date(2026, 11, 20)}
+V2 = os.environ.get('SIM_V2') == '1'   # simulação 2.0: diesel, multas no app, alerta ao vivo, janelas
 GRUPOS = ('com', 'sem')
 
 PARAMS = {
@@ -51,6 +52,14 @@ PARAMS = {
     'treinamento_rs': 250, 'recurso_rs': 60, 'p_recurso_ok': 0.15,
     'aviso_multa_dias': 21,             # a notificação de autuação chega ~3 semanas depois
     'frete_rs_km': 5.0,                 # receita perdida quando uma linha é suspensa
+    # 2.0
+    'tanque_l': {'utilitario': 70, 'vuc': 150, 'toco': 275, 'truck': 300, 'carreta_5e': 600, 'carreta_6e': 600, 'romeu_julieta': 700, 'bitrem': 900, 'rodotrem': 1000},
+    'preco_diesel_padrao': 7.20,        # quando a rota não tem posto com preço da ANP
+    'habito_preco': {'posto_de_costume': 0.0, 'mais_barato_que_conhece': -0.015, 'cartao_da_empresa': -0.01, 'onde_tiver_vaga': 0.015},
+    'abastece_abaixo_pct': 0.25, 'enche_ate_pct': 0.9,
+    'p_alerta_ao_vivo_evita': 0.5,      # motorista fora da rota que recebe o alerta ao vivo e volta (premissa)
+    'p_multa_presencial': 0.3,          # parte das autuações feita por agente na hora (o motorista sabe na hora)
+    'p_cliente_aceita_janela': 0.6,     # cliente aceita mudar a janela quando a empresa pede
 }
 
 rnd_lock = threading.Lock()
@@ -177,6 +186,52 @@ def rota_gps_carro(o, d, preset, hazmat, data, hora, aetc=False):
     return res
 
 
+def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
+    """Plano de abastecimento do BrasaWay para a linha, saindo com nivel_pct (em faixas de 10%). Também traz o preço médio
+    dos postos com preço a até 2 km da rota, que é o que paga quem abastece em qualquer posto do caminho."""
+    faixa = max(5, min(95, int(round(nivel_pct / 10.0)) * 10 or 5))
+    k = 'P|' + chave(o, d, preset, hazmat, data, hora, aetc) + f'|{faixa}'
+    with cache_lock:
+        if k in CACHE: return CACHE[k]
+    a, b = LOCAIS[o], LOCAIS[d]
+    body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
+            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
+            'departure_at': f'{data.isoformat()}T{hora:02d}:00',
+            'abastecimento': {'nivel_pct': faixa, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset]}}
+    st, r = post(API + '/api/route', body)
+    pl = (r or {}).get('plano_abastecimento') if st == 200 else None
+    res = {'litros': pl['litros'], 'custo': pl['custo_rs'], 'media': pl['preco_medio_rota_rs_l'], 'paradas': len(pl['paradas']),
+           'chega_com_l': pl['chega_com_l']} if pl else {'litros': 0, 'custo': 0, 'media': None, 'paradas': 0, 'chega_com_l': None}
+    with cache_lock: CACHE[k] = res
+    return res
+
+
+def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
+    """Combustível da viagem (2.0). Com o app e seguindo a rota: compra o que o plano manda, ao preço do plano. Senão
+    (empresa sem app, ou motorista que ignorou o app): ao cair abaixo de 25% do tanque, enche até 90% no posto de
+    costume, ao preço médio dos postos da rota ajustado pelo hábito dele."""
+    tanque = PARAMS['tanque_l'][preset]
+    cons = PARAMS['km_por_litro'][preset] / float(m.get('fator_consumo', 1.0))
+    usa = km / cons
+    nivel = m.setdefault('nivel_l', tanque * 0.6)
+    pl = plano_abast(o, d, preset, hz, data, hora, bool(m.get('aetc')), 100 * nivel / tanque)
+    media = pl['media'] or PARAMS['preco_diesel_padrao']
+    comprado = 0.0; gasto = 0.0
+    if g == 'com' and segue_app and pl['litros']:
+        comprado = pl['litros']; gasto = pl['custo']
+        nivel = min(tanque, nivel + comprado) - usa
+    else:
+        nivel -= usa
+    if nivel < tanque * PARAMS['abastece_abaixo_pct']:
+        litros = tanque * PARAMS['enche_ate_pct'] - max(nivel, 0)
+        preco = media * (1 + PARAMS['habito_preco'].get(m.get('habito', 'posto_de_costume'), 0.0))
+        comprado += litros; gasto += litros * preco
+        nivel = tanque * PARAMS['enche_ate_pct']
+    m['nivel_l'] = max(0.0, nivel)
+    ev['diesel_consumido_l'] = round(usa, 1); ev['diesel_comprado_l'] = round(comprado, 1); ev['diesel_gasto_rs'] = round(gasto, 2)
+    ev['preco_medio_rota'] = media
+
+
 def item_min(x):
     return {'k': f"{x.get('kind')}:{x.get('layer') or ''}:{x.get('id')}", 'kind': x.get('kind'), 'layer': x.get('layer'),
             'type': x.get('type'), 'name': x.get('name'), 'rule': x.get('rule'), 'value_num': x.get('value_num')}
@@ -219,6 +274,10 @@ def estado_inicial(personas):
                 'risco': float(p.get('tolerancia_risco', 0.3)),
                 'adesao': float(p.get('adesao_app', 0.8)) if g == 'com' else 0.0,
                 'pontos': [], 'parado_ate': None, 'treinado': 0.0,
+                # 2.0: combustível (gêmeos começam iguais)
+                'fator_consumo': float(p.get('fator_consumo') or (1.0 + (int(hashlib.md5(p['id'].encode()).hexdigest(), 16) % 17 - 8) / 100)),
+                'habito': p.get('habito_abastecimento') or ('cartao_da_empresa' if p.get('vinculo') == 'clt' else 'posto_de_costume'),
+                'nivel_l': PARAMS['tanque_l'][p['veiculo']] * (0.4 + (int(hashlib.md5(('n' + p['id']).encode()).hexdigest(), 16) % 41) / 100),
             }
         st['grupos'][g] = {'motoristas': mot, 'eventos': [], 'custos_extra': [], 'mensagens': [], 'decisoes_aplicadas': []}
     return st
@@ -251,7 +310,7 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
         ev['rota'] = 'app'; ev['evitadas_app'] = len(legal['evitou'])
         ev['avisos_risco'] = legal['avisos_risco']
         # trechos restritos sem alternativa e entrega dentro de zona: o app avisa, mas a passagem existe
-        expostos = [{'k': 'zona_destino:' + d, 'kind': 'zone', 'name': msg[:120], 'layer': None} for msg in legal['zona_destino']]
+        expostos = [{'k': 'zona_destino:' + d, 'kind': 'zone', 'name': msg[:400], 'layer': None} for msg in legal['zona_destino']]
         expostos += [{'k': 'sem_alt:' + msg[:60], 'kind': 'layer', 'layer': 'restricoes_rmsp', 'name': msg[:120]} for msg in legal['restrito_sem_alternativa']]
         avisado = True
     else:
@@ -260,10 +319,13 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
         expostos = list(cruza) + [{'k': 'zona_destino:' + d, 'kind': 'zone', 'name': msg[:120], 'layer': None} for msg in gps['zona_destino']]
         avisado = g == 'com'
         nao_evitadas = []
+        ev['evitadas_alerta'] = 0
         for it in cruza:
             k = conhecimento(m, it, uf) + (0.2 if avisado else 0.0)
             if rng.random() < k and rng.random() > m['risco'] * 0.3:
                 ev['evitadas_conhecimento'] += 1
+            elif V2 and g == 'com' and rng.random() < PARAMS['p_alerta_ao_vivo_evita']:
+                ev['evitadas_alerta'] += 1          # alerta ao vivo: fora da rota, o app apitou antes da restrição e ele voltou
             else:
                 nao_evitadas.append(it)
         extremos = expostos[len(cruza):]
@@ -288,9 +350,11 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
             p = p_autuacao(it) * (0.6 if avisado and it['k'].startswith('zona_destino') else 1.0)
             if rng.random() < p:
                 grav = 'grave' if cat == 'fisica_peso' or it.get('layer') == 'perigosos' else 'media'
+                presencial = V2 and rng.random() < PARAMS['p_multa_presencial']
                 ev['multas'].append({'k': it['k'], 'nome': (it.get('name') or '')[:100], 'gravidade': grav,
-                                     'valor': PARAMS['multa'][grav][0], 'pontos': PARAMS['multa'][grav][1],
-                                     'aviso_em': (data + dt.timedelta(days=PARAMS['aviso_multa_dias'])).isoformat()})
+                                     'valor': PARAMS['multa'][grav][0], 'pontos': PARAMS['multa'][grav][1], 'presencial': presencial,
+                                     'mid': hashlib.md5(f"{g}|{pid}|{data}|{hora}|{it['k']}".encode()).hexdigest()[:10],
+                                     'aviso_em': (data if presencial else data + dt.timedelta(days=PARAMS['aviso_multa_dias'])).isoformat()})
         m['conhece'][it['k']] = max(m['conhece'].get(it['k'], 0.0), 0.5 if not ev['multas'] else 0.85)
     ev['km'] = round(km, 1); ev['horas'] = round(seg / 3600, 2)
     chegada = hora + seg / 3600
@@ -298,6 +362,7 @@ def simular_viagem(g, pid, m, linha, data, hora, rng):
     if jan is not None and jan <= hora: jan += 24          # entrega na madrugada do dia seguinte
     ev['atraso'] = bool(jan is not None and chegada > jan + PARAMS['atraso_tolerancia_min'] / 60)
     ev['custo_diesel'] = round(km / PARAMS['km_por_litro'][preset] * PARAMS['diesel_rs_l'], 2)
+    if V2: abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng)
     ev['custo_motorista'] = round(seg / 3600 * PARAMS['custo_hora_motorista'], 2)
     ev['legal_ok'] = bool(legal.get('ok'))
     return ev, (legal.get('geom') if segue_app else None)
@@ -339,6 +404,36 @@ class Frota:
             if call('POST', f'/api/frota/trips/{tid}/end', tk)[0] != 200: self.erros += 1
         except Exception:
             self.erros += 1
+
+    def multa_motorista(self, pid, mu, ev):
+        """Multa presencial: o motorista registra pelo app na hora."""
+        st, r = call('POST', '/api/frota/multas', self.tok[pid], {'ocorrida_em': f"{ev['data']}T{ev['hora']:02d}:30:00-03:00",
+            'descricao': f"Fui parado: {mu['nome']}", 'local': LOCAIS[ev['destino']]['nome']})
+        if st == 201: mu['api_id'] = r['id']
+        else: self.erros += 1
+
+    def multa_equipe(self, mu, ev):
+        """Notificação chegou: a equipe completa (ou registra) a multa no painel."""
+        corpo = {'status': 'notificada', 'gravidade': 'media' if mu['gravidade'] == 'media' else 'grave', 'valor_cents': int(round(mu['valor'] * 100)),
+                 'pontos': mu['pontos'], 'enquadramento': mu['nome'][:200], 'prazo_indicacao': (dt.date.fromisoformat(mu['aviso_em']) + dt.timedelta(days=15)).isoformat()}
+        if mu.get('api_id'):
+            st, _ = call('PATCH', f"/api/frota/multas/{mu['api_id']}", self.gestor, corpo)
+        else:
+            st, r = call('POST', '/api/frota/multas', self.gestor, {**corpo, 'driver_id': self.info['motoristas'][ev['motorista']],
+                         'ocorrida_em': f"{ev['data']}T{ev['hora']:02d}:30:00-03:00"})
+            if st == 201: mu['api_id'] = r['id']
+        if st not in (200, 201): self.erros += 1
+
+    def feedback(self, mu, nota):
+        if mu.get('api_id'):
+            st, _ = call('PATCH', f"/api/frota/multas/{mu['api_id']}", self.gestor, {'feedback_enviado': True, 'feedback_nota': nota[:500]})
+            if st != 200: self.erros += 1
+
+    def abastecimento(self, pid, ev):
+        if ev.get('diesel_comprado_l', 0) <= 0: return
+        st, _ = call('POST', '/api/frota/abastecimentos', self.tok[pid], {'litros': min(2999, ev['diesel_comprado_l']),
+            'valor_cents': int(round(ev['diesel_gasto_rs'] * 100)), 'pagamento': 'cartao_frota', 'posto_nome': f"Posto na rota {ev['origem']}→{ev['destino']}"})
+        if st != 201: self.erros += 1
 
     def mensagem(self, para_pid, texto):
         call('POST', '/api/frota/messages', self.gestor, {'recipient_id': self.info['motoristas'][para_pid], 'body': texto[:3900]})
@@ -421,6 +516,24 @@ def aplicar_decisoes(st, semana, frota):
             elif t == 'reativar_linha' and a.get('motorista') in M:
                 ls = M[a['motorista']]['linhas']; i = int(a.get('linha', 0))
                 if 0 <= i < len(ls): ls[i]['ativa'] = True
+            elif t == 'feedback':
+                # conversa com o motorista sobre multas: ele passa a conhecer o trecho e arrisca menos
+                alvo_m = set(a.get('multas') or [])
+                for e in G['eventos']:
+                    for mu in e['multas']:
+                        if mu.get('feedback') or not (mu.get('mid') in alvo_m or (a.get('motorista') and e['motorista'] == a.get('motorista'))): continue
+                        if mu['aviso_em'] > (INICIO + dt.timedelta(days=st['dia_atual'])).isoformat(): continue
+                        mu['feedback'] = semana
+                        mm = M[e['motorista']]
+                        mm['conhece'][mu['k']] = max(mm['conhece'].get(mu['k'], 0.0), 0.85); mm['risco'] *= 0.85
+                        if g == 'com' and frota: frota.feedback(mu, a.get('nota') or 'Conversa sobre a multa')
+            elif t == 'renegociar_janela' and a.get('motorista') in M:
+                ls = M[a['motorista']]['linhas']; i = int(a.get('linha', 0))
+                aceita = random.Random(f"jan|{g}|{a['motorista']}|{i}|{semana}").random() < PARAMS['p_cliente_aceita_janela']
+                if 0 <= i < len(ls) and aceita and a.get('ate') is not None:
+                    ls[i]['janela_entrega_ate'] = float(a['ate'])
+                else:
+                    aplicada = False                 # cliente não aceitou (ou linha errada)
             elif t == 'nenhuma':
                 pass
             else:
@@ -443,7 +556,9 @@ def agenda(m, data):
     for i, l in enumerate(m['linhas']):
         if not l.get('ativa', True): continue
         vezes = min(len(dias), max(1, round(int(l.get('vezes_por_semana', 2)) * m.get('fator_viagens', 1.0))))
-        escolhidos = {round(j * len(dias) / vezes) for j in range(vezes)}
+        # 2.0: cada linha começa num dia diferente da semana (antes todas começavam na segunda: 52% das viagens caíam nela)
+        desloc = (int(hashlib.md5(f"{m.get('pid', '')}|{i}".encode()).hexdigest(), 16) % len(dias)) if V2 else 0
+        escolhidos = {(desloc + round(j * len(dias) / vezes)) % len(dias) for j in range(vezes)}
         if idx in escolhidos: out.append((i, l))
     return out
 
@@ -458,7 +573,7 @@ def rodar_semana(n):
         data = INICIO + dt.timedelta(days=dia)
         for g in GRUPOS:
             for pid, m in st['grupos'][g]['motoristas'].items():
-                m.setdefault('dias_trabalho', personas[pid].get('dias_trabalho'))
+                m.setdefault('dias_trabalho', personas[pid].get('dias_trabalho')); m['pid'] = pid
                 if m.get('parado_ate') and data.isoformat() <= m['parado_ate']: continue
                 hora_livre = None
                 for i, l in agenda(m, data):
@@ -493,6 +608,20 @@ def rodar_semana(n):
         for mu in ev['multas']: m['pontos'].append({'data': ev['data'], 'pontos': mu['pontos']})
         st['grupos'][g]['eventos'].append(ev); eventos_semana[g].append(ev)
         if g == 'com' and frota and geom: frota_jobs.append((pid, ev, geom, l))
+    if frota and V2:
+        hoje_fim = (INICIO + dt.timedelta(days=d1 - 1)).isoformat()
+        def extras(pid):
+            for e in eventos_semana['com']:
+                if e['motorista'] != pid: continue
+                frota.abastecimento(pid, e)
+                for mu in e['multas']:
+                    if mu.get('presencial') and not mu.get('api_id'): frota.multa_motorista(pid, mu, e)
+        with ThreadPoolExecutor(4) as ex: list(ex.map(extras, {e['motorista'] for e in eventos_semana['com']}))
+        # notificações que chegaram nesta semana (de qualquer semana anterior): a equipe completa no painel
+        for e in st['grupos']['com']['eventos']:
+            for mu in e['multas']:
+                if mu['aviso_em'] <= hoje_fim and not mu.get('notificada'):
+                    mu['notificada'] = True; frota.multa_equipe(mu, e)
     if frota:   # um motorista só tem uma viagem em andamento: as dele vão em fila, motoristas em paralelo
         por_mot = {}
         for job in frota_jobs: por_mot.setdefault(job[0], []).append(job)
@@ -544,6 +673,38 @@ def relatorio(st, g, n, evs, personas):
            'problemas_conhecidos': probl, 'linhas': linhas,
            'nota': ('Dados do painel BrasaWay: rotas legais, restrições evitadas, entregas em zona restrita avisadas antes da saída.'
                     if g == 'com' else 'Sem sistema: a empresa só sabe das multas quando a notificação chega (~3 semanas), dos retornos e batidas que o motorista conta e dos atrasos que o cliente reclama.')}
+    if V2:
+        compr = sum(e.get('diesel_comprado_l', 0) for e in evs); gasto = sum(e.get('diesel_gasto_rs', 0) for e in evs)
+        rel['semana']['diesel_litros_comprados'] = round(compr); rel['semana']['diesel_gasto_rs'] = round(gasto, 2)
+        rel['semana']['diesel_preco_medio_pago'] = round(gasto / compr, 3) if compr else None
+        rel['semana']['multas_presenciais'] = sum(1 for e in evs for mu in e['multas'] if mu.get('presencial'))
+        if g == 'com':
+            # o painel lista as multas que já chegaram (notificação ou registro do motorista) e ainda sem feedback
+            rel['multas_sem_feedback'] = [{'mid': mu['mid'], 'motorista': e['motorista'], 'data': e['data'], 'nome': mu['nome'], 'gravidade': mu['gravidade'],
+                                           'presencial': mu.get('presencial', False)}
+                                          for e in G['eventos'] for mu in e['multas'] if mu['aviso_em'] <= hoje and not mu.get('feedback')][:40]
+            rel['semana']['alertas_ao_vivo_que_evitaram'] = sum(e.get('evitadas_alerta', 0) for e in evs)
+            rel['semana']['diesel_preco_medio_das_rotas'] = round(sum(e.get('preco_medio_rota', 0) * e.get('diesel_consumido_l', 0) for e in evs) /
+                                                                  max(1, sum(e.get('diesel_consumido_l', 0) for e in evs)), 3)
+            # o planejamento avisa janela que não cabe na viagem (rota legal + pausas)
+            jan = []
+            for pid, ls in linhas.items():
+                for l in ls:
+                    if l['janela_entrega_ate'] is None or not l['ativa']: continue
+                    mm = G['motoristas'][pid]
+                    try: lg = rota_legal(l['origem'], l['destino'], mm['veiculo'], mm['hazmat'], INICIO + dt.timedelta(days=st['dia_atual']), int(l['hora_saida']), bool(mm.get('aetc')))
+                    except Exception: continue
+                    if not lg.get('ok'): continue
+                    horas = lg['seg'] / 3600; pausas = 0.5 * int(horas // 5.5) + (11 if horas > 13 else 0)
+                    jfim = l['janela_entrega_ate'] + (24 if l['janela_entrega_ate'] <= l['hora_saida'] else 0)
+                    chegada = l['hora_saida'] + horas + pausas
+                    if chegada > jfim: jan.append({'motorista': pid, 'linha': l['i'], 'saida': l['hora_saida'], 'janela_ate': l['janela_entrega_ate'],
+                                                   'chegada_prevista': round(chegada % 24, 1), 'sair_ate': round((jfim - horas - pausas) % 24, 1)})
+            rel['janelas_inviaveis'] = jan
+        else:
+            rel['multas_sem_feedback'] = [{'mid': mu['mid'], 'motorista': e['motorista'], 'data': e['data'], 'nome': mu['nome']}
+                                          for e in G['eventos'] for mu in e['multas']
+                                          if (INICIO + dt.timedelta(days=st['dia_atual'] - 7)).isoformat() < mu['aviso_em'] <= hoje and not mu.get('feedback')]
     if g == 'com':
         rel['semana']['evitadas_pelo_app'] = sum(e['evitadas_app'] for e in evs)
         rel['semana']['viagens_ignorando_app'] = sum(e['rota'] == 'ignorou_app' for e in evs)
@@ -585,6 +746,17 @@ def final():
         r = res[g]
         r['custo_total_rs'] = round(r['multas_rs'] + r['colisoes_rs'] + r['atrasos_rs'] + r['diesel_rs'] + r['motorista_rs']
                                     + r['planejamento_rs'] + r['decisoes_custos_rs'] + r['mensalidade_rs'], 2)
+        if V2:
+            cons = sum(e.get('diesel_consumido_l', 0) for e in evs); compr = sum(e.get('diesel_comprado_l', 0) for e in evs)
+            gasto = sum(e.get('diesel_gasto_rs', 0) for e in evs)
+            r['diesel_litros_consumidos'] = round(cons); r['diesel_litros_comprados'] = round(compr); r['diesel_gasto_rs'] = round(gasto, 2)
+            r['diesel_preco_medio_pago'] = round(gasto / compr, 3) if compr else None
+            r['diesel_custo_do_consumido_rs'] = round(cons * gasto / compr, 2) if compr else None
+            r['multas_presenciais'] = sum(1 for mu in multas if mu.get('presencial'))
+            r['multas_com_feedback'] = sum(1 for mu in multas if mu.get('feedback'))
+            r['alertas_ao_vivo_que_evitaram'] = sum(e.get('evitadas_alerta', 0) for e in evs)
+            # custo total da 2.0 usa o diesel efetivamente pago (consumido × preço médio pago), não o diesel fixo da 1.0
+            r['custo_total_rs'] = round(r['custo_total_rs'] - r['diesel_rs'] + (r['diesel_custo_do_consumido_rs'] or r['diesel_rs']), 2)
         if g == 'com':
             r['evitadas_pelo_app'] = sum(e['evitadas_app'] for e in evs)
             r['viagens_ignorando_app'] = sum(e['rota'] == 'ignorou_app' for e in evs)

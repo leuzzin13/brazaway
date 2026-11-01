@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Grava as decisões da equipe (resultado do workflow sim/equipe_workflow.js) em sim/out/decisoes/semana_N_<grupo>.json.
 Uso: python3 sim/salvar_decisoes.py <arquivo de saída do workflow>"""
-import json, sys
+import json, os, sys
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent / 'out' / 'decisoes'
+OUT = Path(os.environ.get('SIM_OUT', Path(__file__).resolve().parent / 'out')) / 'decisoes'
 raw = json.loads(Path(sys.argv[1]).read_text())
 res = raw['result'] if isinstance(raw, dict) and 'result' in raw else raw
 OUT.mkdir(parents=True, exist_ok=True)
