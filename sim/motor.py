@@ -16,13 +16,20 @@ Uso:
   python3 sim/motor.py semana N            # roda a semana N (1..9) com as decisões da semana N-1 e grava o relatório
   python3 sim/motor.py final               # consolida tudo em sim/out/resultado.json
 """
-import base64, datetime as dt, hashlib, hmac, json, math, os, random, sys, threading, time, urllib.error, urllib.request
+import base64, datetime as dt, hashlib, hmac, itertools, json, math, os, random, sys, threading, time, urllib.error, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 OUT = Path(os.environ.get('SIM_OUT', ROOT / 'out'))
 API = os.environ.get('SIM_API', 'http://localhost:3000')
+# cálculo de rotas e avaliações (pesado) em rodízio entre as instâncias da API; a frota fica na 1ª (alerta ao vivo guarda estado em memória)
+API_ROTAS = [u.strip() for u in os.environ.get('SIM_API_ROTAS', API).split(',') if u.strip()]
+_rodizio = itertools.count()
+def api_rota(): return API_ROTAS[next(_rodizio) % len(API_ROTAS)]
+_t0 = time.time()
+FROTA_THREADS = int(os.environ.get('SIM_FROTA_THREADS', '4'))
+def marca(fase): print(f'[{time.strftime("%H:%M:%S")} +{(time.time() - _t0) / 60:.1f} min] {fase}', file=sys.stderr, flush=True)
 VALHALLA = os.environ.get('SIM_VALHALLA', 'http://localhost:8002')
 JWT_SECRET = os.environ.get('FROTA_DEV_JWT_SECRET', 'dev-secret-troque')
 INICIO = dt.date(2026, 9, 1)          # terça-feira
@@ -145,7 +152,7 @@ def rota_legal(o, d, preset, hazmat, data, hora, aetc=False):
     body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
             'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
             'departure_at': f'{data.isoformat()}T{hora:02d}:00'}
-    st, r = post(API + '/api/route', body)
+    st, r = post(api_rota() + '/api/route', body)
     if st == 200:
         warns = r.get('warnings') or []
         res = {'ok': True, 'km': r['distance_km'], 'seg': r['duration_s'],
@@ -177,7 +184,7 @@ def rota_gps_carro(o, d, preset, hazmat, data, hora, aetc=False):
     body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
             'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
             'departure_at': f'{data.isoformat()}T{hora:02d}:00', 'coordinates': shape}
-    st, e = post(API + '/api/sim/avaliar', body)
+    st, e = post(api_rota() + '/api/sim/avaliar', body)
     if st != 200: raise RuntimeError(f'/api/sim/avaliar {st}: {str(e)[:200]}')
     res = {'km': v['trip']['summary']['length'], 'seg_carro': v['trip']['summary']['time'],
            'cruza': [item_min(x) for x in e['crossed']],
@@ -206,7 +213,7 @@ def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
             'departure_at': f'{data.isoformat()}T{hora:02d}:00',
             'abastecimento': {'nivel_pct': faixa, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset],
                               'conveniados': [{'cnpj': c['cnpj'], 'desconto_rs_l': c['desconto_rs_l'], 'pagamento': 'PIX'} for c in conv]}}
-    st, r = post(API + '/api/route', body)
+    st, r = post(api_rota() + '/api/route', body)
     pl = (r or {}).get('plano_abastecimento') if st == 200 else None
     res = {'litros': pl['litros'], 'custo': pl['custo_rs'], 'media': pl['preco_medio_rota_rs_l'], 'paradas': len(pl['paradas']),
            'chega_com_l': pl['chega_com_l'],
@@ -232,7 +239,7 @@ def planos_linha(o, d, preset, hazmat, aetc):
             'departure_at': '2026-11-03T10:00',
             'abastecimento': {'niveis_pct': FAIXAS, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset],
                               'conveniados': [{'cnpj': c['cnpj'], 'desconto_rs_l': c['desconto_rs_l'], 'pagamento': 'PIX'} for c in conv]}}
-    st, r = post(API + '/api/route', body)
+    st, r = post(api_rota() + '/api/route', body)
     planos = (r or {}).get('planos_abastecimento') if st == 200 else None
     if not planos: return
     with cache_lock:
@@ -628,7 +635,25 @@ def rodar_semana(n):
     st = load(OUT / 'estado.json'); personas = {p['id']: p for p in load(OUT / 'personas.json')}
     info = load(OUT / 'frota_info.json'); frota = Frota(info) if info else None
     CONVENIOS['com'] = st['grupos']['com'].get('conveniados', [])
+    marca(f'semana {n}: início')
     if n > 1: aplicar_decisoes(st, n - 1, frota)
+    tarefas, falhas = preparar(st, n, personas)
+    d1 = min(DIAS, 7 * n)
+    marca(f'aquecimento pronto ({len(tarefas)} viagens)')
+    simular(st, n, personas, frota, tarefas, falhas, d1)
+
+
+def aquecer(n):
+    """Calcula de antemão as rotas e planos da semana n com o estado atual (antes das decisões da equipe), em paralelo
+    ao workflow da equipe. O que as decisões mudarem (horário, linha) é calculado na hora, na semana de verdade."""
+    st = load(OUT / 'estado.json'); personas = {p['id']: p for p in load(OUT / 'personas.json')}
+    CONVENIOS['com'] = st['grupos']['com'].get('conveniados', [])
+    marca(f'aquecer {n}: início')
+    tarefas, falhas = preparar(st, n, personas)
+    marca(f'aquecer {n}: pronto ({len(tarefas)} viagens, {len(falhas)} falhas)')
+
+
+def preparar(st, n, personas):
     d0 = 7 * (n - 1); d1 = min(DIAS, 7 * n)
     tarefas = []
     for dia in range(d0, d1):
@@ -659,7 +684,12 @@ def rodar_semana(n):
             try: planos_linha(*x)
             except Exception as e: falhas.append(((x[0], x[1]), 'plano: ' + str(e)[:100]))
         with ThreadPoolExecutor(int(os.environ.get('SIM_THREADS', '4'))) as ex: list(ex.map(aquece_plano, planos))
-    save(CACHE_P, CACHE)
+    with cache_lock: save(CACHE_P, CACHE)
+    return tarefas, falhas
+
+
+def simular(st, n, personas, frota, tarefas, falhas, d1):
+    d0 = 7 * (n - 1)
     # simula na ordem do calendário
     eventos_semana = {g: [] for g in GRUPOS}
     frota_jobs = []
@@ -676,6 +706,7 @@ def rodar_semana(n):
         for mu in ev['multas']: m['pontos'].append({'data': ev['data'], 'pontos': mu['pontos']})
         st['grupos'][g]['eventos'].append(ev); eventos_semana[g].append(ev)
         if g == 'com' and frota and geom: frota_jobs.append((pid, ev, geom, l))
+    marca('viagens simuladas')
     if frota and V2:
         hoje_fim = (INICIO + dt.timedelta(days=d1 - 1)).isoformat()
         def extras(pid):
@@ -684,16 +715,18 @@ def rodar_semana(n):
                 frota.abastecimento(pid, e)
                 for mu in e['multas']:
                     if mu.get('presencial') and not mu.get('api_id'): frota.multa_motorista(pid, mu, e)
-        with ThreadPoolExecutor(4) as ex: list(ex.map(extras, {e['motorista'] for e in eventos_semana['com']}))
+        with ThreadPoolExecutor(FROTA_THREADS) as ex: list(ex.map(extras, {e['motorista'] for e in eventos_semana['com']}))
         # notificações que chegaram nesta semana (de qualquer semana anterior): a equipe completa no painel
         for e in st['grupos']['com']['eventos']:
             for mu in e['multas']:
                 if mu['aviso_em'] <= hoje_fim and not mu.get('notificada'):
                     mu['notificada'] = True; frota.multa_equipe(mu, e)
+    marca('abastecimentos e multas na frota')
     if frota:   # um motorista só tem uma viagem em andamento: as dele vão em fila, motoristas em paralelo
         por_mot = {}
         for job in frota_jobs: por_mot.setdefault(job[0], []).append(job)
-        with ThreadPoolExecutor(4) as ex: list(ex.map(lambda js: [frota.viagem(*a) for a in js], por_mot.values()))
+        with ThreadPoolExecutor(FROTA_THREADS) as ex: list(ex.map(lambda js: [frota.viagem(*a) for a in js], por_mot.values()))
+    marca('viagens enviadas à frota')
     st['dia_atual'] = d1
     save(OUT / 'estado.json', st)
     rel = {g: relatorio(st, g, n, eventos_semana[g], personas) for g in GRUPOS}
@@ -850,5 +883,6 @@ if __name__ == '__main__':
     cmd = sys.argv[1] if len(sys.argv) > 1 else ''
     if cmd == 'preparar': preparar()
     elif cmd == 'semana': rodar_semana(int(sys.argv[2]))
+    elif cmd == 'aquecer': aquecer(int(sys.argv[2]))
     elif cmd == 'final': final()
     else: sys.exit(__doc__)

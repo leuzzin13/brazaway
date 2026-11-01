@@ -3,9 +3,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 echo $$ > sim/out2/rodar.pid
-export SIM_OUT="$PWD/sim/out2" SIM_V2=1 SIM_DIAS=90 SIM_THREADS=4
+export SIM_OUT="$PWD/sim/out2" SIM_V2=1 SIM_DIAS=90 SIM_THREADS=6 SIM_FROTA_THREADS=6 SIM_API2=1
+export SIM_API_ROTAS="http://localhost:3000,http://localhost:3001"
 [ -n "${2:-}" ] && python3 sim/salvar_decisoes.py "$2" | grep -v "mensagem:"
 sim/stack.sh >/dev/null
+# se o aquecimento desta semana (sim/aquecer2.sh) ainda está rodando, espera ele gravar o cache
+A=sim/out2/aquecer.pid; while [ -f $A ] && kill -0 "$(cat $A)" 2>/dev/null; do sleep 10; done
 python3 sim/motor.py semana "$1" > "sim/out2/log_semana_$1.txt" 2>&1
 tail -1 "sim/out2/log_semana_$1.txt" | cut -c1-600
 python3 - "$1" <<'PY'
