@@ -192,7 +192,7 @@ CONVENIOS = {'com': []}       # postos com desconto no PIX fechados pela empresa
 def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
     """Plano de abastecimento do BrasaWay para a linha, saindo com nivel_pct (em faixas de 10%). Também traz o preço médio
     dos postos com preço a até 2 km da rota, que é o que paga quem abastece em qualquer posto do caminho."""
-    faixa = max(5, min(95, int(round(nivel_pct / 10.0)) * 10 or 5))
+    faixa = min(FAIXAS, key=lambda f: abs(f - nivel_pct))
     # preço de posto não muda com a hora: o plano vale por linha, caminhão e faixa de nível (bem menos cálculo)
     data, hora = dt.date(2026, 11, 3), 10
     conv = CONVENIOS['com']
@@ -214,6 +214,32 @@ def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct):
           {'litros': 0, 'custo': 0, 'media': None, 'paradas': 0, 'chega_com_l': None, 'postos': []}
     with cache_lock: CACHE[k] = res
     return res
+
+
+FAIXAS = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95]
+
+
+def planos_linha(o, d, preset, hazmat, aetc):
+    """Planos de todas as faixas de nível de uma linha numa só rota (abastecimento.niveis_pct): 11× menos cálculo de rota."""
+    conv = CONVENIOS['com']
+    cv = hashlib.md5(json.dumps(sorted((c['cnpj'], c['desconto_rs_l']) for c in conv)).encode()).hexdigest()[:8] if conv else '0'
+    chaves = {f: f'P2|{o}|{d}|{preset}|{int(bool(hazmat))}|{int(bool(aetc))}|{f}|{cv}' for f in FAIXAS}
+    with cache_lock:
+        if all(k in CACHE for k in chaves.values()): return
+    a, b = LOCAIS[o], LOCAIS[d]
+    body = {'origin': {'lat': a['lat'], 'lon': a['lon']}, 'destination': {'lat': b['lat'], 'lon': b['lon']},
+            'vehicle': {'preset': preset, **({'hazmat': True} if hazmat else {}), **({'has_aetc': True} if aetc else {})},
+            'departure_at': '2026-11-03T10:00',
+            'abastecimento': {'niveis_pct': FAIXAS, 'tanque_l': PARAMS['tanque_l'][preset], 'consumo_km_l': PARAMS['km_por_litro'][preset],
+                              'conveniados': [{'cnpj': c['cnpj'], 'desconto_rs_l': c['desconto_rs_l'], 'pagamento': 'PIX'} for c in conv]}}
+    st, r = post(API + '/api/route', body)
+    planos = (r or {}).get('planos_abastecimento') if st == 200 else None
+    if not planos: return
+    with cache_lock:
+        for pl in planos:
+            CACHE[chaves[int(pl['nivel_pct'])]] = {'litros': pl['litros'], 'custo': pl['custo_rs'], 'media': pl['preco_medio_rota_rs_l'],
+                'paradas': len(pl['paradas']), 'chega_com_l': pl['chega_com_l'],
+                'postos': [[x['cnpj'], x['posto'][:60], x['litros'], x['preco_rs_l'], x['origem_preco']] for x in pl['paradas']]}
 
 
 def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
@@ -628,10 +654,8 @@ def rodar_semana(n):
     if V2:   # planos de abastecimento de todas as faixas de nível das linhas da semana, em paralelo (antes: um a um no meio da simulação)
         planos = {(a[0], a[1], a[2], a[3], a[6]) for a in uniq.values()}
         def aquece_plano(x):
-            o, d, preset, hz, aetc = x
-            for faixa in range(10, 100, 10):
-                try: plano_abast(o, d, preset, hz, None, None, aetc, faixa)
-                except Exception as e: falhas.append(((o, d), 'plano: ' + str(e)[:100]))
+            try: planos_linha(*x)
+            except Exception as e: falhas.append(((x[0], x[1]), 'plano: ' + str(e)[:100]))
         with ThreadPoolExecutor(int(os.environ.get('SIM_THREADS', '4'))) as ex: list(ex.map(aquece_plano, planos))
     save(CACHE_P, CACHE)
     # simula na ordem do calendário

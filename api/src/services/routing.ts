@@ -4,7 +4,7 @@ import { env } from '../config.js';
 import type { RouteRequest } from '../schemas.js';
 import { resolveVehicle, type Vehicle } from './vehicle.js';
 import { priorizarAvisos, type ResumoAvisos } from './alertas.js';
-import { planoAbastecimento, type PlanoAbastecimento } from './abastecimento.js';
+import { planoAbastecimento, planosPorNivel, type PlanoAbastecimento } from './abastecimento.js';
 import * as valhalla from './valhalla.js';
 import { NoRouteError, type Ring } from './valhalla.js';
 import { activeReportsInBbox, blockingReports, crowdAlertsInBbox, reportToRing, type ReportRow } from './restrictions.js';
@@ -54,6 +54,7 @@ export interface RouteResponse {
   resumo_avisos: ResumoAvisos;
   /** só quando o pedido traz `abastecimento`: onde parar e quantos litros (ver services/abastecimento.ts) */
   plano_abastecimento?: PlanoAbastecimento | null;
+  planos_abastecimento?: (PlanoAbastecimento & { nivel_pct: number })[] | null;
   valhalla: { costing: 'truck'; exclude_polygons_count: number; cost_lines_count: number; timings_ms?: Record<string, number> };
 }
 
@@ -515,6 +516,7 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
     layers: layerOut,
     ...priorizarAvisos(warnings),
     ...(req.abastecimento ? { plano_abastecimento: await withTimeout(planoAbastecimento(line.geometry, restricted.distance_km, vehicle.preset_id ?? req.vehicle.preset, req.abastecimento), LAYER_POST_TIMEOUT_MS, 'plano de abastecimento').catch(() => null) } : {}),
+    ...(req.abastecimento?.niveis_pct?.length ? { planos_abastecimento: await withTimeout(planosPorNivel(line.geometry, restricted.distance_km, vehicle.preset_id ?? req.vehicle.preset, req.abastecimento, req.abastecimento.niveis_pct), LAYER_POST_TIMEOUT_MS, 'planos por nível').catch(() => null) } : {}),
     valhalla: { costing: 'truck', exclude_polygons_count: excludePolygons.length, cost_lines_count: costLines.length, ...(timings ? { timings_ms: timings } : {}) },
   };
 }

@@ -55,6 +55,8 @@ export const AbastecimentoInput = z.object({
   compra_minima_l: z.number().positive().max(1000).optional(),
   // completa o tanque em posto abaixo da média da rota, pensando nas próximas viagens (padrão: sim)
   encher_no_barato: z.boolean().default(true),
+  // vários níveis de saída numa só rota (ex.: [10, 20, ..., 90]): devolve planos_abastecimento, um por nível
+  niveis_pct: z.array(z.number().min(0).max(100)).max(20).optional(),
   conveniados: z.array(Conveniado).max(500).default([]),
 });
 export type AbastecimentoInput = z.input<typeof AbastecimentoInput>;

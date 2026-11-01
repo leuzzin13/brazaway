@@ -152,3 +152,13 @@ export async function planoAbastecimento(line: GeoJSON.LineString, distanciaKm: 
   const rows = await featuresNearRoute('postos_diesel', line, NEAR_M, { limit: 3000, where: `f.kind = 'com_preco'` });
   return planejar(rows.map((r) => toPosto(r, distanciaKm)), distanciaKm, preset, AbastecimentoInput.parse(input));
 }
+
+/**
+ * Vários níveis de saída de uma vez, sobre os mesmos postos (a rota e a busca dos postos são o caro; o plano é rápido).
+ * Serve a quem quer comparar ou guardar os planos de uma linha (ex.: a simulação) sem recalcular a rota por nível.
+ */
+export async function planosPorNivel(line: GeoJSON.LineString, distanciaKm: number, preset: string | undefined, input: AbastecimentoInput, niveisPct: number[]) {
+  const rows = await featuresNearRoute('postos_diesel', line, NEAR_M, { limit: 3000, where: `f.kind = 'com_preco'` });
+  const postos = rows.map((r) => toPosto(r, distanciaKm));
+  return niveisPct.map((n) => ({ nivel_pct: n, ...planejar(postos, distanciaKm, preset, AbastecimentoInput.parse({ ...input, nivel_l: undefined, nivel_pct: n })) }));
+}
