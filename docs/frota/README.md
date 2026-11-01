@@ -131,6 +131,9 @@ Legenda de quem pode: **E** = equipe (owner/admin/gestor), **M** = motorista (na
 | `PATCH /vehicles/:id` | E | Altera qualquer campo, inclusive `status` (alimenta a cobrança). |
 | `GET /live` | T | Última posição de cada motorista em GeoJSON (`FeatureCollection` de `Point`, com `age_s`). Motorista só vê a própria. |
 | `GET /billing` | E | Veículos ativos por mês × preço (`billing_active_vehicles_monthly`); filtros `from`/`to` (`YYYY-MM`). |
+| `POST /multas` | T | Registra uma multa. **Motorista**: só a própria, pelo app, na hora em que foi autuado ou parado (`ocorrida_em`, `lat`/`lon`, `local`, `descricao`, `foto_path`, `ait`, `orgao`, `valor_cents`); entra como `registrada`, `origem: motorista`, e os campos da equipe são ignorados. **Equipe**: qualquer campo. A viagem é ligada sozinha pelo motorista (ou veículo) e pelo horário. AIT repetido na empresa → 409. |
+| `GET /multas` | T | Lista (filtros `status` separado por vírgula, `driver_id`, `feedback=true\|false`, `from`, `to`) com `resumo`: `total`, `sem_feedback`, `indicacao_vencendo` (prazo de indicar o condutor em até 7 dias), `valor_cents`, `pontos`. Cada item traz `dias_para_indicar`. Motorista vê só as dele. |
+| `PATCH /multas/:id` | E | Completa o auto (AIT, órgão, enquadramento, gravidade, valor, pontos, prazos, quem paga, `restricao` ligada) e marca **`feedback_enviado`** (com `feedback_nota`); a API grava quem e quando (`feedback_por`, `feedback_em`), e desmarcar limpa os dois. |
 | `POST /jobs/compaction` | S | `select app.run_compaction()`: compacta viagens e rastros, expira convites, apaga pings crus vencidos. |
 
 ### Job de compactação

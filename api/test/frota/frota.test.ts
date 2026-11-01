@@ -540,3 +540,56 @@ describe('janela do cliente que não cabe na viagem', () => {
     await pool.query('delete from trips where id = $1', [r.body.id]);
   });
 });
+
+describe('multas: o motorista registra, a equipe completa e marca o feedback', () => {
+  let multaId = '';
+  const meio = async () => {
+    const t = (await pool.query('select started_at, coalesce(ended_at, now()) as ended_at from trips where id = $1', [S.tripId])).rows[0];
+    return new Date((new Date(t.started_at).getTime() + new Date(t.ended_at).getTime()) / 2).toISOString();
+  };
+
+  it('motorista registra pelo app; a viagem é ligada pelo horário; campos da equipe são ignorados', async () => {
+    const r = await call('POST', '/multas', T.motA, {
+      ocorrida_em: await meio(), lat: -23.55, lon: -46.70, local: 'Marginal Pinheiros', descricao: 'Fui parado pela CET',
+      status: 'paga', feedback_enviado: true, pontos: 0,
+    });
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    expect(r.body.driver_id).toBe(MOT_A);
+    expect(r.body.trip_id).toBe(S.tripId);
+    expect(r.body.origem).toBe('motorista');
+    expect(r.body.status).toBe('registrada');
+    expect(r.body.feedback_enviado).toBe(false);
+    expect(r.body.pontos).toBeNull();
+    multaId = r.body.id;
+  });
+
+  it('motorista não altera; equipe completa o auto e marca "feedback enviado?"', async () => {
+    expect((await call('PATCH', `/multas/${multaId}`, T.motA, { feedback_enviado: true })).status).toBe(403);
+    const r = await call('PATCH', `/multas/${multaId}`, T.ownerA, {
+      ait: 'S12345678', orgao: 'CET', gravidade: 'media', valor_cents: 13016, pontos: 4, status: 'notificada',
+      prazo_indicacao: '2026-12-01', feedback_enviado: true, feedback_nota: 'Conversei sobre o horário da Marginal',
+    });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body).toMatchObject({ status: 'notificada', gravidade: 'media', pontos: 4, feedback_enviado: true, driver_name: expect.any(String) });
+    expect(r.body.feedback_por).toBe(OWNER_A);
+    expect(r.body.feedback_em).toBeTruthy();
+  });
+
+  it('lista com resumo: equipe vê todas; motorista só as dele; outra empresa não vê', async () => {
+    const e = await call('GET', '/multas?feedback=true', T.ownerA);
+    expect(e.status).toBe(200);
+    expect(e.body.items.map((x: any) => x.id)).toContain(multaId);
+    expect(e.body.resumo).toMatchObject({ total: 1, sem_feedback: 0, valor_cents: 13016, pontos: 4 });
+    expect((await call('GET', '/multas', T.motA)).body.items).toHaveLength(1);
+    expect((await call('GET', '/multas', T.ownerB)).body.items).toHaveLength(0);
+    expect((await call('GET', '/multas?status=inexistente', T.ownerA)).status).toBe(422);
+  });
+
+  it('desmarcar o feedback limpa quem e quando; AIT repetido na empresa → 409', async () => {
+    const r = await call('PATCH', `/multas/${multaId}`, T.ownerA, { feedback_enviado: false });
+    expect(r.body).toMatchObject({ feedback_enviado: false, feedback_em: null, feedback_por: null });
+    const dup = await call('POST', '/multas', T.ownerA, { ait: 'S12345678', ocorrida_em: new Date().toISOString() });
+    expect(dup.status).toBe(409);
+    await pool.query('delete from multas where company_id = $1', [CO_A]);
+  });
+});

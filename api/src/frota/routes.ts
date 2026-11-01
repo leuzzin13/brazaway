@@ -161,6 +161,47 @@ const VehicleFields = {
 const NewVehicle = z.object({ plate: Plate, ...VehicleFields });
 const PatchVehicle = z.object({ plate: Plate.optional(), ...VehicleFields }).refine((v) => Object.keys(v).length > 0, { message: 'nada para alterar' });
 
+
+// ------------------------------------------------------------------ multas
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'use AAAA-MM-DD');
+const MultaFields = {
+  ocorrida_em: IsoDateTime.optional(),
+  lat: z.number().min(-90).max(90).optional(), lon: z.number().min(-180).max(180).optional(),
+  local: z.string().trim().max(300).nullable().optional(),
+  descricao: z.string().trim().max(2000).nullable().optional(),
+  foto_path: z.string().trim().max(500).nullable().optional(),
+  ait: z.string().trim().max(40).nullable().optional(),
+  orgao: z.string().trim().max(120).nullable().optional(),
+  enquadramento: z.string().trim().max(200).nullable().optional(),
+  gravidade: z.enum(['leve', 'media', 'grave', 'gravissima']).nullable().optional(),
+  valor_cents: z.number().int().nonnegative().max(10_000_000).nullable().optional(),
+  pontos: z.number().int().min(0).max(7).nullable().optional(),
+  status: z.enum(['registrada', 'notificada', 'condutor_indicado', 'em_recurso', 'paga', 'cancelada']).optional(),
+  prazo_indicacao: IsoDate.nullable().optional(), prazo_pagamento: IsoDate.nullable().optional(),
+  paga_pela: z.enum(['empresa', 'motorista']).nullable().optional(),
+  restricao: z.string().trim().max(300).nullable().optional(),
+  feedback_enviado: z.boolean().optional(), feedback_nota: z.string().trim().max(2000).nullable().optional(),
+  driver_id: Uuid.nullable().optional(), vehicle_id: Uuid.nullable().optional(), trip_id: Uuid.nullable().optional(),
+};
+const NovaMulta = z.object(MultaFields);
+const EditaMulta = z.object(MultaFields).omit({ lat: true, lon: true }).refine((v) => Object.keys(v).length > 0, { message: 'nada para alterar' });
+// o que o motorista pode informar ao registrar pelo app; o resto é da equipe
+const DO_MOTORISTA = ['ocorrida_em', 'lat', 'lon', 'local', 'descricao', 'foto_path', 'ait', 'orgao', 'valor_cents', 'trip_id', 'vehicle_id'] as const;
+const MultasQuery = z.object({
+  status: z.string().optional().transform((v) => (v ? v.split(',') : undefined))
+    .pipe(z.array(z.enum(['registrada', 'notificada', 'condutor_indicado', 'em_recurso', 'paga', 'cancelada'])).optional()),
+  driver_id: Uuid.optional(),
+  feedback: z.enum(['true', 'false']).optional(),
+  from: IsoDateTime.optional(), to: IsoDateTime.optional(),
+  limit: z.coerce.number().int().min(1).max(500).default(100), offset: z.coerce.number().int().min(0).default(0),
+});
+const MULTA_COLS = `x.id, x.driver_id, m.display_name as driver_name, x.vehicle_id, v.plate as vehicle_plate, x.trip_id, t.title as trip_title,
+  x.ocorrida_em, x.local, case when x.geom is null then null else ST_Y(x.geom) end as lat, case when x.geom is null then null else ST_X(x.geom) end as lon,
+  x.descricao, x.ait, x.orgao, x.enquadramento, x.gravidade, x.valor_cents, x.pontos, x.status, x.prazo_indicacao, x.prazo_pagamento,
+  (x.prazo_indicacao - current_date) as dias_para_indicar, x.paga_pela, x.foto_path, x.restricao,
+  x.feedback_enviado, x.feedback_em, x.feedback_por, x.feedback_nota, x.origem, x.created_at, x.updated_at`;
+const MULTA_FROM = `multas x left join company_members m on m.user_id = x.driver_id left join vehicles v on v.id = x.vehicle_id left join trips t on t.id = x.trip_id`;
+
 // ------------------------------------------------------------------ saída (colunas)
 type Db = pg.PoolClient;
 
@@ -467,6 +508,67 @@ export async function frotaRoutes(app: FastifyInstance) {
       const b = parse(z.object({ ids: z.array(Uuid).min(1).max(500) }), req.body);
       const r = await c.query('select app.mark_messages_read($1::uuid[]) as n', [b.ids]);
       return { marked: r.rows[0].n };
+    }));
+
+
+    // ---------------------------------------------------------- multas
+    // motorista: registra a própria ("tomei uma multa") e vê as suas; equipe: completa, muda status, marca o feedback
+    api.post('/multas', async (req, reply) => {
+      const out = await asUser(req, async (c, claims) => {
+        const raw = parse(NovaMulta, req.body ?? {});
+        const staff = (await c.query('select app.is_staff() as ok')).rows[0].ok as boolean;
+        const b: Record<string, any> = staff ? { ...raw } : Object.fromEntries(DO_MOTORISTA.filter((k) => raw[k] !== undefined).map((k) => [k, raw[k]]));
+        if (!staff) { b.driver_id = claims.sub; b.status = 'registrada'; b.feedback_enviado = false; }
+        if ((b.lat === undefined) !== (b.lon === undefined)) throw httpError(422, 'informe lat e lon juntos');
+        const cols: string[] = ['company_id', 'ocorrida_em', 'origem', 'created_by'];
+        const vals: unknown[] = [b.ocorrida_em ?? new Date().toISOString(), staff ? 'gestor' : 'motorista', claims.sub];
+        const ph: string[] = ['app.company_id()', '$1::timestamptz', '$2', '$3::uuid'];
+        if (b.lat !== undefined) { vals.push(b.lon, b.lat); cols.push('geom'); ph.push(`ST_SetSRID(ST_MakePoint($${vals.length - 1}::float8, $${vals.length}::float8), 4326)`); }
+        for (const k of ['local', 'descricao', 'foto_path', 'ait', 'orgao', 'enquadramento', 'gravidade', 'valor_cents', 'pontos', 'status',
+                         'prazo_indicacao', 'prazo_pagamento', 'paga_pela', 'restricao', 'feedback_enviado', 'feedback_nota', 'driver_id', 'vehicle_id', 'trip_id']) {
+          if (b[k] === undefined) continue;
+          vals.push(b[k]); cols.push(k);
+          const cast = k === 'gravidade' ? '::app.multa_gravidade' : k === 'status' ? '::app.multa_status' : '';
+          ph.push(`$${vals.length}${cast}`);
+        }
+        if (b.foto_path && !String(b.foto_path).startsWith(`${(await c.query('select app.company_id() as id')).rows[0].id}/`)) throw httpError(403, 'foto fora da pasta da empresa');
+        const r = await c.query(`insert into multas (${cols.join(', ')}) values (${ph.join(', ')}) returning id`, vals);
+        return one(c, `select ${MULTA_COLS} from ${MULTA_FROM} where x.id = $1`, [r.rows[0].id], 'multa não encontrada');
+      });
+      return reply.code(201).send(out);
+    });
+
+    api.get('/multas', (req) => asUser(req, async (c) => {
+      const q = parse(MultasQuery, req.query);
+      const w: string[] = ['true']; const p: unknown[] = [];
+      if (q.status) { p.push(q.status); w.push(`x.status = any($${p.length}::app.multa_status[])`); }
+      if (q.driver_id) { p.push(q.driver_id); w.push(`x.driver_id = $${p.length}`); }
+      if (q.feedback) { p.push(q.feedback === 'true'); w.push(`x.feedback_enviado = $${p.length}`); }
+      if (q.from) { p.push(q.from); w.push(`x.ocorrida_em >= $${p.length}`); }
+      if (q.to) { p.push(q.to); w.push(`x.ocorrida_em < $${p.length}`); }
+      const where = w.join(' and ');
+      p.push(q.limit, q.offset);
+      const items = (await c.query(`select ${MULTA_COLS} from ${MULTA_FROM} where ${where} order by x.ocorrida_em desc, x.id limit $${p.length - 1} offset $${p.length}`, p)).rows;
+      const resumo = (await c.query(
+        `select count(*)::int as total,
+                count(*) filter (where not x.feedback_enviado and x.status <> 'cancelada')::int as sem_feedback,
+                count(*) filter (where x.status in ('registrada', 'notificada') and x.prazo_indicacao is not null
+                                   and x.prazo_indicacao <= current_date + 7)::int as indicacao_vencendo,
+                coalesce(sum(x.valor_cents) filter (where x.status <> 'cancelada'), 0)::int as valor_cents,
+                coalesce(sum(x.pontos) filter (where x.status <> 'cancelada'), 0)::int as pontos
+           from multas x where ${where}`, p.slice(0, -2))).rows[0];
+      return { items, resumo, limit: q.limit, offset: q.offset };
+    }));
+
+    api.patch('/multas/:id', (req) => asUser(req, async (c) => {
+      const id = idParam(req);
+      await requireStaff(c);
+      const b = parse(EditaMulta, req.body ?? {});
+      const s = setClause(b, 2);
+      const sql = s.sql.replace(/gravidade = \$(\d+)/, 'gravidade = $$$1::app.multa_gravidade').replace(/status = \$(\d+)/, 'status = $$$1::app.multa_status');
+      const r = await c.query(`update multas set ${sql} where id = $1 returning id`, [id, ...s.params]);
+      if (!r.rows[0]) throw httpError(404, 'multa não encontrada');
+      return one(c, `select ${MULTA_COLS} from ${MULTA_FROM} where x.id = $1`, [id], 'multa não encontrada');
     }));
 
     // ---------------------------------------------------------- convites e membros
