@@ -2,7 +2,7 @@
 # Simulação 2.0: grava as decisões da semana anterior (saída do workflow) e roda a semana N. Uso: sim/rodar2.sh N <saida_workflow>
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export SIM_OUT="$PWD/sim/out2" SIM_V2=1 SIM_DIAS=90 SIM_THREADS=6
+export SIM_OUT="$PWD/sim/out2" SIM_V2=1 SIM_DIAS=90 SIM_THREADS=4
 [ -n "${2:-}" ] && python3 sim/salvar_decisoes.py "$2" | grep -v "mensagem:"
 sim/stack.sh >/dev/null
 python3 sim/motor.py semana "$1" > "sim/out2/log_semana_$1.txt" 2>&1
