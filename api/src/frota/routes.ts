@@ -8,6 +8,7 @@ import { computeRoute, RouteBlockedError, withTimeout } from '../services/routin
 import { priorizarAvisos } from '../services/alertas.js';
 import { planoAbastecimento } from '../services/abastecimento.js';
 import { alertasAoVivo } from './alertas_vivo.js';
+import { conciliacaoRoutes } from './conciliacao.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
 import { pool } from '../db.js';
@@ -648,6 +649,9 @@ export async function frotaRoutes(app: FastifyInstance) {
            from abastecimentos a where ${where} and a.combustivel <> 'arla32'`, p)).rows[0];
       return { items, resumo };
     }));
+
+    // conferência do diesel por placa (frota/conciliacao.ts): só a equipe
+    api.register(conciliacaoRoutes);
 
     // consumo médio medido: por veículo e por motorista (equipe vê todos; motorista vê o próprio)
     api.get('/consumo', (req) => asUser(req, async (c, claims) => {
