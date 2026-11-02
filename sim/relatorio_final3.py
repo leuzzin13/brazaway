@@ -387,7 +387,7 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
   <h1>BrasaWay 3.0: as três novidades na mesma frota</h1>
   <p class="lead">Três transportadoras iguais, com os mesmos 100 motoristas, as mesmas linhas e a mesma sorte em cada viagem, rodaram de 1º de setembro a {esc(fmt_data(HOJE)) or "novembro"}. A <b>A+</b> usou o BrasaWay com as três novidades: trechos bloqueados pela empresa, conferência do diesel e prazos das multas no automático. A <b>A</b> usou o BrasaWay como na simulação 2.0. A <b>B</b> seguiu sem sistema. Toda semana, uma equipe interna de cada empresa (roteirista, financeiro e gerente, cada um um agente) leu o próprio relatório e decidiu o que mudar.</p>
   <div class="placa">
-    <div><b>{brl(dif_mes)}</b><span>por mês a menos na A+ do que na A, na frota de 100 caminhões ({brl(dif_mes / 100)} por caminhão)</span></div>
+    <div><b>{brl(abs(dif_mes))}</b><span>por mês {'a menos' if dif_mes >= 0 else 'a mais'} na A+ do que na A, na frota de 100 caminhões ({brl(abs(dif_mes) / 100)} por caminhão)</span></div>
     <div><b>{P["nic_total"]} × {A["nic_total"]}</b><span>NIC pagas pela A+ e pela A ({brl(P["nic_pago"])} contra {brl(A["nic_pago"])}), contando as já certas no fim</span></div>
     <div><b>{num(P["desviado_l"])} × {num(A["desviado_l"])}</b><span>litros de diesel desviados na A+ e na A (na B, {num(B["desviado_l"])})</span></div>
     <div><b>{P["multas"]} × {A["multas"]} × {B["multas"]}</b><span>multas na A+, na A e na B</span></div>
@@ -412,12 +412,12 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
     <thead><tr><th scope="col"></th>{cab3}<th scope="col">A+ gastou a menos que a A</th></tr></thead>
     <tbody>{linhas_c}<tr><th scope="row"><b>Total</b></th>{"".join(f"<td><b>{brl(tot[g])}</b></td>" for g in GR)}<td><b>{brl(tot["com"] - tot["mais"])}</b></td></tr></tbody>
   </table></div>
-  <p class="muted">Por mês, a A+ gastou {brl(dif_mes)} a menos que a A e {brl(dif_mes_b)} a menos que a B.</p>
+  <p class="muted">Por mês, a A+ gastou {brl(abs(dif_mes))} {'a menos' if dif_mes >= 0 else 'a mais'} que a A e {brl(abs(dif_mes_b))} {'a menos' if dif_mes_b >= 0 else 'a mais'} que a B. Na última coluna, valor negativo quer dizer que a A+ gastou mais.</p>
 </section>
 
 <section>
   <div class="eyebrow mais">Novidade 1</div>
-  <h2>Trechos bloqueados: a rota de todos desvia</h2>
+  <h2>Trechos bloqueados: a ideia e o que aconteceu</h2>
   <p>Alguns trechos proibidos não têm alternativa razoável: a rota do app passa por eles e avisa. Na 2.0, orientar motorista por motorista não resolvia. Na A+, a equipe trava o trecho para a frota inteira e a rota de todos desvia dele quando existe qualquer caminho, pagando alguns km a mais. Abaixo, cada trecho bloqueado pela A+ e o que aconteceu nele, nas mesmas semanas, na A (que não tem o bloqueio).</p>
   <div class="scroll"><table>
     <thead><tr><th scope="col">Trecho</th><th scope="col">Multas na A</th><th scope="col" class="c">Multas na A+</th><th scope="col" class="c">Viagens que desviaram</th><th scope="col" class="c">Km a mais</th></tr></thead>
