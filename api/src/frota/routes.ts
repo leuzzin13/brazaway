@@ -168,7 +168,7 @@ const PatchVehicle = z.object({ plate: Plate.optional(), ...VehicleFields }).ref
 
 
 // ------------------------------------------------------------------ multas
-const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'use AAAA-MM-DD');
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'use AAAA-MM-DD').refine((v) => DateTime.fromISO(v).isValid, 'data inexistente');
 const MultaFields = {
   ocorrida_em: IsoDateTime.optional(),
   lat: z.number().min(-90).max(90).optional(), lon: z.number().min(-180).max(180).optional(),

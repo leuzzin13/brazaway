@@ -14,15 +14,17 @@ import { asUser, httpError } from './auth.js';
  * - indicação do condutor: 30 dias a partir da notificação da autuação (art. 257 §7, redação da Lei 14.071/2020). O
  *   prazo é preenchido pelo banco a partir de `notificada_em` (trigger app.multas_prazos, migration 0406);
  * - NIC (art. 257 §8): a multa original multiplicada pelo número de infrações iguais cometidas em 12 meses. Estimativa:
- *   multas da empresa (menos as canceladas) com o mesmo enquadramento, ou a mesma `restricao` quando o enquadramento
- *   falta, nos 365 dias antes da ocorrência, contando ela;
+ *   multas da empresa (menos as canceladas) com o mesmo enquadramento (sem diferença de espaços e maiúsculas), ou a mesma
+ *   `restricao` quando o enquadramento falta, nos 365 dias antes da ocorrência, contando ela. Campo em branco conta como
+ *   faltando: sem enquadramento nem restrição, a multa vale ×1;
  * - pagamento até o vencimento: 80% do valor (art. 284); 60% com o SNE (art. 284 §1º: empresa aderida ao Sistema de
  *   Notificação Eletrônica, multa notificada por ele e sem recurso); depois do vencimento, 100%. Sem `vencimento`, vale o
  *   `prazo_pagamento` antigo (0402).
  *
  * A indicação em lote só muda o status e devolve o formulário pronto para imprimir: o BrasaWay não envia nada ao órgão.
  * As listas de prazos conferem a permissão com RLS (equipe da empresa) e somam fora dela, com a empresa filtrada em toda
- * tabela (a contagem de infrações iguais lê a tabela de multas uma vez por multa listada).
+ * tabela. A contagem de infrações iguais lê as multas da empresa uma vez só (janela de 365 dias por enquadramento e por
+ * restrição), e não uma vez por multa listada.
  */
 
 const SNE_PCT = 60;          // art. 284 §1º
@@ -51,23 +53,42 @@ const IndicarBody = z.object({ ids: z.array(z.string().uuid()).min(1).max(200) }
 const PrazosQuery = z.object({ dias: z.coerce.number().int().min(7).max(90).default(15) });
 const SneBody = z.object({ aderida: z.boolean() });
 
-/** multas abertas com prazo de indicação até hoje + $3 dias e sem indicação; $1 empresa, $2 hoje */
+/**
+ * multas abertas com prazo de indicação até hoje + $3 dias e sem indicação; $1 empresa, $2 hoje.
+ * Infrações iguais em 12 meses: para cada multa listada, as multas da empresa não canceladas com a mesma chave e
+ * ocorrida_em em (ocorrida_em - 365 dias, ocorrida_em], contando ela. Uma passada só pelas multas da empresa na faixa de
+ * datas das listadas, com janela RANGE (o '- 1 microsecond' deixa de fora a de exatamente 365 dias antes). Chave em
+ * branco vira null (não junta multas sem relação); sem enquadramento nem restrição, ×1.
+ */
 const SQL_INDICACAO = `
+with listadas as (
+  select x.* from multas x
+   where x.company_id = $1 and x.status::text = any($4::text[]) and x.prazo_indicacao is not null
+     and x.condutor_indicado_em is null and x.prazo_indicacao <= $2::date + $3::int
+), chaves as (
+  select y.id, y.ocorrida_em, nullif(lower(btrim(y.enquadramento)), '') as enq, nullif(btrim(y.restricao), '') as res
+    from multas y
+   where y.company_id = $1 and y.status <> 'cancelada'
+     and y.ocorrida_em > (select min(ocorrida_em) from listadas) - interval '365 days'
+     and y.ocorrida_em <= (select max(ocorrida_em) from listadas)
+), iguais as (
+  select id,
+         case when enq is not null then count(*) over (partition by enq order by ocorrida_em
+                range between interval '365 days' - interval '1 microsecond' preceding and current row) end as n_enq,
+         case when res is not null then count(*) over (partition by res order by ocorrida_em
+                range between interval '365 days' - interval '1 microsecond' preceding and current row) end as n_res
+    from chaves
+)
 select x.id, x.status::text as status, x.driver_id, m.display_name as driver_name, x.vehicle_id, v.plate as vehicle_plate,
        x.ait, x.orgao, x.enquadramento, x.restricao, x.gravidade::text as gravidade, x.valor_cents, x.ocorrida_em,
        x.notificada_em::text as notificada_em, x.prazo_indicacao::text as prazo_indicacao,
        (x.prazo_indicacao - $2::date)::int as dias_restantes,
-       greatest(1, (select count(*) from multas y
-                     where y.company_id = x.company_id and y.status <> 'cancelada'
-                       and y.ocorrida_em <= x.ocorrida_em and y.ocorrida_em > x.ocorrida_em - interval '365 days'
-                       and case when x.enquadramento is not null then lower(btrim(y.enquadramento)) = lower(btrim(x.enquadramento))
-                                when x.restricao is not null then y.restricao = x.restricao
-                                else y.id = x.id end))::int as infracoes_iguais_12m
-  from multas x
+       greatest(1, case when nullif(btrim(x.enquadramento), '') is not null then i.n_enq
+                        when nullif(btrim(x.restricao), '') is not null then i.n_res end)::int as infracoes_iguais_12m
+  from listadas x
+  left join iguais i on i.id = x.id
   left join company_members m on m.user_id = x.driver_id and m.company_id = x.company_id
   left join vehicles v on v.id = x.vehicle_id and v.company_id = x.company_id
- where x.company_id = $1 and x.status::text = any($4::text[]) and x.prazo_indicacao is not null
-   and x.condutor_indicado_em is null and x.prazo_indicacao <= $2::date + $3::int
  order by x.prazo_indicacao, x.ocorrida_em, x.id`;
 
 /** multas não pagas nem canceladas com vencimento (ou prazo_pagamento); $1 empresa, $2 hoje */
@@ -87,7 +108,8 @@ export async function multasPrazosRoutes(api: FastifyInstance) {
   // grava quando e quem) e volta com o formulário para imprimir e colher a assinatura.
   api.post('/multas/indicar-condutor', (req) => asUser(req, async (c) => {
     await requireStaff(c);
-    const ids = [...new Set(parse(IndicarBody, req.body ?? {}).ids)];
+    // o Postgres devolve o uuid em minúsculas: normaliza antes de comparar (o iOS, por exemplo, manda em maiúsculas)
+    const ids = [...new Set(parse(IndicarBody, req.body ?? {}).ids.map((s) => s.toLowerCase()))];
     const feitas = new Set((await c.query<{ id: string }>(
       `update multas set status = 'condutor_indicado'
         where id = any($1::uuid[]) and driver_id is not null and status in ('registrada', 'notificada') returning id`, [ids])).rows.map((r) => r.id));
@@ -154,8 +176,10 @@ export async function multasPrazosRoutes(api: FastifyInstance) {
       const valor: number | null = x.valor_cents;
       const aPagarX = valor === null ? null : Math.round((valor * pct) / 100);
       const economiaX = valor === null ? null : valor - aPagarX!;
-      // a mais com o SNE: multa ainda no prazo, sem recurso, que hoje sairia por 80%
-      const maisSne = valor !== null && !vencida && !comSne && x.status !== 'em_recurso' ? aPagarX! - Math.round((valor * SNE_PCT) / 100) : 0;
+      // a mais com o SNE: empresa ainda não aderiu e a multa está no prazo, sem recurso, saindo por 80%. Com a empresa
+      // aderida não há o que prometer: a multa notificada pelo correio não passa a ter o desconto do SNE.
+      const maisSne = !sneAderida && valor !== null && !vencida && x.status !== 'em_recurso'
+        ? aPagarX! - Math.round((valor * SNE_PCT) / 100) : 0;
       aPagar += aPagarX ?? 0; economia += economiaX ?? 0; economiaSne += maisSne;
       return {
         ...x, ocorrida_em: horaLocal(x.ocorrida_em), vencida, percentual: pct,

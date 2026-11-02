@@ -88,6 +88,9 @@ describe('trigger: prazo de indicação = notificação + 30 dias', () => {
     expect(p.body).toMatchObject({ notificada_em: dia(-5), vencimento: dia(25), sne: false, dias_para_indicar: 25 });
     expect((await call('PATCH', `/multas/${r.body.id}`, T.motA, { sne: true })).status).toBe(403);
     expect((await call('PATCH', `/multas/${r.body.id}`, T.ownerA, { notificada_em: '05/10/2026' })).status).toBe(422);
+    // data que não existe no calendário: 422 (antes ia ao banco e voltava 500)
+    expect((await call('PATCH', `/multas/${r.body.id}`, T.ownerA, { vencimento: '2026-02-30' })).status).toBe(422);
+    expect((await call('POST', '/multas', T.ownerA, { ocorrida_em: quando(-3), notificada_em: '2026-13-01' })).status).toBe(422);
 
     const m = await call('POST', '/multas', T.motA, { ocorrida_em: quando(-1), descricao: 'Parado na balança', notificada_em: dia(-1), sne: true, vencimento: dia(5) });
     expect(m.status, JSON.stringify(m.body)).toBe(201);
@@ -176,6 +179,15 @@ describe('POST /multas/indicar-condutor', () => {
     expect(p.status).toBe(200);
     expect(p.body).toMatchObject({ status: 'notificada', condutor_indicado_em: null, condutor_indicado_por: null });
   });
+
+  it('id em maiúsculas (UUID do iOS): indica e devolve o formulário, sem repetir o item', async () => {
+    const r = await call('POST', '/multas/indicar-condutor', T.ownerA, { ids: [S.ok.toUpperCase(), S.ok] });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(r.body.indicadas).toBe(1);
+    expect(r.body.items).toHaveLength(1);
+    expect(r.body.items[0]).toMatchObject({ id: S.ok, ok: true, formulario: { condutor: 'Motorista A', ait: 'IND0001' } });
+    expect((await linha(S.ok)).status).toBe('condutor_indicado');
+  });
 });
 
 describe('GET /multas/prazos', () => {
@@ -187,6 +199,9 @@ describe('GET /multas/prazos', () => {
                               enquadramento: '187-I', valor_cents: 13016 });
     // a mesma infração 100 dias antes (paga): conta para a NIC da de 3 dias
     S.anterior = await multa({ company_id: CO_A, driver_id: MOT_A, ocorrida_em: quando(-120), status: 'paga', enquadramento: '218-II', valor_cents: 19353 });
+    // não contam: a mesma infração 366 dias antes da de 3 dias (fora dos 12 meses) e uma cancelada
+    S.antiga = await multa({ company_id: CO_A, ocorrida_em: quando(-30 - 366), status: 'paga', enquadramento: '218-II', valor_cents: 19353 });
+    S.cancelada = await multa({ company_id: CO_A, ocorrida_em: quando(-60), status: 'cancelada', enquadramento: '218-II', valor_cents: 19353 });
     S.em3 = await multa({ company_id: CO_A, driver_id: MOT_A, ocorrida_em: quando(-30), notificada_em: dia(-27), status: 'notificada',
                          enquadramento: '218-II', valor_cents: 19353 });
     S.em12 = await multa({ company_id: CO_A, ocorrida_em: quando(-20), notificada_em: dia(-18), status: 'registrada', restricao: 'zmrc-sp', valor_cents: 13016 });
@@ -240,15 +255,51 @@ describe('GET /multas/prazos', () => {
     expect(r.body.resumo).toMatchObject({ sne_aderida: false, sne_aderida_em: null, economia_sne_possivel_cents: 6000, a_pagar_cents: 8000 + 16000 + 30000 + 32000 });
   });
 
-  it('com SNE aderido: 60% na multa do SNE sem recurso; as outras continuam 80/100', async () => {
+  it('com SNE aderido: 60% na multa do SNE sem recurso; as outras continuam 80/100 e não há economia a prometer', async () => {
     expect((await call('PATCH', '/empresa/sne', T.ownerA, { aderida: true })).status).toBe(200);
     const r = await call('GET', '/multas/prazos', T.ownerA);
     const by = Object.fromEntries(r.body.pagamento.map((x: any) => [x.id, x]));
     expect(by[S.pSne]).toMatchObject({ percentual: 60, valor_a_pagar_cents: 6000, economia_cents: 4000, economia_sne_possivel_cents: 0 });
-    expect(by[S.pSemSne]).toMatchObject({ percentual: 80, valor_a_pagar_cents: 16000, economia_sne_possivel_cents: 4000 });
+    // notificada pelo correio: aderir não dá o desconto do SNE a ela
+    expect(by[S.pSemSne]).toMatchObject({ percentual: 80, valor_a_pagar_cents: 16000, economia_sne_possivel_cents: 0 });
     expect(by[S.pVencida]).toMatchObject({ percentual: 100, valor_a_pagar_cents: 30000 });
     expect(by[S.pRecurso]).toMatchObject({ percentual: 80, valor_a_pagar_cents: 32000 });
-    expect(r.body.resumo).toMatchObject({ sne_aderida: true, sne_aderida_em: dia(0), economia_sne_possivel_cents: 4000 });
+    expect(r.body.resumo).toMatchObject({ sne_aderida: true, sne_aderida_em: dia(0), economia_sne_possivel_cents: 0 });
+  });
+});
+
+describe('NIC: enquadramento ou restrição em branco', () => {
+  afterAll(async () => { await pool.query('delete from multas where company_id = $1', [CO_A]); });
+
+  it('multas sem relação, com o campo vazio, não contam como infrações iguais', async () => {
+    // pela API (o formulário manda '' e o zod corta os espaços) e direto no banco (espaços sem cortar)
+    for (const b of [{ enquadramento: '' }, { enquadramento: '   ' }, { enquadramento: '', restricao: '' }, { restricao: ' ' }]) {
+      const r = await call('POST', '/multas', T.ownerA, {
+        ...b, ocorrida_em: quando(-25), notificada_em: dia(-20), status: 'notificada', valor_cents: 10000, driver_id: MOT_A,
+      });
+      expect(r.status, JSON.stringify(r.body)).toBe(201);
+    }
+    await multa({ company_id: CO_A, driver_id: MOT_A, ocorrida_em: quando(-25), notificada_em: dia(-20), status: 'notificada',
+                  enquadramento: '  ', restricao: '  ', valor_cents: 10000 });
+    const r = await call('GET', '/multas/prazos', T.ownerA);
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const lista = r.body.indicacao.ate_15_dias;
+    expect(lista).toHaveLength(5);
+    for (const x of lista) expect(x).toMatchObject({ infracoes_iguais_12m: 1, nic_estimado_cents: 10000 });
+    expect(r.body.resumo.nic_risco_cents).toBe(50000);
+  });
+
+  it('o mesmo enquadramento com espaços ou maiúsculas diferentes conta como igual', async () => {
+    await pool.query('delete from multas where company_id = $1', [CO_A]);
+    const a = await multa({ company_id: CO_A, ocorrida_em: quando(-25), notificada_em: dia(-20), status: 'notificada', enquadramento: '218-ii ', valor_cents: 10000 });
+    const b = await multa({ company_id: CO_A, ocorrida_em: quando(-24), notificada_em: dia(-20), status: 'notificada', enquadramento: ' 218-II', valor_cents: 10000 });
+    const c = await multa({ company_id: CO_A, ocorrida_em: quando(-23), notificada_em: dia(-20), status: 'notificada', restricao: 'zmrc-sp', valor_cents: 10000 });
+    const d = await multa({ company_id: CO_A, ocorrida_em: quando(-26), notificada_em: dia(-20), status: 'notificada', restricao: 'zmrc-sp',
+                            enquadramento: '187-I', valor_cents: 10000 });
+    const r = await call('GET', '/multas/prazos', T.ownerA);
+    const by = Object.fromEntries(r.body.indicacao.ate_15_dias.map((x: any) => [x.id, x.infracoes_iguais_12m]));
+    // c não tem enquadramento: compara pela restrição, e d (mesma restrição, antes) conta para ela; d compara pelo enquadramento
+    expect(by).toEqual({ [a]: 1, [b]: 2, [c]: 2, [d]: 1 });
   });
 });
 

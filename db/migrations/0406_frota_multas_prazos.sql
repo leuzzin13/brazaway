@@ -25,8 +25,11 @@ alter table multas add column if not exists condutor_indicado_em timestamptz;
 alter table multas add column if not exists condutor_indicado_por uuid references auth.users(id) on delete set null;
 alter table companies add column if not exists sne_aderida_em date;
 
--- infrações iguais da empresa em 12 meses (estimativa da NIC)
-create index if not exists multas_enquadramento_idx on multas (company_id, enquadramento, ocorrida_em);
+-- infrações iguais da empresa em 12 meses (estimativa da NIC): GET /multas/prazos lê uma vez as multas da empresa na faixa
+-- de ocorrida_em das listadas e conta por janela. A primeira versão desta migration criava multas_enquadramento_idx
+-- (company_id, enquadramento, ocorrida_em), que a consulta não usava (compara lower(btrim(enquadramento))): sai.
+drop index if exists multas_enquadramento_idx;
+create index if not exists multas_ocorrida_idx on multas (company_id, ocorrida_em);
 
 -- Trigger próprio (não mexe em app.multas_before_write, de 0402). Triggers BEFORE da mesma tabela disparam em ordem
 -- alfabética do nome: 'multas_before_write' roda antes de 'multas_prazos'.
