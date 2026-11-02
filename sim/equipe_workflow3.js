@@ -29,7 +29,7 @@ const ACAO = {
   convenio_pix: '- {"acao":"convenio_pix","desconto_rs_l":0.25,"quantos":15}  (negocia desconto por litro pago no PIX com os postos mais usados pelo plano do app, listados em postos_mais_usados; até R$ 0,20 ~70% aceitam, até R$ 0,30 ~50%, acima ~25%; o plano passa a preferir esses postos)',
   indicar_condutor: '- {"acao":"indicar_condutor","multas":["<mid de multas_para_indicar>", "..."]}  (indica quem dirigia; liste cada multa pelo mid. Sem indicação até o prazo, a empresa paga a NIC: o valor da multa × o número de multas iguais em 12 meses. Indicada, os pontos vão para a CNH do motorista)',
   indicar_condutor_mais: '- {"acao":"indicar_condutor","multas":["<mid>"]}  (o sistema já indica sozinho até 2 dias depois da notificação; use só se ver alguma parada)',
-  cobrar_abastecimento: '- {"acao":"cobrar_abastecimento","motoristas":["m07"] ou ["todos"],"nota":"..."}  (cobra o motorista sobre onde e quanto abastece: pelo nome tem muito mais efeito do que a cobrança geral)',
+  cobrar_abastecimento: '- {"acao":"cobrar_abastecimento","motoristas":["m07"] ou ["todos"],"nota":"..."}  (cobra o motorista sobre onde e quanto abastece: pelo nome tem muito mais efeito do que a cobrança geral, mas é uma conversa do gerente: no máximo 5 motoristas pelo nome por semana, somando as ações da semana)',
   aderir_sne: '- {"acao":"aderir_sne"}  (adesão da empresa ao SNE, o Sistema de Notificação Eletrônica do Denatran: a notificação chega sem atraso nem extravio e a multa sem recurso sai com 40% de desconto em vez de 20%; vale para as infrações a partir da adesão)',
   bloquear_trecho: '- {"acao":"bloquear_trecho","itens":["<item de problemas_conhecidos com bloqueavel=true>"],"motivo":"..."}  (trava o trecho para a frota inteira: a rota de todos desvia dele se existir caminho; só trecho de camada, "layer:...", não zona) / {"acao":"desbloquear_trecho","itens":["<item de trechos_bloqueados>"]}',
   nenhuma: '- {"acao":"nenhuma"}',
@@ -63,7 +63,7 @@ const LEITURA = {
 const contexto = (e) => `Simulação de operação real, semana ${N} de ${TOTAL} (setembro a novembro de 2026). Você trabalha na ${e.nome}
 Leia o relatório desta semana em ${BASE}/relatorios/semana_${N}_${e.g}.json (${LEITURA[e.g]}).
 ${N > 1 ? `As decisões das semanas anteriores estão em ${BASE}/decisoes/semana_<n>_${e.g}.json; leia só as das últimas 2 semanas (n = ${Math.max(1, N - 2)} a ${N - 1}), cada uma com o resultado (_aplicada, _resultado) do que foi aplicado, e só volte mais se precisar de um fato específico.` : ''}
-As personas dos motoristas estão em ${BASE}/personas.json (perfil e como cada um reage). Trabalhe só com o que a sua empresa enxerga no relatório; não abra os arquivos das outras empresas nem a pasta ${BASE}/verdade. Seja objetivo: leia as partes que importam com jq ou python (não imprima o arquivo inteiro) e não repita a mesma leitura.`
+As personas dos motoristas estão em ${BASE}/personas.json (perfil e como cada um reage). Trabalhe só com o que a sua empresa enxerga no relatório; não abra os arquivos das outras empresas, a pasta ${BASE}/verdade, os bastidores da simulação (${BASE}/estado.json, resultado.json, cache_rotas.json, frota_info.json, falhas_*.json e os logs *.txt) nem o código da simulação (sim/*.py, sim/*.sh, sim/*.js). Seja objetivo: leia as partes que importam com jq ou python (não imprima o arquivo inteiro) e não repita a mesma leitura.`
 
 const res = await parallel(EMPRESAS.map((e) => async () => {
   const [rot, fin] = await parallel(['roteirista', 'financeiro'].map((p) => () => agent(

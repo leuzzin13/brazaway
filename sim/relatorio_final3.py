@@ -3,7 +3,7 @@
 Lê sim/out3/estado.json, resultado.json (rode antes `motor.py final` com SIM_V3=1), os relatórios semanais, as decisões
 e o que a empresa não enxerga (sim/out3/verdade/); escreve docs/simulacao/relatorio_3_0.html.
 Uso: python3 sim/relatorio_final3.py   (SIM_OUT e SIM_RELATORIO trocam a pasta de entrada e o arquivo de saída)"""
-import collections, html, json, os, sys
+import collections, html, json, os, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -30,6 +30,13 @@ def brl(v, casas=0): return ('−' if v < 0 else '') + 'R$ ' + f'{abs(v):,.{casa
 def num(v, casas=0): return ('−' if v < 0 else '') + f'{abs(v):,.{casas}f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
 def fmt_data(iso): return f'{iso[8:10]}/{iso[5:7]}/{iso[:4]}' if iso and len(iso) >= 10 else (iso or '')
 def pct(a, b): return (a - b) / b * 100 if b else 0.0
+def id_trecho(i):
+    """id do trecho sem os sufixos que ele ganha numa rota (`~n`, `#k`), como idDoTrecho na API e id_trecho no motor"""
+    return re.sub(r'(?:[~#]\d+)+$', '', str(i or ''))
+def trecho(k):
+    """trecho (id normalizado) de uma chave 'layer:<camada>:<id>'; None para zona e o resto"""
+    p = str(k).split(':', 2)
+    return id_trecho(p[2]) if len(p) == 3 and p[0] == 'layer' else None
 def semana_de(iso):
     """semana da simulação de uma data (a semana 1 começa em 01/09/2026)"""
     import datetime as dt
@@ -46,14 +53,17 @@ def totais(g):
     tipos = R.get('diesel_litros_por_tipo_de_compra') or {}
     return {
         'viagens': len(evs), 'km': sum(e['km'] for e in evs), 'multas': len(mult), 'multas_pago': R['multas_rs'], 'multas_cheio': R['multas_rs_valor_cheio'],
-        'nic': R['nic'], 'nic_pago': R['nic_rs'], 'pontos': sum(pts.values()), 'mot_20': sum(1 for v in pts.values() if v >= 20),
+        # NIC: as cobradas nos dias simulados e as já certas no fim (notificação extraviada com o prazo depois do último dia)
+        'nic': R['nic'], 'nic_certa': R.get('nic_certa_no_fim', 0), 'nic_total': R['nic'] + R.get('nic_certa_no_fim', 0),
+        'nic_pago': R['nic_rs'] + R.get('nic_certa_no_fim_rs', 0), 'pontos': sum(pts.values()), 'mot_20': sum(1 for v in pts.values() if v >= 20),
         'retornos': sum(e['retornos'] for e in evs), 'colisoes': sum(e['colisoes'] for e in evs), 'atrasos': sum(e['atraso'] for e in evs),
         'passagens': sum(len(e['violacoes']) for e in evs), 'diesel_l': cons, 'diesel_preco': gasto / compr if compr else 0.0,
         'desviado_l': R['diesel_desviado_l'], 'desviado_rs': R['diesel_desviado_rs'], 'diesel_custo': R['diesel_custo_rs'],
         'km_desvio': R.get('km_desvio_bloqueios', 0), 'km_desvio_rs': R.get('km_desvio_bloqueios_rs', 0),
-        'fora_plano_l': tipos.get('fora_do_plano', 0), 'plano_l': tipos.get('plano', 0),
+        'fora_plano_l': tipos.get('fora_do_plano', 0), 'plano_l': tipos.get('plano', 0), 'sobrepreco_fora': R.get('fora_do_plano_sobrepreco_rs', 0),
         'perdidas': R['notificacoes_perdidas'], 'atrasadas': R['notificacoes_atrasadas'], 'sne': R.get('sne_desde'),
-        'desconto': R['multas_desconto_rs'], 'pendentes_fim': R['multas_aguardando_indicacao_no_fim'], 'custo': R['custo_total_rs'],
+        'desconto': R['multas_desconto_rs'], 'desconto_sne': R.get('multas_desconto_sne_rs', 0),
+        'pendentes_fim': R['multas_aguardando_indicacao_no_fim'], 'custo': R['custo_total_rs'],
         'ignorando': sum(1 for e in evs if e.get('rota') == 'ignorou_app'), 'alertas': sum(e.get('evitadas_alerta', 0) for e in evs),
         'restrito_app': sum(1 for mu in mult if mu.get('fonte') == 'restrito_app'),
     }
@@ -75,23 +85,25 @@ blocos = sorted(RES['mais'].get('bloqueios', []) + RES['mais'].get('bloqueios_re
 f1_linhas, f1 = [], {'multas_A': 0, 'multas_P': 0, 'pago_A': 0.0, 'pago_P': 0.0, 'pass_A': 0, 'pass_P': 0, 'viagens': 0, 'km': 0.0}
 
 
-def pago(mu):
+def pago(mu, g):
     if mu.get('situacao') == 'cancelada': return 0.0
     f = RES['params']['pagamento_sne'] if mu.get('sne') and mu.get('situacao') is None else RES['params']['pagamento_no_prazo']
     v = mu['valor'] * f
     if mu.get('nic'): v += mu['nic']['valor'] * (RES['params']['pagamento_sne'] if mu.get('sne') else RES['params']['pagamento_no_prazo'])
+    v += (RES[g].get('nic_certa_no_fim_mid') or {}).get(mu.get('mid'), 0.0)       # NIC já certa no fim (já com o desconto)
     return v
 
 
 for b in blocos:
     s0, s1 = periodo(b)
     linha = {'nome': b['nome'], 'semana': b['semana'], 'removido': b.get('removido_semana')}
+    tb = id_trecho(b['item_id'])        # o trecho inteiro: outro pedaço dele (id com sufixo da rota) também conta
     for g, tag in (('com', 'A'), ('mais', 'P')):
         evs = [e for e in G[g]['eventos'] if s0 <= e['semana'] <= s1]
-        ms = [mu for e in evs for mu in e['multas'] if mu['k'] == b['k']]
-        linha['multas_' + tag] = len(ms); linha['pago_' + tag] = sum(pago(mu) for mu in ms)
-        linha['pass_' + tag] = sum(1 for e in evs for v in e['violacoes'] if v['k'] == b['k'])
-    dv = [e for e in G['mais']['eventos'] if b['item_id'] in (e.get('bloqueios_evitados') or [])]
+        ms = [mu for e in evs for mu in e['multas'] if mu['k'] == b['k'] or trecho(mu['k']) == tb]
+        linha['multas_' + tag] = len(ms); linha['pago_' + tag] = sum(pago(mu, g) for mu in ms)
+        linha['pass_' + tag] = sum(1 for e in evs for v in e['violacoes'] if v['k'] == b['k'] or trecho(v['k']) == tb)
+    dv = [e for e in G['mais']['eventos'] if tb in {id_trecho(x) for x in e.get('bloqueios_evitados') or []}]
     linha['viagens'] = len(dv); linha['km'] = sum((e.get('km_desvio_bloqueio') or 0) / len(e['bloqueios_evitados']) for e in dv)
     for k in f1: f1[k] += linha[k]
     f1_linhas.append(linha)
@@ -122,11 +134,32 @@ falsos = sorted({pid for _, c in conf for pid in c.get('falsos_alarmes') or []})
 ultimo = conf[-1][1] if conf else {}
 fora_pct = {g: (T[g]['fora_plano_l'] / (T[g]['fora_plano_l'] + T[g]['plano_l']) * 100 if (T[g]['fora_plano_l'] + T[g]['plano_l']) else 0) for g in ('mais', 'com')}
 cobr = {g: RES[g].get('cobrancas', []) for g in GR}
+cobr_nomes = {g: sum(len(c['motoristas']) for c in cobr[g] if isinstance(c.get('motoristas'), list)) for g in GR}
+cobr_todos = {g: sum(1 for c in cobr[g] if c.get('motoristas') == 'todos') for g in GR}
+# ganho isolado da novidade (A − A+): diesel desviado e o sobrepreço de quem comprou fora do posto do plano
+f2_desv_l = A['desviado_l'] - P['desviado_l']; f2_desv_rs = A['desviado_rs'] - P['desviado_rs']
+f2_sobre = A['sobrepreco_fora'] - P['sobrepreco_fora']
+f2_saldo = f2_desv_rs + f2_sobre
+# calibração do painel: ele compara com o consumo de referência do caminhão; o consumo de cada motorista é a referência
+# × fator_consumo (o desviador cobra ainda desvio_pct a mais). Quem passa da tolerância só por gastar mais é apontado.
+tol = RES['params'].get('conciliacao_tolerancia_pct', 8) / 100; dpct = RES['params'].get('desvio_pct', 0.08)
+fat = {pid: float(m.get('fator_consumo', 1.0)) for pid, m in G['mais']['motoristas'].items()}
+honestos_acima = sorted(pid for pid, f in fat.items() if pid not in set(desv) and f > 1 + tol)
+desv_abaixo = sorted(pid for pid in desv if fat.get(pid, 1.0) * (1 + dpct) <= 1 + tol)
 
 
 # ------------------------------------------------------------------ F3: prazos das multas
 nic_sem = {g: [sum(1 for e in G[g]['eventos'] for mu in e['multas'] if (mu.get('nic') or {}).get('semana') == n) for n in semanas] for g in GR}
 mult_sem = {g: [rel[(n, g)]['semana']['multas_cometidas'] for n in semanas] for g in GR}
+# ganho isolado da novidade (A − A+), separado por causa: a NIC de notificação que chegou e ninguém indicou a tempo (a
+# indicação automática evita) e a de notificação extraviada (o SNE evita), mais o desconto a mais do SNE nas multas
+npc = {g: RES[g].get('nic_por_causa') or {} for g in GR}
+def causa(g, c): x = npc[g].get(c) or {}; return x.get('n', 0), x.get('rs', 0.0)
+f3_auto_rs = causa('com', 'nao_indicada')[1] - causa('mais', 'nao_indicada')[1]
+f3_extrav_rs = causa('com', 'extraviada')[1] - causa('mais', 'extraviada')[1]
+f3_sne_desc = P['desconto_sne'] - A['desconto_sne']
+f3_sne_rs = f3_extrav_rs + f3_sne_desc
+f3_saldo = f3_auto_rs + f3_sne_rs
 
 
 # ------------------------------------------------------------------ gráficos (SVG, uma escala por gráfico; dica no hover de cada marca)
@@ -220,8 +253,9 @@ tabela = ''.join([
     linha3('Viagens feitas', 'viagens', i0, menor_melhor=False),
     linha3('Multas', 'multas', i0),
     linha3('Multas pagas', 'multas_pago', b0, nota='com o desconto de pagar no prazo (e o do SNE)'),
-    linha3('NIC (condutor não indicado)', 'nic', i0, nota='a empresa paga o valor da multa × as multas iguais em 12 meses'),
-    linha3('NIC pagas', 'nic_pago', b0),
+    linha3('NIC cobradas (condutor não indicado)', 'nic', i0, nota='a empresa paga o valor da multa × as multas iguais em 12 meses'),
+    linha3('NIC já certas no fim', 'nic_certa', i0, nota='notificação extraviada: ninguém pode indicar, mas o prazo vence depois do último dia'),
+    linha3('NIC pagas', 'nic_pago', b0, nota='as cobradas e as já certas no fim'),
     linha3('Pontos na CNH (soma)', 'pontos', i0, nota='só vão para o motorista quando o condutor é indicado'),
     linha3('Voltas por rua proibida', 'retornos', i0),
     linha3('Batidas em viaduto', 'colisoes', i0),
@@ -237,6 +271,7 @@ itens_custo = [('Diesel (consumido × preço pago)', lambda g: RES[g]['diesel_cu
                ('Diesel desviado (pago e não posto no tanque)', lambda g: RES[g]['diesel_desviado_rs']),
                ('Multas pagas', lambda g: RES[g]['multas_rs']),
                ('NIC pagas', lambda g: RES[g]['nic_rs']),
+               ('NIC já certas no fim (notificação extraviada, prazo depois do último dia)', lambda g: RES[g].get('nic_certa_no_fim_rs', 0)),
                ('Batidas em viaduto (R$ 30 mil cada)', lambda g: RES[g]['colisoes_rs']),
                ('Atrasos (R$ 150 por entrega atrasada)', lambda g: RES[g]['atrasos_rs']),
                ('Tempo do roteirista planejando', lambda g: RES[g]['planejamento_rs']),
@@ -353,7 +388,7 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
   <p class="lead">Três transportadoras iguais, com os mesmos 100 motoristas, as mesmas linhas e a mesma sorte em cada viagem, rodaram de 1º de setembro a {esc(fmt_data(HOJE)) or "novembro"}. A <b>A+</b> usou o BrasaWay com as três novidades: trechos bloqueados pela empresa, conferência do diesel e prazos das multas no automático. A <b>A</b> usou o BrasaWay como na simulação 2.0. A <b>B</b> seguiu sem sistema. Toda semana, uma equipe interna de cada empresa (roteirista, financeiro e gerente, cada um um agente) leu o próprio relatório e decidiu o que mudar.</p>
   <div class="placa">
     <div><b>{brl(dif_mes)}</b><span>por mês a menos na A+ do que na A, na frota de 100 caminhões ({brl(dif_mes / 100)} por caminhão)</span></div>
-    <div><b>{P["nic"]} × {A["nic"]}</b><span>NIC pagas pela A+ e pela A ({brl(P["nic_pago"])} contra {brl(A["nic_pago"])})</span></div>
+    <div><b>{P["nic_total"]} × {A["nic_total"]}</b><span>NIC pagas pela A+ e pela A ({brl(P["nic_pago"])} contra {brl(A["nic_pago"])}), contando as já certas no fim</span></div>
     <div><b>{num(P["desviado_l"])} × {num(A["desviado_l"])}</b><span>litros de diesel desviados na A+ e na A (na B, {num(B["desviado_l"])})</span></div>
     <div><b>{P["multas"]} × {A["multas"]} × {B["multas"]}</b><span>multas na A+, na A e na B</span></div>
   </div>
@@ -410,7 +445,10 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
   <ul>
     <li>Diesel desviado: {num(P["desviado_l"])} L ({brl(P["desviado_rs"])}) na A+, {num(A["desviado_l"])} L ({brl(A["desviado_rs"])}) na A e {num(B["desviado_l"])} L ({brl(B["desviado_rs"])}) na B.</li>
     <li>Falsos alarmes do painel (motorista apontado sem desviar, por consumo acima do normal ou nível do tanque): {", ".join(falsos) if falsos else "nenhum"}.{f' Na última conferência, o painel somou {num(ultimo.get("litros_comprados_painel") or 0)} L comprados e a simulação enviou {num(ultimo.get("litros_cobrados_sim") or 0)} L na mesma janela.' if ultimo else ''}</li>
-    <li>Compra fora do posto do plano, seguindo a rota do app: {num(fora_pct["mais"], 1)}% dos litros na A+ e {num(fora_pct["com"], 1)}% na A. Cobranças feitas pela equipe: {len(cobr["mais"])} na A+, {len(cobr["com"])} na A, {len(cobr["sem"])} na B.</li>
+    <li>Compra fora do posto do plano, seguindo a rota do app: {num(fora_pct["mais"], 1)}% dos litros na A+ e {num(fora_pct["com"], 1)}% na A, pagando {brl(P["sobrepreco_fora"])} e {brl(A["sobrepreco_fora"])} acima do preço do plano. Cobranças feitas pela equipe: {len(cobr["mais"])} na A+, {len(cobr["com"])} na A, {len(cobr["sem"])} na B ({cobr_nomes["mais"]}, {cobr_nomes["com"]} e {cobr_nomes["sem"]} motoristas cobrados pelo nome; {cobr_todos["mais"]}, {cobr_todos["com"]} e {cobr_todos["sem"]} cobranças gerais).</li>
+    <li><b>Ganho da novidade (A − A+; positivo = a A+ gastou menos):</b> diesel desviado {num(f2_desv_l)} L ({brl(f2_desv_rs)}); sobrepreço de quem comprou fora do posto do plano {brl(f2_sobre)}. Saldo da novidade: <b>{brl(f2_saldo)}</b>.</li>
+    <li>O que confunde a comparação: a A também pode cobrar abastecimento (pelo nome, até {RES["params"].get("cobrar_nomeado", {}).get("max_semana", "?")} motoristas por semana, ou de todos) e fechar convênios PIX. Desviador parado por cobrança na A, às cegas, reduz o ganho; convênios diferentes mudam o preço do plano de cada uma.</li>
+    <li>Limite do painel: ele compara com o consumo de referência do caminhão, e o desvio ({num(dpct * 100)}%) é igual à tolerância ({num(tol * 100)}%). {len(honestos_acima)} motoristas que não desviam gastam mais que a referência além da tolerância e são apontados por consumo; {len(desv_abaixo)} dos {len(desv)} desviadores gastam menos que a referência e, mesmo desviando, ficam abaixo dela{f" ({', '.join(desv_abaixo)})" if desv_abaixo else ""}.</li>
   </ul>
   <div class="fig">
     {legenda("preço médio pago pelo litro, por semana")}
@@ -427,9 +465,11 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
     {g_nic}
   </div>
   <ul>
-    <li>NIC: <b>{P["nic"]}</b> na A+ ({brl(P["nic_pago"])}), <b>{A["nic"]}</b> na A ({brl(A["nic_pago"])}) e <b>{B["nic"]}</b> na B ({brl(B["nic_pago"])}). Por notificação extraviada: {RES["mais"]["nic_notificacao_perdida"]} na A+, {RES["com"]["nic_notificacao_perdida"]} na A, {RES["sem"]["nic_notificacao_perdida"]} na B.</li>
+    <li>NIC: <b>{P["nic_total"]}</b> na A+ ({brl(P["nic_pago"])}), <b>{A["nic_total"]}</b> na A ({brl(A["nic_pago"])}) e <b>{B["nic_total"]}</b> na B ({brl(B["nic_pago"])}). Por notificação extraviada: {causa("mais", "extraviada")[0]} na A+, {causa("com", "extraviada")[0]} na A, {causa("sem", "extraviada")[0]} na B; por notificação que chegou e ninguém indicou a tempo: {causa("mais", "nao_indicada")[0]}, {causa("com", "nao_indicada")[0]} e {causa("sem", "nao_indicada")[0]}.</li>
     <li>SNE: a A+ {sne_txt["mais"]}; a A {sne_txt["com"]}; a B {sne_txt["sem"]}. Desconto nas multas pagas: {brl(P["desconto"])} na A+, {brl(A["desconto"])} na A, {brl(B["desconto"])} na B.</li>
-    <li>Notificações extraviadas: {P["perdidas"]} na A+, {A["perdidas"]} na A, {B["perdidas"]} na B; atrasadas: {P["atrasadas"]}, {A["atrasadas"]} e {B["atrasadas"]}. No fim, ainda corriam no prazo {P["pendentes_fim"]}, {A["pendentes_fim"]} e {B["pendentes_fim"]} multas sem indicação.</li>
+    <li>Notificações extraviadas: {P["perdidas"]} na A+, {A["perdidas"]} na A, {B["perdidas"]} na B; atrasadas: {P["atrasadas"]}, {A["atrasadas"]} e {B["atrasadas"]}. O prazo de indicação de uma extraviada vence 51 dias depois da infração: {P["nic_certa"]}, {A["nic_certa"]} e {B["nic_certa"]} delas venciam depois do último dia e entram como NIC já certa (ninguém pode indicar). No fim, ainda corriam no prazo {P["pendentes_fim"]}, {A["pendentes_fim"]} e {B["pendentes_fim"]} multas notificadas (ou a notificar) sem indicação.</li>
+    <li><b>Ganho da novidade (A − A+; positivo = a A+ gastou menos):</b> indicação automática {brl(f3_auto_rs)} (NIC de multa notificada e não indicada a tempo); SNE {brl(f3_sne_rs)} ({brl(f3_extrav_rs)} de NIC por notificação extraviada e {brl(f3_sne_desc)} de desconto a mais nas multas: {brl(P["desconto_sne"])} na A+ contra {brl(A["desconto_sne"])} na A). Saldo da novidade: <b>{brl(f3_saldo)}</b>.</li>
+    <li>O que confunde a comparação: a A também pode aderir ao SNE (a novidade da A+ é o painel recomendar); se as duas aderiram, a diferença do SNE vem só da data da adesão. A NIC vale a multa × as multas iguais em 12 meses: com menos multas (trechos bloqueados), a A+ também paga NIC menores.</li>
     <li>O outro lado: condutor indicado leva os pontos. A A+ tem {P["pontos"]} pontos na CNH dos motoristas ({P["mot_20"]} com 20 ou mais), contra {A["pontos"]} na A ({A["mot_20"]}): a empresa que não indica paga a NIC, mas os pontos não chegam a ninguém.</li>
   </ul>
   <div class="fig">
@@ -477,5 +517,5 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
 '''
 DEST.parent.mkdir(parents=True, exist_ok=True)
 DEST.write_text(pagina)
-print(f'{DEST} ({NS} semanas): custo total A+ {tot["mais"]:,.0f} × A {tot["com"]:,.0f} × B {tot["sem"]:,.0f}; NIC {P["nic"]}×{A["nic"]}×{B["nic"]}; '
+print(f'{DEST} ({NS} semanas): custo total A+ {tot["mais"]:,.0f} × A {tot["com"]:,.0f} × B {tot["sem"]:,.0f}; NIC {P["nic_total"]}×{A["nic_total"]}×{B["nic_total"]} (com as já certas no fim); '
       f'desviado {P["desviado_l"]}×{A["desviado_l"]}×{B["desviado_l"]} L; F1 multas {f1["multas_A"]}→{f1["multas_P"]}, km {P["km_desvio"]}')

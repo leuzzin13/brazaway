@@ -92,8 +92,12 @@ PARAMS3 = {
     # P1 adesão ao posto do plano (premissa): seguindo a rota do app, compra no posto do plano com esta probabilidade;
     # senão compra no posto de costume (preço médio da rota × (1 + ajuste do hábito), como quem ignora o app)
     'adesao_posto': {'mais_barato_que_conhece': 0.90, 'cartao_da_empresa': 0.90, 'outros': 0.75},
-    # P2 desvio de diesel (premissa): as N personas de maior tolerância a risco (desempate pelo id) cobram X% a mais de
-    # litros do que põem no tanque, em todo abastecimento, até serem paradas (os mesmos gêmeos nas três empresas)
+    # P2 desvio de diesel (premissa): N personas sorteadas pelo id (sorteio fixo, sem olhar o perfil: as equipes leem as
+    # personas, e escolher pela tolerância a risco deixava A e B acharem quem desvia sem a conferência do diesel) cobram
+    # X% a mais de litros do que põem no tanque, em todo abastecimento, até serem paradas (os mesmos gêmeos nas três).
+    # O painel só aponta consumo acima da tolerância (conciliacao_tolerancia_pct, a padrão da API): com X igual a ela, só
+    # o desviador que já gasta mais que o consumo de referência passa dela, e o motorista honesto que gasta mais também
+    # é apontado (o relatório final mostra quantos de cada)
     'desviadores_n': 4,
     'desvio_pct': 0.08,
     # P3 notificação pelo correio, sem SNE (premissa): chega aviso_multa_dias depois da infração; uma parte atrasa e uma
@@ -110,16 +114,18 @@ PARAMS3 = {
     'vencimento_dias': 30,              # vencimento registrado na frota = notificação + 30 dias
     # F3 (premissa): na 'mais' o sistema indica o condutor sozinho até N dias depois da notificação
     'indicacao_automatica_dias': 2,
-    # ação cobrar_abastecimento (premissa)
-    'cobrar_nomeado': {'adesao_posto_mais': 0.15, 'adesao_posto_max': 0.98, 'p_para_desvio': 0.70},
+    # ação cobrar_abastecimento (premissa): a cobrança pelo nome é uma conversa do gerente com o motorista, no máximo
+    # max_semana por semana em cada empresa (sem limite, listar os 100 dava a todos o efeito da cobrança nominal)
+    'cobrar_nomeado': {'adesao_posto_mais': 0.15, 'adesao_posto_max': 0.98, 'p_para_desvio': 0.70, 'max_semana': 5},
     'cobrar_todos': {'adesao_posto_mais': 0.03, 'p_para_desvio': 0.20},
     # F1 (premissa): trecho bloqueado pela empresa = a frota inteira foi orientada sobre ele (vale para quem ignora a rota)
     'conhece_bloqueado': 0.75,
     # (premissa) motorista orientado sobre um trecho "sem alternativa" da rota do app desvia por conta própria com
     # probabilidade orientação × (1 − 0,3 × risco), pagando o desvio de cabeça da 2.0 (5% a mais de km e 10 min)
     'desvio_de_cabeca': {'km_pct': 0.05, 'min': 10},
-    # conferência do diesel: janela pedida ao painel (dias)
+    # conferência do diesel: janela pedida ao painel (dias) e tolerância (% acima do esperado que vira alerta; a da API)
     'conciliacao_dias': 7,
+    'conciliacao_tolerancia_pct': 8,
 }
 if V3: PARAMS.update(PARAMS3)
 
@@ -207,7 +213,7 @@ def rota_legal(o, d, preset, hazmat, data, hora, aetc=False, bloq=None):
     muda a rota), e aí a chave do cache leva o hash dos bloqueios."""
     if bloq:
         base = rota_legal(o, d, preset, hazmat, data, hora, aetc)
-        if not base.get('ok') or not ({x['id'] for x in base.get('restrito') or []} & set(bloq['item_ids'])):
+        if not base.get('ok') or not (ids_trecho(x['id'] for x in base.get('restrito') or []) & ids_trecho(bloq['item_ids'])):
             return base
     k = ('L3|' if V3 else 'L|') + chave(o, d, preset, hazmat, data, hora, aetc) + (f'|b{hash_bloq(bloq)}' if bloq else '')
     with cache_lock:
@@ -235,9 +241,9 @@ def rota_legal(o, d, preset, hazmat, data, hora, aetc=False, bloq=None):
             # geometria que preserva o comprimento: os pings da frota dão o km que a API usa (25 pontos davam ~89%)
             res['geom'] = simplificar_rdp(r['geometry']['coordinates'], 200)
             if bloq:
-                agora = {x['id'] for x in res['restrito']}
+                agora = ids_trecho(x['id'] for x in res['restrito'])
                 res['km_sem_bloqueio'] = base['km']; res['seg_sem_bloqueio'] = base['seg']
-                res['bloqueios_evitados'] = sorted(({x['id'] for x in base.get('restrito') or []} & set(bloq['item_ids'])) - agora)
+                res['bloqueios_evitados'] = sorted((ids_trecho(x['id'] for x in base.get('restrito') or []) & ids_trecho(bloq['item_ids'])) - agora)
     elif st == 409:
         res = {'ok': False, 'motivo': (r or {}).get('message', 'sem rota')}
     else:
@@ -251,7 +257,7 @@ def rota_gps_carro(o, d, preset, hazmat, data, hora, aetc=False, bloq=None):
     bloqueados pela empresa; só é refeita se a rota cruza algum deles."""
     if bloq:
         base = rota_gps_carro(o, d, preset, hazmat, data, hora, aetc)
-        if not ({id_do_item(x['k']) for x in base['cruza']} & set(bloq['item_ids'])):
+        if not (ids_trecho(id_do_item(x['k']) for x in base['cruza']) & ids_trecho(bloq['item_ids'])):
             return base
     k = ('G3|' if V3 else 'G|') + chave(o, d, preset, hazmat, data, hora, aetc) + (f'|b{hash_bloq(bloq)}' if bloq else '')
     with cache_lock:
@@ -287,7 +293,7 @@ def hash_bloq(bloq):
 
 def bloqueios_de(G):
     """{'item_ids': [...]} dos trechos bloqueados ativos da empresa (None sem nenhum), no formato do pedido de rota."""
-    ids = sorted({b['item_id'] for b in G.get('bloqueios') or []})
+    ids = sorted({id_trecho(b['item_id']) or b['item_id'] for b in G.get('bloqueios') or []})
     return {'item_ids': ids} if ids else None
 
 
@@ -295,6 +301,16 @@ def id_do_item(k):
     """id do item na API a partir da chave 'kind:layer:id' (o id pode ter ':')."""
     p = k.split(':', 2)
     return p[2] if len(p) == 3 else k
+
+
+def id_trecho(i):
+    """id do trecho sem os sufixos que o id ganha numa rota (`~n`, `#k`): a mesma conta de idDoTrecho na API, que compara
+    os bloqueios assim (outro pedaço de um trecho bloqueado também é bloqueado)."""
+    return re.sub(r'(?:[~#]\d+)+$', '', str(i or ''))
+
+
+def ids_trecho(ids):
+    return {id_trecho(i) for i in ids if i} - {''}
 
 
 def aviso_restrito(w):
@@ -333,7 +349,7 @@ def _bloq_plano(o, d, preset, hazmat, aetc, g):
     if usados is None:
         planos_linha(o, d, preset, hazmat, aetc, g, _sem_bloqueio=True)
         with cache_lock: usados = CACHE.get(kpr)
-    return b if set(usados or []) & set(b['item_ids']) else None
+    return b if ids_trecho(usados or []) & ids_trecho(b['item_ids']) else None
 
 
 def plano_abast(o, d, preset, hazmat, data, hora, aetc, nivel_pct, g='com'):
@@ -448,6 +464,7 @@ def abastecer(g, m, ev, km, segue_app, o, d, preset, hz, data, hora, rng):
     ev['diesel_consumido_l'] = round(usa, 1); ev['diesel_comprado_l'] = round(comprado, 1); ev['diesel_gasto_rs'] = round(gasto, 2)
     ev['preco_medio_rota'] = media
     if V3:
+        if pl['litros']: ev['preco_plano'] = round(pl['custo'] / pl['litros'], 3)     # sobrepreço de quem comprou fora do plano
         # P2: o desviador cobra a mais do que pôs no tanque; a empresa paga (e vê) os litros cobrados
         fator = 1 + PARAMS['desvio_pct'] if m.get('desvia') else 1.0
         cobr = [[round(c[0] * fator, 1), round(c[1], 3), c[2], (c[3] or '')[:60] or None, c[4]] for c in compras]
@@ -551,9 +568,10 @@ def estado_inicial(personas):
 
 # ------------------------------------------------------------------ 3.0: modelo de multas e diesel (funções puras)
 def desviadores(personas, n=None):
-    """P2: as n personas de maior tolerância a risco (desempate pelo id)."""
+    """P2: n personas sorteadas pelo id (sorteio fixo, o mesmo em toda execução). Não usa nenhum campo da persona: as
+    equipes leem personas.json, e a escolha pela tolerância a risco (ou pelo texto de como reage) entregava os desviadores."""
     n = PARAMS3['desviadores_n'] if n is None else n
-    return [p['id'] for p in sorted(personas, key=lambda p: (-float(p.get('tolerancia_risco', 0.3)), p['id']))[:n]]
+    return sorted(p['id'] for p in sorted(personas, key=lambda p: hashlib.md5(('desvio|' + p['id']).encode()).hexdigest())[:n])
 
 
 def adesao_posto_inicial(habito):
@@ -798,7 +816,7 @@ class Frota:
         """3.0: a viagem inteira no app, para o km e o diesel da frota baterem com a simulação: viagem planejada (rota e
         plano de abastecimento da API, saindo com o nível do tanque e o hodômetro), abastecimentos com os litros cobrados
         (inclusive os desviados), posto, viagem e hodômetro, multa presencial, pings que preservam o km, entrega e fim."""
-        tid, plano_cnpjs, tk = None, [], self.tok[pid]
+        tid, plano_cnpjs, plano_api, tk = None, [], False, self.tok[pid]
         o, d = LOCAIS[ev['origem']], LOCAIS[ev['destino']]
         try:
             corpo = {'title': f"{o['nome']} → {d['nome']}", 'vehicle_id': self.info['veiculos'][pid], 'driver_id': self.info['motoristas'][pid],
@@ -815,6 +833,7 @@ class Frota:
                 ini = {k: v for k, v in (('combustivel_l', ev.get('nivel_saida_l')), ('odometro_km', ev.get('odometro_saida_km'))) if v is not None}
                 s2, r2 = call('POST', f'/api/frota/trips/{tid}/start', tk, ini, timeout=120, base=api_rota() if FROTA_PLANO else None)
                 if s2 != 200: self.erros += 1
+                plano_api = isinstance((r2 or {}).get('plano_abastecimento'), dict) if s2 == 200 else False
                 plano_cnpjs = [p.get('cnpj') for p in ((r2 or {}).get('plano_abastecimento') or {}).get('paradas') or [] if p.get('cnpj')]
             else:
                 self.erros += 1
@@ -822,7 +841,7 @@ class Frota:
             self.erros += 1
         ev['_enviado_em'] = time.time()
         try:
-            self.abastecimentos3(pid, ev, tid, plano_cnpjs)
+            self.abastecimentos3(pid, ev, tid, plano_cnpjs, plano_api)
             for mu in ev['multas']:
                 if mu.get('presencial') and not mu.get('api_id'): self.multa_motorista(pid, mu, ev, tid)
         except Exception:
@@ -843,15 +862,19 @@ class Frota:
         except Exception:
             self.erros += 1
 
-    def abastecimentos3(self, pid, ev, tid, plano_cnpjs):
+    def abastecimentos3(self, pid, ev, tid, plano_cnpjs, plano_api=False):
         """Cada compra da viagem: litros cobrados (o desviador cobra a mais), valor, posto (a parada do plano da viagem na
-        API, ou o posto de costume), viagem e hodômetro (no meio da viagem pelo plano; no fim, enchendo o tanque)."""
+        API, ou o posto de costume), viagem e hodômetro (no meio da viagem pelo plano; no fim, enchendo o tanque).
+        Plano da API sem parada (o motor planeja pela faixa de nível, na terça às 10h; a API pelo nível e hora exatos) e o
+        do motor com parada: a compra vai sem CNPJ, senão o painel a contaria fora do plano sem o motorista ter saído dele."""
         km, odo = ev.get('km', 0), ev.get('odometro_saida_km')
         n_plano = 0
         for litros, preco, cnpj, nome, tipo in ev.get('compras') or []:
             if litros <= 0: continue
             if tipo == 'plano':
                 if plano_cnpjs: cnpj = plano_cnpjs[min(n_plano, len(plano_cnpjs) - 1)]
+                elif plano_api:
+                    cnpj = None; ev['plano_api_sem_parada_l'] = round(ev.get('plano_api_sem_parada_l', 0) + litros, 1)
                 n_plano += 1
             else:
                 cnpj, nome = cnpj_costume(pid), f'Posto de costume ({pid})'
@@ -879,7 +902,10 @@ class Frota:
             corpo.update({'notificada_em': mu['aviso_em'], 'restricao': mu['k'][:300], 'sne': bool(mu.get('sne')),
                           'vencimento': (dt.date.fromisoformat(mu['aviso_em']) + dt.timedelta(days=PARAMS['vencimento_dias'])).isoformat()})
             if mu.get('presencial'): corpo['status'] = 'condutor_indicado'; corpo.pop('prazo_indicacao')
-            else: corpo['prazo_indicacao'] = mu['prazo']
+            else:
+                corpo['prazo_indicacao'] = mu['prazo']
+                # a equipe já indicou (a notificação chegou no dia do relatório, antes do registro no painel): entra indicada
+                if mu.get('indicada_em'): corpo['status'] = 'condutor_indicado'
         if mu.get('api_id'):
             st, _ = call('PATCH', f"/api/frota/multas/{mu['api_id']}", self.gestor, corpo)
         else:
@@ -1109,16 +1135,17 @@ def aplicar_decisoes(st, semana, frotas):
                     for cnpj, (nome, litros, _) in (mm.get('_uso_postos') or {}).items():
                         u = uso.setdefault(cnpj, [nome, 0.0]); u[1] += litros
                 ja = {c['cnpj'] for c in G.setdefault('conveniados', [])}
-                alvo = [c for c, _ in sorted(uso.items(), key=lambda x: -x[1][1]) if c not in ja][:n]
+                # (nome próprio: `alvo` é a função de escolher motoristas, usada pelas ações seguintes da mesma lista)
+                alvo_cnpj = [c for c, _ in sorted(uso.items(), key=lambda x: -x[1][1]) if c not in ja][:n]
                 p_aceita = 0.7 if desc <= 0.2 else 0.5 if desc <= 0.3 else 0.25
                 rng_c = random.Random(f'conv|{semana}|{desc}')
                 fechados = []
-                for cnpj in alvo:
+                for cnpj in alvo_cnpj:
                     if rng_c.random() < p_aceita:
                         G['conveniados'].append({'cnpj': cnpj, 'nome': uso[cnpj][0], 'desconto_rs_l': desc, 'semana': semana}); fechados.append(cnpj)
                         if frota: call('POST', '/api/frota/postos-conveniados', frota.gestor, {'cnpj': cnpj, 'nome': uso[cnpj][0], 'desconto_rs_l': desc, 'pagamento': 'PIX'})
                 CONVENIOS[g] = G['conveniados']
-                a['_resultado'] = f'{len(fechados)} de {len(alvo)} postos aceitaram R$ {desc:.2f}/L no PIX'
+                a['_resultado'] = f'{len(fechados)} de {len(alvo_cnpj)} postos aceitaram R$ {desc:.2f}/L no PIX'
             elif t == 'nenhuma':
                 pass
             elif V3 and t in ACOES3:
@@ -1164,7 +1191,8 @@ def acao_indicar_condutor(st, g, G, a, semana, frota):
 
 
 def acao_cobrar_abastecimento(st, g, G, a, semana, frota):
-    """Cobra o motorista (ou todos) sobre onde e quanto abastece: mais adesão ao posto do plano; o desviador pode parar."""
+    """Cobra o motorista (ou todos) sobre onde e quanto abastece: mais adesão ao posto do plano; o desviador pode parar.
+    Pelo nome, no máximo cobrar_nomeado.max_semana motoristas por semana (somando as ações da semana)."""
     M = G['motoristas']; ps = a.get('motoristas') or ['todos']
     cn, ct = PARAMS['cobrar_nomeado'], PARAMS['cobrar_todos']
     if 'todos' in ps:
@@ -1175,14 +1203,20 @@ def acao_cobrar_abastecimento(st, g, G, a, semana, frota):
         G.setdefault('cobrancas', []).append({'semana': semana, 'motoristas': 'todos'})
         a['_resultado'] = 'cobrança feita a todos os motoristas'
         return True
-    ok = [pid for pid in ps if pid in M]
+    ja = {pid for c in G.get('cobrancas') or [] if c['semana'] == semana and isinstance(c['motoristas'], list) for pid in c['motoristas']}
+    validos = [pid for pid in dict.fromkeys(ps) if pid in M and pid not in ja]
+    vagas = max(0, cn['max_semana'] - len(ja))
+    ok, sobra = validos[:vagas], validos[vagas:]
     for pid in ok:
         mm = M[pid]; mm['adesao_posto'] = min(cn['adesao_posto_max'], mm.get('adesao_posto', 0.75) + cn['adesao_posto_mais'])
         if mm.get('desvia') and random.Random(f'cobrar|{pid}|{semana}').random() < cn['p_para_desvio']:
             mm['desvia'] = False; mm['desvio_parou'] = {'semana': semana, 'como': 'cobrança nominal'}
         if frota and a.get('nota'): frota.mensagem(pid, a['nota'])
     G.setdefault('cobrancas', []).append({'semana': semana, 'motoristas': ok})
-    a['_resultado'] = f'{len(ok)} motoristas cobrados'           # se o desvio parou, a empresa não sabe (só a verdade sabe)
+    # se o desvio parou, a empresa não sabe (só a verdade sabe)
+    a['_resultado'] = (f'{len(ok)} motoristas cobrados pelo nome'
+                       + (f"; {len(sobra)} ficaram sem conversa (no máximo {cn['max_semana']} por semana): {', '.join(sobra[:10])}"
+                          + ('...' if len(sobra) > 10 else '') if sobra else ''))
     return bool(ok)
 
 
@@ -1199,15 +1233,16 @@ def acao_bloquear_trecho(st, g, G, a, semana, frota):
     """F1 (só a 'mais'): trava o trecho para a frota inteira; a rota de todos desvia se existir caminho."""
     if g != 'mais':
         a['_resultado'] = 'trecho bloqueado só existe na Transportadora A+'; return False
-    ok, recusados, ja = [], [], {b['k'] for b in G['bloqueios']}
+    ok, recusados, ja = [], [], {id_trecho(b['item_id']) or b['item_id'] for b in G['bloqueios']}
     for k in a.get('itens') or []:
         p = str(k).split(':', 2)
         if len(p) < 3 or p[0] != 'layer' or not p[2]: recusados.append(k); continue
-        if k in ja: continue
+        item_id = id_trecho(p[2]) or p[2]          # o trecho inteiro, sem o sufixo da rota (a API guarda assim)
+        if item_id in ja: continue
         nome = nome_do_item(G, k)
-        b = {'k': k, 'item_id': p[2], 'layer': p[1], 'nome': nome[:200], 'motivo': (a.get('motivo') or '')[:300], 'semana': semana}
-        if frota: b['api_id'] = frota.bloquear(p[2], nome, a.get('motivo'))
-        G['bloqueios'].append(b); ok.append(k); ja.add(k)
+        b = {'k': k, 'item_id': item_id, 'layer': p[1], 'nome': nome[:200], 'motivo': (a.get('motivo') or '')[:300], 'semana': semana}
+        if frota: b['api_id'] = frota.bloquear(item_id, nome, a.get('motivo'))
+        G['bloqueios'].append(b); ok.append(k); ja.add(item_id)
     BLOQ[g] = bloqueios_de(G)
     a['_resultado'] = (f'{len(ok)} trechos bloqueados para a frota'
                        + (f'; {len(recusados)} recusados (só dá para bloquear trecho de camada, item "layer:...", não zona)' if recusados else ''))
@@ -1412,7 +1447,7 @@ def semana_frota3(st, n, frotas, frota_jobs, d1):
     painel = {}
     if 'mais' in frotas:
         f = frotas['mais']
-        painel['mais'] = {'conciliacao': f.ler(f"/api/frota/conciliacao-diesel?dias={PARAMS['conciliacao_dias']}"),
+        painel['mais'] = {'conciliacao': f.ler(f"/api/frota/conciliacao-diesel?dias={PARAMS['conciliacao_dias']}&tolerancia_pct={PARAMS['conciliacao_tolerancia_pct']}"),
                           'prazos': f.ler('/api/frota/multas/prazos'), 'consultado_em': time.time(),
                           'veiculos': f.info['veiculos'], 'motoristas': f.info['motoristas']}
     marca('multas, prazos e painel')
@@ -1565,14 +1600,14 @@ def relatorio3(rel, st, g, n, evs, painel):
         for e in evs:
             ids = e.get('bloqueios_evitados') or []
             for i in ids:
-                u = uso.setdefault(i, [0, 0.0]); u[0] += 1; u[1] += (e.get('km_desvio_bloqueio') or 0) / len(ids)
+                u = uso.setdefault(id_trecho(i), [0, 0.0]); u[0] += 1; u[1] += (e.get('km_desvio_bloqueio') or 0) / len(ids)
         rel['trechos_bloqueados'] = [{'item': b['k'], 'nome': b['nome'], 'desde_semana': b['semana'], 'motivo': b.get('motivo'),
-                                      'viagens_que_desviaram_na_semana': uso.get(b['item_id'], [0, 0.0])[0],
-                                      'km_a_mais_na_semana': round(uso.get(b['item_id'], [0, 0.0])[1], 1)} for b in G.get('bloqueios') or []]
+                                      'viagens_que_desviaram_na_semana': uso.get(id_trecho(b['item_id']), [0, 0.0])[0],
+                                      'km_a_mais_na_semana': round(uso.get(id_trecho(b['item_id']), [0, 0.0])[1], 1)} for b in G.get('bloqueios') or []]
         s['km_desvio_bloqueios'] = round(sum(e.get('km_desvio_bloqueio') or 0 for e in evs), 1)
-        bl = {b['k'] for b in G.get('bloqueios') or []}
+        bl = {b['k'] for b in G.get('bloqueios') or []}; bl_ids = {id_trecho(b['item_id']) for b in G.get('bloqueios') or []}
         for p in rel['problemas_conhecidos']:
-            p['bloqueado'] = p['item'] in bl
+            p['bloqueado'] = p['item'] in bl or (p['item'].startswith('layer:') and id_trecho(id_do_item(p['item'])) in bl_ids)
             p['bloqueavel'] = p['item'].startswith('layer:') and not p['bloqueado']
         rel['conciliacao_diesel'] = resumo_conciliacao(painel)
 
@@ -1621,6 +1656,8 @@ def verdade_semana(st, g, n, evs, painel):
            'desvio_por_motorista': {pid: {'litros': round(v[0], 1), 'rs': round(v[1], 2)} for pid, v in sorted(por_mot.items())},
            'desviadores': {pid: {'desvia': M[pid].get('desvia'), 'parou': M[pid].get('desvio_parou')} for pid in G.get('desviadores') or []},
            'litros_por_tipo_de_compra': {k: round(v) for k, v in sorted(compras.items())},
+           # compra pelo plano do motor numa viagem cujo plano na API não tinha parada: foi sem CNPJ (não conta fora do plano)
+           'litros_plano_sem_parada_na_api': round(sum(e.get('plano_api_sem_parada_l', 0) for e in evs), 1),
            'multas': len(mult), 'notificacoes_perdidas': sum(1 for mu in mult if mu.get('perdida')),
            'notificacoes_atrasadas': sum(1 for mu in mult if mu.get('atrasada')),
            'nic_semana': sum(1 for e in G['eventos'] for mu in e['multas'] if (mu.get('nic') or {}).get('semana') == n),
@@ -1715,16 +1752,48 @@ def final():
     print(json.dumps({g: {k: v for k, v in res[g].items() if not isinstance(v, (dict, list))} for g in GRUPOS}, ensure_ascii=False, indent=1))
 
 
+def nic_certas_no_fim(evs, fim_iso):
+    """P4 no fim da simulação: multa com a notificação extraviada e o prazo depois do fim. Ninguém pode indicar o condutor
+    (a notificação não chega, nem o sistema nem a equipe a veem), então a NIC é certa; só não venceu dentro dos dias
+    simulados (o prazo é a infração + 21 + 30 dias: só as extraviadas até ~51 dias antes do fim viram NIC na simulação).
+    {mid: {'n', 'valor'}} com o n e o valor da NIC como em processar_prazos."""
+    todas = [(e['data'], mu['k']) for e in evs for mu in e['multas'] if mu.get('situacao') != 'cancelada']
+    out = {}
+    for e in evs:
+        for mu in e['multas']:
+            if mu.get('perdida') and pendente_indicacao(mu) and mu.get('prazo') and mu['prazo'] >= fim_iso:
+                n = nic_n(todas, mu['k'], e['data'])
+                out[mu['mid']] = {'n': n, 'valor': round(mu['valor'] * n, 2)}
+    return out
+
+
 def final3(r, G, evs):
     """3.0: custos com o modelo novo: multas pagas com desconto (P5), NIC (P4), diesel desviado (P2) e o desvio de rota
     causado pelos trechos bloqueados (F1, já dentro do diesel e das horas; aqui separado para o relatório)."""
     fim = (INICIO + dt.timedelta(days=DIAS)).isoformat()
     mult = [(e, mu) for e in evs for mu in e['multas']]
-    cheio = pago = 0.0
+    cheio = pago = desc_sne = 0.0
     for e, mu in mult:
         if mu.get('situacao') == 'cancelada': continue
         cheio += mu['valor']; pago += mu['valor'] * fator_pagamento(mu.get('sne'), mu.get('situacao') is not None)
+        if mu.get('sne') and mu.get('situacao') is None: desc_sne += mu['valor'] * (PARAMS['pagamento_no_prazo'] - PARAMS['pagamento_sne'])
     nics = [mu for _, mu in mult if mu.get('nic')]
+    certas = nic_certas_no_fim(evs, fim)
+    fp_cert = fator_pagamento(False, False)          # extraviada só acontece sem SNE
+    # NIC por causa: notificação extraviada (o SNE evita) × chegou e ninguém indicou a tempo (a indicação automática evita)
+    causa = {'extraviada': [0, 0.0], 'nao_indicada': [0, 0.0]}
+    for mu in nics:
+        c = causa['extraviada' if mu.get('perdida') else 'nao_indicada']; c[0] += 1; c[1] += mu['nic']['valor'] * fator_pagamento(mu.get('sne'), False)
+    for x in certas.values():
+        causa['extraviada'][0] += 1; causa['extraviada'][1] += x['valor'] * fp_cert
+    # compra fora do posto do plano (P1): o que pagou a mais que o preço do plano da viagem
+    preco_pl = [(c[0], c[1]) for e in evs for c in e.get('compras') or [] if c[4] == 'plano']
+    preco_pl_medio = sum(l * p_ for l, p_ in preco_pl) / sum(l for l, _ in preco_pl) if preco_pl and sum(l for l, _ in preco_pl) else None
+    sobre = 0.0
+    for e in evs:
+        ref = e.get('preco_plano') or preco_pl_medio
+        if ref is None: continue
+        sobre += sum(c[0] * max(0.0, c[1] - ref) for c in e.get('compras') or [] if c[4] == 'fora_do_plano')
     ind, fontes, tipos = {}, {}, {}
     for _, mu in mult:
         if mu.get('indicada_em'): ind[mu.get('indicada_por')] = ind.get(mu.get('indicada_por'), 0) + 1
@@ -1751,7 +1820,14 @@ def final3(r, G, evs):
         'nic': len(nics), 'nic_rs_valor_cheio': round(sum(mu['nic']['valor'] for mu in nics), 2),
         'nic_rs': round(sum(mu['nic']['valor'] * fator_pagamento(mu.get('sne'), False) for mu in nics), 2),
         'nic_notificacao_perdida': sum(1 for mu in nics if mu.get('perdida')),
-        'multas_aguardando_indicacao_no_fim': sum(1 for _, mu in mult if pendente_indicacao(mu) and mu.get('prazo') and mu['prazo'] >= fim),
+        # NIC já certa no fim (notificação extraviada, prazo depois do último dia): entra no custo, separada das cobradas
+        'nic_certa_no_fim': len(certas), 'nic_certa_no_fim_rs_valor_cheio': round(sum(x['valor'] for x in certas.values()), 2),
+        'nic_certa_no_fim_rs': round(sum(x['valor'] for x in certas.values()) * fp_cert, 2),
+        'nic_certa_no_fim_mid': {k: round(v['valor'] * fp_cert, 2) for k, v in certas.items()},
+        'nic_por_causa': {k: {'n': v[0], 'rs': round(v[1], 2)} for k, v in causa.items()},
+        'multas_desconto_sne_rs': round(desc_sne, 2),
+        # no fim, ainda no prazo e sem indicação (a notificação chegou ou vai chegar): pode virar NIC ou não
+        'multas_aguardando_indicacao_no_fim': sum(1 for _, mu in mult if pendente_indicacao(mu) and not mu.get('perdida') and mu.get('prazo') and mu['prazo'] >= fim),
         'notificacoes_perdidas': sum(1 for _, mu in mult if mu.get('perdida')),
         'notificacoes_atrasadas': sum(1 for _, mu in mult if mu.get('atrasada')),
         'sne_desde': G.get('sne_desde'),
@@ -1759,6 +1835,7 @@ def final3(r, G, evs):
         'diesel_custo_do_consumido_rs': round(cons * preco, 2),
         'diesel_custo_rs': round(cons * preco + desv_rs, 2),     # consumido ao preço pago + o desviado (pago e não posto no tanque)
         'diesel_litros_por_tipo_de_compra': {k: round(v) for k, v in sorted(tipos.items())},
+        'fora_do_plano_sobrepreco_rs': round(sobre, 2),
         'km_desvio_bloqueios': round(km_b, 1), 'km_desvio_bloqueios_rs': round(km_b_rs, 2),
         'evitadas_por_orientacao': sum(e.get('evitadas_orientacao', 0) for e in evs),
         'desviadores': {pid: {'parou': M[pid].get('desvio_parou'), 'litros': round(desv_mot.get(pid, [0, 0])[0], 1),
@@ -1766,8 +1843,8 @@ def final3(r, G, evs):
         'bloqueios': G.get('bloqueios') or [], 'bloqueios_removidos': G.get('bloqueios_removidos') or [], 'cobrancas': G.get('cobrancas') or [],
         'conveniados': len(G.get('conveniados') or []),
     })
-    r['custo_total_rs'] = round(r['multas_rs'] + r['nic_rs'] + r['colisoes_rs'] + r['atrasos_rs'] + r['diesel_custo_rs'] + r['motorista_rs']
-                                + r['planejamento_rs'] + r['decisoes_custos_rs'] + r['mensalidade_rs'], 2)
+    r['custo_total_rs'] = round(r['multas_rs'] + r['nic_rs'] + r['nic_certa_no_fim_rs'] + r['colisoes_rs'] + r['atrasos_rs'] + r['diesel_custo_rs']
+                                + r['motorista_rs'] + r['planejamento_rs'] + r['decisoes_custos_rs'] + r['mensalidade_rs'], 2)
 
 
 def _n(v, casas=2):
@@ -1783,17 +1860,19 @@ def premissas3(personas):
         {'id': 'P1', 'nome': 'Adesão ao posto do plano', 'valor': f"{_n(ap['mais_barato_que_conhece'])} (hábito “mais barato que conhece” ou “cartão da empresa”); {_n(ap['outros'])} (os outros)",
          'texto': 'Seguindo a rota do app, o motorista compra no posto do plano com essa chance; senão, no posto de costume, ao preço médio da rota ajustado pelo hábito (como quem ignora o app).'},
         {'id': 'P2', 'nome': 'Desvio de diesel', 'valor': f"{p['desviadores_n']} motoristas ({', '.join(desviadores(personas, p['desviadores_n']))}); {_n(p['desvio_pct'] * 100, 0)}% a mais de litros",
-         'texto': 'As personas de maior tolerância a risco (desempate pelo id) cobram a mais do que põem no tanque em todo abastecimento, até serem paradas. Os mesmos gêmeos nas três empresas.'},
+         'texto': 'Motoristas sorteados pelo id (sorteio fixo, sem olhar o perfil: as equipes leem as personas e não têm como adivinhar quem desvia) '
+                  'cobram a mais do que põem no tanque em todo abastecimento, até serem paradas. Os mesmos gêmeos nas três empresas.'},
         {'id': 'P3', 'nome': 'Notificação pelo correio', 'valor': f"{PARAMS['aviso_multa_dias']} dias; {_n(p['p_notificacao_atrasa'] * 100, 0)}% chegam {p['notificacao_atraso_dias']} dias depois; {_n(p['p_notificacao_perdida'] * 100, 0)}% se perdem",
          'texto': 'Sem SNE. Com SNE, chega no prazo, sem atraso nem extravio. Multa presencial: o condutor é identificado na hora (não precisa indicar).'},
         {'id': 'P4', 'nome': 'NIC', 'valor': f"prazo = chegada + {p['prazo_indicacao_dias']} dias; NIC = valor × n (mesma restrição em {p['nic_janela_dias']} dias)",
-         'texto': 'Sem indicação do condutor até o prazo (ou sem notificação), a empresa paga a multa por não identificação. Indicada, os pontos vão para o motorista.'},
+         'texto': 'Sem indicação do condutor até o prazo (ou sem notificação), a empresa paga a multa por não identificação. Indicada, os pontos vão para o motorista. '
+                  'Notificação extraviada com o prazo vencendo depois do último dia simulado (infração + 51 dias): ninguém pode indicar, e a NIC entra no custo como já certa.'},
         {'id': 'P5', 'nome': 'Pagamento das multas', 'valor': f"{_n(p['pagamento_no_prazo'] * 100, 0)}% do valor; {_n(p['pagamento_sne'] * 100, 0)}% com SNE (sem recurso)",
          'texto': 'Todas pagas no prazo com desconto; a NIC também.'},
         {'id': 'F3', 'nome': 'Indicação automática (A+)', 'valor': f"até {p['indicacao_automatica_dias']} dias depois da notificação",
          'texto': 'O sistema indica o condutor de toda multa notificada com motorista conhecido.'},
-        {'id': 'A1', 'nome': 'Cobrar abastecimento (nominal)', 'valor': f"+{_n(cn['adesao_posto_mais'])} na adesão ao posto (até {_n(cn['adesao_posto_max'])}); desviador para com chance {_n(cn['p_para_desvio'])}",
-         'texto': 'A equipe cobra um motorista pelo nome.'},
+        {'id': 'A1', 'nome': 'Cobrar abastecimento (nominal)', 'valor': f"+{_n(cn['adesao_posto_mais'])} na adesão ao posto (até {_n(cn['adesao_posto_max'])}); desviador para com chance {_n(cn['p_para_desvio'])}; no máximo {cn['max_semana']} motoristas por semana",
+         'texto': 'A equipe cobra um motorista pelo nome (uma conversa do gerente; os nomes além do limite da semana ficam sem conversa).'},
         {'id': 'A2', 'nome': 'Cobrar abastecimento (todos)', 'valor': f"+{_n(ct['adesao_posto_mais'])} na adesão de todos; cada desviador para com chance {_n(ct['p_para_desvio'])}",
          'texto': 'Cobrança geral, sem saber quem.'},
         {'id': 'F1', 'nome': 'Trecho bloqueado conhecido', 'valor': _n(p['conhece_bloqueado']),
@@ -1811,6 +1890,9 @@ def premissas3(personas):
          'texto': 'Tempo do roteirista.'},
         {'id': 'F2', 'nome': 'Janela da conferência do diesel', 'valor': f"{p['conciliacao_dias']} dias (pedido ao painel)",
          'texto': 'A simulação roda as semanas em horas: a janela de 7 dias do painel cobre tudo o que já foi enviado.'},
+        {'id': 'F2', 'nome': 'Tolerância da conferência do diesel', 'valor': f"{_n(p['conciliacao_tolerancia_pct'], 0)}% acima do esperado (a padrão do painel)",
+         'texto': 'O painel compara com o consumo de referência do cadastro do caminhão, não com o consumo de cada motorista: quem gasta mais '
+                  f"que a referência é apontado mesmo sem desviar, e o desviador que gasta menos que ela pode ficar abaixo da tolerância (o desvio é de {_n(p['desvio_pct'] * 100, 0)}%)."},
     ]
 
 
