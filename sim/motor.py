@@ -1608,7 +1608,15 @@ def relatorio3(rel, st, g, n, evs, painel):
                 u = uso.setdefault(id_trecho(i), [0, 0.0]); u[0] += 1; u[1] += (e.get('km_desvio_bloqueio') or 0) / len(ids)
         rel['trechos_bloqueados'] = [{'item': b['k'], 'nome': b['nome'], 'desde_semana': b['semana'], 'motivo': b.get('motivo'),
                                       'viagens_que_desviaram_na_semana': uso.get(id_trecho(b['item_id']), [0, 0.0])[0],
-                                      'km_a_mais_na_semana': round(uso.get(id_trecho(b['item_id']), [0, 0.0])[1], 1)} for b in G.get('bloqueios') or []]
+                                      'km_a_mais_na_semana': round(uso.get(id_trecho(b['item_id']), [0, 0.0])[1], 1),
+                                      # o painel mostra em cada viagem o aviso "trecho bloqueado pela empresa sem nenhum desvio possível"
+                                      'viagens_pela_rota_do_app_sem_desvio_possivel': sum(1 for e in evs if e.get('rota') == 'app' and any(v['k'] == b['k'] for v in e['violacoes'])),
+                                      'passagens_de_quem_saiu_da_rota': sum(1 for e in evs if e.get('rota') == 'ignorou_app' and any(v['k'] == b['k'] for v in e['violacoes']))}
+                                     for b in G.get('bloqueios') or []]
+        for t in rel['trechos_bloqueados']:
+            if t['viagens_pela_rota_do_app_sem_desvio_possivel']:
+                t['aviso_do_painel'] = ('O roteador não achou nenhum desvio para este trecho: o bloqueio não evita a passagem pela rota do app. '
+                                        'Resolva com horário de saída, outro veículo, autorização da prefeitura ou outra janela com o cliente.')
         s['km_desvio_bloqueios'] = round(sum(e.get('km_desvio_bloqueio') or 0 for e in evs), 1)
         bl = {b['k'] for b in G.get('bloqueios') or []}; bl_ids = {id_trecho(b['item_id']) for b in G.get('bloqueios') or []}
         for p in rel['problemas_conhecidos']:
