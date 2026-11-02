@@ -843,7 +843,7 @@ def final():
         pagas = [mu for mu in multas if mu.get('situacao') != 'cancelada']
         extra = sum(c['valor'] for c in G['custos_extra'])
         plan = len(evs) * PARAMS['planejamento_min_viagem'][g] / 60 * PARAMS['custo_hora_roteirista']
-        mens = PARAMS['mensalidade_veiculo'] * 50 * 2 if g == 'com' else 0
+        mens = PARAMS['mensalidade_veiculo'] * len(G['motoristas']) * DIAS / 30 if g == 'com' else 0
         susp = sum(1 for m in G['motoristas'].values() for l in m['linhas'] if not l.get('ativa', True))
         pts = {pid: sum(x['pontos'] for x in m['pontos']) for pid, m in G['motoristas'].items()}
         res[g] = {

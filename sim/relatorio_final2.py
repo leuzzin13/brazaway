@@ -19,7 +19,7 @@ HOJE = json.loads((OUT / 'relatorios' / f'semana_{semanas[-1]}_com.json').read_t
 
 
 def esc(s): return html.escape(str(s))
-def brl(v, casas=0): return 'R$ ' + f'{v:,.{casas}f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
+def brl(v, casas=0): return ('−' if v < 0 else '') + 'R$ ' + f'{abs(v):,.{casas}f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
 def num(v, casas=0): return f'{v:,.{casas}f}'.replace(',', 'X').replace('.', ',').replace('X', '.')
 def fmt_data(iso): return f'{iso[8:10]}/{iso[5:7]}/{iso[:4]}' if len(iso) >= 10 else iso
 def pct(a, b): return (a - b) / b * 100 if b else 0.0
@@ -46,6 +46,7 @@ def totais(g):
 
 
 T = {g: totais(g) for g in ('com', 'sem')}
+RES = json.loads((OUT / 'resultado.json').read_text()) if (OUT / 'resultado.json').exists() else None
 C, S = T['com'], T['sem']
 eco_diesel = S['diesel_preco'] * C['diesel_l'] - C['diesel_custo']          # o mesmo volume da A ao preço que a B pagou
 eco_multas = S['multas_rs'] - C['multas_rs']
@@ -169,9 +170,31 @@ semana_rows = ''.join(
     f'<td>{num(rel[(n, "com")]["diesel_preco_medio_pago"], 3)}</td><td>{num(rel[(n, "sem")]["diesel_preco_medio_pago"], 3)}</td>'
     f'<td>{rel[(n, "com")].get("alertas_ao_vivo_que_evitaram") or 0}</td></tr>' for n in semanas)
 
-dias = NS * 7
+dias = min(NS * 7, 90)          # a última semana tem 6 dias (90 dias no total)
 mensal = lambda v: v / dias * 30
 pct_mult = -pct(C['multas'], S['multas']); pct_dies = (S['diesel_preco'] - C['diesel_preco']) / S['diesel_preco'] * 100
+
+secao_custos = ''
+if RES:
+    rc, rs = RES['com'], RES['sem']
+    itens = [('Diesel (consumido × preço pago)', rc['diesel_custo_do_consumido_rs'], rs['diesel_custo_do_consumido_rs']),
+             ('Multas', rc['multas_rs'], rs['multas_rs']),
+             ('Atrasos (R$ 150 por entrega atrasada)', rc['atrasos_rs'], rs['atrasos_rs']),
+             ('Tempo do roteirista planejando (3 × 12 min por viagem)', rc['planejamento_rs'], rs['planejamento_rs']),
+             ('Custos das decisões (treinamentos, recursos, autorizações)', rc['decisoes_custos_rs'], rs['decisoes_custos_rs']),
+             ('Mensalidade do BrasaWay (R$ 30 por caminhão por mês)', rc['mensalidade_rs'], rs['mensalidade_rs'])]
+    linhas_c = ''.join(f'<tr><th scope="row">{esc(t)}</th><td>{brl(a)}</td><td>{brl(b)}</td><td>{brl(b - a)}</td></tr>' for t, a, b in itens)
+    tot_a = sum(a for _, a, _ in itens); tot_b = sum(b for _, _, b in itens)
+    secao_custos = f'''<section>
+  <div class="eyebrow">Dinheiro</div>
+  <h2>Onde a empresa A gastou menos</h2>
+  <p>Custos que mudam com a ferramenta, em {dias} dias, para 100 caminhões. O salário e o tempo dos motoristas ficaram praticamente iguais nas duas e não entram aqui.</p>
+  <div class="scroll"><table>
+    <thead><tr><th scope="col"></th><th scope="col" class="c">Com BrasaWay</th><th scope="col">Sem BrasaWay</th><th scope="col">A gastou a menos</th></tr></thead>
+    <tbody>{linhas_c}<tr><th scope="row"><b>Total</b></th><td><b>{brl(tot_a)}</b></td><td><b>{brl(tot_b)}</b></td><td><b>{brl(tot_b - tot_a)}</b></td></tr></tbody>
+  </table></div>
+  <p class="muted">Por mês, são {brl(mensal(tot_b - tot_a))} a menos. Por caminhão, {brl(mensal(tot_b - tot_a) / 100)} por mês, contra os R$ 30 da mensalidade.</p>
+</section>'''
 
 pagina = f'''<title>BrasaWay em 90 dias</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -181,17 +204,17 @@ pagina = f'''<title>BrasaWay em 90 dias</title>
 /* Layout: relatório de uma coluna, como um boletim de frota; a placa verde de rodovia marca o que é BrasaWay, o cinza-asfalto o que não é. */
 :root {{
   --bg: #f6f7f5; --surface: #ffffff; --ink: #1d2320; --muted: #5a645f; --line: #dde2de;
-  --com: #0b6b3a; --sem: #8a8f8c; --rota: #c08a1e; --ok: #0b6b3a; --ruim: #b3401f; --chip-ok: #e1f0e6; --chip-ruim: #f7e3dc;
+  --com: #0b6b3a; --sem: #8a8f8c; --rota: #c08a1e; --ok: #0b6b3a; --ruim: #b3401f; --chip-ok: #e1f0e6; --chip-ruim: #f7e3dc; --placa-bg: #0b6b3a; --placa-fg: #ffffff;
   --display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{
   --bg: #121614; --surface: #1a201d; --ink: #e6ebe8; --muted: #9aa49f; --line: #2c3430;
-  --com: #3fb878; --sem: #8e9692; --rota: #d9a441; --ok: #3fb878; --ruim: #e2774f; --chip-ok: #173826; --chip-ruim: #3d2117; color-scheme: dark }} }}
+  --com: #3fb878; --sem: #8e9692; --rota: #d9a441; --ok: #3fb878; --ruim: #e2774f; --chip-ok: #173826; --chip-ruim: #3d2117; --placa-bg: #17482f; --placa-fg: #eaf5ee; color-scheme: dark }} }}
 :root[data-theme="dark"] {{
   --bg: #121614; --surface: #1a201d; --ink: #e6ebe8; --muted: #9aa49f; --line: #2c3430;
-  --com: #3fb878; --sem: #8e9692; --rota: #d9a441; --ok: #3fb878; --ruim: #e2774f; --chip-ok: #173826; --chip-ruim: #3d2117; color-scheme: dark }}
+  --com: #3fb878; --sem: #8e9692; --rota: #d9a441; --ok: #3fb878; --ruim: #e2774f; --chip-ok: #173826; --chip-ruim: #3d2117; --placa-bg: #17482f; --placa-fg: #eaf5ee; color-scheme: dark }}
 body {{ background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--body); }}
 .wrap {{ max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 44px; }}
 h1, h2 {{ font-family: var(--display); font-weight: 700; letter-spacing: .005em; text-wrap: balance; margin: 0; line-height: 1.1; }}
@@ -203,13 +226,15 @@ section {{ display: grid; gap: 16px; min-width: 0; }}
 .lead {{ font-size: 1.08rem; color: var(--ink); }}
 .muted {{ color: var(--muted); }}
 .placa {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }}
-.placa div {{ background: var(--com); color: #fff; border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }}
+.placa div {{ background: var(--placa-bg); color: var(--placa-fg); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }}
 .placa b {{ font: 700 2rem/1 var(--display); font-variant-numeric: tabular-nums; }}
 .placa span {{ font-size: .86rem; line-height: 1.35; opacity: .92; }}
 .scroll {{ overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }}
 table {{ border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }}
 th, td {{ padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }}
-th[scope="row"] {{ text-align: left; font-weight: 500; white-space: normal; }}
+th[scope="row"] {{ text-align: left; font-weight: 500; white-space: normal; min-width: 11em; }}
+thead th:first-child {{ text-align: left; }}
+@media (max-width: 520px) {{ th, td {{ padding: 8px 9px; }} td {{ font-size: .84rem; }} }}
 th[scope="row"] small {{ display: block; color: var(--muted); font-weight: 400; font-size: .8rem; }}
 thead th {{ font: 600 .72rem/1.2 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }}
 thead th.c {{ color: var(--com); }}
@@ -258,6 +283,8 @@ footer {{ font-size: .85rem; color: var(--muted); display: grid; gap: 8px; }}
   </table></div>
   <p class="muted">A economia do diesel usa o volume que a empresa A consumiu ao preço médio que a empresa B pagou ({brl(eco_diesel)} em {dias} dias). A das multas é a diferença do valor das multas ({brl(eco_multas)}). Não entram aqui os pontos na CNH, o seguro e o tempo de quem cuida das multas.</p>
 </section>
+
+{secao_custos}
 
 <section>
   <div class="eyebrow">Multas</div>
