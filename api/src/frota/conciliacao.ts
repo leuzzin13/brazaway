@@ -10,13 +10,19 @@ import { asUser, httpError } from './auth.js';
  * conveniada. Achado da simulação de 90 dias: a frota comprava na rede menos litros do que consumia e a equipe pedia
  * toda semana "puxar no cartão quem abasteceu fora da rede"; desvio de diesel é queixa comum de frota.
  *
- * - km: hodômetro informado nos abastecimentos do período (2 leituras ou mais: última − primeira) ou, sem isso, as
- *   viagens concluídas no período (a mesma fonte do consumo médio medido, consumoMedio em routes.ts). Com hodômetro,
- *   conferem-se só os litros comprados depois da primeira leitura até a última: o primeiro abastecimento repôs o que
- *   foi gasto antes dela.
+ * - km: hodômetro informado nos abastecimentos do período (2 leituras ou mais: última − primeira; leituras iguais =
+ *   caminhão parado, 0 km) ou, sem isso, as viagens concluídas no período (a mesma fonte do consumo médio medido,
+ *   consumoMedio em routes.ts). Entre a primeira leitura e a última conferem-se os litros comprados depois da primeira
+ *   (ela repôs o que foi gasto antes). Compra antes da primeira leitura ou depois da última não some: o trecho entra na
+ *   conta com os km das viagens concluídas nele (a viagem que cruza a leitura é rateada pelo tempo). O hodômetro que
+ *   anda menos que HOD_MIN_VIAGENS dos km das viagens concluídas no mesmo trecho não vale (leitura errada): aí os km
+ *   vêm das viagens.
  * - consumo de referência: cadastro do veículo, senão o padrão do tipo de caminhão (PADRAO do plano de abastecimento).
- *   O consumo medido (90 dias) vai só como informação: o medido já carrega o desvio que se quer achar.
- * - abastecimento sem placa entra no veículo da viagem ou, sem viagem, no veículo padrão do motorista.
+ *   O consumo medido (90 dias, a mesma conta de GET /consumo: só abastecimentos lançados com a placa) vai só como
+ *   informação: o medido já carrega o desvio que se quer achar.
+ * - abastecimento sem placa entra no veículo da viagem ou, sem viagem, no veículo padrão do motorista; sem motorista,
+ *   entra no motorista da viagem (lançado pela equipe só com a placa).
+ * - compra com 0 km esperado (sem viagem concluída e hodômetro parado ou sem leitura) acima de DIF_MIN_L é consumo_acima.
  * - fora do plano: abastecimento de viagem com plano (trips.plano_abastecimento) num posto que não é parada do plano
  *   nem conveniado ativo; sobrepreço = (preço pago − menor preço entre as paradas do plano, ou o preço médio da rota do
  *   plano) × litros, quando positivo.
@@ -36,6 +42,7 @@ const DIAS_MEDIDO = 90;          // janela do consumo medido (informativo)
 const DIF_MIN_L = 100;           // abaixo disso a diferença não vira alerta, qualquer que seja o %
 const FORA_MAX = 0.2;            // fatia dos litros fora do plano que vira alerta
 const KM_SEM_REGISTRO = 300;     // rodou isso sem nenhum abastecimento registrado → alerta
+const HOD_MIN_VIAGENS = 0.8;     // o hodômetro tem que andar ao menos isso dos km das viagens concluídas no mesmo trecho
 
 function parse<S extends z.ZodTypeAny>(schema: S, data: unknown): z.infer<S> {
   const r = schema.safeParse(data);
@@ -46,14 +53,17 @@ function parse<S extends z.ZodTypeAny>(schema: S, data: unknown): z.infer<S> {
 /**
  * Abastecimentos de diesel (sem ARLA) da empresa na janela maior (período ou 90 dias), com o veículo atribuído e as
  * marcas de conferência. $1 = dias do período, $2 = vehicle_id (ou null), $3 = empresa (toda tabela filtrada por ela).
+ * driver_id é o motorista atribuído: o do lançamento ou, sem ele, o da viagem (como o veículo).
  */
 const BASE = `
 with conv as (select cnpj from postos_conveniados where company_id = $3::uuid and ativo),
 ab0 as (
-  select a.id, a.ocorrido_em, a.driver_id, a.trip_id, a.litros::float8 as litros, a.valor_cents, a.posto_nome, a.posto_cnpj,
-         a.odometro_km::float8 as odometro_km,
+  select a.id, a.ocorrido_em, coalesce(a.driver_id, t.driver_id) as driver_id, a.trip_id, a.litros::float8 as litros, a.valor_cents,
+         a.posto_nome, a.posto_cnpj, a.odometro_km::float8 as odometro_km,
          coalesce(a.vehicle_id, t.vehicle_id, m.default_vehicle_id) as vehicle_id,
+         a.vehicle_id is not null as com_placa,
          (a.vehicle_id is null and t.vehicle_id is null and m.default_vehicle_id is not null) as pelo_motorista,
+         (a.driver_id is null and t.driver_id is not null) as pela_viagem,
          a.ocorrido_em > now() - make_interval(days => $1::int) as no_periodo,
          case when a.valor_cents is null then null else a.valor_cents / 100.0 / a.litros end as preco,
          p.cnpjs, p.preco_ref,
@@ -61,7 +71,7 @@ ab0 as (
          exists (select 1 from conv where conv.cnpj = a.posto_cnpj) as conveniado
     from abastecimentos a
     left join trips t on t.id = a.trip_id and t.company_id = a.company_id
-    left join company_members m on m.user_id = a.driver_id and m.company_id = a.company_id
+    left join company_members m on m.user_id = coalesce(a.driver_id, t.driver_id) and m.company_id = a.company_id
     left join lateral (
       select coalesce(array_agg(regexp_replace(x->>'cnpj', '\\D', '', 'g')) filter (where jsonb_typeof(x->'cnpj') = 'string'), '{}') as cnpjs,
              coalesce(min((x->>'preco_rs_l')::numeric) filter (where jsonb_typeof(x->'preco_rs_l') = 'number'),
@@ -89,11 +99,47 @@ odo0 as (
          min(ocorrido_em) as t_ini, max(ocorrido_em) as t_fim
     from ab2 where no_periodo and odometro_km is not null and vehicle_id is not null group by vehicle_id
 ),
--- hodômetro vale com 2 leituras ou mais, em horários diferentes, e a última maior que a primeira
-odo as (select odo0.*, leituras >= 2 and t_fim > t_ini and odo_fim > odo_ini as valido from odo0),
+-- km das viagens concluídas no período antes da primeira leitura, entre a primeira e a última e depois da última
+-- (a viagem que cruza uma leitura é rateada pelo tempo; sem duração, vale o fim)
+kmt as (
+  select o.vehicle_id,
+         sum(t.distance_m * f.antes) / 1000.0 as km_antes,
+         sum(t.distance_m * (1 - f.antes - f.depois)) / 1000.0 as km_janela,
+         sum(t.distance_m * f.depois) / 1000.0 as km_depois
+    from odo0 o
+    join trips t on t.company_id = $3::uuid and t.vehicle_id = o.vehicle_id and t.status = 'concluida'
+                and t.ended_at > now() - make_interval(days => $1::int) and t.distance_m is not null
+    cross join lateral (select coalesce(t.started_at, t.ended_at) as ini, extract(epoch from t.ended_at - coalesce(t.started_at, t.ended_at))::float8 as dur) d
+    cross join lateral (
+      select case when d.dur > 0 then least(1, greatest(0, extract(epoch from least(t.ended_at, o.t_ini) - d.ini)::float8 / d.dur))
+                  else (t.ended_at <= o.t_ini)::int::float8 end as antes,
+             case when d.dur > 0 then least(1, greatest(0, extract(epoch from t.ended_at - greatest(d.ini, o.t_fim))::float8 / d.dur))
+                  else (t.ended_at > o.t_fim)::int::float8 end as depois
+    ) f
+   group by o.vehicle_id
+),
+-- há compra antes da primeira leitura / depois da última?
+lado as (
+  select o.vehicle_id, bool_or(x.ocorrido_em < o.t_ini) as tem_antes, bool_or(x.ocorrido_em > o.t_fim) as tem_depois
+    from odo0 o join ab2 x on x.vehicle_id = o.vehicle_id and x.no_periodo group by o.vehicle_id
+),
+-- hodômetro vale com 2 leituras ou mais, em horários diferentes, sem voltar (iguais = parado, 0 km) e sem andar menos
+-- que as viagens concluídas no mesmo trecho
+odo as (
+  select o.*, coalesce(k.km_antes, 0)::float8 as km_antes, coalesce(k.km_janela, 0)::float8 as km_janela,
+         coalesce(k.km_depois, 0)::float8 as km_depois, coalesce(l.tem_antes, false) as tem_antes, coalesce(l.tem_depois, false) as tem_depois,
+         o.leituras >= 2 and o.t_fim > o.t_ini and o.odo_fim >= o.odo_ini
+           and o.odo_fim - o.odo_ini >= ${HOD_MIN_VIAGENS} * coalesce(k.km_janela, 0) as valido
+    from odo0 o left join kmt k on k.vehicle_id = o.vehicle_id left join lado l on l.vehicle_id = o.vehicle_id
+),
+-- com hodômetro, fica de fora só a compra da primeira leitura (e as do mesmo instante) quando não há compra antes dela:
+-- ela repôs o que foi gasto antes. O que foi comprado antes ou depois da janela entra com os km das viagens do trecho.
 ab as (
   select ab2.*, coalesce(o.valido, false) as hodometro, o.leituras, o.odo_ini, o.odo_fim, o.t_ini, o.t_fim,
-         ab2.no_periodo and (not coalesce(o.valido, false) or (ab2.ocorrido_em > o.t_ini and ab2.ocorrido_em <= o.t_fim)) as conferido
+         o.km_antes, o.km_janela, o.km_depois, coalesce(o.tem_antes, false) as tem_antes, coalesce(o.tem_depois, false) as tem_depois,
+         ab2.no_periodo and (not coalesce(o.valido, false) or ab2.ocorrido_em > o.t_ini or o.tem_antes) as conferido,
+         ab2.no_periodo and coalesce(o.valido, false) and (ab2.ocorrido_em < o.t_ini or ab2.ocorrido_em > o.t_fim
+                                                          or (ab2.ocorrido_em = o.t_ini and o.tem_antes)) as fora_da_janela
     from ab2 left join odo o on o.vehicle_id = ab2.vehicle_id
 )`;
 
@@ -123,8 +169,11 @@ function consumoRef(v: { preset: string | null; consumo_km_l: number | null } | 
   return { km_l: (PADRAO[v?.preset ?? ''] ?? PADRAO.truck).consumo_km_l, fonte: 'estimativa do tipo de caminhão' };
 }
 
-/** diferença, valor e alertas de uma placa ou de um motorista */
-function conferir(x: { km: number; esperados: number; conferidos: number; s: Somas; preco: number | null; hodometro?: boolean },
+/**
+ * diferença, valor e alertas de uma placa ou de um motorista. semHodometro: mensagem do alerta sem_hodometro (null ou
+ * ausente = sem alerta).
+ */
+function conferir(x: { km: number; esperados: number; conferidos: number; s: Somas; preco: number | null; semHodometro?: string | null },
                   tol: number) {
   const dif = x.conferidos - x.esperados;
   const pct = x.esperados > 0 ? (dif / x.esperados) * 100 : null;
@@ -132,6 +181,9 @@ function conferir(x: { km: number; esperados: number; conferidos: number; s: Som
   const alertas: Alerta[] = [];
   if (x.km > KM_SEM_REGISTRO && x.s.abastecimentos === 0) {
     alertas.push({ tipo: 'sem_registro', mensagem: `Rodou ${fmt(x.km)} km sem nenhum abastecimento registrado: confira no cartão onde abasteceu.` });
+  } else if (pct === null && dif > DIF_MIN_L) {
+    // 0 L esperados (nenhuma viagem concluída e hodômetro parado ou sem leitura): o % não existe, mas a compra é o caso mais forte
+    alertas.push({ tipo: 'consumo_acima', mensagem: `Comprou ${fmt(dif)} L sem nenhum km rodado no período: confira desvio de diesel ou viagem ainda em andamento.` });
   } else if (pct !== null && pct > tol && dif > DIF_MIN_L) {
     alertas.push({ tipo: 'consumo_acima', mensagem: `Comprou ${fmt(dif)} L (${fmt(pct, 1)}%) a mais do que o esperado para ${fmt(x.km)} km: confira desvio de diesel ou consumo fora do normal.` });
   } else if (pct !== null && pct < -tol && dif < -DIF_MIN_L) {
@@ -140,9 +192,7 @@ function conferir(x: { km: number; esperados: number; conferidos: number; s: Som
   if (x.s.litros > 0 && x.s.fora_l > FORA_MAX * x.s.litros) {
     alertas.push({ tipo: 'fora_do_plano', mensagem: `${fmt((x.s.fora_l / x.s.litros) * 100)}% dos litros (${fmt(x.s.fora_l)} L) comprados fora do plano da viagem e da rede conveniada${x.s.sobrepreco > 0 ? `, R$ ${fmt(x.s.sobrepreco, 2)} acima do preço do plano` : ''}.` });
   }
-  if (x.hodometro === false && x.s.abastecimentos > 0) {
-    alertas.push({ tipo: 'sem_hodometro', mensagem: 'Menos de duas leituras de hodômetro válidas nos abastecimentos: os km vêm das viagens concluídas. Peça o hodômetro em todo abastecimento.' });
-  }
+  if (x.semHodometro && x.s.abastecimentos > 0) alertas.push({ tipo: 'sem_hodometro', mensagem: x.semHodometro });
   const valor_em_risco_rs = Math.max(0, valorDif ?? 0) + x.s.sobrepreco;
   return {
     litros_esperados: r1(x.esperados), diferenca_l: r1(dif), diferenca_pct: pct === null ? null : r1(pct),
@@ -163,7 +213,9 @@ function item(a: Record<string, any>) {
   if (!a.com_plano) marcas.push('sem_plano');
   if (a.sobrepreco > 0) marcas.push('sobrepreco');
   if (a.pelo_motorista) marcas.push('veiculo_do_motorista');
-  if (a.hodometro && !a.conferido) marcas.push(a.antes_do_hodometro ? 'antes_do_hodometro' : 'depois_do_hodometro');
+  if (a.pela_viagem) marcas.push('motorista_da_viagem');
+  if (a.hodometro && !a.conferido) marcas.push('antes_do_hodometro');
+  if (a.fora_da_janela) marcas.push('fora_do_hodometro');
   return {
     id: a.id, ocorrido_em: a.ocorrido_em, driver_id: a.driver_id, driver_name: a.driver_name, trip_id: a.trip_id,
     litros: a.litros, valor_rs: a.valor_cents === null ? null : a.valor_cents / 100, preco_rs_l: a.preco === null ? null : r2(a.preco),
@@ -194,16 +246,20 @@ async function conciliacao(cid: string, q: z.infer<typeof Query>) {
        select vehicle_id, ${SOMAS},
               coalesce(sum(litros) filter (where conferido), 0)::float8 as litros_conferidos,
               bool_or(hodometro) as hodometro, max(leituras) as leituras, max(odo_ini) as odo_ini, max(odo_fim) as odo_fim,
+              max(km_antes) as km_antes, max(km_janela) as km_janela, max(km_depois) as km_depois,
+              bool_or(tem_antes) as tem_antes, bool_or(tem_depois) as tem_depois,
+              coalesce(sum(litros) filter (where fora_da_janela), 0)::float8 as litros_fora_da_janela,
               count(*) filter (where no_periodo and pelo_motorista)::int as pelo_motorista,
-              coalesce(sum(litros) filter (where ocorrido_em > now() - make_interval(days => ${DIAS_MEDIDO})), 0)::float8 as litros_90
+              -- consumo medido como em GET /consumo (consumoMedio): só os abastecimentos lançados com a placa
+              coalesce(sum(litros) filter (where com_placa and ocorrido_em > now() - make_interval(days => ${DIAS_MEDIDO})), 0)::float8 as litros_90
          from ab group by vehicle_id`, p),
     pool.query(`${BASE} select driver_id, ${SOMAS} from ab where no_periodo group by driver_id`, p),
     q.detalhe ? pool.query(
       `${BASE}
        select ab.id, ab.vehicle_id, ab.ocorrido_em, ab.driver_id, m.display_name as driver_name, ab.trip_id, ab.litros, ab.valor_cents,
               ab.preco::float8 as preco, ab.posto_nome, ab.posto_cnpj, ab.odometro_km, ab.preco_ref::float8 as preco_ref, ab.sobrepreco,
-              ab.com_plano, ab.no_plano, ab.fora, ab.conveniado, ab.pelo_motorista, ab.hodometro, ab.conferido,
-              ab.ocorrido_em <= ab.t_ini as antes_do_hodometro
+              ab.com_plano, ab.no_plano, ab.fora, ab.conveniado, ab.pelo_motorista, ab.pela_viagem, ab.hodometro, ab.conferido,
+              ab.fora_da_janela
          from ab left join company_members m on m.user_id = ab.driver_id and m.company_id = $3::uuid
         where ab.no_periodo order by ab.vehicle_id, ab.ocorrido_em, ab.id`, p) : null,
   ]).then(([v, m, t, pv, pm, it]) => [v.rows, m.rows, t.rows as { vehicle_id: string | null; driver_id: string | null; km: number; km_90: number }[],
@@ -239,13 +295,22 @@ async function conciliacao(cid: string, q: z.infer<typeof Query>) {
       const viag = kmVeic.get(v.id) ?? { km: 0, km_90: 0 };
       const ref = consumoRef(v);
       const hod = !!s.hodometro;
-      const km = hod ? Number(s.odo_fim) - Number(s.odo_ini) : viag.km;
+      const kmHod = s.leituras ? Number(s.odo_fim) - Number(s.odo_ini) : 0;
+      // com hodômetro: km da janela + km das viagens dos trechos de fora em que houve compra
+      const km = hod ? kmHod + (s.tem_antes ? s.km_antes : 0) + (s.tem_depois ? s.km_depois : 0) : viag.km;
+      const km_fonte = !hod ? 'viagens' as const : s.tem_antes || s.tem_depois ? 'hodometro_e_viagens' as const : 'hodometro' as const;
+      const semHodometro = km_fonte === 'hodometro' ? null
+        : km_fonte === 'hodometro_e_viagens'
+          ? `Hodômetro só em parte dos abastecimentos: ${fmt(s.litros_fora_da_janela)} L comprados antes da primeira leitura ou depois da última foram conferidos com os km das viagens concluídas. Peça o hodômetro em todo abastecimento.`
+          : s.leituras >= 2 && kmHod >= 0 && s.km_janela > 0 && kmHod < HOD_MIN_VIAGENS * s.km_janela
+            ? `O hodômetro informado andou ${fmt(kmHod)} km, menos que as viagens concluídas no mesmo trecho (${fmt(s.km_janela)} km): os km vêm das viagens. Confira as leituras e peça o hodômetro em todo abastecimento.`
+            : 'Menos de duas leituras de hodômetro válidas nos abastecimentos: os km vêm das viagens concluídas. Peça o hodômetro em todo abastecimento.';
       const preco = precoMedio(s) ?? precoFrota;
-      const conf = conferir({ km, esperados: km / ref.km_l, conferidos: s.litros_conferidos, s, preco, hodometro: hod }, q.tolerancia_pct);
+      const conf = conferir({ km, esperados: km / ref.km_l, conferidos: s.litros_conferidos, s, preco, semHodometro }, q.tolerancia_pct);
       return {
         vehicle_id: v.id, plate: v.plate, label: v.label, preset: v.preset,
-        km: r1(km), km_fonte: hod ? 'hodometro' as const : 'viagens' as const, km_viagens: r1(viag.km),
-        hodometro: s.leituras ? { leituras: s.leituras, inicial_km: s.odo_ini, final_km: s.odo_fim } : null,
+        km: r1(km), km_fonte, km_viagens: r1(viag.km),
+        hodometro: s.leituras ? { leituras: s.leituras, inicial_km: s.odo_ini, final_km: s.odo_fim, valido: hod, km_viagens_no_trecho: r1(s.km_janela ?? 0) } : null,
         consumo_ref_km_l: ref.km_l, consumo_fonte: ref.fonte,
         consumo_medido_km_l: viag.km_90 >= 300 && s.litros_90 >= 100 ? r2(viag.km_90 / s.litros_90) : null,
         abastecimentos: s.abastecimentos, litros_comprados: r1(s.litros), litros_conferidos: r1(s.litros_conferidos),
@@ -297,15 +362,17 @@ async function conciliacao(cid: string, q: z.infer<typeof Query>) {
   return {
     dias, tolerancia_pct: q.tolerancia_pct, vehicle_id: q.vehicle_id ?? null,
     nota: `Litros esperados = km ÷ consumo de referência (cadastro do veículo ou, sem cadastro, o padrão do tipo de caminhão). `
-      + `Os km vêm do hodômetro informado nos abastecimentos (com duas leituras ou mais; aí só contam os litros comprados depois da primeira leitura até a última) `
-      + `ou, sem isso, das viagens concluídas. O nível do tanque no começo e no fim do período não é conhecido (nem o diesel de uma viagem ainda em andamento), `
+      + `Os km vêm do hodômetro informado nos abastecimentos (com duas leituras ou mais; a compra da primeira leitura repôs o que foi gasto antes e fica de fora; `
+      + `o que foi comprado antes da primeira leitura ou depois da última entra com os km das viagens concluídas nesse trecho) `
+      + `ou, sem isso, das viagens concluídas. Compra sem nenhum km rodado no período também é alerta. O nível do tanque no começo e no fim do período não é conhecido (nem o diesel de uma viagem ainda em andamento), `
       + `por isso a diferença só vira alerta acima de ${fmt(q.tolerancia_pct, 1)}% e de ${DIF_MIN_L} L. Diferença positiva: comprou mais do que devia gastar `
       + `(desvio ou consumo fora do normal); negativa: abasteceu sem registrar (puxe no cartão). Fora do plano: abastecimento de viagem com plano num posto que não é `
-      + `parada do plano nem conveniado; sem CNPJ não dá para conferir. Abastecimento sem placa entra no veículo da viagem ou, sem viagem, no veículo padrão do motorista.`,
+      + `parada do plano nem conveniado; sem CNPJ não dá para conferir. Abastecimento sem placa entra no veículo da viagem ou, sem viagem, no veículo padrão do motorista; `
+      + `sem motorista, entra no motorista da viagem.`,
     resumo: {
       veiculos: veiculos.length, veiculos_com_alerta: veiculos.filter((v) => v.alertas.length).length, alertas,
       km: r1(soma((v) => v.km)), litros_esperados: r1(soma((v) => v.litros_esperados)),
-      litros_comprados: r1(tot.litros), valor_rs: r2(tot.valor_cents / 100), preco_medio_rs_l: precoFrota === null ? null : r2(precoFrota),
+      litros_comprados: r1(tot.litros), litros_conferidos: r1(soma((v) => v.litros_conferidos)), valor_rs: r2(tot.valor_cents / 100), preco_medio_rs_l: precoFrota === null ? null : r2(precoFrota),
       diferenca_l: r1(soma((v) => v.diferenca_l)), valor_diferenca_rs: r2(soma((v) => v.valor_diferenca_rs ?? 0)),
       fora_do_plano: foraDo(tot), sem_cnpj: semCnpj(tot),
       sem_veiculo: { abastecimentos: semVeic.abastecimentos, litros: r1(semVeic.litros), valor_rs: r2(semVeic.valor_cents / 100),

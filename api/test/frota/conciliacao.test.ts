@@ -12,34 +12,43 @@ import { pool } from '../helpers.js';
 const BASE = process.env.API_URL ?? 'http://localhost:3100';
 
 const id = (n: number) => `c0c10000-0000-4000-8000-${String(n).padStart(12, '0')}`;
-const CO_A = id(1), CO_B = id(2);
+const CO_A = id(1), CO_B = id(2), CO_C = id(3);
 const OWNER_A = id(11), MOT_A1 = id(12), MOT_A2 = id(13), OUTSIDER = id(14), OWNER_B = id(21), MOT_B = id(22);
-const ALL_USERS = [OWNER_A, MOT_A1, MOT_A2, OUTSIDER, OWNER_B, MOT_B];
+const OWNER_C = id(31), MOT_C1 = id(32), MOT_C2 = id(33);
+const ALL_USERS = [OWNER_A, MOT_A1, MOT_A2, OUTSIDER, OWNER_B, MOT_B, OWNER_C, MOT_C1, MOT_C2];
 // VEH1 carreta com consumo cadastrado (desvio); VEH2 toco sem cadastro (fora do plano); VEH3 com hodômetro;
 // VEH4 rodou sem abastecer; VEH5 comprou menos do que rodou; VEHB é da outra empresa
 const VEH1 = id(101), VEH2 = id(102), VEH3 = id(103), VEH4 = id(104), VEH5 = id(105), VEHB = id(201);
 const T1A = id(301), T1B = id(302), T2 = id(303), T3 = id(304), T4 = id(305), T5 = id(306), TB = id(401);
+// empresa C (casos de borda): VEHC1 comprou sem rodar; VEHC2 parado com o mesmo hodômetro; VEHC3 comprou antes do
+// trecho com hodômetro; VEHC4 hodômetro que anda menos que as viagens; VEHC5 abastecimento lançado pela equipe só com a placa
+const VEHC1 = id(111), VEHC2 = id(112), VEHC3 = id(113), VEHC4 = id(114), VEHC5 = id(115);
+const TC3A = id(311), TC3B = id(312), TC4 = id(313), TC5 = id(314);
 const CNPJ_PLANO = '11111111000111', CNPJ_FORA = '22222222000122', CNPJ_CONV = '33333333000133', CNPJ_CONV_INATIVO = '44444444000144';
 
 const tok = (sub: string) => signJwt({ sub, role: 'authenticated' });
-const T = { ownerA: tok(OWNER_A), motA1: tok(MOT_A1), outsider: tok(OUTSIDER), ownerB: tok(OWNER_B) };
+const T = { ownerA: tok(OWNER_A), motA1: tok(MOT_A1), outsider: tok(OUTSIDER), ownerB: tok(OWNER_B), ownerC: tok(OWNER_C) };
 
-async function call(path: string, token: string) {
-  const res = await fetch(`${BASE}/api/frota${path}`, { headers: { authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(60_000) });
+async function call(path: string, token: string, body?: object) {
+  const res = await fetch(`${BASE}/api/frota${path}`, {
+    method: body ? 'POST' : 'GET', signal: AbortSignal.timeout(60_000),
+    headers: { authorization: `Bearer ${token}`, ...(body ? { 'content-type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
   return { status: res.status, body: (await res.json().catch(() => ({}))) as any };
 }
 
 async function wipe() {
-  await pool.query('delete from companies where id = any($1::uuid[])', [[CO_A, CO_B]]);
+  await pool.query('delete from companies where id = any($1::uuid[])', [[CO_A, CO_B, CO_C]]);
   await pool.query('delete from auth.users where id = any($1::uuid[])', [ALL_USERS]);
 }
 
-/** viagem concluída: km em distance_m; `fim` = há quanto tempo terminou (intervalo do Postgres) */
-const viagem = (tid: string, co: string, veh: string, driver: string | null, km: number, fim: string, plano: object | null = null) =>
+/** viagem concluída: km em distance_m; `fim` = há quanto tempo terminou (intervalo do Postgres); `duracao` padrão 20 h */
+const viagem = (tid: string, co: string, veh: string, driver: string | null, km: number, fim: string, plano: object | null = null, duracao = '20 hours') =>
   pool.query(
     `insert into trips (id, company_id, vehicle_id, driver_id, status, title, started_at, ended_at, distance_m, plano_abastecimento)
-     values ($1, $2, $3, $4, 'concluida', 'Conciliação', now() - $6::interval - interval '20 hours', now() - $6::interval, $5, $7::jsonb)`,
-    [tid, co, veh, driver, km * 1000, fim, plano ? JSON.stringify(plano) : null]);
+     values ($1, $2, $3, $4, 'concluida', 'Conciliação', now() - $6::interval - $8::interval, now() - $6::interval, $5, $7::jsonb)`,
+    [tid, co, veh, driver, km * 1000, fim, plano ? JSON.stringify(plano) : null, duracao]);
 
 /** abastecimento: `quando` = há quanto tempo (intervalo do Postgres); preço em R$/L */
 const abastece = (o: { co?: string; veh?: string | null; driver?: string | null; trip?: string | null; quando: string; litros: number; preco?: number;
@@ -103,6 +112,45 @@ beforeAll(async () => {
   // empresa B: 800 km a 2 km/L → 400 L; comprou 1.000 L
   await viagem(TB, CO_B, VEHB, MOT_B, 800, '2 days');
   await abastece({ co: CO_B, veh: VEHB, driver: MOT_B, trip: TB, quando: '2 days 5 hours', litros: 1000, preco: 6 });
+
+  // ---- empresa C: casos de borda
+  await pool.query(`insert into companies (id, name) values ($1, 'Conciliação Teste C')`, [CO_C]);
+  await pool.query(
+    `insert into vehicles (id, company_id, plate, preset, consumo_km_l) values
+       ($1, $6, 'CCC1C01', 'carreta_5e', 2.5), ($2, $6, 'CCC1C02', 'truck', 3.0), ($3, $6, 'CCC1C03', 'carreta_5e', 2.5),
+       ($4, $6, 'CCC1C04', 'truck', 3.0), ($5, $6, 'CCC1C05', 'carreta_5e', 2.5)`,
+    [VEHC1, VEHC2, VEHC3, VEHC4, VEHC5, CO_C]);
+  await pool.query(
+    `insert into company_members (company_id, user_id, role, display_name, default_vehicle_id) values
+       ($1, $2, 'owner', 'Dono C', null), ($1, $3, 'motorista', 'Motorista C1', null), ($1, $4, 'motorista', 'Motorista C2', null)`,
+    [CO_C, OWNER_C, MOT_C1, MOT_C2]);
+  const emC = { co: CO_C, preco: 6, cnpj: CNPJ_CONV };
+  // VEHC1: nenhuma viagem concluída e sem hodômetro; 400 L + 400 L (metade pelo Motorista C2, que também não rodou)
+  await abastece({ ...emC, veh: VEHC1, quando: '6 days', litros: 400 });
+  await abastece({ ...emC, veh: VEHC1, driver: MOT_C2, quando: '3 days', litros: 400 });
+  // VEHC2: parado, as duas compras com o mesmo hodômetro (0 km); a primeira repôs o que veio antes
+  await abastece({ ...emC, veh: VEHC2, quando: '8 days', litros: 300, odometro: 100000 });
+  await abastece({ ...emC, veh: VEHC2, quando: '4 days', litros: 300, odometro: 100000 });
+  // VEHC3 (2,5 km/L): 1.000 km de viagens (dias 20 e 10) e 5 × 170 L sem hodômetro (dias 25 a 17); depois só duas leituras
+  // próximas (50 L com 200.000 no dia 3 e 40 L com 200.100 no dia 2): 100 km + 1.000 km → 440 L esperados contra 940 L
+  await viagem(TC3A, CO_C, VEHC3, null, 500, '20 days');
+  await viagem(TC3B, CO_C, VEHC3, null, 500, '10 days');
+  for (const d of [25, 23, 21, 19, 17]) await abastece({ ...emC, veh: VEHC3, quando: `${d} days`, litros: 170 });
+  await abastece({ ...emC, veh: VEHC3, quando: '3 days', litros: 50, odometro: 200000 });
+  await abastece({ ...emC, veh: VEHC3, quando: '2 days', litros: 40, odometro: 200100 });
+  // VEHC4 (3 km/L): viagem de 1.200 km em 48 h (dias 6 a 4); leituras 300.000 e 300.010 com 12 h entre elas, quando a
+  // viagem rodou ~300 km: o hodômetro não vale e os km vêm das viagens (1.200 km → 400 L; comprou 350 L)
+  await viagem(TC4, CO_C, VEHC4, null, 1200, '4 days', null, '48 hours');
+  await abastece({ ...emC, veh: VEHC4, quando: '5 days', litros: 200, odometro: 300000 });
+  await abastece({ ...emC, veh: VEHC4, quando: '4 days 12 hours', litros: 150, odometro: 300010 });
+  // VEHC5 (2,5 km/L): viagem de 1.000 km do Motorista C1; a equipe lança 410 L só com a placa durante a viagem (pela API)
+  await viagem(TC5, CO_C, VEHC5, MOT_C1, 1000, '2 days');
+  const lanc = await call('/abastecimentos', T.ownerC, {
+    vehicle_id: VEHC5, litros: 410, valor_cents: 410 * 600, posto_cnpj: CNPJ_CONV,
+    ocorrido_em: new Date(Date.now() - (2 * 24 + 10) * 3600_000).toISOString(),
+  });
+  expect(lanc.status, JSON.stringify(lanc.body)).toBe(201);
+  expect(lanc.body).toMatchObject({ driver_id: null, trip_id: TC5 });
 });
 
 afterAll(async () => { await wipe(); });
@@ -150,11 +198,20 @@ describe('conferência do diesel: litros esperados × comprados', () => {
       plate: 'CCA1C01', km: 1000, km_fonte: 'viagens', consumo_ref_km_l: 2.5, consumo_fonte: 'cadastro do veículo',
       litros_esperados: 400, abastecimentos: 3, litros_comprados: 600, litros_conferidos: 600, valor_rs: 3600, preco_medio_rs_l: 6,
       diferenca_l: 200, diferenca_pct: 50, valor_diferenca_rs: 1200, valor_em_risco_rs: 1200, atribuidos_pelo_motorista: 1,
-      consumo_medido_km_l: 1.43,          // 90 dias: 1.000 km ÷ 700 L (inclui o de 40 dias atrás), só informativo
+      // 90 dias, como GET /consumo: 1.000 km ÷ 500 L lançados com a placa (inclui o de 40 dias atrás), só informativo
+      consumo_medido_km_l: 2,
       fora_do_plano: { abastecimentos: 0, litros: 0, sobrepreco_rs: 0 },
     });
     expect(tipos(v)).toEqual(['consumo_acima', 'sem_hodometro']);
     expect(v.detalhe).toBeUndefined();
+  });
+
+  it('consumo medido igual ao de GET /consumo?dias=90', async () => {
+    const c = await call('/consumo?dias=90', T.ownerA);
+    expect(c.status).toBe(200);
+    for (const vid of [VEH1, VEH2, VEH3, VEH5]) {
+      expect(veic(vid).consumo_medido_km_l, vid).toBe(c.body.por_veiculo.find((x: any) => x.vehicle_id === vid).km_por_litro);
+    }
   });
 
   it('fora do plano: posto fora das paradas e da rede conveniada, com sobrepreço; conveniado e parada do plano não contam', () => {
@@ -173,7 +230,8 @@ describe('conferência do diesel: litros esperados × comprados', () => {
   it('com duas leituras de hodômetro ou mais, os km vêm do hodômetro', () => {
     const v = veic(VEH3);
     expect(v).toMatchObject({
-      km: 1200, km_fonte: 'hodometro', km_viagens: 50, hodometro: { leituras: 3, inicial_km: 100000, final_km: 101200 },
+      km: 1200, km_fonte: 'hodometro', km_viagens: 50,
+      hodometro: { leituras: 3, inicial_km: 100000, final_km: 101200, valido: true, km_viagens_no_trecho: 50 },
       litros_esperados: 400, litros_comprados: 710, litros_conferidos: 410, diferenca_l: 10, diferenca_pct: 2.5,
     });
     expect(v.alertas).toEqual([]);
@@ -189,7 +247,7 @@ describe('conferência do diesel: litros esperados × comprados', () => {
   it('resumo e ordem por valor em risco', () => {
     expect(r.body.veiculos.map((v: any) => v.plate).slice(0, 2)).toEqual(['CCA1C01', 'CCA1C02']);
     expect(r.body.resumo).toMatchObject({
-      veiculos: 5, veiculos_com_alerta: 4, km: 5000, litros_comprados: 1850,
+      veiculos: 5, veiculos_com_alerta: 4, km: 5000, litros_comprados: 1850, litros_conferidos: 1550,
       alertas: { consumo_acima: 1, consumo_abaixo: 1, fora_do_plano: 1, sem_hodometro: 3, sem_registro: 1 },
       fora_do_plano: { abastecimentos: 2, litros: 120, valor_rs: 774, sobrepreco_rs: 54 },
       sem_cnpj: { abastecimentos: 1, litros: 10 }, sem_veiculo: { abastecimentos: 0, litros: 0 },
@@ -244,5 +302,69 @@ describe('conferência do diesel: filtros e detalhe', () => {
     const tolerante = await call(`/conciliacao-diesel?vehicle_id=${VEH1}&tolerancia_pct=60`, T.ownerA);
     expect(tipos(tolerante.body.veiculos[0])).toEqual(['sem_hodometro']);
     expect((await call(`/conciliacao-diesel?vehicle_id=${id(999)}`, T.ownerA)).status).toBe(404);
+  });
+});
+
+describe('conferência do diesel: casos de borda', () => {
+  let r: { status: number; body: any };
+  const veic = (vid: string) => r.body.veiculos.find((v: any) => v.vehicle_id === vid);
+  const mot = (did: string) => r.body.por_motorista.find((m: any) => m.driver_id === did);
+  beforeAll(async () => { r = await call('/conciliacao-diesel?detalhe=true', T.ownerC); });
+
+  it('compra sem nenhum km rodado (sem viagem e sem hodômetro) → consumo_acima, na placa e no motorista', () => {
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    expect(veic(VEHC1)).toMatchObject({ km: 0, km_fonte: 'viagens', litros_esperados: 0, litros_comprados: 800, diferenca_l: 800, diferenca_pct: null });
+    expect(tipos(veic(VEHC1))).toEqual(['consumo_acima', 'sem_hodometro']);
+    expect(veic(VEHC1).alertas.find((a: any) => a.tipo === 'consumo_acima').mensagem).toMatch(/sem nenhum km rodado/);
+    expect(mot(MOT_C2)).toMatchObject({ km: 0, litros_comprados: 400, diferenca_l: 400, diferenca_pct: null });
+    expect(tipos(mot(MOT_C2))).toEqual(['consumo_acima']);
+  });
+
+  it('parado com o mesmo hodômetro: 0 km pelo hodômetro (não é sem_hodometro) e consumo_acima', () => {
+    expect(veic(VEHC2)).toMatchObject({
+      km: 0, km_fonte: 'hodometro', hodometro: { leituras: 2, inicial_km: 100000, final_km: 100000, valido: true },
+      litros_comprados: 600, litros_conferidos: 300, litros_esperados: 0, diferenca_l: 300,
+    });
+    expect(tipos(veic(VEHC2))).toEqual(['consumo_acima']);
+  });
+
+  it('compra antes da primeira leitura não some: entra com os km das viagens do trecho', () => {
+    const v = veic(VEHC3);
+    expect(v).toMatchObject({
+      km: 1100, km_fonte: 'hodometro_e_viagens', km_viagens: 1000, litros_comprados: 940, litros_conferidos: 940,
+      litros_esperados: 440, diferenca_l: 500,
+    });
+    expect(tipos(v)).toEqual(['consumo_acima', 'sem_hodometro']);
+    expect(v.alertas.find((a: any) => a.tipo === 'sem_hodometro').mensagem).toMatch(/Hodômetro só em parte/);
+    expect(v.valor_em_risco_rs).toBeCloseTo(500 * 6, 1);
+    const d = v.detalhe as any[];
+    expect(d).toHaveLength(7);
+    expect(d.filter((a) => a.marcas.includes('fora_do_hodometro'))).toHaveLength(6);   // os 5 sem leitura e o da 1ª leitura
+    expect(d.some((a) => a.marcas.includes('antes_do_hodometro'))).toBe(false);
+  });
+
+  it('hodômetro que anda menos que as viagens do mesmo trecho não vale: km das viagens', () => {
+    const v = veic(VEHC4);
+    expect(v).toMatchObject({ km: 1200, km_fonte: 'viagens', litros_conferidos: 350, litros_esperados: 400, diferenca_l: -50 });
+    expect(v.hodometro).toMatchObject({ leituras: 2, inicial_km: 300000, final_km: 300010, valido: false });
+    expect(v.hodometro.km_viagens_no_trecho).toBeCloseTo(300, 0);
+    expect(tipos(v)).toEqual(['sem_hodometro']);
+    expect(v.alertas[0].mensagem).toMatch(/menos que as viagens/);
+  });
+
+  it('abastecimento lançado pela equipe só com a placa vai para o motorista da viagem', () => {
+    expect(veic(VEHC5)).toMatchObject({ km: 1000, litros_comprados: 410, litros_esperados: 400, diferenca_l: 10 });
+    expect(mot(MOT_C1)).toMatchObject({ nome: 'Motorista C1', km: 1000, abastecimentos: 1, litros_comprados: 410, diferenca_l: 10 });
+    expect(tipos(mot(MOT_C1))).toEqual([]);
+    const [a] = veic(VEHC5).detalhe as any[];
+    expect(a).toMatchObject({ driver_id: MOT_C1, driver_name: 'Motorista C1', trip_id: TC5 });
+    expect(a.marcas).toContain('motorista_da_viagem');
+  });
+
+  it('resumo: compra sem km conta em consumo_acima; conferidos ao lado dos comprados', () => {
+    expect(r.body.resumo).toMatchObject({
+      veiculos: 5, litros_comprados: 3100, litros_conferidos: 2800,
+      alertas: { consumo_acima: 3, consumo_abaixo: 0, sem_hodometro: 4, sem_registro: 0 },   // VEHC5 também não tem hodômetro
+    });
   });
 });
