@@ -825,13 +825,13 @@ class Frota:
                      'departure_planned_at': f"{ev['data']}T{ev['hora']:02d}:00:00-03:00",
                      'deliveries': [{'customer_name': f"Cliente {d['nome']}", 'address': d['nome'], 'lat': d['lat'], 'lon': d['lon']}]}
             st = 0
-            if FROTA_PLANO:     # a rota da viagem é calculada pela API: vai para as instâncias de rota (rodízio)
+            if getattr(self, 'plano', FROTA_PLANO):     # a rota da viagem é calculada pela API: vai para as instâncias de rota (rodízio)
                 st, t = call('POST', '/api/frota/trips', self.gestor, dict(corpo, plan_route=True), timeout=180, base=api_rota())
             if st != 201: st, t = call('POST', '/api/frota/trips', self.gestor, corpo)
             if st == 201:
                 tid = t['id']
                 ini = {k: v for k, v in (('combustivel_l', ev.get('nivel_saida_l')), ('odometro_km', ev.get('odometro_saida_km'))) if v is not None}
-                s2, r2 = call('POST', f'/api/frota/trips/{tid}/start', tk, ini, timeout=120, base=api_rota() if FROTA_PLANO else None)
+                s2, r2 = call('POST', f'/api/frota/trips/{tid}/start', tk, ini, timeout=120, base=api_rota() if getattr(self, 'plano', FROTA_PLANO) else None)
                 if s2 != 200: self.erros += 1
                 plano_api = isinstance((r2 or {}).get('plano_abastecimento'), dict) if s2 == 200 else False
                 plano_cnpjs = [p.get('cnpj') for p in ((r2 or {}).get('plano_abastecimento') or {}).get('paradas') or [] if p.get('cnpj')]
@@ -1042,7 +1042,12 @@ def preparar_frota3(personas):
 def carregar_frotas(info):
     """Frota de cada empresa que usa o app: a 2.0 tem uma só (frota_info da 'com'); a 3.0, uma por grupo."""
     if not info: return {}
-    if 'grupos' in info: return {g: Frota(i) for g, i in info['grupos'].items() if g in GRUPOS and usa_app(g)}
+    if 'grupos' in info:
+        fs = {g: Frota(i) for g, i in info['grupos'].items() if g in GRUPOS and usa_app(g)}
+        # rota e plano da API na viagem da frota só onde a conferência do diesel existe ('mais'): na 'com' seria uma rota a
+        # mais por viagem sem uso (a 'com' não tem a conferência), e dobrava o tempo de cada semana
+        for g, f in fs.items(): f.plano = FROTA_PLANO and g == 'mais'
+        return fs
     return {'com': Frota(info)}
 
 
