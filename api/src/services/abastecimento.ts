@@ -17,7 +17,7 @@ import { NEAR_M, toPosto, type PostoOnRoute } from '../layers/postos_diesel.laye
 export { AbastecimentoInput, Conveniado } from '../schemas.js';
 
 // estimativas por tipo de caminhão quando o cadastro não traz (tanque em litros, consumo em km/L de diesel carregado)
-const PADRAO: Record<string, { tanque_l: number; consumo_km_l: number }> = {
+export const PADRAO: Record<string, { tanque_l: number; consumo_km_l: number }> = {
   utilitario: { tanque_l: 70, consumo_km_l: 8 }, vuc: { tanque_l: 150, consumo_km_l: 6 }, toco: { tanque_l: 275, consumo_km_l: 4.5 },
   truck: { tanque_l: 300, consumo_km_l: 3.5 }, carreta_5e: { tanque_l: 600, consumo_km_l: 2.4 }, carreta_6e: { tanque_l: 600, consumo_km_l: 2.2 },
   romeu_julieta: { tanque_l: 700, consumo_km_l: 2.0 }, bitrem: { tanque_l: 900, consumo_km_l: 1.9 }, rodotrem: { tanque_l: 1000, consumo_km_l: 1.7 },
