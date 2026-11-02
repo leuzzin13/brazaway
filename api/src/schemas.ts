@@ -61,12 +61,24 @@ export const AbastecimentoInput = z.object({
 });
 export type AbastecimentoInput = z.input<typeof AbastecimentoInput>;
 
+// trechos bloqueados pela transportadora (frota/bloqueios.ts): itens das camadas pelo `id` dos avisos e linhas desenhadas
+export const Bloqueios = z.object({
+  item_ids: z.array(z.string().min(1).max(300)).max(500).optional(),
+  linhas: z.array(z.object({
+    id: z.string().max(100).optional(),
+    nome: z.string().trim().min(1).max(200),
+    coordinates: z.array(z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])).min(2).max(2000),
+  })).max(100).optional(),
+});
+export type Bloqueios = z.infer<typeof Bloqueios>;
+
 export const RouteRequest = z.object({
   origin: LatLon,
   destination: LatLon,
   departure_at: z.string().optional(), // ISO local "YYYY-MM-DDTHH:mm" no fuso TZ
   vehicle: VehicleInput.default({}),
   abastecimento: AbastecimentoInput.optional(),   // pede o plano de abastecimento (onde parar e quantos litros)
+  bloqueios: Bloqueios.optional(),                // a rota evita estes trechos (fator de "proibido salvo sem nenhum caminho")
 });
 export type RouteRequest = z.infer<typeof RouteRequest>;
 

@@ -8,6 +8,7 @@ import { computeRoute, RouteBlockedError, withTimeout } from '../services/routin
 import { priorizarAvisos } from '../services/alertas.js';
 import { planoAbastecimento } from '../services/abastecimento.js';
 import { alertasAoVivo } from './alertas_vivo.js';
+import { bloqueiosDaEmpresa, bloqueiosRoutes } from './bloqueios.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
 import { pool } from '../db.js';
@@ -339,9 +340,11 @@ export async function frotaRoutes(app: FastifyInstance) {
     // alertas ao vivo: equipe vê todos da empresa; motorista, os dele. "visto" marca que alguém leu.
     api.get('/alertas', (req) => asUser(req, async (c) => {
       const q = parse(z.object({ trip_id: Uuid.optional(), desde: IsoDateTime.optional(), nao_vistos: z.enum(['true', 'false']).optional(),
+                                 tipo: z.string().max(200).optional().transform((v) => (v ? v.split(',') : undefined)),
                                  limit: z.coerce.number().int().min(1).max(500).default(100) }), req.query);
       const w = ['true']; const p: unknown[] = [];
       if (q.trip_id) { p.push(q.trip_id); w.push(`a.trip_id = $${p.length}`); }
+      if (q.tipo) { p.push(q.tipo); w.push(`a.tipo = any($${p.length}::text[])`); }
       if (q.desde) { p.push(q.desde); w.push(`a.criado_em >= $${p.length}`); }
       if (q.nao_vistos === 'true') w.push('a.visto_em is null');
       const r = await c.query(
@@ -388,7 +391,9 @@ export async function frotaRoutes(app: FastifyInstance) {
                                                       v.axle_load_t, v.axle_count, v.hazmat, v.is_vuc, v.has_aetc from vehicles v where v.id = $1`,
                                            [b.vehicle_id], 'veículo não encontrado');
         if (b.driver_id) await one(c, `select 1 from company_members where user_id = $1 and role = 'motorista'`, [b.driver_id], 'motorista não encontrado');
-        return { veh };
+        // trechos bloqueados pela empresa que valem para este tipo de caminhão (frota/bloqueios.ts)
+        const bloqueios = b.plan_route ? await bloqueiosDaEmpresa(c, b.vehicle?.preset ?? veh?.preset) : undefined;
+        return { veh, bloqueios };
       });
 
       let plan: Awaited<ReturnType<typeof computeRoute>> | null = null;
@@ -397,7 +402,7 @@ export async function frotaRoutes(app: FastifyInstance) {
         const vehicle = parse(VehicleInput, merged);
         const departure = b.departure_planned_at ? DateTime.fromISO(b.departure_planned_at, { setZone: true }).setZone(env.tz).toFormat("yyyy-MM-dd'T'HH:mm") : undefined;
         try {
-          plan = await computeRoute({ origin: b.origin!, destination: b.destination!, departure_at: departure, vehicle });
+          plan = await computeRoute({ origin: b.origin!, destination: b.destination!, departure_at: departure, vehicle, bloqueios: ctx.bloqueios });
         } catch (e) {
           if (e instanceof RouteBlockedError) return reply.code(409).send({ error: 'NO_ROUTE', message: e.message, blocked_by: e.blocked_by, limited_by: e.limited_by });
           throw e;
@@ -690,6 +695,9 @@ export async function frotaRoutes(app: FastifyInstance) {
       await one(c, 'delete from postos_conveniados where id = $1 returning id', [idParam(req)], 'posto conveniado não encontrado');
       return { ok: true };
     }));
+
+    // ---------------------------------------------------------- trechos bloqueados pela empresa (frota/bloqueios.ts)
+    api.register(bloqueiosRoutes);
 
     // ---------------------------------------------------------- multas
     // motorista: registra a própria ("tomei uma multa") e vê as suas; equipe: completa, muda status, marca o feedback

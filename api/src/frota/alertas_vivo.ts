@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { env } from '../config.js';
 import { pool } from '../db.js';
 import { evaluateLine } from '../services/routing.js';
+import { bloqueiosDaEmpresa } from './bloqueios.js';
 import type { VehicleInput } from '../schemas.js';
 import type { z } from 'zod';
 
@@ -13,13 +14,18 @@ import type { z } from 'zod';
  * restrições da rota legal (evaluateLine). Cada restrição avisa uma vez a cada 30 min por viagem; cada viagem é
  * conferida no máximo a cada 90 s (a conferência carrega as camadas). A gravação é da API (a tabela não aceita insert
  * do cliente); o motorista e a equipe leem pelo GET /alertas.
+ *
+ * Trechos bloqueados pela empresa (frota/bloqueios.ts) entram na conferência: o item à frente que a empresa bloqueou
+ * vira alerta 'trecho_bloqueado' (a linha desenhada vale a qualquer hora; o item de camada, quando a camada restringe).
+ * Para a equipe, a viagem com rota planejada e o motorista a mais de 250 m dela gera um 'fora_da_rota' (no máximo um a
+ * cada 2 h por viagem); esse não volta na resposta do POST /pings (o app mostra os alertas em tela cheia).
  */
 const FORA_DA_ROTA_M = 250;
 const A_FRENTE_M = 1500;
 const INTERVALO_MS = 90_000;
 const ultimaConferencia = new Map<string, number>();
 
-export interface AlertaVivo { id: string; item_id: string | null; item_nome: string | null; mensagem: string; fora_rota_m: number | null; lat: number; lon: number }
+export interface AlertaVivo { id: string; tipo: string; item_id: string | null; item_nome: string | null; mensagem: string; fora_rota_m: number | null; lat: number; lon: number }
 
 type Ping = { lat: number; lon: number; heading_deg?: number | null; recorded_at: string };
 
@@ -39,6 +45,7 @@ export async function alertasAoVivo(tripId: string | null, pings: Ping[], vehicl
        from trips t left join vehicles v on v.id = t.vehicle_id where t.id = $1`, [tripId, p.lon, p.lat])).rows[0];
   if (!t || t.status !== 'em_andamento') return [];
   if (t.fora_m !== null && t.fora_m <= FORA_DA_ROTA_M) return [];
+  if (t.fora_m !== null) await avisarForaDaRota(t, tripId, p).catch(() => undefined);
 
   const origem = turf.point([p.lon, p.lat]);
   const rumo = typeof p.heading_deg === 'number' ? p.heading_deg
@@ -47,22 +54,38 @@ export async function alertasAoVivo(tripId: string | null, pings: Ping[], vehicl
   const frente = turf.destination(origem, A_FRENTE_M / 1000, rumo, { units: 'kilometers' }).geometry.coordinates as [number, number];
   const veh = t.vehicle_id ? vehicleToApi(t) : {};
   const local = DateTime.fromMillis(agora).setZone(env.tz).toFormat("yyyy-LL-dd'T'HH:mm");
-  const r = await evaluateLine({ origin: { lat: p.lat, lon: p.lon }, destination: { lat: frente[1], lon: frente[0] }, departure_at: local, vehicle: veh },
+  const bloqueios = await bloqueiosDaEmpresa(pool, t.preset, t.company_id).catch(() => undefined);
+  const r = await evaluateLine({ origin: { lat: p.lat, lon: p.lon }, destination: { lat: frente[1], lon: frente[0] }, departure_at: local, vehicle: veh, bloqueios },
     [[p.lon, p.lat], frente]);
   if (!r.crossed.length) return [];
 
   const out: AlertaVivo[] = [];
-  for (const it of r.crossed.slice(0, 3)) {
+  // o que a empresa bloqueou primeiro
+  const itens = [...r.crossed].sort((a, b) => Number(!!b.bloqueado_empresa) - Number(!!a.bloqueado_empresa)).slice(0, 3);
+  for (const it of itens) {
     const ja = await pool.query(`select 1 from alertas_viagem where trip_id = $1 and item_id = $2 and criado_em > now() - interval '30 minutes'`, [tripId, it.id]);
     if (ja.rowCount) continue;
     const nome = it.name ?? it.type ?? it.layer ?? 'restrição';
     const regra = 'rule' in it && it.rule ? ` (${it.rule})` : '';
-    const mensagem = `Atenção: a menos de 1,5 km à frente há ${nome}${regra}, proibido para este caminhão agora. Volte para a rota do app.`;
+    const tipo = it.bloqueado_empresa ? 'trecho_bloqueado' : 'restricao_a_frente';
+    const mensagem = it.bloqueado_empresa
+      ? `Atenção: a menos de 1,5 km à frente há ${nome}, trecho bloqueado pela empresa. Volte para a rota do app.`
+      : `Atenção: a menos de 1,5 km à frente há ${nome}${regra}, proibido para este caminhão agora. Volte para a rota do app.`;
     const ins = await pool.query(
-      `insert into alertas_viagem (company_id, trip_id, driver_id, vehicle_id, item_id, item_nome, mensagem, geom, fora_rota_m)
-       values ($1, $2, $3, $4, $5, $6, $7, ST_SetSRID(ST_MakePoint($8, $9), 4326), $10) returning id`,
-      [t.company_id, tripId, t.driver_id, t.vehicle_id, it.id, nome, mensagem, p.lon, p.lat, t.fora_m]);
-    out.push({ id: ins.rows[0].id, item_id: it.id, item_nome: nome, mensagem, fora_rota_m: t.fora_m, lat: p.lat, lon: p.lon });
+      `insert into alertas_viagem (company_id, trip_id, driver_id, vehicle_id, tipo, item_id, item_nome, mensagem, geom, fora_rota_m)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, ST_SetSRID(ST_MakePoint($9, $10), 4326), $11) returning id`,
+      [t.company_id, tripId, t.driver_id, t.vehicle_id, tipo, it.id, nome, mensagem, p.lon, p.lat, t.fora_m]);
+    out.push({ id: ins.rows[0].id, tipo, item_id: it.id, item_nome: nome, mensagem, fora_rota_m: t.fora_m, lat: p.lat, lon: p.lon });
   }
   return out;
+}
+
+/** Aviso ao gestor: o motorista saiu da rota planejada (uma linha por viagem a cada 2 h; não vai para a tela do motorista). */
+async function avisarForaDaRota(t: { company_id: string; driver_id: string | null; vehicle_id: string | null; fora_m: number }, tripId: string, p: Ping) {
+  const ja = await pool.query(`select 1 from alertas_viagem where trip_id = $1 and tipo = 'fora_da_rota' and criado_em > now() - interval '2 hours'`, [tripId]);
+  if (ja.rowCount) return;
+  await pool.query(
+    `insert into alertas_viagem (company_id, trip_id, driver_id, vehicle_id, tipo, mensagem, geom, fora_rota_m)
+     values ($1, $2, $3, $4, 'fora_da_rota', $5, ST_SetSRID(ST_MakePoint($6, $7), 4326), $8)`,
+    [t.company_id, tripId, t.driver_id, t.vehicle_id, `O motorista saiu da rota do app (${t.fora_m.toLocaleString('pt-BR')} m).`, p.lon, p.lat, t.fora_m]);
 }

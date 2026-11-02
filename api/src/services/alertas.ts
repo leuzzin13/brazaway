@@ -9,7 +9,7 @@ import type { Warning } from './routing.js';
  *    desvio grande), depois o que pede atenção na estrada;
  *  - resumo_avisos: contagem por grupo, com uma frase curta ("4 pontos de acidente, 1 área de roubo de carga e 2 radares").
  */
-const AGIR = new Set(['destination_in_zone', 'origin_in_zone', 'origin_and_destination_in_zone', 'uses_restricted_way', 'large_detour',
+const AGIR = new Set(['destination_in_zone', 'origin_in_zone', 'origin_and_destination_in_zone', 'uses_restricted_way', 'uses_company_blocked_way', 'large_detour',
   'height_below_default', 'janela_inviavel', 'rmsp_destino_na_zona', 'rmsp_via_restrita_na_rota', 'holiday', 'holiday_local']);
 const GRUPOS: Record<string, string> = {
   accident_hotspot: 'acidentes', cargo_theft_area: 'roubo_carga', radar_na_rota: 'radares', radar_movel_reportado: 'radares',

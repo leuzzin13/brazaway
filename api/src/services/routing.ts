@@ -1,7 +1,7 @@
 import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
 import { env } from '../config.js';
-import type { RouteRequest } from '../schemas.js';
+import type { Bloqueios, RouteRequest } from '../schemas.js';
 import { resolveVehicle, type Vehicle } from './vehicle.js';
 import { priorizarAvisos, type ResumoAvisos } from './alertas.js';
 import { planoAbastecimento, planosPorNivel, type PlanoAbastecimento } from './abastecimento.js';
@@ -13,6 +13,7 @@ import { endpointHolidays, legalDayInfo, municipiosAt, SAO_PAULO_IBGE, type Endp
 import { etaPorHorario, type EtaHorario } from './etaHorario.js';
 import { drivingPlan, restStopsAlongRoute, type DrivingPlan, type RestStop } from './restStops.js';
 import { loadLayers } from '../layers/index.js';
+import { BLOCK_FACTOR } from '../layers/altura_osm.layer.js';
 import type { LayerCostLine, LayerItem, LayerWarning, RouteCtx, RouteGeom, RouteLayer, RouteLine } from '../layers/types.js';
 
 export interface AvoidedItem {
@@ -26,6 +27,8 @@ export interface AvoidedItem {
   lat?: number;
   lon?: number;
   note?: string | null;
+  /** trecho bloqueado pela empresa (frota/bloqueios.ts) */
+  bloqueado_empresa?: boolean;
 }
 export interface Warning {
   code: string; message: string; report_id?: string; zone_id?: string; layer?: string; severity?: 'info' | 'warn' | 'danger'; lat?: number; lon?: number; id?: string;
@@ -273,7 +276,38 @@ async function prepareRestrictions(req: RouteRequest) {
     }
   }));
 
-  return { vehicle, dep, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings };
+  // 3b) Trechos bloqueados pela empresa (só quando o pedido traz `bloqueios`, ex.: as rotas da Frota)
+  const bloqueado = aplicarBloqueios(costLines, req.bloqueios);
+
+  return { vehicle, dep, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings, bloqueado };
+}
+
+/** Camada "virtual" das linhas desenhadas pela empresa (não existe em layers/: vem do pedido). */
+export const BLOQUEIO_EMPRESA = 'bloqueio_empresa';
+
+/**
+ * Trechos bloqueados pela empresa (frota/bloqueios.ts) viram trechos penalizados com o fator de "proibido salvo sem
+ * nenhum caminho" (BLOCK_FACTOR, o dos viadutos baixos de altura_osm): o trecho de camada cujo `id` está em `item_ids`
+ * (os "sem alternativa razoável", fator ~1000, continuavam sendo usados pela rota legal) e cada linha desenhada, como um
+ * trecho novo. Troca por objetos novos em vez de alterar: a camada pode guardar as linhas em cache, e o bloqueio é de
+ * uma empresa só. Devolve quem diz se um item (de camada, zona ou linha desenhada) é bloqueado pela empresa.
+ */
+export function aplicarBloqueios(costLines: LayerCostLine[], b: Bloqueios | undefined): (item: { id: string; layer?: string }) => boolean {
+  const ids = new Set(b?.item_ids ?? []);
+  if (ids.size) {
+    for (let i = 0; i < costLines.length; i++) {
+      const cl = costLines[i];
+      if (ids.has(cl.item.id)) costLines[i] = { ...cl, factor: Math.max(cl.factor, BLOCK_FACTOR) };
+    }
+  }
+  (b?.linhas ?? []).forEach((l, i) => {
+    const meio = l.coordinates[Math.floor(l.coordinates.length / 2)];
+    costLines.push({
+      item: { kind: 'layer', layer: BLOQUEIO_EMPRESA, id: `${BLOQUEIO_EMPRESA}:${l.id ?? i + 1}`, name: l.nome, lat: meio[1], lon: meio[0] },
+      coordinates: l.coordinates, factor: BLOCK_FACTOR,
+    });
+  });
+  return (it) => it.layer === BLOQUEIO_EMPRESA || ids.has(it.id);
 }
 
 /** Primeiro instante (passos de 15 min, até 36 h) em que a zona não se aplica a este veículo. null = não libera nesse prazo. */
@@ -322,7 +356,7 @@ async function nextLayerFreeTime(layers: RouteLayer[], ctx: RouteCtx, layerId: s
 }
 
 export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
-  const { vehicle, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings } = await prepareRestrictions(req);
+  const { vehicle, departureLocal, at, warnings, exclusions, zones, dayInfo, ends, ctx, layers, costLines, timings, bloqueado } = await prepareRestrictions(req);
   const excludePolygons = exclusions.flatMap((e) => e.rings);
   const base = { origin: req.origin, destination: req.destination, vehicle, departureLocal };
   // Trechos penalizados que o Valhalla não consegue casar com o grafo ("Failed to edge walk line feature") derrubariam a
@@ -384,13 +418,17 @@ export async function computeRoute(req: RouteRequest): Promise<RouteResponse> {
       const freeLine = turf.lineString(free.coordinates);
       freeGeom = { line: freeLine, distance_km: free.distance_km, duration_s: free.duration_s };
       for (const ex of exclusions) {
-        if (intersects(freeLine, ex) && !intersects(line, ex)) avoided.push(ex.item);
+        if (intersects(freeLine, ex) && !intersects(line, ex)) avoided.push(bloqueado(ex.item) ? { ...ex.item, bloqueado_empresa: true } : ex.item);
       }
       for (const cl of costLines) {
         const freeUses = usesCostLine(freeLine, cl);
         const restrictedUses = usesCostLine(line, cl);
-        if (freeUses && !restrictedUses) avoided.push(cl.item);
-        else if (restrictedUses) {
+        const daEmpresa = bloqueado(cl.item);
+        if (freeUses && !restrictedUses) avoided.push(daEmpresa ? { ...cl.item, bloqueado_empresa: true } : cl.item);
+        else if (restrictedUses && daEmpresa) {
+          warnings.push({ code: 'uses_company_blocked_way', layer: cl.item.layer, severity: 'danger', id: cl.item.id, lat: cl.item.lat, lon: cl.item.lon,
+            message: `A rota passa por trecho bloqueado pela empresa sem nenhum desvio possível: ${itemLabel(cl.item)}. Fale com a central antes de seguir.` });
+        } else if (restrictedUses) {
           warnings.push({ code: 'uses_restricted_way', layer: cl.item.layer, severity: 'danger', id: cl.item.id, lat: cl.item.lat, lon: cl.item.lon,
             message: `A rota passa por trecho restrito sem alternativa razoável: ${itemLabel(cl.item)}. Confira a regra antes de seguir.` });
         }
@@ -639,8 +677,12 @@ function noteDroppedLines(bad: LayerCostLine[], warnings: Warning[]) {
   for (const b of bad) byLayer.set(b.item.layer, [...(byLayer.get(b.item.layer) ?? []), b]);
   for (const [layer, ls] of byLayer) {
     console.warn(`[rota] ${ls.length} trecho(s) da camada ${layer} não casam com o grafo do Valhalla e foram ignorados: ${ls.slice(0, 5).map((l) => l.item.id).join(', ')}`);
-    warnings.push({ code: 'cost_line_ignored', layer, severity: 'info',
-      message: `${ls.length} trecho(s) da camada "${layer}" não casaram com o mapa e não foram considerados nesta rota (${ls.slice(0, 3).map((l) => l.item.name ?? l.item.id).join('; ')}).` });
+    const nomes = ls.slice(0, 3).map((l) => l.item.name ?? l.item.id).join('; ');
+    warnings.push(layer === BLOQUEIO_EMPRESA
+      ? { code: 'cost_line_ignored', layer, severity: 'warn',
+          message: `${ls.length} trecho(s) bloqueado(s) pela empresa não seguem as vias do mapa e não foram considerados nesta rota (${nomes}). Redesenhe o trecho em cima da via.` }
+      : { code: 'cost_line_ignored', layer, severity: 'info',
+          message: `${ls.length} trecho(s) da camada "${layer}" não casaram com o mapa e não foram considerados nesta rota (${nomes}).` });
   }
 }
 
@@ -657,11 +699,13 @@ export type { LayerItem };
  * Usado pela simulação comparativa (rota /api/sim, só com SIM_ENDPOINTS=1).
  */
 export async function evaluateLine(req: RouteRequest, coordinates: [number, number][]) {
-  const { vehicle, departureLocal, exclusions, costLines, warnings } = await prepareRestrictions(req);
+  const { vehicle, departureLocal, exclusions, costLines, warnings, bloqueado } = await prepareRestrictions(req);
   const line = turf.lineString(coordinates);
   const crossed: AvoidedItem[] = [];
-  for (const ex of exclusions) if (intersects(line, ex)) crossed.push(ex.item);
-  for (const cl of costLines) if (usesCostLine(line, cl)) crossed.push(cl.item);
+  // com `bloqueios` no pedido, as linhas da empresa entram na conferência e o item bloqueado pela empresa vem marcado
+  const marca = (it: AvoidedItem): AvoidedItem => (bloqueado(it) ? { ...it, bloqueado_empresa: true } : it);
+  for (const ex of exclusions) if (intersects(line, ex)) crossed.push(marca(ex.item));
+  for (const cl of costLines) if (usesCostLine(line, cl)) crossed.push(marca(cl.item));
   const seen = new Set<string>();
   const items = crossed.filter((a) => { const k = `${a.kind}:${a.layer ?? ''}:${a.id}`; if (seen.has(k)) return false; seen.add(k); return true; });
   return { departure_at: departureLocal, vehicle, crossed: items, endpoint_warnings: warnings.filter((w) => /zone/.test(w.code)) };

@@ -6,6 +6,7 @@ import { env } from '../config.js';
 import { RouteRequest, VehicleInput } from '../schemas.js';
 import { computeRoute } from '../services/routing.js';
 import { httpError, withRls, type Claims } from './auth.js';
+import { bloqueiosDaEmpresa } from './bloqueios.js';
 import { vectorLiteral, type Embedder } from './brain.js';
 
 /**
@@ -478,10 +479,14 @@ export async function executeAction(ctx: Pick<ToolCtx, 'claims' | 'userId' | 'co
   switch (tool) {
     case 'criar_viagem': {
       const a = CriarViagemZ.parse(stripMeta(input));
-      const veh = await withRls(ctx.claims, async (c) => (await c.query(
-        `select id, plate, preset, height_m::float8 as height_m, width_m::float8 as width_m, length_m::float8 as length_m, weight_t::float8 as weight_t,
-                payload_t::float8 as payload_t, axle_load_t::float8 as axle_load_t, axle_count, hazmat, is_vuc, has_aetc
-           from vehicles where id = $1 and company_id = app.company_id() and status = 'active'`, [a.veiculo_id])).rows[0]);
+      const { veh, bloqueios } = await withRls(ctx.claims, async (c) => {
+        const v = (await c.query(
+          `select id, plate, preset, height_m::float8 as height_m, width_m::float8 as width_m, length_m::float8 as length_m, weight_t::float8 as weight_t,
+                  payload_t::float8 as payload_t, axle_load_t::float8 as axle_load_t, axle_count, hazmat, is_vuc, has_aetc
+             from vehicles where id = $1 and company_id = app.company_id() and status = 'active'`, [a.veiculo_id])).rows[0];
+        // trechos bloqueados pela empresa que valem para este tipo de caminhão (frota/bloqueios.ts)
+        return { veh: v, bloqueios: v ? await bloqueiosDaEmpresa(c, v.preset) : undefined };
+      });
       if (!veh) throw new Error('veículo não encontrado ou inativo');
       const last = /\d$/.test(veh.plate) ? Number(veh.plate.slice(-1)) : undefined;
       // O roteador recebe o veículo da frota: preset + dimensões cadastradas (as que existirem sobrescrevem o preset)
@@ -489,7 +494,7 @@ export async function executeAction(ctx: Pick<ToolCtx, 'claims' | 'userId' | 'co
         preset: veh.preset ?? undefined, height_m: veh.height_m, width_m: veh.width_m, length_m: veh.length_m, weight_t: veh.weight_t,
         payload_t: veh.payload_t, axle_load_t: veh.axle_load_t, axle_count: veh.axle_count, hazmat: veh.hazmat, is_vuc: veh.is_vuc, has_aetc: veh.has_aetc || undefined, plate_last_digit: last,
       }));
-      const req = RouteRequest.parse({ origin: { lat: a.origem.lat, lon: a.origem.lon }, destination: { lat: a.destino.lat, lon: a.destino.lon }, departure_at: a.saida_planejada, vehicle });
+      const req = RouteRequest.parse({ origin: { lat: a.origem.lat, lon: a.origem.lon }, destination: { lat: a.destino.lat, lon: a.destino.lon }, departure_at: a.saida_planejada, vehicle, bloqueios });
       const r = await ctx.route(req); // fora da transação: o roteamento é lento
       const dep = a.saida_planejada ? DateTime.fromISO(a.saida_planejada, { zone: env.tz }).toUTC().toISO() : null;
       return withRls(ctx.claims, async (c) => {
