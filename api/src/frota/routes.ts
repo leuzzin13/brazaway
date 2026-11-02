@@ -10,6 +10,7 @@ import { planoAbastecimento } from '../services/abastecimento.js';
 import { alertasAoVivo } from './alertas_vivo.js';
 import { bloqueiosDaEmpresa, bloqueiosRoutes } from './bloqueios.js';
 import { conciliacaoRoutes } from './conciliacao.js';
+import { multasPrazosRoutes } from './multas_prazos.js';
 import { findPreset } from '../config.js';
 import { asUser, httpError, requireService, withRls } from './auth.js';
 import { pool } from '../db.js';
@@ -169,7 +170,7 @@ const PatchVehicle = z.object({ plate: Plate.optional(), ...VehicleFields }).ref
 
 
 // ------------------------------------------------------------------ multas
-const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'use AAAA-MM-DD');
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'use AAAA-MM-DD').refine((v) => DateTime.fromISO(v).isValid, 'data inexistente');
 const MultaFields = {
   ocorrida_em: IsoDateTime.optional(),
   lat: z.number().min(-90).max(90).optional(), lon: z.number().min(-180).max(180).optional(),
@@ -188,6 +189,9 @@ const MultaFields = {
   restricao: z.string().trim().max(300).nullable().optional(),
   feedback_enviado: z.boolean().optional(), feedback_nota: z.string().trim().max(2000).nullable().optional(),
   driver_id: Uuid.nullable().optional(), vehicle_id: Uuid.nullable().optional(), trip_id: Uuid.nullable().optional(),
+  // prazos (0406): notificada_em preenche prazo_indicacao (+30 dias); vencimento e sne dão o valor com desconto
+  notificada_em: IsoDate.nullable().optional(), vencimento: IsoDate.nullable().optional(), sne: z.boolean().optional(),
+  condutor_indicado_em: IsoDateTime.nullable().optional(),
 };
 const NovaMulta = z.object(MultaFields);
 const EditaMulta = z.object(MultaFields).omit({ lat: true, lon: true }).refine((v) => Object.keys(v).length > 0, { message: 'nada para alterar' });
@@ -205,7 +209,8 @@ const MULTA_COLS = `x.id, x.driver_id, m.display_name as driver_name, x.vehicle_
   x.ocorrida_em, x.local, case when x.geom is null then null else ST_Y(x.geom) end as lat, case when x.geom is null then null else ST_X(x.geom) end as lon,
   x.descricao, x.ait, x.orgao, x.enquadramento, x.gravidade, x.valor_cents, x.pontos, x.status, x.prazo_indicacao, x.prazo_pagamento,
   (x.prazo_indicacao - current_date) as dias_para_indicar, x.paga_pela, x.foto_path, x.restricao,
-  x.feedback_enviado, x.feedback_em, x.feedback_por, x.feedback_nota, x.origem, x.created_at, x.updated_at`;
+  x.feedback_enviado, x.feedback_em, x.feedback_por, x.feedback_nota, x.origem, x.created_at, x.updated_at,
+  x.notificada_em::text as notificada_em, x.vencimento::text as vencimento, x.sne, x.condutor_indicado_em, x.condutor_indicado_por`;
 const MULTA_FROM = `multas x left join company_members m on m.user_id = x.driver_id left join vehicles v on v.id = x.vehicle_id left join trips t on t.id = x.trip_id`;
 
 // ------------------------------------------------------------------ saída (colunas)
@@ -717,7 +722,8 @@ export async function frotaRoutes(app: FastifyInstance) {
         const ph: string[] = ['app.company_id()', '$1::timestamptz', '$2', '$3::uuid'];
         if (b.lat !== undefined) { vals.push(b.lon, b.lat); cols.push('geom'); ph.push(`ST_SetSRID(ST_MakePoint($${vals.length - 1}::float8, $${vals.length}::float8), 4326)`); }
         for (const k of ['local', 'descricao', 'foto_path', 'ait', 'orgao', 'enquadramento', 'gravidade', 'valor_cents', 'pontos', 'status',
-                         'prazo_indicacao', 'prazo_pagamento', 'paga_pela', 'restricao', 'feedback_enviado', 'feedback_nota', 'driver_id', 'vehicle_id', 'trip_id']) {
+                         'prazo_indicacao', 'prazo_pagamento', 'paga_pela', 'restricao', 'feedback_enviado', 'feedback_nota', 'driver_id', 'vehicle_id', 'trip_id',
+                         'notificada_em', 'vencimento', 'sne', 'condutor_indicado_em']) {
           if (b[k] === undefined) continue;
           vals.push(b[k]); cols.push(k);
           const cast = k === 'gravidade' ? '::app.multa_gravidade' : k === 'status' ? '::app.multa_status' : '';
@@ -762,6 +768,9 @@ export async function frotaRoutes(app: FastifyInstance) {
       if (!r.rows[0]) throw httpError(404, 'multa não encontrada');
       return one(c, `select ${MULTA_COLS} from ${MULTA_FROM} where x.id = $1`, [id], 'multa não encontrada');
     }));
+
+    // prazos de indicação e de pagamento, indicação do condutor em lote, adesão ao SNE (frota/multas_prazos.ts): só a equipe
+    api.register(multasPrazosRoutes);
 
     // ---------------------------------------------------------- convites e membros
     api.post('/invites', async (req, reply) => {
