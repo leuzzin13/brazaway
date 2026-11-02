@@ -1,9 +1,9 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type pg from 'pg';
 import { z } from 'zod';
-import { findPreset } from '../config.js';
+import { env, findPreset } from '../config.js';
 import type { Bloqueios } from '../schemas.js';
-import { withTimeout } from '../services/routing.js';
+import { idDoTrecho, withTimeout } from '../services/routing.js';
 import * as valhalla from '../services/valhalla.js';
 import { resolveVehicle } from '../services/vehicle.js';
 import { asUser, httpError } from './auth.js';
@@ -19,9 +19,12 @@ import { asUser, httpError } from './auth.js';
  * Achado da simulação de 90 dias: orientar motorista por motorista não resolvia (o problema voltava com outro
  * motorista); quando a equipe travou o desvio para todos, sumiu.
  *
- * O item de camada segue a regra da camada (só pesa nos horários em que ela restringe o trecho); a linha desenhada vale
+ * O item de camada segue a regra da camada (só pesa nos horários em que ela restringe o trecho) e vale para o trecho
+ * inteiro: os sufixos que o id do aviso ganha numa rota (`~n`, `#k`; ver idDoTrecho) são tirados. A linha desenhada vale
  * a qualquer hora, no sentido em que foi desenhada, e precisa seguir as vias do mapa (ex.: um pedaço da rota): se não
- * casar, a rota a ignora com o aviso `cost_line_ignored` (o POST já responde `casa_com_vias`).
+ * casar, a rota a ignora com o aviso `cost_line_ignored`. O POST já responde `casa_com_vias` (segue as vias no sentido
+ * desenhado; desenhada na contramão de uma via de mão única, casa com as arestas do sentido proibido e não teria efeito)
+ * e `mao_dupla` (o outro sentido da via também é percorrido e continua liberado; a resposta avisa como travar).
  */
 
 /** limites do pedido de rota (schemas.ts, Bloqueios) */
@@ -104,6 +107,42 @@ async function casaComVias(coords: [number, number][]): Promise<boolean | null> 
 }
 
 /**
+ * Um veículo percorre a linha do primeiro ao último ponto pelas vias do mapa? O "edge walk" dos trechos penalizados
+ * (casaComVias) aceita a linha na contramão de uma via de mão única (casa com as arestas do sentido proibido, e aí o
+ * bloqueio não pega ninguém); o /trace_route com edge_walk respeita a mão das vias. null = não deu para conferir.
+ */
+async function percorrivel(coords: [number, number][]): Promise<boolean | null> {
+  try {
+    const res = await fetch(`${env.valhallaUrl}/trace_route`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, signal: AbortSignal.timeout(8000),
+      body: JSON.stringify({ shape: coords.map(([lon, lat]) => ({ lat, lon })), shape_match: 'edge_walk', costing: 'auto', directions_type: 'none' }),
+    });
+    if (res.ok) return true;
+    const j = (await res.json().catch(() => ({}))) as { error_code?: number };
+    return j.error_code === 443 ? false : null;   // 443: edge_walk não achou o caminho exato
+  } catch {
+    return null;
+  }
+}
+
+/** O que a resposta do POST diz da linha desenhada: se tem efeito na rota e se o outro sentido da via fica liberado. */
+async function confereLinha(coords: [number, number][]) {
+  const volta = [...coords].reverse();
+  const [casa, ida, voltaOk] = await Promise.all([casaComVias(coords), percorrivel(coords), percorrivel(volta)]);
+  if (casa === true && ida === false && voltaOk === true) {
+    return { casa_com_vias: false, mao_dupla: false,
+      aviso: 'A linha foi desenhada na contramão e não vale para ninguém. Desenhe do primeiro ao último ponto no sentido de quem passa pela via.' };
+  }
+  if (casa === false) {
+    return { casa_com_vias: false, mao_dupla: null,
+      aviso: 'A linha não segue as vias do mapa e será ignorada nas rotas. Desenhe em cima da via (por exemplo, marcando um pedaço da rota).' };
+  }
+  const maoDupla = ida === null || voltaOk === null ? null : ida && voltaOk;
+  return { casa_com_vias: casa, mao_dupla: maoDupla,
+    ...(casa && maoDupla ? { aviso: 'O bloqueio vale só no sentido em que a linha foi desenhada (do primeiro ao último ponto); a via tem mão dupla. Para travar também o outro sentido, cadastre a mesma linha desenhada ao contrário.' } : {}) };
+}
+
+/**
  * Trechos bloqueados ativos da empresa que valem para este tipo de caminhão, no formato de `bloqueios` do pedido de
  * rota. Com a conexão da requisição (RLS), a empresa é a do usuário; com o pool (sem RLS, ex.: alerta ao vivo), passe
  * `companyId`. Os mais novos primeiro, dentro dos limites do pedido.
@@ -132,6 +171,8 @@ export async function bloqueiosRoutes(api: FastifyInstance) {
   api.post('/trechos-bloqueados', async (req, reply) => {
     const b = parse(NovoBloqueio, req.body ?? {});
     if (!b.item_id && !b.coordinates) throw httpError(422, 'informe item_id (o id do aviso da rota) ou coordinates (a linha desenhada)');
+    // o id do trecho, sem os sufixos da rota em que o aviso apareceu ("prf:123#2" → "prf:123")
+    if (b.item_id) b.item_id = idDoTrecho(b.item_id) || b.item_id;
     const presets = presetsCanonicos(b.presets);
     const row = await asUser(req, async (c, claims) => {
       await requireStaff(c);
@@ -147,12 +188,7 @@ export async function bloqueiosRoutes(api: FastifyInstance) {
       return r.rows[0];
     });
     // fora da transação: conferir a linha no Valhalla é lento e não muda o que foi gravado
-    const casa = b.coordinates ? await casaComVias(b.coordinates) : undefined;
-    return reply.code(201).send({
-      ...row,
-      ...(casa === undefined ? {} : { casa_com_vias: casa }),
-      ...(casa === false ? { aviso: 'A linha não segue as vias do mapa e será ignorada nas rotas. Desenhe em cima da via (por exemplo, marcando um pedaço da rota).' } : {}),
-    });
+    return reply.code(201).send(b.coordinates ? { ...row, ...(await confereLinha(b.coordinates)) } : row);
   });
 
   api.patch('/trechos-bloqueados/:id', (req) => asUser(req, async (c) => {

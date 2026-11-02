@@ -135,6 +135,14 @@ describe('cadastro e permissões', () => {
     expect((await call('DELETE', `/trechos-bloqueados/${S.carretaId}`, T.ownerA)).body).toEqual({ ok: true });
     expect((await call('DELETE', `/trechos-bloqueados/${S.carretaId}`, T.ownerA)).status).toBe(404);
   });
+
+  it('id do aviso com os sufixos da rota (~n, #k) vira o id do trecho: vale para o trecho inteiro', async () => {
+    const r = await call('POST', '/trechos-bloqueados', T.ownerA, { item_id: 'teste_camada:trecho-7~2#3', nome: 'Pedaço 3 (teste)' });
+    expect(r.status, JSON.stringify(r.body)).toBe(201);
+    expect(r.body.item_id).toBe('teste_camada:trecho-7');
+    expect((await call('POST', '/trechos-bloqueados', T.ownerA, { item_id: 'teste_camada:trecho-7#2', nome: 'Pedaço 2 (teste)' })).status).toBe(409);
+    expect((await call('DELETE', `/trechos-bloqueados/${r.body.id}`, T.ownerA)).body).toEqual({ ok: true });
+  });
 });
 
 describe('roteamento com bloqueios', () => {
@@ -203,6 +211,9 @@ describe('roteamento com bloqueios', () => {
     expect(item.bloqueado_empresa).toBeUndefined();
     const b = await req('POST', `${BASE}/api/sim/avaliar`, null, { ...lv, bloqueios: { item_ids: [item.id] } });
     expect(b.body.crossed).toContainEqual(expect.objectContaining({ id: item.id, bloqueado_empresa: true }));
+    // bloqueado a partir do aviso de outra rota, com sufixo (pedaço 3 do trecho achado de novo): vale do mesmo jeito
+    const c = await req('POST', `${BASE}/api/sim/avaliar`, null, { ...lv, bloqueios: { item_ids: [`${item.id}~2#3`] } });
+    expect(c.body.crossed).toContainEqual(expect.objectContaining({ id: item.id, bloqueado_empresa: true }));
   });
 });
 
@@ -212,6 +223,32 @@ describe('viagens da frota levam os trechos bloqueados da empresa', () => {
     expect(r.status, JSON.stringify(r.body)).toBe(201);
     expect(r.body.casa_com_vias).toBe(false);
     expect(r.body.aviso).toMatch(/não segue as vias/);
+  });
+
+  it('a linha só vale no sentido desenhado: a resposta diz se está na contramão ou se a via tem mão dupla', async () => {
+    const novo = (nome: string, coordinates: Pt[]) => call('POST', '/trechos-bloqueados', T.ownerA, { nome, coordinates, ativo: false });
+    const criados: string[] = [];
+    // trecho da rota CEAGESP → USP (Av. Jaguaré, mão única) desenhado ao contrário: não pegaria ninguém
+    const contra = await novo('Contramão (teste)', [...S.trecho!].reverse());
+    expect(contra.status, JSON.stringify(contra.body)).toBe(201);
+    criados.push(contra.body.id);
+    expect(contra.body).toMatchObject({ casa_com_vias: false, mao_dupla: false });
+    expect(contra.body.aviso).toBe('A linha foi desenhada na contramão e não vale para ninguém. Desenhe do primeiro ao último ponto no sentido de quem passa pela via.');
+    // pista da Bandeirantes no sentido dela: mão única, sem aviso
+    const pista = await novo('Pista (teste)', S.band!);
+    criados.push(pista.body.id);
+    expect(pista.body).toMatchObject({ casa_com_vias: true, mao_dupla: false });
+    expect(pista.body.aviso).toBeUndefined();
+    // trecho de mão dupla (Av. Imperatriz Leopoldina): vale só no sentido desenhado, a resposta diz como travar o outro
+    const r = await rota({ origin: { lat: -23.530587, lon: -46.731241 }, destination: { lat: -23.528478, lon: -46.733202 }, vehicle: { preset: 'toco' } });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    for (const cs of [r.body.geometry.coordinates as Pt[], [...r.body.geometry.coordinates].reverse() as Pt[]]) {
+      const dupla = await novo('Mão dupla (teste)', cs);
+      criados.push(dupla.body.id);
+      expect(dupla.body, JSON.stringify(dupla.body)).toMatchObject({ casa_com_vias: true, mao_dupla: true });
+      expect(dupla.body.aviso).toBe('O bloqueio vale só no sentido em que a linha foi desenhada (do primeiro ao último ponto); a via tem mão dupla. Para travar também o outro sentido, cadastre a mesma linha desenhada ao contrário.');
+    }
+    for (const x of criados) expect((await call('DELETE', `/trechos-bloqueados/${x}`, T.ownerA)).status).toBe(200);
   });
 
   it('POST /trips: bloqueio só de carreta não vale para o toco; com todos os veículos, a rota planejada desvia', async () => {
@@ -287,6 +324,25 @@ describe('alerta ao vivo', () => {
     expect(tb.body.items.map((x: any) => x.tipo)).toEqual(['trecho_bloqueado']);
     expect((await call('GET', `/alertas?trip_id=${t.body.id}&tipo=trecho_bloqueado,fora_da_rota`, T.ownerA)).body.items).toHaveLength(2);
     expect((await call('GET', '/alertas', T.ownerB)).body.items).toHaveLength(0);
+
+    // o fora_da_rota é só da equipe: o motorista não lê nem marca como visto (não esvazia a fila do gestor)
+    const foraId = fora.body.items[0].id;
+    const doMot = await call('GET', `/alertas?trip_id=${t.body.id}`, T.motA);
+    expect(doMot.status).toBe(200);
+    expect(doMot.body.items.map((x: any) => x.tipo)).toEqual(['trecho_bloqueado']);
+    expect((await call('POST', `/alertas/${foraId}/visto`, T.motA, {})).status).toBe(404);
+    expect((await call('GET', `/alertas?trip_id=${t.body.id}&nao_vistos=true&tipo=fora_da_rota`, T.ownerA)).body.items).toHaveLength(1);
+    expect((await call('POST', `/alertas/${bloq.id}/visto`, T.motA, {})).status).toBe(200);   // os outros, sim
+    expect((await call('POST', `/alertas/${foraId}/visto`, T.ownerA, {})).status).toBe(200);
+    // direto no banco, como o motorista (RLS): não vê nem altera
+    const c = await pool.connect();
+    try {
+      await c.query('begin');
+      await c.query(`select set_config('request.jwt.claims', $1, true)`, [JSON.stringify({ sub: MOT_A, role: 'authenticated' })]);
+      await c.query('set local role authenticated');
+      expect((await c.query(`select tipo from alertas_viagem where trip_id = $1 order by tipo`, [t.body.id])).rows.map((x) => x.tipo)).toEqual(['trecho_bloqueado']);
+      expect((await c.query(`update alertas_viagem set visto_em = null where trip_id = $1 and tipo = 'fora_da_rota'`, [t.body.id])).rowCount).toBe(0);
+    } finally { await c.query('rollback'); c.release(); }
     await call('POST', `/trips/${t.body.id}/end`, T.motA, {});
   });
 
@@ -307,5 +363,37 @@ describe('alerta ao vivo', () => {
     const l = await call('GET', `/alertas?trip_id=${t.body.id}&tipo=fora_da_rota`, T.ownerA);
     expect(l.body.items).toHaveLength(1);
     await call('POST', `/trips/${t.body.id}/end`, T.motA, {});
+  });
+
+  it('na rota do app: trecho bloqueado depois de planejar a viagem, à frente, vira trecho_bloqueado', async () => {
+    const t = await call('POST', '/trips', T.ownerA, { title: 'Teste na rota', vehicle_id: VEH_A, driver_id: MOT_A, plan_route: true,
+                                                        origin: SP.origin, destination: SP.destination });
+    expect(t.status, JSON.stringify(t.body)).toBe(201);
+    const cs = t.body.planned_route.coordinates as Pt[];
+    // a equipe bloqueia um pedaço da rota já planejada
+    const trecho = pedaco(cs, 0.6, 500);
+    const b = await call('POST', '/trechos-bloqueados', T.ownerA, { nome: 'Travado depois (teste)', coordinates: trecho });
+    expect(b.status, JSON.stringify(b.body)).toBe(201);
+    expect(b.body.casa_com_vias).toBe(true);
+    expect((await call('POST', `/trips/${t.body.id}/start`, T.motA, {})).status).toBe(200);
+    // o motorista segue a rota do app, 300 m antes do trecho
+    const linha = turf.lineString(cs);
+    const ini = turf.nearestPointOnLine(linha, trecho[0], { units: 'meters' }).properties.location ?? 0;
+    const p0 = turf.along(linha, Math.max(0, ini - 300), { units: 'meters' }).geometry.coordinates as Pt;
+    const p1 = turf.along(linha, Math.max(0, ini - 280), { units: 'meters' }).geometry.coordinates as Pt;
+    const r = await call('POST', '/pings', T.motA, { pings: [{ lat: p0[1], lon: p0[0], heading_deg: (turf.bearing(p0, p1) + 360) % 360, speed_kmh: 40, recorded_at: new Date().toISOString() }] });
+    expect(r.status, JSON.stringify(r.body)).toBe(200);
+    const alertas = r.body.alertas as any[];
+    const bloq = alertas.find((a) => a.tipo === 'trecho_bloqueado');
+    expect(bloq, JSON.stringify(alertas)).toBeTruthy();
+    expect(bloq).toMatchObject({ item_id: `bloqueio_empresa:${b.body.id}`, item_nome: 'Travado depois (teste)' });
+    expect(bloq.mensagem).toBe('Atenção: a menos de 1,5 km à frente a rota do app passa por Travado depois (teste), trecho bloqueado pela empresa depois que a viagem foi planejada. Fale com a central antes de seguir.');
+    expect(bloq.fora_rota_m).toBeLessThanOrEqual(250);
+    expect(alertas.every((a) => a.tipo === 'trecho_bloqueado'), JSON.stringify(alertas)).toBe(true);
+    // a equipe vê; e não é fora da rota
+    expect((await call('GET', `/alertas?trip_id=${t.body.id}&tipo=trecho_bloqueado`, T.ownerA)).body.items).toHaveLength(1);
+    expect((await call('GET', `/alertas?trip_id=${t.body.id}&tipo=fora_da_rota`, T.ownerA)).body.items).toHaveLength(0);
+    await call('POST', `/trips/${t.body.id}/end`, T.motA, {});
+    expect((await call('DELETE', `/trechos-bloqueados/${b.body.id}`, T.ownerA)).status).toBe(200);
   });
 });

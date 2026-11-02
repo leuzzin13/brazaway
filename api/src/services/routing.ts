@@ -290,14 +290,15 @@ export const BLOQUEIO_EMPRESA = 'bloqueio_empresa';
  * nenhum caminho" (BLOCK_FACTOR, o dos viadutos baixos de altura_osm): o trecho de camada cujo `id` está em `item_ids`
  * (os "sem alternativa razoável", fator ~1000, continuavam sendo usados pela rota legal) e cada linha desenhada, como um
  * trecho novo. Troca por objetos novos em vez de alterar: a camada pode guardar as linhas em cache, e o bloqueio é de
- * uma empresa só. Devolve quem diz se um item (de camada, zona ou linha desenhada) é bloqueado pela empresa.
+ * uma empresa só. Devolve quem diz se um item (de camada, zona ou linha desenhada) é bloqueado pela empresa. Os ids
+ * são comparados sem os sufixos que mudam de uma rota para outra (idDoTrecho).
  */
 export function aplicarBloqueios(costLines: LayerCostLine[], b: Bloqueios | undefined): (item: { id: string; layer?: string }) => boolean {
-  const ids = new Set(b?.item_ids ?? []);
+  const ids = new Set((b?.item_ids ?? []).map(idDoTrecho));
   if (ids.size) {
     for (let i = 0; i < costLines.length; i++) {
       const cl = costLines[i];
-      if (ids.has(cl.item.id)) costLines[i] = { ...cl, factor: Math.max(cl.factor, BLOCK_FACTOR) };
+      if (ids.has(idDoTrecho(cl.item.id))) costLines[i] = { ...cl, factor: Math.max(cl.factor, BLOCK_FACTOR) };
     }
   }
   (b?.linhas ?? []).forEach((l, i) => {
@@ -307,8 +308,15 @@ export function aplicarBloqueios(costLines: LayerCostLine[], b: Bloqueios | unde
       coordinates: l.coordinates, factor: BLOCK_FACTOR,
     });
   });
-  return (it) => it.layer === BLOQUEIO_EMPRESA || ids.has(it.id);
+  return (it) => it.layer === BLOQUEIO_EMPRESA || ids.has(idDoTrecho(it.id));
 }
+
+/**
+ * Id do item sem os sufixos que dependem da rota: as camadas que acham os trechos sobre a própria rota
+ * (rodovias_horario) marcam `~n` o mesmo trecho achado de novo ou no outro sentido e `#k` o k-ésimo pedaço dele. O
+ * bloqueio da empresa é do trecho, em qualquer rota que passe por ele: "prf:123~2#3" → "prf:123".
+ */
+export const idDoTrecho = (id: string) => id.replace(/(?:[~#]\d+)+$/, '');
 
 /** Primeiro instante (passos de 15 min, até 36 h) em que a zona não se aplica a este veículo. null = não libera nesse prazo. */
 async function nextAllowedTime(z: ZoneRow, vehicle: Vehicle, from: Date): Promise<Date | null> {

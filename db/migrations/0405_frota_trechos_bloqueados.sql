@@ -35,3 +35,16 @@ create policy frota_bloq_select on trechos_bloqueados for select to authenticate
   using (company_id = app.company_id());
 create policy frota_bloq_write on trechos_bloqueados for all to authenticated
   using (app.staff_of(company_id)) with check (app.staff_of(company_id));
+
+-- Alertas ao vivo (0404): o 'fora_da_rota' que o alerta ao vivo grava para a equipe (frota/alertas_vivo.ts) não é do
+-- motorista. Ele não lê nem marca como visto (marcando, tiraria da fila de "não vistos" do gestor o aviso da própria
+-- saída da rota); os outros alertas da viagem dele seguem como na 0404. Troca as duas policies numa transação só.
+begin;
+drop policy if exists frota_alertas_select on alertas_viagem;
+drop policy if exists frota_alertas_update on alertas_viagem;
+create policy frota_alertas_select on alertas_viagem for select to authenticated
+  using (app.staff_of(company_id) or (app.self_in(company_id, driver_id) and tipo <> 'fora_da_rota'));
+create policy frota_alertas_update on alertas_viagem for update to authenticated
+  using (app.staff_of(company_id) or (app.self_in(company_id, driver_id) and tipo <> 'fora_da_rota'))
+  with check (app.staff_of(company_id) or (app.self_in(company_id, driver_id) and tipo <> 'fora_da_rota'));
+commit;
